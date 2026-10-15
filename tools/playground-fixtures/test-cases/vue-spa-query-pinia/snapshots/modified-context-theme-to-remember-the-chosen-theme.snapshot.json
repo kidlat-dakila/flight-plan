@@ -1,21 +1,5 @@
 {
   "title": "Modified context theme to remember the chosen theme",
-  "context": [
-    "A shopper who switched the storefront to the dark theme got the light theme back after every reload. The storefront now stores the chosen theme in the browser each time a shopper switches it, and starts in the stored theme when it loads.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper clicks \"Switch theme\", **then** [the browser stores the new theme, `dark` or `light`, under `theme`](code:src/App.vue#L11).",
-    "- **When** a shopper reloads a page after choosing the dark theme, **then** [the page starts in the dark theme](code:src/App.vue#L8).",
-    "- **When** a shopper opens the storefront for the first time, **then** nothing changes: the page starts in the light theme.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/App.vue`**",
-    "",
-    "- Modified [`theme`](code:src/App.vue#L8) to start as `\"dark\"` when `localStorage.getItem(\"theme\")` returns `\"dark\"`, and as `\"light\"` for `null` and for every other value. It started as `\"light\"` before.",
-    "- Modified `toggleTheme` to [call `localStorage.setItem()` with `\"theme\"` and the new value of `theme`](code:src/App.vue#L11), after it switches `theme`."
-  ],
   "diff": [
     "diff --git a/src/App.vue b/src/App.vue",
     "--- a/src/App.vue",
@@ -30,6 +14,22 @@
     "segments": [
       {
         "title": "The chosen theme is stored and read back",
+        "context": [
+          "A shopper who switched the storefront to the dark theme got the light theme back after every reload. The storefront now stores the chosen theme in the browser each time a shopper switches it, and starts in the stored theme when it loads.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper clicks \"Switch theme\", **then** [the browser stores the new theme, `dark` or `light`, under `theme`](code:src/App.vue#L11).",
+          "- **When** a shopper reloads a page after choosing the dark theme, **then** [the page starts in the dark theme](code:src/App.vue#L8).",
+          "- **When** a shopper opens the storefront for the first time, **then** nothing changes: the page starts in the light theme.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/App.vue`**",
+          "",
+          "- Modified [`theme`](code:src/App.vue#L8) to start as `\"dark\"` when `localStorage.getItem(\"theme\")` returns `\"dark\"`, and as `\"light\"` for `null` and for every other value. It started as `\"light\"` before.",
+          "- Modified `toggleTheme` to [call `localStorage.setItem()` with `\"theme\"` and the new value of `theme`](code:src/App.vue#L11), after it switches `theme`."
+        ],
         "kind": "entry",
         "importGraph": [
           {

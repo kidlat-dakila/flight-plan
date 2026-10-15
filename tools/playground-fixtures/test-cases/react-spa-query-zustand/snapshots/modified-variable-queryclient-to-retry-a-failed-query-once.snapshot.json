@@ -1,24 +1,5 @@
 {
   "title": "Modified variable queryClient to retry a failed query once",
-  "context": [
-    "A page that loads data showed its failure after one failed request. A failed load is now requested a second time before the page shows the failure. One dropped request no longer costs the shopper the page.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens the catalogue and the first request for the products fails, **then** [the app sends the request a second time](code:src/lib/query-client.ts#queryClient), and the page shows \"Loading the catalogue…\" until that request ends.",
-    "- **When** both requests for the products fail, **then** the page shows \"The catalogue could not be loaded.\" after two requests, where it showed that text after one.",
-    "- **When** a shopper opens the account page and the first request for the profile fails, **then** [the app sends the request a second time](code:src/lib/query-client.ts#queryClient), and the page shows the profile form when that request succeeds.",
-    "- **When** a request for the products or the profile fails with a status that a second request cannot change, such as 404, **then** the app still sends the request a second time.",
-    "- **When** the first request for the products or the profile succeeds, **then** nothing changes.",
-    "- **When** a shopper saves the profile and that request fails, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/lib/query-client.ts`**",
-    "",
-    "- Added the constant [`RETRY_COUNT`](code:src/lib/query-client.ts#RETRY_COUNT) with the value `1`.",
-    "- Modified [`queryClient`](code:src/lib/query-client.ts#queryClient) to set `retry` to `RETRY_COUNT` in its default query options, where it set `false`."
-  ],
   "diff": [
     "diff --git a/src/lib/query-client.ts b/src/lib/query-client.ts",
     "--- a/src/lib/query-client.ts",
@@ -33,6 +14,25 @@
     "segments": [
       {
         "title": "Failed queries retry once",
+        "context": [
+          "A page that loads data showed its failure after one failed request. A failed load is now requested a second time before the page shows the failure. One dropped request no longer costs the shopper the page.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the catalogue and the first request for the products fails, **then** [the app sends the request a second time](code:src/lib/query-client.ts#queryClient), and the page shows \"Loading the catalogue…\" until that request ends.",
+          "- **When** both requests for the products fail, **then** the page shows \"The catalogue could not be loaded.\" after two requests, where it showed that text after one.",
+          "- **When** a shopper opens the account page and the first request for the profile fails, **then** [the app sends the request a second time](code:src/lib/query-client.ts#queryClient), and the page shows the profile form when that request succeeds.",
+          "- **When** a request for the products or the profile fails with a status that a second request cannot change, such as 404, **then** the app still sends the request a second time.",
+          "- **When** the first request for the products or the profile succeeds, **then** nothing changes.",
+          "- **When** a shopper saves the profile and that request fails, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/lib/query-client.ts`**",
+          "",
+          "- Added the constant [`RETRY_COUNT`](code:src/lib/query-client.ts#RETRY_COUNT) with the value `1`.",
+          "- Modified [`queryClient`](code:src/lib/query-client.ts#queryClient) to set `retry` to `RETRY_COUNT` in its default query options, where it set `false`."
+        ],
         "kind": "entry",
         "importGraph": [
           {

@@ -1,22 +1,5 @@
 {
   "title": "Modified hook useUpdateProfile to refetch the profile after a save",
-  "context": [
-    "After a shopper saved their account details, the app kept the server's reply to the save as the profile. The app now asks the server for the profile again after every save that succeeds. The profile the app holds after a save is therefore the one the server returns for a read. The save itself, and what the form shows while the save runs, stay the same.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper saves the profile form and the save succeeds, **then** [the app requests `/api/profile` a second time, to read the profile](code:src/hooks/use-profile.ts#L14-16).",
-    "- **When** that second request has no response yet, or fails, **then** [the app still holds the profile from before the save](code:src/hooks/use-profile.ts#L14-16).",
-    "- **When** the save runs, **then** nothing changes: the Save button is disabled until the save responds, and not until the second request does.",
-    "- **When** the save fails, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/hooks/use-profile.ts`**",
-    "",
-    "- Modified [the `onSuccess` callback of `useUpdateProfile()`](code:src/hooks/use-profile.ts#L14-16) to call `queryClient.invalidateQueries()` with the key `[\"profile\"]`, where it called `queryClient.setQueryData()` with the saved profile.",
-    "- Removed [the `profile` parameter of `onSuccess`](code:src/hooks/use-profile.ts#L14), which nothing reads now."
-  ],
   "diff": [
     "diff --git a/src/hooks/use-profile.ts b/src/hooks/use-profile.ts",
     "--- a/src/hooks/use-profile.ts",
@@ -31,6 +14,23 @@
     "segments": [
       {
         "title": "Profile refetch after a save",
+        "context": [
+          "After a shopper saved their account details, the app kept the server's reply to the save as the profile. The app now asks the server for the profile again after every save that succeeds. The profile the app holds after a save is therefore the one the server returns for a read. The save itself, and what the form shows while the save runs, stay the same.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper saves the profile form and the save succeeds, **then** [the app requests `/api/profile` a second time, to read the profile](code:src/hooks/use-profile.ts#L14-16).",
+          "- **When** that second request has no response yet, or fails, **then** [the app still holds the profile from before the save](code:src/hooks/use-profile.ts#L14-16).",
+          "- **When** the save runs, **then** nothing changes: the Save button is disabled until the save responds, and not until the second request does.",
+          "- **When** the save fails, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/hooks/use-profile.ts`**",
+          "",
+          "- Modified [the `onSuccess` callback of `useUpdateProfile()`](code:src/hooks/use-profile.ts#L14-16) to call `queryClient.invalidateQueries()` with the key `[\"profile\"]`, where it called `queryClient.setQueryData()` with the saved profile.",
+          "- Removed [the `profile` parameter of `onSuccess`](code:src/hooks/use-profile.ts#L14), which nothing reads now."
+        ],
         "kind": "entry",
         "importGraph": [
           {

@@ -1,25 +1,5 @@
 {
   "title": "Modified function request to send the session token",
-  "context": [
-    "The storefront sent every request to its API without saying who the shopper is. Each request now carries the session token of the browser tab, when the tab has one. A tab with no token sends the same requests as before.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper whose tab holds a session token opens the catalogue, **then** [the products request carries an `Authorization: Bearer` header with that token](code:src/api/client.ts#L29).",
-    "- **When** that shopper opens the account page, **then** [the request that reads the profile carries the same header](code:src/api/profile.ts#L5).",
-    "- **When** that shopper saves the profile form, **then** [the `PUT` request that writes the profile carries the same header](code:src/api/profile.ts#L9).",
-    "- **When** the tab holds no session token, **then** nothing changes.",
-    "- **When** the API answers a request with an error status, **then** nothing changes.",
-    "- **When** a shopper opens the cart, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/api/client.ts`**",
-    "",
-    "- Added [`SESSION_TOKEN_KEY`](code:src/api/client.ts#SESSION_TOKEN_KEY), the constant `\"storefront-session\"` that names the `sessionStorage` entry of the token.",
-    "- Added [`readSessionToken()`](code:src/api/client.ts#readSessionToken) to return that entry, or `null` when `sessionStorage` has none.",
-    "- Modified [`request()`](code:src/api/client.ts#request) to add an `Authorization: Bearer` header when the token is not `null`, before the headers of its caller."
-  ],
   "diff": [
     "diff --git a/src/api/client.ts b/src/api/client.ts",
     "--- a/src/api/client.ts",
@@ -45,6 +25,26 @@
     "segments": [
       {
         "title": "Session token on API requests",
+        "context": [
+          "The storefront sent every request to its API without saying who the shopper is. Each request now carries the session token of the browser tab, when the tab has one. A tab with no token sends the same requests as before.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper whose tab holds a session token opens the catalogue, **then** [the products request carries an `Authorization: Bearer` header with that token](code:src/api/client.ts#L29).",
+          "- **When** that shopper opens the account page, **then** [the request that reads the profile carries the same header](code:src/api/profile.ts#L5).",
+          "- **When** that shopper saves the profile form, **then** [the `PUT` request that writes the profile carries the same header](code:src/api/profile.ts#L9).",
+          "- **When** the tab holds no session token, **then** nothing changes.",
+          "- **When** the API answers a request with an error status, **then** nothing changes.",
+          "- **When** a shopper opens the cart, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/api/client.ts`**",
+          "",
+          "- Added [`SESSION_TOKEN_KEY`](code:src/api/client.ts#SESSION_TOKEN_KEY), the constant `\"storefront-session\"` that names the `sessionStorage` entry of the token.",
+          "- Added [`readSessionToken()`](code:src/api/client.ts#readSessionToken) to return that entry, or `null` when `sessionStorage` has none.",
+          "- Modified [`request()`](code:src/api/client.ts#request) to add an `Authorization: Bearer` header when the token is not `null`, before the headers of its caller."
+        ],
         "kind": "entry",
         "importGraph": [
           {

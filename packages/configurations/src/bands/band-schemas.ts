@@ -47,12 +47,24 @@ export interface ProseListItem {
   blocks: ProseBlock[]
 }
 
+export interface ProseTab {
+  label: string
+  blocks: ProseBlock[]
+}
+
+export interface ProseSection {
+  label: string
+  blocks: ProseBlock[]
+}
+
 export type ProseBlock
   = | { kind: "heading", inlines: Inline[] }
     | { kind: "paragraph", inlines: Inline[] }
     | { kind: "list", isOrdered: boolean, items: ProseListItem[] }
     | { kind: "quote", blocks: ProseBlock[] }
     | { kind: "code-block", language: string | null, text: string }
+    | { kind: "tabs", tabs: ProseTab[] }
+    | { kind: "accordion", sections: ProseSection[] }
 
 export type Prose = ProseBlock[]
 
@@ -67,6 +79,14 @@ export const proseSchema: z.ZodType<Prose> = z.array(
     }),
     z.strictObject({ kind: z.literal("quote"), blocks: z.lazy(() => proseSchema) }),
     z.strictObject({ kind: z.literal("code-block"), language: z.string().nullable(), text: z.string() }),
+    z.strictObject({
+      kind: z.literal("tabs"),
+      tabs: z.array(z.strictObject({ label: z.string(), blocks: z.lazy(() => proseSchema) })),
+    }),
+    z.strictObject({
+      kind: z.literal("accordion"),
+      sections: z.array(z.strictObject({ label: z.string(), blocks: z.lazy(() => proseSchema) })),
+    }),
   ]),
 )
 

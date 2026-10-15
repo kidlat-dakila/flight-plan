@@ -1,26 +1,5 @@
 {
   "title": "Modified context ThemeProvider to remember the chosen theme",
-  "context": [
-    "A visitor who switched the storefront to the dark theme got the light theme back after every reload. The storefront now keeps the chosen theme in the browser and starts in that theme on the next visit. A visitor who never chose a theme still starts in the light theme.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a visitor clicks \"Switch theme\", **then** [the browser stores the new theme under `storefront-theme`](code:src/components/ThemeProvider.tsx#L20-22).",
-    "- **When** a visitor reloads a page after choosing the dark theme, **then** [the page starts in the dark theme](code:src/components/ThemeProvider.tsx#readStoredTheme).",
-    "- **When** a visitor opens the storefront with no stored theme, **then** nothing changes on the page: it starts in the light theme.",
-    "- **When** a page renders for the first time, **then** [the browser stores the theme the page started in](code:src/components/ThemeProvider.tsx#L20-22), before the visitor chooses one.",
-    "- **When** the browser holds a value other than `dark` under `storefront-theme`, **then** [the page starts in the light theme](code:src/components/ThemeProvider.tsx#readStoredTheme).",
-    "",
-    "## Implementation",
-    "",
-    "**`src/components/ThemeProvider.tsx`**",
-    "",
-    "- Added `useEffect` to [the import from `react`](code:src/components/ThemeProvider.tsx#L1).",
-    "- Added [the constant `THEME_STORAGE_KEY`](code:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY), with the value `\"storefront-theme\"`.",
-    "- Added [`readStoredTheme()`](code:src/components/ThemeProvider.tsx#readStoredTheme) to return `\"dark\"` when `localStorage` holds `\"dark\"` under the key, and `\"light\"` for every other value.",
-    "- Modified `<ThemeProvider />` to [pass `readStoredTheme` to `useState` as the initial state](code:src/components/ThemeProvider.tsx#L19), in place of `\"light\"`.",
-    "- Added [a `useEffect` to `<ThemeProvider />` that calls `localStorage.setItem()` with the key and `theme`](code:src/components/ThemeProvider.tsx#L20-22), after the first render and after each change of `theme`."
-  ],
   "diff": [
     "diff --git a/src/components/ThemeProvider.tsx b/src/components/ThemeProvider.tsx",
     "--- a/src/components/ThemeProvider.tsx",
@@ -47,6 +26,27 @@
     "segments": [
       {
         "title": "The chosen theme is kept across reloads",
+        "context": [
+          "A visitor who switched the storefront to the dark theme got the light theme back after every reload. The storefront now keeps the chosen theme in the browser and starts in that theme on the next visit. A visitor who never chose a theme still starts in the light theme.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a visitor clicks \"Switch theme\", **then** [the browser stores the new theme under `storefront-theme`](code:src/components/ThemeProvider.tsx#L20-22).",
+          "- **When** a visitor reloads a page after choosing the dark theme, **then** [the page starts in the dark theme](code:src/components/ThemeProvider.tsx#readStoredTheme).",
+          "- **When** a visitor opens the storefront with no stored theme, **then** nothing changes on the page: it starts in the light theme.",
+          "- **When** a page renders for the first time, **then** [the browser stores the theme the page started in](code:src/components/ThemeProvider.tsx#L20-22), before the visitor chooses one.",
+          "- **When** the browser holds a value other than `dark` under `storefront-theme`, **then** [the page starts in the light theme](code:src/components/ThemeProvider.tsx#readStoredTheme).",
+          "",
+          "## Implementation",
+          "",
+          "**`src/components/ThemeProvider.tsx`**",
+          "",
+          "- Added `useEffect` to [the import from `react`](code:src/components/ThemeProvider.tsx#L1).",
+          "- Added [the constant `THEME_STORAGE_KEY`](code:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY), with the value `\"storefront-theme\"`.",
+          "- Added [`readStoredTheme()`](code:src/components/ThemeProvider.tsx#readStoredTheme) to return `\"dark\"` when `localStorage` holds `\"dark\"` under the key, and `\"light\"` for every other value.",
+          "- Modified `<ThemeProvider />` to [pass `readStoredTheme` to `useState` as the initial state](code:src/components/ThemeProvider.tsx#L19), in place of `\"light\"`.",
+          "- Added [a `useEffect` to `<ThemeProvider />` that calls `localStorage.setItem()` with the key and `theme`](code:src/components/ThemeProvider.tsx#L20-22), after the first render and after each change of `theme`."
+        ],
         "kind": "entry",
         "importGraph": [
           {

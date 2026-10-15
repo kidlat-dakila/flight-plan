@@ -20,6 +20,7 @@ const ContextEditor = ({ label, markdown, isSaving, errorMessage, renderCodeLink
         label={label}
         value={markdown}
         errorMessage={errorMessage}
+        canUseSections
         renderCodeLinkDialog={renderCodeLinkDialog}
         onChange={setDraft}
       />

@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
-import { Link, useNavigate, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
+import { Link, useNavigate, type ErrorComponentProps } from "@tanstack/react-router"
 import { lazy, Suspense, use, useState } from "react"
 import { createPortal } from "react-dom"
 import { BandSlotContext } from "@/band-slot"
 import { requestNotificationPermission } from "@/notification-permission"
+import ServerError from "@/routes/-components/ServerError"
 import { useTRPC } from "@/trpc"
 import BandLine from "@flightplan/ui/BandLine"
 import BlastBand from "@flightplan/ui/BlastBand"
@@ -73,7 +74,6 @@ const ARRANGE_FILES_TITLE = "Arrange files"
 const ARRANGE_FILES_DESCRIPTION = "Move a file up or down in the Code Walkthrough. The order is saved as you go."
 const NO_PATHS: readonly string[] = []
 const NO_SEGMENTS: readonly never[] = []
-const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
 const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
 const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--walkthrough-heading-height:2.75rem] [--section-scroll-margin:4.5rem] [--file-header-top:6.25rem] [--waypoint-scroll-margin:9.75rem] [--chat-width:26rem]"
 
@@ -759,19 +759,11 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   )
 }
 
-export const ReviewError = ({ error }: ErrorComponentProps) => {
-  const router = useRouter()
-  return (
-    <section role="alert" className="max-w-prose px-6 pt-8">
-      <h1 className={PAGE_HEADING_CLASSES}>Could not open this review</h1>
-      <p className="mt-2 text-muted-foreground">{error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE}</p>
-      <div className="mt-4 flex items-center gap-4">
-        <Button onClick={() => { void router.invalidate() }}>Try again</Button>
-        <Link to="/" className="underline">Go to your repositories</Link>
-      </div>
-    </section>
-  )
-}
+export const ReviewError = ({ error }: ErrorComponentProps) => (
+  <ServerError heading="MAYDAY! MAYDAY! We couldn't open this review" error={error} className="px-6 pt-8">
+    <Link to="/" className="underline">Go to your repositories</Link>
+  </ServerError>
+)
 
 const booleanOf = (value: unknown): boolean | undefined => (typeof value === "boolean" ? value : undefined)
 

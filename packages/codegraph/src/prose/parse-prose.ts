@@ -1,5 +1,6 @@
 import MarkdownIt from "markdown-it"
-import type { Inline, Prose, ProseBlock, ProseListItem } from "@flightplan/configurations"
+import type { Inline, Prose, ProseBlock, ProseListItem, ProseSection, ProseTab } from "@flightplan/configurations"
+import { ACCORDION_CONTAINER, containerPluginOf, TABS_CONTAINER } from "./container-rule"
 
 type MarkdownToken = ReturnType<MarkdownIt["parse"]>[number]
 
@@ -8,7 +9,12 @@ const SOFT_BREAK_TEXT = " "
 const CLOSING = -1
 const TRAILING_LINE_BREAK_PATTERN = /\n$/
 
-const markdown = new MarkdownIt({ html: false, linkify: false })
+const MARKDOWN_OPTIONS = { html: false, linkify: false } as const
+
+const markdown = new MarkdownIt(MARKDOWN_OPTIONS)
+const contextMarkdown = new MarkdownIt(MARKDOWN_OPTIONS)
+  .use(containerPluginOf(TABS_CONTAINER))
+  .use(containerPluginOf(ACCORDION_CONTAINER))
 
 interface OpenLink {
   readonly href: string
@@ -139,6 +145,21 @@ const toList = (group: TokenGroup, isOrdered: boolean, knownLinkIds: ReadonlySet
   items: groupSiblings(group.inner).map((item) => toListItem(toBlocks(item.inner, knownLinkIds))),
 })
 
+const toLabelledBlocks = (group: TokenGroup, knownLinkIds: ReadonlySet<string>): ProseTab & ProseSection => ({
+  label: group.head.info,
+  blocks: toBlocks(group.inner, knownLinkIds),
+})
+
+const toTabs = (group: TokenGroup, knownLinkIds: ReadonlySet<string>): ProseBlock => ({
+  kind: "tabs",
+  tabs: groupSiblings(group.inner).map((tab) => toLabelledBlocks(tab, knownLinkIds)),
+})
+
+const toAccordion = (group: TokenGroup, knownLinkIds: ReadonlySet<string>): ProseBlock => ({
+  kind: "accordion",
+  sections: groupSiblings(group.inner).map((section) => toLabelledBlocks(section, knownLinkIds)),
+})
+
 const toCodeBlock = (token: MarkdownToken): ProseBlock => ({
   kind: "code-block",
   language: token.info.trim() === "" ? null : token.info.trim(),
@@ -155,6 +176,10 @@ function toBlock(group: TokenGroup, knownLinkIds: ReadonlySet<string>): ProseBlo
       return [toList(group, false, knownLinkIds)]
     case "ordered_list_open":
       return [toList(group, true, knownLinkIds)]
+    case "tabs_open":
+      return [toTabs(group, knownLinkIds)]
+    case "accordion_open":
+      return [toAccordion(group, knownLinkIds)]
     case "blockquote_open":
       return [{ kind: "quote", blocks: toBlocks(group.inner, knownLinkIds) }]
     case "fence":
@@ -167,6 +192,9 @@ function toBlock(group: TokenGroup, knownLinkIds: ReadonlySet<string>): ProseBlo
 
 export const parseProse = (text: string, knownLinkIds: ReadonlySet<string>): Prose =>
   toBlocks(markdown.parse(text, {}), knownLinkIds)
+
+export const parseContextProse = (text: string, knownLinkIds: ReadonlySet<string>): Prose =>
+  toBlocks(contextMarkdown.parse(text, {}), knownLinkIds)
 
 export const parseInlines = (text: string, knownLinkIds: ReadonlySet<string>): Inline[] =>
   markdown.parseInline(text, {}).flatMap((token) => toInlines(token, knownLinkIds))

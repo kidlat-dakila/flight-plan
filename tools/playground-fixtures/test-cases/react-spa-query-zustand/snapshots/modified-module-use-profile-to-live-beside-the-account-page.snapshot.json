@@ -1,22 +1,5 @@
 {
   "title": "Modified module use-profile to live beside the account page",
-  "context": [
-    "The two hooks that load and save a customer's profile sat in the folder for hooks that several pages share. Only the account page and its form use them. This change moves their file into the folder of the account page, and the two files that import the hooks now name the new place. Nothing a customer sees changes.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a customer opens the account page, **then** nothing changes.",
-    "- **When** a customer saves the profile form, **then** nothing changes.",
-    "- **When** a developer imports the profile hooks from `@/hooks/use-profile`, **then** the import does not resolve, because the file is no longer in that folder.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/routes/account/`**",
-    "",
-    "- Modified [the import of `useUpdateProfile` in the file of `<ProfileForm />`](code:src/routes/account/components/ProfileForm.tsx#L4) to read from `@/routes/account/use-profile`.",
-    "- Modified [the import of `useProfile` in the file of `<AccountPage />`](code:src/routes/account/index.tsx#L1) to read from `./use-profile`.",
-    "- Moved `src/hooks/use-profile.ts` to `src/routes/account/use-profile.ts`. No line of the file changes."
-  ],
   "diff": [
     "diff --git a/src/routes/account/components/ProfileForm.tsx b/src/routes/account/components/ProfileForm.tsx",
     "--- a/src/routes/account/components/ProfileForm.tsx",
@@ -38,6 +21,23 @@
     "segments": [
       {
         "title": "Profile hooks move beside the account page",
+        "context": [
+          "The two hooks that load and save a customer's profile sat in the folder for hooks that several pages share. Only the account page and its form use them. This change moves their file into the folder of the account page, and the two files that import the hooks now name the new place. Nothing a customer sees changes.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a customer opens the account page, **then** nothing changes.",
+          "- **When** a customer saves the profile form, **then** nothing changes.",
+          "- **When** a developer imports the profile hooks from `@/hooks/use-profile`, **then** the import does not resolve, because the file is no longer in that folder.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/routes/account/`**",
+          "",
+          "- Modified [the import of `useUpdateProfile` in the file of `<ProfileForm />`](code:src/routes/account/components/ProfileForm.tsx#L4) to read from `@/routes/account/use-profile`.",
+          "- Modified [the import of `useProfile` in the file of `<AccountPage />`](code:src/routes/account/index.tsx#L1) to read from `./use-profile`.",
+          "- Moved `src/hooks/use-profile.ts` to `src/routes/account/use-profile.ts`. No line of the file changes."
+        ],
         "kind": "entry",
         "importGraph": [
           {

@@ -1,21 +1,5 @@
 {
   "title": "Modified type Product to carry a stock count",
-  "context": [
-    "A product now has a stock count: the number of units the shop has of it. The change is to the shape of a product only. No page shows the count, and nothing reads it before a product goes into the cart. The catalogue request does not check that the server sends the count.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens the catalogue, **then** nothing changes.",
-    "- **When** a shopper adds a product to the cart, **then** nothing changes.",
-    "- **When** the server sends a product with no stock count, **then** nothing changes.",
-    "- **When** code builds a product with no stock count, **then** [the type checker reports that `stockCount` is not there](code:src/types/product.ts#Product).",
-    "",
-    "## Implementation",
-    "",
-    "**`src/types/product.ts`**",
-    "",
-    "- Modified [`Product`](code:src/types/product.ts#Product) to require a property `stockCount: number`."
-  ],
   "diff": [
     "diff --git a/src/types/product.ts b/src/types/product.ts",
     "--- a/src/types/product.ts",
@@ -27,6 +11,22 @@
     "segments": [
       {
         "title": "Stock count on the product type",
+        "context": [
+          "A product now has a stock count: the number of units the shop has of it. The change is to the shape of a product only. No page shows the count, and nothing reads it before a product goes into the cart. The catalogue request does not check that the server sends the count.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the catalogue, **then** nothing changes.",
+          "- **When** a shopper adds a product to the cart, **then** nothing changes.",
+          "- **When** the server sends a product with no stock count, **then** nothing changes.",
+          "- **When** code builds a product with no stock count, **then** [the type checker reports that `stockCount` is not there](code:src/types/product.ts#Product).",
+          "",
+          "## Implementation",
+          "",
+          "**`src/types/product.ts`**",
+          "",
+          "- Modified [`Product`](code:src/types/product.ts#Product) to require a property `stockCount: number`."
+        ],
         "kind": "entry",
         "importGraph": [
           {

@@ -746,12 +746,14 @@ describe("the review page", () => {
     expect(screen.getByRole("heading", { name: "No Flight Plan Review yet" })).toBeTruthy()
   })
 
-  it("shows the backend's message and a way back when the review cannot be opened", async () => {
+  it("shows the falling plane, the backend's message and a way back when the review cannot be opened", async () => {
     renderReview({ "review.get": () => ({ errorMessage: "This review target is not listed in Flight Plan." }) })
 
     const alert = await screen.findByRole("alert")
 
-    expect(within(alert).getByRole("heading", { name: "Could not open this review" })).toBeTruthy()
+    expect(within(alert).getByRole("heading", { name: "MAYDAY! MAYDAY! We couldn't open this review" })).toBeTruthy()
+    expect(alert.querySelector("img[src='/server-error.svg']")).not.toBeNull()
+    expect(within(alert).getByRole("button", { name: "Try again" })).toBeTruthy()
     expect(within(alert).getByText("This review target is not listed in Flight Plan.")).toBeTruthy()
     expect(within(alert).getByRole("link", { name: "Go to your repositories" }).getAttribute("href")).toBe("/")
   })

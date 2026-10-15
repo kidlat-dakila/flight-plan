@@ -1,23 +1,5 @@
 {
   "title": "Modified component Button to show a loading state",
-  "context": [
-    "Every screen of the store uses one shared button, and that button had no way to show that its action is still running. It can now show the text \"Loading…\" in place of its own text, and it cannot be clicked while it does. No screen asks for that state yet, so every button on every page looks and works as it did.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a component sets the button to loading, **then** [the button shows \"Loading…\" in place of its own text](code:src/components/ui/button.tsx#L30) and [the button is disabled](code:src/components/ui/button.tsx#L27).",
-    "- **When** a shopper opens the catalogue, the cart or the account page, **then** nothing changes: no component sets a button to loading.",
-    "- **When** a shopper saves the profile form and the save is still pending, **then** nothing changes: the Save button is disabled, as before, and still reads \"Save\".",
-    "",
-    "## Implementation",
-    "",
-    "**`src/components/ui/button.tsx`**",
-    "",
-    "- Added an optional property `isLoading` to [`ButtonProps`](code:src/components/ui/button.tsx#ButtonProps).",
-    "- Modified [`<Button />`](code:src/components/ui/button.tsx#Button) to [take `isLoading`, `disabled` and `children` out of its props](code:src/components/ui/button.tsx#L16-23), with `isLoading` set to `false` by default.",
-    "- Modified `<Button />` to [set `disabled` on the `<button>` to `disabled || isLoading`](code:src/components/ui/button.tsx#L27).",
-    "- Modified `<Button />` to [render `\"Loading…\"` in place of `children` when `isLoading` is `true`](code:src/components/ui/button.tsx#L30)."
-  ],
   "diff": [
     "diff --git a/src/components/ui/button.tsx b/src/components/ui/button.tsx",
     "--- a/src/components/ui/button.tsx",
@@ -49,6 +31,24 @@
     "segments": [
       {
         "title": "A loading state for the shared button",
+        "context": [
+          "Every screen of the store uses one shared button, and that button had no way to show that its action is still running. It can now show the text \"Loading…\" in place of its own text, and it cannot be clicked while it does. No screen asks for that state yet, so every button on every page looks and works as it did.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a component sets the button to loading, **then** [the button shows \"Loading…\" in place of its own text](code:src/components/ui/button.tsx#L30) and [the button is disabled](code:src/components/ui/button.tsx#L27).",
+          "- **When** a shopper opens the catalogue, the cart or the account page, **then** nothing changes: no component sets a button to loading.",
+          "- **When** a shopper saves the profile form and the save is still pending, **then** nothing changes: the Save button is disabled, as before, and still reads \"Save\".",
+          "",
+          "## Implementation",
+          "",
+          "**`src/components/ui/button.tsx`**",
+          "",
+          "- Added an optional property `isLoading` to [`ButtonProps`](code:src/components/ui/button.tsx#ButtonProps).",
+          "- Modified [`<Button />`](code:src/components/ui/button.tsx#Button) to [take `isLoading`, `disabled` and `children` out of its props](code:src/components/ui/button.tsx#L16-23), with `isLoading` set to `false` by default.",
+          "- Modified `<Button />` to [set `disabled` on the `<button>` to `disabled || isLoading`](code:src/components/ui/button.tsx#L27).",
+          "- Modified `<Button />` to [render `\"Loading…\"` in place of `children` when `isLoading` is `true`](code:src/components/ui/button.tsx#L30)."
+        ],
         "kind": "entry",
         "importGraph": [
           {

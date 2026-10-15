@@ -1,28 +1,5 @@
 {
   "title": "Added hook useCartTotals to the cart page",
-  "context": [
-    "A shopper who opens the cart now sees a heading above the list of items. The heading gives the number of items and their total price, such as \"2 items for $24.00\". Before this change the page had no heading, and the total was only below the list.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens the cart page with two items that cost $24.00 in total, **then** [the heading reads \"2 items for $24.00\"](code:src/routes/cart/index.tsx#L13-15).",
-    "- **When** a shopper opens the cart page with one item that costs $12.00, **then** [the heading reads \"1 item for $12.00\"](code:src/routes/cart/index.tsx#L13-15).",
-    "- **When** a shopper removes one of two items on the cart page, **then** [the heading shows the count and the total of the item that is left](code:src/routes/cart/index.tsx#L9).",
-    "- **When** a shopper opens the cart page with no items in the cart, **then** nothing changes: the page shows \"Your cart is empty.\" and no heading.",
-    "- **When** a shopper reads the total below the list, **then** nothing changes: the summary still shows \"Total:\" and the price.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/hooks/use-cart-totals.ts`**",
-    "",
-    "- Added [the import of `useCartStore`, `selectItemCount` and `selectTotalCents`](code:src/hooks/use-cart-totals.ts#L1) from `@/stores/cart-store`.",
-    "- Added [`useCartTotals()`](code:src/hooks/use-cart-totals.ts#useCartTotals), an exported hook that [reads `itemCount` with `useCartStore(selectItemCount)`](code:src/hooks/use-cart-totals.ts#L4), [reads `totalCents` with `useCartStore(selectTotalCents)`](code:src/hooks/use-cart-totals.ts#L5) and [returns `{ itemCount, totalCents }`](code:src/hooks/use-cart-totals.ts#L6).",
-    "",
-    "**`src/routes/cart/index.tsx`**",
-    "",
-    "- Added [the imports of `useCartTotals`, `formatPrice` and `formatQuantity`](code:src/routes/cart/index.tsx#L1-2).",
-    "- Modified [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) to [call `useCartTotals()`](code:src/routes/cart/index.tsx#L9) and to [render an `<h1>` with `formatQuantity(itemCount)` and `formatPrice(totalCents)`](code:src/routes/cart/index.tsx#L13-15) above the `<ul>` of the items."
-  ],
   "diff": [
     "diff --git a/src/hooks/use-cart-totals.ts b/src/hooks/use-cart-totals.ts",
     "new file mode 100644",
@@ -53,6 +30,29 @@
     "segments": [
       {
         "title": "A heading with the totals on the cart page",
+        "context": [
+          "A shopper who opens the cart now sees a heading above the list of items. The heading gives the number of items and their total price, such as \"2 items for $24.00\". Before this change the page had no heading, and the total was only below the list.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the cart page with two items that cost $24.00 in total, **then** [the heading reads \"2 items for $24.00\"](code:src/routes/cart/index.tsx#L13-15).",
+          "- **When** a shopper opens the cart page with one item that costs $12.00, **then** [the heading reads \"1 item for $12.00\"](code:src/routes/cart/index.tsx#L13-15).",
+          "- **When** a shopper removes one of two items on the cart page, **then** [the heading shows the count and the total of the item that is left](code:src/routes/cart/index.tsx#L9).",
+          "- **When** a shopper opens the cart page with no items in the cart, **then** nothing changes: the page shows \"Your cart is empty.\" and no heading.",
+          "- **When** a shopper reads the total below the list, **then** nothing changes: the summary still shows \"Total:\" and the price.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/hooks/use-cart-totals.ts`**",
+          "",
+          "- Added [the import of `useCartStore`, `selectItemCount` and `selectTotalCents`](code:src/hooks/use-cart-totals.ts#L1) from `@/stores/cart-store`.",
+          "- Added [`useCartTotals()`](code:src/hooks/use-cart-totals.ts#useCartTotals), an exported hook that [reads `itemCount` with `useCartStore(selectItemCount)`](code:src/hooks/use-cart-totals.ts#L4), [reads `totalCents` with `useCartStore(selectTotalCents)`](code:src/hooks/use-cart-totals.ts#L5) and [returns `{ itemCount, totalCents }`](code:src/hooks/use-cart-totals.ts#L6).",
+          "",
+          "**`src/routes/cart/index.tsx`**",
+          "",
+          "- Added [the imports of `useCartTotals`, `formatPrice` and `formatQuantity`](code:src/routes/cart/index.tsx#L1-2).",
+          "- Modified [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) to [call `useCartTotals()`](code:src/routes/cart/index.tsx#L9) and to [render an `<h1>` with `formatQuantity(itemCount)` and `formatPrice(totalCents)`](code:src/routes/cart/index.tsx#L13-15) above the `<ul>` of the items."
+        ],
         "kind": "entry",
         "importGraph": [
           {

@@ -1,23 +1,5 @@
 {
   "title": "Modified route account to load its page lazily",
-  "context": [
-    "The code of the account page was loaded when the app started, for every shopper, whichever page they opened. The app now loads that code the first time a shopper opens the account page. A shopper who only looks at the catalogue and the cart never loads it. The account page shows the same content as before.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens the catalogue or the cart, **then** [the app starts and does not load the module of the account page](code:src/router.tsx#L13). The app loaded that module at the start before.",
-    "- **When** a shopper opens `/account` for the first time, **then** [the app loads the module of the account page and then renders the page](code:src/router.tsx#L13). The page was rendered with no load of its own before.",
-    "- **When** the load of that module fails, **then** the account page does not render, and [the `account` route names nothing to render in its place](code:src/router.tsx#L13). The route has no `errorElement`.",
-    "- **When** the account page is rendered, **then** nothing changes: it shows \"Loading your account…\" and then the profile form.",
-    "- **When** the catalogue page or the cart page is rendered, **then** nothing changes: their routes still hold `element` and their static imports.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/router.tsx`**",
-    "",
-    "- Removed the import of `AccountPage` from `@/routes/account`. `src/router.tsx` has no static import of the account page now.",
-    "- Modified [the `account` route of `router`](code:src/router.tsx#router) to [hold a `lazy` function where it held `element: <AccountPage />`](code:src/router.tsx#L13). The function awaits `import(\"@/routes/account\")` and returns `AccountPage` as the `Component` of the route."
-  ],
   "diff": [
     "diff --git a/src/router.tsx b/src/router.tsx",
     "--- a/src/router.tsx",
@@ -32,6 +14,24 @@
     "segments": [
       {
         "title": "Account page loaded on demand",
+        "context": [
+          "The code of the account page was loaded when the app started, for every shopper, whichever page they opened. The app now loads that code the first time a shopper opens the account page. A shopper who only looks at the catalogue and the cart never loads it. The account page shows the same content as before.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the catalogue or the cart, **then** [the app starts and does not load the module of the account page](code:src/router.tsx#L13). The app loaded that module at the start before.",
+          "- **When** a shopper opens `/account` for the first time, **then** [the app loads the module of the account page and then renders the page](code:src/router.tsx#L13). The page was rendered with no load of its own before.",
+          "- **When** the load of that module fails, **then** the account page does not render, and [the `account` route names nothing to render in its place](code:src/router.tsx#L13). The route has no `errorElement`.",
+          "- **When** the account page is rendered, **then** nothing changes: it shows \"Loading your account…\" and then the profile form.",
+          "- **When** the catalogue page or the cart page is rendered, **then** nothing changes: their routes still hold `element` and their static imports.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/router.tsx`**",
+          "",
+          "- Removed the import of `AccountPage` from `@/routes/account`. `src/router.tsx` has no static import of the account page now.",
+          "- Modified [the `account` route of `router`](code:src/router.tsx#router) to [hold a `lazy` function where it held `element: <AccountPage />`](code:src/router.tsx#L13). The function awaits `import(\"@/routes/account\")` and returns `AccountPage` as the `Component` of the route."
+        ],
         "kind": "entry",
         "importGraph": [
           {

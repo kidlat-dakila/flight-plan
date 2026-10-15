@@ -1,23 +1,5 @@
 {
   "title": "Modified query useProducts to keep the catalogue for five minutes",
-  "context": [
-    "The app asked the server for the catalogue again each time a shopper came back to it more than 30 seconds after it loaded. The app now keeps a loaded catalogue for five minutes, so a shopper who looks at the cart and comes back sees the same products and the app sends no new request. A change to a product on the server can now take five minutes to show in the catalogue, where it took 30 seconds before. No other page keeps its data for longer.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens the catalogue for the first time, **then** nothing changes.",
-    "- **When** a shopper leaves the catalogue and comes back between 30 seconds and five minutes after it loaded, **then** [the page shows the stored products and the app sends no products request](code:src/hooks/use-products.ts#L9), where it sent one before.",
-    "- **When** a shopper leaves the browser tab and comes back to the open catalogue between 30 seconds and five minutes after it loaded, **then** [the app sends no products request](code:src/hooks/use-products.ts#L9), where it sent one before.",
-    "- **When** a shopper comes back to the catalogue more than five minutes after it loaded, **then** nothing changes.",
-    "- **When** a shopper opens the account page, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/hooks/use-products.ts`**",
-    "",
-    "- Added [`PRODUCTS_STALE_TIME_MS`](code:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS), a constant that [holds `300_000`](code:src/hooks/use-products.ts#L6), the number of milliseconds in five minutes. The module does not export it.",
-    "- Modified [`useProducts()`](code:src/hooks/use-products.ts#useProducts) to [pass `staleTime: PRODUCTS_STALE_TIME_MS` to `useQuery`](code:src/hooks/use-products.ts#L9). The query had no `staleTime` of its own before, and took the `30_000` that `queryClient` in `src/lib/query-client.ts` sets for every query."
-  ],
   "diff": [
     "diff --git a/src/hooks/use-products.ts b/src/hooks/use-products.ts",
     "--- a/src/hooks/use-products.ts",
@@ -33,6 +15,24 @@
     "segments": [
       {
         "title": "Catalogue kept for five minutes",
+        "context": [
+          "The app asked the server for the catalogue again each time a shopper came back to it more than 30 seconds after it loaded. The app now keeps a loaded catalogue for five minutes, so a shopper who looks at the cart and comes back sees the same products and the app sends no new request. A change to a product on the server can now take five minutes to show in the catalogue, where it took 30 seconds before. No other page keeps its data for longer.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the catalogue for the first time, **then** nothing changes.",
+          "- **When** a shopper leaves the catalogue and comes back between 30 seconds and five minutes after it loaded, **then** [the page shows the stored products and the app sends no products request](code:src/hooks/use-products.ts#L9), where it sent one before.",
+          "- **When** a shopper leaves the browser tab and comes back to the open catalogue between 30 seconds and five minutes after it loaded, **then** [the app sends no products request](code:src/hooks/use-products.ts#L9), where it sent one before.",
+          "- **When** a shopper comes back to the catalogue more than five minutes after it loaded, **then** nothing changes.",
+          "- **When** a shopper opens the account page, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/hooks/use-products.ts`**",
+          "",
+          "- Added [`PRODUCTS_STALE_TIME_MS`](code:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS), a constant that [holds `300_000`](code:src/hooks/use-products.ts#L6), the number of milliseconds in five minutes. The module does not export it.",
+          "- Modified [`useProducts()`](code:src/hooks/use-products.ts#useProducts) to [pass `staleTime: PRODUCTS_STALE_TIME_MS` to `useQuery`](code:src/hooks/use-products.ts#L9). The query had no `staleTime` of its own before, and took the `30_000` that `queryClient` in `src/lib/query-client.ts` sets for every query."
+        ],
         "kind": "entry",
         "importGraph": [
           {

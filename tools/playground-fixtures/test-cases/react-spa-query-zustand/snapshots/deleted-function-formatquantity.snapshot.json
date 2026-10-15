@@ -1,25 +1,5 @@
 {
   "title": "Deleted function formatQuantity",
-  "context": [
-    "A line of the cart showed its quantity in words: \"1 item\" for one unit and \"3 items\" for three. A line now shows the number alone, 1 or 3. The function that wrote those words had one caller, and the change removes the function together with that call.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens the cart with 3 units of one product, **then** [the line shows `3`](code:src/routes/cart/components/CartLine.tsx#L11), where it showed `3 items`.",
-    "- **When** a line of the cart holds 1 unit, **then** [the line shows `1`](code:src/routes/cart/components/CartLine.tsx#L11), where it showed `1 item`.",
-    "- **When** a shopper reads the total of a line, the total of the cart or a price in the catalogue, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/lib/format.ts`**",
-    "",
-    "- Removed the function `formatQuantity()`, which returned `\"1 item\"` for a quantity of 1 and `\"3 items\"` for a quantity of 3.",
-    "",
-    "**`src/routes/cart/components/CartLine.tsx`**",
-    "",
-    "- Removed `formatQuantity` from [the import of `@/lib/format`](code:src/routes/cart/components/CartLine.tsx#L2).",
-    "- Modified [`<CartLine />`](code:src/routes/cart/components/CartLine.tsx#CartLine) to render `item.quantity` with no call to a formatter."
-  ],
   "diff": [
     "diff --git a/src/lib/format.ts b/src/lib/format.ts",
     "--- a/src/lib/format.ts",
@@ -43,6 +23,26 @@
     "segments": [
       {
         "title": "Quantity wording removed from the formatters",
+        "context": [
+          "A line of the cart showed its quantity in words: \"1 item\" for one unit and \"3 items\" for three. A line now shows the number alone, 1 or 3. The function that wrote those words had one caller, and the change removes the function together with that call.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the cart with 3 units of one product, **then** [the line shows `3`](code:src/routes/cart/components/CartLine.tsx#L11), where it showed `3 items`.",
+          "- **When** a line of the cart holds 1 unit, **then** [the line shows `1`](code:src/routes/cart/components/CartLine.tsx#L11), where it showed `1 item`.",
+          "- **When** a shopper reads the total of a line, the total of the cart or a price in the catalogue, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/lib/format.ts`**",
+          "",
+          "- Removed the function `formatQuantity()`, which returned `\"1 item\"` for a quantity of 1 and `\"3 items\"` for a quantity of 3.",
+          "",
+          "**`src/routes/cart/components/CartLine.tsx`**",
+          "",
+          "- Removed `formatQuantity` from [the import of `@/lib/format`](code:src/routes/cart/components/CartLine.tsx#L2).",
+          "- Modified [`<CartLine />`](code:src/routes/cart/components/CartLine.tsx#CartLine) to render `item.quantity` with no call to a formatter."
+        ],
         "kind": "shared",
         "importGraph": [
           {
@@ -363,6 +363,26 @@
       },
       {
         "title": "Cart line shows a bare quantity",
+        "context": [
+          "A line of the cart showed its quantity in words: \"1 item\" for one unit and \"3 items\" for three. A line now shows the number alone, 1 or 3. The function that wrote those words had one caller, and the change removes the function together with that call.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the cart with 3 units of one product, **then** [the line shows `3`](code:src/routes/cart/components/CartLine.tsx#L11), where it showed `3 items`.",
+          "- **When** a line of the cart holds 1 unit, **then** [the line shows `1`](code:src/routes/cart/components/CartLine.tsx#L11), where it showed `1 item`.",
+          "- **When** a shopper reads the total of a line, the total of the cart or a price in the catalogue, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/lib/format.ts`**",
+          "",
+          "- Removed the function `formatQuantity()`, which returned `\"1 item\"` for a quantity of 1 and `\"3 items\"` for a quantity of 3.",
+          "",
+          "**`src/routes/cart/components/CartLine.tsx`**",
+          "",
+          "- Removed `formatQuantity` from [the import of `@/lib/format`](code:src/routes/cart/components/CartLine.tsx#L2).",
+          "- Modified [`<CartLine />`](code:src/routes/cart/components/CartLine.tsx#CartLine) to render `item.quantity` with no call to a formatter."
+        ],
         "kind": "entry",
         "importGraph": [
           {

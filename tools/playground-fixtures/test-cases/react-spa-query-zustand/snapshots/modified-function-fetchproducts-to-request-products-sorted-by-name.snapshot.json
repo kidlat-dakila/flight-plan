@@ -1,21 +1,5 @@
 {
   "title": "Modified function fetchProducts to request products sorted by name",
-  "context": [
-    "The catalogue page showed its products in whatever order the server sent them, and the app never said which order it wanted. The app now asks the server for the products sorted by name. The page still shows the products in the order the answer has them, so the order a shopper sees is the order the server gives for that request. The server is not part of this repository, so nothing here shows what it does with the new parameter.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens the catalogue, **then** [the app requests `/api/products?sort=name`](code:src/api/products.ts#fetchProducts), where it requested `/api/products`.",
-    "- **When** the answer arrives, **then** [the page shows one card per product in the order of the answer](code:src/routes/catalog/index.tsx#L10-14), as before.",
-    "- **When** the request fails, **then** nothing changes.",
-    "- **When** a shopper opens the cart or the account page, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/api/products.ts`**",
-    "",
-    "- Modified [`fetchProducts()`](code:src/api/products.ts#fetchProducts) to request `/products?sort=name`, where it requested `/products`."
-  ],
   "diff": [
     "diff --git a/src/api/products.ts b/src/api/products.ts",
     "--- a/src/api/products.ts",
@@ -28,6 +12,22 @@
     "segments": [
       {
         "title": "Catalogue products requested in name order",
+        "context": [
+          "The catalogue page showed its products in whatever order the server sent them, and the app never said which order it wanted. The app now asks the server for the products sorted by name. The page still shows the products in the order the answer has them, so the order a shopper sees is the order the server gives for that request. The server is not part of this repository, so nothing here shows what it does with the new parameter.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the catalogue, **then** [the app requests `/api/products?sort=name`](code:src/api/products.ts#fetchProducts), where it requested `/api/products`.",
+          "- **When** the answer arrives, **then** [the page shows one card per product in the order of the answer](code:src/routes/catalog/index.tsx#L10-14), as before.",
+          "- **When** the request fails, **then** nothing changes.",
+          "- **When** a shopper opens the cart or the account page, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/api/products.ts`**",
+          "",
+          "- Modified [`fetchProducts()`](code:src/api/products.ts#fetchProducts) to request `/products?sort=name`, where it requested `/products`."
+        ],
         "kind": "entry",
         "importGraph": [
           {

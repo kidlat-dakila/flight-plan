@@ -1,20 +1,5 @@
 {
   "title": "Modified import BaseButton in AddToCartButton to skip the barrel",
-  "context": [
-    "The add-to-cart button of the catalogue now takes the shared button from the file that declares it. It took the shared button from the index file of the shared components before. A shopper sees the same button, and a click still adds the product to the cart. One import line changes, and nothing that runs.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper clicks \"Add to cart\" on a product of the catalogue, **then** nothing changes.",
-    "- **When** the cart page, the account page or the theme toggle renders the shared button, **then** nothing changes.",
-    "- **When** a tool reads the imports of the add-to-cart button, **then** [it finds the file of the shared button](code:src/views/catalog/components/AddToCartButton.vue#L2), and no longer the index file that also re-exports the dialog and the input.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/views/catalog/components/AddToCartButton.vue`**",
-    "",
-    "- Modified [the import of `BaseButton`](code:src/views/catalog/components/AddToCartButton.vue#L2) to read the default export of `@/components/ui/BaseButton.vue`, the file that declares `BaseButton`. It read the named export `BaseButton` of the barrel `@/components/ui` before."
-  ],
   "diff": [
     "diff --git a/src/views/catalog/components/AddToCartButton.vue b/src/views/catalog/components/AddToCartButton.vue",
     "--- a/src/views/catalog/components/AddToCartButton.vue",
@@ -27,6 +12,21 @@
     "segments": [
       {
         "title": "Direct import of BaseButton in AddToCartButton",
+        "context": [
+          "The add-to-cart button of the catalogue now takes the shared button from the file that declares it. It took the shared button from the index file of the shared components before. A shopper sees the same button, and a click still adds the product to the cart. One import line changes, and nothing that runs.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper clicks \"Add to cart\" on a product of the catalogue, **then** nothing changes.",
+          "- **When** the cart page, the account page or the theme toggle renders the shared button, **then** nothing changes.",
+          "- **When** a tool reads the imports of the add-to-cart button, **then** [it finds the file of the shared button](code:src/views/catalog/components/AddToCartButton.vue#L2), and no longer the index file that also re-exports the dialog and the input.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/views/catalog/components/AddToCartButton.vue`**",
+          "",
+          "- Modified [the import of `BaseButton`](code:src/views/catalog/components/AddToCartButton.vue#L2) to read the default export of `@/components/ui/BaseButton.vue`, the file that declares `BaseButton`. It read the named export `BaseButton` of the barrel `@/components/ui` before."
+        ],
         "kind": "entry",
         "importGraph": [
           {

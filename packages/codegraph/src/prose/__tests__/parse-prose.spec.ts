@@ -1,4 +1,4 @@
-import { parseInlines, parseProse } from "@/prose/parse-prose"
+import { parseContextProse, parseInlines, parseProse } from "@/prose/parse-prose"
 
 const KNOWN = new Set(["src/price.ts#priceOf"])
 
@@ -102,5 +102,113 @@ describe("parseProse", () => {
       { kind: "code-block", language: "ts", text: "const held = 1\n\nreturn held" },
       { kind: "code-block", language: null, text: "plain" },
     ])
+  })
+})
+
+describe("parseContextProse", () => {
+  const tabbedContext = [
+    "Why it matters.",
+    "",
+    ":::tabs",
+    "::tab What's added",
+    "- [`priceOf()`](code:src/price.ts#priceOf): added a new function.",
+    "  - Rounds the price.",
+    "::tab What's modified",
+    "Nothing else.",
+    ":::",
+    "",
+    "After the tabs.",
+  ].join("\n")
+
+  it("reads a tabs block as tabs, each with its label and the blocks under it", () => {
+    expect(parseContextProse(tabbedContext, KNOWN)).toStrictEqual([
+      { kind: "paragraph", inlines: [{ kind: "text", text: "Why it matters." }] },
+      {
+        kind: "tabs",
+        tabs: [
+          {
+            label: "What's added",
+            blocks: [
+              {
+                kind: "list",
+                isOrdered: false,
+                items: [
+                  {
+                    inlines: [
+                      { kind: "code-link", text: "priceOf()", isCode: true, linkId: "src/price.ts#priceOf" },
+                      { kind: "text", text: ": added a new function." },
+                    ],
+                    blocks: [{ kind: "list", isOrdered: false, items: [{ inlines: [{ kind: "text", text: "Rounds the price." }], blocks: [] }] }],
+                  },
+                ],
+              },
+            ],
+          },
+          { label: "What's modified", blocks: [{ kind: "paragraph", inlines: [{ kind: "text", text: "Nothing else." }] }] },
+        ],
+      },
+      { kind: "paragraph", inlines: [{ kind: "text", text: "After the tabs." }] },
+    ])
+  })
+
+  it("reads a tabs block that is never closed as the text it is", () => {
+    const unclosed = ":::tabs\n::tab What's added\n- A page."
+
+    expect(parseContextProse(unclosed, KNOWN)).toStrictEqual(parseProse(unclosed, KNOWN))
+  })
+
+  it("reads a tabs block without a tab as the text it is", () => {
+    const tabless = ":::tabs\nA page.\n:::"
+
+    expect(parseContextProse(tabless, KNOWN)).toStrictEqual(parseProse(tabless, KNOWN))
+  })
+
+  it("reads a tabs line inside a tab as text, so tabs never nest", () => {
+    const [tabs] = parseContextProse(":::tabs\n::tab Outer\n:::tabs\n:::", KNOWN)
+
+    expect(tabs).toStrictEqual({ kind: "tabs", tabs: [{ label: "Outer", blocks: [{ kind: "paragraph", inlines: [{ kind: "text", text: ":::tabs" }] }] }] })
+  })
+
+  it("is the only reader that knows tabs: parseProse reads them as text", () => {
+    expect(parseProse(tabbedContext, KNOWN).some((block) => block.kind === "tabs")).toBe(false)
+  })
+})
+
+describe("parseContextProse with an accordion", () => {
+  const paragraphOf = (text: string) => ({ kind: "paragraph", inlines: [{ kind: "text", text }] })
+
+  it("reads an accordion block as sections, each with its label and the blocks under it", () => {
+    const accordion = "Why.\n\n:::accordion\n::section What's added\nA page.\n::section What's modified\nThe router.\n:::"
+
+    expect(parseContextProse(accordion, KNOWN)).toStrictEqual([
+      paragraphOf("Why."),
+      {
+        kind: "accordion",
+        sections: [
+          { label: "What's added", blocks: [paragraphOf("A page.")] },
+          { label: "What's modified", blocks: [paragraphOf("The router.")] },
+        ],
+      },
+    ])
+  })
+
+  it("reads an accordion that is never closed, or has no section, as the text it is", () => {
+    const unclosed = ":::accordion\n::section What's added\nA page."
+    const sectionless = ":::accordion\nA page.\n:::"
+
+    expect(parseContextProse(unclosed, KNOWN)).toStrictEqual(parseProse(unclosed, KNOWN))
+    expect(parseContextProse(sectionless, KNOWN)).toStrictEqual(parseProse(sectionless, KNOWN))
+  })
+
+  it("reads an accordion inside a tab, and tabs inside a section, as text", () => {
+    const [tabs] = parseContextProse(":::tabs\n::tab Outer\n:::accordion\n:::", KNOWN)
+    const [accordion] = parseContextProse(":::accordion\n::section Outer\n:::tabs\n:::", KNOWN)
+
+    expect(tabs).toStrictEqual({ kind: "tabs", tabs: [{ label: "Outer", blocks: [paragraphOf(":::accordion")] }] })
+    expect(accordion).toStrictEqual({ kind: "accordion", sections: [{ label: "Outer", blocks: [paragraphOf(":::tabs")] }] })
+  })
+
+  it("leaves an accordion as text for parseProse", () => {
+    expect(parseProse(":::accordion\n::section A\nB\n:::", KNOWN).some((block) => block.kind === "accordion")).toBe(false)
   })
 })

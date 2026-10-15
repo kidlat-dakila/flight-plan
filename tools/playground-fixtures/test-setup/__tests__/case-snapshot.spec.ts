@@ -1,6 +1,6 @@
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
-import type { Codegraph } from "@flightplan/codegraph"
+import type { Codegraph, CodegraphSegment } from "@flightplan/codegraph"
 import {
   caseSnapshotOf,
   caseTitleOf,
@@ -47,22 +47,54 @@ describe("caseSnapshotOf", () => {
   const change = { title: "Modified function stockOf", diff: "diff --git a/stock.ts b/stock.ts\n@@ -1 +1 @@" }
   const codegraph: Codegraph = { segments: [] }
 
-  it("puts the title, the context, the diff and the codegraph in that order, the diff as one line per entry", () => {
+  const segmentOf = (title: string | null): CodegraphSegment => ({
+    title,
+    kind: "entry",
+    importGraph: [],
+    journeyFlowDiagram: null,
+    blastRadiusDiagram: null,
+    codeWalkthrough: { intro: null, files: [] },
+    codeReferences: [],
+  })
+
+  const writtenSegmentOf = (title: string, context: string[]) => ({
+    title,
+    context,
+    journeyFlowDiagram: null,
+    codeWalkthrough: { intro: null, files: [] },
+  })
+
+  it("puts the title, the diff and the codegraph in that order, the diff as one line per entry", () => {
     const snapshot = caseSnapshotOf(change, codegraph, NOTHING_WRITTEN)
 
     expect(snapshot).toStrictEqual({
       title: "Modified function stockOf",
-      context: [],
       diff: ["diff --git a/stock.ts b/stock.ts", "@@ -1 +1 @@"],
       codegraph: { segments: [] },
     })
-    expect(Object.keys(snapshot)).toStrictEqual(["title", "context", "diff", "codegraph"])
+    expect(Object.keys(snapshot)).toStrictEqual(["title", "diff", "codegraph"])
   })
 
-  it("keeps the context that is already written", () => {
-    const written = { context: ["## Summary", "", "Held stock is subtracted."], codegraph: { segments: [] } }
+  it("keeps the context written for each segment, under the segment's title", () => {
+    const written = {
+      codegraph: {
+        segments: [
+          writtenSegmentOf("Stock check", ["Held stock is subtracted."]),
+          writtenSegmentOf("Stock badge", ["The badge shows the held stock."]),
+        ],
+      },
+    }
 
-    expect(caseSnapshotOf(change, codegraph, written).context).toStrictEqual(["## Summary", "", "Held stock is subtracted."])
+    const { segments } = caseSnapshotOf(change, { segments: [segmentOf(null), segmentOf(null)] }, written).codegraph
+
+    expect(segments.map((segment) => segment.context)).toStrictEqual([["Held stock is subtracted."], ["The badge shows the held stock."]])
+    expect(Object.keys(segments[0]).slice(0, 2)).toStrictEqual(["title", "context"])
+  })
+
+  it("leaves the context of a segment empty when nothing is written for it", () => {
+    const { segments } = caseSnapshotOf(change, { segments: [segmentOf(null)] }, NOTHING_WRITTEN).codegraph
+
+    expect(segments[0].context).toStrictEqual([])
   })
 })
 
@@ -71,11 +103,11 @@ describe("readStoredWrittenParts", () => {
     await expect(readStoredWrittenParts(join(import.meta.dirname, "no-such.snapshot.json"))).resolves.toStrictEqual(NOTHING_WRITTEN)
   })
 
-  it("reads the context and the segments of a committed snapshot", async () => {
+  it("reads the segments of a committed snapshot with the context of each", async () => {
     const written = await readStoredWrittenParts(STOCK_SNAPSHOT_PATH)
 
-    expect(written.context).toContain("## Overview")
     expect(written.codegraph.segments).toHaveLength(1)
+    expect(written.codegraph.segments[0].context).toContain("## Overview")
   })
 })
 

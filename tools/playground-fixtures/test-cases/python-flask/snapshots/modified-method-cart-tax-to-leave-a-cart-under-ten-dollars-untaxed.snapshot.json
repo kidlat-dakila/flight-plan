@@ -1,20 +1,5 @@
 {
   "title": "Modified method Cart.tax to leave a cart under ten dollars untaxed",
-  "context": [
-    "A small cart was taxed like any other. A cart under ten dollars now has no tax in its total.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a client posts a cart with a subtotal of 999 cents to `/cart/total`, **then** [the total is 999 cents](code:shop/cart.py#L15-16). It was 1199 cents before.",
-    "- **When** a client posts a cart with a subtotal of 1000 cents, **then** nothing changes: the total is 1200 cents.",
-    "- **When** a client posts a cart with no lines, **then** nothing changes: the total is 0.",
-    "",
-    "## Implementation",
-    "",
-    "**`shop/cart.py`**",
-    "",
-    "- Modified [`Cart.tax()`](code:shop/cart.py#L14-17) to return 0 for a cart with a subtotal under 1000 cents."
-  ],
   "diff": [
     "diff --git a/shop/cart.py b/shop/cart.py",
     "--- a/shop/cart.py",
@@ -27,6 +12,21 @@
     "segments": [
       {
         "title": "No tax on a cart under ten dollars",
+        "context": [
+          "A small cart was taxed like any other. A cart under ten dollars now has no tax in its total.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a client posts a cart with a subtotal of 999 cents to `/cart/total`, **then** [the total is 999 cents](code:shop/cart.py#L15-16). It was 1199 cents before.",
+          "- **When** a client posts a cart with a subtotal of 1000 cents, **then** nothing changes: the total is 1200 cents.",
+          "- **When** a client posts a cart with no lines, **then** nothing changes: the total is 0.",
+          "",
+          "## Implementation",
+          "",
+          "**`shop/cart.py`**",
+          "",
+          "- Modified [`Cart.tax()`](code:shop/cart.py#L14-17) to return 0 for a cart with a subtotal under 1000 cents."
+        ],
         "kind": "entry",
         "importGraph": [
           {

@@ -1,6 +1,9 @@
+import { useId, useRef, useState, type KeyboardEvent } from "react"
 import CodeLink from "@/components/CodeLink"
 import { keyed } from "@/lib/keyed"
-import type { CodeLinkTargets, Inline, ProseBlock, ProseBlocks, ProseListItem } from "@/lib/review-content"
+import type { CodeLinkTargets, Inline, ProseBlock, ProseBlocks, ProseListItem, ProseSection, ProseTab } from "@/lib/review-content"
+import { sectionSummaryOf, type SectionSummary } from "@/lib/section-summary"
+import { TAB_CLASSES, TAB_LIST_CLASSES, tabIndexAfterKey } from "@/lib/tab-bar"
 import { cn } from "@/lib/utils"
 
 interface LinkProps {
@@ -47,12 +50,112 @@ const Blocks = ({ blocks, codeLinks, onOpenCodeLink }: LinkProps & { readonly bl
   ))
 
 const ListItem = ({ item, codeLinks, onOpenCodeLink }: LinkProps & { readonly item: ProseListItem }) => (
-  <li className={item.blocks.length === 0 ? "" : "flex flex-col gap-2"}>
+  <li className={item.blocks.length === 0 ? "" : "space-y-2"}>
     {item.inlines.length === 0
       ? null
       : <span><Inlines inlines={item.inlines} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} /></span>}
     <Blocks blocks={item.blocks} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
   </li>
+)
+
+const tabIdOf = (tabsId: string, position: number): string => `${tabsId}-tab-${String(position)}`
+
+const panelIdOf = (tabsId: string, position: number): string => `${tabsId}-panel-${String(position)}`
+
+const Tabs = ({ tabs, codeLinks, onOpenCodeLink }: LinkProps & { readonly tabs: readonly ProseTab[] }) => {
+  const tabsId = useId()
+  const [openIndex, setOpenIndex] = useState(0)
+  const tabButtonsRef = useRef<(HTMLButtonElement | null)[]>([])
+  const openTab = tabs.at(openIndex) ?? tabs[0]
+
+  const moveWithKey = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const nextIndex = tabIndexAfterKey(event.key, openIndex, tabs.length)
+    if (nextIndex === null) return
+    event.preventDefault()
+    setOpenIndex(nextIndex)
+    tabButtonsRef.current[nextIndex]?.focus()
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div role="tablist" className={TAB_LIST_CLASSES}>
+        {keyed(tabs).map(({ key, item }, position) => (
+          <button
+            key={key}
+            ref={(button) => { tabButtonsRef.current[position] = button }}
+            type="button"
+            role="tab"
+            id={tabIdOf(tabsId, position)}
+            aria-selected={position === openIndex}
+            aria-controls={panelIdOf(tabsId, position)}
+            tabIndex={position === openIndex ? 0 : -1}
+            className={TAB_CLASSES}
+            onClick={() => { setOpenIndex(position) }}
+            onKeyDown={moveWithKey}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+      <div role="tabpanel" id={panelIdOf(tabsId, openIndex)} aria-labelledby={tabIdOf(tabsId, openIndex)} className="flex flex-col gap-4">
+        <Blocks blocks={openTab.blocks} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
+      </div>
+    </div>
+  )
+}
+
+const SHOW_DETAILS_LABEL = "See change details"
+const HIDE_DETAILS_LABEL = "Hide change details"
+const DETAILS_TOGGLE_CLASSES = "cursor-pointer rounded-sm text-sm text-foreground underline decoration-1 underline-offset-[0.3em] hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+
+const SummaryLine = ({ summary }: { readonly summary: SectionSummary }) => (
+  <>
+    <span className="font-mono text-[0.875em]">{summary.names.join(", ")}</span>
+    {summary.moreCount > 0 ? <span>{`+ ${String(summary.moreCount)} more`}</span> : null}
+  </>
+)
+
+const AccordionSection = ({ section, codeLinks, onOpenCodeLink }: LinkProps & { readonly section: ProseSection }) => {
+  const sectionId = useId()
+  const [isOpen, setIsOpen] = useState(false)
+  const nameId = `${sectionId}-name`
+  const panelId = `${sectionId}-panel`
+  const summary = sectionSummaryOf(section.blocks)
+  const toggle = (
+    <button
+      type="button"
+      aria-expanded={isOpen}
+      aria-controls={panelId}
+      className={DETAILS_TOGGLE_CLASSES}
+      onClick={() => { setIsOpen((wasOpen) => !wasOpen) }}
+    >
+      {isOpen ? HIDE_DETAILS_LABEL : SHOW_DETAILS_LABEL}
+    </button>
+  )
+  return (
+    <section aria-labelledby={nameId} className="flex flex-col gap-2 py-3">
+      <h4 id={nameId} className="text-sm font-bold text-foreground">{section.label}</h4>
+      <p className="flex flex-wrap items-baseline gap-x-2 text-sm text-muted-foreground">
+        {!isOpen && summary !== null ? <SummaryLine summary={summary} /> : null}
+        {toggle}
+      </p>
+      {isOpen
+        ? (
+            <div id={panelId} className="flex flex-col gap-4">
+              <Blocks blocks={section.blocks} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
+            </div>
+          )
+        : null}
+    </section>
+  )
+}
+
+const Accordion = ({ sections, codeLinks, onOpenCodeLink }: LinkProps & { readonly sections: readonly ProseSection[] }) => (
+  <div className="flex flex-col divide-y divide-border border-y border-border">
+    {keyed(sections).map(({ key, item }) => (
+      <AccordionSection key={key} section={item} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
+    ))}
+  </div>
 )
 
 function Block({ block, codeLinks, onOpenCodeLink }: LinkProps & { readonly block: ProseBlock }) {
@@ -68,6 +171,12 @@ function Block({ block, codeLinks, onOpenCodeLink }: LinkProps & { readonly bloc
         <Blocks blocks={block.blocks} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
       </blockquote>
     )
+  }
+  if (block.kind === "accordion") {
+    return <Accordion sections={block.sections} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
+  }
+  if (block.kind === "tabs") {
+    return <Tabs tabs={block.tabs} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
   }
   if (block.kind === "code-block") {
     return <pre data-language={block.language ?? undefined} className={CODE_BLOCK_CLASSES}><code>{block.text}</code></pre>

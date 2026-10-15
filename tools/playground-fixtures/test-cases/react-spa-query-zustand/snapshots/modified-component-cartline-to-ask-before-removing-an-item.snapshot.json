@@ -1,22 +1,5 @@
 {
   "title": "Modified component CartLine to ask before removing an item",
-  "context": [
-    "A click on Remove in the cart took the item out of the cart at once, and the shopper had no step to stop it. The cart now asks the shopper to confirm first, and the question names the product. The item leaves the cart only when the shopper confirms.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper clicks Remove on a line of the cart, **then** [the browser shows a question that names the product](code:src/routes/cart/components/CartLine.tsx#L10), and the item is still in the cart.",
-    "- **When** the shopper confirms the question, **then** [the item leaves the cart](code:src/stores/cart-store.ts#L16-18), as it did after one click before.",
-    "- **When** the shopper cancels the question, **then** [the item stays in the cart](code:src/routes/cart/components/CartLine.tsx#L10).",
-    "- **When** a shopper clicks \"Empty the cart\", **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/routes/cart/components/CartLine.tsx`**",
-    "",
-    "- Added [`handleRemove()`](code:src/routes/cart/components/CartLine.tsx#L9-11), a function inside `<CartLine />` that [calls `removeItem(item.product.id)` only when `window.confirm()` returns `true`](code:src/routes/cart/components/CartLine.tsx#L10).",
-    "- Modified [the Remove `<Button>` to pass `handleRemove` as `onClick`](code:src/routes/cart/components/CartLine.tsx#L18). It passed `() => removeItem(item.product.id)` before."
-  ],
   "diff": [
     "diff --git a/src/routes/cart/components/CartLine.tsx b/src/routes/cart/components/CartLine.tsx",
     "--- a/src/routes/cart/components/CartLine.tsx",
@@ -35,6 +18,23 @@
     "segments": [
       {
         "title": "Confirmation before a cart item is removed",
+        "context": [
+          "A click on Remove in the cart took the item out of the cart at once, and the shopper had no step to stop it. The cart now asks the shopper to confirm first, and the question names the product. The item leaves the cart only when the shopper confirms.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper clicks Remove on a line of the cart, **then** [the browser shows a question that names the product](code:src/routes/cart/components/CartLine.tsx#L10), and the item is still in the cart.",
+          "- **When** the shopper confirms the question, **then** [the item leaves the cart](code:src/stores/cart-store.ts#L16-18), as it did after one click before.",
+          "- **When** the shopper cancels the question, **then** [the item stays in the cart](code:src/routes/cart/components/CartLine.tsx#L10).",
+          "- **When** a shopper clicks \"Empty the cart\", **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/routes/cart/components/CartLine.tsx`**",
+          "",
+          "- Added [`handleRemove()`](code:src/routes/cart/components/CartLine.tsx#L9-11), a function inside `<CartLine />` that [calls `removeItem(item.product.id)` only when `window.confirm()` returns `true`](code:src/routes/cart/components/CartLine.tsx#L10).",
+          "- Modified [the Remove `<Button>` to pass `handleRemove` as `onClick`](code:src/routes/cart/components/CartLine.tsx#L18). It passed `() => removeItem(item.product.id)` before."
+        ],
         "kind": "entry",
         "importGraph": [
           {

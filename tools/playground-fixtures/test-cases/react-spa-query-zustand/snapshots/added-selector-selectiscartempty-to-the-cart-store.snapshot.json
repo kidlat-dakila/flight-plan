@@ -1,25 +1,5 @@
 {
   "title": "Added selector selectIsCartEmpty to the cart store",
-  "context": [
-    "A shopper sees the same cart page as before: the empty message for a cart with no items, and the list with its total for every other cart. The cart store now gives the answer to whether the cart is empty, and the cart page reads that answer where it counted the items itself.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens the cart page with no items in the cart, **then** nothing changes: the page shows \"Your cart is empty.\".",
-    "- **When** a shopper opens the cart page with one or more items in the cart, **then** nothing changes: the page lists the items and the total.",
-    "- **When** a shopper confirms \"Empty the cart?\" on the cart page, **then** nothing changes: the page shows \"Your cart is empty.\" in place of the list.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/stores/cart-store.ts`**",
-    "",
-    "- Added the function [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty), which [returns `true` when `state.items` has length 0](code:src/stores/cart-store.ts#L33) and `false` for every other length.",
-    "",
-    "**`src/routes/cart/index.tsx`**",
-    "",
-    "- Modified [the import from `@/stores/cart-store`](code:src/routes/cart/index.tsx#L1) to name `selectIsCartEmpty` as well as `useCartStore`.",
-    "- Modified [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) to [call `useCartStore(selectIsCartEmpty)`](code:src/routes/cart/index.tsx#L7) and to [return `<p>Your cart is empty.</p>` when the result is `true`](code:src/routes/cart/index.tsx#L8). It tested `items.length === 0` before."
-  ],
   "diff": [
     "diff --git a/src/routes/cart/index.tsx b/src/routes/cart/index.tsx",
     "--- a/src/routes/cart/index.tsx",
@@ -44,6 +24,26 @@
     "segments": [
       {
         "title": "Empty-cart selector added to the cart store",
+        "context": [
+          "A shopper sees the same cart page as before: the empty message for a cart with no items, and the list with its total for every other cart. The cart store now gives the answer to whether the cart is empty, and the cart page reads that answer where it counted the items itself.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the cart page with no items in the cart, **then** nothing changes: the page shows \"Your cart is empty.\".",
+          "- **When** a shopper opens the cart page with one or more items in the cart, **then** nothing changes: the page lists the items and the total.",
+          "- **When** a shopper confirms \"Empty the cart?\" on the cart page, **then** nothing changes: the page shows \"Your cart is empty.\" in place of the list.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/stores/cart-store.ts`**",
+          "",
+          "- Added the function [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty), which [returns `true` when `state.items` has length 0](code:src/stores/cart-store.ts#L33) and `false` for every other length.",
+          "",
+          "**`src/routes/cart/index.tsx`**",
+          "",
+          "- Modified [the import from `@/stores/cart-store`](code:src/routes/cart/index.tsx#L1) to name `selectIsCartEmpty` as well as `useCartStore`.",
+          "- Modified [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) to [call `useCartStore(selectIsCartEmpty)`](code:src/routes/cart/index.tsx#L7) and to [return `<p>Your cart is empty.</p>` when the result is `true`](code:src/routes/cart/index.tsx#L8). It tested `items.length === 0` before."
+        ],
         "kind": "shared",
         "importGraph": [
           {
@@ -619,6 +619,26 @@
       },
       {
         "title": "Cart page reads the empty check from the store",
+        "context": [
+          "A shopper sees the same cart page as before: the empty message for a cart with no items, and the list with its total for every other cart. The cart store now gives the answer to whether the cart is empty, and the cart page reads that answer where it counted the items itself.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the cart page with no items in the cart, **then** nothing changes: the page shows \"Your cart is empty.\".",
+          "- **When** a shopper opens the cart page with one or more items in the cart, **then** nothing changes: the page lists the items and the total.",
+          "- **When** a shopper confirms \"Empty the cart?\" on the cart page, **then** nothing changes: the page shows \"Your cart is empty.\" in place of the list.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/stores/cart-store.ts`**",
+          "",
+          "- Added the function [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty), which [returns `true` when `state.items` has length 0](code:src/stores/cart-store.ts#L33) and `false` for every other length.",
+          "",
+          "**`src/routes/cart/index.tsx`**",
+          "",
+          "- Modified [the import from `@/stores/cart-store`](code:src/routes/cart/index.tsx#L1) to name `selectIsCartEmpty` as well as `useCartStore`.",
+          "- Modified [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) to [call `useCartStore(selectIsCartEmpty)`](code:src/routes/cart/index.tsx#L7) and to [return `<p>Your cart is empty.</p>` when the result is `true`](code:src/routes/cart/index.tsx#L8). It tested `items.length === 0` before."
+        ],
         "kind": "entry",
         "importGraph": [
           {

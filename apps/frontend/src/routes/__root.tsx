@@ -4,14 +4,14 @@ import {
   Outlet,
   redirect,
   useMatches,
-  useRouter,
   type ErrorComponentProps,
 } from "@tanstack/react-router"
 import { useState } from "react"
 import { BandSlotContext } from "@/band-slot"
 import { useColorTheme } from "@/color-theme"
 import type { RouterContext } from "@/router-context"
-import Button from "@flightplan/ui/blocks/button"
+import PlanePicture from "@/routes/-components/PlanePicture"
+import ServerError from "@/routes/-components/ServerError"
 import BrandMark from "@flightplan/ui/BrandMark"
 import { cn } from "@flightplan/ui/lib/utils"
 import SettingsMenu, { type SettingsMenuLink } from "@flightplan/ui/SettingsMenu"
@@ -27,10 +27,7 @@ const SETTINGS_LINKS: readonly SettingsMenuLink[] = [
   { label: "Repositories", icon: "repositories", link: <Link to="/settings/repositories" /> },
 ]
 const COLUMN_CLASSES = "mx-auto max-w-5xl px-4 pt-8 pb-16 sm:px-6"
-const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const NOT_FOUND_PICTURE_SRC = "/not-found.svg"
-const START_ERROR_PICTURE_SRC = "/server-error.svg"
-const PLANE_PICTURE_SIZE = 160
 
 const RootLayout = () => {
   const [bandSlot, setBandSlot] = useState<HTMLElement | null>(null)
@@ -58,10 +55,6 @@ const RootLayout = () => {
   )
 }
 
-const PlanePicture = ({ src }: { readonly src: string }) => (
-  <img src={src} alt="" width={PLANE_PICTURE_SIZE} height={PLANE_PICTURE_SIZE} className="size-40" />
-)
-
 const PageNotFound = () => (
   <section className="mx-auto flex max-w-prose flex-col items-center text-center">
     <PlanePicture src={NOT_FOUND_PICTURE_SRC} />
@@ -75,17 +68,11 @@ const PageNotFound = () => (
   </section>
 )
 
-const StartError = ({ error }: ErrorComponentProps) => {
-  const router = useRouter()
-  return (
-    <main role="alert" className="mx-auto flex min-h-screen max-w-prose flex-col items-center bg-background px-4 pt-16 text-center text-foreground">
-      <PlanePicture src={START_ERROR_PICTURE_SRC} />
-      <h1 className="mt-4 text-2xl font-bold tracking-[-0.01em]">MAYDAY! MAYDAY! Flight Plan could not start</h1>
-      <p className="mt-2 text-muted-foreground">{error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE}</p>
-      <Button className="mt-4" onClick={() => { void router.invalidate() }}>Try again</Button>
-    </main>
-  )
-}
+const StartError = ({ error }: ErrorComponentProps) => (
+  <main className="min-h-screen bg-background px-4 pt-16 text-foreground">
+    <ServerError heading="MAYDAY! MAYDAY! Flight Plan could not start" error={error} />
+  </main>
+)
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context: { queryClient, trpc }, location }) => {

@@ -197,7 +197,7 @@ describe("the create Flight Plan page", () => {
     })
     expect(await screen.findByRole("navigation", { name: "Review sections" })).toBeTruthy()
     expect(screen.queryByRole("heading", { name: "Create a Flight Plan" })).toBeNull()
-    expect(screen.queryByRole("heading", { name: "Could not open this review" })).toBeNull()
+    expect(screen.queryByRole("heading", { name: "MAYDAY! MAYDAY! We couldn't open this review" })).toBeNull()
   })
 
   it("shows the Flight Plan, not the form, for a review target that already has one", async () => {
@@ -424,6 +424,8 @@ describe("the create Flight Plan page", () => {
 
     expect(editor.textContent).toBe("Why stock matters.")
     expect(within(stock).queryByRole("button", { name: "Edit" })).toBeNull()
+    expect(within(stock).getByRole("button", { name: "Tabs" })).toBeTruthy()
+    expect(within(stock).getByRole("button", { name: "Accordion" })).toBeTruthy()
 
     fireEvent.click(within(stock).getByRole("button", { name: "Numbered list" }))
     fireEvent.click(within(stock).getByRole("button", { name: "Save" }))

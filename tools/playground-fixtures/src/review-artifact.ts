@@ -86,6 +86,7 @@ const importGraphFileSchema = z.object({
 
 const codegraphSegmentSchema = z.object({
   title: z.string().nullable(),
+  context: z.array(z.string()),
   importGraph: z.array(importGraphFileSchema),
   journeyFlowDiagram: storedJourneySchema.nullable(),
   blastRadiusDiagram: blastSchema.nullable(),
@@ -95,7 +96,6 @@ const codegraphSegmentSchema = z.object({
 
 export const caseSnapshotSchema = z.object({
   title: z.string(),
-  context: z.array(z.string()),
   diff: z.array(z.string()),
   codegraph: z.object({ segments: z.array(codegraphSegmentSchema) }),
 })
@@ -144,10 +144,10 @@ interface LinkedSegment {
   readonly walkthrough: SegmentParts["walkthrough"]
 }
 
-const toSegmentParts = (segment: CodegraphSegment, { journey, walkthrough }: LinkedSegment, position: number, context: string): SegmentParts => ({
+const toSegmentParts = (segment: CodegraphSegment, { journey, walkthrough }: LinkedSegment, position: number): SegmentParts => ({
   id: `${MOCK_SEGMENT_ID_PREFIX}${String(position + 1)}`,
   title: segment.title,
-  context,
+  context: segment.context.join(LINE_BREAK),
   importGraph: segment.importGraph,
   journey,
   blast: segment.blastRadiusDiagram,
@@ -162,7 +162,6 @@ export const toReviewArtifact = (snapshot: CaseSnapshot, headFiles: RepositoryFi
   const groups = storedGroups.map(linkCodeGroupGraph)
   const blockById: BlockById = new Map([...groups.flatMap((group) => group.codeBlocks)].reverse().map((block) => [block.id, block] as const))
   const linked = segments.map((segment) => ({ journey: journeyOf(segment, groups), walkthrough: walkthroughOf(segment, blockById) }))
-  const context = snapshot.context.join(LINE_BREAK)
   return reviewArtifactSchema.parse(
     assembleReviewArtifact({
       title: snapshot.title,
@@ -170,7 +169,7 @@ export const toReviewArtifact = (snapshot: CaseSnapshot, headFiles: RepositoryFi
       commit: MOCK_HEAD_COMMIT,
       hunks: parseHunks(snapshot.diff.join(LINE_BREAK)),
       textOf: (path) => headFiles.get(path) ?? null,
-      segments: segments.map((segment, position) => toSegmentParts(segment, linked[position], position, context)),
+      segments: segments.map((segment, position) => toSegmentParts(segment, linked[position], position)),
     }),
   )
 }

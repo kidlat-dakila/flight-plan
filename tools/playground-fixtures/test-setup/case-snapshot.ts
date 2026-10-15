@@ -11,7 +11,7 @@ import {
 } from "@flightplan/codegraph"
 import { assembleGitAdapter } from "@flightplan/git-forge"
 import { CASE_REF } from "./case-adapter"
-import { NOTHING_WRITTEN, readWrittenParts, withWrittenParts, type WrittenParts } from "./written-parts"
+import { NOTHING_WRITTEN, readWrittenParts, withWrittenParts, writtenContextAt, type WrittenParts } from "./written-parts"
 
 const SNAPSHOT_FOLDER = "snapshots"
 const SNAPSHOT_SUFFIX = ".snapshot.json"
@@ -38,6 +38,7 @@ const withMapsAsRecords = (_key: string, value: unknown): unknown =>
   value instanceof Map ? Object.fromEntries(value) : value
 
 export interface StoredCodegraphSegment extends Omit<CodegraphSegment, "journeyFlowDiagram" | "codeWalkthrough"> {
+  readonly context: readonly string[]
   readonly journeyFlowDiagram: StoredJourneyFlowDiagram | null
   readonly codeWalkthrough: StoredCodeWalkthrough
 }
@@ -48,13 +49,14 @@ export interface StoredCodegraph {
 
 export interface CaseSnapshot {
   readonly title: string
-  readonly context: readonly string[]
   readonly diff: readonly string[]
   readonly codegraph: StoredCodegraph
 }
 
-export const storeCodegraph = ({ segments }: Codegraph): StoredCodegraph => ({
-  segments: segments.map((segment) => ({
+export const storeCodegraph = ({ segments }: Codegraph, written: WrittenParts): StoredCodegraph => ({
+  segments: segments.map(({ title, ...segment }, position) => ({
+    title,
+    context: writtenContextAt(written, position),
     ...segment,
     journeyFlowDiagram: segment.journeyFlowDiagram === null ? null : storeJourneyFlowDiagram(segment.journeyFlowDiagram),
     codeWalkthrough: storeCodeWalkthrough(segment.codeWalkthrough),
@@ -68,9 +70,8 @@ export interface CaseChange {
 
 export const caseSnapshotOf = ({ title, diff }: CaseChange, codegraph: Codegraph, written: WrittenParts): CaseSnapshot => ({
   title,
-  context: written.context,
   diff: diff.split(LINE_BREAK),
-  codegraph: storeCodegraph(withWrittenParts(codegraph, written)),
+  codegraph: storeCodegraph(withWrittenParts(codegraph, written), written),
 })
 
 const CASE_REPOSITORY = { id: "git", root: "", secret: null, username: "", baseUrl: "" } as const

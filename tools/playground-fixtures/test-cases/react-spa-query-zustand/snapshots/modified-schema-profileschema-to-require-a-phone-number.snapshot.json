@@ -1,28 +1,5 @@
 {
   "title": "Modified schema profileSchema to require a phone number",
-  "context": [
-    "A profile had a name and an email address, and no phone number. The account form now has a phone field. The form saves a profile only when the phone is an optional plus sign and then 7 to 15 digits or spaces. A shopper whose stored profile has no phone cannot save a new name or email address until they type one.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens /account, **then** [the form shows a Phone input under the Email input](code:src/routes/account/components/ProfileForm.tsx#L24).",
-    "- **When** a shopper saves with the phone `555 0100`, **then** [the request that saves the profile carries the phone](code:src/routes/account/components/ProfileForm.tsx#L14-16).",
-    "- **When** a shopper saves with the Phone input empty or with `555-0100`, **then** the form sends no request and [shows an error under the Phone input](code:src/routes/account/components/ProfileForm.tsx#L25).",
-    "- **When** the stored profile has no phone and a shopper saves a new name, **then** the form sends no request, because [the schema requires a phone](code:src/routes/account/components/profile-schema.ts#L9).",
-    "- **When** a shopper opens the catalogue or the cart, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/routes/account/components/profile-schema.ts`**",
-    "",
-    "- Added [`PHONE_PATTERN`](code:src/routes/account/components/profile-schema.ts#PHONE_PATTERN), a regular expression that matches an optional `+` and then 7 to 15 characters that are each a digit or a space.",
-    "- Modified [`profileSchema`](code:src/routes/account/components/profile-schema.ts#profileSchema) to require a `phone` string that matches `PHONE_PATTERN`.",
-    "",
-    "**`src/routes/account/components/ProfileForm.tsx`**",
-    "",
-    "- Added [an `<Input>` with the label `Phone`, registered as `phone`](code:src/routes/account/components/ProfileForm.tsx#L24), to `<ProfileForm />`.",
-    "- Added [a paragraph that shows `formState.errors.phone.message`](code:src/routes/account/components/ProfileForm.tsx#L25) under that input."
-  ],
   "diff": [
     "diff --git a/src/routes/account/components/ProfileForm.tsx b/src/routes/account/components/ProfileForm.tsx",
     "--- a/src/routes/account/components/ProfileForm.tsx",
@@ -42,6 +19,29 @@
     "segments": [
       {
         "title": "Phone number in the profile schema",
+        "context": [
+          "A profile had a name and an email address, and no phone number. The account form now has a phone field. The form saves a profile only when the phone is an optional plus sign and then 7 to 15 digits or spaces. A shopper whose stored profile has no phone cannot save a new name or email address until they type one.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens /account, **then** [the form shows a Phone input under the Email input](code:src/routes/account/components/ProfileForm.tsx#L24).",
+          "- **When** a shopper saves with the phone `555 0100`, **then** [the request that saves the profile carries the phone](code:src/routes/account/components/ProfileForm.tsx#L14-16).",
+          "- **When** a shopper saves with the Phone input empty or with `555-0100`, **then** the form sends no request and [shows an error under the Phone input](code:src/routes/account/components/ProfileForm.tsx#L25).",
+          "- **When** the stored profile has no phone and a shopper saves a new name, **then** the form sends no request, because [the schema requires a phone](code:src/routes/account/components/profile-schema.ts#L9).",
+          "- **When** a shopper opens the catalogue or the cart, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/routes/account/components/profile-schema.ts`**",
+          "",
+          "- Added [`PHONE_PATTERN`](code:src/routes/account/components/profile-schema.ts#PHONE_PATTERN), a regular expression that matches an optional `+` and then 7 to 15 characters that are each a digit or a space.",
+          "- Modified [`profileSchema`](code:src/routes/account/components/profile-schema.ts#profileSchema) to require a `phone` string that matches `PHONE_PATTERN`.",
+          "",
+          "**`src/routes/account/components/ProfileForm.tsx`**",
+          "",
+          "- Added [an `<Input>` with the label `Phone`, registered as `phone`](code:src/routes/account/components/ProfileForm.tsx#L24), to `<ProfileForm />`.",
+          "- Added [a paragraph that shows `formState.errors.phone.message`](code:src/routes/account/components/ProfileForm.tsx#L25) under that input."
+        ],
         "kind": "shared",
         "importGraph": [
           {
@@ -514,6 +514,29 @@
       },
       {
         "title": "Phone input in the account form",
+        "context": [
+          "A profile had a name and an email address, and no phone number. The account form now has a phone field. The form saves a profile only when the phone is an optional plus sign and then 7 to 15 digits or spaces. A shopper whose stored profile has no phone cannot save a new name or email address until they type one.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens /account, **then** [the form shows a Phone input under the Email input](code:src/routes/account/components/ProfileForm.tsx#L24).",
+          "- **When** a shopper saves with the phone `555 0100`, **then** [the request that saves the profile carries the phone](code:src/routes/account/components/ProfileForm.tsx#L14-16).",
+          "- **When** a shopper saves with the Phone input empty or with `555-0100`, **then** the form sends no request and [shows an error under the Phone input](code:src/routes/account/components/ProfileForm.tsx#L25).",
+          "- **When** the stored profile has no phone and a shopper saves a new name, **then** the form sends no request, because [the schema requires a phone](code:src/routes/account/components/profile-schema.ts#L9).",
+          "- **When** a shopper opens the catalogue or the cart, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/routes/account/components/profile-schema.ts`**",
+          "",
+          "- Added [`PHONE_PATTERN`](code:src/routes/account/components/profile-schema.ts#PHONE_PATTERN), a regular expression that matches an optional `+` and then 7 to 15 characters that are each a digit or a space.",
+          "- Modified [`profileSchema`](code:src/routes/account/components/profile-schema.ts#profileSchema) to require a `phone` string that matches `PHONE_PATTERN`.",
+          "",
+          "**`src/routes/account/components/ProfileForm.tsx`**",
+          "",
+          "- Added [an `<Input>` with the label `Phone`, registered as `phone`](code:src/routes/account/components/ProfileForm.tsx#L24), to `<ProfileForm />`.",
+          "- Added [a paragraph that shows `formState.errors.phone.message`](code:src/routes/account/components/ProfileForm.tsx#L25) under that input."
+        ],
         "kind": "entry",
         "importGraph": [
           {

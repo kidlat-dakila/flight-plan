@@ -1,22 +1,5 @@
 {
   "title": "Modified module use-profile to live beside the account page",
-  "context": [
-    "The two composables that load and save a shopper's profile sat in the folder for composables that several pages share. Only the account page and its form use them. This change moves their file into the folder of the account page, and the two files that import the composables now name the new place. Nothing a shopper sees changes.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens the account page, **then** nothing changes.",
-    "- **When** a shopper saves the profile form, **then** nothing changes.",
-    "- **When** a developer imports the profile composables from `@/composables/use-profile`, **then** the import does not resolve, because the file is no longer in that folder.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/views/account/`**",
-    "",
-    "- Modified [the import of `useProfile` in the file of `<AccountPage />`](code:src/views/account/AccountPage.vue#L2) to read from `@/views/account/use-profile`.",
-    "- Modified [the import of `useUpdateProfile` in the file of `<ProfileForm />`](code:src/views/account/components/ProfileForm.vue#L4) to read from `@/views/account/use-profile`.",
-    "- Moved `src/composables/use-profile.ts` to `src/views/account/use-profile.ts`. No line of the file changes."
-  ],
   "diff": [
     "diff --git a/src/views/account/AccountPage.vue b/src/views/account/AccountPage.vue",
     "--- a/src/views/account/AccountPage.vue",
@@ -38,6 +21,23 @@
     "segments": [
       {
         "title": "Profile composables move beside the account page",
+        "context": [
+          "The two composables that load and save a shopper's profile sat in the folder for composables that several pages share. Only the account page and its form use them. This change moves their file into the folder of the account page, and the two files that import the composables now name the new place. Nothing a shopper sees changes.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the account page, **then** nothing changes.",
+          "- **When** a shopper saves the profile form, **then** nothing changes.",
+          "- **When** a developer imports the profile composables from `@/composables/use-profile`, **then** the import does not resolve, because the file is no longer in that folder.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/views/account/`**",
+          "",
+          "- Modified [the import of `useProfile` in the file of `<AccountPage />`](code:src/views/account/AccountPage.vue#L2) to read from `@/views/account/use-profile`.",
+          "- Modified [the import of `useUpdateProfile` in the file of `<ProfileForm />`](code:src/views/account/components/ProfileForm.vue#L4) to read from `@/views/account/use-profile`.",
+          "- Moved `src/composables/use-profile.ts` to `src/views/account/use-profile.ts`. No line of the file changes."
+        ],
         "kind": "entry",
         "importGraph": [
           {

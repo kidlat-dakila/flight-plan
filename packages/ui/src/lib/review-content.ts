@@ -48,12 +48,24 @@ export interface ProseListItem {
   readonly blocks: readonly ProseBlock[]
 }
 
+export interface ProseTab {
+  readonly label: string
+  readonly blocks: readonly ProseBlock[]
+}
+
+export interface ProseSection {
+  readonly label: string
+  readonly blocks: readonly ProseBlock[]
+}
+
 export type ProseBlock
   = | { readonly kind: "heading", readonly inlines: readonly Inline[] }
     | { readonly kind: "paragraph", readonly inlines: readonly Inline[] }
     | { readonly kind: "list", readonly isOrdered: boolean, readonly items: readonly ProseListItem[] }
     | { readonly kind: "quote", readonly blocks: readonly ProseBlock[] }
     | { readonly kind: "code-block", readonly language: string | null, readonly text: string }
+    | { readonly kind: "tabs", readonly tabs: readonly ProseTab[] }
+    | { readonly kind: "accordion", readonly sections: readonly ProseSection[] }
 
 export type ProseBlocks = readonly ProseBlock[]
 

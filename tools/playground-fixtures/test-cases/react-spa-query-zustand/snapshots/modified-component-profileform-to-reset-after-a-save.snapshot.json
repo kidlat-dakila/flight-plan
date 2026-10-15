@@ -1,22 +1,5 @@
 {
   "title": "Modified component ProfileForm to reset after a save",
-  "context": [
-    "The account form kept the name and email it first loaded as its starting values, also after a save. A successful save now replaces those starting values with the name and email the server sent back. The two fields show what the server stored, not what the user typed. A failed save leaves the form as the user left it.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a user saves the profile form and the server stores a name or an email that differs from the typed text, **then** [the two fields show the name and email the server returned](code:src/routes/account/components/ProfileForm.tsx#L15).",
-    "- **When** the server returns the name and email as the user typed them, **then** nothing changes on the page.",
-    "- **When** the save fails, **then** nothing changes.",
-    "- **When** a user submits a name of one character, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/routes/account/components/ProfileForm.tsx`**",
-    "",
-    "- Modified [`<ProfileForm />` to read `reset` from the result of `useForm()`](code:src/routes/account/components/ProfileForm.tsx#L9).",
-    "- Modified [`onSubmit()` to pass an `onSuccess` callback to `saveProfile()`](code:src/routes/account/components/ProfileForm.tsx#L14-16), which calls `reset()` with the profile the server returned."
-  ],
   "diff": [
     "diff --git a/src/routes/account/components/ProfileForm.tsx b/src/routes/account/components/ProfileForm.tsx",
     "--- a/src/routes/account/components/ProfileForm.tsx",
@@ -32,6 +15,23 @@
     "segments": [
       {
         "title": "Profile form reset after a save",
+        "context": [
+          "The account form kept the name and email it first loaded as its starting values, also after a save. A successful save now replaces those starting values with the name and email the server sent back. The two fields show what the server stored, not what the user typed. A failed save leaves the form as the user left it.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a user saves the profile form and the server stores a name or an email that differs from the typed text, **then** [the two fields show the name and email the server returned](code:src/routes/account/components/ProfileForm.tsx#L15).",
+          "- **When** the server returns the name and email as the user typed them, **then** nothing changes on the page.",
+          "- **When** the save fails, **then** nothing changes.",
+          "- **When** a user submits a name of one character, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/routes/account/components/ProfileForm.tsx`**",
+          "",
+          "- Modified [`<ProfileForm />` to read `reset` from the result of `useForm()`](code:src/routes/account/components/ProfileForm.tsx#L9).",
+          "- Modified [`onSubmit()` to pass an `onSuccess` callback to `saveProfile()`](code:src/routes/account/components/ProfileForm.tsx#L14-16), which calls `reset()` with the profile the server returned."
+        ],
         "kind": "entry",
         "importGraph": [
           {

@@ -16,9 +16,9 @@ The test cases live in `tools/playground-fixtures/test-cases/`. The codegraph it
 | **Kind** | One folder of `test-cases/`: a language (`typescript`) or a repository setup with its stack (`react-spa-query-zustand`). |
 | **Case** | One test: a repository, a change to it, and the snapshot of what the codegraph builds from them. |
 | **Case repository** | The files in a kind's `repo/` folder. It is the repository *before* the change. |
-| **Context** | A Markdown text that says what the diffs of a case change. It is written in the case's snapshot, under the title and above the codegraph. |
-| **Written parts** | What an agent writes in a review, as opposed to what the codegraph generates: the context, and the prose of the diagrams and the walkthrough (a title for each segment, a label and a description for a journey node, a label for each of its trigger labels, an impact type and an impact reason for a blast file, a title and a reading for a waypoint). They are in the snapshot only, never in a test. |
-| **Snapshot** | The committed JSON file of a case: its title, its context, its diff and its codegraph with the written parts in it. It is a complete review of the change. |
+| **Context** | A Markdown text that says what the diffs of one segment of a case change. Each segment of the snapshot holds its own, under the segment's title. |
+| **Written parts** | What an agent writes in a review, as opposed to what the codegraph generates: the title and the context of each segment, and the prose of the diagrams and the walkthrough (a label and a description for a journey node, a label for each of its trigger labels, an impact type and an impact reason for a blast file, a title and a reading for a waypoint). They are in the snapshot only, never in a test. |
+| **Snapshot** | The committed JSON file of a case: its title, its diff and its codegraph with the written parts in it, a context in each segment. It is a complete review of the change. |
 | **Fixture** | A snapshot as another project reads it, through `src/index.ts`. A fixture case is a kind, and a review artifact fixture is one snapshot. |
 | **Diff** | A unified diff text written in the test. Applying the diffs of a case to the case repository gives the repository *after* the change. |
 
@@ -353,8 +353,7 @@ A snapshot is a complete review of its change, so it holds what an agent writes 
 
 | What | Where in the snapshot | Fields |
 |---|---|---|
-| The context | `context`, one line of Markdown per entry | |
-| A segment | `codegraph.segments[]` | `title` |
+| A segment | `codegraph.segments[]` | `title`, and `context`, one line of Markdown per entry |
 | A journey node | `journeyFlowDiagram.journeyNodes[]`, and the `children[]` of a node at any depth | `label`, `description` |
 | A trigger label of a journey node | `triggerLabels[]` of a node | `label` |
 | A block label of a journey node | `blockLabels[]` of a node | `label` |
@@ -383,13 +382,12 @@ Only the written parts in the table above, and only where they are missing or wh
 - **An update starts from scratch.** To update a fixture, delete its snapshot and generate it again, then write every written part anew from the code. To fill in a new fixture, write what is missing and leave the rest.
 - **The instructions are never changed to fit what was written.**
 
-The context is what a reviewer needs to know about the change before reading its codegraph. It is written from `context.md`, like every other written part, and so has the three parts that file asks for:
+Each segment has its own context: what a reviewer needs to know about the files of that segment before reading its codegraph. Code from another segment is named and linked where the segment's code uses it, and gets no item of its own. The context is written from `context.md`, like every other written part, and so has the parts that file asks for:
 
-- **An opening paragraph.** Why anyone should care about the change, with no identifier, path or link.
-- **`## Overview`.** What changes from outside the code, one scenario per line: a bold **When**, the situation, a bold **then**, what can be observed. A scenario where a reader expects a change and there is none says "nothing changes".
-- **`## Implementation`.** What changed inside the code, grouped by the file or directory it lives in, in the order the walkthrough reads the files. One line per change in the diffs, the verb first.
+- **One or two sentences that start with "This segment".** What the segment's change does, with no identifier, path or link.
+- **An accordion, with a section for "What's added", "What's modified" and "What's removed".** `:::accordion` opens it, `::section <name>` starts each section and `:::` closes it; a list with nothing in it gets no section. Each section holds one item per main declaration of the segment's files: a link to the declaration, then the verb, the kind of code and what it does, in the code's own terms. An item that does several things puts each in a sub-item. Every other piece of code an item names links to the line where the item's code uses it.
 
-Write it from the diffs and the case repository, never from the codegraph: the context says what the change is, and the codegraph is what was generated from it. The scenarios of the Overview are what let a reader see at once when the two disagree.
+Write it from the diffs and the case repository, never from the codegraph: the context says what the change is, and the codegraph is what was generated from it.
 
 A snapshot whose written parts are empty is a draft: every node has only the name of its declaration, no waypoint has a reading, and its fixture is a review artifact still being drafted.
 
@@ -398,7 +396,7 @@ A snapshot whose written parts are empty is a draft: every node has only the nam
 `expectCaseSnapshot(codegraph)` compares what the codegraph generates, and nothing an agent writes:
 
 1. It reads the committed snapshot of the case.
-2. It carries the written parts of that snapshot over to the codegraph it was handed: a segment by its place, a journey node by `id` at any depth, a trigger label by its `codeBlockId`, a blast file by `path`, a file by `path`, a waypoint by `declaration`.
+2. It carries the written parts of that snapshot over to the codegraph it was handed: a segment, with its title and its context, by its place, a journey node by `id` at any depth, a trigger label by its `codeBlockId`, a blast file by `path`, a file by `path`, a waypoint by `declaration`.
 3. It compares the result with the committed file.
 
 So rewording a context, a label or a reading never fails a case, and a change in a node, an edge, a ring, a line range or anything else that is generated always does. `nx run playground-fixtures:snapshot` rewrites what is generated and keeps what is written. What was written for a node, a file or a waypoint the codegraph no longer has is dropped by that rewrite, and shows in `git diff`.
@@ -414,7 +412,7 @@ A test holds what is handed to the codegraph, and nothing that comes out of a re
 
 ## Reading a snapshot
 
-A snapshot is JSON with four fields. `title` is the title of the case, as written in its `it`. `context` is the context of the case, one line of Markdown per entry, so it reads line by line in the file and in `git diff`. `diff` is the diffs of the case, joined, one line per entry: whatever renders the snapshot marks the changed lines from it. `codegraph` is the result of `buildBranchCodegraph` with the written parts in it, in which a `Map` is written as the record of its entries. It has one entry in `segments` per segment of the change: the entry segments and the shared segment of each group of code blocks.
+A snapshot is JSON with three fields. `title` is the title of the case, as written in its `it`. `diff` is the diffs of the case, joined, one line per entry: whatever renders the snapshot marks the changed lines from it. `codegraph` is the result of `buildBranchCodegraph` with the written parts in it, in which a `Map` is written as the record of its entries. It has one entry in `segments` per segment of the change: the entry segments and the shared segment of each group of code blocks. Each entry holds the `context` of its segment under its `title`, one line of Markdown per entry, so it reads line by line in the file and in `git diff`.
 
 | Field | What to check |
 |---|---|
@@ -466,7 +464,7 @@ The functions read `<kind>/snapshots/*.snapshot.json` and `<kind>/repo/` under t
 | A segment's `id` | A mocked constant, `fixture-segment-<place>` |
 | A segment's `title` | The segment's title, or an empty text while nothing is written |
 | A segment's `changedPaths` | The files of its `importGraph` that have a `diffType` |
-| A segment's `context` | The snapshot's `context`, the same in every segment: a case has one context |
+| A segment's `context` | The `context` of that segment in the snapshot, joined into one Markdown text |
 | `journey`, `blast` | The segment's `blastRadiusDiagram` as it is, and its `journeyFlowDiagram` linked to the groups of the case's `code-blocks/` snapshot, so every block id is the block itself. `journey` is `null` when there is no journey |
 | `walkthrough` | The segment's `codeWalkthrough`, without what only the codegraph keeps on a waypoint: `range`, `category` and the ids of its diagram nodes |
 

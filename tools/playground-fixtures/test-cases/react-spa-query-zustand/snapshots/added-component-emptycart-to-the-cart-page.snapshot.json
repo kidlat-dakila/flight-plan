@@ -1,27 +1,5 @@
 {
   "title": "Added component EmptyCart to the cart page",
-  "context": [
-    "A shopper who opened the cart page with nothing in the cart saw one line of text in the page and nothing to click under it. The page now shows the same line with a link to the catalogue under it. A cart with items looks as it did before.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper opens the cart page with no items in the cart, **then** [the page shows \"Your cart is empty.\" and a link \"Browse the catalogue\"](code:src/routes/cart/components/EmptyCart.tsx#EmptyCart).",
-    "- **When** a shopper clicks \"Browse the catalogue\", **then** [the app goes to `/`](code:src/routes/cart/components/EmptyCart.tsx#L7), the catalogue page.",
-    "- **When** a shopper removes the last item on the cart page, **then** [the page shows the message and the link where the list was](code:src/routes/cart/index.tsx#L8).",
-    "- **When** a shopper opens the cart page with items in the cart, **then** nothing changes: the page lists the items and the total.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/routes/cart/components/EmptyCart.tsx`**",
-    "",
-    "- Added [the import of `Link` from `react-router`](code:src/routes/cart/components/EmptyCart.tsx#L1).",
-    "- Added [the component `<EmptyCart />`](code:src/routes/cart/components/EmptyCart.tsx#EmptyCart), which takes no props. It [renders `<p>Your cart is empty.</p>`](code:src/routes/cart/components/EmptyCart.tsx#L6) and [`<Link to=\"/\">Browse the catalogue</Link>`](code:src/routes/cart/components/EmptyCart.tsx#L7) in one `<section>`.",
-    "",
-    "**`src/routes/cart/index.tsx`**",
-    "",
-    "- Added [the import of `EmptyCart` from `./components/EmptyCart`](code:src/routes/cart/index.tsx#L4).",
-    "- Modified [`<CartPage />` to return `<EmptyCart />` when `items.length === 0`](code:src/routes/cart/index.tsx#L8). It returned `<p>Your cart is empty.</p>` before."
-  ],
   "diff": [
     "diff --git a/src/routes/cart/components/EmptyCart.tsx b/src/routes/cart/components/EmptyCart.tsx",
     "new file mode 100644",
@@ -51,6 +29,28 @@
     "segments": [
       {
         "title": "Empty cart message with a link to the catalogue",
+        "context": [
+          "A shopper who opened the cart page with nothing in the cart saw one line of text in the page and nothing to click under it. The page now shows the same line with a link to the catalogue under it. A cart with items looks as it did before.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper opens the cart page with no items in the cart, **then** [the page shows \"Your cart is empty.\" and a link \"Browse the catalogue\"](code:src/routes/cart/components/EmptyCart.tsx#EmptyCart).",
+          "- **When** a shopper clicks \"Browse the catalogue\", **then** [the app goes to `/`](code:src/routes/cart/components/EmptyCart.tsx#L7), the catalogue page.",
+          "- **When** a shopper removes the last item on the cart page, **then** [the page shows the message and the link where the list was](code:src/routes/cart/index.tsx#L8).",
+          "- **When** a shopper opens the cart page with items in the cart, **then** nothing changes: the page lists the items and the total.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/routes/cart/components/EmptyCart.tsx`**",
+          "",
+          "- Added [the import of `Link` from `react-router`](code:src/routes/cart/components/EmptyCart.tsx#L1).",
+          "- Added [the component `<EmptyCart />`](code:src/routes/cart/components/EmptyCart.tsx#EmptyCart), which takes no props. It [renders `<p>Your cart is empty.</p>`](code:src/routes/cart/components/EmptyCart.tsx#L6) and [`<Link to=\"/\">Browse the catalogue</Link>`](code:src/routes/cart/components/EmptyCart.tsx#L7) in one `<section>`.",
+          "",
+          "**`src/routes/cart/index.tsx`**",
+          "",
+          "- Added [the import of `EmptyCart` from `./components/EmptyCart`](code:src/routes/cart/index.tsx#L4).",
+          "- Modified [`<CartPage />` to return `<EmptyCart />` when `items.length === 0`](code:src/routes/cart/index.tsx#L8). It returned `<p>Your cart is empty.</p>` before."
+        ],
         "kind": "entry",
         "importGraph": [
           {

@@ -55,13 +55,13 @@ const writtenFileSchema = z.object({
 
 const writtenSegmentSchema = z.object({
   title: z.string().nullable(),
+  context: z.array(z.string()).default([]),
   journeyFlowDiagram: z.object({ journeyNodes: z.array(writtenJourneyNodeSchema).default([]) }).nullable(),
   blastRadiusDiagram: z.object({ nodes: z.array(z.unknown()) }).nullable().optional(),
   codeWalkthrough: z.object({ intro: z.string().nullable(), files: z.array(writtenFileSchema) }),
 })
 
 const writtenPartsSchema = z.object({
-  context: z.array(z.string()),
   codegraph: z.object({ segments: z.array(writtenSegmentSchema) }),
 })
 
@@ -71,12 +71,17 @@ type WrittenSegment = z.infer<typeof writtenSegmentSchema>
 type WrittenJourney = NonNullable<WrittenSegment["journeyFlowDiagram"]>
 type WrittenFile = z.infer<typeof writtenFileSchema>
 
-export const NOTHING_WRITTEN: WrittenParts = { context: [], codegraph: { segments: [] } }
+export const NOTHING_WRITTEN: WrittenParts = { codegraph: { segments: [] } }
+
+const NO_CONTEXT: readonly string[] = []
 
 export const readWrittenParts = (snapshot: unknown): WrittenParts => {
   const written = writtenPartsSchema.safeParse(snapshot)
   return written.success ? written.data : NOTHING_WRITTEN
 }
+
+export const writtenContextAt = (written: WrittenParts, position: number): readonly string[] =>
+  written.codegraph.segments.at(position)?.context ?? NO_CONTEXT
 
 const listWrittenJourneyNodes = (nodes: readonly WrittenJourneyNode[]): WrittenJourneyNode[] =>
   nodes.flatMap((node) => [node, ...listWrittenJourneyNodes(node.children)])

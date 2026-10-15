@@ -1,27 +1,5 @@
 {
   "title": "Deleted component Dialog",
-  "context": [
-    "The cart page no longer asks a shopper to confirm before the cart empties. One click on the button now removes every item, and no step lets the shopper keep them. The dialog that asked the question had no other use, so the shared components no longer have a dialog.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper clicks \"Empty the cart\" on the cart page, **then** [the cart empties on that click](code:src/routes/cart/components/CartSummary.tsx#L12), and no \"Empty the cart?\" dialog opens.",
-    "- **When** the cart is empty after that click, **then** nothing changes: the cart page shows \"Your cart is empty.\"",
-    "- **When** a shopper uses a button or an input on another page, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/components/ui/`**",
-    "",
-    "- Deleted `src/components/ui/dialog.tsx`, which held the component `Dialog` and its type `DialogProps`.",
-    "- Removed the export of `Dialog` from the barrel, which [now exports `Button` and `Input` only](code:src/components/ui/index.ts#L1-2).",
-    "",
-    "**`src/routes/cart/components/CartSummary.tsx`**",
-    "",
-    "- Removed the import of `useState`, and modified [the import from `@/components/ui` to take `Button` only](code:src/routes/cart/components/CartSummary.tsx#L1).",
-    "- Removed the state `isConfirming`, the function `handleConfirm()` and the `<Dialog>` element from [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary).",
-    "- Modified [the `onClick` of the \"Empty the cart\" button to run `clear`](code:src/routes/cart/components/CartSummary.tsx#L12), in place of `() => setIsConfirming(true)`."
-  ],
   "diff": [
     "diff --git a/src/components/ui/dialog.tsx b/src/components/ui/dialog.tsx",
     "deleted file mode 100644",
@@ -81,6 +59,28 @@
     "segments": [
       {
         "title": "Dialog removed from the shared components",
+        "context": [
+          "The cart page no longer asks a shopper to confirm before the cart empties. One click on the button now removes every item, and no step lets the shopper keep them. The dialog that asked the question had no other use, so the shared components no longer have a dialog.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper clicks \"Empty the cart\" on the cart page, **then** [the cart empties on that click](code:src/routes/cart/components/CartSummary.tsx#L12), and no \"Empty the cart?\" dialog opens.",
+          "- **When** the cart is empty after that click, **then** nothing changes: the cart page shows \"Your cart is empty.\"",
+          "- **When** a shopper uses a button or an input on another page, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/components/ui/`**",
+          "",
+          "- Deleted `src/components/ui/dialog.tsx`, which held the component `Dialog` and its type `DialogProps`.",
+          "- Removed the export of `Dialog` from the barrel, which [now exports `Button` and `Input` only](code:src/components/ui/index.ts#L1-2).",
+          "",
+          "**`src/routes/cart/components/CartSummary.tsx`**",
+          "",
+          "- Removed the import of `useState`, and modified [the import from `@/components/ui` to take `Button` only](code:src/routes/cart/components/CartSummary.tsx#L1).",
+          "- Removed the state `isConfirming`, the function `handleConfirm()` and the `<Dialog>` element from [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary).",
+          "- Modified [the `onClick` of the \"Empty the cart\" button to run `clear`](code:src/routes/cart/components/CartSummary.tsx#L12), in place of `() => setIsConfirming(true)`."
+        ],
         "kind": "entry",
         "importGraph": [
           {
@@ -433,6 +433,28 @@
       },
       {
         "title": "Cart empties without a confirmation",
+        "context": [
+          "The cart page no longer asks a shopper to confirm before the cart empties. One click on the button now removes every item, and no step lets the shopper keep them. The dialog that asked the question had no other use, so the shared components no longer have a dialog.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper clicks \"Empty the cart\" on the cart page, **then** [the cart empties on that click](code:src/routes/cart/components/CartSummary.tsx#L12), and no \"Empty the cart?\" dialog opens.",
+          "- **When** the cart is empty after that click, **then** nothing changes: the cart page shows \"Your cart is empty.\"",
+          "- **When** a shopper uses a button or an input on another page, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/components/ui/`**",
+          "",
+          "- Deleted `src/components/ui/dialog.tsx`, which held the component `Dialog` and its type `DialogProps`.",
+          "- Removed the export of `Dialog` from the barrel, which [now exports `Button` and `Input` only](code:src/components/ui/index.ts#L1-2).",
+          "",
+          "**`src/routes/cart/components/CartSummary.tsx`**",
+          "",
+          "- Removed the import of `useState`, and modified [the import from `@/components/ui` to take `Button` only](code:src/routes/cart/components/CartSummary.tsx#L1).",
+          "- Removed the state `isConfirming`, the function `handleConfirm()` and the `<Dialog>` element from [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary).",
+          "- Modified [the `onClick` of the \"Empty the cart\" button to run `clear`](code:src/routes/cart/components/CartSummary.tsx#L12), in place of `() => setIsConfirming(true)`."
+        ],
         "kind": "entry",
         "importGraph": [
           {

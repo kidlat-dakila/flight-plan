@@ -1,22 +1,5 @@
 {
   "title": "Modified function formatPrice to round to the nearest cent",
-  "context": [
-    "A price with half a cent or more left over was shown one cent too low. Every price in the catalogue and in the cart now shows the nearest cent. A price that is a whole number of cents shows as it did before.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a product costs 1999.5 cents, **then** [its card in the catalogue shows `$20.00`](code:src/routes/catalog/components/ProductCard.tsx#L10), where it showed `$19.99`.",
-    "- **When** a cart line comes to 1999.5 cents, **then** [the line shows `$20.00`](code:src/routes/cart/components/CartLine.tsx#L12), where it showed `$19.99`.",
-    "- **When** the cart comes to 1999.5 cents, **then** [the total shows `$20.00`](code:src/routes/cart/components/CartSummary.tsx#L18), where it showed `$19.99`.",
-    "- **When** an amount is 1999.4 cents, **then** nothing changes: the price still shows `$19.99`.",
-    "- **When** an amount is a whole number of cents, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/lib/format.ts`**",
-    "",
-    "- Modified [`formatPrice()`](code:src/lib/format.ts#formatPrice) to round `priceCents` with `Math.round`, where it used `Math.floor`."
-  ],
   "diff": [
     "diff --git a/src/lib/format.ts b/src/lib/format.ts",
     "--- a/src/lib/format.ts",
@@ -29,6 +12,23 @@
     "segments": [
       {
         "title": "Prices round to the nearest cent",
+        "context": [
+          "A price with half a cent or more left over was shown one cent too low. Every price in the catalogue and in the cart now shows the nearest cent. A price that is a whole number of cents shows as it did before.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a product costs 1999.5 cents, **then** [its card in the catalogue shows `$20.00`](code:src/routes/catalog/components/ProductCard.tsx#L10), where it showed `$19.99`.",
+          "- **When** a cart line comes to 1999.5 cents, **then** [the line shows `$20.00`](code:src/routes/cart/components/CartLine.tsx#L12), where it showed `$19.99`.",
+          "- **When** the cart comes to 1999.5 cents, **then** [the total shows `$20.00`](code:src/routes/cart/components/CartSummary.tsx#L18), where it showed `$19.99`.",
+          "- **When** an amount is 1999.4 cents, **then** nothing changes: the price still shows `$19.99`.",
+          "- **When** an amount is a whole number of cents, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/lib/format.ts`**",
+          "",
+          "- Modified [`formatPrice()`](code:src/lib/format.ts#formatPrice) to round `priceCents` with `Math.round`, where it used `Math.floor`."
+        ],
         "kind": "entry",
         "importGraph": [
           {

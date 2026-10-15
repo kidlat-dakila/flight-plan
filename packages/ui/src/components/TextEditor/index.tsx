@@ -10,15 +10,20 @@ import {
   LinkIcon,
   ListIcon,
   ListOrderedIcon,
+  ListCollapseIcon,
+  PanelsTopLeftIcon,
   SquareCodeIcon,
   TextQuoteIcon,
   type LucideIcon,
 } from "lucide-react"
+import { Marked, type marked } from "marked"
 import { useId, useState, type ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import Input from "@/components/blocks/input"
 import codeLinkNode, { CODE_LINK_NODE_NAME, type CodeLinkAttributes } from "@/lib/code-link-node"
 import { cn } from "@/lib/utils"
+import containerExtensions from "./containers"
+import { ACCORDION_KIND, TABS_KIND, type ContainerKind } from "./containers/container-changes"
 
 export interface CodeLinkRequest {
   readonly selectedText: string
@@ -32,6 +37,7 @@ interface TextEditorProps {
   readonly errorMessage: string | null
   readonly className?: string
   readonly shouldFocus?: boolean
+  readonly canUseSections?: boolean
   readonly renderCodeLinkDialog?: (request: CodeLinkRequest) => ReactNode
   readonly onChange: (markdown: string) => void
 }
@@ -45,7 +51,7 @@ interface Format {
   readonly toggle: (editor: Editor) => void
 }
 
-type ActiveFormats = Readonly<Record<FormatName | "link", boolean>>
+type ActiveFormats = Readonly<Record<FormatName | "link" | "insideContainer", boolean>>
 
 const TOOLBAR_HEADING_LEVEL = 3
 const LINK_MARK_NAME = "link"
@@ -55,6 +61,8 @@ const LINK_ADDRESS_PLACEHOLDER = "https://"
 const APPLY_LINK_LABEL = "Apply"
 const REMOVE_LINK_LABEL = "Remove link"
 const CODE_LINK_LABEL = "Code link"
+const TABS_LABEL = "Tabs"
+const ACCORDION_LABEL = "Accordion"
 const SELECTED_TEXT_SEPARATOR = " "
 
 const FORMATS: readonly Format[] = [
@@ -73,16 +81,20 @@ const FORMATS: readonly Format[] = [
   { name: "codeBlock", label: "Code block", icon: SquareCodeIcon, toggle: (editor) => { editor.chain().focus().toggleCodeBlock().run() } },
 ]
 
-const EXTENSIONS = [
-  StarterKit.configure({
-    strike: false,
-    underline: false,
-    horizontalRule: false,
-    link: { openOnClick: false, autolink: false },
-  }),
-  codeLinkNode,
-  Markdown,
-]
+const STARTER_KIT = StarterKit.configure({
+  strike: false,
+  underline: false,
+  horizontalRule: false,
+  link: { openOnClick: false, autolink: false },
+})
+
+const EXTENSIONS = [STARTER_KIT, codeLinkNode, Markdown]
+
+const markedOfItsOwn = (): typeof marked =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Tiptap reads only the instance methods that a Marked shares with marked
+  new Marked() as unknown as typeof marked
+
+const EXTENSIONS_WITH_SECTIONS = [STARTER_KIT, codeLinkNode, ...containerExtensions, Markdown.configure({ marked: markedOfItsOwn() })]
 
 const CONTENT_CLASSES = cn(
   "flex min-h-32 flex-col gap-4 px-3 py-2.5 text-base leading-[1.7] text-pretty outline-none",
@@ -97,9 +109,12 @@ const CONTENT_CLASSES = cn(
 )
 
 const FRAME_CLASSES = "rounded-lg border border-input bg-card focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/40 aria-invalid:border-destructive"
-const FORMAT_BUTTON_CLASSES = "flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring aria-pressed:bg-foreground aria-pressed:text-background"
+const FORMAT_BUTTON_CLASSES = "flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 aria-pressed:bg-foreground aria-pressed:text-background"
 
-const activeFormatsOf = (editor: Editor): ActiveFormats => ({
+const isInsideContainer = (editor: Editor): boolean =>
+  editor.isActive(TABS_KIND.itemName) || editor.isActive(ACCORDION_KIND.itemName)
+
+const activeFormatsOf = (editor: Editor, canUseSections: boolean): ActiveFormats => ({
   bold: editor.isActive("bold"),
   italic: editor.isActive("italic"),
   code: editor.isActive("code"),
@@ -109,6 +124,7 @@ const activeFormatsOf = (editor: Editor): ActiveFormats => ({
   blockquote: editor.isActive("blockquote"),
   codeBlock: editor.isActive("codeBlock"),
   link: editor.isActive(LINK_MARK_NAME),
+  insideContainer: canUseSections && isInsideContainer(editor),
 })
 
 const linkAddressOf = (editor: Editor): string => {
@@ -137,10 +153,27 @@ const insertCodeLink = (editor: Editor, codeLink: CodeLinkAttributes): void => {
   editor.chain().focus().insertContent({ type: CODE_LINK_NODE_NAME, attrs: codeLink }).run()
 }
 
+const insertContainer = (editor: Editor, kind: ContainerKind, containerAttributes: object, itemAttributes: object): void => {
+  editor.chain().insertContent({
+    type: kind.name,
+    attrs: containerAttributes,
+    content: [{ type: kind.itemName, attrs: { label: kind.newItemLabel, ...itemAttributes }, content: [{ type: "paragraph" }] }],
+  }).run()
+}
+
+const insertTabs = (editor: Editor): void => {
+  insertContainer(editor, TABS_KIND, { openIndex: 0, namingIndex: 0 }, {})
+}
+
+const insertAccordion = (editor: Editor): void => {
+  insertContainer(editor, ACCORDION_KIND, {}, { isNaming: true })
+}
+
 interface ToolbarButtonProps {
   readonly label: string
   readonly icon: LucideIcon
   readonly isPressed: boolean
+  readonly isDisabled?: boolean
   readonly onClick: () => void
 }
 
@@ -150,6 +183,7 @@ const ToolbarButton = (props: ToolbarButtonProps) => (
     aria-label={props.label}
     title={props.label}
     aria-pressed={props.isPressed}
+    disabled={props.isDisabled}
     className={FORMAT_BUTTON_CLASSES}
     onMouseDown={(event) => { event.preventDefault() }}
     onClick={props.onClick}
@@ -194,12 +228,13 @@ interface FormatToolbarProps {
   readonly label: string
   readonly isLinking: boolean
   readonly canLinkCode: boolean
+  readonly canUseSections: boolean
   readonly onToggleLinking: () => void
   readonly onLinkCode: () => void
 }
 
-const FormatToolbar = ({ editor, label, isLinking, canLinkCode, onToggleLinking, onLinkCode }: FormatToolbarProps) => {
-  const activeFormats = useEditorState({ editor, selector: (snapshot) => activeFormatsOf(snapshot.editor) })
+const FormatToolbar = ({ editor, label, isLinking, canLinkCode, canUseSections, onToggleLinking, onLinkCode }: FormatToolbarProps) => {
+  const activeFormats = useEditorState({ editor, selector: (snapshot) => activeFormatsOf(snapshot.editor, canUseSections) })
   return (
     <div role="toolbar" aria-label={label} className="flex flex-wrap items-center gap-1 border-b border-input px-2 py-1.5">
       {FORMATS.map((format) => (
@@ -213,17 +248,34 @@ const FormatToolbar = ({ editor, label, isLinking, canLinkCode, onToggleLinking,
       ))}
       <ToolbarButton label={LINK_LABEL} icon={LinkIcon} isPressed={activeFormats.link || isLinking} onClick={onToggleLinking} />
       {canLinkCode ? <ToolbarButton label={CODE_LINK_LABEL} icon={FileCodeIcon} isPressed={false} onClick={onLinkCode} /> : null}
+      {canUseSections
+        ? (
+            <>
+              <ToolbarButton label={TABS_LABEL} icon={PanelsTopLeftIcon} isPressed={false} isDisabled={activeFormats.insideContainer} onClick={() => { insertTabs(editor) }} />
+              <ToolbarButton label={ACCORDION_LABEL} icon={ListCollapseIcon} isPressed={false} isDisabled={activeFormats.insideContainer} onClick={() => { insertAccordion(editor) }} />
+            </>
+          )
+        : null}
     </div>
   )
 }
 
-const TextEditor = ({ label, value, errorMessage, className, shouldFocus = false, renderCodeLinkDialog, onChange }: TextEditorProps) => {
+const TextEditor = ({
+  label,
+  value,
+  errorMessage,
+  className,
+  shouldFocus = false,
+  canUseSections = false,
+  renderCodeLinkDialog,
+  onChange,
+}: TextEditorProps) => {
   const errorId = useId()
   const [isLinking, setIsLinking] = useState(false)
   const [isLinkingCode, setIsLinkingCode] = useState(false)
   const hasError = errorMessage !== null
   const editor = useEditor({
-    extensions: EXTENSIONS,
+    extensions: canUseSections ? EXTENSIONS_WITH_SECTIONS : EXTENSIONS,
     content: value,
     contentType: "markdown",
     autofocus: shouldFocus,
@@ -241,6 +293,7 @@ const TextEditor = ({ label, value, errorMessage, className, shouldFocus = false
           label={`${label} formatting`}
           isLinking={isLinking}
           canLinkCode={renderCodeLinkDialog !== undefined}
+          canUseSections={canUseSections}
           onToggleLinking={() => { setIsLinking((isOpen) => !isOpen) }}
           onLinkCode={() => { setIsLinkingCode(true) }}
         />

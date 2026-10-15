@@ -21,6 +21,12 @@ describe("unresolvedLinkIdsIn", () => {
     ])
   })
 
+  it("reports a link that does not resolve inside a tab of a tabs block", () => {
+    const text = ":::tabs\n::tab What's added\n- [`subtotal()`](code:src/cart/subtotal.ts#subtotal) and [gone](code:src/gone.ts#L1)\n:::"
+
+    expect(unresolvedLinkIdsIn([text], sources)).toStrictEqual(["src/gone.ts#L1"])
+  })
+
   it("ignores links that are not code links", () => {
     expect(unresolvedLinkIdsIn(["[the docs](https://example.com/a#b)"], sources)).toStrictEqual([])
   })

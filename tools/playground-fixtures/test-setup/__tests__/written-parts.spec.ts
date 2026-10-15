@@ -86,12 +86,12 @@ const generated: Codegraph = { segments: [generatedSegment] }
 
 const writtenSnapshot = {
   title: "Modified function stockOf",
-  context: ["## Summary", "", "Held stock is subtracted."],
   diff: [],
   codegraph: {
     segments: [
       {
         title: "Stock check",
+        context: ["## Summary", "", "Held stock is subtracted."],
         journeyFlowDiagram: {
           journeyNodes: [
             {
@@ -133,11 +133,17 @@ const writtenSnapshot = {
 describe("readWrittenParts", () => {
   it("reads nothing written from what is not a snapshot", () => {
     expect(readWrittenParts(null)).toStrictEqual(NOTHING_WRITTEN)
-    expect(readWrittenParts({ context: "not lines" })).toStrictEqual(NOTHING_WRITTEN)
+    expect(readWrittenParts({ codegraph: "not segments" })).toStrictEqual(NOTHING_WRITTEN)
   })
 
-  it("reads the context of a snapshot", () => {
-    expect(readWrittenParts(writtenSnapshot).context).toStrictEqual(["## Summary", "", "Held stock is subtracted."])
+  it("reads the context of each segment of a snapshot", () => {
+    expect(readWrittenParts(writtenSnapshot).codegraph.segments[0].context).toStrictEqual(["## Summary", "", "Held stock is subtracted."])
+  })
+
+  it("reads an empty context for a segment that has none written", () => {
+    const [segment] = readWrittenParts({ codegraph: { segments: [{ title: null, journeyFlowDiagram: null, codeWalkthrough: { intro: null, files: [] } }] } }).codegraph.segments
+
+    expect(segment.context).toStrictEqual([])
   })
 })
 

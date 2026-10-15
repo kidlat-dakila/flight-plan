@@ -1,21 +1,5 @@
 {
   "title": "Modified function stockOf to subtract held stock",
-  "context": [
-    "Stock that is held for another order still counted as available, so a shopper could reserve units that were already promised. A reservation now succeeds only for the units that nobody holds.",
-    "",
-    "## Overview",
-    "",
-    "- **When** a shopper reserves 11 units of `tea-01`, with 12 in stock and 2 held, **then** [the reservation returns `null`](code:src/checkout/reserve.ts#L9). It returned a reservation before.",
-    "- **When** a shopper reserves 10 units of `tea-01`, **then** nothing changes.",
-    "- **When** a shopper reserves a product that has no held units, such as `mug-07`, **then** nothing changes.",
-    "",
-    "## Implementation",
-    "",
-    "**`src/inventory/stock.ts`**",
-    "",
-    "- Added [`heldBySku`](code:src/inventory/stock.ts#heldBySku), a record of the units held per SKU, with 2 units held of `tea-01`.",
-    "- Modified [`stockOf()`](code:src/inventory/stock.ts#stockOf) to return the stock of a SKU minus the units held of that SKU."
-  ],
   "diff": [
     "diff --git a/src/inventory/stock.ts b/src/inventory/stock.ts",
     "--- a/src/inventory/stock.ts",
@@ -30,6 +14,22 @@
     "segments": [
       {
         "title": "Held stock no longer counts as available",
+        "context": [
+          "Stock that is held for another order still counted as available, so a shopper could reserve units that were already promised. A reservation now succeeds only for the units that nobody holds.",
+          "",
+          "## Overview",
+          "",
+          "- **When** a shopper reserves 11 units of `tea-01`, with 12 in stock and 2 held, **then** [the reservation returns `null`](code:src/checkout/reserve.ts#L9). It returned a reservation before.",
+          "- **When** a shopper reserves 10 units of `tea-01`, **then** nothing changes.",
+          "- **When** a shopper reserves a product that has no held units, such as `mug-07`, **then** nothing changes.",
+          "",
+          "## Implementation",
+          "",
+          "**`src/inventory/stock.ts`**",
+          "",
+          "- Added [`heldBySku`](code:src/inventory/stock.ts#heldBySku), a record of the units held per SKU, with 2 units held of `tea-01`.",
+          "- Modified [`stockOf()`](code:src/inventory/stock.ts#stockOf) to return the stock of a SKU minus the units held of that SKU."
+        ],
         "kind": "entry",
         "importGraph": [
           {
