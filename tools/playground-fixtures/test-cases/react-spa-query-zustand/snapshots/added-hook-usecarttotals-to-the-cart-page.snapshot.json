@@ -582,67 +582,7 @@
                     "src/hooks/use-cart-totals.ts#property@6:12",
                     "src/hooks/use-cart-totals.ts#property@6:23"
                   ],
-                  "children": [
-                    {
-                      "id": "w2.1",
-                      "title": null,
-                      "declaration": "useCartTotals › itemCount",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 4,
-                        "lineEnd": 4
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/hooks/use-cart-totals.ts#hook@3:1",
-                      "codeBlockIds": [
-                        "src/hooks/use-cart-totals.ts#state@4:3",
-                        "src/hooks/use-cart-totals.ts#component-effect@4:21",
-                        "src/hooks/use-cart-totals.ts#effect-callback@4:34"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w2.2",
-                      "title": null,
-                      "declaration": "useCartTotals › totalCents",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 5,
-                        "lineEnd": 5
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/hooks/use-cart-totals.ts#hook@3:1",
-                      "codeBlockIds": [
-                        "src/hooks/use-cart-totals.ts#state@5:3",
-                        "src/hooks/use-cart-totals.ts#component-effect@5:22",
-                        "src/hooks/use-cart-totals.ts#effect-callback@5:35"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w2.3",
-                      "title": null,
-                      "declaration": "useCartTotals › itemCount, totalCents",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 6,
-                        "lineEnd": 6
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/hooks/use-cart-totals.ts#hook@3:1",
-                      "codeBlockIds": [
-                        "src/hooks/use-cart-totals.ts#property@6:12",
-                        "src/hooks/use-cart-totals.ts#property@6:23"
-                      ],
-                      "children": []
-                    }
-                  ]
+                  "children": []
                 }
               ]
             },

@@ -331,4 +331,80 @@ describe("the steps of a waypoint", () => {
       "w1.3 Cart › button.onClick statement 8-8 0",
     ])
   })
+
+  it("reads a function of fewer than six lines whole, with no child", () => {
+    expect(childrenOf(SHORT, [[2, 4]])).toStrictEqual([])
+  })
+
+  it("reads a nested function, condition or loop of fewer than six lines whole, and one of six lines or more in parts", () => {
+    const [waypoint] = walkthroughOf([{ ...EDIT, diffLines: [[2, 9], [13, 13], [15, 16], [18, 18], [20, 20]] }]).files[0].waypoints
+
+    expect(waypoint.children.map(({ declaration, range, children }) => `${declaration} ${String(range.lineStart)}-${String(range.lineEnd)} ${String(children.length)}`)).toStrictEqual([
+      "EditPage › save, navigate 2-3 0",
+      "EditPage › Condition :4 4-4 0",
+      "EditPage › handleSubmit 5-7 0",
+      "EditPage › Loop :8 8-14 2",
+      "EditPage › Loop :15 15-19 0",
+      "EditPage › form.onSubmit 20-20 0",
+    ])
+  })
+
+  it("makes no waypoint on a line a waypoint already starts on", () => {
+    expect(childrenOf(SUBMIT, [[2, 2], [7, 7]])).toStrictEqual(["w1.1 EditPage › navigate statement 2-2 0", "w1.2 EditPage › Effect :7 statement 7-7 0"])
+  })
 })
+
+const EDIT: GroupFile = {
+  filePath: "src/edit.tsx",
+  lines: [
+    "export function EditPage({ orderId }) {",
+    "  const { mutate: save } = useSave()",
+    "  const navigate = useNavigate()",
+    "  if (!orderId) return null",
+    "  function handleSubmit(draft) {",
+    "    save({ ...draft, id: orderId }, { onSuccess: () => navigate(\"/orders\") })",
+    "  }",
+    "  for (const one of [1, 2]) {",
+    "    if (one) save(one)",
+    "    navigate(\"/\")",
+    "    navigate(\"/two\")",
+    "    navigate(\"/one\")",
+    "    if (one > 1) save(one + 1)",
+    "  }",
+    "  for (const two of [1, 2]) {",
+    "    if (two) save(two)",
+    "    navigate(\"/\")",
+    "    if (two > 1) save(two + 1)",
+    "  }",
+    "  return <form onSubmit={handleSubmit} />",
+    "}",
+  ],
+}
+
+const SHORT: GroupFile = {
+  filePath: "src/short.ts",
+  lines: [
+    "export function shortSum(a, b) {",
+    "  const one = a + 1",
+    "  if (b) return one",
+    "  return one + b",
+    "}",
+  ],
+}
+
+const SUBMIT: GroupFile = {
+  filePath: "src/submit.tsx",
+  lines: [
+    "export function EditPage({ orderId }) {",
+    "  const navigate = useNavigate()",
+    "  function handleSubmit(draft) {",
+    "    const id = orderId",
+    "    const next = \"/orders\"",
+    "    log(draft)",
+    "    save({ ...draft, id }, { onSuccess: () => navigate(next) })",
+    "    return id",
+    "  }",
+    "  return <form onSubmit={handleSubmit} />",
+    "}",
+  ],
+}

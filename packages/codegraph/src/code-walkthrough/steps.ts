@@ -34,6 +34,19 @@ interface Run {
 const MARKUP_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-root", "render"])
 const EXPRESSION_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-condition", "render-loop", "render-event"])
 const UNLISTED_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["root-argument-value"])
+const READ_WHOLE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>([
+  "function",
+  "hook",
+  "component",
+  "method",
+  "condition",
+  "loop",
+  "switch",
+  "switch-case",
+  "render-condition",
+  "render-loop",
+])
+const READ_IN_PARTS_LINE_COUNT = 6
 
 const isExpression = (block: CodeBlock): boolean => EXPRESSION_TYPES.has(block.type)
 
@@ -74,14 +87,21 @@ const rulesOf = (declarationBlock: CodeBlock, changedLines: ReadonlySet<number>)
     Array.from({ length: Math.max(firstLineOf(later) - lastLineOf(earlier) - 1, 0) }, (_line, index) => lastLineOf(earlier) + 1 + index).every((line) => changedLines.has(line)),
 })
 
+const lineCountOf = ([startLine, endLine]: readonly [number, number]): number => endLine - startLine + 1
+
+const isReadWhole = (block: CodeBlock, lines: readonly [number, number]): boolean =>
+  READ_WHOLE_TYPES.has(block.type) && lineCountOf(lines) < READ_IN_PARTS_LINE_COUNT
+
 const toStep = (run: Run, runs: readonly Run[], changedBlocks: readonly CodeBlock[]): WaypointStep => {
   const { statements, name } = run
   const folded = changedBlocks.filter((block) => statements.some((statement) => isWithin(block, statement)))
+  const lines: [number, number] = [Math.min(...statements.map(firstLineOf)), Math.max(...statements.map(lastLineOf))]
+  const isWhole = statements.length === 1 && isReadWhole(statements[0], lines)
   return {
     name,
-    lines: [Math.min(...statements.map(firstLineOf)), Math.max(...statements.map(lastLineOf))],
+    lines,
     blocks: inWrittenOrder([...new Set([...statements, ...folded])]),
-    children: listStepsHeldBy(statements[0].id, runs, changedBlocks),
+    children: isWhole ? [] : listStepsHeldBy(statements[0].id, runs, changedBlocks),
   }
 }
 
@@ -90,7 +110,32 @@ const withoutLoneStep = (steps: readonly WaypointStep[]): readonly WaypointStep[
 const listStepsHeldBy = (holderId: string | null, runs: readonly Run[], changedBlocks: readonly CodeBlock[]): readonly WaypointStep[] =>
   withoutLoneStep(runs.filter((run) => run.holderId === holderId).map((run) => toStep(run, runs, changedBlocks)))
 
+const startLineOf = (step: WaypointStep): number => step.lines[0]
+
+const liftStepsStartingOn = (line: number, steps: readonly WaypointStep[]): WaypointStep[] =>
+  steps.flatMap((step) => (startLineOf(step) === line ? liftStepsStartingOn(line, step.children) : [step]))
+
+const joinSteps = (earlier: WaypointStep, later: WaypointStep): WaypointStep => ({
+  name: earlier.name,
+  lines: [earlier.lines[0], Math.max(earlier.lines[1], later.lines[1])],
+  blocks: inWrittenOrder([...new Set([...earlier.blocks, ...later.blocks])]),
+  children: [...earlier.children, ...later.children],
+})
+
+const joinStepsOnOneLine = (steps: readonly WaypointStep[]): WaypointStep[] =>
+  steps.reduce<WaypointStep[]>((joined, step) => {
+    const earlier = joined.length === 0 ? undefined : joined[joined.length - 1]
+    return earlier !== undefined && startLineOf(earlier) === startLineOf(step) ? [...joined.slice(0, -1), joinSteps(earlier, step)] : [...joined, step]
+  }, [])
+
+const withOneStepPerLine = (holderLine: number, steps: readonly WaypointStep[]): readonly WaypointStep[] => {
+  const kept = joinStepsOnOneLine(liftStepsStartingOn(holderLine, steps))
+    .map((step) => ({ ...step, children: withOneStepPerLine(startLineOf(step), step.children) }))
+  return kept.length === 1 ? withOneStepPerLine(holderLine, kept[0].children) : kept
+}
+
 export const listWaypointSteps = (declarationBlock: CodeBlock, changedBlocks: readonly CodeBlock[]): readonly WaypointStep[] => {
+  if (isReadWhole(declarationBlock, [firstLineOf(declarationBlock), lastLineOf(declarationBlock)])) return []
   const stepBlocks = inWrittenOrder([...new Set(changedBlocks.flatMap((block) => stepBlockOf(block, declarationBlock) ?? []))])
   const candidates: StepCandidate[] = stepBlocks.map((block) => ({ block, name: nameOfBlock(block), isStep: true }))
   const insideBlocks = listDescendants(declarationBlock)
@@ -106,5 +151,5 @@ export const listWaypointSteps = (declarationBlock: CodeBlock, changedBlocks: re
     name: nameOfRun(run),
     holderId: holderOf(run[0].block, folding)?.block.id ?? null,
   }))
-  return listStepsHeldBy(null, runs, changedBlocks.filter(isChanged))
+  return withOneStepPerLine(firstLineOf(declarationBlock), listStepsHeldBy(null, runs, changedBlocks.filter(isChanged)))
 }

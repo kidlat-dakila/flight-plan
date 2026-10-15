@@ -64,6 +64,10 @@ One stop on the tour: an explanation of one piece of the change, placed on top o
 
 **One changed step is no child.** A declaration with a single changed step has its own waypoint alone. A step that would be the only child of its parent is left out, and its own children take its place.
 
+**A short block is read whole.** A function, a component, a hook, a method, a condition, a loop, a `switch` or a `case` of fewer than six lines is one waypoint with no children, whether it is the declaration or a step inside one. What changed inside it is folded into it. One of six lines or more is read in parts as above.
+
+**A line has one waypoint.** A step never starts on the line its parent starts on, nor on the line an earlier sibling starts on. A step on its parent's first line, such as a changed parameter, is left out and its own children take its place. Siblings that start on one line are one child, named after the first, from its first line to the last line of either. So a call and the arguments and callback written on its line are one waypoint.
+
 | Of a child | What it is |
 |---|---|
 | `id` | The id of its parent and its place among the children: `w3.2`, and `w3.2.1` inside that one |

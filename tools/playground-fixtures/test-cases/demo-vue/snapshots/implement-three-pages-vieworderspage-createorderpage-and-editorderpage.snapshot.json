@@ -4294,47 +4294,7 @@
                         "src/views/orders/CreateOrderPage.vue#function@13:33",
                         "src/views/orders/CreateOrderPage.vue#navigation@13:39"
                       ],
-                      "children": [
-                        {
-                          "id": "w20.4.1",
-                          "title": "Added the draft argument of the create handler",
-                          "declaration": "CreateOrderPage › handleSubmit › draft",
-                          "reading": "The author added an argument `draft`, an [`OrderDraft`](code:src/types/order.ts#OrderDraft). [`<OrderForm />` emits `submit` with a copy of its draft](code:src/views/orders/components/OrderForm.vue#L16), so that the handler receives the fields as the staff member left them.",
-                          "needsAttention": null,
-                          "findings": [],
-                          "range": {
-                            "lineStart": 12,
-                            "lineEnd": 12
-                          },
-                          "category": "statement",
-                          "journeyNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
-                          "codeBlockIds": [
-                            "src/views/orders/CreateOrderPage.vue#variable@12:23"
-                          ],
-                          "children": []
-                        },
-                        {
-                          "id": "w20.4.2",
-                          "title": "Added the call that saves the new order",
-                          "declaration": "CreateOrderPage › handleSubmit › saveOrder",
-                          "reading": "The author added a call to `saveOrder(draft, { onSuccess })` whose `onSuccess` calls `router.push(\"/orders\")`. [The mutation of `useCreateOrder()` sends the `POST` request and invalidates the orders](code:src/composables/use-orders.ts#L16-19), so that [`<ViewOrdersPage />`](code:src/views/orders/ViewOrdersPage.vue#ViewOrdersPage) requests the orders again when it opens. A failed request calls no `onSuccess`, and the page stays on the form.",
-                          "needsAttention": null,
-                          "findings": [],
-                          "range": {
-                            "lineStart": 13,
-                            "lineEnd": 13
-                          },
-                          "category": "statement",
-                          "journeyNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
-                          "codeBlockIds": [
-                            "src/views/orders/CreateOrderPage.vue#effect@13:3",
-                            "src/views/orders/CreateOrderPage.vue#code-event@13:22",
-                            "src/views/orders/CreateOrderPage.vue#function@13:33",
-                            "src/views/orders/CreateOrderPage.vue#navigation@13:39"
-                          ],
-                          "children": []
-                        }
-                      ]
+                      "children": []
                     },
                     {
                       "id": "w20.5",
@@ -6475,87 +6435,7 @@
                         "src/views/orders/EditOrderPage.vue#function@14:53",
                         "src/views/orders/EditOrderPage.vue#navigation@14:59"
                       ],
-                      "children": [
-                        {
-                          "id": "w22.6.1",
-                          "title": "Added the draft argument of the edit handler",
-                          "declaration": "EditOrderPage › handleSubmit › draft",
-                          "reading": "The author added an argument `draft`, an [`OrderDraft`](code:src/types/order.ts#OrderDraft). [`<OrderForm />` emits `submit` with a copy of its draft](code:src/views/orders/components/OrderForm.vue#L16), so that the handler receives the fields as the staff member left them.",
-                          "needsAttention": null,
-                          "findings": [],
-                          "range": {
-                            "lineStart": 13,
-                            "lineEnd": 13
-                          },
-                          "category": "statement",
-                          "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
-                          "codeBlockIds": [
-                            "src/views/orders/EditOrderPage.vue#variable@13:23"
-                          ],
-                          "children": []
-                        },
-                        {
-                          "id": "w22.6.2",
-                          "title": "Added the call that saves the edited order",
-                          "declaration": "EditOrderPage › handleSubmit › saveOrder",
-                          "reading": "The author added a call to `saveOrder()` with a copy of the draft whose `id` is `orderId`, and an `onSuccess` callback that calls `router.push(\"/orders\")`. [The mutation of `useUpdateOrder()` sends the `PUT` request and invalidates the orders](code:src/composables/use-orders.ts#L24-27), so that [`<ViewOrdersPage />`](code:src/views/orders/ViewOrdersPage.vue#ViewOrdersPage) requests the orders again when it opens.",
-                          "needsAttention": null,
-                          "findings": [],
-                          "range": {
-                            "lineStart": 14,
-                            "lineEnd": 14
-                          },
-                          "category": "statement",
-                          "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
-                          "codeBlockIds": [
-                            "src/views/orders/EditOrderPage.vue#effect@14:3",
-                            "src/views/orders/EditOrderPage.vue#property@14:25",
-                            "src/views/orders/EditOrderPage.vue#code-event@14:42",
-                            "src/views/orders/EditOrderPage.vue#function@14:53",
-                            "src/views/orders/EditOrderPage.vue#navigation@14:59"
-                          ],
-                          "children": [
-                            {
-                              "id": "w22.6.2.1",
-                              "title": "Added the id of the route to the saved order",
-                              "declaration": "EditOrderPage › handleSubmit › saveOrder › id",
-                              "reading": "The author added `id: orderId` after the spread of the draft. The draft starts from the loaded order, so it holds an `id` already. This property sets `id` to [the `orderId` of the route](code:src/views/orders/EditOrderPage.vue#L9), so that [`updateOrder()` sends the `PUT` request to the path of that id](code:src/api/orders.ts#L12).",
-                              "needsAttention": null,
-                              "findings": [],
-                              "range": {
-                                "lineStart": 14,
-                                "lineEnd": 14
-                              },
-                              "category": "statement",
-                              "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
-                              "codeBlockIds": [
-                                "src/views/orders/EditOrderPage.vue#property@14:25"
-                              ],
-                              "children": []
-                            },
-                            {
-                              "id": "w22.6.2.2",
-                              "title": "Added the return to the list after a save",
-                              "declaration": "EditOrderPage › handleSubmit › saveOrder › onSuccess",
-                              "reading": "The author added an `onSuccess` callback that calls `router.push(\"/orders\")`. `saveOrder()` calls it when the `PUT` request succeeds, so that [`<ViewOrdersPage />`](code:src/views/orders/ViewOrdersPage.vue#ViewOrdersPage) opens and requests the orders again. A failed request calls no `onSuccess`, and the page stays on the form.",
-                              "needsAttention": null,
-                              "findings": [],
-                              "range": {
-                                "lineStart": 14,
-                                "lineEnd": 14
-                              },
-                              "category": "statement",
-                              "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
-                              "codeBlockIds": [
-                                "src/views/orders/EditOrderPage.vue#code-event@14:42",
-                                "src/views/orders/EditOrderPage.vue#function@14:53",
-                                "src/views/orders/EditOrderPage.vue#navigation@14:59"
-                              ],
-                              "children": []
-                            }
-                          ]
-                        }
-                      ]
+                      "children": []
                     },
                     {
                       "id": "w22.7",

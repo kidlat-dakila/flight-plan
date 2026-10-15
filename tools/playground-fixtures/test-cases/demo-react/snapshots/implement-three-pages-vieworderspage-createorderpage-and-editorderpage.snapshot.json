@@ -4821,47 +4821,7 @@
                         "src/routes/orders/create.tsx#function@13:35",
                         "src/routes/orders/create.tsx#navigation@13:41"
                       ],
-                      "children": [
-                        {
-                          "id": "w23.3.1",
-                          "title": "Added the draft argument of the create handler",
-                          "declaration": "CreateOrderPage › handleSubmit › draft",
-                          "reading": "The author added an argument `draft`, an [`OrderDraft`](code:src/types/order.ts#OrderDraft). [`<OrderForm />` calls `onSubmit(draft)` with its state](code:src/routes/orders/components/OrderForm.tsx#L21), so that the handler receives the fields as the staff member left them.",
-                          "needsAttention": null,
-                          "findings": [],
-                          "range": {
-                            "lineStart": 12,
-                            "lineEnd": 12
-                          },
-                          "category": "statement",
-                          "journeyNodeId": "src/routes/orders/create.tsx#component@8:1",
-                          "codeBlockIds": [
-                            "src/routes/orders/create.tsx#variable@12:25"
-                          ],
-                          "children": []
-                        },
-                        {
-                          "id": "w23.3.2",
-                          "title": "Added the call that saves the new order",
-                          "declaration": "CreateOrderPage › handleSubmit › saveOrder",
-                          "reading": "The author added a call to `saveOrder(draft, { onSuccess })` whose `onSuccess` calls `navigate(\"/orders\")`. [The mutation of `useCreateOrder()` sends the `POST` request and invalidates the orders](code:src/hooks/use-orders.ts#L16-19), so that [`<ViewOrdersPage />`](code:src/routes/orders/index.tsx#ViewOrdersPage) requests the orders again when it opens. A failed request calls no `onSuccess`, and the page stays on the form.",
-                          "needsAttention": null,
-                          "findings": [],
-                          "range": {
-                            "lineStart": 13,
-                            "lineEnd": 13
-                          },
-                          "category": "statement",
-                          "journeyNodeId": "src/routes/orders/create.tsx#component@8:1",
-                          "codeBlockIds": [
-                            "src/routes/orders/create.tsx#effect@13:5",
-                            "src/routes/orders/create.tsx#code-event@13:24",
-                            "src/routes/orders/create.tsx#function@13:35",
-                            "src/routes/orders/create.tsx#navigation@13:41"
-                          ],
-                          "children": []
-                        }
-                      ]
+                      "children": []
                     },
                     {
                       "id": "w23.4",
@@ -7310,87 +7270,7 @@
                         "src/routes/orders/edit.tsx#function@15:55",
                         "src/routes/orders/edit.tsx#navigation@15:61"
                       ],
-                      "children": [
-                        {
-                          "id": "w25.7.1",
-                          "title": "Added the draft argument of the edit handler",
-                          "declaration": "EditOrderPage › handleSubmit › draft",
-                          "reading": "The author added an argument `draft`, an [`OrderDraft`](code:src/types/order.ts#OrderDraft). [`<OrderForm />` calls `onSubmit(draft)` with its state](code:src/routes/orders/components/OrderForm.tsx#L21), so that the handler receives the fields as the staff member left them.",
-                          "needsAttention": null,
-                          "findings": [],
-                          "range": {
-                            "lineStart": 14,
-                            "lineEnd": 14
-                          },
-                          "category": "statement",
-                          "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
-                          "codeBlockIds": [
-                            "src/routes/orders/edit.tsx#variable@14:25"
-                          ],
-                          "children": []
-                        },
-                        {
-                          "id": "w25.7.2",
-                          "title": "Added the call that saves the edited order",
-                          "declaration": "EditOrderPage › handleSubmit › saveOrder",
-                          "reading": "The author added a call to `saveOrder()` with a copy of the draft whose `id` is `orderId`, and an `onSuccess` callback that calls `navigate(\"/orders\")`. [The mutation of `useUpdateOrder()` sends the `PUT` request and invalidates the orders](code:src/hooks/use-orders.ts#L24-27), so that [`<ViewOrdersPage />`](code:src/routes/orders/index.tsx#ViewOrdersPage) requests the orders again when it opens.",
-                          "needsAttention": null,
-                          "findings": [],
-                          "range": {
-                            "lineStart": 15,
-                            "lineEnd": 15
-                          },
-                          "category": "statement",
-                          "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
-                          "codeBlockIds": [
-                            "src/routes/orders/edit.tsx#effect@15:5",
-                            "src/routes/orders/edit.tsx#property@15:27",
-                            "src/routes/orders/edit.tsx#code-event@15:44",
-                            "src/routes/orders/edit.tsx#function@15:55",
-                            "src/routes/orders/edit.tsx#navigation@15:61"
-                          ],
-                          "children": [
-                            {
-                              "id": "w25.7.2.1",
-                              "title": "Added the id of the URL to the saved order",
-                              "declaration": "EditOrderPage › handleSubmit › saveOrder › id",
-                              "reading": "The author added `id: orderId` after the spread of the draft. The draft starts from the loaded order, so it holds an `id` already. This property sets `id` to [the `orderId` of the URL](code:src/routes/orders/edit.tsx#L7), so that [`updateOrder()` sends the `PUT` request to the path of that id](code:src/api/orders.ts#L17).",
-                              "needsAttention": null,
-                              "findings": [],
-                              "range": {
-                                "lineStart": 15,
-                                "lineEnd": 15
-                              },
-                              "category": "statement",
-                              "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
-                              "codeBlockIds": [
-                                "src/routes/orders/edit.tsx#property@15:27"
-                              ],
-                              "children": []
-                            },
-                            {
-                              "id": "w25.7.2.2",
-                              "title": "Added the return to the list after a save",
-                              "declaration": "EditOrderPage › handleSubmit › saveOrder › onSuccess",
-                              "reading": "The author added an `onSuccess` callback that calls `navigate(\"/orders\")`. `saveOrder()` calls it when the `PUT` request succeeds, so that [`<ViewOrdersPage />`](code:src/routes/orders/index.tsx#ViewOrdersPage) opens and requests the orders again. A failed request calls no `onSuccess`, and the page stays on the form.",
-                              "needsAttention": null,
-                              "findings": [],
-                              "range": {
-                                "lineStart": 15,
-                                "lineEnd": 15
-                              },
-                              "category": "statement",
-                              "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
-                              "codeBlockIds": [
-                                "src/routes/orders/edit.tsx#code-event@15:44",
-                                "src/routes/orders/edit.tsx#function@15:55",
-                                "src/routes/orders/edit.tsx#navigation@15:61"
-                              ],
-                              "children": []
-                            }
-                          ]
-                        }
-                      ]
+                      "children": []
                     },
                     {
                       "id": "w25.8",
