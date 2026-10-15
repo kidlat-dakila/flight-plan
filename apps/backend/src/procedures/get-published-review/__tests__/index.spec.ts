@@ -23,7 +23,7 @@ describe("getPublishedReview", () => {
     const context = createContext()
     const [review, page] = await Promise.all([
       getPublishedReview(KEY, context),
-      getReview({ ...KEY, filterKeys: null, isShowingReviewed: false }, context),
+      getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context),
     ])
 
     expect(Object.keys(review?.codeLinks ?? {})).toStrictEqual(Object.keys(page?.kind === "artifact" ? page.codeLinks : {}))

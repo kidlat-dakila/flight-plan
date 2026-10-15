@@ -76,15 +76,7 @@ A Flight Plan is **uploaded** once it has been published, to the pull request de
 
 ### Review Navigator
 
-The **Review Navigator** is the toolbar at the foot of the page, on the reviewer's page, the author's page and a published Flight Plan. It shows the controls of the section that fills the screen, and every control has a key, which is the main way to use it:
-
-- **Jump to (W)** lists the Context, the diagrams and the Code Walkthrough of the segment on screen, then the other segments with theirs.
-- **Context**: expand or collapse every accordion section (Q).
-- **Journey Flow Diagram**: collapse or expand every node (Q), zoom in (Z), zoom out (X), full screen (F), reset the view (T).
-- **Blast Diagram**: the export bound (E) and the import bound (Q), then the same zoom, full screen and reset.
-- **Code Walkthrough**: the previous (A) and the next waypoint (D), mark the current waypoint reviewed (S), the filter of finding kinds and of reviewed waypoints (F), collapse every file (Q) or the file being read (E), and hide the waypoint boxes (X).
-
-Stepping to a waypoint opens it and dims the rest of its file's code until the reviewer scrolls away. Keys do nothing while a field or a dialog has the keyboard.
+The **[Review Navigator](review-navigator.md)** is the toolbar at the foot of the page, on the reviewer's page, the author's page and a published Flight Plan. It holds the controls of the section that fills the screen, each with a key: Jump to (W), Back (A) and Next (D) on every section, and the controls of the section itself, such as zooming a diagram or stepping through the waypoints of the Code Walkthrough and marking them reviewed.
 
 ### Comments and the review
 

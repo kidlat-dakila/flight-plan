@@ -8,7 +8,7 @@ const BRANCH_KEY = { repositoryName: "flight-plan", targetId: "branch-refactor-t
 const createContext = () => createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z"))
 
 const readThreads = async (context: ReturnType<typeof createContext>) => {
-  const page = await getReview({ ...DISCUSSED_KEY, filterKeys: null, isShowingReviewed: false }, context)
+  const page = await getReview({ ...DISCUSSED_KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
   if (page?.kind !== "artifact") throw new Error("The sample review is not written.")
   return page.segments.flatMap((segment) => segment.walkthrough.files).flatMap((file) => file.threads)
 }

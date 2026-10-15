@@ -17,8 +17,8 @@ const NOW = new Date("2026-10-01T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "pr-416" }
 const PAGE_REQUEST: GetReviewInput = {
   ...KEY,
-  filterKeys: null,
-  isShowingReviewed: false,
+  filterKeysBySegment: {},
+  reviewedSegmentIds: [],
 }
 
 const DELIVERY_CHANGE: RecordedChange = {

@@ -6,8 +6,8 @@ import { setReviewed } from "@/procedures/set-reviewed"
 const REVIEW_REQUEST: GetReviewInput = {
   repositoryName: "storefront",
   targetId: "pr-405",
-  filterKeys: null,
-  isShowingReviewed: false,
+  filterKeysBySegment: {},
+  reviewedSegmentIds: [],
 }
 
 const KEY = { repositoryName: "storefront", targetId: "pr-405" }
@@ -30,7 +30,7 @@ describe("setReviewed", () => {
     ).resolves.toStrictEqual({ isReviewed: true })
     const page = await getReview(REVIEW_REQUEST, context)
 
-    expect(page).toMatchObject({ walkthroughControls: { reviewedToggle: { label: "Reviewed", countLabel: "1 waypoint" } } })
+    expect(page).toMatchObject({ segments: [{ walkthrough: { controls: { reviewedToggle: { label: "Reviewed", countLabel: "1 waypoint" } } } }] })
     expect(waypointCountOf(page)).toBe(1)
   })
 
@@ -43,7 +43,7 @@ describe("setReviewed", () => {
     await setReviewed({ ...KEY, subject: { kind: "file", path: "src/cart/subtotal.ts" }, isReviewed: false }, context)
 
     await expect(getReview(REVIEW_REQUEST, context)).resolves.toMatchObject({
-      walkthroughControls: { reviewedToggle: { countLabel: "0 waypoints", isAvailable: false } },
+      segments: [{ walkthrough: { controls: { reviewedToggle: { countLabel: "0 waypoints", isAvailable: false } } } }],
     })
   })
 

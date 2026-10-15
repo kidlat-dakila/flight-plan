@@ -1,4 +1,7 @@
 import { parseWithGrammar, type GrammarId, type SyntaxNode } from "@/ast-graph/parser"
+import type { FindExportedBinding } from "@/catalogue/matching/syntax-reader"
+import { outlineFile } from "./languages"
+import type { FindExport } from "./reading"
 import { compareRanges, isBefore } from "./source-range"
 import type { StoredCodeBlock } from "./stored-types"
 import type { CodeBlockDiff, CodeBlockType, SourceRange } from "./types"
@@ -25,6 +28,7 @@ interface RemovedCode {
 }
 
 const DELETED: CodeBlockType = "deleted"
+const UNTYPED_ROOT_TYPES: readonly CodeBlockType[] = ["file", DELETED]
 const CLASS: CodeBlockType = "class"
 const LINE_BREAK = "\n"
 const DECORATOR_MARK = "@"
@@ -117,26 +121,39 @@ const findHolder = (blocks: readonly StoredCodeBlock[], position: SourceRange["s
 const standsAsBlock = ({ kind }: RemovedCode, holder: StoredCodeBlock | null): boolean =>
   holder === null ? kind !== "broken" : kind === "declaration"
 
-const deletedBlockAt = (filePath: string, diff: PatchDiff, name: string | null, holder: StoredCodeBlock | null): StoredCodeBlock => ({
-  id: `${filePath}#${DELETED}@${String(diff.range.start.line)}:${String(diff.range.start.column)}`,
-  ...(name === null ? {} : { name }),
-  type: DELETED,
-  lineOfCodeRangeReference: [diff.range],
-  parentBlockId: holder?.id ?? null,
-  childrenBlockIds: [],
-  isRoot: holder === null,
-  isExported: false,
-  exportedByFilePaths: [],
-  lineOfCodeDiffs: [diff.range],
-  diffs: [{ type: diff.type, range: diff.range }],
-  diffSourceIds: [],
-  outerSymbols: [],
-  usedByIds: [],
-  nextBlockIds: [],
-  handedFrom: [],
-  filePath,
-  catalogue: null,
-})
+const findNoExport: FindExport = () => null
+const findNoBinding: FindExportedBinding = () => null
+
+const typeOfRemovedRoot = (filePath: string, lines: readonly string[]): CodeBlockType | null => {
+  const source = withoutIndentation(lines).join(LINE_BREAK)
+  const reading = outlineFile({ filePath, source, importedFilePaths: new Map() }).read(findNoExport, findNoBinding)
+  return reading.blocks.find((block) => block.parentId === null && !UNTYPED_ROOT_TYPES.includes(block.type))?.type ?? null
+}
+
+const deletedBlockAt = (filePath: string, diff: PatchDiff, name: string | null, holder: StoredCodeBlock | null): StoredCodeBlock => {
+  const deletedType = holder === null && diff.removedLines !== undefined ? typeOfRemovedRoot(filePath, diff.removedLines) : null
+  return {
+    id: `${filePath}#${DELETED}@${String(diff.range.start.line)}:${String(diff.range.start.column)}`,
+    ...(name === null ? {} : { name }),
+    type: DELETED,
+    ...(deletedType === null ? {} : { deletedType }),
+    lineOfCodeRangeReference: [diff.range],
+    parentBlockId: holder?.id ?? null,
+    childrenBlockIds: [],
+    isRoot: holder === null,
+    isExported: false,
+    exportedByFilePaths: [],
+    lineOfCodeDiffs: [diff.range],
+    diffs: [{ type: diff.type, range: diff.range }],
+    diffSourceIds: [],
+    outerSymbols: [],
+    usedByIds: [],
+    nextBlockIds: [],
+    handedFrom: [],
+    filePath,
+    catalogue: null,
+  }
+}
 
 interface DecoratedHolder {
   readonly holding: (text: string) => string

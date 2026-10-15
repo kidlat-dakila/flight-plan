@@ -320,6 +320,8 @@ A use of a member leads to the property of that name, the way it leads to a func
 
 The lines are read with the language of the file, without their indentation, and as members of a class when they were taken out of one. A deleted block has no symbols and nothing uses it, and no chain passes through it.
 
+**A deleted block at the root of a file keeps the type of what was taken out.** The lines are read again as a file of their own, with the reader of the file's language, and the type of their first root block is the block's `deletedType`: `function`, `component`, `hook`, `class`, `root-variable`, `type-declaration`, `import` and the others, decided as they are for code that is still there. Lines that make no block of a type, such as a comment, leave it out, and so does a deleted block inside another block.
+
 ## Who names a block
 
 A type is decided by the code where the syntax says it, and by the [catalogue](catalogue.md) where it depends on a library.

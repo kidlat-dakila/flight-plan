@@ -33,8 +33,8 @@ const typescript: Repository = {
 const requestFor = (repositoryName: string, targetId: string): GetReviewInput => ({
   repositoryName,
   targetId,
-  filterKeys: null,
-  isShowingReviewed: false,
+  filterKeysBySegment: {},
+  reviewedSegmentIds: [],
 })
 
 const createContext = (): ProcedureContext => ({

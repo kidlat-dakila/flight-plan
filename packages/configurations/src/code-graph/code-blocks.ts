@@ -160,6 +160,7 @@ export interface CodeBlock {
   readonly id: string
   readonly name?: string
   readonly type: CodeBlockType
+  readonly deletedType?: CodeBlockType
   readonly lineOfCodeRangeReference: readonly SourceRange[]
   readonly parentBlock: CodeBlock | null
   readonly childrenBlocks: readonly CodeBlock[]

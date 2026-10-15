@@ -16,7 +16,7 @@ import { updateNodes } from "@/procedures/update-nodes"
 const NOW = new Date("2026-10-13T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "pr-416" }
 const PATH = "src/delivery/estimate.ts"
-const PAGE_REQUEST = { ...KEY, filterKeys: null, isShowingReviewed: false }
+const PAGE_REQUEST = { ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }
 
 const DELIVERY_CHANGE: RecordedChange = {
   repositoryPath: "/Users/dev/projects/storefront",

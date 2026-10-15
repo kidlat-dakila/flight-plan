@@ -1,21 +1,51 @@
 import type { ReactNode } from "react"
-import { navigatorButtonOf, type NavigatorChoice, type NavigatorControl, type NavigatorGroup } from "@/lib/navigator-controls"
+import {
+  BACK_KEY,
+  navigatorButtonOf,
+  NEXT_KEY,
+  type ChangeTone,
+  type NavigatorBadge,
+  type NavigatorButton,
+  type NavigatorChoice,
+  type NavigatorControl,
+  type NavigatorGroup,
+  type NavigatorMenuItem,
+  type NavigatorSubmenu,
+  type SectionSteps,
+} from "@/lib/navigator-controls"
 
-type FilterKey = "attention" | "bug" | "risk" | "nit" | "question"
+type FindingFilterKey = "attention" | "bug" | "risk" | "nit" | "question"
+
+const FINDING_FILTER_KEYS: readonly FindingFilterKey[] = ["attention", "bug", "risk", "nit", "question"]
+
+interface FilterOption {
+  readonly key: string
+  readonly label: string
+  readonly detailLabel: string
+  readonly detailChange: ChangeTone | null
+  readonly isSelected: boolean
+  readonly toggledKeys: readonly string[]
+}
+
+interface FilterSubmenu {
+  readonly id: string
+  readonly label: string
+  readonly heading: string
+  readonly valueLabel: string | null
+  readonly options: readonly FilterOption[]
+}
 
 export interface WalkthroughControls {
   readonly filter: {
     readonly buttonLabel: string
-    readonly valueLabel: string | null
+    readonly badge: NavigatorBadge | null
     readonly heading: string
-    readonly hint: string
-    readonly options: readonly {
-      readonly key: FilterKey
-      readonly label: string
-      readonly countLabel: string
-      readonly isSelected: boolean
-      readonly toggledKeys: readonly FilterKey[]
+    readonly groups: readonly {
+      readonly id: string
+      readonly options: readonly FilterOption[]
+      readonly more: FilterSubmenu | null
     }[]
+    readonly submenus: readonly FilterSubmenu[]
   }
   readonly reviewedToggle: { readonly label: string, readonly countLabel: string, readonly isShown: boolean, readonly isAvailable: boolean }
   readonly stepping: { readonly previousLabel: string, readonly nextLabel: string }
@@ -31,19 +61,18 @@ export interface WalkthroughNavigationRequest {
   readonly areFilesCollapsed: boolean
   readonly isFileCollapsed: boolean | null
   readonly areWaypointsHidden: boolean
-  readonly markerOf: (key: FilterKey | "reviewed") => ReactNode
+  readonly markerOf: (key: FindingFilterKey | "reviewed") => ReactNode
+  readonly sectionSteps: SectionSteps
   readonly onPrevious: () => void
   readonly onNext: () => void
   readonly onCurrentReviewedChange: ((isReviewed: boolean) => void) | null
-  readonly onFilterChange: ((keys: readonly FilterKey[] | null) => void) | null
+  readonly onFilterChange: ((keys: readonly string[] | null) => void) | null
   readonly onShowReviewedChange: ((isShown: boolean) => void) | null
   readonly onFilesCollapsedChange: (isCollapsed: boolean) => void
   readonly onFileCollapsedChange: (isCollapsed: boolean) => void
   readonly onWaypointsHiddenChange: (isHidden: boolean) => void
 }
 
-const PREVIOUS_KEY = "a"
-const NEXT_KEY = "d"
 const REVIEW_KEY = "s"
 const FILTER_KEY = "f"
 const FILES_KEY = "q"
@@ -56,14 +85,27 @@ const EXPAND_FILE_LABEL = "Expand file"
 const HIDE_WAYPOINTS_LABEL = "Hide waypoints"
 const SHOW_WAYPOINTS_LABEL = "Show waypoints"
 const REVIEWED_CHOICE_ID = "reviewed"
+const PICK_WAYPOINT_HINT = `Pick a waypoint first: press ${NEXT_KEY.toUpperCase()} to step to the next one.`
+const SHOW_WAYPOINTS_HINT = `Show the waypoints first: press ${WAYPOINTS_KEY.toUpperCase()}.`
+
+const stepButtonOf = (canStep: boolean, sectionStep: NavigatorButton | null, waypointStep: NavigatorButton): NavigatorButton =>
+  canStep || sectionStep === null ? waypointStep : sectionStep
 
 const steppingGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup => {
   const { stepping } = request.controls
   const position: NavigatorControl[] = request.positionLabel === null ? [] : [{ kind: "position", label: request.positionLabel }]
   return [
-    navigatorButtonOf({ key: PREVIOUS_KEY, label: stepping.previousLabel, isDisabled: !request.canStepBack, onRun: request.onPrevious }),
+    stepButtonOf(
+      request.canStepBack,
+      request.sectionSteps.back,
+      navigatorButtonOf({ key: BACK_KEY, label: stepping.previousLabel, isDisabled: !request.canStepBack, onRun: request.onPrevious }),
+    ),
     ...position,
-    navigatorButtonOf({ key: NEXT_KEY, label: stepping.nextLabel, isDisabled: !request.canStepForward, onRun: request.onNext }),
+    stepButtonOf(
+      request.canStepForward,
+      request.sectionSteps.next,
+      navigatorButtonOf({ key: NEXT_KEY, label: stepping.nextLabel, isDisabled: !request.canStepForward, onRun: request.onNext }),
+    ),
   ]
 }
 
@@ -79,6 +121,7 @@ const reviewGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup =>
       isPressed: isReviewed,
       isPrimary: !isReviewed,
       isDisabled: currentWaypoint === null || request.areWaypointsHidden,
+      disabledHint: request.areWaypointsHidden ? SHOW_WAYPOINTS_HINT : PICK_WAYPOINT_HINT,
       onRun: () => { onCurrentReviewedChange(!isReviewed) },
     }),
   ]
@@ -90,9 +133,11 @@ const reviewedChoicesOf = (request: WalkthroughNavigationRequest): NavigatorChoi
   return onShowReviewedChange === null
     ? []
     : [{
+        kind: "choice",
         id: REVIEWED_CHOICE_ID,
         label: toggle.label,
-        countLabel: toggle.countLabel,
+        detailLabel: toggle.countLabel,
+        detailTone: null,
         marker: request.markerOf("reviewed"),
         isChecked: toggle.isShown,
         isDisabled: !toggle.isAvailable && !toggle.isShown,
@@ -100,28 +145,45 @@ const reviewedChoicesOf = (request: WalkthroughNavigationRequest): NavigatorChoi
       }]
 }
 
+const isFindingFilterKey = (key: string): key is FindingFilterKey =>
+  FINDING_FILTER_KEYS.some((findingKey) => findingKey === key)
+
+const filterChoiceOf = (request: WalkthroughNavigationRequest, onFilterChange: (keys: readonly string[] | null) => void) => (option: FilterOption): NavigatorChoice => ({
+  kind: "choice",
+  id: option.key,
+  label: option.label,
+  detailLabel: option.detailLabel,
+  detailTone: option.detailChange,
+  marker: isFindingFilterKey(option.key) ? request.markerOf(option.key) : null,
+  isChecked: option.isSelected,
+  isDisabled: false,
+  onToggle: () => { onFilterChange(option.toggledKeys.length === 0 ? null : option.toggledKeys) },
+})
+
 const filterGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup => {
   const { onFilterChange } = request
   if (onFilterChange === null) return []
   const { filter } = request.controls
-  const kindChoices: NavigatorChoice[] = filter.options.map((option) => ({
-    id: option.key,
-    label: option.label,
-    countLabel: option.countLabel,
-    marker: request.markerOf(option.key),
-    isChecked: option.isSelected,
-    isDisabled: false,
-    onToggle: () => { onFilterChange(option.toggledKeys.length === 0 ? null : option.toggledKeys) },
-  }))
-  const reviewedChoices = reviewedChoicesOf(request)
+  const choiceOf = filterChoiceOf(request, onFilterChange)
+  const submenuOf = (submenu: FilterSubmenu): NavigatorSubmenu => ({
+    kind: "submenu",
+    id: submenu.id,
+    label: submenu.label,
+    heading: submenu.heading,
+    valueLabel: submenu.valueLabel,
+    choices: submenu.options.map(choiceOf),
+  })
+  const groupItems: NavigatorMenuItem[][] = filter.groups.map((group) => [
+    ...group.options.map(choiceOf),
+    ...(group.more === null ? [] : [submenuOf(group.more)]),
+  ])
   return [{
     kind: "menu",
     key: FILTER_KEY,
     label: filter.buttonLabel,
-    valueLabel: filter.valueLabel,
+    badge: filter.badge,
     heading: filter.heading,
-    hint: filter.hint,
-    choiceGroups: reviewedChoices.length === 0 ? [kindChoices] : [kindChoices, reviewedChoices],
+    itemGroups: [...groupItems, filter.submenus.map(submenuOf), reviewedChoicesOf(request)].filter((items) => items.length > 0),
   }]
 }
 

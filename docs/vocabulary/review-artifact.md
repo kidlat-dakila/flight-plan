@@ -112,4 +112,5 @@ A block usually shows both: it focuses on a declaration and marks what changed i
 Two ways of moving through an artifact:
 
 - **Section navigation**: a menu that jumps between the artifact's sections (Context, Journey Flow Diagram, Blast Diagram, Code Walkthrough). In a segmented artifact it lists each segment with that segment's sections under it.
-- **Waypoint stepping**: moving to the previous or next waypoint in the Code Walkthrough, across files and across segments, in reading order.
+- **Section stepping**: moving to the section before or after the one on screen, in the order of the section navigation, from the end of one segment into the next.
+- **Waypoint stepping**: moving to the previous or next waypoint of a segment's Code Walkthrough, across its files, in reading order. A waypoint's position counts the waypoints of its segment. Past the first or the last waypoint of a segment, stepping carries on as section stepping.

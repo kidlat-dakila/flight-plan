@@ -210,7 +210,7 @@ const FileSection = ({
       id={file.anchorId}
       aria-label={file.title}
       data-reviewed={file.isReviewed}
-      className="scroll-mt-(--waypoint-scroll-margin) pt-6 [contain-intrinsic-size:auto_32rem] [content-visibility:auto]"
+      className={cn("scroll-mt-(--waypoint-scroll-margin) pt-6", isCollapsed ? "" : "[contain-intrinsic-size:auto_32rem] [content-visibility:auto]")}
     >
       <div className="overflow-clip rounded-md border">
         <div className={cn("sticky top-(--file-header-top) z-10 flex h-11 items-center gap-3 bg-muted pr-1 pl-1.5", isCollapsed ? "" : "border-b")}>

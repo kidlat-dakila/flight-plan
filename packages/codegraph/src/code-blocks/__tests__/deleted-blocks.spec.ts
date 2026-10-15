@@ -22,6 +22,26 @@ describe("the deleted blocks of a group", () => {
     expect(diffsIn({ "src/cart.ts": CART, "src/util.ts": UTIL }, { "src/util.ts": patch })).toStrictEqual(["deleted old in the file deleted 1:1-1:1"])
   })
 
+  it("keeps the type of what was taken out at the root of a file, read as the language reads it", () => {
+    const deletedTypesIn = (filePath: string, removed: readonly string[]): (string | null)[] =>
+      groupWith({ [filePath]: UTIL }, { [filePath]: codeOf(`@@ -1,${String(removed.length + 1)} +1,1 @@`, ...removed.map((line) => `-${line}`), " export function keep() {") })
+        .codeBlocks.filter((block) => block.type === "deleted")
+        .map((block) => block.deletedType ?? null)
+
+    expect(deletedTypesIn("src/util.ts", ["export function old() {", "  return 0", "}"])).toStrictEqual(["function"])
+    expect(deletedTypesIn("src/util.ts", ["export class Old {}"])).toStrictEqual(["class"])
+    expect(deletedTypesIn("src/util.ts", ["export const LIMIT = 3"])).toStrictEqual(["root-variable"])
+    expect(deletedTypesIn("src/util.ts", ["export type Old = { id: string }"])).toStrictEqual(["type-declaration"])
+    expect(deletedTypesIn("src/view.tsx", ["export const Old = () => <p>old</p>"])).toStrictEqual(["component"])
+    expect(deletedTypesIn("src/util.ts", ["// an old note"])).toStrictEqual([null])
+  })
+
+  it("gives no deleted type to a declaration taken out of a block", () => {
+    const patch = codeOf("@@ -1,3 +1,2 @@", " export function keep() {", "-  const gone = 2", "   return 1")
+
+    expect(groupWith({ "src/util.ts": UTIL }, { "src/util.ts": patch }).codeBlocks.find((block) => block.type === "deleted")?.deletedType).toBeUndefined()
+  })
+
   it("puts the block in the file: among its blocks, at its root, and among the diff blocks", () => {
     const patch = codeOf("@@ -1,4 +1,1 @@", "-export function old() {", "-  return 0", "-}", " export function keep() {")
     const group = groupWith({ "src/util.ts": UTIL }, { "src/util.ts": patch })

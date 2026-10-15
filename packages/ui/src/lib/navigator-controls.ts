@@ -4,31 +4,52 @@ export interface NavigatorButton {
   readonly kind: "button"
   readonly key: string
   readonly label: string
+  readonly shortLabel: string | null
   readonly description: string | null
   readonly isPressed: boolean
   readonly isPrimary: boolean
   readonly isDisabled: boolean
+  readonly disabledHint: string | null
   readonly onRun: () => void
 }
 
+export type ChangeTone = "added" | "modified" | "deleted"
+
 export interface NavigatorChoice {
+  readonly kind: "choice"
   readonly id: string
   readonly label: string
-  readonly countLabel: string
+  readonly detailLabel: string
+  readonly detailTone: ChangeTone | null
   readonly marker: ReactNode
   readonly isChecked: boolean
   readonly isDisabled: boolean
   readonly onToggle: () => void
 }
 
+export interface NavigatorSubmenu {
+  readonly kind: "submenu"
+  readonly id: string
+  readonly label: string
+  readonly heading: string
+  readonly valueLabel: string | null
+  readonly choices: readonly NavigatorChoice[]
+}
+
+export type NavigatorMenuItem = NavigatorChoice | NavigatorSubmenu
+
+export interface NavigatorBadge {
+  readonly count: number
+  readonly label: string
+}
+
 export interface NavigatorMenu {
   readonly kind: "menu"
   readonly key: string
   readonly label: string
-  readonly valueLabel: string | null
+  readonly badge: NavigatorBadge | null
   readonly heading: string
-  readonly hint: string
-  readonly choiceGroups: readonly (readonly NavigatorChoice[])[]
+  readonly itemGroups: readonly (readonly NavigatorMenuItem[])[]
 }
 
 export interface NavigatorPosition {
@@ -43,32 +64,41 @@ export type NavigatorGroup = readonly NavigatorControl[]
 interface ButtonRequest {
   readonly key: string
   readonly label: string
+  readonly shortLabel?: string | null
   readonly description?: string | null
   readonly isPressed?: boolean
   readonly isPrimary?: boolean
   readonly isDisabled?: boolean
+  readonly disabledHint?: string | null
   readonly onRun: () => void
 }
 
-export const navigatorButtonOf = ({ key, label, description = null, isPressed = false, isPrimary = false, isDisabled = false, onRun }: ButtonRequest): NavigatorButton => ({
+export const navigatorButtonOf = ({ key, label, shortLabel = null, description = null, isPressed = false, isPrimary = false, isDisabled = false, disabledHint = null, onRun }: ButtonRequest): NavigatorButton => ({
   kind: "button",
   key,
   label,
+  shortLabel,
   description,
   isPressed,
   isPrimary,
   isDisabled,
+  disabledHint,
   onRun,
 })
 
-const choiceSignatureOf = (choice: NavigatorChoice): string => [choice.id, choice.label, choice.countLabel, choice.isChecked, choice.isDisabled].join("|")
+const choiceSignatureOf = (choice: NavigatorChoice): string => [choice.id, choice.label, choice.detailLabel, choice.detailTone, choice.isChecked, choice.isDisabled].join("|")
+
+const menuItemSignatureOf = (item: NavigatorMenuItem): string =>
+  item.kind === "choice"
+    ? choiceSignatureOf(item)
+    : ["submenu", item.id, item.label, item.heading, item.valueLabel, ...item.choices.map(choiceSignatureOf)].join("|")
 
 const controlSignatureOf = (control: NavigatorControl): string => {
   if (control.kind === "position") return `position|${control.label}`
   if (control.kind === "button") {
-    return ["button", control.key, control.label, control.description, control.isPressed, control.isPrimary, control.isDisabled].join("|")
+    return ["button", control.key, control.label, control.shortLabel, control.description, control.isPressed, control.isPrimary, control.isDisabled, control.disabledHint].join("|")
   }
-  return ["menu", control.key, control.label, control.valueLabel, control.heading, control.hint, ...control.choiceGroups.flat().map(choiceSignatureOf)].join("|")
+  return ["menu", control.key, control.label, control.badge?.label, control.heading, ...control.itemGroups.flat().map(menuItemSignatureOf)].join("|")
 }
 
 export const navigatorSignatureOf = (groups: readonly NavigatorGroup[]): string =>
@@ -161,4 +191,58 @@ export const jumpMenuOf = (rail: NavigatorRail, dominantAnchorId: string | null)
     otherGroups: rail.groups.filter((group) => group !== currentGroup),
     looseSections: rail.sections.map(toJumpSection(dominantAnchorId)),
   }
+}
+
+export const BACK_KEY = "a"
+export const NEXT_KEY = "d"
+const BACK_LABEL = "Back"
+const NEXT_LABEL = "Next"
+
+export interface SectionSteps {
+  readonly back: NavigatorButton | null
+  readonly next: NavigatorButton | null
+}
+
+export const NO_SECTION_STEPS: SectionSteps = { back: null, next: null }
+
+const SEGMENT_LABEL = "Segment"
+
+interface RailStop {
+  readonly section: NavigatorRailSection
+  readonly segmentLabel: string | null
+}
+
+const segmentLabelOf = (position: number, segmentCount: number): string =>
+  `${SEGMENT_LABEL} (${String(position + 1)}/${String(segmentCount)})`
+
+const railStopsOf = (rail: NavigatorRail): RailStop[] => [
+  ...rail.groups.flatMap((group, position) =>
+    group.sections.map((section) => ({ section, segmentLabel: segmentLabelOf(position, rail.groups.length) }))),
+  ...rail.sections.map((section) => ({ section, segmentLabel: null })),
+]
+
+const stopLabelOf = (stop: RailStop, here: RailStop): string =>
+  stop.segmentLabel !== here.segmentLabel && stop.segmentLabel !== null ? stop.segmentLabel : stop.section.label
+
+const stepButtonOf = (key: string, prefix: string, here: RailStop, stop: RailStop | undefined, onJump: (anchorId: string) => void): NavigatorButton | null =>
+  stop === undefined
+    ? null
+    : navigatorButtonOf({ key, label: `${prefix}: ${stopLabelOf(stop, here)}`, shortLabel: prefix, onRun: () => { onJump(stop.section.anchorId) } })
+
+export const sectionStepsOf = (rail: NavigatorRail, anchorId: string | null, onJump: (anchorId: string) => void): SectionSteps => {
+  const stops = railStopsOf(rail)
+  const position = stops.findIndex((stop) => stop.section.anchorId === anchorId)
+  if (position === -1) return NO_SECTION_STEPS
+  const here = stops[position]
+  return {
+    back: stepButtonOf(BACK_KEY, BACK_LABEL, here, stops[position - 1], onJump),
+    next: stepButtonOf(NEXT_KEY, NEXT_LABEL, here, stops[position + 1], onJump),
+  }
+}
+
+export const withSectionSteps = (groups: readonly NavigatorGroup[], steps: SectionSteps): NavigatorGroup[] => {
+  const stepGroup = [steps.back, steps.next]
+    .filter((button): button is NavigatorButton => button !== null)
+    .filter((button) => controlOfKey(groups, button.key) === null)
+  return stepGroup.length === 0 ? [...groups] : [stepGroup, ...groups]
 }

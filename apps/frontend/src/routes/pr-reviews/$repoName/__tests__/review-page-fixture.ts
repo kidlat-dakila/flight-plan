@@ -92,6 +92,7 @@ const segment = (id: string, title: string | null, position: number, files: read
     heading: "Code Walkthrough",
     coverageLabel: "All 1 changed file",
     emptyMessage: null,
+    controls: WALKTHROUGH_CONTROLS,
     files,
     fileOrder: fileOrderOf(files),
   },
@@ -150,6 +151,11 @@ const cartFile = {
   threads: [],
 }
 
+const aloneInSegment = <File extends typeof priceFile | typeof cartFile>(file: File): File => ({
+  ...file,
+  rows: file.rows.map((row) => (row.kind === "waypoint" ? { ...row, waypoint: { ...row.waypoint, positionLabel: "1 of 1", previousId: null, nextId: null } } : row)),
+})
+
 const shell = {
   documentTitle: "Count held units • storefront",
   lineColor: "blue",
@@ -187,10 +193,36 @@ const shell = {
 const filterOption = (key: string, label: string, isSelected: boolean, toggledKeys: readonly string[]) => ({
   key,
   label,
-  countLabel: "1 waypoint",
+  detailLabel: "1 waypoint",
+  detailChange: null,
   isSelected,
   toggledKeys,
 })
+
+const WALKTHROUGH_CONTROLS = {
+  filter: {
+    buttonLabel: "Filter",
+    badge: null,
+    heading: "Show waypoints with",
+    groups: [
+      { id: "finding", options: [filterOption("attention", "Needs Attention", false, ["attention"]), filterOption("bug", "Bug", false, ["bug"])], more: null },
+      { id: "block", options: [{ ...filterOption("block:function:modified", "Function", false, ["block:function:modified"]), detailLabel: "Modified", detailChange: "modified" }], more: null },
+    ],
+    submenus: [{
+      id: "change",
+      label: "Change type",
+      heading: "Change type",
+      valueLabel: null,
+      options: [filterOption("added", "Added", false, ["added"]), filterOption("removed", "Removed", false, ["removed"])],
+    }],
+  },
+  reviewedToggle: { label: "Reviewed", countLabel: "0 waypoints", isShown: false, isAvailable: false },
+  stepping: {
+    previousLabel: "Previous waypoint",
+    nextLabel: "Next waypoint",
+  },
+  currentReview: { markLabel: "Mark as reviewed", reviewedLabel: "Reviewed" },
+}
 
 export const pendingComment = { id: "pending-1", locationLabel: "src/cart.ts, line 3", excerpt: "Round here?", staleLabel: null, discardLabel: "Discard" }
 
@@ -236,24 +268,8 @@ export const artifactPage = {
     ],
     sections: [{ anchorId: "conversation", kind: "conversation", label: "Conversation", children: [] }],
   },
-  segments: [segment("stock", "Stock check", 1, [priceFile]), segment("checkout", "Checkout", 2, [cartFile])],
-  walkthroughControls: {
-    filter: {
-      buttonLabel: "Filter",
-      valueLabel: null,
-      heading: "Show waypoints with",
-      hint: "No kind ticked shows every kind. Reviewed waypoints stay hidden until ticked.",
-      options: [filterOption("attention", "Needs Attention", false, ["attention"]), filterOption("bug", "Bug", false, ["bug"])],
-    },
-    reviewedToggle: { label: "Reviewed", countLabel: "0 waypoints", isShown: false, isAvailable: false },
-    stepping: {
-      firstWaypointId: "price-of",
-      lastWaypointId: "subtotal",
-      previousLabel: "Previous waypoint",
-      nextLabel: "Next waypoint",
-    },
-    currentReview: { markLabel: "Mark as reviewed", reviewedLabel: "Reviewed" },
-  },
+  segments: [segment("stock", "Stock check", 1, [aloneInSegment(priceFile)]), segment("checkout", "Checkout", 2, [aloneInSegment(cartFile)])],
+
   conversation: {
     anchorId: "conversation",
     heading: "Conversation",

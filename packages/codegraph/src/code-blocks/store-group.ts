@@ -42,6 +42,7 @@ const storeBlock = (block: CodeBlock, placeBySymbol: PlaceBySymbol): StoredCodeB
   id: block.id,
   ...(block.name === undefined ? {} : { name: block.name }),
   type: block.type,
+  ...(block.deletedType === undefined ? {} : { deletedType: block.deletedType }),
   lineOfCodeRangeReference: block.lineOfCodeRangeReference,
   parentBlockId: block.parentBlock?.id ?? null,
   childrenBlockIds: idsOf(block.childrenBlocks),

@@ -62,6 +62,7 @@ export * from "./scaffold/review-artifact"
 export * from "./scaffold/source-lines"
 export * from "./walkthrough/build"
 export * from "./walkthrough/reviewed-marks"
+export * from "./walkthrough/waypoint-filter"
 export * from "./walkthrough/waypoints"
 
 export type CodegraphSegmentKind = CodeSegmentKind

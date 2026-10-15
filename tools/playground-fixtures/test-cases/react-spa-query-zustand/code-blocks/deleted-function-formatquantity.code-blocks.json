@@ -10576,6 +10576,7 @@
         "id": "src/lib/format.ts#deleted@8:1",
         "name": "formatQuantity",
         "type": "deleted",
+        "deletedType": "function",
         "lineOfCodeRangeReference": [
           {
             "start": {

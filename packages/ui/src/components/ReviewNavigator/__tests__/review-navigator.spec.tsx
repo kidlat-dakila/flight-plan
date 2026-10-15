@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
-import ReviewNavigator, { ReviewNavigatorBar } from "@/components/ReviewNavigator"
+import ReviewNavigator, { navigatorLeftOf, ReviewNavigatorBar } from "@/components/ReviewNavigator"
 import { findNavigator, findNavigatorButton, showSectionInView } from "@/lib/__tests__/navigator-harness"
 import { useNavigatorSection } from "@/lib/navigator"
 import { navigatorButtonOf, type NavigatorRail } from "@/lib/navigator-controls"
@@ -54,6 +54,27 @@ describe("ReviewNavigator", () => {
     expect(onRun).toHaveBeenCalledOnce()
   })
 
+  it("steps to the section before and after the one on screen with A and D", async () => {
+    showSectionInView("one-walkthrough")
+    renderPage()
+
+    expect(await findNavigatorButton("Back: Context")).toBeTruthy()
+    expect(await findNavigatorButton("Next: Segment (2/2)")).toBeTruthy()
+
+    fireEvent.keyDown(document.body, { key: "a" })
+    fireEvent.keyDown(document.body, { key: "d" })
+
+    expect(scrollIntoView.mock.contexts.flatMap((element) => (element instanceof Element ? [element.id] : []))).toStrictEqual(["one-context", "two-context"])
+  })
+
+  it("has no Back on the first section", async () => {
+    showSectionInView("one-context")
+    renderPage()
+
+    expect(await findNavigatorButton("Next: Code Walkthrough")).toBeTruthy()
+    expect(within(await findNavigator()).queryByRole("button", { name: /^Back/ })).toBeNull()
+  })
+
   it("opens Jump to with W, lists the sections of this segment and the other segments, and jumps to the one chosen", async () => {
     showSectionInView("one-walkthrough")
     renderPage()
@@ -105,5 +126,17 @@ describe("ReviewNavigator", () => {
     const { container } = render(<ReviewNavigatorBar />)
 
     expect(container.childElementCount).toBe(0)
+  })
+})
+
+describe("navigatorLeftOf", () => {
+  it("centres the navigator on the main column until it knows how wide it is", () => {
+    expect(navigatorLeftOf(null)).toBe("calc(var(--navigator-inset-left, 0px) + (100% - var(--navigator-inset-left, 0px) - var(--navigator-inset-right, 0px)) / 2)")
+  })
+
+  it("keeps a navigator of known width between the gutter and the right edge of the page", () => {
+    expect(navigatorLeftOf(800)).toBe(
+      "clamp(calc(1.5rem + 400px), calc(var(--navigator-inset-left, 0px) + (100% - var(--navigator-inset-left, 0px) - var(--navigator-inset-right, 0px)) / 2), calc(100% - var(--navigator-inset-right, 1.5rem) - 400px))",
+    )
   })
 })

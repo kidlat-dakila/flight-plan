@@ -47,6 +47,7 @@ const linkBlock = (stored: StoredCodeBlock, lookup: GroupLookup): CodeBlock => {
     id: stored.id,
     ...(stored.name === undefined ? {} : { name: stored.name }),
     type: stored.type,
+    ...(stored.deletedType === undefined ? {} : { deletedType: stored.deletedType }),
     lineOfCodeRangeReference: stored.lineOfCodeRangeReference,
     isRoot: stored.isRoot,
     isExported: stored.isExported,

@@ -1,0 +1,105 @@
+# Review Navigator
+
+## Definition
+
+The Review Navigator is the toolbar that floats at the foot of a [Flight Plan Review](flight-plan-review.md). It is on the reviewer's page, the author's page and a published Flight Plan, and it stays on screen while the reader scrolls. It holds the controls of the section the reader is looking at, and every control has a key. The keys are the main way to use it: a reader can go through a whole review without leaving the keyboard.
+
+## The section on screen
+
+The navigator always works on one section of the [review artifact](review-artifact.md): the Context, the [Journey Flow Diagram](journey-flow-diagram.md), the [Blast Diagram](blast-diagram.md) or the [Code Walkthrough](code-walkthrough.md) of a segment, or the Conversation. It is the section that fills most of the screen. A short section that is wholly in view counts as filling the screen, so a short Context still gets its own controls.
+
+When the section on screen changes, the navigator changes with it: the controls of the new section fade in and the navigator settles to its new width.
+
+## Always there
+
+Three controls are on every section.
+
+| Control | Key | What it does |
+|---|---|---|
+| **Jump to** | W | Opens a menu of the sections of the segment on screen, with the one on screen marked "Here", then the other segments, each opening on its own sections, then the sections outside every segment, such as the Conversation. The arrow keys move through it and Enter jumps. |
+| **Back** | A | Goes to the section before the one on screen. |
+| **Next** | D | Goes to the section after the one on screen. |
+
+Back and Next follow the order of the section rail and carry on from the end of one segment into the next. Each names where it goes: "Back: Context", "Next: Blast Diagram". When it goes into another segment it names that segment by its place: "Next: Segment (2/3)". The first section has no Back and the last has no Next.
+
+## The controls of each section
+
+| Section | Controls |
+|---|---|
+| Context | **Expand all** or **Collapse all** (Q), for the accordion sections of the context |
+| Journey Flow Diagram | **Collapse all** or **Expand all** nodes (Q), **Zoom in** (Z), **Zoom out** (X), **Full screen** (F), **Reset view** (T) |
+| Blast Diagram | **Export bound** (E) and **Import bound** (Q) when it has both views, **Zoom in** (Z), **Zoom out** (X), **Full screen** (F), **Reset view** (T) |
+| Code Walkthrough | **Previous waypoint** (A), the position, **Next waypoint** (D), **Mark as reviewed** (S), **Filter** (F), **Collapse all** or **Expand all** files (Q), **Collapse file** or **Expand file** (E), **Hide waypoints** or **Show waypoints** (X) |
+
+A control that is on, such as Full screen or Hide waypoints, is drawn pressed. Pressing a key flashes its control, so the reader sees what the key did.
+
+## Reading the Code Walkthrough
+
+The Code Walkthrough is where the navigator does the most.
+
+### Stepping through waypoints
+
+Previous waypoint and Next waypoint take the place of Back and Next. They step through the waypoints of the segment on screen, across its files, in reading order. Stepping to a waypoint opens it, makes it the **current waypoint** and dims the rest of its file's code, so the lines it is about stand out. The dimming ends when the reader scrolls away; the waypoint stays current.
+
+The position between the two buttons counts the waypoints of the segment: "4 of 8". Each segment counts on its own.
+
+At the ends of a segment, stepping carries on through the sections. From the first waypoint, Previous waypoint becomes Back to the section before the walkthrough, such as "Back: Blast Diagram". From the last, Next waypoint becomes Next into the following segment, such as "Next: Segment (2/3)".
+
+With no current waypoint in the segment, the reader's place on the page decides: Next waypoint goes to the first waypoint below where they are reading, and Previous waypoint to the last one above.
+
+Going to a Code Walkthrough with Back, Next or Jump to makes its first waypoint current and opens it, so the reader can mark it reviewed straight away.
+
+### Marking reviewed
+
+Mark as reviewed (S) marks the current waypoint reviewed. It is the one button in the navigator drawn in the primary colour. Once the waypoint is reviewed it reads "Reviewed", drawn pressed, and pressing it again takes the mark off. When reviewed waypoints are hidden, marking one moves on to the next waypoint first, so the reader is not left on a waypoint that has just disappeared.
+
+When there is nothing to mark, the button is dimmed. Clicking it, pressing S or resting on it shows a tooltip that says what to do next:
+
+- with no current waypoint: "Pick a waypoint first: press D to step to the next one."
+- with the waypoints hidden: "Show the waypoints first: press X."
+
+The author's page has no Mark as reviewed, since the author does not review their own Flight Plan. On a published Flight Plan, Mark as reviewed and the filter say that they are only available in Flight Plan.
+
+### Filtering
+
+Filter (F) opens a menu of ticks that narrows the walkthrough to the waypoints worth stopping at. It holds:
+
+- the finding kinds: Needs Attention, Bug, Risk, Nit and Question;
+- the code blocks of the segment, each a kind of block with what the change did to it, such as "Function" with "Added" or "Component" with "Modified". The four with the most waypoints are listed, and the others are under **More**. Imports are left out;
+- **Change type**, a submenu of Added, Modified and Removed;
+- **Reviewed**, which brings back the waypoints already marked reviewed.
+
+Within one group a waypoint shows when it matches any tick, and with ticks in several groups it has to match each of them. While anything is ticked, each file shows only the code around the waypoints the filter keeps, and the rest folds away. The Filter button carries a badge with how many filters are ticked.
+
+Each segment has its own filter: ticking something in one segment leaves the others as they are, and the counts in the menu are the waypoints of that segment. [Code Walkthrough](code-walkthrough.md#filters) describes each filter in full.
+
+### Arranging the files
+
+- **Collapse all** or **Expand all** (Q) folds or opens every file of the walkthrough.
+- **Collapse file** or **Expand file** (E) folds or opens the file being read.
+- **Hide waypoints** or **Show waypoints** (X) hides every waypoint box and leaves the code. Stepping to a waypoint shows them again.
+
+A file folded by hand opens again when stepping reaches a waypoint inside it.
+
+### Keeping the reader's place
+
+Collapsing files and filtering can take away the code the reader was reading. When that happens the walkthrough stays on screen instead of the page sliding on to the next segment: collapsing or expanding every file, and changing the filter, bring the head of the walkthrough back to the top of the page. Folding one file keeps that file where it was.
+
+## Full screen
+
+A diagram in full screen keeps the navigator, inside the full-screen view, with the diagram's own controls. Jump to, Back and Next still work from there: they leave full screen and go to the section.
+
+## Fitting the screen
+
+The navigator sits centred under the main column, between the section rail and the chat panel when the chat is open. It never leaves the window or slides under the chat panel. When centring would push it past an edge, it moves in from that edge, over the section rail if it has to.
+
+When it is still too wide for the space, it gets more compact until it fits:
+
+1. Back and Next drop the name of the section they go to, and read "Back" and "Next".
+2. Every control shows only its key. Its name stays as a tooltip, and screen readers still read it.
+
+When the space grows again, or the reader moves to another section, it goes back to the fullest form that fits.
+
+## When the keys do nothing
+
+The keys belong to the reader's typing first. They do nothing while the reader types in a field, such as a comment or the chat, while a dialog is open, or while Ctrl, Cmd or Alt is held. A key of a control that is not on the section on screen does nothing either.

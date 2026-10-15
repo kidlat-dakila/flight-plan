@@ -74,11 +74,15 @@ const ARRANGE_FILES_DESCRIPTION = "Move a file up or down in the Code Walkthroug
 const NO_PATHS: readonly string[] = []
 const NO_SEGMENTS: readonly never[] = []
 const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
-const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--section-scroll-margin:4.5rem] [--file-header-top:3.5rem] [--waypoint-scroll-margin:7rem] [--chat-width:26rem]"
+const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--section-scroll-margin:4.5rem] [--file-header-top:3.5rem] [--waypoint-scroll-margin:7rem] [--chat-width:26rem] [--navigator-inset-left:calc(1.5rem+13rem+2rem)]"
+const NAVIGATOR_INSET_RIGHT = "[--navigator-inset-right:1.5rem]"
+const NAVIGATOR_INSET_RIGHT_BESIDE_CHAT = "[--navigator-inset-right:calc(var(--chat-width)+1.5rem)]"
+
+type FilterKeysBySegment = Readonly<Record<string, readonly string[]>>
 
 export interface ReviewSearch {
-  readonly filter?: string[] | undefined
-  readonly reviewed?: boolean | undefined
+  readonly filter?: FilterKeysBySegment | undefined
+  readonly reviewed?: readonly string[] | undefined
 }
 
 export interface ReviewParams {
@@ -105,9 +109,21 @@ const renderCommentEditor = (request: CommentEditorRequest) => (
 export const reviewRequestOf = (params: ReviewParams, search: ReviewSearch) => ({
   repositoryName: params.repoName,
   targetId: params.branchId,
-  filterKeys: search.filter ?? null,
-  isShowingReviewed: search.reviewed ?? false,
+  filterKeysBySegment: Object.fromEntries(Object.entries(search.filter ?? {}).map(([segmentId, keys]) => [segmentId, [...keys]])),
+  reviewedSegmentIds: [...(search.reviewed ?? [])],
 })
+
+const withSegmentFilter = (filter: FilterKeysBySegment | undefined, segmentId: string, keys: readonly string[] | null): FilterKeysBySegment | undefined => {
+  const others = Object.entries(filter ?? {}).filter(([otherId]) => otherId !== segmentId)
+  const entries = keys === null ? others : [...others, [segmentId, [...keys]] as const]
+  return entries.length === 0 ? undefined : Object.fromEntries(entries)
+}
+
+const withSegmentReviewed = (segmentIds: readonly string[] | undefined, segmentId: string, isShown: boolean): readonly string[] | undefined => {
+  const others = (segmentIds ?? []).filter((otherId) => otherId !== segmentId)
+  const shown = isShown ? [...others, segmentId] : others
+  return shown.length === 0 ? undefined : shown
+}
 
 export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) => {
   const trpc = useTRPC()
@@ -228,7 +244,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
 
   const artifact = page.kind === "artifact" ? page : null
   const arrangedWalkthroughSegment = artifact?.segments.find((segment) => segment.id === arrangedWalkthroughSegmentId) ?? null
-  const stepping = useWaypointStepping(artifact?.segments ?? NO_SEGMENTS, artifact?.walkthroughControls.stepping ?? null)
+  const stepping = useWaypointStepping(artifact?.segments ?? NO_SEGMENTS)
   const { openWaypointIds, currentWaypointId } = stepping
   const handleOpenCodeLink = stepping.onOpenCodeLink
   const handleToggleWaypoint = stepping.onToggleWaypoint
@@ -242,10 +258,12 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       : (id, isReviewed) => {
           setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
         },
-    onFilterChange: (keys) => {
-      onSearchChange({ filter: keys === null ? undefined : [...keys] })
+    onFilterChange: (segmentId, keys) => {
+      onSearchChange({ filter: withSegmentFilter(search.filter, segmentId, keys) })
     },
-    onShowReviewedChange: isOwn ? null : (isShown) => { onSearchChange({ reviewed: isShown ? true : undefined }) },
+    onShowReviewedChange: isOwn
+      ? null
+      : (segmentId, isShown) => { onSearchChange({ reviewed: withSegmentReviewed(search.reviewed, segmentId, isShown) }) },
   })
 
   const handleEditRailGroup = (anchorId: string): void => {
@@ -278,7 +296,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     <div
       className={cn(
         "px-6 pb-24 transition-[margin] duration-200 ease-out",
-        chat.isOpen ? "mr-(--chat-width) [--navigator-inset-right:var(--chat-width)]" : "",
+        chat.isOpen ? ["mr-(--chat-width)", NAVIGATOR_INSET_RIGHT_BESIDE_CHAT] : NAVIGATOR_INSET_RIGHT,
         ACCENT_LINE_CLASS,
         LAYOUT_VARIABLES,
       )}
@@ -403,7 +421,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       {page.kind === "missing"
         ? null
         : (
-            <ReviewNavigator rail={page.rail}>
+            <ReviewNavigator rail={page.rail} onSectionJump={stepping.onSectionEntered}>
               <WritingContext value={page.progress?.isWriting === true ? page.progress.label : null}>
                 <ReviewNotices
                   staleNotice={page.staleNotice}
@@ -516,7 +534,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           heading={segment.walkthrough.heading}
                           coverageLabel={segment.walkthrough.coverageLabel}
                           emptyMessage={segment.walkthrough.emptyMessage}
-                          navigation={walkthroughLayout.navigationOf(segment, page.walkthroughControls)}
+                          navigation={walkthroughLayout.navigationOf(segment)}
                           onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
                             ? () => { setArrangedWalkthroughSegmentId(segment.id) }
                             : null}
@@ -755,12 +773,19 @@ export const ReviewError = ({ error }: ErrorComponentProps) => (
   </ServerError>
 )
 
-const booleanOf = (value: unknown): boolean | undefined => (typeof value === "boolean" ? value : undefined)
-
 const stringListOf = (value: unknown): string[] | undefined =>
   Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : undefined
 
+const filterKeysBySegmentOf = (value: unknown): FilterKeysBySegment | undefined => {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return undefined
+  const entries = Object.entries(value).flatMap(([segmentId, keys]) => {
+    const listed = stringListOf(keys)
+    return listed === undefined ? [] : [[segmentId, listed] as const]
+  })
+  return entries.length === 0 ? undefined : Object.fromEntries(entries)
+}
+
 export const validateReviewSearch = (search: Record<string, unknown>): ReviewSearch => ({
-  filter: stringListOf(search.filter),
-  reviewed: booleanOf(search.reviewed),
+  filter: filterKeysBySegmentOf(search.filter),
+  reviewed: stringListOf(search.reviewed),
 })

@@ -6,6 +6,11 @@ import type { FileRow, WaypointView } from "@flightplan/configurations"
 const CONTEXT_ROWS = 3
 const SHORTEST_GAP_ROWS = 4
 
+export interface ShownRows {
+  readonly pinnedLines: readonly number[]
+  readonly focusSpans: readonly RowSpan[] | null
+}
+
 export interface PlacedWaypoint {
   readonly view: WaypointView
   readonly span: RowSpan | null
@@ -25,14 +30,16 @@ const isNearChange = (highlighted: HighlightedSource, index: number): boolean =>
 const isPinnedRow = (highlighted: HighlightedSource, pinnedLines: readonly number[], index: number): boolean =>
   highlighted.source.lines.some((line, position) => position === index && line.number !== null && pinnedLines.includes(line.number))
 
+const isInFocus = (focusSpans: ShownRows["focusSpans"], index: number): boolean =>
+  focusSpans === null || focusSpans.some((span) => isInSpan(index, span))
+
 const isShownRow = (
   highlighted: HighlightedSource,
   waypoints: readonly PlacedWaypoint[],
-  pinnedLines: readonly number[],
+  { pinnedLines, focusSpans }: ShownRows,
   index: number,
 ): boolean =>
-  isNearChange(highlighted, index)
-  || waypoints.some((placed) => isInSpan(index, placed.span))
+  (isInFocus(focusSpans, index) && (isNearChange(highlighted, index) || waypoints.some((placed) => isInSpan(index, placed.span))))
   || isPinnedRow(highlighted, pinnedLines, index)
 
 const startsWaypoint = (waypoints: readonly PlacedWaypoint[], index: number): boolean =>
@@ -52,8 +59,19 @@ const withRow = (
 
 const lengthOf = (run: RowRun): number => run.span.end - run.span.start + 1
 
-const withShortGapsShown = (runs: readonly RowRun[]): RowRun[] =>
-  runs.map((run) => (run.kind === "gap" && lengthOf(run) < SHORTEST_GAP_ROWS ? { ...run, kind: "lines" as const } : run))
+const BLANK_PATTERN = /^\s*$/
+
+const isRunInFocus = (focusSpans: ShownRows["focusSpans"], run: RowRun): boolean =>
+  isInFocus(focusSpans, run.span.start) && isInFocus(focusSpans, run.span.end)
+
+const isBlankRun = (highlighted: HighlightedSource, run: RowRun): boolean =>
+  highlighted.source.lines.every((line, index) => !isInSpan(index, run.span) || BLANK_PATTERN.test(line.text))
+
+const isShownShortGap = (highlighted: HighlightedSource, focusSpans: ShownRows["focusSpans"], run: RowRun): boolean =>
+  run.kind === "gap" && lengthOf(run) < SHORTEST_GAP_ROWS && (isRunInFocus(focusSpans, run) || isBlankRun(highlighted, run))
+
+const withShortGapsShown = (highlighted: HighlightedSource, focusSpans: ShownRows["focusSpans"]) => (runs: readonly RowRun[]): RowRun[] =>
+  runs.map((run) => (isShownShortGap(highlighted, focusSpans, run) ? { ...run, kind: "lines" as const } : run))
 
 const withRunMerged = (waypoints: readonly PlacedWaypoint[]) =>
   (runs: readonly RowRun[], run: RowRun): RowRun[] => {
@@ -66,14 +84,14 @@ const withRunMerged = (waypoints: readonly PlacedWaypoint[]) =>
 const rowRunsOf = (
   highlighted: HighlightedSource,
   waypoints: readonly PlacedWaypoint[],
-  pinnedLines: readonly number[],
+  shownRows: ShownRows,
 ): RowRun[] =>
-  withShortGapsShown(
+  withShortGapsShown(highlighted, shownRows.focusSpans)(
     highlighted.source.lines.reduce<RowRun[]>(
       (runs, _line, index) =>
         withRow(
           runs,
-          isShownRow(highlighted, waypoints, pinnedLines, index) ? "lines" : "gap",
+          isShownRow(highlighted, waypoints, shownRows, index) ? "lines" : "gap",
           index,
           startsWaypoint(waypoints, index),
         ),
@@ -87,14 +105,18 @@ const toWaypointRow = (placed: PlacedWaypoint): FileRow => ({
   waypoint: placed.view,
 })
 
+const holdsChange = (highlighted: HighlightedSource, span: RowSpan): boolean =>
+  highlighted.source.lines.some((line, index) => isInSpan(index, span) && line.mark !== "context")
+
+const gapLabelOf = (highlighted: HighlightedSource, span: RowSpan): string =>
+  holdsChange(highlighted, span)
+    ? countLabel(lengthOf({ kind: "gap", span }), "line hidden by the filter", "lines hidden by the filter")
+    : countLabel(lengthOf({ kind: "gap", span }), "unchanged line", "unchanged lines")
+
 const toRunRow = (highlighted: HighlightedSource, run: RowRun, decorations: LineDecorations): FileRow =>
   run.kind === "lines"
     ? { kind: "lines", id: `lines-${String(run.span.start)}`, lines: codeLinesIn(highlighted, run.span, null, decorations) }
-    : {
-        kind: "gap",
-        id: `gap-${String(run.span.start)}`,
-        label: countLabel(run.span.end - run.span.start + 1, "unchanged line", "unchanged lines"),
-      }
+    : { kind: "gap", id: `gap-${String(run.span.start)}`, label: gapLabelOf(highlighted, run.span) }
 
 const waypointRowsAt = (waypoints: readonly PlacedWaypoint[], index: number): FileRow[] =>
   waypoints.filter((placed) => placed.isVisible && placed.span?.start === index).map(toWaypointRow)
@@ -121,9 +143,9 @@ const toRows = (
 export const buildFileRows = (
   highlighted: HighlightedSource | null,
   waypoints: readonly PlacedWaypoint[],
-  pinnedLines: readonly number[],
+  shownRows: ShownRows,
   definitionIds: ReadonlySet<string>,
 ): FileRow[] =>
   highlighted === null
     ? waypoints.filter((placed) => placed.isVisible).map(toWaypointRow)
-    : toRows(highlighted, waypoints, rowRunsOf(highlighted, waypoints, pinnedLines), definitionIds)
+    : toRows(highlighted, waypoints, rowRunsOf(highlighted, waypoints, shownRows), definitionIds)

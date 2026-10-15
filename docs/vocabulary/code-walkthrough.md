@@ -115,9 +115,16 @@ A `question` has no trace and no solution: there is no claim to prove and no fix
 
 ## Filters
 
-The reviewer can narrow the tour to the waypoints worth stopping at. The filter is a set of ticks:
+The reviewer can narrow the tour to the waypoints worth stopping at. The filter is a set of ticks in groups:
 
-- **Needs Attention**
-- **Bug**, **Risk**, **Nit**, **Question**
+- The finding kinds: **Needs Attention**, **Bug**, **Risk**, **Nit**, **Question**
+- The code blocks: the type of each [root block](codegraph/code-blocks.md) the waypoints of the segment are in, and what the change did to it, such as **Function** with **Added** or **Component** with **Modified**. Each reads the type, then what happened in its colour: added in the added colour, modified in blue, deleted in the removed colour. The four with the most waypoints are listed, with any that are ticked, and the others are under **More**. Imports are left out: a root block that is an import, added, modified or deleted, has no option and matches no code block filter.
+- **Change type**, a submenu: **Added**, **Modified**, **Removed**
 
-With several ticked, a waypoint shows when it matches any of them. With nothing ticked, every waypoint shows. Each option shows how many waypoints it matches.
+A root block is **added** when every row of it is added, with no removed lines just before it, so a rewritten block is modified. It is **deleted** when it is a `deleted` block, and it is then named by the type of what was taken out, or "Code" when that type is not known. It is **modified** otherwise. A waypoint is in the root blocks of its code blocks, and a step is in the root blocks of its waypoint. A waypoint that covers several root blocks, such as a run of imports, matches each of them.
+
+A waypoint is **added** when every line of it is added, **removed** when every code block of it is deleted code, and **modified** when it changes some of its lines. A waypoint on lines the change leaves alone has no change type.
+
+Within a group, a waypoint shows when it matches any tick. With ticks in several groups, it has to match every one of those groups, so Bug and Added show the added waypoints that have a bug. A group with nothing ticked lets every waypoint through. While anything is ticked, a file shows only the root blocks that hold a waypoint the filter keeps; the rest of the file folds into gaps, short ones too unless they are only blank lines, and a gap that holds changed lines says how many lines the filter hides. Inside those root blocks, unchanged lines far from a change fold as they always do. A waypoint without code blocks keeps its own lines, and a line with a comment thread stays shown wherever it is. The Reviewed tick alone narrows nothing.
+
+The filter belongs to its segment: each segment has its own ticks and its own Reviewed tick, and the finding kinds, Change type and Reviewed count the waypoints of that segment. The Filter button carries a badge with how many filters are ticked, one included; the Reviewed tick is not counted. The Change type and More rows name their ticks ("Added, Removed").

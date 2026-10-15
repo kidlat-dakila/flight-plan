@@ -14,6 +14,7 @@ import {
   offerOf,
   pendingComment,
   showSectionInView,
+  twoFilePage,
   typeInto,
   unassignedFiles,
 } from "./review-page-fixture"
@@ -81,9 +82,30 @@ const renderReview = (handlers: ProcedureHandlers, path = REVIEW_PATH) =>
     }),
   )
 
+interface ScreenPlace {
+  readonly y: number
+  readonly height: number
+}
+
+const placeOnScreen = (rectsByAnchorId: Readonly<Record<string, ScreenPlace>>): void => {
+  const placesByAnchorId = new Map(Object.entries(rectsByAnchorId))
+  Reflect.defineProperty(HTMLElement.prototype, "getBoundingClientRect", {
+    configurable: true,
+    value(this: HTMLElement) {
+      const place = placesByAnchorId.get(this.id)
+      return DOMRect.fromRect(place === undefined ? {} : { x: 0, width: 1200, ...place })
+    },
+  })
+}
+
 describe("the review page", () => {
+  const scrollIntoView = vi.fn()
+  const scrolledAnchorIds = (): string[] =>
+    scrollIntoView.mock.contexts.flatMap((element) => (element instanceof Element ? [element.id] : []))
+
   beforeEach(() => {
-    Reflect.defineProperty(Element.prototype, "scrollIntoView", { value: vi.fn(), configurable: true })
+    scrollIntoView.mockClear()
+    Reflect.defineProperty(Element.prototype, "scrollIntoView", { value: scrollIntoView, configurable: true })
     Reflect.defineProperty(Element.prototype, "scrollTo", { value: vi.fn(), configurable: true })
     Reflect.defineProperty(Range.prototype, "getClientRects", { value: () => [], configurable: true })
     Reflect.defineProperty(Range.prototype, "getBoundingClientRect", { value: () => EMPTY_RECT, configurable: true })
@@ -215,7 +237,7 @@ describe("the review page", () => {
     await screen.findByText("Why stock matters.")
 
     expect(getReview).toHaveBeenCalledWith(
-      expect.objectContaining({ repositoryName: "storefront", targetId: "pr-412", filterKeys: null, isShowingReviewed: false }),
+      expect.objectContaining({ repositoryName: "storefront", targetId: "pr-412", filterKeysBySegment: {}, reviewedSegmentIds: [] }),
     )
   })
 
@@ -303,9 +325,9 @@ describe("the review page", () => {
     expect(screen.getAllByRole("button", { name: "Next waypoint" })).toHaveLength(1)
   })
 
-  it("steps through the waypoints across segments from the navigator, and opens the one it lands on", async () => {
+  it("steps through the waypoints of a segment from the navigator, and opens the one it lands on", async () => {
     showSectionInView("stock-code-walkthrough")
-    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    renderReview({ "review.get": () => ({ data: twoFilePage }) })
     const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
     const nextButton = await within(navigator).findByRole("button", { name: "Next waypoint" })
 
@@ -321,12 +343,62 @@ describe("the review page", () => {
 
     expect(await screen.findByText("Reading of The sum is rounded once.")).toBeTruthy()
     expect(screen.getByRole("region", { name: "The sum is rounded once" }).getAttribute("data-current")).toBe("true")
-    expect(within(navigator).getByRole("button", { name: "Next waypoint" })).toHaveProperty("disabled", true)
+    expect(within(navigator).getByText("2 of 2")).toBeTruthy()
+    expect(within(navigator).queryByRole("button", { name: "Next waypoint" })).toBeNull()
+    expect(within(navigator).getByRole("button", { name: "Next: Segment (2/2)" })).toBeTruthy()
+  })
+
+  it("hands Previous and Next to the sections around the walkthrough at the ends of its segment", async () => {
+    showSectionInView("stock-code-walkthrough")
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
+
+    expect(await within(navigator).findByRole("button", { name: "Back: Context" })).toBeTruthy()
+
+    fireEvent.keyDown(window, { key: "d" })
+
+    expect(await within(navigator).findByText("1 of 1")).toBeTruthy()
+    expect(within(navigator).getByRole("button", { name: "Back: Context" })).toBeTruthy()
+
+    fireEvent.keyDown(window, { key: "d" })
+
+    await waitFor(() => {
+      expect(scrolledAnchorIds()).toContain("checkout-context")
+    })
+  })
+
+  it("steps to the section before and after the one on screen with A and D", async () => {
+    showSectionInView("checkout-context")
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
+
+    expect(await within(navigator).findByRole("button", { name: "Back: Segment (1/2)" })).toBeTruthy()
+    expect(within(navigator).getByRole("button", { name: "Next: Code Walkthrough" })).toBeTruthy()
+
+    fireEvent.keyDown(window, { key: "a" })
+    fireEvent.keyDown(window, { key: "d" })
+
+    expect(scrolledAnchorIds()).toStrictEqual(["stock-code-walkthrough", "checkout-code-walkthrough"])
+  })
+
+  it("makes the first waypoint of a walkthrough current when the navigator goes to that walkthrough", async () => {
+    showSectionInView("stock-context")
+    renderReview({ "review.get": () => ({ data: twoFilePage }) })
+    const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
+    await within(navigator).findByRole("button", { name: "Next: Code Walkthrough" })
+
+    fireEvent.keyDown(window, { key: "d" })
+
+    await waitFor(() => {
+      expect(screen.getByRole("region", { name: "Held units reduce the price" }).getAttribute("data-current")).toBe("true")
+    })
+    expect(screen.getByText("Reading of Held units reduce the price.")).toBeTruthy()
+    expect(scrolledAnchorIds()).toStrictEqual(["stock-code-walkthrough"])
   })
 
   it("steps with D and A", async () => {
     showSectionInView("stock-code-walkthrough")
-    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    renderReview({ "review.get": () => ({ data: twoFilePage }) })
     await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" })
 
     fireEvent.keyDown(window, { key: "d" })
@@ -344,10 +416,10 @@ describe("the review page", () => {
   it("marks the current waypoint reviewed with S and moves on to the next one", async () => {
     const setReviewed = vi.fn(() => ({ data: { isReviewed: true } }))
     showSectionInView("stock-code-walkthrough")
-    renderReview({ "review.get": () => ({ data: artifactPage }), "review.setReviewed": setReviewed })
+    renderReview({ "review.get": () => ({ data: twoFilePage }), "review.setReviewed": setReviewed })
     const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
 
-    expect(await within(navigator).findByRole("button", { name: "Mark as reviewed" })).toHaveProperty("disabled", true)
+    expect((await within(navigator).findByRole("button", { name: "Mark as reviewed" })).getAttribute("aria-disabled")).toBe("true")
 
     fireEvent.keyDown(window, { key: "d" })
     await screen.findByText("Reading of Held units reduce the price.")
@@ -388,7 +460,40 @@ describe("the review page", () => {
     expect(screen.getByRole("button", { name: "Collapse file: src/cart.ts" })).toBeTruthy()
   })
 
-  it("sends the chosen filter to the backend", async () => {
+  it("brings the head of the walkthrough back when Q collapses every file of it", async () => {
+    placeOnScreen({ "stock-code-walkthrough": { y: -2000, height: 6000 }, "stock-file-1": { y: -1500, height: 4000 } })
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Collapse all" })
+
+    fireEvent.keyDown(window, { key: "q" })
+
+    await screen.findByRole("button", { name: "Expand file: src/price.ts" })
+    expect(scrolledAnchorIds()).toStrictEqual(["stock-code-walkthrough"])
+  })
+
+  it("keeps the file being read in place when E collapses it", async () => {
+    placeOnScreen({ "stock-code-walkthrough": { y: -2000, height: 6000 }, "stock-file-1": { y: -1500, height: 4000 } })
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Collapse file" })
+
+    fireEvent.keyDown(window, { key: "e" })
+
+    await screen.findByRole("button", { name: "Expand file: src/price.ts" })
+    expect(scrolledAnchorIds()).toStrictEqual(["stock-file-1"])
+  })
+
+  it("leaves the page where it is when Q collapses the files of a walkthrough not yet read into", async () => {
+    placeOnScreen({ "stock-code-walkthrough": { y: 100, height: 6000 }, "stock-file-1": { y: 180, height: 4000 } })
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Collapse all" })
+
+    fireEvent.keyDown(window, { key: "q" })
+
+    await screen.findByRole("button", { name: "Expand file: src/price.ts" })
+    expect(scrolledAnchorIds()).toStrictEqual([])
+  })
+
+  it("sends the chosen filter to the backend for the segment on screen only", async () => {
     const getReview = vi.fn(() => ({ data: artifactPage }))
     showSectionInView("stock-code-walkthrough")
     renderReview({ "review.get": getReview })
@@ -398,7 +503,24 @@ describe("the review page", () => {
     fireEvent.click(await screen.findByRole("menuitemcheckbox", { name: /Bug/ }))
 
     await waitFor(() => {
-      expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ filterKeys: ["bug"] }))
+      expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ filterKeysBySegment: { stock: ["bug"] } }))
+    })
+  })
+
+  it("brings the head of the walkthrough back once a filter changed while it was read into", async () => {
+    const getReview = vi.fn(() => ({ data: artifactPage }))
+    placeOnScreen({ "stock-code-walkthrough": { y: -2000, height: 6000 }, "stock-file-1": { y: -1500, height: 4000 } })
+    renderReview({ "review.get": getReview })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" })
+
+    fireEvent.keyDown(window, { key: "f" })
+    fireEvent.click(await screen.findByRole("menuitemcheckbox", { name: /Bug/ }))
+
+    await waitFor(() => {
+      expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ filterKeysBySegment: { stock: ["bug"] } }))
+    })
+    await waitFor(() => {
+      expect(scrolledAnchorIds()).toStrictEqual(["stock-code-walkthrough"])
     })
   })
 

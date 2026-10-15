@@ -1,12 +1,12 @@
 import { createHash } from "node:crypto"
 import { rowSpanOf, isInSpan } from "@/code/lines"
-import { countLabel } from "@/prose/count-label"
 import { parseInlines, parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
 import type { ReviewedMarks } from "@/walkthrough/reviewed-marks"
+import { rootBlockKeysOf, rootBlocksOf, type RootBlockKey } from "@/walkthrough/root-blocks"
 import {
   FINDING_KINDS,
-  WAYPOINT_FILTER_KEYS,
+  type CodeBlock,
   type CodeLine,
   type FileSection,
   type Finding,
@@ -15,8 +15,7 @@ import {
   type SourceLine,
   type TokenLine,
   type Waypoint,
-  type WaypointFilter,
-  type WaypointFilterKey,
+  type WaypointChange,
 } from "@flightplan/configurations"
 
 export interface FlatWaypoint {
@@ -24,32 +23,65 @@ export interface FlatWaypoint {
   readonly depth: number
   readonly path: string
   readonly fingerprint: string
+  readonly change: WaypointChange | null
+  readonly rootBlocks: readonly CodeBlock[]
+  readonly rootBlockKeys: readonly RootBlockKey[]
 }
+
+const DELETED_BLOCK_TYPE: CodeBlock["type"] = "deleted"
 
 const fingerprintOf = (content: unknown): string => createHash("sha1").update(JSON.stringify(content)).digest("hex")
 
-const waypointRowTexts = (source: SourceFile | null, waypoint: Waypoint): string[] => {
+const waypointRowsOf = (source: SourceFile | null, waypoint: Waypoint): SourceLine[] => {
   const range = source?.declarations[waypoint.declaration]
   const span = source === null || range === undefined ? null : rowSpanOf(source, range)
-  return (source?.lines ?? []).filter((_line, index) => isInSpan(index, span)).map((line) => `${line.mark}${line.text}`)
+  return (source?.lines ?? []).filter((_line, index) => isInSpan(index, span))
 }
 
-const waypointFingerprint = (source: SourceFile | null, waypoint: Waypoint): string =>
+const waypointFingerprint = (waypoint: Waypoint, rows: readonly SourceLine[]): string =>
   fingerprintOf({
     title: waypoint.title,
     reading: waypoint.reading,
     needsAttention: waypoint.needsAttention,
     findings: waypoint.findings,
-    rows: waypointRowTexts(source, waypoint),
+    rows: rows.map((line) => `${line.mark}${line.text}`),
   })
 
-const flattenWaypoint = (source: SourceFile | null, path: string, waypoint: Waypoint, depth: number): FlatWaypoint[] => [
-  { waypoint, depth, path, fingerprint: waypointFingerprint(source, waypoint) },
-  ...waypoint.children.flatMap((child) => flattenWaypoint(source, path, child, depth + 1)),
-]
+const isDeletedBlock = (block: CodeBlock): boolean => block.type === DELETED_BLOCK_TYPE
+
+export const waypointChangeOf = (waypoint: Waypoint, rows: readonly SourceLine[]): WaypointChange | null => {
+  if (waypoint.codeBlocks.length > 0 && waypoint.codeBlocks.every(isDeletedBlock)) return "removed"
+  if (rows.length > 0 && rows.every((line) => line.mark === "added")) return "added"
+  return rows.some((line) => line.mark !== "context") ? "modified" : null
+}
+
+interface Flattening {
+  readonly source: SourceFile | null
+  readonly path: string
+  readonly depth: number
+  readonly heldRootBlocks: readonly CodeBlock[]
+}
+
+const flattenWaypoint = (waypoint: Waypoint, { source, path, depth, heldRootBlocks }: Flattening): FlatWaypoint[] => {
+  const rows = waypointRowsOf(source, waypoint)
+  const ownRootBlocks = rootBlocksOf(waypoint)
+  const rootBlocks = ownRootBlocks.length === 0 ? heldRootBlocks : ownRootBlocks
+  return [
+    {
+      waypoint,
+      depth,
+      path,
+      fingerprint: waypointFingerprint(waypoint, rows),
+      change: waypointChangeOf(waypoint, rows),
+      rootBlocks,
+      rootBlockKeys: rootBlockKeysOf(rootBlocks, source),
+    },
+    ...waypoint.children.flatMap((child) => flattenWaypoint(child, { source, path, depth: depth + 1, heldRootBlocks: rootBlocks })),
+  ]
+}
 
 export const flattenWaypoints = (file: FileSection, source: SourceFile | null): FlatWaypoint[] =>
-  file.waypoints.flatMap((waypoint) => flattenWaypoint(source, file.path, waypoint, 0))
+  file.waypoints.flatMap((waypoint) => flattenWaypoint(waypoint, { source, path: file.path, depth: 0, heldRootBlocks: [] }))
 
 export const fileFingerprint = (waypoints: readonly FlatWaypoint[]): string =>
   fingerprintOf(waypoints.map((flat) => flat.fingerprint))
@@ -77,59 +109,6 @@ export const FINDING_KIND_LABELS: Readonly<Record<(typeof FINDING_KINDS)[number]
 }
 
 export const ATTENTION_LABEL = "Needs Attention"
-
-const FILTER_LABELS: Readonly<Record<WaypointFilterKey, string>> = {
-  attention: ATTENTION_LABEL,
-  ...FINDING_KIND_LABELS,
-}
-
-const isFilterKey = (key: string): key is WaypointFilterKey =>
-  WAYPOINT_FILTER_KEYS.some((filterKey) => filterKey === key)
-
-export const selectFilterKeys = (requested: readonly string[] | null): WaypointFilterKey[] =>
-  WAYPOINT_FILTER_KEYS.filter((key) => (requested ?? []).filter(isFilterKey).includes(key))
-
-const matchesKey = ({ waypoint }: FlatWaypoint, key: WaypointFilterKey): boolean =>
-  key === "attention" ? waypoint.needsAttention !== null : waypoint.findings.some((finding) => finding.kind === key)
-
-export const matchesFilter = (flat: FlatWaypoint, selected: readonly WaypointFilterKey[]): boolean =>
-  selected.length === 0 || selected.some((key) => matchesKey(flat, key))
-
-const toggledKeys = (selected: readonly WaypointFilterKey[], key: WaypointFilterKey): WaypointFilterKey[] =>
-  WAYPOINT_FILTER_KEYS.filter((candidate) => (candidate === key) !== selected.includes(candidate))
-
-const FILTER_BUTTON_LABEL = "Filter"
-const FILTER_HEADING = "Show waypoints with"
-const FILTER_HINT = "No kind ticked shows every kind. Reviewed waypoints stay hidden until ticked."
-const REVIEWED_VALUE_LABEL = "Reviewed"
-
-const kindsValueLabel = (selected: readonly WaypointFilterKey[]): string | null => {
-  if (selected.length > 1) return `${String(selected.length)} kinds`
-  return selected.length === 0 ? null : FILTER_LABELS[selected[0]]
-}
-
-const filterValueLabel = (selected: readonly WaypointFilterKey[], isShowingReviewed: boolean): string | null => {
-  const parts = [kindsValueLabel(selected), isShowingReviewed ? REVIEWED_VALUE_LABEL : null].filter((part) => part !== null)
-  return parts.length === 0 ? null : parts.join(" + ")
-}
-
-export const buildWaypointFilter = (
-  waypoints: readonly FlatWaypoint[],
-  selected: readonly WaypointFilterKey[],
-  isShowingReviewed: boolean,
-): WaypointFilter => ({
-  buttonLabel: FILTER_BUTTON_LABEL,
-  valueLabel: filterValueLabel(selected, isShowingReviewed),
-  heading: FILTER_HEADING,
-  hint: FILTER_HINT,
-  options: WAYPOINT_FILTER_KEYS.map((key) => ({
-    key,
-    label: FILTER_LABELS[key],
-    countLabel: countLabel(waypoints.filter((flat) => matchesKey(flat, key)).length, "waypoint", "waypoints"),
-    isSelected: selected.includes(key),
-    toggledKeys: toggledKeys(selected, key),
-  })),
-})
 
 export interface ReplacedRow {
   readonly line: SourceLine

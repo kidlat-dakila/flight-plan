@@ -56,6 +56,7 @@ export interface StoredCodeBlock {
   readonly id: string
   readonly name?: string
   readonly type: CodeBlockType
+  readonly deletedType?: CodeBlockType
   readonly lineOfCodeRangeReference: readonly SourceRange[]
   readonly parentBlockId: string | null
   readonly childrenBlockIds: readonly string[]

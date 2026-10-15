@@ -4,7 +4,10 @@ import {
   jumpMenuOf,
   navigatorButtonOf,
   navigatorSignatureOf,
+  NO_SECTION_STEPS,
   railAnchorIdsOf,
+  sectionStepsOf,
+  withSectionSteps,
   type NavigatorRail,
 } from "@/lib/navigator-controls"
 
@@ -84,5 +87,41 @@ describe("navigatorSignatureOf", () => {
 
     expect(signatureOf("Collapse all")).toBe(signatureOf("Collapse all"))
     expect(signatureOf("Collapse all")).not.toBe(signatureOf("Expand all"))
+  })
+})
+
+describe("sectionStepsOf", () => {
+  const labelsOf = (anchorId: string): (string | null)[] => {
+    const steps = sectionStepsOf(RAIL, anchorId, vi.fn())
+    return [steps.back?.label ?? null, steps.next?.label ?? null]
+  }
+
+  it("steps to the sections around the one on screen, and names another segment by its position", () => {
+    expect(labelsOf("one-context")).toStrictEqual([null, "Next: Code Walkthrough"])
+    expect(labelsOf("one-walkthrough")).toStrictEqual(["Back: Context", "Next: Segment (2/2)"])
+    expect(labelsOf("two-context")).toStrictEqual(["Back: Segment (1/2)", "Next: Conversation"])
+    expect(labelsOf("conversation")).toStrictEqual(["Back: Segment (2/2)", null])
+  })
+
+  it("jumps to the section it names", () => {
+    const onJump = vi.fn()
+
+    sectionStepsOf(RAIL, "one-walkthrough", onJump).next?.onRun()
+
+    expect(onJump).toHaveBeenCalledWith("two-context")
+  })
+
+  it("has no step while no section of the rail is on screen", () => {
+    expect(sectionStepsOf(RAIL, null, vi.fn())).toBe(NO_SECTION_STEPS)
+  })
+})
+
+describe("withSectionSteps", () => {
+  it("puts the steps before the controls of the section, and leaves a key the section runs itself to the section", () => {
+    const steps = sectionStepsOf(RAIL, "one-walkthrough", vi.fn())
+    const previousWaypoint = navigatorButtonOf({ key: "a", label: "Previous waypoint", onRun: vi.fn() })
+
+    expect(withSectionSteps([[previousWaypoint]], steps)).toStrictEqual([[steps.next], [previousWaypoint]])
+    expect(withSectionSteps([], NO_SECTION_STEPS)).toStrictEqual([])
   })
 })

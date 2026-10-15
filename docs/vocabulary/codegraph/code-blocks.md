@@ -257,6 +257,7 @@ interface CodeBlock {
   id: string
   name?: string
   type: CodeBlockType
+  deletedType?: CodeBlockType
   lineOfCodeRangeReference: SourceRange[]
   parentBlock: CodeBlock | null // alias not a shallow or clone
   childrenBlocks: CodeBlock[] // aliases not a shallow or clone
@@ -280,6 +281,7 @@ interface CodeBlock {
 | `id` | The file path, the type and the start of the block, such as `src/pages/users-page.tsx#function@12:1`. It is derived, never invented. |
 | `name` | The name of the block, when it has one. An anonymous function or a condition has none. |
 | `type` | What kind of block it is. See [Block types](block-types.md). |
+| `deletedType` | On a `deleted` block at the root of a file, the type of what was taken out, read with the language of the file. Left out on every other block. See [Block types](block-types.md#what-counts-as-a-variable-a-property-and-a-deleted-block). |
 | `lineOfCodeRangeReference` | The ranges the block spans, each from a line and a column to a line and a column |
 | `parentBlock` | The block that holds it, or `null` at the root of the file |
 | `childrenBlocks` | The blocks directly inside it |

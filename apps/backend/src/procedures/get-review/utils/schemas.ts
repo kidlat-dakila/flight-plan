@@ -15,7 +15,6 @@ import {
   linkSchema,
   proseSchema,
   walkthroughBandSchema,
-  walkthroughControlsSchema,
 } from "@flightplan/configurations"
 import { MANUAL_WRITER } from "./start/agent-offers"
 import { WALKTHROUGH_ORDERS } from "./start/review-request"
@@ -388,7 +387,6 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
     unassignedFiles: unassignedFilesSchema.nullable(),
     rail: railSchema,
     segments: z.array(segmentViewSchema),
-    walkthroughControls: walkthroughControlsSchema,
     conversation: conversationBandSchema.nullable(),
     composer: composerLabelsSchema.nullable(),
     reviewDraft: reviewDraftSchema.nullable(),
@@ -402,8 +400,8 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
 export const getReviewInputSchema = z.strictObject({
   repositoryName: z.string(),
   targetId: z.string(),
-  filterKeys: z.array(z.string()).nullable(),
-  isShowingReviewed: z.boolean(),
+  filterKeysBySegment: z.record(z.string(), z.array(z.string())),
+  reviewedSegmentIds: z.array(z.string()),
 })
 
 export type StartForm = z.infer<typeof startFormSchema>

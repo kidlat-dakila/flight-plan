@@ -1,5 +1,12 @@
 import { createContext, use, useEffect, useLayoutEffect, useRef } from "react"
-import { navigatorSignatureOf, type NavigatorGroup, type NavigatorRail } from "@/lib/navigator-controls"
+import {
+  navigatorSignatureOf,
+  NO_SECTION_STEPS,
+  sectionStepsOf,
+  type NavigatorGroup,
+  type NavigatorRail,
+  type SectionSteps,
+} from "@/lib/navigator-controls"
 
 export type GroupsReader = () => readonly NavigatorGroup[]
 
@@ -21,6 +28,9 @@ export interface NavigatorState {
   readonly fullScreenOwner: FullScreenOwner | null
   readonly openMenuKey: string | null
   readonly flashedKey: string | null
+  readonly hintedKey: string | null
+  readonly onHintedKeyChange: (key: string | null) => void
+  readonly onHint: (key: string) => void
   readonly onOpenMenuKeyChange: (key: string | null) => void
   readonly onJump: (anchorId: string) => void
 }
@@ -68,4 +78,9 @@ export const useNavigatorFullScreen = (anchorId: string | null, isFullScreen: bo
       changeOwner(null)
     }
   }, [changeOwner, anchorId, isFullScreen])
+}
+
+export const useSectionSteps = (anchorId: string | null): SectionSteps => {
+  const navigator = use(NavigatorContext)
+  return navigator === null ? NO_SECTION_STEPS : sectionStepsOf(navigator.rail, anchorId, navigator.onJump)
 }

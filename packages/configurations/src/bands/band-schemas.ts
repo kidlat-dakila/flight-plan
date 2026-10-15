@@ -3,7 +3,10 @@ import { CARD_SIDES, FINDING_KINDS, IMPACT_TYPES } from "@/artifact/kinds"
 import { CODE_BLOCK_TYPES, type CodeBlockType } from "@/code-graph/code-blocks"
 import { TOKEN_KINDS } from "./code-token"
 
-export const WAYPOINT_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
+export const WAYPOINT_FINDING_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
+export const WAYPOINT_CHANGES = ["added", "modified", "removed"] as const
+export const WAYPOINT_FILTER_KEYS = [...WAYPOINT_FINDING_FILTER_KEYS, ...WAYPOINT_CHANGES] as const
+export const ROOT_BLOCK_CHANGES = ["added", "modified", "deleted"] as const
 export const NODE_CHANGES = ["added", "modified"] as const
 export const NODE_BLOCK_LIST_KINDS = ["argument", "state", "hook", "effect", "call", "step"] as const
 export const BLAST_FILE_MARKS = ["added", "modified", "deleted", "breaks", "behaviour-changes", "plain"] as const
@@ -321,20 +324,45 @@ export const fileSectionSchema = z.strictObject({
   rows: z.array(fileRowSchema),
 })
 
+const waypointFilterOptionSchema = z.strictObject({
+  key: z.string(),
+  label: z.string(),
+  detailLabel: z.string(),
+  detailChange: z.enum(ROOT_BLOCK_CHANGES).nullable(),
+  isSelected: z.boolean(),
+  toggledKeys: z.array(z.string()),
+})
+
+const waypointFilterSubmenuSchema = z.strictObject({
+  id: z.string(),
+  label: z.string(),
+  heading: z.string(),
+  valueLabel: z.string().nullable(),
+  options: z.array(waypointFilterOptionSchema),
+})
+
 export const waypointFilterSchema = z.strictObject({
   buttonLabel: z.string(),
-  valueLabel: z.string().nullable(),
+  badge: z.strictObject({ count: z.number().int(), label: z.string() }).nullable(),
   heading: z.string(),
-  hint: z.string(),
-  options: z.array(
+  groups: z.array(
     z.strictObject({
-      key: z.enum(WAYPOINT_FILTER_KEYS),
-      label: z.string(),
-      countLabel: z.string(),
-      isSelected: z.boolean(),
-      toggledKeys: z.array(z.enum(WAYPOINT_FILTER_KEYS)),
+      id: z.string(),
+      options: z.array(waypointFilterOptionSchema),
+      more: waypointFilterSubmenuSchema.nullable(),
     }),
   ),
+  submenus: z.array(waypointFilterSubmenuSchema),
+})
+
+export const walkthroughControlsSchema = z.strictObject({
+  filter: waypointFilterSchema,
+  reviewedToggle: z.strictObject({ label: z.string(), countLabel: z.string(), isShown: z.boolean(), isAvailable: z.boolean() }),
+  stepping: z.strictObject({
+    previousLabel: z.string(),
+    nextLabel: z.string(),
+  }),
+  currentReview: z.strictObject({ markLabel: z.string(), reviewedLabel: z.string() }),
 })
 
 export const walkthroughBandSchema = z.strictObject({
@@ -342,6 +370,7 @@ export const walkthroughBandSchema = z.strictObject({
   heading: z.string(),
   coverageLabel: z.string(),
   emptyMessage: z.string().nullable(),
+  controls: walkthroughControlsSchema,
   files: z.array(fileSectionSchema),
   fileOrder: z.array(
     z.strictObject({
@@ -352,18 +381,6 @@ export const walkthroughBandSchema = z.strictObject({
       canMoveDown: z.boolean(),
     }),
   ),
-})
-
-export const walkthroughControlsSchema = z.strictObject({
-  filter: waypointFilterSchema,
-  reviewedToggle: z.strictObject({ label: z.string(), countLabel: z.string(), isShown: z.boolean(), isAvailable: z.boolean() }),
-  stepping: z.strictObject({
-    firstWaypointId: z.string().nullable(),
-    lastWaypointId: z.string().nullable(),
-    previousLabel: z.string(),
-    nextLabel: z.string(),
-  }),
-  currentReview: z.strictObject({ markLabel: z.string(), reviewedLabel: z.string() }),
 })
 
 export type CodeLine = z.infer<typeof codeLineSchema>
@@ -387,5 +404,7 @@ export type FileRow = z.infer<typeof fileRowSchema>
 export type FileSectionView = z.infer<typeof fileSectionSchema>
 export type WaypointFilter = z.infer<typeof waypointFilterSchema>
 export type WaypointFilterKey = (typeof WAYPOINT_FILTER_KEYS)[number]
+export type WaypointChange = (typeof WAYPOINT_CHANGES)[number]
+export type RootBlockChange = (typeof ROOT_BLOCK_CHANGES)[number]
 export type WalkthroughControls = z.infer<typeof walkthroughControlsSchema>
 export type WalkthroughBand = z.infer<typeof walkthroughBandSchema>

@@ -28,7 +28,6 @@ export const buildPublishedReview = (page: WrittenReviewPage, target: ReviewTarg
   unassignedFiles: page.unassignedFiles,
   rail: page.rail,
   segments: page.segments,
-  walkthroughControls: page.walkthroughControls,
   composer: COMPOSER_LABELS,
   codeLinks: page.codeLinks,
   codeDefinitions: page.codeDefinitions,

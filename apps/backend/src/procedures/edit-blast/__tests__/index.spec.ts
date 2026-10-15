@@ -18,7 +18,7 @@ describe("editBlast", () => {
     ).resolves.toStrictEqual({ kind: "saved" })
 
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ status: statusBefore })
-    const page = await getReview({ ...KEY, filterKeys: null, isShowingReviewed: false }, context)
+    const page = await getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
     const nodes = page?.kind === "artifact" ? page.segments.flatMap((segment) => segment.blast?.views[0].board.nodes ?? []) : []
 
     expect(nodes.find((node) => node.id === STOCK_ROUTE_PATH)).toMatchObject({

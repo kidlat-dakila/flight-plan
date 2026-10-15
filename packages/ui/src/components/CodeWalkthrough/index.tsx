@@ -2,10 +2,10 @@ import { CheckIcon } from "lucide-react"
 import type { ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import FindingMark from "@/components/FindingMark"
-import { useNavigatorSection } from "@/lib/navigator"
+import { useNavigatorSection, useSectionSteps } from "@/lib/navigator"
 import { walkthroughNavigationOf, type WalkthroughNavigationRequest } from "@/lib/walkthrough-navigation"
 
-export type WalkthroughNavigation = Omit<WalkthroughNavigationRequest, "markerOf">
+export type WalkthroughNavigation = Omit<WalkthroughNavigationRequest, "markerOf" | "sectionSteps">
 
 interface CodeWalkthroughProps {
   readonly anchorId: string
@@ -28,7 +28,8 @@ const ReviewedMark = () => (
 const markerOf: WalkthroughNavigationRequest["markerOf"] = (key) => (key === "reviewed" ? <ReviewedMark /> : <FindingMark kind={key} />)
 
 const CodeWalkthrough = ({ anchorId, heading, coverageLabel, emptyMessage, navigation, children, onArrangeFiles }: CodeWalkthroughProps) => {
-  useNavigatorSection(anchorId, walkthroughNavigationOf({ ...navigation, markerOf }))
+  const sectionSteps = useSectionSteps(anchorId)
+  useNavigatorSection(anchorId, walkthroughNavigationOf({ ...navigation, markerOf, sectionSteps }))
   return (
     <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-10">
       <div className="flex items-center gap-3">

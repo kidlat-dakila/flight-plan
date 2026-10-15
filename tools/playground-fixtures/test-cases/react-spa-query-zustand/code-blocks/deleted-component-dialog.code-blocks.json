@@ -13485,6 +13485,7 @@
       {
         "id": "src/components/ui/index.ts#deleted@2:1",
         "type": "deleted",
+        "deletedType": "import",
         "lineOfCodeRangeReference": [
           {
             "start": {

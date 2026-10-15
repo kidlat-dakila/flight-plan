@@ -1,6 +1,7 @@
 import {
   CART_PATH,
   cartSource,
+  createCodeBlock,
   createFinding,
   createSegment,
   createViewContext,
@@ -33,10 +34,13 @@ const build = (segment: Segment, marks: ReviewedMarks = NO_REVIEWED_MARKS, reque
 
 const buildControls = (segment: Segment, marks: ReviewedMarks = NO_REVIEWED_MARKS, request = EVERYTHING): WalkthroughControls => {
   const prepared = prepareWalkthrough(segment, marks, request, createViewContext())
-  return buildWalkthroughControls([prepared], request, steppingOf([prepared]))
+  return buildWalkthroughControls(prepared, request)
 }
 
 const rowKinds = (rows: readonly FileRow[]): string[] => rows.map((row) => row.kind)
+
+const shownTexts = (rows: readonly FileRow[]): string[] =>
+  rows.flatMap((row) => (row.kind === "lines" ? row.lines.map((line) => line.tokens.map((token) => token.text).join("")) : []))
 
 const waypointIds = (band: WalkthroughBand): string[] =>
   band.files.flatMap((file) => file.rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint.id] : [])))
@@ -49,7 +53,7 @@ const markWaypoint = (segment: Segment, waypointId: string): ReviewedMarks => {
 }
 
 describe("buildWalkthrough", () => {
-  it("numbers the waypoints across every segment, and prefixes a segment's anchors with its scope", () => {
+  it("numbers the waypoints within their own segment, and prefixes a segment's anchors with its scope", () => {
     const context = createViewContext()
     const first = prepareWalkthrough(createSegment({ id: "one" }), NO_REVIEWED_MARKS, EVERYTHING, context)
     const second = prepareWalkthrough(
@@ -66,7 +70,7 @@ describe("buildWalkthrough", () => {
     expect(band).toMatchObject({ anchorId: "two-code-walkthrough", files: [{ anchorId: "two-file-1" }] })
     expect(waypointIds(band)).toStrictEqual(["late"])
     expect(band.files[0].rows.find((row) => row.kind === "waypoint")).toMatchObject({
-      waypoint: { positionLabel: "4 of 4", previousId: "subtotal", nextId: null },
+      waypoint: { positionLabel: "1 of 1", previousId: null, nextId: null },
     })
   })
 
@@ -114,12 +118,29 @@ describe("buildWalkthrough", () => {
       ["format", "2 of 3", "price-of", "subtotal"],
       ["subtotal", "3 of 3", "format", null],
     ])
-    expect(buildControls(createSegment()).stepping).toMatchObject({
-      firstWaypointId: "price-of",
-      lastWaypointId: "subtotal",
+    expect(buildControls(createSegment()).stepping).toStrictEqual({
       previousLabel: "Previous waypoint",
       nextLabel: "Next waypoint",
     })
+  })
+
+  it("counts the filter and the reviewed waypoints over its own segment only", () => {
+    const context = createViewContext()
+    const first = prepareWalkthrough(createSegment({ id: "one" }), NO_REVIEWED_MARKS, EVERYTHING, context)
+    const second = prepareWalkthrough(
+      createSegment({
+        id: "two",
+        walkthrough: { files: [{ path: CART_PATH, waypoints: [createWaypoint("late", "subtotal", { needsAttention: "Check the rounding." })] }] },
+      }),
+      NO_REVIEWED_MARKS,
+      EVERYTHING,
+      context,
+    )
+    const stepping = steppingOf([first, second])
+    const attentionCountOf = (band: WalkthroughBand) => band.controls.filter.groups[0].options.find((option) => option.key === "attention")?.detailLabel
+
+    expect(attentionCountOf(buildWalkthrough(first, "one-", EVERYTHING, stepping, findNoPinnedLines, context))).toBe("0 waypoints")
+    expect(attentionCountOf(buildWalkthrough(second, "two-", EVERYTHING, stepping, findNoPinnedLines, context))).toBe("1 waypoint")
   })
 
   it("places a nested waypoint one level deeper, after its parent", () => {
@@ -161,7 +182,7 @@ describe("buildWalkthrough", () => {
     expect(unwritten).toMatchObject({ title: "format", isDraft: true, reading: null, chip: null })
   })
 
-  it("keeps the code and drops the box of a waypoint the filter hides, and drops a file with no box left", () => {
+  it("shows only the root block of a waypoint the filter keeps, folds the rest of the file, and drops a file with no box left", () => {
     const segment = createSegment({
       walkthrough: {
         files: [
@@ -181,8 +202,64 @@ describe("buildWalkthrough", () => {
 
     expect(band.files.map((file) => file.path)).toStrictEqual([PRICE_PATH])
     expect(waypointIds(band)).toStrictEqual(["buggy"])
-    expect(rowKinds(band.files[0].rows)).toStrictEqual(["gap", "lines", "waypoint", "lines"])
-    expect(buildControls(segment, NO_REVIEWED_MARKS, request).stepping).toMatchObject({ firstWaypointId: "buggy", lastWaypointId: "buggy" })
+    expect(rowKinds(band.files[0].rows)).toStrictEqual(["gap", "waypoint", "lines", "gap"])
+    expect(shownTexts(band.files[0].rows)).not.toContain("export const format = (price: number) => String(price / CENTS)")
+    expect(band.files[0].rows.flatMap((row) => (row.kind === "gap" ? [row.label] : []))).toStrictEqual(["10 unchanged lines", "2 unchanged lines"])
+    expect(band.files[0].rows.find((row) => row.kind === "waypoint")).toMatchObject({
+      waypoint: { positionLabel: "1 of 1", previousId: null, nextId: null },
+    })
+  })
+
+  it("shows a short run of blank lines between two root blocks the filter keeps", () => {
+    const segment = createSegment({
+      walkthrough: {
+        files: [{
+          path: PRICE_PATH,
+          waypoints: [
+            createWaypoint("one", "priceOf", { findings: [createFinding("nit-one", "nit")] }),
+            createWaypoint("two", "format", { findings: [createFinding("nit-two", "nit")] }),
+          ],
+        }],
+      },
+    })
+    const band = build(segment, NO_REVIEWED_MARKS, { filterKeys: ["nit"], isShowingReviewed: false })
+
+    expect(rowKinds(band.files[0].rows)).toStrictEqual(["gap", "waypoint", "lines", "waypoint", "lines"])
+  })
+
+  it("says a gap holds lines the filter hides when changed lines are folded into it", () => {
+    const segment = createSegment({
+      walkthrough: {
+        files: [{
+          path: PRICE_PATH,
+          waypoints: [createWaypoint("changed", "priceOf"), createWaypoint("flagged", "format", { findings: [createFinding("nit", "nit")] })],
+        }],
+      },
+    })
+    const band = build(segment, NO_REVIEWED_MARKS, { filterKeys: ["nit"], isShowingReviewed: false })
+
+    expect(band.files[0].rows.flatMap((row) => (row.kind === "gap" ? [row.label] : []))).toStrictEqual(["14 lines hidden by the filter"])
+  })
+
+  it("shows the whole root block around a waypoint the filter keeps, and a line with a thread outside it", () => {
+    const rootAround = createCodeBlock("prices", PRICE_PATH, { lineOfCodeRangeReference: [{ start: { line: 11, column: 1 }, end: { line: 14, column: 1 } }] })
+    const inside = createCodeBlock("held", PRICE_PATH, { type: "condition", parentBlock: rootAround, isRoot: false })
+    const segment = createSegment({
+      walkthrough: {
+        files: [{
+          path: PRICE_PATH,
+          waypoints: [createWaypoint("buggy", "priceOf", { codeBlocks: [inside], findings: [createFinding("bug", "bug")] }), createWaypoint("clean", "format")],
+        }],
+      },
+    })
+    const request: WalkthroughRequest = { filterKeys: ["bug"], isShowingReviewed: false }
+    const context = createViewContext()
+    const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, request, context)
+    const [priceFile] = buildWalkthrough(prepared, "", request, steppingOf([prepared]), pinLines(PRICE_PATH, [1]), context).files
+
+    expect(shownTexts(priceFile.rows)).toContain("export const format = (price: number) => String(price / CENTS)")
+    expect(shownTexts(priceFile.rows)).toContain("import { rates } from \"./rates\"")
+    expect(shownTexts(priceFile.rows)).not.toContain("const CENTS = 100")
   })
 
   it("says so when no waypoint matches the filter", () => {

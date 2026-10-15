@@ -34,7 +34,7 @@ interface PublishedReviewPageProps {
 
 const PRODUCT_NAME = "Flight Plan"
 const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
-const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--section-scroll-margin:4.5rem] [--file-header-top:3.5rem] [--waypoint-scroll-margin:7rem]"
+const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--section-scroll-margin:4.5rem] [--file-header-top:3.5rem] [--waypoint-scroll-margin:7rem] [--navigator-inset-left:calc(1.5rem+13rem+2rem)] [--navigator-inset-right:1.5rem]"
 
 const ignoreCopy = (): void => undefined
 const renderNoEditor = (): null => null
@@ -67,7 +67,7 @@ const PublishedContext = ({ anchorId, heading, context, isDraft, unwrittenLabel,
 const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
   const [isFeatureUnavailable, setIsFeatureUnavailable] = useState(false)
   const [isListingUnassignedFiles, setIsListingUnassignedFiles] = useState(false)
-  const stepping = useWaypointStepping(review.segments, review.walkthroughControls.stepping)
+  const stepping = useWaypointStepping(review.segments)
   const codeSelection = useCodeSelection()
   const railSections = [...review.rail.groups.flatMap((group) => group.sections), ...review.rail.sections]
   const currentAnchorId = useCurrentAnchor(
@@ -108,7 +108,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
         </div>
       </SignBand>
       <main className={cn("w-full px-6 pb-24", ACCENT_LINE_CLASS, LAYOUT_VARIABLES)}>
-        <ReviewNavigator rail={review.rail}>
+        <ReviewNavigator rail={review.rail} onSectionJump={stepping.onSectionEntered}>
           <ReviewNotices
             staleNotice={null}
             unassignedFiles={review.unassignedFiles}
@@ -190,7 +190,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                     heading={segment.walkthrough.heading}
                     coverageLabel={segment.walkthrough.coverageLabel}
                     emptyMessage={segment.walkthrough.emptyMessage}
-                    navigation={walkthroughLayout.navigationOf(segment, review.walkthroughControls)}
+                    navigation={walkthroughLayout.navigationOf(segment)}
                     onArrangeFiles={null}
                   >
                     {segment.offers.findings === null

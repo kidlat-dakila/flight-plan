@@ -10,8 +10,8 @@ import {
   buildCodeLink,
   buildJourney,
   buildWalkthrough,
-  buildWalkthroughControls,
   collectCodeLinkIds,
+  isSteppedWaypoint,
   listWaypointPlaces,
   prepareWalkthrough,
   resolveCodeTarget,
@@ -90,7 +90,7 @@ const buildCodeLinks = (
   const waypointIds = waypointIdByLinkId(artifact.segments)
   const anchorIdOf = (linkId: string): string | null => {
     const waypointId = waypointIds.get(linkId)
-    return waypointId !== undefined && stepping.orderedIds.includes(waypointId) ? waypointAnchorId(waypointId) : null
+    return waypointId !== undefined && isSteppedWaypoint(stepping, waypointId) ? waypointAnchorId(waypointId) : null
   }
   return Object.fromEntries(
     [...resolvedTargets].map(([linkId, resolved]) => [
@@ -101,7 +101,7 @@ const buildCodeLinks = (
 }
 
 interface SegmentSettings {
-  readonly walkthrough: WalkthroughRequest
+  readonly walkthroughOf: (segmentId: string) => WalkthroughRequest
   readonly sections: SectionSwitches
 }
 
@@ -146,7 +146,7 @@ const buildSegment = (
   const walkthrough = buildWalkthrough(
     prepared,
     scope,
-    settings.walkthrough,
+    settings.walkthroughOf(segment.id),
     stepping,
     (path) => threadLinesOfFile(discussion, path),
     context,
@@ -253,11 +253,14 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     blobLinkOf: linkToBlob,
   }
   const settings: SegmentSettings = {
-    walkthrough: { filterKeys: selectFilterKeys(input.filterKeys), isShowingReviewed: source.isOwn || input.isShowingReviewed },
+    walkthroughOf: (segmentId) => ({
+      filterKeys: selectFilterKeys(input.filterKeysBySegment[segmentId] ?? null),
+      isShowingReviewed: source.isOwn || input.reviewedSegmentIds.includes(segmentId),
+    }),
     sections: sectionsOf(artifact),
   }
   const walkthroughs = artifact.segments.map((segment) =>
-    prepareWalkthrough(segment, source.marks, settings.walkthrough, context))
+    prepareWalkthrough(segment, source.marks, settings.walkthroughOf(segment.id), context))
   const stepping = steppingOf(walkthroughs)
   const places = walkthroughs.flatMap((prepared) => listWaypointPlaces(prepared, stepping, context))
   const discussion = discussionSourceOf(source, artifact)
@@ -277,7 +280,6 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     unassignedFiles: buildUnassignedFiles(artifact),
     rail: buildRail(segments, conversation),
     segments,
-    walkthroughControls: buildWalkthroughControls(walkthroughs, settings.walkthrough, stepping),
     conversation,
     composer: discussion === null ? null : COMPOSER_LABELS,
     reviewDraft: isReviewable ? buildReviewDraft(discussion, unavailableReasonOf(source)) : null,

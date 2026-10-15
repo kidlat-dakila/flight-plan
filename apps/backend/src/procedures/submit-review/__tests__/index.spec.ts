@@ -11,7 +11,7 @@ const ADDED_LINE = { path: SUBTOTAL_PATH, side: "new" as const, startLine: 7, en
 const createContext = () => createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z"))
 
 const readPage = async (context: ReturnType<typeof createContext>) => {
-  const page = await getReview({ ...KEY, filterKeys: null, isShowingReviewed: false }, context)
+  const page = await getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
   if (page?.kind !== "artifact") throw new Error("The sample review is not written.")
   return page
 }

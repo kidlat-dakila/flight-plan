@@ -1,5 +1,5 @@
 import { ChevronUpIcon } from "lucide-react"
-import { use, useEffect, useEffectEvent, useMemo, useRef, useState, type ComponentProps, type ReactNode } from "react"
+import { use, useCallback, useEffect, useEffectEvent, useId, useMemo, useRef, useState, type ComponentProps, type ReactNode } from "react"
 import Menubar, {
   MenubarCheckboxItem,
   MenubarContent,
@@ -14,6 +14,7 @@ import Menubar, {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/blocks/menubar"
+import Tooltip, { TooltipContent, TooltipTrigger } from "@/components/blocks/tooltip"
 import {
   NavigatorContext,
   NavigatorSectionsContext,
@@ -26,13 +27,20 @@ import {
   controlOfKey,
   dominantAnchorIdOf,
   jumpMenuOf,
+  navigatorSignatureOf,
   railAnchorIdsOf,
+  sectionStepsOf,
+  withSectionSteps,
+  type ChangeTone,
   type JumpSection,
+  type NavigatorBadge,
   type NavigatorButton,
+  type NavigatorChoice,
   type NavigatorControl,
   type NavigatorGroup,
   type NavigatorMenu,
   type NavigatorRail,
+  type NavigatorSubmenu,
   type SectionSpan,
 } from "@/lib/navigator-controls"
 import { isNavigatorKeyEvent } from "@/lib/navigator-keys"
@@ -40,6 +48,7 @@ import { cn } from "@/lib/utils"
 
 interface ReviewNavigatorProps {
   readonly rail: NavigatorRail
+  readonly onSectionJump?: (anchorId: string) => void
   readonly children: ReactNode
 }
 
@@ -57,17 +66,24 @@ const NAVIGATOR_LABEL = "Review navigator"
 const HERE_LABEL = "Here"
 const OTHER_SEGMENTS_LABEL = "Other segments"
 const FLASH_MS = 180
+const HINT_MS = 3000
 const BAND_HEIGHT_PX = 56
 const NO_FRAME = 0
 const ANCHOR_SEPARATOR = "\n"
 const JUMP_HINTS: readonly KeyHint[] = [[["↑", "↓"], "move"], [["→"], "sections"], [["↵"], "jump"], [["esc"], "close"]]
 const MENU_HINTS: readonly KeyHint[] = [[["↑", "↓"], "move"], [["space"], "tick"], [["esc"], "close"]]
+const SUBMENU_HINTS: readonly KeyHint[] = [[["↑", "↓"], "move"], [["→"], "open"], [["space"], "tick"], [["esc"], "close"]]
 const NO_READERS: ReadersByAnchorId = new Map()
 const NO_GROUPS: readonly NavigatorGroup[] = []
 
 const BUTTON_CLASSES = "inline-flex h-[1.875rem] shrink-0 cursor-pointer items-center gap-1.5 rounded-[0.3rem] px-[0.4375rem] outline-none transition-colors duration-[180ms] ease-out hover:bg-sign-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-45 aria-pressed:bg-sign-foreground aria-pressed:font-bold aria-pressed:text-sign data-[flash=true]:bg-sign-foreground/25"
 const PRIMARY_BUTTON_CLASSES = "bg-primary font-bold text-primary-foreground hover:bg-[color-mix(in_oklab,var(--primary)_88%,var(--primary-foreground))]"
 const HINT_KEY_CLASSES = "h-4 min-w-4 text-[0.625rem] normal-case"
+const CHANGE_TONE_CLASSES: Readonly<Record<ChangeTone, string>> = {
+  added: "font-semibold text-diff-added",
+  modified: "font-semibold text-line-blue",
+  deleted: "font-semibold text-diff-removed",
+}
 
 const withReader = (readers: ReadersByAnchorId, anchorId: string, readGroups: GroupsReader): ReadersByAnchorId =>
   new Map([...readers, [anchorId, readGroups]])
@@ -118,7 +134,8 @@ const scrollToSection = (anchorId: string): void => {
   document.getElementById(anchorId)?.scrollIntoView({ block: "start" })
 }
 
-const ReviewNavigator = ({ rail, children }: ReviewNavigatorProps) => {
+const ReviewNavigator = ({ rail, onSectionJump, children }: ReviewNavigatorProps) => {
+  const [hintedKey, setHintedKey] = useState<string | null>(null)
   const [readersByAnchorId, setReadersByAnchorId] = useState<ReadersByAnchorId>(NO_READERS)
   const [fullScreenOwner, setFullScreenOwner] = useState<FullScreenOwner | null>(null)
   const [openMenuKey, setOpenMenuKey] = useState<string | null>(null)
@@ -138,13 +155,39 @@ const ReviewNavigator = ({ rail, children }: ReviewNavigatorProps) => {
   const scrolledAnchorId = useDominantAnchorId(railAnchorIdsOf(rail))
   const dominantAnchorId = fullScreenOwner?.anchorId ?? scrolledAnchorId
   const readGroups = dominantAnchorId === null ? undefined : readersByAnchorId.get(dominantAnchorId)
-  const groups = readGroups?.() ?? NO_GROUPS
+
+  const sectionGroups = readGroups?.() ?? NO_GROUPS
+
+  const jump = useCallback((anchorId: string): void => {
+    setOpenMenuKey(null)
+    onSectionJump?.(anchorId)
+    if (fullScreenOwner === null) {
+      scrollToSection(anchorId)
+      return
+    }
+    fullScreenOwner.onLeave()
+    requestAnimationFrame(() => {
+      scrollToSection(anchorId)
+    })
+  }, [fullScreenOwner, onSectionJump])
+
+  const groups = useMemo(
+    () => withSectionSteps(sectionGroups, sectionStepsOf(rail, dominantAnchorId, jump)),
+    [sectionGroups, rail, dominantAnchorId, jump],
+  )
 
   const flash = (key: string): void => {
     setFlashedKey(key)
     setTimeout(() => {
       setFlashedKey((current) => (current === key ? null : current))
     }, FLASH_MS)
+  }
+
+  const showHint = (key: string): void => {
+    setHintedKey(key)
+    setTimeout(() => {
+      setHintedKey((current) => (current === key ? null : current))
+    }, HINT_MS)
   }
 
   const handleKeyDown = useEffectEvent((event: KeyboardEvent): void => {
@@ -168,6 +211,7 @@ const ReviewNavigator = ({ rail, children }: ReviewNavigatorProps) => {
     flash(key)
     if (control.kind === "menu") setOpenMenuKey(control.key)
     else if (!control.isDisabled) control.onRun()
+    else if (control.disabledHint !== null) showHint(control.key)
   })
 
   useEffect(() => {
@@ -187,19 +231,12 @@ const ReviewNavigator = ({ rail, children }: ReviewNavigatorProps) => {
     fullScreenOwner,
     openMenuKey,
     flashedKey,
+    hintedKey,
+    onHintedKeyChange: setHintedKey,
+    onHint: showHint,
     onOpenMenuKeyChange: setOpenMenuKey,
-    onJump: (anchorId) => {
-      setOpenMenuKey(null)
-      if (fullScreenOwner === null) {
-        scrollToSection(anchorId)
-        return
-      }
-      fullScreenOwner.onLeave()
-      requestAnimationFrame(() => {
-        scrollToSection(anchorId)
-      })
-    },
-  }), [rail, dominantAnchorId, groups, fullScreenOwner, openMenuKey, flashedKey])
+    onJump: jump,
+  }), [rail, dominantAnchorId, groups, fullScreenOwner, openMenuKey, flashedKey, hintedKey, jump])
   return (
     <NavigatorSectionsContext value={sections}>
       <NavigatorContext value={state}>{children}</NavigatorContext>
@@ -211,7 +248,30 @@ const Keycap = ({ label, className }: { readonly label: string, readonly classNa
   <MenubarShortcut aria-hidden="true" className={className}>{label}</MenubarShortcut>
 )
 
-const KeyHints = ({ hints, note = null }: { readonly hints: readonly KeyHint[], readonly note?: string | null }) => (
+type Density = "full" | "short" | "keys"
+
+const DENSITIES: readonly Density[] = ["full", "short", "keys"]
+
+interface ControlLabelProps {
+  readonly label: string
+  readonly shortLabel: string | null
+  readonly density: Density
+}
+
+const ControlLabel = ({ label, shortLabel, density }: ControlLabelProps) => {
+  if (density === "full") return <span>{label}</span>
+  if (density === "keys") return <span className="sr-only">{label}</span>
+  return (
+    <>
+      <span aria-hidden="true">{shortLabel ?? label}</span>
+      <span className="sr-only">{label}</span>
+    </>
+  )
+}
+
+const titleOf = (label: string, density: Density): string | undefined => (density === "full" ? undefined : label)
+
+const KeyHints = ({ hints }: { readonly hints: readonly KeyHint[] }) => (
   <div className="-mx-1 mt-1 flex max-w-[21rem] flex-wrap items-center gap-x-3 gap-y-1.5 border-t px-3 pt-2 pb-1.5 text-[0.6875rem] text-muted-foreground">
     {hints.map(([keys, label]) => (
       <span key={label} className="inline-flex items-center gap-1">
@@ -219,7 +279,6 @@ const KeyHints = ({ hints, note = null }: { readonly hints: readonly KeyHint[], 
         {label}
       </span>
     ))}
-    {note === null ? null : <p className="w-full leading-4">{note}</p>}
   </div>
 )
 
@@ -239,7 +298,7 @@ const JumpItem = ({ section, onJump }: { readonly section: JumpSection, readonly
   </MenubarItem>
 )
 
-const JumpMenu = ({ navigator }: { readonly navigator: NavigatorState }) => {
+const JumpMenu = ({ navigator, density }: { readonly navigator: NavigatorState, readonly density: Density }) => {
   const menu = jumpMenuOf(navigator.rail, navigator.dominantAnchorId)
   const isOpen = navigator.openMenuKey === JUMP_KEY
   return (
@@ -247,9 +306,10 @@ const JumpMenu = ({ navigator }: { readonly navigator: NavigatorState }) => {
       <MenubarMenu open={isOpen} onOpenChange={(isOpening) => { navigator.onOpenMenuKeyChange(isOpening ? JUMP_KEY : null) }}>
         <MenubarTrigger
           data-flash={navigator.flashedKey === JUMP_KEY}
+          title={titleOf(JUMP_LABEL, density)}
           className={cn(BUTTON_CLASSES, "pl-2.5 data-popup-open:bg-sign-foreground/15")}
         >
-          <span>{JUMP_LABEL}</span>
+          <ControlLabel label={JUMP_LABEL} shortLabel={null} density={density} />
           <ChevronUpIcon aria-hidden="true" className="size-3.5" />
           <Keycap label={JUMP_KEY} />
         </MenubarTrigger>
@@ -299,22 +359,105 @@ const JumpMenu = ({ navigator }: { readonly navigator: NavigatorState }) => {
   )
 }
 
-const ButtonControl = ({ control, isFlashed }: { readonly control: NavigatorButton, readonly isFlashed: boolean }) => (
+interface ButtonControlProps {
+  readonly control: NavigatorButton
+  readonly isFlashed: boolean
+  readonly density: Density
+}
+
+const ButtonControl = ({ control, isFlashed, density }: ButtonControlProps) => (
   <button
     type="button"
     aria-pressed={control.isPrimary ? undefined : control.isPressed}
     disabled={control.isDisabled}
-    title={control.description ?? undefined}
+    title={control.description ?? titleOf(control.label, density)}
     data-flash={isFlashed}
     className={cn(BUTTON_CLASSES, control.isPrimary && PRIMARY_BUTTON_CLASSES)}
     onClick={control.onRun}
   >
-    <span>{control.label}</span>
+    <ControlLabel label={control.label} shortLabel={control.shortLabel} density={density} />
     <Keycap label={control.key} />
   </button>
 )
 
-const MenuControl = ({ control, navigator }: { readonly control: NavigatorMenu, readonly navigator: NavigatorState }) => (
+interface HintedButtonControlProps extends ButtonControlProps {
+  readonly hint: string
+  readonly navigator: NavigatorState
+}
+
+const HintedButtonControl = ({ control, isFlashed, density, hint, navigator }: HintedButtonControlProps) => {
+  const hintId = useId()
+  return (
+    <>
+      <span id={hintId} hidden>{hint}</span>
+      <Tooltip
+        open={navigator.hintedKey === control.key}
+        onOpenChange={(isOpening) => { navigator.onHintedKeyChange(isOpening ? control.key : null) }}
+      >
+        <TooltipTrigger
+          closeOnClick={false}
+          render={(
+            <button
+              type="button"
+              aria-pressed={control.isPrimary ? undefined : control.isPressed}
+              aria-disabled="true"
+              aria-describedby={hintId}
+              data-flash={isFlashed}
+              className={cn(BUTTON_CLASSES, control.isPrimary && PRIMARY_BUTTON_CLASSES, "aria-disabled:cursor-default aria-disabled:opacity-45")}
+              onClick={() => { navigator.onHint(control.key) }}
+            />
+          )}
+        >
+          <ControlLabel label={control.label} shortLabel={control.shortLabel} density={density} />
+          <Keycap label={control.key} />
+        </TooltipTrigger>
+        <TooltipContent sideOffset={12}>{hint}</TooltipContent>
+      </Tooltip>
+    </>
+  )
+}
+
+const ChoiceItem = ({ choice }: { readonly choice: NavigatorChoice }) => (
+  <MenubarCheckboxItem checked={choice.isChecked} disabled={choice.isDisabled} onCheckedChange={choice.onToggle}>
+    {choice.marker}
+    <span className="flex-1">{choice.label}</span>
+    <span className={cn("text-xs tabular-nums", choice.detailTone === null ? "text-muted-foreground" : CHANGE_TONE_CLASSES[choice.detailTone])}>{choice.detailLabel}</span>
+  </MenubarCheckboxItem>
+)
+
+const SubmenuItem = ({ submenu }: { readonly submenu: NavigatorSubmenu }) => (
+  <MenubarSub>
+    <MenubarSubTrigger>
+      <span className="flex-1">{submenu.label}</span>
+      {submenu.valueLabel === null ? null : <span className="max-w-32 truncate text-xs text-muted-foreground">{submenu.valueLabel}</span>}
+    </MenubarSubTrigger>
+    <MenubarSubContent className="min-w-[15rem]">
+      <MenubarGroup>
+        <MenubarLabel>{submenu.heading}</MenubarLabel>
+        {submenu.choices.map((choice) => <ChoiceItem key={choice.id} choice={choice} />)}
+      </MenubarGroup>
+    </MenubarSubContent>
+  </MenubarSub>
+)
+
+const Badge = ({ badge }: { readonly badge: NavigatorBadge }) => (
+  <>
+    <span aria-hidden="true" className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-sign-foreground px-1 text-[0.625rem] leading-none font-bold text-sign tabular-nums group-data-popup-open:bg-sign group-data-popup-open:text-sign-foreground">
+      {badge.count}
+    </span>
+    <span className="sr-only">{badge.label}</span>
+  </>
+)
+
+const hasSubmenu = (menu: NavigatorMenu): boolean => menu.itemGroups.flat().some((item) => item.kind === "submenu")
+
+interface MenuControlProps {
+  readonly control: NavigatorMenu
+  readonly navigator: NavigatorState
+  readonly density: Density
+}
+
+const MenuControl = ({ control, navigator, density }: MenuControlProps) => (
   <Menubar modal={false}>
     <MenubarMenu
       open={navigator.openMenuKey === control.key}
@@ -322,74 +465,138 @@ const MenuControl = ({ control, navigator }: { readonly control: NavigatorMenu, 
     >
       <MenubarTrigger
         data-flash={navigator.flashedKey === control.key}
-        className={cn(BUTTON_CLASSES, "data-popup-open:bg-sign-foreground data-popup-open:font-bold data-popup-open:text-sign")}
+        title={titleOf(control.label, density)}
+        className={cn(BUTTON_CLASSES, "group data-popup-open:bg-sign-foreground data-popup-open:font-bold data-popup-open:text-sign")}
       >
-        <span>{control.label}</span>
-        {control.valueLabel === null ? null : <span className="font-normal opacity-70">{control.valueLabel}</span>}
+        <ControlLabel label={control.label} shortLabel={null} density={density} />
+        {control.badge === null ? null : <Badge badge={control.badge} />}
         <Keycap label={control.key} />
       </MenubarTrigger>
       <MenubarContent side="top" sideOffset={12} className="min-w-[17rem]">
         <MenubarGroup>
           <MenubarLabel>{control.heading}</MenubarLabel>
-          {control.choiceGroups.map((choices, position) => (
-            <div key={choices.map((choice) => choice.id).join(ANCHOR_SEPARATOR)}>
+          {control.itemGroups.map((items, position) => (
+            <div key={items.map((item) => item.id).join(ANCHOR_SEPARATOR)}>
               {position === 0 ? null : <MenubarSeparator />}
-              {choices.map((choice) => (
-                <MenubarCheckboxItem
-                  key={choice.id}
-                  checked={choice.isChecked}
-                  disabled={choice.isDisabled}
-                  onCheckedChange={choice.onToggle}
-                >
-                  {choice.marker}
-                  <span className="flex-1">{choice.label}</span>
-                  <span className="text-xs text-muted-foreground tabular-nums">{choice.countLabel}</span>
-                </MenubarCheckboxItem>
-              ))}
+              {items.map((item) => (item.kind === "choice" ? <ChoiceItem key={item.id} choice={item} /> : <SubmenuItem key={item.id} submenu={item} />))}
             </div>
           ))}
         </MenubarGroup>
-        <KeyHints hints={MENU_HINTS} note={control.hint} />
+        <KeyHints hints={hasSubmenu(control) ? SUBMENU_HINTS : MENU_HINTS} />
       </MenubarContent>
     </MenubarMenu>
   </Menubar>
 )
 
-const Control = ({ control, navigator }: { readonly control: NavigatorControl, readonly navigator: NavigatorState }) => {
+interface ControlProps {
+  readonly control: NavigatorControl
+  readonly navigator: NavigatorState
+  readonly density: Density
+}
+
+const Control = ({ control, navigator, density }: ControlProps) => {
   if (control.kind === "position") return <span className="min-w-16 px-1 text-center tabular-nums">{control.label}</span>
-  if (control.kind === "menu") return <MenuControl control={control} navigator={navigator} />
-  return <ButtonControl control={control} isFlashed={navigator.flashedKey === control.key} />
+  if (control.kind === "menu") return <MenuControl control={control} navigator={navigator} density={density} />
+  const isFlashed = navigator.flashedKey === control.key
+  if (control.isDisabled && control.disabledHint !== null) {
+    return <HintedButtonControl control={control} isFlashed={isFlashed} density={density} hint={control.disabledHint} navigator={navigator} />
+  }
+  return <ButtonControl control={control} isFlashed={isFlashed} density={density} />
 }
 
 const POSITION_KEY = "position"
 
 const controlKeyOf = (control: NavigatorControl): string => (control.kind === "position" ? POSITION_KEY : control.key)
 
+const COLUMN_CENTRE = "calc(var(--navigator-inset-left, 0px) + (100% - var(--navigator-inset-left, 0px) - var(--navigator-inset-right, 0px)) / 2)"
+const WINDOW_GUTTER = "1.5rem"
+const BOTH_SIDES = 2
+const RIGHT_EDGE = "100% - var(--navigator-inset-right, 1.5rem)"
+
+export const navigatorLeftOf = (width: number | null): string => {
+  if (width === null) return COLUMN_CENTRE
+  const halfWidth = `${String(width / BOTH_SIDES)}px`
+  return `clamp(calc(${WINDOW_GUTTER} + ${halfWidth}), ${COLUMN_CENTRE}, calc(${RIGHT_EDGE} - ${halfWidth}))`
+}
+
+const useWidthOf = (element: HTMLElement | null): number | null => {
+  const [width, setWidth] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (element === null) return undefined
+    const observer = new ResizeObserver(() => {
+      setWidth(element.offsetWidth)
+    })
+    observer.observe(element)
+    return () => {
+      observer.disconnect()
+    }
+  }, [element])
+
+  return width
+}
+
+interface Fitting {
+  readonly signature: string
+  readonly densityIndex: number
+}
+
+const FIRST_FITTING: Fitting = { signature: "", densityIndex: 0 }
+
+const useDensityThatFits = (bar: HTMLElement | null, availableWidth: number | null, contentSignature: string): Density => {
+  const [fitting, setFitting] = useState<Fitting>(FIRST_FITTING)
+  const signature = `${contentSignature}|${String(availableWidth)}`
+  const densityIndex = fitting.signature === signature ? fitting.densityIndex : 0
+
+  useEffect(() => {
+    if (bar === null || availableWidth === null || densityIndex === DENSITIES.length - 1) return undefined
+    const observer = new ResizeObserver(() => {
+      if (bar.offsetWidth > availableWidth) setFitting({ signature, densityIndex: densityIndex + 1 })
+    })
+    observer.observe(bar)
+    return () => {
+      observer.disconnect()
+    }
+  }, [bar, availableWidth, signature, densityIndex])
+
+  return DENSITIES[densityIndex]
+}
+
 export const ReviewNavigatorBar = ({ place = "page", ...props }: ReviewNavigatorBarProps & Omit<ComponentProps<"div">, "children">) => {
   const navigator = use(NavigatorContext)
+  const [bar, setBar] = useState<HTMLDivElement | null>(null)
+  const [track, setTrack] = useState<HTMLDivElement | null>(null)
+  const width = useWidthOf(bar)
+  const availableWidth = useWidthOf(track)
+  const groups = (navigator?.groups ?? []).filter((group) => group.length > 0)
+  const density = useDensityThatFits(bar, availableWidth, navigatorSignatureOf(groups))
   if (navigator === null || (place === "page" && navigator.fullScreenOwner !== null)) return null
-  const groups = navigator.groups.filter((group) => group.length > 0)
   return (
-    <div
-      role="toolbar"
-      aria-label={NAVIGATOR_LABEL}
-      {...props}
-      className={cn(
-        "fixed bottom-3.5 left-[calc((100%-var(--navigator-inset-right,0px))/2)] z-40 flex h-[2.875rem] -translate-x-1/2 items-center rounded-md border border-sign-foreground/16 bg-sign px-1 pt-1 pb-2 text-[0.8rem] whitespace-nowrap text-sign-foreground transition-[left] duration-200 ease-out",
-        props.className,
-      )}
-    >
-      <JumpMenu navigator={navigator} />
-      <div key={navigator.dominantAnchorId ?? ""} className="flex items-center duration-[180ms] animate-in fade-in-0">
-        {groups.map((group) => (
-          <div key={group.map(controlKeyOf).find((key) => key !== POSITION_KEY) ?? POSITION_KEY} className="flex items-center gap-0.5">
-            <Divider />
-            {group.map((control) => <Control key={controlKeyOf(control)} control={control} navigator={navigator} />)}
-          </div>
-        ))}
+    <>
+      <div aria-hidden="true" ref={setTrack} className="pointer-events-none fixed bottom-0 left-6 h-0 right-[var(--navigator-inset-right,1.5rem)]" />
+      <div
+        ref={setBar}
+        role="toolbar"
+        aria-label={NAVIGATOR_LABEL}
+        {...props}
+        style={{ ...props.style, left: navigatorLeftOf(width) }}
+        className={cn(
+          "fixed bottom-3.5 z-40 flex h-[2.875rem] -translate-x-1/2 items-center rounded-md border border-sign-foreground/16 bg-sign px-1 pt-1 pb-2 text-[0.8rem] whitespace-nowrap text-sign-foreground transition-[left] duration-200 ease-out",
+          props.className,
+        )}
+      >
+        <JumpMenu navigator={navigator} density={density} />
+        <div key={navigator.dominantAnchorId ?? ""} className="flex items-center duration-[180ms] animate-in fade-in-0">
+          {groups.map((group) => (
+            <div key={group.map(controlKeyOf).find((key) => key !== POSITION_KEY) ?? POSITION_KEY} className="flex items-center gap-0.5">
+              <Divider />
+              {group.map((control) => <Control key={controlKeyOf(control)} control={control} navigator={navigator} density={density} />)}
+            </div>
+          ))}
+        </div>
+        <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-1 rounded-b-md bg-(--line,var(--primary-text))" />
       </div>
-      <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-1 rounded-b-md bg-(--line,var(--primary-text))" />
-    </div>
+    </>
   )
 }
 

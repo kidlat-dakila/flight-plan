@@ -8,7 +8,7 @@ import { buildPublishedReview } from "./utils/build-published-review"
 import { buildImportLink } from "./utils/import-link"
 import type { GetPublishedReviewInput, PublishedReview } from "./utils/schemas"
 
-const UNFILTERED = { filterKeys: null, isShowingReviewed: false } as const
+const UNFILTERED = { filterKeysBySegment: {}, reviewedSegmentIds: [] }
 
 export const getPublishedReview = async (
   input: GetPublishedReviewInput,

@@ -15361,6 +15361,7 @@
       {
         "id": "src/router.tsx#deleted@2:1",
         "type": "deleted",
+        "deletedType": "import",
         "lineOfCodeRangeReference": [
           {
             "start": {

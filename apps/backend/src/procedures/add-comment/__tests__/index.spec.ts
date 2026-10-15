@@ -10,7 +10,7 @@ const ADDED_LINE = { path: SUBTOTAL_PATH, side: "new" as const, startLine: 7, en
 const createContext = () => createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z"))
 
 const readConversation = async (context: ReturnType<typeof createContext>) => {
-  const page = await getReview({ ...KEY, filterKeys: null, isShowingReviewed: false }, context)
+  const page = await getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
   return page?.kind === "artifact" ? page.conversation : null
 }
 
@@ -51,7 +51,7 @@ describe("addComment", () => {
       addComment({ ...KEY, position: ADDED_LINE, body: "Round here?", shouldPostNow: true }, context),
     ).resolves.toStrictEqual({ kind: "done" })
     await expect(context.reviewStore.readPendingComments(KEY)).resolves.toStrictEqual([])
-    const page = await getReview({ ...KEY, filterKeys: null, isShowingReviewed: false }, context)
+    const page = await getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
     const files = page?.kind === "artifact" ? page.segments.flatMap((segment) => segment.walkthrough.files) : []
     expect(files.flatMap((file) => file.threads)).toMatchObject([
       { side: "new", lineLabel: "7", comments: [{ author: { name: "you" }, pendingLabel: null }] },

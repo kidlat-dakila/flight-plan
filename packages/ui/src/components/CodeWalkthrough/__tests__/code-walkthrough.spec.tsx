@@ -2,6 +2,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react"
 import type { ComponentProps } from "react"
 import CodeWalkthrough, { type WalkthroughNavigation } from "@/components/CodeWalkthrough"
 import { findNavigator, findNavigatorButton, navigatorLabels, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
+import type { NavigatorRail } from "@/lib/navigator-controls"
 
 type CodeWalkthroughProps = ComponentProps<typeof CodeWalkthrough>
 
@@ -9,13 +10,39 @@ const createNavigation = (overrides: Partial<WalkthroughNavigation> = {}): Walkt
   controls: {
     filter: {
       buttonLabel: "Filter",
-      valueLabel: null,
+      badge: null,
       heading: "Show waypoints with",
-      hint: "No kind ticked shows every kind.",
-      options: [
-        { key: "attention", label: "Needs Attention", countLabel: "1 waypoint", isSelected: false, toggledKeys: ["attention"] },
-        { key: "bug", label: "Bug", countLabel: "2 waypoints", isSelected: false, toggledKeys: ["bug"] },
+      groups: [
+        {
+          id: "finding",
+          options: [
+            { key: "attention", label: "Needs Attention", detailLabel: "1 waypoint", detailChange: null, isSelected: false, toggledKeys: ["attention"] },
+            { key: "bug", label: "Bug", detailLabel: "2 waypoints", detailChange: null, isSelected: false, toggledKeys: ["bug"] },
+          ],
+          more: null,
+        },
+        {
+          id: "block",
+          options: [{ key: "block:hook:added", label: "Hook", detailLabel: "Added", detailChange: "added", isSelected: false, toggledKeys: ["block:hook:added"] }],
+          more: {
+            id: "more-blocks",
+            label: "More",
+            heading: "Code blocks",
+            valueLabel: null,
+            options: [{ key: "block:class:deleted", label: "Class", detailLabel: "Deleted", detailChange: "deleted", isSelected: false, toggledKeys: ["block:class:deleted"] }],
+          },
+        },
       ],
+      submenus: [{
+        id: "change",
+        label: "Change type",
+        heading: "Change type",
+        valueLabel: "Added",
+        options: [
+          { key: "added", label: "Added", detailLabel: "3 waypoints", detailChange: null, isSelected: true, toggledKeys: [] },
+          { key: "removed", label: "Removed", detailLabel: "1 waypoint", detailChange: null, isSelected: false, toggledKeys: ["added", "removed"] },
+        ],
+      }],
     },
     reviewedToggle: { label: "Reviewed", countLabel: "1 waypoint", isShown: false, isAvailable: true },
     stepping: { previousLabel: "Previous waypoint", nextLabel: "Next waypoint" },
@@ -50,8 +77,20 @@ const createProps = (overrides: Partial<CodeWalkthroughProps> = {}): CodeWalkthr
   ...overrides,
 })
 
-const renderWalkthrough = (navigation: Partial<WalkthroughNavigation> = {}) =>
-  renderInNavigator(<CodeWalkthrough {...createProps({ navigation: createNavigation(navigation) })} />)
+const SURROUNDED_RAIL: NavigatorRail = {
+  groups: [
+    {
+      anchorId: "one",
+      label: "Requests (1/2)",
+      sections: [{ anchorId: "one-blast", label: "Blast Diagram" }, { anchorId: SECTION_ANCHOR_ID, label: "Code Walkthrough" }],
+    },
+    { anchorId: "two", label: "Pages (2/2)", sections: [{ anchorId: "two-context", label: "Context" }] },
+  ],
+  sections: [],
+}
+
+const renderWalkthrough = (navigation: Partial<WalkthroughNavigation> = {}, rail?: NavigatorRail) =>
+  renderInNavigator(<CodeWalkthrough {...createProps({ navigation: createNavigation(navigation) })} />, rail)
 
 describe("CodeWalkthrough", () => {
   it("shows its heading, coverage and the files it is given", () => {
@@ -60,6 +99,15 @@ describe("CodeWalkthrough", () => {
     expect(screen.getByRole("heading", { level: 2, name: "Code Walkthrough" })).toBeTruthy()
     expect(screen.getByText("All 2 changed files")).toBeTruthy()
     expect(screen.getByText("The files")).toBeTruthy()
+  })
+
+  it("counts the ticked filters in a badge on the Filter button", async () => {
+    const navigation = createNavigation()
+    renderWalkthrough({ controls: { ...navigation.controls, filter: { ...navigation.controls.filter, badge: { count: 2, label: "2 filters" } } } })
+    const trigger = await within(await findNavigator()).findByRole("menuitem", { name: /Filter/ })
+
+    expect(trigger.textContent).toBe("Filter22 filtersf")
+    expect(within(trigger).getByText("2 filters").className).toContain("sr-only")
   })
 
   it("gives the navigator the stepping, the review, the filter and the layout of the files, in that order", async () => {
@@ -96,6 +144,33 @@ describe("CodeWalkthrough", () => {
     expect(onPrevious).toHaveBeenCalledOnce()
   })
 
+  it("keeps the waypoint steps while it has a waypoint to step to", async () => {
+    renderWalkthrough({}, SURROUNDED_RAIL)
+
+    expect((await navigatorLabels("Next waypoint")).slice(0, 3)).toStrictEqual(["Jump to", "Previous waypoint", "Next waypoint"])
+  })
+
+  it("steps back to the section before it and on to the next segment from the ends of its waypoints", async () => {
+    const scrollIntoView = vi.fn()
+    Reflect.defineProperty(Element.prototype, "scrollIntoView", { value: scrollIntoView, configurable: true })
+    renderInNavigator(
+      <>
+        <div id="one-blast" />
+        <CodeWalkthrough {...createProps({ navigation: createNavigation({ positionLabel: "1 of 1", canStepBack: false, canStepForward: false }) })} />
+        <div id="two-context" />
+      </>,
+      SURROUNDED_RAIL,
+    )
+
+    expect((await navigatorLabels("Next: Segment (2/2)")).slice(0, 3)).toStrictEqual(["Jump to", "Back: Blast Diagram", "Next: Segment (2/2)"])
+    expect(within(await findNavigator()).getByText("1 of 1")).toBeTruthy()
+
+    fireEvent.keyDown(document.body, { key: "a" })
+    fireEvent.keyDown(document.body, { key: "d" })
+
+    expect(scrollIntoView.mock.contexts.flatMap((element) => (element instanceof Element ? [element.id] : []))).toStrictEqual(["one-blast", "two-context"])
+  })
+
   it("marks the current waypoint reviewed with S, and offers to take the mark off once it is reviewed", async () => {
     const onCurrentReviewedChange = vi.fn()
     const view = renderWalkthrough({ onCurrentReviewedChange })
@@ -112,14 +187,30 @@ describe("CodeWalkthrough", () => {
     expect((await findNavigatorButton("Reviewed")).getAttribute("aria-pressed")).toBe("true")
   })
 
-  it("cannot mark a waypoint reviewed before one is current, or while the waypoints are hidden", async () => {
-    const view = renderWalkthrough({ currentWaypoint: null })
+  it("cannot mark a waypoint reviewed before one is current, and says what to do when S is pressed or it is clicked", async () => {
+    const onCurrentReviewedChange = vi.fn()
+    renderWalkthrough({ currentWaypoint: null, onCurrentReviewedChange })
+    const button = await findNavigatorButton("Mark as reviewed")
 
-    expect((await findNavigatorButton("Mark as reviewed")).hasAttribute("disabled")).toBe(true)
+    expect(button.getAttribute("aria-disabled")).toBe("true")
 
-    view.rerender(<CodeWalkthrough {...createProps({ navigation: createNavigation({ areWaypointsHidden: true }) })} />)
+    fireEvent.keyDown(document.body, { key: "s" })
 
-    expect((await findNavigatorButton("Mark as reviewed")).hasAttribute("disabled")).toBe(true)
+    expect(await screen.findByText("Pick a waypoint first: press D to step to the next one.", { selector: "[data-slot=tooltip-content]" })).toBeTruthy()
+
+    fireEvent.click(button)
+
+    expect(onCurrentReviewedChange).not.toHaveBeenCalled()
+  })
+
+  it("cannot mark a waypoint reviewed while the waypoints are hidden, and says how to show them", async () => {
+    renderWalkthrough({ areWaypointsHidden: true })
+    const button = await findNavigatorButton("Mark as reviewed")
+
+    fireEvent.click(button)
+
+    expect(await screen.findByText("Show the waypoints first: press X.", { selector: "[data-slot=tooltip-content]" })).toBeTruthy()
+    expect(button.getAttribute("aria-describedby")).toBeTruthy()
   })
 
   it("filters by kind and shows the reviewed waypoints from the filter menu", async () => {
@@ -134,6 +225,7 @@ describe("CodeWalkthrough", () => {
     expect(within(menu).getAllByRole("menuitemcheckbox").map((item) => item.textContent)).toStrictEqual([
       "Needs Attention1 waypoint",
       "Bug2 waypoints",
+      "HookAdded",
       "Reviewed1 waypoint",
     ])
 
@@ -142,6 +234,45 @@ describe("CodeWalkthrough", () => {
 
     expect(onFilterChange).toHaveBeenCalledWith(["bug"])
     expect(onShowReviewedChange).toHaveBeenCalledWith(true)
+  })
+
+  it("lists the first code blocks in the filter menu, and the rest under More", async () => {
+    const onFilterChange = vi.fn()
+    renderWalkthrough({ onFilterChange })
+    await findNavigatorButton("Next waypoint")
+
+    fireEvent.keyDown(document.body, { key: "f" })
+    const menu = await screen.findByRole("menu")
+
+    expect(within(menu).getAllByRole("menuitem").map((item) => item.textContent)).toStrictEqual(["More", "Change typeAdded"])
+
+    fireEvent.click(within(menu).getByRole("menuitem", { name: "More" }))
+    const more = (await screen.findAllByRole("menu")).find((candidate) => within(candidate).queryByText("Code blocks") !== null)
+
+    fireEvent.click(within(more ?? document.body).getByRole("menuitemcheckbox", { name: /Class/ }))
+
+    expect(onFilterChange).toHaveBeenCalledWith(["block:class:deleted"])
+  })
+
+  it("puts the change types in a submenu of the filter menu, named after what is ticked in it", async () => {
+    const onFilterChange = vi.fn()
+    renderWalkthrough({ onFilterChange })
+    await findNavigatorButton("Next waypoint")
+
+    fireEvent.keyDown(document.body, { key: "f" })
+    const trigger = within(await screen.findByRole("menu")).getByRole("menuitem", { name: /Change type/ })
+
+    expect(trigger.textContent).toBe("Change typeAdded")
+
+    fireEvent.click(trigger)
+    const submenu = (await screen.findAllByRole("menu")).find((menu) => within(menu).queryByRole("menuitemcheckbox", { name: /Removed/ }) !== null)
+
+    expect(submenu).toBeDefined()
+
+    fireEvent.click(within(submenu ?? document.body).getByRole("menuitemcheckbox", { name: /Removed/ }))
+    fireEvent.click(within(submenu ?? document.body).getByRole("menuitemcheckbox", { name: /Added/ }))
+
+    expect(onFilterChange.mock.calls).toStrictEqual([[["added", "removed"]], [null]])
   })
 
   it("has no review button and no filter when the page does not track them", async () => {

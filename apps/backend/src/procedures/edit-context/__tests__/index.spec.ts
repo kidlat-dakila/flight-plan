@@ -21,7 +21,7 @@ describe("editContext", () => {
     })
 
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ status: statusBefore })
-    const page = await getReview({ ...KEY, filterKeys: null, isShowingReviewed: false }, context)
+    const page = await getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
 
     expect(page?.kind === "artifact" ? page.segments[0]?.context : null).toMatchObject({
       markdown: "The stock check now counts **held** units.",

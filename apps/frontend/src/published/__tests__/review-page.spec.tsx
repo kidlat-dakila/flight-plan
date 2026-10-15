@@ -28,7 +28,6 @@ const publishedReview = {
   unassignedFiles: null,
   rail: artifactPage.rail,
   segments: artifactPage.segments,
-  walkthroughControls: artifactPage.walkthroughControls,
   composer: artifactPage.composer,
   codeLinks: {},
   codeDefinitions: {},
@@ -73,7 +72,7 @@ describe("the published review page", () => {
 
     fireEvent.click(await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" }))
 
-    expect((await screen.findAllByText("1 of 2")).length).toBeGreaterThan(0)
+    expect((await screen.findAllByText("1 of 1")).length).toBeGreaterThan(0)
     expect(screen.queryByRole("dialog")).toBeNull()
     showSectionInView(null)
   })
