@@ -7,6 +7,7 @@ import { createDemoProcedureContext } from "@flightplan/backend/context"
 import { demoReviewPathOf, type DemoReview } from "@flightplan/backend/demo-reviews"
 import { appRouter, type AppRouter } from "@flightplan/backend/router"
 import { createApp } from "@flightplan/frontend/app"
+import { keepAnchorLinksOnPage } from "./anchor-links"
 import { readDemos, readMount, type DemoMount } from "./demo-data"
 import { keepForgeLinksInDemo } from "./forge-links"
 import { jsonWireLink } from "./json-wire-link"
@@ -31,6 +32,7 @@ const mountDemo = async (element: HTMLElement): Promise<void> => {
   if (startingPath === null) throw new Error(UNKNOWN_DEMO_MESSAGE)
   openStartingPath(startingPath)
   keepForgeLinksInDemo(demos)
+  keepAnchorLinksOnPage()
   const context = await createDemoProcedureContext(demos, new Date(), () => crypto.randomUUID())
   const trpcClient = createTRPCClient<AppRouter>({
     links: [jsonWireLink<AppRouter>(), unstable_localLink({ router: appRouter, createContext: async () => await Promise.resolve(context) })],
