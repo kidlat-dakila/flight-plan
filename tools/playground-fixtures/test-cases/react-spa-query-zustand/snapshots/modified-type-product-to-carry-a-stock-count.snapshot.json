@@ -441,14 +441,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/types/product.ts",
-              "title": "A product carries a stock count",
-              "summary": [
-                "Modified [`Product`](code:src/types/product.ts#Product) to require a property `stock: number`."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

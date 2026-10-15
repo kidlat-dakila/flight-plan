@@ -958,12 +958,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The route first, then the page the route renders, then the store and the types the page reads.",
           "files": [
             {
               "path": "src/routes/root-layout.tsx",
-              "title": "src/routes/root-layout.tsx",
-              "summary": [],
               "waypoints": [
                 {
                   "id": "w1",
@@ -988,12 +985,6 @@
             },
             {
               "path": "src/stores/order-filter-store.ts",
-              "title": "A store holds the chosen status",
-              "summary": [
-                "Added [`OrderFilterState`](code:src/stores/order-filter-store.ts#OrderFilterState), an interface with `status` and `setStatus`.",
-                "Added [`useOrderFilterStore`](code:src/stores/order-filter-store.ts#useOrderFilterStore), a Zustand store that [starts with `status: null`](code:src/stores/order-filter-store.ts#L10) and whose [`setStatus()` calls `set({ status })`](code:src/stores/order-filter-store.ts#L11-13).",
-                "Added [`selectStatus()`](code:src/stores/order-filter-store.ts#selectStatus), a function that [returns `state.status`](code:src/stores/order-filter-store.ts#L17)."
-              ],
               "waypoints": [
                 {
                   "id": "w2",
@@ -1082,11 +1073,6 @@
             },
             {
               "path": "src/types/order.ts",
-              "title": "The types of an order and its status",
-              "summary": [
-                "Added [`OrderStatus`](code:src/types/order.ts#OrderStatus), a type that is `\"open\"`, `\"shipped\"` or `\"cancelled\"`.",
-                "Added [`Order`](code:src/types/order.ts#Order), an interface with `id`, `placedAt`, `status` and `totalCents`."
-              ],
               "waypoints": [
                 {
                   "id": "w6",
@@ -2866,14 +2852,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The request first, then the query hook that calls it.",
           "files": [
             {
               "path": "src/api/orders.ts",
-              "title": "The API module requests orders by status",
-              "summary": [
-                "Added [`fetchOrders()`](code:src/api/orders.ts#fetchOrders), a function that [requests `/orders` for `null` and `/orders?status=open` for `\"open\"`](code:src/api/orders.ts#L5)."
-              ],
               "waypoints": [
                 {
                   "id": "w8",
@@ -2918,10 +2899,6 @@
             },
             {
               "path": "src/hooks/use-orders.ts",
-              "title": "A query hook caches orders per status",
-              "summary": [
-                "Added [`useOrders()`](code:src/hooks/use-orders.ts#useOrders), a hook that [calls `useQuery` with the key `[\"orders\", status]` and a query function that calls `fetchOrders(status)`](code:src/hooks/use-orders.ts#L6)."
-              ],
               "waypoints": [
                 {
                   "id": "w10",
@@ -2970,8 +2947,6 @@
             },
             {
               "path": "src/router.tsx",
-              "title": "src/router.tsx",
-              "summary": [],
               "waypoints": [
                 {
                   "id": "w12",
@@ -3017,8 +2992,6 @@
             },
             {
               "path": "src/routes/orders/components/OrderRow.tsx",
-              "title": "src/routes/orders/components/OrderRow.tsx",
-              "summary": [],
               "waypoints": [
                 {
                   "id": "w14",
@@ -3067,8 +3040,6 @@
             },
             {
               "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-              "title": "src/routes/orders/components/OrderStatusFilter.tsx",
-              "summary": [],
               "waypoints": [
                 {
                   "id": "w16",
@@ -3232,8 +3203,6 @@
             },
             {
               "path": "src/routes/orders/index.tsx",
-              "title": "src/routes/orders/index.tsx",
-              "summary": [],
               "waypoints": [
                 {
                   "id": "w19",

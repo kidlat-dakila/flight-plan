@@ -25,6 +25,30 @@ const requestSchema = z.strictObject({
   requestedAt: z.iso.datetime().transform((text) => new Date(text)),
 }).transform((request) => ({ ...request, configurationId: request.configurationId ?? request.preset }))
 
+const RETIRED_WALKTHROUGH_KEY = "intro"
+const RETIRED_FILE_KEYS: readonly string[] = ["title", "summary"]
+
+const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
+  typeof value === "object" && value !== null && !Array.isArray(value)
+
+const withoutKeys = (record: Readonly<Record<string, unknown>>, keys: readonly string[]): Record<string, unknown> =>
+  Object.fromEntries(Object.entries(record).filter(([name]) => !keys.includes(name)))
+
+const withoutRetiredFileKeys = (file: unknown): unknown => (isRecord(file) ? withoutKeys(file, RETIRED_FILE_KEYS) : file)
+
+const withoutRetiredWalkthroughKeys = (walkthrough: unknown): unknown =>
+  isRecord(walkthrough) && Array.isArray(walkthrough.files)
+    ? { ...withoutKeys(walkthrough, [RETIRED_WALKTHROUGH_KEY]), files: walkthrough.files.map(withoutRetiredFileKeys) }
+    : walkthrough
+
+const withoutRetiredSegmentKeys = (segment: unknown): unknown =>
+  isRecord(segment) ? { ...segment, walkthrough: withoutRetiredWalkthroughKeys(segment.walkthrough) } : segment
+
+const withoutRetiredKeys = (artifact: unknown): unknown =>
+  isRecord(artifact) && Array.isArray(artifact.segments)
+    ? { ...artifact, segments: artifact.segments.map(withoutRetiredSegmentKeys) }
+    : artifact
+
 const storedReviewSchema = z.strictObject({
   schema: z.literal(STORED_SCHEMA_VERSION),
   meta: z.strictObject({
@@ -32,7 +56,7 @@ const storedReviewSchema = z.strictObject({
     baseCommit: z.string(),
     request: requestSchema,
   }),
-  artifact: reviewArtifactSchema,
+  artifact: z.preprocess(withoutRetiredKeys, reviewArtifactSchema),
 })
 
 const parseStored = (text: string): unknown => {

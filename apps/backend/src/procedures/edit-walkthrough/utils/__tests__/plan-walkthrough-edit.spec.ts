@@ -4,15 +4,12 @@ import { CART_PATH, createArtifact, createSegment, createWaypoint, PRICE_PATH } 
 const nested = createSegment({
   id: "nested",
   walkthrough: {
-    intro: null,
     files: [
       {
         path: PRICE_PATH,
-        title: "Price file",
-        summary: [],
         waypoints: [createWaypoint("price-of", "priceOf", { children: [createWaypoint("format", "format")] })],
       },
-      { path: CART_PATH, title: "Cart file", summary: [], waypoints: [createWaypoint("subtotal", "subtotal")] },
+      { path: CART_PATH, waypoints: [createWaypoint("subtotal", "subtotal")] },
     ],
   },
 })
@@ -85,8 +82,7 @@ describe("planWalkthroughEdit", () => {
       segments: [
         createSegment({
           walkthrough: {
-            intro: null,
-            files: [{ path: PRICE_PATH, title: "Price file", summary: [], waypoints: [createWaypoint("price-of", "priceOf", { needsAttention: "Look." })] }],
+            files: [{ path: PRICE_PATH, waypoints: [createWaypoint("price-of", "priceOf", { needsAttention: "Look." })] }],
           },
         }),
       ],

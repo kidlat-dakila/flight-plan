@@ -298,15 +298,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "One file: the constant for the stale time first, then the query that reads it.",
           "files": [
             {
               "path": "src/hooks/use-products.ts",
-              "title": "The products query sets its own stale time",
-              "summary": [
-                "Added [`PRODUCTS_STALE_TIME_MS`](code:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS), a constant that [holds `300_000`](code:src/hooks/use-products.ts#L6), the number of milliseconds in five minutes. The module does not export it.",
-                "Modified [`useProducts()`](code:src/hooks/use-products.ts#useProducts) to [pass `staleTime: PRODUCTS_STALE_TIME_MS` to `useQuery`](code:src/hooks/use-products.ts#L9). The query had no `staleTime` of its own before, and took the `30_000` that `queryClient` in `src/lib/query-client.ts` sets for every query."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

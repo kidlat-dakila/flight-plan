@@ -11,9 +11,8 @@ export const updateNodes = async (input: UpdateNodesInput, context: ProcedureCon
   if (opened.kind === "rejected") return opened
   const edits: NodeEdits = {
     segmentId: input.segmentId,
-    segment: { title: input.title, context: input.context, intro: input.intro, order: input.order, journeyDescription: input.journeyDescription },
+    segment: { title: input.title, context: input.context, order: input.order, journeyDescription: input.journeyDescription },
     waypoints: input.waypoints ?? [],
-    files: input.files ?? [],
     journey: input.journey ?? [],
     blast: input.blast ?? [],
     contextCodeBlocks: input.contextCodeBlocks ?? [],

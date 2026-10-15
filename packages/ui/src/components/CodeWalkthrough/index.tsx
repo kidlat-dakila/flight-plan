@@ -2,9 +2,7 @@ import type { ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import FilterMenu, { FilterMenuOption, FilterMenuReset } from "@/components/FilterMenu"
 import FindingMark, { type FindingMarkKind } from "@/components/FindingMark"
-import Prose from "@/components/Prose"
 import WaypointStepper from "@/components/WaypointStepper"
-import type { CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 
 interface WaypointFilter {
   readonly buttonLabel: string
@@ -22,7 +20,6 @@ interface WaypointFilter {
 interface CodeWalkthroughProps {
   readonly anchorId: string
   readonly heading: string
-  readonly intro: ProseBlocks | null
   readonly coverageLabel: string
   readonly controls: {
     readonly filter: WaypointFilter
@@ -33,10 +30,8 @@ interface CodeWalkthroughProps {
   readonly canStepBack: boolean
   readonly canStepForward: boolean
   readonly emptyMessage: string | null
-  readonly codeLinks: CodeLinkTargets
   readonly children: ReactNode
   readonly onArrangeFiles: (() => void) | null
-  readonly onOpenCodeLink: (anchorId: string) => void
   readonly onPrevious: () => void
   readonly onNext: () => void
   readonly onFilterChange: ((keys: readonly FindingMarkKind[] | null) => void) | null
@@ -48,17 +43,14 @@ const ARRANGE_FILES_LABEL = "Arrange files"
 const CodeWalkthrough = ({
   anchorId,
   heading,
-  intro,
   coverageLabel,
   controls: { filter, reviewedToggle, stepping: stepLabels },
   positionLabel,
   canStepBack,
   canStepForward,
   emptyMessage,
-  codeLinks,
   children,
   onArrangeFiles,
-  onOpenCodeLink,
   onPrevious,
   onNext,
   onFilterChange,
@@ -111,7 +103,6 @@ const CodeWalkthrough = ({
             </FilterMenu>
           )}
     </div>
-    {intro === null ? null : <Prose blocks={intro} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} className="pt-4" />}
     {emptyMessage === null ? null : <p className="pt-6 text-muted-foreground">{emptyMessage}</p>}
     {children}
   </section>

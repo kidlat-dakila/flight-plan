@@ -443,14 +443,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/lib/format.ts",
-              "title": "The price formatter rounds to the nearest cent",
-              "summary": [
-                "Modified [`formatPrice()`](code:src/lib/format.ts#formatPrice) to round `priceCents` with `Math.round`, where it used `Math.floor`."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

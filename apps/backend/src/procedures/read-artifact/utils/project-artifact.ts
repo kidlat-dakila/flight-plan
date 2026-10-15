@@ -66,11 +66,7 @@ const segmentOverviewOf = (segment: Segment): unknown => ({
   changedPaths: segment.changedPaths,
   journey: segment.journey === null ? null : { isDescriptionWritten: segment.journey.description !== null, nodes: journeyStubsOf(segment) },
   blast: segment.blast,
-  files: segment.walkthrough.files.map((file) => ({
-    path: file.path,
-    title: file.title,
-    waypoints: file.waypoints.map(waypointStubOf),
-  })),
+  files: segment.walkthrough.files.map((file) => ({ path: file.path, waypoints: file.waypoints.map(waypointStubOf) })),
 })
 
 export const projectOverview = (artifact: ReviewArtifact, configurationId: string, sections: SectionSwitches): unknown => ({

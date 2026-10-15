@@ -342,15 +342,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/account/components/profile-schema.ts",
-              "title": "The profile schema requires a phone",
-              "summary": [
-                "Added [`PHONE_PATTERN`](code:src/routes/account/components/profile-schema.ts#PHONE_PATTERN), a regular expression that matches an optional `+` and then 7 to 15 characters that are each a digit or a space.",
-                "Modified [`profileSchema`](code:src/routes/account/components/profile-schema.ts#profileSchema) to require a `phone` string that matches `PHONE_PATTERN`."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -960,15 +954,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/account/components/ProfileForm.tsx",
-              "title": "The profile form has a Phone input",
-              "summary": [
-                "Added [an `<Input>` with the label `Phone`, registered as `phone`](code:src/routes/account/components/ProfileForm.tsx#L24), to `<ProfileForm />`.",
-                "Added [a paragraph that shows `formState.errors.phone.message`](code:src/routes/account/components/ProfileForm.tsx#L25) under that input."
-              ],
               "waypoints": [
                 {
                   "id": "w3",

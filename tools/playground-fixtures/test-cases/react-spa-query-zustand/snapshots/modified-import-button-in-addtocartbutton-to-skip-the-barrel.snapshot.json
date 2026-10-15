@@ -183,14 +183,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/catalog/components/AddToCartButton.tsx",
-              "title": "Button comes from its own file",
-              "summary": [
-                "Modified [the import of `Button`](code:src/routes/catalog/components/AddToCartButton.tsx#L1) to read `@/components/ui/button`, the file that declares `Button`. It read the barrel `@/components/ui` before."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

@@ -111,7 +111,7 @@ describe("getReviewArtifactFixture", () => {
 
     const [file] = artifact.segments[0].walkthrough.files
 
-    expect(Object.keys(file)).toStrictEqual(["path", "title", "summary", "waypoints"])
+    expect(Object.keys(file)).toStrictEqual(["path", "waypoints"])
     expect(file.waypoints.map((waypoint) => Object.keys(waypoint))).toStrictEqual([
       ["id", "title", "declaration", "codeBlocks", "reading", "needsAttention", "findings", "children"],
       ["id", "title", "declaration", "codeBlocks", "reading", "needsAttention", "findings", "children"],

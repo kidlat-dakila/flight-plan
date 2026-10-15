@@ -63,15 +63,12 @@ export const createSegment = (overrides: Partial<Segment> = {}): Segment => ({
   journey: null,
   blast: null,
   walkthrough: {
-    intro: null,
     files: [
       {
         path: PRICE_PATH,
-        title: "Price file",
-        summary: [],
         waypoints: [createWaypoint("price-of", "priceOf"), createWaypoint("format", "format")],
       },
-      { path: CART_PATH, title: "Cart file", summary: [], waypoints: [createWaypoint("subtotal", "subtotal")] },
+      { path: CART_PATH, waypoints: [createWaypoint("subtotal", "subtotal")] },
     ],
   },
   ...overrides,

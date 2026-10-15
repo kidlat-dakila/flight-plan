@@ -6,12 +6,9 @@ const artifact = createArtifact({
   segments: [
     createSegment({
       walkthrough: {
-        intro: null,
         files: [
           {
             path: PRICE_PATH,
-            title: "Price file",
-            summary: [],
             waypoints: [
               createWaypoint("parent", "priceOf", { children: [createWaypoint("child", "format"), createWaypoint("other", "format")] }),
               createWaypoint("sibling", "format"),

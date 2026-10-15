@@ -275,14 +275,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/lib/format.ts",
-              "title": "The quantity formatter is gone",
-              "summary": [
-                "Removed the function `formatQuantity()`, which returned `\"1 item\"` for a quantity of 1 and `\"3 items\"` for a quantity of 3."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -777,15 +772,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/cart/components/CartLine.tsx",
-              "title": "A cart line renders its quantity unformatted",
-              "summary": [
-                "Removed `formatQuantity` from [the import of `@/lib/format`](code:src/routes/cart/components/CartLine.tsx#L2).",
-                "Modified [`<CartLine />`](code:src/routes/cart/components/CartLine.tsx#CartLine) to render `item.quantity` with no call to a formatter."
-              ],
               "waypoints": [
                 {
                   "id": "w2",

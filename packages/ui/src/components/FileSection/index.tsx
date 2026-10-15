@@ -1,3 +1,5 @@
+import { ChevronRightIcon } from "lucide-react"
+import { useState } from "react"
 import CodeBlock, { lineKeyOf, type LineAddress } from "@/components/CodeBlock"
 import CommentThread, {
   CommentComposer,
@@ -6,12 +8,11 @@ import CommentThread, {
   type ThreadResolution,
 } from "@/components/CommentThread"
 import OutwardLink from "@/components/OutwardLink"
-import Prose, { HoverProse } from "@/components/Prose"
+import { HoverProse } from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
-import Unwritten from "@/components/Unwritten"
 import WaypointBox, { type WaypointContent } from "@/components/WaypointBox"
-import { keyed } from "@/lib/keyed"
 import type { CodeDefinitions, CodeLine, CodeLinkTargets, ForgeLink, ProseBlocks } from "@/lib/review-content"
+import { cn } from "@/lib/utils"
 
 export interface WalkthroughWaypoint extends WaypointContent {
   readonly id: string
@@ -58,11 +59,8 @@ export interface WalkthroughFile {
   readonly anchorId: string
   readonly path: string
   readonly title: string
-  readonly isDraft: boolean
   readonly isReviewed: boolean
   readonly reviewLabel: string
-  readonly summary: readonly ProseBlocks[]
-  readonly waypointCountLabel: string
   readonly forgeLink: ForgeLink | null
   readonly rows: readonly FileRow[]
   readonly threads: readonly FileThread[]
@@ -92,6 +90,16 @@ interface FileSectionProps {
 }
 
 const DECIMAL = 10
+const COLLAPSE_LABEL = "Collapse file"
+const EXPAND_LABEL = "Expand file"
+
+interface Collapse {
+  readonly isCollapsed: boolean
+  readonly currentWaypointId: string | null
+}
+
+const holdsWaypoint = (file: WalkthroughFile, waypointId: string | null): boolean =>
+  file.rows.some((row) => row.kind === "waypoint" && row.waypoint.id === waypointId)
 
 const lineKeysOf = (range: CommentRange): string[] => {
   const start = Number.parseInt(range.startLineLabel, DECIMAL)
@@ -128,6 +136,11 @@ const FileSection = ({
   onResolveThread,
   onDiscardComment,
 }: FileSectionProps) => {
+  const [collapse, setCollapse] = useState<Collapse>({ isCollapsed: false, currentWaypointId })
+  if (collapse.currentWaypointId !== currentWaypointId) {
+    setCollapse({ isCollapsed: collapse.isCollapsed && !holdsWaypoint(file, currentWaypointId), currentWaypointId })
+  }
+  const { isCollapsed } = collapse
   const commentedLineKeys = new Set([...file.threads, ...(composingRange === null ? [] : [composingRange])].flatMap(lineKeysOf))
   const renderDefinitionDescription = (description: ProseBlocks) => (
     <HoverProse blocks={description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
@@ -192,24 +205,24 @@ const FileSection = ({
       data-reviewed={file.isReviewed}
       className="scroll-mt-(--waypoint-scroll-margin) pt-6 [contain-intrinsic-size:auto_32rem] [content-visibility:auto]"
     >
-      {file.summary.length === 0
-        ? null
-        : (
-            <ul className="flex list-disc flex-col gap-2 pb-4 pl-5">
-              {keyed(file.summary).map(({ key, item }) => (
-                <li key={key}><Prose blocks={item} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} /></li>
-              ))}
-            </ul>
-          )}
       <div className="overflow-clip rounded-md border">
-        <div className="sticky top-(--file-header-top) z-10 flex h-11 items-center gap-3 border-b bg-muted pr-1 pl-3">
+        <div className={cn("sticky top-(--file-header-top) z-10 flex h-11 items-center gap-3 bg-muted pr-1 pl-1.5", isCollapsed ? "" : "border-b")}>
+          <button
+            type="button"
+            aria-expanded={!isCollapsed}
+            aria-label={`${isCollapsed ? EXPAND_LABEL : COLLAPSE_LABEL}: ${file.path}`}
+            className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-background hover:text-foreground"
+            onClick={() => { setCollapse({ isCollapsed: !isCollapsed, currentWaypointId }) }}
+          >
+            <ChevronRightIcon
+              aria-hidden="true"
+              className={cn("size-4 transition-transform duration-[180ms] ease-out", isCollapsed ? "" : "rotate-90")}
+            />
+          </button>
           <div className="flex min-w-0 flex-col justify-center">
-            <h3 className="truncate text-[0.9375rem] leading-5 font-semibold">
-              <Unwritten isPending={file.isDraft} className="h-5 w-64 py-0">{file.title}</Unwritten>
-            </h3>
+            <h3 className="truncate text-[0.9375rem] leading-5 font-semibold">{file.title}</h3>
             <p className="truncate font-mono text-xs leading-4 text-muted-foreground" title={file.path}>{file.path}</p>
           </div>
-          <p className="shrink-0 text-xs text-muted-foreground tabular-nums">{file.waypointCountLabel}</p>
           <span className="flex-1" />
           {file.forgeLink === null ? null : <OutwardLink href={file.forgeLink.href} label={file.forgeLink.label} className="shrink-0 text-xs" />}
           {onFileReviewedChange === null
@@ -223,54 +236,56 @@ const FileSection = ({
                 />
               )}
         </div>
-        {file.rows.map((row) => {
-          if (row.kind === "lines") {
-            return (
-              <CodeBlock
-                key={row.id}
-                lines={row.lines}
-                definitions={codeDefinitions}
-                renderDefinitionDescription={renderDefinitionDescription}
-                path={file.path}
-                label={file.path}
-                className="py-0"
-                commentedLineKeys={commentedLineKeys}
-                renderLineThreads={renderLineThreads}
-                {...(composer === null
-                  ? {}
-                  : {
-                      addCommentLabel: composer.addLabel,
-                      onAddComment: (address: LineAddress, isExtending: boolean) => {
-                        onStartComment(file.path, address, isExtending)
-                      },
-                    })}
-              />
-            )
-          }
-          if (row.kind === "gap") {
-            return (
-              <p key={row.id} className="border-y bg-muted/60 py-0.5 pl-18 font-mono text-xs text-muted-foreground first-of-type:border-t-0 last:border-b-0">
-                {row.label}
-              </p>
-            )
-          }
-          return (
-            <div key={row.id} className="bg-code">
-              <WaypointBox
-                waypoint={row.waypoint}
-                isOpen={openWaypointIds.has(row.waypoint.id)}
-                isCurrent={row.waypoint.id === currentWaypointId}
-                isReviewPending={isReviewPending}
-                codeLinks={codeLinks}
-                onOpenCodeLink={onOpenCodeLink}
-                onToggle={() => { onToggleWaypoint(row.waypoint.id) }}
-                onReviewedChange={onWaypointReviewedChange === null
-                  ? null
-                  : (isReviewed) => { onWaypointReviewedChange(row.waypoint.id, isReviewed) }}
-              />
-            </div>
-          )
-        })}
+        {isCollapsed
+          ? null
+          : file.rows.map((row) => {
+              if (row.kind === "lines") {
+                return (
+                  <CodeBlock
+                    key={row.id}
+                    lines={row.lines}
+                    definitions={codeDefinitions}
+                    renderDefinitionDescription={renderDefinitionDescription}
+                    path={file.path}
+                    label={file.path}
+                    className="py-0"
+                    commentedLineKeys={commentedLineKeys}
+                    renderLineThreads={renderLineThreads}
+                    {...(composer === null
+                      ? {}
+                      : {
+                          addCommentLabel: composer.addLabel,
+                          onAddComment: (address: LineAddress, isExtending: boolean) => {
+                            onStartComment(file.path, address, isExtending)
+                          },
+                        })}
+                  />
+                )
+              }
+              if (row.kind === "gap") {
+                return (
+                  <p key={row.id} className="border-y bg-muted/60 py-0.5 pl-18 font-mono text-xs text-muted-foreground first-of-type:border-t-0 last:border-b-0">
+                    {row.label}
+                  </p>
+                )
+              }
+              return (
+                <div key={row.id} className="bg-code">
+                  <WaypointBox
+                    waypoint={row.waypoint}
+                    isOpen={openWaypointIds.has(row.waypoint.id)}
+                    isCurrent={row.waypoint.id === currentWaypointId}
+                    isReviewPending={isReviewPending}
+                    codeLinks={codeLinks}
+                    onOpenCodeLink={onOpenCodeLink}
+                    onToggle={() => { onToggleWaypoint(row.waypoint.id) }}
+                    onReviewedChange={onWaypointReviewedChange === null
+                      ? null
+                      : (isReviewed) => { onWaypointReviewedChange(row.waypoint.id, isReviewed) }}
+                  />
+                </div>
+              )
+            })}
       </div>
     </article>
   )

@@ -262,14 +262,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The two import lines that follow the moved file: the page that loads the profile, then the form that saves it.",
           "files": [
             {
               "path": "src/views/account/AccountPage.vue",
-              "title": "The profile query comes from the account folder",
-              "summary": [
-                "Modified [the import of `useProfile` in the file of `<AccountPage />`](code:src/views/account/AccountPage.vue#L2) to read from `@/views/account/use-profile`."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -293,10 +288,6 @@
             },
             {
               "path": "src/views/account/components/ProfileForm.vue",
-              "title": "The save mutation comes from the account folder",
-              "summary": [
-                "Modified [the import of `useUpdateProfile` in the file of `<ProfileForm />`](code:src/views/account/components/ProfileForm.vue#L4) to read from `@/views/account/use-profile`."
-              ],
               "waypoints": [
                 {
                   "id": "w2",

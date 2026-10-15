@@ -273,15 +273,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/hooks/use-profile.ts",
-              "title": "A save now invalidates the profile query",
-              "summary": [
-                "Modified [the `onSuccess` callback of `useUpdateProfile()`](code:src/hooks/use-profile.ts#L14-16) to call `queryClient.invalidateQueries()` with the key `[\"profile\"]`, where it called `queryClient.setQueryData()` with the saved profile.",
-                "Removed [the `profile` parameter of `onSuccess`](code:src/hooks/use-profile.ts#L14), which nothing reads now."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

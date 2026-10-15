@@ -316,11 +316,8 @@ export const fileSectionSchema = z.strictObject({
   anchorId: z.string(),
   path: z.string(),
   title: z.string(),
-  isDraft: z.boolean(),
   isReviewed: z.boolean(),
   reviewLabel: z.string(),
-  summary: z.array(proseSchema),
-  waypointCountLabel: z.string(),
   forgeLink: linkSchema.nullable(),
   rows: z.array(fileRowSchema),
 })
@@ -343,7 +340,6 @@ export const waypointFilterSchema = z.strictObject({
 export const walkthroughBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
-  intro: proseSchema.nullable(),
   coverageLabel: z.string(),
   emptyMessage: z.string().nullable(),
   files: z.array(fileSectionSchema),

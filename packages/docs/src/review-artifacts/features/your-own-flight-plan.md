@@ -23,7 +23,7 @@ On the author's page every part can be edited:
 - [Blast Diagram](/docs/review-artifacts/parts/blast-diagram/): the impact of each file.
 - [Code Walkthrough](/docs/review-artifacts/parts/code-walkthrough/): the waypoints, the files and their order.
 
-Findings, file titles and the walkthrough's intro come from the agent and aren't edited here.
+Findings come from the agent and aren't edited here.
 
 ## Mark it as complete
 

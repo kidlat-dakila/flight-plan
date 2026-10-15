@@ -404,15 +404,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/App.vue",
-              "title": "The theme is stored and read back",
-              "summary": [
-                "Modified [`theme`](code:src/App.vue#L8) to start as `\"dark\"` when `localStorage.getItem(\"theme\")` returns `\"dark\"`, and as `\"light\"` for `null` and for every other value. It started as `\"light\"` before.",
-                "Modified `toggleTheme` to [call `localStorage.setItem()` with `\"theme\"` and the new value of `theme`](code:src/App.vue#L11), after it switches `theme`."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

@@ -118,12 +118,7 @@ const writeEverything = (artifact: ReviewArtifact): ReviewArtifact => ({
       ? null
       : { ...segment.journey, description: "A shopper opens the cart, and the estimate is read.", journeyNodes: segment.journey.journeyNodes.map(writeJourneyNode) },
     walkthrough: {
-      intro: "Start with the estimate.",
-      files: segment.walkthrough.files.map((file) => ({
-        ...file,
-        title: "The estimate",
-        waypoints: file.waypoints.map(writeWaypoint),
-      })),
+      files: segment.walkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map(writeWaypoint) })),
     },
   })),
   contextCodeBlocks: artifact.contextCodeBlocks.map((listed) => ({ ...listed, description: `Description of ${listed.codeBlock?.name ?? listed.name ?? ""}` })),
@@ -173,7 +168,7 @@ describe("rebuildReview", () => {
     await expect(journeyLabelsOf(harness.reviewStore)).resolves.toStrictEqual(["Label of estimate", null])
     await expect(contextDescriptionsOf(harness.reviewStore)).resolves.toMatchObject({ estimate: "Description of estimate" })
     await expect(harness.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
-      segments: [{ context: "", walkthrough: { intro: null, files: [{ title: PATH }] } }],
+      segments: [{ context: "", walkthrough: { files: [{ path: PATH }] } }],
     })
   })
 
@@ -194,7 +189,7 @@ describe("rebuildReview", () => {
     expect(harness.spawner.launches).toStrictEqual([])
     await expect(harness.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       status: "complete",
-      segments: [{ title: "Delivery estimates", context: "Estimates depend on the zone now.", walkthrough: { intro: "Start with the estimate.", files: [{ title: "The estimate" }] } }],
+      segments: [{ title: "Delivery estimates", context: "Estimates depend on the zone now.", walkthrough: { files: [{ path: PATH }] } }],
     })
   })
 

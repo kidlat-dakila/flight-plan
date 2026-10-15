@@ -406,14 +406,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/stores/cart-store.ts",
-              "title": "A selector that says whether the cart is empty",
-              "summary": [
-                "Added the function [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty), which [returns `true` when `state.items` has length 0](code:src/stores/cart-store.ts#L33) and `false` for every other length."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -1137,15 +1132,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/cart/index.tsx",
-              "title": "The empty message now depends on a store selector",
-              "summary": [
-                "Modified [the import from `@/stores/cart-store`](code:src/routes/cart/index.tsx#L1) to name `selectIsCartEmpty` as well as `useCartStore`.",
-                "Modified [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) to [call `useCartStore(selectIsCartEmpty)`](code:src/routes/cart/index.tsx#L7) and to [return `<p>Your cart is empty.</p>` when the result is `true`](code:src/routes/cart/index.tsx#L8). It tested `items.length === 0` before."
-              ],
               "waypoints": [
                 {
                   "id": "w2",

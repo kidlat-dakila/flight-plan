@@ -31,6 +31,10 @@ import {
 } from "./waypoints"
 
 const WALKTHROUGH_ANCHOR_NAME = "code-walkthrough"
+const PATH_SEPARATOR = "/"
+const TITLE_SEGMENT_COUNT = 2
+
+const fileTitleOf = (path: string): string => path.split(PATH_SEPARATOR).slice(-TITLE_SEGMENT_COUNT).join(PATH_SEPARATOR)
 
 export const waypointAnchorId = (waypointId: string): string => `waypoint-${waypointId}`
 
@@ -148,12 +152,9 @@ const toFileView = (
   return {
     anchorId: fileAnchorId(scope, entry.position),
     path: entry.file.path,
-    title: entry.file.title,
-    isDraft: entry.file.title === entry.file.path,
+    title: fileTitleOf(entry.file.path),
     isReviewed: entry.isReviewed,
     reviewLabel: "File reviewed",
-    summary: entry.file.summary.map((item) => parseProse(item, context.knownLinkIds)),
-    waypointCountLabel: countLabel(entry.waypoints.length, "waypoint", "waypoints"),
     forgeLink: context.blobLinkOf(entry.file.path, null),
     rows: buildFileRows(entry.highlighted, placed, pinnedLinesOf(entry.file.path), context.definitionIds),
   }
@@ -162,7 +163,7 @@ const toFileView = (
 const toFileOrder = (files: readonly VisibleFile[]): WalkthroughBand["fileOrder"] =>
   files.map(({ entry }, position) => ({
     path: entry.file.path,
-    heading: entry.file.title,
+    heading: fileTitleOf(entry.file.path),
     detailLabel: countLabel(entry.waypoints.length, "waypoint", "waypoints"),
     canMoveUp: position > 0,
     canMoveDown: position < files.length - 1,
@@ -240,9 +241,6 @@ export const buildWalkthrough = (
 ): WalkthroughBand => ({
   anchorId: `${scope}${WALKTHROUGH_ANCHOR_NAME}`,
   heading: "Code Walkthrough",
-  intro: prepared.segment.walkthrough.intro === null
-    ? null
-    : parseProse(prepared.segment.walkthrough.intro, context.knownLinkIds),
   coverageLabel: coverageLabelOf(prepared.files.length, prepared.segment.changedPaths.length),
   emptyMessage: emptyMessageOf(prepared, request),
   files: prepared.shownFiles.map((file) =>

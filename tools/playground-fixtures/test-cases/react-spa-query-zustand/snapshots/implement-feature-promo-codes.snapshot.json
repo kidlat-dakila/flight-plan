@@ -1027,15 +1027,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The shape of a promo and its request first, then the cart store that keeps the promo and computes the discount.",
           "files": [
             {
               "path": "src/api/promo.ts",
-              "title": "A promo and the request that fetches it",
-              "summary": [
-                "Added [the type `Promo`](code:src/api/promo.ts#Promo) with a `code` and a `percentOff`.",
-                "Added [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) to request `/promos/<code>` and return the `Promo` of the response."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -1096,14 +1090,6 @@
             },
             {
               "path": "src/stores/cart-store.ts",
-              "title": "The cart store keeps the applied promo",
-              "summary": [
-                "Modified [`CartState`](code:src/stores/cart-store.ts#CartState) to have `promo` and the action `applyPromo`.",
-                "Modified [`useCartStore`](code:src/stores/cart-store.ts#useCartStore) to start with `promo: null` and to set `promo` in the new action `applyPromo`.",
-                "Modified [the action `clear`](code:src/stores/cart-store.ts#L26-28) to set `promo` to `null` with `items: []`.",
-                "Added [the constant `PERCENT`](code:src/stores/cart-store.ts#PERCENT) with the value `100`.",
-                "Added [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents) to return the promo's percentage of the cart total in cents, or `0` when `promo` is `null`."
-              ],
               "waypoints": [
                 {
                   "id": "w4",
@@ -3209,14 +3195,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The mutation that applies a promo first, then the summary that shows the discount, then the form the summary renders.",
           "files": [
             {
               "path": "src/hooks/use-promo.ts",
-              "title": "A mutation writes a fetched promo to the store",
-              "summary": [
-                "Added [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) to run `fetchPromo()` as a mutation and to pass the returned promo to the store action `applyPromo` on success."
-              ],
               "waypoints": [
                 {
                   "id": "w9",
@@ -3309,10 +3290,6 @@
             },
             {
               "path": "src/routes/cart/components/CartSummary.tsx",
-              "title": "The summary shows the promo form and the discount",
-              "summary": [
-                "Modified [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary) to render `<PromoForm />`, a Discount line when the discount is over `0`, and the total minus the discount."
-              ],
               "waypoints": [
                 {
                   "id": "w11",
@@ -3403,10 +3380,6 @@
             },
             {
               "path": "src/routes/cart/components/PromoForm.tsx",
-              "title": "A form submits a promo code",
-              "summary": [
-                "Added [`<PromoForm />`](code:src/routes/cart/components/PromoForm.tsx#PromoForm) with a field for the code, an Apply button and a message for a failed request."
-              ],
               "waypoints": [
                 {
                   "id": "w13",

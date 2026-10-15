@@ -55,7 +55,7 @@ describe("buildWalkthrough", () => {
     const second = prepareWalkthrough(
       createSegment({
         id: "two",
-        walkthrough: { intro: null, files: [{ path: CART_PATH, title: "Cart file", summary: [], waypoints: [createWaypoint("late", "subtotal")] }] },
+        walkthrough: { files: [{ path: CART_PATH, waypoints: [createWaypoint("late", "subtotal")] }] },
       }),
       NO_REVIEWED_MARKS,
       EVERYTHING,
@@ -86,7 +86,7 @@ describe("buildWalkthrough", () => {
 
   it("shows a run of unchanged lines that is too short to be worth folding", () => {
     const segment = createSegment({
-      walkthrough: { intro: null, files: [{ path: PRICE_PATH, title: "Price file", summary: [], waypoints: [createWaypoint("format", "format")] }] },
+      walkthrough: { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("format", "format")] }] },
     })
     const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, createViewContext())
     const [priceFile] = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), pinLines(PRICE_PATH, [4]), createViewContext()).files
@@ -124,12 +124,9 @@ describe("buildWalkthrough", () => {
   it("places a nested waypoint one level deeper, after its parent", () => {
     const segment = createSegment({
       walkthrough: {
-        intro: null,
         files: [
           {
             path: PRICE_PATH,
-            title: "Price file",
-            summary: [],
             waypoints: [createWaypoint("parent", "priceOf", { children: [createWaypoint("child", "format")] })],
           },
         ],
@@ -143,12 +140,9 @@ describe("buildWalkthrough", () => {
   it("shows the most severe finding's chip, and marks an unwritten waypoint as a draft", () => {
     const segment = createSegment({
       walkthrough: {
-        intro: null,
         files: [
           {
             path: PRICE_PATH,
-            title: "Price file",
-            summary: [],
             waypoints: [
               createWaypoint("found", "priceOf", {
                 needsAttention: "Slow down.",
@@ -169,18 +163,15 @@ describe("buildWalkthrough", () => {
   it("keeps the code and drops the box of a waypoint the filter hides, and drops a file with no box left", () => {
     const segment = createSegment({
       walkthrough: {
-        intro: null,
         files: [
           {
             path: PRICE_PATH,
-            title: "Price file",
-            summary: [],
             waypoints: [
               createWaypoint("buggy", "priceOf", { findings: [createFinding("bug", "bug")] }),
               createWaypoint("clean", "format"),
             ],
           },
-          { path: CART_PATH, title: "Cart file", summary: [], waypoints: [createWaypoint("subtotal", "subtotal")] },
+          { path: CART_PATH, waypoints: [createWaypoint("subtotal", "subtotal")] },
         ],
       },
     })
@@ -216,8 +207,7 @@ describe("buildWalkthrough", () => {
     const marks = markWaypoint(createSegment(), "price-of")
     const rewritten = createSegment({
       walkthrough: {
-        intro: null,
-        files: [{ path: PRICE_PATH, title: "Price file", summary: [], waypoints: [createWaypoint("price-of", "priceOf", { reading: "Rewritten." })] }],
+        files: [{ path: PRICE_PATH, waypoints: [createWaypoint("price-of", "priceOf", { reading: "Rewritten." })] }],
       },
     })
 
@@ -236,12 +226,9 @@ describe("buildWalkthrough", () => {
   it("previews a finding's fix as the current lines removed and the replacement added", () => {
     const segment = createSegment({
       walkthrough: {
-        intro: null,
         files: [
           {
             path: CART_PATH,
-            title: "Cart file",
-            summary: [],
             waypoints: [
               createWaypoint("subtotal", "subtotal", {
                 findings: [createFinding("fix", "risk", { solution: "const fixed = 1" })],

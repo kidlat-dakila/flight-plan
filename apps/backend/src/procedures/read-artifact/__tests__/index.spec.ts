@@ -36,7 +36,7 @@ describe("readArtifact", () => {
           { path: PRICE_PATH, declarations: ["priceOf"] },
           { path: SUBTOTAL_PATH, declarations: ["lineTotal", "subtotal"] },
         ],
-        unwritten: { total: 13 },
+        unwritten: { total: 11 },
         segments: [{
           segmentId: "all",
           files: [

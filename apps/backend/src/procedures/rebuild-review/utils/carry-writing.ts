@@ -120,11 +120,8 @@ const carryFile = (file: FileSection, carry: Carry): FileSection => {
   const walked = { ...file, waypoints: file.waypoints.map((waypoint) => carryWaypoint(waypoint, file.path, carry)) }
   const written = carry.files.get(file.path)
   if (written === undefined || !isFileUnchanged(carry.comparison, file.path)) return walked
-  if (!areLinksKept(carry.comparison, written.summary)) return walked
   return {
     ...walked,
-    title: written.title,
-    summary: written.summary,
     waypoints: inWrittenOrder(walked.waypoints, written.waypoints.map((waypoint) => waypoint.declaration), (waypoint) => waypoint.declaration),
   }
 }
@@ -175,7 +172,6 @@ const segmentKeyOf = (segment: Segment): string => segment.changedPaths.join(KEY
 
 const textsOfSegment = (segment: Segment): string[] => [
   segment.context,
-  segment.walkthrough.intro ?? UNWRITTEN,
   segment.journey?.description ?? UNWRITTEN,
   ...(segment.blast?.nodes ?? []).map((node) => node.impactReason ?? UNWRITTEN),
 ]
@@ -200,7 +196,6 @@ const carrySegmentWriting = (segment: Segment, written: Segment, fileOrder: File
   journey: carryDescription(segment.journey, written.journey),
   blast: carryBlast(segment.blast, written.blast),
   walkthrough: {
-    intro: written.walkthrough.intro,
     files: fileOrder === WRITTEN_ORDER
       ? inWrittenOrder(segment.walkthrough.files, written.walkthrough.files.map((file) => file.path), (file) => file.path)
       : segment.walkthrough.files,

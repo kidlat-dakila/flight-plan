@@ -51,6 +51,20 @@ describe("stored review", () => {
     expect(parseStoredReview(older)).toStrictEqual(SCAFFOLD)
   })
 
+  it("reads a review saved while the walkthrough had an intro and files had a title and a summary, without them", () => {
+    const olderArtifact = {
+      ...HELD_STOCK_ARTIFACT,
+      segments: HELD_STOCK_ARTIFACT.segments.map((segment) => ({
+        ...segment,
+        walkthrough: { intro: "The stock check first.", files: segment.walkthrough.files.map((file) => ({ ...file, title: "Held units", summary: ["Subtracts held units."] })) },
+      })),
+    }
+    const older = formatStoredReview({ ...SCAFFOLD, artifact: olderArtifact })
+
+    expect(older).toContain("Subtracts held units.")
+    expect(parseStoredReview(older)).toStrictEqual(SCAFFOLD)
+  })
+
   it("has no answer for text that is not a stored review", () => {
     expect(parseStoredReview("not json")).toBeNull()
     expect(parseStoredReview("[{\"schema\":1},3]")).toBeNull()

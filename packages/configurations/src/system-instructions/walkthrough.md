@@ -1,5 +1,5 @@
-The Code Walkthrough: an object with an optional `intro` that frames the whole
-tour and a `files` array, one File Section per toured file in reading order.
+The Code Walkthrough: an object with a `files` array, one File Section per
+toured file in reading order.
 
 ## Reading order
 

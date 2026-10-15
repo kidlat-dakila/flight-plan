@@ -20,7 +20,7 @@ diff marks. The reviewer is already reading it while you write.
 | You write | Flight Plan already set |
 |---|---|
 | A segment's title and its context | The title, copied from the change |
-| A File Section's title and summary, and the order of the File Sections | Which files have a section, and their paths |
+| The order of the File Sections | Which files have a section, and their paths |
 | A waypoint's title, reading, needs-attention note and findings | Which waypoints exist, the declaration each is about, and its lines |
 | A Journey Flow Diagram's description, a node's label and description, and the label of each of its trigger labels | Which nodes exist, how they connect, which node is inside which, and which trigger labels a node has |
 | A Blast Diagram file's impact type and impact reason, on a file the change did not touch | Which files exist, which the change touched and how they import each other |
@@ -46,8 +46,7 @@ file, a waypoint or a node, and no tool takes a line number for a waypoint.
       "journey": { "description": "…", "nodes": [...], "edges": [...] }, // or null when the segment has none
       "blast": { "nodes": [...], "edges": [...], "importBound": { "nodes": [...], "edges": [...] } },   // or null when the segment has none
       "walkthrough": {
-        "intro": "…",
-        "files": [{ "path": "…", "title": "…", "summary": ["…"], "waypoints": [...] }]
+        "files": [{ "path": "…", "waypoints": [...] }]
       }
     }
   ],
@@ -73,7 +72,7 @@ names a `segmentId`, and any segment of the artifact will do.
 | `get-instructions` | How to write each field, for the configuration the reviewer chose |
 | `read` | One part of the artifact: `overview` to get oriented, `diff` for the change |
 | `nodes` | What is still unwritten, each piece with the code it covers |
-| `update-nodes` | Every word you write, on one segment, in one batch: its title, context, intro, file order and Journey Flow Diagram description by name, and its waypoints, File Sections, diagram nodes and context code blocks by id. Answers with how many nodes are complete and how many are not |
+| `update-nodes` | Every word you write, on one segment, in one batch: its title, context, file order and Journey Flow Diagram description by name, and its waypoints, diagram nodes and context code blocks by id. Answers with how many nodes are complete and how many are not |
 | `complete` | Says the artifact is finished, and checks it |
 
 ## What is refused
@@ -97,7 +96,7 @@ none of it, and the refusal names the entry.
 - A `journeyDescription` on a segment that has no Journey Flow Diagram.
 - A `position` on a nested waypoint, past the end of its file, or given to two
   waypoints of one file.
-- On `complete`: an empty context, a segment with no title, a File Section still titled with its path, a
+- On `complete`: an empty context, a segment with no title, a
   waypoint with no title or no reading, a Journey Flow Diagram with no description, a Journey Flow Diagram node or one of its trigger labels with no
   label, a file the change reaches that nobody assessed, or a `bug`, `risk` or
   `nit` with no solution.

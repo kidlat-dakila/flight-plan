@@ -83,8 +83,7 @@ const segmentTexts = (segment: Segment): string[] => [
   segment.context,
   ...journeyNodesOf(segment).map((node) => node.description ?? ""),
   ...(segment.blast?.nodes ?? []).map((node) => node.impactReason ?? ""),
-  segment.walkthrough.intro ?? "",
-  ...segment.walkthrough.files.flatMap((file) => [...file.summary, ...file.waypoints.flatMap(waypointTexts)]),
+  ...segment.walkthrough.files.flatMap((file) => file.waypoints.flatMap(waypointTexts)),
 ]
 
 const waypointLinkIds = (path: string, waypoint: Waypoint): string[] => [

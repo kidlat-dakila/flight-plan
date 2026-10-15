@@ -491,15 +491,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The new component first, then the cart page that returns it.",
           "files": [
             {
               "path": "src/routes/cart/components/EmptyCart.tsx",
-              "title": "The empty cart gets its own component",
-              "summary": [
-                "Added [the import of `Link` from `react-router`](code:src/routes/cart/components/EmptyCart.tsx#L1).",
-                "Added [the component `<EmptyCart />`](code:src/routes/cart/components/EmptyCart.tsx#EmptyCart), which takes no props. It [renders `<p>Your cart is empty.</p>`](code:src/routes/cart/components/EmptyCart.tsx#L6) and [`<Link to=\"/\">Browse the catalogue</Link>`](code:src/routes/cart/components/EmptyCart.tsx#L7) in one `<section>`."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -545,11 +539,6 @@
             },
             {
               "path": "src/routes/cart/index.tsx",
-              "title": "The cart page returns the new component",
-              "summary": [
-                "Added [the import of `EmptyCart` from `./components/EmptyCart`](code:src/routes/cart/index.tsx#L4).",
-                "Modified [`<CartPage />` to return `<EmptyCart />` when `items.length === 0`](code:src/routes/cart/index.tsx#L8). It returned `<p>Your cart is empty.</p>` before."
-              ],
               "waypoints": [
                 {
                   "id": "w3",

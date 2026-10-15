@@ -153,16 +153,13 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                 <CodeWalkthrough
                   anchorId={segment.walkthrough.anchorId}
                   heading={segment.walkthrough.heading}
-                  intro={segment.walkthrough.intro}
                   coverageLabel={segment.walkthrough.coverageLabel}
                   controls={review.walkthroughControls}
                   positionLabel={stepping.positionLabel ?? review.walkthroughControls.stepping.idleLabel}
                   canStepBack={stepping.canStepBack}
                   canStepForward={stepping.canStepForward}
                   emptyMessage={segment.walkthrough.emptyMessage}
-                  codeLinks={review.codeLinks}
                   onArrangeFiles={null}
-                  onOpenCodeLink={stepping.onOpenCodeLink}
                   onPrevious={stepping.onPrevious}
                   onNext={stepping.onNext}
                   onFilterChange={showUnavailableFeature}

@@ -9,9 +9,9 @@ describe("readNodes", () => {
 
     expect(reading).toMatchObject({
       kind: "unfilled",
-      total: 10,
-      remaining: 8,
-      unwritten: { total: 13 },
+      total: 8,
+      remaining: 6,
+      unwritten: { total: 11 },
       items: [
         { kind: "blast-node", id: "src/cart/CartPage.tsx", needs: ["impact"], node: { importsCarryingTheChange: ["src/cart/CartTotal.tsx"] }, code: null },
         { kind: "blast-node", id: "src/cart/CartTotal.tsx", needs: ["impact"], node: { importsCarryingTheChange: [SUBTOTAL_PATH] }, code: null },
@@ -73,13 +73,12 @@ describe("readNodes", () => {
   it("selects items by id, and says which id the artifact does not have", async () => {
     const context = await createArtifactContext()
 
-    const reading = await readNodes({ ...KEY, ids: ["w3", SUBTOTAL_PATH, "j-subtotal", "w9"] }, context)
+    const reading = await readNodes({ ...KEY, ids: ["w3", "j-subtotal", "w9"] }, context)
 
     expect(reading).toMatchObject({
       kind: "selected",
       items: [
         { kind: "waypoint", id: "w3", needs: ["title", "reading"] },
-        { kind: "file", id: SUBTOTAL_PATH, needs: ["file-title"], node: { waypointIds: ["w2", "w3"] } },
         { kind: "journey-node", id: "j-subtotal", needs: ["label"], code: { lineStart: 6 } },
         { kind: "unknown", id: "w9", node: null },
       ],

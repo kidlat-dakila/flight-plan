@@ -114,15 +114,9 @@ const STOCK_SEGMENT: Segment = {
   journey: STOCK_JOURNEY,
   blast: STOCK_BLAST,
   walkthrough: {
-    intro: "The tour follows a stock check from the guard down to the query, then the two functions that create and delete holds.",
     files: [
       {
         path: STOCK_LEVEL_PATH,
-        title: "The stock check counts what other carts hold",
-        summary: [
-          "Subtracts held units in [`availableUnits()`](code:src/inventory/stock-level.ts#availableUnits), with an optional `held` for the caller's own units.",
-          "Changes [`assertInStock()`](code:src/inventory/stock-level.ts#assertInStock) to take a cart line instead of a SKU and a number.",
-        ],
         waypoints: [
           {
             id: "available-units",
@@ -188,11 +182,6 @@ const STOCK_SEGMENT: Segment = {
       },
       {
         path: HOLDS_PATH,
-        title: "Holds are placed, counted and released",
-        summary: [
-          "Filters expired holds out of [`activeHolds()`](code:src/inventory/holds.ts#activeHolds).",
-          "Adds [`placeHold()`](code:src/inventory/holds.ts#placeHold) and [`releaseExpiredHolds()`](code:src/inventory/holds.ts#releaseExpiredHolds).",
-        ],
         waypoints: [
           {
             id: "active-holds",
@@ -245,8 +234,6 @@ const STOCK_SEGMENT: Segment = {
       },
       {
         path: HOLD_POLICY_PATH,
-        title: "How long a hold lasts",
-        summary: ["Adds the hold length as [`HOLD_MINUTES`](code:src/inventory/hold-policy.ts#HOLD_MINUTES)."],
         waypoints: [
           {
             id: "hold-minutes",
@@ -262,8 +249,6 @@ const STOCK_SEGMENT: Segment = {
       },
       {
         path: RELEASE_JOB_PATH,
-        title: "A scheduled job cleans up expired holds",
-        summary: ["Adds [`releaseHoldsJob`](code:src/jobs/release-holds.ts#releaseHoldsJob), which runs every five minutes."],
         waypoints: [
           {
             id: "release-holds-job",
@@ -321,14 +306,9 @@ const CHECKOUT_SEGMENT: Segment = {
   journey: CHECKOUT_FLOW,
   blast: null,
   walkthrough: {
-    intro: "The tour starts where the hold is placed, then the type that carries it and the message a shopper sees.",
     files: [
       {
         path: CHECKOUT_PATH,
-        title: "Checkout places a hold after it charges",
-        summary: [
-          "Passes the whole line to the guard and places holds in [`checkout()`](code:src/checkout/checkout.ts#checkout).",
-        ],
         waypoints: [
           {
             id: "checkout",
@@ -381,8 +361,6 @@ const CHECKOUT_SEGMENT: Segment = {
       },
       {
         path: CART_LINE_PATH,
-        title: "A cart line can carry its own hold",
-        summary: ["Adds an optional `held` to [`CartLine`](code:src/cart/cart-line.ts#CartLine)."],
         waypoints: [
           {
             id: "cart-line",
@@ -407,10 +385,6 @@ const CHECKOUT_SEGMENT: Segment = {
       },
       {
         path: CHECKOUT_BUTTON_PATH,
-        title: "The button explains a held item",
-        summary: [
-          "Shows a message for a 409 answer in [`handleCheckout()`](code:src/checkout/CheckoutButton.tsx#handleCheckout).",
-        ],
         waypoints: [
           {
             id: "handle-checkout",

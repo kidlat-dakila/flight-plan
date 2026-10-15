@@ -252,7 +252,7 @@ describe("buildReviewPage", () => {
       isSegmented: true,
       segments: [
         createSegment({ id: "one", title: "One", context: "First part." }),
-        createSegment({ id: "two", title: "Two", blast: { nodes: [{ path: PRICE_PATH, diffType: "modified", impactType: null, impactReason: null }], edges: [] }, walkthrough: { intro: null, files: [] } }),
+        createSegment({ id: "two", title: "Two", blast: { nodes: [{ path: PRICE_PATH, diffType: "modified", impactType: null, impactReason: null }], edges: [] }, walkthrough: { files: [] } }),
       ],
     })
     const page = buildReviewPage(createSource({ artifact }), createInput())
@@ -291,13 +291,13 @@ describe("buildReviewPage", () => {
       isSegmented: true,
       segments: [
         createSegment({ id: "one" }),
-        createSegment({ id: "two", walkthrough: { intro: null, files: [] } }),
+        createSegment({ id: "two", walkthrough: { files: [] } }),
       ],
     })
     const page = buildReviewPage(createSource({ artifact }), createInput())
 
     expect(page.kind === "artifact" ? page.rail.groups.map((group) => group.sections.find((section) => section.kind === "walkthrough")?.children) : []).toStrictEqual([
-      [{ anchorId: "one-file-1", label: "Price file" }, { anchorId: "one-file-2", label: "Cart file" }],
+      [{ anchorId: "one-file-1", label: "src/price.ts" }, { anchorId: "one-file-2", label: "src/cart.ts" }],
       [],
     ])
   })
@@ -461,9 +461,8 @@ describe("buildReviewPage", () => {
       segments: [
         createSegment({
           walkthrough: {
-            intro: "Read the price first.",
             files: [
-              { path: PRICE_PATH, title: "Price file", summary: [], waypoints: [createWaypoint("w", "priceOf", { needsAttention: "Slow." })] },
+              { path: PRICE_PATH, waypoints: [createWaypoint("w", "priceOf", { needsAttention: "Slow." })] },
             ],
           },
         }),

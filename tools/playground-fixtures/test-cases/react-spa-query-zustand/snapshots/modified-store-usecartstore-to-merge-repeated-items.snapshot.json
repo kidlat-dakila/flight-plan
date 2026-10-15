@@ -522,14 +522,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/stores/cart-store.ts",
-              "title": "Adding a product again raises its quantity",
-              "summary": [
-                "Modified [the `addItem` function of `useCartStore`](code:src/stores/cart-store.ts#L13-23) to add 1 to the `quantity` of the item with the same `product.id`, and to append `{ product, quantity: 1 }` only when `items` holds no such item."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

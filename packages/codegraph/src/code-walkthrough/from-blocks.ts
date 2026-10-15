@@ -153,7 +153,7 @@ export const generateWalkthroughFromBlocks = ({ group, filePaths, journeyFlowDia
     if (stops.length === 0) return sections
     const waypointCount = sections.reduce((count, section) => count + section.waypoints.length, 0)
     const waypoints = stops.map((stop, index) => withSteps(toDeclarationWaypoint(stop, firstWaypointNumber + waypointCount + index), listStepsOf(stop)))
-    return [...sections, { path: filePath, title: filePath, summary: [], waypoints }]
+    return [...sections, { path: filePath, waypoints }]
   }, [])
-  return { intro: null, files }
+  return { files }
 }

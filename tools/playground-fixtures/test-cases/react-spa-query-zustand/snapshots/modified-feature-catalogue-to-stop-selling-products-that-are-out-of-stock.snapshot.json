@@ -636,15 +636,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The catalogue page that counts the stock first, then the cart store that compares the cart with it, and last the `Product` type that declares it.",
           "files": [
             {
               "path": "src/stores/cart-store.ts",
-              "title": "`addItem` stops at the stock of a product",
-              "summary": [
-                "Modified [`addItem`](code:src/stores/cart-store.ts#L13-19) to [count the items of the cart that have the id of the product](code:src/stores/cart-store.ts#L15).",
-                "Modified [`addItem`](code:src/stores/cart-store.ts#L13-19) to [return the same `state` when that count is `product.stock` or more](code:src/stores/cart-store.ts#L16). It appended an item on every call before."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -678,10 +672,6 @@
             },
             {
               "path": "src/types/product.ts",
-              "title": "A product carries its stock",
-              "summary": [
-                "Added [`stock: number`](code:src/types/product.ts#L6) to the interface [`Product`](code:src/types/product.ts#Product)."
-              ],
               "waypoints": [
                 {
                   "id": "w2",
@@ -1648,14 +1638,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The request for the products first, then the hook that repeats it.",
           "files": [
             {
               "path": "src/api/products.ts",
-              "title": "The request asks for stock",
-              "summary": [
-                "Modified [`fetchProducts()`](code:src/api/products.ts#fetchProducts) to [request `\"/products?include=stock\"`](code:src/api/products.ts#L5). It requested `\"/products\"` before."
-              ],
               "waypoints": [
                 {
                   "id": "w3",
@@ -1679,11 +1664,6 @@
             },
             {
               "path": "src/hooks/use-products.ts",
-              "title": "The query repeats every 60 seconds",
-              "summary": [
-                "Added [`STOCK_REFRESH_MS`](code:src/hooks/use-products.ts#STOCK_REFRESH_MS), a constant with the value `60_000`.",
-                "Modified [`useProducts()`](code:src/hooks/use-products.ts#useProducts) to [pass `refetchInterval: STOCK_REFRESH_MS` to `useQuery`](code:src/hooks/use-products.ts#L9)."
-              ],
               "waypoints": [
                 {
                   "id": "w4",
@@ -1727,8 +1707,6 @@
             },
             {
               "path": "src/routes/catalog/components/AddToCartButton.tsx",
-              "title": "src/routes/catalog/components/AddToCartButton.tsx",
-              "summary": [],
               "waypoints": [
                 {
                   "id": "w6",
@@ -1755,8 +1733,6 @@
             },
             {
               "path": "src/routes/catalog/index.tsx",
-              "title": "src/routes/catalog/index.tsx",
-              "summary": [],
               "waypoints": [
                 {
                   "id": "w7",

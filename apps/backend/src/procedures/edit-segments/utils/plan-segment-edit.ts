@@ -52,7 +52,7 @@ const createSegment = (id: string, { title, paths }: SegmentContent): Segment =>
   context: UNWRITTEN_CONTEXT,
   journey: null,
   blast: null,
-  walkthrough: { intro: null, files: [] },
+  walkthrough: { files: [] },
 })
 
 const withContent = (segment: Segment, { title, paths }: SegmentContent): Segment => {

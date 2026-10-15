@@ -641,15 +641,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "One file: the removed import first, then the route that loads the page in its place.",
           "files": [
             {
               "path": "src/router.tsx",
-              "title": "The account route loads its page on demand",
-              "summary": [
-                "Removed the import of `AccountPage` from `@/routes/account`. `src/router.tsx` has no static import of the account page now.",
-                "Modified [the `account` route of `router`](code:src/router.tsx#router) to [hold a `lazy` function where it held `element: <AccountPage />`](code:src/router.tsx#L13). The function awaits `import(\"@/routes/account\")` and returns `AccountPage` as the `Component` of the route."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

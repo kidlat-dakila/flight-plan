@@ -126,15 +126,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/lib/query-client.ts",
-              "title": "Queries retry once after a failure",
-              "summary": [
-                "Added the constant [`RETRY_COUNT`](code:src/lib/query-client.ts#RETRY_COUNT) with the value `1`.",
-                "Modified [`queryClient`](code:src/lib/query-client.ts#queryClient) to set `retry` to `RETRY_COUNT` in its default query options, where it set `false`."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

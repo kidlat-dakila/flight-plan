@@ -369,15 +369,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/cart/components/CartLine.tsx",
-              "title": "Remove asks before it removes the item",
-              "summary": [
-                "Added [`handleRemove()`](code:src/routes/cart/components/CartLine.tsx#L9-11), a function inside `<CartLine />` that [calls `removeItem(item.product.id)` only when `window.confirm()` returns `true`](code:src/routes/cart/components/CartLine.tsx#L10).",
-                "Modified [the Remove `<Button>` to pass `handleRemove` as `onClick`](code:src/routes/cart/components/CartLine.tsx#L18). It passed `() => removeItem(item.product.id)` before."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

@@ -35,12 +35,6 @@ const waypointEditSchema = z.strictObject({
     .describe("Where this waypoint ends up among the top-level waypoints of its file, counting from 1."),
 })
 
-const fileEditSchema = z.strictObject({
-  path: z.string().min(1).describe("The File Section's path, as the artifact has it."),
-  title: prose.optional().describe("What the reviewer is shown in this file."),
-  summary: z.array(prose).optional().describe("The changes the context names for this file."),
-})
-
 const triggerLabelEditSchema = z.strictObject({
   codeBlockId: z.string().min(1).describe("The `codeBlockId` of one of the node's `triggerLabels`, as the artifact has it."),
   label: prose.describe("What the event or the data fetch is, in the reader's terms: what the user does, or what is loaded."),
@@ -77,7 +71,6 @@ const fileOrderSchema = z.strictObject({
 const segmentEditShape = {
   title: prose.optional().describe("The segment's title: a very short text of what its context is about."),
   context: prose.optional().describe("The Context Section, as Markdown: why the change matters, what it changes from outside and what changed inside. Replaces the whole section."),
-  intro: prose.nullable().optional().describe("The one line that frames the Code Walkthrough. `null` takes it back."),
   order: fileOrderSchema.optional().describe("The order a reader walks the File Sections in."),
   journeyDescription: prose.optional().describe("The Journey Flow Diagram told in words, shown above the diagram: where its paths start, what they run through and where they reach the change. Five sentences at most. Required where the segment has a diagram."),
 }
@@ -87,7 +80,6 @@ export const updateNodesInputShape = {
   segmentId: writtenSegmentIdShape,
   ...segmentEditShape,
   waypoints: z.array(waypointEditSchema).min(1).optional(),
-  files: z.array(fileEditSchema).min(1).optional().describe("File Sections, by path."),
   journey: z.array(journeyEditSchema).min(1).optional().describe("Journey Flow Diagram nodes."),
   blast: z.array(blastEditSchema).min(1).optional().describe("Blast Diagram files, by path. Work this before the prose."),
   contextCodeBlocks: z
@@ -100,10 +92,9 @@ export const updateNodesInputShape = {
 export const updateNodesInputSchema = z.strictObject(updateNodesInputShape)
 
 export type UpdateNodesInput = z.infer<typeof updateNodesInputSchema>
-export type SegmentEdit = Pick<UpdateNodesInput, "title" | "context" | "intro" | "order" | "journeyDescription">
+export type SegmentEdit = Pick<UpdateNodesInput, "title" | "context" | "order" | "journeyDescription">
 export type FindingEdit = z.infer<typeof findingEditSchema>
 export type WaypointEdit = z.infer<typeof waypointEditSchema>
-export type FileEdit = z.infer<typeof fileEditSchema>
 export type JourneyEdit = z.infer<typeof journeyEditSchema>
 export type BlastEdit = z.infer<typeof blastEditSchema>
 export type ContextCodeBlockEdit = z.infer<typeof contextCodeBlockEditSchema>

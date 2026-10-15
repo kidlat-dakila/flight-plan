@@ -1,14 +1,12 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import type { ComponentProps } from "react"
 import CodeWalkthrough from "@/components/CodeWalkthrough"
-import { paragraph } from "@/lib/__tests__/review-samples"
 
 type CodeWalkthroughProps = ComponentProps<typeof CodeWalkthrough>
 
 const createProps = (overrides: Partial<CodeWalkthroughProps> = {}): CodeWalkthroughProps => ({
   anchorId: "walkthrough",
   heading: "Code Walkthrough",
-  intro: paragraph("Two files change."),
   coverageLabel: "All 2 changed files",
   controls: {
     filter: { buttonLabel: "Filter", isDefault: true, resetLabel: "Reset", options: [] },
@@ -19,10 +17,8 @@ const createProps = (overrides: Partial<CodeWalkthroughProps> = {}): CodeWalkthr
   canStepBack: true,
   canStepForward: true,
   emptyMessage: null,
-  codeLinks: {},
   children: <p>The files</p>,
   onArrangeFiles: null,
-  onOpenCodeLink: vi.fn(),
   onPrevious: vi.fn(),
   onNext: vi.fn(),
   onFilterChange: vi.fn(),
@@ -31,12 +27,11 @@ const createProps = (overrides: Partial<CodeWalkthroughProps> = {}): CodeWalkthr
 })
 
 describe("CodeWalkthrough", () => {
-  it("shows its heading, coverage, intro and the files it is given", () => {
+  it("shows its heading, coverage and the files it is given", () => {
     render(<CodeWalkthrough {...createProps()} />)
 
     expect(screen.getByRole("heading", { level: 2, name: "Code Walkthrough" })).toBeTruthy()
     expect(screen.getByText("All 2 changed files")).toBeTruthy()
-    expect(screen.getByText("Two files change.")).toBeTruthy()
     expect(screen.getByText("The files")).toBeTruthy()
   })
 

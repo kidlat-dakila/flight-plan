@@ -21,12 +21,9 @@ describe("highlightReview", () => {
   it("highlights each finding's fix in the language of the file it is about", async () => {
     const segment = createSegment({
       walkthrough: {
-        intro: null,
         files: [
           {
             path: PRICE_PATH,
-            title: "Price file",
-            summary: [],
             waypoints: [
               createWaypoint("w", "priceOf", {
                 children: [createWaypoint("c", "format", { findings: [createFinding("nested", "nit", { solution: "a\nb" })] })],

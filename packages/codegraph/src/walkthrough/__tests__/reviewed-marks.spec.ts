@@ -4,7 +4,6 @@ import { descendantsOf, flattenWaypoints, isFileReviewed, isWaypointReviewed } f
 const file = {
   path: PRICE_PATH,
   title: "Price file",
-  summary: [],
   waypoints: [
     createWaypoint("parent", "priceOf", { children: [createWaypoint("first", "format"), createWaypoint("second", "format")] }),
     createWaypoint("sibling", "format"),

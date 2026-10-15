@@ -3,9 +3,7 @@ import { useFileCode } from "@/routes/pr-reviews/$repoName/-hooks/use-file-code"
 import CodeViewEditor, { type CodeViewWaypoint } from "@flightplan/ui/CodeViewEditor"
 import type { WalkthroughWaypoint } from "@flightplan/ui/FileSection"
 import IconButton from "@flightplan/ui/IconButton"
-import { keyed } from "@flightplan/ui/lib/keyed"
-import type { CodeLinkTargets, ProseBlocks } from "@flightplan/ui/lib/review-content"
-import Prose from "@flightplan/ui/Prose"
+import type { CodeLinkTargets } from "@flightplan/ui/lib/review-content"
 import type { CodeLinkRequest } from "@flightplan/ui/TextEditor"
 import WaypointBox from "@flightplan/ui/WaypointBox"
 
@@ -29,8 +27,6 @@ interface AuthoredFile {
   readonly anchorId: string
   readonly path: string
   readonly title: string
-  readonly summary: readonly ProseBlocks[]
-  readonly waypointCountLabel: string
   readonly rows: readonly AuthoredRow[]
 }
 
@@ -128,18 +124,11 @@ const WalkthroughFile = ({
 
   return (
     <article id={file.anchorId} aria-label={file.title} className="scroll-mt-(--waypoint-scroll-margin) pt-6">
-      {file.summary.length === 0
-        ? null
-        : (
-            <ul className="flex list-disc flex-col gap-2 pb-4 pl-5">
-              {keyed(file.summary).map(({ key, item }) => (
-                <li key={key}><Prose blocks={item} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} /></li>
-              ))}
-            </ul>
-          )}
       <div className="flex items-center gap-3 pb-2">
-        <h3 className="min-w-0 truncate text-[0.9375rem] leading-5 font-semibold">{file.title}</h3>
-        <p className="shrink-0 text-xs text-muted-foreground tabular-nums">{file.waypointCountLabel}</p>
+        <div className="flex min-w-0 flex-col justify-center">
+          <h3 className="truncate text-[0.9375rem] leading-5 font-semibold">{file.title}</h3>
+          <p className="truncate font-mono text-xs leading-4 text-muted-foreground" title={file.path}>{file.path}</p>
+        </div>
         <span className="flex-1" />
         <IconButton icon="remove" label={`${REMOVE_FILE_LABEL}: ${file.path}`} isDisabled={isPending} onClick={onRemove} />
       </div>

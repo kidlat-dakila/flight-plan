@@ -431,16 +431,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/lib/format.ts",
-              "title": "Price formatting takes the currency as a parameter",
-              "summary": [
-                "Added the constant [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), which holds `\"USD\"`.",
-                "Removed the module-level `priceFormatter`, an `Intl.NumberFormat` fixed to `\"USD\"`.",
-                "Modified [`formatPrice()`](code:src/lib/format.ts#formatPrice) to take a second parameter `currency` and to build its `Intl.NumberFormat` from that currency on each call."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -1054,15 +1047,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/cart/components/CartLine.tsx",
-              "title": "The line total passes the store currency",
-              "summary": [
-                "Modified [the import from `@/lib/format`](code:src/routes/cart/components/CartLine.tsx#L2) in `CartLine.tsx` to add `STORE_CURRENCY`.",
-                "Modified [`<CartLine />`](code:src/routes/cart/components/CartLine.tsx#CartLine) to pass `STORE_CURRENCY` to `formatPrice()` for the line total."
-              ],
               "waypoints": [
                 {
                   "id": "w3",
@@ -1956,15 +1943,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/cart/components/CartSummary.tsx",
-              "title": "The cart total passes the store currency",
-              "summary": [
-                "Modified [the import from `@/lib/format`](code:src/routes/cart/components/CartSummary.tsx#L3) in `CartSummary.tsx` to add `STORE_CURRENCY`.",
-                "Modified [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary) to pass `STORE_CURRENCY` to `formatPrice()` for the cart total."
-              ],
               "waypoints": [
                 {
                   "id": "w5",
@@ -2918,15 +2899,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/catalog/components/ProductCard.tsx",
-              "title": "The product price passes the store currency",
-              "summary": [
-                "Modified [the import from `@/lib/format`](code:src/routes/catalog/components/ProductCard.tsx#L1) to add `STORE_CURRENCY`.",
-                "Modified [`<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) to pass `STORE_CURRENCY` to `formatPrice()` for the product price."
-              ],
               "waypoints": [
                 {
                   "id": "w7",

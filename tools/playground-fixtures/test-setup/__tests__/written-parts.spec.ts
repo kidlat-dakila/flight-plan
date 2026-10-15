@@ -78,7 +78,7 @@ const generatedSegment: CodegraphSegment = {
     ],
     edges: [{ importer: "reserve.ts", imported: "stock.ts" }],
   },
-  codeWalkthrough: { intro: null, files: [{ path: "stock.ts", title: "stock.ts", summary: [], waypoints: [waypointOf("stockOf")] }] },
+  codeWalkthrough: { files: [{ path: "stock.ts", waypoints: [waypointOf("stockOf")] }] },
   codeReferences: [],
 }
 
@@ -113,12 +113,9 @@ const writtenSnapshot = {
           ],
         },
         codeWalkthrough: {
-          intro: "One function changes.",
           files: [
             {
               path: "stock.ts",
-              title: "Held units leave the stock",
-              summary: ["`stockOf` subtracts held units."],
               waypoints: [
                 { declaration: "stockOf", title: "Subtract held units", reading: "The held units are subtracted.", needsAttention: "Every checkout depends on it.", children: [] },
               ],
@@ -141,7 +138,7 @@ describe("readWrittenParts", () => {
   })
 
   it("reads an empty context for a segment that has none written", () => {
-    const [segment] = readWrittenParts({ codegraph: { segments: [{ title: null, journeyFlowDiagram: null, codeWalkthrough: { intro: null, files: [] } }] } }).codegraph.segments
+    const [segment] = readWrittenParts({ codegraph: { segments: [{ title: null, journeyFlowDiagram: null, codeWalkthrough: { files: [] } }] } }).codegraph.segments
 
     expect(segment.context).toStrictEqual([])
   })
@@ -178,13 +175,10 @@ describe("withWrittenParts", () => {
     ])
   })
 
-  it("keeps what is written in the walkthrough: its intro, each file and each waypoint", () => {
+  it("keeps what is written in the walkthrough: each waypoint", () => {
     expect(segment.codeWalkthrough).toMatchObject({
-      intro: "One function changes.",
       files: [
         {
-          title: "Held units leave the stock",
-          summary: ["`stockOf` subtracts held units."],
           waypoints: [{ title: "Subtract held units", reading: "The held units are subtracted.", needsAttention: "Every checkout depends on it." }],
         },
       ],
@@ -218,7 +212,7 @@ describe("withWrittenParts", () => {
       segments: [
         {
           ...generatedSegment,
-          codeWalkthrough: { intro: null, files: [{ path: "stock.ts", title: "stock.ts", summary: [], waypoints: [waypointOf("availableOf")] }] },
+          codeWalkthrough: { files: [{ path: "stock.ts", waypoints: [waypointOf("availableOf")] }] },
           codeReferences: [],
         },
       ],

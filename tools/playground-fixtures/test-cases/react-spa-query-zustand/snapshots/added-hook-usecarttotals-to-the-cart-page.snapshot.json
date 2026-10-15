@@ -536,15 +536,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The hook that reads the totals first, then the cart page that renders them.",
           "files": [
             {
               "path": "src/hooks/use-cart-totals.ts",
-              "title": "A new hook returns the cart totals",
-              "summary": [
-                "Added [the import of `useCartStore`, `selectItemCount` and `selectTotalCents`](code:src/hooks/use-cart-totals.ts#L1) from `@/stores/cart-store`.",
-                "Added [`useCartTotals()`](code:src/hooks/use-cart-totals.ts#useCartTotals), an exported hook that [reads `itemCount` with `useCartStore(selectItemCount)`](code:src/hooks/use-cart-totals.ts#L4), [reads `totalCents` with `useCartStore(selectTotalCents)`](code:src/hooks/use-cart-totals.ts#L5) and [returns `{ itemCount, totalCents }`](code:src/hooks/use-cart-totals.ts#L6)."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -654,11 +648,6 @@
             },
             {
               "path": "src/routes/cart/index.tsx",
-              "title": "The cart page renders a heading with totals",
-              "summary": [
-                "Added [the imports of `useCartTotals`, `formatPrice` and `formatQuantity`](code:src/routes/cart/index.tsx#L1-2).",
-                "Modified [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) to [call `useCartTotals()`](code:src/routes/cart/index.tsx#L9) and to [render an `<h1>` with `formatQuantity(itemCount)` and `formatPrice(totalCents)`](code:src/routes/cart/index.tsx#L13-15) above the `<ul>` of the items."
-              ],
               "waypoints": [
                 {
                   "id": "w3",

@@ -306,14 +306,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/api/products.ts",
-              "title": "The products request asks for name order",
-              "summary": [
-                "Modified [`fetchProducts()`](code:src/api/products.ts#fetchProducts) to request `/products?sort=name`, where it requested `/products`."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

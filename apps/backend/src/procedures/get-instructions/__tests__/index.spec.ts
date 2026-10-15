@@ -49,7 +49,7 @@ describe("getInstructions", () => {
 
     const instructions = await getInstructions({ ...KEY, all: true }, context)
 
-    expect(instructions.kind === "resolved" ? instructions.fields.length : 0).toBe(30)
+    expect(instructions.kind === "resolved" ? instructions.fields.length : 0).toBe(27)
   })
 
   it("rejects an unknown field and suggests the one that ends the same way", async () => {
@@ -57,7 +57,7 @@ describe("getInstructions", () => {
 
     await expect(getInstructions({ ...KEY, fields: ["waypoints.title"] }, context)).resolves.toStrictEqual({
       kind: "rejected",
-      message: "No field at `waypoints.title`. Did you mean `title`, `walkthrough.files.title`, `walkthrough.files.waypoints.title`, `walkthrough.files.waypoints.findings.title`? Nothing was returned.",
+      message: "No field at `waypoints.title`. Did you mean `title`, `walkthrough.files.waypoints.title`, `walkthrough.files.waypoints.findings.title`? Nothing was returned.",
     })
   })
 

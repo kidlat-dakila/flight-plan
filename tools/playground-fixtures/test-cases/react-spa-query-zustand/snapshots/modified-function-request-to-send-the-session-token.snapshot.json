@@ -742,16 +742,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/api/client.ts",
-              "title": "Requests now carry the stored session token",
-              "summary": [
-                "Added [`SESSION_TOKEN_KEY`](code:src/api/client.ts#SESSION_TOKEN_KEY), the constant `\"storefront-session\"` that names the `sessionStorage` entry of the token.",
-                "Added [`readSessionToken()`](code:src/api/client.ts#readSessionToken) to return that entry, or `null` when `sessionStorage` has none.",
-                "Modified [`request()`](code:src/api/client.ts#request) to add an `Authorization: Bearer` header when the token is not `null`, before the headers of its caller."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

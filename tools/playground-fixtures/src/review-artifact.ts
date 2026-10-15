@@ -51,8 +51,6 @@ const storedWaypointSchema: z.ZodType<StoredWaypoint> = z.lazy(() =>
 
 const storedFileSectionSchema = z.object({
   path: z.string(),
-  title: z.string(),
-  summary: z.array(z.string()),
   waypoints: z.array(storedWaypointSchema),
 })
 
@@ -90,7 +88,7 @@ const codegraphSegmentSchema = z.object({
   importGraph: z.array(importGraphFileSchema),
   journeyFlowDiagram: storedJourneySchema.nullable(),
   blastRadiusDiagram: blastSchema.nullable(),
-  codeWalkthrough: z.object({ intro: z.string().nullable(), files: z.array(storedFileSectionSchema) }),
+  codeWalkthrough: z.object({ files: z.array(storedFileSectionSchema) }),
   codeReferences: z.array(z.object({ path: z.string(), references: z.array(codeReferenceSchema), languageReferences: z.array(languageReferenceSchema).default([]) })),
 })
 
@@ -135,7 +133,6 @@ const linkWaypoint = ({ codeBlockIds, children, ...written }: StoredWaypoint, bl
 })
 
 const walkthroughOf = ({ codeWalkthrough }: CodegraphSegment, blockById: BlockById): SegmentParts["walkthrough"] => ({
-  intro: codeWalkthrough.intro,
   files: codeWalkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map((waypoint) => linkWaypoint(waypoint, blockById)) })),
 })
 

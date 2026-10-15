@@ -14,8 +14,6 @@ describe("unwrittenWork", () => {
       "blast-node:src/cart/CartPage.tsx:impact",
       "blast-node:src/cart/CartTotal.tsx:impact",
       "context::context",
-      "file:src/catalog/price.ts:file-title",
-      "file:src/cart/subtotal.ts:file-title",
       "waypoint:w1:title",
       "waypoint:w1:reading",
       "waypoint:w2:title",
@@ -130,14 +128,14 @@ describe("unwrittenWork", () => {
   })
 
   it("counts the nodes that still need writing apart from the ones that do not", () => {
-    expect(tallyNodes(WALKTHROUGH_ONLY_ARTIFACT, ALL_ON)).toStrictEqual({ complete: 0, incomplete: 6 })
+    expect(tallyNodes(WALKTHROUGH_ONLY_ARTIFACT, ALL_ON)).toStrictEqual({ complete: 0, incomplete: 4 })
     expect(tallyNodes(DRAFT_ARTIFACT, { journey: false, blast: false, walkthrough: false, findings: false })).toStrictEqual({ complete: 0, incomplete: 1 })
   })
 
   it("counts the work by kind, leaving out the kinds with none", () => {
     expect(tallyWork(unwrittenWork(WALKTHROUGH_ONLY_ARTIFACT, ALL_ON))).toStrictEqual({
-      total: 9,
-      byKind: { "context": 1, "file-title": 2, "title": 3, "reading": 3 },
+      total: 7,
+      byKind: { context: 1, title: 3, reading: 3 },
     })
   })
 })

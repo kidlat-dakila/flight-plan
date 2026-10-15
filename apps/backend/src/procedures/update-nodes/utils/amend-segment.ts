@@ -28,16 +28,13 @@ const amendSegment = (segment: Segment, edit: SegmentEdit): Segment => ({
   title: edit.title ?? segment.title,
   context: edit.context ?? segment.context,
   journey: describedJourney(segment, edit.journeyDescription),
-  walkthrough: {
-    intro: edit.intro === undefined ? segment.walkthrough.intro : edit.intro,
-    files: orderedFiles(segment.walkthrough.files, edit.order?.files),
-  },
+  walkthrough: { files: orderedFiles(segment.walkthrough.files, edit.order?.files) },
 })
 
-export const segmentTextsOf = (edit: SegmentEdit): string[] => [edit.context ?? "", edit.intro ?? "", edit.journeyDescription ?? ""]
+export const segmentTextsOf = (edit: SegmentEdit): string[] => [edit.context ?? "", edit.journeyDescription ?? ""]
 
 export const countSegmentEdits = (edit: SegmentEdit): number =>
-  [edit.title, edit.context, edit.intro, edit.order, edit.journeyDescription].filter((written) => written !== undefined).length
+  [edit.title, edit.context, edit.order, edit.journeyDescription].filter((written) => written !== undefined).length
 
 export const amendSegments = (segments: readonly Segment[], edit: SegmentEdit): SegmentsOutcome => {
   if (edit.journeyDescription !== undefined && segments.some((segment) => segment.journey === null)) return refuse(NO_DIAGRAM_MESSAGE)

@@ -98,14 +98,9 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
       ),
       blast: null,
       walkthrough: {
-        intro: null,
         files: [
           {
             path: WEBHOOK_RETRY_PATH,
-            title: "Retrying a delivery with backoff",
-            summary: [
-              "Retries up to five times in [`deliverWithRetry()`](code:src/payments/webhook-retry.ts#deliverWithRetry), with the pause from [`retryDelayMs()`](code:src/payments/webhook-retry.ts#retryDelayMs).",
-            ],
             waypoints: [
               {
                 id: "retry-delay-ms",
@@ -131,8 +126,6 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
           },
           {
             path: WEBHOOK_QUEUE_PATH,
-            title: "The queue handler marks a dead delivery",
-            summary: [],
             waypoints: [
               {
                 id: "handle-queued-event",

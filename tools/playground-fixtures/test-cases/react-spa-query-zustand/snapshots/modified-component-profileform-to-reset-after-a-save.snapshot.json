@@ -567,15 +567,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/account/components/ProfileForm.tsx",
-              "title": "The form resets to the saved profile",
-              "summary": [
-                "Modified [`<ProfileForm />` to read `reset` from the result of `useForm()`](code:src/routes/account/components/ProfileForm.tsx#L9).",
-                "Modified [`onSubmit()` to pass an `onSuccess` callback to `saveProfile()`](code:src/routes/account/components/ProfileForm.tsx#L14-16), which calls `reset()` with the profile the server returned."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

@@ -170,14 +170,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "shop/cart.py",
-              "title": "The tax of a cart under ten dollars is 0",
-              "summary": [
-                "Modified [`Cart.tax()`](code:shop/cart.py#L14-17) to return 0 for a cart with a subtotal under 1000 cents."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

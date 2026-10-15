@@ -59,7 +59,7 @@ describe("saveConfiguration", () => {
     })
     const entries = page.kind === "found" ? page.index.flatMap((group) => group.entries) : []
     expect(entries.find((entry) => entry.key === "sections")).toMatchObject({ mark: "changed" })
-    expect(entries.find((entry) => entry.key === "walkthrough.intro")).toMatchObject({ mark: "unchanged" })
+    expect(entries.find((entry) => entry.key === "walkthrough.files.waypoints.title")).toMatchObject({ mark: "unchanged" })
     expect(entries.find((entry) => entry.key === "journey.description")).toMatchObject({ mark: "off" })
   })
 

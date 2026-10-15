@@ -38,7 +38,7 @@ export interface SegmentParts {
   readonly importGraph: readonly SegmentFile[]
   readonly journey: JourneyFlowDiagram | null
   readonly blast: Blast | null
-  readonly walkthrough: { readonly intro: string | null, readonly files: readonly RangedFileSection[] }
+  readonly walkthrough: { readonly files: readonly RangedFileSection[] }
   readonly codeReferences: readonly FileCodeReferences[]
 }
 
@@ -106,10 +106,7 @@ const toSegment = (parts: SegmentParts): Segment => ({
   context: parts.context,
   journey: parts.journey,
   blast: parts.blast,
-  walkthrough: {
-    intro: parts.walkthrough.intro,
-    files: parts.walkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map(toWaypoint) })),
-  },
+  walkthrough: { files: parts.walkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map(toWaypoint) })) },
 })
 
 const declarationsOf = (path: string, sections: readonly RangedFileSection[]): Record<string, LineRange> =>

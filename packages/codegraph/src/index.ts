@@ -106,7 +106,7 @@ const FIRST_WAYPOINT_NUMBER = 1
 const DELETED: DiffType = "deleted"
 const SHARED: CodegraphSegmentKind = "shared"
 const UNREAD_FILE: CodeBlockType = "file"
-const NO_WALKTHROUGH: LinkedCodeWalkthrough = { intro: null, files: [] }
+const NO_WALKTHROUGH: LinkedCodeWalkthrough = { files: [] }
 
 const diffLinesIn = ({ diffTypes, patches }: ImportGraphContext): ReadonlyMap<string, readonly LineRange[]> =>
   new Map(

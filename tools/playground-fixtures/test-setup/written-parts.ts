@@ -48,8 +48,6 @@ const writtenWaypointSchema: z.ZodType<WrittenWaypoint> = z.lazy(() =>
 
 const writtenFileSchema = z.object({
   path: z.string(),
-  title: z.string(),
-  summary: z.array(z.string()),
   waypoints: z.array(writtenWaypointSchema),
 })
 
@@ -58,7 +56,7 @@ const writtenSegmentSchema = z.object({
   context: z.array(z.string()).default([]),
   journeyFlowDiagram: z.object({ journeyNodes: z.array(writtenJourneyNodeSchema).default([]) }).nullable(),
   blastRadiusDiagram: z.object({ nodes: z.array(z.unknown()) }).nullable().optional(),
-  codeWalkthrough: z.object({ intro: z.string().nullable(), files: z.array(writtenFileSchema) }),
+  codeWalkthrough: z.object({ files: z.array(writtenFileSchema) }),
 })
 
 const writtenPartsSchema = z.object({
@@ -150,12 +148,7 @@ const withWrittenWaypoint = (waypoint: LinkedWaypoint, writtenWaypoints: Readonl
 const withWrittenFile = (file: LinkedFileSection, written: WrittenFile | undefined): LinkedFileSection => {
   if (written === undefined) return file
   const writtenWaypoints = new Map(listWrittenWaypoints(written.waypoints).map((waypoint) => [waypoint.declaration, waypoint]))
-  return {
-    ...file,
-    title: written.title,
-    summary: written.summary,
-    waypoints: file.waypoints.map((waypoint) => withWrittenWaypoint(waypoint, writtenWaypoints)),
-  }
+  return { ...file, waypoints: file.waypoints.map((waypoint) => withWrittenWaypoint(waypoint, writtenWaypoints)) }
 }
 
 const withWrittenWalkthrough = (
@@ -166,7 +159,6 @@ const withWrittenWalkthrough = (
   const writtenFiles = new Map(written.files.map((file) => [file.path, file]))
   return {
     ...walkthrough,
-    intro: written.intro,
     files: walkthrough.files.map((file) => withWrittenFile(file, writtenFiles.get(file.path))),
   }
 }

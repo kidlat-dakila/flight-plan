@@ -506,18 +506,15 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                       <CodeWalkthrough
                         anchorId={segment.walkthrough.anchorId}
                         heading={segment.walkthrough.heading}
-                        intro={segment.walkthrough.intro}
                         coverageLabel={segment.walkthrough.coverageLabel}
                         controls={page.walkthroughControls}
                         positionLabel={stepping.positionLabel ?? page.walkthroughControls.stepping.idleLabel}
                         canStepBack={stepping.canStepBack}
                         canStepForward={stepping.canStepForward}
                         emptyMessage={segment.walkthrough.emptyMessage}
-                        codeLinks={page.codeLinks}
                         onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
                           ? () => { setArrangedWalkthroughSegmentId(segment.id) }
                           : null}
-                        onOpenCodeLink={handleOpenCodeLink}
                         onPrevious={stepping.onPrevious}
                         onNext={stepping.onNext}
                         onFilterChange={(keys) => {

@@ -53,7 +53,7 @@ describe("caseSnapshotOf", () => {
     importGraph: [],
     journeyFlowDiagram: null,
     blastRadiusDiagram: null,
-    codeWalkthrough: { intro: null, files: [] },
+    codeWalkthrough: { files: [] },
     codeReferences: [],
   })
 
@@ -61,7 +61,7 @@ describe("caseSnapshotOf", () => {
     title,
     context,
     journeyFlowDiagram: null,
-    codeWalkthrough: { intro: null, files: [] },
+    codeWalkthrough: { files: [] },
   })
 
   it("puts the title, the diff and the codegraph in that order, the diff as one line per entry", () => {

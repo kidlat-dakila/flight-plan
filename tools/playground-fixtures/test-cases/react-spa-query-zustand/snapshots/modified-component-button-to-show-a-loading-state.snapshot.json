@@ -832,17 +832,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/components/ui/button.tsx",
-              "title": "The shared button gains a loading state",
-              "summary": [
-                "Added an optional property `isLoading` to [`ButtonProps`](code:src/components/ui/button.tsx#ButtonProps).",
-                "Modified [`<Button />`](code:src/components/ui/button.tsx#Button) to [take `isLoading`, `disabled` and `children` out of its props](code:src/components/ui/button.tsx#L16-23), with `isLoading` set to `false` by default.",
-                "Modified `<Button />` to [set `disabled` on the `<button>` to `disabled || isLoading`](code:src/components/ui/button.tsx#L27).",
-                "Modified `<Button />` to [render `\"Loading…\"` in place of `children` when `isLoading` is `true`](code:src/components/ui/button.tsx#L30)."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

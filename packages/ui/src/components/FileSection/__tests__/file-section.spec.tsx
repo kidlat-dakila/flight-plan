@@ -10,11 +10,8 @@ const createFile = (overrides: Partial<WalkthroughFile> = {}): WalkthroughFile =
   anchorId: "file-price",
   path: "src/price.ts",
   title: "Price",
-  isDraft: false,
   isReviewed: false,
   reviewLabel: "Reviewed",
-  summary: [paragraph("Held units reduce the price.")],
-  waypointCountLabel: "1 waypoint",
   forgeLink: null,
   rows: [
     { kind: "lines", id: "lines-1", lines: [codeLine("3", "export const priceOf = () => 1", "added")] },
@@ -210,17 +207,38 @@ describe("FileSection comments", () => {
 })
 
 describe("FileSection", () => {
-  it("shows the file's title, path, summary, code, gap and waypoint", () => {
+  it("shows the file's title, path, code, gap and waypoint", () => {
     render(<FileSection {...createProps()} />)
 
     const section = screen.getByRole("article", { name: "Price" })
 
     expect(within(section).getByRole("heading", { level: 3, name: "Price" })).toBeTruthy()
     expect(within(section).getByText("src/price.ts")).toBeTruthy()
-    expect(within(section).getByText("Held units reduce the price.")).toBeTruthy()
-    expect(within(section).getByText("1 waypoint")).toBeTruthy()
     expect(within(section).getByText("12 unchanged lines")).toBeTruthy()
     expect(within(section).getByRole("region", { name: "priceOf" })).toBeTruthy()
+  })
+
+  it("collapses its code and expands it again", () => {
+    render(<FileSection {...createProps()} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Collapse file: src/price.ts" }))
+
+    expect(screen.queryByText("12 unchanged lines")).toBeNull()
+    expect(screen.queryByRole("region", { name: "priceOf" })).toBeNull()
+    expect(screen.getByRole("heading", { level: 3, name: "Price" })).toBeTruthy()
+
+    fireEvent.click(screen.getByRole("button", { name: "Expand file: src/price.ts", expanded: false }))
+
+    expect(screen.getByText("12 unchanged lines")).toBeTruthy()
+  })
+
+  it("expands a collapsed file when stepping reaches one of its waypoints", () => {
+    const view = render(<FileSection {...createProps()} />)
+    fireEvent.click(screen.getByRole("button", { name: "Collapse file: src/price.ts" }))
+
+    view.rerender(<FileSection {...createProps({ currentWaypointId: "w1" })} />)
+
+    expect(screen.getByRole("region", { name: "priceOf" })).toBeTruthy()
   })
 
   it("opens a waypoint that is clicked", () => {

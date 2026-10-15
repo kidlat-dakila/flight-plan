@@ -39,7 +39,7 @@ const permissionAnswered = (sequence: number, batchId: string): JournalEntry => 
 const drafting = createArtifact({ status: "drafting" })
 const unwritten = createArtifact({
   status: "drafting",
-  segments: [createSegment({ title: "", context: "", walkthrough: { intro: null, files: [{ path: "src/price.ts", title: "src/price.ts", summary: [], waypoints: [createWaypoint("w1", "priceOf", { title: null, reading: "" })] }] } })],
+  segments: [createSegment({ title: "", context: "", walkthrough: { files: [{ path: "src/price.ts", waypoints: [createWaypoint("w1", "priceOf", { title: null, reading: "" })] }] } })],
 })
 
 const activityOf = (overrides: Partial<WritingActivity>): WritingActivity => ({ ...NO_WRITING_ACTIVITY, ...overrides })

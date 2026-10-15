@@ -391,15 +391,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/components/ui/index.ts",
-              "title": "The barrel stops exporting Dialog",
-              "summary": [
-                "Deleted `src/components/ui/dialog.tsx`, which held the component `Dialog` and its type `DialogProps`.",
-                "Removed the export of `Dialog` from the barrel, which [now exports `Button` and `Input` only](code:src/components/ui/index.ts#L1-2)."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -911,16 +905,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/routes/cart/components/CartSummary.tsx",
-              "title": "One click now empties the cart",
-              "summary": [
-                "Removed the import of `useState`, and modified [the import from `@/components/ui` to take `Button` only](code:src/routes/cart/components/CartSummary.tsx#L1).",
-                "Removed the state `isConfirming`, the function `handleConfirm()` and the `<Dialog>` element from [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary).",
-                "Modified [the `onClick` of the \"Empty the cart\" button to run `clear`](code:src/routes/cart/components/CartSummary.tsx#L12), in place of `() => setIsConfirming(true)`."
-              ],
               "waypoints": [
                 {
                   "id": "w2",

@@ -398,18 +398,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/components/ThemeProvider.tsx",
-              "title": "The theme provider reads and stores the chosen theme",
-              "summary": [
-                "Added `useEffect` to [the import from `react`](code:src/components/ThemeProvider.tsx#L1).",
-                "Added [the constant `THEME_STORAGE_KEY`](code:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY), with the value `\"storefront-theme\"`.",
-                "Added [`readStoredTheme()`](code:src/components/ThemeProvider.tsx#readStoredTheme) to return `\"dark\"` when `localStorage` holds `\"dark\"` under the key, and `\"light\"` for every other value.",
-                "Modified `<ThemeProvider />` to [pass `readStoredTheme` to `useState` as the initial state](code:src/components/ThemeProvider.tsx#L19), in place of `\"light\"`.",
-                "Added [a `useEffect` to `<ThemeProvider />` that calls `localStorage.setItem()` with the key and `theme`](code:src/components/ThemeProvider.tsx#L20-22), after the first render and after each change of `theme`."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

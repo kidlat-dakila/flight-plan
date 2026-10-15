@@ -159,15 +159,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/inventory/stock.ts",
-              "title": "The stock count now subtracts held units",
-              "summary": [
-                "Added [`heldBySku`](code:src/inventory/stock.ts#heldBySku), a record of the units held per SKU, with 2 units held of `tea-01`.",
-                "Modified [`stockOf()`](code:src/inventory/stock.ts#stockOf) to return the stock of a SKU minus the units held of that SKU."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

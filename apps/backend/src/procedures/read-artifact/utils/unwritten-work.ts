@@ -7,7 +7,6 @@ export const WORK_KINDS = [
   "impact",
   "context",
   "segment-title",
-  "file-title",
   "title",
   "reading",
   "label",
@@ -20,7 +19,7 @@ export const WORK_KINDS = [
 
 export type WorkKind = (typeof WORK_KINDS)[number]
 
-export type WorkTarget = "blast-node" | "context" | "file" | "waypoint" | "journey-node" | "journey" | "context-code-block"
+export type WorkTarget = "blast-node" | "context" | "waypoint" | "journey-node" | "journey" | "context-code-block"
 
 export interface Work {
   readonly target: WorkTarget
@@ -64,17 +63,6 @@ const contextWork = (segment: Segment): Work[] => {
       : []),
   ]
 }
-
-const fileWork = (segment: Segment): Work[] =>
-  segment.walkthrough.files
-    .filter((file) => file.title === file.path)
-    .map((file) => ({
-      target: "file",
-      id: file.path,
-      segmentId: segment.id,
-      needs: "file-title",
-      message: `The File Section of \`${file.path}\` is still titled with its path. Say what the reviewer is shown in this file.`,
-    }))
 
 const waypointWork = (segment: Segment, sections: SectionSwitches): Work[] =>
   waypointsOf(segment).flatMap(({ waypoint }): Work[] => {
@@ -152,7 +140,7 @@ const journeyWork = (segment: Segment): Work[] => [...nodeWork(segment), ...desc
 const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
   ...(sections.blast ? blastWork(segment) : []),
   ...contextWork(segment),
-  ...(sections.walkthrough ? [...fileWork(segment), ...waypointWork(segment, sections)] : []),
+  ...(sections.walkthrough ? waypointWork(segment, sections) : []),
   ...(sections.journey ? journeyWork(segment) : []),
 ]
 
@@ -178,12 +166,7 @@ const assessedPathsOf = ({ blast }: Segment): string[] =>
 const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
   ...(sections.blast ? assessedPathsOf(segment).map((path) => nodeKeyOf("blast-node", path, segment.id)) : []),
   nodeKeyOf("context", null, segment.id),
-  ...(sections.walkthrough
-    ? [
-        ...segment.walkthrough.files.map((file) => nodeKeyOf("file", file.path, segment.id)),
-        ...waypointsOf(segment).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id)),
-      ]
-    : []),
+  ...(sections.walkthrough ? waypointsOf(segment).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id)) : []),
   ...(sections.journey
     ? [
         ...journeyNodesOf(segment).map((node) => nodeKeyOf("journey-node", node.id, segment.id)),

@@ -18,7 +18,7 @@ describe("update-nodes tool", () => {
     const response = await server.inject(callTool("update-nodes", { ...SEGMENT_KEY, waypoints: [{ id: "w1", title: "Returned zero for an unknown SKU" }] }))
 
     expect(response.body).toContain("Wrote 1 entry.")
-    expect(response.body).toContain(String.raw`\"nodes\":{\"complete\":0,\"incomplete\":10}`)
+    expect(response.body).toContain(String.raw`\"nodes\":{\"complete\":0,\"incomplete\":8}`)
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       segments: [{ walkthrough: { files: [{ waypoints: [{ id: "w1", title: "Returned zero for an unknown SKU" }] }, {}] } }],
     })

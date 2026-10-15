@@ -43,19 +43,6 @@ const waypointCandidate = ({ segment, file, waypoint, ancestors }: LocatedWaypoi
   }),
 })
 
-const fileCandidates = (segment: Segment): Candidate[] =>
-  segment.walkthrough.files.map((file) => ({
-    kind: "file",
-    id: file.path,
-    segmentId: segment.id,
-    describe: () => ({
-      file: file.path,
-      node: { title: file.title, summary: file.summary, waypointIds: file.waypoints.map((waypoint) => waypoint.id) },
-      lineage: [],
-      code: null,
-    }),
-  }))
-
 const lineRangeOf = ({ codeBlocks: [root] }: JourneyNode): LineRange => {
   const [{ start, end }] = root.lineOfCodeRangeReference
   return { lineStart: start.line, lineEnd: end.line }
@@ -131,7 +118,6 @@ const contextCandidate = (segment: Segment): Candidate => ({
 const candidatesIn = (segment: Segment): Candidate[] => [
   ...(segment.blast?.nodes ?? []).filter((node) => node.diffType === null).map((node) => blastCandidate(segment, node)),
   contextCandidate(segment),
-  ...fileCandidates(segment),
   ...waypointsOf(segment).map(waypointCandidate),
   ...journeyCandidates(segment),
   ...descriptionCandidates(segment),

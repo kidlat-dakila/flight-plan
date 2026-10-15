@@ -385,46 +385,10 @@ const segmentSchema = z.strictObject({
   blast: blastSchema.nullable(),
   walkthrough: z
     .strictObject({
-      intro: z
-        .string()
-        .register(configurations, {
-          version: 0.1,
-          configurationType: "editable",
-          _ui: {
-            title: "Code Walkthrough intro",
-            description: "The one line that frames the whole tour.",
-          },
-          fieldDescription: "walkthrough.intro.md",
-          exampleValue: "The stock check first, then the checkout that relies on it.",
-          defaultInstruction: "walkthrough.intro.md",
-        })
-        .nullable(),
       files: z
         .array(
           z.strictObject({
             path: z.string(),
-            title: z
-              .string()
-              .register(configurations, {
-                version: 0.1,
-                configurationType: "editable",
-                _ui: {
-                  title: "File Section title",
-                  description: "What the reviewer is shown in one file.",
-                },
-                fieldDescription: "walkthrough.files.title.md",
-                exampleValue: "Held units leave the available stock",
-                defaultInstruction: "walkthrough.files.title.md",
-              }),
-            summary: z
-              .array(z.string())
-              .register(configurations, {
-                version: 0.1,
-                configurationType: "static",
-                summary: "The changes the context names for this file.",
-                fieldDescription: "walkthrough.files.summary.md",
-                exampleValue: "Subtracts held units in [`availableUnits()`](code:src/inventory/stock-level.ts#availableUnits).",
-              }),
             waypoints: z
               .array(waypointSchema)
               .register(configurations, {

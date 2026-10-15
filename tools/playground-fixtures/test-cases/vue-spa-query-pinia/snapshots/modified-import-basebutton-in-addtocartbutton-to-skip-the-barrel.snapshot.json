@@ -168,14 +168,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": null,
           "files": [
             {
               "path": "src/views/catalog/components/AddToCartButton.vue",
-              "title": "BaseButton comes from its own file",
-              "summary": [
-                "Modified [the import of `BaseButton`](code:src/views/catalog/components/AddToCartButton.vue#L2) to read the default export of `@/components/ui/BaseButton.vue`, the file that declares `BaseButton`. It read the named export `BaseButton` of the barrel `@/components/ui` before."
-              ],
               "waypoints": [
                 {
                   "id": "w1",

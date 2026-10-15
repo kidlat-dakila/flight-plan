@@ -71,13 +71,10 @@ export const DRAFT_SEGMENT: Segment = {
     ],
   },
   walkthrough: {
-    intro: null,
     files: [
-      { path: PRICE_PATH, title: PRICE_PATH, summary: [], waypoints: [unwrittenWaypoint("w1", "priceOf")] },
+      { path: PRICE_PATH, waypoints: [unwrittenWaypoint("w1", "priceOf")] },
       {
         path: SUBTOTAL_PATH,
-        title: SUBTOTAL_PATH,
-        summary: [],
         waypoints: [unwrittenWaypoint("w2", "lineTotal"), unwrittenWaypoint("w3", "subtotal")],
       },
     ],

@@ -1239,12 +1239,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The route first, then the product card that both pages render, then the store that the button and the page read.",
           "files": [
             {
               "path": "src/router.tsx",
-              "title": "src/router.tsx",
-              "summary": [],
               "waypoints": [
                 {
                   "id": "w1",
@@ -1290,11 +1287,6 @@
             },
             {
               "path": "src/routes/catalog/components/ProductCard.tsx",
-              "title": "The product card renders a wishlist button",
-              "summary": [
-                "Added [the import of `WishlistButton`](code:src/routes/catalog/components/ProductCard.tsx#L4).",
-                "Modified [`<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) to [render `<WishlistButton product={product} />`](code:src/routes/catalog/components/ProductCard.tsx#L13) after `<AddToCartButton />`."
-              ],
               "waypoints": [
                 {
                   "id": "w3",
@@ -1337,8 +1329,6 @@
             },
             {
               "path": "src/routes/root-layout.tsx",
-              "title": "src/routes/root-layout.tsx",
-              "summary": [],
               "waypoints": [
                 {
                   "id": "w5",
@@ -1363,12 +1353,6 @@
             },
             {
               "path": "src/stores/wishlist-store.ts",
-              "title": "A store holds the wished products",
-              "summary": [
-                "Added [`WishlistState`](code:src/stores/wishlist-store.ts#WishlistState), an interface with `products` and `toggleProduct`.",
-                "Added [`useWishlistStore`](code:src/stores/wishlist-store.ts#useWishlistStore), a Zustand store that [starts with `products: []`](code:src/stores/wishlist-store.ts#L10) and whose [`toggleProduct()` removes a product whose `id` is in `products` and appends any other product](code:src/stores/wishlist-store.ts#L11-17).",
-                "Added [`selectIsWished()`](code:src/stores/wishlist-store.ts#selectIsWished), a function that [returns a function that returns `true` when `products` has a product with the id `productId`](code:src/stores/wishlist-store.ts#L21)."
-              ],
               "waypoints": [
                 {
                   "id": "w6",
@@ -2872,14 +2856,9 @@
         },
         "blastRadiusDiagram": null,
         "codeWalkthrough": {
-          "intro": "The button that writes the wishlist first, then the page that reads it.",
           "files": [
             {
               "path": "src/routes/catalog/components/WishlistButton.tsx",
-              "title": "A button toggles one product on the wishlist",
-              "summary": [
-                "Added [`<WishlistButton />`](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton), a component that [reads `isWished` from the store](code:src/routes/catalog/components/WishlistButton.tsx#L6), renders [a `<Button>` that calls `toggleProduct(product)` on a click](code:src/routes/catalog/components/WishlistButton.tsx#L9) and [shows \"Remove from wishlist\" when `isWished` is `true` and \"Add to wishlist\" when `isWished` is `false`](code:src/routes/catalog/components/WishlistButton.tsx#L10)."
-              ],
               "waypoints": [
                 {
                   "id": "w10",
@@ -3011,10 +2990,6 @@
             },
             {
               "path": "src/routes/wishlist/index.tsx",
-              "title": "The wishlist page lists the wished products",
-              "summary": [
-                "Added [`<WishlistPage />`](code:src/routes/wishlist/index.tsx#WishlistPage), a component that [reads `products` from the store](code:src/routes/wishlist/index.tsx#L5) and renders [`<p>Your wishlist is empty.</p>` for an empty array](code:src/routes/wishlist/index.tsx#L6) or [one `<ProductCard />` per product](code:src/routes/wishlist/index.tsx#L8-14)."
-              ],
               "waypoints": [
                 {
                   "id": "w12",

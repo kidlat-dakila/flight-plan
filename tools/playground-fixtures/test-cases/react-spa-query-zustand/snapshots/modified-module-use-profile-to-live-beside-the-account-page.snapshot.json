@@ -282,14 +282,9 @@
           }
         },
         "codeWalkthrough": {
-          "intro": "The two import lines that follow the moved file: the form that saves the profile, then the page that loads it.",
           "files": [
             {
               "path": "src/routes/account/components/ProfileForm.tsx",
-              "title": "The save mutation comes from the account folder",
-              "summary": [
-                "Modified [the import of `useUpdateProfile` in the file of `<ProfileForm />`](code:src/routes/account/components/ProfileForm.tsx#L4) to read from `@/routes/account/use-profile`."
-              ],
               "waypoints": [
                 {
                   "id": "w1",
@@ -313,10 +308,6 @@
             },
             {
               "path": "src/routes/account/index.tsx",
-              "title": "The profile query comes from the file beside the page",
-              "summary": [
-                "Modified [the import of `useProfile` in the file of `<AccountPage />`](code:src/routes/account/index.tsx#L1) to read from `./use-profile`."
-              ],
               "waypoints": [
                 {
                   "id": "w2",

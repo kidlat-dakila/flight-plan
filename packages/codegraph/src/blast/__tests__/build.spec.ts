@@ -9,7 +9,7 @@ const segmentWith = (blast: Blast | null): Segment => ({
   context: "",
   journey: null,
   blast,
-  walkthrough: { intro: null, files: [] },
+  walkthrough: { files: [] },
 })
 
 const BLAST: Blast = {

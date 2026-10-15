@@ -73,7 +73,7 @@ describe("planSegmentEdit", () => {
       context: "",
       journey: null,
       blast: null,
-      walkthrough: { intro: null, files: [] },
+      walkthrough: { files: [] },
     })
   })
 

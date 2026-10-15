@@ -75,8 +75,6 @@ export interface Waypoint {
 
 export interface FileSection {
   readonly path: string
-  readonly title: string
-  readonly summary: readonly string[]
   readonly waypoints: readonly Waypoint[]
 }
 
@@ -168,7 +166,6 @@ export interface Blast {
 }
 
 export interface CodeWalkthrough {
-  readonly intro: string | null
   readonly files: readonly FileSection[]
 }
 

@@ -51,15 +51,9 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
       journey: null,
       blast: null,
       walkthrough: {
-        intro: "The tour reads the two functions in the order they run.",
         files: [
           {
             path: SUBTOTAL_PATH,
-            title: "Rounding moves to the subtotal",
-            summary: [
-              "Removes the rounding from [`lineTotal()`](code:src/cart/subtotal.ts#lineTotal).",
-              "Rounds the sum in [`subtotal()`](code:src/cart/subtotal.ts#subtotal).",
-            ],
             waypoints: [
               {
                 id: "line-total",

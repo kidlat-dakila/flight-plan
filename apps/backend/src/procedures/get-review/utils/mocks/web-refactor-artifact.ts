@@ -76,14 +76,9 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
       ),
       blast: null,
       walkthrough: {
-        intro: "The tour reads the parser first, then the one place that calls it.",
         files: [
           {
             path: SERVER_CONFIG_PATH,
-            title: "The settings parser takes its environment",
-            summary: [
-              "Makes [`readServerConfig()`](code:apps/backend/src/config.ts#readServerConfig) take the environment as a parameter.",
-            ],
             waypoints: [
               {
                 id: "read-server-config",
@@ -99,8 +94,6 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
           },
           {
             path: SERVER_MAIN_PATH,
-            title: "The shell passes the environment in",
-            summary: ["Passes `process.env` from [`start()`](code:apps/backend/src/main.ts#start)."],
             waypoints: [
               {
                 id: "start",

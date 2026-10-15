@@ -90,7 +90,6 @@ const segment = (id: string, title: string | null, position: number, files: read
   walkthrough: {
     anchorId: `${id}-code-walkthrough`,
     heading: "Code Walkthrough",
-    intro: null,
     coverageLabel: "All 1 changed file",
     emptyMessage: null,
     files,
@@ -105,7 +104,6 @@ const priceFile = {
   isDraft: false,
   isReviewed: false,
   reviewLabel: "File reviewed",
-  summary: [],
   waypointCountLabel: "1 waypoint",
   forgeLink: null,
   rows: [
@@ -143,7 +141,6 @@ const cartFile = {
   isDraft: false,
   isReviewed: false,
   reviewLabel: "File reviewed",
-  summary: [],
   waypointCountLabel: "1 waypoint",
   forgeLink: null,
   rows: [

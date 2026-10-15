@@ -51,7 +51,7 @@ describe("updateNodes", () => {
       }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", nodes: { complete: 1, incomplete: 9 }, unwritten: { total: 11 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", nodes: { complete: 1, incomplete: 7 }, unwritten: { total: 9 } })
     await expect(waypointOf(context, "w3")).resolves.toStrictEqual({
       id: "w3",
       declaration: "subtotal",
@@ -64,20 +64,18 @@ describe("updateNodes", () => {
     })
   })
 
-  it("writes File Sections, Journey Flow Diagram nodes and Blast Diagram files in one batch", async () => {
+  it("writes Journey Flow Diagram nodes and Blast Diagram files in one batch", async () => {
     const context = await createArtifactContext()
 
     const writing = await updateNodes({
       ...SEGMENT_KEY,
-      files: [{ path: PRICE_PATH, title: "A missing price is zero", summary: ["Returns 0 for an unknown SKU."] }],
       journey: [{ id: "j-subtotal", label: "Rounds the cart total once" }],
       blast: [{ path: "src/cart/CartTotal.tsx", impactType: "unaffected" }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 3 entries.", unwritten: { total: 9 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 2 entries.", unwritten: { total: 8 } })
     const artifact = await context.reviewStore.findArtifact(KEY)
     expect(artifact?.segments[0]).toMatchObject({
-      walkthrough: { files: [{ path: PRICE_PATH, title: "A missing price is zero", summary: ["Returns 0 for an unknown SKU."] }, { path: SUBTOTAL_PATH }] },
       journey: { journeyNodes: [{ id: "j-subtotal", label: "Rounds the cart total once" }] },
       blast: {
         nodes: [
@@ -138,20 +136,19 @@ describe("updateNodes", () => {
       ...SEGMENT_KEY,
       title: "Rounding moves to the total",
       context: markdown,
-      intro: "The price first, then the total.",
       order: { files: [SUBTOTAL_PATH, PRICE_PATH] },
       journeyDescription: "When a cart is shown, the total is summed and rounded once.",
       waypoints: [{ id: "w1", title: "Returned zero" }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 6 entries.", unwritten: { total: 10 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 5 entries.", unwritten: { total: 8 } })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       segments: [{
         id: "all",
         title: "Rounding moves to the total",
         context: markdown,
         journey: { description: "When a cart is shown, the total is summed and rounded once." },
-        walkthrough: { intro: "The price first, then the total.", files: [{ path: SUBTOTAL_PATH }, { path: PRICE_PATH, waypoints: [{ title: "Returned zero" }] }] },
+        walkthrough: { files: [{ path: SUBTOTAL_PATH }, { path: PRICE_PATH, waypoints: [{ title: "Returned zero" }] }] },
       }],
     })
   })
@@ -183,15 +180,6 @@ describe("updateNodes", () => {
     expect(messageOf(writing)).toContain("`code:src/cart/total.ts#total`")
   })
 
-  it("takes an intro back when it is given null", async () => {
-    const context = await createArtifactContext()
-    await updateNodes({ ...SEGMENT_KEY, intro: "The price first, then the total." }, context)
-
-    await updateNodes({ ...SEGMENT_KEY, intro: null }, context)
-
-    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ segments: [{ walkthrough: { intro: null } }] })
-  })
-
   it("refuses a Journey Flow Diagram description on a segment that has no diagram", async () => {
     const context = await createArtifactContext(TWO_SEGMENT_ARTIFACT)
 
@@ -213,7 +201,7 @@ describe("updateNodes", () => {
   it("refuses a call that writes nothing", async () => {
     const context = await createArtifactContext()
 
-    await expect(updateNodes(SEGMENT_KEY, context)).resolves.toMatchObject({ kind: "rejected", message: "Give at least one of title, context, intro, order, journeyDescription, waypoints, files, journey, blast or contextCodeBlocks. Nothing was written." })
+    await expect(updateNodes(SEGMENT_KEY, context)).resolves.toMatchObject({ kind: "rejected", message: "Give at least one of title, context, order, journeyDescription, waypoints, journey, blast or contextCodeBlocks. Nothing was written." })
   })
 
   it("rejects a review target with no artifact", async () => {

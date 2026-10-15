@@ -169,10 +169,9 @@ describe("generateWalkthroughFromBlocks", () => {
     const untouched: GroupFile = { filePath: "src/ui.ts", lines: ["export const render = () => 1"] }
     const walkthrough = walkthroughOf([changedAt([7, 7], [10, 10]), pricing, untouched], 5)
 
-    expect(walkthrough.intro).toBeNull()
-    expect(walkthrough.files.map(({ path, title, summary }) => ({ path, title, summary }))).toStrictEqual([
-      { path: "src/checkout.ts", title: "src/checkout.ts", summary: [] },
-      { path: "src/pricing.ts", title: "src/pricing.ts", summary: [] },
+    expect(walkthrough.files.map(({ path }) => path)).toStrictEqual([
+      "src/checkout.ts",
+      "src/pricing.ts",
     ])
     expect(stopsOf(walkthrough)).toStrictEqual([
       "w5 src/checkout.ts TAX_RATE variable 7-7",
@@ -192,7 +191,7 @@ describe("generateWalkthroughFromBlocks", () => {
   })
 
   it("gives a walkthrough without files when nothing changed", () => {
-    expect(walkthroughOf([CHECKOUT])).toStrictEqual({ intro: null, files: [] })
+    expect(walkthroughOf([CHECKOUT])).toStrictEqual({ files: [] })
   })
 })
 
