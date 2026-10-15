@@ -89,7 +89,7 @@ rendered, and it does not say whether the connection is proven or assumed.
 ## What the reviewer sees
 
 - **The description is read first.** It is shown above the board: the
-  diagram told in words, in five sentences at most. Until it is written
+  caption of the diagram, in five sentences at most. Until it is written
   the page says so.
 - **Every edge is the same line, with no label.** Where something about a
   connection matters to the reviewer, such as a prop passed through three
@@ -132,7 +132,7 @@ A node inside another is written by its own `id`, like any other.
 
 With `update-nodes { segmentId, journeyDescription }`:
 
-- `journeyDescription` — the diagram told in words, in five sentences at
+- `journeyDescription` — the caption of the diagram, in five sentences at
   most. Required on every segment that has a diagram. See
   `journey.description`.
 

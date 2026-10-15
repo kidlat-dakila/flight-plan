@@ -68,6 +68,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "shop/api.py#function@8:1",

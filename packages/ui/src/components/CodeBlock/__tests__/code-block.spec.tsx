@@ -119,7 +119,7 @@ describe("CodeBlock", () => {
 
     expect(await screen.findByText("export const taxOf = () => 2")).toBeTruthy()
     expect(screen.getByText("Library. The import is shown and not followed.")).toBeTruthy()
-    expect(screen.getByRole("group", { name: "src/tax.ts, Line 1" }).querySelector(".whitespace-pre-wrap")).not.toBeNull()
+    expect(screen.getByRole("group", { name: "src/tax.ts, Line 1" }).querySelector(".whitespace-pre-wrap")).toBeNull()
   })
 
   it("shows the description written for a definition above its code", async () => {

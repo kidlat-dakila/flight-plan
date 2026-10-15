@@ -196,6 +196,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "src/components/ThemeToggle.vue#component@1:1",

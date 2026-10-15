@@ -7,7 +7,7 @@ import type { JourneyNode, Waypoint } from "./review-artifact"
 
 const lineRangeSchema = z.strictObject({ lineStart: z.number().int(), lineEnd: z.number().int() })
 
-const findingSchema = z.strictObject({
+export const artifactFindingSchema = z.strictObject({
   id: z.string(),
   kind: z
     .enum(FINDING_KINDS)
@@ -135,7 +135,7 @@ const waypointSchema: z.ZodType<Waypoint> = z.lazy(() =>
       })
       .nullable(),
     findings: z
-      .array(findingSchema)
+      .array(artifactFindingSchema)
       .register(configurations, {
         version: 0.1,
         configurationType: "editable",
@@ -268,7 +268,7 @@ export const journeyFlowDiagramSchema = z
         configurationType: "editable",
         _ui: {
           title: "Journey Flow Diagram description",
-          description: "The diagram told in words, in five sentences at most.",
+          description: "The caption of the diagram, in five sentences at most.",
         },
         fieldDescription: "journey.description.md",
         exampleValue: "When a shopper places an order, `<Checkout />` calls `placeOrder()`, which asks `stockOf()` for every line of the cart before it charges the card.",

@@ -370,6 +370,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "src/stores/cart-store.ts#state@11:1",
@@ -1436,6 +1437,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",

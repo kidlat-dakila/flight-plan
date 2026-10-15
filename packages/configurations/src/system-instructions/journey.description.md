@@ -1,5 +1,5 @@
-The Journey Flow Diagram told in words, shown above its board: one short paragraph a reviewer can read instead of the
-diagram. Five sentences at most. Required on every segment that has a diagram,
+The caption of the Journey Flow Diagram, shown above its board: one short paragraph that says what the
+diagram shows before the reviewer follows its lines. Five sentences at most. Required on every segment that has a diagram,
 `null` on arrival, and `complete` refuses an artifact where one is missing.
 
 Written with `update-nodes { segmentId, journeyDescription }`. Writing it

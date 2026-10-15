@@ -95,11 +95,11 @@ const NO_STYLE = {}
 const UNFOCUSED_ROW_CLASSES = "group-has-data-[focused=true]/code:opacity-55 data-[focused=true]:opacity-100"
 const ADD_COMMENT_CLASSES = "absolute top-0.5 left-1 flex size-4 items-center justify-center rounded-sm bg-(--line) text-line-foreground opacity-0 group-hover/line:opacity-100 focus-visible:opacity-100"
 const MARK_CLASSES_INLINE = "rounded-sm bg-[color-mix(in_oklab,var(--line,var(--color-primary))_22%,transparent)] outline outline-1 outline-[var(--line,var(--color-primary))]"
-const DEFINITION_DESCRIPTION_CLASSES = "max-h-48 shrink-0 overflow-y-auto border-b px-3 py-2.5 text-foreground"
+const DEFINITION_DESCRIPTION_CLASSES = "max-h-48 shrink-0 overflow-y-auto border-b px-3 py-2.5 text-foreground [contain:inline-size]"
 const REFERENCE_CLASSES = "rounded-sm underline decoration-muted-foreground decoration-dotted underline-offset-[0.25em] hover:bg-muted focus-visible:bg-muted"
-const CARD_CLASSES = "flex max-h-[30rem] w-[min(36rem,calc(100vw-2rem))] flex-col overflow-hidden font-sans whitespace-normal"
+const CARD_CLASSES = "flex max-h-[30rem] w-max min-w-[min(20rem,calc(100vw-2rem))] max-w-[min(64rem,calc(100vw-2rem))] flex-col overflow-hidden font-sans whitespace-normal"
 const CARD_HEADER_CLASSES = "flex items-baseline justify-between gap-4 border-b px-3 py-2"
-const CARD_FOOTER_CLASSES = "flex flex-wrap items-baseline gap-x-4 gap-y-1 border-t px-3 py-1.5 text-xs"
+const CARD_FOOTER_CLASSES = "flex flex-wrap items-baseline gap-x-4 gap-y-1 border-t px-3 py-1.5 text-xs [contain:inline-size]"
 const REFERENCE_SELECTOR = "[data-reference]"
 const CODE_BLOCK_SELECTOR = "[data-code-block]"
 const REFERENCE_SCOPE_SELECTOR = "[data-reference-scope]"
@@ -274,7 +274,7 @@ const DeclarationCard = ({ declaration }: { readonly declaration: CodeDeclaratio
       {declaration.description === null || renderDefinitionDescription === undefined
         ? null
         : <div className={DEFINITION_DESCRIPTION_CLASSES}>{renderDefinitionDescription(declaration.description)}</div>}
-      {declaration.lines.length === 0 ? null : <CodeBlock lines={declaration.lines} label={label} isWrapped className="min-h-24 flex-1 overflow-y-auto" />}
+      {declaration.lines.length === 0 ? null : <CodeBlock lines={declaration.lines} label={label} className="flex-1 overflow-y-auto" />}
       {declaration.note === null && declaration.forgeLink === null
         ? null
         : (
@@ -303,12 +303,12 @@ const UsagesCard = ({ usages }: { readonly usages: CodeUsages }) => (
                   <span className="min-w-0 font-mono wrap-anywhere">{file.pathLabel}</span>
                   {file.forgeLink === null ? null : <OutwardLink href={file.forgeLink.href} label={file.forgeLink.label} />}
                 </div>
-                <CodeBlock lines={file.lines} label={`${usages.nameLabel} in ${file.pathLabel}`} isWrapped />
+                <CodeBlock lines={file.lines} label={`${usages.nameLabel} in ${file.pathLabel}`} />
               </section>
             ))}
           </div>
         )}
-    {usages.note === null ? null : <p className="px-3 py-2 text-xs text-muted-foreground">{usages.note}</p>}
+    {usages.note === null ? null : <p className="px-3 py-2 text-xs text-muted-foreground [contain:inline-size]">{usages.note}</p>}
   </>
 )
 

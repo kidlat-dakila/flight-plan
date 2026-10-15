@@ -236,6 +236,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",

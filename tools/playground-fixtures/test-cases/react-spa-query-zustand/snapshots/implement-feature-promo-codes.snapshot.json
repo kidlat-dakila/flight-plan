@@ -435,6 +435,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
@@ -2884,6 +2885,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "src/hooks/use-promo.ts#hook@5:1",

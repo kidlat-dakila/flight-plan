@@ -215,6 +215,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "src/routes/cart/components/CartLine.tsx#component@6:1",

@@ -151,6 +151,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "src/hooks/use-profile.ts#hook@10:1",

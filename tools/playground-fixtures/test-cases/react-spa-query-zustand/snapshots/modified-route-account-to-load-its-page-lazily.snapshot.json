@@ -379,6 +379,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "src/router.tsx#root-variable@6:1",

@@ -1,6 +1,6 @@
 import { z } from "zod"
 import type { Codegraph, CodegraphSegment, LinkedCodeWalkthrough, LinkedFileSection, LinkedWaypoint } from "@flightplan/codegraph"
-import { IMPACT_TYPES, type Blast, type BlockLabel, type JourneyFlowDiagram, type JourneyNode, type TriggerLabel } from "@flightplan/configurations"
+import { artifactFindingSchema, IMPACT_TYPES, type Blast, type BlockLabel, type Finding, type JourneyFlowDiagram, type JourneyNode, type TriggerLabel } from "@flightplan/configurations"
 
 interface WrittenJourneyNode {
   readonly id: string
@@ -33,6 +33,7 @@ interface WrittenWaypoint {
   readonly title: string | null
   readonly reading: string
   readonly needsAttention: string | null
+  readonly findings: readonly Finding[]
   readonly children: readonly WrittenWaypoint[]
 }
 
@@ -42,6 +43,7 @@ const writtenWaypointSchema: z.ZodType<WrittenWaypoint> = z.lazy(() =>
     title: z.string().nullable(),
     reading: z.string(),
     needsAttention: z.string().nullable(),
+    findings: z.array(artifactFindingSchema).default([]),
     children: z.array(writtenWaypointSchema),
   }),
 )
@@ -54,7 +56,7 @@ const writtenFileSchema = z.object({
 const writtenSegmentSchema = z.object({
   title: z.string().nullable(),
   context: z.array(z.string()).default([]),
-  journeyFlowDiagram: z.object({ journeyNodes: z.array(writtenJourneyNodeSchema).default([]) }).nullable(),
+  journeyFlowDiagram: z.object({ description: z.string().nullable().default(null), journeyNodes: z.array(writtenJourneyNodeSchema).default([]) }).nullable(),
   blastRadiusDiagram: z.object({ nodes: z.array(z.unknown()) }).nullable().optional(),
   codeWalkthrough: z.object({ files: z.array(writtenFileSchema) }),
 })
@@ -112,7 +114,7 @@ const withWrittenJourneyNode = (node: JourneyNode, writtenById: ReadonlyMap<stri
 const withWrittenJourney = (journey: JourneyFlowDiagram | null, written: WrittenJourney | null | undefined): JourneyFlowDiagram | null => {
   if (journey === null || written === null || written === undefined) return journey
   const writtenById = new Map(listWrittenJourneyNodes(written.journeyNodes).map((node) => [node.id, node]))
-  return { ...journey, journeyNodes: journey.journeyNodes.map((node) => withWrittenJourneyNode(node, writtenById)) }
+  return { ...journey, description: written.description, journeyNodes: journey.journeyNodes.map((node) => withWrittenJourneyNode(node, writtenById)) }
 }
 
 const withWrittenBlast = (blast: Blast | null, written: WrittenSegment["blastRadiusDiagram"]): Blast | null => {
@@ -142,7 +144,7 @@ const withWrittenWaypoint = (waypoint: LinkedWaypoint, writtenWaypoints: Readonl
   const children = waypoint.children.map((child) => withWrittenWaypoint(child, writtenWaypoints))
   return written === undefined
     ? { ...waypoint, children }
-    : { ...waypoint, title: written.title, reading: written.reading, needsAttention: written.needsAttention, children }
+    : { ...waypoint, title: written.title, reading: written.reading, needsAttention: written.needsAttention, findings: written.findings, children }
 }
 
 const withWrittenFile = (file: LinkedFileSection, written: WrittenFile | undefined): LinkedFileSection => {

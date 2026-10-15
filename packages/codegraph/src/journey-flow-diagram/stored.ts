@@ -23,6 +23,7 @@ export interface StoredJourneyNode {
 }
 
 export interface StoredJourneyFlowDiagram {
+  readonly description: string | null
   readonly journeyNodes: readonly StoredJourneyNode[]
   readonly journeyNodeEdges: readonly JourneyNodeEdge[]
 }
@@ -57,7 +58,8 @@ const storeNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, c
   blockLabels: blockLabels.map(storeBlockLabel),
 })
 
-export const storeJourneyFlowDiagram = ({ journeyNodes, journeyNodeEdges }: JourneyFlowDiagram): StoredJourneyFlowDiagram => ({
+export const storeJourneyFlowDiagram = ({ description, journeyNodes, journeyNodeEdges }: JourneyFlowDiagram): StoredJourneyFlowDiagram => ({
+  description,
   journeyNodes: journeyNodes.map(storeNode),
   journeyNodeEdges,
 })
@@ -85,7 +87,7 @@ export const linkJourneyFlowDiagram = (stored: StoredJourneyFlowDiagram, astCode
   return {
     astCodeGroup,
     importGraphGroup,
-    description: null,
+    description: stored.description,
     journeyNodes: stored.journeyNodes.map((node) => linkNode(node, blockById)),
     journeyNodeEdges: stored.journeyNodeEdges,
   }

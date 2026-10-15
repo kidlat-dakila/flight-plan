@@ -50,7 +50,7 @@
       "comments": [
         {
           "author": "dinesh",
-          "body": "Clearing this field sets the quantity to 0, and `min={1}` only limits the arrows. Should the form refuse to submit a 0?",
+          "body": "Clearing this field puts a 0 back in it, and `min={1}` then makes the browser block the submit with its own tooltip. Should the form show a message of its own instead?",
           "minutesAgo": 120
         }
       ]

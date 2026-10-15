@@ -59,6 +59,7 @@
           }
         ],
         "journeyFlowDiagram": {
+          "description": null,
           "journeyNodes": [
             {
               "id": "src/lib/query-client.ts#root-variable@3:1",

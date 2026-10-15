@@ -16,6 +16,7 @@ import {
   codeReferenceSchema,
   languageReferenceSchema,
   DIFF_TYPES,
+  artifactFindingSchema,
   reviewArtifactSchema,
   type ASTCodeGroupGraph,
   type CodeBlock,
@@ -44,7 +45,7 @@ const storedWaypointSchema: z.ZodType<StoredWaypoint> = z.lazy(() =>
     codeBlockIds: z.array(z.string()),
     reading: z.string(),
     needsAttention: z.string().nullable(),
-    findings: z.array(z.never()),
+    findings: z.array(artifactFindingSchema),
     children: z.array(storedWaypointSchema),
     range: lineRangeSchema,
   }),
@@ -70,6 +71,7 @@ const storedJourneyNodeSchema: z.ZodType<StoredJourneyNode> = z.lazy(() =>
 )
 
 const storedJourneySchema = z.object({
+  description: z.string().nullable().default(null),
   journeyNodes: z.array(storedJourneyNodeSchema),
   journeyNodeEdges: z.array(z.object({ id: z.string(), from: z.string(), to: z.string() })),
 })
