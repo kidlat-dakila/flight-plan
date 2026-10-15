@@ -367,9 +367,9 @@ const segmentSchema = z.strictObject({
     .register(configurations, {
       version: 0.1,
       configurationType: "static",
-      summary: "A segment's title: a very short text of its context, written after the context.",
+      summary: "A segment's title: what the segment adds, modifies and removes, or the code a groundwork segment is for, written after the context.",
       fieldDescription: "title.md",
-      exampleValue: "Stock check",
+      exampleValue: "New EditOrderPage",
     }),
   changedPaths: z.array(z.string()),
   context: z
