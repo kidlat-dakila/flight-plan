@@ -32,6 +32,7 @@ const fastapiRouterMethodFixtures = (factoryKey: string, made: string, local: st
     fastapiMethodFixture(factoryKey, made, local, `decorator:${name}:*`, [
       fastapiDecorated(`${receiver}.${name}("/items/{item_id}")`, "handle_item(item_id: int)"),
       fastapiDecorated(`${receiver}.${name}(path="/items/{item_id}")`, "handle_item(item_id: int)"),
+      fastapiDecorated(`${receiver}.${name}("/items/{item_id}", dependencies=[Depends(verify_key)])`, "handle_item(item_id: int)"),
     ]),
   ),
   fastapiMethodFixture(factoryKey, made, local, "decorator:api_route:*", [
@@ -48,6 +49,7 @@ const fastapiRouterMethodFixtures = (factoryKey: string, made: string, local: st
   fastapiMethodFixture(factoryKey, made, local, "call:include_router:*", [
     `${receiver}.include_router(admin.router, prefix="/admin")`,
     `${receiver}.include_router(users.router)`,
+    `${receiver}.include_router(users.router, prefix="/users", dependencies=[Depends(verify_key)])`,
   ]),
 ]
 

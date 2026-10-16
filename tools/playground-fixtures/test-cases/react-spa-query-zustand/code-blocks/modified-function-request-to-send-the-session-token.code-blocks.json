@@ -24,7 +24,7 @@
           "src/api/client.ts#root-argument-value@23:34",
           "src/api/client.ts#root-argument-value@23:48",
           "src/api/client.ts#root-argument-value@30:10",
-          "src/api/client.ts#variable@24:3",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#external-value@25:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#property@27:5",
@@ -47,7 +47,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#root-argument-value@30:10",
-          "src/api/client.ts#variable@24:3",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#property@27:5",
           "src/api/client.ts#property@28:7",
@@ -1307,7 +1307,7 @@
         ],
         "outerSymbols": [],
         "usedByIds": [
-          "src/api/client.ts#variable@24:3"
+          "src/api/client.ts#external-value@24:3"
         ],
         "nextBlockIds": [
           "src/api/client.ts#storage@20:10"
@@ -1426,7 +1426,7 @@
         "childrenBlockIds": [
           "src/api/client.ts#root-argument-value@23:34",
           "src/api/client.ts#root-argument-value@23:48",
-          "src/api/client.ts#variable@24:3",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#external-value@25:3",
           "src/api/client.ts#condition@33:3"
         ],
@@ -1442,6 +1442,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -1474,7 +1475,7 @@
           "src/api/profile.ts#function@8:1"
         ],
         "nextBlockIds": [
-          "src/api/client.ts#variable@24:3",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#external-value@25:3",
           "src/api/client.ts#condition@33:3"
         ],
@@ -1608,9 +1609,9 @@
         "catalogue": null
       },
       {
-        "id": "src/api/client.ts#variable@24:3",
+        "id": "src/api/client.ts#external-value@24:3",
         "name": "token",
-        "type": "variable",
+        "type": "external-value",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -1671,7 +1672,8 @@
         "diffSourceIds": [
           "src/api/client.ts#root-variable@2:1",
           "src/api/client.ts#function@19:1",
-          "src/api/client.ts#storage@20:10"
+          "src/api/client.ts#storage@20:10",
+          "src/api/client.ts#external-value@24:3"
         ],
         "outerSymbols": [
           {
@@ -1727,6 +1729,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [
+          "src/api/client.ts#root-variable@2:1",
+          "src/api/client.ts#function@19:1",
+          "src/api/client.ts#storage@20:10",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -1793,6 +1799,10 @@
           }
         ],
         "diffSourceIds": [
+          "src/api/client.ts#root-variable@2:1",
+          "src/api/client.ts#function@19:1",
+          "src/api/client.ts#storage@20:10",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -2044,6 +2054,10 @@
           }
         ],
         "diffSourceIds": [
+          "src/api/client.ts#root-variable@2:1",
+          "src/api/client.ts#function@19:1",
+          "src/api/client.ts#storage@20:10",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#condition@29:11"
         ],
         "outerSymbols": [
@@ -2219,6 +2233,10 @@
           }
         ],
         "diffSourceIds": [
+          "src/api/client.ts#root-variable@2:1",
+          "src/api/client.ts#function@19:1",
+          "src/api/client.ts#storage@20:10",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#condition@29:11"
         ],
         "outerSymbols": [
@@ -2236,11 +2254,14 @@
             "use": "value",
             "handedToId": null,
             "type": "internal-code-block",
-            "codeBlockId": "src/api/client.ts#variable@24:3"
+            "codeBlockId": "src/api/client.ts#external-value@24:3"
           }
         ],
         "usedByIds": [],
-        "nextBlockIds": [],
+        "nextBlockIds": [
+          "src/api/client.ts#property@29:35",
+          "src/api/client.ts#external-value@24:3"
+        ],
         "handedFrom": [],
         "filePath": "src/api/client.ts",
         "catalogue": null
@@ -2306,7 +2327,12 @@
             }
           }
         ],
-        "diffSourceIds": [],
+        "diffSourceIds": [
+          "src/api/client.ts#root-variable@2:1",
+          "src/api/client.ts#function@19:1",
+          "src/api/client.ts#storage@20:10",
+          "src/api/client.ts#external-value@24:3"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2322,11 +2348,13 @@
             "use": "value",
             "handedToId": null,
             "type": "internal-code-block",
-            "codeBlockId": "src/api/client.ts#variable@24:3"
+            "codeBlockId": "src/api/client.ts#external-value@24:3"
           }
         ],
         "usedByIds": [],
-        "nextBlockIds": [],
+        "nextBlockIds": [
+          "src/api/client.ts#external-value@24:3"
+        ],
         "handedFrom": [],
         "filePath": "src/api/client.ts",
         "catalogue": null
@@ -2370,6 +2398,10 @@
           }
         ],
         "diffSourceIds": [
+          "src/api/client.ts#root-variable@2:1",
+          "src/api/client.ts#function@19:1",
+          "src/api/client.ts#storage@20:10",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -2442,6 +2474,10 @@
           }
         ],
         "diffSourceIds": [
+          "src/api/client.ts#root-variable@2:1",
+          "src/api/client.ts#function@19:1",
+          "src/api/client.ts#storage@20:10",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -2590,6 +2626,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -2758,6 +2795,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -2870,6 +2908,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -3192,6 +3231,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -3236,6 +3276,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -3350,6 +3391,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -3514,6 +3556,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -3558,6 +3601,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -3672,6 +3716,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -3742,6 +3787,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -3837,6 +3883,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -3903,6 +3950,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -5301,6 +5349,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -5349,6 +5398,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -5559,6 +5609,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -5607,6 +5658,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -5821,6 +5873,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -5920,6 +5973,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -6182,6 +6236,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -6275,6 +6330,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -6354,6 +6410,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -6401,6 +6458,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -6443,6 +6501,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -6484,6 +6543,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -6546,6 +6606,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -6967,6 +7028,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7112,6 +7174,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7156,6 +7219,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7216,6 +7280,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7363,6 +7428,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7406,6 +7472,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7477,6 +7544,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7623,6 +7691,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7668,6 +7737,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7729,6 +7799,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7855,6 +7926,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -7981,6 +8053,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -8023,6 +8096,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -8064,6 +8138,7 @@
           "src/api/client.ts#function@19:1",
           "src/api/client.ts#storage@20:10",
           "src/api/client.ts#function@23:1",
+          "src/api/client.ts#external-value@24:3",
           "src/api/client.ts#request@25:26",
           "src/api/client.ts#condition@29:11"
         ],
@@ -8292,7 +8367,7 @@
       "src/api/client.ts#function@19:1",
       "src/api/client.ts#storage@20:10",
       "src/api/client.ts#root-argument-value@30:10",
-      "src/api/client.ts#variable@24:3",
+      "src/api/client.ts#external-value@24:3",
       "src/api/client.ts#request@25:26",
       "src/api/client.ts#property@27:5",
       "src/api/client.ts#property@28:7",

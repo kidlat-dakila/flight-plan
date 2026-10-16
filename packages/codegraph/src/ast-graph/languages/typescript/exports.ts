@@ -73,3 +73,21 @@ export const readReExports = (grammar: GrammarId, tree: SyntaxTree, filePaths: F
     const source = statement.childForFieldName("source")
     return source === null ? [] : reExportsOf(statement, source, filePaths)
   })
+
+const ASSIGNMENT_TYPE = "assignment_expression"
+const STATEMENT_TYPE = "expression_statement"
+const MODULE_EXPORTS = "module.exports"
+
+export const moduleExportsHolding = (value: SyntaxNode): SyntaxNode | null => {
+  const assignment = value.parent
+  const target = assignment?.type === ASSIGNMENT_TYPE && assignment.childForFieldName("right")?.id === value.id ? assignment.childForFieldName("left") : null
+  return target?.text === MODULE_EXPORTS ? target : null
+}
+
+export const listModuleExportValues = (tree: SyntaxTree): SyntaxNode[] =>
+  tree.rootNode.namedChildren
+    .filter((statement) => statement.type === STATEMENT_TYPE && statement.firstNamedChild?.type === ASSIGNMENT_TYPE)
+    .flatMap((statement) => {
+      const value = statement.firstNamedChild?.childForFieldName("right") ?? null
+      return value !== null && moduleExportsHolding(value) !== null ? [value] : []
+    })

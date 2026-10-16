@@ -86,6 +86,18 @@ export interface ClassSite {
 
 export type Site = CallSite | DecoratorSite | ElementSite | ClassSite
 
+export interface HandedCallback {
+  readonly call: SyntaxNode
+  readonly passed: SyntaxNode
+  readonly reader?: SyntaxReader
+}
+
+export type FindHandedExport = (filePath: string, moduleNames: readonly string[]) => HandedCallback | null
+
+export type FindHandedAway = (moduleNames: readonly string[]) => HandedCallback | null
+
+export const findNothingHanded: FindHandedExport = () => null
+
 export interface Directive {
   readonly text: string
   readonly node: SyntaxNode
@@ -97,7 +109,10 @@ export interface SyntaxReader {
   readonly expressionOf: (node: SyntaxNode) => Expression
   readonly bindingOf: (name: SyntaxNode) => Binding | null
   readonly basesOf: (declaration: SyntaxNode) => readonly SyntaxNode[]
-  readonly callHandedTo: (callback: SyntaxNode) => SyntaxNode | null
+  readonly handedAt: (callback: SyntaxNode) => HandedCallback | null
+  readonly parameterTypeOf: (holder: SyntaxNode) => SyntaxNode | null
+  readonly functionTypeOf: (holder: SyntaxNode) => SyntaxNode | null
+  readonly requiredSpecifierOf: (call: SyntaxNode) => string | null
   readonly listSites: () => readonly Site[]
   readonly listDirectives: () => readonly Directive[]
   readonly passedTo: (site: SyntaxNode) => readonly PassedValue[]

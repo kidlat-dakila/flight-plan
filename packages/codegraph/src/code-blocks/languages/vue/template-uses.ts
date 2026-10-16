@@ -129,6 +129,7 @@ const outlineOf = (tree: SyntaxTree, aliases: readonly TemplateAlias[], names: N
     resolutionByStart: new Map(resolved.map(({ reference, resolution }) => [positionKey(reference.range.start), resolution] as const)),
     localExports: [],
     forwardedExports: [],
+    importedFilePaths: new Map(),
   }
 }
 

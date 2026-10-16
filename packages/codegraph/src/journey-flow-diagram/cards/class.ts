@@ -20,7 +20,7 @@ export const classOfDeclaredProperty = (block: CodeBlock): CodeBlock | null => {
   return method !== null && isConstructor(method) ? method.parentBlock : null
 }
 
-export const hasMethods = (block: CodeBlock): boolean => block.childrenBlocks.some((child) => child.type === METHOD)
+export const hasMethodsOfItsOwn = (block: CodeBlock): boolean => block.childrenBlocks.some((child) => child.type === METHOD && (child.cardOwner ?? null) === null)
 
 export const extendedClassOf = (block: CodeBlock): CodeBlock | null => {
   const extended = block.outerSymbols.find((symbol) =>
@@ -42,8 +42,9 @@ const listClassAncestorIds = (block: CodeBlock, seenIds: ReadonlySet<string> = n
 const listClassParents = ({ nodes }: CardContext): ParentIdById => {
   const nodeIds = new Set(nodes.map((node) => node.id))
   const methodParents = nodes.flatMap((node) => {
-    const holder = rootBlockOfNode(node).parentBlock
-    return isMethodOfClass(rootBlockOfNode(node)) && holder !== null && nodeIds.has(holder.id) ? [[node.id, holder.id] as const] : []
+    const root = rootBlockOfNode(node)
+    const holder = root.parentBlock
+    return isMethodOfClass(root) && (root.cardOwner ?? null) === null && holder !== null && nodeIds.has(holder.id) ? [[node.id, holder.id] as const] : []
   })
   const classParents = nodes.filter(isClassNode).flatMap((node) => {
     const extended = extendedClassOf(rootBlockOfNode(node))

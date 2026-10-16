@@ -12,6 +12,11 @@ const subjectOf = (pattern: CataloguePattern): string => {
   return pattern.from === undefined ? pattern.name : `${pattern.name}${SPECIFIER_SEPARATOR}${pattern.from}`
 }
 
+export const kindOfPatternKey = (key: string): string => {
+  const [lastKey] = key.split(METHOD_SEPARATOR).slice(-1)
+  return lastKey.split(KEY_PART_SEPARATOR)[0]
+}
+
 export const patternKeyOf = (pattern: CataloguePattern): string =>
   [pattern.kind, subjectOf(pattern), pattern.versions ?? EVERY_VERSION].join(KEY_PART_SEPARATOR)
 

@@ -1,3 +1,4 @@
+import { moduleExportsHolding } from "@/ast-graph/languages/typescript/exports"
 import { isRequireDeclarator } from "@/ast-graph/languages/typescript/imports"
 import { bindingNamesIn } from "@/ast-graph/languages/typescript/patterns"
 import { isClassValue, isFieldOf, isFunctionValue, textOfName } from "@/ast-graph/languages/typescript/syntax"
@@ -250,7 +251,12 @@ const readInlineCallable: ReadSeeds = (callable, context, reader) => {
   if (isOwnedValue(callable, [PAIR_TYPE])) return findCallbackSlot(parent, reader) === null ? [] : [seedAt(callable, typeOfCallable(callable, null, context))]
   if (parent.type === EXPORT_TYPE) return readDefaultValue(callable, typeOfCallable(callable, null, context))
   const name = callable.childForFieldName("name")?.text ?? null
-  return [{ ...seedAt(callable, typeOfCallable(callable, name, context), name), ...returnedMarkOf(callable, callable, name) }]
+  const moduleExports = moduleExportsHolding(callable)
+  return [{
+    ...seedAt(callable, typeOfCallable(callable, name, context), name),
+    ...(moduleExports === null ? {} : { declaredAt: [startOf(moduleExports)] }),
+    ...returnedMarkOf(callable, callable, name),
+  }]
 }
 
 const firstDecoratorOf = (member: SyntaxNode): SyntaxNode => {

@@ -23,7 +23,7 @@ const EXTENSIONS_BY_LANGUAGE: Readonly<Record<LibraryLanguage, readonly string[]
 const LANGUAGES: readonly LibraryLanguage[] = ["javascript", "python"]
 const START_OF_FILE: SourceRange = { start: { line: FIRST_LINE, column: FIRST_COLUMN }, end: { line: FIRST_LINE, column: FIRST_COLUMN } }
 
-const saysNothingMore = { makes: null, slots: [], path: null, prefix: null, method: null, event: null, unfilledPlaces: [], members: [], isProviding: false, isOwnNode: false }
+const saysNothingMore = { makes: null, slots: [], path: null, prefix: null, method: null, event: null, unfilledPlaces: [], members: [], isProviding: false, isOwnNode: false, isMounting: false }
 
 export const languageOfFile = (filePath: string): LibraryLanguage | null =>
   LANGUAGES.find((language) => hasExtension(filePath, EXTENSIONS_BY_LANGUAGE[language])) ?? null

@@ -82,7 +82,7 @@ const readImportStatement = (statement: SyntaxNode, filePaths: FilePaths): Impor
   return names.map((name) => importVariableOf(name, importSource, filePaths))
 }
 
-const specifierRequiredBy = (call: SyntaxNode | null): string | null => {
+export const specifierRequiredBy = (call: SyntaxNode | null): string | null => {
   const callee = call?.childForFieldName("function") ?? null
   const given = call?.childForFieldName("arguments")?.namedChildren ?? []
   if (call?.type !== CALL_TYPE || callee?.type !== NAME_TYPE || callee.text !== REQUIRE_FUNCTION) return null

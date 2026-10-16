@@ -1,10 +1,10 @@
-import type { MethodPattern, SlotPosition } from "@/catalogue/types"
+import type { MethodPattern, Slot, SlotPosition } from "@/catalogue/types"
 import { readRouteCards } from "@/code-blocks/libraries/route-cards"
 import type { Library } from "@/code-blocks/libraries/types"
 
 const FIRST_ARGUMENT = 0
 
-const METHODS = "methods"
+const METHODS = "methods[]"
 
 const FASTAPI_PATH: SlotPosition = [FIRST_ARGUMENT, "path"]
 
@@ -12,20 +12,24 @@ const FASTAPI_ENDPOINT: SlotPosition = [1, "endpoint"]
 
 const FASTAPI_PREFIX = "prefix"
 
+const DEPENDENCIES: readonly Slot[] = [{ at: "dependencies[]", runs: "middleware" }]
+
+const routeDecorator = (name: string, method: string): MethodPattern => ({ kind: "decorator", name, runs: "route", slots: DEPENDENCIES, pathAt: FASTAPI_PATH, method })
+
 const FASTAPI_ROUTER_METHODS: readonly MethodPattern[] = [
-  { kind: "decorator", name: "get", runs: "route", pathAt: FASTAPI_PATH, method: "GET" },
-  { kind: "decorator", name: "post", runs: "route", pathAt: FASTAPI_PATH, method: "POST" },
-  { kind: "decorator", name: "put", runs: "route", pathAt: FASTAPI_PATH, method: "PUT" },
-  { kind: "decorator", name: "patch", runs: "route", pathAt: FASTAPI_PATH, method: "PATCH" },
-  { kind: "decorator", name: "delete", runs: "route", pathAt: FASTAPI_PATH, method: "DELETE" },
-  { kind: "decorator", name: "options", runs: "route", pathAt: FASTAPI_PATH, method: "OPTIONS" },
-  { kind: "decorator", name: "head", runs: "route", pathAt: FASTAPI_PATH, method: "HEAD" },
-  { kind: "decorator", name: "trace", runs: "route", pathAt: FASTAPI_PATH, method: "TRACE" },
-  { kind: "decorator", name: "api_route", runs: "route", pathAt: FASTAPI_PATH, methodAt: METHODS },
-  { kind: "decorator", name: "websocket", runs: "route", pathAt: FASTAPI_PATH, method: "WEBSOCKET" },
+  routeDecorator("get", "GET"),
+  routeDecorator("post", "POST"),
+  routeDecorator("put", "PUT"),
+  routeDecorator("patch", "PATCH"),
+  routeDecorator("delete", "DELETE"),
+  routeDecorator("options", "OPTIONS"),
+  routeDecorator("head", "HEAD"),
+  routeDecorator("trace", "TRACE"),
+  routeDecorator("websocket", "WEBSOCKET"),
+  { kind: "decorator", name: "api_route", runs: "route", slots: DEPENDENCIES, pathAt: FASTAPI_PATH, methodAt: METHODS },
   { kind: "decorator", name: "on_event", runs: "event", eventAt: FIRST_ARGUMENT },
-  { kind: "call", name: "add_api_route", slots: [{ at: FASTAPI_ENDPOINT, runs: "route" }], pathAt: FASTAPI_PATH, methodAt: METHODS },
-  { kind: "call", name: "include_router", slots: [], prefixAt: FASTAPI_PREFIX },
+  { kind: "call", name: "add_api_route", slots: [{ at: FASTAPI_ENDPOINT, runs: "route" }, ...DEPENDENCIES], pathAt: FASTAPI_PATH, methodAt: METHODS },
+  { kind: "call", name: "include_router", slots: DEPENDENCIES, prefixAt: FASTAPI_PREFIX },
 ]
 
 export const fastapiLibrary: Library = {
@@ -40,13 +44,14 @@ export const fastapiLibrary: Library = {
     {
       kind: "factory",
       name: "FastAPI",
+      slots: DEPENDENCIES,
       methods: [
         ...FASTAPI_ROUTER_METHODS,
         { kind: "decorator", name: "middleware", runs: "middleware" },
         { kind: "decorator", name: "exception_handler", runs: "event" },
       ],
     },
-    { kind: "factory", name: "APIRouter", prefixAt: FASTAPI_PREFIX, methods: FASTAPI_ROUTER_METHODS },
+    { kind: "factory", name: "APIRouter", prefixAt: FASTAPI_PREFIX, slots: DEPENDENCIES, methods: FASTAPI_ROUTER_METHODS },
     { kind: "call", name: "Depends", slots: [{ at: FIRST_ARGUMENT, runs: "in-place" }] },
     { kind: "call", name: "Security", slots: [{ at: FIRST_ARGUMENT, runs: "in-place" }], makes: "auth" },
   ],

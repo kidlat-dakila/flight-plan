@@ -200,6 +200,24 @@ describe("the names a file exports", () => {
     })
   })
 
+  it("exports a function declared at the top of its file under the name an export clause gives it", () => {
+    const declared = groupOf({ "src/price.ts": codeOf("function priceOf(item) {}", "export { priceOf as price }", "export default priceOf") })
+
+    expect(declared.astGraphs[0].exports).toStrictEqual({ price: "src/price.ts#function@1:1", default: "src/price.ts#function@1:1" })
+  })
+
+  it("leads a required module to the function its module.exports holds, named or written in place", () => {
+    const required = groupOf({
+      "src/named.ts": codeOf("function priceOf(item) {}", "module.exports = priceOf"),
+      "src/written.ts": codeOf("module.exports = function (item) {}"),
+      "src/cart.ts": codeOf("const priceOf = require(\"./named\")", "export const total = () => run(priceOf, require(\"./written\"))"),
+    })
+
+    const cartSymbols = required.codeBlocks.filter((block) => block.filePath === "src/cart.ts").flatMap(symbolsOf)
+
+    expect(cartSymbols.filter((line) => line.startsWith("value"))).toStrictEqual(["value external-block src/written.ts#function@1:18", "value external-block src/named.ts#function@1:1"])
+  })
+
   it("says on a block which files export it", () => {
     const priceOf = blockNamed(group, "function", "priceOf")
 

@@ -72,6 +72,8 @@ A factory named `default` is the default export of the library, such as `express
 
 **A factory is a call or a `new`.** `new PrismaClient()`, `new Hono()` and `FastAPI()` each make a value, and one factory pattern holds for both ways of writing it. A factory has slots when what it is handed runs later: the second argument of `new Worker("Paint", paintCar)` is a job.
 
+**A factory names the type of the value it makes, in `makesType`,** when code writes that type instead of making the value. The `default` factory of Fastify says `makesType: "FastifyInstance"`, so the first parameter of `async function userRoutes(fastify: FastifyInstance)` is a value `Fastify()` made, and `fastify.get(…)` in it is a route, in whatever file the plugin is registered. **It names the types of a function that is handed the value, in `parameterOfTypes`:** Fastify lists `FastifyPluginAsync` and `FastifyPluginCallback`, so the first parameter of `const userRoutes: FastifyPluginAsync = async (fastify) => …` is such a value too.
+
 **A factory says what the value it makes is when the value itself is called**, in `called`. It holds for a call and for a tagged template:
 
 | Code | The factory | `called` says |
@@ -99,11 +101,13 @@ A method is also a factory, when a call on the value makes another value: `route
 |---|---|---|
 | `router.route("/users/:id").get(showUser)` | The factory `route` | The routes of its methods, which have no path of their own |
 | `APIRouter(prefix="/items")` | The factory `APIRouter` | Every route registered on the router |
-| `app.use("/admin", adminRouter)`, `app.include_router(router, prefix="/admin")` | The call | Every route of a value a factory made that is handed to the call |
+| `app.use("/admin", adminRouter)`, `app.include_router(router, prefix="/admin")`, `app.register_blueprint(bp, url_prefix="/admin")`, `app.register(userRoutes, { prefix: "/admin" })` | The call | Every route registered on the router or in the plugin the call is handed, in any file of the group |
+
+**A call with `prefixAt` mounts what it is handed.** Its match says `isMounting`, the library file of a route library gives its block the card part `mount` with the prefix, and the routes are reached once the group is linked, through the symbols that join the call to the router, so a router declared in one file and mounted in another takes the prefix. Mounts above mounts add up, outermost first: `/api` above `/v1` above `/users` is `/api/v1/users`. See [The routes below a mount](code-blocks.md#the-routes-below-a-mount).
 
 A decorator names a prefix the same way, for the routes inside what it decorates: `@Controller("cats")` of NestJS is the prefix of every `@Get` in the class.
 
-An argument that is a function is never a path or a prefix, so `app.use(logRequest)` has no prefix.
+An argument that is a function is never a path, and only an argument written as text is a prefix, so `app.use(logRequest)` and `app.use(requireSession)` have no prefix and their argument is a slot.
 
 ## A class that extends a library
 
@@ -356,7 +360,7 @@ A pattern names the slots of a call: an argument by its position, or a property 
 
 A pattern names each depth it reads: `"routes[].component"`, `"routes[].children[].component"`.
 
-The same places serve `pathAt`, `prefixAt`, `methodAt`, `eventAt` and the `keyAt` and `valueAt` of a provided value. Each slot says when what is handed to it runs. It is the name of the [`effect-callback`](block-types.md#the-types) block.
+The same places serve `pathAt`, `prefixAt`, `methodAt`, `eventAt` and the `keyAt` and `valueAt` of a provided value. A `methodAt` that reads each item of a list gives every method it finds: `methodAt: "methods[]"` reads `GET` and `POST` from `@app.route("/users", methods=["GET", "POST"])`. Each slot says when what is handed to it runs. It is the name of the [`effect-callback`](block-types.md#the-types) block.
 
 | A slot is | It runs | Example |
 |---|---|---|
@@ -452,6 +456,7 @@ interface DecoratorPattern {
   name: string                         // "Get", or the name of a method such as "get" in "@app.get"
   from?: string
   runs?: SlotRuns                      // what the decorated function is
+  slots?: Slot[]                       // what is handed to the decorator and runs before the function: "dependencies[]" of FastAPI
   pathAt?: SlotPosition
   prefixAt?: SlotPosition              // where the prefix of the routes inside what it decorates is
   method?: string                      // "GET", or "*" for every method
@@ -487,6 +492,8 @@ interface FactoryPattern {
   makes?: BlockMade                    // what the factory makes
   prefixAt?: SlotPosition              // where the prefix of every route below is
   provides?: ContextProvision          // what the made value provides when it is written as an element
+  makesType?: string                   // the type code writes for the made value: "FastifyInstance"
+  parameterOfTypes?: string[]          // the types of a function whose first parameter is the made value: "FastifyPluginAsync"
 }
 
 interface ClassPattern {
@@ -588,6 +595,11 @@ A file is read once, and every call, `new`, tagged template, decorator, element 
 | `const { tables } = connect()`, then `tables["users"].where(…).find()` | The method `find`: the value is followed through a name taken apart from it, a subscript and a call no pattern names |
 | `export const prisma = new PrismaClient()` in one file, `prisma.user.findMany()` in another | The method `findMany`: the value is followed through the import to the file that makes it |
 | `prisma.$transaction((tx) => tx.user.create(…))` | The method `create` on `tx`. The first argument of a callback in a slot that runs in place is taken to be the value. This is assumed. |
+| `async function userRoutes(fastify) { fastify.get(…) }`, then `app.register(userRoutes)` in the same file | The method `get` on `fastify`: a function handed by name to a slot that runs in place is read as one written there |
+| The same function exported, then `app.register(userRoutes)` in another file, through `import userRoutes from "./users"`, `const userRoutes = require("./users")` or `app.register(require("./users"))` | The same: the other files of the group are asked which hand the export, or what `module.exports` holds, to a slot that runs in place, and that call is read in its own file. The prefix the call names, `{ prefix: "/v1" }`, goes before every route of the function. |
+| `async function userRoutes(fastify: FastifyInstance) { fastify.get(…) }` | The method `get` on `fastify`: a first parameter typed with the `makesType` of a factory is a value that factory made |
+| `const userRoutes: FastifyPluginAsync = async (fastify) => { fastify.get(…) }` | The method `get` on `fastify`: the first parameter of a function declared with a type the factory lists in `parameterOfTypes` is a value that factory made |
+| `const express = require("express")`, then `express()`, and `require("fastify")({ logger: true })` | The factory `default`: calling a whole module, bound by `require` or written in place, calls its default export |
 | `program.argument("<name>").action(…)` with `program` imported | `program.action`: a call no pattern names on a member of an export leaves the member |
 | `app.register(mercurius, { schema })` | The call pattern of the default export of `mercurius`, with the arguments after it as its own. An export handed to a method by name is called by that method. |
 | `class User extends Model {}`, then `User.findAll()` and `new User().save()` | The class pattern, and its methods on the class and on what is made from it |
@@ -595,7 +607,7 @@ A file is read once, and every call, `new`, tagged template, decorator, element 
 
 In a Vue file the script is read as JavaScript, an element of the template matches by the name the script imports, written `RouterLink` or `router-link`, and the options a script exports are read as the options of `defineComponent`. In Python a name is a member of a module at any depth: `from web.cache import cache`, `import web` and `web.cache.cache.get(…)` all lead to `cache.get` of `web.cache`.
 
-A value that is a parameter, or that comes from a call no pattern names, has no origin, and nothing matches on it.
+Any other parameter, and a value that comes from a call no pattern names, has no origin, and nothing matches on it.
 
 A file pattern is matched by the path of the file, read from the folder of the nearest manifest above it, and only when that manifest lists the library: `package.json` for JavaScript, `pyproject.toml` or a `requirements` file for Python. A manifest lists a library under the name it is imported by or under the name a registry installs it by, so `django-allauth` in a `requirements` file is the library imported as `allauth`. A file with no manifest above it matches no file pattern. What the pattern says of an export is left on the block behind that export, as the `catalogue` of a call is, so a Next.js `page.tsx` is a visit of the path its folders spell and a `route.ts` is an API call of each method it exports.
 

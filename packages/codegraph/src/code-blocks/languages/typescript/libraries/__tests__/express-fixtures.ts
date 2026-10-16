@@ -8,6 +8,8 @@ const EXPRESS_ROUTER_KEY = "factory:Router:*"
 
 const EXPRESS_APP = "import express from \"express\"\nconst app = express()"
 
+const EXPRESS_REQUIRED_APP = "const express = require(\"express\")\nconst app = express()"
+
 const EXPRESS_ROUTER = "import { Router } from \"express\"\nconst router = Router()"
 
 const EXPRESS_ROUTER_OF_DEFAULT = "import express from \"express\"\nconst router = express.Router()"
@@ -45,7 +47,8 @@ const expressRouterMethodFixtures = (factoryKey: string, made: string, local: st
 ]
 
 export const expressFixtures: readonly PatternFixture[] = [
-  { library: EXPRESS, patternKey: EXPRESS_APP_KEY, matches: [EXPRESS_APP], rejects: ["const express = () => makeLocalRegistry()\nconst app = express()"] },
+  { library: EXPRESS, patternKey: EXPRESS_APP_KEY, matches: [EXPRESS_APP, EXPRESS_REQUIRED_APP], rejects: ["const express = () => makeLocalRegistry()\nconst app = express()"] },
+  expressMethodFixture(EXPRESS_APP_KEY, EXPRESS_REQUIRED_APP, EXPRESS_LOCAL_APP, "get", "app.get(\"/users/:id\", requireSession, showUser)"),
   ...expressRouterMethodFixtures(EXPRESS_APP_KEY, EXPRESS_APP, EXPRESS_LOCAL_APP, "app"),
   expressMethodFixture(EXPRESS_APP_KEY, EXPRESS_APP, EXPRESS_LOCAL_APP, "listen", "app.listen(8080, \"0.0.0.0\", (error) => { report(error) })"),
   { library: EXPRESS, patternKey: EXPRESS_ROUTER_KEY, matches: [EXPRESS_ROUTER, EXPRESS_ROUTER_OF_DEFAULT], rejects: ["const Router = () => makeLocalRegistry()\nconst router = Router()"] },

@@ -1,10 +1,13 @@
-import { readImportVariables } from "@/ast-graph/languages/typescript/imports"
+import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
+import { moduleExportsHolding } from "@/ast-graph/languages/typescript/exports"
+import { readImportVariables, specifierRequiredBy } from "@/ast-graph/languages/typescript/imports"
 import { isFieldOf, isQuoted, textOfName, unquoted } from "@/ast-graph/languages/typescript/syntax"
 import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
 import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
+import { isSameRange, rangeOf } from "@/ast-graph/source-range"
 import type { FileVariable } from "@/ast-graph/types"
 import { readOutline, resolutionOf, type FileOutline } from "@/code-blocks/languages/typescript/outline"
-import { NO_EXPRESSION, type Binding, type Directive, type Expression, type FindExportedBinding, type ImportBinding, type PassedValue, type Site, type SyntaxReader } from "./syntax-reader"
+import { NO_EXPRESSION, type Binding, type Directive, type Expression, type FindExportedBinding, type FindHandedAway, type HandedCallback, type ImportBinding, type PassedValue, type Site, type SyntaxReader } from "./syntax-reader"
 
 const FIRST_LINE = 1
 const NAME_TYPES: ReadonlySet<string> = new Set(["identifier", "type_identifier", "property_identifier"])
@@ -48,6 +51,8 @@ const COMMENT_TYPE = "comment"
 const TEMPLATE_TYPE = "template_string"
 const STATEMENT_TYPE = "expression_statement"
 const TEXT_TYPE = "string"
+const CALL_PATTERN = patternOfTypes([CALL_TYPE])
+const GENERIC_TYPE = "generic_type"
 const CODE_SITE_TYPES: readonly string[] = [CALL_TYPE, CONSTRUCTION_TYPE, DECORATOR_TYPE, ...CLASS_TYPES]
 const MARKUP_GRAMMAR: GrammarId = "tsx"
 const SITE_PATTERNS: Readonly<Record<string, string>> = {
@@ -86,7 +91,7 @@ const declaredFrom = (node: SyntaxNode, memberPath: readonly string[]): Declared
   return TAKING_APART_TYPES.has(holder.type) ? declaredFrom(holder, [...takenApartKeyOf(node, holder), ...memberPath]) : null
 }
 
-const nameNodeOf = (tree: SyntaxTree, { range }: FileVariable): SyntaxNode =>
+const nameNodeOf = (tree: SyntaxTree, { range }: { readonly range: FileVariable["range"] }): SyntaxNode =>
   tree.rootNode.namedDescendantForPosition(
     { row: range.start.line - FIRST_LINE, column: range.start.column },
     { row: range.end.line - FIRST_LINE, column: range.end.column },
@@ -100,10 +105,96 @@ const functionOfFirstParameter = (name: SyntaxNode): SyntaxNode | null => {
   return parameters?.type === PARAMETERS_TYPE && parameters.firstNamedChild?.id === holder.id ? parameters.parent : null
 }
 
-const callHandedTo = (callback: SyntaxNode): SyntaxNode | null => {
-  const option = callback.parent?.type === PAIR_TYPE ? callback.parent.parent : null
-  const passed = option?.type === OPTIONS_TYPE ? option : callback
-  return passed.parent?.type === ARGUMENTS_TYPE ? passed.parent.parent : null
+const callOfPassed = (passed: SyntaxNode): SyntaxNode | null => {
+  const option = passed.parent?.type === PAIR_TYPE ? passed.parent.parent : null
+  const argument = option?.type === OPTIONS_TYPE ? option : passed
+  return argument.parent?.type === ARGUMENTS_TYPE ? argument.parent.parent : null
+}
+
+const handedOf = (passed: SyntaxNode): HandedCallback | null => {
+  const call = callOfPassed(passed)
+  return call === null ? null : { call, passed }
+}
+
+const nameOfFunction = (callback: SyntaxNode): SyntaxNode | null => {
+  const own = callback.childForFieldName("name")
+  if (own !== null) return own
+  const declarator = callback.parent?.type === DECLARATOR_TYPE && isFieldOf(callback, "value") ? callback.parent : null
+  return declarator?.childForFieldName("name") ?? null
+}
+
+const namesOfFunction = (outline: FileOutline, callback: SyntaxNode): SyntaxNode[] => {
+  const name = nameOfFunction(callback)
+  if (name === null) return []
+  const declared = rangeOf(name)
+  return outline.resolved
+    .filter(({ resolution }) => resolution.kind === "local" && isSameRange(resolution.declaration.range, declared))
+    .map(({ reference }) => nameNodeOf(outline.tree, reference))
+}
+
+const exportedNamesOf = (outline: FileOutline, callback: SyntaxNode): string[] => {
+  const name = nameOfFunction(callback)
+  const declared = [rangeOf(callback), ...(name === null ? [] : [rangeOf(name)])]
+  return outline.localExports.filter(({ declaration }) => declared.some((range) => isSameRange(range, declaration.range))).map(({ exportedName }) => exportedName)
+}
+
+const moduleNamesOf = (outline: FileOutline, callback: SyntaxNode): string[] => {
+  const isModule = [callback, ...namesOfFunction(outline, callback)].some((value) => moduleExportsHolding(value) !== null)
+  return [...exportedNamesOf(outline, callback), ...(isModule ? [NAMESPACE_IMPORT] : [])]
+}
+
+const handedAt = (outline: FileOutline, callback: SyntaxNode, findHandedAway: FindHandedAway): HandedCallback | null => {
+  const handedHere = handedOf(callback) ?? namesOfFunction(outline, callback).map(handedOf).find((handed) => handed !== null) ?? null
+  if (handedHere !== null) return handedHere
+  const moduleNames = moduleNamesOf(outline, callback)
+  return moduleNames.length === 0 ? null : findHandedAway(moduleNames)
+}
+
+const nameOfType = (type: SyntaxNode | null): SyntaxNode | null =>
+  type?.type === GENERIC_TYPE ? type.childForFieldName("name") : type
+
+const parameterTypeOf = (holder: SyntaxNode): SyntaxNode | null => {
+  const first = holder.childForFieldName("parameters")?.firstNamedChild ?? null
+  const annotation = first !== null && PARAMETER_TYPES.has(first.type) ? first.childForFieldName("type") : null
+  return nameOfType(annotation?.firstNamedChild ?? null)
+}
+
+const functionTypeOf = (holder: SyntaxNode): SyntaxNode | null => {
+  const declarator = holder.parent?.type === DECLARATOR_TYPE && isFieldOf(holder, "value") ? holder.parent : null
+  return nameOfType(declarator?.childForFieldName("type")?.firstNamedChild ?? null)
+}
+
+const requiredSpecifierOf = (outline: FileOutline, call: SyntaxNode): string | null => {
+  const callee = call.childForFieldName("function")
+  return callee === null || resolutionOf(outline, callee) !== null ? null : specifierRequiredBy(call)
+}
+
+const isRequiring = (call: SyntaxNode, filePath: string, importedFilePaths: ReadonlyMap<string, string>): boolean => {
+  const specifier = specifierRequiredBy(call)
+  return specifier !== null && importedFilePaths.get(specifier) === filePath
+}
+
+const importsOf = (outline: FileOutline, filePath: string, moduleNames: readonly string[]): SyntaxNode[] =>
+  outline.resolved
+    .filter(({ resolution }) => resolution.kind === "import" && resolution.variable.importedFilePath === filePath && moduleNames.includes(resolution.variable.importedName))
+    .map(({ reference }) => nameNodeOf(outline.tree, reference))
+
+const requiresOf = (grammar: GrammarId, outline: FileOutline, filePath: string, importedFilePaths: ReadonlyMap<string, string>): SyntaxNode[] =>
+  nodesMatching(grammar, outline.tree, CALL_PATTERN).filter((call) => isRequiring(call, filePath, importedFilePaths))
+
+export interface HandingSearch {
+  readonly grammar: GrammarId
+  readonly outline: FileOutline
+  readonly importedFilePaths: ReadonlyMap<string, string>
+  readonly reader: SyntaxReader
+}
+
+export const listHandedImports = ({ grammar, outline, importedFilePaths, reader }: HandingSearch, filePath: string, moduleNames: readonly string[]): HandedCallback[] => {
+  const required = moduleNames.includes(NAMESPACE_IMPORT) ? requiresOf(grammar, outline, filePath, importedFilePaths) : []
+  return [...importsOf(outline, filePath, moduleNames), ...required].flatMap((passed) => {
+    const handed = handedOf(passed)
+    return handed === null ? [] : [{ ...handed, reader }]
+  })
 }
 
 const bindingOfDeclared = (name: SyntaxNode): Binding | null => {
@@ -212,13 +303,18 @@ export interface JavascriptSyntax {
 const withReader = (binding: Binding | null, reader: SyntaxReader): Binding | null =>
   binding?.kind === "value" || binding?.kind === "class" ? { ...binding, reader } : binding
 
-export const javascriptReaderOf = (grammar: GrammarId, outline: FileOutline, findExported: FindExportedBinding): SyntaxReader => ({
+const findNothingHandedAway: FindHandedAway = () => null
+
+export const javascriptReaderOf = (grammar: GrammarId, outline: FileOutline, findExported: FindExportedBinding, findHandedAway: FindHandedAway = findNothingHandedAway): SyntaxReader => ({
   language: "javascript",
   tree: outline.tree,
   expressionOf,
   bindingOf: (name) => bindingIn(outline, name, findExported),
   basesOf,
-  callHandedTo,
+  handedAt: (callback) => handedAt(outline, callback, findHandedAway),
+  parameterTypeOf,
+  functionTypeOf,
+  requiredSpecifierOf: (call) => requiredSpecifierOf(outline, call),
   listSites: () => nodesMatching(grammar, outline.tree, SITE_PATTERNS[grammar] ?? SITE_PATTERNS.typescript).flatMap(siteOf),
   listDirectives: () => listDirectives(grammar, outline.tree),
   passedTo,

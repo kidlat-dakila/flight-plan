@@ -226,7 +226,9 @@ import { price } from "./pricing"
 | `pricing/price-of.ts` | `default` → the block `priceOf` |
 | `pricing/index.ts` | `price` → the block `priceOf`, and `tax` → the block `taxOf` |
 
-`price` in `cart.ts` is looked up in the `exports` of `pricing/index.ts`, and becomes a symbol that points at the block `priceOf`. `export * from "./price-of"` adds every name of that file but `default`.
+`price` in `cart.ts` is looked up in the `exports` of `pricing/index.ts`, and becomes a symbol that points at the block `priceOf`. `export * from "./price-of"` adds every name of that file but `default`. A function declared at the top of its file and exported by a clause, `function priceOf(item) { … }` then `export { priceOf }` or `export default priceOf`, is exported as a `const` would be.
+
+**A CommonJS file exports what `module.exports` holds, as the whole module.** `module.exports = priceOf` leads to the block `priceOf`, and `module.exports = function (item) { … }` to the function written there, which is declared where `module.exports` is written. `const priceOf = require("./price-of")` and `require("./price-of")` handed to a call are symbols that point at that block. The whole module is no name of `exports`, so `export *` passes it on to no file.
 
 `exports` and `exportedBy` are the two directions of one fact: `exports` leads from a file and a name to a block, and `exportedBy` from a block to the files that export it.
 
@@ -303,27 +305,52 @@ interface CodeBlock {
 | `usedBy` | The blocks that have this block in their `outerSymbols`. It is the reverse of `outerSymbols`, filled once when the group is built, so that climbing from a block to what uses it is a lookup. |
 | `astGraph` | The AST graph of the file the block is in, an alias, so the file can be found from any block |
 | `catalogue` | What the [catalogue](catalogue.md) says about the block, or `null` when no pattern matched it. See "What the catalogue leaves on a block". |
-| `card` | Which card of the Journey Flow Diagram the block belongs to, and as what part: the library that says it, the kind of card, the part, the heading it is drawn under, the key its card is grouped by and the block it is drawn in. Only a library with a file of its own writes it; left out otherwise. See "Which card a block belongs to". |
+| `card` | Which card of the Journey Flow Diagram the block belongs to, and as what part: the library that says it, the kind of card, the part, the heading it is drawn under, the key its card is grouped by and the block it is drawn in, and for middleware that runs before a whole router, the route paths it reaches (`routePaths`) and whether it reaches the whole app (`isAppWide`). Only a library with a file of its own writes it; left out otherwise. See "Which card a block belongs to". |
 | `cardOwner` | The block `card.ownerId` names, an alias, or `null` when the card names none. Only in memory: the stored form keeps the id in `card`. |
 
 ## Which card a block belongs to
 
-`card` is written in two passes, so a part written away from its card is drawn in it.
+`card` is written in three passes, so a part written away from its card is drawn in it, and a route has the path it answers on.
 
 | Pass | When | What it writes |
 |---|---|---|
 | The library files | As a file is read, after its blocks | The `card` of every block a library with a file of its own recognises in that file: an Express registration and its handler and middleware, a tRPC router and its procedures, a Zustand, Pinia or Redux store and its parts, an RTK Query API and its endpoints, a Flask or FastAPI route. Each `readCards` reads the blocks of the file, the matches of its library and the syntax around them. |
 | The card links | Once every reference of the group exists | The `ownerId` of a part written beside its card, found through the symbols that join them, and the card of a block no library file could see |
+| The mounts | After the card links | The prefix of every mount above a route, put before its `groupKey`, and the `routePaths` of middleware that runs before a whole router. See "The routes below a mount". |
 
 | Card link | The block | Its card |
 |---|---|---|
 | A function a route registration names as its handler, from its own file or another | The function | The card of the registration's handler slot, with the registration as its owner |
+| A method of a view class a registration names through `as_view`, such as `get` of `ItemAPI` in `add_url_rule("/items/<int:id>", view_func=ItemAPI.as_view("item"))` | The method, when its name is a method of HTTP | The card of the registration's handler slot, under the heading of its own method, with the registration as its owner |
 | A function handed to a call of a store's holder, such as `selectTotal` in `useCartStore(selectTotal)` | The function | A selector of that store |
 | A function whose first argument reads the key of a store, such as `(state) => state.cart.items` for the slice named `cart`, and a selector whose function reads it | The function, or the selector | A selector of that store |
 | A selector built on a selector of a store, such as `createSelector([selectItems], …)` | The selector | A selector of the same store |
 | A thunk that an extra reducer of a slice names, such as `checkout` in `addCase(checkout.fulfilled, …)` | The thunk | Owned by that slice |
 | A part written in a call that names a holder, such as the listener of `startListening({ actionCreator: cartSlice.actions.addItem, … })` or an endpoint of `todosApi.injectEndpoints(…)` | The part | Owned by that holder |
 | A value whose every key names a holder, such as `createTRPCRouter({ todo: todoRouter })` or `configureStore({ reducer: { cart: cartSlice.reducer } })` | The value | A holder of the same kind with no part: it only joins them |
+
+### The routes below a mount
+
+A mount is a call that hands a router or a plugin to another router under a prefix: `app.use("/api", users)`, `app.register(userRoutes, { prefix: "/v1" })`, `app.register_blueprint(bp, url_prefix="/api")`, `app.include_router(router, prefix="/api")`. Its block has the card part `mount` and the prefix as its `groupKey`, and the mounts pass reads it once the group is linked:
+
+| What the pass reads | Through |
+|---|---|
+| The router a route is registered on | The symbol of the registration that calls a member of it: `users` in `users.get(…)`, `bp` in `@bp.get(…)` |
+| What a mount hands over | The values the mount names, in its own file or another, and a function written in it: a router, or a plugin whose first parameter the routes are registered on |
+| The router a mount is on | The symbol of the mount that calls a member of it: `app` in `app.use(…)` |
+
+**A route takes the prefix of every mount above its router, outermost first,** before its `groupKey` and its `catalogue.path`. The routes of a plugin already have the prefix of the call that registers it, from [matching](catalogue.md#how-a-pattern-is-applied); the pass adds the prefixes of the mounts above routers. A slot of a mount that names a router is no middleware, and loses its card.
+
+**Middleware that runs before a whole router lists the paths it reaches, in `card.routePaths`.** It is middleware no registration owns: a function `app.use` is handed, a hook of `addHook`, a function decorated `@app.before_request` or `@app.middleware("http")`, and a dependency of `APIRouter(dependencies=[…])` or `include_router(…, dependencies=[…])`. It reaches the routes of the first block above it that names a router:
+
+| The block above | The routes it reaches |
+|---|---|
+| A mount that hands over a router | The routes of that router and of every router mounted below it |
+| A mount that hands over no router, such as `app.use("/admin", requireAdmin)` | The routes of the router the mount is on, below the prefix of the mount |
+| The router itself, as `APIRouter(…)` | The routes of that router and below |
+| A call on a router, as `app.addHook(…)` or the decorator `@bp.before_request` | The routes of that router and below |
+
+A card that says `isAppWide`, as Flask's `before_app_request` does, reaches every route of the app at the top of the mounts above its router.
 
 ## What the catalogue leaves on a block
 

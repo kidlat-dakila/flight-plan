@@ -1,5 +1,5 @@
 import type { FileSyntax } from "@/ast-graph/types"
-import type { Binding, FindExportedBinding } from "@/catalogue/matching/syntax-reader"
+import type { Binding, FindExportedBinding, FindHandedExport, HandedCallback } from "@/catalogue/matching/syntax-reader"
 import type { BlockCard, CodeBlockCatalogue, CodeBlockType, Position, SourceRange, SymbolUse } from "./types"
 
 export type ArgumentRole = "whole" | "key" | "member"
@@ -103,8 +103,9 @@ export type FindExport = (filePath: string, exportedName: string) => FoundExport
 export interface OutlinedFile {
   readonly filePath: string
   readonly exports: FileExports
-  readonly read: (findExport: FindExport, findBinding: FindExportedBinding) => FileReading
+  readonly read: (findExport: FindExport, findBinding: FindExportedBinding, findHanded?: FindHandedExport) => FileReading
   readonly bindingAt?: (declarationRange: SourceRange, findBinding: FindExportedBinding) => Binding | null
+  readonly handingsOf?: (filePath: string, moduleNames: readonly string[], findBinding: FindExportedBinding, findHanded: FindHandedExport) => HandedCallback[]
 }
 
 export const NO_EXPORTS: FileExports = { local: [], forwarded: [] }

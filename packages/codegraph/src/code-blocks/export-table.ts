@@ -47,7 +47,8 @@ export const createExportTable = (files: readonly OutlinedFile[]): ExportTable =
       .flatMap((forwarded) => (forwarded.filePath === null ? [] : listNames(forwarded.filePath, [...listed, filePath])))
       .filter((name) => name !== DEFAULT_EXPORT)
     const named = exports.forwarded.filter((forwarded) => forwarded.exportedName !== EVERY_NAME).map((forwarded) => forwarded.exportedName)
-    return [...new Set([...exports.local.map((local) => local.exportedName), ...named, ...passedOn])]
+    const local = exports.local.map((exported) => exported.exportedName).filter((name) => name !== EVERY_NAME)
+    return [...new Set([...local, ...named, ...passedOn])]
   }
 
   return {

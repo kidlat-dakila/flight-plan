@@ -2,7 +2,7 @@ import { codeOf } from "@/code-blocks/__tests__/group-fixture"
 import { cardsOf } from "@/code-blocks/libraries/__tests__/card-fixture"
 
 describe("the cards Flask writes", () => {
-  it("makes a decorated function the handler of its route path, under its method, and under ANY when it names several", () => {
+  it("makes a decorated function the handler of its route path, under its method, and under one heading of every method when it names several", () => {
     expect(cardsOf({
       "shop/views.py": codeOf(
         "from flask import Flask",
@@ -14,7 +14,7 @@ describe("the cards Flask writes", () => {
         "def users():",
         "    return list_users()",
       ),
-    })).toStrictEqual(["user: Flask route handler under GET at /users/<id>", "users: Flask route handler under ANY at /users"])
+    })).toStrictEqual(["user: Flask route handler under GET at /users/<id>", "users: Flask route handler under GET · POST at /users"])
   })
 })
 

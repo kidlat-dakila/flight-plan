@@ -61,8 +61,8 @@ export const outlineWholeFile = ({ filePath, source }: LanguageSource): Outlined
 
 const withBlocksEnsured = (outlined: OutlinedFile, source: LanguageSource, language: LibraryLanguage): OutlinedFile => ({
   ...outlined,
-  read: (findExport, findBinding) => {
-    const reading = outlined.read(findExport, findBinding)
+  read: (findExport, findBinding, findHanded) => {
+    const reading = outlined.read(findExport, findBinding, findHanded)
     if (reading.blocks.length === 0) return { ...outlineWholeFile(source).read(findExport, findBinding), readSyntax: reading.readSyntax }
     return withExportNamings(reading, outlined.exports, listExportNamings(source.manifest, language, LIBRARIES))
   },

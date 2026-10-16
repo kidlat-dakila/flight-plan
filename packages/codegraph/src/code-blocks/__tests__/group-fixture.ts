@@ -7,7 +7,7 @@ export type FixtureFiles = Readonly<Record<string, string>>
 
 export type FixtureDiffs = Readonly<Record<string, readonly SourceRange[]>>
 
-const SPECIFIER_PATTERN = /from "(?<specifier>\.[^"]*)"/g
+const SPECIFIER_PATTERN = /(?:from |require\()"(?<specifier>\.[^"]*)"/g
 const FOLDER_SEPARATOR = "/"
 const PARENT_FOLDER = ".."
 const SAME_FOLDER = "."

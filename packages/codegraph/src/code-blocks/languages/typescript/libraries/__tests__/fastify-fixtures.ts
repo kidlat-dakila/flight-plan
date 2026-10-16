@@ -8,6 +8,8 @@ export const fastifyFixtures: readonly PatternFixture[] = [
     patternKey: "factory:default:*",
     matches: [
       "import Fastify from \"fastify\"\nconst fastify = Fastify({ logger: true })",
+      "const Fastify = require(\"fastify\")\nconst fastify = Fastify({ logger: true })",
+      "const fastify = require(\"fastify\")({ logger: true })",
     ],
     rejects: [
       "const Fastify = (...parts) => parts\nconst fastify = Fastify({ logger: true })",
@@ -18,9 +20,16 @@ export const fastifyFixtures: readonly PatternFixture[] = [
     patternKey: "factory:default:*>call:get:*",
     matches: [
       "import Fastify from \"fastify\"\nconst fastify = Fastify({ logger: true })\nfastify.get(\"/users/:id\", async (request, reply) => showUser(request.params.id))",
+      "import Fastify from \"fastify\"\nconst fastify = Fastify({ logger: true })\nfastify.get(\"/users/:id\", { preHandler: [authenticate] }, async (request, reply) => showUser(request.params.id))",
+      "import type { FastifyInstance } from \"fastify\"\nexport async function userRoutes(fastify: FastifyInstance) {\n  fastify.get(\"/users/:id\", async (request, reply) => showUser(request.params.id))\n}",
+      "import Fastify from \"fastify\"\nconst app = Fastify()\nasync function userRoutes(fastify) {\n  fastify.get(\"/users/:id\", async (request, reply) => showUser(request.params.id))\n}\napp.register(userRoutes)",
+      "import type { FastifyPluginAsync } from \"fastify\"\nconst userRoutes: FastifyPluginAsync = async (fastify) => {\n  fastify.get(\"/users/:id\", async (request, reply) => showUser(request.params.id))\n}",
+      "const fastify = require(\"fastify\")({ logger: true })\nfastify.get(\"/users/:id\", async (request, reply) => showUser(request.params.id))",
     ],
     rejects: [
       "const fastify = makeLocalRegistry()\nfastify.get(\"/users/:id\", async (request, reply) => showUser(request.params.id))",
+      "type FastifyInstance = { get: Function }\nexport async function userRoutes(fastify: FastifyInstance) {\n  fastify.get(\"/users/:id\", async (request, reply) => showUser(request.params.id))\n}",
+      "async function userRoutes(fastify) {\n  fastify.get(\"/users/:id\", async (request, reply) => showUser(request.params.id))\n}\nmakeLocalRegistry().register(userRoutes)",
     ],
   },
   {

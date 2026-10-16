@@ -1,5 +1,6 @@
 import type { SyntaxNode } from "@/ast-graph/parser"
 import type { MatchedSlot, PatternMatch } from "@/catalogue/matching/match-sites"
+import { kindOfPatternKey } from "@/catalogue/pattern-keys"
 import type { BlockMade, ClassMember } from "@/catalogue/types"
 import { rangeOfNode } from "@/code-blocks/source-range"
 import type { CatalogueRuns, CodeBlockCatalogue, CodeBlockType, SourceRange } from "@/code-blocks/types"
@@ -30,7 +31,15 @@ const PATH_SEPARATOR = "/"
 
 const keyOf = ({ start, end }: SourceRange): string => [start.line, start.column, end.line, end.column].join(":")
 
-const entryRunsOf = (match: PatternMatch): CatalogueRuns | null => ENTRY_RUNS.find((runs) => match.slots.some((slot) => slot.runs === runs)) ?? null
+const FACTORY_KIND = "factory"
+
+const isMadeByFactory = (match: PatternMatch): boolean => kindOfPatternKey(match.patternKey) === FACTORY_KIND
+
+const entryRunsOf = (match: PatternMatch): CatalogueRuns | null =>
+  isMadeByFactory(match) ? null : (ENTRY_RUNS.find((runs) => match.slots.some((slot) => slot.runs === runs)) ?? null)
+
+const runsOf = (match: PatternMatch): CatalogueRuns | null =>
+  match.site === CALL_SITE ? (entryRunsOf(match) ?? match.runs) : (match.runs ?? entryRunsOf(match))
 
 const isEntryType = (runs: CatalogueRuns | null): runs is "route" | "resolver" | "middleware" => runs !== null && ENTRY_TYPES.has(runs)
 
@@ -67,7 +76,7 @@ const slotCatalogueOf = (match: PatternMatch, slot: MatchedSlot): CodeBlockCatal
 const namedBy = (match: PatternMatch): NamedBlock => ({
   type: typeOf(match),
   declares: declaredBy(match),
-  catalogue: withOwnNode(catalogueOf(match, entryRunsOf(match) ?? match.runs), match),
+  catalogue: withOwnNode(catalogueOf(match, runsOf(match)), match),
   prefix: match.prefix,
   members: match.members,
   isProviding: match.isProviding,

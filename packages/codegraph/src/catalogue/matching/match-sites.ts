@@ -1,10 +1,10 @@
 import { isSameNode } from "@/ast-graph/languages/typescript/syntax"
 import type { SyntaxNode } from "@/ast-graph/parser"
 import { patternKeyOf } from "@/catalogue/pattern-keys"
-import type { BlockMade, CatalogueLibrary, ClassMember, ContextProvision, Slot, SlotPosition, SlotRuns } from "@/catalogue/types"
+import type { BlockMade, CatalogueLibrary, CataloguePattern, ClassMember, ContextProvision, Slot, SlotPosition, SlotRuns } from "@/catalogue/types"
 import { rangeOfNode } from "@/code-blocks/source-range"
 import type { SourceRange } from "@/code-blocks/types"
-import { calledKeyOf, joinPrefixes, keyBelow, listExportedPatterns, listMethods, originOf, type MadeValue, type Origin, type OriginContext } from "./origins"
+import { calledKeyOf, joinPrefixes, keyBelow, listExportedPatterns, listMethods, originOf, type ExportOrigin, type MadeValue, type Origin, type OriginContext } from "./origins"
 import { isRestOfArguments, lastKeyOf, listPositional, nodesAt, placedAt, type PlaceHolder, type PlacedNode } from "./places"
 import type { PassedValue, Site, SyntaxReader } from "./syntax-reader"
 
@@ -34,9 +34,11 @@ export interface PatternMatch {
   readonly members: readonly ClassMember[]
   readonly isProviding: boolean
   readonly isOwnNode: boolean
+  readonly isMounting: boolean
 }
 
 interface PatternSaying {
+  readonly kind?: CataloguePattern["kind"]
   readonly name: string
   readonly versions?: string
   readonly slots?: readonly Slot[]
@@ -66,6 +68,7 @@ const KINDS_BY_SITE: Readonly<Record<Exclude<Site["kind"], "class">, ReadonlySet
   element: new Set<MatchedKind>(["element"]),
 }
 const CALLED_NAME = "called"
+const MOUNTING_KIND = "call"
 
 const textAt = (position: SlotPosition | undefined, passed: readonly PassedValue[], reader: SyntaxReader): string | null =>
   position === undefined
@@ -74,15 +77,25 @@ const textAt = (position: SlotPosition | undefined, passed: readonly PassedValue
         .map((node) => reader.textOf(node))
         .find((text) => text !== null) ?? null)
 
+export const METHOD_SEPARATOR = ","
+
+const methodsAt = (position: SlotPosition | undefined, passed: readonly PassedValue[], reader: SyntaxReader): string | null => {
+  const methods = position === undefined
+    ? []
+    : nodesAt(position, passed, reader).flatMap((node) => {
+        const text = reader.textOf(node)
+        return text === null ? [] : [text.toUpperCase()]
+      })
+  return methods.length === 0 ? null : methods.join(METHOD_SEPARATOR)
+}
+
 const isAmong = (node: SyntaxNode, nodes: readonly SyntaxNode[]): boolean => nodes.some((other) => isSameNode(other, node))
 
 const restOf = (saying: PatternSaying, passed: readonly PassedValue[], reader: SyntaxReader): SyntaxNode[] => {
   const slotted = (saying.slots ?? []).map((slot) => slot.at).filter((position) => !isRestOfArguments(position))
-  const written = [saying.pathAt, saying.prefixAt].filter((position) => position !== undefined)
-  const taken = [
-    ...slotted.flatMap((position) => nodesAt(position, passed, reader)),
-    ...written.flatMap((position) => nodesAt(position, passed, reader)).filter((node) => !reader.isFunction(node)),
-  ]
+  const paths = saying.pathAt === undefined ? [] : nodesAt(saying.pathAt, passed, reader).filter((node) => !reader.isFunction(node))
+  const prefixes = saying.prefixAt === undefined ? [] : nodesAt(saying.prefixAt, passed, reader).filter((node) => reader.textOf(node) !== null)
+  const taken = [...slotted.flatMap((position) => nodesAt(position, passed, reader)), ...paths, ...prefixes]
   return listPositional(passed).filter((argument) => !isAmong(argument, taken))
 }
 
@@ -147,13 +160,14 @@ const matchOfPassed = (saying: PatternSaying, source: MatchSource, site: Site, p
   slots: slotsOf(saying, passed, reader),
   path: textAt(saying.pathAt, passed, reader),
   prefix: textAt(saying.prefixAt, passed, reader),
-  method: saying.method ?? textAt(saying.methodAt, passed, reader)?.toUpperCase() ?? null,
+  method: saying.method ?? methodsAt(saying.methodAt, passed, reader),
   event: textAt(saying.eventAt, passed, reader),
   versions: saying.versions ?? null,
   unfilledPlaces: unfilledPlacesOf(saying, passed, reader),
   members: saying.members ?? [],
   isProviding: saying.provides !== undefined,
   isOwnNode: saying.isOwnNode ?? false,
+  isMounting: saying.kind === MOUNTING_KIND && saying.prefixAt !== undefined,
 })
 
 const matchOf = (saying: PatternSaying, source: MatchSource, site: Site, reader: SyntaxReader): PatternMatch =>
@@ -171,10 +185,19 @@ const matchesOfMade = (made: MadeValue, site: Exclude<Site, { kind: "class" }>, 
   return [matchOf({ ...made.called, name: CALLED_NAME }, { ...source, patternKey: calledKeyOf(made) }, site, reader)]
 }
 
+const DEFAULT_EXPORT = "default"
+
+const isDefaultPath = (path: readonly string[]): boolean => path.length === 1 && path[0] === DEFAULT_EXPORT
+
+const withDefaultExport = (origin: ExportOrigin, site: Exclude<Site, { kind: "class" }>): ExportOrigin => {
+  const isWholeModule = origin.paths.some((path) => path.length === 0) && !origin.paths.some(isDefaultPath)
+  return site.kind === "call" && isWholeModule ? { ...origin, paths: [...origin.paths, [DEFAULT_EXPORT]] } : origin
+}
+
 const matchesOfOrigin = (origin: Origin, site: Exclude<Site, { kind: "class" }>, context: OriginContext): PatternMatch[] => {
   if (origin.kind === "made") return matchesOfMade(origin, site, context.reader)
   const kinds: ReadonlySet<string> = KINDS_BY_SITE[site.kind]
-  return listExportedPatterns(origin, context).flatMap(({ library, specifier, pattern }) =>
+  return listExportedPatterns(withDefaultExport(origin, site), context).flatMap(({ library, specifier, pattern }) =>
     pattern.kind !== "class" && pattern.kind !== "file" && pattern.kind !== "directive" && kinds.has(pattern.kind)
       ? [matchOf(pattern, { library, specifier, patternKey: patternKeyOf(pattern) }, site, context.reader)]
       : [],

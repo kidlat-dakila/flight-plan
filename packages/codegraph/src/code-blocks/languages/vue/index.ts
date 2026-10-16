@@ -3,7 +3,7 @@ import type { ScriptBlock } from "@/ast-graph/languages/vue/sfc"
 import type { ParsedTemplate } from "@/ast-graph/languages/vue/template"
 import type { GrammarId, SyntaxNode, SyntaxTree } from "@/ast-graph/parser"
 import type { FileSyntax } from "@/ast-graph/types"
-import type { FindExportedBinding } from "@/catalogue/matching/syntax-reader"
+import { findNothingHanded, type FindExportedBinding, type FindHandedExport } from "@/catalogue/matching/syntax-reader"
 import { bindingInScript, exportsOf, outlineTypescriptTree, readScript, type ReadScript } from "@/code-blocks/languages/typescript"
 import { readOutline, resolutionOf, type FileOutline } from "@/code-blocks/languages/typescript/outline"
 import { blockIdOf } from "@/code-blocks/languages/typescript/syntax"
@@ -144,9 +144,10 @@ const withEventsEmitted = (declared: ComponentArguments, emitting: readonly Emit
   keys: firstOfEach([...declared.keys, ...emitting.flatMap(listEmittedEvents)], (key) => key.name),
 })
 
-const readComponent = ({ block, script, template, parsed, members, props, events, optionsScript }: Component, source: VueSource, findExport: FindExport, findBinding: FindExportedBinding): ScriptReading => {
+const readComponent = (component: Component, source: VueSource, findExport: FindExport, findBinding: FindExportedBinding, findHanded: FindHandedExport): ScriptReading => {
+  const { block, script, template, parsed, members, props, events, optionsScript } = component
   const { filePath } = source
-  const body = script === null ? { filePath, blocks: [], uses: [] } : readScript(script, findExport, findBinding)
+  const body = script === null ? { filePath, blocks: [], uses: [] } : readScript(script, findExport, findBinding, findHanded)
   const declared = script === null ? { ...NO_ARGUMENTS, keys: [...props, ...events].map(keyOfProp) } : readComponentArguments(script.grammar, script.outline.tree)
   const markup = template === null || parsed === null ? null : readTemplateUses({ parsed, template, script: script?.outline ?? null, props: declared.keys, members })
   const emitting = emittingTreesOf(script, markup, optionsScript, declared)
@@ -175,11 +176,11 @@ export const outlineVue = (source: VueSource): OutlinedFile => {
   return {
     filePath: source.filePath,
     exports: exportsWith(component, script, setup?.outline ?? null),
-    read: (findExport, findBinding) => {
+    read: (findExport, findBinding, findHanded = findNothingHanded) => {
       const readSyntax = (): FileSyntax => readVueSyntax(file.parsed, source.importedFilePaths)
-      const written: ScriptReading = script?.read(findExport, findBinding) ?? { filePath: source.filePath, blocks: [], uses: [] }
+      const written: ScriptReading = script?.read(findExport, findBinding, findHanded) ?? { filePath: source.filePath, blocks: [], uses: [] }
       if (component === null) return { filePath: source.filePath, blocks: written.blocks, uses: written.uses, readSyntax }
-      const read = readComponent(component, source, findExport, findBinding)
+      const read = readComponent(component, source, findExport, findBinding, findHanded)
       return {
         filePath: source.filePath,
         blocks: [...read.blocks, ...withMembersDeclared(written.blocks, component.members)],

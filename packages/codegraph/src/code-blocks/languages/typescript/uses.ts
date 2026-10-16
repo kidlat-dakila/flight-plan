@@ -1,4 +1,5 @@
 import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
+import { specifierRequiredBy } from "@/ast-graph/languages/typescript/imports"
 import { isFieldOf, isSameNode } from "@/ast-graph/languages/typescript/syntax"
 import type { SyntaxNode, SyntaxTree } from "@/ast-graph/parser"
 import { isSameRange, rangeOf } from "@/ast-graph/source-range"
@@ -20,6 +21,7 @@ interface MemberChain {
 type Role = "call" | "render" | "value"
 
 const VALUE_SPACE: SymbolSpace = "value"
+const VALUE_USE: SymbolUse = "value"
 const MEMBER_TYPE = "member_expression"
 const NAME_TYPE = "identifier"
 const CALL_TYPE = "call_expression"
@@ -228,8 +230,19 @@ const readReceiverUse = (receiver: SyntaxNode, outline: FileOutline): ReadUse[] 
 
 const listReceivers = (outline: FileOutline): SyntaxNode[] => RECEIVER_TYPES.flatMap((type) => outline.tree.rootNode.descendantsOfType(type))
 
+const readRequireUse = (call: SyntaxNode, outline: FileOutline): ReadUse[] => {
+  const callee = call.childForFieldName("function")
+  const specifier = callee === null || resolutionOf(outline, callee) !== null ? null : specifierRequiredBy(call)
+  if (specifier === null || call.parent?.type !== ARGUMENTS_TYPE) return []
+  const target: ReadTarget = { kind: "import", specifier, importedName: NAMESPACE_IMPORT, filePath: outline.importedFilePaths.get(specifier) ?? null }
+  return [{ usedAt: rangeOfNode(call), use: VALUE_USE, memberPath: [], target, handing: handingOf(call, outline), writtenAt: WRITTEN_NOWHERE }]
+}
+
+const listRequireUses = (outline: FileOutline): ReadUse[] => outline.tree.rootNode.descendantsOfType(CALL_TYPE).flatMap((call) => readRequireUse(call, outline))
+
 export const readUses = (outline: FileOutline, declaredIn: SyntaxTree = outline.tree): ReadUse[] => [
   ...listReceivers(outline).flatMap((receiver) => readReceiverUse(receiver, outline)),
+  ...listRequireUses(outline),
   ...outline.resolved.map((resolved) => readUse(resolved, outline, declaredIn)),
   ...outline.resolved.flatMap((resolved) => readCallbackUses(resolved, outline)),
   ...outline.resolved.flatMap((resolved) => readChildCallbackUses(resolved, outline)),

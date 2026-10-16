@@ -3,9 +3,9 @@ import { readTypescriptSyntax } from "@/ast-graph/languages/typescript"
 import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
 import { containsRange, rangeOf } from "@/ast-graph/source-range"
 import type { SymbolSpace } from "@/ast-graph/types"
-import { exportedBindingAt, javascriptReaderOf } from "@/catalogue/matching/javascript-reader"
+import { exportedBindingAt, javascriptReaderOf, listHandedImports } from "@/catalogue/matching/javascript-reader"
 import { matchSyntax } from "@/catalogue/matching/match-source"
-import type { Binding, FindExportedBinding } from "@/catalogue/matching/syntax-reader"
+import { findNothingHanded, type Binding, type FindExportedBinding, type FindHandedExport, type SyntaxReader } from "@/catalogue/matching/syntax-reader"
 import { LIBRARIES } from "@/code-blocks/libraries"
 import { withCards } from "@/code-blocks/libraries/cards"
 import type { FileExports, FindExport, OutlinedFile, ScriptReading } from "@/code-blocks/reading"
@@ -76,9 +76,12 @@ const createBlockReader = ({ filePath, outline, componentId }: ReadScript, findE
   },
 })
 
-export const readScript = (script: ReadScript, findExport: FindExport, findBinding: FindExportedBinding): ScriptReading => {
-  const { grammar, filePath, outline, componentId } = script
-  const matches = matchSyntax(javascriptReaderOf(grammar, outline, findBinding), LIBRARIES)
+const scriptReaderOf = ({ grammar, filePath, outline }: ReadScript, findBinding: FindExportedBinding, findHanded: FindHandedExport): SyntaxReader =>
+  javascriptReaderOf(grammar, outline, findBinding, (moduleNames) => findHanded(filePath, moduleNames))
+
+export const readScript = (script: ReadScript, findExport: FindExport, findBinding: FindExportedBinding, findHanded: FindHandedExport = findNothingHanded): ScriptReading => {
+  const { filePath, outline, componentId } = script
+  const matches = matchSyntax(scriptReaderOf(script, findBinding, findHanded), LIBRARIES)
   const blocks = readBlocks(createBlockReader(script, findExport, createFileNaming(matches)), componentId)
   return { filePath, blocks: withCards(withDirectives(blocks, matches, exportsOf(outline)), matches, outline.tree, LIBRARIES), uses: readUses(outline) }
 }
@@ -96,11 +99,13 @@ export const outlineTypescriptTree = (grammar: GrammarId, tree: SyntaxTree, { fi
   return {
     filePath,
     exports: exportsOf(script.outline),
-    read: (findExport, findBinding) => ({
-      ...readScript(script, findExport, findBinding),
+    read: (findExport, findBinding, findHanded) => ({
+      ...readScript(script, findExport, findBinding, findHanded),
       readSyntax: () => (grammar === JSX_GRAMMAR ? readJsxSyntax(tree, importedFilePaths) : readTypescriptSyntax(tree, importedFilePaths)),
     }),
     bindingAt: (declarationRange, findBinding) => bindingInScript(script, declarationRange, findBinding),
+    handingsOf: (handedPath, moduleNames, findBinding, findHanded) =>
+      listHandedImports({ grammar, outline: script.outline, importedFilePaths, reader: scriptReaderOf(script, findBinding, findHanded) }, handedPath, moduleNames),
   }
 }
 

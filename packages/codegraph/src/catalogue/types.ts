@@ -73,6 +73,7 @@ export interface DecoratorPattern {
   readonly from?: string
   readonly versions?: string
   readonly runs?: SlotRuns
+  readonly slots?: readonly Slot[]
   readonly makes?: BlockMade
   readonly pathAt?: SlotPosition
   readonly prefixAt?: SlotPosition
@@ -110,6 +111,8 @@ export interface FactoryPattern {
   readonly makes?: BlockMade
   readonly prefixAt?: SlotPosition
   readonly provides?: ContextProvision
+  readonly makesType?: string
+  readonly parameterOfTypes?: readonly string[]
 }
 
 export type MethodPattern = CallPattern | DecoratorPattern | ElementPattern | FactoryPattern

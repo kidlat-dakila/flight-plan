@@ -59,6 +59,22 @@ describe("the row groups of a route card", () => {
     expect(node?.blockLists).toStrictEqual([])
     expect(groupsOf(node).map(([label, rowCount, childNames]) => [label, rowCount, childNames.length])).toStrictEqual([["POST", 0, 1], ["GET", 0, 1]])
   })
+
+  it("heads a handler registered for several methods with all of them, after the headings of one method", () => {
+    const views = codeOf(
+      "from flask import Flask",
+      "app = Flask(__name__)",
+      "@app.route(\"/users\", methods=[\"GET\", \"POST\"])",
+      "def users():",
+      "    return list_users()",
+      "@app.delete(\"/users\")",
+      "def remove_users():",
+      "    return clear_users()",
+    )
+    const node = nodeViewNamed({ "shop/views.py": views }, { "shop/views.py": [rangeAt(5, 5, 5, 24), rangeAt(8, 5, 8, 25)] }, "/users")
+
+    expect(groupsOf(node)).toStrictEqual([["DELETE", 0, ["remove_users"]], ["GET · POST", 0, ["users"]]])
+  })
 })
 
 describe("the row groups of a tRPC router card", () => {

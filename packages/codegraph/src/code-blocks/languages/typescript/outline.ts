@@ -1,12 +1,12 @@
 import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
 import { readJsxReferences } from "@/ast-graph/languages/jsx/references"
 import { readFileVariables } from "@/ast-graph/languages/typescript/declarations"
-import { readExportAliases, readReExports } from "@/ast-graph/languages/typescript/exports"
+import { listModuleExportValues, moduleExportsHolding, readExportAliases, readReExports } from "@/ast-graph/languages/typescript/exports"
 import { readImportVariables } from "@/ast-graph/languages/typescript/imports"
 import { bindingNamesIn } from "@/ast-graph/languages/typescript/patterns"
 import { readReferences } from "@/ast-graph/languages/typescript/references"
 import { functionScopeOf } from "@/ast-graph/languages/typescript/scopes"
-import { isSameNode } from "@/ast-graph/languages/typescript/syntax"
+import { isFieldOf, isSameNode } from "@/ast-graph/languages/typescript/syntax"
 import type { GrammarId, SyntaxNode, SyntaxTree } from "@/ast-graph/parser"
 import { containsPosition, containsRange, isSameRange, positionKey, rangeOf } from "@/ast-graph/source-range"
 import type { FileVariable, ImportVariable, SourceRange as SyntaxRange, SymbolReference, SymbolSpace } from "@/ast-graph/types"
@@ -48,6 +48,7 @@ export interface FileOutline {
   readonly resolutionByStart: ReadonlyMap<string, Resolution>
   readonly localExports: readonly LocalExport[]
   readonly forwardedExports: readonly ForwardedExport[]
+  readonly importedFilePaths: ReadonlyMap<string, string>
 }
 
 const JSX_GRAMMAR: GrammarId = "tsx"
@@ -119,10 +120,29 @@ const FIRST_LINE = 1
 
 const pointOf = ({ line, column }: SyntaxRange["start"]): { row: number, column: number } => ({ row: line - FIRST_LINE, column })
 
+const FUNCTION_DECLARATION_TYPES: ReadonlySet<string> = new Set(["function_declaration", "generator_function_declaration"])
+
+const outsideOfDeclaration = (name: SyntaxNode): SyntaxNode => {
+  const declaration = name.parent
+  return declaration !== null && FUNCTION_DECLARATION_TYPES.has(declaration.type) && isFieldOf(name, "name") ? (declaration.parent ?? declaration) : name
+}
+
 const isFileWide = (tree: SyntaxTree, { range, scope }: FileVariable): boolean => {
   if (!isSameRange(scope, rangeOf(tree.rootNode))) return false
   const name = tree.rootNode.namedDescendantForPosition(pointOf(range.start), pointOf(range.end))
-  return isSameNode(functionScopeOf(name), tree.rootNode)
+  return isSameNode(functionScopeOf(outsideOfDeclaration(name)), tree.rootNode)
+}
+
+const NAME_TYPE = "identifier"
+const VALUE_SPACES: readonly SymbolSpace[] = ["value"]
+const FUNCTION_TYPE: FileVariable["type"] = "function"
+
+const moduleExportOf = (tree: SyntaxTree, value: SyntaxNode, fileWide: readonly FileVariable[]): LocalExport[] => {
+  if (value.type === NAME_TYPE) return fileWide.filter((declaration) => declaration.name === value.text).map((declaration) => ({ exportedName: NAMESPACE_IMPORT, declaration }))
+  const target = moduleExportsHolding(value)
+  if (target === null) return []
+  const declaration: FileVariable = { name: NAMESPACE_IMPORT, range: rangeOf(target), scope: rangeOf(tree.rootNode), spaces: VALUE_SPACES, declarationType: ANONYMOUS, type: FUNCTION_TYPE }
+  return [{ exportedName: NAMESPACE_IMPORT, declaration }]
 }
 
 export const readOutline = (grammar: GrammarId, tree: SyntaxTree, importedFilePaths: ReadonlyMap<string, string>): FileOutline => {
@@ -158,8 +178,14 @@ export const readOutline = (grammar: GrammarId, tree: SyntaxTree, importedFilePa
     imports,
     resolved,
     resolutionByStart: new Map(resolved.map(({ reference, resolution }) => [positionKey(reference.range.start), resolution] as const)),
-    localExports: [...tree.rootNode.namedChildren.flatMap((statement) => inlineExportsOf(statement, declarations)), ...aliased, ...anonymous],
+    localExports: [
+      ...tree.rootNode.namedChildren.flatMap((statement) => inlineExportsOf(statement, declarations)),
+      ...aliased,
+      ...anonymous,
+      ...listModuleExportValues(tree).flatMap((value) => moduleExportOf(tree, value, fileWide)),
+    ],
     forwardedExports: [...importForwards, ...reExported],
+    importedFilePaths,
   }
 }
 

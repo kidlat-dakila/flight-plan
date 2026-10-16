@@ -1,5 +1,5 @@
 import type { FileSyntax } from "@/ast-graph/types"
-import type { FindExportedBinding } from "@/catalogue/matching/syntax-reader"
+import type { FindExportedBinding, FindHandedExport } from "@/catalogue/matching/syntax-reader"
 import { LIBRARIES } from "@/code-blocks/libraries"
 import { groupBy } from "@/shared/group-by"
 import { once } from "@/shared/memo"
@@ -13,6 +13,7 @@ import { createExportTable } from "./export-table"
 import { grammarOfFile, outlineFile, type LanguageSource } from "./languages"
 import { linkReferences } from "./link-references"
 import type { FileReading } from "./reading"
+import { mountRoutes } from "./route-mounts"
 import { compareRanges } from "./source-range"
 import type { StoredASTGraph, StoredCodeBlock, StoredCodeGroupGraph } from "./stored-types"
 import { followMembers } from "./value-origins"
@@ -94,12 +95,16 @@ export const readCodeGroup = (files: readonly CodeFileSource[]): ReadCodeGroup =
     const found = exports.findExport(filePath, exportedName)
     return found === null ? null : (outlinedByPath.get(found.filePath)?.bindingAt?.(found.declarationRange, findBinding) ?? null)
   }
-  const readings = outlined.map((file) => file.read(exports.findExport, findBinding))
+  const findHanded: FindHandedExport = (filePath, moduleNames) => {
+    const handings = outlined.filter((file) => file.filePath !== filePath).flatMap((file) => file.handingsOf?.(filePath, moduleNames, findBinding, findHanded) ?? [])
+    return handings.length === 0 ? null : handings[0]
+  }
+  const readings = outlined.map((file) => file.read(exports.findExport, findBinding, findHanded))
   const readBlocks = readings.flatMap(({ blocks }) => blocks)
   const returnedIds = new Set(readBlocks.filter((block) => block.isReturned === true).map((block) => block.id))
   const heldMarkupIds = new Set(readBlocks.filter((block) => block.holdsMarkup === true).map((block) => block.id))
   const linked = linkReferences(readings, exports)
-  const linkedBlocks = linkCards(followMembers(linked.codeBlocks, linked.details, LIBRARIES))
+  const linkedBlocks = mountRoutes(linkCards(followMembers(linked.codeBlocks, linked.details, LIBRARIES)))
   const blocksByPath = groupBy(linkedBlocks, (block) => block.filePath)
   const deleted = files.flatMap((file) => listDeletedOf(file, blocksByPath))
   const deletedByHolder = groupBy(deleted, (one) => one.block.parentBlockId)

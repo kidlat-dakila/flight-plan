@@ -1,7 +1,7 @@
 import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
 import type { SyntaxNode } from "@/ast-graph/parser"
 import { patternKeyOf } from "@/catalogue/pattern-keys"
-import type { CalledValue, CatalogueLibrary, CataloguePattern, ClassPattern, FactoryPattern, MethodPattern, SlotPosition } from "@/catalogue/types"
+import type { CalledValue, CallPattern, CatalogueLibrary, CataloguePattern, ClassPattern, FactoryPattern, MethodPattern, SlotPosition } from "@/catalogue/types"
 import { nodesAt } from "./places"
 import type { Binding, SyntaxReader } from "./syntax-reader"
 
@@ -163,19 +163,50 @@ const receiverOf = (origin: ExportOrigin): ExportOrigin | null => {
   return paths.length === 0 ? null : { ...origin, paths }
 }
 
-const isHandedInPlace = (callback: SyntaxNode, call: SyntaxNode, made: MadeValue, { reader }: OriginContext): boolean =>
-  listMethods(made, CALLED_KINDS).some(
-    (method) =>
-      method.kind === "call"
-      && method.slots.some((slot) => slot.runs === RUNNING_IN_PLACE && nodesAt(slot.at, reader.passedTo(call), reader).some((node) => node.id === callback.id)),
+const prefixWrittenAt = (position: SlotPosition | null, call: SyntaxNode, reader: SyntaxReader): string | null =>
+  position === null ? null : (nodesAt(position, reader.passedTo(call), reader).map((node) => reader.textOf(node)).find((text) => text !== null) ?? null)
+
+const handsInPlace = (callback: SyntaxNode, call: SyntaxNode, { reader }: OriginContext) => (method: MethodPattern): method is CallPattern =>
+  method.kind === "call"
+  && method.slots.some((slot) => slot.runs === RUNNING_IN_PLACE && nodesAt(slot.at, reader.passedTo(call), reader).some((node) => node.id === callback.id))
+
+function originOfHandedFunction(holder: SyntaxNode, context: OriginContext, depth: number): Origin | null {
+  const handed = context.reader.handedAt(holder)
+  if (handed === null) return null
+  const handing = { ...context, reader: handed.reader ?? context.reader }
+  const called = handing.reader.expressionOf(handed.call)
+  const receiver = called.kind === "call" ? originAt(called.callee, handing, depth) : null
+  if (receiver?.kind !== "made") return null
+  const method = listMethods(receiver, CALLED_KINDS).find(handsInPlace(handed.passed, handed.call, handing))
+  if (method === undefined) return null
+  return { ...rested(receiver), prefix: joinPrefixes(receiver.prefix, prefixWrittenAt(method.prefixAt ?? null, handed.call, handing.reader)) }
+}
+
+const madeFor = (origin: ExportOrigin, context: OriginContext, isMadeFor: (pattern: FactoryPattern, typeName: string) => boolean): MadeValue | null => {
+  const made = exportedNamesOf(origin).flatMap((exported) =>
+    context.libraries
+      .filter((library) => isOfLanguage(library, context) && library.specifiers.includes(exported.specifier))
+      .flatMap((library) =>
+        library.patterns
+          .filter((pattern): pattern is FactoryPattern => pattern.kind === "factory" && isMadeFor(pattern, exported.name))
+          .map((pattern) => madeBy(pattern, patternKeyOf(pattern), library, exported.specifier))),
   )
+  return made.length === 0 ? null : made[0]
+}
+
+const isMakingType = (pattern: FactoryPattern, typeName: string): boolean => pattern.makesType === typeName
+
+const isParameterOfType = (pattern: FactoryPattern, typeName: string): boolean => pattern.parameterOfTypes?.includes(typeName) ?? false
+
+function originOfType(type: SyntaxNode | null, context: OriginContext, depth: number, isMadeFor: (pattern: FactoryPattern, typeName: string) => boolean): Origin | null {
+  const origin = type === null ? null : originAt(type, context, depth)
+  return origin?.kind === "export" ? madeFor(origin, context, isMadeFor) : null
+}
 
 function originOfParameter(holder: SyntaxNode, context: OriginContext, depth: number): Origin | null {
-  const call = context.reader.callHandedTo(holder)
-  const called = call === null ? null : context.reader.expressionOf(call)
-  const receiver = called?.kind === "call" ? originAt(called.callee, context, depth) : null
-  if (call === null || receiver?.kind !== "made") return null
-  return isHandedInPlace(holder, call, receiver, context) ? rested(receiver) : null
+  return originOfHandedFunction(holder, context, depth)
+    ?? originOfType(context.reader.parameterTypeOf(holder), context, depth, isMakingType)
+    ?? originOfType(context.reader.functionTypeOf(holder), context, depth, isParameterOfType)
 }
 
 function originOfBinding(binding: Binding, context: OriginContext, depth: number): Origin | null {
@@ -186,16 +217,25 @@ function originOfBinding(binding: Binding, context: OriginContext, depth: number
   return binding.memberPath.reduce<Origin | null>(withMember, originAt(binding.value, declaring, depth))
 }
 
-const prefixWrittenAt = (position: SlotPosition | null, call: SyntaxNode, reader: SyntaxReader): string | null =>
-  position === null ? null : (nodesAt(position, reader.passedTo(call), reader).map((node) => reader.textOf(node)).find((text) => text !== null) ?? null)
-
 const withWrittenPrefix = (made: Origin | null, call: SyntaxNode, { reader }: OriginContext): Origin | null =>
   made?.kind === "made" && made.memberPath.length === 0 ? { ...made, prefix: joinPrefixes(made.prefix, prefixWrittenAt(made.prefixAt, call, reader)), prefixAt: null } : made
 
+const isDefaultPath = (path: readonly string[]): boolean => path.length === 1 && path[0] === DEFAULT_EXPORT
+
+const asDefaultExport = (origin: ExportOrigin): ExportOrigin | null =>
+  origin.paths.some((path) => path.length === 0) && !origin.paths.some(isDefaultPath) ? { ...origin, paths: [[DEFAULT_EXPORT]] } : null
+
+const madeByCallingExport = (origin: ExportOrigin, context: OriginContext): Origin | null => {
+  const asDefault = asDefaultExport(origin)
+  return madeByExport(origin, "factory", context) ?? (asDefault === null ? null : madeByExport(asDefault, "factory", context)) ?? receiverOf(origin)
+}
+
 function originOfCall(call: SyntaxNode, callee: SyntaxNode, context: OriginContext, depth: number): Origin | null {
+  const required = context.reader.requiredSpecifierOf(call)
+  if (required !== null) return { kind: "export", specifier: required, paths: [[]] }
   const origin = originAt(callee, context, depth)
   if (origin === null) return null
-  const made = origin.kind === "made" ? madeByCalling(origin) : (madeByExport(origin, "factory", context) ?? receiverOf(origin))
+  const made = origin.kind === "made" ? madeByCalling(origin) : madeByCallingExport(origin, context)
   return withWrittenPrefix(made, call, context)
 }
 

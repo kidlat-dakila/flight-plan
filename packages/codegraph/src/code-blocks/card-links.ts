@@ -26,6 +26,19 @@ const PROPERTY: CodeBlockType = "property"
 const PARAMETER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["variable", "root-argument-value"])
 const JOINED_KINDS: readonly CardKind[] = ["router", "store", "api"]
 const MAX_ROUNDS = 8
+const CLASS: CodeBlockType = "class"
+const METHOD: CodeBlockType = "method"
+const VIEW_FACTORY = "as_view"
+const NAME_SEPARATOR = "."
+const HEADING_BY_VIEW_METHOD: ReadonlyMap<string, string> = new Map([
+  ["get", "GET"],
+  ["post", "POST"],
+  ["put", "PUT"],
+  ["patch", "PATCH"],
+  ["delete", "DELETE"],
+  ["head", "HEAD"],
+  ["options", "OPTIONS"],
+])
 
 const targetIdOf = (symbol: StoredCodeBlockSymbol): string | null =>
   symbol.type === "internal-code-block" || symbol.type === "external-block" ? symbol.codeBlockId : null
@@ -73,6 +86,30 @@ const linkNamedHandlers = (index: LinkIndex, cardById: CardById): (readonly [str
     if (card?.kind !== ROUTE || card.part !== HANDLER || slot.parentBlockId === null || childrenOf(slot, index).length > 0) return []
     const ownerId = slot.parentBlockId
     return targetsOf(slot, NAMING_USES, index).filter(isRootCallable).map((handler) => [handler.id, { ...card, ownerId }] as const)
+  })
+
+const isMakingView = (symbol: StoredCodeBlockSymbol): boolean => symbol.use === CALL && (symbol.member?.path ?? []).slice(-1)[0] === VIEW_FACTORY
+
+const viewClassOf = (slot: StoredCodeBlock, index: LinkIndex): StoredCodeBlock | undefined =>
+  withinOf(slot, index)
+    .flatMap((inside) => inside.outerSymbols.filter(isMakingView))
+    .map((symbol) => index.blockById.get(targetIdOf(symbol) ?? ""))
+    .find((target) => target?.type === CLASS)
+
+const viewMethodNameOf = (method: StoredCodeBlock): string => (method.name ?? "").split(NAME_SEPARATOR).slice(-1)[0]
+
+const linkViewMethods = (index: LinkIndex, cardById: CardById): (readonly [string, BlockCard])[] =>
+  index.blocks.flatMap((slot) => {
+    const card = cardOf(slot, cardById)
+    const view = card?.kind === ROUTE && card.part === HANDLER && slot.parentBlockId !== null ? viewClassOf(slot, index) : undefined
+    if (card === undefined || view === undefined) return []
+    const ownerId = slot.parentBlockId
+    return childrenOf(view, index)
+      .filter((child) => child.type === METHOD)
+      .flatMap((method) => {
+        const heading = HEADING_BY_VIEW_METHOD.get(viewMethodNameOf(method))
+        return heading === undefined ? [] : [[method.id, { ...card, heading, ownerId }] as const]
+      })
   })
 
 const linkHandedSelectors = (index: LinkIndex, cardById: CardById): (readonly [string, BlockCard])[] =>
@@ -178,7 +215,7 @@ const linkJoiners = (index: LinkIndex, cardById: CardById): (readonly [string, B
     return [[root.id, { library: first.library, kind: first.kind, part: HOLDER, heading: null, groupKey: null, ownerId: null }] as const]
   })
 
-const LINKS = [linkJoiners, linkNamedHandlers, linkHandedSelectors, linkKeyedSelectors, linkReadingSelectors, linkBuiltSelectors, linkHandledThunks, linkPartsBeside]
+const LINKS = [linkJoiners, linkNamedHandlers, linkViewMethods, linkHandedSelectors, linkKeyedSelectors, linkReadingSelectors, linkBuiltSelectors, linkHandledThunks, linkPartsBeside]
 
 const canTake = (block: StoredCodeBlock | undefined, linked: BlockCard, cardById: CardById): boolean => {
   if (block === undefined) return false

@@ -1,8 +1,8 @@
 import type { MethodPattern, SlotPosition } from "@/catalogue/types"
 import { readRouteCards } from "@/code-blocks/libraries/route-cards"
-import type { Library } from "@/code-blocks/libraries/types"
+import type { CardReading, CardSeed, Library } from "@/code-blocks/libraries/types"
 
-const METHODS = "methods"
+const METHODS = "methods[]"
 
 const THIRD_ARGUMENT = 2
 
@@ -30,6 +30,15 @@ const FLASK_SCAFFOLD_METHODS: readonly MethodPattern[] = [
   { kind: "call", name: "register_blueprint", slots: [], prefixAt: FLASK_PREFIX },
 ]
 
+const APP_WIDE_HOOKS: ReadonlySet<string> = new Set(["before_app_request", "after_app_request"])
+
+const asAppWide = (seed: CardSeed): CardSeed => ({ ...seed, card: { ...seed.card, isAppWide: true } })
+
+const readFlaskCards = (reading: CardReading): CardSeed[] => {
+  const appWideIds = new Set(readRouteCards({ ...reading, matches: reading.matches.filter((match) => APP_WIDE_HOOKS.has(match.name)) }).map((seed) => seed.blockId))
+  return readRouteCards(reading).map((seed) => (appWideIds.has(seed.blockId) ? asAppWide(seed) : seed))
+}
+
 export const flaskLibrary: Library = {
   name: "Flask",
   specifiers: ["flask"],
@@ -37,7 +46,7 @@ export const flaskLibrary: Library = {
   category: "framework",
   type: "backend",
   language: "python",
-  readCards: readRouteCards,
+  readCards: readFlaskCards,
   patterns: [
     { kind: "factory", name: "Flask", methods: FLASK_SCAFFOLD_METHODS },
     {
