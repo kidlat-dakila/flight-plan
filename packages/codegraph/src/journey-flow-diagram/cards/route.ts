@@ -13,6 +13,8 @@ const HANDLER: CardPart = "handler"
 const MIDDLEWARE: CardPart = "middleware"
 const PAGE: CardPart = "page"
 const ROUTE_TYPE = "route"
+const EFFECT = "effect"
+const ROOT_VARIABLE = "root-variable"
 const GROUP_ID_MARK = "#route@"
 const NAMING_USES: ReadonlySet<string> = new Set(["value", "read"])
 const CALLING = "call"
@@ -211,7 +213,12 @@ const listRouteLeftOutEdgeIds = (context: CardContext): ReadonlySet<string> => {
 
 const isNamingMiddleware = (block: CodeBlock): boolean => routeCardOf(block)?.part === MIDDLEWARE && block.childrenBlocks.length === 0
 
-const isHandingMiddleware = (block: CodeBlock): boolean => block.childrenBlocks.length > 0 && block.childrenBlocks.every(isNamingMiddleware)
+const handsOnly = (block: CodeBlock, isHanded: (child: CodeBlock) => boolean): boolean => block.childrenBlocks.length > 0 && block.childrenBlocks.every(isHanded)
+
+const isCallHandingMiddleware = (block: CodeBlock): boolean => block.type === EFFECT && handsOnly(block, isNamingMiddleware)
+
+const isHandingMiddleware = (block: CodeBlock): boolean =>
+  handsOnly(block, isNamingMiddleware) || (block.type === ROOT_VARIABLE && handsOnly(block, (child) => isNamingMiddleware(child) || isCallHandingMiddleware(child)))
 
 const isRouteCardBlock = (block: CodeBlock): boolean => routeCardOf(block) !== null
 
@@ -219,7 +226,7 @@ const isArgumentBlock = (block: CodeBlock): boolean => ARGUMENT_TYPES.has(block.
 
 const onlyRegistersRoutes = (block: CodeBlock): boolean => {
   const statements = block.childrenBlocks.filter((child) => !isArgumentBlock(child))
-  return PLUGIN_TYPES.has(block.type) && statements.length > 0 && statements.every(isRouteCardBlock)
+  return (PLUGIN_TYPES.has(block.type) || (block.type === ROOT_VARIABLE && block.parentBlock === null)) && statements.length > 0 && statements.every(isRouteCardBlock)
 }
 
 const listPluginNodeIds = ({ nodes }: CardContext): ReadonlySet<string> => {

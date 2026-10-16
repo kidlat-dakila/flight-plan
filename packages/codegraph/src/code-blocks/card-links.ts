@@ -1,3 +1,4 @@
+import { methodHeadingOf } from "@/code-blocks/libraries/route-cards"
 import { groupBy } from "@/shared/group-by"
 import type { StoredCodeBlock, StoredCodeBlockSymbol } from "./stored-types"
 import type { BlockCard, CardKind, CardPart, CodeBlockType } from "./types"
@@ -29,6 +30,7 @@ const MAX_ROUNDS = 8
 const CLASS: CodeBlockType = "class"
 const METHOD: CodeBlockType = "method"
 const VIEW_FACTORY = "as_view"
+const ANY_METHOD = "ANY"
 const NAME_SEPARATOR = "."
 const HEADING_BY_VIEW_METHOD: ReadonlyMap<string, string> = new Map([
   ["get", "GET"],
@@ -80,12 +82,17 @@ const selectorCardOf = (holder: StoredCodeBlock, cardById: CardById): BlockCard 
   ownerId: holder.id,
 })
 
+const headingOfHandler = (card: BlockCard, handler: StoredCodeBlock): string | null => {
+  const method = handler.catalogue?.method ?? null
+  return card.heading === ANY_METHOD && method !== null ? methodHeadingOf(method) : card.heading
+}
+
 const linkNamedHandlers = (index: LinkIndex, cardById: CardById): (readonly [string, BlockCard])[] =>
   index.blocks.flatMap((slot) => {
     const card = cardOf(slot, cardById)
     if (card?.kind !== ROUTE || card.part !== HANDLER || slot.parentBlockId === null || childrenOf(slot, index).length > 0) return []
     const ownerId = slot.parentBlockId
-    return targetsOf(slot, NAMING_USES, index).filter(isRootCallable).map((handler) => [handler.id, { ...card, ownerId }] as const)
+    return targetsOf(slot, NAMING_USES, index).filter(isRootCallable).map((handler) => [handler.id, { ...card, heading: headingOfHandler(card, handler), ownerId }] as const)
   })
 
 const isMakingView = (symbol: StoredCodeBlockSymbol): boolean => symbol.use === CALL && (symbol.member?.path ?? []).slice(-1)[0] === VIEW_FACTORY
@@ -104,12 +111,13 @@ const linkViewMethods = (index: LinkIndex, cardById: CardById): (readonly [strin
     const view = card?.kind === ROUTE && card.part === HANDLER && slot.parentBlockId !== null ? viewClassOf(slot, index) : undefined
     if (card === undefined || view === undefined) return []
     const ownerId = slot.parentBlockId
-    return childrenOf(view, index)
+    const routed = childrenOf(view, index)
       .filter((child) => child.type === METHOD)
       .flatMap((method) => {
         const heading = HEADING_BY_VIEW_METHOD.get(viewMethodNameOf(method))
         return heading === undefined ? [] : [[method.id, { ...card, heading, ownerId }] as const]
       })
+    return routed.length === 0 ? [[view.id, { ...card, ownerId }] as const] : routed
   })
 
 const linkHandedSelectors = (index: LinkIndex, cardById: CardById): (readonly [string, BlockCard])[] =>

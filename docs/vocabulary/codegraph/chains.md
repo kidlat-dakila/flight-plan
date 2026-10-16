@@ -174,7 +174,8 @@ A chain is traced the way a debugger steps: from a block to what runs next when 
 | A symbol of the use `value` or `read` that names a function, a hook or a component | No. The chain carries on from the block the value is `handedTo`. | Handing a function over does not run it. It runs later, where it is called. |
 | A symbol of any use but `type` that names a value: a `root-variable`, a `state` or an `external-value` | Yes, to the block of that value | A value has no "later". Using it in any way is a read of it. |
 | An effect a function returns, such as `return useQuery({ … })` | Yes, from the function | The function runs the call, and its caller keeps the result |
-| A symbol of the use `type` | No | Nothing runs |
+| A symbol of the use `type` | No, but to an annotated alias (`isAnnotatedAlias`), such as `CurrentUser` in `user: CurrentUser` | Nothing runs. What an alias's `Annotated[…]` holds is used where the alias names the type, as if written there. |
+| A parameter whose type names an annotated alias | Yes, from the function | The calls the alias holds in place run when the function is called, as `Depends(current_user)` does for FastAPI |
 | A call of an argument, or of a member of one, such as `onSave()` or `props.onSave()` | Yes, to the `root-argument-value` block, and on to what each place hands it, through `handedFrom` | Handing a value over is not a step. Calling the block that received it is where the chain picks it back up. |
 | An argument that is only read, such as `id` in `save({ id })` or `initialTitle` in `useState(initialTitle)` | No step on to what it was handed | Nothing is run. The place that hands the value over, such as `<EditForm id={todo.id} />`, is the one that reads `todo`, so no chain leads from a component back to the component that renders it. |
 | A block nested inside it that runs with it, such as a `condition` or a `loop` | Yes | A debugger steps into it |
@@ -183,6 +184,7 @@ A chain is traced the way a debugger steps: from a block to what runs next when 
 | A declaration inside it that keeps the result of a call handed a callback, such as `const query = useQuery({ … })` | Yes, to the call. Not to its callbacks. | The call is made when the block runs. Its callbacks run where the result is used. |
 | A function passed by name to a method of a list or of a promise, such as `items.map(priceOf)` or `load().then(save)` | Yes, to that function | The method runs it where it is passed |
 | An `effect` inside it, such as `setTimeout(() => save(), 500)` in a handler or `set((state) => …)` in an action of a store | Yes, and from the effect to its callbacks | The call is made when the block runs. Only an effect directly in the body of a component or of a hook waits for the render. |
+| A callback inside it that runs in place (`catalogue.runs` is `in-place`) with no effect around it, such as the type `Pagination` handed to the empty `Depends()` of `Annotated[Pagination, Depends()]` | Yes | It runs where it is written |
 | A function declared inside it under a name | No. The chain reaches the function from the place that calls it. | Declaring a function does not run it |
 | A function with no name written in place inside it, such as the callback of `lines.map((line) => …)` | Yes. Assumed. | It is handed to a call the block makes |
 

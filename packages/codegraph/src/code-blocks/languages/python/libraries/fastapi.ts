@@ -1,6 +1,6 @@
 import type { MethodPattern, Slot, SlotPosition } from "@/catalogue/types"
 import { readRouteCards } from "@/code-blocks/libraries/route-cards"
-import type { Library } from "@/code-blocks/libraries/types"
+import type { CardReading, CardSeed, Library } from "@/code-blocks/libraries/types"
 
 const FIRST_ARGUMENT = 0
 
@@ -11,6 +11,8 @@ const FASTAPI_PATH: SlotPosition = [FIRST_ARGUMENT, "path"]
 const FASTAPI_ENDPOINT: SlotPosition = [1, "endpoint"]
 
 const FASTAPI_PREFIX = "prefix"
+
+const FASTAPI_MIDDLEWARE_CLASS: SlotPosition = [FIRST_ARGUMENT, "middleware_class"]
 
 const DEPENDENCIES: readonly Slot[] = [{ at: "dependencies[]", runs: "middleware" }]
 
@@ -32,6 +34,24 @@ const FASTAPI_ROUTER_METHODS: readonly MethodPattern[] = [
   { kind: "call", name: "include_router", slots: DEPENDENCIES, prefixAt: FASTAPI_PREFIX },
 ]
 
+const APP_WIDE_MIDDLEWARE: ReadonlySet<string> = new Set(["middleware", "add_middleware"])
+
+const APP_MOUNT = "mount"
+
+const seedIdsOf = (reading: CardReading, isNamed: (name: string) => boolean): ReadonlySet<string> =>
+  new Set(readRouteCards({ ...reading, matches: reading.matches.filter((match) => isNamed(match.name)) }).map((seed) => seed.blockId))
+
+const withAppMarks = (seed: CardSeed, appWideIds: ReadonlySet<string>, appMountIds: ReadonlySet<string>): CardSeed => {
+  if (appWideIds.has(seed.blockId)) return { ...seed, card: { ...seed.card, isAppWide: true } }
+  return appMountIds.has(seed.blockId) ? { ...seed, card: { ...seed.card, isAppMount: true } } : seed
+}
+
+const readFastapiCards = (reading: CardReading): CardSeed[] => {
+  const appWideIds = seedIdsOf(reading, (name) => APP_WIDE_MIDDLEWARE.has(name))
+  const appMountIds = seedIdsOf(reading, (name) => name === APP_MOUNT)
+  return readRouteCards(reading).map((seed) => withAppMarks(seed, appWideIds, appMountIds))
+}
+
 export const fastapiLibrary: Library = {
   name: "FastAPI",
   specifiers: ["fastapi"],
@@ -39,7 +59,7 @@ export const fastapiLibrary: Library = {
   category: "framework",
   type: "backend",
   language: "python",
-  readCards: readRouteCards,
+  readCards: readFastapiCards,
   patterns: [
     {
       kind: "factory",
@@ -48,6 +68,8 @@ export const fastapiLibrary: Library = {
       methods: [
         ...FASTAPI_ROUTER_METHODS,
         { kind: "decorator", name: "middleware", runs: "middleware" },
+        { kind: "call", name: "mount", slots: [], prefixAt: FASTAPI_PATH },
+        { kind: "call", name: "add_middleware", slots: [{ at: FASTAPI_MIDDLEWARE_CLASS, runs: "middleware" }] },
         { kind: "decorator", name: "exception_handler", runs: "event" },
       ],
     },

@@ -267,6 +267,8 @@ interface CodeBlock {
   isExported: boolean
   isPlain?: boolean
   isReturned?: boolean
+  isParameterProperty?: boolean
+  isAnnotatedAlias?: boolean
   exportedBy: ASTGraph[] // aliases not a shallow or clone
   lineOfCodeDiffs: SourceRange[] | null
   diffs: CodeBlockDiff[]
@@ -296,6 +298,7 @@ interface CodeBlock {
 | `isPlain` | On a `root-variable`, set when every value in it, at any depth, is written out as it is: no call but `new`, no function, no markup, and in Python no comprehension. Left out otherwise. The Journey Flow Diagram reads it as [Plain code](../journey-flow-diagram.md#plain-code) says. |
 | `isReturned` | On a `function`, a `hook`, a `component` or a `method`, set when the function around it returns it: written in the `return`, as the body of an arrow function, or named by the `return`. Left out otherwise. |
 | `isParameterProperty` | On a `root-argument-value` of a TypeScript constructor, set when the parameter is marked `private`, `protected`, `public` or `readonly`, so it declares a property of the class too. Left out otherwise. The Journey Flow Diagram draws it as a property of its class, as the [class card](../journey-flow-diagram/class-card.md#rows-and-methods) says. |
+| `isAnnotatedAlias` | On a Python `root-variable`, set when its value is `Annotated[…]`, written bare or as `typing.Annotated[…]`, so the name stands for a type and what the `Annotated` holds: `CurrentUser = Annotated[User, Depends(current_user)]`. Left out otherwise. A chain steps to it from a type that names it, as [Chains](chains.md#what-a-chain-steps-through) says, and the Journey Flow Diagram draws it as [plain code](../journey-flow-diagram.md#plain-code). |
 | `exportedBy` | The AST graph of every file that exports the block: its own file, and each file that re-exports it, such as an `index.ts`. Empty when `isExported` is `false`. |
 | `lineOfCodeDiffs` | The ranges of the changes that belong to the block itself: those it is the innermost block around. `null` for every other block, including a block around a diff block. A block with ranges here is a diff block. |
 | `diffs` | What a change does to the block, each as a diff with a `type` and a `range`. The changes of `lineOfCodeDiffs` are here as `added`, `modified` or `deleted`. A use of a block with a change is here as `affected`. Empty on a block with neither. See [The diffs of a block](chains.md#the-diffs-of-a-block). |
@@ -306,7 +309,7 @@ interface CodeBlock {
 | `usedBy` | The blocks that have this block in their `outerSymbols`. It is the reverse of `outerSymbols`, filled once when the group is built, so that climbing from a block to what uses it is a lookup. |
 | `astGraph` | The AST graph of the file the block is in, an alias, so the file can be found from any block |
 | `catalogue` | What the [catalogue](catalogue.md) says about the block, or `null` when no pattern matched it. See "What the catalogue leaves on a block". |
-| `card` | Which card of the Journey Flow Diagram the block belongs to, and as what part: the library that says it, the kind of card, the part, the heading it is drawn under, the key its card is grouped by and the block it is drawn in, and for middleware that runs before a whole router, the route paths it reaches (`routePaths`), whether it reaches the whole app (`isAppWide`) and the routes it runs before (`routePatterns`) and the routes it leaves out (`excludedRoutePatterns`, also on a `mount` of the whole app), each a path pattern and a method or `null` for every method, and the versions of a handler or of a `versioning` part (`versions`, empty for a route of no version). Only a library with a file of its own writes it; left out otherwise. See "Which card a block belongs to". |
+| `card` | Which card of the Journey Flow Diagram the block belongs to, and as what part: the library that says it, the kind of card, the part, the heading it is drawn under, the key its card is grouped by and the block it is drawn in, and for middleware that runs before a whole router, the route paths it reaches (`routePaths`), whether it reaches the whole app (`isAppWide`), for a `mount`, whether it hands over an app of its own (`isAppMount`) and the dotted name of the module it hands over (`mountedModule`, as Django's `include("shop.api_urls")` writes), and the routes it runs before (`routePatterns`) and the routes it leaves out (`excludedRoutePatterns`, also on a `mount` of the whole app), each a path pattern and a method or `null` for every method, and the versions of a handler or of a `versioning` part (`versions`, empty for a route of no version). Only a library with a file of its own writes it; left out otherwise. See "Which card a block belongs to". |
 | `cardOwner` | The block `card.ownerId` names, an alias, or `null` when the card names none. Only in memory: the stored form keeps the id in `card`. |
 
 ## Which card a block belongs to
@@ -332,19 +335,21 @@ interface CodeBlock {
 
 ### The routes below a mount
 
-A mount is a call that hands a router or a plugin to another router under a prefix: `app.use("/api", users)`, `app.register(userRoutes, { prefix: "/v1" })`, `app.register_blueprint(bp, url_prefix="/api")`, `app.include_router(router, prefix="/api")`. Its block has the card part `mount` and the prefix as its `groupKey`, and the mounts pass reads it once the group is linked:
+A mount is a call that hands a router or a plugin to another router under a prefix: `app.use("/api", users)`, `app.register(userRoutes, { prefix: "/v1" })`, `app.register_blueprint(bp, url_prefix="/api")`, `app.include_router(router, prefix="/api")`, `path("api/", include("shop.api_urls"))` of Django. Its block has the card part `mount` and the prefix as its `groupKey`, and the mounts pass reads it once the group is linked:
 
 | What the pass reads | Through |
 |---|---|
-| The router a route is registered on | The symbol of the registration that calls a member of it: `users` in `users.get(…)`, `bp` in `@bp.get(…)`. A decorated method's router is its class, a controller of NestJS. |
-| What a mount hands over | The values the mount names, in its own file or another, and a function written in it: a router, or a plugin whose first parameter the routes are registered on |
-| The router a mount is on | The symbol of the mount that calls a member of it: `app` in `app.use(…)`. A mount written in a decorator of a class, `controllers` in `@Module({ controllers: […] })` of NestJS, is on that class. |
+| The router a route is registered on | The symbol of the registration that calls a member of it: `users` in `users.get(…)`, `bp` in `@bp.get(…)`. A decorated method's router is its class, a controller of NestJS. A registration with neither is on the value at the root of its file that holds it, the `urlpatterns` of Django. |
+| What a mount hands over | The values the mount names, in its own file or another, and a function written in it: a router, or a plugin whose first parameter the routes are registered on. A module the mount names, by its dotted name in `card.mountedModule` or imported whole (`from shop import api_urls`, a relative import among them), hands over every value at the root of that module's file, `shop/api_urls.py` or `shop/api_urls/__init__.py` in any folder. |
+| The router a mount is on | The symbol of the mount that calls a member of it: `app` in `app.use(…)`. A mount written in a decorator of a class, `controllers` in `@Module({ controllers: […] })` of NestJS, is on that class. A mount with neither is on the value at the root of its file that holds it. |
 
 **A route takes the prefix of every mount above its router, outermost first,** before its `groupKey` and its `catalogue.path`. A router mounted in several places takes the first prefix found. The routes of a plugin already have the prefix of the call that registers it, from [matching](catalogue.md#how-a-pattern-is-applied); the pass adds the prefixes of the mounts above routers. A slot of a mount that names a router is no middleware, and loses its card.
 
+**A mount whose card says `isAppMount` hands over an app of its own**, as `app.mount("/admin", admin)` of FastAPI does. Its prefix goes before the routes of that app like any mount's. Middleware crosses it only when its card says `isAppWide`: the middleware of the outer app reaches the routes of the mounted app, its dependencies do not, and middleware of the mounted app reaches only its own routes.
+
 **A part of the whole app goes before every route of its library.** Its card says `isAppWide`. A `versioning` part puts the versions of a route, its `card.versions` or else the `versions` of the part, each after the text in its `groupKey`, in one segment: `v` and `2` are `/v2`, `v` and `1`, `2` are `/v1|v2`. Empty `versions`, which NestJS writes for `VERSION_NEUTRAL`, put no segment, whatever the part says. A part whose `groupKey` is `null` versions by a header or a media type: it puts `v` and the versions after the heading of the handler, and of the middleware it owns, `GET v2`, and nothing in the path. Then a `mount` part puts its prefix before that, unless an entry of its `excludedRoutePatterns` matches the path the route had before both: a `pathPattern` that matches it and a `method` that is `null` or the method of the handler. `setGlobalPrefix` and `enableVersioning` of NestJS are such parts.
 
-**Middleware that runs before a whole router lists the paths it reaches, in `card.routePaths`.** It is middleware no registration owns: a function `app.use` is handed, a hook of `addHook`, a function decorated `@app.before_request` or `@app.middleware("http")`, and a dependency of `APIRouter(dependencies=[…])` or `include_router(…, dependencies=[…])`. It reaches the routes of the first block above it that names a router:
+**Middleware that runs before a whole router lists the paths it reaches, in `card.routePaths`.** It is middleware no registration owns: a function `app.use` is handed, a hook of `addHook`, a function decorated `@app.before_request` or `@app.middleware("http")`, a class `app.add_middleware` is handed, and a dependency of `APIRouter(dependencies=[…])` or `include_router(…, dependencies=[…])`. It reaches the routes of the first block above it that names a router:
 
 | The block above | The routes it reaches |
 |---|---|
@@ -354,7 +359,7 @@ A mount is a call that hands a router or a plugin to another router under a pref
 | A call on a router, as `app.addHook(…)` or the decorator `@bp.before_request` | The routes of that router and below |
 | A call that names routers, as `consumer.apply(LoggerMiddleware).forRoutes(UsersController)` of NestJS | The routes of those routers and below |
 
-A block above that is a router or names one is looked for first, at every height, and only then a call on a router. A card that says `isAppWide`, as Flask's `before_app_request` does, reaches every route of the app at the top of the mounts above its router, and every route of its library when no router is above it, as `app.useGlobalGuards(…)` of NestJS.
+A block above that is a router or names one is looked for first, at every height, and only then a call on a router. A card that says `isAppWide`, as Flask's `before_app_request` and FastAPI's `@app.middleware("http")` and `add_middleware` do, reaches every route of the app at the top of the mounts above its router, climbing no mount that says `isAppMount`, and the routes of the apps mounted below it, and every route of its library when no router is above it, as `app.useGlobalGuards(…)` of NestJS.
 
 **Middleware whose card has `routePatterns` reaches by path, not by router.** Each `pathPattern` is a regular expression a library wrote, as Next.js does from `config.matcher` and NestJS from the paths of `forRoutes`. Its `routePaths` are the paths of every route and every `page` part of the group that a pattern matches, a pattern that names a `method` only routes with a handler of that method or of every method (`*`) and no page, with a dynamic segment, `[team]`, read as the word inside it, and the routes of the routers a block above it names. A pattern is tried on the whole path, on the path below the prefix of the whole app, and on that path below its version.
 

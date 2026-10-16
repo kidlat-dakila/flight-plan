@@ -66,6 +66,16 @@ export const fastapiFixtures: readonly PatternFixture[] = [
   fastapiMethodFixture(FASTAPI_APP_KEY, FASTAPI_APP, LOCAL_APP, "decorator:middleware:*", [
     fastapiDecorated("app.middleware(\"http\")", "add_process_time_header(request: Request, call_next)"),
   ]),
+  fastapiMethodFixture(FASTAPI_APP_KEY, FASTAPI_APP, LOCAL_APP, "call:mount:*", [
+    "app.mount(\"/admin\", admin_app)",
+    "app.mount(path=\"/admin\", app=admin_app)",
+    "app.mount(\"/static\", StaticFiles(directory=\"static\"), name=\"static\")",
+  ]),
+  fastapiMethodFixture(FASTAPI_APP_KEY, FASTAPI_APP, LOCAL_APP, "call:add_middleware:*", [
+    "app.add_middleware(TimingMiddleware)",
+    "app.add_middleware(CORSMiddleware, allow_origins=[\"*\"])",
+    "app.add_middleware(middleware_class=TimingMiddleware)",
+  ]),
   fastapiMethodFixture(FASTAPI_APP_KEY, FASTAPI_APP, LOCAL_APP, "decorator:exception_handler:*", [
     fastapiDecorated("app.exception_handler(UnicornException)", "unicorn_exception_handler(request: Request, exc: UnicornException)"),
   ]),

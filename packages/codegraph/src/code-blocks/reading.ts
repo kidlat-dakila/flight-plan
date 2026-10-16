@@ -22,6 +22,7 @@ export interface ReadBlock {
   readonly isReturned?: boolean
   readonly isPlain?: boolean
   readonly isParameterProperty?: boolean
+  readonly isAnnotatedAlias?: boolean
   readonly holdsMarkup?: boolean
   readonly catalogue?: CodeBlockCatalogue
   readonly card?: BlockCard

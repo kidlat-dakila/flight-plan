@@ -136,6 +136,8 @@ export interface BlockCard {
   readonly ownerId: string | null
   readonly routePaths?: readonly string[]
   readonly isAppWide?: boolean
+  readonly isAppMount?: boolean
+  readonly mountedModule?: string
   readonly routePatterns?: readonly RoutePattern[]
   readonly excludedRoutePatterns?: readonly RoutePattern[]
   readonly versions?: readonly string[]
@@ -211,6 +213,7 @@ export interface CodeBlock {
   readonly isPlain?: boolean
   readonly isReturned?: boolean
   readonly isParameterProperty?: boolean
+  readonly isAnnotatedAlias?: boolean
   readonly exportedBy: readonly ASTGraph[]
   readonly lineOfCodeDiffs: readonly SourceRange[] | null
   readonly diffs: readonly CodeBlockDiff[]

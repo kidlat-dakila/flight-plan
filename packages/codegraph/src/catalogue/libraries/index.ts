@@ -271,7 +271,6 @@ import {
   unleashPythonLibrary,
 } from "./python/feature-flags"
 import {
-  djangoLibrary,
   djangoRestFrameworkLibrary,
   djangoTastypieLibrary,
   eveLibrary,
@@ -439,7 +438,6 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   dexieJsLibrary,
   discordJsLibrary,
   diskcacheLibrary,
-  djangoLibrary,
   djangoAllauthLibrary,
   djangoCacheMachineLibrary,
   djangoCacheopsLibrary,

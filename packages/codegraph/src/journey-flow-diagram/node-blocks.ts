@@ -112,7 +112,7 @@ const makesClassWithMethods = (block: CodeBlock): boolean =>
 
 const isPlainValue = (block: CodeBlock): boolean => block.type === ROOT_VARIABLE && block.isPlain === true && !makesClassWithMethods(block)
 
-const isPlainRoot = (block: CodeBlock): boolean => block.parentBlock === null && (isPlainValue(block) || (block.type === CLASS && !hasMethodsOfItsOwn(block) && !isController(block)))
+const isPlainRoot = (block: CodeBlock): boolean => block.parentBlock === null && (isPlainValue(block) || block.isAnnotatedAlias === true || (block.type === CLASS && !hasMethodsOfItsOwn(block) && !isController(block)))
 
 const isReadInNode = (reader: CodeBlock, value: CodeBlock): boolean => {
   const readerRoot = rootOf(reader)

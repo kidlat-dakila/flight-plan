@@ -203,6 +203,7 @@ flowchart LR
 | `export const LIMITS = { page: [10, 20], max: 100 }` | No | Plain all the way down |
 | `export enum Role { Admin = "admin", User = "user" }` | No | An enum of plain values |
 | `export interface User { … }`, `export type Role = …` | No | A type |
+| `CurrentUser = Annotated[User, Depends(current_user)]` in Python | No | An [annotated alias](codegraph/code-blocks.md#a-code-block), a type: each node whose parameter it types holds it, as if written in place there, with the line of what it holds, though it holds a call |
 | `export class Point { x = 0; y = 0 }` | No | A class with no method |
 | `export const cache = new Map()` | No | `new` of a class of the language |
 | `export const redis = new Redis(url)` | No | `new` of a class of a library |

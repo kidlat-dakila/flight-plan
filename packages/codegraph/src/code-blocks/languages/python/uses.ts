@@ -6,6 +6,7 @@ import { nodeAtRange } from "@/code-blocks/languages/typescript/syntax"
 import type { HandingSlot, ReadHanding, ReadTarget, ReadUse, WrittenAt } from "@/code-blocks/reading"
 import { fromSyntaxRange, rangeOfNode } from "@/code-blocks/source-range"
 import type { SymbolUse } from "@/code-blocks/types"
+import { callFilledByAnnotatedType } from "./annotated"
 import { keyOfGetter, keyOfSubscript, listAttributeNames } from "./members"
 import { resolutionAt, type PythonOutline } from "./outline"
 
@@ -44,6 +45,9 @@ const DECORATED_TYPE = "decorated_definition"
 const RECEIVER_NAMES: ReadonlySet<string> = new Set(["self", "cls"])
 const MODULE_SEPARATOR = "."
 const ARGUMENT = "argument"
+const FIRST_SLOT = 0
+
+const isTypeUse = (used: SyntaxNode): boolean => used.closest([ANNOTATION_TYPE, CALL_TYPE])?.type === ANNOTATION_TYPE
 
 const isChildAt = (node: SyntaxNode, field: string): boolean => node.parent?.childForFieldName(field)?.id === node.id
 
@@ -106,12 +110,13 @@ const callHandedTo = (used: SyntaxNode): SyntaxNode | null => {
   return holder?.type === ARGUMENTS_TYPE && holder.parent?.type === CALL_TYPE ? holder.parent : null
 }
 
-const handingOf = (used: SyntaxNode, outline: PythonOutline): ReadHanding | null => {
-  const slot = slotOf(used)
-  const callee = callHandedTo(used)?.childForFieldName("function") ?? null
+const handingInto = (call: SyntaxNode | null, slot: HandingSlot | null, outline: PythonOutline): ReadHanding | null => {
+  const callee = call?.childForFieldName("function") ?? null
   const resolution = callee?.type === NAME_TYPE ? resolutionAt(outline, callee) : null
   return slot === null || resolution === null ? null : { receiver: targetOf(resolution), slot }
 }
+
+const handingOf = (used: SyntaxNode, outline: PythonOutline): ReadHanding | null => handingInto(callHandedTo(used), slotOf(used), outline)
 
 const isBaseOfClass = (used: SyntaxNode): boolean => used.parent?.parent?.type === CLASS_TYPE && isChildAt(used.parent, "superclasses")
 
@@ -199,7 +204,9 @@ const readUses = ({ reference, resolution: found }: ResolvedReference, outline: 
   }
   const bases = listBaseTargets(classOfReceiver(used, resolution, path), outline)
   if (bases.length > 0) return bases.map((base) => ({ usedAt, use: useOf(role, path), memberPath: path, target: base, handing: null, writtenAt }))
-  if (outermost.closest(ANNOTATION_TYPE) !== null) return [{ usedAt, use: "type", memberPath: path, target, handing: null, writtenAt }]
+  const filled = handingInto(callFilledByAnnotatedType(outermost), FIRST_SLOT, outline)
+  if (filled !== null) return [{ usedAt, use: "value", memberPath: path, target, handing: filled, writtenAt }]
+  if (isTypeUse(outermost)) return [{ usedAt, use: "type", memberPath: path, target, handing: null, writtenAt }]
   const named = throughNamespace({ target, path })
   if (named.target !== target) return [{ usedAt, use: useOf(role, named.path), memberPath: named.path, target: named.target, handing: null, writtenAt }]
   return [{ usedAt, use: useOf(role, path), memberPath: path, target, handing: role === "value" ? handingOf(outermost, outline) : null, writtenAt }, ...readKeysGot(used, target)]

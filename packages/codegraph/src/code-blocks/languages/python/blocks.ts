@@ -7,6 +7,7 @@ import type { FindExport, ReadBlock } from "@/code-blocks/reading"
 import { compareRanges, rangeOfNode } from "@/code-blocks/source-range"
 import type { CodeBlockCatalogue, CodeBlockType, Position, SourceRange } from "@/code-blocks/types"
 import { groupBy } from "@/shared/group-by"
+import { annotatedTypeFilling, callFilledByAnnotatedType, isAnnotated } from "./annotated"
 import { attributeOfReceiver, keyPathOf, listAttributeNames } from "./members"
 import { namesOutside, resolutionAt, type PythonOutline } from "./outline"
 import { isPlainValue } from "./plain-values"
@@ -33,6 +34,7 @@ interface Seed {
   readonly declaredAt: readonly Position[]
   readonly isPlain?: boolean
   readonly isReturned?: boolean
+  readonly isAnnotatedAlias?: boolean
   readonly catalogue?: CodeBlockCatalogue
 }
 
@@ -71,6 +73,7 @@ const ARGUMENT_DECLARATION = "argument"
 const LANGUAGE_FUNCTIONS: ReadonlySet<string> = new Set(["map", "filter", "sorted", "min", "max", "reduce"])
 const LANGUAGE_METHODS: ReadonlySet<string> = new Set(["map", "filter", "reduce", "sort"])
 const LISTENING_METHODS: ReadonlySet<string> = new Set(["add_event_listener", "on", "once", "add_listener", "subscribe"])
+const FIRST_SLOT = 0
 const EVENT_NAME_PREFIX = "on_"
 const TYPE_BASES: ReadonlySet<string> = new Set(["TypedDict", "Protocol"])
 const SUBSCRIPT_TYPE = "subscript"
@@ -97,6 +100,8 @@ const catalogued = (catalogue: CodeBlockCatalogue | null | undefined): { catalog
 
 const plainMarkOf = (value: SyntaxNode | null): Pick<Seed, "isPlain"> => (isPlainValue(value) ? { isPlain: true } : {})
 
+const aliasMarkOf = (value: SyntaxNode | null): Pick<Seed, "isAnnotatedAlias"> => (isAnnotated(value) ? { isAnnotatedAlias: true } : {})
+
 const returnedMarkOf = (callable: SyntaxNode, name: string | null): Pick<Seed, "isReturned"> => (isReturnedFunction(callable, name) ? { isReturned: true } : {})
 
 const decoratedOf = (definition: SyntaxNode): SyntaxNode => (definition.parent?.type === DECORATED_TYPE ? definition.parent : definition)
@@ -111,12 +116,15 @@ const classAround = (definition: SyntaxNode): SyntaxNode | null => {
   return body?.type === BODY_TYPE && body.parent?.type === CLASS_TYPE ? body.parent : null
 }
 
+const methodOfDecorators = (definition: SyntaxNode, { naming }: PythonBlockReader): string | null =>
+  decoratorsOf(definition).map((decorator) => naming.blockAt(decorator)?.catalogue.method ?? null).find((method) => method !== null) ?? null
+
 const catalogueOfFunction = (definition: SyntaxNode, reader: PythonBlockReader): CodeBlockCatalogue | null => {
   const holder = classAround(definition)
   const decorated = firstNamed(decoratorsOf(definition), reader)
   if (decorated !== null) {
     const prefix = holder === null ? null : (firstNamed(decoratorsOf(holder), reader)?.prefix ?? null)
-    return { ...decorated.catalogue, path: pathBelow(prefix, decorated.catalogue.path) }
+    return { ...decorated.catalogue, path: pathBelow(prefix, decorated.catalogue.path), method: decorated.catalogue.method ?? methodOfDecorators(definition, reader) }
   }
   const extended = holder === null ? null : reader.naming.blockAt(holder)
   const ownName = definition.childForFieldName("name")?.text ?? null
@@ -187,7 +195,7 @@ const readAssignment: ReadSeeds = (assignment, context, reader) => {
     return value?.type === FUNCTION_VALUE_TYPE || names.length === 0 ? [] : [{ ...declared, name: memberNameOf(names[0].text, context), type: "property" }]
   }
   if (value?.type === FUNCTION_VALUE_TYPE && target.type === NAME_TYPE) return [{ ...declared, type: "function", ...returnedMarkOf(value, target.text) }]
-  if (isAtRoot(context)) return [{ ...declared, type: "root-variable", ...plainMarkOf(value) }]
+  if (isAtRoot(context)) return [{ ...declared, type: "root-variable", ...plainMarkOf(value), ...aliasMarkOf(value) }]
   if (names.length === 0) return []
   const isKept = value !== null && (keepsBlock(value, reader) || namesOutside(reader.outline, value))
   return [{ ...declared, type: isKept ? "external-value" : "variable" }]
@@ -198,9 +206,12 @@ const isAssignedFunction = (callable: SyntaxNode): boolean =>
 
 const readFunctionValue: ReadSeeds = (callable) => (isAssignedFunction(callable) ? [] : [{ ...seedAt(callable, "function"), ...returnedMarkOf(callable, null) }])
 
-const passedValuesOf = (call: SyntaxNode): SyntaxNode[] =>
-  (call.childForFieldName("arguments")?.namedChildren ?? []).map((argument) =>
+const passedValuesOf = (call: SyntaxNode): SyntaxNode[] => {
+  const filling = annotatedTypeFilling(call)
+  const written = (call.childForFieldName("arguments")?.namedChildren ?? []).map((argument) =>
     argument.type === NAMED_ARGUMENT_TYPE ? (argument.childForFieldName("value") ?? argument) : argument)
+  return filling === null ? written : [filling, ...written]
+}
 
 const leadsToFunction = (name: SyntaxNode, reader: PythonBlockReader): boolean => {
   const resolution = resolutionAt(reader.outline, name)
@@ -260,18 +271,22 @@ const readCallStatement: ReadSeeds = (statement, context, reader) => {
 }
 
 const slotNameOf = (passed: SyntaxNode): string => {
+  if (callFilledByAnnotatedType(passed) !== null) return String(FIRST_SLOT)
   const holder = passed.parent
   if (holder?.type === NAMED_ARGUMENT_TYPE) return holder.childForFieldName("name")?.text ?? ""
   return String(holder?.namedChildren.filter((argument) => argument.type !== NAMED_ARGUMENT_TYPE).findIndex((argument) => argument.id === passed.id) ?? 0)
 }
 
 const isPassed = (node: SyntaxNode): boolean => {
+  if (callFilledByAnnotatedType(node) !== null) return true
   const holder = node.parent
   if (holder?.type === ARGUMENTS_TYPE) return node.type !== NAMED_ARGUMENT_TYPE && holder.parent?.type === "call"
   return holder?.type === NAMED_ARGUMENT_TYPE && holder.childForFieldName("value")?.id === node.id
 }
 
 const callPassedTo = (passed: SyntaxNode): SyntaxNode | null => {
+  const filled = callFilledByAnnotatedType(passed)
+  if (filled !== null) return filled
   const holder = passed.parent?.type === NAMED_ARGUMENT_TYPE ? passed.parent.parent : passed.parent
   return holder?.type === ARGUMENTS_TYPE && holder.parent?.type === CALL_NODE_TYPE ? holder.parent : null
 }
@@ -331,7 +346,7 @@ const readSeeds: ReadSeeds = (node, context, reader) => [
 ]
 
 const blocksOf = (seeds: readonly Seed[], context: WalkContext, filePath: string): ReadBlock[] =>
-  seeds.reduce<ReadBlock[]>((blocks, { type, name, range, declaredAt, isPlain, isReturned, catalogue }) => {
+  seeds.reduce<ReadBlock[]>((blocks, { type, name, range, declaredAt, isPlain, isReturned, isAnnotatedAlias, catalogue }) => {
     const outer = blocks.length === 0 ? undefined : blocks[blocks.length - 1]
     const takenIds = [...context.takenIds, ...blocks.map((block) => block.id)]
     const block: ReadBlock = {
@@ -343,6 +358,7 @@ const blocksOf = (seeds: readonly Seed[], context: WalkContext, filePath: string
       declaredAt,
       ...(isPlain === true ? { isPlain } : {}),
       ...(isReturned === true ? { isReturned } : {}),
+      ...(isAnnotatedAlias === true ? { isAnnotatedAlias } : {}),
       ...(catalogue === undefined ? {} : { catalogue }),
     }
     return [...blocks, block]

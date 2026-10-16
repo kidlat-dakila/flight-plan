@@ -29,10 +29,84 @@ The app is the value `FastAPI()` makes, and a router the value `APIRouter()` mak
 | `Depends(verify_key)` in `APIRouter(dependencies=[…])` | The routes of the router | From `verify_key` to each route card of the router |
 | `Depends(verify_key)` in `app.include_router(router, dependencies=[…])` | The routes of the included router | From `verify_key` to each of its route cards |
 | `Depends(verify_key)` in `FastAPI(dependencies=[…])` | The whole app | From `verify_key` to each route card of the app |
-| `@app.middleware("http")` | The whole app | From the decorated function to each route card of the app |
+| `@app.middleware("http")` | The whole app, and the apps it mounts | From the decorated function to each route card of the app |
+| `app.add_middleware(TimingMiddleware)` | The whole app, and the apps it mounts | From the class card of `TimingMiddleware` to each route card of the app |
 | `user=Depends(current_user)` in the parameters of a handler | None: the handler calls it | From the handler card to `current_user` |
+| `user: Annotated[User, Depends(current_user)]` in the parameters of a handler | None: the handler calls it | From the handler card to `current_user` |
+| `page: Annotated[Pagination, Depends()]` in the parameters of a handler | None: the handler makes a `Pagination` | From the handler card to the class card of `Pagination` |
+| `user: CurrentUser`, with `CurrentUser = Annotated[User, Depends(current_user)]` in any file | None: the handler calls what the alias names | From the handler card to `current_user` |
 
-The call `Depends(…)` is no node: the line goes from the function it names.
+The call `Depends(…)` is no node: the line goes from the function it names. Nor is an app or a router that only hands its dependencies, `app = FastAPI(dependencies=[Depends(verify_key)])`: the dependency is the card. A dependency of a dependency is a call of it the same way, written as a default or in `Annotated`: `def current_user(db: Annotated[Session, Depends(get_db)])` has a line to `get_db`. `Security(…)` is read as `Depends(…)` is.
+
+## Aliases
+
+**An alias of `Annotated` is no card.** `CurrentUser = Annotated[User, Depends(current_user)]` stands for a type, and a parameter typed `CurrentUser` is read as if `Annotated[User, Depends(current_user)]` were written there: the handler card holds it, and the line goes from the handler to `current_user`, in whatever file the alias is declared.
+
+```python
+# shop/deps.py
+SessionDep = Annotated[Session, Depends(get_db)]
+
+def current_user(db: SessionDep):
+    return find_user(db)
+
+CurrentUser = Annotated[User, Depends(current_user)]
+
+# shop/routes.py
+@router.get("/me")
+async def read_me(user: CurrentUser, db: SessionDep):
+    return list_me(user, db)
+```
+
+```mermaid
+flowchart LR
+  subgraph me["/me"]
+    read["GET: read_me"]
+  end
+  read --> user["current_user"]
+  read --> db["get_db"]
+  user --> db
+```
+
+## Mounted apps
+
+**A mounted app's routes take the path it is mounted at.** `app.mount("/admin", admin)`, with `admin = FastAPI()`, puts `/admin` before every route of `admin`. The mounted app is an app of its own: the middleware of the outer app runs before its routes, and so has a line to each of them, but the dependencies of the outer app do not, and the middleware of the mounted app reaches only its own routes. A mount of something that is no app of the repository, `app.mount("/static", StaticFiles(directory="static"))`, draws nothing.
+
+```python
+app = FastAPI(dependencies=[Depends(verify_key)])
+admin = FastAPI()
+
+@app.middleware("http")
+async def timing(request, call_next):
+    return await time_call(call_next, request)
+
+@admin.middleware("http")
+async def audit(request, call_next):
+    return record(request)
+
+@admin.get("/stats")
+async def stats():
+    return read_stats()
+
+@app.get("/home")
+async def home():
+    return read_home()
+
+app.mount("/admin", admin)
+```
+
+```mermaid
+flowchart LR
+  timing["timing (app)"] --> home
+  timing --> stats
+  verify["verify_key (app dependency)"] --> home
+  audit["audit (admin)"] --> stats
+  subgraph home["/home"]
+    h["GET: home"]
+  end
+  subgraph stats["/admin/stats"]
+    s["GET: stats"]
+  end
+```
 
 ```python
 # shop/items.py

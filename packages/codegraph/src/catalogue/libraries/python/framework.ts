@@ -1,59 +1,10 @@
-import type { CallPattern, CatalogueLibrary, MethodPattern, SlotPosition } from "@/catalogue/types"
+import type { CallPattern, CatalogueLibrary, MethodPattern } from "@/catalogue/types"
 
 const EVERY_METHOD = "*"
 
 const FIRST_ARGUMENT = 0
 
 const SECOND_ARGUMENT = 1
-
-const DJANGO_ROUTE: SlotPosition = [0, "route"]
-
-const DJANGO_VIEW: SlotPosition = [1, "view"]
-
-const DJANGO_REDIRECT_TARGET: SlotPosition = [0, "to"]
-
-const DJANGO_SIGNAL: SlotPosition = [0, "signal"]
-
-export const djangoLibrary: CatalogueLibrary = {
-  name: "Django",
-  specifiers: [
-    "django",
-    "django.urls",
-    "django.shortcuts",
-    "django.contrib.auth",
-    "django.contrib.auth.decorators",
-    "django.views.decorators.cache",
-    "django.core.cache",
-    "django.db",
-    "django.dispatch",
-  ],
-  documentedVersion: "6.1",
-  category: "framework",
-  type: "backend",
-  language: "python",
-  patterns: [
-    { kind: "call", name: "path", slots: [{ at: DJANGO_VIEW, runs: "route" }], pathAt: DJANGO_ROUTE, prefixAt: DJANGO_ROUTE, method: EVERY_METHOD },
-    { kind: "call", name: "re_path", slots: [{ at: DJANGO_VIEW, runs: "route" }], pathAt: DJANGO_ROUTE, prefixAt: DJANGO_ROUTE, method: EVERY_METHOD },
-    { kind: "file", glob: "**/management/commands/[!_]*.py", exports: [{ name: "Command", runs: "command" }] },
-    { kind: "call", name: "redirect", slots: [], makes: "navigation", pathAt: DJANGO_REDIRECT_TARGET },
-    { kind: "call", name: "get_object_or_404", slots: [], makes: "data-fetch" },
-    { kind: "call", name: "get_list_or_404", slots: [], makes: "data-fetch" },
-    { kind: "call", name: "authenticate", slots: [], makes: "auth" },
-    { kind: "call", name: "login", slots: [], makes: "auth" },
-    { kind: "call", name: "logout", slots: [], makes: "auth" },
-    { kind: "decorator", name: "login_required", makes: "auth" },
-    { kind: "decorator", name: "permission_required", makes: "auth" },
-    { kind: "decorator", name: "user_passes_test", makes: "auth" },
-    { kind: "decorator", name: "cache_page", makes: "cache" },
-    { kind: "call", name: "cache.get", slots: [], makes: "cache" },
-    { kind: "call", name: "cache.set", slots: [], makes: "cache" },
-    { kind: "call", name: "cache.get_or_set", slots: [], makes: "cache" },
-    { kind: "call", name: "cache.delete", slots: [], makes: "cache" },
-    { kind: "decorator", name: "transaction.atomic", makes: "transaction" },
-    { kind: "call", name: "transaction.atomic", slots: [], makes: "transaction" },
-    { kind: "decorator", name: "receiver", runs: "event", eventAt: DJANGO_SIGNAL },
-  ],
-}
 
 const DJANGO_REST_FRAMEWORK_REGISTER: CallPattern = {
   kind: "call",

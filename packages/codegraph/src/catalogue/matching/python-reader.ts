@@ -1,6 +1,7 @@
 import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
 import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
 import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
+import { annotatedTypeFilling } from "@/code-blocks/languages/python/annotated"
 import { NO_EXPRESSION, type Binding, type Expression, type PassedValue, type Site, type SyntaxReader } from "./syntax-reader"
 
 const GRAMMAR: GrammarId = "python"
@@ -27,6 +28,7 @@ const LIST_TYPES: ReadonlySet<string> = new Set(["list", "tuple"])
 const TEXT_TYPE = "string"
 const TEXT_CONTENT_TYPE = "string_content"
 const INTERPOLATION_TYPE = "interpolation"
+const FIRST_POSITION = 0
 const WRAPPING_TYPES: ReadonlySet<string> = new Set(["await", "parenthesized_expression"])
 const SUBSCRIPT_TYPE = "subscript"
 const FUNCTION_VALUE_TYPE = "lambda"
@@ -129,12 +131,14 @@ const passedTo = (site: SyntaxNode): PassedValue[] => {
   if (given?.type !== ARGUMENTS_TYPE) return []
   const written = given.namedChildren.filter((argument) => argument.type !== COMMENT_TYPE && !UNPACKED_TYPES.has(argument.type))
   const positional = written.filter((argument) => argument.type !== NAMED_ARGUMENT_TYPE)
-  return written.flatMap((argument): PassedValue[] => {
+  const filling = call === null ? null : annotatedTypeFilling(call)
+  const filled: PassedValue[] = filling === null ? [] : [{ position: FIRST_POSITION, name: null, node: filling }]
+  return [...filled, ...written.flatMap((argument): PassedValue[] => {
     if (argument.type !== NAMED_ARGUMENT_TYPE) return [{ position: positional.indexOf(argument), name: null, node: argument }]
     const name = argument.childForFieldName("name")
     const value = argument.childForFieldName("value")
     return name === null || value === null ? [] : [{ position: null, name: name.text, node: value }]
-  })
+  })]
 }
 
 const textOf = (value: SyntaxNode): string | null => {

@@ -74,7 +74,7 @@ A symbol is one use of a name, not one name. A name a block uses twice is two sy
 | `render` | Renders it as an element, inside markup a function returns | `<SaveButton />` in a `render-root` |
 | `value` | Hands it over without running it | `onSave={save}`, `{ mutationFn: save }` |
 | `read` | Takes a member from it without running it | `query.data`, `props.label` |
-| `type` | Names it as a type. Nothing runs, so the Journey Flow Diagram does not follow it, but it is an edge of the Blast Diagram. | `user: User` in a signature |
+| `type` | Names it as a type. Nothing runs, so the Journey Flow Diagram does not follow it, but it is an edge of the Blast Diagram. A name inside a call in a Python annotation is no type: the call runs. | `user: User` in a signature |
 
 ```tsx
 const Page = () => {
@@ -82,6 +82,8 @@ const Page = () => {
   return <SaveButton onSave={save} />           // a symbol of the use "value"
 }
 ```
+
+**A call inside a Python annotation is read as code, not as a type.** In `user: Annotated[User, Depends(current_user)]`, `Annotated` and `User` are `type`, `Depends` is a `call` and `current_user` a `value` handed to it. A call of the metadata of `Annotated` that is written with no argument is handed the annotated type as its first argument: `Annotated[Pagination, Depends()]` hands `Pagination` to `Depends`, as `Depends(Pagination)` would.
 
 An element counts as rendered only inside a `render-root`. An element anywhere else, in an object, an array or an argument, is a `value`: building the element does not run the component. So `{ path: "/orders", element: <OrdersPage /> }` in a route table hands `OrdersPage` over, and `OrdersPage` is a component nothing renders.
 

@@ -302,6 +302,231 @@ describe("the dependencies of a FastAPI route", () => {
   })
 })
 
+describe("the Annotated dependencies of a FastAPI route", () => {
+  it("draws a line from a handler to a dependency it names in Annotated, from a dependency to its own, and to the class Annotated names for an empty Depends", () => {
+    const app = codeOf(
+      "from typing import Annotated",
+      "from fastapi import FastAPI, Depends",
+      "app = FastAPI()",
+      "def get_db():",
+      "    yield open_session()",
+      "def current_user(db: Annotated[Session, Depends(get_db)]):",
+      "    return find_user(db)",
+      "class Pagination:",
+      "    def window(self):",
+      "        return slice_of(self)",
+      "@app.get(\"/items\")",
+      "async def read_items(user: Annotated[User, Depends(current_user)], page: Annotated[Pagination, Depends()]):",
+      "    return list_items(user, page)",
+    )
+    const diagram = presentDiagramOf({ "shop/main.py": app }, { "shop/main.py": [rangeAt(5, 5, 5, 25), rangeAt(7, 5, 7, 25), rangeAt(10, 9, 10, 30), rangeAt(13, 5, 13, 34)] })
+    const edgeIds = diagram.journeyNodeEdges.map((edge) => edge.id)
+
+    expect(edgeIds).toContain("shop/main.py#function@11:1 -> shop/main.py#function@6:1")
+    expect(edgeIds).toContain("shop/main.py#function@6:1 -> shop/main.py#function@4:1")
+    expect(edgeIds).toContain("shop/main.py#function@11:1 -> shop/main.py#class@8:1")
+  })
+
+  it("makes no card of an Annotated alias, and draws a line from a handler typed by it to the dependency it names, across files", () => {
+    const deps = codeOf(
+      "from typing import Annotated",
+      "from fastapi import Depends",
+      "def get_db():",
+      "    yield open_session()",
+      "SessionDep = Annotated[Session, Depends(get_db)]",
+      "def current_user(db: SessionDep):",
+      "    return find_user(db)",
+      "CurrentUser = Annotated[User, Depends(current_user)]",
+    )
+    const routes = codeOf(
+      "from fastapi import APIRouter",
+      "from shop.deps import CurrentUser, SessionDep",
+      "router = APIRouter()",
+      "@router.get(\"/me\")",
+      "async def read_me(user: CurrentUser, db: SessionDep):",
+      "    return list_me(user, db)",
+    )
+    const diagram = presentDiagramOf({ "shop/deps.py": deps, "shop/routes.py": routes }, { "shop/deps.py": [rangeAt(4, 5, 4, 25)], "shop/routes.py": [rangeAt(6, 5, 6, 29)] })
+
+    expect(listJourneyNodes(diagram.journeyNodes).map((node) => node.id)).toStrictEqual([
+      "shop/routes.py#route@/me",
+      "shop/routes.py#function@4:1",
+      "shop/deps.py#function@6:1",
+      "shop/deps.py#function@3:1",
+    ])
+    expect(diagram.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual([
+      "shop/routes.py#function@4:1 -> shop/deps.py#function@6:1",
+      "shop/routes.py#function@4:1 -> shop/deps.py#function@3:1",
+      "shop/deps.py#function@6:1 -> shop/deps.py#function@3:1",
+    ])
+  })
+})
+
+describe("the middleware classes and mounted apps of FastAPI", () => {
+  it("draws a line from a middleware class the app adds to each route card of the app", () => {
+    const app = codeOf(
+      "from fastapi import FastAPI",
+      "app = FastAPI()",
+      "class TimingMiddleware:",
+      "    async def dispatch(self, request, call_next):",
+      "        return await time_call(call_next, request)",
+      "app.add_middleware(TimingMiddleware)",
+      "@app.get(\"/home\")",
+      "async def home():",
+      "    return read_home()",
+    )
+    const edgeIds = presentDiagramOf({ "shop/main.py": app }, { "shop/main.py": [rangeAt(5, 9, 5, 50), rangeAt(9, 5, 9, 23)] }).journeyNodeEdges.map((edge) => edge.id)
+
+    expect(edgeIds).toContain("shop/main.py#class@3:1 -> shop/main.py#route@/home")
+  })
+
+  it("puts the path of a mount before the routes of the mounted app, which the middleware of the app reaches but not its dependencies", () => {
+    const app = codeOf(
+      "from fastapi import FastAPI, Depends",
+      "def verify_key():",
+      "    return check_key()",
+      "app = FastAPI(dependencies=[Depends(verify_key)])",
+      "admin = FastAPI()",
+      "@app.middleware(\"http\")",
+      "async def timing(request, call_next):",
+      "    return await time_call(call_next, request)",
+      "@admin.middleware(\"http\")",
+      "async def audit(request, call_next):",
+      "    return record(request)",
+      "@admin.get(\"/stats\")",
+      "async def stats():",
+      "    return read_stats()",
+      "@app.get(\"/home\")",
+      "async def home():",
+      "    return read_home()",
+      "app.mount(\"/admin\", admin)",
+    )
+    const diagram = presentDiagramOf({ "shop/main.py": app }, { "shop/main.py": [rangeAt(3, 5, 3, 22), rangeAt(8, 5, 8, 46), rangeAt(11, 5, 11, 27), rangeAt(14, 5, 14, 24), rangeAt(17, 5, 17, 23)] })
+    const routeEdgeIds = diagram.journeyNodeEdges.map((edge) => edge.id).filter((edgeId) => edgeId.includes("#route@"))
+
+    expect([...routeEdgeIds].sort()).toStrictEqual([
+      "shop/main.py#function@2:1 -> shop/main.py#route@/home",
+      "shop/main.py#function@6:1 -> shop/main.py#route@/admin/stats",
+      "shop/main.py#function@6:1 -> shop/main.py#route@/home",
+      "shop/main.py#function@9:1 -> shop/main.py#route@/admin/stats",
+    ])
+  })
+
+  it("makes no card of an app that only hands its dependencies", () => {
+    const app = codeOf(
+      "from fastapi import FastAPI, Depends",
+      "def verify_key():",
+      "    return check_key()",
+      "app = FastAPI(dependencies=[Depends(verify_key)])",
+      "@app.get(\"/home\")",
+      "async def home():",
+      "    return read_home()",
+    )
+    const diagram = presentDiagramOf({ "shop/main.py": app }, { "shop/main.py": [rangeAt(3, 5, 3, 22), rangeAt(7, 5, 7, 23)] })
+
+    expect(listJourneyNodes(diagram.journeyNodes).map((node) => node.id)).toStrictEqual(["shop/main.py#route@/home", "shop/main.py#function@5:1", "shop/main.py#function@2:1"])
+    expect(diagram.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual(["shop/main.py#function@2:1 -> shop/main.py#route@/home"])
+  })
+})
+
+describe("the route cards of Django", () => {
+  const views = codeOf(
+    "from django.views import View",
+    "from django.views.generic import ListView",
+    "from django.contrib.auth.decorators import login_required",
+    "from django.views.decorators.http import require_POST, require_http_methods",
+    "def user_list(request):",
+    "    return render_users(request)",
+    "@login_required",
+    "@require_POST",
+    "def user_create(request):",
+    "    return save_user(request)",
+    "@require_http_methods([\"GET\", \"POST\"])",
+    "def user_detail(request, pk):",
+    "    return find_user(pk)",
+    "class AboutView(View):",
+    "    def get(self, request):",
+    "        return show_about()",
+    "    def post(self, request):",
+    "        return save_about()",
+    "class TeamList(ListView):",
+    "    def get_queryset(self):",
+    "        return active_teams()",
+  )
+  const urls = codeOf(
+    "from django.urls import path, re_path",
+    "from shop.views import user_list, user_create, user_detail, AboutView, TeamList",
+    "urlpatterns = [",
+    "    path(\"users/\", user_list, name=\"users\"),",
+    "    path(\"users/new/\", user_create),",
+    "    path(\"users/<int:pk>/\", user_detail),",
+    "    path(\"about/\", AboutView.as_view()),",
+    "    path(\"teams/\", TeamList.as_view()),",
+    "    re_path(r\"^legacy/(?P<slug>[-\\w]+)/$\", user_list),",
+    "]",
+  )
+  const diagram = presentDiagramOf({ "shop/views.py": views, "shop/urls.py": urls }, {
+    "shop/views.py": [rangeAt(6, 5, 6, 32), rangeAt(10, 5, 10, 29), rangeAt(13, 5, 13, 25), rangeAt(16, 9, 16, 28), rangeAt(18, 9, 18, 28), rangeAt(21, 9, 21, 30)],
+  })
+
+  it("makes a route card of each path, from the root and with no slash at its end, and no card of the urlpatterns that only lists them", () => {
+    expect(outlineOfNodes(diagram)).toStrictEqual([
+      "route",
+      "  class TeamList (changed)",
+      "    method TeamList.get_queryset (changed)",
+      "route",
+      "  function user_list (changed)",
+      "route",
+      "  function user_create (changed)",
+      "route",
+      "  function user_detail (changed)",
+      "route",
+      "route  (changed)",
+      "  method AboutView.get (changed)",
+      "  method AboutView.post (changed)",
+    ])
+    expect(diagram.journeyNodes.map((node) => node.id)).toStrictEqual([
+      "shop/urls.py#route@/teams",
+      "shop/urls.py#route@/users",
+      "shop/urls.py#route@/users/new",
+      "shop/urls.py#route@/users/<int:pk>",
+      "shop/urls.py#route@/legacy/(?P<slug>[-\\w]+)",
+      "shop/urls.py#route@/about",
+    ])
+  })
+
+  it("puts a function view under the methods its decorators allow, under ANY when none says, and a view class with no method of HTTP under ANY itself", () => {
+    const headings = listJourneyNodes(diagram.journeyNodes).flatMap((node) => node.codeBlocks.slice(0, 1).flatMap((block) => (block.card?.part === "handler" ? [`${block.name ?? ""} ${block.card.heading ?? ""}`] : [])))
+
+    expect(headings).toStrictEqual(["TeamList ANY", "user_list ANY", "user_create POST", "user_detail GET · POST", "AboutView.get GET", "AboutView.post POST"])
+  })
+})
+
+describe("the include of Django", () => {
+  it("puts the path of an include before the paths of the module it names, written as text, in a pair with a namespace or imported whole, across files and through every include above it", () => {
+    const root = codeOf(
+      "from django.urls import include, path",
+      "from shop import admin_urls",
+      "urlpatterns = [",
+      "    path(\"api/\", include(\"shop.api_urls\")),",
+      "    path(\"admin/\", include(admin_urls)),",
+      "    path(\"blog/\", include([path(\"posts/\", posts)])),",
+      "]",
+      "def posts(request):",
+      "    return list_posts()",
+    )
+    const api = codeOf("from django.urls import include, path", "urlpatterns = [", "    path(\"v1/\", include((\"shop.v1_urls\", \"v1\"))),", "]")
+    const v1 = codeOf("from django.urls import path", "def items(request):", "    return list_items()", "urlpatterns = [path(\"items/\", items)]")
+    const admin = codeOf("from django.urls import path", "def stats(request):", "    return read_stats()", "urlpatterns = [path(\"stats/\", stats)]")
+    const diagram = presentDiagramOf(
+      { "mysite/urls.py": root, "shop/api_urls.py": api, "shop/v1_urls.py": v1, "shop/admin_urls.py": admin },
+      { "mysite/urls.py": [rangeAt(9, 5, 9, 23)], "shop/v1_urls.py": [rangeAt(3, 5, 3, 23)], "shop/admin_urls.py": [rangeAt(3, 5, 3, 23)] },
+    )
+
+    expect(diagram.journeyNodes.map((node) => node.id)).toStrictEqual(["mysite/urls.py#route@/blog/posts", "shop/v1_urls.py#route@/api/v1/items", "shop/admin_urls.py#route@/admin/stats"])
+  })
+})
+
 describe("the plugins and hooks of Fastify", () => {
   it("reads the routes of a plugin typed FastifyInstance in another file, below the prefix it is registered with, and makes no node of a plugin that only registers routes", () => {
     const plugin = codeOf(

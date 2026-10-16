@@ -66,6 +66,7 @@ export interface StoredCodeBlock {
   readonly isPlain?: boolean
   readonly isReturned?: boolean
   readonly isParameterProperty?: boolean
+  readonly isAnnotatedAlias?: boolean
   readonly exportedByFilePaths: readonly string[]
   readonly lineOfCodeDiffs: readonly SourceRange[] | null
   readonly diffs: readonly CodeBlockDiff[]

@@ -37,13 +37,20 @@ const PYTHON_IMPORT_PATTERN = /^from (?<module>[\w.]+) import (?<names>[\w, ]+)$
 const MODULE_SEPARATOR = "."
 const NAME_SEPARATOR = ","
 
+const importedFileOf = (module: string, name: string, files: FixtureFiles): string | null => {
+  const folder = module.split(MODULE_SEPARATOR).join(FOLDER_SEPARATOR)
+  return [`${folder}${PYTHON_SUFFIX}`, `${folder}${FOLDER_SEPARATOR}${name}${PYTHON_SUFFIX}`].find((candidate) => candidate in files) ?? null
+}
+
 const pythonImportsOf = (source: string, files: FixtureFiles): ReadonlyMap<string, string> =>
   new Map(
     [...source.matchAll(PYTHON_IMPORT_PATTERN)].flatMap(({ groups }) => {
       const module = groups?.module ?? ""
-      const imported = `${module.split(MODULE_SEPARATOR).join(FOLDER_SEPARATOR)}${PYTHON_SUFFIX}`
-      if (!(imported in files)) return []
-      return (groups?.names ?? "").split(NAME_SEPARATOR).map((name) => [`${module}:${name.trim()}`, imported] as const)
+      return (groups?.names ?? "").split(NAME_SEPARATOR).flatMap((written) => {
+        const name = written.trim()
+        const imported = importedFileOf(module, name, files)
+        return imported === null ? [] : [[`${module}:${name}`, imported] as const]
+      })
     }),
   )
 

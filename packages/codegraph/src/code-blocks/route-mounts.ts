@@ -13,6 +13,7 @@ export interface Mount {
   readonly routerId: string | null
   readonly prefix: string | null
   readonly targetIds: ReadonlySet<string>
+  readonly isAppMount: boolean
 }
 
 const ROUTE: CardKind = "route"
@@ -23,6 +24,13 @@ const MIDDLEWARE: CardPart = "middleware"
 const PAGE: CardPart = "page"
 const VERSIONING: CardPart = "versioning"
 const CLASS: CodeBlockType = "class"
+const ROOT_VARIABLE: CodeBlockType = "root-variable"
+const MODULE_SEPARATOR = "."
+const PYTHON_SUFFIX = ".py"
+const PACKAGE_ENTRY = "__init__.py"
+const SPECIFIER_SEPARATOR = ":"
+const WHOLE_MODULE = "*"
+const RELATIVE_DOTS_PATTERN = /^\.+/
 const DYNAMIC_SEGMENT_PATTERN = /\[+(?:\.{3})?([^\]]+)\]+/g
 const NUMBERED_VERSION_PATTERN = /^[\d.|]+$/
 const VERSION_SEPARATOR = "|"
@@ -77,9 +85,20 @@ export const registrationOf = (block: StoredCodeBlock, index: RouteIndex): Store
 const controllerOf = (registration: StoredCodeBlock, index: RouteIndex): string | null =>
   isDecoratedHandler(registration, index) ? classAroundOf(registration, index) : null
 
+const rootOf = (block: StoredCodeBlock, index: RouteIndex): StoredCodeBlock => {
+  const parent = block.parentBlockId === null ? undefined : index.blockById.get(block.parentBlockId)
+  return parent === undefined ? block : rootOf(parent, index)
+}
+
+const valueAroundOf = (block: StoredCodeBlock, index: RouteIndex): string | null => {
+  const root = rootOf(block, index)
+  return root.id !== block.id && root.type === ROOT_VARIABLE ? root.id : null
+}
+
 const routerIdOfRegistration = (registration: StoredCodeBlock, index: RouteIndex): string | null =>
   controllerOf(registration, index)
   ?? routerIdOf(registration)
+  ?? valueAroundOf(registration, index)
   ?? (index.childrenById.get(registration.id) ?? [])
     .filter((chained) => isRegistration(chained, index))
     .map((chained) => routerIdOfRegistration(chained, index))
@@ -92,14 +111,42 @@ const namedTargetIdsOf = (block: StoredCodeBlock): string[] =>
     return targetId === null ? [] : [targetId]
   })
 
+const isFileOfModule = (filePath: string, module: string): boolean => {
+  const modulePath = module.split(MODULE_SEPARATOR).join(PATH_SEPARATOR)
+  return [`${modulePath}${PYTHON_SUFFIX}`, `${modulePath}${PATH_SEPARATOR}${PACKAGE_ENTRY}`].some((candidate) => filePath === candidate || filePath.endsWith(`${PATH_SEPARATOR}${candidate}`))
+}
+
+const listValuesOfModule = (module: string | undefined, { blockById }: RouteIndex): string[] =>
+  module === undefined
+    ? []
+    : [...blockById.values()].filter((block) => block.parentBlockId === null && block.type === ROOT_VARIABLE && isFileOfModule(block.filePath, module)).map((block) => block.id)
+
+const moduleOfImport = (specifier: string, filePath: string): string => {
+  const [from, name] = specifier.split(SPECIFIER_SEPARATOR)
+  const dots = RELATIVE_DOTS_PATTERN.exec(from)?.[0].length ?? 0
+  const folders = dots === 0 ? [] : filePath.split(PATH_SEPARATOR).slice(0, -dots)
+  const rest = from.slice(dots).split(MODULE_SEPARATOR).filter((part) => part !== "")
+  return [...folders, ...rest, name].join(MODULE_SEPARATOR)
+}
+
+const listModulesImportedWhole = (within: readonly StoredCodeBlock[]): string[] =>
+  within.flatMap((block) =>
+    block.outerSymbols.flatMap((symbol) =>
+      symbol.type === "unopened-import" && !symbol.isLibrary && symbol.importedName === WHOLE_MODULE && symbol.specifier.includes(SPECIFIER_SEPARATOR) ? [moduleOfImport(symbol.specifier, block.filePath)] : []))
+
 const mountOf = (block: StoredCodeBlock, index: RouteIndex): Mount => {
   const within = withinOf(block, index)
   const plugins = within.filter((inside) => inside.id !== block.id && PLUGIN_TYPES.has(inside.type))
   return {
     block,
-    routerId: routerIdOf(block) ?? classAroundOf(block, index),
+    routerId: routerIdOf(block) ?? classAroundOf(block, index) ?? valueAroundOf(block, index),
     prefix: block.card?.groupKey ?? null,
-    targetIds: new Set([...within.flatMap(namedTargetIdsOf), ...plugins.map((plugin) => plugin.id)]),
+    targetIds: new Set([
+      ...within.flatMap(namedTargetIdsOf),
+      ...plugins.map((plugin) => plugin.id),
+      ...[block.card?.mountedModule, ...listModulesImportedWhole(within)].flatMap((module) => listValuesOfModule(module, index)),
+    ]),
+    isAppMount: block.card?.isAppMount === true,
   }
 }
 
@@ -322,17 +369,24 @@ const namedCoverageOf = (middleware: StoredCodeBlock, context: RouteContext): Co
 const coverageOfRoutersNamedAround = (middleware: StoredCodeBlock, context: RouteContext): Coverage | null =>
   firstCoverage(holdersOf(middleware, context.index), (holder) => coverageOfNamedRouters(holder, context))
 
+const isRouterMount = (mount: Mount): boolean => !mount.isAppMount
+
 const coverageOf = (middleware: StoredCodeBlock, context: RouteContext): Coverage | null => {
   const coverage = namedCoverageOf(middleware, context) ?? firstCoverage(holdersOf(middleware, context.index), calledCoverageAt)
   if (coverage === null || middleware.card?.isAppWide !== true) return coverage
-  return { ...coverage, routerIds: coverage.routerIds.map((routerId) => rootRouterOf(routerId, context.mounts, context.index, FIRST_DEPTH)) }
+  const routerMounts = context.mounts.filter(isRouterMount)
+  return { ...coverage, routerIds: coverage.routerIds.map((routerId) => rootRouterOf(routerId, routerMounts, context.index, FIRST_DEPTH)) }
 }
 
-const pathsCovered = (coverage: Coverage | null, registered: readonly Registered[], context: RouteContext): string[] => {
+const mountsCrossedBy = (middleware: StoredCodeBlock, mounts: readonly Mount[]): readonly Mount[] =>
+  middleware.card?.isAppWide === true ? mounts : mounts.filter(isRouterMount)
+
+const pathsCovered = (middleware: StoredCodeBlock, coverage: Coverage | null, registered: readonly Registered[], context: RouteContext): string[] => {
   if (coverage === null) return []
+  const crossed = mountsCrossedBy(middleware, context.mounts)
   const isCovered = (one: Registered): boolean =>
     one.routerId !== null
-    && coverage.routerIds.some((routerId) => one.routerId !== null && isRouterBelow(one.routerId, routerId, context.mounts, context.index, FIRST_DEPTH))
+    && coverage.routerIds.some((routerId) => one.routerId !== null && isRouterBelow(one.routerId, routerId, crossed, context.index, FIRST_DEPTH))
     && isWithinPath(one.path, coverage.scope)
   return registered.filter(isCovered).map((one) => one.path)
 }
@@ -343,7 +397,7 @@ const routePathsOf = (middleware: StoredCodeBlock, registered: readonly Register
   const coverage = coverageOf(middleware, context)
   const card = middleware.card
   if (coverage === null && card?.isAppWide === true) return pathsOfLibrary(card.library, registered)
-  return pathsCovered(coverage, registered, context)
+  return pathsCovered(middleware, coverage, registered, context)
 }
 
 const isPage = (block: StoredCodeBlock): boolean => block.card?.kind === ROUTE && block.card.part === PAGE
@@ -415,7 +469,7 @@ const withRoutePaths = (blocks: readonly StoredCodeBlock[], context: RouteContex
     const appPaths = context.appPathsByLibrary.get(card.library) ?? NO_APP_PATHS
     const covered = card.routePatterns === undefined
       ? routePathsOf(block, registered, context)
-      : [...pathsMatching(card.routePatterns, reached, appPaths), ...pathsCovered(coverageOfRoutersNamedAround(block, context), registered, context)]
+      : [...pathsMatching(card.routePatterns, reached, appPaths), ...pathsCovered(block, coverageOfRoutersNamedAround(block, context), registered, context)]
     return { ...block, card: { ...card, routePaths: withoutExcluded(covered, card, registered, appPaths) } }
   })
 }

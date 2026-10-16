@@ -271,7 +271,6 @@ import {
   unleashPythonFixtures,
 } from "./python/feature-flags"
 import {
-  djangoFixtures,
   djangoRestFrameworkFixtures,
   djangoTastypieFixtures,
   eveFixtures,
@@ -439,7 +438,6 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...dexieJsFixtures,
   ...discordJsFixtures,
   ...diskcacheFixtures,
-  ...djangoFixtures,
   ...djangoAllauthFixtures,
   ...djangoCacheMachineFixtures,
   ...djangoCacheopsFixtures,

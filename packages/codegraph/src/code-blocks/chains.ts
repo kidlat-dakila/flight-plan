@@ -54,6 +54,7 @@ const CALLING_BACK_TYPES = typesOf(
 const HANDLING_TYPES = typesOf("render-event", "effect-callback", "code-event")
 const STATE_TYPES = typesOf("state", "derived")
 const RUNNING_IN_PLACE_TYPES = typesOf("render-event", "effect-callback", "code-event", "render-loop")
+const RUNNING_IN_PLACE = "in-place"
 const UNTRACED_TYPES = typesOf("type-declaration", "import", "file", "deleted")
 const STARTING_LATER_TYPES = typesOf(
   "function",
@@ -119,7 +120,7 @@ const reachedThrough = (symbol: StoredCodeBlockSymbol, isHandler: boolean, index
   const referenced = member ?? findBlock(namedIdOf(symbol), index)
   if (referenced === null) return []
   const isRun = RUNNING_USES.has(symbol.use) || (isHandler && NAMING_USES.has(symbol.use))
-  if (isValue(referenced, index)) return symbol.use === NAMING_A_TYPE ? [] : [referenced]
+  if (isValue(referenced, index)) return symbol.use === NAMING_A_TYPE && referenced.isAnnotatedAlias !== true ? [] : [referenced]
   const hasUnknownMember = symbol.member !== undefined && member === null
   const isReached = CALLABLE_TYPES.has(referenced.type) ? !hasUnknownMember : referenced.type === ARGUMENT
   return isRun && isReached ? [referenced] : []
@@ -187,12 +188,18 @@ const listHandedSteps = (argument: StoredCodeBlock, index: ChainIndex): StoredCo
 const stepsInto = (block: StoredCodeBlock, child: StoredCodeBlock, index: ChainIndex): StoredCodeBlock[] => {
   if (index.heldMarkupIds.has(child.id)) return [child]
   if (isWrittenInPlace(child, index)) return RUNNING_IN_PLACE_TYPES.has(block.type) || child.name === undefined ? [child] : []
-  if (child.type === CALLBACK) return CALLING_BACK_TYPES.has(block.type) && !isResultKept(block, index) ? [child] : []
+  if (child.type === CALLBACK) return (CALLING_BACK_TYPES.has(block.type) || isRunInPlace(child)) && !isResultKept(block, index) ? [child] : []
   if (child.type === METHOD) return block.type === CLASS ? [child] : []
   if (HANDED_TYPES.has(child.type) && index.returnedIds.has(child.id)) return [child]
+  if (child.type === ARGUMENT && isTypedByAnnotatedAlias(child, index)) return [child]
   if (STARTING_LATER_TYPES.has(child.type)) return []
   return isKeepingResult(child, index) ? listHandedCalls(child, index) : [child]
 }
+
+const isTypedByAnnotatedAlias = (argument: StoredCodeBlock, index: ChainIndex): boolean =>
+  argument.outerSymbols.some((symbol) => symbol.use === NAMING_A_TYPE && findBlock(namedIdOf(symbol), index)?.isAnnotatedAlias === true)
+
+const isRunInPlace = (callback: StoredCodeBlock): boolean => callback.catalogue?.runs === RUNNING_IN_PLACE
 
 const listNestedSteps = (block: StoredCodeBlock, index: ChainIndex): StoredCodeBlock[] => {
   if (isKeepingResult(block, index)) {

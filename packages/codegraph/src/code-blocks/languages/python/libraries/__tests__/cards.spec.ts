@@ -31,3 +31,18 @@ describe("the cards FastAPI writes", () => {
     })).toStrictEqual(["create_item: FastAPI route handler under POST at /items"])
   })
 })
+
+describe("the cards Django writes", () => {
+  it("makes each path a holder of its path from the root, and an include a mount of the module it names, with its path", () => {
+    expect(cardsOf({
+      "shop/urls.py": codeOf(
+        "from django.urls import include, path",
+        "from shop.views import user_list",
+        "urlpatterns = [",
+        "    path(\"users/\", user_list),",
+        "    path(\"api/\", include(\"shop.api_urls\")),",
+        "]",
+      ),
+    })).toStrictEqual(["route: Django route holder under ANY at /users", "1: Django route handler under ANY at /users", "route: Django route mount at /api"])
+  })
+})
