@@ -51,6 +51,7 @@ const storeBlock = (block: CodeBlock, placeBySymbol: PlaceBySymbol): StoredCodeB
   isExported: block.isExported,
   ...(block.isPlain === true ? { isPlain: true } : {}),
   ...(block.isReturned === true ? { isReturned: true } : {}),
+  ...(block.isParameterProperty === true ? { isParameterProperty: true } : {}),
   exportedByFilePaths: block.exportedBy.map((astGraph) => astGraph.filePath),
   lineOfCodeDiffs: block.lineOfCodeDiffs,
   diffs: block.diffs,

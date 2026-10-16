@@ -49,6 +49,7 @@ const CALLABLE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["func
 const NAMING_USES: ReadonlySet<StoredCodeBlockSymbol["use"]> = new Set<StoredCodeBlockSymbol["use"]>(["value", "read"])
 const MARKUP: CodeBlockType = "render"
 const CLASS: CodeBlockType = "class"
+const TYPE_USE: StoredCodeBlockSymbol["use"] = "type"
 const MEMBER_SEPARATOR = "."
 const SEEN_SEPARATOR = "|"
 const NO_PLACES: Places = []
@@ -227,14 +228,25 @@ const followThroughReader = (path: readonly string[], context: StoredCodeBlock, 
   return firstFound(provided, (given) => followSymbol(path.slice(1), given, index, new Set()))
 }
 
+const classOfType = (block: StoredCodeBlock, index: OriginIndex): StoredCodeBlock | null =>
+  block.outerSymbols
+    .filter((symbol) => symbol.use === TYPE_USE)
+    .map((symbol) => referencedBlockOf(symbol, index))
+    .find((typed) => typed?.type === CLASS) ?? null
+
+const findTypedMethod = (path: readonly string[], block: StoredCodeBlock, index: OriginIndex): string | null => {
+  const typed = classOfType(block, index)
+  return typed === null ? null : findMethod(path[0], typed, index, new Set())
+}
+
 const withMemberFollowed = (symbol: StoredCodeBlockSymbol, index: OriginIndex): StoredCodeBlockSymbol => {
   const { member } = symbol
   const referenced = referencedBlockOf(symbol, index)
-  if (member?.blockId !== null || symbol.use === "type" || referenced === null) return symbol
+  if (member?.blockId !== null || symbol.use === TYPE_USE || referenced === null) return symbol
   if (referenced.type === CLASS) return { ...symbol, member: { ...member, blockId: findMethod(member.path[0], referenced, index, new Set()) } }
-  if (!VALUE_TYPES.has(referenced.type)) return symbol
-  const blockId = followThroughReader(member.path, referenced, index) ?? followPath(member.path, referenced, index, new Set())
-  return { ...symbol, member: { ...member, blockId } }
+  const followed = VALUE_TYPES.has(referenced.type) ? (followThroughReader(member.path, referenced, index) ?? followPath(member.path, referenced, index, new Set())) : null
+  const blockId = followed ?? findTypedMethod(member.path, referenced, index)
+  return blockId === null && !VALUE_TYPES.has(referenced.type) ? symbol : { ...symbol, member: { ...member, blockId } }
 }
 
 export const followMembers = (codeBlocks: readonly StoredCodeBlock[], details: ReferenceDetails, libraries: readonly CatalogueLibrary[]): StoredCodeBlock[] => {

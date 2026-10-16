@@ -144,6 +144,7 @@ A symbol that reaches a member of a name says which member, as `member`. The pat
 | `remove` from `const { orders: { remove } } = api` | `["orders", "remove"]` | The `function` block `remove` written under `orders` |
 | `actions.reset()`, with `const actions = { reset: clearCart }` or `{ reset }` | `["reset"]` | The block the key names: `clearCart`, or the function `reset` |
 | `mailer.send()`, with `const mailer = new Mailer()` | `["send"]` | The `method` block `Mailer.send` |
+| `this.users.findAll()`, with `constructor(private readonly users: UsersService)`, or a property `users: UsersService` | `["findAll"]`: the symbol names the parameter or the property | The `method` block `findAll` of the class the member is typed as, or of the nearest class it names as a base that declares it. A parameter of the constructor marked `private`, `protected`, `public` or `readonly` is a member of the class, as a property is. |
 | `props.onSave` | `["onSave"]` | The `root-argument-value` block `onSave` |
 | `query.data` | `["data"]` | `null` |
 | `trpc.users.list.useQuery()` | `["users", "list", "useQuery"]` | `null` |

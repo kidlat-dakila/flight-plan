@@ -1,7 +1,7 @@
 import { calledNamesOf, nameOfBlock } from "@/journey/names"
 import { firstOfEach } from "@/shared/first-of-each"
-import type { CodeBlock, CodeBlockType, NodeBlockListKind } from "@flightplan/configurations"
-import { classOfDeclaredProperty, isMethodOfClass } from "./cards/class"
+import type { CardPart, CodeBlock, CodeBlockType, NodeBlockListKind } from "@flightplan/configurations"
+import { classOfDeclaredProperty, declaresProperty, isMethodOfClass } from "./cards/class"
 import { holdsStoreParts, storePartAround } from "./cards/store"
 import { isFoldedValue, isHandlerBlock, isNodeBlock, isNodeDrawnInside, isStepBlock, nodeBlockOf } from "./node-blocks"
 import {
@@ -44,6 +44,7 @@ const PROPERTY_KIND: NodeBlockListKind = "property"
 const PART: NodeBlockListKind = "part"
 const PROPERTY: CodeBlockType = "property"
 const CLASS: CodeBlockType = "class"
+const MIDDLEWARE: CardPart = "middleware"
 const RECEIVER_PREFIXES: readonly string[] = ["this.", "self."]
 const BLOCK_LIST_KIND_BY_TYPE: ReadonlyMap<CodeBlockType, NodeBlockListKind> = new Map<CodeBlockType, NodeBlockListKind>([
   ["root-argument-value", "argument"],
@@ -89,15 +90,20 @@ const isArgumentOfNode = (block: CodeBlock, nodeBlock: CodeBlock): boolean =>
   isParameter(block) && block.parentBlock !== null && (isHandlerBlock(block.parentBlock) || block.parentBlock.id === nodeBlock.id)
 
 const isPropertyOfClass = (block: CodeBlock, nodeBlock: CodeBlock): boolean =>
-  block.type === PROPERTY && nodeBlock.type === CLASS && (classOfDeclaredProperty(block) ?? block.parentBlock)?.id === nodeBlock.id
+  declaresProperty(block) && nodeBlock.type === CLASS && (classOfDeclaredProperty(block) ?? block.parentBlock)?.id === nodeBlock.id
 
 const isReachedThroughReceiver = (block: CodeBlock): boolean => RECEIVER_PREFIXES.some((prefix) => (block.name ?? "").startsWith(prefix))
 
 const isOwnClassReach = (block: CodeBlock, nodeBlock: CodeBlock): boolean =>
   isMethodOfClass(nodeBlock) && (block.type === PROPERTY || isReachedThroughReceiver(block) || isReachedThroughReceiver(statementOf(block, nodeBlock)))
 
+const isMiddlewareOf = (block: CodeBlock, nodeBlock: CodeBlock): boolean => block.card?.part === MIDDLEWARE && block.card.ownerId === nodeBlock.id
+
+const handsMiddlewareTo = (block: CodeBlock, nodeBlock: CodeBlock): boolean =>
+  isMiddlewareOf(block, nodeBlock) || (block.childrenBlocks.length > 0 && block.childrenBlocks.every((child) => isMiddlewareOf(child, nodeBlock)))
+
 const toCandidate = (block: CodeBlock, nodeBlock: CodeBlock): Candidate[] => {
-  if (isNodeDrawnInside(block) || isOwnClassReach(block, nodeBlock) || holdsStoreParts(block, nodeBlock)) return []
+  if (isNodeDrawnInside(block) || isOwnClassReach(block, nodeBlock) || holdsStoreParts(block, nodeBlock) || handsMiddlewareTo(block, nodeBlock)) return []
   const part = storePartAround(block, nodeBlock)
   if (part !== null) return [{ kind: PART, block: part, name: nameOfBlock(part), isStep: false }]
   if (isArgumentOfNode(block, nodeBlock)) return [toCandidateOf(ARGUMENT, block, nameOfBlock(block))]

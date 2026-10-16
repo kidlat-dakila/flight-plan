@@ -113,6 +113,7 @@ export interface FactoryPattern {
   readonly provides?: ContextProvision
   readonly makesType?: string
   readonly parameterOfTypes?: readonly string[]
+  readonly isTypeOnly?: boolean
 }
 
 export type MethodPattern = CallPattern | DecoratorPattern | ElementPattern | FactoryPattern

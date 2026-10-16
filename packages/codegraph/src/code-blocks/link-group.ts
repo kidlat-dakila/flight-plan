@@ -54,6 +54,7 @@ const linkBlock = (stored: StoredCodeBlock, lookup: GroupLookup): CodeBlock => {
     isExported: stored.isExported,
     ...(stored.isPlain === true ? { isPlain: true } : {}),
     ...(stored.isReturned === true ? { isReturned: true } : {}),
+    ...(stored.isParameterProperty === true ? { isParameterProperty: true } : {}),
     lineOfCodeDiffs: stored.lineOfCodeDiffs,
     diffs: stored.diffs,
     catalogue: stored.catalogue,

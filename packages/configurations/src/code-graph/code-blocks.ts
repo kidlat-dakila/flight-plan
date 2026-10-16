@@ -115,10 +115,17 @@ export type CardPart
     | "handler"
     | "middleware"
     | "mount"
+    | "versioning"
     | "server-action"
     | "page"
     | "procedure"
     | "endpoint"
+    | "controller"
+
+export interface RoutePattern {
+  readonly pathPattern: string
+  readonly method: string | null
+}
 
 export interface BlockCard {
   readonly library: string
@@ -129,7 +136,9 @@ export interface BlockCard {
   readonly ownerId: string | null
   readonly routePaths?: readonly string[]
   readonly isAppWide?: boolean
-  readonly pathPatterns?: readonly string[]
+  readonly routePatterns?: readonly RoutePattern[]
+  readonly excludedRoutePatterns?: readonly RoutePattern[]
+  readonly versions?: readonly string[]
 }
 
 export type SymbolUse = "call" | "render" | "value" | "read" | "type"
@@ -201,6 +210,7 @@ export interface CodeBlock {
   readonly isExported: boolean
   readonly isPlain?: boolean
   readonly isReturned?: boolean
+  readonly isParameterProperty?: boolean
   readonly exportedBy: readonly ASTGraph[]
   readonly lineOfCodeDiffs: readonly SourceRange[] | null
   readonly diffs: readonly CodeBlockDiff[]

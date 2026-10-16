@@ -72,7 +72,7 @@ A factory named `default` is the default export of the library, such as `express
 
 **A factory is a call or a `new`.** `new PrismaClient()`, `new Hono()` and `FastAPI()` each make a value, and one factory pattern holds for both ways of writing it. A factory has slots when what it is handed runs later: the second argument of `new Worker("Paint", paintCar)` is a job.
 
-**A factory names the type of the value it makes, in `makesType`,** when code writes that type instead of making the value. The `default` factory of Fastify says `makesType: "FastifyInstance"`, so the first parameter of `async function userRoutes(fastify: FastifyInstance)` is a value `Fastify()` made, and `fastify.get(…)` in it is a route, in whatever file the plugin is registered. **It names the types of a function that is handed the value, in `parameterOfTypes`:** Fastify lists `FastifyPluginAsync` and `FastifyPluginCallback`, so the first parameter of `const userRoutes: FastifyPluginAsync = async (fastify) => …` is such a value too.
+**A factory names the type of the value it makes, in `makesType`,** when code writes that type instead of making the value. The `default` factory of Fastify says `makesType: "FastifyInstance"`, so the first parameter of `async function userRoutes(fastify: FastifyInstance)` is a value `Fastify()` made, and `fastify.get(…)` in it is a route, in whatever file the plugin is registered. **It names the types of a function that is handed the value, in `parameterOfTypes`:** Fastify lists `FastifyPluginAsync` and `FastifyPluginCallback`, so the first parameter of `const userRoutes: FastifyPluginAsync = async (fastify) => …` is such a value too. **A factory no code calls says `isTypeOnly`:** `MiddlewareConsumer` of NestJS is only ever the type of a parameter, so `consumer.apply(LoggerMiddleware)` in `configure(consumer: MiddlewareConsumer)` is its method `apply`.
 
 **A factory says what the value it makes is when the value itself is called**, in `called`. It holds for a call and for a tagged template:
 
@@ -105,7 +105,7 @@ A method is also a factory, when a call on the value makes another value: `route
 
 **A call with `prefixAt` mounts what it is handed.** Its match says `isMounting`, the library file of a route library gives its block the card part `mount` with the prefix, and the routes are reached once the group is linked, through the symbols that join the call to the router, so a router declared in one file and mounted in another takes the prefix. Mounts above mounts add up, outermost first: `/api` above `/v1` above `/users` is `/api/v1/users`. See [The routes below a mount](code-blocks.md#the-routes-below-a-mount).
 
-A decorator names a prefix the same way, for the routes inside what it decorates: `@Controller("cats")` of NestJS is the prefix of every `@Get` in the class.
+A decorator names a prefix the same way, for the routes inside what it decorates: `@Controller("cats")` and `@Controller({ path: "cats" })` of NestJS are the prefix of every `@Get` in the class, whichever decorator of the class is written first. A method takes the route of its route decorator over a decorator that only hands middleware, `@UseGuards(…)`, wherever each is written, and the path of a decorated method always starts with `/`: `@Get()` in `@Controller("cats")` is `/cats`.
 
 An argument that is a function is never a path, and only an argument written as text is a prefix, so `app.use(logRequest)` and `app.use(requireSession)` have no prefix and their argument is a slot.
 
@@ -456,7 +456,7 @@ interface DecoratorPattern {
   name: string                         // "Get", or the name of a method such as "get" in "@app.get"
   from?: string
   runs?: SlotRuns                      // what the decorated function is
-  slots?: Slot[]                       // what is handed to the decorator and runs before the function: "dependencies[]" of FastAPI
+  slots?: Slot[]                       // what is handed to the decorator and runs before the function: "dependencies[]" of FastAPI, every argument of "@UseGuards" of NestJS
   pathAt?: SlotPosition
   prefixAt?: SlotPosition              // where the prefix of the routes inside what it decorates is
   method?: string                      // "GET", or "*" for every method
@@ -494,6 +494,7 @@ interface FactoryPattern {
   provides?: ContextProvision          // what the made value provides when it is written as an element
   makesType?: string                   // the type code writes for the made value: "FastifyInstance"
   parameterOfTypes?: string[]          // the types of a function whose first parameter is the made value: "FastifyPluginAsync"
+  isTypeOnly?: boolean                 // no call makes the value, code only writes its type: "MiddlewareConsumer" of NestJS
 }
 
 interface ClassPattern {
@@ -656,14 +657,14 @@ The catalogue also says which files are tests and stories, as file conventions: 
 | Source | Holds | Kept in |
 |---|---|---|
 | The built-in catalogue | The patterns of the libraries Flight Plan knows, one file of data per language and category | The codegraph package, `packages/codegraph` |
-| A library file | The patterns of a library that needs handling of its own, in the same shape, with the `readCards` that says which card of the Journey Flow Diagram each of its blocks belongs to, as [Which card a block belongs to](code-blocks.md#which-card-a-block-belongs-to) says. Express, Fastify, Next.js, tRPC, Zustand, Pinia, Redux and RTK Query are files of JavaScript, Flask and FastAPI files of Python. A library whose routes come from the path of a file, as Next.js, also has a `readExportCards` that says the card of each block its file patterns name. A library is in the catalogue or in a file of its own, never both. | The codegraph package, one file per library in the folder of its language |
+| A library file | The patterns of a library that needs handling of its own, in the same shape, with the `readCards` that says which card of the Journey Flow Diagram each of its blocks belongs to, as [Which card a block belongs to](code-blocks.md#which-card-a-block-belongs-to) says. Express, Fastify, Next.js, NestJS, tRPC, Zustand, Pinia, Redux and RTK Query are files of JavaScript, Flask and FastAPI files of Python. A library whose routes come from the path of a file, as Next.js, also has a `readExportCards` that says the card of each block its file patterns name. A library is in the catalogue or in a file of its own, never both. | The codegraph package, one file per library in the folder of its language |
 | The repository's catalogue | The patterns of what the built-in one does not cover: an uncommon framework, the repository's own event bus, where its test files and story files are | The configuration of the repository |
 
 The repository's catalogue is written in setup. An agent reads the frameworks of the repository and proposes patterns for the gaps.
 
 **A proposed pattern is checked before it is kept.** The codegraph applies it to the repository. A pattern that matches nothing is refused, and what each kept pattern matched is shown, such as "37 routes", so that a person can confirm it at a glance. `countPatternMatches` counts the matches of each pattern over the files of a repository, and `checkProposedLibraries` turns the counts into the patterns kept and the sentences of the ones refused.
 
-**Every pattern has a fixture.** A pattern of the built-in catalogue or of a library file comes with a small piece of code it must match and one it must not, so the catalogue can grow to any size without a pattern silently matching the wrong thing. Every fixture is run: a pattern that does not match its own code, or that matches the code it must not, fails the tests.
+**Every pattern has a fixture.** A pattern of the built-in catalogue or of a library file comes with a small piece of code it must match and one it must not, but a factory that `isTypeOnly`, which no code calls: its methods have their fixtures, so the catalogue can grow to any size without a pattern silently matching the wrong thing. Every fixture is run: a pattern that does not match its own code, or that matches the code it must not, fails the tests.
 
 ## What a file convention of Next.js runs as
 

@@ -7,6 +7,10 @@ const ARROW_TYPE = "arrow_function"
 const MEMBER_TYPE = "member_expression"
 const ASSIGNMENT_TYPE = "assignment_expression"
 const CLASS_MEMBER_TYPES: ReadonlySet<string> = new Set(["method_definition", "public_field_definition"])
+const METHOD_TYPE = "method_definition"
+const CONSTRUCTOR_NAME = "constructor"
+const PARAMETER_TYPES: ReadonlySet<string> = new Set(["required_parameter", "optional_parameter"])
+const PROPERTY_MARKS: ReadonlySet<string> = new Set(["accessibility_modifier", "readonly"])
 
 export const classBodyBoundTo = (node: SyntaxNode): SyntaxNode | null => {
   const { parent } = node
@@ -33,8 +37,17 @@ const listAssignedMembers = (classBody: SyntaxNode, takenNames: ReadonlySet<stri
   return assigned.filter((_name, index) => names.indexOf(names[index]) === index)
 }
 
+const isConstructor = (member: SyntaxNode): boolean => member.type === METHOD_TYPE && member.childForFieldName("name")?.text === CONSTRUCTOR_NAME
+
+export const isParameterProperty = (parameter: SyntaxNode): boolean => PARAMETER_TYPES.has(parameter.type) && parameter.children.some((child) => PROPERTY_MARKS.has(child.type))
+
+const listParameterProperties = (classBody: SyntaxNode): SyntaxNode[] =>
+  (classBody.namedChildren.find(isConstructor)?.childForFieldName("parameters")?.namedChildren ?? [])
+    .filter(isParameterProperty)
+    .flatMap((parameter) => parameter.childForFieldName("pattern") ?? [])
+
 export const listMemberNames = (classBody: SyntaxNode): SyntaxNode[] => {
-  const declared = classBody.namedChildren.flatMap((member) => nameOfMember(member) ?? [])
+  const declared = [...classBody.namedChildren.flatMap((member) => nameOfMember(member) ?? []), ...listParameterProperties(classBody)]
   return [...declared, ...listAssignedMembers(classBody, new Set(declared.map((name) => name.text)))]
 }
 

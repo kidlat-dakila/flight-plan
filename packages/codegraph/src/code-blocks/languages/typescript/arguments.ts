@@ -5,6 +5,7 @@ import { isSameRange, rangeOf } from "@/ast-graph/source-range"
 import type { ReadBlock } from "@/code-blocks/reading"
 import { compareRanges, rangeOfNode } from "@/code-blocks/source-range"
 import { groupBy } from "@/shared/group-by"
+import { isParameterProperty } from "./class-members"
 import type { FileOutline } from "./outline"
 import { blockIdOf, nodeAtRange, startOf } from "./syntax"
 
@@ -70,6 +71,7 @@ const readWhole = (parameter: SyntaxNode, name: SyntaxNode, parameterIndex: numb
     parentId: owner.ownerId,
     declaredAt: [startOf(name)],
     argument: { parameterIndex, role: "whole" },
+    ...(isParameterProperty(parameter) ? { isParameterProperty: true } : {}),
   }
   return [whole, ...readMembers(name, parameterIndex, id, owner)]
 }

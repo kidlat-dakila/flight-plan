@@ -73,6 +73,51 @@ describe("the card of a class", () => {
   })
 })
 
+describe("the card of a class that holds another class by type", () => {
+  it("draws a line from a method to the method of the class a parameter of its constructor or a property is typed as, and leaves out a constructor that only takes them", () => {
+    const files = {
+      "src/users.ts": codeOf("export class UsersService {", "  findAll() {", "    return db.users()", "  }", "}"),
+      "src/report.ts": codeOf(
+        "import { UsersService } from \"./users\"",
+        "export class Report {",
+        "  private readonly archive: UsersService",
+        "  constructor(private readonly users: UsersService) {}",
+        "  run() {",
+        "    return this.users.findAll()",
+        "  }",
+        "  old() {",
+        "    return this.archive.findAll()",
+        "  }",
+        "}",
+      ),
+    }
+    const diagram = presentDiagramOf(files, { "src/users.ts": [rangeAt(3, 5, 3, 22)] })
+
+    expect(outlineOfNodes(diagram)).toStrictEqual(["class UsersService (changed)", "  method UsersService.findAll (changed)", "class Report", "  method Report.run", "  method Report.old"])
+    expect(diagram.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual(expect.arrayContaining([
+      "src/report.ts#method@5:3 -> src/users.ts#method@2:3",
+      "src/report.ts#method@8:3 -> src/users.ts#method@2:3",
+    ]))
+  })
+
+  it("lists a parameter of the constructor marked as a property as a row of the class, and a parameter with no mark as no row", () => {
+    const report = codeOf(
+      "export class Report {",
+      "  constructor(private readonly users: UsersService, public title: string, limit: number) {",
+      "    log(limit)",
+      "  }",
+      "  run() {",
+      "    return this.users.findAll()",
+      "  }",
+      "}",
+    )
+    const diagram = presentDiagramOf({ "src/report.ts": report }, { "src/report.ts": [rangeAt(2, 15, 2, 87), rangeAt(3, 5, 3, 15)] })
+
+    expect(rowNamesOf(nodeNamed(diagram.journeyNodes, "Report"))).toStrictEqual(["users", "title"])
+    expect(rowNamesOf(nodeNamed(diagram.journeyNodes, "Report.constructor"))).toStrictEqual(["limit", "log"])
+  })
+})
+
 describe("the card of a class component", () => {
   it("draws a React class component as a component card, with no method card inside it and its events as cards of their own", () => {
     const modal = codeOf(

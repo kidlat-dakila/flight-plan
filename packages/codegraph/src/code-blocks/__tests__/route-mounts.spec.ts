@@ -6,6 +6,9 @@ const nameOf = (block: StoredCodeBlock): string => block.name ?? block.type
 const routePathsOf = (files: FixtureFiles): string[] =>
   groupOf(files).codeBlocks.flatMap((block) => (block.card?.routePaths === undefined ? [] : [`${nameOf(block)}: ${block.card.routePaths.join(", ")}`]))
 
+const headingsOf = (files: FixtureFiles): string[] =>
+  groupOf(files).codeBlocks.flatMap((block) => (block.card?.part === "handler" ? [`${nameOf(block)}: ${block.card.heading ?? ""}`] : []))
+
 const groupKeysOf = (files: FixtureFiles): string[] =>
   groupOf(files).codeBlocks.flatMap((block) => (block.card?.part === "holder" || block.card?.part === "handler" ? [`${nameOf(block)} ${block.card.part}: ${block.card.groupKey ?? ""}`] : []))
 
@@ -123,5 +126,181 @@ describe("the route paths of middleware that runs before a whole router", () => 
       "shop/items.py": codeOf("from fastapi import APIRouter", "router = APIRouter()", "@router.get(\"/items\")", "async def items():", "    return []"),
       "shop/main.py": codeOf("from fastapi import FastAPI, Depends", "from shop.items import router", "app = FastAPI(dependencies=[Depends(verify_key)])", "app.include_router(router, prefix=\"/v1\")"),
     })).toStrictEqual(["0: /v1/items"])
+  })
+})
+
+const NEST_USERS = codeOf(
+  "import { Controller, Get, Post, UseGuards, Version } from \"@nestjs/common\"",
+  "import { AuthGuard } from \"./auth.guard\"",
+  "@UseGuards(AuthGuard)",
+  "@Controller({ path: \"users\", version: \"1\" })",
+  "export class UsersController {",
+  "  @Get()",
+  "  findAll() {",
+  "    return []",
+  "  }",
+  "  @Version(\"2\")",
+  "  @Post(\":id\")",
+  "  save() {",
+  "    return 1",
+  "  }",
+  "}",
+)
+
+const NEST_FILES: FixtureFiles = {
+  "src/users/users.controller.ts": NEST_USERS,
+  "src/users/users.module.ts": codeOf(
+    "import { Module } from \"@nestjs/common\"",
+    "import { UsersController } from \"./users.controller\"",
+    "@Module({ controllers: [UsersController] })",
+    "export class UsersModule {}",
+  ),
+  "src/auth.guard.ts": codeOf("export class AuthGuard {}"),
+  "src/roles.guard.ts": codeOf("export class RolesGuard {}"),
+  "src/logger.middleware.ts": codeOf("export class LoggerMiddleware {}"),
+  "src/health.controller.ts": codeOf("import { Controller, Get } from \"@nestjs/common\"", "@Controller(\"health\")", "export class HealthController {", "  @Get()", "  check() {", "    return 1", "  }", "}"),
+  "src/app.module.ts": codeOf(
+    "import { MiddlewareConsumer, Module } from \"@nestjs/common\"",
+    "import { APP_GUARD, RouterModule } from \"@nestjs/core\"",
+    "import { UsersModule } from \"./users/users.module\"",
+    "import { HealthController } from \"./health.controller\"",
+    "import { LoggerMiddleware } from \"./logger.middleware\"",
+    "import { RolesGuard } from \"./roles.guard\"",
+    "@Module({",
+    "  imports: [UsersModule, RouterModule.register([{ path: \"admin\", module: UsersModule }])],",
+    "  controllers: [HealthController],",
+    "  providers: [{ provide: APP_GUARD, useClass: RolesGuard }],",
+    "})",
+    "export class AppModule {",
+    "  configure(consumer: MiddlewareConsumer) {",
+    "    consumer.apply(LoggerMiddleware).forRoutes(\"admin/*\")",
+    "  }",
+    "}",
+  ),
+  "src/main.ts": codeOf(
+    "import { NestFactory } from \"@nestjs/core\"",
+    "import { AppModule } from \"./app.module\"",
+    "const app = await NestFactory.create(AppModule)",
+    "app.setGlobalPrefix(\"api\", { exclude: [\"health\"] })",
+    "app.enableVersioning({ type: VersioningType.URI })",
+  ),
+}
+
+describe("the routes of a Nest app", () => {
+  it("puts the global prefix, the version and the path RouterModule gives a module before each route of its controllers, and no global prefix before a path it excludes", () => {
+    expect(groupKeysOf(NEST_FILES)).toStrictEqual([
+      "UsersController.findAll handler: /api/v1/admin/users",
+      "UsersController.save handler: /api/v2/admin/users/:id",
+      "HealthController.check handler: /health",
+    ])
+  })
+
+  it("puts the path RouterModule gives a module before the routes of its own controllers only, not of the modules it imports", () => {
+    const files = {
+      ...NEST_FILES,
+      "src/users/users.module.ts": NEST_FILES["src/users/users.module.ts"].replace("@Module({ controllers: [UsersController] })", "@Module({ imports: [TagsModule], controllers: [UsersController] })").replace("export class UsersModule", "import { TagsModule } from \"../tags.module\"\nexport class UsersModule"),
+      "src/tags.module.ts": codeOf(
+        "import { Controller, Get, Module } from \"@nestjs/common\"",
+        "@Controller(\"tags\")",
+        "export class TagsController {",
+        "  @Get()",
+        "  list() {",
+        "    return []",
+        "  }",
+        "}",
+        "@Module({ controllers: [TagsController] })",
+        "export class TagsModule {}",
+      ),
+    }
+
+    expect(groupKeysOf(files)).toContain("TagsController.list handler: /api/tags")
+  })
+
+  it("puts no version before a route when the app versions by header, and names the version in the heading of its handler instead", () => {
+    const files = { ...NEST_FILES, "src/main.ts": NEST_FILES["src/main.ts"].replace("VersioningType.URI", "VersioningType.HEADER") }
+
+    expect(groupKeysOf(files)).toContain("UsersController.findAll handler: /api/admin/users")
+    expect(headingsOf(files)).toStrictEqual(["UsersController.findAll: GET v1", "UsersController.save: POST v2", "HealthController.check: GET"])
+  })
+
+  it("names the default version in the heading of a handler with none of its own, when the app versions by media type", () => {
+    const files = {
+      ...NEST_FILES,
+      "src/main.ts": NEST_FILES["src/main.ts"].replace("{ type: VersioningType.URI }", "{ type: VersioningType.MEDIA_TYPE, key: \"v=\", defaultVersion: \"3\" }"),
+    }
+
+    expect(headingsOf(files)).toContain("HealthController.check: GET v3")
+  })
+
+  it("puts every version of a list in one segment, and none for a route that is VERSION_NEUTRAL, whatever its controller or the app's default says", () => {
+    const files = {
+      ...NEST_FILES,
+      "src/users/users.controller.ts": NEST_USERS.replace("@Version(\"2\")", "@Version([\"2\", \"3\"])").replace("  @Get()", "  @Version(VERSION_NEUTRAL)\n  @Get()"),
+      "src/main.ts": NEST_FILES["src/main.ts"].replace("{ type: VersioningType.URI }", "{ type: VersioningType.URI, defaultVersion: \"1\" }"),
+    }
+
+    expect(groupKeysOf(files)).toStrictEqual([
+      "UsersController.findAll handler: /api/admin/users",
+      "UsersController.save handler: /api/v2|v3/admin/users/:id",
+      "HealthController.check handler: /v1/health",
+    ])
+  })
+
+  it("leaves out of the global prefix only the handlers of the method an exclusion names", () => {
+    const files = {
+      "src/users.controller.ts": codeOf(
+        "import { Controller, Get, Post } from \"@nestjs/common\"",
+        "@Controller(\"users\")",
+        "export class UsersController {",
+        "  @Get()",
+        "  list() {",
+        "    return []",
+        "  }",
+        "  @Post()",
+        "  create() {",
+        "    return 1",
+        "  }",
+        "}",
+      ),
+      "src/main.ts": codeOf(
+        "import { NestFactory } from \"@nestjs/core\"",
+        "const app = await NestFactory.create(AppModule)",
+        "app.setGlobalPrefix(\"api\", { exclude: [{ path: \"users\", method: RequestMethod.GET }] })",
+      ),
+    }
+
+    expect(groupKeysOf(files)).toStrictEqual(["UsersController.list handler: /users", "UsersController.create handler: /api/users"])
+  })
+
+  it("covers the routes of a controller for its guard, every route for a guard the app provides, and the routes a consumer chooses by path below the global prefix", () => {
+    expect(routePathsOf(NEST_FILES)).toStrictEqual([
+      "0: /api/v1/admin/users, /api/v2/admin/users/:id",
+      "useClass: /api/v1/admin/users, /api/v2/admin/users/:id, /health",
+      "0: /api/v1/admin/users, /api/v2/admin/users/:id",
+    ])
+  })
+
+  it("leaves out a route a consumer excludes by method only when every handler of its path has that method", () => {
+    const files = {
+      ...NEST_FILES,
+      "src/app.module.ts": NEST_FILES["src/app.module.ts"].replace("forRoutes(\"admin/*\")", "exclude({ path: \"admin/users\", method: RequestMethod.GET }, { path: \"admin/users/:id\", method: RequestMethod.GET }).forRoutes(\"admin/*\")"),
+    }
+
+    expect(routePathsOf(files).slice(-1)).toStrictEqual(["0: /api/v2/admin/users/:id"])
+  })
+
+  it("covers only the routes with a handler of the method a consumer chooses a path for", () => {
+    const files = {
+      ...NEST_FILES,
+      "src/app.module.ts": NEST_FILES["src/app.module.ts"].replace("forRoutes(\"admin/*\")", "forRoutes({ path: \"admin/users\", method: RequestMethod.GET }, { path: \"admin/users/:id\", method: RequestMethod.GET })"),
+    }
+
+    expect(routePathsOf(files).slice(-1)).toStrictEqual(["0: /api/v1/admin/users"])
+  })
+
+  it("covers the routes of a controller a consumer names, and leaves out those it excludes", () => {
+    const files = { ...NEST_FILES, "src/app.module.ts": NEST_FILES["src/app.module.ts"].replace("forRoutes(\"admin/*\")", "exclude(\"health\").forRoutes(HealthController, UsersController)").replace("import { MiddlewareConsumer", "import { UsersController } from \"./users/users.controller\"\nimport { MiddlewareConsumer") }
+
+    expect(routePathsOf(files).slice(-1)).toStrictEqual(["0: /api/v1/admin/users, /api/v2/admin/users/:id"])
   })
 })

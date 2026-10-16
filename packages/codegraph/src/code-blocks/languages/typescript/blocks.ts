@@ -9,6 +9,7 @@ import type { CodeBlockCatalogue, CodeBlockType, Position, SourceRange } from "@
 import { listParameters, patternOf, readArgumentBlocks } from "./arguments"
 import { catalogueOfSlot, findCallbackSlot, typeOfCall, typeOfConstruction, typeOfMember, typeOfSlot, type CallbackSlot, type CallReader, type EffectPlace } from "./calls"
 import { isFirstAssignmentOf, memberAssignedIn } from "./class-members"
+import { withDecoratorsInside } from "./decorators"
 import type { MadeBlock } from "./made-by"
 import {
   attributeNameOf,
@@ -119,6 +120,8 @@ const CATCH_TYPE = "catch_clause"
 const CALLEE_NAME_PATTERN = /^[\w$]+(?:\??\.[\w$#]+)*$/
 const CALLABLE_BLOCK_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component", "method"])
 const COMPONENT_KINDS: ReadonlySet<CallableKind> = new Set<CallableKind>(["component", "hook"])
+const MIDDLEWARE_RUNS = "middleware"
+const PATH_SEPARATOR = "/"
 
 const START: WalkContext = {
   parentId: null,
@@ -281,15 +284,25 @@ const decoratorsOfClass = (declared: SyntaxNode): SyntaxNode[] => [
   ...declared.namedChildren.filter((child) => child.type === DECORATOR_TYPE),
 ]
 
-const firstNamed = (nodes: readonly SyntaxNode[], reader: BlockReader): NamedBlock | null =>
-  nodes.map((node) => reader.naming.blockAt(node)).find((found) => found !== null) ?? null
+const tellingFirst = (candidates: readonly NamedBlock[]): NamedBlock[] => [
+  ...candidates.filter(({ catalogue }) => catalogue.runs !== null && catalogue.runs !== MIDDLEWARE_RUNS),
+  ...candidates.filter(({ catalogue }) => catalogue.runs === null || catalogue.runs === MIDDLEWARE_RUNS),
+]
+
+const mostTellingOf = (nodes: readonly SyntaxNode[], reader: BlockReader): NamedBlock | null =>
+  tellingFirst(nodes.flatMap((node) => reader.naming.blockAt(node) ?? []))[0] ?? null
+
+const prefixOfClass = (declared: SyntaxNode, reader: BlockReader): string | null =>
+  decoratorsOfClass(declared).map((node) => reader.naming.blockAt(node)?.prefix ?? null).find((prefix) => prefix !== null) ?? null
+
+const rootedPath = (path: string | null): string | null => (path === null || path.startsWith(PATH_SEPARATOR) ? path : `${PATH_SEPARATOR}${path}`)
 
 const catalogueOfMember = (member: SyntaxNode, reader: BlockReader): CodeBlockCatalogue | null => {
   const declared = member.parent?.parent ?? null
   const ownName = member.childForFieldName("name")
-  const decorated = firstNamed(decoratorsBefore(member), reader)
-  const prefix = declared === null ? null : (firstNamed(decoratorsOfClass(declared), reader)?.prefix ?? null)
-  if (decorated !== null) return { ...decorated.catalogue, path: pathBelow(prefix, decorated.catalogue.path) }
+  const decorated = mostTellingOf(decoratorsBefore(member), reader)
+  const prefix = declared === null ? null : prefixOfClass(declared, reader)
+  if (decorated !== null) return { ...decorated.catalogue, path: rootedPath(pathBelow(prefix, decorated.catalogue.path)) }
   const extended = declared === null ? null : reader.naming.blockAt(declared)
   const run = extended === null || ownName === null ? null : memberNamed(extended, textOfName(ownName))
   return extended === null || run === null ? null : { ...extended.catalogue, runs: run.runs, method: run.method ?? null }
@@ -635,6 +648,5 @@ const COMPONENT_BODY: CallableKind = "component"
 const startWithin = (componentId: string | null): WalkContext =>
   componentId === null ? START : { ...START, parentId: componentId, takenIds: [componentId], callableKind: COMPONENT_BODY }
 
-export const readBlocks = (reader: BlockReader, componentId: string | null = null): ReadBlock[] => [
-  ...walkBlocks(reader.outline.tree.rootNode.walk(), reader, startWithin(componentId)),
-]
+export const readBlocks = (reader: BlockReader, componentId: string | null = null): ReadBlock[] =>
+  withDecoratorsInside([...walkBlocks(reader.outline.tree.rootNode.walk(), reader, startWithin(componentId))])

@@ -9,6 +9,7 @@ The card of a route path in a [Journey Flow Diagram](../journey-flow-diagram.md)
 | Flask | [libraries/flask.md](libraries/flask.md) | A decorator on a function, a call naming a view |
 | FastAPI | [libraries/fastapi.md](libraries/fastapi.md) | A decorator on a function |
 | Next.js | [libraries/nextjs.md](libraries/nextjs.md) | An export of a file, the path read from its folders |
+| NestJS | [libraries/nestjs.md](libraries/nestjs.md) | A decorator on a method of a controller |
 
 A route of a framework with no page here has no library file: the catalogue still recognises it with its path and its method, and each registration is a node of its own.
 
@@ -30,9 +31,11 @@ The head of the card names the route path, `/api/users`, with the path of the fi
 | Part | What it is | Where it is drawn |
 |---|---|---|
 | `holder` | A call that registers a handler for a path and a method | None: it is the card |
-| `handler` | The function a registration runs. A decorated function is its own registration and its handler. | A card inside the route card, under the heading of its method |
+| `handler` | The function a registration runs. A decorated function, or a decorated method of a controller, is its own registration and its handler. | A card inside the route card, under the heading of its method |
 | `middleware` | A function that runs before a handler, or before every route of a router | A card of its own, with a line to what it runs before |
-| `mount` | A call that hands a router or a plugin to another router, under a prefix | Nowhere: its prefix goes before the path of every route below it |
+| `mount` | A call that hands a router or a plugin to another router, under a prefix, or what puts a prefix before every route of an app (`isAppWide`), as `setGlobalPrefix` of NestJS | Nowhere: its prefix goes before the path of every route below it |
+| `versioning` | What puts the version of a route in its path or its heading, for every route of an app, as `enableVersioning` of NestJS, with the text before the version as `groupKey` and the versions of a route that names none as `versions`. A `groupKey` of `null` versions by something other than the path. | Nowhere: the segment goes after the prefix of the app and before every other, or the version after the method in the heading |
+| `controller` | A class whose decorated methods are handlers, as a controller of NestJS | Its own card, a class card whose type reads Controller, with a line to each route card of its methods |
 | `page` | A page of a framework whose middleware runs before visits too, with its path as `groupKey`, as a page of Next.js | Its own card, a component card: the part only gives middleware of the whole app a page to reach |
 | `server-action` | A function the browser calls with a request at an address the framework makes, with no path, as a server action of Next.js | A card of its own, with no route card around it |
 
@@ -44,7 +47,7 @@ The head of the card names the route path, `/api/users`, with the path of the fi
 POST · PUT · PATCH · GET · DELETE · HEAD · OPTIONS · ANY
 ```
 
-A method the path has no registration of has no heading. **A registration that names several methods is under one heading that names them all**, in the order they are written, `GET · POST`, after the headings of one method and before ANY. A registration that names no method, every method, or a method with no heading of its own is under ANY.
+A method the path has no registration of has no heading. **A registration that names several methods is under one heading that names them all**, in the order they are written, `GET · POST`, after the headings of one method and before ANY. A registration that names no method, every method, or a method with no heading of its own is under ANY. **A heading can name a version after the method**, `GET v2`, when the app versions by something other than the path: it sits after the heading of its method alone, versions in order.
 
 **Under each heading is the handler of that method, drawn as a function card inside the route card.** The handler is the function the registration runs:
 
@@ -53,13 +56,14 @@ A method the path has no registration of has no heading. **A registration that n
 | Written in place, in the registration | A function card named after its signature, `(req, res) => …` |
 | Named by the registration, from its own file or another | Its function card, which keeps the path of its own file |
 | A decorated function, or a function a route file exports | Its function card: the function is the registration too |
+| A decorated method of a controller | Its method card: the method is the registration too |
 | A method of a view class the registration names | The card of each method named after a method of HTTP, under the heading of that method |
 
-**A named handler is drawn inside the route card**, wherever it is declared, and has no card of its own on the board. A route comes first, as [component and route come first](../journey-flow-diagram.md#component-and-route-come-first) says, so **a view class has no card of its own** when every method it has is drawn in a route card.
+**A named handler is drawn inside the route card**, wherever it is declared, and has no card of its own on the board. A route comes first, as [component and route come first](../journey-flow-diagram.md#component-and-route-come-first) says, so **a view class has no card of its own** when every method it has is drawn in a route card, a constructor that only takes its parameters aside. A view class with a method that is no route keeps its class card with that method, and has no line to its routes. **A class with a `controller` card always keeps its card**, typed Controller, holding the methods that are no route and with a line to each route card of the others, as a [NestJS controller](libraries/nestjs.md#controllers) is.
 
 ## The path of a route card
 
-**The path of a route card is the path the route answers on.** The prefix of the router a route is registered on goes before its path, and so does the prefix of every mount above that router, outermost first, in any file of the group. `/api` mounted above `/v1` above `/users` is `/api/v1/users`. How the mounts are found is in [The routes below a mount](../codegraph/code-blocks.md#the-routes-below-a-mount).
+**The path of a route card is the path the route answers on.** The prefix of the router a route is registered on goes before its path, and so does the prefix of every mount above that router, outermost first, in any file of the group. `/api` mounted above `/v1` above `/users` is `/api/v1/users`. The router of a decorated method is its class. A `versioning` part of the app puts the version of a route before that, or after the method in its heading, and a `mount` of the whole app its prefix before everything, unless the mount excludes the path, and the method of the handler when the exclusion names one, in `excludedRoutePatterns`. How the mounts are found is in [The routes below a mount](../codegraph/code-blocks.md#the-routes-below-a-mount).
 
 **A function that only registers routes has no card of its own**, as a plugin of Fastify does: its routes are route cards, and the function adds nothing to them.
 
@@ -69,11 +73,11 @@ A method the path has no registration of has no heading. **A registration that n
 
 | Middleware | Its line |
 |---|---|
-| Of one registration, named in it before its handler | From the middleware to the head of each handler card it runs before |
-| Of a whole app or router | From the middleware to each route card it reaches, one line per route card, not one per handler |
+| Of one registration, named in it before its handler, or in a decorator of the handler | From the middleware to the head of each handler card it runs before |
+| Of a whole app or router, a controller among them | From the middleware to each route card it reaches, one line per route card, not one per handler |
 | Of a whole app, by the paths it runs before, as Next.js middleware | From the middleware to each route card and each `page` whose path its patterns reach |
 
-The routes middleware of a whole router reaches are the routes of that router and of every router mounted below it, and only those below its own path when it is mounted at one. The block of such middleware lists them in `card.routePaths`.
+The routes middleware of a whole router reaches are the routes of that router and of every router mounted below it, and only those below its own path when it is mounted at one. The block of such middleware lists them in `card.routePaths`, and leaves out a path its `excludedRoutePatterns` match, one that names a method only when every handler of the path has it. Middleware of a whole app that names no router reaches every route of its library. **What a decorator hands as middleware is no row** of the card it decorates: its line stands for it.
 
 ```mermaid
 flowchart LR
@@ -116,4 +120,4 @@ A route library is added in the folders of its language, one file in each, and n
 | The band | `METHOD_HEADINGS` in `packages/codegraph/src/journey/cards/route.ts` | The one order of the method headings every route library shares |
 | Its page | `docs/vocabulary/journey-flow-diagram/libraries/<library>.md`, and a row in the table at the top of this page | How the library registers routes, names handlers, mounts routers and runs middleware, an example of its code and a drawing of its card |
 
-**Start from the page of the closest library.** A library that registers with a call on a router, as Express and Fastify do, writes a `holder`, a `handler` slot and `middleware` slots. A library that registers with a decorator, as Flask and FastAPI do, makes the decorated function the handler, and the slots of the decorator its middleware. A library that registers with the path of a file, as Next.js does, has file patterns whose exports `runs: "route"`, and `readExportCards: readExportRouteCards` makes each function they name a `handler` of the path its folders give. What a pattern cannot say goes in a `readCards` of the library's own, built on `readRouteCards`, as Flask's marks the hooks that run before every route of the app.
+**Start from the page of the closest library.** A library that registers with a call on a router, as Express and Fastify do, writes a `holder`, a `handler` slot and `middleware` slots. A library that registers with a decorator, as Flask and FastAPI do, makes the decorated function the handler, and the slots of the decorator its middleware. A library that registers with a decorator on a method of a class, as NestJS does, makes the method the handler and the class its router, and writes its own `readCards`, because the path of the class goes before the path of the decorator. A library that registers with the path of a file, as Next.js does, has file patterns whose exports `runs: "route"`, and `readExportCards: readExportRouteCards` makes each function they name a `handler` of the path its folders give. What a pattern cannot say goes in a `readCards` of the library's own, built on `readRouteCards`, as Flask's marks the hooks that run before every route of the app.

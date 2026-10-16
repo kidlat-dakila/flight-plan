@@ -59,9 +59,20 @@ const configNodeOf = ({ exports, nodeAt }: ExportCardReading) => {
   return config === undefined || nodeAt === null ? null : nodeAt(config.declarationRange)
 }
 
+const ANY_METHOD = null
+
 const middlewareSeedOf = (pathPatterns: readonly string[]) => ({ blockId }: BlockNaming): CardSeed => ({
   blockId,
-  card: { library: NEXT, kind: "route", part: "middleware", heading: null, groupKey: null, ownerId: null, isAppWide: true, pathPatterns },
+  card: {
+    library: NEXT,
+    kind: "route",
+    part: "middleware",
+    heading: null,
+    groupKey: null,
+    ownerId: null,
+    isAppWide: true,
+    routePatterns: pathPatterns.map((pathPattern) => ({ pathPattern, method: ANY_METHOD })),
+  },
 })
 
 const readNextExportCards = (reading: ExportCardReading): CardSeed[] => {

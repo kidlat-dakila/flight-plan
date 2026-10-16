@@ -1,6 +1,6 @@
 import type { CodeBlock, CodeBlockType } from "@flightplan/configurations"
 import { isCardNodeBlock, isCardNotNodeBlock } from "./cards"
-import { classOfDeclaredProperty, hasMethodsOfItsOwn } from "./cards/class"
+import { classOfDeclaredProperty, hasMethodsOfItsOwn, isController } from "./cards/class"
 
 export interface NodeStep {
   readonly from: CodeBlock
@@ -112,7 +112,7 @@ const makesClassWithMethods = (block: CodeBlock): boolean =>
 
 const isPlainValue = (block: CodeBlock): boolean => block.type === ROOT_VARIABLE && block.isPlain === true && !makesClassWithMethods(block)
 
-const isPlainRoot = (block: CodeBlock): boolean => block.parentBlock === null && (isPlainValue(block) || (block.type === CLASS && !hasMethodsOfItsOwn(block)))
+const isPlainRoot = (block: CodeBlock): boolean => block.parentBlock === null && (isPlainValue(block) || (block.type === CLASS && !hasMethodsOfItsOwn(block) && !isController(block)))
 
 const isReadInNode = (reader: CodeBlock, value: CodeBlock): boolean => {
   const readerRoot = rootOf(reader)

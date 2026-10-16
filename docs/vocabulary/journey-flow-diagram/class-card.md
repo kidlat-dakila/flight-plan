@@ -4,7 +4,7 @@ The card of a node of the type `class` in a [Journey Flow Diagram](../journey-fl
 
 ## What is a class card
 
-**A class with a method is a class card.** A class with no method holds only values, so it is [plain](../journey-flow-diagram.md#plain-code) and has no card: it is a row of every card that reads it. A class component is a [component card](component-card.md), as [component and route come first](../journey-flow-diagram.md#component-and-route-come-first) says.
+**A class with a method is a class card.** A class with no method holds only values, so it is [plain](../journey-flow-diagram.md#plain-code) and has no card: it is a row of every card that reads it. A class component is a [component card](component-card.md), as [component and route come first](../journey-flow-diagram.md#component-and-route-come-first) says. **A method drawn in another card is no method of its class card**: a method of a view class or a controller a route registers is a card inside its [route card](route-card.md#methods-and-handlers), and a class whose every method is drawn elsewhere has no card, a constructor that only takes its parameters aside. A [NestJS controller](libraries/nestjs.md#controllers) keeps its card all the same, typed Controller, with a line to each route card of its methods; a [NestJS resolver](libraries/nestjs.md#graphql-resolvers) is a router card.
 
 | Code | Card |
 |---|---|
@@ -72,9 +72,10 @@ export class CartStore {
 | `this.items.push(item)` | None |
 | `self.items.append(item)` | None |
 | `this.save()` | None. The line to the card of `save` leaves the head. |
+| `this.usersService.findAll()`, where the constructor takes `private readonly usersService: UsersService` | None. The line to the card of `findAll` of `UsersService` leaves the head. |
 | `await api.post("/orders", this.items)` | `api.post`. It calls out, and only reads `this`. |
 
-**A property declared in the constructor is a property of the class.** `self.items = []` in `__init__` and `this.items = []` in a TypeScript `constructor` are rows under Properties of the class card, not rows of the constructor. A constructor that holds nothing else on the way to a change, and leads to no other card, is not drawn.
+**A property declared in the constructor is a property of the class.** `self.items = []` in `__init__`, `this.items = []` in a TypeScript `constructor`, and a parameter of a TypeScript `constructor` marked `private`, `protected`, `public` or `readonly`, `constructor(private readonly users: UsersService)`, are rows under Properties of the class card, not rows of the constructor. A parameter with no mark stays an argument of the constructor. A constructor that holds nothing else on the way to a change, and leads to no other card, is not drawn.
 
 ```python
 class Store:
@@ -84,6 +85,8 @@ class Store:
 ```
 
 A step into the class from another card ends at the card of the method it reaches, or at the head of the class card when it reaches no method.
+
+**A member typed as a class leads to the methods of that class.** A parameter of the constructor marked `private`, `protected`, `public` or `readonly` is a member of the class, and a row under Properties, as a property is, and a call of a method on a member typed as a class of the repository, `this.usersService.findAll()`, reaches `findAll` of that class, or of the class it extends. This is how a NestJS controller reaches the services it is injected with. A constructor that only takes such parameters, and leads to no other card, is not drawn.
 
 ## A class that extends another
 

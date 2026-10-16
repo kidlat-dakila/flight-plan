@@ -2,6 +2,7 @@ import { compareRanges } from "@/code-blocks/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
 import type { BlockCard, CardKind, CardPart, CodeBlock, JourneyNode, JourneyNodeEdge } from "@flightplan/configurations"
+import { isController, isMethodOfClass } from "./class"
 import { filePathOfNode, NOTHING_LEFT_OUT, rootBlockOfNode } from "./nodes"
 import { cardOfKind, listPartParents, nodeIdByBlockIdOf, toEdge } from "./parts"
 import type { CardContext, CardRules, NodeGroup, ParentIdById } from "./types"
@@ -14,6 +15,8 @@ const PAGE: CardPart = "page"
 const ROUTE_TYPE = "route"
 const GROUP_ID_MARK = "#route@"
 const NAMING_USES: ReadonlySet<string> = new Set(["value", "read"])
+const CALLING = "call"
+const CLASS: CodeBlock["type"] = "class"
 const ARGUMENT_TYPES: ReadonlySet<CodeBlock["type"]> = new Set<CodeBlock["type"]>(["root-argument-value", "variable"])
 const PLUGIN_TYPES: ReadonlySet<CodeBlock["type"]> = new Set<CodeBlock["type"]>(["function"])
 
@@ -34,7 +37,8 @@ const isNamingSlot = (block: CodeBlock): boolean => (isSlot(block) || isRouterWi
 
 const isWrittenSlot = (block: CodeBlock): boolean => (isSlot(block) || isRouterWideSlot(block)) && block.childrenBlocks.length > 0
 
-const isDecoratedHandler = (block: CodeBlock): boolean => routeCardOf(block)?.part === HANDLER && block.parentBlock === null && block.cardOwner === null
+const isDecoratedHandler = (block: CodeBlock): boolean =>
+  routeCardOf(block)?.part === HANDLER && (block.parentBlock === null || isMethodOfClass(block)) && (block.cardOwner ?? null) === null
 
 const groupKeyOf = (node: JourneyNode): string | null => {
   const root = rootBlockOfNode(node)
@@ -76,8 +80,11 @@ const groupRouteNodes = (nodes: readonly JourneyNode[]): NodeGroup[] => {
 
 const isRouteGroup = (node: JourneyNode): boolean => node.type === ROUTE_TYPE && routeCardOf(rootBlockOfNode(node)) !== null
 
+const groupIdByKeyOf = (nodes: readonly JourneyNode[]): ReadonlyMap<string, string> =>
+  new Map(nodes.filter(isRouteGroup).map((node) => [routeCardOf(rootBlockOfNode(node))?.groupKey ?? "", node.id] as const))
+
 const listDecoratedParents = ({ nodes }: CardContext): ParentIdById => {
-  const groupIdByKey = new Map(nodes.filter(isRouteGroup).map((node) => [routeCardOf(rootBlockOfNode(node))?.groupKey ?? "", node.id] as const))
+  const groupIdByKey = groupIdByKeyOf(nodes)
   return new Map(nodes.flatMap((node) => {
     const root = rootBlockOfNode(node)
     const groupId = isRouteGroup(node) || !isDecoratedHandler(root) ? undefined : groupIdByKey.get(routeCardOf(root)?.groupKey ?? "")
@@ -85,12 +92,20 @@ const listDecoratedParents = ({ nodes }: CardContext): ParentIdById => {
   }))
 }
 
-const listRouteParents = (context: CardContext): ParentIdById =>
-  new Map([...listPartParents(ROUTE_KINDS)(context), ...listDecoratedParents(context)])
+const nodeIdsOfDecoratedHandlers = ({ nodes }: CardContext): ReadonlySet<string> =>
+  new Set(nodes.filter((node) => isDecoratedHandler(rootBlockOfNode(node))).map((node) => node.id))
+
+const listRouteParents = (context: CardContext): ParentIdById => {
+  const decoratedIds = nodeIdsOfDecoratedHandlers(context)
+  const partParents = [...listPartParents(ROUTE_KINDS)(context)].filter(([nodeId]) => !decoratedIds.has(nodeId))
+  return new Map([...partParents, ...listDecoratedParents(context)])
+}
+
+const isNamingOrMaking = (use: string, target: CodeBlock): boolean => NAMING_USES.has(use) || (use === CALLING && target.type === CLASS)
 
 const namedTargetsOf = (slot: CodeBlock): CodeBlock[] =>
   slot.outerSymbols.flatMap((symbol) =>
-    NAMING_USES.has(symbol.use) && (symbol.type === "internal-code-block" || symbol.type === "external-block") ? [symbol.codeBlockReference] : [])
+    (symbol.type === "internal-code-block" || symbol.type === "external-block") && isNamingOrMaking(symbol.use, symbol.codeBlockReference) ? [symbol.codeBlockReference] : [])
 
 const slotNodeIdsOf = (slot: CodeBlock, nodeIdByRootId: ReadonlyMap<string, string>): string[] =>
   [slot, ...namedTargetsOf(slot)].flatMap((block) => {
@@ -151,10 +166,46 @@ const listRouterWideEdges = ({ nodes }: CardContext): JourneyNodeEdge[] => {
       (reachedIdsByPath.get(path) ?? []).filter((target) => target.id !== node.id).map((target) => toEdge(node.id, target.id))))
 }
 
-const listRouteAddedEdges = (context: CardContext): JourneyNodeEdge[] => [...listMiddlewareEdges(context), ...listRouterWideEdges(context)]
+const listControllerEdges = ({ nodes }: CardContext): JourneyNodeEdge[] => {
+  const nodeIdByRootId = new Map(nodes.map((node) => [rootBlockOfNode(node).id, node.id] as const))
+  const groupIdByKey = groupIdByKeyOf(nodes)
+  return nodes.flatMap((node) => {
+    const root = rootBlockOfNode(node)
+    const controller = isRouteGroup(node) || !isDecoratedHandler(root) ? null : root.parentBlock
+    const controllerId = controller !== null && isController(controller) ? nodeIdByRootId.get(controller.id) : undefined
+    const groupId = groupIdByKey.get(routeCardOf(root)?.groupKey ?? "")
+    return controllerId === undefined || groupId === undefined ? [] : [toEdge(controllerId, groupId)]
+  })
+}
 
-const listGroupToMiddlewareIds = (context: CardContext): ReadonlySet<string> => {
-  const ids = listMiddlewareSteps(context).map(({ groupId, middlewareId }) => toEdge(groupId, middlewareId).id)
+const listRouteAddedEdges = (context: CardContext): JourneyNodeEdge[] => [...listMiddlewareEdges(context), ...listRouterWideEdges(context), ...listControllerEdges(context)]
+
+const listControllerToHandlerIds = ({ nodes }: CardContext): string[] => {
+  const nodeIdByRootId = new Map(nodes.map((node) => [rootBlockOfNode(node).id, node.id] as const))
+  return nodes.flatMap((node) => {
+    const root = rootBlockOfNode(node)
+    const controllerId = isDecoratedHandler(root) && root.parentBlock !== null ? nodeIdByRootId.get(root.parentBlock.id) : undefined
+    return controllerId === undefined ? [] : [toEdge(controllerId, node.id).id]
+  })
+}
+
+const listWithin = (block: CodeBlock): CodeBlock[] => block.childrenBlocks.flatMap((child) => [child, ...listWithin(child)])
+
+const listControllerToMiddlewareIds = ({ nodes }: CardContext): string[] => {
+  const nodeIdByRootId = new Map(nodes.map((node) => [rootBlockOfNode(node).id, node.id] as const))
+  return nodes.filter((node) => isController(rootBlockOfNode(node))).flatMap((node) =>
+    listWithin(rootBlockOfNode(node))
+      .filter(isRouterWideMiddleware)
+      .flatMap((slot) => slotNodeIdsOf(slot, nodeIdByRootId))
+      .map((middlewareId) => toEdge(node.id, middlewareId).id))
+}
+
+const listRouteLeftOutEdgeIds = (context: CardContext): ReadonlySet<string> => {
+  const ids = [
+    ...listMiddlewareSteps(context).map(({ groupId, middlewareId }) => toEdge(groupId, middlewareId).id),
+    ...listControllerToHandlerIds(context),
+    ...listControllerToMiddlewareIds(context),
+  ]
   return ids.length === 0 ? NOTHING_LEFT_OUT : new Set(ids)
 }
 
@@ -184,5 +235,5 @@ export const routeCard: CardRules = {
   listLeftOutNodeIds: listPluginNodeIds,
   groupNodes: groupRouteNodes,
   listAddedEdges: listRouteAddedEdges,
-  listLeftOutEdgeIds: listGroupToMiddlewareIds,
+  listLeftOutEdgeIds: listRouteLeftOutEdgeIds,
 }

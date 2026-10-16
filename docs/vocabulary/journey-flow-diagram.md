@@ -28,7 +28,7 @@ On the page each node is a card. This entry holds the rules every card shares; e
 | [Function card](journey-flow-diagram/function-card.md) | A function, a hook, a method, an event, an effect, a callback, the handler of a route, a procedure | As written, no headings. Under the headings of a component card when it returns a function. | The function it returns |
 | [Class card](journey-flow-diagram/class-card.md) | A class with a method | Under Properties | Its methods, under Methods, then the classes that extend it |
 | [Route card](journey-flow-diagram/route-card.md) | A route path | None | The handler of each method, under a heading per method |
-| [tRPC router card](journey-flow-diagram/libraries/trpc.md) | A router of procedures | None | Each procedure, under a heading per procedure type |
+| [tRPC router card](journey-flow-diagram/libraries/trpc.md) | A router of procedures, and a [GraphQL resolver of NestJS](journey-flow-diagram/libraries/nestjs.md#graphql-resolvers) | None | Each procedure, under a heading per procedure type |
 | [State card](journey-flow-diagram/state.md) | A store of Zustand, Pinia or Redux, and an API of RTK Query | Under State, and under Getters, Actions and Selectors for Zustand and Pinia | For Redux, its reducers, thunks, extra reducers, listeners and selectors, and the endpoints of an API |
 
 ## The shape
@@ -341,7 +341,7 @@ An agent reads and writes one node at a time. A node that carried its children w
 | What is drawn | From |
 |---|---|
 | The description of the diagram, above the board | The `description` of the diagram: its caption, in five sentences at most. A diagram nobody has described yet says "Not written yet." there. The board is named after the code of its changed nodes for a screen reader, and shows no title. |
-| A node, headed by the name of its code and the path of its file, with its type and its label below | A `JourneyNode`. The path is cut to its last two folders and its file, such as `routes/orders/index.tsx`. A route card is headed by its route path, and a router card reads Router for its type. A node with no label has its header and its type alone. |
+| A node, headed by the name of its code and the path of its file, with its type and its label below | A `JourneyNode`. The path is cut to its last two folders and its file, such as `routes/orders/index.tsx`. A route card is headed by its route path, a router card reads Router for its type, a NestJS resolver Resolver, and a NestJS controller Controller. A node with no label has its header and its type alone. |
 | A node as added or modified | Its `diffCodeBlocks`. A node whose every line is new is added. |
 | A node inside another | Its place in `children`, drawn inside the card of its parent, as [Children](#children) says |
 | The code of a pressed row | Pressing a row opens the panel of its node with the code focused on the lines of the block of that row: every other line is dimmed, and the first focused line is scrolled into view. Pressing the head of the node shows its code with no line dimmed. |
@@ -383,7 +383,7 @@ A block inside a listed block is not listed again, unless it is an argument, a s
 | [Function card](journey-flow-diagram/function-card.md#rows) | None: its arguments first, then every other row in the order it is written, its trigger labels among them. The headings of a component card when it [returns a function](journey-flow-diagram/function-card.md#returning-a-function). |
 | [Class card](journey-flow-diagram/class-card.md#rows-and-methods) | Properties, Methods |
 | [Route card](journey-flow-diagram/route-card.md#methods-and-handlers) | POST, PUT, PATCH, GET, DELETE, HEAD, OPTIONS, ANY |
-| [tRPC router card](journey-flow-diagram/libraries/trpc.md#procedures) | QUERY, MUTATION, SUBSCRIPTION |
+| [tRPC router card](journey-flow-diagram/libraries/trpc.md#procedures) | QUERY, MUTATION, SUBSCRIPTION, and FIELD for a [NestJS resolver](journey-flow-diagram/libraries/nestjs.md#graphql-resolvers), then Methods for a method of a resolver with none of them |
 | [State card](journey-flow-diagram/state.md#the-shape-of-a-card) | STATE, then for Zustand ACTIONS, SELECTORS; for Pinia GETTERS, ACTIONS; for a Redux slice REDUCERS, THUNKS, EXTRA REDUCERS, LISTENERS, SELECTORS; for `createReducer` CASES. An RTK Query API has QUERY, MUTATION. |
 
 ### Steps

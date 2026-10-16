@@ -115,7 +115,7 @@ describe("the cards Next.js writes", () => {
 
   it("makes the middleware of the app middleware of every path its matcher reaches, and of every path with no matcher", () => {
     const pathPatternsOf = (files: Readonly<Record<string, string>>): readonly string[] | undefined =>
-      groupOf(files).codeBlocks.find((block) => block.card?.part === "middleware")?.card?.pathPatterns
+      groupOf(files).codeBlocks.find((block) => block.card?.part === "middleware")?.card?.routePatterns?.map(({ pathPattern }) => pathPattern)
 
     expect(cardsOf({ "package.json": NEXT_MANIFEST, "middleware.ts": codeOf("export function middleware(request) {", "  return check(request)", "}") }))
       .toStrictEqual(["middleware: Next.js route middleware"])
@@ -132,6 +132,192 @@ describe("the cards Next.js writes", () => {
 
   it("writes no route card without a manifest that lists Next.js", () => {
     expect(cardsOf({ "app/api/users/route.ts": codeOf("export async function GET() {", "  return Response.json([])", "}") })).toStrictEqual([])
+  })
+})
+
+const NEST_CONTROLLER = codeOf(
+  "import { Body, Controller, Get, Post, UseGuards, UseInterceptors, Version } from \"@nestjs/common\"",
+  "@UseGuards(AuthGuard)",
+  "@Controller({ path: \"users\", version: \"1\" })",
+  "export class UsersController {",
+  "  @UseInterceptors(LoggingInterceptor, new CacheInterceptor())",
+  "  @Get()",
+  "  findAll() {",
+  "    return []",
+  "  }",
+  "  @Version(\"2\")",
+  "  @Post(\":id\")",
+  "  save(@Body() body) {",
+  "    return body",
+  "  }",
+  "}",
+)
+
+describe("the cards Nest writes", () => {
+  it("makes each decorated method a handler of the path its controller and its decorator give, and what its decorators hand middleware of it", () => {
+    expect(cardsOf({ "src/users.controller.ts": NEST_CONTROLLER })).toStrictEqual([
+      "0: Nest route middleware",
+      "UsersController: Nest route controller",
+      "effect: Nest route middleware under GET at /users in UsersController.findAll",
+      "0: Nest route middleware under GET at /users in UsersController.findAll",
+      "UsersController.findAll: Nest route handler under GET at /users",
+      "UsersController.save: Nest route handler under POST at /users/:id",
+    ])
+  })
+
+  it("gives a handler the version of its own decorator, or else of its controller", () => {
+    const handlers = groupOf({ "src/users.controller.ts": NEST_CONTROLLER }).codeBlocks.filter((block) => block.card?.part === "handler")
+
+    expect(handlers.map((block) => [block.name, block.card?.versions])).toStrictEqual([["UsersController.findAll", ["1"]], ["UsersController.save", ["2"]]])
+  })
+
+  it("gives a handler every version of a list, and no version for VERSION_NEUTRAL, written on the method or on its controller", () => {
+    const controller = NEST_CONTROLLER
+      .replace("@Controller({ path: \"users\", version: \"1\" })", "@Controller({ path: \"users\", version: VERSION_NEUTRAL })")
+      .replace("@Version(\"2\")", "@Version([\"2\", \"3\"])")
+    const handlers = groupOf({ "src/users.controller.ts": controller }).codeBlocks.filter((block) => block.card?.part === "handler")
+
+    expect(handlers.map((block) => [block.name, block.card?.versions])).toStrictEqual([["UsersController.findAll", []], ["UsersController.save", ["2", "3"]]])
+  })
+
+  it("makes a version neutral in a list leave the list with the versions it names", () => {
+    const controller = NEST_CONTROLLER.replace("@Version(\"2\")", "@Version([VERSION_NEUTRAL, \"2\"])")
+    const save = groupOf({ "src/users.controller.ts": controller }).codeBlocks.find((block) => block.name === "UsersController.save")
+
+    expect(save?.card?.versions).toStrictEqual(["2"])
+  })
+
+  it("makes the app's prefix and URI versioning parts of the whole app, and its global enhancers middleware of it", () => {
+    expect(cardsOf({
+      "src/main.ts": codeOf(
+        "import { NestFactory } from \"@nestjs/core\"",
+        "const app = await NestFactory.create(AppModule)",
+        "app.setGlobalPrefix(\"api\", { exclude: [\"health\", { path: \"status\", method: RequestMethod.GET }] })",
+        "app.enableVersioning({ type: VersioningType.URI, defaultVersion: \"1\" })",
+        "app.useGlobalGuards(new RolesGuard())",
+      ),
+    })).toStrictEqual([
+      "config: Nest route mount at api",
+      "config: Nest route versioning at v",
+      "auth: Nest route middleware",
+    ])
+  })
+
+  it("reads the method of an exclusion written as a path and a method, and none for RequestMethod.ALL", () => {
+    const [mount] = groupOf({
+      "src/main.ts": codeOf(
+        "import { NestFactory } from \"@nestjs/core\"",
+        "const app = await NestFactory.create(AppModule)",
+        "app.setGlobalPrefix(\"api\", { exclude: [\"health\", { path: \"status\", method: RequestMethod.GET }, { path: \"ping\", method: RequestMethod.ALL }] })",
+      ),
+    }).codeBlocks.filter((block) => block.card?.part === "mount")
+
+    expect(mount.card?.excludedRoutePatterns).toStrictEqual([
+      { pathPattern: "^/health/?$", method: null },
+      { pathPattern: "^/status/?$", method: "GET" },
+      { pathPattern: "^/ping/?$", method: null },
+    ])
+  })
+
+  it("makes versioning by a header a part with no path prefix, holding the default versions", () => {
+    const [versioning] = groupOf({
+      "src/main.ts": codeOf(
+        "import { NestFactory } from \"@nestjs/core\"",
+        "const app = await NestFactory.create(AppModule)",
+        "app.enableVersioning({ type: VersioningType.HEADER, header: \"X-API-Version\", defaultVersion: [\"1\", \"2\"] })",
+      ),
+    }).codeBlocks.filter((block) => block.card?.part === "versioning")
+
+    expect([versioning.card?.groupKey, versioning.card?.versions]).toStrictEqual([null, ["1", "2"]])
+  })
+
+  it("makes the modules RouterModule names mounts under their whole path, the controllers of a module mounts of it, and an enhancer it provides middleware of every path", () => {
+    expect(cardsOf({
+      "src/app.module.ts": codeOf(
+        "import { Module } from \"@nestjs/common\"",
+        "import { RouterModule } from \"@nestjs/core\"",
+        "@Module({",
+        "  imports: [RouterModule.register([{ path: \"admin\", module: AdminModule, children: [{ path: \"metrics\", module: MetricsModule }] }])],",
+        "  controllers: [HealthController],",
+        "  providers: [{ provide: APP_GUARD, useClass: RolesGuard }],",
+        "})",
+        "export class AppModule {}",
+      ),
+    })).toStrictEqual([
+      "module: Nest route mount at /admin",
+      "module: Nest route mount at /admin/metrics",
+      "controllers: Nest route mount",
+      "useClass: Nest route middleware",
+    ])
+  })
+
+  it("makes what a consumer applies middleware of the routes it is chosen for", () => {
+    const [middleware] = groupOf({
+      "src/app.module.ts": codeOf(
+        "import { MiddlewareConsumer, Module } from \"@nestjs/common\"",
+        "@Module({})",
+        "export class AppModule {",
+        "  configure(consumer: MiddlewareConsumer) {",
+        "    consumer.apply(LoggerMiddleware).exclude(\"cats/health\").forRoutes(CatsController, \"dogs/*\")",
+        "  }",
+        "}",
+      ),
+    }).codeBlocks.filter((block) => block.card?.part === "middleware")
+
+    expect([middleware.name, middleware.card?.routePatterns, middleware.card?.excludedRoutePatterns]).toStrictEqual([
+      "0",
+      [{ pathPattern: "^/dogs\\/.*/?$", method: null }],
+      [{ pathPattern: "^/cats\\/health/?$", method: null }],
+    ])
+  })
+
+  it("reads the method of a route a consumer chooses by path and method", () => {
+    const [middleware] = groupOf({
+      "src/app.module.ts": codeOf(
+        "import { MiddlewareConsumer, Module } from \"@nestjs/common\"",
+        "@Module({})",
+        "export class AppModule {",
+        "  configure(consumer: MiddlewareConsumer) {",
+        "    consumer.apply(LoggerMiddleware).forRoutes({ path: \"cats\", method: RequestMethod.GET })",
+        "  }",
+        "}",
+      ),
+    }).codeBlocks.filter((block) => block.card?.part === "middleware")
+
+    expect(middleware.card?.routePatterns).toStrictEqual([{ pathPattern: "^/cats/?$", method: "GET" }])
+  })
+
+  it("makes a GraphQL resolver a router, each method a query, a mutation, a subscription or a field resolves under its heading", () => {
+    expect(cardsOf({
+      "src/users.resolver.ts": codeOf(
+        "import { Args, Mutation, Query, ResolveField, Resolver, Subscription } from \"@nestjs/graphql\"",
+        "@Resolver(() => User)",
+        "export class UsersResolver {",
+        "  @Query(() => [User])",
+        "  users() {",
+        "    return []",
+        "  }",
+        "  @Mutation(() => User)",
+        "  addUser(@Args(\"name\") name: string) {",
+        "    return { name }",
+        "  }",
+        "  @Subscription(() => User)",
+        "  userAdded() {",
+        "    return watch()",
+        "  }",
+        "  @ResolveField()",
+        "  posts() {",
+        "    return []",
+        "  }",
+        "}",
+      ),
+    })).toStrictEqual([
+      "UsersResolver: Nest router holder",
+      "UsersResolver.users: Nest router procedure under QUERY",
+      "UsersResolver.addUser: Nest router procedure under MUTATION",
+      "UsersResolver.userAdded: Nest router procedure under SUBSCRIPTION",
+      "UsersResolver.posts: Nest router procedure under FIELD",
+    ])
   })
 })
 

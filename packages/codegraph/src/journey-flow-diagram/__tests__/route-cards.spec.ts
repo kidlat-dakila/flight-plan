@@ -339,3 +339,130 @@ describe("the plugins and hooks of Fastify", () => {
     expect(edgeIds).toContain("server/hooks.ts#function@4:1 -> server/app.ts#route@/v1/users")
   })
 })
+
+const NEST_FILES = {
+  "src/users/users.controller.ts": codeOf(
+    "import { Controller, Get, Post, UseGuards, UseInterceptors } from \"@nestjs/common\"",
+    "import { UsersService } from \"./users.service\"",
+    "import { AuthGuard } from \"../auth.guard\"",
+    "import { LoggingInterceptor } from \"../logging.interceptor\"",
+    "@UseGuards(AuthGuard)",
+    "@Controller(\"users\")",
+    "export class UsersController {",
+    "  constructor(private readonly usersService: UsersService) {}",
+    "  @UseInterceptors(LoggingInterceptor)",
+    "  @Get()",
+    "  findAll() {",
+    "    return this.usersService.findAll()",
+    "  }",
+    "  @Post()",
+    "  create() {",
+    "    return this.usersService.create()",
+    "  }",
+    "  @Get(\":id\")",
+    "  findOne() {",
+    "    return this.usersService.findAll()",
+    "  }",
+    "}",
+  ),
+  "src/users/users.service.ts": codeOf(
+    "export class UsersService {",
+    "  findAll() {",
+    "    return db.user.findMany()",
+    "  }",
+    "  create() {",
+    "    return db.user.create()",
+    "  }",
+    "}",
+  ),
+  "src/auth.guard.ts": codeOf("export class AuthGuard {", "  canActivate(context) {", "    return check(context)", "  }", "}"),
+  "src/logging.interceptor.ts": codeOf("export class LoggingInterceptor {", "  intercept(context, next) {", "    return next.handle()", "  }", "}"),
+}
+
+const NEST_CHANGES = {
+  "src/users/users.service.ts": [rangeAt(3, 5, 3, 30), rangeAt(6, 5, 6, 28)],
+  "src/auth.guard.ts": [rangeAt(3, 5, 3, 26)],
+  "src/logging.interceptor.ts": [rangeAt(3, 5, 3, 25)],
+}
+
+describe("the card of a route path of a Nest controller", () => {
+  it("makes a route node of each path its methods register, with the methods inside it, and a node of the controller beside them with a line to each", () => {
+    const diagram = presentDiagramOf(NEST_FILES, NEST_CHANGES)
+
+    expect(outlineOfNodes(diagram).filter((line) => !line.includes("Service") && !line.includes("Guard") && !line.includes("Interceptor"))).toStrictEqual([
+      "class UsersController",
+      "route UsersController.findAll",
+      "  method UsersController.findAll",
+      "  method UsersController.create",
+      "route UsersController.findOne",
+      "  method UsersController.findOne",
+    ])
+    expect(listJourneyNodes(diagram.journeyNodes).filter((node) => node.type === "route").map((node) => node.id)).toStrictEqual([
+      "src/users/users.controller.ts#route@/users",
+      "src/users/users.controller.ts#route@/users/:id",
+    ])
+    expect(diagram.journeyNodeEdges.filter((edge) => edge.from === "src/users/users.controller.ts#class@5:1").map((edge) => edge.to)).toStrictEqual([
+      "src/users/users.controller.ts#route@/users",
+      "src/users/users.controller.ts#route@/users/:id",
+    ])
+  })
+
+  it("draws a line from a handler to the method of the service it calls through what the constructor injects", () => {
+    const edgeIds = presentDiagramOf(NEST_FILES, NEST_CHANGES).journeyNodeEdges.map((edge) => edge.id)
+
+    expect(edgeIds).toContain("src/users/users.controller.ts#method@9:3 -> src/users/users.service.ts#method@2:3")
+    expect(edgeIds).toContain("src/users/users.controller.ts#method@14:3 -> src/users/users.service.ts#method@5:3")
+  })
+
+  it("draws a line from a guard of the controller to each of its route nodes, and from an interceptor of a method to that method only", () => {
+    const edgeIds = presentDiagramOf(NEST_FILES, NEST_CHANGES).journeyNodeEdges.map((edge) => edge.id)
+
+    expect(edgeIds).toStrictEqual(expect.arrayContaining([
+      "src/auth.guard.ts#class@1:1 -> src/users/users.controller.ts#route@/users",
+      "src/auth.guard.ts#class@1:1 -> src/users/users.controller.ts#route@/users/:id",
+      "src/logging.interceptor.ts#class@1:1 -> src/users/users.controller.ts#method@9:3",
+    ]))
+    expect(edgeIds).not.toContain("src/users/users.controller.ts#method@9:3 -> src/logging.interceptor.ts#class@1:1")
+  })
+
+  it("keeps a method that is no route in the card of its controller, and the line from the controller to the routes of its other methods", () => {
+    const files = { ...NEST_FILES, "src/users/users.controller.ts": NEST_FILES["src/users/users.controller.ts"].replace("  @Get(\":id\")\n", "") }
+    const diagram = presentDiagramOf(files, NEST_CHANGES)
+    const controller = listJourneyNodes(diagram.journeyNodes).find((node) => node.id === "src/users/users.controller.ts#class@5:1")
+
+    expect(controller?.children.map((child) => child.codeBlocks[0].name)).toStrictEqual(["UsersController.findOne"])
+    const targetIds = diagram.journeyNodeEdges.filter((edge) => edge.from === controller?.id).map((edge) => edge.to)
+
+    expect(targetIds.filter((targetId) => targetId.includes("#route@") || targetId === "src/users/users.controller.ts#method@9:3")).toStrictEqual(["src/users/users.controller.ts#route@/users"])
+  })
+})
+
+describe("the card of a Nest GraphQL resolver", () => {
+  it("makes the resolver a router node holding its decorated methods, and a method that is no field among them", () => {
+    const resolver = codeOf(
+      "import { Mutation, Query, Resolver } from \"@nestjs/graphql\"",
+      "@Resolver()",
+      "export class UsersResolver {",
+      "  @Query(() => [User])",
+      "  users() {",
+      "    return this.find()",
+      "  }",
+      "  @Mutation(() => User)",
+      "  addUser() {",
+      "    return save()",
+      "  }",
+      "  find() {",
+      "    return load()",
+      "  }",
+      "}",
+    )
+    const diagram = presentDiagramOf({ "src/users.resolver.ts": resolver }, { "src/users.resolver.ts": [rangeAt(10, 5, 10, 18), rangeAt(13, 5, 13, 18)] })
+
+    expect(outlineOfNodes(diagram)).toStrictEqual([
+      "class UsersResolver (changed)",
+      "  method UsersResolver.users",
+      "  method UsersResolver.addUser (changed)",
+      "  method UsersResolver.find (changed)",
+    ])
+  })
+})

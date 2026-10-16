@@ -164,3 +164,106 @@ describe("the row groups of a state card", () => {
     expect(groupsOf(node)).toStrictEqual([["Query", 0, ["getTodos"]], ["Mutation", 0, ["addTodo"]]])
   })
 })
+
+describe("the row groups of a Nest route card", () => {
+  it("groups the methods of a controller by method, and lists no row for what a decorator hands the method", () => {
+    const controller = codeOf(
+      "import { Controller, Get, Post, Body, UseInterceptors } from \"@nestjs/common\"",
+      "import { LoggingInterceptor } from \"./logging\"",
+      "@Controller(\"users\")",
+      "export class UsersController {",
+      "  @UseInterceptors(LoggingInterceptor)",
+      "  @Get()",
+      "  list() {",
+      "    return find()",
+      "  }",
+      "  @Post()",
+      "  create(@Body() body) {",
+      "    return save(body)",
+      "  }",
+      "}",
+    )
+    const files = { "src/users.ts": controller, "src/logging.ts": codeOf("export class LoggingInterceptor {}") }
+    const node = nodeViewNamed(files, { "src/users.ts": [rangeAt(8, 5, 8, 18), rangeAt(12, 5, 12, 22)] }, "/users")
+
+    expect(node?.typeLabel).toBe("Route")
+    expect(groupsOf(node)).toStrictEqual([["POST", 0, ["UsersController.create"]], ["GET", 0, ["UsersController.list"]]])
+    expect(node?.children.find((child) => child.name === "UsersController.list")?.blockLists).toStrictEqual([])
+  })
+
+  it("puts a heading that names a version after the heading of its method alone, versions in order", () => {
+    const controller = codeOf(
+      "import { Controller, Get, Post, Version } from \"@nestjs/common\"",
+      "@Controller(\"users\")",
+      "export class UsersController {",
+      "  @Version(\"2\")",
+      "  @Get()",
+      "  listAgain() {",
+      "    return find()",
+      "  }",
+      "  @Version(VERSION_NEUTRAL)",
+      "  @Get()",
+      "  list() {",
+      "    return find()",
+      "  }",
+      "  @Post()",
+      "  create() {",
+      "    return save()",
+      "  }",
+      "}",
+    )
+    const main = codeOf("import { NestFactory } from \"@nestjs/core\"", "const app = await NestFactory.create(AppModule)", "app.enableVersioning({ type: VersioningType.HEADER, header: \"X-Version\", defaultVersion: \"1\" })")
+    const node = nodeViewNamed({ "src/users.ts": controller, "src/main.ts": main }, { "src/users.ts": [rangeAt(7, 5, 7, 18), rangeAt(12, 5, 12, 18), rangeAt(16, 5, 16, 18)] }, "/users")
+
+    expect(groupsOf(node)).toStrictEqual([["POST v1", 0, ["UsersController.create"]], ["GET", 0, ["UsersController.list"]], ["GET v2", 0, ["UsersController.listAgain"]]])
+  })
+})
+
+describe("the row groups of a Nest controller card", () => {
+  it("types the controller Controller, with what it is injected with under Properties and a method that is no route under Methods", () => {
+    const controller = codeOf(
+      "import { Controller, Get } from \"@nestjs/common\"",
+      "@Controller(\"users\")",
+      "export class UsersController {",
+      "  constructor(private readonly usersService: UsersService) {}",
+      "  @Get()",
+      "  list() {",
+      "    return this.usersService.find()",
+      "  }",
+      "  audit() {",
+      "    return log()",
+      "  }",
+      "}",
+    )
+    const node = nodeViewNamed({ "src/users.ts": controller }, { "src/users.ts": [rangeAt(4, 15, 4, 59), rangeAt(10, 5, 10, 17)] }, "UsersController")
+
+    expect(node?.typeLabel).toBe("Controller")
+    expect(groupsOf(node)).toStrictEqual([["Properties", 1, []], ["Methods", 0, ["UsersController.audit"]]])
+  })
+})
+
+describe("the row groups of a Nest resolver card", () => {
+  it("types the resolver Resolver, its fields under their headings and a method that is no field under Methods", () => {
+    const resolver = codeOf(
+      "import { Query, ResolveField, Resolver } from \"@nestjs/graphql\"",
+      "@Resolver()",
+      "export class UsersResolver {",
+      "  @Query(() => [User])",
+      "  users() {",
+      "    return this.find()",
+      "  }",
+      "  @ResolveField()",
+      "  posts() {",
+      "    return []",
+      "  }",
+      "  find() {",
+      "    return load()",
+      "  }",
+      "}",
+    )
+    const node = nodeViewNamed({ "src/users.ts": resolver }, { "src/users.ts": [rangeAt(6, 5, 6, 23), rangeAt(10, 5, 10, 14), rangeAt(13, 5, 13, 18)] }, "UsersResolver")
+
+    expect(node?.typeLabel).toBe("Resolver")
+    expect(groupsOf(node)).toStrictEqual([["Query", 0, ["UsersResolver.users"]], ["Field", 0, ["UsersResolver.posts"]], ["Methods", 0, ["UsersResolver.find"]]])
+  })
+})

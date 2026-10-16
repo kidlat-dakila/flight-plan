@@ -87,8 +87,8 @@ const runsWithAPath = (pattern: DecoratorPattern): boolean => pattern.runs !== u
 const decoratorProblems = (pattern: DecoratorPattern, place: PatternPlace): string[] => [
   ...(isBlank(pattern.name) ? ["has no name"] : []),
   ...sourceProblems(pattern.from, place),
-  ...(pattern.runs === undefined && pattern.makes === undefined && pattern.prefixAt === undefined && namesNoMethod(pattern)
-    ? ["says nothing: it runs nothing, makes nothing and names no method"]
+  ...(pattern.runs === undefined && pattern.makes === undefined && pattern.prefixAt === undefined && (pattern.slots ?? []).length === 0 && namesNoMethod(pattern)
+    ? ["says nothing: it runs nothing, makes nothing, has no slot and names no method"]
     : []),
   ...(runsWithAPath(pattern) && lacksPath(pattern, place) ? ["runs a route or a page and has no pathAt"] : []),
   ...(pattern.runs === RUNS_WITH_A_METHOD && namesNoMethod(pattern) ? ["runs a route and has neither method nor methodAt"] : []),

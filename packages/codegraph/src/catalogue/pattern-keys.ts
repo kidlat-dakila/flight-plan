@@ -36,3 +36,7 @@ function keysOf(pattern: CataloguePattern): string[] {
 }
 
 export const listPatternKeys = (library: CatalogueLibrary): string[] => library.patterns.flatMap(keysOf)
+
+const isTypeOnly = (pattern: CataloguePattern): boolean => pattern.kind === "factory" && pattern.isTypeOnly === true
+
+export const listTypeOnlyKeys = (library: CatalogueLibrary): string[] => library.patterns.filter(isTypeOnly).map(patternKeyOf)

@@ -214,6 +214,7 @@ export const linkReferences = (readings: readonly FileReading[], exports: Export
       isRoot: block.parentId === null,
       isExported: exportedByFilePaths.length > 0,
       ...(block.isPlain === true ? { isPlain: true } : {}),
+      ...(block.isParameterProperty === true ? { isParameterProperty: true } : {}),
       ...(block.isReturned === true && RETURNED_TYPES.has(block.type) ? { isReturned: true } : {}),
       exportedByFilePaths,
       lineOfCodeDiffs: null,

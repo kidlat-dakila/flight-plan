@@ -1,10 +1,10 @@
 import type { ListedBlock } from "@/journey-flow-diagram/listed-blocks"
 import type { CodeBlockType, JourneyNode, JourneyRowGroupView } from "@flightplan/configurations"
-import { listClassGroups } from "./class"
+import { CONTROLLER_LABEL, isControllerNode, listClassGroups } from "./class"
 import { listComponentGroups } from "./component"
 import { listRowsInOrder } from "./function"
 import { isRouteNode, isServerActionNode, listRouteGroups, routeHeadOf, SERVER_ACTION_LABEL } from "./route"
-import { isRouterNode, listRouterGroups, ROUTER_LABEL } from "./router"
+import { isResolverNode, isRouterNode, listRouterGroups, RESOLVER_LABEL, ROUTER_LABEL } from "./router"
 import { API_LABEL, isApiNode, isStoreNode, listStoreGroups } from "./store"
 
 const COMPONENT: CodeBlockType = "component"
@@ -25,6 +25,8 @@ export const headOfNode = (node: JourneyNode, head: NodeHead): NodeHead => {
   if (isRouteNode(node)) return routeHeadOf(node)
   if (isApiNode(node)) return { ...head, typeLabel: API_LABEL }
   if (isServerActionNode(node)) return { ...head, typeLabel: SERVER_ACTION_LABEL }
+  if (isControllerNode(node)) return { ...head, typeLabel: CONTROLLER_LABEL }
+  if (isResolverNode(node)) return { ...head, typeLabel: RESOLVER_LABEL }
   return isRouterNode(node) ? { ...head, typeLabel: ROUTER_LABEL } : head
 }
 

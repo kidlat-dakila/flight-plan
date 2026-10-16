@@ -4,6 +4,8 @@ The card of a tRPC router in a [Journey Flow Diagram](../../journey-flow-diagram
 
 ## What is a tRPC router card
 
+A [GraphQL resolver of NestJS](nestjs.md#graphql-resolvers) is drawn as this card too, its type reading Resolver.
+
 **A value at the top level of a file that holds procedures is a router card.** A procedure is a call the [catalogue](../../codegraph/catalogue.md#a-call-that-is-a-node-of-its-own) says is a node of its own: `query`, `mutation` and `subscription` of `initTRPC.create`, written as the value of a key. The card is named after the value, `todoRouter`, and its type reads Router.
 
 A router card is drawn as a [route card](../route-card.md) is:

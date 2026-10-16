@@ -158,39 +158,6 @@ export const moleculerLibrary: CatalogueLibrary = {
   ],
 }
 
-export const nestLibrary: CatalogueLibrary = {
-  name: "Nest",
-  specifiers: ["@nestjs/common", "@nestjs/core", "@nestjs/microservices", "@nestjs/schedule", "@nestjs/websockets"],
-  documentedVersion: "12.1",
-  category: "framework",
-  type: "backend",
-  language: "javascript",
-  patterns: [
-    { kind: "decorator", name: "Controller", prefixAt: 0 },
-    { kind: "decorator", name: "Get", runs: "route", pathAt: 0, method: "GET" },
-    { kind: "decorator", name: "Post", runs: "route", pathAt: 0, method: "POST" },
-    { kind: "decorator", name: "Put", runs: "route", pathAt: 0, method: "PUT" },
-    { kind: "decorator", name: "Delete", runs: "route", pathAt: 0, method: "DELETE" },
-    { kind: "decorator", name: "Patch", runs: "route", pathAt: 0, method: "PATCH" },
-    { kind: "decorator", name: "UseGuards", makes: "auth" },
-    { kind: "decorator", name: "MessagePattern", runs: "event", eventAt: 0 },
-    { kind: "decorator", name: "EventPattern", runs: "event", eventAt: 0 },
-    { kind: "decorator", name: "Cron", runs: "job" },
-    { kind: "decorator", name: "Interval", runs: "job" },
-    { kind: "decorator", name: "SubscribeMessage", runs: "event", eventAt: 0 },
-    { kind: "decorator", name: "Catch", runs: "event" },
-    {
-      kind: "factory",
-      name: "NestFactory.create",
-      methods: [
-        { kind: "call", name: "useGlobalGuards", slots: [], makes: "auth" },
-        { kind: "call", name: "setGlobalPrefix", slots: [], prefixAt: 0 },
-        { kind: "call", name: "listen", slots: [{ at: "last", runs: "event" }] },
-      ],
-    },
-  ],
-}
-
 const REACT_CONTEXT_VALUE = "value"
 
 const REACT_CHILDREN = "children"

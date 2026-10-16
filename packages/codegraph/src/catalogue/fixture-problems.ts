@@ -1,11 +1,11 @@
-import { listPatternKeys } from "./pattern-keys"
+import { listPatternKeys, listTypeOnlyKeys } from "./pattern-keys"
 import type { CatalogueLibrary, PatternFixture } from "./types"
 
 const fixturesOf = (library: CatalogueLibrary, fixtures: readonly PatternFixture[]): PatternFixture[] =>
   fixtures.filter((fixture) => fixture.library === library.name)
 
 const missingFixtures = (library: CatalogueLibrary, fixtures: readonly PatternFixture[]): string[] => {
-  const covered = new Set(fixturesOf(library, fixtures).map((fixture) => fixture.patternKey))
+  const covered = new Set([...fixturesOf(library, fixtures).map((fixture) => fixture.patternKey), ...listTypeOnlyKeys(library)])
   return listPatternKeys(library)
     .filter((key) => !covered.has(key))
     .map((key) => `${library.name}: ${key} has no fixture`)

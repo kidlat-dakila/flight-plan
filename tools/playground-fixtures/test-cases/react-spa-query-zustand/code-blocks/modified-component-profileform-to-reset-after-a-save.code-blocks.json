@@ -818,6 +818,7 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "isParameterProperty": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],

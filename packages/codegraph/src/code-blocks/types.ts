@@ -18,6 +18,7 @@ export type {
   InternalCodeBlockSymbol,
   InternalVariableSymbol,
   Position,
+  RoutePattern,
   SourceRange,
   SymbolMember,
   SymbolUsage,

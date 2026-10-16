@@ -115,11 +115,14 @@ export const cartStore = {
 
 A TypeScript file is traced by its calls. A function at the top level of a file is one node of the type `function`, a class with a method one node of the type `class` that holds a node for each of its methods, and a constant that is not [plain](../../journey-flow-diagram.md#plain-code) one node of the type `root-variable`. Each is one node, whatever is written inside it: an effect, a callback handed to one and a subscription inside a function or a constant are rows of that node. Only a call the [catalogue](../catalogue.md#a-call-that-is-a-node-of-its-own) says is a node of its own is one, such as a procedure of a tRPC router, the cards inside a Redux slice as the [state card](../../journey-flow-diagram/libraries/redux.md) says, and a function a function returns, drawn inside it as the [function card](../../journey-flow-diagram/function-card.md#returning-a-function) says. Any other function inside a function, and a condition or a loop of a function, are steps of their node: rows, with a line to the node of each block of another root block they run. See [Journey Flow Diagram](../../journey-flow-diagram.md) for the rules every language shares.
 
+**What a decorator writes is inside what it decorates.** The call `@UseGuards(AuthGuard)` and the object of `@Module({ controllers: […] })` are blocks of the class they decorate, and a decorator of a method is a block of the method, though the decorators stand before the declaration in the file.
+
 A path starts at the top of a chain, and the top is a block of a node like any other:
 
 | The top of the path | The node it is in |
 |---|---|
 | A route registration, such as `router.post("/users", createUser)` | The [route card](../../journey-flow-diagram/route-card.md) of its path, with `createUser` as the handler inside it |
+| A decorated method of a controller, such as `@Get(":id")` of NestJS | The route card of its path, with the method inside it, as [NestJS](../../journey-flow-diagram/libraries/nestjs.md) says |
 | A subscription: `on`, `once`, `addListener`, `subscribe` | The node of the root block that holds it, with the `code-event` as a trigger label. In a component the subscription is a `code-event` node of its own too. |
 | A statement at the top level of a file | Its own `root-statement` node |
 | A function nothing calls | The `function` node of that function |
