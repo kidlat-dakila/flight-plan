@@ -210,6 +210,32 @@
         ]
       }
     },
+    "sync-types": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "{workspaceRoot}/packages/docs/src/**/*",
+        {
+          "externalDependencies": [
+            "astro",
+            "@astrojs/starlight"
+          ]
+        }
+      ],
+      "outputs": [
+        "{projectRoot}/.astro"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "astro sync"
+      }
+    },
+    "eslint:lint": {
+      "dependsOn": [
+        "sync-types"
+      ]
+    },
     "copy-docs-media": {
       "executor": "nx:run-commands",
       "cache": true,
