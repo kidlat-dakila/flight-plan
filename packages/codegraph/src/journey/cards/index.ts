@@ -3,7 +3,7 @@ import type { CodeBlockType, JourneyNode, JourneyRowGroupView } from "@flightpla
 import { listClassGroups } from "./class"
 import { listComponentGroups } from "./component"
 import { listRowsInOrder } from "./function"
-import { isRouteNode, listRouteGroups, routeHeadOf } from "./route"
+import { isRouteNode, isServerActionNode, listRouteGroups, routeHeadOf, SERVER_ACTION_LABEL } from "./route"
 import { isRouterNode, listRouterGroups, ROUTER_LABEL } from "./router"
 import { API_LABEL, isApiNode, isStoreNode, listStoreGroups } from "./store"
 
@@ -24,6 +24,7 @@ export const listsNoRows = (node: JourneyNode): boolean => isRouteNode(node) || 
 export const headOfNode = (node: JourneyNode, head: NodeHead): NodeHead => {
   if (isRouteNode(node)) return routeHeadOf(node)
   if (isApiNode(node)) return { ...head, typeLabel: API_LABEL }
+  if (isServerActionNode(node)) return { ...head, typeLabel: SERVER_ACTION_LABEL }
   return isRouterNode(node) ? { ...head, typeLabel: ROUTER_LABEL } : head
 }
 

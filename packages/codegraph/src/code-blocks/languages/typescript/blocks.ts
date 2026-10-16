@@ -16,6 +16,7 @@ import {
   FUNCTION_TYPES,
   isArrowBody,
   isClassComponent,
+  isActionAttribute,
   isEventName,
   isMarkup,
   isMarkupCondition,
@@ -381,7 +382,7 @@ const readReturn: ReadSeeds = (statement, context) => {
 
 const readAttribute: ReadSeeds = (attribute) => {
   const name = attributeNameOf(attribute)
-  return name !== null && isEventName(name) ? [seedAt(attribute, "render-event", name)] : []
+  return name !== null && (isEventName(name) || isActionAttribute(attribute, name)) ? [seedAt(attribute, "render-event", name)] : []
 }
 
 const isReturnedValue = (value: SyntaxNode): boolean => {

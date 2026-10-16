@@ -4,7 +4,7 @@ import type { SlotRuns } from "@/catalogue/types"
 import type { ReadBlock } from "@/code-blocks/reading"
 import type { BlockCard, CardPart, SourceRange } from "@/code-blocks/types"
 import { childrenOf, innermostAround, innermostAt, innermostCallableAround, outermostAt } from "./read-blocks"
-import type { CardReading, CardSeed } from "./types"
+import type { BlockNaming, CardReading, CardSeed, ExportCardReading } from "./types"
 
 const ROUTE_RUNS: SlotRuns = "route"
 const IN_PLACE_RUNS: SlotRuns = "in-place"
@@ -124,3 +124,11 @@ export const readRouteCards = ({ matches, blocks, nodeAt }: CardReading, nameOfW
     ...matches.filter(isRouterWideMiddleware).flatMap((match) => readRouterWideSeeds(match, reading)),
   ]
 }
+
+const isPathedRoute = ({ catalogue }: BlockNaming): boolean => catalogue.runs === ROUTE_RUNS && catalogue.path !== null
+
+export const readExportRouteCards = ({ namings }: ExportCardReading): CardSeed[] =>
+  namings.filter(isPathedRoute).map(({ blockId, library, catalogue }) => ({
+    blockId,
+    card: { library, kind: "route", part: "handler", heading: methodHeadingOf(catalogue.method), groupKey: catalogue.path, ownerId: null },
+  }))

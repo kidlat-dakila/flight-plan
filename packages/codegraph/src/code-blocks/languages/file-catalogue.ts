@@ -1,13 +1,17 @@
 import { fitsGlob } from "@/catalogue/matching/file-patterns"
+import { METHOD_SEPARATOR } from "@/catalogue/matching/match-sites"
 import type { CatalogueLibrary, FilePattern, LibraryLanguage, SlotRuns } from "@/catalogue/types"
+import type { BlockNaming } from "@/code-blocks/libraries/types"
 import type { FileManifest } from "@/code-blocks/manifests"
 import type { FileExports, FileReading, ReadBlock } from "@/code-blocks/reading"
 import { positionKey } from "@/code-blocks/source-range"
 import type { CodeBlockCatalogue } from "@/code-blocks/types"
 import { LIBRARIES, registryNamesOf } from "@/data/libraries"
+import { groupBy } from "@/shared/group-by"
 
 export interface ExportNaming {
   readonly exportedName: string
+  readonly library: string
   readonly catalogue: CodeBlockCatalogue
 }
 
@@ -15,7 +19,7 @@ const FOLDER_SEPARATOR = "/"
 const SCOPE_MARK = "@"
 const SCOPED_NAME_LENGTH = 2
 const ANY_FOLDERS = "/**/"
-const CHOICE_PATTERN = /^\{(?<choices>[^{}]*)\}$/
+const CHOICE_PATTERN = /^\{(?<choices>[^{}]*)\}/
 const CHOICE_SEPARATOR = ","
 const WILDCARD_PATTERN = /[*?[]/
 const EXTENSION_MARK = "."
@@ -71,6 +75,7 @@ export const routePathOf = (glob: string, packagePath: string): string | null =>
 const namingsOfPattern = (library: CatalogueLibrary, pattern: FilePattern, { packagePath }: FileManifest): ExportNaming[] =>
   pattern.exports.map(({ name, runs, method }) => ({
     exportedName: name,
+    library: library.name,
     catalogue: {
       specifier: library.specifiers.length === 0 ? null : library.specifiers[0],
       name: pattern.glob,
@@ -93,16 +98,45 @@ export const listExportNamings = (manifest: FileManifest | undefined, language: 
         .flatMap((pattern) => namingsOfPattern(library, pattern, manifest)))
 }
 
-const withNaming = (block: ReadBlock, catalogueByStart: ReadonlyMap<string, CodeBlockCatalogue>): ReadBlock => {
-  const said = block.declaredAt.map((declaredAt) => catalogueByStart.get(positionKey(declaredAt))).find((catalogue) => catalogue !== undefined)
+const isSaidOfSamePattern = (one: ExportNaming, two: ExportNaming): boolean => one.library === two.library && one.catalogue.name === two.catalogue.name
+
+const methodsOf = (namings: readonly ExportNaming[]): string | null => {
+  const methods = new Set(namings.flatMap(({ catalogue }) => (catalogue.method === null ? [] : [catalogue.method])))
+  return methods.size === 0 ? null : [...methods].join(METHOD_SEPARATOR)
+}
+
+const namingOfBlock = (block: ReadBlock, namingsByStart: ReadonlyMap<string, readonly ExportNaming[]>): BlockNaming[] => {
+  const said = block.declaredAt.map((declaredAt) => namingsByStart.get(positionKey(declaredAt))).find((namings) => namings !== undefined)
+  if (said === undefined) return []
+  const [first] = said
+  const sameOfFirst = said.filter((naming) => isSaidOfSamePattern(naming, first))
+  return [{
+    blockId: block.id,
+    library: first.library,
+    exportedNames: sameOfFirst.map(({ exportedName }) => exportedName),
+    catalogue: { ...first.catalogue, method: methodsOf(sameOfFirst) },
+  }]
+}
+
+const namingsByStartOf = (exports: FileExports, namings: readonly ExportNaming[]): ReadonlyMap<string, readonly ExportNaming[]> => {
+  const keyed = namings.flatMap((naming) =>
+    exports.local.filter((exported) => exported.exportedName === naming.exportedName).map((exported) => ({ key: positionKey(exported.declarationRange.start), naming })))
+  return new Map([...groupBy(keyed, ({ key }) => key)].map(([key, entries]) => [key, entries.map(({ naming }) => naming)] as const))
+}
+
+export const listBlockNamings = (blocks: readonly ReadBlock[], exports: FileExports, namings: readonly ExportNaming[]): BlockNaming[] => {
+  if (namings.length === 0) return []
+  const namingsByStart = namingsByStartOf(exports, namings)
+  return blocks.flatMap((block) => namingOfBlock(block, namingsByStart))
+}
+
+const withNaming = (block: ReadBlock, catalogueById: ReadonlyMap<string, CodeBlockCatalogue>): ReadBlock => {
+  const said = catalogueById.get(block.id)
   return said === undefined || block.catalogue !== undefined ? block : { ...block, catalogue: said }
 }
 
-export const withExportNamings = (reading: FileReading, exports: FileExports, namings: readonly ExportNaming[]): FileReading => {
+export const withExportNamings = (reading: FileReading, namings: readonly BlockNaming[]): FileReading => {
   if (namings.length === 0) return reading
-  const catalogueByStart = new Map(
-    [...namings].reverse().flatMap(({ exportedName, catalogue }) =>
-      exports.local.filter((exported) => exported.exportedName === exportedName).map((exported) => [positionKey(exported.declarationRange.start), catalogue] as const)),
-  )
-  return { ...reading, blocks: reading.blocks.map((block) => withNaming(block, catalogueByStart)) }
+  const catalogueById = new Map(namings.map(({ blockId, catalogue }) => [blockId, catalogue] as const))
+  return { ...reading, blocks: reading.blocks.map((block) => withNaming(block, catalogueById)) }
 }

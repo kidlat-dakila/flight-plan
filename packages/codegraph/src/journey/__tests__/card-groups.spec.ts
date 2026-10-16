@@ -77,6 +77,26 @@ describe("the row groups of a route card", () => {
   })
 })
 
+describe("the cards of Next.js", () => {
+  const manifest = JSON.stringify({ dependencies: { next: "16.0.0" } })
+
+  it("heads a route file with its path and groups the methods it exports", () => {
+    const route = codeOf("export async function GET() {", "  return Response.json(await db.user.findMany())", "}", "export async function POST(request) {", "  await db.user.create(await request.json())", "}")
+    const node = nodeViewNamed({ "package.json": manifest, "app/api/users/route.ts": route }, { "app/api/users/route.ts": [rangeAt(2, 3, 2, 50), rangeAt(5, 3, 5, 45)] }, "/api/users")
+
+    expect(node?.typeLabel).toBe("Route")
+    expect(groupsOf(node)).toStrictEqual([["POST", 0, ["POST"]], ["GET", 0, ["GET"]]])
+  })
+
+  it("reads Server action for a function a \"use server\" directive names", () => {
+    const actions = codeOf("\"use server\"", "export async function createUser(formData) {", "  await db.user.create(formData)", "}")
+    const node = nodeViewNamed({ "app/actions.ts": actions }, { "app/actions.ts": [rangeAt(3, 3, 3, 33)] }, "createUser")
+
+    expect(node?.typeLabel).toBe("Server action")
+    expect(groupsOf(node)).toStrictEqual([[null, 1, []]])
+  })
+})
+
 describe("the row groups of a tRPC router card", () => {
   it("reads Router, lists no row and groups its procedures by type, each named after its key", () => {
     const trpc = codeOf("import { initTRPC } from \"@trpc/server\"", "const t = initTRPC.create()", "export const router = t.router", "export const publicProcedure = t.procedure")

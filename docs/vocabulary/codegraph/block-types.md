@@ -106,7 +106,7 @@ type CodeBlockType =
 | `render` | Markup | `<div>hello!</div>`, `<Container>Hello</Container>` |
 | `render-condition` | Markup rendered under a condition | `{isEmpty && <EmptyWarning />}`, `v-if` |
 | `render-loop` | Markup rendered once per item | `{items.map((item) => <Row />)}`, `v-for` |
-| `render-event` | An event inside JSX or a Vue template | `<button onClick={someFunc} />`, `@click="someFunc"` |
+| `render-event` | An event inside JSX or a Vue template: an attribute whose name starts with `on` and a capital letter, and React's `action` or `formAction` when it holds an expression, not a string | `<button onClick={someFunc} />`, `<form action={createUser}>`, `@click="someFunc"` |
 
 ## What counts as a hook
 

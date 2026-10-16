@@ -1,4 +1,5 @@
 import { buildStoredCodeGroupGraph, type CodeFileSource } from "@/code-blocks/build-group"
+import { findManifestOf, isManifestPath, readManifest, type PackageManifest } from "@/code-blocks/manifests"
 import { positionKey } from "@/code-blocks/source-range"
 import type { StoredCodeBlock, StoredCodeBlockSymbol, StoredCodeGroupGraph } from "@/code-blocks/stored-types"
 import type { SourceRange } from "@/code-blocks/types"
@@ -58,15 +59,24 @@ const importedFilePathsOf = (filePath: string, files: FixtureFiles): ReadonlyMap
   )
 }
 
+const manifestsOf = (files: FixtureFiles): PackageManifest[] =>
+  Object.keys(files).filter(isManifestPath).map((manifestPath) => readManifest(manifestPath, files[manifestPath]))
+
 export const sourcesOf = (files: FixtureFiles, diffs: FixtureDiffs = NO_DIFFS): CodeFileSource[] => {
-  const importedByPath = new Map(Object.keys(files).map((filePath) => [filePath, importedFilePathsOf(filePath, files)] as const))
-  return Object.keys(files).map((filePath) => ({
-    filePath,
-    source: files[filePath],
-    importedFilePaths: importedByPath.get(filePath) ?? new Map<string, string>(),
-    importedBy: [...importedByPath].filter(([, imported]) => [...imported.values()].includes(filePath)).map(([importer]) => importer),
-    diffs: (diffs[filePath] ?? []).map((range) => ({ type: "modified", range })),
-  }))
+  const manifests = manifestsOf(files)
+  const codePaths = Object.keys(files).filter((filePath) => !isManifestPath(filePath))
+  const importedByPath = new Map(codePaths.map((filePath) => [filePath, importedFilePathsOf(filePath, files)] as const))
+  return codePaths.map((filePath) => {
+    const manifest = findManifestOf(filePath, manifests)
+    return {
+      filePath,
+      source: files[filePath],
+      importedFilePaths: importedByPath.get(filePath) ?? new Map<string, string>(),
+      importedBy: [...importedByPath].filter(([, imported]) => [...imported.values()].includes(filePath)).map(([importer]) => importer),
+      diffs: (diffs[filePath] ?? []).map((range) => ({ type: "modified", range })),
+      ...(manifest === null ? {} : { manifest }),
+    }
+  })
 }
 
 export const groupOf = (files: FixtureFiles, diffs: FixtureDiffs = NO_DIFFS): StoredCodeGroupGraph => buildStoredCodeGroupGraph(sourcesOf(files, diffs))

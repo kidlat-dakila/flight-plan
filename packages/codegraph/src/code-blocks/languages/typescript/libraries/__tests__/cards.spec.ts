@@ -1,4 +1,5 @@
-import { codeOf } from "@/code-blocks/__tests__/group-fixture"
+import { codeOf, groupOf } from "@/code-blocks/__tests__/group-fixture"
+import { EVERY_PATH_PATTERN, pathPatternOf } from "@/code-blocks/languages/typescript/libraries/nextjs-matcher"
 import { cardsOf } from "@/code-blocks/libraries/__tests__/card-fixture"
 
 describe("the cards Express writes", () => {
@@ -40,6 +41,97 @@ describe("the cards Fastify writes", () => {
       "(request) => …: Fastify route middleware under PATCH at /api/users",
       "(request) => …: Fastify route handler under PATCH at /api/users",
     ])
+  })
+})
+
+const NEXT_MANIFEST = JSON.stringify({ dependencies: { next: "16.0.0" } })
+
+describe("the cards Next.js writes", () => {
+  it("makes each exported method of a route file a handler of the path its folders give, under its method", () => {
+    expect(cardsOf({
+      "package.json": NEXT_MANIFEST,
+      "app/api/users/[id]/route.ts": codeOf(
+        "export async function GET(request, { params }) {",
+        "  return Response.json(await findUser(params.id))",
+        "}",
+        "export const DELETE = async (request, { params }) => {",
+        "  await removeUser(params.id)",
+        "}",
+        "const helper = () => null",
+      ),
+    })).toStrictEqual([
+      "GET: Next.js route handler under GET at /api/users/[id]",
+      "DELETE: Next.js route handler under DELETE at /api/users/[id]",
+    ])
+  })
+
+  it("puts a function exported under several methods under one heading that names them all", () => {
+    expect(cardsOf({
+      "package.json": NEXT_MANIFEST,
+      "src/app/api/auth/route.ts": codeOf("const handler = async (request) => Response.json(await auth(request))", "export { handler as GET, handler as POST }"),
+    })).toStrictEqual(["handler: Next.js route handler under GET · POST at /api/auth"])
+  })
+
+  it("makes the default export of an API page a handler under ANY, its path read from the file", () => {
+    expect(cardsOf({
+      "package.json": NEXT_MANIFEST,
+      "pages/api/posts/[id].ts": codeOf("export default async function handler(req, res) {", "  res.json(await findPost(req.query.id))", "}"),
+      "pages/api/posts/index.ts": codeOf("export default async function listPosts(req, res) {", "  res.json(await findPosts())", "}"),
+    })).toStrictEqual([
+      "handler: Next.js route handler under ANY at /api/posts/[id]",
+      "listPosts: Next.js route handler under ANY at /api/posts",
+    ])
+  })
+
+  it("makes a function a \"use server\" directive names a server action under POST, with no path", () => {
+    expect(cardsOf({
+      "app/actions.ts": codeOf("\"use server\"", "export async function createUser(formData) {", "  await saveUser(formData)", "}", "function helper() {}"),
+      "app/posts/page.tsx": codeOf(
+        "export default function PostsPage() {",
+        "  async function createPost(formData) {",
+        "    \"use server\"",
+        "    await savePost(formData)",
+        "  }",
+        "  return <form action={createPost} />",
+        "}",
+      ),
+    })).toStrictEqual([
+      "createUser: Next.js route server-action under POST",
+      "createPost: Next.js route server-action under POST",
+    ])
+  })
+
+  it("makes the default export of a page a page of the path its folders give, and of a layout nothing", () => {
+    expect(cardsOf({
+      "package.json": NEXT_MANIFEST,
+      "app/dashboard/page.tsx": codeOf("export default function DashboardPage() {", "  return <h1>Dashboard</h1>", "}"),
+      "app/dashboard/layout.tsx": codeOf("export default function DashboardLayout({ children }) {", "  return <main>{children}</main>", "}"),
+      "pages/about.tsx": codeOf("export default function About() {", "  return <h1>About</h1>", "}", "export async function getStaticProps() {", "  return { props: {} }", "}"),
+    })).toStrictEqual([
+      "DashboardPage: Next.js route page at /dashboard",
+      "About: Next.js route page at /about",
+    ])
+  })
+
+  it("makes the middleware of the app middleware of every path its matcher reaches, and of every path with no matcher", () => {
+    const pathPatternsOf = (files: Readonly<Record<string, string>>): readonly string[] | undefined =>
+      groupOf(files).codeBlocks.find((block) => block.card?.part === "middleware")?.card?.pathPatterns
+
+    expect(cardsOf({ "package.json": NEXT_MANIFEST, "middleware.ts": codeOf("export function middleware(request) {", "  return check(request)", "}") }))
+      .toStrictEqual(["middleware: Next.js route middleware"])
+    expect(pathPatternsOf({ "package.json": NEXT_MANIFEST, "middleware.ts": codeOf("export function middleware(request) {}") })).toStrictEqual([EVERY_PATH_PATTERN])
+    expect(pathPatternsOf({
+      "package.json": NEXT_MANIFEST,
+      "middleware.ts": codeOf("export function middleware(request) {}", "export const config = { matcher: [\"/dashboard/:path*\", { source: \"/api/:path*\" }] }"),
+    })).toStrictEqual([pathPatternOf("/dashboard/:path*"), pathPatternOf("/api/:path*")])
+    expect(pathPatternsOf({
+      "package.json": NEXT_MANIFEST,
+      "proxy.ts": codeOf("export function proxy(request) {}", "export const config = { matcher: \"/{blog}\" }"),
+    })).toStrictEqual([EVERY_PATH_PATTERN])
+  })
+
+  it("writes no route card without a manifest that lists Next.js", () => {
+    expect(cardsOf({ "app/api/users/route.ts": codeOf("export async function GET() {", "  return Response.json([])", "}") })).toStrictEqual([])
   })
 })
 

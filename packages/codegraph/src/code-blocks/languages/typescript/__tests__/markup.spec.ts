@@ -69,6 +69,19 @@ describe("the markup of a JSX file", () => {
     ])
   })
 
+  it("makes a render-event of an action or formAction attribute that holds an expression, and none of one that holds a string", () => {
+    expect(outlineOfCode("const Form = () => <form action={save}><button formAction={() => rename()} /><form action=\"/x\" /></form>")).toStrictEqual([
+      "component Form 1:1-1:105",
+      "  render-root 1:20-1:105",
+      "    render form 1:20-1:105",
+      "      render-event action 1:26-1:39",
+      "      render button 1:40-1:78",
+      "        render-event formAction 1:48-1:75",
+      "          function 1:60-1:74",
+      "      render form 1:78-1:98",
+    ])
+  })
+
   it("makes a render-root of a returned condition or loop of markup", () => {
     expect(outlineOfCode("function Users({ items }) {", "  return items.length > 0 ? items.map((item) => <Row />) : null", "}").slice(2)).toStrictEqual([
       "  render-root 2:3-2:64",

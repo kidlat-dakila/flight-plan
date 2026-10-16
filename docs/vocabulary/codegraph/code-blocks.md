@@ -305,7 +305,7 @@ interface CodeBlock {
 | `usedBy` | The blocks that have this block in their `outerSymbols`. It is the reverse of `outerSymbols`, filled once when the group is built, so that climbing from a block to what uses it is a lookup. |
 | `astGraph` | The AST graph of the file the block is in, an alias, so the file can be found from any block |
 | `catalogue` | What the [catalogue](catalogue.md) says about the block, or `null` when no pattern matched it. See "What the catalogue leaves on a block". |
-| `card` | Which card of the Journey Flow Diagram the block belongs to, and as what part: the library that says it, the kind of card, the part, the heading it is drawn under, the key its card is grouped by and the block it is drawn in, and for middleware that runs before a whole router, the route paths it reaches (`routePaths`) and whether it reaches the whole app (`isAppWide`). Only a library with a file of its own writes it; left out otherwise. See "Which card a block belongs to". |
+| `card` | Which card of the Journey Flow Diagram the block belongs to, and as what part: the library that says it, the kind of card, the part, the heading it is drawn under, the key its card is grouped by and the block it is drawn in, and for middleware that runs before a whole router, the route paths it reaches (`routePaths`), whether it reaches the whole app (`isAppWide`) and the patterns of the paths it runs before (`pathPatterns`). Only a library with a file of its own writes it; left out otherwise. See "Which card a block belongs to". |
 | `cardOwner` | The block `card.ownerId` names, an alias, or `null` when the card names none. Only in memory: the stored form keeps the id in `card`. |
 
 ## Which card a block belongs to
@@ -314,7 +314,7 @@ interface CodeBlock {
 
 | Pass | When | What it writes |
 |---|---|---|
-| The library files | As a file is read, after its blocks | The `card` of every block a library with a file of its own recognises in that file: an Express registration and its handler and middleware, a tRPC router and its procedures, a Zustand, Pinia or Redux store and its parts, an RTK Query API and its endpoints, a Flask or FastAPI route. Each `readCards` reads the blocks of the file, the matches of its library and the syntax around them. |
+| The library files | As a file is read, after its blocks | The `card` of every block a library with a file of its own recognises in that file: an Express registration and its handler and middleware, a tRPC router and its procedures, a Zustand, Pinia or Redux store and its parts, an RTK Query API and its endpoints, a Flask or FastAPI route, a Next.js route file and server action. Each `readCards` reads the blocks of the file, the matches of its library and the syntax around them. Each `readExportCards` reads the blocks the file patterns of its library name, once the manifest has said which patterns the file matches. |
 | The card links | Once every reference of the group exists | The `ownerId` of a part written beside its card, found through the symbols that join them, and the card of a block no library file could see |
 | The mounts | After the card links | The prefix of every mount above a route, put before its `groupKey`, and the `routePaths` of middleware that runs before a whole router. See "The routes below a mount". |
 
@@ -351,6 +351,8 @@ A mount is a call that hands a router or a plugin to another router under a pref
 | A call on a router, as `app.addHook(…)` or the decorator `@bp.before_request` | The routes of that router and below |
 
 A card that says `isAppWide`, as Flask's `before_app_request` does, reaches every route of the app at the top of the mounts above its router.
+
+**Middleware whose card has `pathPatterns` reaches by path, not by router.** Each pattern is a regular expression a library wrote, as Next.js does from `config.matcher`. Its `routePaths` are the paths of every route and every `page` part of the group that a pattern matches, with a dynamic segment, `[team]`, read as the word inside it.
 
 ## What the catalogue leaves on a block
 

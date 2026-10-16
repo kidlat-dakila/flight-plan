@@ -20,6 +20,8 @@ const HOLDER: CardPart = "holder"
 const HANDLER: CardPart = "handler"
 const MOUNT: CardPart = "mount"
 const MIDDLEWARE: CardPart = "middleware"
+const PAGE: CardPart = "page"
+const DYNAMIC_SEGMENT_PATTERN = /\[+(?:\.{3})?([^\]]+)\]+/g
 const PATH_SEPARATOR = "/"
 const CALL: StoredCodeBlockSymbol["use"] = "call"
 const NAMING_USES: ReadonlySet<StoredCodeBlockSymbol["use"]> = new Set<StoredCodeBlockSymbol["use"]>(["value", "read"])
@@ -210,11 +212,29 @@ const routePathsOf = (middleware: StoredCodeBlock, registered: readonly Register
   return [...new Set(registered.filter(isCovered).map((one) => one.path))]
 }
 
+const isPage = (block: StoredCodeBlock): boolean => block.card?.kind === ROUTE && block.card.part === PAGE
+
+const listReachedPaths = (blocks: readonly StoredCodeBlock[]): string[] =>
+  [...new Set(blocks.filter((block) => isRegistration(block) || isPage(block)).flatMap((block) => {
+    const path = block.card?.groupKey ?? null
+    return path === null ? [] : [path]
+  }))]
+
+const samplePathOf = (path: string): string => path.replace(DYNAMIC_SEGMENT_PATTERN, "$1")
+
+const pathsMatching = (pathPatterns: readonly string[], paths: readonly string[]): string[] => {
+  const expressions = pathPatterns.map((pattern) => new RegExp(pattern))
+  return paths.filter((path) => expressions.some((expression) => expression.test(samplePathOf(path))))
+}
+
 const withRoutePaths = (blocks: readonly StoredCodeBlock[], context: RouteContext): StoredCodeBlock[] => {
   const registered = listRegistered(blocks, context.index)
+  const reached = listReachedPaths(blocks)
   return blocks.map((block) => {
     const { card } = block
-    return card === undefined || !isRouterWideMiddleware(block, context.index) ? block : { ...block, card: { ...card, routePaths: routePathsOf(block, registered, context) } }
+    if (card === undefined || !isRouterWideMiddleware(block, context.index)) return block
+    const routePaths = card.pathPatterns === undefined ? routePathsOf(block, registered, context) : pathsMatching(card.pathPatterns, reached)
+    return { ...block, card: { ...card, routePaths } }
   })
 }
 

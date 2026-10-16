@@ -1,14 +1,14 @@
-import { BUILT_IN_LIBRARIES } from "@/catalogue/libraries"
 import { blockNamed, codeOf } from "@/code-blocks/__tests__/group-fixture"
 import { buildStoredCodeGroupGraph } from "@/code-blocks/build-group"
 import { listExportNamings, routePathOf } from "@/code-blocks/languages/file-catalogue"
+import { LIBRARIES } from "@/code-blocks/libraries"
 import type { FileManifest } from "@/code-blocks/manifests"
 import type { StoredCodeGroupGraph } from "@/code-blocks/stored-types"
 
 const WITH_NEXT: readonly string[] = ["next", "react"]
 
 const namedIn = (packagePath: string, packages: readonly string[] = WITH_NEXT): string[] =>
-  listExportNamings({ packages, packagePath }, "javascript", BUILT_IN_LIBRARIES).map(({ exportedName, catalogue }) =>
+  listExportNamings({ packages, packagePath }, "javascript", LIBRARIES).map(({ exportedName, catalogue }) =>
     [exportedName, catalogue.runs, catalogue.method, catalogue.path].filter((word) => word !== null).join(" "))
 
 const groupOf = (filePath: string, source: string, manifest?: FileManifest): StoredCodeGroupGraph =>
@@ -23,12 +23,12 @@ describe("what the path of a file says of its exports", () => {
 
   it("names nothing in a repository that does not use the library, and nothing without a manifest", () => {
     expect(namedIn("app/users/page.tsx", ["react"])).toStrictEqual([])
-    expect(listExportNamings(undefined, "javascript", BUILT_IN_LIBRARIES)).toStrictEqual([])
+    expect(listExportNamings(undefined, "javascript", LIBRARIES)).toStrictEqual([])
   })
 
   it("knows a library by the name its manifest installs it under, where that is not the name it is imported by", () => {
     const namedBy = (packages: readonly string[]): string[] =>
-      listExportNamings({ packages, packagePath: "shop/allauth/urls.py" }, "python", BUILT_IN_LIBRARIES).map(({ exportedName, catalogue }) => [exportedName, catalogue.specifier].join(" "))
+      listExportNamings({ packages, packagePath: "shop/allauth/urls.py" }, "python", LIBRARIES).map(({ exportedName, catalogue }) => [exportedName, catalogue.specifier].join(" "))
 
     expect(namedBy(["django_allauth"])).toStrictEqual(["urlpatterns allauth"])
     expect(namedBy(["allauth"])).toStrictEqual(["urlpatterns allauth"])
@@ -43,6 +43,8 @@ describe("what the path of a file says of its exports", () => {
     expect(routePathOf(pages, "src/app/(shop)/cart/[id]/page.tsx")).toBe("/cart/[id]")
     expect(routePathOf(files, "pages/users/index.tsx")).toBe("/users")
     expect(routePathOf(files, "pages/users/[id].tsx")).toBe("/users/[id]")
+    expect(routePathOf("{pages,src/pages}/api/**/*.{js,ts}", "src/pages/api/users/[id].ts")).toBe("/api/users/[id]")
+    expect(routePathOf("{pages,src/pages}/api/**/*.{js,ts}", "pages/api/users/index.ts")).toBe("/api/users")
     expect(routePathOf("{middleware,src/middleware}.{js,ts}", "middleware.ts")).toBeNull()
   })
 
@@ -52,6 +54,13 @@ describe("what the path of a file says of its exports", () => {
 
     expect(blockNamed(named, "component", "UsersPage").catalogue).toMatchObject({ specifier: "next", runs: "page", path: "/users" })
     expect(blockNamed(groupOf("apps/web/app/users/page.tsx", page), "component", "UsersPage").catalogue).toBeNull()
+  })
+
+  it("joins the methods of a function exported under several of them", () => {
+    const route = codeOf("const handler = async (request) => Response.json(await auth(request))", "export { handler as GET, handler as POST }")
+    const named = groupOf("app/api/auth/route.ts", route, { packages: ["next"], packagePath: "app/api/auth/route.ts" })
+
+    expect(blockNamed(named, "function", "handler").catalogue).toMatchObject({ runs: "route", method: "GET,POST", path: "/api/auth" })
   })
 })
 

@@ -85,6 +85,110 @@ describe("the card of a route path of a Python framework", () => {
   })
 })
 
+const NEXT_FILES = {
+  "package.json": JSON.stringify({ dependencies: { next: "16.0.0" } }),
+  "app/api/users/[id]/route.ts": codeOf(
+    "export async function GET(request, { params }) {",
+    "  return Response.json(await db.user.find(params.id))",
+    "}",
+    "export async function DELETE(request, { params }) {",
+    "  await db.user.delete(params.id)",
+    "}",
+  ),
+  "pages/api/posts.ts": codeOf("export default async function handler(req, res) {", "  res.json(await db.post.findMany())", "}"),
+  "app/actions.ts": codeOf("\"use server\"", "export async function createUser(formData) {", "  await db.user.create(formData)", "}"),
+}
+
+const NEXT_CHANGES = {
+  "app/api/users/[id]/route.ts": [rangeAt(2, 3, 2, 54), rangeAt(5, 3, 5, 33)],
+  "pages/api/posts.ts": [rangeAt(2, 3, 2, 38)],
+  "app/actions.ts": [rangeAt(3, 3, 3, 33)],
+}
+
+describe("the card of a Next.js route file", () => {
+  it("makes one route node of the methods a route file exports and of an API page, and leaves a server action a node of its own", () => {
+    const diagram = presentDiagramOf(NEXT_FILES, NEXT_CHANGES)
+
+    expect(outlineOfNodes(diagram)).toStrictEqual([
+      "route GET",
+      "  function GET (changed)",
+      "  function DELETE (changed)",
+      "route handler",
+      "  function handler (changed)",
+      "function createUser (changed)",
+    ])
+    expect(diagram.journeyNodes.map((node) => node.id)).toStrictEqual([
+      "app/api/users/[id]/route.ts#route@/api/users/[id]",
+      "pages/api/posts.ts#route@/api/posts",
+      "app/actions.ts#function@2:1",
+    ])
+  })
+})
+
+describe("a server action a page hands to a form", () => {
+  it("draws a line from the action and formAction of the page to each server action they name", () => {
+    const files = {
+      "app/actions.ts": codeOf("\"use server\"", "export async function createUser(formData) {", "  await db.user.create(formData)", "}", "export async function renameUser(formData) {", "  await db.user.update(formData)", "}"),
+      "app/users/page.tsx": codeOf(
+        "import { createUser, renameUser } from \"../actions\"",
+        "export default function UsersPage() {",
+        "  return <form action={createUser}><button formAction={renameUser}>Rename</button></form>",
+        "}",
+      ),
+    }
+    const edgeIds = presentDiagramOf(files, { "app/actions.ts": [rangeAt(3, 3, 3, 33), rangeAt(6, 3, 6, 33)] }).journeyNodeEdges.map((edge) => edge.id)
+
+    expect(edgeIds).toContain("app/users/page.tsx#render-event@3:16 -> app/actions.ts#function@2:1")
+    expect(edgeIds).toContain("app/users/page.tsx#render-event@3:44 -> app/actions.ts#function@5:1")
+  })
+})
+
+const middlewareFilesOf = (config: string) => ({
+  "package.json": JSON.stringify({ dependencies: { next: "16.0.0" } }),
+  "middleware.ts": codeOf("export function middleware(request) {", "  return checkSession(request)", "}", config),
+  "app/api/users/route.ts": codeOf("export async function GET() {", "  return Response.json(await db.user.findMany())", "}"),
+  "app/api/health/route.ts": codeOf("export async function GET() {", "  return Response.json(await ping())", "}"),
+  "app/dashboard/[team]/page.tsx": codeOf("export default function DashboardPage() {", "  const team = useTeam()", "  return <h1>{team}</h1>", "}"),
+  "app/dashboard/layout.tsx": codeOf("export default function DashboardLayout({ children }) {", "  const nav = useNav()", "  return <main>{nav}{children}</main>", "}"),
+  "app/page.tsx": codeOf("export default function HomePage() {", "  const user = useUser()", "  return <h1>{user}</h1>", "}"),
+})
+
+const MIDDLEWARE_CHANGES = {
+  "middleware.ts": [rangeAt(2, 3, 2, 31)],
+  "app/api/users/route.ts": [rangeAt(2, 3, 2, 50)],
+  "app/api/health/route.ts": [rangeAt(2, 3, 2, 40)],
+  "app/dashboard/[team]/page.tsx": [rangeAt(2, 3, 2, 25)],
+  "app/dashboard/layout.tsx": [rangeAt(2, 3, 2, 23)],
+  "app/page.tsx": [rangeAt(2, 3, 2, 25)],
+}
+
+const middlewareTargetsOf = (config: string): string[] =>
+  presentDiagramOf(middlewareFilesOf(config), MIDDLEWARE_CHANGES).journeyNodeEdges
+    .filter((edge) => edge.id.startsWith("middleware.ts#"))
+    .map((edge) => edge.id.slice(edge.id.indexOf(" -> ") + " -> ".length))
+
+describe("the middleware of a Next.js app", () => {
+  it("draws a line to every route card and every page with no matcher, and none to a layout", () => {
+    expect(middlewareTargetsOf("")).toStrictEqual([
+      "app/api/users/route.ts#route@/api/users",
+      "app/api/health/route.ts#route@/api/health",
+      "app/dashboard/[team]/page.tsx#component@1:1",
+      "app/page.tsx#component@1:1",
+    ])
+  })
+
+  it("draws a line only to the route cards and pages its matcher reaches", () => {
+    expect(middlewareTargetsOf("export const config = { matcher: [\"/dashboard/:path*\", \"/api/users\"] }")).toStrictEqual([
+      "app/api/users/route.ts#route@/api/users",
+      "app/dashboard/[team]/page.tsx#component@1:1",
+    ])
+    expect(middlewareTargetsOf("export const config = { matcher: \"/((?!api|_next/static).*)\" }")).toStrictEqual([
+      "app/dashboard/[team]/page.tsx#component@1:1",
+      "app/page.tsx#component@1:1",
+    ])
+  })
+})
+
 describe("the card of a route path below a mount", () => {
   it("puts the prefix a router is mounted under before the path of its routes, across files", () => {
     const users = codeOf("import { Router } from \"express\"", "const users = Router()", "users.get(\"/users\", async (req, res) => {", "  res.json(await db.user.findMany())", "})", "export default users")

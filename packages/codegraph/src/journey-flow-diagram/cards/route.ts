@@ -10,6 +10,7 @@ const ROUTE_KINDS: readonly CardKind[] = ["route"]
 const HOLDER: CardPart = "holder"
 const HANDLER: CardPart = "handler"
 const MIDDLEWARE: CardPart = "middleware"
+const PAGE: CardPart = "page"
 const ROUTE_TYPE = "route"
 const GROUP_ID_MARK = "#route@"
 const NAMING_USES: ReadonlySet<string> = new Set(["value", "read"])
@@ -140,13 +141,14 @@ const listMiddlewareEdges = (context: CardContext): JourneyNodeEdge[] =>
 const routePathsAt = (block: CodeBlock): string[] =>
   [...new Set([block, ...block.usedBy].filter(isRouterWideMiddleware).flatMap((middleware) => middleware.card?.routePaths ?? []))]
 
+const isPageNode = (node: JourneyNode): boolean => routeCardOf(rootBlockOfNode(node))?.part === PAGE
+
 const listRouterWideEdges = ({ nodes }: CardContext): JourneyNodeEdge[] => {
-  const groupIdByKey = new Map(nodes.filter(isRouteGroup).map((node) => [routeCardOf(rootBlockOfNode(node))?.groupKey ?? "", node.id] as const))
+  const reached = nodes.filter((node) => isRouteGroup(node) || isPageNode(node))
+  const reachedIdsByPath = groupBy(reached, (node) => routeCardOf(rootBlockOfNode(node))?.groupKey ?? "")
   return nodes.flatMap((node) =>
-    routePathsAt(rootBlockOfNode(node)).flatMap((path) => {
-      const groupId = groupIdByKey.get(path)
-      return groupId === undefined || groupId === node.id ? [] : [toEdge(node.id, groupId)]
-    }))
+    routePathsAt(rootBlockOfNode(node)).flatMap((path) =>
+      (reachedIdsByPath.get(path) ?? []).filter((target) => target.id !== node.id).map((target) => toEdge(node.id, target.id))))
 }
 
 const listRouteAddedEdges = (context: CardContext): JourneyNodeEdge[] => [...listMiddlewareEdges(context), ...listRouterWideEdges(context)]

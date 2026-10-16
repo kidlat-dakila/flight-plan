@@ -1,3 +1,4 @@
+import type { SyntaxNode } from "@/ast-graph/parser"
 import type { FileSyntax } from "@/ast-graph/types"
 import type { Binding, FindExportedBinding, FindHandedExport, HandedCallback } from "@/catalogue/matching/syntax-reader"
 import type { BlockCard, CodeBlockCatalogue, CodeBlockType, Position, SourceRange, SymbolUse } from "./types"
@@ -90,6 +91,7 @@ export interface ScriptReading {
 
 export interface FileReading extends ScriptReading {
   readonly readSyntax: (() => FileSyntax) | null
+  readonly nodeAt?: (range: SourceRange) => SyntaxNode
 }
 
 export interface FoundExport {

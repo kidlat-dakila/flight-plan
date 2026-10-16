@@ -8,8 +8,6 @@ const LAST_ARGUMENT = "last"
 
 const OTHER_ARGUMENTS = "rest"
 
-const EVERY_METHOD = "*"
-
 const THIRD_ARGUMENT = 2
 
 export const adonisLibrary: CatalogueLibrary = {
@@ -188,85 +186,6 @@ export const nestLibrary: CatalogueLibrary = {
         { kind: "call", name: "useGlobalGuards", slots: [], makes: "auth" },
         { kind: "call", name: "setGlobalPrefix", slots: [], prefixAt: 0 },
         { kind: "call", name: "listen", slots: [{ at: "last", runs: "event" }] },
-      ],
-    },
-  ],
-}
-
-const NEXT_SINCE_PROXY = ">=16"
-
-export const nextLibrary: CatalogueLibrary = {
-  name: "Next.js",
-  specifiers: ["next", "next/navigation", "next/router", "next/link", "next/cache", "next/headers", "next/server"],
-  documentedVersion: "16.4",
-  category: "framework",
-  type: "fullstack",
-  language: "javascript",
-  patterns: [
-    { kind: "file", glob: "{app,src/app}/**/page.{js,jsx,ts,tsx}", exports: [{ name: "default", runs: "page" }] },
-    {
-      kind: "file",
-      glob: "{app,src/app}/**/{layout,template,loading,error,not-found,global-error}.{js,jsx,ts,tsx}",
-      exports: [{ name: "default", runs: "page" }],
-    },
-    {
-      kind: "file",
-      glob: "{app,src/app}/**/route.{js,ts}",
-      exports: [
-        { name: "GET", runs: "route", method: "GET" },
-        { name: "POST", runs: "route", method: "POST" },
-        { name: "PUT", runs: "route", method: "PUT" },
-        { name: "PATCH", runs: "route", method: "PATCH" },
-        { name: "DELETE", runs: "route", method: "DELETE" },
-        { name: "HEAD", runs: "route", method: "HEAD" },
-        { name: "OPTIONS", runs: "route", method: "OPTIONS" },
-      ],
-    },
-    {
-      kind: "file",
-      glob: "{pages,src/pages}/api/**/*.{js,ts}",
-      exports: [{ name: "default", runs: "route", method: EVERY_METHOD }],
-    },
-    {
-      kind: "file",
-      glob: "{pages,src/pages}/**/[!_]*.{js,jsx,ts,tsx}",
-      exports: [
-        { name: "default", runs: "page" },
-        { name: "getServerSideProps", runs: "page" },
-        { name: "getStaticProps", runs: "page" },
-        { name: "getStaticPaths", runs: "page" },
-      ],
-    },
-    { kind: "file", glob: "{middleware,src/middleware}.{js,ts}", exports: [{ name: "middleware", runs: "middleware" }] },
-    {
-      kind: "file",
-      glob: "{proxy,src/proxy}.{js,ts}",
-      versions: NEXT_SINCE_PROXY,
-      exports: [{ name: "proxy", runs: "middleware" }],
-    },
-    { kind: "directive", text: "use server", runs: "route", method: "POST" },
-    { kind: "element", name: "default", from: "next/link", slots: [], makes: "navigation", pathAt: "href" },
-    { kind: "call", name: "redirect", slots: [], makes: "navigation", pathAt: FIRST_ARGUMENT },
-    { kind: "call", name: "permanentRedirect", slots: [], makes: "navigation", pathAt: FIRST_ARGUMENT },
-    {
-      kind: "factory",
-      name: "useRouter",
-      methods: [
-        { kind: "call", name: "push", slots: [], makes: "navigation", pathAt: FIRST_ARGUMENT },
-        { kind: "call", name: "replace", slots: [], makes: "navigation", pathAt: FIRST_ARGUMENT },
-      ],
-    },
-    { kind: "call", name: "after", slots: [{ at: FIRST_ARGUMENT, runs: "event" }] },
-    { kind: "call", name: "revalidatePath", slots: [], makes: "cache" },
-    { kind: "call", name: "revalidateTag", slots: [], makes: "cache" },
-    { kind: "call", name: "unstable_cache", slots: [{ at: FIRST_ARGUMENT, runs: "kept" }], makes: "cache" },
-    {
-      kind: "factory",
-      name: "cookies",
-      methods: [
-        { kind: "call", name: "get", slots: [], makes: "storage" },
-        { kind: "call", name: "set", slots: [], makes: "storage" },
-        { kind: "call", name: "delete", slots: [], makes: "storage" },
       ],
     },
   ],

@@ -2,6 +2,7 @@ import { BUILT_IN_LIBRARIES } from "@/catalogue/libraries"
 import { fitsGlob } from "@/catalogue/matching/file-patterns"
 import { matchFilePath, matchSource } from "@/catalogue/matching/match-source"
 import type { CatalogueLibrary, LibraryLanguage } from "@/catalogue/types"
+import { LIBRARIES } from "@/code-blocks/libraries"
 
 const library = (name: string, specifiers: readonly string[], language: LibraryLanguage, patterns: CatalogueLibrary["patterns"]): CatalogueLibrary => ({
   name,
@@ -251,7 +252,7 @@ describe("the patterns of the built-in catalogue", () => {
   })
 
   it("says the method of a directive", () => {
-    const [match] = matchSource({ filePath: null, language: "javascript", text: lines("\"use server\"", "export const save = async () => 1") }, BUILT_IN_LIBRARIES)
+    const [match] = matchSource({ filePath: null, language: "javascript", text: lines("\"use server\"", "export const save = async () => 1") }, LIBRARIES)
 
     expect([match.patternKey, match.runs, match.method]).toStrictEqual(["directive:use server:*", "route", "POST"])
   })

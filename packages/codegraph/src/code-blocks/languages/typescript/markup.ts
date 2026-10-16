@@ -14,6 +14,8 @@ const RETURN_TYPE = "return_statement"
 const BODY_TYPE = "statement_block"
 const ARROW_TYPE = "arrow_function"
 const EVENT_NAME_PATTERN = /^on[A-Z]/
+const ACTION_ATTRIBUTES: ReadonlySet<string> = new Set(["action", "formAction"])
+const EXPRESSION_VALUE_TYPE = "jsx_expression"
 const HERITAGE_TYPE = "class_heritage"
 const METHOD_TYPE = "method_definition"
 const RENDER_METHOD = "render"
@@ -54,6 +56,9 @@ export const elementNameOf = (element: SyntaxNode): string | null => {
 export const isEventName = (name: string): boolean => EVENT_NAME_PATTERN.test(name)
 
 export const attributeNameOf = (attribute: SyntaxNode): string | null => attribute.firstNamedChild?.text ?? null
+
+export const isActionAttribute = (attribute: SyntaxNode, name: string): boolean =>
+  ACTION_ATTRIBUTES.has(name) && attribute.lastNamedChild?.type === EXPRESSION_VALUE_TYPE
 
 export const methodNameOf = (call: SyntaxNode): string | null => {
   const callee = call.childForFieldName("function")

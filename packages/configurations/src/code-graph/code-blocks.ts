@@ -115,6 +115,8 @@ export type CardPart
     | "handler"
     | "middleware"
     | "mount"
+    | "server-action"
+    | "page"
     | "procedure"
     | "endpoint"
 
@@ -127,6 +129,7 @@ export interface BlockCard {
   readonly ownerId: string | null
   readonly routePaths?: readonly string[]
   readonly isAppWide?: boolean
+  readonly pathPatterns?: readonly string[]
 }
 
 export type SymbolUse = "call" | "render" | "value" | "read" | "type"

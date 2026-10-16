@@ -4,7 +4,7 @@ import { matchSyntax } from "@/catalogue/matching/match-source"
 import { readPython } from "@/catalogue/matching/python-reader"
 import { createFileNaming } from "@/code-blocks/languages/typescript/named-by"
 import { LIBRARIES } from "@/code-blocks/libraries"
-import { withCards } from "@/code-blocks/libraries/cards"
+import { nodeFinderOf, withCards } from "@/code-blocks/libraries/cards"
 import type { FileExports, OutlinedFile } from "@/code-blocks/reading"
 import { fromSyntaxRange } from "@/code-blocks/source-range"
 import { readPythonBlocks } from "./blocks"
@@ -42,6 +42,7 @@ export const outlinePython = ({ filePath, source, importedFilePaths }: PythonSou
         blocks: withCards(blocks, matches, outline.tree, LIBRARIES),
         uses: readPythonUses(outline),
         readSyntax: () => readPythonSyntax(outline.tree, importedFilePaths),
+        nodeAt: nodeFinderOf(outline.tree),
       }
     },
   }

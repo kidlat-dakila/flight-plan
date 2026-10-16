@@ -1,12 +1,13 @@
 import type { GrammarId } from "@/ast-graph/parser"
 import type { LibraryLanguage } from "@/catalogue/types"
 import { LIBRARIES } from "@/code-blocks/libraries"
+import { withExportCards } from "@/code-blocks/libraries/cards"
 import type { FileManifest } from "@/code-blocks/manifests"
 import { NO_EXPORTS, type OutlinedFile } from "@/code-blocks/reading"
 import { FIRST_COLUMN, FIRST_LINE } from "@/code-blocks/source-range"
 import type { SourceRange } from "@/code-blocks/types"
 import { hasExtension } from "@/import-graph/languages/language"
-import { listExportNamings, withExportNamings } from "./file-catalogue"
+import { listBlockNamings, listExportNamings, withExportNamings } from "./file-catalogue"
 import { outlinePython } from "./python"
 import { outlineTypescript } from "./typescript"
 import { outlineVue } from "./vue"
@@ -64,7 +65,9 @@ const withBlocksEnsured = (outlined: OutlinedFile, source: LanguageSource, langu
   read: (findExport, findBinding, findHanded) => {
     const reading = outlined.read(findExport, findBinding, findHanded)
     if (reading.blocks.length === 0) return { ...outlineWholeFile(source).read(findExport, findBinding), readSyntax: reading.readSyntax }
-    return withExportNamings(reading, outlined.exports, listExportNamings(source.manifest, language, LIBRARIES))
+    const namings = listBlockNamings(reading.blocks, outlined.exports, listExportNamings(source.manifest, language, LIBRARIES))
+    const named = withExportNamings(reading, namings)
+    return { ...named, blocks: withExportCards(named.blocks, { namings, exports: outlined.exports, nodeAt: reading.nodeAt ?? null }, LIBRARIES) }
   },
 })
 

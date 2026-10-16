@@ -7,7 +7,7 @@ import { exportedBindingAt, javascriptReaderOf, listHandedImports } from "@/cata
 import { matchSyntax } from "@/catalogue/matching/match-source"
 import { findNothingHanded, type Binding, type FindExportedBinding, type FindHandedExport, type SyntaxReader } from "@/catalogue/matching/syntax-reader"
 import { LIBRARIES } from "@/code-blocks/libraries"
-import { withCards } from "@/code-blocks/libraries/cards"
+import { nodeFinderOf, withCards } from "@/code-blocks/libraries/cards"
 import type { FileExports, FindExport, OutlinedFile, ScriptReading } from "@/code-blocks/reading"
 import { FIRST_COLUMN, fromSyntaxRange } from "@/code-blocks/source-range"
 import type { SourceRange } from "@/code-blocks/types"
@@ -102,6 +102,7 @@ export const outlineTypescriptTree = (grammar: GrammarId, tree: SyntaxTree, { fi
     read: (findExport, findBinding, findHanded) => ({
       ...readScript(script, findExport, findBinding, findHanded),
       readSyntax: () => (grammar === JSX_GRAMMAR ? readJsxSyntax(tree, importedFilePaths) : readTypescriptSyntax(tree, importedFilePaths)),
+      nodeAt: nodeFinderOf(tree),
     }),
     bindingAt: (declarationRange, findBinding) => bindingInScript(script, declarationRange, findBinding),
     handingsOf: (handedPath, moduleNames, findBinding, findHanded) =>
