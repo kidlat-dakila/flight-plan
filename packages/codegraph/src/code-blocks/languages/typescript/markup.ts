@@ -14,6 +14,9 @@ const RETURN_TYPE = "return_statement"
 const BODY_TYPE = "statement_block"
 const ARROW_TYPE = "arrow_function"
 const EVENT_NAME_PATTERN = /^on[A-Z]/
+const HERITAGE_TYPE = "class_heritage"
+const METHOD_TYPE = "method_definition"
+const RENDER_METHOD = "render"
 
 export const FUNCTION_TYPES: ReadonlySet<string> = new Set([
   "function_declaration",
@@ -104,3 +107,10 @@ export const isMarkupCondition = (node: SyntaxNode): boolean =>
 
 export const isArrowBody = (node: SyntaxNode): boolean =>
   node.parent?.type === ARROW_TYPE && isFieldOf(node, "body") && node.type !== BODY_TYPE
+
+const isRenderMethod = (member: SyntaxNode): boolean =>
+  member.type === METHOD_TYPE && member.childForFieldName("name")?.text === RENDER_METHOD && returnsMarkup(member)
+
+export const isClassComponent = (declared: SyntaxNode): boolean =>
+  declared.namedChildren.some((child) => child.type === HERITAGE_TYPE)
+  && (declared.childForFieldName("body")?.namedChildren ?? []).some(isRenderMethod)

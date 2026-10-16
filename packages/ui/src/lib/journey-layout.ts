@@ -1,6 +1,8 @@
 import type { Point } from "@/lib/diagram-path"
 
-export type LayoutRowKind = "heading" | "row" | "two-line-row"
+export type LayoutRowKind = "heading" | "row" | "two-line-row" | "card"
+
+type DrawnRowKind = Exclude<LayoutRowKind, "card">
 
 export interface LayoutRow {
   readonly id: string
@@ -128,37 +130,55 @@ const NOTHING_PLACED: Placement = { nodes: [], rows: [], lanes: [] }
 
 const sumOf = (numbers: readonly number[]): number => numbers.reduce((total, one) => total + one, 0)
 
-const ROW_HEIGHTS: Readonly<Record<LayoutRowKind, number>> = { "heading": ROW_HEADING_HEIGHT, "row": ROW_HEIGHT, "two-line-row": TWO_LINE_ROW_HEIGHT }
+const ROW_HEIGHTS: Readonly<Record<DrawnRowKind, number>> = { "heading": ROW_HEADING_HEIGHT, "row": ROW_HEIGHT, "two-line-row": TWO_LINE_ROW_HEIGHT }
+const CARD_ROW: LayoutRowKind = "card"
 
-const heightOfRow = ({ kind }: LayoutRow): number => ROW_HEIGHTS[kind]
+type LayoutPart = { readonly kind: "row", readonly row: LayoutRow & { readonly kind: DrawnRowKind } } | { readonly kind: "card", readonly node: LayoutNode }
 
-const heightOfRows = (rows: readonly LayoutRow[]): number => sumOf(rows.map((row) => heightOfRow(row) + ROW_GAP))
+interface PartsPlacement {
+  readonly top: number
+  readonly placed: Placement
+}
+
+const isDrawnRow = (row: LayoutRow): row is LayoutRow & { readonly kind: DrawnRowKind } => row.kind !== CARD_ROW
+
+const partsOf = (node: LayoutNode): LayoutPart[] => {
+  const childById = new Map(node.children.map((child) => [child.id, child] as const))
+  const placedIds = new Set(node.rows.filter((row) => row.kind === CARD_ROW).map((row) => row.id))
+  return [
+    ...node.rows.flatMap((row): LayoutPart[] => {
+      if (isDrawnRow(row)) return [{ kind: "row", row }]
+      const child = childById.get(row.id)
+      return child === undefined ? [] : [{ kind: "card", node: child }]
+    }),
+    ...node.children.filter((child) => !placedIds.has(child.id)).map((child): LayoutPart => ({ kind: "card", node: child })),
+  ]
+}
+
+const heightOfPart = (part: LayoutPart): number => (part.kind === "row" ? ROW_HEIGHTS[part.row.kind] : sizeOf(part.node).height) + ROW_GAP
 
 const sizeOf = (node: LayoutNode): Size => {
   const childSizes = node.children.map(sizeOf)
-  const rowsHeight = heightOfRows(node.rows) + sumOf(childSizes.map((size) => size.height + ROW_GAP))
   return {
     width: Math.max(NODE_WIDTH, ...childSizes.map((size) => size.width + INSET * HALF)),
-    height: NODE_HEAD_HEIGHT + rowsHeight + BOTTOM_PADDING,
+    height: NODE_HEAD_HEIGHT + sumOf(partsOf(node).map(heightOfPart)) + BOTTOM_PADDING,
   }
 }
 
 const placeNode = (node: LayoutNode, box: Omit<Box, "height">, depth: number, topId: string): Placement => {
   const { height } = sizeOf(node)
   const inner = { x: box.x + INSET, width: box.width - INSET * HALF }
-  const rowsTop = box.y + NODE_HEAD_HEIGHT
-  const rows = node.rows.map((row, index) => ({ ...row, nodeId: node.id, ...inner, y: rowsTop + heightOfRows(node.rows.slice(0, index)), height: heightOfRow(row) }))
-  const childrenTop = rowsTop + heightOfRows(node.rows)
-  const children = node.children.reduce<{ readonly top: number, readonly placed: readonly Placement[] }>(
-    ({ top, placed }, child) => ({
-      top: top + sizeOf(child).height + ROW_GAP,
-      placed: [...placed, placeNode(child, { ...inner, y: top }, depth + 1, topId)],
-    }),
-    { top: childrenTop, placed: [] },
+  const placeOne = (part: LayoutPart, y: number): Placement =>
+    part.kind === "row"
+      ? { nodes: [], rows: [{ ...part.row, nodeId: node.id, ...inner, y, height: ROW_HEIGHTS[part.row.kind] }], lanes: [] }
+      : placeNode(part.node, { ...inner, y }, depth + 1, topId)
+  const { placed } = partsOf(node).reduce<PartsPlacement>(
+    ({ top, placed: soFar }, part) => ({ top: top + heightOfPart(part), placed: mergePlacements([soFar, placeOne(part, top)]) }),
+    { top: box.y + NODE_HEAD_HEIGHT, placed: NOTHING_PLACED },
   )
   return {
-    nodes: [{ id: node.id, topId, depth, ...box, height }, ...children.placed.flatMap((placed) => placed.nodes)],
-    rows: [...rows, ...children.placed.flatMap((placed) => placed.rows)],
+    nodes: [{ id: node.id, topId, depth, ...box, height }, ...placed.nodes],
+    rows: placed.rows,
     lanes: [],
   }
 }

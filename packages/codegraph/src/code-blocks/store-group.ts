@@ -13,11 +13,12 @@ type PlaceBySymbol = ReadonlyMap<CodeBlockSymbol, StoredSymbolPlace>
 
 const idsOf = (blocks: readonly CodeBlock[]): string[] => blocks.map((block) => block.id)
 
-const usageOf = ({ usedAt, use, handedTo, member }: CodeBlockSymbol): StoredSymbolUsage => ({
+const usageOf = ({ usedAt, use, handedTo, member, binding }: CodeBlockSymbol): StoredSymbolUsage => ({
   usedAt,
   use,
   ...(handedTo === undefined ? {} : { handedToId: handedTo?.id ?? null }),
   ...(member === undefined ? {} : { member: { path: member.path, blockId: member.block?.id ?? null } }),
+  ...(binding === undefined ? {} : { binding }),
 })
 
 const storeSymbol = (symbol: CodeBlockSymbol): StoredCodeBlockSymbol => {
@@ -48,6 +49,8 @@ const storeBlock = (block: CodeBlock, placeBySymbol: PlaceBySymbol): StoredCodeB
   childrenBlockIds: idsOf(block.childrenBlocks),
   isRoot: block.isRoot,
   isExported: block.isExported,
+  ...(block.isPlain === true ? { isPlain: true } : {}),
+  ...(block.isReturned === true ? { isReturned: true } : {}),
   exportedByFilePaths: block.exportedBy.map((astGraph) => astGraph.filePath),
   lineOfCodeDiffs: block.lineOfCodeDiffs,
   diffs: block.diffs,
@@ -58,6 +61,7 @@ const storeBlock = (block: CodeBlock, placeBySymbol: PlaceBySymbol): StoredCodeB
   handedFrom: placesOf(block.handedFrom, placeBySymbol),
   filePath: block.astGraph.filePath,
   catalogue: block.catalogue,
+  ...(block.card === undefined ? {} : { card: block.card }),
 })
 
 const storeExports = ({ exports }: ASTGraph): StoredExports =>

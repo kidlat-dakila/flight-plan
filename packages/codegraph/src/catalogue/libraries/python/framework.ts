@@ -6,10 +6,6 @@ const FIRST_ARGUMENT = 0
 
 const SECOND_ARGUMENT = 1
 
-const METHODS = "methods"
-
-const THIRD_ARGUMENT = 2
-
 const DJANGO_ROUTE: SlotPosition = [0, "route"]
 
 const DJANGO_VIEW: SlotPosition = [1, "view"]
@@ -125,99 +121,6 @@ export const eveLibrary: CatalogueLibrary = {
         { kind: "call", name: "run", slots: [], makes: "config" },
       ],
     },
-  ],
-}
-
-const FASTAPI_PATH: SlotPosition = [FIRST_ARGUMENT, "path"]
-
-const FASTAPI_ENDPOINT: SlotPosition = [1, "endpoint"]
-
-const FASTAPI_PREFIX = "prefix"
-
-const FASTAPI_ROUTER_METHODS: readonly MethodPattern[] = [
-  { kind: "decorator", name: "get", runs: "route", pathAt: FASTAPI_PATH, method: "GET" },
-  { kind: "decorator", name: "post", runs: "route", pathAt: FASTAPI_PATH, method: "POST" },
-  { kind: "decorator", name: "put", runs: "route", pathAt: FASTAPI_PATH, method: "PUT" },
-  { kind: "decorator", name: "patch", runs: "route", pathAt: FASTAPI_PATH, method: "PATCH" },
-  { kind: "decorator", name: "delete", runs: "route", pathAt: FASTAPI_PATH, method: "DELETE" },
-  { kind: "decorator", name: "options", runs: "route", pathAt: FASTAPI_PATH, method: "OPTIONS" },
-  { kind: "decorator", name: "head", runs: "route", pathAt: FASTAPI_PATH, method: "HEAD" },
-  { kind: "decorator", name: "trace", runs: "route", pathAt: FASTAPI_PATH, method: "TRACE" },
-  { kind: "decorator", name: "api_route", runs: "route", pathAt: FASTAPI_PATH, methodAt: METHODS },
-  { kind: "decorator", name: "websocket", runs: "route", pathAt: FASTAPI_PATH, method: "WEBSOCKET" },
-  { kind: "decorator", name: "on_event", runs: "event", eventAt: FIRST_ARGUMENT },
-  { kind: "call", name: "add_api_route", slots: [{ at: FASTAPI_ENDPOINT, runs: "route" }], pathAt: FASTAPI_PATH, methodAt: METHODS },
-  { kind: "call", name: "include_router", slots: [], prefixAt: FASTAPI_PREFIX },
-]
-
-export const fastapiLibrary: CatalogueLibrary = {
-  name: "FastAPI",
-  specifiers: ["fastapi"],
-  documentedVersion: "0.143",
-  category: "framework",
-  type: "backend",
-  language: "python",
-  patterns: [
-    {
-      kind: "factory",
-      name: "FastAPI",
-      methods: [
-        ...FASTAPI_ROUTER_METHODS,
-        { kind: "decorator", name: "middleware", runs: "middleware" },
-        { kind: "decorator", name: "exception_handler", runs: "event" },
-      ],
-    },
-    { kind: "factory", name: "APIRouter", prefixAt: FASTAPI_PREFIX, methods: FASTAPI_ROUTER_METHODS },
-    { kind: "call", name: "Depends", slots: [{ at: FIRST_ARGUMENT, runs: "in-place" }] },
-    { kind: "call", name: "Security", slots: [{ at: FIRST_ARGUMENT, runs: "in-place" }], makes: "auth" },
-  ],
-}
-
-const FLASK_RULE: SlotPosition = [0, "rule"]
-
-const FLASK_VIEW: SlotPosition = [THIRD_ARGUMENT, "view_func"]
-
-const FLASK_LOCATION: SlotPosition = [0, "location"]
-
-const FLASK_PREFIX = "url_prefix"
-
-const FLASK_SCAFFOLD_METHODS: readonly MethodPattern[] = [
-  { kind: "decorator", name: "route", runs: "route", pathAt: FLASK_RULE, methodAt: METHODS },
-  { kind: "decorator", name: "get", runs: "route", pathAt: FLASK_RULE, method: "GET" },
-  { kind: "decorator", name: "post", runs: "route", pathAt: FLASK_RULE, method: "POST" },
-  { kind: "decorator", name: "put", runs: "route", pathAt: FLASK_RULE, method: "PUT" },
-  { kind: "decorator", name: "delete", runs: "route", pathAt: FLASK_RULE, method: "DELETE" },
-  { kind: "decorator", name: "patch", runs: "route", pathAt: FLASK_RULE, method: "PATCH" },
-  { kind: "call", name: "add_url_rule", slots: [{ at: FLASK_VIEW, runs: "route" }], pathAt: FLASK_RULE, methodAt: METHODS },
-  { kind: "decorator", name: "before_request", runs: "middleware" },
-  { kind: "decorator", name: "after_request", runs: "middleware" },
-  { kind: "decorator", name: "teardown_request", runs: "event" },
-  { kind: "decorator", name: "errorhandler", runs: "event" },
-  { kind: "decorator", name: "command", runs: "command" },
-  { kind: "call", name: "register_blueprint", slots: [], prefixAt: FLASK_PREFIX },
-]
-
-export const flaskLibrary: CatalogueLibrary = {
-  name: "Flask",
-  specifiers: ["flask"],
-  documentedVersion: "3.1",
-  category: "framework",
-  type: "backend",
-  language: "python",
-  patterns: [
-    { kind: "factory", name: "Flask", methods: FLASK_SCAFFOLD_METHODS },
-    {
-      kind: "factory",
-      name: "Blueprint",
-      prefixAt: FLASK_PREFIX,
-      methods: [
-        ...FLASK_SCAFFOLD_METHODS,
-        { kind: "decorator", name: "before_app_request", runs: "middleware" },
-        { kind: "decorator", name: "after_app_request", runs: "middleware" },
-        { kind: "decorator", name: "app_errorhandler", runs: "event" },
-      ],
-    },
-    { kind: "call", name: "redirect", slots: [], makes: "navigation", pathAt: FLASK_LOCATION },
   ],
 }
 

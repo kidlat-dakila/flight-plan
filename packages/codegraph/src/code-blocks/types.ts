@@ -1,6 +1,9 @@
 export type {
   ASTCodeGroupGraph,
   ASTGraph,
+  BlockCard,
+  CardKind,
+  CardPart,
   CatalogueCertainty,
   CatalogueRuns,
   CodeBlock,

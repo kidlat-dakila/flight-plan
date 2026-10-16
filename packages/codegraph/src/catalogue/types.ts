@@ -38,7 +38,7 @@ export type LibraryLanguage = "javascript" | "python"
 export interface Slot {
   readonly at: SlotPosition
   readonly runs: SlotRuns
-  readonly holdsOwnNodes?: boolean
+  readonly holdsActions?: boolean
 }
 
 export interface ContextProvision {

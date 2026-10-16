@@ -1,8 +1,4 @@
-import type { CatalogueLibrary, Slot } from "@/catalogue/types"
-
-const FIRST_ARGUMENT = 0
-
-const SECOND_ARGUMENT = 1
+import type { CatalogueLibrary } from "@/catalogue/types"
 
 const THIRD_ARGUMENT = 2
 
@@ -93,88 +89,6 @@ export const nanostoresLibrary: CatalogueLibrary = {
   ],
 }
 
-export const piniaLibrary: CatalogueLibrary = {
-  name: "Pinia",
-  specifiers: ["pinia"],
-  documentedVersion: "4.0",
-  category: "state",
-  type: "frontend",
-  language: "javascript",
-  patterns: [
-    {
-      kind: "call",
-      name: "defineStore",
-      slots: [
-        { at: SECOND_ARGUMENT, runs: "in-place" },
-        { at: "state", runs: "in-place" },
-      ],
-      makes: "state",
-    },
-    {
-      kind: "factory",
-      name: "defineStore",
-      methods: [],
-      called: {
-        slots: [],
-        methods: [
-          { kind: "call", name: "$subscribe", slots: [{ at: FIRST_ARGUMENT, runs: "event" }] },
-          { kind: "call", name: "$onAction", slots: [{ at: FIRST_ARGUMENT, runs: "event" }] },
-        ],
-      },
-    },
-  ],
-}
-
-export const reduxLibrary: CatalogueLibrary = {
-  name: "Redux",
-  specifiers: ["redux", "react-redux", "@reduxjs/toolkit"],
-  documentedVersion: "5.0",
-  category: "state",
-  type: "frontend",
-  language: "javascript",
-  patterns: [
-    {
-      kind: "factory",
-      name: "configureStore",
-      methods: [
-        { kind: "call", name: "dispatch", slots: [], makes: "state" },
-        { kind: "call", name: "getState", slots: [], makes: "state" },
-        { kind: "call", name: "subscribe", slots: [{ at: 0, runs: "event" }] },
-      ],
-    },
-    {
-      kind: "factory",
-      name: "createStore",
-      slots: [{ at: 0, runs: "kept" }],
-      methods: [
-        { kind: "call", name: "dispatch", slots: [], makes: "state" },
-        { kind: "call", name: "getState", slots: [], makes: "state" },
-        { kind: "call", name: "subscribe", slots: [{ at: 0, runs: "event" }] },
-      ],
-    },
-    { kind: "call", name: "createSlice", slots: [], makes: "state" },
-    { kind: "call", name: "createAsyncThunk", slots: [{ at: 1, runs: "kept" }], eventAt: 0 },
-    { kind: "call", name: "createSelector", slots: [{ at: "last", runs: "in-place" }], makes: "derived" },
-    {
-      kind: "factory",
-      name: "createListenerMiddleware",
-      methods: [
-        { kind: "call", name: "startListening", slots: [{ at: "effect", runs: "event" }] },
-      ],
-    },
-    { kind: "call", name: "useSelector", slots: [{ at: 0, runs: "in-place" }], makes: "state" },
-    {
-      kind: "factory",
-      name: "useDispatch",
-      methods: [],
-      called: {
-        slots: [],
-        makes: "state",
-      },
-    },
-  ],
-}
-
 export const tinybaseLibrary: CatalogueLibrary = {
   name: "TinyBase",
   specifiers: ["tinybase", "tinybase/ui-react"],
@@ -238,46 +152,5 @@ export const xstateLibrary: CatalogueLibrary = {
     { kind: "call", name: "assign", slots: [], makes: "state" },
     { kind: "call", name: "useMachine", slots: [], makes: "state" },
     { kind: "call", name: "useSelector", slots: [{ at: 1, runs: "in-place" }], makes: "state" },
-  ],
-}
-
-const ZUSTAND_STORE_SLOTS: readonly Slot[] = [{ at: 0, runs: "in-place", holdsOwnNodes: true }]
-
-export const zustandLibrary: CatalogueLibrary = {
-  name: "Zustand",
-  specifiers: ["zustand", "zustand/vanilla", "zustand/middleware"],
-  documentedVersion: "5.0",
-  category: "state",
-  type: "frontend",
-  language: "javascript",
-  patterns: [
-    {
-      kind: "factory",
-      name: "create",
-      slots: ZUSTAND_STORE_SLOTS,
-      makes: "state",
-      methods: [
-        { kind: "call", name: "getState", slots: [], makes: "state" },
-        { kind: "call", name: "setState", slots: [], makes: "state" },
-        { kind: "call", name: "subscribe", slots: [{ at: 0, runs: "event" }] },
-      ],
-      called: {
-        slots: ZUSTAND_STORE_SLOTS,
-        makes: "state",
-      },
-    },
-    {
-      kind: "factory",
-      name: "createStore",
-      slots: ZUSTAND_STORE_SLOTS,
-      makes: "state",
-      methods: [
-        { kind: "call", name: "getState", slots: [], makes: "state" },
-        { kind: "call", name: "setState", slots: [], makes: "state" },
-        { kind: "call", name: "subscribe", slots: [{ at: 0, runs: "event" }] },
-      ],
-    },
-    { kind: "call", name: "useStore", slots: [{ at: 1, runs: "in-place" }], makes: "state" },
-    { kind: "call", name: "persist", slots: ZUSTAND_STORE_SLOTS, makes: "storage" },
   ],
 }

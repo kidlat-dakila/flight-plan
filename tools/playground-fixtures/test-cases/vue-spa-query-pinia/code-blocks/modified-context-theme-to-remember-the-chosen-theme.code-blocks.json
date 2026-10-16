@@ -4019,6 +4019,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -5294,6 +5295,14 @@
           "method": null,
           "event": null,
           "certainty": "proven"
+        },
+        "card": {
+          "library": "Pinia",
+          "kind": "store",
+          "part": "holder",
+          "heading": null,
+          "groupKey": null,
+          "ownerId": null
         }
       },
       {
@@ -5512,6 +5521,14 @@
           "method": null,
           "event": null,
           "certainty": "proven"
+        },
+        "card": {
+          "library": "Pinia",
+          "kind": "store",
+          "part": "state",
+          "heading": "STATE",
+          "groupKey": null,
+          "ownerId": null
         }
       },
       {
@@ -5555,6 +5572,14 @@
           "method": null,
           "event": null,
           "certainty": "proven"
+        },
+        "card": {
+          "library": "Pinia",
+          "kind": "store",
+          "part": "getter",
+          "heading": "GETTERS",
+          "groupKey": null,
+          "ownerId": null
         }
       },
       {
@@ -5889,6 +5914,14 @@
           "method": null,
           "event": null,
           "certainty": "proven"
+        },
+        "card": {
+          "library": "Pinia",
+          "kind": "store",
+          "part": "getter",
+          "heading": "GETTERS",
+          "groupKey": null,
+          "ownerId": null
         }
       },
       {
@@ -6282,7 +6315,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Pinia",
+          "kind": "store",
+          "part": "action",
+          "heading": "ACTIONS",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#variable@11:20",
@@ -6490,7 +6531,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Pinia",
+          "kind": "store",
+          "part": "action",
+          "heading": "ACTIONS",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#variable@15:23",

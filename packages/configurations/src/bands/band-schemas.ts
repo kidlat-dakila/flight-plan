@@ -8,7 +8,7 @@ export const WAYPOINT_CHANGES = ["added", "modified", "removed"] as const
 export const WAYPOINT_FILTER_KEYS = [...WAYPOINT_FINDING_FILTER_KEYS, ...WAYPOINT_CHANGES] as const
 export const ROOT_BLOCK_CHANGES = ["added", "modified", "deleted"] as const
 export const NODE_CHANGES = ["added", "modified"] as const
-export const NODE_BLOCK_LIST_KINDS = ["argument", "state", "hook", "effect", "call", "step"] as const
+export const NODE_BLOCK_LIST_KINDS = ["argument", "property", "state", "hook", "effect", "call", "step", "part"] as const
 export const BLAST_FILE_MARKS = ["added", "modified", "deleted", "breaks", "behaviour-changes", "plain"] as const
 export const BLAST_VIEW_IDS = ["export-bound", "import-bound"] as const
 export const BLAST_IMPACT_CHOICES = [...IMPACT_TYPES, "unassessed"] as const
@@ -204,7 +204,7 @@ export const journeyBlockListSchema = z.strictObject({
 
 export type JourneyBlockListView = z.infer<typeof journeyBlockListSchema>
 
-export const journeyRowGroupSchema = z.strictObject({ label: z.string().nullable(), rowIds: z.array(z.string()) })
+export const journeyRowGroupSchema = z.strictObject({ label: z.string().nullable(), rowIds: z.array(z.string()), childIds: z.array(z.string()) })
 
 export type JourneyRowGroupView = z.infer<typeof journeyRowGroupSchema>
 

@@ -1,9 +1,10 @@
 import { readPythonSyntax } from "@/ast-graph/languages/python"
 import { parseWithGrammar, type GrammarId } from "@/ast-graph/parser"
-import { BUILT_IN_LIBRARIES } from "@/catalogue/libraries"
 import { matchSyntax } from "@/catalogue/matching/match-source"
 import { readPython } from "@/catalogue/matching/python-reader"
 import { createFileNaming } from "@/code-blocks/languages/typescript/named-by"
+import { LIBRARIES } from "@/code-blocks/libraries"
+import { withCards } from "@/code-blocks/libraries/cards"
 import type { FileExports, OutlinedFile } from "@/code-blocks/reading"
 import { fromSyntaxRange } from "@/code-blocks/source-range"
 import { readPythonBlocks } from "./blocks"
@@ -33,11 +34,15 @@ export const outlinePython = ({ filePath, source, importedFilePaths }: PythonSou
   return {
     filePath,
     exports: exportsOf(outline),
-    read: (findExport) => ({
-      filePath,
-      blocks: readPythonBlocks({ filePath, outline, naming: createFileNaming(matchSyntax(readPython(source), BUILT_IN_LIBRARIES)), findExport }),
-      uses: readPythonUses(outline),
-      readSyntax: () => readPythonSyntax(outline.tree, importedFilePaths),
-    }),
+    read: (findExport) => {
+      const matches = matchSyntax(readPython(source), LIBRARIES)
+      const blocks = readPythonBlocks({ filePath, outline, naming: createFileNaming(matches), findExport })
+      return {
+        filePath,
+        blocks: withCards(blocks, matches, outline.tree, LIBRARIES),
+        uses: readPythonUses(outline),
+        readSyntax: () => readPythonSyntax(outline.tree, importedFilePaths),
+      }
+    },
   }
 }

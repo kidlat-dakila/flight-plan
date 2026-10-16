@@ -379,24 +379,6 @@
               "description": null,
               "codeBlockIds": [
                 "src/stores/cart-store.ts#state@11:1",
-                "src/stores/cart-store.ts#function@13:3"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#function@13:3"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#function@13:3",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
                 "src/stores/cart-store.ts#function@13:3",
                 "src/stores/cart-store.ts#effect@14:5",
                 "src/stores/cart-store.ts#effect-callback@14:9",
@@ -427,22 +409,12 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#effect@14:5"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
+                  "codeBlockId": "src/stores/cart-store.ts#function@13:3"
                 }
               ]
             }
           ],
-          "journeyNodeEdges": [
-            {
-              "id": "src/stores/cart-store.ts#state@11:1 -> src/stores/cart-store.ts#function@13:3",
-              "from": "src/stores/cart-store.ts#state@11:1",
-              "to": "src/stores/cart-store.ts#function@13:3"
-            }
-          ]
+          "journeyNodeEdges": []
         },
         "blastRadiusDiagram": {
           "nodes": [

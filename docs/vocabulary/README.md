@@ -6,7 +6,7 @@ The shared language of Flight Plan. When code, docs, issues or conversations use
 |---|---|
 | [Flight Plan Review](flight-plan-review.md) | Reading a pull request as a guided tour, written by an agent and read in the web app |
 | [Review artifact](review-artifact.md) | The document a review produces, its Context Section and Segments, and the components used throughout it: CodeLink, CodeBlock and Navigation |
-| [Journey Flow Diagram](journey-flow-diagram.md) | How execution reaches a change: the nodes on the way to the changed code, the nodes inside a node, the trigger labels and the edges |
+| [Journey Flow Diagram](journey-flow-diagram.md) | How execution reaches a change: the nodes on the way to the changed code, the nodes inside a node, the trigger labels and the edges. Each kind of card, [component](journey-flow-diagram/component-card.md), [function](journey-flow-diagram/function-card.md), [class](journey-flow-diagram/class-card.md), [route](journey-flow-diagram/route-card.md), [tRPC router](journey-flow-diagram/libraries/trpc.md) and [state](journey-flow-diagram/state.md), has a page of its own |
 | [Blast Diagram](blast-diagram.md) | The files a change is connected to through imports, and what it does to the ones it did not touch |
 | [Code Walkthrough](code-walkthrough.md) | The changed code with explanations on top of it: File Section, Diff Waypoint, Findings and Filters |
 | [Review Navigator](review-navigator.md) | The keyboard-first toolbar at the foot of a review: going between sections, the controls of the section on screen, stepping, marking and filtering the Code Walkthrough |

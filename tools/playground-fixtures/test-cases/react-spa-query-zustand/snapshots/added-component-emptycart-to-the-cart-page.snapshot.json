@@ -290,8 +290,8 @@
             {
               "id": "src/routes/cart/index.tsx#component@6:1",
               "type": "component",
-              "label": "Shows the empty cart component or the cart lines",
-              "description": "When a shopper opens `/cart`, `router` in `src/router.tsx` renders this component at the path `cart`, inside `<RootLayout />`.",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
                 "src/routes/cart/index.tsx#component@6:1",
                 "src/routes/cart/index.tsx#condition@8:3",

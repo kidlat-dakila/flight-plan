@@ -162,6 +162,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -195,6 +196,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -257,6 +259,7 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "isPlain": true,
         "exportedByFilePaths": [
           "src/lib/query-client.ts"
         ],

@@ -21,3 +21,14 @@ export const blockIdOf = (filePath: string, type: CodeBlockType, { start, end }:
 }
 
 export const named = (name: string | null): { name?: string } => (name === null ? {} : { name })
+
+const WRITTEN_FUNCTION_TYPES: ReadonlySet<string> = new Set(["arrow_function", "function_expression"])
+const BODY_MARK = "=> …"
+const PARAMETERS_START = "("
+
+export const shortSignatureOf = (node: SyntaxNode): string | null => {
+  if (!WRITTEN_FUNCTION_TYPES.has(node.type)) return null
+  const parameters = node.childForFieldName("parameters")?.text ?? node.childForFieldName("parameter")?.text ?? null
+  if (parameters === null) return null
+  return `${parameters.startsWith(PARAMETERS_START) ? parameters : `(${parameters})`} ${BODY_MARK}`
+}

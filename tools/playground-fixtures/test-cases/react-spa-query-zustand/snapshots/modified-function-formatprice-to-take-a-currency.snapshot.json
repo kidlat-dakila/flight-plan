@@ -313,21 +313,6 @@
                   "codeBlockId": "src/lib/format.ts#variable@6:3"
                 }
               ]
-            },
-            {
-              "id": "src/lib/format.ts#root-variable@3:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/lib/format.ts#root-variable@3:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/lib/format.ts#root-variable@3:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "journeyNodeEdges": []
@@ -448,7 +433,7 @@
                     "lineEnd": 3
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/lib/format.ts#root-variable@3:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/lib/format.ts#root-variable@3:1"
                   ],
@@ -919,8 +904,8 @@
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
               "type": "component",
-              "label": "Shows the cart, or a message when the cart is empty",
-              "description": "When a shopper opens /cart, the `cart` route in `src/router.tsx` renders this page.",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
                 "src/routes/cart/index.tsx#component@5:1",
                 "src/routes/cart/index.tsx#render-root@8:3",
@@ -935,20 +920,27 @@
                 {
                   "id": "src/routes/cart/components/CartLine.tsx#component@6:1",
                   "type": "component",
-                  "label": "Shows the name, the quantity and the total of one item",
-                  "description": "When a shopper opens /cart and the cart holds one item or more, [`<CartPage />` renders this component once per item](code:src/routes/cart/index.tsx#L11-13). Its markup reads [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), a new constant that holds `\"USD\"`.",
+                  "label": null,
+                  "description": null,
                   "codeBlockIds": [
                     "src/routes/cart/components/CartLine.tsx#component@6:1",
+                    "src/lib/format.ts#root-variable@3:1",
                     "src/routes/cart/components/CartLine.tsx#render-root@8:3",
                     "src/routes/cart/components/CartLine.tsx#render@9:5",
                     "src/routes/cart/components/CartLine.tsx#render@12:7"
                   ],
                   "diffCodeBlockIds": [
+                    "src/lib/format.ts#root-variable@3:1",
                     "src/routes/cart/components/CartLine.tsx#render@12:7"
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/lib/format.ts#root-variable@3:1"
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],
@@ -996,21 +988,6 @@
                   "codeBlockId": "src/lib/format.ts#variable@6:3"
                 }
               ]
-            },
-            {
-              "id": "src/lib/format.ts#root-variable@3:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/lib/format.ts#root-variable@3:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/lib/format.ts#root-variable@3:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -1028,11 +1005,6 @@
               "id": "src/routes/cart/components/CartLine.tsx#component@6:1 -> src/lib/format.ts#function@5:1",
               "from": "src/routes/cart/components/CartLine.tsx#component@6:1",
               "to": "src/lib/format.ts#function@5:1"
-            },
-            {
-              "id": "src/routes/cart/components/CartLine.tsx#component@6:1 -> src/lib/format.ts#root-variable@3:1",
-              "from": "src/routes/cart/components/CartLine.tsx#component@6:1",
-              "to": "src/lib/format.ts#root-variable@3:1"
             }
           ]
         },
@@ -1960,8 +1932,8 @@
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
               "type": "component",
-              "label": "Shows the cart, or a message when the cart is empty",
-              "description": "When a shopper opens /cart, the `cart` route in `src/router.tsx` renders this page.",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
                 "src/routes/cart/index.tsx#component@5:1",
                 "src/routes/cart/index.tsx#render-root@8:3",
@@ -1973,20 +1945,27 @@
                 {
                   "id": "src/routes/cart/components/CartSummary.tsx#component@6:1",
                   "type": "component",
-                  "label": "Shows the cart total and the button that empties the cart",
-                  "description": "When a shopper opens /cart and the cart holds one item or more, [`<CartPage />` renders this component under the cart lines](code:src/routes/cart/index.tsx#L15). Its markup reads [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), a new constant that holds `\"USD\"`.",
+                  "label": null,
+                  "description": null,
                   "codeBlockIds": [
                     "src/routes/cart/components/CartSummary.tsx#component@6:1",
+                    "src/lib/format.ts#root-variable@3:1",
                     "src/routes/cart/components/CartSummary.tsx#render-root@16:3",
                     "src/routes/cart/components/CartSummary.tsx#render@17:5",
                     "src/routes/cart/components/CartSummary.tsx#render@18:7"
                   ],
                   "diffCodeBlockIds": [
+                    "src/lib/format.ts#root-variable@3:1",
                     "src/routes/cart/components/CartSummary.tsx#render@18:7"
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/lib/format.ts#root-variable@3:1"
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],
@@ -2029,21 +2008,6 @@
                   "codeBlockId": "src/lib/format.ts#variable@6:3"
                 }
               ]
-            },
-            {
-              "id": "src/lib/format.ts#root-variable@3:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/lib/format.ts#root-variable@3:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/lib/format.ts#root-variable@3:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -2061,11 +2025,6 @@
               "id": "src/routes/cart/components/CartSummary.tsx#component@6:1 -> src/lib/format.ts#function@5:1",
               "from": "src/routes/cart/components/CartSummary.tsx#component@6:1",
               "to": "src/lib/format.ts#function@5:1"
-            },
-            {
-              "id": "src/routes/cart/components/CartSummary.tsx#component@6:1 -> src/lib/format.ts#root-variable@3:1",
-              "from": "src/routes/cart/components/CartSummary.tsx#component@6:1",
-              "to": "src/lib/format.ts#root-variable@3:1"
             }
           ]
         },
@@ -3069,16 +3028,23 @@
                   "description": "When a shopper opens / and `useProducts()` returns the products, [`<CatalogPage />` renders this component once per product](code:src/routes/catalog/index.tsx#L10-14). Its markup reads [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), a new constant that holds `\"USD\"`.",
                   "codeBlockIds": [
                     "src/routes/catalog/components/ProductCard.tsx#component@5:1",
+                    "src/lib/format.ts#root-variable@3:1",
                     "src/routes/catalog/components/ProductCard.tsx#render-root@6:3",
                     "src/routes/catalog/components/ProductCard.tsx#render@7:5",
                     "src/routes/catalog/components/ProductCard.tsx#render@10:7"
                   ],
                   "diffCodeBlockIds": [
+                    "src/lib/format.ts#root-variable@3:1",
                     "src/routes/catalog/components/ProductCard.tsx#render@10:7"
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/lib/format.ts#root-variable@3:1"
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],
@@ -3126,21 +3092,6 @@
                   "codeBlockId": "src/lib/format.ts#variable@6:3"
                 }
               ]
-            },
-            {
-              "id": "src/lib/format.ts#root-variable@3:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/lib/format.ts#root-variable@3:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/lib/format.ts#root-variable@3:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -3158,11 +3109,6 @@
               "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1 -> src/lib/format.ts#function@5:1",
               "from": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
               "to": "src/lib/format.ts#function@5:1"
-            },
-            {
-              "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1 -> src/lib/format.ts#root-variable@3:1",
-              "from": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
-              "to": "src/lib/format.ts#root-variable@3:1"
             }
           ]
         },

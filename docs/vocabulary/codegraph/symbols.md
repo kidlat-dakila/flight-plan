@@ -41,6 +41,7 @@ type CodeBlockSymbol = {
   use: SymbolUse
   handedTo?: CodeBlock | null // alias not a shallow or clone
   member?: SymbolMember
+  binding?: string
 } & (
   | { type: "internal-variable"; lineOfCodeReference: SourceRange }
   | { type: "internal-code-block"; codeBlockReference: CodeBlock }
@@ -148,6 +149,10 @@ A symbol that reaches a member of a name says which member, as `member`. The pat
 | `trpc.users.list.useQuery()` | `["users", "list", "useQuery"]` | `null` |
 
 **A member is looked up by its whole path.** A function written in an object has the keys it is written under, `users.remove`, and a name written as the value of a key, or in short as `{ reset }`, has that key. The member is the block whose keys are the start of the path, the longest that fits. A name taken apart more than one level deep carries every key it was taken through. What an object spreads from another, `{ ...defaults }`, is looked up in that other value with the same path.
+
+## Which name of a declaration is imported
+
+**A symbol that reaches a declaration of several names through an import keeps the name it imports, as `binding`.** `export const { useGetTodosQuery, useAddTodoMutation } = todosApi` is one block, named after its first name. A file that imports `useAddTodoMutation` reaches that block, and its symbol says `binding: "useAddTodoMutation"`, so what it calls is named after the name it imports. A symbol that reaches a declaration of one name, or the first name of several, has no `binding`.
 
 ## Where a value comes from
 

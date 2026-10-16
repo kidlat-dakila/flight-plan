@@ -272,38 +272,6 @@
               "description": "When a shopper clicks \"Add to cart\", [the `onClick` of `<AddToCartButton />` calls `addItem(product)`](code:src/routes/catalog/components/AddToCartButton.tsx#L7). [`<AddToCartButton />` reads `addItem` from this store through the selector `(state) => state.addItem`](code:src/routes/catalog/components/AddToCartButton.tsx#L6), so no code calls the function through the name of the store. The trace assumed this step from that read.",
               "codeBlockIds": [
                 "src/stores/cart-store.ts#state@11:1",
-                "src/stores/cart-store.ts#function@13:3"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#function@13:3"
-                }
-              ]
-            },
-            {
-              "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
-              "type": "render-event",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
-                "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/stores/cart-store.ts#function@13:3",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
                 "src/stores/cart-store.ts#function@13:3",
                 "src/stores/cart-store.ts#effect@14:5",
                 "src/stores/cart-store.ts#effect-callback@14:9",
@@ -344,35 +312,40 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#effect@14:5"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
+                  "codeBlockId": "src/stores/cart-store.ts#function@13:3"
                 }
               ]
+            },
+            {
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
+              "type": "render-event",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
+                "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18 -> src/stores/cart-store.ts#function@13:3",
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18 -> src/stores/cart-store.ts#state@11:1",
               "from": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
-              "to": "src/stores/cart-store.ts#function@13:3"
+              "to": "src/stores/cart-store.ts#state@11:1"
             },
             {
-              "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/stores/cart-store.ts#function@13:3",
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/stores/cart-store.ts#state@11:1",
               "from": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
-              "to": "src/stores/cart-store.ts#function@13:3"
+              "to": "src/stores/cart-store.ts#state@11:1"
             },
             {
               "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
               "from": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
               "to": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18"
-            },
-            {
-              "id": "src/stores/cart-store.ts#state@11:1 -> src/stores/cart-store.ts#function@13:3",
-              "from": "src/stores/cart-store.ts#state@11:1",
-              "to": "src/stores/cart-store.ts#function@13:3"
             }
           ]
         },

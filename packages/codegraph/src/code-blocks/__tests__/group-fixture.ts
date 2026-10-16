@@ -31,7 +31,23 @@ const joinPath = (folder: readonly string[], specifier: string): string =>
     }, folder)
     .join(FOLDER_SEPARATOR)
 
+const PYTHON_SUFFIX = ".py"
+const PYTHON_IMPORT_PATTERN = /^from (?<module>[\w.]+) import (?<names>[\w, ]+)$/gm
+const MODULE_SEPARATOR = "."
+const NAME_SEPARATOR = ","
+
+const pythonImportsOf = (source: string, files: FixtureFiles): ReadonlyMap<string, string> =>
+  new Map(
+    [...source.matchAll(PYTHON_IMPORT_PATTERN)].flatMap(({ groups }) => {
+      const module = groups?.module ?? ""
+      const imported = `${module.split(MODULE_SEPARATOR).join(FOLDER_SEPARATOR)}${PYTHON_SUFFIX}`
+      if (!(imported in files)) return []
+      return (groups?.names ?? "").split(NAME_SEPARATOR).map((name) => [`${module}:${name.trim()}`, imported] as const)
+    }),
+  )
+
 const importedFilePathsOf = (filePath: string, files: FixtureFiles): ReadonlyMap<string, string> => {
+  if (filePath.endsWith(PYTHON_SUFFIX)) return pythonImportsOf(files[filePath], files)
   const folder = filePath.split(FOLDER_SEPARATOR).slice(0, -1)
   const specifiers = [...files[filePath].matchAll(SPECIFIER_PATTERN)].map((match) => match.groups?.specifier ?? "")
   return new Map(

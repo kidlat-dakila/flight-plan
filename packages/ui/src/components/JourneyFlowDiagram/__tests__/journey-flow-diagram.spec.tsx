@@ -56,9 +56,9 @@ const CART_LINE = node({
   ],
   triggerLabels: [{ id: "cart-line-click", type: "render-event", typeLabel: "Event", name: "button.onClick", label: "A shopper removes the line", isDraft: false, change: null, lines: [[4, 5]] }],
   rowGroups: [
-    { label: "Args", rowIds: ["cart-line-on-remove"] },
-    { label: "State", rowIds: ["cart-line-held", "cart-line-total"] },
-    { label: "Triggers", rowIds: ["cart-line-click"] },
+    { label: "Args", rowIds: ["cart-line-on-remove"], childIds: [] },
+    { label: "State", rowIds: ["cart-line-held", "cart-line-total"], childIds: [] },
+    { label: "Triggers", rowIds: ["cart-line-click"], childIds: [] },
   ],
   codeViews: [
     {
@@ -292,7 +292,7 @@ describe("JourneyFlowDiagram", () => {
         { kind: "call", label: "Calls", blocks: [{ id: "on-submit-mutate", name: "createTodo.mutate", label: "createTodo.mutate", isDraft: true, change: null, lines: [[3, 3]] }] },
         { kind: "step", label: "Steps", blocks: [{ id: "on-submit-prevent", name: "event.preventDefault", label: "event.preventDefault", isDraft: true, change: null, lines: [[2, 2]] }] },
       ],
-      rowGroups: [{ label: null, rowIds: ["on-submit-event", "on-submit-prevent", "on-submit-mutate"] }],
+      rowGroups: [{ label: null, rowIds: ["on-submit-event", "on-submit-prevent", "on-submit-mutate"], childIds: [] }],
     })
     const { container } = render(
       <JourneyFlowDiagram title="A form" nodes={[handler]} edges={[]} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,

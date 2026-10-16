@@ -126,9 +126,11 @@ describe("buildCodegraph", () => {
       ["src/cart.ts#class@3:1", "class"],
       ["src/pricing.ts#function@3:1", "function"],
     ])
+    expect(segments[0].journeyFlowDiagram?.journeyNodes[1].children.map((node) => [node.id, node.type])).toStrictEqual([["src/cart.ts#method@4:3", "method"]])
     expect(segments[0].journeyFlowDiagram?.journeyNodeEdges.map((edge) => [edge.from, edge.to])).toStrictEqual([
       ["src/ui.ts#function@3:1", "src/cart.ts#class@3:1"],
-      ["src/cart.ts#class@3:1", "src/pricing.ts#function@3:1"],
+      ["src/cart.ts#method@4:3", "src/pricing.ts#function@3:1"],
+      ["src/cart.ts#class@3:1", "src/cart.ts#method@4:3"],
     ])
   })
 

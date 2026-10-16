@@ -1159,6 +1159,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -2644,8 +2645,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -2936,6 +2936,7 @@
         ],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -4525,6 +4526,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "isPlain": true,
         "exportedByFilePaths": [
           "src/hooks/use-products.ts"
         ],
@@ -4560,6 +4562,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -4967,6 +4970,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -5003,6 +5007,7 @@
         ],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -7392,8 +7397,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -8262,8 +8266,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -8417,8 +8420,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -9502,8 +9504,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -10452,8 +10453,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -14119,6 +14119,14 @@
           "method": null,
           "event": null,
           "certainty": "proven"
+        },
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "holder",
+          "heading": null,
+          "groupKey": null,
+          "ownerId": null
         }
       },
       {
@@ -14232,8 +14240,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -14336,7 +14343,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "state",
+          "heading": "STATE",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#function@13:3",
@@ -14377,7 +14392,15 @@
         ],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "action",
+          "heading": "ACTIONS",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#variable@13:13",
@@ -15520,7 +15543,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "action",
+          "heading": "ACTIONS",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#variable@20:16",
@@ -15893,7 +15924,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "action",
+          "heading": "ACTIONS",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#call@24:5",
@@ -16034,7 +16073,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "selector",
+          "heading": "SELECTORS",
+          "groupKey": null,
+          "ownerId": "src/stores/cart-store.ts#state@11:1"
+        }
       },
       {
         "id": "src/stores/cart-store.ts#root-argument-value@28:33",
@@ -16314,7 +16361,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "selector",
+          "heading": "SELECTORS",
+          "groupKey": null,
+          "ownerId": "src/stores/cart-store.ts#state@11:1"
+        }
       },
       {
         "id": "src/stores/cart-store.ts#root-argument-value@32:34",

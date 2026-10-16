@@ -1,4 +1,4 @@
-import type { CallPattern, CatalogueLibrary, MethodPattern, Slot } from "@/catalogue/types"
+import type { CatalogueLibrary, Slot } from "@/catalogue/types"
 
 const FIRST_ARGUMENT = 0
 
@@ -61,87 +61,6 @@ export const elysiaLibrary: CatalogueLibrary = {
         { kind: "call", name: "onBeforeHandle", slots: [{ at: "last", runs: "middleware" }] },
         { kind: "call", name: "onError", slots: [{ at: "last", runs: "event" }] },
         { kind: "call", name: "ws", slots: [{ at: "message", runs: "route" }], pathAt: 0, method: "WEBSOCKET" },
-        { kind: "call", name: "listen", slots: [{ at: "last", runs: "event" }] },
-      ],
-    },
-  ],
-}
-
-const EXPRESS_HANDLER_SLOTS: readonly Slot[] = [
-  { at: LAST_ARGUMENT, runs: "route" },
-  { at: OTHER_ARGUMENTS, runs: "middleware" },
-]
-
-const EXPRESS_ROUTES: readonly CallPattern[] = [
-  { kind: "call", name: "get", slots: EXPRESS_HANDLER_SLOTS, pathAt: FIRST_ARGUMENT, method: "GET" },
-  { kind: "call", name: "post", slots: EXPRESS_HANDLER_SLOTS, pathAt: FIRST_ARGUMENT, method: "POST" },
-  { kind: "call", name: "put", slots: EXPRESS_HANDLER_SLOTS, pathAt: FIRST_ARGUMENT, method: "PUT" },
-  { kind: "call", name: "patch", slots: EXPRESS_HANDLER_SLOTS, pathAt: FIRST_ARGUMENT, method: "PATCH" },
-  { kind: "call", name: "delete", slots: EXPRESS_HANDLER_SLOTS, pathAt: FIRST_ARGUMENT, method: "DELETE" },
-  { kind: "call", name: "head", slots: EXPRESS_HANDLER_SLOTS, pathAt: FIRST_ARGUMENT, method: "HEAD" },
-  { kind: "call", name: "options", slots: EXPRESS_HANDLER_SLOTS, pathAt: FIRST_ARGUMENT, method: "OPTIONS" },
-  { kind: "call", name: "all", slots: EXPRESS_HANDLER_SLOTS, pathAt: FIRST_ARGUMENT, method: EVERY_METHOD },
-]
-
-const EXPRESS_ROUTES_OF_ONE_PATH: readonly CallPattern[] = [
-  { kind: "call", name: "get", slots: EXPRESS_HANDLER_SLOTS, method: "GET" },
-  { kind: "call", name: "post", slots: EXPRESS_HANDLER_SLOTS, method: "POST" },
-  { kind: "call", name: "put", slots: EXPRESS_HANDLER_SLOTS, method: "PUT" },
-  { kind: "call", name: "patch", slots: EXPRESS_HANDLER_SLOTS, method: "PATCH" },
-  { kind: "call", name: "delete", slots: EXPRESS_HANDLER_SLOTS, method: "DELETE" },
-  { kind: "call", name: "head", slots: EXPRESS_HANDLER_SLOTS, method: "HEAD" },
-  { kind: "call", name: "options", slots: EXPRESS_HANDLER_SLOTS, method: "OPTIONS" },
-  { kind: "call", name: "all", slots: EXPRESS_HANDLER_SLOTS, method: EVERY_METHOD },
-]
-
-const EXPRESS_ROUTER_METHODS: readonly MethodPattern[] = [
-  ...EXPRESS_ROUTES,
-  { kind: "factory", name: "route", prefixAt: FIRST_ARGUMENT, methods: EXPRESS_ROUTES_OF_ONE_PATH },
-  { kind: "call", name: "use", slots: [{ at: OTHER_ARGUMENTS, runs: "middleware" }], prefixAt: FIRST_ARGUMENT },
-  { kind: "call", name: "param", slots: [{ at: SECOND_ARGUMENT, runs: "middleware" }] },
-]
-
-export const expressLibrary: CatalogueLibrary = {
-  name: "Express",
-  specifiers: ["express"],
-  documentedVersion: "5.2",
-  category: "framework",
-  type: "backend",
-  language: "javascript",
-  patterns: [
-    {
-      kind: "factory",
-      name: "default",
-      methods: [...EXPRESS_ROUTER_METHODS, { kind: "call", name: "listen", slots: [{ at: LAST_ARGUMENT, runs: "event" }] }],
-    },
-    { kind: "factory", name: "Router", methods: EXPRESS_ROUTER_METHODS },
-  ],
-}
-
-export const fastifyLibrary: CatalogueLibrary = {
-  name: "Fastify",
-  specifiers: ["fastify"],
-  documentedVersion: "5.12",
-  category: "framework",
-  type: "backend",
-  language: "javascript",
-  patterns: [
-    {
-      kind: "factory",
-      name: "default",
-      methods: [
-        { kind: "call", name: "get", slots: [{ at: "last", runs: "route" }], pathAt: 0, method: "GET" },
-        { kind: "call", name: "post", slots: [{ at: "last", runs: "route" }], pathAt: 0, method: "POST" },
-        { kind: "call", name: "put", slots: [{ at: "last", runs: "route" }], pathAt: 0, method: "PUT" },
-        { kind: "call", name: "delete", slots: [{ at: "last", runs: "route" }], pathAt: 0, method: "DELETE" },
-        { kind: "call", name: "patch", slots: [{ at: "last", runs: "route" }], pathAt: 0, method: "PATCH" },
-        { kind: "call", name: "head", slots: [{ at: "last", runs: "route" }], pathAt: 0, method: "HEAD" },
-        { kind: "call", name: "options", slots: [{ at: "last", runs: "route" }], pathAt: 0, method: "OPTIONS" },
-        { kind: "call", name: "all", slots: [{ at: "last", runs: "route" }], pathAt: 0, method: "*" },
-        { kind: "call", name: "route", slots: [{ at: "handler", runs: "route" }, { at: "preHandler", runs: "middleware" }], pathAt: "url", methodAt: "method" },
-        { kind: "call", name: "addHook", slots: [{ at: 1, runs: "middleware" }], eventAt: 0 },
-        { kind: "call", name: "register", slots: [{ at: 0, runs: "in-place" }], prefixAt: "prefix" },
-        { kind: "call", name: "setErrorHandler", slots: [{ at: 0, runs: "event" }] },
         { kind: "call", name: "listen", slots: [{ at: "last", runs: "event" }] },
       ],
     },
@@ -425,43 +344,6 @@ export const reactDomLibrary: CatalogueLibrary = {
       ],
     },
     { kind: "call", name: "hydrateRoot", slots: [], makes: "config" },
-  ],
-}
-
-export const trpcLibrary: CatalogueLibrary = {
-  name: "tRPC",
-  specifiers: ["@trpc/server", "@trpc/client", "@trpc/react-query"],
-  documentedVersion: "11.19",
-  category: "framework",
-  type: "fullstack",
-  language: "javascript",
-  patterns: [
-    {
-      kind: "factory",
-      name: "initTRPC.create",
-      methods: [
-        { kind: "call", name: "query", slots: [{ at: 0, runs: "resolver" }], isOwnNode: true },
-        { kind: "call", name: "mutation", slots: [{ at: 0, runs: "resolver" }], isOwnNode: true },
-        { kind: "call", name: "use", slots: [{ at: 0, runs: "middleware" }] },
-        { kind: "call", name: "input", slots: [], makes: "validation" },
-      ],
-    },
-    {
-      kind: "factory",
-      name: "createTRPCClient",
-      methods: [
-        { kind: "call", name: "query", slots: [], makes: "data-fetch" },
-        { kind: "call", name: "mutate", slots: [], makes: "request" },
-      ],
-    },
-    {
-      kind: "factory",
-      name: "createTRPCReact",
-      methods: [
-        { kind: "call", name: "useQuery", slots: [], makes: "data-fetch" },
-        { kind: "call", name: "useMutation", slots: [], makes: "request" },
-      ],
-    },
   ],
 }
 

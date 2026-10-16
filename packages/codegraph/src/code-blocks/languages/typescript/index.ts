@@ -3,10 +3,11 @@ import { readTypescriptSyntax } from "@/ast-graph/languages/typescript"
 import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
 import { containsRange, rangeOf } from "@/ast-graph/source-range"
 import type { SymbolSpace } from "@/ast-graph/types"
-import { BUILT_IN_LIBRARIES } from "@/catalogue/libraries"
 import { exportedBindingAt, javascriptReaderOf } from "@/catalogue/matching/javascript-reader"
 import { matchSyntax } from "@/catalogue/matching/match-source"
 import type { Binding, FindExportedBinding } from "@/catalogue/matching/syntax-reader"
+import { LIBRARIES } from "@/code-blocks/libraries"
+import { withCards } from "@/code-blocks/libraries/cards"
 import type { FileExports, FindExport, OutlinedFile, ScriptReading } from "@/code-blocks/reading"
 import { FIRST_COLUMN, fromSyntaxRange } from "@/code-blocks/source-range"
 import type { SourceRange } from "@/code-blocks/types"
@@ -65,7 +66,7 @@ const createBlockReader = ({ filePath, outline, componentId }: ReadScript, findE
     const { importedFilePath, importedName } = resolution.variable
     return importedFilePath !== null && (findExport(importedFilePath, importedName)?.isFunction ?? false)
   },
-  findMade: (value) => findMadeBlock(value, outline, BUILT_IN_LIBRARIES),
+  findMade: (value) => findMadeBlock(value, outline, LIBRARIES),
   comesFromOutside: (value: SyntaxNode) => {
     const range = rangeOf(value)
     return outline.resolved.some(
@@ -77,9 +78,9 @@ const createBlockReader = ({ filePath, outline, componentId }: ReadScript, findE
 
 export const readScript = (script: ReadScript, findExport: FindExport, findBinding: FindExportedBinding): ScriptReading => {
   const { grammar, filePath, outline, componentId } = script
-  const matches = matchSyntax(javascriptReaderOf(grammar, outline, findBinding), BUILT_IN_LIBRARIES)
+  const matches = matchSyntax(javascriptReaderOf(grammar, outline, findBinding), LIBRARIES)
   const blocks = readBlocks(createBlockReader(script, findExport, createFileNaming(matches)), componentId)
-  return { filePath, blocks: withDirectives(blocks, matches, exportsOf(outline)), uses: readUses(outline) }
+  return { filePath, blocks: withCards(withDirectives(blocks, matches, exportsOf(outline)), matches, outline.tree, LIBRARIES), uses: readUses(outline) }
 }
 
 export const bindingInScript = ({ grammar, outline }: ReadScript, declarationRange: SourceRange, findBinding: FindExportedBinding): Binding | null =>

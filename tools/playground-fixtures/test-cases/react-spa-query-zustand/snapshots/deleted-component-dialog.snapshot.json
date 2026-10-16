@@ -735,8 +735,8 @@
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
               "type": "component",
-              "label": "Shows the cart of the shopper",
-              "description": "When a shopper opens /cart, the route `cart` in `src/router.tsx` renders this component.",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
                 "src/routes/cart/index.tsx#component@5:1",
                 "src/routes/cart/index.tsx#render-root@8:3",
@@ -748,8 +748,8 @@
                 {
                   "id": "src/routes/cart/components/CartSummary.tsx#component@5:1",
                   "type": "component",
-                  "label": "Shows the total and the button that empties the cart",
-                  "description": "When a shopper opens /cart and the cart holds one item or more, [`<CartPage />` renders this component](code:src/routes/cart/index.tsx#L15) under the cart lines.",
+                  "label": null,
+                  "description": null,
                   "codeBlockIds": [
                     "src/routes/cart/components/CartSummary.tsx#component@5:1",
                     "src/routes/cart/components/CartSummary.tsx#deleted@8:1",

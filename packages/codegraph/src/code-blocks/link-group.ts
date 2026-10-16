@@ -13,11 +13,12 @@ const found = <Linked>(linkedByKey: ReadonlyMap<string, Linked>, key: string): L
   return linked
 }
 
-const usageOf = ({ usedAt, use, handedToId, member }: StoredCodeBlockSymbol, { blockOf }: GroupLookup): SymbolUsage => ({
+const usageOf = ({ usedAt, use, handedToId, member, binding }: StoredCodeBlockSymbol, { blockOf }: GroupLookup): SymbolUsage => ({
   usedAt,
   use,
   ...(handedToId === undefined ? {} : { handedTo: handedToId === null ? null : blockOf(handedToId) }),
   ...(member === undefined ? {} : { member: { path: member.path, block: member.blockId === null ? null : blockOf(member.blockId) } }),
+  ...(binding === undefined ? {} : { binding }),
 })
 
 const linkSymbol = (stored: StoredCodeBlockSymbol, lookup: GroupLookup): CodeBlockSymbol => {
@@ -51,9 +52,16 @@ const linkBlock = (stored: StoredCodeBlock, lookup: GroupLookup): CodeBlock => {
     lineOfCodeRangeReference: stored.lineOfCodeRangeReference,
     isRoot: stored.isRoot,
     isExported: stored.isExported,
+    ...(stored.isPlain === true ? { isPlain: true } : {}),
+    ...(stored.isReturned === true ? { isReturned: true } : {}),
     lineOfCodeDiffs: stored.lineOfCodeDiffs,
     diffs: stored.diffs,
     catalogue: stored.catalogue,
+    ...(stored.card === undefined ? {} : { card: stored.card }),
+    get cardOwner() {
+      const ownerId = stored.card?.ownerId ?? null
+      return ownerId === null ? null : lookup.blockOf(ownerId)
+    },
     get parentBlock() {
       return stored.parentBlockId === null ? null : lookup.blockOf(stored.parentBlockId)
     },

@@ -656,8 +656,8 @@
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
               "type": "component",
-              "label": "Lists the items of the cart",
-              "description": "When a shopper opens /cart, the router renders this component: the route table in `src/router.tsx` gives the path `cart` the element `<CartPage />`.",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
                 "src/routes/cart/index.tsx#component@5:1",
                 "src/routes/cart/index.tsx#render-root@8:3",
@@ -672,8 +672,8 @@
                 {
                   "id": "src/routes/cart/components/CartLine.tsx#component@6:1",
                   "type": "component",
-                  "label": "Shows the name, the quantity and the total of one item",
-                  "description": "When a shopper opens /cart and the cart holds one item or more, [`<CartPage />` renders this component once per item](code:src/routes/cart/index.tsx#L11-13) and passes the item as the prop `item`.",
+                  "label": null,
+                  "description": null,
                   "codeBlockIds": [
                     "src/routes/cart/components/CartLine.tsx#component@6:1",
                     "src/routes/cart/components/CartLine.tsx#render-root@8:3",

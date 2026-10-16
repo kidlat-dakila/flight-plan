@@ -14,6 +14,7 @@ import {
   elementNameOf,
   FUNCTION_TYPES,
   isArrowBody,
+  isClassComponent,
   isEventName,
   isMarkup,
   isMarkupCondition,
@@ -23,6 +24,9 @@ import {
 } from "./markup"
 import { memberNamed, pathBelow, type NamedBlock } from "./named-by"
 import type { FileOutline } from "./outline"
+import { parameterMemberWrittenIn } from "./parameter-writes"
+import { isPlainValue } from "./plain-values"
+import { isReturnedFunction } from "./returned-functions"
 import { blockIdOf, callableTypeOf, named, startOf } from "./syntax"
 import { memberPathOf } from "./written-at"
 
@@ -51,6 +55,7 @@ interface Seed {
   readonly range: SourceRange
   readonly declaredAt: readonly Position[]
   readonly isReturned?: boolean
+  readonly isPlain?: boolean
   readonly holdsMarkup?: boolean
   readonly catalogue?: CodeBlockCatalogue
 }
@@ -132,6 +137,11 @@ const seedAt = (node: SyntaxNode, type: CodeBlockType, name: string | null = nul
   declaredAt: [],
 })
 
+const plainMarkOf = (value: SyntaxNode | null): Pick<Seed, "isPlain"> => (isPlainValue(value) ? { isPlain: true } : {})
+
+const returnedMarkOf = (callable: SyntaxNode, declaration: SyntaxNode, name: string | null): Pick<Seed, "isReturned"> =>
+  isReturnedFunction(callable, declaration, name) ? { isReturned: true } : {}
+
 const exportingStatementOf = (declaration: SyntaxNode): SyntaxNode =>
   declaration.parent?.type === EXPORT_TYPE ? declaration.parent : declaration
 
@@ -189,6 +199,8 @@ const typeOfCallable = (callable: SyntaxNode, name: string | null, context: Walk
   return returnsMarkup(callable) && !context.isRenderedInPlace ? "component" : typeByName
 }
 
+const typeOfClass = (declared: SyntaxNode): CodeBlockType => (isClassComponent(declared) ? "component" : "class")
+
 const isHeldMarkup = (value: SyntaxNode | null, context: WalkContext): boolean =>
   value !== null && value.parent?.type === DECLARATOR_TYPE && isFieldOf(value, "value") && !context.isRenderedInPlace && isMarkup(value)
 
@@ -200,12 +212,12 @@ const readDeclarator: ReadSeeds = (declarator, context, reader) => {
   const bindings = bindingNamesIn(pattern)
   const name = bindings.length === 0 ? null : bindings[0].text
   const declared = { ...named(name), range: rangeOfDeclarator(declarator), declaredAt: bindings.map(startOf) }
-  if (value !== null && isFunctionValue(value)) return [{ ...declared, type: typeOfCallable(value, name, context) }]
-  if (isClassValue(value)) return [{ ...declared, type: "class" }]
+  if (value !== null && isFunctionValue(value)) return [{ ...declared, type: typeOfCallable(value, name, context), ...returnedMarkOf(value, declarator, name) }]
+  if (value !== null && isClassValue(value)) return [{ ...declared, type: typeOfClass(value) }]
   if (isHeldMarkup(value, context)) return [{ ...declared, type: "component", holdsMarkup: true }]
   const made = value === null ? null : madeBy(unawaited(value), reader)
   if (made !== null) return [{ ...declared, ...made }]
-  if (isAtRoot(context)) return [{ ...declared, type: "root-variable" }]
+  if (isAtRoot(context)) return [{ ...declared, type: "root-variable", ...plainMarkOf(value) }]
   if (declarator.closest(AMBIENT_TYPE) !== null) return []
   const isKept = value !== null && (keepsBlock(value, context, reader) || reader.comesFromOutside(value))
   return [{ ...declared, type: isKept ? "external-value" : "variable" }]
@@ -213,7 +225,13 @@ const readDeclarator: ReadSeeds = (declarator, context, reader) => {
 
 const readDeclaredCallable: ReadSeeds = (callable, context) => {
   const name = callable.childForFieldName("name")?.text ?? null
-  return [{ type: typeOfCallable(callable, name, context), ...named(name), range: rangeOfNode(exportingStatementOf(callable)), declaredAt: declaredAtName(callable) }]
+  return [{
+    type: typeOfCallable(callable, name, context),
+    ...named(name),
+    range: rangeOfNode(exportingStatementOf(callable)),
+    declaredAt: declaredAtName(callable),
+    ...returnedMarkOf(callable, callable, name),
+  }]
 }
 
 const readDefaultValue = (value: SyntaxNode, type: CodeBlockType): Seed[] => {
@@ -232,7 +250,7 @@ const readInlineCallable: ReadSeeds = (callable, context, reader) => {
   if (isOwnedValue(callable, [PAIR_TYPE])) return findCallbackSlot(parent, reader) === null ? [] : [seedAt(callable, typeOfCallable(callable, null, context))]
   if (parent.type === EXPORT_TYPE) return readDefaultValue(callable, typeOfCallable(callable, null, context))
   const name = callable.childForFieldName("name")?.text ?? null
-  return [seedAt(callable, typeOfCallable(callable, name, context), name)]
+  return [{ ...seedAt(callable, typeOfCallable(callable, name, context), name), ...returnedMarkOf(callable, callable, name) }]
 }
 
 const firstDecoratorOf = (member: SyntaxNode): SyntaxNode => {
@@ -286,10 +304,18 @@ const readField: ReadSeeds = (field, context, reader) =>
     ? [{ ...seedAt(field, "method", memberNameOf(field, context)), declaredAt: declaredAtName(field), ...catalogued(catalogueOfMember(field, reader)) }]
     : [{ ...seedAt(field, "property", memberNameOf(field, context)), declaredAt: declaredAtName(field) }]
 
-const readAssignedMember: ReadSeeds = (assignment, context) => {
+const statementAroundWriting = (writing: SyntaxNode): SyntaxNode => (writing.parent?.type === STATEMENT_TYPE ? writing.parent : writing)
+
+const readWrittenParameterMember: ReadSeeds = (writing) => {
+  const target = parameterMemberWrittenIn(writing)
+  return target === null ? [] : [seedAt(statementAroundWriting(writing), "property", target.text)]
+}
+
+const readAssignedMember: ReadSeeds = (assignment, context, reader) => {
   const name = memberAssignedIn(assignment)
-  if (name === null || !isFirstAssignmentOf(name)) return []
-  const written = assignment.parent?.type === STATEMENT_TYPE ? assignment.parent : assignment
+  if (name === null) return readWrittenParameterMember(assignment, context, reader)
+  if (!isFirstAssignmentOf(name)) return []
+  const written = statementAroundWriting(assignment)
   const ownName = textOfName(name)
   return [{ ...seedAt(written, "property", context.className === null ? ownName : [context.className, ownName].join(MEMBER_SEPARATOR)), declaredAt: [startOf(name)] }]
 }
@@ -310,11 +336,11 @@ const readClass: ReadSeeds = (declared, _context, reader) => {
   if (declared.type !== CLASS_EXPRESSION_TYPE) {
     const name = declared.childForFieldName("name")?.text ?? null
     const extended = reader.naming.blockAt(declared)?.catalogue
-    return [{ type: "class", ...named(name), range: rangeOfNode(exportingStatementOf(declared)), declaredAt: declaredAtName(declared), ...catalogued(extended) }]
+    return [{ type: typeOfClass(declared), ...named(name), range: rangeOfNode(exportingStatementOf(declared)), declaredAt: declaredAtName(declared), ...catalogued(extended) }]
   }
   if (isOwnedValue(declared, [DECLARATOR_TYPE])) return []
-  if (declared.parent?.type === EXPORT_TYPE) return readDefaultValue(declared, "class")
-  return [seedAt(declared, "class", declared.childForFieldName("name")?.text ?? null)]
+  if (declared.parent?.type === EXPORT_TYPE) return readDefaultValue(declared, typeOfClass(declared))
+  return [seedAt(declared, typeOfClass(declared), declared.childForFieldName("name")?.text ?? null)]
 }
 
 const readExport: ReadSeeds = (statement) => {
@@ -323,7 +349,7 @@ const readExport: ReadSeeds = (statement) => {
   const value = statement.childForFieldName("value")
   if (value === null || value.type === NAME_TYPE) return [seedAt(statement, "root-statement")]
   if (isFunctionValue(value) || isClassValue(value)) return []
-  return readDefaultValue(value, "root-variable")
+  return readDefaultValue(value, "root-variable").map((seed) => ({ ...seed, ...plainMarkOf(value) }))
 }
 
 const readTypeDeclaration: ReadSeeds = (declaration) => [
@@ -332,7 +358,13 @@ const readTypeDeclaration: ReadSeeds = (declaration) => [
 
 const readEnumeration: ReadSeeds = (declaration, context) =>
   isAtRoot(context)
-    ? [{ type: "root-variable", ...named(declaration.childForFieldName("name")?.text ?? null), range: rangeOfNode(exportingStatementOf(declaration)), declaredAt: declaredAtName(declaration) }]
+    ? [{
+        type: "root-variable",
+        ...named(declaration.childForFieldName("name")?.text ?? null),
+        range: rangeOfNode(exportingStatementOf(declaration)),
+        declaredAt: declaredAtName(declaration),
+        ...plainMarkOf(declaration.childForFieldName("body")),
+      }]
     : []
 
 const readReturn: ReadSeeds = (statement, context) => {
@@ -390,6 +422,8 @@ const READERS: ReadonlyMap<string, ReadSeeds> = new Map<string, ReadSeeds>([
   ["method_definition", readMethod],
   [FIELD_TYPE, readField],
   ["assignment_expression", readAssignedMember],
+  ["augmented_assignment_expression", readWrittenParameterMember],
+  ["update_expression", readWrittenParameterMember],
   [PAIR_TYPE, readOption],
   ["shorthand_property_identifier", readOption],
   ["class_declaration", readClass],
@@ -446,7 +480,7 @@ const readSeeds: ReadSeeds = (node, context, reader) => [
 ]
 
 const blocksOf = (seeds: readonly Seed[], context: WalkContext, filePath: string): ReadBlock[] =>
-  seeds.reduce<ReadBlock[]>((blocks, { type, name, range, declaredAt, isReturned, holdsMarkup, catalogue }) => {
+  seeds.reduce<ReadBlock[]>((blocks, { type, name, range, declaredAt, isReturned, isPlain, holdsMarkup, catalogue }) => {
     const outer = blocks.length === 0 ? undefined : blocks[blocks.length - 1]
     const takenIds = [...context.takenIds, ...blocks.map((block) => block.id)]
     const block: ReadBlock = {
@@ -457,6 +491,7 @@ const blocksOf = (seeds: readonly Seed[], context: WalkContext, filePath: string
       parentId: outer === undefined ? context.parentId : outer.id,
       declaredAt,
       ...(isReturned === true ? { isReturned } : {}),
+      ...(isPlain === true ? { isPlain } : {}),
       ...(holdsMarkup === true ? { holdsMarkup } : {}),
       ...(catalogue === undefined ? {} : { catalogue }),
     }

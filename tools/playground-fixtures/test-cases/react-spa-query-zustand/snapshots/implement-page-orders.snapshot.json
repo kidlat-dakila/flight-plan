@@ -680,7 +680,12 @@
                 "src/stores/order-filter-store.ts#function@9:61",
                 "src/stores/order-filter-store.ts#variable@9:62",
                 "src/stores/order-filter-store.ts#property@10:3",
-                "src/stores/order-filter-store.ts#function@11:3"
+                "src/stores/order-filter-store.ts#function@11:3",
+                "src/stores/order-filter-store.ts#variable@11:15",
+                "src/stores/order-filter-store.ts#call@12:5",
+                "src/stores/order-filter-store.ts#property@12:11",
+                "src/stores/order-filter-store.ts#root-argument-value@16:30",
+                "src/stores/order-filter-store.ts#root-argument-value@17:10"
               ],
               "diffCodeBlockIds": [
                 "src/stores/order-filter-store.ts#state@9:1",
@@ -688,83 +693,36 @@
                 "src/stores/order-filter-store.ts#function@9:61",
                 "src/stores/order-filter-store.ts#variable@9:62",
                 "src/stores/order-filter-store.ts#property@10:3",
-                "src/stores/order-filter-store.ts#function@11:3"
+                "src/stores/order-filter-store.ts#function@11:3",
+                "src/stores/order-filter-store.ts#variable@11:15",
+                "src/stores/order-filter-store.ts#call@12:5",
+                "src/stores/order-filter-store.ts#property@12:11",
+                "src/stores/order-filter-store.ts#root-argument-value@16:30",
+                "src/stores/order-filter-store.ts#root-argument-value@17:10"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#effect@9:36"
-                },
                 {
                   "label": null,
                   "codeBlockId": "src/stores/order-filter-store.ts#variable@9:62"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/order-filter-store.ts#function@16:1",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/order-filter-store.ts#function@16:1",
-                "src/stores/order-filter-store.ts#root-argument-value@16:30",
-                "src/stores/order-filter-store.ts#root-argument-value@17:10"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/order-filter-store.ts#function@16:1",
-                "src/stores/order-filter-store.ts#root-argument-value@16:30",
-                "src/stores/order-filter-store.ts#root-argument-value@17:10"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#root-argument-value@16:30"
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#root-argument-value@17:10"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/order-filter-store.ts#function@11:3",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/order-filter-store.ts#function@11:3",
-                "src/stores/order-filter-store.ts#variable@11:15",
-                "src/stores/order-filter-store.ts#call@12:5",
-                "src/stores/order-filter-store.ts#property@12:11"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/order-filter-store.ts#function@11:3",
-                "src/stores/order-filter-store.ts#variable@11:15",
-                "src/stores/order-filter-store.ts#call@12:5",
-                "src/stores/order-filter-store.ts#property@12:11"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
+                  "codeBlockId": "src/stores/order-filter-store.ts#property@10:3"
+                },
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#call@12:5"
+                  "codeBlockId": "src/stores/order-filter-store.ts#function@11:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/order-filter-store.ts#function@16:1"
                 }
               ]
             }
           ],
-          "journeyNodeEdges": [
-            {
-              "id": "src/stores/order-filter-store.ts#state@9:1 -> src/stores/order-filter-store.ts#function@11:3",
-              "from": "src/stores/order-filter-store.ts#state@9:1",
-              "to": "src/stores/order-filter-store.ts#function@11:3"
-            }
-          ]
+          "journeyNodeEdges": []
         },
         "blastRadiusDiagram": {
           "nodes": [
@@ -1062,7 +1020,7 @@
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyNodeId": "src/stores/order-filter-store.ts#function@16:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/stores/order-filter-store.ts#function@16:1",
                     "src/stores/order-filter-store.ts#root-argument-value@16:30",
@@ -2325,7 +2283,12 @@
                 "src/stores/order-filter-store.ts#function@9:61",
                 "src/stores/order-filter-store.ts#variable@9:62",
                 "src/stores/order-filter-store.ts#property@10:3",
-                "src/stores/order-filter-store.ts#function@11:3"
+                "src/stores/order-filter-store.ts#function@11:3",
+                "src/stores/order-filter-store.ts#variable@11:15",
+                "src/stores/order-filter-store.ts#call@12:5",
+                "src/stores/order-filter-store.ts#property@12:11",
+                "src/stores/order-filter-store.ts#root-argument-value@16:30",
+                "src/stores/order-filter-store.ts#root-argument-value@17:10"
               ],
               "diffCodeBlockIds": [
                 "src/stores/order-filter-store.ts#state@9:1",
@@ -2333,18 +2296,31 @@
                 "src/stores/order-filter-store.ts#function@9:61",
                 "src/stores/order-filter-store.ts#variable@9:62",
                 "src/stores/order-filter-store.ts#property@10:3",
-                "src/stores/order-filter-store.ts#function@11:3"
+                "src/stores/order-filter-store.ts#function@11:3",
+                "src/stores/order-filter-store.ts#variable@11:15",
+                "src/stores/order-filter-store.ts#call@12:5",
+                "src/stores/order-filter-store.ts#property@12:11",
+                "src/stores/order-filter-store.ts#root-argument-value@16:30",
+                "src/stores/order-filter-store.ts#root-argument-value@17:10"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#effect@9:36"
+                  "codeBlockId": "src/stores/order-filter-store.ts#variable@9:62"
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#variable@9:62"
+                  "codeBlockId": "src/stores/order-filter-store.ts#property@10:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/order-filter-store.ts#function@11:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/order-filter-store.ts#function@16:1"
                 }
               ]
             },
@@ -2383,34 +2359,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/hooks/use-orders.ts#effect-callback@6:51"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/order-filter-store.ts#function@16:1",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/order-filter-store.ts#function@16:1",
-                "src/stores/order-filter-store.ts#root-argument-value@16:30",
-                "src/stores/order-filter-store.ts#root-argument-value@17:10"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/order-filter-store.ts#function@16:1",
-                "src/stores/order-filter-store.ts#root-argument-value@16:30",
-                "src/stores/order-filter-store.ts#root-argument-value@17:10"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#root-argument-value@16:30"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#root-argument-value@17:10"
                 }
               ]
             },
@@ -2475,32 +2423,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": []
-            },
-            {
-              "id": "src/stores/order-filter-store.ts#function@11:3",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/order-filter-store.ts#function@11:3",
-                "src/stores/order-filter-store.ts#variable@11:15",
-                "src/stores/order-filter-store.ts#call@12:5",
-                "src/stores/order-filter-store.ts#property@12:11"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/order-filter-store.ts#function@11:3",
-                "src/stores/order-filter-store.ts#variable@11:15",
-                "src/stores/order-filter-store.ts#call@12:5",
-                "src/stores/order-filter-store.ts#property@12:11"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#call@12:5"
-                }
-              ]
             }
           ],
           "journeyNodeEdges": [
@@ -2510,14 +2432,14 @@
               "to": "src/routes/orders/index.tsx#component@6:1"
             },
             {
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#render-event@12:58 -> src/stores/order-filter-store.ts#function@11:3",
+              "id": "src/routes/orders/components/OrderStatusFilter.tsx#render-event@12:58 -> src/stores/order-filter-store.ts#state@9:1",
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#render-event@12:58",
-              "to": "src/stores/order-filter-store.ts#function@11:3"
+              "to": "src/stores/order-filter-store.ts#state@9:1"
             },
             {
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75 -> src/stores/order-filter-store.ts#function@11:3",
+              "id": "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75 -> src/stores/order-filter-store.ts#state@9:1",
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75",
-              "to": "src/stores/order-filter-store.ts#function@11:3"
+              "to": "src/stores/order-filter-store.ts#state@9:1"
             },
             {
               "id": "src/routes/orders/index.tsx#component@6:1 -> src/stores/order-filter-store.ts#state@9:1",
@@ -2530,14 +2452,9 @@
               "to": "src/hooks/use-orders.ts#hook@5:1"
             },
             {
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/stores/order-filter-store.ts#function@11:3",
+              "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/stores/order-filter-store.ts#state@9:1",
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
-              "to": "src/stores/order-filter-store.ts#function@11:3"
-            },
-            {
-              "id": "src/routes/orders/index.tsx#component@6:1 -> src/stores/order-filter-store.ts#function@16:1",
-              "from": "src/routes/orders/index.tsx#component@6:1",
-              "to": "src/stores/order-filter-store.ts#function@16:1"
+              "to": "src/stores/order-filter-store.ts#state@9:1"
             },
             {
               "id": "src/routes/orders/index.tsx#component@6:1 -> src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
@@ -2550,19 +2467,9 @@
               "to": "src/api/orders.ts#function@4:1"
             },
             {
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/stores/order-filter-store.ts#state@9:1",
-              "from": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
-              "to": "src/stores/order-filter-store.ts#state@9:1"
-            },
-            {
               "id": "src/routes/orders/index.tsx#component@6:1 -> src/routes/orders/components/OrderRow.tsx#component@4:1",
               "from": "src/routes/orders/index.tsx#component@6:1",
               "to": "src/routes/orders/components/OrderRow.tsx#component@4:1"
-            },
-            {
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/stores/order-filter-store.ts#function@16:1",
-              "from": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
-              "to": "src/stores/order-filter-store.ts#function@16:1"
             },
             {
               "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/routes/orders/components/OrderStatusFilter.tsx#render-event@12:58",
@@ -2573,11 +2480,6 @@
               "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75",
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
               "to": "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75"
-            },
-            {
-              "id": "src/stores/order-filter-store.ts#state@9:1 -> src/stores/order-filter-store.ts#function@11:3",
-              "from": "src/stores/order-filter-store.ts#state@9:1",
-              "to": "src/stores/order-filter-store.ts#function@11:3"
             }
           ]
         },

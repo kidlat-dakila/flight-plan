@@ -3,7 +3,7 @@ import type { ExportTable } from "./export-table"
 import type { FileReading, HandingSlot, ReadBlock, ReadTarget, ReadUse, WrittenAt } from "./reading"
 import { containsRange, positionKey } from "./source-range"
 import type { StoredASTGraph, StoredCodeBlock, StoredCodeBlockSymbol, StoredExports, StoredSymbolMember, StoredSymbolPlace } from "./stored-types"
-import type { Position, SourceRange } from "./types"
+import type { CodeBlockType, Position, SourceRange } from "./types"
 
 export interface ReferenceDetails {
   readonly memberPathById: ReadonlyMap<string, readonly string[]>
@@ -40,6 +40,7 @@ const KEY_ROLE = "key"
 const FIRST_PARAMETER = 0
 const RENDER_ROOT = "render-root"
 const PAGE_SLOT = "page"
+const RETURNED_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component", "method"])
 const EXTERNAL_TYPES: ReadonlySet<StoredCodeBlockSymbol["type"]> = new Set<StoredCodeBlockSymbol["type"]>([
   "external-variable",
   "external-block",
@@ -116,6 +117,11 @@ const isInReturnedMarkup = (block: ReadBlock, index: BlockIndex): boolean => {
 const asUsedIn = (use: ReadUse, holder: ReadBlock, index: BlockIndex): ReadUse =>
   use.use === "render" && !isInReturnedMarkup(holder, index) ? { ...use, use: "value" } : use
 
+const bindingOf = (importedName: string, targetId: string, index: BlockIndex): { binding?: string } => {
+  const target = index.blockById.get(targetId)?.block
+  return target !== undefined && target.declaredAt.length > 1 && target.name !== importedName ? { binding: importedName } : {}
+}
+
 const symbolOf = (use: ReadUse, filePath: string, index: BlockIndex): StoredCodeBlockSymbol => {
   const { target } = use
   const targetId = blockIdOfTarget(target, filePath, index)
@@ -130,7 +136,7 @@ const symbolOf = (use: ReadUse, filePath: string, index: BlockIndex): StoredCode
       ? { ...usage, type: "internal-variable", lineOfCodeReference: target.declarationRange }
       : { ...usage, type: "internal-code-block", codeBlockId: targetId }
   }
-  if (targetId !== null) return { ...usage, type: "external-block", codeBlockId: targetId }
+  if (targetId !== null) return { ...usage, type: "external-block", codeBlockId: targetId, ...bindingOf(target.importedName, targetId, index) }
   const found = target.filePath === null ? null : index.exports.findExport(target.filePath, target.importedName)
   if (found !== null) return { ...usage, type: "external-variable", lineOfCodeReference: found.declarationRange, filePath: found.filePath }
   return { ...usage, type: "unopened-import", specifier: target.specifier, importedName: target.importedName, isLibrary: target.filePath === null }
@@ -207,6 +213,8 @@ export const linkReferences = (readings: readonly FileReading[], exports: Export
       childrenBlockIds: childrenOf(index, block.id).map((child) => child.id),
       isRoot: block.parentId === null,
       isExported: exportedByFilePaths.length > 0,
+      ...(block.isPlain === true ? { isPlain: true } : {}),
+      ...(block.isReturned === true && RETURNED_TYPES.has(block.type) ? { isReturned: true } : {}),
       exportedByFilePaths,
       lineOfCodeDiffs: null,
       diffs: [],
@@ -217,6 +225,7 @@ export const linkReferences = (readings: readonly FileReading[], exports: Export
       handedFrom: (handedByBlock.get(block.id) ?? []).map((one) => one.place),
       filePath,
       catalogue: block.catalogue ?? null,
+      ...(block.card === undefined ? {} : { card: block.card }),
     }
   }
 

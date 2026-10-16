@@ -1085,6 +1085,7 @@
         ],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],

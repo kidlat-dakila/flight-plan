@@ -386,7 +386,7 @@ describe("the chains of a group", () => {
       "src/server.ts": codeOf("import express from \"express\"", "import { removeUser } from \"./users\"", "const app = express()", "app.delete(\"/users/:id\", (request) => removeUser(request.params.id))"),
     }
 
-    expect(chainsIn(files, USERS_CHANGE)).toStrictEqual(["route → effect-callback 1 → function → function removeUser"])
+    expect(chainsIn(files, USERS_CHANGE)).toStrictEqual(["route → effect-callback (request) => … → function → function removeUser"])
   })
 
   it("steps from a class to its methods", () => {

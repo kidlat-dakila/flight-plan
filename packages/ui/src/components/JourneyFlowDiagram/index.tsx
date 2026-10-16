@@ -81,6 +81,7 @@ export interface JourneyBlockList {
 export interface JourneyRowGroup {
   readonly label: string | null
   readonly rowIds: readonly string[]
+  readonly childIds: readonly string[]
 }
 
 export interface JourneyNode {
@@ -241,6 +242,7 @@ const HEAD_BAR_CLASSES = "flex h-7 shrink-0 items-center gap-2 rounded-t-md bord
 const HEAD_BODY_CLASSES = "flex min-h-0 flex-1 flex-col justify-center gap-1 px-3"
 const BLOCK_LIST_ICONS: Readonly<Record<string, LucideIcon>> = {
   argument: SlidersHorizontalIcon,
+  property: SlidersHorizontalIcon,
   state: DatabaseIcon,
   hook: AnchorIcon,
   effect: ZapIcon,
@@ -304,12 +306,13 @@ const rowKindOf = ({ isDraft }: Pick<JourneyTriggerLabel, "isDraft">): LayoutRow
 
 const toLayoutRows = (node: JourneyNode): LayoutRow[] => {
   const rowById = new Map([...node.blockLists.flatMap(({ blocks }) => blocks), ...node.triggerLabels].map((row) => [row.id, row] as const))
-  return node.rowGroups.flatMap(({ label, rowIds }, groupIndex): LayoutRow[] => [
+  return node.rowGroups.flatMap(({ label, rowIds, childIds }, groupIndex): LayoutRow[] => [
     ...(label === null ? [] : [{ id: headingIdOf(node, groupIndex), kind: "heading" as const }]),
     ...rowIds.flatMap((rowId): LayoutRow[] => {
       const row = rowById.get(rowId)
       return row === undefined ? [] : [{ id: rowId, kind: rowKindOf(row) }]
     }),
+    ...childIds.map((childId): LayoutRow => ({ id: childId, kind: "card" })),
   ])
 }
 

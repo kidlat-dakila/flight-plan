@@ -207,11 +207,11 @@ A `with` statement, a name bound in the body of a class and a plain local are no
 
 ## Journey Flow Diagram
 
-A Python file is traced by its calls, like a [TypeScript](typescript.md#journey-flow-diagram) file. A function at the root of a file is one node of the type `function`, and a class with its methods one node of the type `class`. A method, and a condition or a loop of a function or of a method, is a step of its node, as [Journey Flow Diagram](../../journey-flow-diagram.md#nodes) says.
+A Python file is traced by its calls, like a [TypeScript](typescript.md#journey-flow-diagram) file. A function at the root of a file is one node of the type `function`, and a class with a method one node of the type `class` that holds a node for each of its methods, as the [class card](../../journey-flow-diagram/class-card.md) says: `self` reaches the class as `this` does. A function a function returns, such as the `wrapper` of a decorator, is a node drawn inside it. A value at the root of a file that is [plain](../../journey-flow-diagram.md#plain-code), such as `MAX_ITEMS = 5`, is no node. A condition or a loop of a function or of a method is a step of its node, as [Journey Flow Diagram](../../journey-flow-diagram.md#nodes) says.
 
 | The top of the path | The node it is in |
 |---|---|
-| A function a catalogue pattern names as a route, such as one under `@app.get("/total")` | The `function` node of that function |
+| A function a catalogue pattern names as a route, such as one under `@app.get("/total")` | The handler inside the [route card](../../journey-flow-diagram/route-card.md) of its path |
 | A statement at the root of a file | Its own `root-statement` node |
 | A function nothing calls | The `function` node of that function |
 

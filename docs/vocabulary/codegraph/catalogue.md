@@ -297,7 +297,7 @@ The globals of the platform need no pattern. `fetch`, `EventSource`, `process.en
 
 ## A call that is a node of its own
 
-A Journey Flow Diagram has one node per root block, and only a component holds nodes of its own. A library that declares several operations in one value breaks that rule: a tRPC router is one `root-variable`, and each procedure in it is called on an occasion of its own, from another page.
+A Journey Flow Diagram has one node per root block, and a root block holds nodes of its own only as its card says. A library that declares several operations in one value breaks that rule: a tRPC router is one `root-variable`, and each procedure in it is called on an occasion of its own, from another page. Each procedure is drawn inside the [tRPC router card](../journey-flow-diagram/libraries/trpc.md) of its router.
 
 `isOwnNode: true` on a call pattern says each such call is a node of its own. The block of the call carries it in its `catalogue`, and [Nodes](../journey-flow-diagram.md#nodes) reads it. What is written inside the call stays in that node: its callback, and the effects and callbacks inside that.
 
@@ -312,22 +312,22 @@ export const todoRouter = createTRPCRouter({
 })
 ```
 
-A call written as the value of a key is named after that key, so the two nodes are `list` and `update`, not `query` and `mutation`. `query` and `mutation` of `initTRPC.create` are the only patterns that say it.
+A call written as the value of a key is named after that key, so the two nodes are `list` and `update`, not `query` and `mutation`. `query`, `mutation` and `subscription` of `initTRPC.create` are the only patterns that say it.
 
-A store is the same case with no call to name: its actions are functions written under the keys of what a callback returns. `holdsOwnNodes: true` on a slot says each function written under a key of what the callback in that slot returns is a node of its own, named after its key. The first argument of `create`, of `createStore` and of `persist` of Zustand say it.
+A store declares its actions in one value too, with no call to name them: they are functions written under the keys of what a callback returns. They are no nodes. `holdsActions: true` on a slot says each function written under a key of what the callback in that slot returns is an action of the store, a row under Actions of its [state card](../journey-flow-diagram/libraries/zustand.md), named after its key. The first argument of `create`, of `createStore`, of `persist` and of `devtools` of Zustand say it.
 
 ```ts
-{ kind: "factory", name: "create", slots: [{ at: 0, runs: "in-place", holdsOwnNodes: true }], makes: "state" }
+{ kind: "factory", name: "create", slots: [{ at: 0, runs: "in-place", holdsActions: true }], makes: "state" }
 ```
 
 ```ts
 export const useCartStore = create((set) => ({
-  items: [],                                                    // a value: a row of useCartStore
-  addItem: (product) => set((state) => addTo(state, product)),  // a node, named addItem
+  items: [],                                                    // a row under State of useCartStore
+  addItem: (product) => set((state) => addTo(state, product)),  // a row under Actions, named addItem
 }))
 ```
 
-Nothing inside such a node is a node: the callback handed to `set` is a row of `addItem`.
+What is inside an action is folded into its row: the callback handed to `set` is part of the row `addItem`.
 
 ## What a slot is
 
@@ -417,7 +417,7 @@ type SlotPosition = SlotPlace | SlotPlace[]
 interface Slot {
   at: SlotPosition
   runs: SlotRuns
-  holdsOwnNodes?: boolean              // each function under a key of what the callback returns is a node of its own
+  holdsActions?: boolean               // each function under a key of what the callback returns is an action of the store
 }
 
 interface ContextProvision {
@@ -644,13 +644,14 @@ The catalogue also says which files are tests and stories, as file conventions: 
 | Source | Holds | Kept in |
 |---|---|---|
 | The built-in catalogue | The patterns of the libraries Flight Plan knows, one file of data per language and category | The codegraph package, `packages/codegraph` |
+| A library file | The patterns of a library that needs handling of its own, in the same shape, with the `readCards` that says which card of the Journey Flow Diagram each of its blocks belongs to, as [Which card a block belongs to](code-blocks.md#which-card-a-block-belongs-to) says. Express, Fastify, tRPC, Zustand, Pinia, Redux and RTK Query are files of JavaScript, Flask and FastAPI files of Python. A library is in the catalogue or in a file of its own, never both. | The codegraph package, one file per library in the folder of its language |
 | The repository's catalogue | The patterns of what the built-in one does not cover: an uncommon framework, the repository's own event bus, where its test files and story files are | The configuration of the repository |
 
 The repository's catalogue is written in setup. An agent reads the frameworks of the repository and proposes patterns for the gaps.
 
 **A proposed pattern is checked before it is kept.** The codegraph applies it to the repository. A pattern that matches nothing is refused, and what each kept pattern matched is shown, such as "37 routes", so that a person can confirm it at a glance. `countPatternMatches` counts the matches of each pattern over the files of a repository, and `checkProposedLibraries` turns the counts into the patterns kept and the sentences of the ones refused.
 
-**Every pattern has a fixture.** A pattern of the built-in catalogue comes with a small piece of code it must match and one it must not, so the catalogue can grow to any size without a pattern silently matching the wrong thing. Every fixture is run: a pattern that does not match its own code, or that matches the code it must not, fails the tests.
+**Every pattern has a fixture.** A pattern of the built-in catalogue or of a library file comes with a small piece of code it must match and one it must not, so the catalogue can grow to any size without a pattern silently matching the wrong thing. Every fixture is run: a pattern that does not match its own code, or that matches the code it must not, fails the tests.
 
 ## What a file convention of Next.js runs as
 

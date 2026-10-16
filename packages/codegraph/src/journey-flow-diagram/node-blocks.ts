@@ -1,4 +1,6 @@
 import type { CodeBlock, CodeBlockType } from "@flightplan/configurations"
+import { isCardNodeBlock, isCardNotNodeBlock } from "./cards"
+import { classOfDeclaredProperty, hasMethods } from "./cards/class"
 
 export interface NodeStep {
   readonly from: CodeBlock
@@ -49,6 +51,8 @@ const STATEMENT: CodeBlockType = "root-statement"
 const KEPT_STATE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["state", "derived"])
 const IN_PLACE = "in-place"
 const ROOT_VARIABLE: CodeBlockType = "root-variable"
+const CLASS: CodeBlockType = "class"
+const CALLING = "call"
 const RUNNING_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>([...TRIGGERED_TYPES, ...INVOKED_TYPES])
 
 const isStateCall = (block: CodeBlock): boolean => EFFECT_TYPES.has(block.type) && block.parentBlock !== null && KEPT_STATE_TYPES.has(block.parentBlock.type)
@@ -89,12 +93,7 @@ const isExecutedAfterRender = (block: CodeBlock): boolean => {
 
 const hasNodesInside = (root: CodeBlock): boolean => root.type === COMPONENT || root.type === STATEMENT
 
-const isKeyedFunction = (block: CodeBlock): boolean => {
-  const body = block.type === FUNCTION && block.name !== undefined ? block.parentBlock : null
-  return body !== null && isBodyBlock(body) && body.parentBlock?.catalogue?.holdsOwnNodes === true
-}
-
-const isOwnNode = (block: CodeBlock): boolean => block.catalogue?.isOwnNode === true || isKeyedFunction(block)
+const isOwnNode = (block: CodeBlock): boolean => block.catalogue?.isOwnNode === true
 
 const isInsideOwnNode = (block: CodeBlock): boolean => block.parentBlock !== null && (isOwnNode(block.parentBlock) || isInsideOwnNode(block.parentBlock))
 
@@ -103,12 +102,24 @@ const listBlocksWithin = (block: CodeBlock): CodeBlock[] => block.childrenBlocks
 const isLocalValue = (block: CodeBlock): boolean =>
   block.parentBlock === null && block.type === ROOT_VARIABLE && !block.isExported && !listBlocksWithin(block).some((inner) => RUNNING_TYPES.has(inner.type))
 
+const makesClassWithMethods = (block: CodeBlock): boolean =>
+  [block, ...listBlocksWithin(block)].some((inner) =>
+    inner.outerSymbols.some((symbol) =>
+      symbol.use === CALLING
+      && (symbol.type === "internal-code-block" || symbol.type === "external-block")
+      && symbol.codeBlockReference.type === CLASS
+      && hasMethods(symbol.codeBlockReference)))
+
+const isPlainValue = (block: CodeBlock): boolean => block.type === ROOT_VARIABLE && block.isPlain === true && !makesClassWithMethods(block)
+
+const isPlainRoot = (block: CodeBlock): boolean => block.parentBlock === null && (isPlainValue(block) || (block.type === CLASS && !hasMethods(block)))
+
 const isReadInNode = (reader: CodeBlock, value: CodeBlock): boolean => {
   const readerRoot = rootOf(reader)
   return readerRoot.id !== value.id && (readerRoot.type !== STATEMENT || nodeBlockOf(reader) !== null)
 }
 
-export const isFoldedValue = (block: CodeBlock): boolean => isLocalValue(block) && block.usedBy.some((reader) => isReadInNode(reader, block))
+export const isFoldedValue = (block: CodeBlock): boolean => (isLocalValue(block) || isPlainRoot(block)) && block.usedBy.some((reader) => isReadInNode(reader, block))
 
 export const foldedValueOf = (block: CodeBlock): CodeBlock | null => {
   const root = rootOf(block)
@@ -116,15 +127,20 @@ export const foldedValueOf = (block: CodeBlock): CodeBlock | null => {
 }
 
 export const isNodeBlock = (block: CodeBlock): boolean => {
+  if (isCardNotNodeBlock(block)) return false
   if (block.parentBlock === null) return block.type !== STATEMENT && !isFoldedValue(block)
-  return isOwnNode(block) || (isTriggered(block) && hasNodesInside(rootOf(block)) && !isInsideOwnNode(block))
+  return isOwnNode(block) || isCardNodeBlock(block, isNodeBlock) || (isTriggered(block) && hasNodesInside(rootOf(block)) && !isInsideOwnNode(block))
 }
+
+export const isNodeDrawnInside = (block: CodeBlock): boolean => block.parentBlock !== null && isCardNodeBlock(block, isNodeBlock)
 
 export const isStepBlock = (block: CodeBlock): boolean =>
   block.parentBlock !== null && !isPartOfRender(block) && !isTriggered(block) && (isInvoked(block) || isExecutedAfterRender(block))
 
+const blockAround = (block: CodeBlock): CodeBlock | null => eventHandedTo(block) ?? block.cardOwner ?? classOfDeclaredProperty(block) ?? block.parentBlock
+
 const holderBlockOf = (block: CodeBlock): CodeBlock => {
-  const around = eventHandedTo(block) ?? block.parentBlock
+  const around = blockAround(block)
   return around === null || isNodeBlock(block) ? block : holderBlockOf(around)
 }
 
@@ -134,7 +150,7 @@ export const nodeBlockOf = (block: CodeBlock): CodeBlock | null => {
 }
 
 export const nodeBlockAround = (block: CodeBlock): CodeBlock | null => {
-  const around = eventHandedTo(block) ?? block.parentBlock
+  const around = blockAround(block)
   return around === null ? null : nodeBlockOf(around)
 }
 

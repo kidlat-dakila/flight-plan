@@ -631,19 +631,53 @@
                 "src/stores/cart-store.ts#function@14:47",
                 "src/stores/cart-store.ts#property@16:3",
                 "src/stores/cart-store.ts#function@23:3",
-                "src/stores/cart-store.ts#function@26:3"
+                "src/stores/cart-store.ts#variable@23:16",
+                "src/stores/cart-store.ts#call@24:5",
+                "src/stores/cart-store.ts#property@24:11",
+                "src/stores/cart-store.ts#function@26:3",
+                "src/stores/cart-store.ts#call@27:5",
+                "src/stores/cart-store.ts#property@27:22",
+                "src/stores/cart-store.ts#root-variable@39:1",
+                "src/stores/cart-store.ts#root-argument-value@41:37",
+                "src/stores/cart-store.ts#condition@42:3",
+                "src/stores/cart-store.ts#root-argument-value@42:7"
               ],
               "diffCodeBlockIds": [
                 "src/stores/cart-store.ts#function@14:47",
                 "src/stores/cart-store.ts#property@16:3",
-                "src/stores/cart-store.ts#function@23:3"
+                "src/stores/cart-store.ts#function@23:3",
+                "src/stores/cart-store.ts#variable@23:16",
+                "src/stores/cart-store.ts#call@24:5",
+                "src/stores/cart-store.ts#property@24:11",
+                "src/stores/cart-store.ts#call@27:5",
+                "src/stores/cart-store.ts#property@27:22",
+                "src/stores/cart-store.ts#root-variable@39:1",
+                "src/stores/cart-store.ts#root-argument-value@41:37",
+                "src/stores/cart-store.ts#condition@42:3",
+                "src/stores/cart-store.ts#root-argument-value@42:7"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#effect-callback@14:47"
+                  "codeBlockId": "src/stores/cart-store.ts#property@16:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@23:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@26:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#root-variable@39:1"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@41:1"
                 }
               ]
             },
@@ -666,95 +700,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/api/promo.ts#root-argument-value@8:28"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#function@41:1",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/cart-store.ts#function@41:1",
-                "src/stores/cart-store.ts#root-variable@39:1",
-                "src/stores/cart-store.ts#root-argument-value@41:37",
-                "src/stores/cart-store.ts#condition@42:3",
-                "src/stores/cart-store.ts#root-argument-value@42:7"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#function@41:1",
-                "src/stores/cart-store.ts#root-variable@39:1",
-                "src/stores/cart-store.ts#root-argument-value@41:37",
-                "src/stores/cart-store.ts#condition@42:3",
-                "src/stores/cart-store.ts#root-argument-value@42:7"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Gives the number a percentage is divided by",
-                  "codeBlockId": "src/stores/cart-store.ts#root-variable@39:1"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@41:37"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#condition@42:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@42:7"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#function@23:3",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/cart-store.ts#function@23:3",
-                "src/stores/cart-store.ts#variable@23:16",
-                "src/stores/cart-store.ts#call@24:5",
-                "src/stores/cart-store.ts#property@24:11"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#function@23:3",
-                "src/stores/cart-store.ts#variable@23:16",
-                "src/stores/cart-store.ts#call@24:5",
-                "src/stores/cart-store.ts#property@24:11"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#call@24:5"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#function@26:3",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/cart-store.ts#function@26:3",
-                "src/stores/cart-store.ts#call@27:5",
-                "src/stores/cart-store.ts#property@27:22"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#call@27:5",
-                "src/stores/cart-store.ts#property@27:22"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#call@27:5"
                 }
               ]
             }
@@ -814,16 +759,6 @@
               "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/stores/cart-store.ts#state@14:1",
               "from": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
               "to": "src/stores/cart-store.ts#state@14:1"
-            },
-            {
-              "id": "src/stores/cart-store.ts#state@14:1 -> src/stores/cart-store.ts#function@23:3",
-              "from": "src/stores/cart-store.ts#state@14:1",
-              "to": "src/stores/cart-store.ts#function@23:3"
-            },
-            {
-              "id": "src/stores/cart-store.ts#state@14:1 -> src/stores/cart-store.ts#function@26:3",
-              "from": "src/stores/cart-store.ts#state@14:1",
-              "to": "src/stores/cart-store.ts#function@26:3"
             }
           ]
         },
@@ -1184,7 +1119,7 @@
                     "lineEnd": 44
                   },
                   "category": "function",
-                  "journeyNodeId": "src/stores/cart-store.ts#function@41:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/stores/cart-store.ts#function@41:1",
                     "src/stores/cart-store.ts#root-argument-value@41:37",
@@ -2890,8 +2825,8 @@
             {
               "id": "src/hooks/use-promo.ts#hook@5:1",
               "type": "hook",
-              "label": "Builds the mutation that applies a promo",
-              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), [`<CartSummary />` renders `<PromoForm />`](code:src/routes/cart/components/CartSummary.tsx#L20), and [`<PromoForm />` calls this function](code:src/routes/cart/components/PromoForm.tsx#L7) on each render to get the mutation.",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
                 "src/hooks/use-promo.ts#hook@5:1",
                 "src/hooks/use-promo.ts#state@6:3",
@@ -2962,8 +2897,8 @@
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
               "type": "component",
-              "label": "Shows the cart lines and the summary",
-              "description": "When a shopper opens /cart, the route `cart` in `src/router.tsx` renders this page inside `<RootLayout />`.",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
                 "src/routes/cart/index.tsx#component@5:1",
                 "src/routes/cart/index.tsx#render-root@8:3",
@@ -2975,8 +2910,8 @@
                 {
                   "id": "src/routes/cart/components/CartSummary.tsx#component@7:1",
                   "type": "component",
-                  "label": "Shows the promo form, the discount and the total",
-                  "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders this component](code:src/routes/cart/index.tsx#L15) under the cart lines.",
+                  "label": null,
+                  "description": null,
                   "codeBlockIds": [
                     "src/routes/cart/components/CartSummary.tsx#component@7:1",
                     "src/routes/cart/components/CartSummary.tsx#component-effect@8:22",
@@ -3087,19 +3022,52 @@
                 "src/stores/cart-store.ts#function@14:47",
                 "src/stores/cart-store.ts#property@16:3",
                 "src/stores/cart-store.ts#function@23:3",
-                "src/stores/cart-store.ts#function@26:3"
+                "src/stores/cart-store.ts#variable@23:16",
+                "src/stores/cart-store.ts#call@24:5",
+                "src/stores/cart-store.ts#property@24:11",
+                "src/stores/cart-store.ts#call@27:5",
+                "src/stores/cart-store.ts#property@27:22",
+                "src/stores/cart-store.ts#root-variable@39:1",
+                "src/stores/cart-store.ts#root-argument-value@41:37",
+                "src/stores/cart-store.ts#condition@42:3",
+                "src/stores/cart-store.ts#root-argument-value@42:7"
               ],
               "diffCodeBlockIds": [
                 "src/stores/cart-store.ts#function@14:47",
                 "src/stores/cart-store.ts#property@16:3",
-                "src/stores/cart-store.ts#function@23:3"
+                "src/stores/cart-store.ts#function@23:3",
+                "src/stores/cart-store.ts#variable@23:16",
+                "src/stores/cart-store.ts#call@24:5",
+                "src/stores/cart-store.ts#property@24:11",
+                "src/stores/cart-store.ts#call@27:5",
+                "src/stores/cart-store.ts#property@27:22",
+                "src/stores/cart-store.ts#root-variable@39:1",
+                "src/stores/cart-store.ts#root-argument-value@41:37",
+                "src/stores/cart-store.ts#condition@42:3",
+                "src/stores/cart-store.ts#root-argument-value@42:7"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#effect-callback@14:47"
+                  "codeBlockId": "src/stores/cart-store.ts#property@16:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@23:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@26:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#root-variable@39:1"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@41:1"
                 }
               ]
             },
@@ -3122,46 +3090,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/api/promo.ts#root-argument-value@8:28"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#function@41:1",
-              "type": "function",
-              "label": "Computes the discount of the applied promo",
-              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), and [`<CartSummary />` passes this function to `useCartStore` as a selector](code:src/routes/cart/components/CartSummary.tsx#L9). The store calls it with its state. The trace assumes this connection, because no code calls this function by name.",
-              "codeBlockIds": [
-                "src/stores/cart-store.ts#function@41:1",
-                "src/stores/cart-store.ts#root-variable@39:1",
-                "src/stores/cart-store.ts#root-argument-value@41:37",
-                "src/stores/cart-store.ts#condition@42:3",
-                "src/stores/cart-store.ts#root-argument-value@42:7"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#function@41:1",
-                "src/stores/cart-store.ts#root-variable@39:1",
-                "src/stores/cart-store.ts#root-argument-value@41:37",
-                "src/stores/cart-store.ts#condition@42:3",
-                "src/stores/cart-store.ts#root-argument-value@42:7"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Gives the number a percentage is divided by",
-                  "codeBlockId": "src/stores/cart-store.ts#root-variable@39:1"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@41:37"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#condition@42:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@42:7"
                 }
               ]
             },
@@ -3220,55 +3148,6 @@
                   "codeBlockId": "src/routes/cart/components/PromoForm.tsx#variable@16:62"
                 }
               ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#function@23:3",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/cart-store.ts#function@23:3",
-                "src/stores/cart-store.ts#variable@23:16",
-                "src/stores/cart-store.ts#call@24:5",
-                "src/stores/cart-store.ts#property@24:11"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#function@23:3",
-                "src/stores/cart-store.ts#variable@23:16",
-                "src/stores/cart-store.ts#call@24:5",
-                "src/stores/cart-store.ts#property@24:11"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#call@24:5"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#function@26:3",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/cart-store.ts#function@26:3",
-                "src/stores/cart-store.ts#call@27:5",
-                "src/stores/cart-store.ts#property@27:22"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#call@27:5",
-                "src/stores/cart-store.ts#property@27:22"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#call@27:5"
-                }
-              ]
             }
           ],
           "journeyNodeEdges": [
@@ -3283,9 +3162,9 @@
               "to": "src/hooks/use-promo.ts#hook@5:1"
             },
             {
-              "id": "src/hooks/use-promo.ts#hook@5:1 -> src/stores/cart-store.ts#function@23:3",
+              "id": "src/hooks/use-promo.ts#hook@5:1 -> src/stores/cart-store.ts#state@14:1",
               "from": "src/hooks/use-promo.ts#hook@5:1",
-              "to": "src/stores/cart-store.ts#function@23:3"
+              "to": "src/stores/cart-store.ts#state@14:1"
             },
             {
               "id": "src/routes/cart/components/PromoForm.tsx#component@5:1 -> src/hooks/use-promo.ts#hook@5:1",
@@ -3296,11 +3175,6 @@
               "id": "src/routes/cart/index.tsx#component@5:1 -> src/routes/cart/components/CartSummary.tsx#component@7:1",
               "from": "src/routes/cart/index.tsx#component@5:1",
               "to": "src/routes/cart/components/CartSummary.tsx#component@7:1"
-            },
-            {
-              "id": "src/hooks/use-promo.ts#hook@5:1 -> src/stores/cart-store.ts#state@14:1",
-              "from": "src/hooks/use-promo.ts#hook@5:1",
-              "to": "src/stores/cart-store.ts#state@14:1"
             },
             {
               "id": "src/hooks/use-promo.ts#hook@5:1 -> src/api/promo.ts#function@8:1",
@@ -3318,11 +3192,6 @@
               "to": "src/routes/cart/components/PromoForm.tsx#component@5:1"
             },
             {
-              "id": "src/routes/cart/components/CartSummary.tsx#component@7:1 -> src/stores/cart-store.ts#function@41:1",
-              "from": "src/routes/cart/components/CartSummary.tsx#component@7:1",
-              "to": "src/stores/cart-store.ts#function@41:1"
-            },
-            {
               "id": "src/routes/cart/components/PromoForm.tsx#component@5:1 -> src/routes/cart/components/PromoForm.tsx#render-event@15:11",
               "from": "src/routes/cart/components/PromoForm.tsx#component@5:1",
               "to": "src/routes/cart/components/PromoForm.tsx#render-event@15:11"
@@ -3331,16 +3200,6 @@
               "id": "src/routes/cart/components/PromoForm.tsx#component@5:1 -> src/routes/cart/components/PromoForm.tsx#render-event@16:51",
               "from": "src/routes/cart/components/PromoForm.tsx#component@5:1",
               "to": "src/routes/cart/components/PromoForm.tsx#render-event@16:51"
-            },
-            {
-              "id": "src/stores/cart-store.ts#state@14:1 -> src/stores/cart-store.ts#function@23:3",
-              "from": "src/stores/cart-store.ts#state@14:1",
-              "to": "src/stores/cart-store.ts#function@23:3"
-            },
-            {
-              "id": "src/stores/cart-store.ts#state@14:1 -> src/stores/cart-store.ts#function@26:3",
-              "from": "src/stores/cart-store.ts#state@14:1",
-              "to": "src/stores/cart-store.ts#function@26:3"
             }
           ]
         },

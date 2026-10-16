@@ -1,7 +1,7 @@
 import { findSource, rowSpanOf } from "@/code/lines"
 import { codeLinkIdOf } from "@/code/links"
 import { listJourneyNodes } from "@/journey-flow-diagram"
-import { linesLabelOf } from "@/journey-flow-diagram/cards"
+import { linesLabelOf } from "@/journey-flow-diagram/added-cards"
 import { listListedBlocks, type ListedBlock } from "@/journey-flow-diagram/listed-blocks"
 import { eventHandedTo, isFoldedValue, isHandlerBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
 import { parseProse } from "@/prose/parse-prose"
@@ -11,7 +11,6 @@ import { groupBy } from "@/shared/group-by"
 import type { WaypointPlace } from "@/walkthrough/build"
 import type {
   CodeBlock,
-  CodeBlockType,
   JourneyBand,
   JourneyBlockListView,
   JourneyEdgeView,
@@ -23,11 +22,11 @@ import type {
   JourneyRowGroupView,
   JourneyTriggerLabelView,
   LineSpan,
-  NodeBlockListKind,
   NodeChange,
   Segment,
   TriggerLabel,
 } from "@flightplan/configurations"
+import { BLOCK_LIST_KINDS, headOfNode, labelOfRow, listRowGroups, listsNoRows } from "./cards"
 import { buildNodeCodeViews, type CodeViewSetting } from "./code-views"
 import { BLOCK_TYPE_LABELS, nameOfBlock } from "./names"
 
@@ -43,15 +42,6 @@ type RowIdByBlockId = ReadonlyMap<string, string>
 
 const NO_ROW_IDS: RowIdByBlockId = new Map()
 const LIST_KEY_SEPARATOR = ":"
-const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = { argument: "Args", state: "State", hook: "Hooks", effect: "Effects", call: "Calls", step: "Steps" }
-const KINDS_BEFORE_CALLS: readonly NodeBlockListKind[] = ["argument", "state", "hook", "effect"]
-const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = [...KINDS_BEFORE_CALLS, "call", "step"]
-const ARGUMENT: NodeBlockListKind = "argument"
-const EXTERNAL_CALL: NodeBlockListKind = "call"
-const STEP: NodeBlockListKind = "step"
-const GROUPED_TYPE: CodeBlockType = "component"
-const PLAIN_CALL_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["external-value", "call"])
-const TRIGGERS_LABEL = "Triggers"
 const EMPTY_TITLE = "Empty diagram"
 const UNWRITTEN_LABEL = "Not written yet."
 const UNWRITTEN_MARKDOWN = ""
@@ -113,7 +103,10 @@ const rowIdAround = (block: CodeBlock, rowIdByBlockId: RowIdByBlockId): string |
   return block.parentBlock === null ? null : rowIdAround(block.parentBlock, rowIdByBlockId)
 }
 
-const listRows = ({ codeBlocks: [nodeBlock, ...insideBlocks] }: JourneyNode): ListedBlock[] => listListedBlocks(nodeBlock, insideBlocks)
+const listRows = (node: JourneyNode): ListedBlock[] => {
+  const [nodeBlock, ...insideBlocks] = node.codeBlocks
+  return listsNoRows(node) ? [] : listListedBlocks(nodeBlock, insideBlocks)
+}
 
 const rowIdByBlockIdOf = (node: JourneyNode): RowIdByBlockId =>
   node.rows === undefined
@@ -142,16 +135,13 @@ const toStoredRowView = (row: JourneyRow, node: JourneyNode): JourneyTriggerLabe
 }
 
 const groupStoredRows = (rows: readonly JourneyRow[]): JourneyRowGroupView[] =>
-  rows.length === 0 ? [] : [{ label: null, rowIds: rows.map((row) => row.id) }]
+  rows.length === 0 ? [] : [{ label: null, rowIds: rows.map((row) => row.id), childIds: [] }]
 
 const linesOfRow = ({ statements }: ListedBlock): LineSpan[] => {
   const spans = statements.flatMap(lineSpansOf)
   if (statements.length === 1) return spans
   return [[Math.min(...spans.map(([lineStart]) => lineStart)), Math.max(...spans.map(([, lineEnd]) => lineEnd))]]
 }
-
-const labelOfRow = ({ kind, block }: ListedBlock): string =>
-  kind === EXTERNAL_CALL && !PLAIN_CALL_TYPES.has(block.type) ? BLOCK_TYPE_LABELS[block.type] : BLOCK_LIST_LABELS[kind]
 
 const toBlockLists = (node: JourneyNode, rows: readonly ListedBlock[]): JourneyBlockListView[] => {
   const writtenById = new Map(node.blockLabels.map(({ label, codeBlock }) => [codeBlock.id, label] as const))
@@ -171,45 +161,13 @@ const toBlockLists = (node: JourneyNode, rows: readonly ListedBlock[]): JourneyB
   }))
 }
 
-const positionOf = (block: CodeBlock): readonly [number, number] => {
-  const { line, column } = block.lineOfCodeRangeReference[0].start
-  return [line, column]
-}
-
-const inWrittenOrder = (blocks: readonly CodeBlock[]): CodeBlock[] =>
-  [...blocks].sort((one, two) => positionOf(one)[0] - positionOf(two)[0] || positionOf(one)[1] - positionOf(two)[1])
-
-const idsOf = (rows: readonly ListedBlock[]): string[] => rows.map(({ block }) => block.id)
-
-const listGroupsOfComponent = (rows: readonly ListedBlock[], triggers: readonly TriggerLabel[]): JourneyRowGroupView[] => {
-  const ofKind = (kind: NodeBlockListKind): ListedBlock[] => rows.filter((row) => row.kind === kind)
-  const calls = ofKind(EXTERNAL_CALL)
-  const groups: JourneyRowGroupView[] = [
-    ...KINDS_BEFORE_CALLS.map((kind) => ({ label: BLOCK_LIST_LABELS[kind], rowIds: idsOf(ofKind(kind)) })),
-    ...[...new Set(calls.map(labelOfRow))].map((label) => ({ label, rowIds: idsOf(calls.filter((row) => labelOfRow(row) === label)) })),
-    { label: TRIGGERS_LABEL, rowIds: triggers.map(({ codeBlock }) => codeBlock.id) },
-    { label: BLOCK_LIST_LABELS[STEP], rowIds: idsOf(ofKind(STEP)) },
-  ].filter(({ rowIds }) => rowIds.length > 0)
-  return groups.length === 1 && groups[0].label === TRIGGERS_LABEL ? [{ ...groups[0], label: null }] : groups
-}
-
-const listRowsInOrder = (rows: readonly ListedBlock[], triggers: readonly TriggerLabel[]): JourneyRowGroupView[] => {
-  const isArgument = (row: ListedBlock): boolean => row.kind === ARGUMENT
-  const following = inWrittenOrder([...rows.filter((row) => !isArgument(row)).map(({ block }) => block), ...triggers.map(({ codeBlock }) => codeBlock)])
-  const rowIds = [...idsOf(rows.filter(isArgument)), ...following.map((block) => block.id)]
-  return rowIds.length === 0 ? [] : [{ label: null, rowIds }]
-}
-
-const toRowGroups = (node: JourneyNode, rows: readonly ListedBlock[]): JourneyRowGroupView[] =>
-  node.type === GROUPED_TYPE ? listGroupsOfComponent(rows, node.triggerLabels) : listRowsInOrder(rows, node.triggerLabels)
-
 const codeLinesOf = ({ codeBlocks: [root, ...insideBlocks] }: JourneyNode): LineSpan[] =>
   inLineOrder([root, ...insideBlocks.filter((block) => eventHandedTo(block)?.id === root.id || isFoldedValue(block))].flatMap(lineSpansOf))
 
 const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: ReviewViewContext): JourneyNodeView => {
   const [root] = node.codeBlocks
   const path = filePathOf(root)
-  const name = nameOfBlock(root)
+  const { name, typeLabel } = headOfNode(node, { name: nameOfBlock(root), typeLabel: BLOCK_TYPE_LABELS[node.type] })
   const change = changeOfNode(node, context)
   const linkId = codeLinkIdOf(path, name)
   const storedRows = node.rows === undefined ? null : inRowOrder(node.rows)
@@ -217,7 +175,7 @@ const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: Review
   return {
     id: node.id,
     type: node.type,
-    typeLabel: BLOCK_TYPE_LABELS[node.type],
+    typeLabel,
     change,
     changedLabel: change === null ? null : CHANGE_LABELS[change],
     label: node.label ?? name,
@@ -229,7 +187,7 @@ const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: Review
     codeViews: buildNodeCodeViews(node.id, { path, lines: codeLinesOf(node) }, setting, context),
     blockLists: storedRows === null ? toBlockLists(node, rows) : [],
     triggerLabels: storedRows === null ? node.triggerLabels.map(toTriggerLabelView) : storedRows.map((row) => toStoredRowView(row, node)),
-    rowGroups: storedRows === null ? toRowGroups(node, rows) : groupStoredRows(storedRows),
+    rowGroups: storedRows === null ? listRowGroups(node, rows) : groupStoredRows(storedRows),
     position: node.position ?? null,
     children: node.children.map((child) => toNodeView(child, setting, context)),
   }
@@ -276,7 +234,7 @@ const toEdgeViews = (edge: JourneyNodeEdge, steps: readonly NodeStep[], nodeById
 
 const titleOf = (nodes: readonly JourneyNode[]): string => {
   const changed = nodes.filter((node) => node.diffCodeBlocks.length > 0)
-  const titled = (changed.length === 0 ? nodes : changed).map((node) => nameOfBlock(node.codeBlocks[0]))
+  const titled = (changed.length === 0 ? nodes : changed).map((node) => headOfNode(node, { name: nameOfBlock(node.codeBlocks[0]), typeLabel: BLOCK_TYPE_LABELS[node.type] }).name)
   const shown = titled.slice(0, TITLED_NODE_COUNT).join(TITLE_SEPARATOR)
   return titled.length > TITLED_NODE_COUNT ? `${shown} +${String(titled.length - TITLED_NODE_COUNT)} more` : shown
 }

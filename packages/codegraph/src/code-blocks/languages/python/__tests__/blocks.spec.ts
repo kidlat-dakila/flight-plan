@@ -334,3 +334,11 @@ describe("a method a Python class inherits", () => {
     expect(blockNamed(changed, "method", "Cart.total").nextBlockIds).toStrictEqual(["shop/base.py#method@2:5"])
   })
 })
+
+describe("the path of a route registered on a router with a prefix", () => {
+  it("puts the prefix of the router before the path of the route", () => {
+    const group = groupOf({ "shop/items.py": codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/items\")", "@router.get(\"/{item_id}\")", "def read_item(item_id):", "    return find(item_id)") })
+
+    expect(blockNamed(group, "function", "read_item").catalogue?.path).toBe("/items/{item_id}")
+  })
+})

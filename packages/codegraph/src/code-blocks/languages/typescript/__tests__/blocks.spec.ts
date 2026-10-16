@@ -202,3 +202,30 @@ describe("the blocks inside a block of a TypeScript file", () => {
     ])
   })
 })
+
+describe("a write to a member of a parameter", () => {
+  it("makes a property of an assignment, an operation and an update to a member of a parameter of the function it is in, named after the member", () => {
+    const outline = outlineOf(groupOf({ "src/reducers.ts": codeOf(
+      "export const reset = (state, action) => {",
+      "  state.items = []",
+      "  state.total += action.payload",
+      "  state.count++",
+      "  local.items = []",
+      "}",
+    ) }), "src/reducers.ts")
+
+    expect(outline.filter((line) => line.includes("property"))).toStrictEqual([
+      "  property state.items 2:3-2:19",
+      "  property state.total 3:3-3:32",
+      "  property state.count 4:3-4:16",
+    ])
+  })
+})
+
+describe("the path of a route made on a value a factory made", () => {
+  it("puts the prefix written at the factory before the path of the route", () => {
+    const group = groupOf({ "src/routes.ts": codeOf("import express from \"express\"", "const router = express.Router()", "router.route(\"/api/items\").get((req, res) => res.json([]))") })
+
+    expect(group.codeBlocks.filter((block) => block.type === "route").map((block) => [block.catalogue?.method, block.catalogue?.path])).toStrictEqual([["GET", "/api/items"]])
+  })
+})

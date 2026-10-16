@@ -71,24 +71,38 @@
           "description": null,
           "journeyNodes": [
             {
-              "id": "shop/api.py#function@8:1",
-              "type": "function",
-              "label": "Builds a cart from the request and returns its total",
-              "description": "When a client posts a cart to `/cart/total`, Flask calls this function.",
+              "id": "shop/api.py#route@/cart/total",
+              "type": "route",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
-                "shop/api.py#function@8:1",
-                "shop/api.py#external-value@10:5",
-                "shop/api.py#property@11:21"
+                "shop/api.py#function@8:1"
               ],
               "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
+              "children": [
                 {
-                  "label": null,
-                  "codeBlockId": "shop/api.py#external-value@10:5"
+                  "id": "shop/api.py#function@8:1",
+                  "type": "function",
+                  "label": "Builds a cart from the request and returns its total",
+                  "description": "When a client posts a cart to `/cart/total`, Flask calls this function.",
+                  "codeBlockIds": [
+                    "shop/api.py#function@8:1",
+                    "shop/api.py#external-value@10:5",
+                    "shop/api.py#property@11:21"
+                  ],
+                  "diffCodeBlockIds": [],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "shop/api.py#external-value@10:5"
+                    }
+                  ]
                 }
-              ]
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "shop/cart.py#class@4:1",
@@ -98,28 +112,47 @@
               "codeBlockIds": [
                 "shop/cart.py#class@4:1",
                 "shop/cart.py#method@11:5",
-                "shop/cart.py#method@14:5",
-                "shop/cart.py#condition@15:9"
+                "shop/cart.py#method@14:5"
               ],
-              "diffCodeBlockIds": [
-                "shop/cart.py#condition@15:9"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
+              "diffCodeBlockIds": [],
+              "children": [
                 {
+                  "id": "shop/cart.py#method@11:5",
+                  "type": "method",
                   "label": null,
-                  "codeBlockId": "shop/cart.py#method@11:5"
+                  "description": null,
+                  "codeBlockIds": [
+                    "shop/cart.py#method@11:5"
+                  ],
+                  "diffCodeBlockIds": [],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": []
                 },
                 {
+                  "id": "shop/cart.py#method@14:5",
+                  "type": "method",
                   "label": null,
-                  "codeBlockId": "shop/cart.py#method@14:5"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "shop/cart.py#condition@15:9"
+                  "description": null,
+                  "codeBlockIds": [
+                    "shop/cart.py#method@14:5",
+                    "shop/cart.py#condition@15:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "shop/cart.py#condition@15:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "shop/cart.py#condition@15:9"
+                    }
+                  ]
                 }
-              ]
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -127,6 +160,26 @@
               "id": "shop/api.py#function@8:1 -> shop/cart.py#class@4:1",
               "from": "shop/api.py#function@8:1",
               "to": "shop/cart.py#class@4:1"
+            },
+            {
+              "id": "shop/api.py#function@8:1 -> shop/cart.py#method@11:5",
+              "from": "shop/api.py#function@8:1",
+              "to": "shop/cart.py#method@11:5"
+            },
+            {
+              "id": "shop/cart.py#method@11:5 -> shop/cart.py#method@14:5",
+              "from": "shop/cart.py#method@11:5",
+              "to": "shop/cart.py#method@14:5"
+            },
+            {
+              "id": "shop/cart.py#class@4:1 -> shop/cart.py#method@11:5",
+              "from": "shop/cart.py#class@4:1",
+              "to": "shop/cart.py#method@11:5"
+            },
+            {
+              "id": "shop/cart.py#class@4:1 -> shop/cart.py#method@14:5",
+              "from": "shop/cart.py#class@4:1",
+              "to": "shop/cart.py#method@14:5"
             }
           ]
         },

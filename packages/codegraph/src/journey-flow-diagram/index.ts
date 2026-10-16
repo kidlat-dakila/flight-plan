@@ -2,6 +2,7 @@ import { compareRanges } from "@/code-blocks/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
 import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType, ImportGraphGroup, JourneyFlowDiagram, JourneyNode, JourneyNodeEdge } from "@flightplan/configurations"
+import { groupCardNodes, listCardAddedEdges, listCardLeftOutEdgeIds, listCardParents, listLeftOutNodeIds, type CardContext, type NodeGroup, type ParentIdById } from "./cards"
 import { listListedBlocks } from "./listed-blocks"
 import { foldedValueOf, listNodeSteps, nodeBlockAround, nodeBlockOf } from "./node-blocks"
 
@@ -51,16 +52,12 @@ interface FoldedValueHold {
   readonly block: CodeBlock
 }
 
-type ParentIdById = ReadonlyMap<string, string>
-
 type ImporterCountByPath = ReadonlyMap<string, number>
 
-const COMPONENT: CodeBlockType = "component"
 const TRIGGER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event", "data-fetch"])
 const EDGE_ID_SEPARATOR = " -> "
 const VISIT_KEY_SEPARATOR = "|"
 const NO_STEPS: readonly Step[] = []
-const NO_PARENTS: ParentIdById = new Map()
 
 const filePathOf = (block: CodeBlock): string => block.astGraph.filePath
 
@@ -204,18 +201,18 @@ const listNodes = (nodeBlocks: readonly CodeBlock[], shownBlocks: readonly CodeB
 
 const edgeIdOf = (from: string, to: string): string => [from, to].join(EDGE_ID_SEPARATOR)
 
-const toEdge = (from: CodeBlock, to: CodeBlock): JourneyNodeEdge => ({ id: edgeIdOf(from.id, to.id), from: from.id, to: to.id })
+const toBlockEdge = (from: CodeBlock, to: CodeBlock): JourneyNodeEdge => ({ id: edgeIdOf(from.id, to.id), from: from.id, to: to.id })
 
 const listStepEdges = ({ blocks, steps }: Walk): JourneyNodeEdge[] => {
   const stepsByFromId = groupBy(steps, (step) => step.from.id)
   const nextBlocksOf = (block: CodeBlock): CodeBlock[] => (stepsByFromId.get(block.id) ?? []).map((step) => step.to)
-  return listNodeSteps(blocks, nextBlocksOf).map(({ from, to }) => toEdge(from, to))
+  return listNodeSteps(blocks, nextBlocksOf).map(({ from, to }) => toBlockEdge(from, to))
 }
 
 const listHeldNodeEdges = (nodeBlocks: readonly CodeBlock[]): JourneyNodeEdge[] =>
   nodeBlocks.flatMap((nodeBlock) => {
     const around = nodeBlockAround(nodeBlock)
-    return around === null ? [] : [toEdge(around, nodeBlock)]
+    return around === null ? [] : [toBlockEdge(around, nodeBlock)]
   })
 
 const listEdges = (walk: Walk, nodeBlocks: readonly CodeBlock[]): JourneyNodeEdge[] =>
@@ -234,41 +231,37 @@ const countImportersByPath = (importGraphGroup: ImportGraphGroup, group: ASTCode
   return new Map(importGraphGroup.map((file) => [file.filePath, listImporterPaths(importersOf(file.filePath), importersOf).size] as const))
 }
 
-const reachChildren = (frontierIds: readonly string[], childIdsOf: (parentId: string) => readonly string[], parentIdById: ParentIdById, reachedIds: ReadonlySet<string>): ParentIdById => {
-  if (frontierIds.length === 0) return parentIdById
-  const found = firstOfEach(
-    frontierIds.flatMap((parentId) => childIdsOf(parentId).filter((childId) => !reachedIds.has(childId)).map((childId) => [childId, parentId] as const)),
-    ([childId]) => childId,
-  )
-  const foundIds = found.map(([childId]) => childId)
-  return reachChildren(foundIds, childIdsOf, new Map([...parentIdById, ...found]), new Set([...reachedIds, ...foundIds]))
-}
-
-const assignParents = (componentIds: readonly string[], topIds: readonly string[], childIdsOf: (parentId: string) => readonly string[]): ParentIdById => {
-  const parentIdById = reachChildren(topIds, childIdsOf, NO_PARENTS, new Set(topIds))
-  const unreachedId = componentIds.find((componentId) => !topIds.includes(componentId) && !parentIdById.has(componentId))
-  return unreachedId === undefined ? parentIdById : assignParents(componentIds, [...topIds, unreachedId], childIdsOf)
-}
-
-const listComponentParents = (nodes: readonly JourneyNode[], edges: readonly JourneyNodeEdge[], importerCountByPath: ImporterCountByPath): ParentIdById => {
-  const importerCountOf = (node: JourneyNode): number => importerCountByPath.get(filePathOf(node.codeBlocks[0])) ?? 0
-  const components = nodes
-    .filter((node) => node.type === COMPONENT)
-    .map((node, index) => ({ node, index }))
-    .sort((one, two) => importerCountOf(one.node) - importerCountOf(two.node) || one.index - two.index)
-    .map(({ node }) => node)
-  const componentIds = new Set(components.map((node) => node.id))
-  const renders = edges.filter((edge) => componentIds.has(edge.from) && componentIds.has(edge.to))
-  const renderedIds = new Set(renders.map((edge) => edge.to))
-  const topIds = components.filter((node) => !renderedIds.has(node.id)).map((node) => node.id)
-  const childIdsOf = (parentId: string): string[] => renders.filter((edge) => edge.from === parentId).map((edge) => edge.to)
-  return assignParents(components.map((node) => node.id), topIds, childIdsOf)
-}
-
 const nestNodes = (nodes: readonly JourneyNode[], parentIdById: ParentIdById): JourneyNode[] => {
   const childrenByParentId = groupBy(nodes.filter((node) => parentIdById.has(node.id)), (node) => parentIdById.get(node.id) ?? "")
   const withChildren = (node: JourneyNode): JourneyNode => ({ ...node, children: (childrenByParentId.get(node.id) ?? []).map(withChildren) })
   return nodes.filter((node) => !parentIdById.has(node.id)).map(withChildren)
+}
+
+interface Grouped {
+  readonly nodes: readonly JourneyNode[]
+  readonly edges: readonly JourneyNodeEdge[]
+}
+
+const groupedIdOf = (id: string, groupIdByMemberId: ReadonlyMap<string, string>): string => groupIdByMemberId.get(id) ?? id
+
+const withGroups = (nodes: readonly JourneyNode[], edges: readonly JourneyNodeEdge[], groups: readonly NodeGroup[]): Grouped => {
+  const groupIdByMemberId = new Map(groups.flatMap(({ node, memberIds }) => memberIds.map((memberId) => [memberId, node.id] as const)))
+  const groupsByPlaceId = groupBy(groups, (group) => group.placedAtId)
+  const listed = nodes.flatMap((node) => [
+    ...(groupsByPlaceId.get(node.id) ?? []).map((group) => group.node),
+    ...(groupIdByMemberId.has(node.id) ? [] : [node]),
+  ])
+  const remapped = edges
+    .map((edge) => toEdgeBetween(groupedIdOf(edge.from, groupIdByMemberId), groupedIdOf(edge.to, groupIdByMemberId)))
+    .filter((edge) => edge.from !== edge.to)
+  return { nodes: firstOfEach(listed, (node) => node.id), edges: firstOfEach(remapped, (edge) => edge.id) }
+}
+
+const toEdgeBetween = (from: string, to: string): JourneyNodeEdge => ({ id: edgeIdOf(from, to), from, to })
+
+const withCardEdges = (context: CardContext): JourneyNodeEdge[] => {
+  const leftOutIds = listCardLeftOutEdgeIds(context)
+  return firstOfEach([...context.edges.filter((edge) => !leftOutIds.has(edge.id)), ...listCardAddedEdges(context)], (edge) => edge.id)
 }
 
 export const listJourneyNodes = (nodes: readonly JourneyNode[]): JourneyNode[] => nodes.flatMap((node) => [node, ...listJourneyNodes(node.children)])
@@ -280,8 +273,14 @@ export const generateJourneyFlowDiagram = ({ group, importGraphGroup, scope }: J
   const shownBlocks = listShownBlocks(walk.blocks, group, reach)
   const nodeBlocks = listNodeBlocks(shownBlocks)
   if (nodeBlocks.length === 0) return null
-  const nodes = listNodes(nodeBlocks, shownBlocks, walk.steps)
-  const journeyNodeEdges = listEdges(walk, nodeBlocks)
-  const parentIdById = listComponentParents(nodes, journeyNodeEdges, countImportersByPath(importGraphGroup, group))
+  const allNodes = listNodes(nodeBlocks, shownBlocks, walk.steps)
+  const allEdges = listEdges(walk, nodeBlocks)
+  const importerCountByPath = countImportersByPath(importGraphGroup, group)
+  const leftOutIds = listLeftOutNodeIds({ nodes: allNodes, edges: allEdges, importerCountByPath })
+  const keptNodes = allNodes.filter((node) => !leftOutIds.has(node.id))
+  const keptEdges = allEdges.filter((edge) => !leftOutIds.has(edge.from) && !leftOutIds.has(edge.to))
+  const { nodes, edges } = withGroups(keptNodes, keptEdges, groupCardNodes(keptNodes))
+  const journeyNodeEdges = withCardEdges({ nodes, edges, importerCountByPath })
+  const parentIdById = listCardParents({ nodes, edges: journeyNodeEdges, importerCountByPath })
   return { astCodeGroup: group, importGraphGroup, description: null, journeyNodes: nestNodes(nodes, parentIdById), journeyNodeEdges }
 }

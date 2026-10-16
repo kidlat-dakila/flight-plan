@@ -316,17 +316,16 @@
           "description": null,
           "journeyNodes": [
             {
-              "id": "src/stores/cart-store.ts#function@32:1",
-              "type": "function",
+              "id": "src/stores/cart-store.ts#state@11:1",
+              "type": "state",
               "label": null,
               "description": null,
               "codeBlockIds": [
-                "src/stores/cart-store.ts#function@32:1",
+                "src/stores/cart-store.ts#state@11:1",
                 "src/stores/cart-store.ts#root-argument-value@32:35",
                 "src/stores/cart-store.ts#root-argument-value@33:10"
               ],
               "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#function@32:1",
                 "src/stores/cart-store.ts#root-argument-value@32:35",
                 "src/stores/cart-store.ts#root-argument-value@33:10"
               ],
@@ -335,11 +334,7 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@32:35"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@33:10"
+                  "codeBlockId": "src/stores/cart-store.ts#function@32:1"
                 }
               ]
             }
@@ -423,7 +418,7 @@
                     "lineEnd": 34
                   },
                   "category": "function",
-                  "journeyNodeId": "src/stores/cart-store.ts#function@32:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/stores/cart-store.ts#function@32:1",
                     "src/stores/cart-store.ts#root-argument-value@32:35",
@@ -1045,8 +1040,8 @@
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
               "type": "component",
-              "label": "Shows the cart, or that the cart is empty",
-              "description": "When a shopper opens /cart, `router` in `src/router.tsx` renders this component as the `element` of its `cart` route.",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
                 "src/routes/cart/index.tsx#component@5:1",
                 "src/routes/cart/index.tsx#state@7:3",
@@ -1078,17 +1073,16 @@
               ]
             },
             {
-              "id": "src/stores/cart-store.ts#function@32:1",
-              "type": "function",
-              "label": "Returns `true` when the cart has no items",
-              "description": "When a shopper opens /cart, `<CartPage />` [passes this function to `useCartStore`](code:src/routes/cart/index.tsx#L7). [`useCartStore`](code:src/stores/cart-store.ts#L11-22) is the hook that `create` of `zustand` returns. The call of this function with the state of the store is inside `zustand`, and no line of the repository calls it by name.",
+              "id": "src/stores/cart-store.ts#state@11:1",
+              "type": "state",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
-                "src/stores/cart-store.ts#function@32:1",
+                "src/stores/cart-store.ts#state@11:1",
                 "src/stores/cart-store.ts#root-argument-value@32:35",
                 "src/stores/cart-store.ts#root-argument-value@33:10"
               ],
               "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#function@32:1",
                 "src/stores/cart-store.ts#root-argument-value@32:35",
                 "src/stores/cart-store.ts#root-argument-value@33:10"
               ],
@@ -1097,11 +1091,7 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@32:35"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@33:10"
+                  "codeBlockId": "src/stores/cart-store.ts#function@32:1"
                 }
               ]
             }
@@ -1113,9 +1103,9 @@
               "to": "src/routes/cart/index.tsx#component@5:1"
             },
             {
-              "id": "src/routes/cart/index.tsx#component@5:1 -> src/stores/cart-store.ts#function@32:1",
+              "id": "src/routes/cart/index.tsx#component@5:1 -> src/stores/cart-store.ts#state@11:1",
               "from": "src/routes/cart/index.tsx#component@5:1",
-              "to": "src/stores/cart-store.ts#function@32:1"
+              "to": "src/stores/cart-store.ts#state@11:1"
             }
           ]
         },

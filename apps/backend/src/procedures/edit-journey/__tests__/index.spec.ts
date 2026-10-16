@@ -90,7 +90,7 @@ describe("editJourney", () => {
       { label: "Refuses an empty cart", typeLabel: "Condition", isDraft: false },
       { label: "Lines 10 to 11", typeLabel: "Condition", isDraft: true },
     ])
-    expect(card?.rowGroups).toStrictEqual([{ label: null, rowIds: form?.rows.map((row) => row.id) }])
+    expect(card?.rowGroups).toStrictEqual([{ label: null, rowIds: form?.rows.map((row) => row.id), childIds: [] }])
   })
 
   it("draws a line from a row to a side of another card, and takes it away with its row", async () => {

@@ -1,4 +1,4 @@
-import { buildBlockCard, buildLinesCard, createEmptyJourney, linesCardIdOf, listCardBlocks, readFileGraph, sourceFileOf } from "@/journey-flow-diagram/cards"
+import { buildBlockCard, buildLinesCard, createEmptyJourney, linesCardIdOf, listCardBlocks, readFileGraph, sourceFileOf } from "@/journey-flow-diagram/added-cards"
 
 const PATH = "src/cart/CartPage.tsx"
 const SOURCE = [

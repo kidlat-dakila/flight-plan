@@ -1,7 +1,7 @@
 import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
 import type { SyntaxNode } from "@/ast-graph/parser"
 import { patternKeyOf } from "@/catalogue/pattern-keys"
-import type { CalledValue, CatalogueLibrary, CataloguePattern, ClassPattern, FactoryPattern, MethodPattern } from "@/catalogue/types"
+import type { CalledValue, CatalogueLibrary, CataloguePattern, ClassPattern, FactoryPattern, MethodPattern, SlotPosition } from "@/catalogue/types"
 import { nodesAt } from "./places"
 import type { Binding, SyntaxReader } from "./syntax-reader"
 
@@ -19,6 +19,8 @@ export interface MadeValue {
   readonly methods: readonly MethodPattern[]
   readonly called: CalledValue | null
   readonly memberPath: readonly string[]
+  readonly prefixAt: SlotPosition | null
+  readonly prefix: string | null
 }
 
 export type Origin = ExportOrigin | MadeValue
@@ -97,7 +99,15 @@ export const keyBelow = (key: string, memberKey: string): string => `${key}${KEY
 
 export const calledKeyOf = (made: MadeValue): string => keyBelow(made.key, CALLED_VALUE)
 
-const madeBy = (pattern: FactoryPattern | ClassPattern, key: string, library: CatalogueLibrary, specifier: string): MadeValue => ({
+const PATH_SEPARATOR = "/"
+
+export const joinPrefixes = (outer: string | null, inner: string | null): string | null => {
+  if (outer === null || inner === null) return inner ?? outer
+  const parts = [outer, inner].flatMap((part) => part.split(PATH_SEPARATOR)).filter((part) => part !== "")
+  return `${PATH_SEPARATOR}${parts.join(PATH_SEPARATOR)}`
+}
+
+const madeBy = (pattern: FactoryPattern | ClassPattern, key: string, library: CatalogueLibrary, specifier: string, prefix: string | null = null): MadeValue => ({
   kind: "made",
   library,
   specifier,
@@ -105,6 +115,8 @@ const madeBy = (pattern: FactoryPattern | ClassPattern, key: string, library: Ca
   methods: pattern.methods,
   called: pattern.kind === "factory" ? (pattern.called ?? null) : null,
   memberPath: [],
+  prefixAt: pattern.kind === "factory" ? (pattern.prefixAt ?? null) : null,
+  prefix,
 })
 
 const isMaking = (pattern: CataloguePattern): pattern is FactoryPattern | ClassPattern => pattern.kind === "factory" || pattern.kind === "class"
@@ -117,7 +129,7 @@ const rested = (made: MadeValue): MadeValue => ({ ...made, memberPath: [] })
 const madeByCalling = (made: MadeValue): MadeValue => {
   const factory = made.methods.find((method): method is FactoryPattern => method.kind === "factory" && fitsMemberPath(method.name, made.memberPath))
   if (made.memberPath.length > 0) {
-    return factory === undefined ? rested(made) : madeBy(factory, keyBelow(made.key, patternKeyOf(factory)), made.library, made.specifier)
+    return factory === undefined ? rested(made) : madeBy(factory, keyBelow(made.key, patternKeyOf(factory)), made.library, made.specifier, made.prefix)
   }
   if (made.called === null) return made
   return { ...made, key: calledKeyOf(made), methods: made.called.methods ?? [], called: null }
@@ -174,10 +186,17 @@ function originOfBinding(binding: Binding, context: OriginContext, depth: number
   return binding.memberPath.reduce<Origin | null>(withMember, originAt(binding.value, declaring, depth))
 }
 
-function originOfCall(callee: SyntaxNode, context: OriginContext, depth: number): Origin | null {
+const prefixWrittenAt = (position: SlotPosition | null, call: SyntaxNode, reader: SyntaxReader): string | null =>
+  position === null ? null : (nodesAt(position, reader.passedTo(call), reader).map((node) => reader.textOf(node)).find((text) => text !== null) ?? null)
+
+const withWrittenPrefix = (made: Origin | null, call: SyntaxNode, { reader }: OriginContext): Origin | null =>
+  made?.kind === "made" && made.memberPath.length === 0 ? { ...made, prefix: joinPrefixes(made.prefix, prefixWrittenAt(made.prefixAt, call, reader)), prefixAt: null } : made
+
+function originOfCall(call: SyntaxNode, callee: SyntaxNode, context: OriginContext, depth: number): Origin | null {
   const origin = originAt(callee, context, depth)
   if (origin === null) return null
-  return origin.kind === "made" ? madeByCalling(origin) : (madeByExport(origin, "factory", context) ?? receiverOf(origin))
+  const made = origin.kind === "made" ? madeByCalling(origin) : (madeByExport(origin, "factory", context) ?? receiverOf(origin))
+  return withWrittenPrefix(made, call, context)
 }
 
 function originAt(node: SyntaxNode, context: OriginContext, depth: number): Origin | null {
@@ -185,7 +204,7 @@ function originAt(node: SyntaxNode, context: OriginContext, depth: number): Orig
   const expression = context.reader.expressionOf(node)
   if (expression.kind === "wrapped") return originAt(expression.inner, context, depth + 1)
   if (expression.kind === "member") return withMember(originAt(expression.object, context, depth + 1), expression.property)
-  if (expression.kind === "call") return originOfCall(expression.callee, context, depth + 1)
+  if (expression.kind === "call") return originOfCall(node, expression.callee, context, depth + 1)
   if (expression.kind !== "name") return null
   const binding = context.reader.bindingOf(expression.name)
   return binding === null ? null : originOfBinding(binding, context, depth + 1)

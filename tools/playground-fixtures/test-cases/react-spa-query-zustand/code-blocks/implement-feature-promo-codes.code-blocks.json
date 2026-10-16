@@ -1297,6 +1297,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -3060,8 +3061,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -3352,6 +3352,7 @@
         ],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -5388,8 +5389,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -5941,6 +5941,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -5977,6 +5978,7 @@
         ],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -8399,8 +8401,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -9386,8 +9387,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -9688,8 +9688,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -9855,8 +9854,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -13488,8 +13486,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -14537,8 +14534,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -17117,6 +17113,14 @@
           "method": null,
           "event": null,
           "certainty": "proven"
+        },
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "holder",
+          "heading": null,
+          "groupKey": null,
+          "ownerId": null
         }
       },
       {
@@ -17248,8 +17252,7 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven",
-          "holdsOwnNodes": true
+          "certainty": "proven"
         }
       },
       {
@@ -17405,7 +17408,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "state",
+          "heading": "STATE",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#property@16:3",
@@ -17461,7 +17472,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "state",
+          "heading": "STATE",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#function@17:3",
@@ -17495,7 +17514,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "action",
+          "heading": "ACTIONS",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#variable@17:13",
@@ -17844,7 +17871,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "action",
+          "heading": "ACTIONS",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#variable@20:16",
@@ -18294,7 +18329,15 @@
         ],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "action",
+          "heading": "ACTIONS",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#variable@23:16",
@@ -18574,7 +18617,15 @@
         ],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "action",
+          "heading": "ACTIONS",
+          "groupKey": null,
+          "ownerId": null
+        }
       },
       {
         "id": "src/stores/cart-store.ts#call@27:5",
@@ -18799,7 +18850,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "selector",
+          "heading": "SELECTORS",
+          "groupKey": null,
+          "ownerId": "src/stores/cart-store.ts#state@14:1"
+        }
       },
       {
         "id": "src/stores/cart-store.ts#root-argument-value@31:33",
@@ -19094,7 +19153,15 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "selector",
+          "heading": "SELECTORS",
+          "groupKey": null,
+          "ownerId": "src/stores/cart-store.ts#state@14:1"
+        }
       },
       {
         "id": "src/stores/cart-store.ts#root-argument-value@35:34",
@@ -19376,6 +19443,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -19659,7 +19727,15 @@
         ],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
-        "catalogue": null
+        "catalogue": null,
+        "card": {
+          "library": "Zustand",
+          "kind": "store",
+          "part": "selector",
+          "heading": "SELECTORS",
+          "groupKey": null,
+          "ownerId": "src/stores/cart-store.ts#state@14:1"
+        }
       },
       {
         "id": "src/stores/cart-store.ts#root-argument-value@41:37",

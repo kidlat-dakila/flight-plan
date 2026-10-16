@@ -362,13 +362,12 @@ describe("the steps of a node of the journey band", () => {
     expect(steps.find((step) => step.name === "user, stored")?.id).toBe("src/rename.ts#variable@5:3")
   })
 
-  it("lists a function that is a node of its own as a row of the store around it, and folds what is written inside a callback of that function into its row", () => {
+  it("lists an action of a store as a row of the store, and folds what is written inside the action into its row", () => {
     const band = bandOf(STORE_FILES, { "src/store.ts": [rangeAt(5, 1, 11, 10)] })
     const namedRows = (nodeId: string): [string, string | null][] => stepsOf(band, nodeId).map(({ name, change }) => [name, change])
 
-    expect(listNodeViews(band.nodes).map((node) => [node.id, node.name])).toStrictEqual([["src/store.ts#state@2:1", "useCartStore"], ["src/store.ts#function@4:3", "addItem"]])
+    expect(listNodeViews(band.nodes).map((node) => [node.id, node.name])).toStrictEqual([["src/store.ts#state@2:1", "useCartStore"]])
     expect(namedRows("src/store.ts#state@2:1")).toStrictEqual([["addItem", "modified"]])
-    expect(namedRows("src/store.ts#function@4:3")).toStrictEqual([["state", "modified"], ["set", "modified"]])
   })
 
   it("marks a step as changed when a block folded into it is", () => {

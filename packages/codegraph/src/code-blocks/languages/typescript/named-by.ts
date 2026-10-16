@@ -49,7 +49,7 @@ const catalogueOf = (match: PatternMatch, runs: CatalogueRuns | null): CodeBlock
   specifier: match.specifier,
   name: match.name,
   runs,
-  path: match.path,
+  path: pathBelow(match.prefix, match.path),
   method: match.method,
   event: match.event,
   certainty: match.versions === null ? "proven" : "assumed",
@@ -62,7 +62,6 @@ const slotCatalogueOf = (match: PatternMatch, slot: MatchedSlot): CodeBlockCatal
   path: slot.path,
   method: null,
   event: null,
-  ...(slot.holdsOwnNodes ? { holdsOwnNodes: true } : {}),
 })
 
 const namedBy = (match: PatternMatch): NamedBlock => ({

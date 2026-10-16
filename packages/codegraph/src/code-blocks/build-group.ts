@@ -1,9 +1,10 @@
 import type { FileSyntax } from "@/ast-graph/types"
-import { BUILT_IN_LIBRARIES } from "@/catalogue/libraries"
 import type { FindExportedBinding } from "@/catalogue/matching/syntax-reader"
+import { LIBRARIES } from "@/code-blocks/libraries"
 import { groupBy } from "@/shared/group-by"
 import { once } from "@/shared/memo"
 import { traceAffectedDiffs } from "./affected-diffs"
+import { linkCards } from "./card-links"
 import { traceChains, type TracedChains } from "./chains"
 import { listDeletedCode, listRemovedDecorations, type DeletedCode, type PatchDiff } from "./deleted-blocks"
 import { placeDiffs, type PlacedDiff } from "./diff-blocks"
@@ -98,7 +99,7 @@ export const readCodeGroup = (files: readonly CodeFileSource[]): ReadCodeGroup =
   const returnedIds = new Set(readBlocks.filter((block) => block.isReturned === true).map((block) => block.id))
   const heldMarkupIds = new Set(readBlocks.filter((block) => block.holdsMarkup === true).map((block) => block.id))
   const linked = linkReferences(readings, exports)
-  const linkedBlocks = followMembers(linked.codeBlocks, linked.details, BUILT_IN_LIBRARIES)
+  const linkedBlocks = linkCards(followMembers(linked.codeBlocks, linked.details, LIBRARIES))
   const blocksByPath = groupBy(linkedBlocks, (block) => block.filePath)
   const deleted = files.flatMap((file) => listDeletedOf(file, blocksByPath))
   const deletedByHolder = groupBy(deleted, (one) => one.block.parentBlockId)

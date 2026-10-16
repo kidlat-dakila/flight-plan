@@ -44,6 +44,20 @@ describe("layoutJourney", () => {
     expect(edges).toStrictEqual([])
   })
 
+  it("places a child card where its card row is, under its heading and above the rows after it", () => {
+    const card: LayoutNode = {
+      id: "store",
+      rows: [{ id: "methods", kind: "heading" }, { id: "add", kind: "card" }, { id: "after", kind: "row" }],
+      children: [leaf("add"), leaf("extending")],
+    }
+    const { nodes: [store, add, extending], rows: [methods, after] } = layoutJourney([card], [])
+
+    expect(add.y).toBeGreaterThanOrEqual(methods.y + methods.height)
+    expect(after.y).toBeGreaterThanOrEqual(add.y + add.height)
+    expect(extending.y).toBeGreaterThanOrEqual(after.y + after.height)
+    expect(extending.y + extending.height).toBeLessThanOrEqual(store.y + store.height)
+  })
+
   it("places a heading above the rows it titles, lower than a row, and each row below the last", () => {
     const card: LayoutNode = { id: "page", rows: [{ id: "state", kind: "heading" }, { id: "held", kind: "row" }, { id: "total", kind: "row" }], children: [] }
     const { nodes: [page], rows: [heading, held, total] } = layoutJourney([card], [])

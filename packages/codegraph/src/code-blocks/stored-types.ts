@@ -1,4 +1,4 @@
-import type { CodeBlockCatalogue, CodeBlockDiff, CodeBlockType, DiffKind, SourceRange, SymbolUse } from "./types"
+import type { BlockCard, CodeBlockCatalogue, CodeBlockDiff, CodeBlockType, DiffKind, SourceRange, SymbolUse } from "./types"
 
 export interface StoredSymbolMember {
   readonly path: readonly string[]
@@ -10,6 +10,7 @@ export interface StoredSymbolUsage {
   readonly use: SymbolUse
   readonly handedToId?: string | null
   readonly member?: StoredSymbolMember
+  readonly binding?: string
 }
 
 export interface StoredInternalVariableSymbol extends StoredSymbolUsage {
@@ -62,6 +63,8 @@ export interface StoredCodeBlock {
   readonly childrenBlockIds: readonly string[]
   readonly isRoot: boolean
   readonly isExported: boolean
+  readonly isPlain?: boolean
+  readonly isReturned?: boolean
   readonly exportedByFilePaths: readonly string[]
   readonly lineOfCodeDiffs: readonly SourceRange[] | null
   readonly diffs: readonly CodeBlockDiff[]
@@ -72,6 +75,7 @@ export interface StoredCodeBlock {
   readonly handedFrom: readonly StoredSymbolPlace[]
   readonly filePath: string
   readonly catalogue: CodeBlockCatalogue | null
+  readonly card?: BlockCard
 }
 
 export type StoredExports = Readonly<Record<string, string | SourceRange>>

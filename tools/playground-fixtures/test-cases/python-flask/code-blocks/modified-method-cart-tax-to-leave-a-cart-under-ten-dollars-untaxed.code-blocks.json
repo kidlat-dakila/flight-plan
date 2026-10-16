@@ -313,6 +313,14 @@
           "method": "POST",
           "event": null,
           "certainty": "proven"
+        },
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "handler",
+          "heading": "POST",
+          "groupKey": "/cart/total",
+          "ownerId": null
         }
       },
       {
@@ -989,6 +997,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "isPlain": true,
         "exportedByFilePaths": [
           "shop/cart.py",
           "shop/pricing.py"

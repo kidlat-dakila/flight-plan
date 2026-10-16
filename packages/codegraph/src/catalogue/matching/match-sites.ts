@@ -4,7 +4,7 @@ import { patternKeyOf } from "@/catalogue/pattern-keys"
 import type { BlockMade, CatalogueLibrary, ClassMember, ContextProvision, Slot, SlotPosition, SlotRuns } from "@/catalogue/types"
 import { rangeOfNode } from "@/code-blocks/source-range"
 import type { SourceRange } from "@/code-blocks/types"
-import { calledKeyOf, keyBelow, listExportedPatterns, listMethods, originOf, type MadeValue, type Origin, type OriginContext } from "./origins"
+import { calledKeyOf, joinPrefixes, keyBelow, listExportedPatterns, listMethods, originOf, type MadeValue, type Origin, type OriginContext } from "./origins"
 import { isRestOfArguments, lastKeyOf, listPositional, nodesAt, placedAt, type PlaceHolder, type PlacedNode } from "./places"
 import type { PassedValue, Site, SyntaxReader } from "./syntax-reader"
 
@@ -12,7 +12,7 @@ export interface MatchedSlot {
   readonly runs: SlotRuns
   readonly range: SourceRange
   readonly path: string | null
-  readonly holdsOwnNodes: boolean
+  readonly holdsActions: boolean
 }
 
 export interface PatternMatch {
@@ -115,7 +115,7 @@ const slotsOf = (saying: PatternSaying, passed: readonly PassedValue[], reader: 
       runs: slot.runs,
       range: rangeOfNode(placed.node),
       path: pathOfPlaced(placed, saying, reader),
-      holdsOwnNodes: slot.holdsOwnNodes ?? false,
+      holdsActions: slot.holdsActions ?? false,
     })),
   )
 
@@ -162,7 +162,10 @@ const matchOf = (saying: PatternSaying, source: MatchSource, site: Site, reader:
 const matchesOfMade = (made: MadeValue, site: Exclude<Site, { kind: "class" }>, reader: SyntaxReader): PatternMatch[] => {
   const source = { library: made.library, specifier: made.specifier }
   if (made.memberPath.length > 0) {
-    return listMethods(made, KINDS_BY_SITE[site.kind]).map((method) => matchOf(method, { ...source, patternKey: keyBelow(made.key, patternKeyOf(method)) }, site, reader))
+    return listMethods(made, KINDS_BY_SITE[site.kind]).map((method) => {
+      const match = matchOf(method, { ...source, patternKey: keyBelow(made.key, patternKeyOf(method)) }, site, reader)
+      return { ...match, prefix: joinPrefixes(made.prefix, match.prefix) }
+    })
   }
   if (site.kind !== "call" || made.called === null) return []
   return [matchOf({ ...made.called, name: CALLED_NAME }, { ...source, patternKey: calledKeyOf(made) }, site, reader)]

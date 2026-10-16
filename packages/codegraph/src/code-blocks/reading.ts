@@ -1,6 +1,6 @@
 import type { FileSyntax } from "@/ast-graph/types"
 import type { Binding, FindExportedBinding } from "@/catalogue/matching/syntax-reader"
-import type { CodeBlockCatalogue, CodeBlockType, Position, SourceRange, SymbolUse } from "./types"
+import type { BlockCard, CodeBlockCatalogue, CodeBlockType, Position, SourceRange, SymbolUse } from "./types"
 
 export type ArgumentRole = "whole" | "key" | "member"
 
@@ -19,8 +19,10 @@ export interface ReadBlock {
   readonly argument?: ReadArgument
   readonly isParameter?: boolean
   readonly isReturned?: boolean
+  readonly isPlain?: boolean
   readonly holdsMarkup?: boolean
   readonly catalogue?: CodeBlockCatalogue
+  readonly card?: BlockCard
   readonly memberPath?: readonly string[]
 }
 

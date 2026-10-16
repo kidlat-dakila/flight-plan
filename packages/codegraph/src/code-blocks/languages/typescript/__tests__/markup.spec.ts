@@ -116,3 +116,21 @@ describe("the markup of a JSX file", () => {
     expect(outline.filter((line) => /^\s*(hook|function|component)/.test(line))).toStrictEqual(["hook useList 1:1-1:31", "function Cart 2:1-2:33", "component Lines 3:1-3:70", "        function 3:45-3:63"])
   })
 })
+
+describe("a class component", () => {
+  it("makes a component of a class that extends another and renders markup, and keeps a class with no rendering method a class", () => {
+    const outline = outlineOfCode(
+      "export class Modal extends React.Component {",
+      "  render() { return <div /> }",
+      "}",
+      "export class Store extends Base {",
+      "  render() { return \"text\" }",
+      "}",
+      "export class Lone {",
+      "  render() { return <div /> }",
+      "}",
+    )
+
+    expect(outline.filter((line) => !line.startsWith(" "))).toStrictEqual(["component Modal 1:1-3:2", "class Store 4:1-6:2", "class Lone 7:1-9:2"])
+  })
+})

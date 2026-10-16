@@ -1,6 +1,6 @@
 import type { GrammarId } from "@/ast-graph/parser"
-import { BUILT_IN_LIBRARIES } from "@/catalogue/libraries"
 import type { LibraryLanguage } from "@/catalogue/types"
+import { LIBRARIES } from "@/code-blocks/libraries"
 import type { FileManifest } from "@/code-blocks/manifests"
 import { NO_EXPORTS, type OutlinedFile } from "@/code-blocks/reading"
 import { FIRST_COLUMN, FIRST_LINE } from "@/code-blocks/source-range"
@@ -64,7 +64,7 @@ const withBlocksEnsured = (outlined: OutlinedFile, source: LanguageSource, langu
   read: (findExport, findBinding) => {
     const reading = outlined.read(findExport, findBinding)
     if (reading.blocks.length === 0) return { ...outlineWholeFile(source).read(findExport, findBinding), readSyntax: reading.readSyntax }
-    return withExportNamings(reading, outlined.exports, listExportNamings(source.manifest, language, BUILT_IN_LIBRARIES))
+    return withExportNamings(reading, outlined.exports, listExportNamings(source.manifest, language, LIBRARIES))
   },
 })
 

@@ -701,69 +701,6 @@
                 "src/stores/wishlist-store.ts#function@9:55",
                 "src/stores/wishlist-store.ts#variable@9:56",
                 "src/stores/wishlist-store.ts#property@10:3",
-                "src/stores/wishlist-store.ts#function@11:3"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/wishlist-store.ts#state@9:1",
-                "src/stores/wishlist-store.ts#effect@9:33",
-                "src/stores/wishlist-store.ts#function@9:55",
-                "src/stores/wishlist-store.ts#variable@9:56",
-                "src/stores/wishlist-store.ts#property@10:3",
-                "src/stores/wishlist-store.ts#function@11:3"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#effect@9:33"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#function@20:1",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/wishlist-store.ts#function@20:1",
-                "src/stores/wishlist-store.ts#root-argument-value@20:32",
-                "src/stores/wishlist-store.ts#function@21:10",
-                "src/stores/wishlist-store.ts#variable@21:11",
-                "src/stores/wishlist-store.ts#function@21:65",
-                "src/stores/wishlist-store.ts#variable@21:66"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/wishlist-store.ts#function@20:1",
-                "src/stores/wishlist-store.ts#root-argument-value@20:32",
-                "src/stores/wishlist-store.ts#function@21:10",
-                "src/stores/wishlist-store.ts#variable@21:11",
-                "src/stores/wishlist-store.ts#function@21:65",
-                "src/stores/wishlist-store.ts#variable@21:66"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#root-argument-value@20:32"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#function@21:10"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#function@11:3",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
                 "src/stores/wishlist-store.ts#function@11:3",
                 "src/stores/wishlist-store.ts#variable@11:19",
                 "src/stores/wishlist-store.ts#effect@12:5",
@@ -778,6 +715,11 @@
                 "src/stores/wishlist-store.ts#variable@14:34"
               ],
               "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#state@9:1",
+                "src/stores/wishlist-store.ts#effect@9:33",
+                "src/stores/wishlist-store.ts#function@9:55",
+                "src/stores/wishlist-store.ts#variable@9:56",
+                "src/stores/wishlist-store.ts#property@10:3",
                 "src/stores/wishlist-store.ts#function@11:3",
                 "src/stores/wishlist-store.ts#variable@11:19",
                 "src/stores/wishlist-store.ts#effect@12:5",
@@ -795,11 +737,66 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
+                  "codeBlockId": "src/stores/wishlist-store.ts#property@10:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@11:3"
+                }
+              ]
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#function@20:1",
+              "type": "function",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/wishlist-store.ts#function@20:1",
+                "src/stores/wishlist-store.ts#root-argument-value@20:32",
+                "src/stores/wishlist-store.ts#function@21:10"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#function@20:1",
+                "src/stores/wishlist-store.ts#root-argument-value@20:32",
+                "src/stores/wishlist-store.ts#function@21:10"
+              ],
+              "children": [
+                {
+                  "id": "src/stores/wishlist-store.ts#function@21:10",
+                  "type": "function",
+                  "label": null,
+                  "description": null,
+                  "codeBlockIds": [
+                    "src/stores/wishlist-store.ts#function@21:10",
+                    "src/stores/wishlist-store.ts#variable@21:11",
+                    "src/stores/wishlist-store.ts#function@21:65",
+                    "src/stores/wishlist-store.ts#variable@21:66"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/stores/wishlist-store.ts#function@21:10",
+                    "src/stores/wishlist-store.ts#variable@21:11",
+                    "src/stores/wishlist-store.ts#function@21:65",
+                    "src/stores/wishlist-store.ts#variable@21:66"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/stores/wishlist-store.ts#variable@21:11"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#root-argument-value@20:32"
                 }
               ]
             }
@@ -821,9 +818,9 @@
               "to": "src/routes/catalog/components/ProductCard.tsx#component@6:1"
             },
             {
-              "id": "src/stores/wishlist-store.ts#state@9:1 -> src/stores/wishlist-store.ts#function@11:3",
-              "from": "src/stores/wishlist-store.ts#state@9:1",
-              "to": "src/stores/wishlist-store.ts#function@11:3"
+              "id": "src/stores/wishlist-store.ts#function@20:1 -> src/stores/wishlist-store.ts#function@21:10",
+              "from": "src/stores/wishlist-store.ts#function@20:1",
+              "to": "src/stores/wishlist-store.ts#function@21:10"
             }
           ]
         },
@@ -2667,8 +2664,8 @@
                     {
                       "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
                       "type": "component",
-                      "label": "Renders a button that says \"Add to wishlist\" or \"Remove from wishlist\"",
-                      "description": "Several Entry Points reach this component, all through `<ProductCard />`: [`<ProductCard />` renders this component with the product of the card](code:src/routes/catalog/components/ProductCard.tsx#L13).\n\n- When a shopper opens /, [`<CatalogPage />` renders one `<ProductCard />` per product of the catalogue](code:src/routes/catalog/index.tsx#L10-14).\n- When a shopper opens /wishlist, [`<WishlistPage />` renders one `<ProductCard />` per wished product](code:src/routes/wishlist/index.tsx#L9-13), so `isWished` is `true` for every button on that page.",
+                      "label": null,
+                      "description": null,
                       "codeBlockIds": [
                         "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
                         "src/routes/catalog/components/WishlistButton.tsx#root-argument-value@5:34",
@@ -2742,8 +2739,8 @@
             {
               "id": "src/routes/wishlist/index.tsx#component@4:1",
               "type": "component",
-              "label": "Renders the wished products, or a note that there are none",
-              "description": "When a shopper opens /wishlist, [`router` renders this component at the path `wishlist`](code:src/router.tsx#L16), a child of the `/` route, so [the `<Outlet />` of `<RootLayout />`](code:src/routes/root-layout.tsx#L20) shows it under the header.",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
                 "src/routes/wishlist/index.tsx#component@4:1",
                 "src/routes/wishlist/index.tsx#state@5:3",
@@ -2812,7 +2809,18 @@
                 "src/stores/wishlist-store.ts#function@9:55",
                 "src/stores/wishlist-store.ts#variable@9:56",
                 "src/stores/wishlist-store.ts#property@10:3",
-                "src/stores/wishlist-store.ts#function@11:3"
+                "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#variable@11:19",
+                "src/stores/wishlist-store.ts#effect@12:5",
+                "src/stores/wishlist-store.ts#effect-callback@12:9",
+                "src/stores/wishlist-store.ts#function@12:9",
+                "src/stores/wishlist-store.ts#variable@12:10",
+                "src/stores/wishlist-store.ts#property@13:7",
+                "src/stores/wishlist-store.ts#condition@13:17",
+                "src/stores/wishlist-store.ts#function@13:37",
+                "src/stores/wishlist-store.ts#variable@13:38",
+                "src/stores/wishlist-store.ts#function@14:33",
+                "src/stores/wishlist-store.ts#variable@14:34"
               ],
               "diffCodeBlockIds": [
                 "src/stores/wishlist-store.ts#state@9:1",
@@ -2820,18 +2828,32 @@
                 "src/stores/wishlist-store.ts#function@9:55",
                 "src/stores/wishlist-store.ts#variable@9:56",
                 "src/stores/wishlist-store.ts#property@10:3",
-                "src/stores/wishlist-store.ts#function@11:3"
+                "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#variable@11:19",
+                "src/stores/wishlist-store.ts#effect@12:5",
+                "src/stores/wishlist-store.ts#function@12:9",
+                "src/stores/wishlist-store.ts#variable@12:10",
+                "src/stores/wishlist-store.ts#property@13:7",
+                "src/stores/wishlist-store.ts#condition@13:17",
+                "src/stores/wishlist-store.ts#function@13:37",
+                "src/stores/wishlist-store.ts#variable@13:38",
+                "src/stores/wishlist-store.ts#function@14:33",
+                "src/stores/wishlist-store.ts#variable@14:34"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#effect@9:33"
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
+                  "codeBlockId": "src/stores/wishlist-store.ts#property@10:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@11:3"
                 }
               ]
             },
@@ -2843,29 +2865,46 @@
               "codeBlockIds": [
                 "src/stores/wishlist-store.ts#function@20:1",
                 "src/stores/wishlist-store.ts#root-argument-value@20:32",
-                "src/stores/wishlist-store.ts#function@21:10",
-                "src/stores/wishlist-store.ts#variable@21:11",
-                "src/stores/wishlist-store.ts#function@21:65",
-                "src/stores/wishlist-store.ts#variable@21:66"
+                "src/stores/wishlist-store.ts#function@21:10"
               ],
               "diffCodeBlockIds": [
                 "src/stores/wishlist-store.ts#function@20:1",
                 "src/stores/wishlist-store.ts#root-argument-value@20:32",
-                "src/stores/wishlist-store.ts#function@21:10",
-                "src/stores/wishlist-store.ts#variable@21:11",
-                "src/stores/wishlist-store.ts#function@21:65",
-                "src/stores/wishlist-store.ts#variable@21:66"
+                "src/stores/wishlist-store.ts#function@21:10"
               ],
-              "children": [],
+              "children": [
+                {
+                  "id": "src/stores/wishlist-store.ts#function@21:10",
+                  "type": "function",
+                  "label": null,
+                  "description": null,
+                  "codeBlockIds": [
+                    "src/stores/wishlist-store.ts#function@21:10",
+                    "src/stores/wishlist-store.ts#variable@21:11",
+                    "src/stores/wishlist-store.ts#function@21:65",
+                    "src/stores/wishlist-store.ts#variable@21:66"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/stores/wishlist-store.ts#function@21:10",
+                    "src/stores/wishlist-store.ts#variable@21:11",
+                    "src/stores/wishlist-store.ts#function@21:65",
+                    "src/stores/wishlist-store.ts#variable@21:66"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/stores/wishlist-store.ts#variable@21:11"
+                    }
+                  ]
+                }
+              ],
               "triggerLabels": [],
               "blockLabels": [
                 {
                   "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#root-argument-value@20:32"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#function@21:10"
                 }
               ]
             },
@@ -2885,51 +2924,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": []
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#function@11:3",
-              "type": "function",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/wishlist-store.ts#function@11:3",
-                "src/stores/wishlist-store.ts#variable@11:19",
-                "src/stores/wishlist-store.ts#effect@12:5",
-                "src/stores/wishlist-store.ts#effect-callback@12:9",
-                "src/stores/wishlist-store.ts#function@12:9",
-                "src/stores/wishlist-store.ts#variable@12:10",
-                "src/stores/wishlist-store.ts#property@13:7",
-                "src/stores/wishlist-store.ts#condition@13:17",
-                "src/stores/wishlist-store.ts#function@13:37",
-                "src/stores/wishlist-store.ts#variable@13:38",
-                "src/stores/wishlist-store.ts#function@14:33",
-                "src/stores/wishlist-store.ts#variable@14:34"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/wishlist-store.ts#function@11:3",
-                "src/stores/wishlist-store.ts#variable@11:19",
-                "src/stores/wishlist-store.ts#effect@12:5",
-                "src/stores/wishlist-store.ts#function@12:9",
-                "src/stores/wishlist-store.ts#variable@12:10",
-                "src/stores/wishlist-store.ts#property@13:7",
-                "src/stores/wishlist-store.ts#condition@13:17",
-                "src/stores/wishlist-store.ts#function@13:37",
-                "src/stores/wishlist-store.ts#variable@13:38",
-                "src/stores/wishlist-store.ts#function@14:33",
-                "src/stores/wishlist-store.ts#variable@14:34"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
-                }
-              ]
             }
           ],
           "journeyNodeEdges": [
@@ -2944,9 +2938,9 @@
               "to": "src/routes/wishlist/index.tsx#component@4:1"
             },
             {
-              "id": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29 -> src/stores/wishlist-store.ts#function@11:3",
+              "id": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29 -> src/stores/wishlist-store.ts#state@9:1",
               "from": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
-              "to": "src/stores/wishlist-store.ts#function@11:3"
+              "to": "src/stores/wishlist-store.ts#state@9:1"
             },
             {
               "id": "src/routes/wishlist/index.tsx#component@4:1 -> src/stores/wishlist-store.ts#state@9:1",
@@ -2954,9 +2948,9 @@
               "to": "src/stores/wishlist-store.ts#state@9:1"
             },
             {
-              "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#function@11:3",
+              "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#state@9:1",
               "from": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
-              "to": "src/stores/wishlist-store.ts#function@11:3"
+              "to": "src/stores/wishlist-store.ts#state@9:1"
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1 -> src/routes/catalog/components/ProductCard.tsx#component@6:1",
@@ -2974,11 +2968,6 @@
               "to": "src/routes/catalog/components/WishlistButton.tsx#component@5:1"
             },
             {
-              "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#state@9:1",
-              "from": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
-              "to": "src/stores/wishlist-store.ts#state@9:1"
-            },
-            {
               "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#function@20:1",
               "from": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
               "to": "src/stores/wishlist-store.ts#function@20:1"
@@ -2989,9 +2978,9 @@
               "to": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29"
             },
             {
-              "id": "src/stores/wishlist-store.ts#state@9:1 -> src/stores/wishlist-store.ts#function@11:3",
-              "from": "src/stores/wishlist-store.ts#state@9:1",
-              "to": "src/stores/wishlist-store.ts#function@11:3"
+              "id": "src/stores/wishlist-store.ts#function@20:1 -> src/stores/wishlist-store.ts#function@21:10",
+              "from": "src/stores/wishlist-store.ts#function@20:1",
+              "to": "src/stores/wishlist-store.ts#function@21:10"
             }
           ]
         },

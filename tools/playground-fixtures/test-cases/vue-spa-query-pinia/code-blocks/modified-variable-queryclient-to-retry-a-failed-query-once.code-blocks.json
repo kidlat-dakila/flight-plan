@@ -150,6 +150,7 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "isPlain": true,
         "exportedByFilePaths": [
           "src/lib/query-client.ts"
         ],

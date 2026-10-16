@@ -63,7 +63,7 @@ const EFFECT_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["effect
 const calledNameOf = (symbol: CodeBlockSymbol): string | null => {
   if (symbol.use !== CALL) return null
   if (symbol.type === "unopened-import") return symbol.importedName
-  return symbol.type === "internal-code-block" || symbol.type === "external-block" ? (symbol.codeBlockReference.name ?? null) : null
+  return symbol.type === "internal-code-block" || symbol.type === "external-block" ? (symbol.binding ?? symbol.codeBlockReference.name ?? null) : null
 }
 
 export const calledNamesOf = (block: CodeBlock): string[] => block.outerSymbols.flatMap((symbol) => calledNameOf(symbol) ?? [])

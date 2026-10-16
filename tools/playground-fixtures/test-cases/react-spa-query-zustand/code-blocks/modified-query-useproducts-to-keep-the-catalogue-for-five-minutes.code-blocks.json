@@ -352,6 +352,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -1600,6 +1601,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "isPlain": true,
         "exportedByFilePaths": [
           "src/hooks/use-products.ts"
         ],
@@ -1635,6 +1637,7 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": false,
+        "isPlain": true,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {

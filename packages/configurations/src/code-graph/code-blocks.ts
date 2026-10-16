@@ -97,7 +97,33 @@ export interface CodeBlockCatalogue {
   readonly event: string | null
   readonly certainty: CatalogueCertainty
   readonly isOwnNode?: boolean
-  readonly holdsOwnNodes?: boolean
+}
+
+export type CardKind = "route" | "router" | "store" | "api"
+
+export type CardPart
+  = | "holder"
+    | "state"
+    | "getter"
+    | "action"
+    | "selector"
+    | "reducer"
+    | "thunk"
+    | "extra-reducer"
+    | "listener"
+    | "case"
+    | "handler"
+    | "middleware"
+    | "procedure"
+    | "endpoint"
+
+export interface BlockCard {
+  readonly library: string
+  readonly kind: CardKind
+  readonly part: CardPart
+  readonly heading: string | null
+  readonly groupKey: string | null
+  readonly ownerId: string | null
 }
 
 export type SymbolUse = "call" | "render" | "value" | "read" | "type"
@@ -112,6 +138,7 @@ export interface SymbolUsage {
   readonly use: SymbolUse
   readonly handedTo?: CodeBlock | null
   readonly member?: SymbolMember
+  readonly binding?: string
 }
 
 export interface InternalVariableSymbol extends SymbolUsage {
@@ -166,6 +193,8 @@ export interface CodeBlock {
   readonly childrenBlocks: readonly CodeBlock[]
   readonly isRoot: boolean
   readonly isExported: boolean
+  readonly isPlain?: boolean
+  readonly isReturned?: boolean
   readonly exportedBy: readonly ASTGraph[]
   readonly lineOfCodeDiffs: readonly SourceRange[] | null
   readonly diffs: readonly CodeBlockDiff[]
@@ -176,6 +205,8 @@ export interface CodeBlock {
   readonly handedFrom: readonly CodeBlockSymbol[]
   readonly astGraph: ASTGraph
   readonly catalogue: CodeBlockCatalogue | null
+  readonly card?: BlockCard
+  readonly cardOwner?: CodeBlock | null
 }
 
 export interface ASTGraph {

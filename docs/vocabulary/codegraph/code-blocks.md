@@ -263,6 +263,8 @@ interface CodeBlock {
   childrenBlocks: CodeBlock[] // aliases not a shallow or clone
   isRoot: boolean
   isExported: boolean
+  isPlain?: boolean
+  isReturned?: boolean
   exportedBy: ASTGraph[] // aliases not a shallow or clone
   lineOfCodeDiffs: SourceRange[] | null
   diffs: CodeBlockDiff[]
@@ -273,6 +275,8 @@ interface CodeBlock {
   handedFrom: CodeBlockSymbol[] // aliases not a shallow or clone
   astGraph: ASTGraph // alias not a shallow or clone
   catalogue: CodeBlockCatalogue | null
+  card?: BlockCard
+  cardOwner?: CodeBlock | null // alias not a shallow or clone
 }
 ```
 
@@ -287,6 +291,8 @@ interface CodeBlock {
 | `childrenBlocks` | The blocks directly inside it |
 | `isRoot` | Whether it sits at the top level of the file |
 | `isExported` | Whether the file exports it. Being exported is a fact about a block, not a type: a function, a class and a root variable can each be exported or not. |
+| `isPlain` | On a `root-variable`, set when every value in it, at any depth, is written out as it is: no call but `new`, no function, no markup, and in Python no comprehension. Left out otherwise. The Journey Flow Diagram reads it as [Plain code](../journey-flow-diagram.md#plain-code) says. |
+| `isReturned` | On a `function`, a `hook`, a `component` or a `method`, set when the function around it returns it: written in the `return`, as the body of an arrow function, or named by the `return`. Left out otherwise. |
 | `exportedBy` | The AST graph of every file that exports the block: its own file, and each file that re-exports it, such as an `index.ts`. Empty when `isExported` is `false`. |
 | `lineOfCodeDiffs` | The ranges of the changes that belong to the block itself: those it is the innermost block around. `null` for every other block, including a block around a diff block. A block with ranges here is a diff block. |
 | `diffs` | What a change does to the block, each as a diff with a `type` and a `range`. The changes of `lineOfCodeDiffs` are here as `added`, `modified` or `deleted`. A use of a block with a change is here as `affected`. Empty on a block with neither. See [The diffs of a block](chains.md#the-diffs-of-a-block). |
@@ -297,6 +303,27 @@ interface CodeBlock {
 | `usedBy` | The blocks that have this block in their `outerSymbols`. It is the reverse of `outerSymbols`, filled once when the group is built, so that climbing from a block to what uses it is a lookup. |
 | `astGraph` | The AST graph of the file the block is in, an alias, so the file can be found from any block |
 | `catalogue` | What the [catalogue](catalogue.md) says about the block, or `null` when no pattern matched it. See "What the catalogue leaves on a block". |
+| `card` | Which card of the Journey Flow Diagram the block belongs to, and as what part: the library that says it, the kind of card, the part, the heading it is drawn under, the key its card is grouped by and the block it is drawn in. Only a library with a file of its own writes it; left out otherwise. See "Which card a block belongs to". |
+| `cardOwner` | The block `card.ownerId` names, an alias, or `null` when the card names none. Only in memory: the stored form keeps the id in `card`. |
+
+## Which card a block belongs to
+
+`card` is written in two passes, so a part written away from its card is drawn in it.
+
+| Pass | When | What it writes |
+|---|---|---|
+| The library files | As a file is read, after its blocks | The `card` of every block a library with a file of its own recognises in that file: an Express registration and its handler and middleware, a tRPC router and its procedures, a Zustand, Pinia or Redux store and its parts, an RTK Query API and its endpoints, a Flask or FastAPI route. Each `readCards` reads the blocks of the file, the matches of its library and the syntax around them. |
+| The card links | Once every reference of the group exists | The `ownerId` of a part written beside its card, found through the symbols that join them, and the card of a block no library file could see |
+
+| Card link | The block | Its card |
+|---|---|---|
+| A function a route registration names as its handler, from its own file or another | The function | The card of the registration's handler slot, with the registration as its owner |
+| A function handed to a call of a store's holder, such as `selectTotal` in `useCartStore(selectTotal)` | The function | A selector of that store |
+| A function whose first argument reads the key of a store, such as `(state) => state.cart.items` for the slice named `cart`, and a selector whose function reads it | The function, or the selector | A selector of that store |
+| A selector built on a selector of a store, such as `createSelector([selectItems], …)` | The selector | A selector of the same store |
+| A thunk that an extra reducer of a slice names, such as `checkout` in `addCase(checkout.fulfilled, …)` | The thunk | Owned by that slice |
+| A part written in a call that names a holder, such as the listener of `startListening({ actionCreator: cartSlice.actions.addItem, … })` or an endpoint of `todosApi.injectEndpoints(…)` | The part | Owned by that holder |
+| A value whose every key names a holder, such as `createTRPCRouter({ todo: todoRouter })` or `configureStore({ reducer: { cart: cartSlice.reducer } })` | The value | A holder of the same kind with no part: it only joins them |
 
 ## What the catalogue leaves on a block
 
@@ -372,7 +399,7 @@ flowchart LR
 
 Steps 5 and 6 make the two flat lists, and step 7 the chains: a chain cannot be traced before every block and every changed block is known.
 
-The references between blocks are part of step 5, and they need two passes of their own: every block is created first, and the references are filled in after, since a block can only point at a block that exists.
+The references between blocks are part of step 5, and they need two passes of their own: every block is created first, and the references are filled in after, since a block can only point at a block that exists. The card links follow them, as [Which card a block belongs to](#which-card-a-block-belongs-to) says.
 
 From the finished group the diagrams are built: the [segments](segments.md), then the Journey Flow Diagram, the Blast Diagram and the Code Walkthrough of each.
 

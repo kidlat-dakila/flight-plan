@@ -300,8 +300,8 @@
             {
               "id": "src/routes/cart/index.tsx#component@7:1",
               "type": "component",
-              "label": "Renders a heading with the item count and the total",
-              "description": "When a shopper opens /cart, `router` in `src/router.tsx` renders this component as the element of the path `cart`, with no props.",
+              "label": null,
+              "description": null,
               "codeBlockIds": [
                 "src/routes/cart/index.tsx#component@7:1",
                 "src/routes/cart/index.tsx#external-value@9:3",

@@ -120,9 +120,17 @@ describe("the Journey Flow Diagram of a group", () => {
     ])
   })
 
-  it("keeps a node for a value at the top level of a file that is exported", () => {
+  it("gives an exported value that is plain no node, and lists it as a step of every node that reads it", () => {
     const orders = codeOf("export const ORDERS_KEY = [\"orders\"]", "export const loadOrders = () => {", "  return ORDERS_KEY", "}")
     const diagram = diagramOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(1, 27, 1, 36)] })
+
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function loadOrders (changed)"])
+    expect(diagram?.journeyNodes[0].blockLabels.map(({ codeBlock }) => codeBlock.id)).toStrictEqual(["src/orders.ts#root-variable@1:1"])
+  })
+
+  it("keeps a node for an exported value made by a call", () => {
+    const orders = codeOf("export const ORDERS_KEY = keyOf(\"orders\")", "export const loadOrders = () => {", "  return ORDERS_KEY", "}")
+    const diagram = diagramOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(1, 33, 1, 41)] })
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function loadOrders", "root-variable ORDERS_KEY (changed)"])
   })
@@ -282,13 +290,13 @@ describe("the nodes inside a root block", () => {
 
     expect(nodes.map((node) => [node.type, nameOfBlock(node.codeBlocks[0])])).toStrictEqual([
       ["root-variable", "todoRouter"],
-      ["function", "listTodos"],
       ["resolver", "list"],
       ["resolver", "update"],
+      ["function", "listTodos"],
     ])
   })
 
-  it("makes a node of each function written under a key of what a slot that holds nodes returns, named after its key, and none of what is inside it", () => {
+  it("gives an action written under a key of a store no node, and keeps it in the node of its store", () => {
     const files = {
       "src/pricing.ts": PRICING,
       "src/cart-store.ts": codeOf(
@@ -313,10 +321,9 @@ describe("the nodes inside a root block", () => {
 
     expect(nodes.map((node) => [node.type, nameOfBlock(node.codeBlocks[0])])).toStrictEqual(expect.arrayContaining([
       ["state", "useCartStore"],
-      ["function", "add"],
       ["function", "priceOf"],
     ]))
-    expect(nodes.filter((node) => node.codeBlocks[0].astGraph.filePath === "src/cart-store.ts")).toHaveLength(2)
+    expect(nodes.filter((node) => node.codeBlocks[0].astGraph.filePath === "src/cart-store.ts").map((node) => node.codeBlocks[0].name)).toStrictEqual(["useCartStore"])
   })
 
   it("keeps a condition, a declaration and the markup of a root block in the node of that root block", () => {
@@ -379,7 +386,7 @@ describe("the nodes inside a root block", () => {
     }
     const nodes = listJourneyNodes(presentDiagramOf(files, PRICING_CHANGE).journeyNodes)
 
-    expect(nodes.map((node) => [node.type, node.codeBlocks[0].name ?? null])).toStrictEqual([["state", "useCartStore"], ["function", "priceOf"], ["function", "add"]])
+    expect(nodes.map((node) => [node.type, node.codeBlocks[0].name ?? null])).toStrictEqual([["state", "useCartStore"], ["function", "priceOf"]])
   })
 
   it("does not list the block a node stands for as a trigger label of that node", () => {

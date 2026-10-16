@@ -150,6 +150,8 @@ A `component` block is a function that returns markup, or a variable that holds 
 | `const useOrders = () => { … return <OrderList /> }` | No. A `hook`: the name decides first. |
 | `const Cart = () => renderLines()` | No. A `function`: what `renderLines` returns is not followed. |
 | `const priceOf = (item) => item.price` | No. A `function`. |
+| `class Modal extends React.Component { render() { return <div /> } }` | Yes. A class that extends another and whose `render` method returns markup is a class component. Its methods are blocks inside it. |
+| `class Store extends Base { render() { return "text" } }`, `class Lone { render() { return <div /> } }` | No. A `class`: its `render` returns no markup, or it extends nothing. |
 
 **Every component of a file is found, at any depth.** A component at the root of a file is a root block. A function that returns markup or a variable that holds markup inside another function is a `component` block too, inside the block around it.
 
@@ -303,6 +305,7 @@ export const saveOrder = (order) =>
 | `limit = 3` in the body of a Python class `Order` | `property` `Order.limit` |
 | `self.count = 0` in a method of that class | `property` `Order.count`, where the attribute is first set. A later `self.count = …` is a use of it, and so is one of an attribute the body of the class already sets. |
 | `"retries": 3` in a Python dictionary | `property` `retries`. A key that is not written as text, such as `LIMIT: 2`, is no block. |
+| `state.items = []`, `state.total += action.payload` and `state.count++` in a TypeScript function whose parameter is `state` | `property` `state.items`, `state.total`, `state.count`: a write to a member of a parameter of the function it is written in, one block for each write. A write to a member of any other name is no block. |
 
 A use of a member leads to the property of that name, the way it leads to a function: `state.promo` leads to `promo`, `api.users.limit` to `limit` under `users`, `self.count` to `Order.count`, and `CONFIG["db"]["host"]` and `CONFIG.get("db").get("host")` to `host` under `db`. A member read through `this` or `self` that the class does not declare leads to the class it extends, and to the member of that name there. See [Symbols](symbols.md).
 
