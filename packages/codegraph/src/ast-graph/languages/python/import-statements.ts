@@ -7,6 +7,7 @@ export interface ImportedName {
   readonly importedName: string
   readonly specifier: string
   readonly isTakenFromModule: boolean
+  readonly fromModule: string
 }
 
 interface ImportedModule {
@@ -42,14 +43,14 @@ const readImportedModule = (imported: SyntaxNode): ImportedName[] => {
   const module = importedPathOf(imported)?.text ?? NO_NAME
   if (name === null) return []
   const specifier = pythonSpecifierOf({ module, level: ABSOLUTE_LEVEL, imported: NO_NAME })
-  return [{ name, importedName: NAMESPACE_IMPORT, specifier, isTakenFromModule: false }]
+  return [{ name, importedName: NAMESPACE_IMPORT, specifier, isTakenFromModule: false, fromModule: NO_NAME }]
 }
 
 const readNameFrom = (from: ImportedModule, imported: SyntaxNode): ImportedName[] => {
   const name = boundNameOf(imported)
   const importedName = importedPathOf(imported)?.text ?? NO_NAME
   if (name === null) return []
-  return [{ name, importedName, specifier: pythonSpecifierOf({ ...from, imported: importedName }), isTakenFromModule: true }]
+  return [{ name, importedName, specifier: pythonSpecifierOf({ ...from, imported: importedName }), isTakenFromModule: true, fromModule: from.module }]
 }
 
 export const importedNamesOf = (statement: SyntaxNode): ImportedName[] => {

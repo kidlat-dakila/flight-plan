@@ -68,6 +68,17 @@ describe("PythonASTGraphFile import variables", () => {
     ])
   })
 
+  it.each([
+    ["a name a module of the same name binds", "from .helper import helper", { ".helper:helper": "shop/helper.py" }, ["helper", "helper", "shop/helper.py"]],
+    ["a name a package of the same name binds", "from shop import shop", { "shop:shop": "shop/__init__.py" }, ["shop", "shop", "shop/__init__.py"]],
+    ["a submodule of a module path", "from shop.orders import cart", { "shop.orders:cart": "shop/orders/cart.py" }, ["cart", "*", "shop/orders/cart.py"]],
+    ["a subpackage", "from . import orders", { ".:orders": "shop/orders/__init__.py" }, ["orders", "*", "shop/orders/__init__.py"]],
+  ])("reads %s as a module only when the file is the submodule of that name", (_form, source, filePaths, read) => {
+    const { importVariables } = syntaxOf(source, filePaths)
+
+    expect(importVariables.map(({ name, importedName, importedFilePath }) => [name, importedName, importedFilePath])).toStrictEqual([read])
+  })
+
   describe("isFileUsingSymbol", () => {
     it.each([
       ["calls a name it imports", "price_of", ["from shop.pricing import price_of", "total = price_of(item)"]],

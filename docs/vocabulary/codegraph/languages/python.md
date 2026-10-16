@@ -41,33 +41,49 @@ flowchart TD
   packages -->|not found| external
 ```
 
-**The module roots of a file** come from the nearest project file above it: `pyproject.toml`, `setup.cfg` or `setup.py`.
+**The module roots of a file** are the folders Python would search for it, in order:
 
-| The project file | Module roots, in order |
+1. **Its base folder**: the first folder above the file that is not a package, a folder with no `__init__` file. Python runs a script from there, and pytest puts a test there on the path, so a module beside a script or a test resolves. For `backend/shop/models.py`, with `backend/shop/__init__.py`, the base folder is `backend`.
+2. **The roots of its project**, from the nearest project file above it: `pyproject.toml`, `setup.cfg` or `setup.py`.
+3. **The root of the repository.**
+
+| The project file | Roots of the project, in order |
 |---|---|
-| Declares a `src` layout | Its folder's `src`, then the root of the repository |
-| Declares none | Its folder, then the root of the repository |
-| There is no project file | Every folder named `src` above the file, then the root of the repository |
+| Declares a `src` layout | Its folder's `src` |
+| Declares none | Its folder's `src`, when that folder holds Python files, then its folder |
+| There is no project file | Every folder named `src` above the file, then the `src` folder of the repository, when it holds Python files |
 
-A `src` layout is declared by `package-dir = { "" = "src" }` under `[tool.setuptools]`, by a Poetry package with `from = "src"`, by `package_dir` in the `[options]` of `setup.cfg`, or by `package_dir={"": "src"}` or `where="src"` in `setup.py`.
+A `src` layout is declared by `package-dir = { "" = "src" }` under `[tool.setuptools]`, by a Poetry package with `from = "src"`, by `package_dir` in the `[options]` of `setup.cfg`, or by `package_dir={"": "src"}` or `where="src"` in `setup.py`. Hatch, uv, pdm and flit declare nothing and find the `src` folder themselves, so a `src` folder that holds Python files is a root whatever the project file says.
 
-**Under a root, a module is a file or a package:**
+| Layout | File | Its module roots |
+|---|---|---|
+| A uv project | `tests/test_core.py` | `tests`, `src`, the project's folder, the root |
+| A script | `scripts/tool.py` | `scripts`, the root |
+| A Django project in a folder, with a `pyproject.toml` at the root for its tools | `backend/shop/models.py` | `backend`, the root |
+
+**Under a root, a module is a package or a file.** A package comes first, as it does in Python, and a stub only when there is no source:
 
 | Looking for `shop.pricing` under `src` | Found as |
 |---|---|
-| `src/shop/pricing.py` or `src/shop/pricing.pyi` | The module |
-| `src/shop/pricing/__init__.py` or `__init__.pyi` | The package |
+| `src/shop/pricing/__init__.py` | The package |
+| `src/shop/pricing.py` | The module |
+| `src/shop/pricing/__init__.pyi` | The stub of the package |
+| `src/shop/pricing.pyi` | The stub of the module |
 
 Every folder on the way must be a package: a folder with an `__init__` file, or any folder that holds files.
 
-**An imported name may be a module.** `from shop import pricing` could take the name `pricing` from `shop/__init__.py`, or it could be the module `shop/pricing.py`. The module is tried first:
+**An imported name may be a module.** `from shop import pricing` takes the name `pricing` from `shop/__init__.py` when that file binds it, and the module `shop/pricing.py` otherwise, as Python does:
 
 ```mermaid
 flowchart LR
-  statement["from shop import pricing"] --> tryModule{"Is there a<br/>shop/pricing.py?"}
+  statement["from shop import pricing"] --> binds{"Does shop/__init__.py<br/>bind pricing?"}
+  binds -->|yes| init["shop/__init__.py"]
+  binds -->|no| tryModule{"Is there a<br/>shop/pricing.py?"}
   tryModule -->|yes| module["shop/pricing.py"]
-  tryModule -->|no| init["shop/__init__.py"]
+  tryModule -->|no| init
 ```
+
+`__init__.py` binds a name when, outside its functions and classes, it assigns it, defines a function or a class of that name, or imports it: `pricing = …`, `def pricing`, `from .rates import pricing`, `import pricing`. `from . import pricing` does not bind it, since it imports the module itself.
 
 ### The patterns an importer would contain
 
@@ -119,7 +135,7 @@ class Cart:
 
 - **Every import of a name is kept** when its first binding is an import, so `import shop.tax` and `import shop.pricing` both count, though both bind `shop`.
 - **A file exports every name it imports.** There is no export statement, so a name a file imports can be imported from that file by another.
-- **An import of a name that resolved to a module** has the imported name `*`: in `from shop import pricing`, `pricing` stands for the whole of `shop/pricing.py`. When it resolved to the package that defines it, the imported name is `pricing`.
+- **An import of a name that resolved to a submodule** has the imported name `*`: in `from shop import pricing`, `pricing` stands for the whole of `shop/pricing.py`. The file has to be the submodule of that name, `shop/pricing`. In `from .helper import helper`, the import resolved to `helper.py` and takes the name `helper` that file binds, since a submodule would be `helper/helper.py`. When the import resolved to the package that defines the name, the imported name is `pricing`.
 
 ```python
 # shop/__init__.py
@@ -150,6 +166,7 @@ A Python file is read into [code blocks](../code-blocks.md) by its statements.
 | `def price_of(line):`, at any depth | `function`, from its first decorator to its last line |
 | `def total(self):` in the body of a class | `method`, named `Cart.total` |
 | `class Cart:` | `class` |
+| `class Order(TypedDict):`, `class Priced(Protocol):` | `type-declaration`, like an `interface` of TypeScript, with no block inside it |
 | `RATE = 0.2` at the root | `root-variable`, named after the first name it binds |
 | `double = lambda value: value * 2` | `function`, named `double` |
 | A `lambda` written in place | `function`, with no name |
@@ -163,8 +180,11 @@ A Python file is read into [code blocks](../code-blocks.md) by its statements.
 | A name below the root that keeps what an import or a name of the root gives, `rate = RATE * 2` | `external-value` |
 | An argument of a function at the root, or of a method of a class at the root, without `self` and `cls` | `root-argument-value`, with one more for each member read from it, `line.price` |
 | A call a [catalogue](../catalogue.md) pattern names | The type the pattern makes, with a callback it names as an `effect-callback` or a `code-event` |
+| Any other call handed a callback: a `lambda`, a name that leads to a function, or a keyword that starts with `on_`, as `register(handle)` or `schedule(run, on_done=report)` | `effect`, with an `effect-callback` of each callback, and a `code-event` of a keyword that starts with `on_`. A call of `subscribe`, `on`, `once`, `add_listener` or `add_event_listener` is a `code-event`. |
 
 A `with` statement, a name bound in the body of a class and a plain local are no blocks: their lines belong to the block around them. A docstring is no statement.
+
+**A call of the language that takes a function is no effect.** `map`, `filter`, `sorted`, `min`, `max` and `reduce`, and the methods `map`, `filter`, `reduce` and `sort`, run the function they are handed in place, like the collection methods of TypeScript, so `sorted(lines, key=price_of)` hands `price_of` over as a `value`. A call handed only an argument of the function around it, as `register(handle)` in `def run(handle):`, is no effect either: the argument leads to no function.
 
 **A decorator can name what its function is.** A function under `@app.get("/users")` of Flask carries the route of that pattern, and the decorator of its class gives the prefix of the path.
 
@@ -175,6 +195,7 @@ A `with` statement, a name bound in the body of a class and a plain local are no
 | `sorted(lines, key=price_of)` | `value`, handed to the argument at that position, or of that name |
 | `def total_of(cart: Cart)` | `type` |
 | `pricing.price_of(line)`, where `pricing` is a module of the repository | A `call` of what that module binds as `price_of` |
+| `shop.pricing.price_of(line)` after `import shop.pricing` | A `call` of what `shop/pricing.py` binds as `price_of`: the path of the module is passed first. With `import shop.tax` beside it, `shop.tax.rate()` follows `import shop.tax`, the import whose path the member chain follows. |
 | `self.price_of(line)`, `cls.empty()` in a method | A `call` of the method of that name of the class around it, and a `value` of it where it is not called |
 | `self.tax()` in a method of `class Cart(Taxed)`, where `Cart` declares no `tax` | A `call` of `Taxed`, with the member `tax` |
 
@@ -217,6 +238,7 @@ flowchart LR
 | Reading the imports of a file, and naming each | `src/import-graph/languages/python-specifiers.ts` |
 | The module roots and the known packages | `src/import-graph/languages/python-module-roots.ts` |
 | Resolving a module | `src/import-graph/languages/python-resolve.ts` |
+| The names a package's `__init__` binds | `src/import-graph/languages/python-bindings.ts` |
 | The patterns of an importer | `src/import-graph/languages/python-importer-patterns.ts` |
 | The class of the AST graph | `src/ast-graph/languages/python/index.ts` |
 | Bindings and scopes | `bindings.ts` and `scopes.ts` in the same folder |

@@ -3,17 +3,18 @@ import type { SyntaxCursor, SyntaxNode } from "@/ast-graph/parser"
 import { isSameRange, rangeOf } from "@/ast-graph/source-range"
 import { memberNamed, pathBelow, type FileNaming, type NamedBlock } from "@/code-blocks/languages/typescript/named-by"
 import { blockIdOf, named, nodeAtRange, startOf } from "@/code-blocks/languages/typescript/syntax"
-import type { ReadBlock } from "@/code-blocks/reading"
+import type { FindExport, ReadBlock } from "@/code-blocks/reading"
 import { compareRanges, rangeOfNode } from "@/code-blocks/source-range"
 import type { CodeBlockCatalogue, CodeBlockType, Position, SourceRange } from "@/code-blocks/types"
 import { groupBy } from "@/shared/group-by"
 import { attributeOfReceiver, keyPathOf, listAttributeNames } from "./members"
-import { namesOutside, type PythonOutline } from "./outline"
+import { namesOutside, resolutionAt, type PythonOutline } from "./outline"
 
 export interface PythonBlockReader {
   readonly filePath: string
   readonly outline: PythonOutline
   readonly naming: FileNaming
+  readonly findExport: FindExport
 }
 
 interface WalkContext {
@@ -61,6 +62,14 @@ const CALLABLE_NODE_TYPES: ReadonlySet<string> = new Set([FUNCTION_TYPE, FUNCTIO
 const RECEIVER_NAMES: ReadonlySet<string> = new Set(["self", "cls"])
 const NOTHING_TAKEN: readonly string[] = []
 const CALLABLE_BLOCK_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "method"])
+const FUNCTION_DECLARATION = "function"
+const ARGUMENT_DECLARATION = "argument"
+const LANGUAGE_FUNCTIONS: ReadonlySet<string> = new Set(["map", "filter", "sorted", "min", "max", "reduce"])
+const LANGUAGE_METHODS: ReadonlySet<string> = new Set(["map", "filter", "reduce", "sort"])
+const LISTENING_METHODS: ReadonlySet<string> = new Set(["add_event_listener", "on", "once", "add_listener", "subscribe"])
+const EVENT_NAME_PREFIX = "on_"
+const TYPE_BASES: ReadonlySet<string> = new Set(["TypedDict", "Protocol"])
+const SUBSCRIPT_TYPE = "subscript"
 const BLOCKLESS_ROOT_TYPES: ReadonlySet<string> = new Set([
   "comment",
   "import_statement",
@@ -113,13 +122,25 @@ const readFunction: ReadSeeds = (definition, context, reader) => {
   const range = rangeOfNode(decoratedOf(definition))
   const found = catalogued(catalogueOfFunction(definition, reader))
   const holder = classAround(definition)
+  if (isTypeClass(holder)) return []
   if (holder !== null) return [{ type: "method", name: [context.className ?? "", name.text].join(MEMBER_SEPARATOR), range, declaredAt: [startOf(name)], ...found }]
   return [{ type: "function", name: name.text, range, declaredAt: [startOf(name)], ...found }]
 }
 
+const baseNameOf = (base: SyntaxNode): string | null => {
+  if (base.type === NAME_TYPE) return base.text
+  if (base.type === MEMBER_TYPE) return base.childForFieldName("attribute")?.text ?? null
+  const subscripted = base.type === SUBSCRIPT_TYPE ? base.childForFieldName("value") : null
+  return subscripted === null ? null : baseNameOf(subscripted)
+}
+
+const isTypeClass = (definition: SyntaxNode | null): boolean =>
+  (definition?.childForFieldName("superclasses")?.namedChildren ?? []).some((base) => TYPE_BASES.has(baseNameOf(base) ?? ""))
+
 const readClass: ReadSeeds = (definition, _context, reader) => {
   const name = definition.childForFieldName("name")
   if (name === null) return []
+  if (isTypeClass(definition)) return [{ type: "type-declaration", name: name.text, range: rangeOfNode(decoratedOf(definition)), declaredAt: [startOf(name)] }]
   return [{ type: "class", name: name.text, range: rangeOfNode(decoratedOf(definition)), declaredAt: [startOf(name)], ...catalogued(reader.naming.blockAt(definition)?.catalogue) }]
 }
 
@@ -154,6 +175,7 @@ const readAssignment: ReadSeeds = (assignment, context, reader) => {
   const attribute = attributeOfReceiver(assignment)
   if (attribute !== null) return isDeclaredAttribute(attribute) ? [{ type: "property", name: memberNameOf(attribute.text, context), range: rangeOfNode(statement), declaredAt: [startOf(attribute)] }] : []
   if (isClassAttribute(assignment)) {
+    if (isTypeClass(assignment.closest(CLASS_TYPE))) return []
     return value?.type === FUNCTION_VALUE_TYPE || names.length === 0 ? [] : [{ ...declared, name: memberNameOf(names[0].text, context), type: "property" }]
   }
   if (value?.type === FUNCTION_VALUE_TYPE && target.type === NAME_TYPE) return [{ ...declared, type: "function" }]
@@ -172,9 +194,46 @@ const passedValuesOf = (call: SyntaxNode): SyntaxNode[] =>
   (call.childForFieldName("arguments")?.namedChildren ?? []).map((argument) =>
     argument.type === NAMED_ARGUMENT_TYPE ? (argument.childForFieldName("value") ?? argument) : argument)
 
+const leadsToFunction = (name: SyntaxNode, reader: PythonBlockReader): boolean => {
+  const resolution = resolutionAt(reader.outline, name)
+  if (resolution === null) return false
+  if (resolution.kind === "local") return resolution.declaration.type === FUNCTION_DECLARATION && resolution.declaration.declarationType !== ARGUMENT_DECLARATION
+  const { importedFilePath, importedName } = resolution.variable
+  return importedFilePath !== null && (reader.findExport(importedFilePath, importedName)?.isFunction ?? false)
+}
+
+const keywordOf = (passed: SyntaxNode): string | null =>
+  passed.parent?.type === NAMED_ARGUMENT_TYPE ? (passed.parent.childForFieldName("name")?.text ?? null) : null
+
+const isCallback = (passed: SyntaxNode, reader: PythonBlockReader): boolean =>
+  passed.type === FUNCTION_VALUE_TYPE
+  || (passed.type === NAME_TYPE && leadsToFunction(passed, reader))
+  || (keywordOf(passed) ?? "").startsWith(EVENT_NAME_PREFIX)
+  || reader.naming.slotAt(passed) !== null
+
+const calledNameOf = (call: SyntaxNode): { readonly name: string | null, readonly isMethod: boolean } => {
+  const callee = call.childForFieldName("function")
+  if (callee?.type === MEMBER_TYPE) return { name: callee.childForFieldName("attribute")?.text ?? null, isMethod: true }
+  return { name: callee?.type === NAME_TYPE ? callee.text : null, isMethod: false }
+}
+
+const isLanguageCall = (call: SyntaxNode): boolean => {
+  const { name, isMethod } = calledNameOf(call)
+  return name !== null && (isMethod ? LANGUAGE_METHODS : LANGUAGE_FUNCTIONS).has(name)
+}
+
+const typeOfHandedCall = (call: SyntaxNode, reader: PythonBlockReader): CodeBlockType | null => {
+  if (isLanguageCall(call) || !passedValuesOf(call).some((passed) => isCallback(passed, reader))) return null
+  const { name, isMethod } = calledNameOf(call)
+  return isMethod && LISTENING_METHODS.has(name ?? "") ? "code-event" : "effect"
+}
+
 const readCall: ReadSeeds = (call, _context, reader) => {
   const said = reader.naming.blockAt(call)
-  if (said === null) return []
+  if (said === null) {
+    const handed = typeOfHandedCall(call, reader)
+    return handed === null ? [] : [seedAt(call, handed)]
+  }
   const isHandedCallbacks = passedValuesOf(call).some((value) => reader.naming.slotAt(value) !== null)
   const type = said.type ?? (isHandedCallbacks ? "effect" : null)
   return type === null ? [] : [{ ...seedAt(call, type), catalogue: said.catalogue }]
@@ -204,10 +263,22 @@ const isPassed = (node: SyntaxNode): boolean => {
   return holder?.type === NAMED_ARGUMENT_TYPE && holder.childForFieldName("value")?.id === node.id
 }
 
+const callPassedTo = (passed: SyntaxNode): SyntaxNode | null => {
+  const holder = passed.parent?.type === NAMED_ARGUMENT_TYPE ? passed.parent.parent : passed.parent
+  return holder?.type === ARGUMENTS_TYPE && holder.parent?.type === CALL_NODE_TYPE ? holder.parent : null
+}
+
+const isHandedToEffect = (passed: SyntaxNode, reader: PythonBlockReader): boolean => {
+  const call = callPassedTo(passed)
+  return call !== null && reader.naming.blockAt(call) === null && typeOfHandedCall(call, reader) !== null && isCallback(passed, reader)
+}
+
 const readPassedCallback: ReadSeeds = (node, _context, reader) => {
-  const slot = isPassed(node) ? reader.naming.slotAt(node) : null
-  if (slot === null) return []
-  return [{ ...seedAt(node, slot.runs === RUNNING_ON_AN_EVENT ? "code-event" : "effect-callback", slotNameOf(node)), catalogue: slot }]
+  if (!isPassed(node)) return []
+  const slot = reader.naming.slotAt(node)
+  if (slot !== null) return [{ ...seedAt(node, slot.runs === RUNNING_ON_AN_EVENT ? "code-event" : "effect-callback", slotNameOf(node)), catalogue: slot }]
+  if (!isHandedToEffect(node, reader)) return []
+  return [seedAt(node, slotNameOf(node).startsWith(EVENT_NAME_PREFIX) ? "code-event" : "effect-callback", slotNameOf(node))]
 }
 
 const isLooseStatement = (statement: SyntaxNode): boolean => {

@@ -62,6 +62,39 @@ describe("readImportSpecifiers", () => {
     expect(readImportSpecifiers("src/order.ts", source)).toStrictEqual([])
   })
 
+  it("reads a module augmentation in a file that is a module", () => {
+    expect(readImportSpecifiers("src/order.ts", lines("export {}", "declare module \"./augmented\" {", "  interface Box { extra: 1 }", "}"))).toStrictEqual(["./augmented"])
+  })
+
+  it.each([
+    ["a typedef", "/** @typedef {import(\"./typed\").T} T */"],
+    ["a type tag inside a function", "function a() {\n  /** @type {import('./typed').T} */\n  const b = 1\n}"],
+    ["a parameter tag", "/**\n * @param {import(\"./typed\").T} order\n */\nexport const a = (order) => order"],
+    ["an import tag", "/** @import { T } from \"./typed\" */"],
+    ["an import tag of a namespace", "/** @import * as typed from './typed' */"],
+  ])("reads an import of JSDoc in %s of a JavaScript file", (_form, source) => {
+    expect(readImportSpecifiers("src/order.js", source)).toStrictEqual(["./typed"])
+  })
+
+  it.each([
+    ["a TypeScript file", "src/order.ts", "/** @typedef {import(\"./typed\").T} T */"],
+    ["a comment that is no JSDoc", "src/order.js", "/* @typedef {import(\"./typed\").T} T */"],
+  ])("leaves out an import of JSDoc in %s", (_form, filePath, source) => {
+    expect(readImportSpecifiers(filePath, source)).toStrictEqual([])
+  })
+
+  it("reads an import of JSDoc in a Vue script block written in JavaScript, and not in one written in TypeScript", () => {
+    const vue = lines(
+      "<script>",
+      "/** @typedef {import(\"./from-javascript\").T} T */",
+      "</script>",
+      "<script setup lang=\"ts\">",
+      "/** @typedef {import(\"./from-typescript\").T} T */",
+      "</script>",
+    )
+    expect(readImportSpecifiers("src/Order.vue", vue)).toStrictEqual(["./from-javascript"])
+  })
+
   it("reads every import of a file once, in the order written", () => {
     const source = lines(
       "/// <reference path=\"./ambient.d.ts\" />",

@@ -20,6 +20,12 @@ const groupOf = (files: FixtureFiles, imports: Imports = NO_IMPORTS): StoredCode
 
 const outlineOfCode = (...lines: readonly string[]): string[] => outlineOf(groupOf({ [FILE_PATH]: codeOf(...lines) }), FILE_PATH)
 
+const blockWithId = (group: StoredCodeGroupGraph, id: string): StoredCodeBlock => {
+  const block = group.codeBlocks.find((candidate) => candidate.id === id)
+  if (block === undefined) throw new Error(`There is no block ${id}.`)
+  return block
+}
+
 const handedOf = ({ outerSymbols }: StoredCodeBlock): (string | null)[] => outerSymbols.map((symbol) => symbol.handedToId ?? null)
 
 const SHOP: FixtureFiles = {
@@ -82,6 +88,40 @@ describe("the blocks of a Python file", () => {
       "root-statement 4:1-5:18",
       "  call handle.read 5:5-5:18",
     ])
+  })
+
+  it.each([
+    ["a TypedDict", "from typing import TypedDict", "class Order(TypedDict):", "    cents: int"],
+    ["a Protocol", "import typing", "class Priced(typing.Protocol):", "    def price(self) -> int: ..."],
+    ["a generic Protocol", "from typing import Protocol", "class Priced(Protocol[T]):", "    def price(self) -> T: ..."],
+  ])("makes a type-declaration of %s, with no block inside it", (_form, ...lines) => {
+    expect(outlineOfCode(...lines).slice(1)).toStrictEqual([`type-declaration ${lines[1].includes("Order") ? "Order" : "Priced"} 2:1-3:${String(lines[2].length + 1)}`])
+  })
+
+  it("makes an effect of a call handed a callback, with an effect-callback of each callback", () => {
+    expect(outlineOfCode("def handle():", "    return 1", "register(handle)", "schedule(lambda: 1, on_done=report)", "button.subscribe(handle)")).toStrictEqual([
+      "function handle 1:1-2:13",
+      "root-statement 3:1-3:17",
+      "  effect 3:1-3:17",
+      "    effect-callback 0 3:10-3:16",
+      "root-statement 4:1-4:36",
+      "  effect 4:1-4:36",
+      "    effect-callback 0 4:10-4:19",
+      "      function 4:10-4:19",
+      "    code-event on_done 4:29-4:35",
+      "root-statement 5:1-5:25",
+      "  code-event 5:1-5:25",
+      "    effect-callback 0 5:18-5:24",
+    ])
+  })
+
+  it.each([
+    ["a call handed only values", "def handle():", "    return 1", "register(1, name=\"a\")"],
+    ["a call of the language that takes a function", "def handle(line):", "    return 1", "lines = sorted(LINES, key=handle)"],
+    ["a method of the language that takes a function", "def handle(line):", "    return 1", "LINES.sort(key=handle)"],
+    ["a call handed an argument of a function", "def run(handle):", "    return register(handle)", ""],
+  ])("makes no effect of %s", (_form, ...lines) => {
+    expect(outlineOfCode(...lines).filter((line) => line.includes("effect") || line.includes("code-event"))).toStrictEqual([])
   })
 
   it("makes a condition, a switch with its cases, a loop, a try-catch and a throw of the statements that are one", () => {
@@ -165,15 +205,43 @@ describe("the uses of a Python file", () => {
     expect(blockNamed(group, "function", "price_of").usedByIds).toContain("shop/checkout.py#function@4:1")
   })
 
-  it("hands an argument to the argument block at its position, or under its keyword", () => {
-    const report = blockNamed(group, "function", "report")
+  it("reads a member of a dotted module import past the path of that module, through the import whose path it follows", () => {
+    const dotted = groupOf(
+      {
+        "shop/pricing.py": codeOf("def price_of(line):", "    return line"),
+        "shop/tax.py": codeOf("def rate():", "    return 1"),
+        "shop/report.py": codeOf("import shop.pricing", "import shop.tax", "", "def report():", "    return shop.pricing.price_of(1) + shop.tax.rate()"),
+      },
+      { "shop/report.py": { "shop.pricing": "shop/pricing.py", "shop.tax": "shop/tax.py" } },
+    )
 
-    expect(symbolsOf(report)).toStrictEqual([
-      "call internal-code-block shop/checkout.py#function@4:1",
-      "value internal-code-block shop/checkout.py#root-argument-value@8:12",
-      "value external-block shop/pricing.py#function@2:1",
+    expect(symbolsOf(blockNamed(dotted, "function", "report"))).toStrictEqual([
+      "call external-block shop/pricing.py#function@1:1",
+      "call external-block shop/tax.py#function@1:1",
     ])
-    expect(handedOf(report)).toStrictEqual([null, "shop/checkout.py#root-argument-value@4:14", "shop/checkout.py#root-argument-value@4:26"])
+  })
+
+  it("reads a name taken from a module of the same name as that name, not as the module", () => {
+    const sameName = groupOf(
+      {
+        "shop/helper.py": codeOf("def helper():", "    return 1"),
+        "shop/page.py": codeOf("from .helper import helper", "", "def page():", "    return helper()"),
+      },
+      { "shop/page.py": { ".helper:helper": "shop/helper.py" } },
+    )
+
+    expect(symbolsOf(blockNamed(sameName, "function", "page"))).toStrictEqual(["call external-block shop/helper.py#function@1:1"])
+  })
+
+  it("hands an argument to the argument block at its position, or under its keyword", () => {
+    const effect = blockWithId(group, "shop/checkout.py#effect@9:12")
+    const callback = blockNamed(group, "effect-callback", "format")
+
+    expect(symbolsOf(blockNamed(group, "function", "report"))).toStrictEqual([])
+    expect(symbolsOf(effect)).toStrictEqual(["call internal-code-block shop/checkout.py#function@4:1", "value internal-code-block shop/checkout.py#root-argument-value@8:12"])
+    expect(handedOf(effect)).toStrictEqual([null, "shop/checkout.py#root-argument-value@4:14"])
+    expect(symbolsOf(callback)).toStrictEqual(["value external-block shop/pricing.py#function@2:1"])
+    expect(handedOf(callback)).toStrictEqual(["shop/checkout.py#root-argument-value@4:26"])
   })
 
   it("exports every name the root of a file binds, and every name it imports", () => {

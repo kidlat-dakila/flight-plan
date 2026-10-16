@@ -1,6 +1,6 @@
 import * as path from "node:path"
 import { parse as parseToml } from "smol-toml"
-import { Memo } from "@/shared/memo"
+import { Memo, once } from "@/shared/memo"
 import { recordOf } from "@/shared/record"
 import { mapInSequence } from "@/shared/sequence"
 
@@ -87,8 +87,38 @@ const SRC_LAYOUT_CHECK: Record<Marker, (text: string) => boolean> = {
   "setup.py": setupPyIsSrcLayout,
 }
 
-function rootOf(dir: string, marker: Marker, text: string): string {
-  return SRC_LAYOUT_CHECK[marker](text) ? join(dir, "src") : dir
+const SOURCE_FOLDER = "src"
+const PACKAGE_ENTRIES = ["__init__.py", "__init__.pyi"]
+const PYTHON_FILE = /\.pyi?$/
+
+function parentOf(directory: string): string {
+  const parent = path.posix.dirname(directory)
+  return parent === "." ? "" : parent
+}
+
+function ancestorsOf(directory: string): string[] {
+  return directory === "" ? [] : [directory, ...ancestorsOf(parentOf(directory))]
+}
+
+function pythonFoldersOf(files: ReadonlySet<string>): ReadonlySet<string> {
+  return new Set([...files].filter((file) => PYTHON_FILE.test(file)).flatMap((file) => ancestorsOf(parentOf(file))))
+}
+
+function isPackage(directory: string, files: ReadonlySet<string>): boolean {
+  return PACKAGE_ENTRIES.some((entry) => files.has(join(directory, entry)))
+}
+
+function baseFolderOf(directory: string, files: ReadonlySet<string>): string {
+  return directory !== "" && isPackage(directory, files) ? baseFolderOf(parentOf(directory), files) : directory
+}
+
+function sourceFoldersIn(directory: string, pythonFolders: ReadonlySet<string>): string[] {
+  const sourceFolder = join(directory, SOURCE_FOLDER)
+  return pythonFolders.has(sourceFolder) ? [sourceFolder] : []
+}
+
+function projectRootsOf(dir: string, marker: Marker, text: string, pythonFolders: ReadonlySet<string>): string[] {
+  return SRC_LAYOUT_CHECK[marker](text) ? [join(dir, SOURCE_FOLDER)] : [...sourceFoldersIn(dir, pythonFolders), dir]
 }
 
 function nearestMarker(directory: string, files: ReadonlySet<string>): { dir: string, marker: Marker } | null {
@@ -107,14 +137,17 @@ function ancestorSrcDirs(directory: string): string[] {
 
 export function rootsFinder(files: ReadonlySet<string>, read: Read): (fromFile: string) => Promise<string[]> {
   const byDirectory = new Memo<string, Promise<string[]>>()
+  const pythonFolders = once(() => pythonFoldersOf(files))
 
-  const rootsOf = async (directory: string): Promise<string[]> => {
+  const projectRootsAbove = async (directory: string): Promise<string[]> => {
     const found = nearestMarker(directory, files)
     const text = found === null ? null : await read(found.dir === "" ? found.marker : `${found.dir}/${found.marker}`)
-    if (found === null || text === null) return [...new Set([...ancestorSrcDirs(directory), ""])]
-    const root = rootOf(found.dir, found.marker, text)
-    return root === "" ? [root] : [root, ""]
+    if (found === null || text === null) return [...ancestorSrcDirs(directory), ...sourceFoldersIn("", pythonFolders())]
+    return projectRootsOf(found.dir, found.marker, text, pythonFolders())
   }
+
+  const rootsOf = async (directory: string): Promise<string[]> =>
+    [...new Set([baseFolderOf(directory, files), ...(await projectRootsAbove(directory)), ""])]
 
   return async (fromFile) => {
     const directory = path.posix.dirname(fromFile)
@@ -141,10 +174,10 @@ export async function pythonPackages(files: ReadonlySet<string>, read: Read): Pr
     const base = path.posix.basename(file)
     return isMarker(base) ? [{ file, marker: base }] : []
   })
+  const pythonFolders = pythonFoldersOf(files)
   const found = await mapInSequence(markerFiles, async ({ file, marker }) => {
-    const dir = path.posix.dirname(file)
     const text = await read(file)
-    return text === null ? [] : [rootOf(dir === "." ? "" : dir, marker, text)]
+    return text === null ? [] : projectRootsOf(parentOf(file), marker, text, pythonFolders)
   })
   const roots = [...new Set(found.flat())]
   return (roots.length === 0 ? [""] : roots)

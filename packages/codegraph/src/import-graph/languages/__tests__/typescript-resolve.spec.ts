@@ -147,6 +147,86 @@ describe("moduleResolver with workspace packages", () => {
   })
 })
 
+describe("moduleResolver with the exports of a workspace package", () => {
+  const exportingPackage = {
+    "packages/core/package.json": JSON.stringify({
+      name: "@org/core",
+      exports: {
+        ".": { types: "./src/index.ts", default: "./dist/index.js" },
+        "./feature": "./src/feature.ts",
+        "./internal/*": "./src/internal/*.ts",
+      },
+    }),
+    "packages/core/src/index.ts": "",
+    "packages/core/src/feature.ts": "",
+    "packages/core/feature.ts": "",
+    "packages/core/src/internal/deep.ts": "",
+  }
+
+  it.each([
+    ["the entry of a condition", "@org/core", "packages/core/src/index.ts"],
+    ["a subpath, before a file of that name in the package folder", "@org/core/feature", "packages/core/src/feature.ts"],
+    ["a subpath of a wildcard", "@org/core/internal/deep", "packages/core/src/internal/deep.ts"],
+  ])("resolves %s", async (_form, specifier, resolved) => {
+    expect(await resolver(exportingPackage)("packages/web/src/app.ts", specifier)).toBe(resolved)
+  })
+
+  it("lets tsconfig paths come before a workspace package whose name they share", async () => {
+    const resolve = resolver({
+      "tsconfig.json": config({ paths: { "@org/ui/*": ["./packages/ui/src/components/*"] } }),
+      "packages/ui/package.json": JSON.stringify({ name: "@org/ui" }),
+      "packages/ui/src/components/Button/index.tsx": "",
+    })
+    expect(await resolve("apps/web/src/page.tsx", "@org/ui/Button")).toBe("packages/ui/src/components/Button/index.tsx")
+  })
+})
+
+describe("moduleResolver with the config that holds a file", () => {
+  const viteProject = {
+    "apps/web/tsconfig.json": JSON.stringify({ files: [], references: [{ path: "./tsconfig.node.json" }, { path: "./tsconfig.app.json" }] }),
+    "apps/web/tsconfig.node.json": JSON.stringify({ include: ["vite.config.ts"], compilerOptions: { paths: { "@/*": ["./tools/*"] } } }),
+    "apps/web/tsconfig.app.json": JSON.stringify({ include: ["src/**/*.ts", "src/**/*.vue"], compilerOptions: { paths: { "@/*": ["./src/*"] } } }),
+    "apps/web/src/lib/util.ts": "",
+    "apps/web/tools/lib/util.ts": "",
+  }
+
+  it.each([
+    ["a TypeScript file", "apps/web/src/main.ts", "apps/web/src/lib/util.ts"],
+    ["a Vue file", "apps/web/src/App.vue", "apps/web/src/lib/util.ts"],
+    ["a file another referenced config includes", "apps/web/vite.config.ts", "apps/web/tools/lib/util.ts"],
+  ])("follows the references of a config that holds no file to the one that includes %s", async (_form, fromFile, resolved) => {
+    expect(await resolver(viteProject)(fromFile, "@/lib/util")).toBe(resolved)
+  })
+
+  it("keeps the include a config inherits through extends", async () => {
+    const resolve = resolver({
+      "apps/web/tsconfig.json": JSON.stringify({ files: [], references: [{ path: "./tsconfig.app.json" }] }),
+      "apps/web/tsconfig.base.json": JSON.stringify({ include: ["src"] }),
+      "apps/web/tsconfig.app.json": JSON.stringify({ extends: "./tsconfig.base.json", compilerOptions: { paths: { "@/*": ["./src/*"] } } }),
+      "apps/web/src/lib/util.ts": "",
+    })
+    expect(await resolve("apps/web/src/main.ts", "@/lib/util")).toBe("apps/web/src/lib/util.ts")
+  })
+
+  it("reads the paths of a jsconfig.json", async () => {
+    const resolve = resolver({
+      "apps/web/jsconfig.json": config({ paths: { "~/*": ["./src/*"] } }),
+      "apps/web/src/util.js": "",
+    })
+    expect(await resolve("apps/web/src/main.jsx", "~/util")).toBe("apps/web/src/util.js")
+  })
+
+  it("takes the tsconfig.json of a folder before its jsconfig.json", async () => {
+    const resolve = resolver({
+      "apps/web/tsconfig.json": config({ paths: { "~/*": ["./src/*"] } }),
+      "apps/web/jsconfig.json": config({ paths: { "~/*": ["./lib/*"] } }),
+      "apps/web/src/util.ts": "",
+      "apps/web/lib/util.ts": "",
+    })
+    expect(await resolve("apps/web/src/main.ts", "~/util")).toBe("apps/web/src/util.ts")
+  })
+})
+
 describe("moduleResolver on relative specifiers", () => {
   it("probes extensions, index files and the emitted .js convention", async () => {
     const resolve = resolver({ "src/pricing.ts": "", "src/cart/index.tsx": "" })

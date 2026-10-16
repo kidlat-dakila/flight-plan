@@ -130,6 +130,66 @@ describe("the Python import language", () => {
       ])
     })
 
+    it.each([
+      ["a script", "scripts/tool.py", "import helpers\nfrom helpers import HELP", "scripts/helpers.py"],
+      ["a test outside a package", "tests/test_pricing.py", "from helpers import make_order", "tests/helpers.py"],
+    ])("resolves a module beside %s, from the folder Python runs it in", async (_form, importer, source, resolved) => {
+      const reader = await readerOf({ ...SHOP, [resolved]: "", [importer]: source })
+
+      expect(await reader.importsOf(importer)).toStrictEqual([resolved])
+    })
+
+    it.each([
+      ["a project file that does not declare it", { "pyproject.toml": "[project]\nname = \"app\"\n\n[build-system]\nbuild-backend = \"uv_build\"\n" }],
+      ["no project file", {}],
+    ])("resolves from a src folder with %s", async (_form, projectFiles) => {
+      const reader = await readerOf({
+        ...projectFiles,
+        "src/app/__init__.py": "",
+        "src/app/util.py": "",
+        "src/app/core.py": "from app import util",
+        "tests/test_core.py": "from app.core import util",
+      })
+
+      expect(await reader.importsOf("src/app/core.py")).toStrictEqual(["src/app/util.py"])
+      expect(await reader.importsOf("tests/test_core.py")).toStrictEqual(["src/app/core.py"])
+    })
+
+    it("resolves from the folder a project runs in when its project file is above it", async () => {
+      const reader = await readerOf({
+        "pyproject.toml": "[tool.ruff]\nline-length = 100\n",
+        "backend/manage.py": "import config.settings",
+        "backend/config/__init__.py": "",
+        "backend/config/settings.py": "",
+        "backend/shop/__init__.py": "",
+        "backend/shop/pricing.py": "",
+        "backend/shop/models.py": "from config import settings\nfrom shop.pricing import price_of",
+      })
+
+      expect(await reader.importsOf("backend/manage.py")).toStrictEqual(["backend/config/settings.py"])
+      expect(await reader.importsOf("backend/shop/models.py")).toStrictEqual(["backend/config/settings.py", "backend/shop/pricing.py"])
+    })
+
+    it("resolves a package before a module of the same name", async () => {
+      const reader = await readerOf({ "both.py": "", "both/__init__.py": "", "run.py": "import both" })
+
+      expect(await reader.importsOf("run.py")).toStrictEqual(["both/__init__.py"])
+    })
+
+    it("resolves a name the package binds to the package, though a module has the same name", async () => {
+      const reader = await readerOf({
+        "lib/__init__.py": "conflict = \"a name\"\nfrom .plain import PLAIN",
+        "lib/conflict.py": "",
+        "lib/plain.py": "",
+        "run.py": "from lib import conflict\nfrom lib import plain",
+      })
+
+      expect([...(await reader.importedFilePathsOf("run.py"))]).toStrictEqual([
+        ["lib:conflict", "lib/__init__.py"],
+        ["lib:plain", "lib/plain.py"],
+      ])
+    })
+
     it("reads the imports written before a syntax error", async () => {
       expect(await importsOf("from . import pricing\ndef broken(:\n")).toStrictEqual(["shop/orders/pricing.py"])
     })

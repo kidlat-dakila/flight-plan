@@ -1,5 +1,6 @@
 import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
 import type { SyntaxNode } from "@/ast-graph/parser"
+import type { ImportVariable } from "@/ast-graph/types"
 import type { ResolvedReference, Resolution } from "@/code-blocks/languages/typescript/outline"
 import { nodeAtRange } from "@/code-blocks/languages/typescript/syntax"
 import type { HandingSlot, ReadHanding, ReadTarget, ReadUse, WrittenAt } from "@/code-blocks/reading"
@@ -11,6 +12,16 @@ import { resolutionAt, type PythonOutline } from "./outline"
 interface NamedTarget {
   readonly target: ReadTarget
   readonly path: readonly string[]
+}
+
+interface ResolvedPath {
+  readonly resolution: Resolution
+  readonly path: readonly string[]
+}
+
+interface DottedImport {
+  readonly variable: ImportVariable
+  readonly submodules: readonly string[]
 }
 
 interface MemberChain {
@@ -31,6 +42,7 @@ const CLASS_TYPE = "class_definition"
 const FUNCTION_TYPE = "function_definition"
 const DECORATED_TYPE = "decorated_definition"
 const RECEIVER_NAMES: ReadonlySet<string> = new Set(["self", "cls"])
+const MODULE_SEPARATOR = "."
 const ARGUMENT = "argument"
 
 const isChildAt = (node: SyntaxNode, field: string): boolean => node.parent?.childForFieldName(field)?.id === node.id
@@ -133,6 +145,26 @@ const throughNamespace = (named: NamedTarget): NamedTarget => {
   return target.kind === "import" && isNamespaceOfFile(target, path) ? { target: { ...target, importedName: path[0] }, path: path.slice(1) } : named
 }
 
+const submodulesOf = ({ name, specifier, importedName }: ImportVariable): readonly string[] => {
+  const [boundModule, ...submodules] = specifier.split(MODULE_SEPARATOR)
+  return importedName === NAMESPACE_IMPORT && boundModule === name ? submodules : []
+}
+
+const startsWith = (path: readonly string[], prefix: readonly string[]): boolean => prefix.every((segment, index) => path[index] === segment)
+
+const longerImport = (longest: DottedImport | null, candidate: DottedImport): DottedImport =>
+  longest === null || candidate.submodules.length > longest.submodules.length ? candidate : longest
+
+const throughDottedImport = ({ resolution, path }: ResolvedPath, outline: PythonOutline): ResolvedPath => {
+  if (resolution.kind !== "import" || submodulesOf(resolution.variable).length === 0) return { resolution, path }
+  const followed = outline.imports
+    .filter((variable) => variable.name === resolution.variable.name)
+    .map((variable) => ({ variable, submodules: submodulesOf(variable) }))
+    .filter(({ submodules }) => submodules.length > 0 && startsWith(path, submodules))
+    .reduce<DottedImport | null>(longerImport, null)
+  return followed === null ? { resolution, path } : { resolution: { kind: "import", variable: followed.variable }, path: path.slice(followed.submodules.length) }
+}
+
 const rootNameOf = (written: SyntaxNode): SyntaxNode | null => {
   if (written.type === NAME_TYPE) return written
   const object = written.type === MEMBER_TYPE ? written.childForFieldName("object") : null
@@ -141,18 +173,21 @@ const rootNameOf = (written: SyntaxNode): SyntaxNode | null => {
 
 const baseTargetOf = (base: SyntaxNode, outline: PythonOutline): ReadTarget[] => {
   const name = rootNameOf(base)
-  const resolution = name === null ? null : resolutionAt(outline, name)
-  if (name === null || resolution === null) return []
-  const { target, path } = throughNamespace({ target: targetOf(resolution), path: chainFrom(name).path })
+  const found = name === null ? null : resolutionAt(outline, name)
+  if (name === null || found === null) return []
+  const { resolution, path: modulePath } = throughDottedImport({ resolution: found, path: chainFrom(name).path }, outline)
+  const { target, path } = throughNamespace({ target: targetOf(resolution), path: modulePath })
   return path.length === 0 ? [target] : []
 }
 
 const listBaseTargets = (holder: SyntaxNode | null, outline: PythonOutline): ReadTarget[] =>
   (holder?.childForFieldName("superclasses")?.namedChildren ?? []).flatMap((base) => baseTargetOf(base, outline))
 
-const readUses = ({ reference, resolution }: ResolvedReference, outline: PythonOutline): ReadUse[] => {
+const readUses = ({ reference, resolution: found }: ResolvedReference, outline: PythonOutline): ReadUse[] => {
   const used = nodeAtRange(outline.tree, reference.range)
-  const { outermost, path } = chainFrom(used)
+  const chain = chainFrom(used)
+  const { outermost } = chain
+  const { resolution, path } = throughDottedImport({ resolution: found, path: chain.path }, outline)
   const target = targetOf(resolution)
   const role = roleOf(outermost)
   const usedAt = rangeOfNode(outermost)

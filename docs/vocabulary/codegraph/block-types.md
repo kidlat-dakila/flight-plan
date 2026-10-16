@@ -65,7 +65,7 @@ type CodeBlockType =
 | `method` | A function that is a member of a class. It is named after its class and itself. | `findAll` in `class OrdersService { findAll() { … } }`, named `OrdersService.findAll` |
 | `root-variable` | A value at the root of a file that is not a function, a class or markup, exported or not | `const MAX_RETRIES = 5`, `export const STATUSES = ["open", "paid"]` |
 | `root-statement` | A statement at the root of a file that is not a declaration | `app.use(rateLimit({ perMinute: 60 }))` |
-| `type-declaration` | An `interface` or a `type`. Nothing that runs is different when it changes, so the Journey Flow Diagram does not trace it. | `interface User { … }`, `type Status = "open" \| "paid"` |
+| `type-declaration` | An `interface` or a `type`, and in Python a `type` alias or a class of `TypedDict` or `Protocol`. Nothing that runs is different when it changes, so the Journey Flow Diagram does not trace it. | `interface User { … }`, `type Status = "open" \| "paid"`, `class Order(TypedDict): …` |
 | `import` | An import statement. The Journey Flow Diagram does not trace it. | `import { rateLimit } from "./rate-limit"` |
 | `file` | The whole of a file no language reads. It is one block, with no blocks inside it and no symbols. | `migrations/0042_add_status.sql`, `schema.prisma`, `orders.module.css` |
 | `condition` | A condition block, including a ternary | `if (isPending) { … }`, `a ? b : c` |
@@ -364,7 +364,7 @@ A call that is handed a callback is an effect, with one exclusion: a call to one
 | `items.map(…)`, `filter`, `forEach`, `reduce`, `find`, `some`, `every`, `flatMap`, `sort` | No |
 | `promise.then(…)`, `catch`, `finally` | No |
 
-The excluded methods are a closed list that belongs to the language, like the four timers.
+The excluded methods are a closed list that belongs to the language, like the four timers. In Python they are `map`, `filter`, `sorted`, `min`, `max` and `reduce`, and the methods `map`, `filter`, `reduce` and `sort`. See [Python](languages/python.md#code-blocks).
 
 **A call that provides a value is no effect.** A call a [catalogue](catalogue.md) pattern names with `provides` is handed a value, also where that value is a function: `provide(themeKey, { toggleTheme })` of Vue is no block, and `toggleTheme` is a `value` use of the block around the call. The function is reached from the component that [reads the value](symbols.md#where-a-value-comes-from).
 

@@ -25,31 +25,44 @@ How the [codegraph](../../codegraph.md) reads a TypeScript file. This page holds
 | `type Rate = import("./rates").Rate` | Yes, an `import()` in a type is resolved by the compiler |
 | `const tax = await import("./tax")` | No, a dynamic `import()` call is not an import |
 | `/// <reference path="./globals.d.ts" />` | Yes |
+| `declare module "./tax" { … }` in a file that imports or exports | Yes, it augments that module. In a file that does neither, no: it declares a module of that name. |
+| `/** @typedef {import("./rates").Rate} Rate */`, `/** @import { Rate } from "./rates" */` in a JavaScript file | Yes, the compiler reads the types of JSDoc in JavaScript. In a TypeScript file, no. |
 
 ### How a specifier resolves
 
-A specifier is resolved against the file list of the commit, never against a disk. What it resolves to depends on how it is written:
+A specifier is resolved against the file list of the commit, never against a disk, in the order the compiler follows:
 
 ```mermaid
 flowchart LR
   specifier["A specifier"] --> relative["Starts with ./ or ../"]
-  specifier --> alias["A path alias of the<br/>nearest tsconfig.json"]
+  specifier --> alias["A path alias of the<br/>config that holds the file"]
+  alias -->|no file| workspace
   specifier --> workspace["The name of a package.json<br/>of the repository"]
   specifier --> other["Anything else"]
   relative --> byPath["The file at that path, with an<br/>extension added, or the<br/>index file of the folder"]
   alias --> byAlias["The target of the alias"]
-  workspace --> byPackage["That package's entry file,<br/>or a file of its folder"]
+  workspace --> byPackage["What its exports or its main names,<br/>or else its index file or a file of its folder"]
   other --> external["A library: not in the graph"]
 ```
+
+**The config that holds a file** is the nearest `tsconfig.json` above it, or the `jsconfig.json` of that folder when there is no `tsconfig.json`. When that config holds no file, as the `tsconfig.json` of a Vite project does with `"files": []`, the config is the one its `references` name whose `files` or `include` hold the file, followed through the references they name in turn. `files`, `include` and `exclude` are inherited through `extends`, and with neither `files` nor `include` a config holds every file of its folder.
+
+| Config | Written | Holds |
+|---|---|---|
+| `apps/web/tsconfig.json` | `{ "files": [], "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.app.json" }] }` | No file |
+| `apps/web/tsconfig.app.json` | `{ "include": ["src/**/*.ts", "src/**/*.vue"], "compilerOptions": { "paths": { "@/*": ["./src/*"] } } }` | `src/main.ts` and `src/App.vue`, so their `@/…` use its paths |
+
+**A package of the repository is read as if it were installed.** Its name leads into the folder of its `package.json`, which the compiler would reach through `node_modules`: the subpaths its `exports` names, with the conditions `source`, `types`, `import`, `require` and `default`, or its `main` when it has no `exports`. When nothing is found that way, as when `exports` names build output the repository does not hold, the name stands for the `index` file of the package folder or of its `src` folder, and a path below the name for a path below the folder. A `paths` entry always comes first, so `@shop/ui/Button` follows `"@shop/ui/*": ["./packages/ui/src/components/*"]` even when `packages/ui/package.json` is named `@shop/ui`.
 
 | Specifier | Resolves to | Rule |
 |---|---|---|
 | `"./tax"` | `src/pricing/tax.ts` | An extension is added |
 | `"./tax.js"` | `src/pricing/tax.ts` | An emitted extension stands for its source: `.js` for `.ts` or `.tsx`, `.mjs` for `.mts`, `.cjs` for `.cts`, `.jsx` for `.tsx` |
 | `"./pricing"` | `src/pricing/index.ts` | A folder stands for its `index` file |
-| `"@/pricing/tax"` | `src/pricing/tax.ts` | A `paths` entry of the nearest `tsconfig.json`, followed through `extends` |
-| `"@shop/pricing"` | `packages/pricing/src/index.ts` | The name of a `package.json` of the repository: the entry its manifest names, or the `index` file of the package folder or of its `src` folder |
-| `"@shop/pricing/tax"` | `packages/pricing/tax.ts` | A path below the name of a package is a path below its folder |
+| `"@/pricing/tax"` | `src/pricing/tax.ts` | A `paths` entry of the config that holds the file, followed through `extends` |
+| `"@shop/pricing"` | `packages/pricing/src/index.ts` | The name of a `package.json` of the repository: the entry its `exports` or its `main` names, or the `index` file of the package folder or of its `src` folder |
+| `"@shop/pricing/tax"` | `packages/pricing/src/tax.ts` | A subpath the `exports` of the package names, as `"./tax": "./src/tax.ts"` or `"./*": "./src/*.ts"` |
+| `"@shop/pricing/lib/tax"` | `packages/pricing/lib/tax.ts` | Without `exports`, or with none that leads to a file, a path below the name of a package is a path below its folder |
 | `"react"` | Nothing | A library has no file in the repository |
 
 Only an import that resolves to a script file of the repository is in the graph. A file never imports itself.

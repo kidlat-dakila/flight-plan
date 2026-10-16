@@ -51,6 +51,27 @@ describe("resolveModule (python)", () => {
     )
   })
 
+  it("resolves a package before a module of the same name", () => {
+    const files = set("pkg.py", "pkg/__init__.py")
+    expect(resolveModule("app/main.py", "pkg", 0, "", files, [""], null)).toStrictEqual(file("pkg/__init__.py"))
+  })
+
+  it("resolves a module before a stub of the same name", () => {
+    const files = set("pkg.py", "pkg.pyi", "pkg/__init__.pyi")
+    expect(resolveModule("app/main.py", "pkg", 0, "", files, [""], null)).toStrictEqual(file("pkg.py"))
+  })
+
+  it("resolves a name the package entry binds to the entry, though a submodule has the name", () => {
+    const files = set("pkg/__init__.py", "pkg/pricing.py")
+    const bindsPricing = (packageEntry: string, name: string) => packageEntry === "pkg/__init__.py" && name === "pricing"
+    expect(resolveModule("app/main.py", "pkg", 0, "pricing", files, [""], null, bindsPricing)).toStrictEqual(file("pkg/__init__.py"))
+  })
+
+  it("resolves a name the package entry does not bind to the submodule", () => {
+    const files = set("pkg/__init__.py", "pkg/pricing.py")
+    expect(resolveModule("app/main.py", "pkg", 0, "pricing", files, [""], null, () => false)).toStrictEqual(file("pkg/pricing.py"))
+  })
+
   it("returns external for an unresolved module (stdlib / installed dep)", () => {
     expect(resolveModule("app/main.py", "os.path", 0, "join", set("app/main.py"), [""], null)).toStrictEqual({
       kind: "external",

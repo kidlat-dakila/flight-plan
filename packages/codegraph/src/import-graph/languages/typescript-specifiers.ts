@@ -4,10 +4,13 @@ import { readVueScripts, type VueScript } from "./vue-script"
 
 const VUE_EXTENSIONS = [".vue"]
 const TSX_GRAMMAR_EXTENSIONS = [".tsx", ".jsx", ".js", ".mjs", ".cjs"]
+const JAVASCRIPT_EXTENSIONS = [".jsx", ".js", ".mjs", ".cjs"]
 
 const SPECIFIER_CAPTURE = "specifier"
 const TYPE_IMPORT_CAPTURE = "typeImport"
 const COMMENT_CAPTURE = "comment"
+const AUGMENTED_CAPTURE = "augmented"
+const DOCUMENTATION_CAPTURE = "documentation"
 
 const IMPORT_QUERY = `
 (import_statement source: (string) @${SPECIFIER_CAPTURE})
@@ -25,6 +28,8 @@ const IMPORT_QUERY = `
   function: (import)
   arguments: (arguments . (string) @${TYPE_IMPORT_CAPTURE}))
 (program (comment) @${COMMENT_CAPTURE})
+(program (ambient_declaration (module name: (string) @${AUGMENTED_CAPTURE})))
+(comment) @${DOCUMENTATION_CAPTURE}
 `
 
 const TYPE_ONLY_NODES: ReadonlySet<string> = new Set([
@@ -44,6 +49,16 @@ const SUBSTITUTION_NODE = "template_substitution"
 const REFERENCE_PATH_PATTERN = /^\/\/\/\s*<reference\s+path\s*=\s*["']([^"']+)["']/
 const RELATIVE_PREFIXES = [".", "/"]
 const CURRENT_FOLDER_PREFIX = "./"
+const DOCUMENTATION_START = "/**"
+const DOCUMENTED_TYPE_IMPORT_PATTERN = /\bimport\(\s*(["'`])([^"'`]+)\1\s*\)/g
+const DOCUMENTED_IMPORT_TAG_PATTERN = /@import\s[^@]*?\bfrom\s+(["'])([^"']+)\1/g
+const SPECIFIER_GROUP = 2
+const MODULE_STATEMENT_TYPES: ReadonlySet<string> = new Set(["import_statement", "export_statement"])
+
+interface Reading {
+  readonly isJavaScript: boolean
+  readonly isModule: boolean
+}
 
 const unquoted = (literal: string): string => literal.slice(1, -1)
 
@@ -65,24 +80,32 @@ const referencedPathOf = (comment: string): string | null => {
   return RELATIVE_PREFIXES.some((prefix) => referenced.startsWith(prefix)) ? referenced : `${CURRENT_FOLDER_PREFIX}${referenced}`
 }
 
-const specifierOf = ({ name, node }: QueryCapture): string | null => {
-  if (name === SPECIFIER_CAPTURE) return hasSubstitution(node) ? null : unquoted(node.text)
-  if (name === TYPE_IMPORT_CAPTURE) return isInTypePosition(node) ? unquoted(node.text) : null
-  if (name === COMMENT_CAPTURE) return referencedPathOf(node.text)
-  return null
+const documentedSpecifiersOf = (comment: string): string[] =>
+  comment.startsWith(DOCUMENTATION_START)
+    ? [...comment.matchAll(DOCUMENTED_TYPE_IMPORT_PATTERN), ...comment.matchAll(DOCUMENTED_IMPORT_TAG_PATTERN)].map((match) => match[SPECIFIER_GROUP])
+    : []
+
+const specifiersOf = ({ name, node }: QueryCapture, { isJavaScript, isModule }: Reading): (string | null)[] => {
+  if (name === SPECIFIER_CAPTURE) return [hasSubstitution(node) ? null : unquoted(node.text)]
+  if (name === TYPE_IMPORT_CAPTURE) return [isInTypePosition(node) ? unquoted(node.text) : null]
+  if (name === COMMENT_CAPTURE) return [referencedPathOf(node.text)]
+  if (name === AUGMENTED_CAPTURE) return isModule ? [unquoted(node.text)] : []
+  if (name === DOCUMENTATION_CAPTURE) return isJavaScript ? documentedSpecifiersOf(node.text) : []
+  return []
 }
 
 const distinct = (specifiers: readonly (string | null)[]): string[] =>
   [...new Set(specifiers.filter((specifier): specifier is string => specifier !== null && specifier !== ""))]
 
-const readSpecifiersIn = (grammar: GrammarId, text: string): string[] => {
+const readSpecifiersIn = (grammar: GrammarId, text: string, isJavaScript: boolean): string[] => {
   const tree = parseWithGrammar(grammar, text)
-  return distinct(queryCaptures(grammar, tree.rootNode, IMPORT_QUERY).map(specifierOf))
+  const reading: Reading = { isJavaScript, isModule: tree.rootNode.namedChildren.some((child) => MODULE_STATEMENT_TYPES.has(child.type)) }
+  return distinct(queryCaptures(grammar, tree.rootNode, IMPORT_QUERY).flatMap((capture) => specifiersOf(capture, reading)))
 }
 
-const readScriptSpecifiers = ({ grammar, text, source }: VueScript): string[] => [
+const readScriptSpecifiers = ({ grammar, text, source, isJavaScript }: VueScript): string[] => [
   ...(source === null ? [] : [source]),
-  ...readSpecifiersIn(grammar, text),
+  ...readSpecifiersIn(grammar, text, isJavaScript),
 ]
 
 const grammarOf = (filePath: string): GrammarId => (hasExtension(filePath, TSX_GRAMMAR_EXTENSIONS) ? "tsx" : "typescript")
@@ -90,4 +113,4 @@ const grammarOf = (filePath: string): GrammarId => (hasExtension(filePath, TSX_G
 export const readImportSpecifiers = (filePath: string, text: string): string[] =>
   hasExtension(filePath, VUE_EXTENSIONS)
     ? distinct(readVueScripts(text).flatMap(readScriptSpecifiers))
-    : readSpecifiersIn(grammarOf(filePath), text)
+    : readSpecifiersIn(grammarOf(filePath), text, hasExtension(filePath, JAVASCRIPT_EXTENSIONS))

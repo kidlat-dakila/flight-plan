@@ -35,7 +35,41 @@ describe("rootsFinder", () => {
   })
 })
 
+describe("rootsFinder base folder", () => {
+  it.each([
+    ["a script", { "scripts/tool.py": "" }, "scripts/tool.py", "scripts"],
+    ["a test outside a package", { "tests/test_a.py": "" }, "tests/test_a.py", "tests"],
+    ["a module of a package", { "app/__init__.py": "", "app/sub/__init__.py": "", "app/sub/a.py": "" }, "app/sub/a.py", ""],
+    ["a module of a package in a folder", { "backend/shop/__init__.py": "", "backend/shop/models.py": "" }, "backend/shop/models.py", "backend"],
+  ])("puts the first folder above %s that is not a package first", async (_form, layout, fromFile, baseFolder) => {
+    const { files, read } = fake(layout)
+    expect((await rootsFinder(files, read)(fromFile))[0]).toBe(baseFolder)
+  })
+})
+
+describe("rootsFinder src folder", () => {
+  it("uses a src folder that holds Python code, though the project file does not declare it", async () => {
+    const { files, read } = fake({ "proj/pyproject.toml": "[project]\nname='proj'\n", "proj/src/pkg/__init__.py": "", "proj/tests/test_a.py": "" })
+    expect(await rootsFinder(files, read)("proj/tests/test_a.py")).toStrictEqual(["proj/tests", "proj/src", "proj", ""])
+  })
+
+  it("leaves out a src folder that holds no Python code", async () => {
+    const { files, read } = fake({ "proj/pyproject.toml": "[project]\nname='proj'\n", "proj/src/index.ts": "", "proj/pkg/__init__.py": "", "proj/pkg/a.py": "" })
+    expect(await rootsFinder(files, read)("proj/pkg/a.py")).toStrictEqual(["proj", ""])
+  })
+
+  it("uses the src folder of the repository when there is no project file", async () => {
+    const { files, read } = fake({ "src/pkg/__init__.py": "", "tests/test_a.py": "" })
+    expect(await rootsFinder(files, read)("tests/test_a.py")).toStrictEqual(["tests", "src", ""])
+  })
+})
+
 describe("pythonPackages", () => {
+  it("maps the packages of a src folder the project file does not declare", async () => {
+    const { files, read } = fake({ "a/pyproject.toml": "[project]\nname='a'\n", "a/src/apkg/__init__.py": "" })
+    expect((await pythonPackages(files, read)).get("apkg")).toStrictEqual({ dir: "a/src", topLevel: "apkg" })
+  })
+
   it("maps each project's top-level package to its root", async () => {
     const a = "[tool.setuptools]\npackage-dir = { \"\" = \"src\" }\n[project]\nname='a'\n"
     const { files, read } = fake({

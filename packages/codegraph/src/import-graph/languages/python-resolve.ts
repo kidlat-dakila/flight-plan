@@ -1,9 +1,14 @@
 import * as path from "node:path"
+import { isPackageEntry } from "./python-importer-patterns"
 import type { PyPackages } from "./python-module-roots"
 
 export type PyResolved
   = | { kind: "file", path: string }
     | { kind: "external", module: string }
+
+export type BindsName = (packageEntry: string, name: string) => boolean
+
+const bindsNoName: BindsName = () => false
 
 const normalise = (value: string): string => value.split(path.sep).join("/")
 
@@ -25,16 +30,10 @@ function isPackageDir(dir: string, files: ReadonlySet<string>): boolean {
   return false
 }
 
+const MODULE_FILE_SUFFIXES = ["/__init__.py", ".py", "/__init__.pyi", ".pyi"]
+
 function moduleFile(pathSoFar: string, files: ReadonlySet<string>): string | null {
-  const py = `${pathSoFar}.py`
-  if (files.has(py)) return py
-  const pyi = `${pathSoFar}.pyi`
-  if (files.has(pyi)) return pyi
-  const init = `${pathSoFar}/__init__.py`
-  if (files.has(init)) return init
-  const initPyi = `${pathSoFar}/__init__.pyi`
-  if (files.has(initPyi)) return initPyi
-  return null
+  return MODULE_FILE_SUFFIXES.map((suffix) => `${pathSoFar}${suffix}`).find((candidate) => files.has(candidate)) ?? null
 }
 
 function resolveSegments(segments: string[], baseDir: string, files: ReadonlySet<string>): string | null {
@@ -52,15 +51,13 @@ function resolveUnderRoot(
   imported: string,
   root: string,
   files: ReadonlySet<string>,
+  bindsName: BindsName,
 ): string | null {
   const moduleSegments = module === "" ? [] : module.split(".")
-
-  if (imported !== "") {
-    const withImported = resolveSegments([...moduleSegments, imported], root, files)
-    if (withImported !== null) return withImported
-  }
-
-  return resolveSegments(moduleSegments, root, files)
+  const found = resolveSegments(moduleSegments, root, files)
+  if (imported === "") return found
+  if (found !== null && isPackageEntry(found) && bindsName(found, imported)) return found
+  return resolveSegments([...moduleSegments, imported], root, files) ?? found
 }
 
 function climbedFrom(directory: string, climbs: number): string | null {
@@ -78,16 +75,17 @@ export function resolveModule(
   files: ReadonlySet<string>,
   roots: string[],
   packages: PyPackages | null,
+  bindsName: BindsName = bindsNoName,
 ): PyResolved {
   if (level > 0) {
     const fromDir = path.posix.dirname(normalise(fromFile))
     const base = climbedFrom(fromDir === "." ? "" : fromDir, level - 1)
-    const found = base === null ? null : resolveUnderRoot(module, imported, base, files)
+    const found = base === null ? null : resolveUnderRoot(module, imported, base, files, bindsName)
     return found === null ? { kind: "external", module } : { kind: "file", path: found }
   }
 
   for (const root of roots) {
-    const found = resolveUnderRoot(module, imported, root, files)
+    const found = resolveUnderRoot(module, imported, root, files, bindsName)
     if (found !== null) return { kind: "file", path: found }
   }
 
@@ -95,7 +93,7 @@ export function resolveModule(
     const firstSegment = module.split(".")[0] ?? ""
     const entry = packages.get(firstSegment)
     if (entry !== undefined) {
-      const found = resolveUnderRoot(module, imported, entry.dir, files)
+      const found = resolveUnderRoot(module, imported, entry.dir, files, bindsName)
       if (found !== null) return { kind: "file", path: found }
     }
   }

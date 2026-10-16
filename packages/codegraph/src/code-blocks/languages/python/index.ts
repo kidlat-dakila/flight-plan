@@ -33,9 +33,9 @@ export const outlinePython = ({ filePath, source, importedFilePaths }: PythonSou
   return {
     filePath,
     exports: exportsOf(outline),
-    read: () => ({
+    read: (findExport) => ({
       filePath,
-      blocks: readPythonBlocks({ filePath, outline, naming: createFileNaming(matchSyntax(readPython(source), BUILT_IN_LIBRARIES)) }),
+      blocks: readPythonBlocks({ filePath, outline, naming: createFileNaming(matchSyntax(readPython(source), BUILT_IN_LIBRARIES)), findExport }),
       uses: readPythonUses(outline),
       readSyntax: () => readPythonSyntax(outline.tree, importedFilePaths),
     }),

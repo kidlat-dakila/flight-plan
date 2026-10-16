@@ -1,6 +1,7 @@
 import * as path from "node:path"
 import { ResolverFactory, type ResolveOptions } from "enhanced-resolve"
 import * as jsonc from "jsonc-parser"
+import { fitsGlob } from "@/catalogue/matching/file-patterns"
 import { Memo } from "@/shared/memo"
 import { omit, recordOf } from "@/shared/record"
 import { mapInSequence } from "@/shared/sequence"
@@ -44,7 +45,14 @@ type ModuleResolver = ReturnType<typeof ResolverFactory.createResolver>
 interface Stats { isFile: () => boolean, isDirectory: () => boolean, isSymbolicLink: () => boolean }
 
 const SCOPED_NAME_PARTS = 2
-const TSCONFIG = /(^|\/)tsconfig[^/]*\.json$/
+const TSCONFIG = /(^|\/)(tsconfig|jsconfig)[^/]*\.json$/
+const CONFIG_NAMES = ["tsconfig.json", "jsconfig.json"]
+const PACKAGE_FOLDER = "node_modules"
+const SCOPE_PREFIX = "@"
+const CONDITIONS = ["source", "types", "import", "require", "default"]
+const EVERY_FILE = "**/*"
+const WILDCARD = "*"
+const CURRENT_FOLDER = "."
 
 const missing = (at: string): NodeJS.ErrnoException =>
   ({ name: "Error", code: "ENOENT", message: `ENOENT: no such file or directory, '${at}'` })
@@ -136,6 +144,27 @@ const ancestorsOf = (at: string): string[] => {
 const isResolverFileSystem = (fileSystem: object): fileSystem is ResolverFileSystem =>
   ["stat", "lstat", "readFile", "readJson", "readdir", "readlink"].every((method) => method in fileSystem)
 
+const inPackageFolder = (relative: string): string | null =>
+  relative.startsWith(`${PACKAGE_FOLDER}/`) ? relative.slice(PACKAGE_FOLDER.length + 1) : null
+
+export function installedPathOf(relative: string, packages: ReadonlyMap<string, string>): string | null {
+  const inside = inPackageFolder(relative)
+  const name = inside === null ? undefined : [...packages.keys()].find((one) => inside === one || inside.startsWith(`${one}/`))
+  const directory = name === undefined ? undefined : packages.get(name)
+  if (inside === null || name === undefined || directory === undefined) return null
+  const found = path.posix.join(directory, inside.slice(name.length))
+  return found === CURRENT_FOLDER ? "" : found
+}
+
+export function installedNamesIn(relative: string, packages: ReadonlyMap<string, string>): string[] | null {
+  const names = [...packages.keys()]
+  if (relative === PACKAGE_FOLDER) return [...new Set(names.map((name) => name.split("/")[0]))]
+  const scope = inPackageFolder(relative)
+  if (scope === null || !scope.startsWith(SCOPE_PREFIX) || scope.includes("/")) return null
+  const scoped = names.filter((name) => name.startsWith(`${scope}/`)).map((name) => name.slice(scope.length + 1))
+  return scoped.length === 0 ? null : scoped
+}
+
 function repoFileSystem(
   files: ReadonlySet<string>,
   read: Read,
@@ -143,6 +172,11 @@ function repoFileSystem(
 ): ResolverFileSystem {
   const directories = new Set<string>(["", ...[...files].flatMap(ancestorsOf)])
   const inRepo = (at: string): string => path.posix.relative(ROOT, at)
+  const realPathOf = async (at: string): Promise<string> => {
+    const relative = inRepo(at)
+    return installedPathOf(relative, await packages) ?? relative
+  }
+  const installedNamesAt = async (at: string): Promise<string[] | null> => installedNamesIn(inRepo(at), await packages)
   const stats = (isFile: boolean): Stats => ({ isFile: () => isFile, isDirectory: () => !isFile, isSymbolicLink: () => false })
   const buffers = new Memo<string, Promise<Buffer | null>>()
   const textOf = async (relative: string): Promise<string | null> => {
@@ -160,10 +194,12 @@ function repoFileSystem(
 
   const stat = (at: string, ...args: unknown[]): void => {
     const done = callbackOf<Stats>(args)
-    const relative = inRepo(at)
-    if (files.has(relative)) done(null, stats(true))
-    else if (directories.has(relative)) done(null, stats(false))
-    else done(missing(at))
+    Promise.all([realPathOf(at), installedNamesAt(at)]).then(([relative, installed]) => {
+      if (installed !== null) done(null, stats(false))
+      else if (files.has(relative)) done(null, stats(true))
+      else if (directories.has(relative)) done(null, stats(false))
+      else done(missing(at))
+    }, failWith(done))
   }
 
   const fileSystem = {
@@ -171,39 +207,34 @@ function repoFileSystem(
     lstat: stat,
     readFile: (at: string, ...args: unknown[]): void => {
       const done = callbackOf<Buffer>(args)
-      const relative = inRepo(at)
-      if (!files.has(relative)) {
-        done(missing(at))
-        return
-      }
-      bufferOf(relative).then((value) => {
+      realPathOf(at).then(async (relative) => (files.has(relative) ? await bufferOf(relative) : null)).then((value) => {
         deliver(done, at, value)
       }, failWith(done))
     },
     readJson: (at: string, ...args: unknown[]): void => {
       const done = callbackOf<unknown>(args)
-      const relative = inRepo(at)
-      if (!files.has(relative)) {
-        done(missing(at))
-        return
-      }
-      manifestOf(relative).then((value) => {
+      realPathOf(at).then(async (relative) => (files.has(relative) ? await manifestOf(relative) : null)).then((value) => {
         deliver(done, at, value)
       }, failWith(done))
     },
     readdir: (at: string, ...args: unknown[]): void => {
       const done = callbackOf<string[]>(args)
-      const relative = inRepo(at)
-      if (!directories.has(relative)) {
-        done(missing(at))
-        return
-      }
-      const prefix = relative === "" ? "" : `${relative}/`
-      const names = [...files, ...directories]
-        .filter((one) => one !== relative && one.startsWith(prefix))
-        .map((one) => one.slice(prefix.length))
-        .filter((rest) => !rest.includes("/"))
-      done(null, [...new Set(names)])
+      Promise.all([realPathOf(at), installedNamesAt(at)]).then(([relative, installed]) => {
+        if (installed !== null) {
+          done(null, installed)
+          return
+        }
+        if (!directories.has(relative)) {
+          done(missing(at))
+          return
+        }
+        const prefix = relative === "" ? "" : `${relative}/`
+        const names = [...files, ...directories]
+          .filter((one) => one !== relative && one.startsWith(prefix))
+          .map((one) => one.slice(prefix.length))
+          .filter((rest) => !rest.includes("/"))
+        done(null, [...new Set(names)])
+      }, failWith(done))
     },
     readlink: (at: string, ...args: unknown[]): void => {
       callbackOf<string>(args)(Object.assign(new Error(`EINVAL: not a link, '${at}'`), { code: "EINVAL" }))
@@ -240,12 +271,106 @@ export function workspaceAliases(packages: ReadonlyMap<string, string>, root = R
   })
 }
 
+const configIn = (directory: string, files: ReadonlySet<string>): string | undefined =>
+  CONFIG_NAMES.map((name) => (directory === CURRENT_FOLDER ? name : `${directory}/${name}`)).find((candidate) => files.has(candidate))
+
 export function nearestConfig(directory: string, files: ReadonlySet<string>): string | null {
   for (let here = directory; ; here = path.posix.dirname(here)) {
-    const candidate = here === "." ? "tsconfig.json" : `${here}/tsconfig.json`
-    if (files.has(candidate)) return candidate
-    if (here === ".") return null
+    const found = configIn(here, files)
+    if (found !== undefined) return found
+    if (here === CURRENT_FOLDER) return null
   }
+}
+
+export interface ConfigScope {
+  readonly files: readonly string[] | null
+  readonly include: readonly string[] | null
+  readonly exclude: readonly string[] | null
+}
+
+const NO_SCOPE: ConfigScope = { files: null, include: null, exclude: null }
+
+const stringsOf = (value: unknown): string[] | null =>
+  Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === "string") : null
+
+const globOf = (folder: string, pattern: string): string => {
+  const joined = path.posix.join(folder, pattern)
+  const last = path.posix.basename(joined)
+  return last.includes(WILDCARD) || path.posix.extname(last) !== "" ? joined : `${joined}/${EVERY_FILE}`
+}
+
+const ownScopeOf = (config: Record<string, unknown>, file: string): ConfigScope => {
+  const folder = path.posix.dirname(file)
+  const rooted = (patterns: readonly string[] | null, rootPattern: (pattern: string) => string) => (patterns === null ? null : patterns.map(rootPattern))
+  return {
+    files: rooted(stringsOf(config.files), (entry) => path.posix.join(folder, entry)),
+    include: rooted(stringsOf(config.include), (pattern) => globOf(folder, pattern)),
+    exclude: rooted(stringsOf(config.exclude), (pattern) => globOf(folder, pattern)),
+  }
+}
+
+const inherited = (own: ConfigScope, extended: ConfigScope): ConfigScope => ({
+  files: own.files ?? extended.files,
+  include: own.include ?? extended.include,
+  exclude: own.exclude ?? extended.exclude,
+})
+
+export function coversFile({ files, include, exclude }: ConfigScope, configFile: string, file: string): boolean {
+  if (files?.includes(file) === true) return true
+  const patterns = include ?? (files === null ? [globOf(path.posix.dirname(configFile), EVERY_FILE)] : [])
+  return patterns.some((glob) => fitsGlob(glob, file)) && !(exclude ?? []).some((glob) => fitsGlob(glob, file))
+}
+
+const referencedConfigOf = (entry: unknown, file: string, files: ReadonlySet<string>): string | null => {
+  const reference = recordOf(entry)?.path
+  if (typeof reference !== "string") return null
+  const target = path.posix.join(path.posix.dirname(file), reference)
+  if (files.has(target)) return target
+  return configIn(target, files) ?? null
+}
+
+interface ConfigReader {
+  readonly recordOf: (file: string) => Promise<Record<string, unknown> | null>
+  readonly scopeOf: (file: string) => Promise<ConfigScope>
+}
+
+const createConfigReader = (files: ReadonlySet<string>, read: Read, packages: Promise<ReadonlyMap<string, string>>): ConfigReader => {
+  const records = new Memo<string, Promise<Record<string, unknown> | null>>()
+  const scopes = new Memo<string, Promise<ConfigScope>>()
+  const configRecordOf = async (file: string): Promise<Record<string, unknown> | null> =>
+    await records.remember(file, async () => {
+      const text = await read(file)
+      return text === null ? null : recordOf(jsonc.parse(text))
+    })
+  const scopeOf = async (file: string, seen: ReadonlySet<string> = new Set()): Promise<ConfigScope> =>
+    await scopes.remember(file, async () => {
+      const config = await configRecordOf(file)
+      if (config === null) return NO_SCOPE
+      const entry = config.extends
+      const extendedFile = typeof entry === "string" ? extendedConfig(entry, file, files, await packages) : null
+      const own = ownScopeOf(config, file)
+      if (extendedFile === null || seen.has(extendedFile)) return own
+      return inherited(own, await scopeOf(extendedFile, new Set([...seen, file])))
+    })
+  return { recordOf: configRecordOf, scopeOf }
+}
+
+const findCoveringConfig = async (
+  configFile: string,
+  file: string,
+  reader: ConfigReader,
+  files: ReadonlySet<string>,
+  seen: ReadonlySet<string>,
+): Promise<string | null> => {
+  if (seen.has(configFile)) return null
+  if (coversFile(await reader.scopeOf(configFile), configFile, file)) return configFile
+  const references = (await reader.recordOf(configFile))?.references
+  const referenced = (Array.isArray(references) ? references : []).flatMap((entry) => {
+    const found = referencedConfigOf(entry, configFile, files)
+    return found === null ? [] : [found]
+  })
+  const covering = await mapInSequence(referenced, async (one) => await findCoveringConfig(one, file, reader, files, new Set([...seen, configFile])))
+  return covering.find((one) => one !== null) ?? null
 }
 
 export function moduleResolver(files: ReadonlySet<string>, read: Read): ResolveModule {
@@ -253,6 +378,17 @@ export function moduleResolver(files: ReadonlySet<string>, read: Read): ResolveM
   const fileSystem = repoFileSystem(files, read, packages)
   const aliases = packages.then((found) => workspaceAliases(found))
   const resolvers = new Memo<string, Promise<ModuleResolver>>()
+  const configReader = createConfigReader(files, read, packages)
+  const projectConfigs = new Memo<string, Promise<string | null>>()
+  const projectConfigFor = async (file: string): Promise<string | null> =>
+    await projectConfigs.remember(file, async () => {
+      const nearest = nearestConfig(path.posix.dirname(file), files)
+      return nearest === null ? null : ((await findCoveringConfig(nearest, file, configReader, files, new Set())) ?? nearest)
+    })
+  const repoPathOf = async (found: string): Promise<string> => {
+    const relative = path.posix.relative(ROOT, found)
+    return installedPathOf(relative, await packages) ?? relative
+  }
 
   const resolverFor = async (config: string | null): Promise<ModuleResolver> =>
     resolvers.remember(config ?? "", async () =>
@@ -262,12 +398,12 @@ export function moduleResolver(files: ReadonlySet<string>, read: Read): ResolveM
           extensions: EXTENSIONS,
           extensionAlias: EMITTED,
           mainFields: MAIN_FIELDS,
-          exportsFields: [],
+          exportsFields: ["exports"],
           mainFiles: ["index"],
-          conditionNames: [],
+          conditionNames: CONDITIONS,
           symlinks: false,
           unsafeCache: true,
-          alias,
+          fallback: alias,
           tsconfig: config === null ? false : { configFile: path.posix.join(ROOT, config) },
         }),
       ),
@@ -276,11 +412,12 @@ export function moduleResolver(files: ReadonlySet<string>, read: Read): ResolveM
   return async (fromFile, specifier) => {
     if (specifier === "") return null
     const directory = path.posix.dirname(fromFile)
-    const resolver = await resolverFor(nearestConfig(directory, files))
-    return new Promise((settle) => {
-      resolver.resolve({}, path.posix.join(ROOT, directory), specifier, {}, (error, found) => {
-        settle(error || typeof found !== "string" ? null : path.posix.relative(ROOT, found))
+    const resolver = await resolverFor(await projectConfigFor(fromFile))
+    const found = await new Promise<string | null>((settle) => {
+      resolver.resolve({}, path.posix.join(ROOT, directory), specifier, {}, (error, resolved) => {
+        settle(error || typeof resolved !== "string" ? null : resolved)
       })
     })
+    return found === null ? null : await repoPathOf(found)
   }
 }
