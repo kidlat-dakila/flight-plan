@@ -29,6 +29,7 @@ interface WaypointBoxProps {
   readonly isOpen: boolean
   readonly isCurrent: boolean
   readonly isReviewPending: boolean
+  readonly isGuttered?: boolean
   readonly codeLinks: CodeLinkTargets
   readonly actions?: ReactNode
   readonly onOpenCodeLink: (anchorId: string) => void
@@ -38,12 +39,20 @@ interface WaypointBoxProps {
 
 const DEPTH_CLASSES = ["ml-18", "ml-24", "ml-30"] as const
 const DEEPEST_CLASS = "ml-36"
+const GUTTERED_DEPTH_CLASSES = ["ml-28", "ml-34", "ml-40"] as const
+const GUTTERED_DEEPEST_CLASS = "ml-46"
+
+const depthClassOf = (depth: number, isGuttered: boolean): string =>
+  isGuttered
+    ? GUTTERED_DEPTH_CLASSES.find((_depthClass, index) => index === depth) ?? GUTTERED_DEEPEST_CLASS
+    : DEPTH_CLASSES.find((_depthClass, index) => index === depth) ?? DEEPEST_CLASS
 
 const WaypointBox = ({
   waypoint,
   isOpen,
   isCurrent,
   isReviewPending,
+  isGuttered = false,
   codeLinks,
   actions,
   onOpenCodeLink,
@@ -57,7 +66,7 @@ const WaypointBox = ({
     data-reviewed={waypoint.isReviewed}
     className={cn(
       "my-1.5 mr-4 scroll-mt-(--waypoint-scroll-margin) rounded-md border border-input bg-background font-sans whitespace-normal transition-[border-color,outline-color,opacity] duration-[180ms] ease-out data-[current=true]:border-(--line) data-[current=true]:outline-1 data-[current=true]:outline-(--line) data-[reviewed=true]:opacity-60",
-      DEPTH_CLASSES.find((_depthClass, depth) => depth === waypoint.depth) ?? DEEPEST_CLASS,
+      depthClassOf(waypoint.depth, isGuttered),
     )}
   >
     <div className="flex items-center gap-1 pr-1">

@@ -39,7 +39,7 @@ The Code Walkthrough is where the navigator does the most.
 
 ### Stepping through waypoints
 
-Previous waypoint and Next waypoint take the place of Back and Next. They step through the waypoints of the segment on screen, across its files, in reading order. Stepping to a waypoint opens it, makes it the **current waypoint** and dims the rest of its file's code, so the lines it is about stand out. The dimming ends when the reader scrolls away; the waypoint stays current.
+Previous waypoint and Next waypoint take the place of Back and Next. They step through the waypoints of the segment on screen, across its files, in reading order. Stepping to a waypoint makes it the **current waypoint**, shows its preview card and dims the rest of its file's code, so the lines it is about stand out. Only one card shows at a time: stepping on, or hovering another mark, closes it. On the author's page stepping opens the waypoint's box instead. The dimming ends when the reader scrolls away; the waypoint stays current.
 
 The position between the two buttons counts the waypoints of the segment: "4 of 8". Each segment counts on its own.
 
@@ -77,7 +77,7 @@ Each segment has its own filter: ticking something in one segment leaves the oth
 
 - **Collapse all** or **Expand all** (Q) folds or opens every file of the walkthrough.
 - **Collapse file** or **Expand file** (E) folds or opens the file being read.
-- **Hide waypoints** or **Show waypoints** (X) hides every waypoint box and leaves the code. Stepping to a waypoint shows them again.
+- **Hide waypoints** or **Show waypoints** (X) hides every waypoint, its mark in the gutter and its box, and leaves the code. Stepping to a waypoint shows them again.
 
 A file folded by hand opens again when stepping reaches a waypoint inside it.
 

@@ -156,12 +156,17 @@ export const commentSchema = z.strictObject({
   discardLabel: z.string().nullable(),
 })
 
+export const THREAD_MARK_KINDS = ["open", "pending", "resolved"] as const
+
 export const threadSchema = z.strictObject({
   id: z.string(),
   side: z.enum(DIFF_SIDES),
   lineLabel: z.string(),
   startLineLabel: z.string(),
   rangeLabel: z.string().nullable(),
+  linesLabel: z.string(),
+  mark: z.strictObject({ kind: z.enum(THREAD_MARK_KINDS), label: z.string() }),
+  startsOpen: z.boolean(),
   statusLabel: z.string().nullable(),
   resolution: z.strictObject({ label: z.string(), isResolving: z.boolean() }).nullable(),
   canReply: z.boolean(),

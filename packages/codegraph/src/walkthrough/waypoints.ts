@@ -1,11 +1,13 @@
 import { createHash } from "node:crypto"
 import { rowSpanOf, isInSpan } from "@/code/lines"
+import { countLabel } from "@/prose/count-label"
 import { parseInlines, parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
 import type { ReviewedMarks } from "@/walkthrough/reviewed-marks"
 import { rootBlockKeysOf, rootBlocksOf, type RootBlockKey } from "@/walkthrough/root-blocks"
 import {
   FINDING_KINDS,
+  WAYPOINT_MARK_KINDS,
   type CodeBlock,
   type CodeLine,
   type FileSection,
@@ -109,6 +111,53 @@ export const FINDING_KIND_LABELS: Readonly<Record<(typeof FINDING_KINDS)[number]
 }
 
 export const ATTENTION_LABEL = "Needs Attention"
+
+type WaypointMarkKind = (typeof WAYPOINT_MARK_KINDS)[number]
+
+const WAYPOINT_MARK_LABELS: Readonly<Record<WaypointMarkKind, string>> = {
+  ...FINDING_KIND_LABELS,
+  attention: ATTENTION_LABEL,
+  plain: "",
+}
+
+const markKindsOf = (waypoint: Waypoint): ReadonlySet<WaypointMarkKind> =>
+  new Set([...waypoint.findings.map((finding) => finding.kind), ...(waypoint.needsAttention === null ? [] : ["attention" as const])])
+
+export const markKindOf = (waypoint: Waypoint): WaypointMarkKind => {
+  const kinds = markKindsOf(waypoint)
+  return WAYPOINT_MARK_KINDS.find((kind) => kinds.has(kind)) ?? "plain"
+}
+
+export const markLabelOf = (kind: WaypointMarkKind, positionLabel: string, title: string): string =>
+  kind === "plain"
+    ? `Waypoint ${positionLabel}: ${title}`
+    : `${WAYPOINT_MARK_LABELS[kind]} waypoint ${positionLabel}: ${title}`
+
+const COUNTED_MARK_KINDS = ["bug", "risk", "attention", "question", "nit"] as const satisfies readonly WaypointMarkKind[]
+
+type CountedMarkKind = (typeof COUNTED_MARK_KINDS)[number]
+
+const COUNT_NOUNS: Readonly<Record<CountedMarkKind, readonly [singular: string, plural: string]>> = {
+  bug: ["bug", "bugs"],
+  risk: ["risk", "risks"],
+  attention: ["needs attention", "need attention"],
+  question: ["question", "questions"],
+  nit: ["nit", "nits"],
+}
+
+const markCountOf = (waypoints: readonly FlatWaypoint[], kind: CountedMarkKind): number =>
+  kind === "attention"
+    ? waypoints.filter(({ waypoint }) => waypoint.needsAttention !== null).length
+    : waypoints.flatMap(({ waypoint }) => waypoint.findings).filter((finding) => finding.kind === kind).length
+
+export const countLabelsOf = (waypoints: readonly FlatWaypoint[]): string[] => [
+  countLabel(waypoints.length, "waypoint", "waypoints"),
+  ...COUNTED_MARK_KINDS.flatMap((kind) => {
+    const count = markCountOf(waypoints, kind)
+    const [singular, plural] = COUNT_NOUNS[kind]
+    return count === 0 ? [] : [countLabel(count, singular, plural)]
+  }),
+]
 
 export interface ReplacedRow {
   readonly line: SourceLine

@@ -15,9 +15,15 @@ function HoverCardContent({
   sideOffset = 6,
   align = "start",
   alignOffset = 0,
+  anchor,
+  collisionAvoidance,
+  collisionPadding = 8,
   ...props
 }: PreviewCardPrimitive.Popup.Props
-  & Pick<PreviewCardPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">) {
+  & Pick<
+    PreviewCardPrimitive.Positioner.Props,
+    "align" | "alignOffset" | "side" | "sideOffset" | "anchor" | "collisionAvoidance" | "collisionPadding"
+  >) {
   return (
     <PreviewCardPrimitive.Portal data-slot="hover-card-portal">
       <PreviewCardPrimitive.Positioner
@@ -25,7 +31,9 @@ function HoverCardContent({
         alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
-        collisionPadding={8}
+        anchor={anchor}
+        collisionAvoidance={collisionAvoidance}
+        collisionPadding={collisionPadding}
         className="isolate z-50"
       >
         <PreviewCardPrimitive.Popup
@@ -41,6 +49,19 @@ function HoverCardContent({
   )
 }
 
-export { HoverCardTrigger, HoverCardContent }
+function HoverCardArrow({ className, ...props }: PreviewCardPrimitive.Arrow.Props) {
+  return (
+    <PreviewCardPrimitive.Arrow
+      data-slot="hover-card-arrow"
+      className={cn(
+        "size-2.5 rotate-45 border-foreground bg-popover data-[side=bottom]:-top-[5px] data-[side=bottom]:border-t data-[side=bottom]:border-l data-[side=top]:-bottom-[5px] data-[side=top]:border-r data-[side=top]:border-b",
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+
+export { HoverCardTrigger, HoverCardContent, HoverCardArrow }
 
 export default HoverCard

@@ -182,6 +182,35 @@ describe("buildWalkthrough", () => {
     expect(unwritten).toMatchObject({ title: "format", isDraft: true, reading: null, chip: null })
   })
 
+  it("marks each waypoint by its most urgent finding, puts Needs Attention before questions and nits, and counts a file's findings", () => {
+    const segment = createSegment({
+      walkthrough: {
+        files: [
+          {
+            path: PRICE_PATH,
+            waypoints: [
+              createWaypoint("risky", "priceOf", { findings: [createFinding("nit", "nit"), createFinding("risk", "risk")] }),
+              createWaypoint("attended", "format", { needsAttention: "Slow down.", findings: [createFinding("question", "question")] }),
+            ],
+          },
+          { path: CART_PATH, waypoints: [createWaypoint("plain", "subtotal")] },
+        ],
+      },
+    })
+    const band = build(segment)
+    const waypoints = band.files.flatMap((file) => file.rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint] : [])))
+
+    expect(waypoints.map((waypoint) => [waypoint.mark, waypoint.rangeLabel])).toStrictEqual([
+      [{ kind: "risk", label: "Risk waypoint 1 of 3: Waypoint risky" }, "Lines 11–12"],
+      [{ kind: "attention", label: "Needs Attention waypoint 2 of 3: Waypoint attended" }, "Line 14"],
+      [{ kind: "plain", label: "Waypoint 3 of 3: Waypoint plain" }, "Lines 1–2"],
+    ])
+    expect(band.files.map((file) => file.countLabels)).toStrictEqual([
+      ["2 waypoints", "1 risk", "1 needs attention", "1 question", "1 nit"],
+      ["1 waypoint"],
+    ])
+  })
+
   it("shows only the root block of a waypoint the filter keeps, folds the rest of the file, and drops a file with no box left", () => {
     const segment = createSegment({
       walkthrough: {

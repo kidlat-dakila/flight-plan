@@ -2,7 +2,7 @@
 
 ## Definition
 
-The Code Walkthrough is the section of a [review artifact](review-artifact.md) where the reviewer reads the changed code itself. It is the code, file by file, with each explanation placed as a box directly on top of the lines it is about. A reviewer reads down the code and meets each explanation exactly where it applies.
+The Code Walkthrough is the section of a [review artifact](review-artifact.md) where the reviewer reads the changed code itself. It is the code, file by file, with each explanation marked in the gutter beside the line it starts on and opened as a box on top of the lines it is about. A reviewer reads down the code and meets each explanation exactly where it applies.
 
 It opens with one line saying what the tour follows, and states how many of the change's files it covers ("12 of 14 files"). Full coverage is stated as plainly as partial coverage, so a reviewer never has to guess whether a file was left out.
 
@@ -33,7 +33,7 @@ When Flight Plan derived the section's structure from the code, the agent fills 
 
 ## Diff Waypoint
 
-One stop on the tour: an explanation of one piece of the change, placed on top of its lines. A waypoint holds:
+One stop on the tour: an explanation of one piece of the change, marked beside its lines. A waypoint holds:
 
 | Part | Content |
 |---|---|
@@ -44,6 +44,12 @@ One stop on the tour: an explanation of one piece of the change, placed on top o
 | Needs attention | Present only when the agent judges the reviewer must not skim this change, and says why. |
 | Findings | The [findings](#findings) about this code. |
 | Children | Waypoints nested inside this one: the [changed steps](#the-steps-of-a-waypoint) of a declaration read in parts. Always two or more, never one: a single child would repeat its parent. |
+
+### How a waypoint shows in the code
+
+A waypoint starts closed, as a mark in the gutter at the left of the code, beside the first line it explains, the way an editor marks a breakpoint. The mark is the waypoint's most urgent finding, in the order bug, risk, Needs Attention, question, nit; a waypoint with none is a pointer in the line colour. Hovering or focusing the mark shows a preview on top of the line, or under it when the line is too near the top: the title, the findings, the lines and the position, the first paragraph of the reading and the Reviewed toggle. Clicking the mark, or Enter on it, opens the waypoint: its box sits on top of its lines, and a stem in the gutter joins it to the last of them. Stepping to a waypoint with the Review Navigator shows its preview instead, one preview at a time.
+
+Comment threads have their own column of the gutter, beside the last line they cover: a filled speech mark for an open thread, a thin dashed one for a resolved thread, and an amber one for a comment of the reviewer's that is not sent yet. A thread opens under its line when its mark is clicked; a comment not sent yet starts open. The header of each file counts its waypoints, its findings by kind and its threads.
 
 ### The steps of a waypoint
 

@@ -23,8 +23,11 @@ interface CodeBlockProps {
   readonly selectLineLabel?: string
   readonly selectedLineLabels?: ReadonlySet<string>
   readonly commentedLineKeys?: ReadonlySet<string>
+  readonly markedLines?: ReadonlySet<CodeLine>
   readonly renderLineExtra?: (numberLabel: string) => ReactNode
   readonly renderLineThreads?: (address: LineAddress) => ReactNode
+  readonly renderWaypointLane?: (line: CodeLine) => ReactNode
+  readonly renderThreadMark?: (address: LineAddress) => ReactNode
   readonly renderDefinitionDescription?: (description: ProseBlocks) => ReactNode
   readonly onAddComment?: (address: LineAddress, isExtending: boolean) => void
   readonly onSelectLine?: (numberLabel: string, isExtending: boolean) => void
@@ -37,12 +40,15 @@ type LineSetting = Pick<
   | "selectLineLabel"
   | "renderLineExtra"
   | "renderLineThreads"
+  | "renderWaypointLane"
+  | "renderThreadMark"
   | "renderDefinitionDescription"
   | "onAddComment"
   | "onSelectLine"
 > & {
   readonly selectedLineLabels: ReadonlySet<string>
   readonly commentedLineKeys: ReadonlySet<string>
+  readonly markedLines: ReadonlySet<CodeLine>
   readonly definitions: CodeDefinitions
   readonly isWrapped: boolean
   readonly tabStopReferenceKey: string | null
@@ -93,7 +99,16 @@ const DEFINITION_HANDLER_NAME = "definition"
 const HOVER_DELAY_MS = 150
 const NO_STYLE = {}
 const UNFOCUSED_ROW_CLASSES = "group-has-data-[focused=true]/code:opacity-55 data-[focused=true]:opacity-100"
-const ADD_COMMENT_CLASSES = "absolute top-0.5 left-1 flex size-4 items-center justify-center rounded-sm bg-(--line) text-line-foreground opacity-0 group-hover/line:opacity-100 focus-visible:opacity-100"
+const ADD_COMMENT_CLASSES = "flex size-4 items-center justify-center rounded-sm bg-(--line) text-line-foreground opacity-0 group-hover/line:opacity-100 focus-visible:opacity-100"
+const FLOATING_ADD_COMMENT_CLASSES = "absolute top-0.5 left-1"
+const LANE_ADD_COMMENT_CLASSES = "mt-1"
+const ROW_GRID_CLASSES = "grid-cols-[3.25rem_1.25rem_1fr]"
+const GUTTERED_ROW_GRID_CLASSES = "grid-cols-[1.25rem_1.25rem_3.25rem_1.25rem_1fr]"
+const MARKED_LINE_CLASSES = cn(
+  "-ml-1 pl-2 transition-[background-color,box-shadow] duration-[180ms] ease-out",
+  "data-[marked=true]:bg-[color-mix(in_oklab,var(--line,var(--color-primary))_6%,transparent)]",
+  "data-[marked=true]:shadow-[inset_2px_0_0_color-mix(in_oklab,var(--line,var(--color-primary))_70%,transparent)]",
+)
 const MARK_CLASSES_INLINE = "rounded-sm bg-[color-mix(in_oklab,var(--line,var(--color-primary))_22%,transparent)] outline outline-1 outline-[var(--line,var(--color-primary))]"
 const DEFINITION_DESCRIPTION_CLASSES = "max-h-48 shrink-0 overflow-y-auto border-b px-3 py-2.5 text-foreground [contain:inline-size]"
 const REFERENCE_CLASSES = "rounded-sm underline decoration-muted-foreground decoration-dotted underline-offset-[0.25em] hover:bg-muted focus-visible:bg-muted"
@@ -113,12 +128,14 @@ const LINE_NUMBER_BUTTON_CLASSES = "cursor-pointer hover:text-foreground focus-v
 
 const NO_DEFINITIONS: CodeDefinitions = {}
 const NO_SELECTED_LINES: ReadonlySet<string> = new Set()
+const NO_MARKED_LINES: ReadonlySet<CodeLine> = new Set()
 const NO_LINES: LineSetting = {
   lines: [],
   definitions: NO_DEFINITIONS,
   isWrapped: false,
   selectedLineLabels: NO_SELECTED_LINES,
   commentedLineKeys: NO_SELECTED_LINES,
+  markedLines: NO_MARKED_LINES,
   tabStopReferenceKey: null,
 }
 
@@ -201,8 +218,11 @@ const lineHandler: AnnotationHandler = {
       addCommentLabel,
       selectedLineLabels,
       commentedLineKeys,
+      markedLines,
       renderLineExtra,
       renderLineThreads,
+      renderWaypointLane,
+      renderThreadMark,
       onAddComment,
     } = use(LineSettingContext)
     const line = lines.find((_line, index) => index === props.lineNumber - 1)
@@ -210,6 +230,21 @@ const lineHandler: AnnotationHandler = {
     const isSelected = selectedLineLabels.has(line.numberLabel)
     const address = lineAddressOf(line)
     const addressLabel = address === null ? "" : `${MARK_NAMES[line.mark]} ${address.lineLabel}`.trim()
+    const isGuttered = renderWaypointLane !== undefined
+    const threadMark = address === null || renderThreadMark === undefined ? null : renderThreadMark(address)
+    const addCommentButton = onAddComment === undefined || addCommentLabel === undefined || address === null
+      ? null
+      : (
+          <button
+            type="button"
+            aria-label={`${addCommentLabel} ${addressLabel}`}
+            title={addCommentLabel}
+            className={cn(ADD_COMMENT_CLASSES, isGuttered ? LANE_ADD_COMMENT_CLASSES : FLOATING_ADD_COMMENT_CLASSES)}
+            onClick={(event) => { onAddComment(address, event.shiftKey) }}
+          >
+            <PlusIcon aria-hidden="true" className="size-3" strokeWidth={3} />
+          </button>
+        )
     return (
       <>
         <div
@@ -221,34 +256,35 @@ const lineHandler: AnnotationHandler = {
           data-comment-side={onAddComment === undefined ? undefined : address?.side}
           data-comment-line={onAddComment === undefined ? undefined : address?.lineLabel}
           className={cn(
-            "group/line relative grid min-h-6 grid-cols-[3.25rem_1.25rem_1fr] pr-4",
+            "group/line relative grid min-h-6 pr-4",
+            isGuttered ? GUTTERED_ROW_GRID_CLASSES : ROW_GRID_CLASSES,
             ROW_CLASSES[line.mark],
             UNFOCUSED_ROW_CLASSES,
             SELECTED_ROW_CLASSES,
             COMMENTED_ROW_CLASSES,
           )}
         >
+          {isGuttered
+            ? (
+                <>
+                  {renderWaypointLane(line)}
+                  <span className="flex justify-center">{threadMark ?? addCommentButton}</span>
+                </>
+              )
+            : null}
           {line.mark === "removed" && line.removedNumberLabel !== ""
             ? <span className={LINE_NUMBER_CLASSES}>{line.removedNumberLabel}</span>
             : <LineNumber numberLabel={line.numberLabel} isSelected={isSelected} />}
-          <span className={cn("text-center font-bold select-none", MARK_CLASSES[line.mark])}>
+          <span data-diff-mark="" className={cn("text-center font-bold select-none", MARK_CLASSES[line.mark])}>
             <span aria-hidden="true">{MARK_SYMBOLS[line.mark]}</span>
             <span className="sr-only">{MARK_NAMES[line.mark]}</span>
           </span>
-          <InnerLine merge={props} className={isWrapped ? "wrap-anywhere whitespace-pre-wrap" : "whitespace-pre"} />
-          {onAddComment === undefined || addCommentLabel === undefined || address === null
-            ? null
-            : (
-                <button
-                  type="button"
-                  aria-label={`${addCommentLabel} ${addressLabel}`}
-                  title={addCommentLabel}
-                  className={ADD_COMMENT_CLASSES}
-                  onClick={(event) => { onAddComment(address, event.shiftKey) }}
-                >
-                  <PlusIcon aria-hidden="true" className="size-3" strokeWidth={3} />
-                </button>
-              )}
+          <InnerLine
+            merge={props}
+            data-marked={markedLines.has(line)}
+            className={cn(MARKED_LINE_CLASSES, isWrapped ? "wrap-anywhere whitespace-pre-wrap" : "whitespace-pre")}
+          />
+          {isGuttered ? null : addCommentButton}
         </div>
         {renderLineExtra === undefined || line.numberLabel === "" ? null : renderLineExtra(line.numberLabel)}
         {renderLineThreads === undefined || address === null ? null : renderLineThreads(address)}
@@ -354,8 +390,11 @@ function CodeBlock({
   selectLineLabel,
   selectedLineLabels = NO_SELECTED_LINES,
   commentedLineKeys = NO_SELECTED_LINES,
+  markedLines = NO_MARKED_LINES,
   renderLineExtra,
   renderLineThreads,
+  renderWaypointLane,
+  renderThreadMark,
   renderDefinitionDescription,
   onAddComment,
   onSelectLine,
@@ -374,8 +413,11 @@ function CodeBlock({
       selectLineLabel,
       selectedLineLabels,
       commentedLineKeys,
+      markedLines,
       renderLineExtra,
       renderLineThreads,
+      renderWaypointLane,
+      renderThreadMark,
       renderDefinitionDescription,
       onAddComment,
       onSelectLine,
@@ -389,8 +431,11 @@ function CodeBlock({
       selectLineLabel,
       selectedLineLabels,
       commentedLineKeys,
+      markedLines,
       renderLineExtra,
       renderLineThreads,
+      renderWaypointLane,
+      renderThreadMark,
       renderDefinitionDescription,
       onAddComment,
       onSelectLine,

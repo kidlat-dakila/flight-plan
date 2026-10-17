@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { CARD_SIDES, FINDING_KINDS, IMPACT_TYPES } from "@/artifact/kinds"
+import { CARD_SIDES, FINDING_KINDS, IMPACT_TYPES, WAYPOINT_MARK_KINDS } from "@/artifact/kinds"
 import { CODE_BLOCK_TYPES, type CodeBlockType } from "@/code-graph/code-blocks"
 import { TOKEN_KINDS } from "./code-token"
 
@@ -123,6 +123,8 @@ export const waypointSchema = z.strictObject({
   title: z.string(),
   isDraft: z.boolean(),
   positionLabel: z.string(),
+  rangeLabel: z.string().nullable(),
+  mark: z.strictObject({ kind: z.enum(WAYPOINT_MARK_KINDS), label: z.string() }),
   previousId: z.string().nullable(),
   nextId: z.string().nullable(),
   chip: z.strictObject({ kind: z.enum(FINDING_KINDS), label: z.string() }).nullable(),
@@ -336,6 +338,7 @@ export const fileSectionSchema = z.strictObject({
   title: z.string(),
   isReviewed: z.boolean(),
   reviewLabel: z.string(),
+  countLabels: z.array(z.string()),
   forgeLink: linkSchema.nullable(),
   rows: z.array(fileRowSchema),
 })

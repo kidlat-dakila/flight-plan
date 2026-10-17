@@ -12,6 +12,7 @@ const createFile = (overrides: Partial<WalkthroughFile> = {}): WalkthroughFile =
   title: "Price",
   isReviewed: false,
   reviewLabel: "Reviewed",
+  countLabels: ["1 waypoint", "1 risk"],
   forgeLink: null,
   rows: [
     { kind: "lines", id: "lines-1", lines: [codeLine("3", "export const priceOf = () => 1", "added")] },
@@ -28,6 +29,9 @@ const createFile = (overrides: Partial<WalkthroughFile> = {}): WalkthroughFile =
         title: "priceOf",
         isDraft: true,
         positionLabel: "1 of 1",
+        rangeLabel: null,
+        mark: { kind: "plain", label: "Waypoint 1 of 1: priceOf" },
+        lines: null,
         chip: null,
         attentionLabel: null,
         reading: null,
@@ -103,6 +107,9 @@ const thread = (overrides: Partial<WalkthroughFile["threads"][number]> = {}): Wa
   lineLabel: "4",
   startLineLabel: "3",
   rangeLabel: "Lines 3–4",
+  linesLabel: "Lines 3–4",
+  mark: { kind: "open", label: "Open thread" },
+  startsOpen: false,
   statusLabel: null,
   resolution: { label: "Resolve conversation", isResolving: true },
   canReply: true,
@@ -173,6 +180,9 @@ describe("FileSection comments", () => {
       lineLabel: "3",
       startLineLabel: "3",
       rangeLabel: "Removed line 3",
+      linesLabel: "Removed line 3",
+      mark: { kind: "pending", label: "Pending comment" },
+      startsOpen: true,
       resolution: null,
       canReply: false,
       comments: [
@@ -184,8 +194,12 @@ describe("FileSection comments", () => {
         {...createProps({ file: discussedFile([thread(), pending]), composer: COMPOSER, onReply, onResolveThread, onDiscardComment })}
       />,
     )
-    const range = screen.getByRole("region", { name: "src/price.ts 3 to 4" })
     const removed = screen.getByRole("region", { name: "src/price.ts 3" })
+
+    expect(screen.queryByRole("region", { name: "src/price.ts 3 to 4" })).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Open thread, Lines 3–4", expanded: false }))
+    const range = screen.getByRole("region", { name: "src/price.ts 3 to 4" })
 
     expect(within(range).getByText("Lines 3–4")).toBeTruthy()
     expect(within(removed).getByText("Removed line 3")).toBeTruthy()
@@ -206,6 +220,66 @@ describe("FileSection comments", () => {
     render(<FileSection {...createProps({ file: discussedFile([thread()]) })} />)
 
     expect(screen.queryByRole("button", { name: /Add a comment/ })).toBeNull()
+    expect(screen.queryByText("Clamp it.")).toBeNull()
+  })
+})
+
+describe("FileSection gutter", () => {
+  const placedFile = (): WalkthroughFile => {
+    const [, , waypointRow] = createFile().rows
+    return createFile({
+      rows: [
+        waypointRow.kind === "waypoint"
+          ? { ...waypointRow, waypoint: { ...waypointRow.waypoint, lines: { lineStart: 3, lineEnd: 4 }, rangeLabel: "Lines 3–4" } }
+          : waypointRow,
+        { kind: "lines", id: "lines-3", lines: [codeLine("3", "export const priceOf = () => 1", "added"), codeLine("4", "// held units", "added")] },
+      ],
+    })
+  }
+
+  it("draws a closed waypoint as a mark beside its first line, carrying its anchor, and opens it from the mark", () => {
+    const onToggleWaypoint = vi.fn()
+    render(<FileSection {...createProps({ file: placedFile(), onToggleWaypoint })} />)
+    const mark = screen.getByRole("button", { name: "Waypoint 1 of 1: priceOf", expanded: false })
+
+    expect(screen.queryByRole("region", { name: "priceOf" })).toBeNull()
+    expect(mark.id).toBe("waypoint-w1")
+    expect(mark.closest("[data-line]")).toBe(rowOf("export const priceOf = () => 1"))
+    expect(mark.tabIndex).toBe(0)
+
+    fireEvent.click(mark)
+
+    expect(onToggleWaypoint).toHaveBeenCalledWith("w1")
+  })
+
+  it("draws an open waypoint's box above its lines, moves the anchor to the box, and keeps the mark", () => {
+    render(<FileSection {...createProps({ file: placedFile(), openWaypointIds: new Set(["w1"]) })} />)
+    const box = screen.getByRole("region", { name: "priceOf" })
+
+    expect(document.getElementById("waypoint-w1")).toBe(box)
+    expect(screen.getByRole("button", { name: "Waypoint 1 of 1: priceOf", expanded: true })).toBeTruthy()
+  })
+
+  it("hides the marks with the waypoints", () => {
+    render(<FileSection {...createProps({ file: placedFile(), areWaypointsHidden: true })} />)
+
+    expect(screen.queryByRole("button", { name: "Waypoint 1 of 1: priceOf" })).toBeNull()
+  })
+
+  it("opens and closes a thread from its mark, and shows the file's counts in its header", () => {
+    render(<FileSection {...createProps({ file: discussedFile([thread()]), composer: COMPOSER })} />)
+    const mark = screen.getByRole("button", { name: "Open thread, Lines 3–4" })
+
+    expect(screen.getByText("1 risk")).toBeTruthy()
+    expect(mark.closest("[data-line]")).toBe(rowOf("// held units"))
+    expect(screen.queryByRole("button", { name: "Add a comment on this line 4" })).toBeNull()
+
+    fireEvent.click(mark)
+
+    expect(screen.getByText("Clamp it.")).toBeTruthy()
+
+    fireEvent.click(mark)
+
     expect(screen.queryByText("Clamp it.")).toBeNull()
   })
 })

@@ -45,7 +45,7 @@ The structure of a review is derived from the code, not written by the agent. Th
 - Forge adapters declare their capabilities. A control that cannot work is shown as unavailable instead of failing when used.
 - The component foundation is the shadcn primitives in `packages/ui/src/components/blocks` with Tailwind. Flight Plan has its own theme, in light and dark, including its own syntax colours. It does not follow the VS Code theme the extension used. The primitives may be modified to fit the theme.
 - Flight Plan is a desktop tool. The review page does not support phone widths; reading a review on a phone would need a different view.
-- The review page keeps the layout of the extension's review panel: one scrolling page with a sticky review header, full-width bands for the Context Section and the diagrams, and a Code Walkthrough where each file is drawn once with its waypoints as boxes inside the code.
+- The review page keeps the layout of the extension's review panel: one scrolling page with a sticky review header, full-width bands for the Context Section and the diagrams, and a Code Walkthrough where each file is drawn once with its waypoints as marks in the gutter of the code, each opening into a box inside the code.
 
 ## Brand Commitments
 

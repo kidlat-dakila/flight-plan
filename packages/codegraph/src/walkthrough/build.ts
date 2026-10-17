@@ -19,10 +19,13 @@ import { buildWaypointFilter, matchesFilter, type FilterKey } from "./waypoint-f
 import {
   ATTENTION_LABEL,
   buildFinding,
+  countLabelsOf,
   FINDING_KIND_LABELS,
   flattenWaypoints,
   isFileReviewed,
   isWaypointReviewed,
+  markKindOf,
+  markLabelOf,
   mostSevereKind,
   type FlatWaypoint,
   type ReplacedRow,
@@ -125,6 +128,15 @@ const neighbourOf = (stepping: Stepping, waypointId: string, offset: number): st
     : null
 }
 
+const RANGE_DASH = "\u2013"
+
+const rangeLabelOf = (range: LineRange | null): string | null => {
+  if (range === null) return null
+  return range.lineStart === range.lineEnd
+    ? `Line ${String(range.lineStart)}`
+    : `Lines ${String(range.lineStart)}${RANGE_DASH}${String(range.lineEnd)}`
+}
+
 const hasAttentionReason = (waypoint: Waypoint): waypoint is Waypoint & { readonly needsAttention: string } =>
   waypoint.needsAttention !== null && waypoint.needsAttention !== ""
 
@@ -137,13 +149,19 @@ const toWaypointView = (
   const { waypoint } = flat
   const chipKind = mostSevereKind(waypoint.findings)
   const replacedRows = replacedRowsOf(entry.highlighted, span)
+  const title = waypoint.title ?? waypoint.declaration
+  const positionLabel = positionLabelOf(stepping, waypoint.id)
+  const lines = entry.highlighted?.source.declarations[waypoint.declaration] ?? null
+  const markKind = markKindOf(waypoint)
   return {
     id: waypoint.id,
     anchorId: waypointAnchorId(waypoint.id),
     depth: flat.depth,
-    title: waypoint.title ?? waypoint.declaration,
+    title,
     isDraft: waypoint.title === null,
-    positionLabel: positionLabelOf(stepping, waypoint.id),
+    positionLabel,
+    rangeLabel: rangeLabelOf(lines),
+    mark: { kind: markKind, label: markLabelOf(markKind, positionLabel, title) },
     previousId: neighbourOf(stepping, waypoint.id, -1),
     nextId: neighbourOf(stepping, waypoint.id, 1),
     chip: chipKind === null ? null : { kind: chipKind, label: FINDING_KIND_LABELS[chipKind] },
@@ -154,7 +172,7 @@ const toWaypointView = (
     findings: waypoint.findings.map((finding) => buildFinding(finding, replacedRows, context)),
     isReviewed,
     reviewLabel: "Reviewed",
-    lines: entry.highlighted?.source.declarations[waypoint.declaration] ?? null,
+    lines,
     text: { title: waypoint.title ?? "", reading: waypoint.reading, needsAttention: waypoint.needsAttention },
   }
 }
@@ -177,6 +195,7 @@ const toFileView = (
     title: fileTitleOf(entry.file.path),
     isReviewed: entry.isReviewed,
     reviewLabel: "File reviewed",
+    countLabels: countLabelsOf(entry.waypoints),
     forgeLink: context.blobLinkOf(entry.file.path, null),
     rows: buildFileRows(entry.highlighted, placed, { pinnedLines: pinnedLinesOf(entry.file.path), focusSpans }, context.definitionIds),
   }

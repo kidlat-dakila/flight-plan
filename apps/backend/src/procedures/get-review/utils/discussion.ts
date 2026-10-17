@@ -97,6 +97,11 @@ const NO_CODE_LINKS: ReadonlySet<string> = new Set()
 const PENDING_LABEL = "Pending"
 const DISCARD_LABEL = "Discard"
 const RESOLVED_LABEL = "Resolved"
+const THREAD_MARK_LABELS: Readonly<Record<ThreadView["mark"]["kind"], string>> = {
+  open: "Open thread",
+  pending: "Pending comment",
+  resolved: "Resolved thread",
+}
 const RESOLVE_LABEL = "Resolve conversation"
 const REOPEN_LABEL = "Reopen conversation"
 const OUTDATED_NOTE = "outdated"
@@ -136,6 +141,11 @@ export const rangeLabelOf = (position: DiffPosition): string | null => {
   return isRange(position) ? linesPhrase(position, "Line", "Lines") : null
 }
 
+const linesLabelOf = (position: DiffPosition): string =>
+  position.side === "old" ? linesPhrase(position, "Removed line", "Removed lines") : linesPhrase(position, "Line", "Lines")
+
+const threadMarkOf = (kind: ThreadView["mark"]["kind"]): ThreadView["mark"] => ({ kind, label: THREAD_MARK_LABELS[kind] })
+
 const locationLabelOf = (path: string, position: DiffPosition | null): string =>
   position === null
     ? `${path} (${OUTDATED_NOTE})`
@@ -161,6 +171,9 @@ const toThreadView = (thread: CommentThread, position: DiffPosition, { abilities
   lineLabel: String(position.endLine),
   startLineLabel: String(position.startLine),
   rangeLabel: rangeLabelOf(position),
+  linesLabel: linesLabelOf(position),
+  mark: threadMarkOf(thread.isResolved ? "resolved" : "open"),
+  startsOpen: false,
   statusLabel: thread.isResolved ? RESOLVED_LABEL : null,
   resolution: resolutionOf(thread, abilities),
   canReply: abilities.canReply,
@@ -173,6 +186,9 @@ const toPendingThreadView = (pending: PendingComment, { viewer, now }: Discussio
   lineLabel: String(pending.position.endLine),
   startLineLabel: String(pending.position.startLine),
   rangeLabel: rangeLabelOf(pending.position),
+  linesLabel: linesLabelOf(pending.position),
+  mark: threadMarkOf("pending"),
+  startsOpen: true,
   statusLabel: null,
   resolution: null,
   canReply: false,
@@ -213,9 +229,15 @@ const threadsOfFile = (file: WalkthroughBand["files"][number], source: Discussio
   ]
 }
 
+const withThreads = (file: WalkthroughBand["files"][number], threads: ThreadView[]): DiscussedWalkthroughBand["files"][number] => ({
+  ...file,
+  countLabels: threads.length === 0 ? file.countLabels : [...file.countLabels, countLabel(threads.length, "thread", "threads")],
+  threads,
+})
+
 export const attachThreads = (band: WalkthroughBand, source: DiscussionSource | null): DiscussedWalkthroughBand => ({
   ...band,
-  files: band.files.map((file) => ({ ...file, threads: source === null ? [] : threadsOfFile(file, source) })),
+  files: band.files.map((file) => withThreads(file, source === null ? [] : threadsOfFile(file, source))),
 })
 
 const linesBetween = (position: DiffPosition): number[] =>

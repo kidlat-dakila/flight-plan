@@ -71,7 +71,7 @@ interface CommentThreadProps {
 const NO_CODE_LINKS = {}
 const SHOW_LABEL = "Show"
 const HIDE_LABEL = "Hide"
-const THREAD_CLASSES = "my-1.5 mr-4 ml-18 flex max-w-[52rem] flex-col gap-3 rounded-md border border-input bg-card p-3 font-sans whitespace-normal"
+const THREAD_CLASSES = "my-1.5 mr-4 ml-28 flex max-w-[52rem] flex-col gap-3 rounded-md border border-input bg-card p-3 font-sans whitespace-normal"
 const QUIET_BUTTON_CLASSES = "text-xs text-muted-foreground underline decoration-1 underline-offset-[0.3em] hover:text-foreground disabled:opacity-50"
 
 const ignoreCodeLink = (): void => undefined

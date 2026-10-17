@@ -1,19 +1,24 @@
 import { ChevronRightIcon } from "lucide-react"
-import CodeBlock, { hasKnownReference, lineKeyOf, type LineAddress } from "@/components/CodeBlock"
+import { useLayoutEffect, useRef, useState, type RefObject } from "react"
+import CodeBlock, { hasKnownReference, lineAddressOf, lineKeyOf, type LineAddress } from "@/components/CodeBlock"
 import CommentThread, {
   CommentComposer,
   type CommentEditorRenderer,
   type ThreadComment,
   type ThreadResolution,
 } from "@/components/CommentThread"
+import LabelSegments from "@/components/LabelSegments"
 import OutwardLink from "@/components/OutwardLink"
 import { HoverProse } from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
-import WaypointBox, { type WaypointContent } from "@/components/WaypointBox"
+import ThreadMark, { type MarkedThread } from "@/components/ThreadMark"
+import WaypointBox from "@/components/WaypointBox"
+import WaypointMark, { WaypointLane, type MarkedWaypoint } from "@/components/WaypointMark"
 import type { CodeDefinitions, CodeLine, CodeLinkTargets, ForgeLink, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
+import { lineSequenceOf, placeWaypoints, stemsOf, type StemTone } from "./gutter"
 
-export interface WalkthroughWaypoint extends WaypointContent {
+export interface WalkthroughWaypoint extends MarkedWaypoint {
   readonly id: string
   readonly previousId: string | null
   readonly nextId: string | null
@@ -24,7 +29,7 @@ export type FileRow
     | { readonly kind: "gap", readonly id: string, readonly label: string }
     | { readonly kind: "waypoint", readonly id: string, readonly waypoint: WalkthroughWaypoint }
 
-export interface FileThread {
+export interface FileThread extends MarkedThread {
   readonly id: string
   readonly side: LineAddress["side"]
   readonly lineLabel: string
@@ -32,6 +37,7 @@ export interface FileThread {
   readonly rangeLabel: string | null
   readonly statusLabel: string | null
   readonly resolution: ThreadResolution | null
+  readonly startsOpen: boolean
   readonly canReply: boolean
   readonly comments: readonly ThreadComment[]
 }
@@ -60,13 +66,20 @@ export interface WalkthroughFile {
   readonly title: string
   readonly isReviewed: boolean
   readonly reviewLabel: string
+  readonly countLabels: readonly string[]
   readonly forgeLink: ForgeLink | null
   readonly rows: readonly FileRow[]
   readonly threads: readonly FileThread[]
 }
 
+export interface PreviewVisit {
+  readonly waypointId: string
+  readonly count: number
+}
+
 interface FileSectionProps {
   readonly file: WalkthroughFile
+  readonly previewVisit?: PreviewVisit | null
   readonly openWaypointIds: ReadonlySet<string>
   readonly currentWaypointId: string | null
   readonly focusedWaypointId: string | null
@@ -97,6 +110,9 @@ const COLLAPSE_LABEL = "Collapse file"
 const EXPAND_LABEL = "Expand file"
 
 const NO_ROW_IDS: ReadonlySet<string> = new Set()
+const NO_IDS: ReadonlySet<string> = new Set()
+const NO_LINES: ReadonlySet<CodeLine> = new Set()
+const WAYPOINT_MARK_SELECTOR = "[data-waypoint-mark]"
 const UNFOCUSED_ROW_CLASSES = "transition-opacity duration-[180ms] ease-out data-[unfocused=true]:opacity-45"
 
 export const focusedRowIdsOf = (rows: readonly FileRow[], waypointId: string | null): ReadonlySet<string> => {
@@ -123,8 +139,42 @@ const isAt = (range: CommentRange, address: LineAddress): boolean =>
 const rangeNameOf = (range: CommentRange): string =>
   range.startLineLabel === range.lineLabel ? range.lineLabel : `${range.startLineLabel} to ${range.lineLabel}`
 
+const isSameAddress = (first: LineAddress | null, second: LineAddress | null): boolean =>
+  first !== null && second !== null && first.side === second.side && first.lineLabel === second.lineLabel
+
+const withToggled = (ids: ReadonlySet<string>, toggledIds: readonly string[]): ReadonlySet<string> =>
+  new Set([...[...ids].filter((id) => !toggledIds.includes(id)), ...toggledIds.filter((id) => !ids.has(id))])
+
+const isThreadOpen = (thread: FileThread, toggledThreadIds: ReadonlySet<string>): boolean =>
+  thread.startsOpen !== toggledThreadIds.has(thread.id)
+
+const markTopOf = (file: HTMLElement | null, waypointId: string): number | null =>
+  [...(file?.querySelectorAll<HTMLElement>(WAYPOINT_MARK_SELECTOR) ?? [])]
+    .find((mark) => mark.dataset.waypointMark === waypointId)
+    ?.getBoundingClientRect().top ?? null
+
+interface HeldMark {
+  readonly waypointId: string
+  readonly top: number
+}
+
+const useHeldMark = (file: RefObject<HTMLElement | null>, openWaypointIds: ReadonlySet<string>) => {
+  const heldMarkRef = useRef<HeldMark | null>(null)
+  useLayoutEffect(() => {
+    const held = heldMarkRef.current
+    heldMarkRef.current = null
+    const top = held === null ? null : markTopOf(file.current, held.waypointId)
+    if (held !== null && top !== null) window.scrollBy(0, top - held.top)
+  }, [file, openWaypointIds])
+  return (waypointId: string): void => {
+    const top = markTopOf(file.current, waypointId)
+    heldMarkRef.current = top === null ? null : { waypointId, top }
+  }
+}
+
 const FileSection = ({
   file,
+  previewVisit = null,
   openWaypointIds,
   currentWaypointId,
   focusedWaypointId,
@@ -149,18 +199,87 @@ const FileSection = ({
   onResolveThread,
   onDiscardComment,
 }: FileSectionProps) => {
-  const focusedRowIds = focusedRowIdsOf(file.rows, focusedWaypointId)
+  const fileRef = useRef<HTMLElement>(null)
+  const [previewedWaypointId, setPreviewedWaypointId] = useState<string | null>(null)
+  const [toggledThreadIds, setToggledThreadIds] = useState<ReadonlySet<string>>(NO_IDS)
+  const holdMark = useHeldMark(fileRef, openWaypointIds)
+  const placedWaypoints = areWaypointsHidden ? new Map<CodeLine, readonly WalkthroughWaypoint[]>() : placeWaypoints(file.rows)
+  const linesOfWaypoint = (waypointId: string | null): ReadonlySet<CodeLine> => (waypointId === null
+    ? NO_LINES
+    : new Set(stemsOf(file.rows, placedWaypoints, (stemmedId) => (stemmedId === waypointId ? "faint" : null)).keys()))
+  const focusedLines = linesOfWaypoint(focusedWaypointId)
+  const focusedRowIds = focusedLines.size === 0
+    ? focusedRowIdsOf(file.rows, focusedWaypointId)
+    : new Set(file.rows.filter((row) => row.kind === "lines" && row.lines.some((line) => focusedLines.has(line))).map((row) => row.id))
   const tabStopRowId = referenceTabStopRowIdOf(file.rows, codeDefinitions)
   const hasFocus = focusedRowIds.size > 0
   const commentedLineKeys = new Set([...file.threads, ...(composingRange === null ? [] : [composingRange])].flatMap(lineKeysOf))
+  const placedWaypointIds = new Set([...placedWaypoints.values()].flat().map((waypoint) => waypoint.id))
+  const toneOf = (waypointId: string): StemTone | null => {
+    if (openWaypointIds.has(waypointId)) return "solid"
+    return waypointId === currentWaypointId ? "faint" : null
+  }
+  const stems = stemsOf(file.rows, placedWaypoints, toneOf)
+  const markedLines = linesOfWaypoint(previewedWaypointId)
+  const threadsAt = (address: LineAddress): FileThread[] => file.threads.filter((thread) => isAt(thread, address))
+  const tabStopLine = lineSequenceOf(file.rows).find((line) => {
+    if (line === null) return false
+    const address = lineAddressOf(line)
+    return placedWaypoints.has(line) || (address !== null && threadsAt(address).length > 0)
+  }) ?? null
+  const tabStopAddress = tabStopLine === null ? null : lineAddressOf(tabStopLine)
   const renderDefinitionDescription = (description: ProseBlocks) => (
     <HoverProse blocks={description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
   )
+  const renderWaypointLane = (line: CodeLine) => (
+    <WaypointLane stem={stems.get(line) ?? null}>
+      {(placedWaypoints.get(line) ?? []).map((waypoint, index) => (
+        <WaypointMark
+          key={waypoint.id}
+          waypoint={waypoint}
+          isOpen={openWaypointIds.has(waypoint.id)}
+          isCurrent={waypoint.id === currentWaypointId}
+          isReviewPending={isReviewPending}
+          isTabStop={line === tabStopLine && index === 0}
+          previewRequest={previewVisit?.waypointId === waypoint.id ? previewVisit.count : null}
+          codeLinks={codeLinks}
+          onOpenCodeLink={onOpenCodeLink}
+          onToggle={() => {
+            holdMark(waypoint.id)
+            onToggleWaypoint(waypoint.id)
+          }}
+          onReviewedChange={onWaypointReviewedChange === null
+            ? null
+            : (isReviewed) => { onWaypointReviewedChange(waypoint.id, isReviewed) }}
+          onPreviewChange={(isPreviewed) => {
+            setPreviewedWaypointId((previewedId) => {
+              if (isPreviewed) return waypoint.id
+              return previewedId === waypoint.id ? null : previewedId
+            })
+          }}
+        />
+      ))}
+    </WaypointLane>
+  )
+  const renderThreadMark = (address: LineAddress) => {
+    const threads = composer === null ? [] : threadsAt(address)
+    if (threads.length === 0) return null
+    return (
+      <ThreadMark
+        threads={threads}
+        isOpen={threads.some((thread) => isThreadOpen(thread, toggledThreadIds))}
+        isTabStop={isSameAddress(address, tabStopAddress) && tabStopLine !== null && !placedWaypoints.has(tabStopLine)}
+        onToggle={() => {
+          setToggledThreadIds((toggledIds) => withToggled(toggledIds, threads.map((thread) => thread.id)))
+        }}
+      />
+    )
+  }
   const renderLineThreads = (address: LineAddress) => (composer === null
     ? null
     : (
         <>
-          {file.threads.filter((thread) => isAt(thread, address)).map((thread) => (
+          {threadsAt(address).filter((thread) => isThreadOpen(thread, toggledThreadIds)).map((thread) => (
             <CommentThread
               key={thread.id}
               comments={thread.comments}
@@ -193,7 +312,7 @@ const FileSection = ({
                   hint={composer.rangeHint}
                   isSubmitting={isCommentPending}
                   shouldFocus
-                  className="my-1.5 mr-4 ml-18 max-w-[52rem] rounded-md border border-input bg-card p-3 font-sans whitespace-normal"
+                  className="my-1.5 mr-4 ml-28 max-w-[52rem] rounded-md border border-input bg-card p-3 font-sans whitespace-normal"
                   renderEditor={renderCommentEditor}
                   onSubmit={(body) => {
                     onAddComment(file.path, composingRange, body)
@@ -211,6 +330,7 @@ const FileSection = ({
       ))
   return (
     <article
+      ref={fileRef}
       id={file.anchorId}
       aria-label={file.title}
       data-reviewed={file.isReviewed}
@@ -218,7 +338,10 @@ const FileSection = ({
       className={cn("scroll-mt-(--waypoint-scroll-margin) pt-6", isCollapsed ? "" : "[contain-intrinsic-size:auto_32rem] [content-visibility:auto]")}
     >
       <div className="overflow-clip rounded-md border">
-        <div className={cn("sticky top-(--file-header-top) z-10 flex h-11 items-center gap-3 bg-muted pr-1 pl-1.5", isCollapsed ? "" : "border-b")}>
+        <div
+          data-file-header=""
+          className={cn("sticky top-(--file-header-top) z-10 flex h-11 items-center gap-3 bg-muted pr-1 pl-1.5", isCollapsed ? "" : "border-b")}
+        >
           <button
             type="button"
             aria-expanded={!isCollapsed}
@@ -236,6 +359,10 @@ const FileSection = ({
             <p className="truncate font-mono text-xs leading-4 text-muted-foreground" title={file.path}>{file.path}</p>
           </div>
           <span className="flex-1" />
+          <LabelSegments
+            segments={file.countLabels.map((text) => ({ text, kind: "plain" }))}
+            className="hidden shrink justify-end text-xs text-muted-foreground tabular-nums md:flex"
+          />
           {file.forgeLink === null ? null : <OutwardLink href={file.forgeLink.href} label={file.forgeLink.label} className="shrink-0 text-xs" />}
           {onFileReviewedChange === null
             ? null
@@ -269,7 +396,10 @@ const FileSection = ({
                       label={file.path}
                       className="py-0"
                       commentedLineKeys={commentedLineKeys}
+                      markedLines={markedLines}
                       renderLineThreads={renderLineThreads}
+                      renderWaypointLane={renderWaypointLane}
+                      renderThreadMark={renderThreadMark}
                       {...(composer === null
                         ? {}
                         : {
@@ -284,23 +414,30 @@ const FileSection = ({
               }
               if (row.kind === "gap") {
                 return (
-                  <p key={row.id} className="border-y bg-muted/60 py-0.5 pl-18 font-mono text-xs text-muted-foreground first-of-type:border-t-0 last:border-b-0">
+                  <p key={row.id} className="border-y bg-muted/60 py-0.5 pl-28 font-mono text-xs text-muted-foreground first-of-type:border-t-0 last:border-b-0">
                     {row.label}
                   </p>
                 )
               }
               if (areWaypointsHidden) return null
+              const isPlaced = placedWaypointIds.has(row.waypoint.id)
+              const isOpen = openWaypointIds.has(row.waypoint.id)
+              if (isPlaced && !isOpen) return null
               return (
                 <div
                   key={row.id}
                   data-waypoint-focus={row.waypoint.id === focusedWaypointId ? focusedWaypointId : undefined}
-                  className="bg-code"
+                  className="relative bg-code"
                 >
+                  {isPlaced
+                    ? <span aria-hidden="true" className="pointer-events-none absolute top-5 bottom-0 left-[calc(0.625rem-1px)] w-0.5 bg-(--line)" />
+                    : null}
                   <WaypointBox
                     waypoint={row.waypoint}
-                    isOpen={openWaypointIds.has(row.waypoint.id)}
+                    isOpen={isOpen}
                     isCurrent={row.waypoint.id === currentWaypointId}
                     isReviewPending={isReviewPending}
+                    isGuttered
                     codeLinks={codeLinks}
                     onOpenCodeLink={onOpenCodeLink}
                     onToggle={() => { onToggleWaypoint(row.waypoint.id) }}

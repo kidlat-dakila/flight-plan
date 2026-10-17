@@ -67,7 +67,7 @@ const PublishedContext = ({ anchorId, heading, context, isDraft, unwrittenLabel,
 const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
   const [isFeatureUnavailable, setIsFeatureUnavailable] = useState(false)
   const [isListingUnassignedFiles, setIsListingUnassignedFiles] = useState(false)
-  const stepping = useWaypointStepping(review.segments)
+  const stepping = useWaypointStepping(review.segments, { opensSteppedWaypoint: false })
   const codeSelection = useCodeSelection()
   const railSections = [...review.rail.groups.flatMap((group) => group.sections), ...review.rail.sections]
   const currentAnchorId = useCurrentAnchor(
@@ -211,6 +211,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                         openWaypointIds={stepping.openWaypointIds}
                         currentWaypointId={stepping.currentWaypointId}
                         focusedWaypointId={stepping.focusedWaypointId}
+                        previewVisit={stepping.previewVisit}
                         isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
                         areWaypointsHidden={walkthroughLayout.areWaypointsHidden}
                         isReviewPending={false}

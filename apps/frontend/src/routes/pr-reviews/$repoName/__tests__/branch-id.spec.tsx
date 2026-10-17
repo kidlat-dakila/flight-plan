@@ -21,6 +21,8 @@ import {
 
 const REVIEW_PATH = "/pr-reviews/storefront/pr-412"
 
+const markOf = (title: string): HTMLElement => screen.getByRole("button", { name: new RegExp(`waypoint [0-9]+ of [0-9]+: ${title}$`, "i") })
+
 const WRITING_PROGRESS = {
   state: "writing",
   label: "Claude is writing the review",
@@ -325,7 +327,7 @@ describe("the review page", () => {
     expect(screen.getAllByRole("button", { name: "Next waypoint" })).toHaveLength(1)
   })
 
-  it("steps through the waypoints of a segment from the navigator, and opens the one it lands on", async () => {
+  it("steps through the waypoints of a segment from the navigator, and shows only the card of the one it lands on", async () => {
     showSectionInView("stock-code-walkthrough")
     renderReview({ "review.get": () => ({ data: twoFilePage }) })
     const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
@@ -336,13 +338,15 @@ describe("the review page", () => {
     fireEvent.click(nextButton)
 
     expect(await screen.findByText("Reading of Held units reduce the price.")).toBeTruthy()
-    expect(screen.getByRole("region", { name: "Held units reduce the price" }).getAttribute("data-current")).toBe("true")
+    expect(markOf("Held units reduce the price").getAttribute("data-current")).toBe("true")
+    expect(screen.queryByRole("region", { name: "Held units reduce the price" })).toBeNull()
     expect(within(navigator).getByText("1 of 2")).toBeTruthy()
 
     fireEvent.click(nextButton)
 
     expect(await screen.findByText("Reading of The sum is rounded once.")).toBeTruthy()
-    expect(screen.getByRole("region", { name: "The sum is rounded once" }).getAttribute("data-current")).toBe("true")
+    expect(screen.queryByText("Reading of Held units reduce the price.")).toBeNull()
+    expect(markOf("The sum is rounded once").getAttribute("data-current")).toBe("true")
     expect(within(navigator).getByText("2 of 2")).toBeTruthy()
     expect(within(navigator).queryByRole("button", { name: "Next waypoint" })).toBeNull()
     expect(within(navigator).getByRole("button", { name: "Next: Segment (2/2)" })).toBeTruthy()
@@ -390,9 +394,9 @@ describe("the review page", () => {
     fireEvent.keyDown(window, { key: "d" })
 
     await waitFor(() => {
-      expect(screen.getByRole("region", { name: "Held units reduce the price" }).getAttribute("data-current")).toBe("true")
+      expect(markOf("Held units reduce the price").getAttribute("data-current")).toBe("true")
     })
-    expect(screen.getByText("Reading of Held units reduce the price.")).toBeTruthy()
+    expect(screen.queryByRole("region", { name: "Held units reduce the price" })).toBeNull()
     expect(scrolledAnchorIds()).toStrictEqual(["stock-code-walkthrough"])
   })
 
@@ -409,7 +413,7 @@ describe("the review page", () => {
     fireEvent.keyDown(window, { key: "a" })
 
     await waitFor(() => {
-      expect(screen.getByRole("region", { name: "Held units reduce the price" }).getAttribute("data-current")).toBe("true")
+      expect(markOf("Held units reduce the price").getAttribute("data-current")).toBe("true")
     })
   })
 
@@ -428,25 +432,26 @@ describe("the review page", () => {
     await waitFor(() => {
       expect(setReviewed).toHaveBeenCalledWith(expect.objectContaining({ subject: { kind: "waypoint", id: "price-of" }, isReviewed: true }))
     })
-    expect(screen.getByRole("region", { name: "The sum is rounded once" }).getAttribute("data-current")).toBe("true")
+    expect(markOf("The sum is rounded once").getAttribute("data-current")).toBe("true")
   })
 
   it("hides the waypoints with X and shows them again when stepping", async () => {
     showSectionInView("stock-code-walkthrough")
     renderReview({ "review.get": () => ({ data: artifactPage }) })
-    await screen.findByRole("region", { name: "Held units reduce the price" })
+    await screen.findByRole("button", { name: "Waypoint 1 of 2: Held units reduce the price" })
     await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Hide waypoints" })
 
     fireEvent.keyDown(window, { key: "x" })
 
     await waitFor(() => {
-      expect(screen.queryByRole("region", { name: "Held units reduce the price" })).toBeNull()
+      expect(screen.queryByRole("button", { name: "Waypoint 1 of 2: Held units reduce the price" })).toBeNull()
     })
     expect(screen.getByText("export const priceOf = () => 1", { exact: false })).toBeTruthy()
 
     fireEvent.keyDown(window, { key: "d" })
 
-    expect(await screen.findByRole("region", { name: "Held units reduce the price" })).toBeTruthy()
+    expect(await screen.findByText("Reading of Held units reduce the price.")).toBeTruthy()
+    expect(markOf("Held units reduce the price")).toBeTruthy()
   })
 
   it("collapses the files of the walkthrough on screen with Q", async () => {
@@ -528,6 +533,7 @@ describe("the review page", () => {
     const getReview = vi.fn(() => ({ data: artifactPage }))
     const setReviewed = vi.fn(() => ({ data: { isReviewed: true } }))
     renderReview({ "review.get": getReview, "review.setReviewed": setReviewed })
+    fireEvent.click(await screen.findByRole("button", { name: "Waypoint 1 of 2: Held units reduce the price", expanded: false }))
     const box = await screen.findByRole("region", { name: "Held units reduce the price" })
 
     fireEvent.click(within(box).getByRole("button", { name: "Reviewed" }))
@@ -544,6 +550,10 @@ describe("the review page", () => {
     const addComment = vi.fn(() => ({ data: { message: null } }))
     renderReview({ "review.get": () => ({ data: artifactPage }), "review.addComment": addComment })
     const file = await screen.findByRole("article", { name: "Cart file" })
+
+    expect(screen.queryByText("Can this go negative?")).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Open thread, Line 11" }))
 
     expect(screen.getByText("Can this go negative?")).toBeTruthy()
 
@@ -571,6 +581,7 @@ describe("the review page", () => {
     const replyToThread = vi.fn(() => ({ data: { message: null } }))
     const resolveThread = vi.fn(() => ({ data: { message: null } }))
     renderReview({ "review.get": () => ({ data: artifactPage }), "review.replyToThread": replyToThread, "review.resolveThread": resolveThread })
+    fireEvent.click(await screen.findByRole("button", { name: "Open thread, Line 11" }))
     const thread = await screen.findByRole("region", { name: "src/price.ts 11" })
 
     fireEvent.click(within(thread).getByRole("button", { name: "Reply" }))
@@ -592,6 +603,7 @@ describe("the review page", () => {
       "review.resolveThread": () => ({ errorMessage: "Resource not accessible by integration" }),
     })
 
+    fireEvent.click(await screen.findByRole("button", { name: "Open thread, Line 11" }))
     fireEvent.click(await screen.findByRole("button", { name: "Resolve conversation" }))
 
     expect(await screen.findByText("Resource not accessible by integration")).toBeTruthy()

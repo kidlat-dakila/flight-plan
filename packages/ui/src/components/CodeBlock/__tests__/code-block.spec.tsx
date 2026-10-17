@@ -23,6 +23,13 @@ describe("CodeBlock", () => {
     expect(block.textContent).toContain("const held = 2")
   })
 
+  it("marks the lines it is given and leaves the rest plain", () => {
+    render(<CodeBlock lines={LINES} label="price.ts" markedLines={new Set([LINES[1], LINES[2]])} />)
+    const markedOf = (text: string) => screen.getByText(text).closest("[data-marked]")?.getAttribute("data-marked")
+
+    expect([markedOf("const old = 1"), markedOf("const held = 2"), markedOf("return held")]).toStrictEqual(["false", "true", "true"])
+  })
+
   it("colours each token by its kind", () => {
     render(
       <CodeBlock

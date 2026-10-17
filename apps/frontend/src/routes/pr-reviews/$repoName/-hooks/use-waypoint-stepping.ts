@@ -16,7 +16,18 @@ export interface SteppedSegment {
 
 interface Visit {
   readonly anchorId: string
+  readonly waypointId: string
+  readonly isOpening: boolean
   readonly count: number
+}
+
+export interface PreviewVisit {
+  readonly waypointId: string
+  readonly count: number
+}
+
+export interface SteppingOptions {
+  readonly opensSteppedWaypoint: boolean
 }
 
 interface StepTargets {
@@ -34,6 +45,7 @@ export interface SegmentStepping {
 
 export interface WaypointStepping {
   readonly openWaypointIds: ReadonlySet<string>
+  readonly previewVisit: PreviewVisit | null
   readonly currentWaypointId: string | null
   readonly focusedWaypointId: string | null
   readonly steppingOf: (segment: SteppedSegment) => SegmentStepping
@@ -137,7 +149,13 @@ const releaseFocus = (setFocusedWaypointId: (waypointId: string | null) => void)
   setFocusedWaypointId(null)
 }
 
-export const useWaypointStepping = (segments: readonly SteppedSegment[]): WaypointStepping => {
+const previewVisitOf = (visit: Visit | null): PreviewVisit | null =>
+  visit === null || visit.isOpening ? null : { waypointId: visit.waypointId, count: visit.count }
+
+export const useWaypointStepping = (
+  segments: readonly SteppedSegment[],
+  { opensSteppedWaypoint }: SteppingOptions,
+): WaypointStepping => {
   const [openWaypointIds, setOpenWaypointIds] = useState<ReadonlySet<string>>(() => new Set())
   const [currentWaypointId, setCurrentWaypointId] = useState<string | null>(null)
   const [focusedWaypointId, setFocusedWaypointId] = useState<string | null>(null)
@@ -152,17 +170,18 @@ export const useWaypointStepping = (segments: readonly SteppedSegment[]): Waypoi
 
   useFocusRelease(focusedWaypointId, visit, onRelease)
 
-  const visitWaypoint = (waypointId: string | null): void => {
+  const visitWaypoint = (waypointId: string | null, isOpening: boolean): void => {
     const waypoint = waypoints.find((candidate) => candidate.id === waypointId)
     if (waypoint === undefined) return
     setCurrentWaypointId(waypoint.id)
     setFocusedWaypointId(waypoint.id)
-    setOpenWaypointIds((openIds) => new Set([...openIds, waypoint.id]))
-    setVisit((previous) => ({ anchorId: waypoint.anchorId, count: (previous?.count ?? 0) + 1 }))
+    if (isOpening) setOpenWaypointIds((openIds) => new Set([...openIds, waypoint.id]))
+    setVisit((previous) => ({ anchorId: waypoint.anchorId, waypointId: waypoint.id, isOpening, count: (previous?.count ?? 0) + 1 }))
   }
 
   return {
     openWaypointIds,
+    previewVisit: previewVisitOf(visit),
     currentWaypointId,
     focusedWaypointId,
     steppingOf: (segment) => {
@@ -173,8 +192,8 @@ export const useWaypointStepping = (segments: readonly SteppedSegment[]): Waypoi
         positionLabel: current?.positionLabel ?? null,
         canStepBack: targets.previousId !== null,
         canStepForward: targets.nextId !== null,
-        onPrevious: () => { visitWaypoint(targets.previousId) },
-        onNext: () => { visitWaypoint(targets.nextId) },
+        onPrevious: () => { visitWaypoint(targets.previousId, opensSteppedWaypoint) },
+        onNext: () => { visitWaypoint(targets.nextId, opensSteppedWaypoint) },
       }
     },
     onSectionEntered: (anchorId) => {
@@ -183,7 +202,7 @@ export const useWaypointStepping = (segments: readonly SteppedSegment[]): Waypoi
       if (first === undefined) return
       setCurrentWaypointId(first.id)
       setFocusedWaypointId(null)
-      setOpenWaypointIds((openIds) => new Set([...openIds, first.id]))
+      if (opensSteppedWaypoint) setOpenWaypointIds((openIds) => new Set([...openIds, first.id]))
     },
     onToggleWaypoint: (waypointId) => {
       setCurrentWaypointId(waypointId)
@@ -193,7 +212,7 @@ export const useWaypointStepping = (segments: readonly SteppedSegment[]): Waypoi
     onOpenCodeLink: (anchorId) => {
       const waypoint = waypoints.find((candidate) => candidate.anchorId === anchorId)
       if (waypoint === undefined) scrollToAnchor(anchorId)
-      else visitWaypoint(waypoint.id)
+      else visitWaypoint(waypoint.id, true)
     },
   }
 }

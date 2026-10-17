@@ -244,7 +244,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
 
   const artifact = page.kind === "artifact" ? page : null
   const arrangedWalkthroughSegment = artifact?.segments.find((segment) => segment.id === arrangedWalkthroughSegmentId) ?? null
-  const stepping = useWaypointStepping(artifact?.segments ?? NO_SEGMENTS)
+  const stepping = useWaypointStepping(artifact?.segments ?? NO_SEGMENTS, { opensSteppedWaypoint: isOwn })
   const { openWaypointIds, currentWaypointId } = stepping
   const handleOpenCodeLink = stepping.onOpenCodeLink
   const handleToggleWaypoint = stepping.onToggleWaypoint
@@ -578,6 +578,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                   openWaypointIds={openWaypointIds}
                                   currentWaypointId={currentWaypointId}
                                   focusedWaypointId={stepping.focusedWaypointId}
+                                  previewVisit={stepping.previewVisit}
                                   isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
                                   areWaypointsHidden={walkthroughLayout.areWaypointsHidden}
                                   isReviewPending={setReviewed.isPending}
