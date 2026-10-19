@@ -1,11 +1,17 @@
-staged_files=$(git diff --cached --name-only --diff-filter=ACMRD | paste -sd, -)
+staged_files=$(git diff --cached --name-only --diff-filter=ACMRD)
 
-if [ -z "$staged_files" ]; then
+if [ -n "$staged_files" ]; then
+  changed_files="$staged_files"
+else
+  changed_files=$( (git diff --name-only --diff-filter=ACMRD; git ls-files --others --exclude-standard) | sort -u)
+fi
+
+if [ -z "$changed_files" ]; then
   exit 0
 fi
 
-nx affected -t eslint:lint typecheck --files="$staged_files"
+nx affected -t eslint:lint typecheck --files="$(printf '%s\n' "$changed_files" | paste -sd, -)"
 
-if git diff --cached --name-only | grep -qE '^eslint(\.base)?\.config\.ts$'; then
+if printf '%s\n' "$changed_files" | grep -qE '^eslint(\.base)?\.config\.ts$'; then
   eslint eslint.base.config.ts eslint.config.ts
 fi
