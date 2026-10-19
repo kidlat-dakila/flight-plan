@@ -34,6 +34,7 @@ interface ReviewConfigurationFormProps<Classification extends string> {
   readonly preferences: ReviewPreferences<Classification>
   readonly spotlightChoices: readonly SpotlightChoice<Classification>[]
   readonly problem: FormProblem | null
+  readonly promptConfigurationNotes: readonly string[]
   readonly children: ReactNode
   readonly onSubmit: (choice: ReviewConfigurationChoice<Classification>) => void
 }
@@ -45,7 +46,7 @@ const SPOTLIGHT_INTRO = "Flight Plan sorts each changed code block into a kind, 
 const WRITE_UPS_TITLE = "Write-ups"
 const WRITE_UPS_INTRO = "Which parts should the agent write up by default? Always means the agent writes that part each time it writes a review. On demand means it leaves the part out, and you ask for it in the review when you want it."
 const PROMPT_CONFIGURATION_TITLE = "Prompt configuration"
-const PROMPT_CONFIGURATION_INTRO = "A prompt configuration is the set of instructions the agent follows when it writes a review: the tone it writes in, how it words each part, and which sections it includes. The structure of a review stays the same."
+const PROMPT_CONFIGURATION_INTRO = "A prompt configuration is the set of instructions the agent follows when it writes a review: the tone it writes in and how it words each part. The structure of a review stays the same."
 const ORGANIZATION_TITLE = "Review organization"
 const ORGANIZATION_INTRO = "Choose whether a review is split into segments and how the Code Walkthrough orders its files."
 const SEGMENTS_LABEL = "Split reviews into segments"
@@ -139,6 +140,7 @@ const ReviewConfigurationForm = <Classification extends string>({
   preferences,
   spotlightChoices,
   problem,
+  promptConfigurationNotes,
   children,
   onSubmit,
 }: ReviewConfigurationFormProps<Classification>) => {
@@ -166,10 +168,13 @@ const ReviewConfigurationForm = <Classification extends string>({
         {() => (
           <>
             <DefaultConfigurationChoice presets={presets} chosenId={configurationId} onChoose={setConfigurationId} />
-            <ul className="max-w-[62ch] list-disc pt-4 pl-5 text-sm text-muted-foreground">
-              <li>You can pick another prompt configuration each time you create a Flight Plan.</li>
-              <li>You can make your own later, in the settings.</li>
-            </ul>
+            {promptConfigurationNotes.length === 0
+              ? null
+              : (
+                  <ul className="max-w-[62ch] list-disc pt-4 pl-5 text-sm text-muted-foreground">
+                    {promptConfigurationNotes.map((note) => <li key={note}>{note}</li>)}
+                  </ul>
+                )}
           </>
         )}
       </PartSection>

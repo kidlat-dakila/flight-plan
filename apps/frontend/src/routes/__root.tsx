@@ -25,6 +25,7 @@ const SETTINGS_LINKS: readonly SettingsMenuLink[] = [
   { label: "Git integrations", icon: "forges", link: <Link to="/settings/forges" /> },
   { label: "Prompt configurations", icon: "configurations", link: <Link to="/settings/profiles" /> },
   { label: "Repositories", icon: "repositories", link: <Link to="/settings/repositories" /> },
+  { label: "Review configuration", icon: "review", link: <Link to="/settings/review" /> },
 ]
 const COLUMN_CLASSES = "mx-auto max-w-5xl px-4 pt-8 pb-16 sm:px-6"
 const NOT_FOUND_PICTURE_SRC = "/not-found.svg"

@@ -7,6 +7,7 @@ const SECTIONS = [
   { to: "/settings/forges", label: "Git integration", purpose: "Configure how Flight Plan communicates with your git setup" },
   { to: "/settings/profiles", label: "Prompt configurations", purpose: "Configure how the agent writes your reviews" },
   { to: "/settings/repositories", label: "Repositories", purpose: "Configure which repositories and team members Flight Plan follows" },
+  { to: "/settings/review", label: "Review configuration", purpose: "Configure how Flight Plan puts your reviews together" },
 ] as const
 
 const SettingsNavigation = () => (

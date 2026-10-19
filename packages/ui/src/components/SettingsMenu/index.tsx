@@ -1,4 +1,14 @@
-import { BotIcon, FileTextIcon, FolderGit2Icon, GitMergeIcon, MoonIcon, SettingsIcon, SunIcon, type LucideIcon } from "lucide-react"
+import {
+  BotIcon,
+  FileTextIcon,
+  FolderGit2Icon,
+  GitMergeIcon,
+  MoonIcon,
+  SettingsIcon,
+  SlidersHorizontalIcon,
+  SunIcon,
+  type LucideIcon,
+} from "lucide-react"
 import type { ReactElement } from "react"
 import DropdownMenu, {
   DropdownMenuContent,
@@ -7,7 +17,7 @@ import DropdownMenu, {
   DropdownMenuTrigger,
 } from "@/components/blocks/dropdown-menu"
 
-export type SettingsSectionIcon = "agents" | "forges" | "configurations" | "repositories"
+export type SettingsSectionIcon = "agents" | "forges" | "configurations" | "repositories" | "review"
 
 export interface SettingsMenuLink {
   readonly label: string
@@ -35,6 +45,7 @@ const SECTION_ICONS: Record<SettingsSectionIcon, LucideIcon> = {
   forges: GitMergeIcon,
   configurations: FileTextIcon,
   repositories: FolderGit2Icon,
+  review: SlidersHorizontalIcon,
 }
 
 const ThemeToggleItem = ({ useThemeToggle }: { readonly useThemeToggle: () => ThemeToggle }) => {

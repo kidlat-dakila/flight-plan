@@ -1,3 +1,4 @@
+import { createConfiguration } from "@/procedures/create-configuration"
 import { getSettings } from "@/procedures/get-settings"
 import {
   AT_REPOSITORIES,
@@ -56,5 +57,33 @@ describe("getSettings", () => {
     const page = await getSettings({ section: "repositories" }, createSetupContext(EMPTY_SETUP))
 
     expect(page).toMatchObject({ section: "repositories", repositories: [] })
+  })
+
+  it("fills the review section as setup step 4 does, with the user's own configurations after the presets", async () => {
+    const context = createSetupContext(COMPLETE_SETUP)
+    await createConfiguration({ name: "Terse", sourceId: "minimal" }, context)
+
+    const page = await getSettings({ section: "review" }, context)
+
+    expect(page).toMatchObject({
+      section: "review",
+      selectedConfigurationId: "minimal",
+      preferences: { spotlight: [], isSegmented: true, walkthroughOrder: "imports-bottom-up" },
+    })
+    expect(page.section === "review" ? page.presets.map((option) => option.configurationId) : []).toStrictEqual([
+      "standard",
+      "minimal",
+      "onboardee",
+      "unfamiliar-territory",
+      "custom-terse",
+    ])
+    expect(page).toHaveProperty("presets.4", {
+      configurationId: "custom-terse",
+      label: "Terse",
+      bestFor: "Based on Minimal.",
+      description: "The agent writes in fragments: few words and no filler.",
+      note: null,
+    })
+    expect(page).toHaveProperty("spotlightChoices.0.label", "Test")
   })
 })

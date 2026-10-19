@@ -4,7 +4,9 @@ import { buildAgentsStep } from "@/procedures/get-setup/utils/build-agents-step"
 import { buildForgesStep } from "@/procedures/get-setup/utils/build-forges-step"
 import { listOfferedModels } from "@/procedures/get-setup/utils/list-agent-models"
 import type { Setup } from "@/procedures/get-setup/utils/setup"
+import { listConfigurationsOf } from "@/procedures/list-configurations/utils/configuration"
 import { buildRepositoriesSection, type RepositoryFollowing } from "./utils/build-repositories-section"
+import { buildReviewSection } from "./utils/build-review-section"
 import type { GetSettingsInput, SettingsPage } from "./utils/schemas"
 import type { SettingsSection } from "./utils/settings-section"
 import { toAgentsSection, toForgesSection } from "./utils/step-sections"
@@ -39,10 +41,14 @@ const readFollowings = async (setup: Setup, context: ProcedureContext): Promise<
 const readRepositoriesSection: SectionReader = async (setup, context) =>
   buildRepositoriesSection(await readFollowings(setup, context))
 
+const readReviewSection: SectionReader = async (setup, context) =>
+  buildReviewSection(setup, listConfigurationsOf(await context.configurationStore.read()))
+
 const SECTION_READERS: Record<SettingsSection, SectionReader> = {
   agents: readAgentsSection,
   forges: readForgesSection,
   repositories: readRepositoriesSection,
+  review: readReviewSection,
 }
 
 export const getSettings = async (input: GetSettingsInput, context: ProcedureContext): Promise<SettingsPage> => {

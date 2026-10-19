@@ -15,6 +15,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as SettingsAgentsRouteImport } from './routes/settings/agents'
 import { Route as SettingsForgesRouteImport } from './routes/settings/forges'
 import { Route as SettingsRepositoriesRouteImport } from './routes/settings/repositories'
+import { Route as SettingsReviewRouteImport } from './routes/settings/review'
 import { Route as SetupIndexRouteImport } from './routes/setup/index'
 import { Route as ArtifactClaudeDownloadRouteImport } from './routes/artifact/claude/download'
 import { Route as PrReviewsRepoNameBranchIdRouteImport } from './routes/pr-reviews/$repoName/$branchId'
@@ -51,6 +52,11 @@ const SettingsForgesRoute = SettingsForgesRouteImport.update({
 const SettingsRepositoriesRoute = SettingsRepositoriesRouteImport.update({
   id: '/repositories',
   path: '/repositories',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsReviewRoute = SettingsReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
   getParentRoute: () => SettingsRouteRoute,
 } as any)
 const SetupIndexRoute = SetupIndexRouteImport.update({
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/settings/agents': typeof SettingsAgentsRoute
   '/settings/forges': typeof SettingsForgesRoute
   '/settings/repositories': typeof SettingsRepositoriesRoute
+  '/settings/review': typeof SettingsReviewRoute
   '/settings/': typeof SettingsIndexRoute
   '/setup/': typeof SetupIndexRoute
   '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/settings/agents': typeof SettingsAgentsRoute
   '/settings/forges': typeof SettingsForgesRoute
   '/settings/repositories': typeof SettingsRepositoriesRoute
+  '/settings/review': typeof SettingsReviewRoute
   '/settings': typeof SettingsIndexRoute
   '/setup': typeof SetupIndexRoute
   '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/settings/agents': typeof SettingsAgentsRoute
   '/settings/forges': typeof SettingsForgesRoute
   '/settings/repositories': typeof SettingsRepositoriesRoute
+  '/settings/review': typeof SettingsReviewRoute
   '/settings/': typeof SettingsIndexRoute
   '/setup/': typeof SetupIndexRoute
   '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/settings/agents'
     | '/settings/forges'
     | '/settings/repositories'
+    | '/settings/review'
     | '/settings/'
     | '/setup/'
     | '/artifact/claude/download'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/settings/agents'
     | '/settings/forges'
     | '/settings/repositories'
+    | '/settings/review'
     | '/settings'
     | '/setup'
     | '/artifact/claude/download'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/settings/agents'
     | '/settings/forges'
     | '/settings/repositories'
+    | '/settings/review'
     | '/settings/'
     | '/setup/'
     | '/artifact/claude/download'
@@ -235,6 +247,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRepositoriesRouteImport
       parentRoute: typeof SettingsRouteRoute
     }
+    '/settings/review': {
+      id: '/settings/review'
+      path: '/review'
+      fullPath: '/settings/review'
+      preLoaderRoute: typeof SettingsReviewRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
     '/setup/': {
       id: '/setup/'
       path: '/setup'
@@ -291,6 +310,7 @@ interface SettingsRouteRouteChildren {
   SettingsAgentsRoute: typeof SettingsAgentsRoute
   SettingsForgesRoute: typeof SettingsForgesRoute
   SettingsRepositoriesRoute: typeof SettingsRepositoriesRoute
+  SettingsReviewRoute: typeof SettingsReviewRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsProfilesIdRoute: typeof SettingsProfilesIdRoute
   SettingsProfilesCreateRoute: typeof SettingsProfilesCreateRoute
@@ -301,6 +321,7 @@ const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
   SettingsAgentsRoute: SettingsAgentsRoute,
   SettingsForgesRoute: SettingsForgesRoute,
   SettingsRepositoriesRoute: SettingsRepositoriesRoute,
+  SettingsReviewRoute: SettingsReviewRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsProfilesIdRoute: SettingsProfilesIdRoute,
   SettingsProfilesCreateRoute: SettingsProfilesCreateRoute,

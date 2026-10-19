@@ -28,6 +28,7 @@ const renderForm = (onSubmit = vi.fn(), problem: React.ComponentProps<typeof Rev
       preferences={PREFERENCES}
       spotlightChoices={SPOTLIGHT_CHOICES}
       problem={problem}
+      promptConfigurationNotes={["You can pick another prompt configuration each time you create a Flight Plan."]}
       onSubmit={onSubmit}
     >
       <button type="submit">Save</button>

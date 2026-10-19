@@ -29,6 +29,7 @@ const ConfigurationsPage = () => {
   const setDefault = useMutation(
     trpc.settings.save.mutationOptions({
       onSuccess: async () => {
+        queryClient.removeQueries({ ...trpc.settings.pathFilter(), type: "inactive" })
         await queryClient.invalidateQueries(trpc.configuration.pathFilter())
       },
     }),

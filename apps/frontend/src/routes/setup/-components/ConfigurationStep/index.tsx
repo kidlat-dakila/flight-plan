@@ -6,13 +6,17 @@ type ReviewConfigurationFormProps<Classification extends string> = React.Compone
   typeof ReviewConfigurationForm<Classification>
 >
 
-type ConfigurationStepProps<Classification extends string> = Omit<ReviewConfigurationFormProps<Classification>, "problem" | "children"> & {
+type ConfigurationStepProps<Classification extends string> = Omit<ReviewConfigurationFormProps<Classification>, "problem" | "promptConfigurationNotes" | "children"> & {
   readonly backStep: string | null
   readonly problem: StepProblem | null
   readonly isPending: boolean
 }
 
 const TITLE = "Review configuration"
+const PROMPT_CONFIGURATION_NOTES = [
+  "You can pick another prompt configuration each time you create a Flight Plan.",
+  "You can make your own later, in the settings.",
+]
 
 const ConfigurationStep = <Classification extends string>({
   presets,
@@ -34,6 +38,7 @@ const ConfigurationStep = <Classification extends string>({
       preferences={preferences}
       spotlightChoices={spotlightChoices}
       problem={problem}
+      promptConfigurationNotes={PROMPT_CONFIGURATION_NOTES}
       onSubmit={onSubmit}
     >
       <StepActions

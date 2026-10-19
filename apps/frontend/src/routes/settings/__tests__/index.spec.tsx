@@ -82,10 +82,34 @@ const recentRepositories: ProcedureReply = {
   data: { repositories: [recentOf("storefront", "2 days ago", "Already in Flight Plan"), recentOf("ledger", "5 days ago")], message: null },
 }
 
+const reviewPreferences = {
+  spotlight: ["auth"],
+  sectionWriteUps: { context: "always", traceDiagram: "always", blastDiagram: "on-demand", walkthrough: "on-demand", findings: "always" },
+  isSegmented: true,
+  walkthroughOrder: "imports-bottom-up",
+  sectionOrder: ["context", "traceDiagram", "blastDiagram", "walkthrough"],
+  ignoredPaths: ["**/*.spec.ts", "**/e2e/**"],
+}
+
+const reviewSection = {
+  section: "review",
+  presets: [
+    { configurationId: "standard", label: "Standard", bestFor: "Best for general pull requests.", description: "The full review.", note: null },
+    { configurationId: "custom-terse", label: "Terse", bestFor: "Based on Minimal.", description: "Few words and no filler.", note: null },
+  ],
+  selectedConfigurationId: "custom-terse",
+  preferences: reviewPreferences,
+  spotlightChoices: [
+    { classification: "migration", label: "Migration", description: "A change to the shape of the database" },
+    { classification: "auth", label: "Auth", description: "A check of who the caller is, or what they may do" },
+  ],
+}
+
 const SECTIONS: Readonly<Record<string, unknown>> = {
   agents: agentsSection,
   forges: forgesSection,
   repositories: repositoriesSection,
+  review: reviewSection,
 }
 
 const sectionNameOf = (input: unknown): string =>
@@ -114,7 +138,7 @@ describe("the settings pages", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Settings" })).toBeTruthy()
   })
 
-  it("lists the four pages and says which one is open", async () => {
+  it("lists the five pages and says which one is open", async () => {
     renderApp({}, "/settings/forges")
 
     const sections = await screen.findByRole("navigation", { name: "Settings sections" })
@@ -125,8 +149,9 @@ describe("the settings pages", () => {
       "/settings/forges",
       "/settings/profiles",
       "/settings/repositories",
+      "/settings/review",
     ])
-    expect(links.map((link) => link.getAttribute("aria-current"))).toStrictEqual([null, "page", null, null])
+    expect(links.map((link) => link.getAttribute("aria-current"))).toStrictEqual([null, "page", null, null, null])
   })
 
   it("is reached from the settings menu in the sign band, which also switches the colour theme", async () => {
@@ -146,6 +171,7 @@ describe("the settings pages", () => {
       ["Git integrations", "/settings/forges"],
       ["Prompt configurations", "/settings/profiles"],
       ["Repositories", "/settings/repositories"],
+      ["Review configuration", "/settings/review"],
     ])
 
     fireEvent.click(screen.getByRole("menuitem", { name: "Switch to dark mode" }))
@@ -215,6 +241,97 @@ describe("the settings pages", () => {
 
     expect(await screen.findByRole("heading", { name: "Could not load the settings" })).toBeTruthy()
     expect(screen.getByText("The saved settings cannot be read.")).toBeTruthy()
+  })
+
+  describe("the review configuration page", () => {
+    it("draws setup step 4's form with the saved choices and the user's own configurations", async () => {
+      renderApp({}, "/settings/review")
+
+      expect(await screen.findByRole("heading", { level: 2, name: "Review configuration" })).toBeTruthy()
+      expect(screen.getAllByRole("region").map((region) => within(region).getByRole("heading").textContent)).toStrictEqual([
+        "Spotlight",
+        "Write-ups",
+        "Prompt configuration",
+        "Review organization",
+        "Display arrangement",
+        "Ignored files",
+      ])
+      expect(screen.getByRole("button", { name: "Auth", pressed: true })).toBeTruthy()
+      expect(screen.getByRole<HTMLInputElement>("radio", { name: /Terse/ }).checked).toBe(true)
+      expect(screen.getByText("You can pick another prompt configuration each time you create a Flight Plan.")).toBeTruthy()
+      expect(screen.queryByText("You can make your own later, in the settings.")).toBeNull()
+    })
+
+    it("saves the preferences and the default configuration together and says so", async () => {
+      const save = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(saved("Your review configuration is saved."))
+      renderApp({ "settings.save": save }, "/settings/review")
+
+      fireEvent.click(await screen.findByRole("button", { name: "Migration" }))
+      fireEvent.click(screen.getByRole("radio", { name: /Standard/ }))
+      fireEvent.click(screen.getByRole("button", { name: "Save" }))
+
+      expect(await screen.findByText("Your review configuration is saved.")).toBeTruthy()
+      expect(save).toHaveBeenCalledWith({
+        section: "review",
+        configurationId: "standard",
+        preferences: { ...reviewPreferences, spotlight: ["migration", "auth"] },
+      })
+    })
+
+    it("reads the default again after it changes on the prompt configurations page", async () => {
+      const readSettings = vi.fn<(input: unknown) => ProcedureReply>(getSettings)
+      const terseRow = {
+        id: "custom-terse",
+        name: "Terse",
+        summary: null,
+        details: [],
+        defaultLabel: null,
+        isDefault: false,
+        defaultChoiceLabel: "Use Terse by default",
+        duplicateLabel: "Duplicate",
+        duplicateName: "Duplicate Terse",
+      }
+      const configurationList = { defaultChoiceHeading: "Default", groups: [{ title: "Your configurations", rows: [terseRow], emptyMessage: null }] }
+      renderApp(
+        {
+          "settings.get": readSettings,
+          "settings.save": () => saved("Your default configuration is saved."),
+          "configuration.list": () => ({ data: configurationList }),
+        },
+        "/settings/review",
+      )
+      await screen.findByRole("heading", { level: 2, name: "Review configuration" })
+      const sections = screen.getByRole("navigation", { name: "Settings sections" })
+
+      fireEvent.click(within(sections).getByRole("link", { name: /Prompt configurations/ }))
+      fireEvent.click(await screen.findByRole("radio", { name: "Use Terse by default" }))
+      await waitFor(() => {
+        expect(screen.getByRole<HTMLInputElement>("radio", { name: "Use Terse by default" }).disabled).toBe(false)
+      })
+      const reviewReads = () => readSettings.mock.calls.filter(([input]) => sectionNameOf(input) === "review").length
+      const readsBefore = reviewReads()
+      fireEvent.click(within(sections).getByRole("link", { name: /Review configuration/ }))
+
+      await screen.findByRole("region", { name: "Spotlight" })
+      expect(reviewReads()).toBeGreaterThan(readsBefore)
+    })
+
+    it("shows a refused path pattern under its row", async () => {
+      renderApp(
+        {
+          "settings.save": () => ({
+            data: { kind: "rejected", message: "This pattern is already in the list.", field: { owner: "ignoredPaths", name: "1" } },
+          }),
+        },
+        "/settings/review",
+      )
+
+      fireEvent.click(await screen.findByRole("button", { name: "Save" }))
+
+      const ignoredFiles = screen.getByRole("region", { name: "Ignored files" })
+      expect(await within(ignoredFiles).findByText("This pattern is already in the list.")).toBeTruthy()
+      expect(within(ignoredFiles).getByRole("textbox", { name: "Path pattern 2" }).getAttribute("aria-invalid")).toBe("true")
+    })
   })
 
   describe("the repositories page", () => {

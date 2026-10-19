@@ -1,4 +1,6 @@
 import { createConfiguration } from "@/procedures/create-configuration"
+import { DEFAULT_REVIEW_PREFERENCES } from "@/procedures/get-review-preferences/utils/review-preferences"
+import { toPreferencesData } from "@/procedures/get-review-preferences/utils/schemas"
 import { AT_REPOSITORIES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP, type Setup } from "@/procedures/get-setup/utils/setup"
 import { saveSettings } from "@/procedures/save-settings"
@@ -11,6 +13,8 @@ const AGENTS_INPUT: SaveSettingsInput = {
   agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default", effort: "default" }],
   defaultAgent: null,
 }
+
+const PREFERENCES = toPreferencesData(DEFAULT_REVIEW_PREFERENCES)
 
 describe("saveSettings", () => {
   it("saves the agents and leaves the rest of the setup as it is", async () => {
@@ -88,5 +92,31 @@ describe("saveSettings", () => {
       message: "Finish the earlier steps of the setup first.",
       field: null,
     })
+  })
+
+  it("saves the review preferences and the default configuration together", async () => {
+    const context = createSetupContext(COMPLETE_SETUP)
+    const preferences = { ...PREFERENCES, spotlight: ["auth" as const], isSegmented: false }
+
+    await expect(saveSettings({ section: "review", configurationId: "onboardee", preferences }, context)).resolves.toStrictEqual({
+      kind: "saved",
+      message: "Your review configuration is saved.",
+    })
+    await expect(context.setupStore.read()).resolves.toMatchObject({
+      defaultConfiguration: "onboardee",
+      reviewPreferences: { spotlight: ["auth"], isSegmented: false },
+    })
+  })
+
+  it("refuses a path pattern with its row and keeps the saved review configuration", async () => {
+    const context = createSetupContext(COMPLETE_SETUP)
+    const preferences = { ...PREFERENCES, ignoredPaths: ["**/e2e/**", "**/e2e/**"] }
+
+    await expect(saveSettings({ section: "review", configurationId: "onboardee", preferences }, context)).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "This pattern is already in the list.",
+      field: { owner: "ignoredPaths", name: "1" },
+    })
+    await expect(context.setupStore.read()).resolves.toStrictEqual(COMPLETE_SETUP)
   })
 })

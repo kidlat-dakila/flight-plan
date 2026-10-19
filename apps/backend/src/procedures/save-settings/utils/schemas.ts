@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { reviewPreferencesSchema } from "@/procedures/get-review-preferences/utils/schemas"
 import {
   agentsInputSchema,
   configurationInputSchema,
@@ -10,6 +11,7 @@ export const saveSettingsInputSchema = z.discriminatedUnion("section", [
   agentsInputSchema.omit({ step: true }).extend({ section: z.literal("agents") }),
   forgesInputSchema.omit({ step: true }).extend({ section: z.literal("forges") }),
   configurationInputSchema.omit({ step: true }).extend({ section: z.literal("configuration") }),
+  configurationInputSchema.omit({ step: true }).extend({ section: z.literal("review"), preferences: reviewPreferencesSchema }),
 ])
 
 export const settingsSavingSchema = z.discriminatedUnion("kind", [
@@ -18,4 +20,6 @@ export const settingsSavingSchema = z.discriminatedUnion("kind", [
 ])
 
 export type SaveSettingsInput = z.infer<typeof saveSettingsInputSchema>
+export type StepSettingsInput = Exclude<SaveSettingsInput, { section: "review" }>
+export type ReviewSettingsInput = Extract<SaveSettingsInput, { section: "review" }>
 export type SettingsSaving = z.infer<typeof settingsSavingSchema>
