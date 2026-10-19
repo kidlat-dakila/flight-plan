@@ -2,7 +2,7 @@
 
 ## Definition
 
-A Flight Plan Review is a way of reading a pull request as a guided tour instead of a list of changed files. A coding agent writes a [review artifact](review-artifact.md) for the change through Flight Plan's MCP tools, and the reviewer reads it in the Flight Plan web app, next to the code it describes.
+A Flight Plan Review is a way of reading a pull request as a guided tour instead of a list of changed files. Flight Plan builds a [review artifact](review-artifact.md) for the change from the code itself, and the reviewer reads it in the Flight Plan web app, next to the code it describes. A coding agent writes the artifact's prose through Flight Plan's MCP tools.
 
 A review can cover a pull request on a [forge](forge.md) such as GitHub, GitLab or Bitbucket, or a branch in a repository that has no forge at all.
 
@@ -17,13 +17,13 @@ A Flight Plan Review answers those questions directly:
 - **What it can affect**, as a [Blast Diagram](blast-diagram.md) of the files the change is connected to through imports, and what it does to the ones it did not touch. Its second view shows the files the change itself uses.
 - **Where to look**, as a [Code Walkthrough](code-walkthrough.md) that puts an explanation on top of the lines it is about, with findings on the code they concern.
 
-Guided review has one standing objection: a curated tour can leave out the file that mattered, and a diff cannot leave out anything. Flight Plan answers it in two ways. The structure of both diagrams is derived from the code by the [codegraph](codegraph.md), not written by the agent, so the agent cannot leave a caller out or invent one. And the walkthrough states how much of the change it covers, so a gap is visible instead of silent.
+Guided review has one standing objection: a curated tour can leave out the file that mattered, and a diff cannot leave out anything. Flight Plan answers it in two ways. The structure of both diagrams and of the walkthrough is derived from the code by the [codegraph](codegraph.md), not written by whoever writes the prose, so no writer can leave a caller out or invent one. And the walkthrough states how much of the change it covers, so a gap is visible instead of silent.
 
 ## How a review happens
 
 1. The reviewer picks a pull request or branch in the web app, from the list the forge provides.
 2. The reviewer makes a [review request](#review-request) on the review target's page.
-3. Flight Plan builds the structure of the artifact from the change and saves it with the request. The page opens the artifact at once, marked as drafting, so the reviewer can start reading the code. At the same time Flight Plan starts the chosen coding agent with a prompt, or gives the reviewer the prompt to paste into their own agent session. The agent works with the Flight Plan review skill.
+3. Flight Plan builds the structure of the artifact from the change and saves it with the request. The page opens the artifact at once, marked as drafting, so the reviewer can read the diagrams and the code before any prose is written. At the same time Flight Plan starts the chosen coding agent with a prompt, or gives the reviewer the prompt to paste into their own agent session. The agent works with the Flight Plan review skill.
 4. The agent fills in the prose through the MCP tools: each segment's title and context, labels and explanations, findings. It can change the words, never the structure.
 5. The artifact opens in the web app while it is still being written, marked as drafting, and fills in as the agent works. The page shows the [progress](#progress-and-completion) at the top, and a skeleton in place of each part that is not written yet.
 6. The agent marks the artifact complete. Completing it runs the checks a finished artifact must pass.
@@ -31,7 +31,7 @@ Guided review has one standing objection: a curated tour can leave out the file 
 
 ## Review request
 
-A review request is what the reviewer asks for before an agent writes a review artifact. A review target with no review artifact shows the request form in place of the review. It holds three choices:
+A review request is what the reviewer makes to have Flight Plan build a review artifact and choose who writes its prose. A review target with no review artifact shows the request form in place of the review. It holds three choices:
 
 | Choice | Content |
 |---|---|

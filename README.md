@@ -1,13 +1,16 @@
 # Flight Plan
 
-Read a pull request the way its author would explain it, instead of as a list of files.
+An offline-first code review tool that helps you understand and navigate the changes in a pull request.
 
-Flight Plan turns a pull request, or a branch with no pull request, into a guided review. Your coding agent writes a
-review artifact through Flight Plan's MCP tools, and a local web app shows it next to the code it describes. A review
-answers four questions a diff does not: why the change exists, how it runs, what it can affect, and where to look.
+Flight Plan reads the code of a pull request, or of a branch with no pull request, and lays the change out as a guided
+review in a local web app, next to the code it describes. It shows how the change runs, what it can affect, and where to
+look. It works from your local git checkout, and connects to GitHub, GitLab or Bitbucket for their pull requests,
+comments and reviews.
 
-The structure of a review comes from the code, not from the agent. Flight Plan reads the syntax trees to work out who
-calls what, so the agent cannot leave a caller out or invent one. The agent writes only the prose.
+Flight Plan builds the review from the code itself, with no model involved. It reads the syntax trees to work out who
+calls what, then draws the diagrams and lays out the walkthrough from them. A coding agent can fill in the prose through
+Flight Plan's MCP tools: why the change exists, the labels, the explanations and the findings. It writes only that
+prose, so it cannot leave a caller out or invent one.
 
 ## Running it
 
@@ -49,8 +52,8 @@ You can change all of these later in **Settings**. Flight Plan acts on your forg
 1. Open a repository on the homepage, then pick a pull request or a branch.
 2. Make a review request: choose the configuration, the order of the Code Walkthrough and the agent. Flight Plan can
    start Claude Code for you. With any other agent, copy the prompt it gives you into your own agent session.
-3. Flight Plan builds the structure of the review from the change, and the page opens it at once. Each part fills in as
-   the agent writes it, and the page shows how much is written.
+3. Flight Plan builds the review from the change, and the page opens it at once, ready to read. The prose of each part
+   fills in as the agent writes it, and the page shows how much is written.
 4. When the agent finishes, the browser notifies you.
 
 A review artifact has these parts:

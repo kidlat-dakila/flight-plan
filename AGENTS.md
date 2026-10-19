@@ -1,6 +1,6 @@
 # Flight Plan
 
-Flight Plan turns a pull request into a guided review. A coding agent writes a review artifact through Flight Plan's MCP tools, and a local web app renders that artifact next to the code. Users start the app with `npx` or `pnpm dlx`.
+Flight Plan is an offline-first code review tool that helps you understand and navigate the changes in a pull request. It builds a review artifact from the code itself, and a local web app renders that artifact next to the code. A coding agent can write the artifact's prose through Flight Plan's MCP tools. Users start the app with `npx` or `pnpm dlx`.
 
 The repo is moving from a VS Code extension (`src/`) to an Nx monorepo web app (`apps/`, `packages/`). All new work goes into `apps/` and `packages/`. Only open `src/` to read code you are porting.
 

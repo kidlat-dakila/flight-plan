@@ -43,9 +43,9 @@ The diagrams the codegraph produces have entries of their own: [Journey Flow Dia
 
 ## Why it exists
 
-A review artifact is only worth trusting if its structure is right. The Journey Flow Diagram and the Blast Diagram make claims about the code: this function uses that one, and this change reaches these places. If an agent drew those diagrams from reading the code, it could miss a user or invent a connection, and a reviewer would have no way to tell. Reading enough files to find every user would also cost the agent a large number of tokens on every review.
+The codegraph is what a review artifact is built from, and the artifact is only worth trusting if its structure is right. The Journey Flow Diagram and the Blast Diagram make claims about the code: this function uses that one, and this change reaches these places. If an agent drew those diagrams from reading the code, it could miss a user or invent a connection, and a reviewer would have no way to tell. Reading enough files to find every user would also cost the agent a large number of tokens on every review.
 
-The codegraph splits the work in two. **Structure is derived**: Flight Plan computes who uses what, directly from the code, so the same change always gives the same structure. **Prose is authored**: the agent explains what the structure means, such as why a path matters or what could break along it. Neither side writes the other's half, so an agent cannot restructure a diagram and the codegraph never makes up an explanation.
+The codegraph splits the work in two. **Structure is derived**: Flight Plan computes who uses what, directly from the code, so the same change always gives the same structure. **Prose is authored**: the agent, or the author of the pull request, explains what the structure means, such as why a path matters or what could break along it. Neither side writes the other's half, so a writer cannot restructure a diagram and the codegraph never makes up an explanation. The structure needs no writer, so a review can be read as soon as Flight Plan builds it.
 
 Two more properties follow from that goal:
 

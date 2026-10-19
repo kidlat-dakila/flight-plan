@@ -1,9 +1,9 @@
 ---
 title: Agent integration
-description: Pick the coding agents that write your reviews, and how Flight Plan works with them.
+description: Pick the coding agents that write the prose of your reviews, and how Flight Plan works with them.
 ---
 
-A coding agent writes each review. In this step you pick every agent you use, and Flight Plan installs its review skill and its MCP server into each one.
+Flight Plan builds each review from the code, and a coding agent writes its prose: the context, the labels, the explanations and the findings. In this step you pick every agent you use, and Flight Plan installs its review skill and its MCP server into each one.
 
 ![Picking Claude as the agent, with its install folder, model and effort](../../media/setup-agents-light.webm)
 

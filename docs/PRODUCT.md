@@ -20,18 +20,18 @@ The same person moves between these situations in one day. They run Flight Plan 
 
 ## Product Purpose
 
-Flight Plan turns a pull request, or a branch with no pull request, into a guided review. A coding agent writes a review artifact through Flight Plan's MCP tools, and the local web app renders it next to the code it describes. A review answers four questions a diff does not: why the change exists, how it runs, what it can affect, and where to look.
+Flight Plan is an offline-first code review tool that helps reviewers understand and navigate the changes in a pull request, or in a branch with no pull request. It builds a review from the code itself and renders it in a local web app next to the code it describes. A review answers four questions a diff does not: why the change exists, how it runs, what it can affect, and where to look. The code answers the last three. A coding agent connects through Flight Plan's MCP tools and writes the prose: why the change exists, the labels and explanations, and the findings.
 
 Success is a reviewer who reads a large change in the order it makes sense, spends attention on the lines that deserve it, and can see what the review did not cover.
 
 ## Positioning
 
-The structure of a review is derived from the code, not written by the agent. The codegraph computes who calls what from the syntax trees, so the agent cannot leave a caller out or invent one. The agent writes only the prose. The Code Walkthrough states how many of the change's files it covers, so a gap is visible instead of silent.
+Flight Plan is a code review tool with agent integration, not a tool for agents. The codegraph derives the structure of a review from the syntax trees: the segments, both diagrams, and the files and lines of the Code Walkthrough. A review is readable before any prose is written. The agent, or the author on their own pull request, writes the prose into that structure and cannot change it, so no writer can leave a caller out or invent one. The Code Walkthrough states how many of the change's files it covers, so a gap is visible instead of silent.
 
 ## Operating Context
 
 - Started with `npx` or `pnpm dlx`. A local Fastify backend serves the web app, a tRPC API and an MCP endpoint.
-- The reviewer picks a review target in the web app, asks their coding agent to review it with the Flight Plan review skill, and reads the artifact in the web app while the agent is still writing it.
+- The reviewer picks a review target in the web app and reads the artifact Flight Plan builds for it. Flight Plan starts their coding agent, or gives them a prompt for it, and the agent writes the prose with the Flight Plan review skill while the reviewer reads.
 - A review target is a pull request on a forge (GitHub, GitLab, Bitbucket) or a branch of a local repository.
 - All data stays on the user's machine in `~/.flightplan/`. Nothing is stored in the reviewed repository and nothing is sent elsewhere.
 - One data directory serves every repository the user reviews.
@@ -60,7 +60,7 @@ The structure of a review is derived from the code, not written by the agent. Th
 
 ## Product Principles
 
-1. **Derived structure, authored prose.** Flight Plan states what the code proves. The agent explains it.
+1. **The code decides the structure.** Flight Plan states what the code proves, and a review stands on that alone. The agent, or the author, explains it.
 2. **A gap is visible.** Coverage, drafts, staleness and unavailable capabilities are stated, never hidden.
 3. **The backend decides.** The interface shows what it receives and sends back what the user intends.
 4. **Local and private.** The user's code and reviews stay on their machine.

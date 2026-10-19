@@ -1,9 +1,9 @@
 ---
 title: How it works
-description: How Flight Plan builds a review artifact from the code and your agent writes it.
+description: How Flight Plan builds a review artifact from the code, and how your agent writes its prose.
 ---
 
-A review artifact is built in two passes. Flight Plan builds its structure from the code, with no model involved. Then your agent writes the prose into that structure through Flight Plan's MCP tools. The agent can't add, remove or move anything in it.
+A review artifact is built in two passes. Flight Plan builds its structure from the code, with no model involved, and the review is ready to read. Then your agent writes the prose into that structure through Flight Plan's MCP tools. The agent can't add, remove or move anything in it.
 
 ## 1. You start the review
 
@@ -25,7 +25,7 @@ Before any agent starts, Flight Plan reads the change from git and builds the wh
 4. It splits the change into [segments](/docs/review-artifacts/parts/segments/): one for each path through the change, plus one for code that several paths share.
 5. For each segment it builds the nodes and edges of the [Journey Flow Diagram](/docs/review-artifacts/parts/journey-flow-diagram/) and the [Blast Diagram](/docs/review-artifacts/parts/blast-diagram/), and the files and waypoints of the [Code Walkthrough](/docs/review-artifacts/parts/code-walkthrough/).
 
-This runs on your machine, with tree-sitter. The page opens the review at once, with every part marked **Not written yet.**
+This runs on your machine, with tree-sitter. The page opens the review at once: the diagrams and the walkthrough are there to read, and each piece of prose is marked **Not written yet.**
 
 ## 3. Your agent writes the prose
 
