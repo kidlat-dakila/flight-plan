@@ -198,6 +198,46 @@ export const joseFixtures: readonly PatternFixture[] = [
       "const createRemoteJWKSet = (...parts) => parts\nconst JWKS = createRemoteJWKSet(new URL(\"https://example.com/.well-known/jwks.json\"))",
     ],
   },
+  {
+    library: JOSE,
+    patternKey: "factory:CompactSign:*",
+    matches: [
+      "import { CompactSign } from \"jose\"\nconst jws = await new CompactSign(new TextEncoder().encode(\"payload\")).setProtectedHeader({ alg: \"ES256\" }).sign(privateKey)",
+    ],
+    rejects: [
+      "const CompactSign = (...parts) => parts\nconst jws = await new CompactSign(new TextEncoder().encode(\"payload\")).setProtectedHeader({ alg: \"ES256\" }).sign(privateKey)",
+    ],
+  },
+  {
+    library: JOSE,
+    patternKey: "call:compactVerify:*",
+    matches: [
+      "import { compactVerify } from \"jose\"\nconst { payload, protectedHeader } = await compactVerify(jws, publicKey)",
+    ],
+    rejects: [
+      "const compactVerify = (...parts) => parts\nconst { payload, protectedHeader } = await compactVerify(jws, publicKey)",
+    ],
+  },
+  {
+    library: JOSE,
+    patternKey: "factory:CompactEncrypt:*",
+    matches: [
+      "import { CompactEncrypt } from \"jose\"\nconst jwe = await new CompactEncrypt(new TextEncoder().encode(\"payload\")).setProtectedHeader({ alg: \"RSA-OAEP-256\", enc: \"A256GCM\" }).encrypt(publicKey)",
+    ],
+    rejects: [
+      "const CompactEncrypt = (...parts) => parts\nconst jwe = await new CompactEncrypt(new TextEncoder().encode(\"payload\")).setProtectedHeader({ alg: \"RSA-OAEP-256\", enc: \"A256GCM\" }).encrypt(publicKey)",
+    ],
+  },
+  {
+    library: JOSE,
+    patternKey: "call:compactDecrypt:*",
+    matches: [
+      "import { compactDecrypt } from \"jose\"\nconst { plaintext, protectedHeader } = await compactDecrypt(jwe, privateKey)",
+    ],
+    rejects: [
+      "const compactDecrypt = (...parts) => parts\nconst { plaintext, protectedHeader } = await compactDecrypt(jwe, privateKey)",
+    ],
+  },
 ]
 
 const JSONWEBTOKEN = "jsonwebtoken"

@@ -6,8 +6,9 @@ import type { SymbolSpace } from "@/ast-graph/types"
 import { exportedBindingAt, javascriptReaderOf, listHandedImports } from "@/catalogue/matching/javascript-reader"
 import { matchSyntax } from "@/catalogue/matching/match-source"
 import { findNothingHanded, type Binding, type FindExportedBinding, type FindHandedExport, type SyntaxReader } from "@/catalogue/matching/syntax-reader"
+import { listLibraryUses } from "@/code-blocks/classifications"
 import { LIBRARIES } from "@/code-blocks/libraries"
-import { nodeFinderOf, withCards } from "@/code-blocks/libraries/cards"
+import { listOwnUses, nodeFinderOf, withCards } from "@/code-blocks/libraries/cards"
 import type { FileExports, FindExport, OutlinedFile, ScriptReading } from "@/code-blocks/reading"
 import { fromSyntaxRange, toSyntaxRange } from "@/code-blocks/source-range"
 import type { SourceRange } from "@/code-blocks/types"
@@ -78,7 +79,12 @@ export const readScript = (script: ReadScript, findExport: FindExport, findBindi
   const { filePath, outline, componentId } = script
   const matches = matchSyntax(scriptReaderOf(script, findBinding, findHanded), LIBRARIES)
   const blocks = readBlocks(createBlockReader(script, findExport, createFileNaming(matches)), componentId)
-  return { filePath, blocks: withCards(withDirectives(blocks, matches, exportsOf(outline)), matches, outline.tree, LIBRARIES), uses: readUses(outline) }
+  return {
+    filePath,
+    blocks: withCards(withDirectives(blocks, matches, exportsOf(outline)), matches, outline.tree, LIBRARIES),
+    uses: readUses(outline),
+    libraryUses: [...listLibraryUses(matches, LIBRARIES), ...listOwnUses(blocks, matches, outline.tree, LIBRARIES)],
+  }
 }
 
 export const bindingInScript = ({ grammar, outline }: ReadScript, declarationRange: SourceRange, findBinding: FindExportedBinding): Binding | null =>

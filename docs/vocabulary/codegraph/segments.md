@@ -40,7 +40,7 @@ Four details of the tests:
 - **A file that hands one line over is on that line.** A route table that names one changed page is in the segment of that page.
 - **A file that was not changed is in no segment and joins nothing.** Two changed pages that both render an unchanged `Button` are two segments.
 
-Test files and story files are ignored. They are in no segment, they are never a user of a file, and nothing of them is in a review artifact. A function that one page and its test use is used from one place. See [Files that are ignored](code-blocks.md#files-that-are-ignored).
+A test or a story is never read. A changed one is one `file` block classified `test`, drawn in the shared segment as any file no language reads is, and a test is never a user of a file. A function that one page and its test use is used from one place. See [Test files](classifications.md#test-files).
 
 ## Examples
 

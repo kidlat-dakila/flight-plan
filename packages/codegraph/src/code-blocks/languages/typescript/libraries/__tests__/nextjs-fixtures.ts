@@ -47,10 +47,16 @@ export const nextFixtures: readonly PatternFixture[] = [
     ["app/users/layout.tsx", "app/users/route.ts", "components/page.tsx"],
   ),
   nextFileFixture(
-    "{app,src/app}/**/{layout,template,loading,error,not-found,global-error}.{js,jsx,ts,tsx}",
+    "{app,src/app}/**/{layout,template,loading,not-found}.{js,jsx,ts,tsx}",
     "*",
-    ["app/layout.tsx", "app/dashboard/loading.tsx", "src/app/not-found.jsx", "app/global-error.tsx"],
-    ["app/dashboard/page.tsx", "components/layout.tsx"],
+    ["app/layout.tsx", "app/dashboard/loading.tsx", "src/app/not-found.jsx"],
+    ["app/dashboard/page.tsx", "components/layout.tsx", "app/global-error.tsx"],
+  ),
+  nextFileFixture(
+    "{app,src/app}/**/{error,global-error}.{js,jsx,ts,tsx}",
+    "*",
+    ["app/dashboard/error.tsx", "app/global-error.tsx", "src/app/error.jsx"],
+    ["app/dashboard/page.tsx", "components/error.tsx", "app/errors.tsx"],
   ),
   nextFileFixture(
     "{app,src/app}/**/route.{js,ts}",

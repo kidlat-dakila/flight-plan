@@ -67,6 +67,80 @@ describe("a name is matched through its import", () => {
   it("matches only a library of the language of the file", () => {
     expect(keysIn(lines("from server import useLoad", "", "useLoad()"), "python")).toStrictEqual([])
   })
+
+  it("matches a class pattern on a class that extends a local class extending the export, and on a class that extends a whole required module", () => {
+    expect(keysIn(lines("import { Model } from \"server\"", "class Timestamped extends Model {}", "class Order extends Timestamped {}"))).toStrictEqual([
+      "class:Model:*",
+      "class:Model:*",
+    ])
+    const base = library("Base", ["base"], "javascript", [{ kind: "class", name: "default", members: [], methods: [], classifies: "event" }])
+    const required = matchSource({ filePath: null, language: "javascript", text: lines("const Emitter = require(\"base\")", "class Bus extends Emitter {}") }, [base])
+
+    expect(required.map((match) => match.patternKey)).toStrictEqual(["class:default:*"])
+  })
+
+  it("matches a call on this and on self inside a method as a call on an instance of the class", () => {
+    const consumers = library("Consumers", ["consumers"], "python", [{ kind: "class", name: "Consumer", members: [], methods: [{ kind: "call", name: "send", slots: [], makes: "publish" }] }])
+    const python = lines(
+      "from consumers import Consumer",
+      "",
+      "class Chat(Consumer):",
+      "    def receive(self, text):",
+      "        self.send(text)",
+      "",
+      "    @staticmethod",
+      "    def echo(self):",
+      "        self.send(1)",
+      "",
+      "def loose(self):",
+      "    self.send(2)",
+    )
+    const pythonKeys = matchSource({ filePath: null, language: "python", text: python }, [consumers]).map((match) => match.patternKey)
+
+    expect(keysIn(lines("import { Model } from \"server\"", "class User extends Model {", "  load() { return this.all() }", "}", "function loose() { return this.all() }"))).toStrictEqual([
+      "class:Model:*",
+      "class:Model:*>call:all:*",
+    ])
+    expect(pythonKeys).toStrictEqual(["class:Consumer:*", "class:Consumer:*>call:send:*"])
+  })
+
+  it("follows a call that returns one of its arguments to that argument, and matches what it is then called as", () => {
+    const wrapping = library("Wrap", ["wrap"], "javascript", [{ kind: "call", name: "wrap", slots: [], returnsAt: 0 }])
+    const keysOf = (text: string): string[] => matchSource({ filePath: null, language: "javascript", text }, [SERVER, wrapping]).map((match) => match.patternKey)
+
+    expect(keysOf(lines("import { wrap } from \"wrap\"", "import { useLoad } from \"server\"", "wrap(useLoad)({})"))).toStrictEqual(["call:useLoad:*", "call:wrap:*"])
+  })
+
+  it("matches the method of a Channels layer handed through async_to_sync", () => {
+    const text = lines(
+      "from asgiref.sync import async_to_sync",
+      "from channels.generic.websocket import WebsocketConsumer",
+      "",
+      "class ChatConsumer(WebsocketConsumer):",
+      "    def receive(self, text_data):",
+      "        async_to_sync(self.channel_layer.group_send)(\"chat\", {\"type\": \"chat.message\"})",
+    )
+
+    expect(matchSource({ filePath: null, language: "python", text }, LIBRARIES).map((match) => match.patternKey)).toContain("class:WebsocketConsumer:*>call:channel_layer.group_send:*")
+  })
+
+  it("matches an assignment to a member of a value a factory made, with the assigned value as its first place", () => {
+    const apps = library("Apps", ["apps"], "javascript", [{ kind: "factory", name: "createApp", methods: [{ kind: "assignment", name: "config.onError", slots: [{ at: 0, runs: "event" }], classifies: "error-handling" }] }])
+    const matched = matchSource({ filePath: null, language: "javascript", text: lines("import { createApp } from \"apps\"", "const app = createApp()", "app.config.onError = (error) => report(error)", "app.config.name = \"shop\"") }, [apps])
+
+    expect(matched.map((match) => [match.patternKey, match.slots.map((slot) => slot.runs)])).toStrictEqual([
+      ["factory:createApp:*", []],
+      ["factory:createApp:*>assignment:config.onError:*", ["event"]],
+    ])
+  })
+
+  it("matches an export by a name whose segments may hold a wildcard, segment by segment", () => {
+    const tags = library("Tags", ["tags"], "javascript", [{ kind: "call", name: "default.*", slots: [], classifies: "styling" }])
+    const keysOf = (text: string): string[] => matchSource({ filePath: null, language: "javascript", text }, [tags]).map((match) => match.patternKey)
+
+    expect(keysOf(lines("import styled from \"tags\"", "styled.button``", "styled.li``"))).toStrictEqual(["call:default.*:*", "call:default.*:*"])
+    expect(keysOf(lines("import { css } from \"tags\"", "css``"))).toStrictEqual([])
+  })
 })
 
 describe("a value a factory made", () => {

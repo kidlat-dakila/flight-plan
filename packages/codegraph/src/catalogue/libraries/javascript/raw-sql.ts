@@ -68,6 +68,16 @@ export const knexJsLibrary: CatalogueLibrary = {
   category: "raw-sql",
   type: "backend",
   language: "javascript",
+  locations: [
+    {
+      classification: "migration",
+      files: [{ glob: "knexfile.*" }],
+      keys: [
+        { key: "migrations.directory", holds: "folders", default: ["migrations"], unlessRead: "*.migrations.directory" },
+        { key: "*.migrations.directory", holds: "folders" },
+      ],
+    },
+  ],
   patterns: [
     {
       kind: "factory",

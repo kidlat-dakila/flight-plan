@@ -135,6 +135,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -167,6 +171,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/query-client.ts#property@8:16"
@@ -228,6 +236,12 @@
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/query-client.ts#property@8:42"
@@ -268,6 +282,12 @@
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1",
           "src/lib/query-client.ts#root-variable@6:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -326,6 +346,12 @@
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -364,6 +390,12 @@
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -397,6 +429,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -485,6 +521,12 @@
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -534,6 +576,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -564,6 +610,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -594,6 +644,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -624,6 +678,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -654,6 +712,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -684,6 +746,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -714,6 +780,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -745,6 +815,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/main.tsx#condition@10:1",
@@ -780,6 +854,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -812,6 +890,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -859,6 +941,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -894,6 +980,11 @@
           "src/lib/query-client.ts#root-variable@4:1",
           "src/lib/query-client.ts#root-variable@6:1"
         ],
+        "classifications": [
+          "component",
+          "config"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -931,6 +1022,11 @@
           "src/lib/query-client.ts#root-variable@4:1",
           "src/lib/query-client.ts#root-variable@6:1"
         ],
+        "classifications": [
+          "component",
+          "config"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1011,6 +1107,10 @@
           "src/lib/query-client.ts#root-variable@4:1",
           "src/lib/query-client.ts#root-variable@6:1"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1082,6 +1182,10 @@
           "src/lib/query-client.ts#root-variable@4:1",
           "src/lib/query-client.ts#root-variable@6:1"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1152,6 +1256,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1202,6 +1310,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {

@@ -53,7 +53,8 @@ const STATEMENT_TYPE = "expression_statement"
 const TEXT_TYPE = "string"
 const CALL_PATTERN = patternOfTypes([CALL_TYPE])
 const GENERIC_TYPE = "generic_type"
-const CODE_SITE_TYPES: readonly string[] = [CALL_TYPE, CONSTRUCTION_TYPE, DECORATOR_TYPE, ...CLASS_TYPES]
+const ASSIGNMENT_TYPE = "assignment_expression"
+const CODE_SITE_TYPES: readonly string[] = [CALL_TYPE, CONSTRUCTION_TYPE, DECORATOR_TYPE, ASSIGNMENT_TYPE, ...CLASS_TYPES]
 const MARKUP_GRAMMAR: GrammarId = "tsx"
 const SITE_PATTERNS: Readonly<Record<string, string>> = {
   typescript: patternOfTypes(CODE_SITE_TYPES),
@@ -67,7 +68,7 @@ interface Declared {
 }
 
 const expressionOf = (node: SyntaxNode): Expression => {
-  if (NAME_TYPES.has(node.type)) return { kind: "name", name: node }
+  if (NAME_TYPES.has(node.type) || node.type === RECEIVER_TYPE) return { kind: "name", name: node }
   const object = node.childForFieldName("object")
   const property = node.childForFieldName("property")
   if (MEMBER_TYPES.has(node.type) && object !== null && property !== null) return { kind: "member", object, property: property.text }
@@ -208,7 +209,23 @@ const bindingOfDeclared = (name: SyntaxNode): Binding | null => {
   return CLASS_TYPES.has(value.type) ? { kind: "class", declaration: value } : { kind: "value", value, memberPath: declared.memberPath }
 }
 
+const RECEIVER_TYPE = "this"
+const OWN_RECEIVER_TYPES: ReadonlySet<string> = new Set(["function_declaration", "function_expression", "generator_function", "generator_function_declaration"])
+
+const classOfReceiver = (node: SyntaxNode | null): SyntaxNode | null => {
+  if (node === null || OWN_RECEIVER_TYPES.has(node.type)) return null
+  if (node.type !== METHOD_TYPE) return classOfReceiver(node.parent)
+  const body = node.parent
+  return body?.parent !== null && body?.parent !== undefined && CLASS_TYPES.has(body.parent.type) ? body.parent : null
+}
+
+const receiverBindingOf = (name: SyntaxNode): Binding | null => {
+  const declaration = name.type === RECEIVER_TYPE ? classOfReceiver(name.parent) : null
+  return declaration === null ? null : { kind: "class", declaration }
+}
+
 const bindingIn = (outline: FileOutline, name: SyntaxNode, findExported: FindExportedBinding): Binding | null => {
+  if (name.type === RECEIVER_TYPE) return receiverBindingOf(name)
   const resolution = resolutionOf(outline, name)
   if (resolution === null) return null
   if (resolution.kind === "local") return bindingOfDeclared(nameNodeOf(outline.tree, resolution.declaration))
@@ -230,8 +247,14 @@ const calleeOfDecorator = (decorator: SyntaxNode): SyntaxNode | null => {
   return written?.type === CALL_TYPE ? written.childForFieldName("function") : written
 }
 
+const assignedSiteOf = (node: SyntaxNode): Site[] => {
+  const left = node.childForFieldName("left")
+  return left !== null && MEMBER_TYPES.has(left.type) ? [{ kind: "assignment", node, callee: left }] : []
+}
+
 const siteOf = (node: SyntaxNode): Site[] => {
   if (CLASS_TYPES.has(node.type)) return [{ kind: "class", node, bases: basesOf(node) }]
+  if (node.type === ASSIGNMENT_TYPE) return assignedSiteOf(node)
   if (node.type === DECORATOR_TYPE) {
     const callee = calleeOfDecorator(node)
     return callee === null ? [] : [{ kind: "decorator", node, callee }]
@@ -265,7 +288,13 @@ const childrenOf = (element: SyntaxNode): PassedValue[] =>
     .filter((child) => !NOT_CHILDREN.has(child.type))
     .map((child) => ({ position: null, name: CHILDREN, node: child.type === EMBEDDED_TYPE ? (child.firstNamedChild ?? child) : child }))
 
+const ASSIGNED_POSITION = 0
+
 const passedTo = (site: SyntaxNode): PassedValue[] => {
+  if (site.type === ASSIGNMENT_TYPE) {
+    const right = site.childForFieldName("right")
+    return right === null ? [] : [{ position: ASSIGNED_POSITION, name: null, node: right }]
+  }
   if (site.type === ELEMENT_TYPE) {
     const opening = site.childForFieldName("open_tag")
     return [...(opening === null ? [] : attributesOf(opening)), ...childrenOf(site)]

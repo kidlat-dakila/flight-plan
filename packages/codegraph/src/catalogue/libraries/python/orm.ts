@@ -1,5 +1,7 @@
 import type { CatalogueLibrary } from "@/catalogue/types"
 
+const DATA_MODEL = "data-model"
+
 export const datasetLibrary: CatalogueLibrary = {
   name: "dataset",
   specifiers: ["dataset"],
@@ -33,6 +35,7 @@ export const djangoModelsLibrary: CatalogueLibrary = {
       kind: "class",
       name: "Model",
       makes: "data",
+      classifies: DATA_MODEL,
       members: [{ name: "save", runs: "in-place" }],
       methods: [
         { kind: "call", name: "filter", slots: [], makes: "data-fetch" },
@@ -82,6 +85,7 @@ export const mongoengineLibrary: CatalogueLibrary = {
       kind: "class",
       name: "Document",
       makes: "data",
+      classifies: DATA_MODEL,
       members: [{ name: "save", runs: "in-place" }],
       methods: [
         { kind: "call", name: "objects", slots: [], makes: "data-fetch" },
@@ -110,6 +114,7 @@ export const oratorLibrary: CatalogueLibrary = {
       kind: "class",
       name: "Model",
       makes: "data",
+      classifies: DATA_MODEL,
       members: [],
       methods: [
         { kind: "call", name: "find", slots: [], makes: "data-fetch" },
@@ -133,6 +138,7 @@ export const ormLibrary: CatalogueLibrary = {
       kind: "class",
       name: "Model",
       makes: "data",
+      classifies: DATA_MODEL,
       members: [],
       methods: [
         { kind: "call", name: "filter", slots: [], makes: "data-fetch" },
@@ -156,6 +162,7 @@ export const peeweeLibrary: CatalogueLibrary = {
       kind: "class",
       name: "Model",
       makes: "data",
+      classifies: DATA_MODEL,
       members: [],
       methods: [
         { kind: "call", name: "create", slots: [], makes: "data" },
@@ -189,6 +196,10 @@ export const ponyLibrary: CatalogueLibrary = {
       ],
     },
     { kind: "decorator", name: "db_session", makes: "transaction" },
+    { kind: "call", name: "PrimaryKey", slots: [], classifies: DATA_MODEL },
+    { kind: "call", name: "Required", slots: [], classifies: DATA_MODEL },
+    { kind: "call", name: "Optional", slots: [], classifies: DATA_MODEL },
+    { kind: "call", name: "Set", slots: [], classifies: DATA_MODEL },
   ],
 }
 
@@ -204,7 +215,7 @@ export const pydalLibrary: CatalogueLibrary = {
       kind: "factory",
       name: "DAL",
       methods: [
-        { kind: "call", name: "define_table", slots: [], makes: "data" },
+        { kind: "call", name: "define_table", slots: [], makes: "data", classifies: DATA_MODEL },
         { kind: "call", name: "insert", slots: [], makes: "data" },
         { kind: "call", name: "commit", slots: [], makes: "transaction" },
       ],
@@ -236,5 +247,9 @@ export const sqlalchemyLibrary: CatalogueLibrary = {
     },
     { kind: "call", name: "select", slots: [], makes: "data-fetch" },
     { kind: "call", name: "text", slots: [], makes: "data" },
+    { kind: "class", name: "DeclarativeBase", classifies: DATA_MODEL, members: [], methods: [] },
+    { kind: "call", name: "declarative_base", slots: [], classifies: DATA_MODEL },
+    { kind: "call", name: "mapped_column", slots: [], classifies: DATA_MODEL },
+    { kind: "call", name: "Column", slots: [], classifies: DATA_MODEL },
   ],
 }

@@ -561,6 +561,7 @@
           "src/router.tsx#deleted@2:1"
         ],
         "diffContains": [
+          "ui",
           "effect",
           "logic"
         ],
@@ -1171,6 +1172,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#request@19:26"
@@ -1208,6 +1213,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#function@13:1"
@@ -1246,6 +1255,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -1278,6 +1291,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -1309,6 +1326,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#call@8:5"
@@ -1342,6 +1363,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1390,6 +1415,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -1424,6 +1453,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1550,6 +1583,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#variable@14:3",
@@ -1589,6 +1626,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -1620,6 +1661,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -1651,6 +1696,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -1682,6 +1731,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1744,6 +1797,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "request"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1799,6 +1856,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#request@19:26"
@@ -1834,6 +1895,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#request@19:26",
@@ -1868,6 +1933,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -1901,6 +1970,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "request"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#condition@23:3",
@@ -1937,6 +2010,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "request"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2019,6 +2096,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2072,6 +2153,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2104,6 +2189,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2156,6 +2245,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2218,6 +2311,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2248,6 +2345,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2281,6 +2382,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2359,6 +2464,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2389,6 +2498,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2425,6 +2538,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/root-layout.tsx#render@13:9"
@@ -2460,6 +2579,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/CartBadge.tsx#render@6:10"
@@ -2502,6 +2626,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2557,6 +2685,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2614,6 +2746,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2645,6 +2781,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2717,6 +2857,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2748,6 +2892,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ThemeProvider.tsx#type-declaration@5:1",
@@ -2782,6 +2930,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2832,6 +2984,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "context-and-wiring"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2906,6 +3062,13 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "state",
+          "effect",
+          "context-and-wiring"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2957,6 +3120,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ThemeProvider.tsx#render@18:10"
@@ -2990,6 +3157,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "state"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3068,6 +3239,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ThemeProvider.tsx#render@18:10"
@@ -3110,6 +3286,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3185,6 +3365,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3226,6 +3410,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3257,6 +3445,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3307,6 +3499,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3339,6 +3535,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3388,6 +3588,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3421,6 +3625,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3452,6 +3660,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ThemeProvider.tsx#condition@15:63"
@@ -3484,6 +3696,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3533,6 +3749,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "context-and-wiring"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3564,6 +3785,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "context-and-wiring"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3662,6 +3888,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3727,6 +3957,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3796,6 +4030,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3843,6 +4081,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3873,6 +4115,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3903,6 +4149,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3934,6 +4184,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/button.tsx#type-declaration@6:1",
@@ -3968,6 +4222,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4038,6 +4296,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4087,6 +4349,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4118,6 +4384,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4157,6 +4427,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4211,6 +4485,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/button.tsx#render@16:10"
@@ -4244,6 +4522,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/button.tsx#render@16:10"
@@ -4277,6 +4559,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/button.tsx#render@16:10"
@@ -4311,6 +4597,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4342,6 +4632,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4452,6 +4746,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4482,6 +4780,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4513,6 +4815,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4574,6 +4880,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4623,6 +4933,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/dialog.tsx#render@14:5",
@@ -4657,6 +4971,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/dialog.tsx#condition@12:3"
@@ -4695,6 +5013,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/dialog.tsx#render-event@17:31"
@@ -4728,6 +5050,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/dialog.tsx#render@14:5"
@@ -4760,6 +5086,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4809,6 +5139,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4843,6 +5177,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4907,6 +5245,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4957,6 +5299,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5004,6 +5350,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5051,6 +5401,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5081,6 +5435,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5111,6 +5469,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5141,6 +5503,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5171,6 +5537,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5207,6 +5577,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5239,6 +5614,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5307,6 +5687,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5342,6 +5727,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5373,6 +5762,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/input.tsx#render@6:12"
@@ -5406,6 +5799,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/input.tsx#render@6:12"
@@ -5440,6 +5837,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5471,6 +5872,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5565,6 +5970,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5595,6 +6004,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5629,6 +6042,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/hooks/use-products.ts#property@7:21"
@@ -5666,6 +6083,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/catalog/index.tsx#external-value@5:3"
@@ -5701,6 +6122,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5758,6 +6183,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5806,6 +6235,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5863,6 +6296,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/format.ts#function@5:1"
@@ -5900,6 +6337,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/format.ts#function@5:1"
@@ -5933,6 +6374,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5964,6 +6409,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5999,6 +6448,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -6088,6 +6541,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/format.ts#function@5:1"
@@ -6135,6 +6592,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/components/CartLine.tsx#render@11:7"
@@ -6168,6 +6629,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/format.ts#condition@10:10"
@@ -6205,6 +6670,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -6268,6 +6737,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6298,6 +6771,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6333,6 +6810,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -6435,6 +6916,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/utils.ts#function@4:1"
@@ -6467,6 +6952,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6497,6 +6986,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6527,6 +7020,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6557,6 +7054,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6587,6 +7088,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6617,6 +7122,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6647,6 +7156,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6678,6 +7191,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/main.tsx#condition@10:1",
@@ -6713,6 +7230,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6745,6 +7266,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -6792,6 +7317,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6824,6 +7353,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "config"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -6856,6 +7390,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "config"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -6931,6 +7470,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -6983,6 +7526,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -7053,6 +7600,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -7115,6 +7666,10 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -7180,6 +7735,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7210,6 +7769,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7240,6 +7803,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7270,6 +7837,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7307,6 +7878,15 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [
+          "page",
+          "effect"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -7358,6 +7938,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7391,6 +7975,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7430,6 +8020,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -7484,6 +8078,15 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [
+          "page",
+          "effect"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7515,6 +8118,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7548,6 +8155,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7587,6 +8200,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -7634,6 +8251,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7667,6 +8288,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7706,6 +8333,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -7753,6 +8384,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7813,6 +8448,14 @@
         "diffSourceIds": [
           "src/router.tsx#effect-callback@13:26",
           "src/router.tsx#function@13:32"
+        ],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [
+          "page",
+          "effect"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7906,6 +8549,12 @@
         "diffSourceIds": [
           "src/router.tsx#function@13:32"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7962,6 +8611,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -7992,6 +8647,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8022,6 +8681,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8052,6 +8715,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8082,6 +8749,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8119,6 +8790,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8168,6 +8845,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/components/CartLine.tsx#render@10:7",
@@ -8211,6 +8892,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/components/CartLine.tsx#function@13:40"
@@ -8253,6 +8939,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8310,6 +9000,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8350,6 +9044,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8424,6 +9122,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/components/CartLine.tsx#function@7:35"
@@ -8458,6 +9160,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8494,6 +9200,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8525,6 +9235,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8579,6 +9293,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8648,6 +9366,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8740,6 +9462,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8789,6 +9515,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8819,6 +9549,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8887,6 +9621,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8917,6 +9655,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8947,6 +9689,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8977,6 +9723,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9016,6 +9766,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/index.tsx#render@15:7"
@@ -9051,6 +9807,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/components/CartSummary.tsx#render@18:7"
@@ -9093,6 +9854,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9148,6 +9913,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9206,6 +9975,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/components/CartSummary.tsx#call@12:5"
@@ -9248,6 +10022,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9305,6 +10083,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9345,6 +10127,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9419,6 +10205,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/components/CartSummary.tsx#function@8:30"
@@ -9452,6 +10242,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "state"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9517,6 +10311,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/components/CartSummary.tsx#render-event@23:17"
@@ -9550,6 +10348,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9597,6 +10399,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9645,6 +10451,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9680,6 +10490,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9711,6 +10525,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9776,6 +10594,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9825,6 +10647,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9855,6 +10681,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9905,6 +10735,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9970,6 +10804,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10000,6 +10838,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10049,6 +10891,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10096,6 +10942,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10143,6 +10993,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10173,6 +11027,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10203,6 +11061,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10240,6 +11102,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.tsx#render@12:32"
@@ -10275,6 +11143,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/index.tsx#condition@7:3",
@@ -10318,6 +11191,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10375,6 +11252,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10415,6 +11296,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10489,6 +11374,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/index.tsx#function@6:30"
@@ -10523,6 +11412,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10577,6 +11470,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10608,6 +11505,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10640,6 +11541,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10674,6 +11579,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10707,6 +11616,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10739,6 +11652,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10794,6 +11711,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10825,6 +11746,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/cart/index.tsx#render@12:11"
@@ -10858,6 +11783,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10943,6 +11872,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10989,6 +11922,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11019,6 +11956,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11049,6 +11990,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11086,6 +12031,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11135,6 +12086,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
@@ -11175,6 +12130,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
@@ -11217,6 +12177,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11274,6 +12238,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11314,6 +12282,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11388,6 +12360,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#function@6:32"
@@ -11422,6 +12398,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11455,6 +12435,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11504,6 +12488,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11534,6 +12522,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11596,6 +12588,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11626,6 +12622,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11656,6 +12656,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11692,6 +12696,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11741,6 +12749,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/catalog/components/ProductCard.tsx#render@8:7",
@@ -11783,6 +12795,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11819,6 +12835,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11850,6 +12870,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11924,6 +12948,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11977,6 +13005,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12046,6 +13078,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12108,6 +13144,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12138,6 +13178,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12176,6 +13220,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.tsx#render@11:31"
@@ -12209,6 +13257,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12261,6 +13313,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12315,6 +13371,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12346,6 +13406,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12378,6 +13442,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12432,6 +13500,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12463,6 +13535,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12495,6 +13571,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12528,6 +13608,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12560,6 +13644,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12616,6 +13704,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12647,6 +13739,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/routes/catalog/index.tsx#render@11:9",
@@ -12683,6 +13779,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12736,6 +13836,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12798,6 +13902,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12828,6 +13936,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12858,6 +13970,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12888,6 +14004,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12924,6 +14044,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.tsx#render@9:14"
@@ -12957,6 +14081,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13008,6 +14136,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13042,6 +14174,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13100,6 +14236,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13131,6 +14271,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13188,6 +14332,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13245,6 +14393,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13294,6 +14446,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13341,6 +14497,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13396,6 +14556,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13427,6 +14591,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13475,6 +14643,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13505,6 +14677,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13536,6 +14712,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13606,6 +14786,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "store",
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/CartBadge.tsx#component-effect@5:21",
@@ -13665,6 +14851,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "store",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13739,6 +14930,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "store",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13783,6 +14979,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "store",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13814,6 +15015,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/stores/cart-store.ts#effect@14:5",
@@ -13849,6 +15054,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "store"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13891,6 +15100,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "store",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13930,6 +15144,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/stores/cart-store.ts#property@14:49"
@@ -13964,6 +15182,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14013,6 +15235,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -14046,6 +15272,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -14077,6 +15307,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/stores/cart-store.ts#property@14:23"
@@ -14113,6 +15347,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14166,6 +15404,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14214,6 +15456,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -14248,6 +15494,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "store",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -14287,6 +15538,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/stores/cart-store.ts#function@17:49"
@@ -14321,6 +15576,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14370,6 +15629,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -14403,6 +15666,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -14434,6 +15701,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/stores/cart-store.ts#property@17:23"
@@ -14469,6 +15740,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14524,6 +15799,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14594,6 +15873,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/stores/cart-store.ts#function@17:49"
@@ -14629,6 +15912,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "store"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -14670,6 +15957,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14717,6 +16008,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -14753,6 +16048,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "store"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14819,6 +16118,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14868,6 +16171,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -14901,6 +16208,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14970,6 +16281,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/stores/cart-store.ts#function@25:29"
@@ -15003,6 +16318,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/stores/cart-store.ts#function@25:29"
@@ -15041,6 +16360,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "store"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -15107,6 +16430,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -15156,6 +16483,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -15189,6 +16520,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -15280,6 +16615,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/stores/cart-store.ts#function@29:29"
@@ -15313,6 +16652,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/stores/cart-store.ts#function@29:29"
@@ -15348,6 +16691,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/products.ts#function@4:1",
@@ -15387,6 +16734,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -15462,6 +16813,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -15477,10 +16834,12 @@
       "src/router.tsx#deleted@2:1"
     ],
     "diffContains": [
+      "ui",
       "effect",
       "logic"
     ],
     "chainContains": [
+      "ui",
       "effect",
       "logic"
     ],

@@ -1,15 +1,16 @@
 import type { ImportGraphFile } from "@/import-graph"
-import { isIgnoredFile } from "./ignored-files"
 
 type FileGroup = readonly ImportGraphFile[]
 
-const withoutIgnored = (cluster: FileGroup): ImportGraphFile[] =>
+export type IsLeftOut = (filePath: string) => boolean
+
+const withoutLeftOut = (cluster: FileGroup, isLeftOut: IsLeftOut): ImportGraphFile[] =>
   cluster
-    .filter((file) => !isIgnoredFile(file.filePath))
+    .filter((file) => !isLeftOut(file.filePath))
     .map((file) => ({
       ...file,
-      importedBy: file.importedBy.filter((filePath) => !isIgnoredFile(filePath)),
-      importsTo: file.importsTo.filter((filePath) => !isIgnoredFile(filePath)),
+      importedBy: file.importedBy.filter((filePath) => !isLeftOut(filePath)),
+      importsTo: file.importsTo.filter((filePath) => !isLeftOut(filePath)),
     }))
 
 const addConnected = (groups: readonly FileGroup[], file: ImportGraphFile): readonly FileGroup[] => {
@@ -23,8 +24,8 @@ const hasChange = (group: FileGroup): boolean => group.some((file) => file.diffT
 
 const byPath = (one: ImportGraphFile, two: ImportGraphFile): number => (one.filePath < two.filePath ? -1 : Number(one.filePath > two.filePath))
 
-export const splitIntoGroups = (cluster: FileGroup): ImportGraphFile[][] =>
-  withoutIgnored(cluster)
+export const splitIntoGroups = (cluster: FileGroup, isLeftOut: IsLeftOut): ImportGraphFile[][] =>
+  withoutLeftOut(cluster, isLeftOut)
     .reduce(addConnected, [])
     .filter(hasChange)
     .map((group) => [...group].sort(byPath))

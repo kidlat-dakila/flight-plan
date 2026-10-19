@@ -1,4 +1,5 @@
 import type { CatalogueLibrary } from "@/catalogue/types"
+import { anthropicLibrary, huggingfaceJsLibrary, langchainJsLibrary, openaiLibrary, vercelAiSdkLibrary } from "./javascript/ai"
 import {
   authkitLibrary,
   betterAuthLibrary,
@@ -33,6 +34,8 @@ import {
   lruCacheLibrary,
   unstorageLibrary,
 } from "./javascript/caching"
+import { commanderJsLibrary, gluegunLibrary, meowLibrary, oclifLibrary, yargsLibrary } from "./javascript/cli"
+import { awsSdkS3Library, firebaseLibrary, googleCloudStorageLibrary, nhostLibrary, supabaseLibrary } from "./javascript/cloud"
 import {
   arkenvLibrary,
   c12Library,
@@ -56,6 +59,7 @@ import {
   tanstackQueryLibrary,
   urqlLibrary,
 } from "./javascript/data-fetching"
+import { awilixLibrary, injectionJsLibrary, inversifyLibrary, tsyringeLibrary, typediLibrary } from "./javascript/dependency-injection"
 import {
   alienSignalsLibrary,
   reatomLibrary,
@@ -63,6 +67,9 @@ import {
   rxjsLibrary,
   signalsLibrary,
 } from "./javascript/derived-state"
+import { discordJsLibrary, emailSdkLibrary, nodemailerLibrary, plunkLibrary, upyoLibrary } from "./javascript/email-and-messaging"
+import { betterResultLibrary, neverThrowLibrary, opossumLibrary, reactErrorBoundaryLibrary, trueMythLibrary } from "./javascript/error-handling"
+import { emitteryLibrary, eventemitter2Library, eventemitter3Library, mittLibrary, nanoEventsLibrary } from "./javascript/event-emitters"
 import {
   flagsmithLibrary,
   growthbookLibrary,
@@ -75,6 +82,7 @@ import {
   unleashLibrary,
   vercelFlagsLibrary,
 } from "./javascript/feature-flags"
+import { archiverLibrary, chokidarLibrary, fsExtraLibrary, globLibrary, multerLibrary } from "./javascript/file-io"
 import {
   autoformLibrary,
   conformLibrary,
@@ -124,18 +132,9 @@ import {
   wretchLibrary,
   xiorLibrary,
 } from "./javascript/http-clients"
-import {
-  agendaLibrary,
-  breeLibrary,
-  commanderJsLibrary,
-  cronScheduleLibrary,
-  cronerLibrary,
-  motiaLibrary,
-  oclifLibrary,
-  triggerDevLibrary,
-  workflowLibrary,
-  yargsLibrary,
-} from "./javascript/jobs"
+import { i18nextLibrary, linguiLibrary, nextIntlLibrary, reactIntlLibrary, vueI18nLibrary } from "./javascript/i18n"
+import { devContainerLibrary, dockerComposeLibrary, helmLibrary, kustomizeLibrary } from "./javascript/infrastructure"
+import { agendaLibrary, breeLibrary, cronScheduleLibrary, cronerLibrary, motiaLibrary, triggerDevLibrary, workflowLibrary } from "./javascript/jobs"
 import {
   analyticsLibrary,
   consolaLibrary,
@@ -160,18 +159,9 @@ import {
   typegooseLibrary,
   typeormLibrary,
 } from "./javascript/orm"
-import {
-  absurdLibrary,
-  beeQueueLibrary,
-  bullLibrary,
-  bullmqLibrary,
-  groupmqLibrary,
-  inngestLibrary,
-  mqttJsLibrary,
-  pgBossLibrary,
-  sidequestLibrary,
-  socketIoLibrary,
-} from "./javascript/queues"
+import { adyenLibrary, paypalLibrary, razorpayLibrary, squareLibrary, stripeLibrary } from "./javascript/payments"
+import { execaLibrary, piscinaLibrary, tinypoolLibrary, workerpoolLibrary, zxLibrary } from "./javascript/processes"
+import { absurdLibrary, beeQueueLibrary, bullLibrary, bullmqLibrary, groupmqLibrary, inngestLibrary, mqttJsLibrary, pgBossLibrary, sidequestLibrary } from "./javascript/queues"
 import {
   alasqlLibrary,
   betterSqlite3Library,
@@ -184,6 +174,7 @@ import {
   slonikLibrary,
   sqlJsLibrary,
 } from "./javascript/raw-sql"
+import { colyseusLibrary, partyKitLibrary, socketIoLibrary, uWebSocketsLibrary, wsLibrary } from "./javascript/realtime"
 import {
   naviLibrary,
   nuqsLibrary,
@@ -196,28 +187,12 @@ import {
   vueRouterLibrary,
   wouterLibrary,
 } from "./javascript/routing"
-import {
-  effectorLibrary,
-  jotaiLibrary,
-  mobxLibrary,
-  nanostoresLibrary,
-  tinybaseLibrary,
-  valtioLibrary,
-  xstateLibrary,
-} from "./javascript/state"
-import { javascriptTestFilesLibrary } from "./javascript/testing"
-import {
-  discordJsLibrary,
-  emailSdkLibrary,
-  huggingfaceJsLibrary,
-  nhostLibrary,
-  nodemailerLibrary,
-  octokitLibrary,
-  plunkLibrary,
-  supabaseLibrary,
-  upyoLibrary,
-  youtubeJsLibrary,
-} from "./javascript/third-party-services"
+import { connectRpcLibrary, grpcForNodeJsLibrary, jaysonLibrary, jsonRpc2Library } from "./javascript/rpc"
+import { bcryptJsLibrary, cryptoJsLibrary, expressRateLimitLibrary, forgeLibrary, helmetLibrary } from "./javascript/security"
+import { jotaiLibrary, tinybaseLibrary } from "./javascript/state"
+import { emotionLibrary, linariaLibrary, styledComponentsLibrary, stylexLibrary, vanillaExtractLibrary } from "./javascript/styling"
+import { cypressLibrary, jestLibrary, playwrightLibrary, storybookLibrary, vitestLibrary } from "./javascript/testing"
+import { octokitLibrary, youtubeJsLibrary } from "./javascript/third-party-services"
 import {
   ajvLibrary,
   arktypeLibrary,
@@ -230,6 +205,8 @@ import {
   vinejsLibrary,
   zodLibrary,
 } from "./javascript/validation"
+import { discordInteractionsLibrary, octokitWebhooksLibrary, octokitWebhooksMethodsLibrary, standardWebhooksLibrary, svixLibrary } from "./javascript/webhooks"
+import { anthropicPythonLibrary, googleGenAiLibrary, langchainLibrary, openaiPythonLibrary, transformersLibrary } from "./python/ai"
 import {
   authlibLibrary,
   djangoAllauthLibrary,
@@ -252,12 +229,19 @@ import {
   pylibmcLibrary,
   redisPyLibrary,
 } from "./python/caching"
+import { cementLibrary, clickLibrary, cliffLibrary, docoptLibrary, pythonFireLibrary } from "./python/cli"
+import { apacheLibcloudLibrary, azureStorageBlobLibrary, boto3Library, googleApiPythonClientLibrary, googleCloudStoragePythonLibrary } from "./python/cloud"
 import {
   configobjLibrary,
+  dynaconfLibrary,
   hydraLibrary,
-  profigLibrary,
   pythonDecoupleLibrary,
+  pythonDotenvLibrary,
 } from "./python/config"
+import { dependencyInjectorLibrary, dishkaLibrary, injectorLibrary, pythonInjectLibrary, svcsLibrary } from "./python/dependency-injection"
+import { flankerLibrary, imboxLibrary, slackSdkLibrary, twilioLibrary, yagmailLibrary } from "./python/email-and-messaging"
+import { backoffLibrary, pyBreakerLibrary, retryLibrary, returnsLibrary, tenacityLibrary } from "./python/error-handling"
+import { blinkerLibrary, observableLibrary, pyDispatcherLibrary, pyeeLibrary, zopeEventLibrary } from "./python/event-emitters"
 import {
   configcatLibrary,
   djangoWaffleLibrary,
@@ -270,6 +254,8 @@ import {
   statsigPythonLibrary,
   unleashPythonLibrary,
 } from "./python/feature-flags"
+import { pathLibrary, pyFilesystemLibrary, pythonMagicLibrary, unipathLibrary, watchdogLibrary } from "./python/file-io"
+import { deformLibrary, djangoCrispyFormsLibrary, djangoFormtoolsLibrary, flaskWtfLibrary, wtformsLibrary } from "./python/forms"
 import {
   djangoRestFrameworkLibrary,
   djangoTastypieLibrary,
@@ -302,24 +288,16 @@ import {
   treqLibrary,
   urllib3Library,
 } from "./python/http-clients"
-import {
-  airflowLibrary,
-  apschedulerLibrary,
-  cementLibrary,
-  clickLibrary,
-  cliffLibrary,
-  joblibLibrary,
-  planLibrary,
-  scheduleLibrary,
-  spiffworkflowLibrary,
-  taskflowLibrary,
-} from "./python/jobs"
+import { babelLibrary, fastapiBabelLibrary, flaskBabelLibrary, fluentRuntimeLibrary, pythonI18nLibrary } from "./python/i18n"
+import { airflowLibrary, apschedulerLibrary, joblibLibrary, planLibrary, scheduleLibrary, spiffworkflowLibrary, taskflowLibrary } from "./python/jobs"
 import {
   logbookLibrary,
   loguruLibrary,
+  opentelemetryPythonLibrary,
   sentryPythonLibrary,
   structlogLibrary,
 } from "./python/logging"
+import { alembicLibrary } from "./python/migrations"
 import {
   datasetLibrary,
   djangoModelsLibrary,
@@ -332,16 +310,9 @@ import {
   pydalLibrary,
   sqlalchemyLibrary,
 } from "./python/orm"
-import {
-  autobahnLibrary,
-  celeryLibrary,
-  channelsLibrary,
-  hueyLibrary,
-  kafkaPythonLibrary,
-  mrqLibrary,
-  rqLibrary,
-  websocketsLibrary,
-} from "./python/queues"
+import { adyenPythonLibrary, braintreeLibrary, razorpayPythonLibrary, squarePythonLibrary, stripePythonLibrary } from "./python/payments"
+import { delegatorPyLibrary, pexpectLibrary, plumbumLibrary, sargeLibrary, shLibrary } from "./python/processes"
+import { celeryLibrary, hueyLibrary, kafkaPythonLibrary, mrqLibrary, rqLibrary } from "./python/queues"
 import {
   cassandraDriverLibrary,
   happybaseLibrary,
@@ -354,19 +325,11 @@ import {
   queriesLibrary,
   supersqliteLibrary,
 } from "./python/raw-sql"
-import { pythonTestFilesLibrary } from "./python/testing"
-import {
-  apacheLibcloudLibrary,
-  boto3Library,
-  djangoWordpressLibrary,
-  facebookSdkLibrary,
-  flankerLibrary,
-  googleApiPythonClientLibrary,
-  gspreadLibrary,
-  imboxLibrary,
-  twythonLibrary,
-  yagmailLibrary,
-} from "./python/third-party-services"
+import { autobahnLibrary, channelsLibrary, pythonSocketioLibrary, sseStarletteLibrary, websocketsLibrary } from "./python/realtime"
+import { apacheThriftLibrary, grpcForPythonLibrary, rpycLibrary, thriftpy2Library, zerorpcLibrary } from "./python/rpc"
+import { bcryptLibrary, cryptographyLibrary, itsdangerousLibrary, passlibLibrary, pynaclLibrary } from "./python/security"
+import { pytestLibrary } from "./python/testing"
+import { djangoWordpressLibrary, facebookSdkLibrary, gspreadLibrary, twythonLibrary } from "./python/third-party-services"
 import {
   cerberusLibrary,
   colanderLibrary,
@@ -376,10 +339,50 @@ import {
   valideerLibrary,
   voluptuousLibrary,
 } from "./python/validation"
+import { discordInteractionsForPythonLibrary, gidgethubLibrary, slackeventsapiLibrary, standardWebhooksForPythonLibrary, svixForPythonLibrary } from "./python/webhooks"
 
 export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
-  javascriptTestFilesLibrary,
-  pythonTestFilesLibrary,
+  i18nextLibrary,
+  linguiLibrary,
+  nextIntlLibrary,
+  reactIntlLibrary,
+  vueI18nLibrary,
+  babelLibrary,
+  fastapiBabelLibrary,
+  flaskBabelLibrary,
+  fluentRuntimeLibrary,
+  pythonI18nLibrary,
+  vitestLibrary,
+  jestLibrary,
+  playwrightLibrary,
+  cypressLibrary,
+  storybookLibrary,
+  dockerComposeLibrary,
+  devContainerLibrary,
+  helmLibrary,
+  kustomizeLibrary,
+  pytestLibrary,
+  alembicLibrary,
+  reactErrorBoundaryLibrary,
+  neverThrowLibrary,
+  betterResultLibrary,
+  opossumLibrary,
+  trueMythLibrary,
+  returnsLibrary,
+  tenacityLibrary,
+  backoffLibrary,
+  pyBreakerLibrary,
+  retryLibrary,
+  mittLibrary,
+  eventemitter3Library,
+  emitteryLibrary,
+  nanoEventsLibrary,
+  eventemitter2Library,
+  blinkerLibrary,
+  pyeeLibrary,
+  zopeEventLibrary,
+  pyDispatcherLibrary,
+  observableLibrary,
   absurdLibrary,
   adonisLibrary,
   agendaLibrary,
@@ -401,7 +404,10 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   authlibLibrary,
   autobahnLibrary,
   autoformLibrary,
+  awilixLibrary,
+  awsSdkS3Library,
   axiosLibrary,
+  azureStorageBlobLibrary,
   beakerLibrary,
   beeQueueLibrary,
   bentocacheLibrary,
@@ -425,6 +431,7 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   clickLibrary,
   cliffLibrary,
   colanderLibrary,
+  colyseusLibrary,
   commanderJsLibrary,
   configcatLibrary,
   configobjLibrary,
@@ -435,12 +442,17 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   cronerLibrary,
   datasetLibrary,
   debugLibrary,
+  deformLibrary,
+  dependencyInjectorLibrary,
   dexieJsLibrary,
   discordJsLibrary,
+  dishkaLibrary,
   diskcacheLibrary,
   djangoAllauthLibrary,
   djangoCacheMachineLibrary,
   djangoCacheopsLibrary,
+  djangoCrispyFormsLibrary,
+  djangoFormtoolsLibrary,
   djangoGuardianLibrary,
   djangoModelsLibrary,
   djangoOauthToolkitLibrary,
@@ -448,30 +460,37 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   djangoTastypieLibrary,
   djangoWaffleLibrary,
   djangoWordpressLibrary,
+  docoptLibrary,
   dogpileCacheLibrary,
   dotenvLibrary,
   dotenvFlowLibrary,
   dotenvxLibrary,
   drizzleOrmLibrary,
   duckdbWasmLibrary,
-  effectorLibrary,
+  dynaconfLibrary,
   elysiaLibrary,
   emailSdkLibrary,
+  emotionLibrary,
   envalidLibrary,
   eveLibrary,
   expressZodApiLibrary,
   facebookSdkLibrary,
   fateLibrary,
+  firebaseLibrary,
   flagsmithLibrary,
   flagsmithPythonLibrary,
   flankerLibrary,
   flaskApiLibrary,
   flaskGraphqlLibrary,
   flaskRestfulLibrary,
+  flaskWtfLibrary,
   formCreateLibrary,
   formischLibrary,
   formkitLibrary,
+  gluegunLibrary,
   googleApiPythonClientLibrary,
+  googleCloudStorageLibrary,
+  googleCloudStoragePythonLibrary,
   gotLibrary,
   gqlLibrary,
   graffleLibrary,
@@ -500,7 +519,10 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   idbKeyvalLibrary,
   imboxLibrary,
   immortaldbLibrary,
+  injectionJsLibrary,
+  injectorLibrary,
   inngestLibrary,
+  inversifyLibrary,
   joblibLibrary,
   joseLibrary,
   jotaiLibrary,
@@ -514,6 +536,7 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   kyselyLibrary,
   launchdarklyLibrary,
   launchdarklyPythonLibrary,
+  linariaLibrary,
   localforageLibrary,
   logbookLibrary,
   loglayerLibrary,
@@ -523,9 +546,9 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   lruCacheLibrary,
   luciaLibrary,
   masoniteLibrary,
+  meowLibrary,
   mercuriusLibrary,
   mikroormLibrary,
-  mobxLibrary,
   moleculerLibrary,
   mongoengineLibrary,
   mongooseLibrary,
@@ -535,7 +558,6 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   mrqLibrary,
   msalJsLibrary,
   mysqlclientLibrary,
-  nanostoresLibrary,
   naviLibrary,
   nconfLibrary,
   nextauthJsLibrary,
@@ -553,6 +575,7 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   oidcProviderLibrary,
   openfeatureLibrary,
   openfeaturePythonLibrary,
+  opentelemetryPythonLibrary,
   optimizelyLibrary,
   optimizelyPythonLibrary,
   orangeOrmLibrary,
@@ -560,6 +583,7 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   ormLibrary,
   orpcLibrary,
   pageJsLibrary,
+  partyKitLibrary,
   peeweeLibrary,
   pgBossLibrary,
   pgliteLibrary,
@@ -573,7 +597,6 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   posthogPythonLibrary,
   pothosLibrary,
   prismaLibrary,
-  profigLibrary,
   psycopg2Library,
   py2neoLibrary,
   pydalLibrary,
@@ -584,10 +607,14 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   pymysqlLibrary,
   pyramidLibrary,
   pythonDecoupleLibrary,
+  pythonDotenvLibrary,
+  pythonFireLibrary,
+  pythonInjectLibrary,
   pythonJoseLibrary,
   pythonJwtLibrary,
   pythonOauth2Library,
   pythonSocialAuthLibrary,
+  pythonSocketioLibrary,
   queriesLibrary,
   reachRouterLibrary,
   reactLibrary,
@@ -606,6 +633,15 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   reselectLibrary,
   router5Library,
   rqLibrary,
+  grpcForNodeJsLibrary,
+  jsonRpc2Library,
+  connectRpcLibrary,
+  jaysonLibrary,
+  zerorpcLibrary,
+  rpycLibrary,
+  grpcForPythonLibrary,
+  apacheThriftLibrary,
+  thriftpy2Library,
   rxdbLibrary,
   rxjsLibrary,
   scheduleLibrary,
@@ -617,21 +653,26 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   sidequestLibrary,
   signaleLibrary,
   signalsLibrary,
+  slackSdkLibrary,
   slonikLibrary,
   socketIoLibrary,
   spiffworkflowLibrary,
   splitLibrary,
   sqlJsLibrary,
   sqlalchemyLibrary,
+  sseStarletteLibrary,
   stackAuthLibrary,
   statsigLibrary,
   statsigPythonLibrary,
   storeJsLibrary,
   strawberryLibrary,
   structlogLibrary,
+  styledComponentsLibrary,
+  stylexLibrary,
   supabaseLibrary,
   supersqliteLibrary,
   suryLibrary,
+  svcsLibrary,
   swrLibrary,
   t3EnvLibrary,
   tanstackFormLibrary,
@@ -646,8 +687,11 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   treqLibrary,
   triggerDevLibrary,
   tslogLibrary,
+  tsyringeLibrary,
+  twilioLibrary,
   twythonLibrary,
   typeboxLibrary,
+  typediLibrary,
   typegooseLibrary,
   typegraphqlLibrary,
   typeormLibrary,
@@ -660,10 +704,11 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   upyoLibrary,
   urllib3Library,
   urqlLibrary,
+  uWebSocketsLibrary,
   valibotLibrary,
   validatorLibrary,
   valideerLibrary,
-  valtioLibrary,
+  vanillaExtractLibrary,
   veevalidateLibrary,
   vercelFlagsLibrary,
   vinejsLibrary,
@@ -673,12 +718,23 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   vueformLibrary,
   watermelondbLibrary,
   websocketsLibrary,
+  discordInteractionsLibrary,
+  octokitWebhooksLibrary,
+  octokitWebhooksMethodsLibrary,
+  standardWebhooksLibrary,
+  svixLibrary,
+  discordInteractionsForPythonLibrary,
+  gidgethubLibrary,
+  slackeventsapiLibrary,
+  standardWebhooksForPythonLibrary,
+  svixForPythonLibrary,
   winstonLibrary,
   workflowLibrary,
   wouterLibrary,
   wretchLibrary,
+  wsLibrary,
+  wtformsLibrary,
   xiorLibrary,
-  xstateLibrary,
   yagmailLibrary,
   yargsLibrary,
   youtubeJsLibrary,
@@ -687,4 +743,53 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   koaRouterLibrary,
   falconLibrary,
   sanicLibrary,
+  helmetLibrary,
+  forgeLibrary,
+  cryptoJsLibrary,
+  expressRateLimitLibrary,
+  bcryptJsLibrary,
+  cryptographyLibrary,
+  passlibLibrary,
+  pynaclLibrary,
+  itsdangerousLibrary,
+  bcryptLibrary,
+  globLibrary,
+  fsExtraLibrary,
+  multerLibrary,
+  chokidarLibrary,
+  archiverLibrary,
+  pathLibrary,
+  pyFilesystemLibrary,
+  pythonMagicLibrary,
+  unipathLibrary,
+  watchdogLibrary,
+  zxLibrary,
+  execaLibrary,
+  piscinaLibrary,
+  workerpoolLibrary,
+  tinypoolLibrary,
+  delegatorPyLibrary,
+  sargeLibrary,
+  shLibrary,
+  pexpectLibrary,
+  plumbumLibrary,
+  stripeLibrary,
+  razorpayLibrary,
+  squareLibrary,
+  adyenLibrary,
+  paypalLibrary,
+  stripePythonLibrary,
+  braintreeLibrary,
+  adyenPythonLibrary,
+  razorpayPythonLibrary,
+  squarePythonLibrary,
+  vercelAiSdkLibrary,
+  langchainJsLibrary,
+  anthropicLibrary,
+  openaiLibrary,
+  openaiPythonLibrary,
+  langchainLibrary,
+  anthropicPythonLibrary,
+  googleGenAiLibrary,
+  transformersLibrary,
 ]

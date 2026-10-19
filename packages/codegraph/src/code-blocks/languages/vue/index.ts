@@ -147,7 +147,7 @@ const withEventsEmitted = (declared: ComponentArguments, emitting: readonly Emit
 const readComponent = (component: Component, source: VueSource, findExport: FindExport, findBinding: FindExportedBinding, findHanded: FindHandedExport): ScriptReading => {
   const { block, script, template, parsed, members, props, events, optionsScript } = component
   const { filePath } = source
-  const body = script === null ? { filePath, blocks: [], uses: [] } : readScript(script, findExport, findBinding, findHanded)
+  const body = script === null ? { filePath, blocks: [], uses: [], libraryUses: [] } : readScript(script, findExport, findBinding, findHanded)
   const declared = script === null ? { ...NO_ARGUMENTS, keys: [...props, ...events].map(keyOfProp) } : readComponentArguments(script.grammar, script.outline.tree)
   const markup = template === null || parsed === null ? null : readTemplateUses({ parsed, template, script: script?.outline ?? null, props: declared.keys, members })
   const emitting = emittingTreesOf(script, markup, optionsScript, declared)
@@ -162,6 +162,7 @@ const readComponent = (component: Component, source: VueSource, findExport: Find
       ...(template === null ? [] : readTemplateBlocks(template, filePath, block.id)),
     ],
     uses: [...throughArguments(written, taken), ...emitting.flatMap((tree) => listEmittedUses(tree, taken))],
+    libraryUses: body.libraryUses,
   }
 }
 
@@ -178,13 +179,14 @@ export const outlineVue = (source: VueSource): OutlinedFile => {
     exports: exportsWith(component, script, setup?.outline ?? null),
     read: (findExport, findBinding, findHanded = findNothingHanded) => {
       const readSyntax = (): FileSyntax => readVueSyntax(file.parsed, source.importedFilePaths)
-      const written: ScriptReading = script?.read(findExport, findBinding, findHanded) ?? { filePath: source.filePath, blocks: [], uses: [] }
-      if (component === null) return { filePath: source.filePath, blocks: written.blocks, uses: written.uses, readSyntax }
+      const written: ScriptReading = script?.read(findExport, findBinding, findHanded) ?? { filePath: source.filePath, blocks: [], uses: [], libraryUses: [] }
+      if (component === null) return { filePath: source.filePath, blocks: written.blocks, uses: written.uses, libraryUses: written.libraryUses, readSyntax }
       const read = readComponent(component, source, findExport, findBinding, findHanded)
       return {
         filePath: source.filePath,
         blocks: [...read.blocks, ...withMembersDeclared(written.blocks, component.members)],
         uses: [...read.uses, ...written.uses, ...component.receiverUses],
+        libraryUses: [...read.libraryUses, ...written.libraryUses],
         readSyntax,
       }
     },

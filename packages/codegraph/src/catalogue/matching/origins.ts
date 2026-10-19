@@ -45,7 +45,7 @@ const DEEPEST_ORIGIN = 24
 const START_DEPTH = 0
 const RUNNING_IN_PLACE = "in-place"
 const CALLED_KINDS: ReadonlySet<MethodPattern["kind"]> = new Set<MethodPattern["kind"]>(["call"])
-const NAMED_KINDS: ReadonlySet<CataloguePattern["kind"]> = new Set<CataloguePattern["kind"]>(["call", "factory", "decorator", "element", "class"])
+const NAMED_KINDS: ReadonlySet<CataloguePattern["kind"]> = new Set<CataloguePattern["kind"]>(["call", "factory", "decorator", "element", "class", "assignment"])
 
 type NamedPattern = MethodPattern | ClassPattern
 
@@ -83,8 +83,14 @@ const deeperModules = (specifier: string, path: readonly string[]): ExportedName
 const exportedNamesOf = ({ specifier, paths }: ExportOrigin): ExportedName[] =>
   paths.flatMap((path) => [...(path.length === 0 ? [] : [{ specifier, name: path.join(MEMBER_SEPARATOR) }]), ...deeperModules(specifier, path)])
 
+const fitsExportName = (wanted: string, written: string): boolean => {
+  const wantedSegments = wanted.split(MEMBER_SEPARATOR)
+  const writtenSegments = written.split(MEMBER_SEPARATOR)
+  return wantedSegments.length === writtenSegments.length && wantedSegments.every((segment, index) => fitsSegment(segment, writtenSegments[index]))
+}
+
 const isExportedAs = (pattern: NamedPattern, { specifier, name }: ExportedName): boolean =>
-  pattern.name === name && (pattern.from === undefined || pattern.from === specifier)
+  fitsExportName(pattern.name, name) && (pattern.from === undefined || pattern.from === specifier)
 
 export const listExportedPatterns = (origin: ExportOrigin, context: OriginContext): ExportedPattern[] =>
   exportedNamesOf(origin).flatMap((exported) =>
@@ -148,12 +154,19 @@ const withMember = (origin: Origin | null, property: string): Origin | null => {
   return { ...origin, paths: origin.paths.map((path) => [...path, property]) }
 }
 
+const isDefaultPath = (path: readonly string[]): boolean => path.length === 1 && path[0] === DEFAULT_EXPORT
+
+export const asWholeModuleDefault = (origin: ExportOrigin): ExportOrigin => {
+  const isWholeModule = origin.paths.some((path) => path.length === 0) && !origin.paths.some(isDefaultPath)
+  return isWholeModule ? { ...origin, paths: [...origin.paths, [DEFAULT_EXPORT]] } : origin
+}
+
 function originOfClass(declaration: SyntaxNode, context: OriginContext, depth: number): Origin | null {
   return (
     context.reader
       .basesOf(declaration)
       .map((base) => originAt(base, context, depth))
-      .map((origin) => (origin?.kind === "export" ? madeByExport(origin, "class", context) : origin))
+      .map((origin) => (origin?.kind === "export" ? madeByExport(asWholeModuleDefault(origin), "class", context) : origin))
       .find((origin) => origin !== null) ?? null
   )
 }
@@ -220,8 +233,6 @@ function originOfBinding(binding: Binding, context: OriginContext, depth: number
 const withWrittenPrefix = (made: Origin | null, call: SyntaxNode, { reader }: OriginContext): Origin | null =>
   made?.kind === "made" && made.memberPath.length === 0 ? { ...made, prefix: joinPrefixes(made.prefix, prefixWrittenAt(made.prefixAt, call, reader)), prefixAt: null } : made
 
-const isDefaultPath = (path: readonly string[]): boolean => path.length === 1 && path[0] === DEFAULT_EXPORT
-
 const asDefaultExport = (origin: ExportOrigin): ExportOrigin | null =>
   origin.paths.some((path) => path.length === 0) && !origin.paths.some(isDefaultPath) ? { ...origin, paths: [[DEFAULT_EXPORT]] } : null
 
@@ -230,11 +241,20 @@ const madeByCallingExport = (origin: ExportOrigin, context: OriginContext): Orig
   return madeByExport(origin, "factory", context) ?? (asDefault === null ? null : madeByExport(asDefault, "factory", context)) ?? receiverOf(origin)
 }
 
+const returnedPlaceOf = (origin: Origin, context: OriginContext): SlotPosition | null => {
+  const patterns = origin.kind === "made" ? listMethods(origin, CALLED_KINDS) : listExportedPatterns(origin, context).map(({ pattern }) => pattern)
+  const passing = patterns.find((pattern): pattern is CallPattern => pattern.kind === "call" && pattern.returnsAt !== undefined)
+  return passing?.returnsAt ?? null
+}
+
 function originOfCall(call: SyntaxNode, callee: SyntaxNode, context: OriginContext, depth: number): Origin | null {
   const required = context.reader.requiredSpecifierOf(call)
   if (required !== null) return { kind: "export", specifier: required, paths: [[]] }
   const origin = originAt(callee, context, depth)
   if (origin === null) return null
+  const returnedPlace = returnedPlaceOf(origin, context)
+  const returned = returnedPlace === null ? [] : nodesAt(returnedPlace, context.reader.passedTo(call), context.reader)
+  if (returned.length > 0) return originAt(returned[0], context, depth)
   const made = origin.kind === "made" ? madeByCalling(origin) : madeByCallingExport(origin, context)
   return withWrittenPrefix(made, call, context)
 }

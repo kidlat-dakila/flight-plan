@@ -14,6 +14,8 @@ const FLASK_LOCATION: SlotPosition = [0, "location"]
 
 const FLASK_PREFIX = "url_prefix"
 
+const FLASK_ERROR_HANDLER: SlotPosition = [1, "f"]
+
 const FLASK_SCAFFOLD_METHODS: readonly MethodPattern[] = [
   { kind: "decorator", name: "route", runs: "route", pathAt: FLASK_RULE, methodAt: METHODS },
   { kind: "decorator", name: "get", runs: "route", pathAt: FLASK_RULE, method: "GET" },
@@ -25,7 +27,8 @@ const FLASK_SCAFFOLD_METHODS: readonly MethodPattern[] = [
   { kind: "decorator", name: "before_request", runs: "middleware" },
   { kind: "decorator", name: "after_request", runs: "middleware" },
   { kind: "decorator", name: "teardown_request", runs: "event" },
-  { kind: "decorator", name: "errorhandler", runs: "event" },
+  { kind: "decorator", name: "errorhandler", runs: "event", classifies: "error-handling" },
+  { kind: "call", name: "register_error_handler", slots: [{ at: FLASK_ERROR_HANDLER, runs: "event" }], classifies: "error-handling" },
   { kind: "decorator", name: "command", runs: "command" },
   { kind: "call", name: "register_blueprint", slots: [], prefixAt: FLASK_PREFIX },
 ]
@@ -48,7 +51,7 @@ export const flaskLibrary: Library = {
   language: "python",
   readCards: readFlaskCards,
   patterns: [
-    { kind: "factory", name: "Flask", methods: FLASK_SCAFFOLD_METHODS },
+    { kind: "factory", name: "Flask", methods: [...FLASK_SCAFFOLD_METHODS, { kind: "call", name: "run", slots: [], classifies: "context-and-wiring" }] },
     {
       kind: "factory",
       name: "Blueprint",
@@ -57,9 +60,11 @@ export const flaskLibrary: Library = {
         ...FLASK_SCAFFOLD_METHODS,
         { kind: "decorator", name: "before_app_request", runs: "middleware" },
         { kind: "decorator", name: "after_app_request", runs: "middleware" },
-        { kind: "decorator", name: "app_errorhandler", runs: "event" },
+        { kind: "decorator", name: "app_errorhandler", runs: "event", classifies: "error-handling" },
       ],
     },
     { kind: "call", name: "redirect", slots: [], makes: "navigation", pathAt: FLASK_LOCATION },
+    { kind: "call", name: "render_template", slots: [], classifies: "page" },
+    { kind: "call", name: "render_template_string", slots: [], classifies: "page" },
   ],
 }

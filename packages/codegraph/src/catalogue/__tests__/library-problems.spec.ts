@@ -18,8 +18,34 @@ describe("listLibraryProblems", () => {
     expect(listLibraryProblems(libraryWith([route]))).toStrictEqual([])
   })
 
-  it("reports a library with no pattern", () => {
-    expect(listLibraryProblems(libraryWith([]))).toStrictEqual(["has no pattern"])
+  it("reports a library with no pattern and no location", () => {
+    expect(listLibraryProblems(libraryWith([]))).toStrictEqual(["has no pattern and no location"])
+  })
+
+  it("accepts a library with no pattern that says where a tool keeps its files", () => {
+    const runner: CatalogueLibrary = {
+      ...libraryWith([], "Vitest", ["vitest"]),
+      locations: [{ classification: "test", files: [{ glob: "vitest.config.*" }], keys: [{ key: "test.include", holds: "globs" }] }],
+    }
+
+    expect(listLibraryProblems(runner)).toStrictEqual([])
+  })
+
+  it("reports a location that reads no key and marks nothing, and one that gives way to a key it does not read", () => {
+    const runner: CatalogueLibrary = {
+      ...libraryWith([route]),
+      locations: [
+        { classification: "test", files: [{ glob: "jest.config.*" }], keys: [] },
+        { classification: "test", files: [{ glob: "jest.config.*" }], keys: [{ key: "testMatch", holds: "globs", unlessRead: "testRegex" }] },
+        { classification: "build-and-infrastructure", files: [], keys: [], marks: "folder" },
+      ],
+    }
+
+    expect(listLibraryProblems(runner)).toStrictEqual([
+      "location 0 of test reads no key and marks nothing",
+      "location 1 of test gives way to testRegex, which it does not read",
+      "location 2 of build-and-infrastructure marks a file and names none",
+    ])
   })
 
   it("reports a library with no category", () => {
@@ -177,9 +203,9 @@ describe("listLibraryProblems", () => {
     expect(listLibraryProblems(libraryWith([{ kind: "decorator", name: "lru_cache", makes: "cache" }]))).toStrictEqual([])
   })
 
-  it("reports a file pattern that names no export and is not ignored", () => {
+  it("reports a file pattern that names no export", () => {
     expect(listLibraryProblems(libraryWith([{ kind: "file", glob: "app/**/page.tsx", exports: [] }]))).toStrictEqual([
-      "file:app/**/page.tsx:* names no export and is not ignored",
+      "file:app/**/page.tsx:* names no export",
     ])
   })
 
@@ -188,17 +214,13 @@ describe("listLibraryProblems", () => {
       "file:app/**/route.ts:* exports the route GET with no method",
     ])
   })
-
-  it("accepts a file pattern of ignored files with no export", () => {
-    expect(listLibraryProblems(libraryWith([{ kind: "file", glob: "**/*.spec.ts", exports: [], isIgnored: true }]))).toStrictEqual([])
-  })
 })
 
 describe("listCatalogueProblems", () => {
   it("names the library each problem is in", () => {
     expect(listCatalogueProblems([libraryWith([]), libraryWith([], "Tests and stories", [])])).toStrictEqual([
-      "Express: has no pattern",
-      "Tests and stories: has no pattern",
+      "Express: has no pattern and no location",
+      "Tests and stories: has no pattern and no location",
     ])
   })
 
@@ -273,7 +295,7 @@ describe("listCatalogueProblems", () => {
 
   it("accepts several libraries of repository conventions", () => {
     const pages = libraryWith([{ kind: "file", glob: "app/**/page.tsx", exports: [{ name: "default", runs: "page" }] }], "File routes", [])
-    const tests = libraryWith([{ kind: "file", glob: "**/*.spec.ts", exports: [], isIgnored: true }], "Tests and stories", [])
+    const tests: CatalogueLibrary = { ...libraryWith([], "unittest", []), locations: [{ classification: "test", files: [], keys: [{ key: "pattern", holds: "names", default: ["test*.py"] }] }] }
 
     expect(listCatalogueProblems([pages, tests])).toStrictEqual([])
   })

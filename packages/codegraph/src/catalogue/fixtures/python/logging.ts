@@ -219,3 +219,49 @@ export const structlogFixtures: readonly PatternFixture[] = [
     ],
   },
 ]
+
+const OPENTELEMETRY_PYTHON = "opentelemetry-python"
+
+export const opentelemetryPythonFixtures: readonly PatternFixture[] = [
+  {
+    library: OPENTELEMETRY_PYTHON,
+    patternKey: "factory:get_tracer:*",
+    matches: [
+      "from opentelemetry import trace\n\ntracer = trace.get_tracer(__name__)",
+      "from opentelemetry.trace import get_tracer\n\ntracer = get_tracer(__name__)",
+    ],
+    rejects: [
+      "def get_tracer(*parts, **options):\n    return parts\n\ntracer = get_tracer(__name__)",
+    ],
+  },
+  {
+    library: OPENTELEMETRY_PYTHON,
+    patternKey: "factory:get_tracer:*>call:start_as_current_span:*",
+    matches: [
+      "from opentelemetry import trace\n\ntracer = trace.get_tracer(__name__)\n\nwith tracer.start_as_current_span(\"foo\"):\n    print(\"Hello world from OpenTelemetry Python!\")",
+    ],
+    rejects: [
+      "tracer = LocalRegistry()\n\nwith tracer.start_as_current_span(\"foo\"):\n    print(\"Hello world from OpenTelemetry Python!\")",
+    ],
+  },
+  {
+    library: OPENTELEMETRY_PYTHON,
+    patternKey: "factory:get_tracer:*>decorator:start_as_current_span:*",
+    matches: [
+      "from opentelemetry import trace\n\ntracer = trace.get_tracer(__name__)\n\n@tracer.start_as_current_span(\"do_work\")\ndef do_work():\n    print(\"doing some work...\")",
+    ],
+    rejects: [
+      "tracer = LocalRegistry()\n\n@tracer.start_as_current_span(\"do_work\")\ndef do_work():\n    print(\"doing some work...\")",
+    ],
+  },
+  {
+    library: OPENTELEMETRY_PYTHON,
+    patternKey: "call:set_tracer_provider:*",
+    matches: [
+      "from opentelemetry import trace\n\ntrace.set_tracer_provider(provider)",
+    ],
+    rejects: [
+      "trace = LocalRegistry()\n\ntrace.set_tracer_provider(provider)",
+    ],
+  },
+]

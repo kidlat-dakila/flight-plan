@@ -97,6 +97,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -130,6 +134,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/checkout/reserve.ts#function@8:1"
@@ -174,6 +182,10 @@
           "src/inventory/stock.ts#root-variable@2:1",
           "src/inventory/stock.ts#function@4:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -223,6 +235,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/checkout/reserve.ts#condition@9:3",
@@ -257,6 +273,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/checkout/reserve.ts#condition@9:3",
@@ -293,6 +313,10 @@
           "src/inventory/stock.ts#root-variable@2:1",
           "src/inventory/stock.ts#function@4:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -374,6 +398,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -422,6 +450,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -474,6 +506,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/inventory/stock.ts#function@4:1"
@@ -507,6 +543,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -538,6 +578,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -622,6 +666,12 @@
         "diffSourceIds": [
           "src/inventory/stock.ts#root-variable@2:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/inventory/stock.ts#function@4:1"
@@ -680,6 +730,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -755,6 +811,12 @@
         "diffSourceIds": [
           "src/inventory/stock.ts#root-variable@2:1",
           "src/inventory/stock.ts#function@4:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -856,6 +918,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/inventory/stock.ts#function@4:1"
@@ -916,6 +982,10 @@
           "src/inventory/stock.ts#root-variable@2:1",
           "src/inventory/stock.ts#function@4:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -999,6 +1069,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/inventory/stock.ts#function@8:1"
@@ -1037,6 +1111,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/inventory/stock.ts#function@8:1"

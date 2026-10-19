@@ -3,10 +3,11 @@ import { parseWithGrammar, type GrammarId } from "@/ast-graph/parser"
 import { matchSyntax } from "@/catalogue/matching/match-source"
 import { declaredBindingAt, pythonReaderOf, type FindImportedBinding } from "@/catalogue/matching/python-reader"
 import type { FindExportedBinding, SyntaxReader } from "@/catalogue/matching/syntax-reader"
+import { listLibraryUses } from "@/code-blocks/classifications"
 import { createFileNaming } from "@/code-blocks/languages/typescript/named-by"
 import { nodeAtRange } from "@/code-blocks/languages/typescript/syntax"
 import { LIBRARIES } from "@/code-blocks/libraries"
-import { nodeFinderOf, withCards } from "@/code-blocks/libraries/cards"
+import { listOwnUses, nodeFinderOf, withCards } from "@/code-blocks/libraries/cards"
 import type { FileExports, OutlinedFile } from "@/code-blocks/reading"
 import { fromSyntaxRange, toSyntaxRange } from "@/code-blocks/source-range"
 import { readPythonBlocks } from "./blocks"
@@ -53,6 +54,7 @@ export const outlinePython = ({ filePath, source, importedFilePaths }: PythonSou
         filePath,
         blocks: withCards(blocks, matches, outline.tree, LIBRARIES),
         uses: readPythonUses(outline),
+        libraryUses: [...listLibraryUses(matches, LIBRARIES), ...listOwnUses(blocks, matches, outline.tree, LIBRARIES)],
         readSyntax: () => readPythonSyntax(outline.tree, importedFilePaths),
         nodeAt: nodeFinderOf(outline.tree),
       }

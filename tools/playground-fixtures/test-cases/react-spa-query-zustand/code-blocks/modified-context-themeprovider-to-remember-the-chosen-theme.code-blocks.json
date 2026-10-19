@@ -354,6 +354,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -385,6 +391,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ThemeProvider.tsx#type-declaration@5:1",
@@ -420,6 +430,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -498,6 +512,12 @@
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ThemeProvider.tsx#storage@15:10",
@@ -532,6 +552,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "context-and-wiring"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -677,6 +701,12 @@
           "src/components/ThemeProvider.tsx#condition@15:10",
           "src/components/ThemeProvider.tsx#storage@15:10"
         ],
+        "classifications": [
+          "storage"
+        ],
+        "diffClassifications": [
+          "storage"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -758,6 +788,12 @@
           "src/components/ThemeProvider.tsx#condition@15:10",
           "src/components/ThemeProvider.tsx#storage@15:10"
         ],
+        "classifications": [
+          "storage"
+        ],
+        "diffClassifications": [
+          "storage"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -831,6 +867,12 @@
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#storage@15:10"
         ],
+        "classifications": [
+          "storage"
+        ],
+        "diffClassifications": [
+          "storage"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -897,6 +939,18 @@
           "src/components/ThemeProvider.tsx#component-effect@19:29",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "component",
+          "state",
+          "effect",
+          "context-and-wiring",
+          "storage"
+        ],
+        "diffClassifications": [
+          "state",
+          "effect",
+          "storage"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -952,6 +1006,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ThemeProvider.tsx#render@27:10"
@@ -1018,6 +1076,14 @@
           "src/components/ThemeProvider.tsx#storage@15:10",
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
+        ],
+        "classifications": [
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [
+          "state",
+          "effect"
         ],
         "outerSymbols": [],
         "usedByIds": [
@@ -1116,6 +1182,12 @@
         ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#component-effect@19:29"
+        ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
         ],
         "outerSymbols": [
           {
@@ -1232,6 +1304,12 @@
           "src/components/ThemeProvider.tsx#condition@15:10",
           "src/components/ThemeProvider.tsx#storage@15:10",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
+        ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
         ],
         "outerSymbols": [
           {
@@ -1363,6 +1441,14 @@
           "src/components/ThemeProvider.tsx#function@20:13",
           "src/components/ThemeProvider.tsx#storage@21:5"
         ],
+        "classifications": [
+          "effect",
+          "storage"
+        ],
+        "diffClassifications": [
+          "effect",
+          "storage"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1449,6 +1535,13 @@
           "src/components/ThemeProvider.tsx#effect-callback@19:45",
           "src/components/ThemeProvider.tsx#function@20:13",
           "src/components/ThemeProvider.tsx#storage@21:5"
+        ],
+        "classifications": [
+          "effect",
+          "storage"
+        ],
+        "diffClassifications": [
+          "storage"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1549,6 +1642,12 @@
           "src/components/ThemeProvider.tsx#function@20:13",
           "src/components/ThemeProvider.tsx#storage@21:5"
         ],
+        "classifications": [
+          "storage"
+        ],
+        "diffClassifications": [
+          "storage"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -1640,6 +1739,12 @@
           "src/components/ThemeProvider.tsx#effect-callback@19:45",
           "src/components/ThemeProvider.tsx#storage@21:5"
         ],
+        "classifications": [
+          "storage"
+        ],
+        "diffClassifications": [
+          "storage"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1716,6 +1821,11 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "state",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ThemeProvider.tsx#render@27:10"
@@ -1781,6 +1891,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1865,6 +1979,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -1915,6 +2033,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -1969,6 +2091,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2028,6 +2154,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -2083,6 +2213,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2134,6 +2268,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2167,6 +2305,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2198,6 +2340,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ThemeProvider.tsx#condition@24:63"
@@ -2230,6 +2376,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2286,6 +2436,11 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "component",
+          "context-and-wiring"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -2326,6 +2481,11 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "component",
+          "context-and-wiring"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2426,6 +2586,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2491,6 +2655,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2560,6 +2728,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2607,6 +2779,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2637,6 +2813,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2667,6 +2847,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2697,6 +2881,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2727,6 +2915,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2757,6 +2949,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2787,6 +2983,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2817,6 +3017,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2848,6 +3052,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/main.tsx#condition@10:1",
@@ -2883,6 +3091,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2915,6 +3127,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2962,6 +3178,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2994,6 +3214,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "config"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3026,6 +3251,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "config"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3101,6 +3331,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3153,6 +3387,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3237,6 +3475,10 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3285,6 +3527,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3350,6 +3596,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3380,6 +3630,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3410,6 +3664,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3440,6 +3698,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3470,6 +3732,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3507,6 +3773,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3558,6 +3830,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3598,6 +3874,12 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -3646,6 +3928,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3702,6 +3988,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3733,6 +4025,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3766,6 +4062,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3805,6 +4107,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3854,6 +4160,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3887,6 +4197,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3926,6 +4242,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3975,6 +4295,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4008,6 +4332,12 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4047,6 +4377,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4095,6 +4429,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4125,6 +4463,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4155,6 +4497,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4185,6 +4531,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4228,6 +4578,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.tsx#render@10:14"
@@ -4263,6 +4617,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4321,6 +4679,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -4378,6 +4740,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4438,6 +4804,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4469,6 +4839,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4526,6 +4900,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4583,6 +4961,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4634,6 +5016,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4690,6 +5076,10 @@
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4747,6 +5137,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4778,6 +5172,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {

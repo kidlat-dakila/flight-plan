@@ -1,5 +1,6 @@
 import { listPatternKeys, patternKeyOf } from "./pattern-keys"
 import type {
+  AssignmentPattern,
   CallPattern,
   CatalogueLibrary,
   CataloguePattern,
@@ -11,6 +12,7 @@ import type {
   FactoryPattern,
   FileExport,
   FilePattern,
+  LocationSetting,
   MethodPattern,
   SlotRuns,
 } from "./types"
@@ -28,6 +30,8 @@ const isBlank = (text: string): boolean => text.trim() === ""
 const saysNothing = (pattern: CallPattern): boolean =>
   pattern.slots.length === 0
   && pattern.makes === undefined
+  && pattern.classifies === undefined
+  && pattern.returnsAt === undefined
   && pattern.pathAt === undefined
   && pattern.prefixAt === undefined
   && pattern.eventAt === undefined
@@ -59,6 +63,7 @@ const callProblems = (pattern: CallPattern, place: PatternPlace): string[] => [
 const factorySaysNothing = (pattern: FactoryPattern): boolean =>
   pattern.methods.length === 0
   && pattern.makes === undefined
+  && pattern.classifies === undefined
   && pattern.provides === undefined
   && pattern.called === undefined
   && (pattern.slots ?? []).length === 0
@@ -76,7 +81,7 @@ const memberProblems = (member: ClassMember): string[] =>
 const classProblems = (pattern: ClassPattern, place: PatternPlace): string[] => [
   ...(isBlank(pattern.name) ? ["has no name"] : []),
   ...sourceProblems(pattern.from, place),
-  ...(pattern.members.length === 0 && pattern.methods.length === 0 && pattern.makes === undefined
+  ...(pattern.members.length === 0 && pattern.methods.length === 0 && pattern.makes === undefined && pattern.classifies === undefined
     ? ["says nothing: it has no member and no method, and makes nothing"]
     : []),
   ...pattern.members.flatMap(memberProblems),
@@ -87,7 +92,7 @@ const runsWithAPath = (pattern: DecoratorPattern): boolean => pattern.runs !== u
 const decoratorProblems = (pattern: DecoratorPattern, place: PatternPlace): string[] => [
   ...(isBlank(pattern.name) ? ["has no name"] : []),
   ...sourceProblems(pattern.from, place),
-  ...(pattern.runs === undefined && pattern.makes === undefined && pattern.prefixAt === undefined && (pattern.slots ?? []).length === 0 && namesNoMethod(pattern)
+  ...(pattern.runs === undefined && pattern.makes === undefined && pattern.classifies === undefined && pattern.prefixAt === undefined && (pattern.slots ?? []).length === 0 && namesNoMethod(pattern)
     ? ["says nothing: it runs nothing, makes nothing, has no slot and names no method"]
     : []),
   ...(runsWithAPath(pattern) && lacksPath(pattern, place) ? ["runs a route or a page and has no pathAt"] : []),
@@ -95,7 +100,7 @@ const decoratorProblems = (pattern: DecoratorPattern, place: PatternPlace): stri
 ]
 
 const elementSaysNothing = (pattern: ElementPattern): boolean =>
-  pattern.slots.length === 0 && pattern.makes === undefined && pattern.provides === undefined && pattern.reads === undefined
+  pattern.slots.length === 0 && pattern.makes === undefined && pattern.classifies === undefined && pattern.provides === undefined && pattern.reads === undefined
 
 const elementProblems = (pattern: ElementPattern, place: PatternPlace): string[] => [
   ...(isBlank(pattern.name) ? ["has no name"] : []),
@@ -110,14 +115,21 @@ const exportProblems = (fileExport: FileExport): string[] =>
 
 const fileProblems = (pattern: FilePattern): string[] => [
   ...(isBlank(pattern.glob) ? ["has no glob"] : []),
-  ...(pattern.exports.length === 0 && pattern.isIgnored !== true ? ["names no export and is not ignored"] : []),
+  ...(pattern.exports.length === 0 ? ["names no export"] : []),
   ...pattern.exports.flatMap(exportProblems),
 ]
 
 const directiveProblems = (pattern: DirectivePattern): string[] => (isBlank(pattern.text) ? ["has no text"] : [])
 
+const assignmentProblems = (pattern: AssignmentPattern, place: PatternPlace): string[] => [
+  ...(isBlank(pattern.name) ? ["has no name"] : []),
+  ...sourceProblems(pattern.from, place),
+  ...(pattern.slots.length === 0 && pattern.makes === undefined && pattern.classifies === undefined ? ["says nothing: it has no slot, makes nothing and classifies nothing"] : []),
+]
+
 const ownProblems = (pattern: CataloguePattern, place: PatternPlace): string[] => {
   if (pattern.kind === "call") return callProblems(pattern, place)
+  if (pattern.kind === "assignment") return assignmentProblems(pattern, place)
   if (pattern.kind === "factory") return factoryProblems(pattern, place)
   if (pattern.kind === "decorator") return decoratorProblems(pattern, place)
   if (pattern.kind === "element") return elementProblems(pattern, place)
@@ -148,6 +160,15 @@ function patternProblems(pattern: CataloguePattern, place: PatternPlace): string
   return [...ownProblems(pattern, place), ...methodProblems, ...calledProblems].map((problem) => `${patternKeyOf(pattern)} ${problem}`)
 }
 
+const locationProblems = (setting: LocationSetting, index: number): string[] => [
+  ...(setting.keys.length === 0 && setting.marks === undefined ? [`location ${String(index)} of ${setting.classification} reads no key and marks nothing`] : []),
+  ...(setting.marks !== undefined && setting.files.length === 0 ? [`location ${String(index)} of ${setting.classification} marks a file and names none`] : []),
+  ...setting.keys.flatMap((key) =>
+    [key.unlessRead ?? []].flat()
+      .filter((givenWayTo) => !setting.keys.some((other) => other.key === givenWayTo))
+      .map((givenWayTo) => `location ${String(index)} of ${setting.classification} gives way to ${givenWayTo}, which it does not read`)),
+]
+
 const repeated = (texts: readonly string[]): string[] => [...new Set(texts.filter((text, index) => texts.indexOf(text) !== index))]
 
 const lacksDocumentedVersion = (library: CatalogueLibrary): boolean =>
@@ -157,7 +178,8 @@ export const listLibraryProblems = (library: CatalogueLibrary): string[] => [
   ...(isBlank(library.name) ? ["has no name"] : []),
   ...(isBlank(library.category) ? ["has no category"] : []),
   ...(lacksDocumentedVersion(library) ? ["does not say which version of the documentation it was written from"] : []),
-  ...(library.patterns.length === 0 ? ["has no pattern"] : []),
+  ...(library.patterns.length === 0 && (library.locations ?? []).length === 0 ? ["has no pattern and no location"] : []),
+  ...(library.locations ?? []).flatMap(locationProblems),
   ...repeated(library.specifiers).map((specifier) => `${specifier} is listed more than once`),
   ...repeated(listPatternKeys(library)).map((key) => `${key} is listed more than once`),
   ...library.patterns.flatMap((pattern) => patternProblems(pattern, { specifiers: library.specifiers, isUnderPrefix: false })),

@@ -1,10 +1,10 @@
 import { isSameNode } from "@/ast-graph/languages/typescript/syntax"
 import type { SyntaxNode } from "@/ast-graph/parser"
 import { patternKeyOf } from "@/catalogue/pattern-keys"
-import type { BlockMade, CatalogueLibrary, CataloguePattern, ClassMember, ContextProvision, Slot, SlotPosition, SlotRuns } from "@/catalogue/types"
+import type { BlockMade, CatalogueLibrary, CataloguePattern, ClassMember, ClassPattern, ContextProvision, Slot, SlotPosition, SlotRuns } from "@/catalogue/types"
 import { rangeOfNode } from "@/code-blocks/source-range"
-import type { SourceRange } from "@/code-blocks/types"
-import { calledKeyOf, joinPrefixes, keyBelow, listExportedPatterns, listMethods, originOf, type ExportOrigin, type MadeValue, type Origin, type OriginContext } from "./origins"
+import type { CodeBlockClassification, SourceRange } from "@/code-blocks/types"
+import { asWholeModuleDefault, calledKeyOf, joinPrefixes, keyBelow, listExportedPatterns, listMethods, originOf, type ExportOrigin, type MadeValue, type Origin, type OriginContext } from "./origins"
 import { isRestOfArguments, lastKeyOf, listPositional, nodesAt, placedAt, type PlaceHolder, type PlacedNode } from "./places"
 import type { PassedValue, Site, SyntaxReader } from "./syntax-reader"
 
@@ -23,6 +23,7 @@ export interface PatternMatch {
   readonly site: Site["kind"] | "file" | "directive"
   readonly range: SourceRange
   readonly makes: BlockMade | null
+  readonly classifies: CodeBlockClassification | null
   readonly runs: SlotRuns | null
   readonly slots: readonly MatchedSlot[]
   readonly path: string | null
@@ -44,6 +45,7 @@ interface PatternSaying {
   readonly slots?: readonly Slot[]
   readonly runs?: SlotRuns
   readonly makes?: BlockMade
+  readonly classifies?: CodeBlockClassification
   readonly pathAt?: SlotPosition
   readonly prefixAt?: SlotPosition
   readonly method?: string
@@ -60,12 +62,13 @@ interface MatchSource {
   readonly patternKey: string
 }
 
-type MatchedKind = "call" | "factory" | "decorator" | "element"
+type MatchedKind = "call" | "factory" | "decorator" | "element" | "assignment"
 
 const KINDS_BY_SITE: Readonly<Record<Exclude<Site["kind"], "class">, ReadonlySet<MatchedKind>>> = {
   call: new Set<MatchedKind>(["call", "factory"]),
   decorator: new Set<MatchedKind>(["decorator"]),
   element: new Set<MatchedKind>(["element"]),
+  assignment: new Set<MatchedKind>(["assignment"]),
 }
 const CALLED_NAME = "called"
 const MOUNTING_KIND = "call"
@@ -156,6 +159,7 @@ const matchOfPassed = (saying: PatternSaying, source: MatchSource, site: Site, p
   site: site.kind,
   range: rangeOfNode(site.node),
   makes: saying.makes ?? null,
+  classifies: saying.classifies ?? null,
   runs: saying.runs ?? null,
   slots: slotsOf(saying, passed, reader),
   path: textAt(saying.pathAt, passed, reader),
@@ -185,14 +189,8 @@ const matchesOfMade = (made: MadeValue, site: Exclude<Site, { kind: "class" }>, 
   return [matchOf({ ...made.called, name: CALLED_NAME }, { ...source, patternKey: calledKeyOf(made) }, site, reader)]
 }
 
-const DEFAULT_EXPORT = "default"
-
-const isDefaultPath = (path: readonly string[]): boolean => path.length === 1 && path[0] === DEFAULT_EXPORT
-
-const withDefaultExport = (origin: ExportOrigin, site: Exclude<Site, { kind: "class" }>): ExportOrigin => {
-  const isWholeModule = origin.paths.some((path) => path.length === 0) && !origin.paths.some(isDefaultPath)
-  return site.kind === "call" && isWholeModule ? { ...origin, paths: [...origin.paths, [DEFAULT_EXPORT]] } : origin
-}
+const withDefaultExport = (origin: ExportOrigin, site: Exclude<Site, { kind: "class" }>): ExportOrigin =>
+  site.kind === "call" ? asWholeModuleDefault(origin) : origin
 
 const matchesOfOrigin = (origin: Origin, site: Exclude<Site, { kind: "class" }>, context: OriginContext): PatternMatch[] => {
   if (origin.kind === "made") return matchesOfMade(origin, site, context.reader)
@@ -204,11 +202,20 @@ const matchesOfOrigin = (origin: Origin, site: Exclude<Site, { kind: "class" }>,
   )
 }
 
+const classPatternOf = (made: MadeValue): ClassPattern | null =>
+  made.memberPath.length > 0 ? null : (made.library.patterns.find((pattern): pattern is ClassPattern => pattern.kind === "class" && patternKeyOf(pattern) === made.key) ?? null)
+
+const matchesOfInheritedClass = (made: MadeValue, site: Extract<Site, { kind: "class" }>, reader: SyntaxReader): PatternMatch[] => {
+  const pattern = classPatternOf(made)
+  return pattern === null ? [] : [matchOf(pattern, { library: made.library, specifier: made.specifier, patternKey: made.key }, site, reader)]
+}
+
 const matchesOfClass = (site: Extract<Site, { kind: "class" }>, context: OriginContext): PatternMatch[] =>
   site.bases.flatMap((base) => {
     const origin = originOf(base, context)
-    if (origin?.kind !== "export") return []
-    return listExportedPatterns(origin, context).flatMap(({ library, specifier, pattern }) =>
+    if (origin === null) return []
+    if (origin.kind === "made") return matchesOfInheritedClass(origin, site, context.reader)
+    return listExportedPatterns(asWholeModuleDefault(origin), context).flatMap(({ library, specifier, pattern }) =>
       pattern.kind === "class" ? [matchOf(pattern, { library, specifier, patternKey: patternKeyOf(pattern) }, site, context.reader)] : [],
     )
   })

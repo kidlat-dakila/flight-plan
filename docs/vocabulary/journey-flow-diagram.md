@@ -29,7 +29,7 @@ On the page each node is a card. This entry holds the rules every card shares; e
 | [Class card](journey-flow-diagram/class-card.md) | A class with a method | Under Properties | Its methods, under Methods, then the classes that extend it |
 | [Route card](journey-flow-diagram/route-card.md) | A route path | None | The handler of each method, under a heading per method |
 | [tRPC router card](journey-flow-diagram/libraries/trpc.md) | A router of procedures, and a [GraphQL resolver of NestJS](journey-flow-diagram/libraries/nestjs.md#graphql-resolvers) | None | Each procedure, under a heading per procedure type |
-| [State card](journey-flow-diagram/state.md) | A store of Zustand, Pinia or Redux, and an API of RTK Query | Under State, and under Getters, Actions and Selectors for Zustand and Pinia | For Redux, its reducers, thunks, extra reducers, listeners and selectors, and the endpoints of an API |
+| [State card](journey-flow-diagram/state.md) | A store of Zustand, Pinia, Redux, MobX, Valtio, XState Store, Nano Stores or Effector, and an API of RTK Query | Under State, and under Getters, Actions and Selectors for the stores drawn rows only | For Redux, its reducers, thunks, extra reducers, listeners and selectors, the cases of an Effector store, and the endpoints of an API |
 
 ## The shape
 

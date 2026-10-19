@@ -85,6 +85,10 @@ export const joseLibrary: CatalogueLibrary = {
       methods: [],
     },
     { kind: "call", name: "createRemoteJWKSet", slots: [], makes: "auth" },
+    { kind: "factory", name: "CompactSign", classifies: "security", methods: [] },
+    { kind: "call", name: "compactVerify", slots: [], classifies: "security" },
+    { kind: "factory", name: "CompactEncrypt", classifies: "security", methods: [] },
+    { kind: "call", name: "compactDecrypt", slots: [], classifies: "security" },
   ],
 }
 

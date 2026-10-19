@@ -84,7 +84,13 @@ export interface ClassSite {
   readonly bases: readonly SyntaxNode[]
 }
 
-export type Site = CallSite | DecoratorSite | ElementSite | ClassSite
+export interface AssignmentSite {
+  readonly kind: "assignment"
+  readonly node: SyntaxNode
+  readonly callee: SyntaxNode
+}
+
+export type Site = CallSite | DecoratorSite | ElementSite | ClassSite | AssignmentSite
 
 export interface HandedCallback {
   readonly call: SyntaxNode

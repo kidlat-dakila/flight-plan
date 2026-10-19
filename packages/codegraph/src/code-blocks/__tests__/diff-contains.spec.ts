@@ -46,14 +46,25 @@ describe("what the diff of a group contains", () => {
     expect(containsOf([rangeAt(1, 10, 1, 17)])).toStrictEqual(["logic"])
   })
 
-  it("says file for a change in a file no language reads", () => {
-    expect(groupOf({ "schema.prisma": "model Order {}" }, { "schema.prisma": [rangeAt(1, 7, 1, 12)] }).diffContains).toStrictEqual(["file"])
+  it("says file for a change in a file no language reads and no location names", () => {
+    expect(groupOf({ "schema.sql": "create table orders;" }, { "schema.sql": [rangeAt(1, 14, 1, 20)] }).diffContains).toStrictEqual(["file"])
   })
 
-  it("says data for a change in a data-fetch", () => {
-    const group = groupOf({ "src/orders.ts": codeOf("export const loadOrders = () => fetch(\"/api/orders\")") }, { "src/orders.ts": [rangeAt(1, 39, 1, 52)] })
+  it("says logic for a change in a file no language reads that a location names", () => {
+    expect(groupOf({ "schema.prisma": "model Order {}" }, { "schema.prisma": [rangeAt(1, 7, 1, 12)] }).diffContains).toStrictEqual(["logic"])
+  })
+
+  it("says data for a change in a read of a database", () => {
+    const orders = codeOf("import { PrismaClient } from \"@prisma/client\"", "const prisma = new PrismaClient()", "export const loadOrders = () => prisma.order.findMany()")
+    const group = groupOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(3, 33, 3, 56)] })
 
     expect(group.diffContains).toStrictEqual(["data"])
+  })
+
+  it("says logic for a change in a read over the network", () => {
+    const group = groupOf({ "src/orders.ts": codeOf("export const loadOrders = () => fetch(\"/api/orders\")") }, { "src/orders.ts": [rangeAt(1, 39, 1, 52)] })
+
+    expect(group.diffContains).toStrictEqual(["logic"])
   })
 
   it("says for each file what its own changes hold", () => {

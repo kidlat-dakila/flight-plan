@@ -20,6 +20,7 @@ This page is the overview. Each mechanism and each language has a page of its ow
 | [Import graph](codegraph/import-graph.md) | How the files of a change are found and grouped: the trace in both directions, searching for importers, clusters |
 | [Code blocks](codegraph/code-blocks.md) | The shapes: the group, a file, a code block, the stored form |
 | [Block types](codegraph/block-types.md) | What each type of block is, and what counts as a hook and as an effect |
+| [Classifications](codegraph/classifications.md) | What a block is for and what a change to it does, and where a repository's tools keep its tests, migrations and configuration |
 | [Symbols](codegraph/symbols.md) | How a block refers to what it uses, and where a value comes from |
 | [Chains](codegraph/chains.md) | How a change is placed in a block and traced to what starts it |
 | [Steps](codegraph/steps.md) | How the blocks inside a declaration are compressed into the steps of a journey node and the children of a waypoint |
@@ -59,8 +60,9 @@ Two more properties follow from that goal:
 | **Change** | The lines a branch or a pull request changes, between its base commit and its head commit. |
 | **Import graph** | For one changed file, the files that import it and the files it imports, directly or through other files, each with the files it imports and is imported by. |
 | **Cluster** | The import graphs that share a file, joined into one. A cluster is one connected part of one language. |
-| **Group** | The files of a cluster without its tests and stories, split again where only they joined it. A changed file no cluster holds is a group of its own. See [The group](codegraph/code-blocks.md#the-group). |
+| **Group** | The files of a cluster without its tests and stories, split again where only they joined it. A changed file no cluster holds, a changed test among them, is a group of its own. See [The group](codegraph/code-blocks.md#the-group). |
 | **Code block** | One piece of a file a changed line can belong to: a function, a condition, a render, an event. See [Code blocks](codegraph/code-blocks.md). |
+| **Classification** | What a code block is for, read from the code it holds and from where its file is: a page, a database operation, a webhook, a test. Its first is its primary. See [Classifications](codegraph/classifications.md). |
 | **Diff block** | The innermost block around a change. |
 | **Symbol** | One use of a name a block does not declare itself, with what the name leads to. See [Symbols](codegraph/symbols.md). |
 | **Chain** | A path from the block that starts it, through the blocks it runs, to a changed block. See [Chains](codegraph/chains.md). |
@@ -90,7 +92,7 @@ flowchart TD
 | 1. Read the change | The base commit, the head commit and the changed files between them are read once, each file with its patch and whether it was added, modified or deleted | [Import graph](codegraph/import-graph.md) |
 | 2. Trace the import graph | For each changed file, the files that import it and the files it imports, followed through other files until nothing new is reached | [The trace of one file](codegraph/import-graph.md#the-trace-of-one-file) |
 | 3. Join into clusters | Two import graphs that share a file are one cluster | [Clusters](codegraph/import-graph.md#clusters) |
-| 4. Build the groups | The tests and the stories are taken out of each cluster, every file is read into code blocks, each change is placed in its innermost block, and the chains that lead to a change are traced | [How a group is built](codegraph/code-blocks.md#how-a-group-is-built) |
+| 4. Build the groups | The repository's tools say where its tests and other files live, the tests and the stories are taken out of each cluster, every file is read into code blocks, each change is placed in its innermost block, the chains that lead to a change are traced, and every block is classified | [How a group is built](codegraph/code-blocks.md#how-a-group-is-built) |
 | 5. Cut into segments | Each group is cut into its entry segments and its shared segment, and each segment gets its diagrams and its Code Walkthrough | [Segments](codegraph/segments.md) |
 
 ## An example, end to end

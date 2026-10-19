@@ -1,3 +1,5 @@
+import type { CodeBlockClassification } from "@/code-blocks/types"
+
 export type SlotRuns
   = | "route"
     | "resolver"
@@ -57,6 +59,7 @@ export interface CallPattern {
   readonly from?: string
   readonly versions?: string
   readonly makes?: BlockMade
+  readonly classifies?: CodeBlockClassification
   readonly pathAt?: SlotPosition
   readonly prefixAt?: SlotPosition
   readonly method?: string
@@ -65,6 +68,7 @@ export interface CallPattern {
   readonly provides?: ContextProvision
   readonly reads?: ContextRead
   readonly isOwnNode?: boolean
+  readonly returnsAt?: SlotPosition
 }
 
 export interface DecoratorPattern {
@@ -75,6 +79,7 @@ export interface DecoratorPattern {
   readonly runs?: SlotRuns
   readonly slots?: readonly Slot[]
   readonly makes?: BlockMade
+  readonly classifies?: CodeBlockClassification
   readonly pathAt?: SlotPosition
   readonly prefixAt?: SlotPosition
   readonly method?: string
@@ -89,6 +94,7 @@ export interface ElementPattern {
   readonly from?: string
   readonly versions?: string
   readonly makes?: BlockMade
+  readonly classifies?: CodeBlockClassification
   readonly pathAt?: SlotPosition
   readonly provides?: ContextProvision
   readonly reads?: ContextRead
@@ -97,6 +103,7 @@ export interface ElementPattern {
 export interface CalledValue {
   readonly slots: readonly Slot[]
   readonly makes?: BlockMade
+  readonly classifies?: CodeBlockClassification
   readonly methods?: readonly MethodPattern[]
 }
 
@@ -109,6 +116,7 @@ export interface FactoryPattern {
   readonly from?: string
   readonly versions?: string
   readonly makes?: BlockMade
+  readonly classifies?: CodeBlockClassification
   readonly prefixAt?: SlotPosition
   readonly provides?: ContextProvision
   readonly makesType?: string
@@ -116,12 +124,23 @@ export interface FactoryPattern {
   readonly isTypeOnly?: boolean
 }
 
-export type MethodPattern = CallPattern | DecoratorPattern | ElementPattern | FactoryPattern
+export interface AssignmentPattern {
+  readonly kind: "assignment"
+  readonly name: string
+  readonly slots: readonly Slot[]
+  readonly from?: string
+  readonly versions?: string
+  readonly makes?: BlockMade
+  readonly classifies?: CodeBlockClassification
+}
+
+export type MethodPattern = CallPattern | DecoratorPattern | ElementPattern | FactoryPattern | AssignmentPattern
 
 export interface FileExport {
   readonly name: string
   readonly runs: SlotRuns
   readonly method?: string
+  readonly classifies?: CodeBlockClassification
 }
 
 export interface FilePattern {
@@ -129,7 +148,6 @@ export interface FilePattern {
   readonly glob: string
   readonly exports: readonly FileExport[]
   readonly versions?: string
-  readonly isIgnored?: boolean
 }
 
 export interface DirectivePattern {
@@ -144,6 +162,7 @@ export interface ClassMember {
   readonly name: string
   readonly runs: SlotRuns
   readonly method?: string
+  readonly classifies?: CodeBlockClassification
 }
 
 export interface ClassPattern {
@@ -154,9 +173,40 @@ export interface ClassPattern {
   readonly from?: string
   readonly versions?: string
   readonly makes?: BlockMade
+  readonly classifies?: CodeBlockClassification
 }
 
 export type CataloguePattern = MethodPattern | ClassPattern | FilePattern | DirectivePattern
+
+export type LocationHolds = "globs" | "paths" | "folders" | "names" | "files" | "file-folders" | "modules" | "url-globs" | "regex"
+
+export type LocationBase = "config" | "package"
+
+export interface ConfigFile {
+  readonly glob: string
+  readonly under?: string
+  readonly base?: LocationBase
+  readonly levelsUp?: number
+}
+
+export interface LocationKey {
+  readonly key: string
+  readonly holds: LocationHolds
+  readonly below?: string
+  readonly default?: readonly string[]
+  readonly unlessRead?: string | readonly string[]
+  readonly defaultWhen?: string
+  readonly defaultBase?: LocationBase
+  readonly separator?: string
+  readonly isScope?: boolean
+}
+
+export interface LocationSetting {
+  readonly classification: CodeBlockClassification
+  readonly files: readonly ConfigFile[]
+  readonly keys: readonly LocationKey[]
+  readonly marks?: "file" | "folder"
+}
 
 export interface CatalogueLibrary {
   readonly name: string
@@ -166,6 +216,7 @@ export interface CatalogueLibrary {
   readonly type: LibraryType
   readonly language: LibraryLanguage
   readonly patterns: readonly CataloguePattern[]
+  readonly locations?: readonly LocationSetting[]
 }
 
 export interface PatternFixture {

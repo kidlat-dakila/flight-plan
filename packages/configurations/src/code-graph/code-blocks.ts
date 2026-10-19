@@ -62,6 +62,53 @@ export const CODE_BLOCK_TYPES = [
 
 export type CodeBlockType = (typeof CODE_BLOCK_TYPES)[number]
 
+export const CODE_BLOCK_CLASSIFICATIONS = [
+  "test",
+  "build-and-infrastructure",
+  "migration",
+  "page",
+  "component",
+  "webhook",
+  "server-action",
+  "api-route",
+  "realtime",
+  "queue-consumer",
+  "job",
+  "command",
+  "database-operation",
+  "data-model",
+  "third-party-integration",
+  "request",
+  "form",
+  "validation",
+  "store",
+  "state",
+  "auth",
+  "security",
+  "file-io",
+  "process-execution",
+  "publish",
+  "navigation",
+  "error-handling",
+  "effect",
+  "event",
+  "context-and-wiring",
+  "feature-flag",
+  "config",
+  "storage",
+  "telemetry",
+  "i18n",
+  "styling",
+  "type",
+  "file",
+  "logic",
+] as const
+
+export type CodeBlockClassification = (typeof CODE_BLOCK_CLASSIFICATIONS)[number]
+
+export const primaryClassificationOf = (classifications: readonly CodeBlockClassification[]): CodeBlockClassification | null =>
+  classifications.length === 0 ? null : classifications[0]
+
 export type DiffKind
   = | "ui"
     | "state"
@@ -97,6 +144,7 @@ export interface CodeBlockCatalogue {
   readonly event: string | null
   readonly certainty: CatalogueCertainty
   readonly isOwnNode?: boolean
+  readonly classifies?: CodeBlockClassification
 }
 
 export type CardKind = "route" | "router" | "store" | "api"
@@ -218,6 +266,8 @@ export interface CodeBlock {
   readonly lineOfCodeDiffs: readonly SourceRange[] | null
   readonly diffs: readonly CodeBlockDiff[]
   readonly diffSources: readonly CodeBlock[]
+  readonly classifications: readonly CodeBlockClassification[]
+  readonly diffClassifications: readonly CodeBlockClassification[]
   readonly outerSymbols: readonly CodeBlockSymbol[]
   readonly usedBy: readonly CodeBlock[]
   readonly nextBlocks: readonly CodeBlock[]

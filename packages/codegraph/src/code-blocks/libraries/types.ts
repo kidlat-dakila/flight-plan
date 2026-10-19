@@ -1,7 +1,7 @@
 import type { SyntaxNode } from "@/ast-graph/parser"
 import type { PatternMatch } from "@/catalogue/matching/match-sites"
 import type { CatalogueLibrary } from "@/catalogue/types"
-import type { FileExports, ReadBlock } from "@/code-blocks/reading"
+import type { FileExports, LibraryUse, ReadBlock } from "@/code-blocks/reading"
 import type { BlockCard, CodeBlockCatalogue, SourceRange } from "@/code-blocks/types"
 
 export interface CardReading {
@@ -32,4 +32,5 @@ export interface CardSeed {
 export interface Library extends CatalogueLibrary {
   readonly readCards?: (reading: CardReading) => readonly CardSeed[]
   readonly readExportCards?: (reading: ExportCardReading) => readonly CardSeed[]
+  readonly readUses?: (reading: CardReading) => readonly LibraryUse[]
 }

@@ -1,4 +1,4 @@
-import { splitIntoGroups } from "@/code-blocks/group-files"
+import { splitIntoGroups as splitWithLeftOut } from "@/code-blocks/group-files"
 import type { ImportGraphFile } from "@/import-graph"
 
 interface FileLinks {
@@ -16,6 +16,10 @@ const clusterOf = (links: Readonly<Record<string, FileLinks>>): ImportGraphFile[
     importedFilePaths: new Map(),
   }))
 
+const TEST_PATTERN = /(?:\.spec\.ts|\.stories\.ts|\/__tests__\/.*)$/
+
+const splitIntoGroups = (cluster: readonly ImportGraphFile[]): ImportGraphFile[][] => splitWithLeftOut(cluster, (filePath) => TEST_PATTERN.test(filePath))
+
 const pathsOf = (groups: readonly (readonly ImportGraphFile[])[]): string[][] => groups.map((group) => group.map((file) => file.filePath))
 
 describe("splitIntoGroups", () => {
@@ -25,7 +29,7 @@ describe("splitIntoGroups", () => {
     expect(pathsOf(splitIntoGroups(cluster))).toStrictEqual([["src/cart.ts", "src/page.ts"]])
   })
 
-  it("leaves a test out of the group, and out of the files that import a file", () => {
+  it("leaves a file the predicate names out of the group, and out of the files that import a file", () => {
     const cluster = clusterOf({ "src/cart.spec.ts": { importsTo: ["src/cart.ts"] }, "src/cart.ts": { isChanged: true } })
     const [[cart]] = splitIntoGroups(cluster)
 

@@ -78,3 +78,23 @@ export const structlogLibrary: CatalogueLibrary = {
     { kind: "call", name: "configure", slots: [], makes: "config" },
   ],
 }
+
+export const opentelemetryPythonLibrary: CatalogueLibrary = {
+  name: "opentelemetry-python",
+  specifiers: ["opentelemetry.trace"],
+  documentedVersion: "1.45",
+  category: "logging",
+  type: "backend",
+  language: "python",
+  patterns: [
+    {
+      kind: "factory",
+      name: "get_tracer",
+      methods: [
+        { kind: "call", name: "start_as_current_span", slots: [], makes: "telemetry" },
+        { kind: "decorator", name: "start_as_current_span", makes: "telemetry" },
+      ],
+    },
+    { kind: "call", name: "set_tracer_provider", slots: [], makes: "config" },
+  ],
+}

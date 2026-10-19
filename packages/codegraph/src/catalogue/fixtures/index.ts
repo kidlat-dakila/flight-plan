@@ -1,4 +1,5 @@
 import type { PatternFixture } from "@/catalogue/types"
+import { anthropicFixtures, huggingfaceJsFixtures, langchainJsFixtures, openaiFixtures, vercelAiSdkFixtures } from "./javascript/ai"
 import {
   authkitFixtures,
   betterAuthFixtures,
@@ -33,6 +34,8 @@ import {
   lruCacheFixtures,
   unstorageFixtures,
 } from "./javascript/caching"
+import { commanderJsFixtures, gluegunFixtures, meowFixtures, oclifFixtures, yargsFixtures } from "./javascript/cli"
+import { awsSdkS3Fixtures, firebaseFixtures, googleCloudStorageFixtures, nhostFixtures, supabaseFixtures } from "./javascript/cloud"
 import {
   arkenvFixtures,
   c12Fixtures,
@@ -56,6 +59,7 @@ import {
   tanstackQueryFixtures,
   urqlFixtures,
 } from "./javascript/data-fetching"
+import { awilixFixtures, injectionJsFixtures, inversifyFixtures, tsyringeFixtures, typediFixtures } from "./javascript/dependency-injection"
 import {
   alienSignalsFixtures,
   reatomFixtures,
@@ -63,6 +67,9 @@ import {
   rxjsFixtures,
   signalsFixtures,
 } from "./javascript/derived-state"
+import { discordJsFixtures, emailSdkFixtures, nodemailerFixtures, plunkFixtures, upyoFixtures } from "./javascript/email-and-messaging"
+import { betterResultFixtures, neverThrowFixtures, opossumFixtures, reactErrorBoundaryFixtures, trueMythFixtures } from "./javascript/error-handling"
+import { emitteryFixtures, eventemitter2Fixtures, eventemitter3Fixtures, mittFixtures, nanoEventsFixtures } from "./javascript/event-emitters"
 import {
   flagsmithFixtures,
   growthbookFixtures,
@@ -75,6 +82,7 @@ import {
   unleashFixtures,
   vercelFlagsFixtures,
 } from "./javascript/feature-flags"
+import { archiverFixtures, chokidarFixtures, fsExtraFixtures, globFixtures, multerFixtures } from "./javascript/file-io"
 import {
   autoformFixtures,
   conformFixtures,
@@ -124,18 +132,8 @@ import {
   wretchFixtures,
   xiorFixtures,
 } from "./javascript/http-clients"
-import {
-  agendaFixtures,
-  breeFixtures,
-  commanderJsFixtures,
-  cronScheduleFixtures,
-  cronerFixtures,
-  motiaFixtures,
-  oclifFixtures,
-  triggerDevFixtures,
-  workflowFixtures,
-  yargsFixtures,
-} from "./javascript/jobs"
+import { i18nextFixtures, linguiFixtures, nextIntlFixtures, reactIntlFixtures, vueI18nFixtures } from "./javascript/i18n"
+import { agendaFixtures, breeFixtures, cronScheduleFixtures, cronerFixtures, motiaFixtures, triggerDevFixtures, workflowFixtures } from "./javascript/jobs"
 import {
   analyticsFixtures,
   consolaFixtures,
@@ -160,18 +158,9 @@ import {
   typegooseFixtures,
   typeormFixtures,
 } from "./javascript/orm"
-import {
-  absurdFixtures,
-  beeQueueFixtures,
-  bullFixtures,
-  bullmqFixtures,
-  groupmqFixtures,
-  inngestFixtures,
-  mqttJsFixtures,
-  pgBossFixtures,
-  sidequestFixtures,
-  socketIoFixtures,
-} from "./javascript/queues"
+import { adyenFixtures, paypalFixtures, razorpayFixtures, squareFixtures, stripeFixtures } from "./javascript/payments"
+import { execaFixtures, piscinaFixtures, tinypoolFixtures, workerpoolFixtures, zxFixtures } from "./javascript/processes"
+import { absurdFixtures, beeQueueFixtures, bullFixtures, bullmqFixtures, groupmqFixtures, inngestFixtures, mqttJsFixtures, pgBossFixtures, sidequestFixtures } from "./javascript/queues"
 import {
   alasqlFixtures,
   betterSqlite3Fixtures,
@@ -184,6 +173,7 @@ import {
   slonikFixtures,
   sqlJsFixtures,
 } from "./javascript/raw-sql"
+import { colyseusFixtures, partyKitFixtures, socketIoFixtures, uWebSocketsFixtures, wsFixtures } from "./javascript/realtime"
 import {
   naviFixtures,
   nuqsFixtures,
@@ -196,28 +186,11 @@ import {
   vueRouterFixtures,
   wouterFixtures,
 } from "./javascript/routing"
-import {
-  effectorFixtures,
-  jotaiFixtures,
-  mobxFixtures,
-  nanostoresFixtures,
-  tinybaseFixtures,
-  valtioFixtures,
-  xstateFixtures,
-} from "./javascript/state"
-import { javascriptTestFilesFixtures } from "./javascript/testing"
-import {
-  discordJsFixtures,
-  emailSdkFixtures,
-  huggingfaceJsFixtures,
-  nhostFixtures,
-  nodemailerFixtures,
-  octokitFixtures,
-  plunkFixtures,
-  supabaseFixtures,
-  upyoFixtures,
-  youtubeJsFixtures,
-} from "./javascript/third-party-services"
+import { connectRpcFixtures, grpcForNodeJsFixtures, jaysonFixtures, jsonRpc2Fixtures } from "./javascript/rpc"
+import { bcryptJsFixtures, cryptoJsFixtures, expressRateLimitFixtures, forgeFixtures, helmetFixtures } from "./javascript/security"
+import { jotaiFixtures, tinybaseFixtures } from "./javascript/state"
+import { emotionFixtures, linariaFixtures, styledComponentsFixtures, stylexFixtures, vanillaExtractFixtures } from "./javascript/styling"
+import { octokitFixtures, youtubeJsFixtures } from "./javascript/third-party-services"
 import {
   ajvFixtures,
   arktypeFixtures,
@@ -230,6 +203,8 @@ import {
   vinejsFixtures,
   zodFixtures,
 } from "./javascript/validation"
+import { discordInteractionsFixtures, octokitWebhooksFixtures, octokitWebhooksMethodsFixtures, standardWebhooksFixtures, svixFixtures } from "./javascript/webhooks"
+import { anthropicPythonFixtures, googleGenAiFixtures, langchainFixtures, openaiPythonFixtures, transformersFixtures } from "./python/ai"
 import {
   authlibFixtures,
   djangoAllauthFixtures,
@@ -252,12 +227,19 @@ import {
   pylibmcFixtures,
   redisPyFixtures,
 } from "./python/caching"
+import { cementFixtures, clickFixtures, cliffFixtures, docoptFixtures, pythonFireFixtures } from "./python/cli"
+import { apacheLibcloudFixtures, azureStorageBlobFixtures, boto3Fixtures, googleApiPythonClientFixtures, googleCloudStoragePythonFixtures } from "./python/cloud"
 import {
   configobjFixtures,
+  dynaconfFixtures,
   hydraFixtures,
-  profigFixtures,
   pythonDecoupleFixtures,
+  pythonDotenvFixtures,
 } from "./python/config"
+import { dependencyInjectorFixtures, dishkaFixtures, injectorFixtures, pythonInjectFixtures, svcsFixtures } from "./python/dependency-injection"
+import { flankerFixtures, imboxFixtures, slackSdkFixtures, twilioFixtures, yagmailFixtures } from "./python/email-and-messaging"
+import { backoffFixtures, pyBreakerFixtures, retryFixtures, returnsFixtures, tenacityFixtures } from "./python/error-handling"
+import { blinkerFixtures, observableFixtures, pyDispatcherFixtures, pyeeFixtures, zopeEventFixtures } from "./python/event-emitters"
 import {
   configcatFixtures,
   djangoWaffleFixtures,
@@ -270,6 +252,8 @@ import {
   statsigPythonFixtures,
   unleashPythonFixtures,
 } from "./python/feature-flags"
+import { pathFixtures, pyFilesystemFixtures, pythonMagicFixtures, unipathFixtures, watchdogFixtures } from "./python/file-io"
+import { deformFixtures, djangoCrispyFormsFixtures, djangoFormtoolsFixtures, flaskWtfFixtures, wtformsFixtures } from "./python/forms"
 import {
   djangoRestFrameworkFixtures,
   djangoTastypieFixtures,
@@ -302,21 +286,12 @@ import {
   treqFixtures,
   urllib3Fixtures,
 } from "./python/http-clients"
-import {
-  airflowFixtures,
-  apschedulerFixtures,
-  cementFixtures,
-  clickFixtures,
-  cliffFixtures,
-  joblibFixtures,
-  planFixtures,
-  scheduleFixtures,
-  spiffworkflowFixtures,
-  taskflowFixtures,
-} from "./python/jobs"
+import { babelFixtures, fastapiBabelFixtures, flaskBabelFixtures, fluentRuntimeFixtures, pythonI18nFixtures } from "./python/i18n"
+import { airflowFixtures, apschedulerFixtures, joblibFixtures, planFixtures, scheduleFixtures, spiffworkflowFixtures, taskflowFixtures } from "./python/jobs"
 import {
   logbookFixtures,
   loguruFixtures,
+  opentelemetryPythonFixtures,
   sentryPythonFixtures,
   structlogFixtures,
 } from "./python/logging"
@@ -332,16 +307,9 @@ import {
   pydalFixtures,
   sqlalchemyFixtures,
 } from "./python/orm"
-import {
-  autobahnFixtures,
-  celeryFixtures,
-  channelsFixtures,
-  hueyFixtures,
-  kafkaPythonFixtures,
-  mrqFixtures,
-  rqFixtures,
-  websocketsFixtures,
-} from "./python/queues"
+import { adyenPythonFixtures, braintreeFixtures, razorpayPythonFixtures, squarePythonFixtures, stripePythonFixtures } from "./python/payments"
+import { delegatorPyFixtures, pexpectFixtures, plumbumFixtures, sargeFixtures, shFixtures } from "./python/processes"
+import { celeryFixtures, hueyFixtures, kafkaPythonFixtures, mrqFixtures, rqFixtures } from "./python/queues"
 import {
   cassandraDriverFixtures,
   happybaseFixtures,
@@ -354,19 +322,10 @@ import {
   queriesFixtures,
   supersqliteFixtures,
 } from "./python/raw-sql"
-import { pythonTestFilesFixtures } from "./python/testing"
-import {
-  apacheLibcloudFixtures,
-  boto3Fixtures,
-  djangoWordpressFixtures,
-  facebookSdkFixtures,
-  flankerFixtures,
-  googleApiPythonClientFixtures,
-  gspreadFixtures,
-  imboxFixtures,
-  twythonFixtures,
-  yagmailFixtures,
-} from "./python/third-party-services"
+import { autobahnFixtures, channelsFixtures, pythonSocketioFixtures, sseStarletteFixtures, websocketsFixtures } from "./python/realtime"
+import { apacheThriftFixtures, grpcForPythonFixtures, rpycFixtures, thriftpy2Fixtures, zerorpcFixtures } from "./python/rpc"
+import { bcryptFixtures, cryptographyFixtures, itsdangerousFixtures, passlibFixtures, pynaclFixtures } from "./python/security"
+import { djangoWordpressFixtures, facebookSdkFixtures, gspreadFixtures, twythonFixtures } from "./python/third-party-services"
 import {
   cerberusFixtures,
   colanderFixtures,
@@ -376,10 +335,39 @@ import {
   valideerFixtures,
   voluptuousFixtures,
 } from "./python/validation"
+import { discordInteractionsForPythonFixtures, gidgethubFixtures, slackeventsapiFixtures, standardWebhooksForPythonFixtures, svixForPythonFixtures } from "./python/webhooks"
 
 export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
-  ...javascriptTestFilesFixtures,
-  ...pythonTestFilesFixtures,
+  ...i18nextFixtures,
+  ...linguiFixtures,
+  ...nextIntlFixtures,
+  ...reactIntlFixtures,
+  ...vueI18nFixtures,
+  ...babelFixtures,
+  ...fastapiBabelFixtures,
+  ...flaskBabelFixtures,
+  ...fluentRuntimeFixtures,
+  ...pythonI18nFixtures,
+  ...reactErrorBoundaryFixtures,
+  ...neverThrowFixtures,
+  ...betterResultFixtures,
+  ...opossumFixtures,
+  ...trueMythFixtures,
+  ...returnsFixtures,
+  ...tenacityFixtures,
+  ...backoffFixtures,
+  ...pyBreakerFixtures,
+  ...retryFixtures,
+  ...mittFixtures,
+  ...eventemitter3Fixtures,
+  ...emitteryFixtures,
+  ...nanoEventsFixtures,
+  ...eventemitter2Fixtures,
+  ...blinkerFixtures,
+  ...pyeeFixtures,
+  ...zopeEventFixtures,
+  ...pyDispatcherFixtures,
+  ...observableFixtures,
   ...absurdFixtures,
   ...adonisFixtures,
   ...agendaFixtures,
@@ -401,7 +389,10 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...authlibFixtures,
   ...autobahnFixtures,
   ...autoformFixtures,
+  ...awilixFixtures,
+  ...awsSdkS3Fixtures,
   ...axiosFixtures,
+  ...azureStorageBlobFixtures,
   ...beakerFixtures,
   ...beeQueueFixtures,
   ...bentocacheFixtures,
@@ -425,6 +416,7 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...clickFixtures,
   ...cliffFixtures,
   ...colanderFixtures,
+  ...colyseusFixtures,
   ...commanderJsFixtures,
   ...configcatFixtures,
   ...configobjFixtures,
@@ -435,12 +427,17 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...cronerFixtures,
   ...datasetFixtures,
   ...debugFixtures,
+  ...deformFixtures,
+  ...dependencyInjectorFixtures,
   ...dexieJsFixtures,
   ...discordJsFixtures,
+  ...dishkaFixtures,
   ...diskcacheFixtures,
   ...djangoAllauthFixtures,
   ...djangoCacheMachineFixtures,
   ...djangoCacheopsFixtures,
+  ...djangoCrispyFormsFixtures,
+  ...djangoFormtoolsFixtures,
   ...djangoGuardianFixtures,
   ...djangoModelsFixtures,
   ...djangoOauthToolkitFixtures,
@@ -448,30 +445,37 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...djangoTastypieFixtures,
   ...djangoWaffleFixtures,
   ...djangoWordpressFixtures,
+  ...docoptFixtures,
   ...dogpileCacheFixtures,
   ...dotenvFixtures,
   ...dotenvFlowFixtures,
   ...dotenvxFixtures,
   ...drizzleOrmFixtures,
   ...duckdbWasmFixtures,
-  ...effectorFixtures,
+  ...dynaconfFixtures,
   ...elysiaFixtures,
   ...emailSdkFixtures,
+  ...emotionFixtures,
   ...envalidFixtures,
   ...eveFixtures,
   ...expressZodApiFixtures,
   ...facebookSdkFixtures,
   ...fateFixtures,
+  ...firebaseFixtures,
   ...flagsmithFixtures,
   ...flagsmithPythonFixtures,
   ...flankerFixtures,
   ...flaskApiFixtures,
   ...flaskGraphqlFixtures,
   ...flaskRestfulFixtures,
+  ...flaskWtfFixtures,
   ...formCreateFixtures,
   ...formischFixtures,
   ...formkitFixtures,
+  ...gluegunFixtures,
   ...googleApiPythonClientFixtures,
+  ...googleCloudStorageFixtures,
+  ...googleCloudStoragePythonFixtures,
   ...gotFixtures,
   ...gqlFixtures,
   ...graffleFixtures,
@@ -500,7 +504,10 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...idbKeyvalFixtures,
   ...imboxFixtures,
   ...immortaldbFixtures,
+  ...injectionJsFixtures,
+  ...injectorFixtures,
   ...inngestFixtures,
+  ...inversifyFixtures,
   ...joblibFixtures,
   ...joseFixtures,
   ...jotaiFixtures,
@@ -514,6 +521,7 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...kyselyFixtures,
   ...launchdarklyFixtures,
   ...launchdarklyPythonFixtures,
+  ...linariaFixtures,
   ...localforageFixtures,
   ...logbookFixtures,
   ...loglayerFixtures,
@@ -523,9 +531,9 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...lruCacheFixtures,
   ...luciaFixtures,
   ...masoniteFixtures,
+  ...meowFixtures,
   ...mercuriusFixtures,
   ...mikroormFixtures,
-  ...mobxFixtures,
   ...moleculerFixtures,
   ...mongoengineFixtures,
   ...mongooseFixtures,
@@ -535,7 +543,6 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...mrqFixtures,
   ...msalJsFixtures,
   ...mysqlclientFixtures,
-  ...nanostoresFixtures,
   ...naviFixtures,
   ...nconfFixtures,
   ...nextauthJsFixtures,
@@ -553,6 +560,7 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...oidcProviderFixtures,
   ...openfeatureFixtures,
   ...openfeaturePythonFixtures,
+  ...opentelemetryPythonFixtures,
   ...optimizelyFixtures,
   ...optimizelyPythonFixtures,
   ...orangeOrmFixtures,
@@ -560,6 +568,7 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...ormFixtures,
   ...orpcFixtures,
   ...pageJsFixtures,
+  ...partyKitFixtures,
   ...peeweeFixtures,
   ...pgBossFixtures,
   ...pgliteFixtures,
@@ -573,7 +582,6 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...posthogPythonFixtures,
   ...pothosFixtures,
   ...prismaFixtures,
-  ...profigFixtures,
   ...psycopg2Fixtures,
   ...py2neoFixtures,
   ...pydalFixtures,
@@ -584,10 +592,14 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...pymysqlFixtures,
   ...pyramidFixtures,
   ...pythonDecoupleFixtures,
+  ...pythonDotenvFixtures,
+  ...pythonFireFixtures,
+  ...pythonInjectFixtures,
   ...pythonJoseFixtures,
   ...pythonJwtFixtures,
   ...pythonOauth2Fixtures,
   ...pythonSocialAuthFixtures,
+  ...pythonSocketioFixtures,
   ...queriesFixtures,
   ...reachRouterFixtures,
   ...reactFixtures,
@@ -617,21 +629,26 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...sidequestFixtures,
   ...signaleFixtures,
   ...signalsFixtures,
+  ...slackSdkFixtures,
   ...slonikFixtures,
   ...socketIoFixtures,
   ...spiffworkflowFixtures,
   ...splitFixtures,
   ...sqlJsFixtures,
   ...sqlalchemyFixtures,
+  ...sseStarletteFixtures,
   ...stackAuthFixtures,
   ...statsigFixtures,
   ...statsigPythonFixtures,
   ...storeJsFixtures,
   ...strawberryFixtures,
   ...structlogFixtures,
+  ...styledComponentsFixtures,
+  ...stylexFixtures,
   ...supabaseFixtures,
   ...supersqliteFixtures,
   ...suryFixtures,
+  ...svcsFixtures,
   ...swrFixtures,
   ...t3EnvFixtures,
   ...tanstackFormFixtures,
@@ -646,8 +663,11 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...treqFixtures,
   ...triggerDevFixtures,
   ...tslogFixtures,
+  ...tsyringeFixtures,
+  ...twilioFixtures,
   ...twythonFixtures,
   ...typeboxFixtures,
+  ...typediFixtures,
   ...typegooseFixtures,
   ...typegraphqlFixtures,
   ...typeormFixtures,
@@ -660,10 +680,11 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...upyoFixtures,
   ...urllib3Fixtures,
   ...urqlFixtures,
+  ...uWebSocketsFixtures,
   ...valibotFixtures,
   ...validatorFixtures,
   ...valideerFixtures,
-  ...valtioFixtures,
+  ...vanillaExtractFixtures,
   ...veevalidateFixtures,
   ...vercelFlagsFixtures,
   ...vinejsFixtures,
@@ -673,18 +694,87 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...vueformFixtures,
   ...watermelondbFixtures,
   ...websocketsFixtures,
+  ...discordInteractionsFixtures,
+  ...octokitWebhooksFixtures,
+  ...octokitWebhooksMethodsFixtures,
+  ...standardWebhooksFixtures,
+  ...svixFixtures,
+  ...discordInteractionsForPythonFixtures,
+  ...gidgethubFixtures,
+  ...slackeventsapiFixtures,
+  ...standardWebhooksForPythonFixtures,
+  ...svixForPythonFixtures,
   ...winstonFixtures,
   ...workflowFixtures,
   ...wouterFixtures,
   ...wretchFixtures,
+  ...wsFixtures,
+  ...wtformsFixtures,
   ...xiorFixtures,
-  ...xstateFixtures,
   ...yagmailFixtures,
   ...yargsFixtures,
   ...youtubeJsFixtures,
   ...zodFixtures,
+  ...grpcForNodeJsFixtures,
+  ...jsonRpc2Fixtures,
+  ...connectRpcFixtures,
+  ...jaysonFixtures,
+  ...zerorpcFixtures,
+  ...rpycFixtures,
+  ...grpcForPythonFixtures,
+  ...apacheThriftFixtures,
+  ...thriftpy2Fixtures,
   ...koaFixtures,
   ...koaRouterFixtures,
   ...falconFixtures,
   ...sanicFixtures,
+  ...helmetFixtures,
+  ...forgeFixtures,
+  ...cryptoJsFixtures,
+  ...expressRateLimitFixtures,
+  ...bcryptJsFixtures,
+  ...cryptographyFixtures,
+  ...passlibFixtures,
+  ...pynaclFixtures,
+  ...itsdangerousFixtures,
+  ...bcryptFixtures,
+  ...globFixtures,
+  ...fsExtraFixtures,
+  ...multerFixtures,
+  ...chokidarFixtures,
+  ...archiverFixtures,
+  ...pathFixtures,
+  ...pyFilesystemFixtures,
+  ...pythonMagicFixtures,
+  ...unipathFixtures,
+  ...watchdogFixtures,
+  ...zxFixtures,
+  ...execaFixtures,
+  ...piscinaFixtures,
+  ...workerpoolFixtures,
+  ...tinypoolFixtures,
+  ...delegatorPyFixtures,
+  ...sargeFixtures,
+  ...shFixtures,
+  ...pexpectFixtures,
+  ...plumbumFixtures,
+  ...stripeFixtures,
+  ...razorpayFixtures,
+  ...squareFixtures,
+  ...adyenFixtures,
+  ...paypalFixtures,
+  ...stripePythonFixtures,
+  ...braintreeFixtures,
+  ...adyenPythonFixtures,
+  ...razorpayPythonFixtures,
+  ...squarePythonFixtures,
+  ...vercelAiSdkFixtures,
+  ...langchainJsFixtures,
+  ...anthropicFixtures,
+  ...openaiFixtures,
+  ...openaiPythonFixtures,
+  ...langchainFixtures,
+  ...anthropicPythonFixtures,
+  ...googleGenAiFixtures,
+  ...transformersFixtures,
 ]

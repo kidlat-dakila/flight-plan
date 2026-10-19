@@ -1,4 +1,5 @@
 import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
+import { readBindings as readScopedBindings } from "@/ast-graph/languages/python/bindings"
 import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
 import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
 import { annotatedTypeFilling } from "@/code-blocks/languages/python/annotated"
@@ -32,8 +33,9 @@ const FIRST_POSITION = 0
 const WRAPPING_TYPES: ReadonlySet<string> = new Set(["await", "parenthesized_expression"])
 const SUBSCRIPT_TYPE = "subscript"
 const FUNCTION_VALUE_TYPE = "lambda"
+const BUILTINS_MODULE = "builtins"
 const BINDING_PATTERN = patternOfTypes([IMPORT_TYPE, IMPORT_FROM_TYPE, ASSIGNMENT_TYPE, RENAMED_TYPE, CLASS_TYPE, FUNCTION_TYPE])
-const SITE_PATTERN = patternOfTypes([CALL_TYPE, DECORATOR_TYPE, CLASS_TYPE])
+const SITE_PATTERN = patternOfTypes([CALL_TYPE, DECORATOR_TYPE, CLASS_TYPE, ASSIGNMENT_TYPE])
 
 interface NamedBinding {
   readonly name: string
@@ -117,15 +119,25 @@ const bindingAmong = (bindings: readonly NamedBinding[], name: SyntaxNode): Bind
 const basesOf = (declaration: SyntaxNode): SyntaxNode[] =>
   (declaration.childForFieldName("superclasses")?.namedChildren ?? []).filter((base) => base.type !== NAMED_ARGUMENT_TYPE && base.type !== COMMENT_TYPE)
 
+const assignedSiteOf = (node: SyntaxNode): Site[] => {
+  const left = node.childForFieldName("left")
+  return left?.type === MEMBER_TYPE && node.childForFieldName("right") !== null ? [{ kind: "assignment", node, callee: left }] : []
+}
+
 const siteOf = (node: SyntaxNode): Site[] => {
   if (node.type === CLASS_TYPE) return [{ kind: "class", node, bases: basesOf(node) }]
+  if (node.type === ASSIGNMENT_TYPE) return assignedSiteOf(node)
   const written = node.type === DECORATOR_TYPE ? node.firstNamedChild : node
   const callee = written?.type === CALL_TYPE ? written.childForFieldName("function") : written
   if (callee === null) return []
   return [{ kind: node.type === DECORATOR_TYPE ? "decorator" : "call", node, callee }]
 }
 
+const ASSIGNED_POSITION = 0
+
 const passedTo = (site: SyntaxNode): PassedValue[] => {
+  const assigned = site.type === ASSIGNMENT_TYPE ? site.childForFieldName("right") : null
+  if (assigned !== null) return [{ position: ASSIGNED_POSITION, name: null, node: assigned }]
   const call = site.type === DECORATOR_TYPE ? site.firstNamedChild : site
   const given = call?.type === CALL_TYPE ? call.childForFieldName("arguments") : null
   if (given?.type !== ARGUMENTS_TYPE) return []
@@ -166,13 +178,54 @@ const findNothingImported: FindImportedBinding = () => null
 const followedImport = (binding: Binding | null, name: SyntaxNode, findImported: FindImportedBinding): Binding | null =>
   binding?.kind === "import" ? (findImported(name) ?? binding) : binding
 
+const listBoundNames = (tree: SyntaxTree): ReadonlySet<string> => {
+  const { variables, imports, classNames } = readScopedBindings(tree)
+  return new Set([...variables.map(({ name }) => name), ...imports.map(({ name }) => name.text), ...classNames.map(({ text }) => text)])
+}
+
+const PARAMETERS_FIELD = "parameters"
+const DECORATED_TYPE = "decorated_definition"
+const BLOCK_TYPE = "block"
+const STATIC_METHOD = "staticmethod"
+
+const nameOfParameter = (parameter: SyntaxNode): string | null =>
+  parameter.type === NAME_TYPE ? parameter.text : (parameter.namedChildren.find((child) => child.type === NAME_TYPE)?.text ?? null)
+
+const parameterNamesOf = (definition: SyntaxNode): (string | null)[] =>
+  (definition.childForFieldName(PARAMETERS_FIELD)?.namedChildren ?? []).filter((parameter) => parameter.type !== COMMENT_TYPE).map(nameOfParameter)
+
+const isStaticMethod = (definition: SyntaxNode): boolean =>
+  definition.parent?.type === DECORATED_TYPE && definition.parent.namedChildren.some((child) => child.type === DECORATOR_TYPE && child.text.endsWith(STATIC_METHOD))
+
+const classOfMethod = (definition: SyntaxNode): SyntaxNode | null => {
+  const written = definition.parent?.type === DECORATED_TYPE ? definition.parent : definition
+  const block = written.parent
+  return block?.type === BLOCK_TYPE && block.parent?.type === CLASS_TYPE && !isStaticMethod(definition) ? block.parent : null
+}
+
+const definingFunctionOf = (node: SyntaxNode | null, name: string): SyntaxNode | null => {
+  if (node === null || node.type === CLASS_TYPE) return null
+  if (node.type === FUNCTION_TYPE && parameterNamesOf(node).includes(name)) return node
+  return definingFunctionOf(node.parent, name)
+}
+
+const receiverBindingOf = (name: SyntaxNode): Binding | null => {
+  const definition = definingFunctionOf(name.parent, name.text)
+  const declaration = definition === null || parameterNamesOf(definition)[0] !== name.text ? null : classOfMethod(definition)
+  return declaration === null ? null : { kind: "class", declaration }
+}
+
+const builtinBindingOf = (name: SyntaxNode, boundNames: ReadonlySet<string>): Binding | null =>
+  boundNames.has(name.text) ? null : { kind: "import", specifier: BUILTINS_MODULE, importedName: name.text }
+
 export const pythonReaderOf = (tree: SyntaxTree, findImported: FindImportedBinding = findNothingImported): SyntaxReader => {
   const bindings = readBindings(tree)
+  const boundNames = listBoundNames(tree)
   return {
     language: "python",
     tree,
     expressionOf,
-    bindingOf: (name) => followedImport(bindingAmong(bindings, name), name, findImported),
+    bindingOf: (name) => receiverBindingOf(name) ?? followedImport(bindingAmong(bindings, name), name, findImported) ?? builtinBindingOf(name, boundNames),
     basesOf,
     handedAt: () => null,
     parameterTypeOf: () => null,

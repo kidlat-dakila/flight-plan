@@ -128,6 +128,36 @@ export const drizzleOrmFixtures: readonly PatternFixture[] = [
       "const db = makeLocalRegistry()\nawait db.transaction(async (tx) => { await tx.update(users).set({ name: \"Ada\" }) })",
     ],
   },
+  {
+    library: DRIZZLE_ORM,
+    patternKey: "call:pgTable:*",
+    matches: [
+      "import { integer, pgTable } from \"drizzle-orm/pg-core\"\nexport const users = pgTable(\"users\", { id: integer() })",
+    ],
+    rejects: [
+      "const pgTable = (...parts) => parts\nexport const users = pgTable(\"users\", { id: integer() })",
+    ],
+  },
+  {
+    library: DRIZZLE_ORM,
+    patternKey: "call:mysqlTable:*",
+    matches: [
+      "import { integer, mysqlTable } from \"drizzle-orm/mysql-core\"\nexport const users = mysqlTable(\"users\", { id: integer() })",
+    ],
+    rejects: [
+      "const mysqlTable = (...parts) => parts\nexport const users = mysqlTable(\"users\", { id: integer() })",
+    ],
+  },
+  {
+    library: DRIZZLE_ORM,
+    patternKey: "call:sqliteTable:*",
+    matches: [
+      "import { integer, sqliteTable } from \"drizzle-orm/sqlite-core\"\nexport const users = sqliteTable(\"users\", { id: integer() })",
+    ],
+    rejects: [
+      "const sqliteTable = (...parts) => parts\nexport const users = sqliteTable(\"users\", { id: integer() })",
+    ],
+  },
 ]
 
 const MIKROORM = "MikroORM"
@@ -201,6 +231,26 @@ export const mikroormFixtures: readonly PatternFixture[] = [
     ],
     rejects: [
       "const orm = makeLocalRegistry()\nconst em = orm.em.fork()",
+    ],
+  },
+  {
+    library: MIKROORM,
+    patternKey: "decorator:Entity:*",
+    matches: [
+      "import { Entity, PrimaryKey } from \"@mikro-orm/decorators/legacy\"\n@Entity()\nexport class User {\n  @PrimaryKey()\n  id!: number\n}",
+    ],
+    rejects: [
+      "const Entity = (...parts) => parts\n@Entity()\nexport class User {\n  id!: number\n}",
+    ],
+  },
+  {
+    library: MIKROORM,
+    patternKey: "call:defineEntity:*",
+    matches: [
+      "import { defineEntity, p } from \"@mikro-orm/core\"\nexport const Book = defineEntity({ name: \"Book\", properties: { id: p.bigint().primary(), title: p.string() } })",
+    ],
+    rejects: [
+      "const defineEntity = (...parts) => parts\nexport const Book = defineEntity({ name: \"Book\", properties: { id: p.bigint().primary(), title: p.string() } })",
     ],
   },
 ]
@@ -661,6 +711,16 @@ export const typegooseFixtures: readonly PatternFixture[] = [
     ],
     rejects: [
       "const KittenModel = makeLocalRegistry()\nKittenModel.find({ name: \"Kitty\" })",
+    ],
+  },
+  {
+    library: TYPEGOOSE,
+    patternKey: "decorator:prop:*",
+    matches: [
+      "import { prop } from \"@typegoose/typegoose\"\nclass Kitten {\n  @prop()\n  public name?: string\n}",
+    ],
+    rejects: [
+      "const prop = (...parts) => parts\nclass Kitten {\n  @prop()\n  public name?: string\n}",
     ],
   },
   {

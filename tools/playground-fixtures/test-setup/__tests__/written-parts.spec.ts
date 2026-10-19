@@ -30,6 +30,8 @@ const blockOf = (id: string, type: CodeBlock["type"]): CodeBlock => ({
   lineOfCodeDiffs: null,
   diffs: [],
   diffSources: [],
+  classifications: ["logic"],
+  diffClassifications: [],
   outerSymbols: [],
   usedBy: [],
   nextBlocks: [],

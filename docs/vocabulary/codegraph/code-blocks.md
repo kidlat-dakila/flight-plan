@@ -20,8 +20,9 @@ flowchart TD
 
 | Page | What it holds |
 |---|---|
-| This page | The shapes: the group, a file, a code block, the stored form, and the files that are ignored |
+| This page | The shapes: the group, a file, a code block, the stored form, and the files no language reads |
 | [Block types](block-types.md) | What each type of block is, and what counts as a hook and as an effect |
+| [Classifications](classifications.md) | What a block is for and what a change to it does, read from the code it holds and from where its file is |
 | [Symbols](symbols.md) | How a block refers to what it uses: where, how, what it is handed to, and where a value comes from |
 | [Chains](chains.md) | How a change is placed in a block and traced to what starts it |
 | [Segments](segments.md) | How the changes of a review are split, and when a segment has a Blast Diagram |
@@ -76,22 +77,22 @@ interface ASTCodeGroupGraph {
 
 `diffContains` says, in a few words, what the changes of the group are made of. It is read before anything is traced, so that what is built next can take the right path without looking at every block again. The Journey Flow Diagram is built differently when the diff has changes to the interface, and `diffContains` says so at once.
 
-It is worked out from `diffBlocks` alone: the type of each diff block and of the blocks around it.
+It is worked out from `diffBlocks` alone: the [classifications](classifications.md) each diff block earns by itself, each mapped to the kind it gives, and whether the block is inside a component.
 
 Its values are the ten of `DiffKind`, and no other: a value that is not one of them does not compile.
 
-| Value | The diff has a change in |
+| Value | The diff has a change in a block classified |
 |---|---|
-| `ui` | Markup, or a component: a `render-root`, `render`, `render-condition`, `render-loop` or `render-event` block, a `component` block, or any block inside one |
-| `state` | A `state` or a `derived` block |
-| `effect` | An `effect`, a `component-effect` or an `effect-callback` block |
-| `event` | A `code-event` block |
-| `route` | A `route`, a `resolver` or a `middleware` block |
-| `data` | A `data`, a `data-fetch`, a `cache` or a `transaction` block |
-| `auth` | An `auth` block |
-| `type` | A `type-declaration` block |
-| `file` | A `file` block: a file no language reads |
-| `logic` | Any other block: a function, a method, a condition, a loop |
+| `ui` | `page` or `component`, or any block inside a function that holds a `render-root` |
+| `state` | `state` or `store` |
+| `effect` | `effect` |
+| `event` | `event` |
+| `route` | `api-route`, `webhook` or `server-action` |
+| `data` | `database-operation`: a write or a read of a database or a cache |
+| `auth` | `auth` |
+| `type` | `type` |
+| `file` | `file`: a file no language reads and no location names |
+| `logic` | Anything else, and a block that earns no classification: a function, a method, a condition, a loop, a request over the network, a migration |
 
 A diff can hold several: a change to a component and to the function it calls gives `["ui", "logic"]`. A group whose diff has no `ui` holds no change to the interface, and the Journey Flow Diagram needs none of what it builds for components.
 
@@ -150,16 +151,9 @@ Every block in these lists is the same object as in the AST graph of its file: a
 
 A changed file no language reads, such as a migration, a schema, a stylesheet or a JSON file, has an AST graph with one block of the type `file` that spans the whole file. It has no symbols and nothing uses it, so no test of the [segments](segments.md) places it: it is in the shared segment of the change, or a segment of its own when the change has none, and the Code Walkthrough has a block for its waypoint. A file of that kind the diff did not change is not in the group.
 
-## Files that are ignored
+## Test files
 
-Test files and story files are never part of a review artifact, so they are never part of a group. A file the [catalogue](catalogue.md#files-that-are-ignored) names as a test or a story has no AST graph and no blocks, whether the diff changed it or not. The catalogue names them with file patterns that say `isIgnored`: `**/*.test.*`, `**/*.spec.*`, `**/*.stories.*` and `**/__tests__/**` for JavaScript, and `**/test_*.py`, `**/*_test.py` and `**/conftest.py` for Python.
-
-| Because a test or a story is ignored | It follows that |
-|---|---|
-| It has no blocks | A change in it has no diff block, and no waypoint in the Code Walkthrough |
-| It is not a user | A function its page and its test use is used from one place, when segments are found |
-| It hands nothing over | A value a story hands to a component is not an origin of that value |
-| It is not a top of a chain | No journey starts in a test |
+A test or a story is never read. The test runners the repository installs, read with their configuration, say which files are tests, as [Test files](classifications.md#test-files) says. A changed test is a group of its own with one `file` block classified `test`, and a test is in no group of the files it imports and joins none of them.
 
 ## A file
 
@@ -253,6 +247,7 @@ interface CodeBlockCatalogue {
   method: string | null
   event: string | null
   certainty: "proven" | "assumed"
+  classifies?: CodeBlockClassification
 }
 
 interface CodeBlock {
@@ -273,6 +268,8 @@ interface CodeBlock {
   lineOfCodeDiffs: SourceRange[] | null
   diffs: CodeBlockDiff[]
   diffSources: CodeBlock[] // aliases not a shallow or clone
+  classifications: CodeBlockClassification[]
+  diffClassifications: CodeBlockClassification[]
   outerSymbols: CodeBlockSymbol[]
   usedBy: CodeBlock[] // aliases not a shallow or clone
   nextBlocks: CodeBlock[] // aliases not a shallow or clone
@@ -303,6 +300,8 @@ interface CodeBlock {
 | `lineOfCodeDiffs` | The ranges of the changes that belong to the block itself: those it is the innermost block around. `null` for every other block, including a block around a diff block. A block with ranges here is a diff block. |
 | `diffs` | What a change does to the block, each as a diff with a `type` and a `range`. The changes of `lineOfCodeDiffs` are here as `added`, `modified` or `deleted`. A use of a block with a change is here as `affected`. Empty on a block with neither. See [The diffs of a block](chains.md#the-diffs-of-a-block). |
 | `diffSources` | The diff sources the block leads to: every block with a change on a chain that starts at this block. A diff source lists itself. Empty when no chain from the block leads to a change. |
+| `classifications` | What the block is for: every classification the block and the blocks nested in it earn, in the order of the hierarchy, never empty. See [Classifications](classifications.md). |
+| `diffClassifications` | What the change to the block does: the classifications the changed blocks among the block and its nested blocks earn, a subset of `classifications`, empty when nothing in the block changed. See [Classifications](classifications.md). |
 | `nextBlocks` | The next blocks of the chain this block is on: the blocks it runs that lead to a change. One block on a chain that does not split, several where it splits, and none on the last changed block of a path or on a block that is on no chain. |
 | `outerSymbols` | The names the block uses that are declared outside its own scope, one entry per use. See [Symbols](symbols.md). |
 | `handedFrom` | The symbols that are handed to this block: every symbol whose `handedTo` is this block. It is the reverse of `handedTo`, as `usedBy` is the reverse of `outerSymbols`. |
@@ -318,7 +317,7 @@ interface CodeBlock {
 
 | Pass | When | What it writes |
 |---|---|---|
-| The library files | As a file is read, after its blocks | The `card` of every block a library with a file of its own recognises in that file: an Express registration and its handler and middleware, a tRPC router and its procedures, a Zustand, Pinia or Redux store and its parts, an RTK Query API and its endpoints, a Flask or FastAPI route, a Next.js route file and server action. Each `readCards` reads the blocks of the file, the matches of its library and the syntax around them. Each `readExportCards` reads the blocks the file patterns of its library name, once the manifest has said which patterns the file matches. |
+| The library files | As a file is read, after its blocks | The `card` of every block a library with a file of its own recognises in that file: an Express registration and its handler and middleware, a tRPC router and its procedures, a Zustand, Pinia, Redux, MobX, Valtio, XState Store, Nano Stores or Effector store and its parts, an RTK Query API and its endpoints, a Flask or FastAPI route, a Next.js route file and server action. Each `readCards` reads the blocks of the file, the matches of its library and the syntax around them. Each `readExportCards` reads the blocks the file patterns of its library name, once the manifest has said which patterns the file matches. |
 | The card links | Once every reference of the group exists | The `ownerId` of a part written beside its card, found through the symbols that join them, and the card of a block no library file could see |
 | The mounts | After the card links | The prefix of every mount above a route, put before its `groupKey`, and the `routePaths` of middleware that runs before a whole router. See "The routes below a mount". |
 
@@ -378,6 +377,7 @@ When a pattern of the [catalogue](catalogue.md) matches a block, the block keeps
 | `method` | The method of a route, of a request or of a data-fetch that is a request |
 | `event` | The name of the event, the channel or the queue of a `publish` or a `code-event` block |
 | `certainty` | `proven` when the pattern matched through an import and a known version. `assumed` when the version of the library is not known and the shape of the call picked the pattern. |
+| `classifies` | The [classification](classifications.md) a member of a class pattern or an export of a file pattern gives the block, such as `error-handling` for `componentDidCatch` of a React class or the default export of a Next.js `error.tsx`. Left out when the pattern says none. |
 
 | Code | Block | Its `catalogue` |
 |---|---|---|
@@ -434,7 +434,7 @@ flowchart LR
 | 3. `astGraphs` | One AST graph per file of the group, parsed once by its language. The same parse gives the [syntax](ast-graph.md) of the file, which the group keeps beside its stored form. | The files of step 2 |
 | 4. `rootASTGraphs` | The AST graphs no other file of the group imports | Step 3 and the imports of step 1 |
 | 5. `codeBlocks` | Every block of every file, with its type, its range and what it refers to: `outerSymbols`, `usedBy`, `handedTo`, `handedFrom`, and the `exports` of each file | Step 3 |
-| 6. `diffBlocks` | The innermost block around each change, with its `lineOfCodeDiffs` and its `diffs`, the `affected` diffs of the blocks that use it, and `diffContains`, read from those blocks | Step 5 and the ranges of the changes |
+| 6. `diffBlocks` | The innermost block around each change, with its `lineOfCodeDiffs` and its `diffs`, the `affected` diffs of the blocks that use it, the `classifications` and `diffClassifications` of every block, and `diffContains`, read from the classifications of the changed blocks | Step 5, the ranges of the changes, the library calls of each file and the locations of the repository |
 | 7. `diffChains` | `nextBlocks` and `diffSources` on each block, the top of each chain on the group, and `chainContains` | Steps 5 and 6 |
 
 Steps 5 and 6 make the two flat lists, and step 7 the chains: a chain cannot be traced before every block and every changed block is known.

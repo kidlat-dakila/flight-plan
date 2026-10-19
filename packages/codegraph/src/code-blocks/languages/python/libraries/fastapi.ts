@@ -54,7 +54,7 @@ const readFastapiCards = (reading: CardReading): CardSeed[] => {
 
 export const fastapiLibrary: Library = {
   name: "FastAPI",
-  specifiers: ["fastapi"],
+  specifiers: ["fastapi", "fastapi.templating"],
   documentedVersion: "0.143",
   category: "framework",
   type: "backend",
@@ -70,11 +70,12 @@ export const fastapiLibrary: Library = {
         { kind: "decorator", name: "middleware", runs: "middleware" },
         { kind: "call", name: "mount", slots: [], prefixAt: FASTAPI_PATH },
         { kind: "call", name: "add_middleware", slots: [{ at: FASTAPI_MIDDLEWARE_CLASS, runs: "middleware" }] },
-        { kind: "decorator", name: "exception_handler", runs: "event" },
+        { kind: "decorator", name: "exception_handler", runs: "event", classifies: "error-handling" },
       ],
     },
     { kind: "factory", name: "APIRouter", prefixAt: FASTAPI_PREFIX, slots: DEPENDENCIES, methods: FASTAPI_ROUTER_METHODS },
     { kind: "call", name: "Depends", slots: [{ at: FIRST_ARGUMENT, runs: "in-place" }] },
     { kind: "call", name: "Security", slots: [{ at: FIRST_ARGUMENT, runs: "in-place" }], makes: "auth" },
+    { kind: "factory", name: "Jinja2Templates", methods: [{ kind: "call", name: "TemplateResponse", slots: [], classifies: "page" }] },
   ],
 }

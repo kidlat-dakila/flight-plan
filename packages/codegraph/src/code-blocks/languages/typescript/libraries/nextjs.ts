@@ -104,8 +104,13 @@ export const nextLibrary: Library = {
     { kind: "file", glob: APP_PAGE_GLOB, exports: [{ name: DEFAULT_EXPORT, runs: PAGE_RUNS }] },
     {
       kind: "file",
-      glob: "{app,src/app}/**/{layout,template,loading,error,not-found,global-error}.{js,jsx,ts,tsx}",
+      glob: "{app,src/app}/**/{layout,template,loading,not-found}.{js,jsx,ts,tsx}",
       exports: [{ name: "default", runs: "page" }],
+    },
+    {
+      kind: "file",
+      glob: "{app,src/app}/**/{error,global-error}.{js,jsx,ts,tsx}",
+      exports: [{ name: "default", runs: "page", classifies: "error-handling" }],
     },
     {
       kind: "file",

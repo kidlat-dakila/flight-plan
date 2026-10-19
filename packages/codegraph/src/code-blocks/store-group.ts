@@ -57,6 +57,8 @@ const storeBlock = (block: CodeBlock, placeBySymbol: PlaceBySymbol): StoredCodeB
   lineOfCodeDiffs: block.lineOfCodeDiffs,
   diffs: block.diffs,
   diffSourceIds: idsOf(block.diffSources),
+  classifications: block.classifications,
+  diffClassifications: block.diffClassifications,
   outerSymbols: block.outerSymbols.map(storeSymbol),
   usedByIds: idsOf(block.usedBy),
   nextBlockIds: idsOf(block.nextBlocks),

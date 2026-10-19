@@ -199,30 +199,3 @@ export const sidequestLibrary: CatalogueLibrary = {
     { kind: "call", name: "Sidequest.start", slots: [], makes: "config" },
   ],
 }
-
-export const socketIoLibrary: CatalogueLibrary = {
-  name: "socket.io",
-  specifiers: ["socket.io", "socket.io-client"],
-  documentedVersion: "4.8",
-  category: "queues",
-  type: "fullstack",
-  language: "javascript",
-  patterns: [
-    {
-      kind: "factory",
-      name: "Server",
-      methods: [
-        { kind: "call", name: "on", slots: [{ at: 1, runs: "event" }], eventAt: 0 },
-        { kind: "call", name: "emit", slots: [], makes: "publish", eventAt: 0 },
-      ],
-    },
-    {
-      kind: "factory",
-      name: "io",
-      methods: [
-        { kind: "call", name: "on", slots: [{ at: 1, runs: "event" }], eventAt: 0 },
-        { kind: "call", name: "emit", slots: [], makes: "publish", eventAt: 0 },
-      ],
-    },
-  ],
-}

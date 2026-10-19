@@ -93,6 +93,8 @@ export const createCodeBlock = (id: string, filePath: string, overrides: Partial
   lineOfCodeDiffs: null,
   diffs: [],
   diffSources: [],
+  classifications: ["logic"],
+  diffClassifications: [],
   outerSymbols: [],
   usedBy: [],
   nextBlocks: [],

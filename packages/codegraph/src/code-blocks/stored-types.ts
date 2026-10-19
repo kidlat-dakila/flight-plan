@@ -1,4 +1,4 @@
-import type { BlockCard, CodeBlockCatalogue, CodeBlockDiff, CodeBlockType, DiffKind, SourceRange, SymbolUse } from "./types"
+import type { BlockCard, CodeBlockCatalogue, CodeBlockClassification, CodeBlockDiff, CodeBlockType, DiffKind, SourceRange, SymbolUse } from "./types"
 
 export interface StoredSymbolMember {
   readonly path: readonly string[]
@@ -71,6 +71,8 @@ export interface StoredCodeBlock {
   readonly lineOfCodeDiffs: readonly SourceRange[] | null
   readonly diffs: readonly CodeBlockDiff[]
   readonly diffSourceIds: readonly string[]
+  readonly classifications: readonly CodeBlockClassification[]
+  readonly diffClassifications: readonly CodeBlockClassification[]
   readonly outerSymbols: readonly StoredCodeBlockSymbol[]
   readonly usedByIds: readonly string[]
   readonly nextBlockIds: readonly string[]

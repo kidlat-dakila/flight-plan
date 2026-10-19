@@ -428,6 +428,46 @@ export const ponyFixtures: readonly PatternFixture[] = [
       "def db_session(*parts, **options):\n    return parts\n\n@db_session\ndef print_person_name(person_id):\n    p = Person[person_id]\n    print(p.name)",
     ],
   },
+  {
+    library: PONY,
+    patternKey: "call:PrimaryKey:*",
+    matches: [
+      "from pony.orm import Database, PrimaryKey\n\ndb = Database()\n\nclass Person(db.Entity):\n    id = PrimaryKey(int, auto=True)",
+    ],
+    rejects: [
+      "def PrimaryKey(*parts, **options):\n    return parts\n\nclass Person(db.Entity):\n    id = PrimaryKey(int, auto=True)",
+    ],
+  },
+  {
+    library: PONY,
+    patternKey: "call:Required:*",
+    matches: [
+      "from pony.orm import Database, Required\n\ndb = Database()\n\nclass Person(db.Entity):\n    name = Required(str)",
+    ],
+    rejects: [
+      "def Required(*parts, **options):\n    return parts\n\nclass Person(db.Entity):\n    name = Required(str)",
+    ],
+  },
+  {
+    library: PONY,
+    patternKey: "call:Optional:*",
+    matches: [
+      "from pony.orm import Database, Optional\n\ndb = Database()\n\nclass Person(db.Entity):\n    age = Optional(int)",
+    ],
+    rejects: [
+      "def Optional(*parts, **options):\n    return parts\n\nclass Person(db.Entity):\n    age = Optional(int)",
+    ],
+  },
+  {
+    library: PONY,
+    patternKey: "call:Set:*",
+    matches: [
+      "from pony.orm import Database, Set\n\ndb = Database()\n\nclass Person(db.Entity):\n    orders = Set(\"Order\")",
+    ],
+    rejects: [
+      "def Set(*parts, **options):\n    return parts\n\nclass Person(db.Entity):\n    orders = Set(\"Order\")",
+    ],
+  },
 ]
 
 const PYDAL = "pyDAL"
@@ -556,6 +596,46 @@ export const sqlalchemyFixtures: readonly PatternFixture[] = [
     ],
     rejects: [
       "def text(*parts, **options):\n    return parts\n\nstmt = text(\"SELECT x, y FROM some_table\")",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "class:DeclarativeBase:*",
+    matches: [
+      "from sqlalchemy.orm import DeclarativeBase\n\nclass Base(DeclarativeBase):\n    pass",
+    ],
+    rejects: [
+      "class DeclarativeBase:\n    pass\n\nclass Base(DeclarativeBase):\n    pass",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "call:declarative_base:*",
+    matches: [
+      "from sqlalchemy.orm import declarative_base\n\nBase = declarative_base()",
+    ],
+    rejects: [
+      "def declarative_base(*parts, **options):\n    return parts\n\nBase = declarative_base()",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "call:mapped_column:*",
+    matches: [
+      "from sqlalchemy.orm import mapped_column\n\nclass User(Base):\n    __tablename__ = \"user\"\n\n    id = mapped_column(Integer, primary_key=True)",
+    ],
+    rejects: [
+      "def mapped_column(*parts, **options):\n    return parts\n\nclass User(Base):\n    __tablename__ = \"user\"\n\n    id = mapped_column(Integer, primary_key=True)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "call:Column:*",
+    matches: [
+      "from sqlalchemy import Column, Integer\n\nclass User(Base):\n    __tablename__ = \"user\"\n\n    id = Column(Integer, primary_key=True)",
+    ],
+    rejects: [
+      "def Column(*parts, **options):\n    return parts\n\nclass User(Base):\n    __tablename__ = \"user\"\n\n    id = Column(Integer, primary_key=True)",
     ],
   },
 ]

@@ -1,10 +1,10 @@
 import type { SyntaxNode, SyntaxTree } from "@/ast-graph/parser"
 import type { PatternMatch } from "@/catalogue/matching/match-sites"
-import type { ReadBlock } from "@/code-blocks/reading"
+import type { LibraryUse, ReadBlock } from "@/code-blocks/reading"
 import { FIRST_COLUMN, FIRST_LINE } from "@/code-blocks/source-range"
 import type { SourceRange } from "@/code-blocks/types"
 import { firstOfEach } from "@/shared/first-of-each"
-import type { CardSeed, ExportCardReading, Library } from "./types"
+import type { CardReading, CardSeed, ExportCardReading, Library } from "./types"
 
 const pointOf = ({ line, column }: SourceRange["start"]): { row: number, column: number } => ({ row: line - FIRST_LINE, column: column - FIRST_COLUMN })
 
@@ -32,6 +32,16 @@ const withSeeds = (blocks: readonly ReadBlock[], seeds: readonly CardSeed[]): Re
 export const withCards = (blocks: readonly ReadBlock[], matches: readonly PatternMatch[], tree: SyntaxTree, libraries: readonly Library[]): ReadBlock[] => {
   const nodeAt = nodeFinderOf(tree)
   return withSeeds(blocks, libraries.flatMap((library) => readSeeds(library, matches, blocks, nodeAt)))
+}
+
+const readOwnUses = (library: Library, reading: CardReading): readonly LibraryUse[] => {
+  const own = reading.matches.filter((match) => match.library === library.name)
+  return library.readUses === undefined || own.length === 0 ? [] : library.readUses({ ...reading, matches: own })
+}
+
+export const listOwnUses = (blocks: readonly ReadBlock[], matches: readonly PatternMatch[], tree: SyntaxTree, libraries: readonly Library[]): LibraryUse[] => {
+  const reading: CardReading = { matches, blocks, nodeAt: nodeFinderOf(tree) }
+  return libraries.flatMap((library) => readOwnUses(library, reading))
 }
 
 export const withExportCards = (blocks: readonly ReadBlock[], reading: ExportCardReading, libraries: readonly Library[]): ReadBlock[] =>

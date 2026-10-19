@@ -363,6 +363,20 @@
               "pokedex.trainers.models:Trainer": "src/pokedex/trainers/models.py",
               "pokedex.trainers.schemas:TrainerCreate": "src/pokedex/trainers/schemas.py"
             }
+          },
+          {
+            "filePath": "tests/test_pokemon.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [],
+            "importsTo": [
+              "src/pokedex/main.py",
+              "src/pokedex/settings.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.main:app": "src/pokedex/main.py",
+              "pokedex.settings:API_KEY": "src/pokedex/settings.py"
+            }
           }
         ],
         "journeyFlowDiagram": {
@@ -865,6 +879,29 @@
                       "children": []
                     }
                   ]
+                }
+              ]
+            },
+            {
+              "path": "tests/test_pokemon.py",
+              "waypoints": [
+                {
+                  "id": "w7",
+                  "title": null,
+                  "declaration": "Lines 1–17",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 17
+                  },
+                  "category": "file",
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "tests/test_pokemon.py#file@1:1"
+                  ],
+                  "children": []
                 }
               ]
             }
@@ -2084,7 +2121,7 @@
               "path": "src/pokedex/main.py",
               "waypoints": [
                 {
-                  "id": "w7",
+                  "id": "w8",
                   "title": "Added the include of the Pokemon router under `/api`",
                   "declaration": "Lines 16–16",
                   "reading": "The author added a call to `app.include_router()` that puts `/api` before every route of [`pokemon_router`](code:src/pokedex/main.py#L6), and adds `Depends(verify_api_key)` to each of them. [`verify_api_key()` raises a 401 for a wrong `x-api-key` header](code:src/pokedex/security.py#L8-10), so the Pokemon routes ask for the same key as [the trainer routes](code:src/pokedex/main.py#L15).",
@@ -2110,7 +2147,7 @@
               "path": "src/pokedex/pokemon/models.py",
               "waypoints": [
                 {
-                  "id": "w8",
+                  "id": "w9",
                   "title": "Added the `Pokemon` model for the `pokemon` table",
                   "declaration": "Pokemon",
                   "reading": "The author added a SQLAlchemy model `Pokemon` on [`Base`](code:src/pokedex/database.py#L13-14) that maps the `pokemon` table. [`create_pokemon()` builds one from the body of a create request](code:src/pokedex/pokemon/service.py#L27), and [`PokemonRead` reads its attributes](code:src/pokedex/pokemon/schemas.py#L39) for every response.",
@@ -2134,7 +2171,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w8.1",
+                      "id": "w9.1",
                       "title": "Added the table name `pokemon`",
                       "declaration": "Pokemon › Pokemon.__tablename__",
                       "reading": "The author set `__tablename__` to `\"pokemon\"`, so SQLAlchemy reads and writes the `pokemon` table.",
@@ -2152,7 +2189,7 @@
                       "children": []
                     },
                     {
-                      "id": "w8.2",
+                      "id": "w9.2",
                       "title": "Added the `id` primary key",
                       "declaration": "Pokemon › Pokemon.id",
                       "reading": "The author added an `id` column as the primary key. The database sets it on insert, and [`find_pokemon()` looks a row up by it](code:src/pokedex/pokemon/service.py#L18).",
@@ -2170,7 +2207,7 @@
                       "children": []
                     },
                     {
-                      "id": "w8.3",
+                      "id": "w9.3",
                       "title": "Added the `name` column of up to 40 characters",
                       "declaration": "Pokemon › Pokemon.name",
                       "reading": "The author added a `name` column of type `String(40)` that cannot be `NULL`. Its length matches [the length check of `PokemonCreate.name`](code:src/pokedex/pokemon/schemas.py#L10).",
@@ -2188,7 +2225,7 @@
                       "children": []
                     },
                     {
-                      "id": "w8.4",
+                      "id": "w9.4",
                       "title": "Added the `level` column",
                       "declaration": "Pokemon › Pokemon.level",
                       "reading": "The author added a `level` column of whole numbers that cannot be `NULL`. The column has no range: [`PokemonCreate.level`](code:src/pokedex/pokemon/schemas.py#L11) keeps the value from 1 to 100.",
@@ -2206,7 +2243,7 @@
                       "children": []
                     },
                     {
-                      "id": "w8.5",
+                      "id": "w9.5",
                       "title": "Added the `primary_type` column of up to 10 characters",
                       "declaration": "Pokemon › Pokemon.primary_type",
                       "reading": "The author added a `primary_type` column of type `String(10)` that cannot be `NULL`. The longest names in [`POKEMON_TYPES`](code:src/pokedex/pokemon/schemas.py#L3-6), `\"electric\"` and `\"fighting\"`, have eight characters, so every known type fits.",
@@ -2224,7 +2261,7 @@
                       "children": []
                     },
                     {
-                      "id": "w8.6",
+                      "id": "w9.6",
                       "title": "Added the nullable `secondary_type` column",
                       "declaration": "Pokemon › Pokemon.secondary_type",
                       "reading": "The author added a `secondary_type` column of type `String(10)`. Its annotation is `Mapped[str | None]`, so the column is `NULL` for a Pokemon with one type.",
@@ -2242,7 +2279,7 @@
                       "children": []
                     },
                     {
-                      "id": "w8.7",
+                      "id": "w9.7",
                       "title": "Added the `trainer_id` foreign key to `trainers.id`",
                       "declaration": "Pokemon › Pokemon.trainer_id",
                       "reading": "The author added a nullable `trainer_id` column with a foreign key to `trainers.id`. [`list_pokemon()` filters on it](code:src/pokedex/pokemon/service.py#L13), so `GET /api/pokemon?trainer_id=1` returns the Pokemon of trainer 1.",
@@ -2267,7 +2304,7 @@
               "path": "src/pokedex/pokemon/routes.py",
               "waypoints": [
                 {
-                  "id": "w9",
+                  "id": "w10",
                   "title": "Added the Pokemon router with the prefix `/pokemon`",
                   "declaration": "router",
                   "reading": "The author added an `APIRouter` with the prefix `/pokemon` and the tag `pokemon`. [`main.py` includes it under `/api`](code:src/pokedex/main.py#L16), so the five handlers of this file answer at `/api/pokemon` and `/api/pokemon/{pokemon_id}`.",
@@ -2285,7 +2322,7 @@
                   "children": []
                 },
                 {
-                  "id": "w10",
+                  "id": "w11",
                   "title": "Added `read_all_pokemon()` for `GET /api/pokemon`",
                   "declaration": "read_all_pokemon",
                   "reading": "The author added a route handler `read_all_pokemon()` that returns [`list_pokemon()`](code:src/pokedex/pokemon/service.py#L10-14) as a list of [`PokemonRead`](code:src/pokedex/pokemon/schemas.py#L38-46). FastAPI reads `trainer_id` from the query string, so `GET /api/pokemon?trainer_id=1` lists the Pokemon of trainer 1 and `GET /api/pokemon` lists all of them.",
@@ -2305,7 +2342,7 @@
                   "children": []
                 },
                 {
-                  "id": "w11",
+                  "id": "w12",
                   "title": "Added `read_pokemon()` for `GET /api/pokemon/{pokemon_id}`",
                   "declaration": "read_pokemon",
                   "reading": "The author added a route handler `read_pokemon()` that returns the Pokemon [`find_pokemon()`](code:src/pokedex/pokemon/service.py#L17-21) loads. For an id with no row, `find_pokemon()` raises `NotFoundError`, and [`not_found_handler()` returns a 404](code:src/pokedex/errors.py#L11-12) with `\"pokemon 7 not found\"`.",
@@ -2325,7 +2362,7 @@
                   "children": []
                 },
                 {
-                  "id": "w12",
+                  "id": "w13",
                   "title": "Added `add_pokemon()` for `POST /api/pokemon`",
                   "declaration": "add_pokemon",
                   "reading": "The author added a route handler `add_pokemon()` that passes the validated [`PokemonCreate`](code:src/pokedex/pokemon/schemas.py#L9-27) body to [`create_pokemon()`](code:src/pokedex/pokemon/service.py#L24-31), and returns the new Pokemon with a 201. A body that breaks a rule of `PokemonCreate` gets a 422 before the handler runs, which is what [the two new tests](code:tests/test_pokemon.py#L9-16) check.",
@@ -2345,7 +2382,7 @@
                   "children": []
                 },
                 {
-                  "id": "w13",
+                  "id": "w14",
                   "title": "Added `edit_pokemon()` for `PATCH /api/pokemon/{pokemon_id}`",
                   "declaration": "edit_pokemon",
                   "reading": "The author added a route handler `edit_pokemon()` that passes the id and the [`PokemonUpdate`](code:src/pokedex/pokemon/schemas.py#L30-35) body to [`update_pokemon()`](code:src/pokedex/pokemon/service.py#L34-43), and returns the updated Pokemon. It answers `PATCH`, so a client sends only the fields it changes.",
@@ -2366,7 +2403,7 @@
                   "children": []
                 },
                 {
-                  "id": "w14",
+                  "id": "w15",
                   "title": "Added `remove_pokemon()` for `DELETE /api/pokemon/{pokemon_id}`",
                   "declaration": "remove_pokemon",
                   "reading": "The author added a route handler `remove_pokemon()` that calls [`delete_pokemon()`](code:src/pokedex/pokemon/service.py#L46-49) and returns a 204. It returns `None`, which matches `status_code=204`: a 204 has no body.",
@@ -2392,7 +2429,7 @@
               "path": "src/pokedex/pokemon/service.py",
               "waypoints": [
                 {
-                  "id": "w15",
+                  "id": "w16",
                   "title": "Added `list_pokemon()` to load the Pokemon, sorted by name",
                   "declaration": "list_pokemon",
                   "reading": "The author added a function `list_pokemon()` that selects every `Pokemon` ordered by `name`, and adds `WHERE trainer_id = …` when `trainer_id` is not `None`. [`read_all_pokemon()` returns its list](code:src/pokedex/pokemon/routes.py#L12) as the body of `GET /api/pokemon`.",
@@ -2417,7 +2454,7 @@
                   "children": []
                 },
                 {
-                  "id": "w16",
+                  "id": "w17",
                   "title": "Added `find_pokemon()` to load one Pokemon or raise `NotFoundError`",
                   "declaration": "find_pokemon",
                   "reading": "The author added a function `find_pokemon()` that loads a row by its primary key with `session.get()`, and raises `NotFoundError(\"pokemon\", pokemon_id)` when there is none. [`read_pokemon()`](code:src/pokedex/pokemon/routes.py#L17), [`update_pokemon()`](code:src/pokedex/pokemon/service.py#L35) and [`delete_pokemon()`](code:src/pokedex/pokemon/service.py#L47) call it, so all three return a 404 for an unknown id through [`not_found_handler()`](code:src/pokedex/errors.py#L11-12).",
@@ -2441,7 +2478,7 @@
                   "children": []
                 },
                 {
-                  "id": "w17",
+                  "id": "w18",
                   "title": "Added `create_pokemon()` to insert a new Pokemon",
                   "declaration": "create_pokemon",
                   "reading": "The author added a function `create_pokemon()` that:\n\n- raises `NotFoundError` through [`find_trainer()`](code:src/pokedex/trainers/service.py#L12-16) when the body names a trainer that does not exist\n- builds a `Pokemon` from every field of the body\n- inserts the row, commits, and reloads it, so `id` is set\n\n[`add_pokemon()` returns the reloaded row](code:src/pokedex/pokemon/routes.py#L22) as the body of the 201.",
@@ -2471,7 +2508,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w17.1",
+                      "id": "w18.1",
                       "title": "Added a trainer check before the insert",
                       "declaration": "create_pokemon › Condition :25",
                       "reading": "The author added a condition that calls `find_trainer()` when `trainer_id` is set. [`find_trainer()` raises `NotFoundError(\"trainer\", trainer_id)`](code:src/pokedex/trainers/service.py#L14-15) for a trainer that does not exist, so the request gets a 404 and no row is inserted.",
@@ -2490,7 +2527,7 @@
                       "children": []
                     },
                     {
-                      "id": "w17.2",
+                      "id": "w18.2",
                       "title": "Added the new `Pokemon` row built from the body",
                       "declaration": "create_pokemon › pokemon",
                       "reading": "The author added a `Pokemon` built from `draft.model_dump()`, so each field of [`PokemonCreate`](code:src/pokedex/pokemon/schemas.py#L10-14) sets the column of the same name.",
@@ -2508,7 +2545,7 @@
                       "children": []
                     },
                     {
-                      "id": "w17.3",
+                      "id": "w18.3",
                       "title": "Added the insert of the new row",
                       "declaration": "create_pokemon › session.add, session.commit +1",
                       "reading": "The author added `session.add()`, `session.commit()` and `session.refresh()`, so the row is in the database and its `id` is set when [`add_pokemon()` returns it](code:src/pokedex/pokemon/routes.py#L22).",
@@ -2530,7 +2567,7 @@
                   ]
                 },
                 {
-                  "id": "w18",
+                  "id": "w19",
                   "title": "Added `update_pokemon()` to write the changed fields onto a Pokemon",
                   "declaration": "update_pokemon",
                   "reading": "The author added a function `update_pokemon()` that:\n\n- loads the Pokemon with [`find_pokemon()`](code:src/pokedex/pokemon/service.py#L17-21), which raises `NotFoundError` for an unknown id\n- keeps only the fields the body sets, through `model_dump(exclude_unset=True)`\n- raises `NotFoundError` through [`find_trainer()`](code:src/pokedex/trainers/service.py#L12-16) when the body sets a trainer that does not exist\n- copies each kept field onto the row, then commits and reloads it\n\n[`edit_pokemon()` returns the reloaded row](code:src/pokedex/pokemon/routes.py#L27), so a PATCH with `{\"level\": 12}` changes the level and nothing else.",
@@ -2562,7 +2599,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w18.1",
+                      "id": "w19.1",
                       "title": "Added the lookup of the stored Pokemon",
                       "declaration": "update_pokemon › pokemon",
                       "reading": "The author added a call to [`find_pokemon()`](code:src/pokedex/pokemon/service.py#L17-21) that loads the row of `pokemon_id`, so a PATCH of an unknown id gets a 404 before any field is read.",
@@ -2580,7 +2617,7 @@
                       "children": []
                     },
                     {
-                      "id": "w18.2",
+                      "id": "w19.2",
                       "title": "Added the dump of the fields the body sets",
                       "declaration": "update_pokemon › fields",
                       "reading": "The author added `changes.model_dump(exclude_unset=True)`, which leaves out every field the body does not name. A body of `{\"level\": 12}` gives `{\"level\": 12}`, so [the loop](code:src/pokedex/pokemon/service.py#L39-40) changes only `level`.",
@@ -2598,7 +2635,7 @@
                       "children": []
                     },
                     {
-                      "id": "w18.3",
+                      "id": "w19.3",
                       "title": "Added a trainer check before the update",
                       "declaration": "update_pokemon › Condition :37",
                       "reading": "The author added a condition that calls [`find_trainer()`](code:src/pokedex/trainers/service.py#L12-16) when the body sets `trainer_id` to a number. A `trainer_id` of `null` skips the check, so a PATCH can take a Pokemon away from its trainer.",
@@ -2617,7 +2654,7 @@
                       "children": []
                     },
                     {
-                      "id": "w18.4",
+                      "id": "w19.4",
                       "title": "Added a loop that copies each set field onto the row",
                       "declaration": "update_pokemon › Loop :39",
                       "reading": "The author added a loop that calls `setattr(pokemon, name, value)` for each entry of `fields`, so each field of [`PokemonUpdate`](code:src/pokedex/pokemon/schemas.py#L31-35) writes the column of the same name on [`Pokemon`](code:src/pokedex/pokemon/models.py#L10-15).",
@@ -2637,7 +2674,7 @@
                       "children": []
                     },
                     {
-                      "id": "w18.5",
+                      "id": "w19.5",
                       "title": "Added the save of the changed row",
                       "declaration": "update_pokemon › session.commit, session.refresh",
                       "reading": "The author added `session.commit()` and `session.refresh()`, so the changes are in the database and [`edit_pokemon()` returns the row](code:src/pokedex/pokemon/routes.py#L27) as it is stored.",
@@ -2658,7 +2695,7 @@
                   ]
                 },
                 {
-                  "id": "w19",
+                  "id": "w20",
                   "title": "Added `delete_pokemon()` to delete a stored Pokemon",
                   "declaration": "delete_pokemon",
                   "reading": "The author added a function `delete_pokemon()` that loads the row with [`find_pokemon()`](code:src/pokedex/pokemon/service.py#L17-21), deletes it and commits. [`remove_pokemon()` calls it](code:src/pokedex/pokemon/routes.py#L32), so a DELETE of an unknown id gets a 404 and a DELETE of a stored id gets a 204.",

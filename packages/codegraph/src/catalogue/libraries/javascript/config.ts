@@ -54,6 +54,13 @@ export const dotenvLibrary: CatalogueLibrary = {
   category: "config",
   type: "backend",
   language: "javascript",
+  locations: [
+    {
+      classification: "config",
+      files: [{ glob: "**/{index,main,server,app,config,env}.{js,ts,mjs,cjs,mts,cts}" }],
+      keys: [{ key: "config(0).path", holds: "files" }],
+    },
+  ],
   patterns: [
     { kind: "call", name: "default.config", slots: [], makes: "config" },
     { kind: "call", name: "default.parse", slots: [], makes: "config" },
@@ -125,6 +132,9 @@ export const nodeConfigLibrary: CatalogueLibrary = {
   category: "config",
   type: "backend",
   language: "javascript",
+  locations: [
+    { classification: "config", files: [{ glob: ".env" }], keys: [{ key: "NODE_CONFIG_DIR", holds: "folders", default: ["config"] }] },
+  ],
   patterns: [
     { kind: "call", name: "default.get", slots: [], makes: "config" },
     { kind: "call", name: "default.has", slots: [], makes: "config" },

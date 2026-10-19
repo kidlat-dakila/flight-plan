@@ -1,5 +1,7 @@
 import type { CatalogueLibrary } from "@/catalogue/types"
 
+const DATA_MODEL = "data-model"
+
 export const bookshelfLibrary: CatalogueLibrary = {
   name: "Bookshelf",
   specifiers: ["bookshelf"],
@@ -16,6 +18,7 @@ export const bookshelfLibrary: CatalogueLibrary = {
           kind: "factory",
           name: "model",
           makes: "data",
+          classifies: DATA_MODEL,
           methods: [
             { kind: "call", name: "where", slots: [], makes: "data-fetch" },
             { kind: "call", name: "fetchAll", slots: [], makes: "data-fetch" },
@@ -29,11 +32,26 @@ export const bookshelfLibrary: CatalogueLibrary = {
 
 export const drizzleOrmLibrary: CatalogueLibrary = {
   name: "Drizzle ORM",
-  specifiers: ["drizzle-orm", "drizzle-orm/node-postgres", "drizzle-orm/postgres-js", "drizzle-orm/mysql2", "drizzle-orm/better-sqlite3", "drizzle-orm/libsql", "drizzle-orm/neon-http"],
+  specifiers: [
+    "drizzle-orm",
+    "drizzle-orm/node-postgres",
+    "drizzle-orm/postgres-js",
+    "drizzle-orm/mysql2",
+    "drizzle-orm/better-sqlite3",
+    "drizzle-orm/libsql",
+    "drizzle-orm/neon-http",
+    "drizzle-orm/pg-core",
+    "drizzle-orm/mysql-core",
+    "drizzle-orm/sqlite-core",
+  ],
   documentedVersion: "0.45",
   category: "orm",
   type: "backend",
   language: "javascript",
+  locations: [
+    { classification: "migration", files: [{ glob: "drizzle.config.*" }], keys: [{ key: "out", holds: "folders", default: ["drizzle"] }] },
+    { classification: "data-model", files: [{ glob: "drizzle.config.*" }], keys: [{ key: "schema", holds: "paths" }] },
+  ],
   patterns: [
     {
       kind: "factory",
@@ -47,16 +65,29 @@ export const drizzleOrmLibrary: CatalogueLibrary = {
         { kind: "call", name: "transaction", slots: [{ at: 0, runs: "in-place" }], makes: "transaction" },
       ],
     },
+    { kind: "call", name: "pgTable", slots: [], classifies: DATA_MODEL },
+    { kind: "call", name: "mysqlTable", slots: [], classifies: DATA_MODEL },
+    { kind: "call", name: "sqliteTable", slots: [], classifies: DATA_MODEL },
   ],
 }
 
 export const mikroormLibrary: CatalogueLibrary = {
   name: "MikroORM",
-  specifiers: ["@mikro-orm/core"],
+  specifiers: ["@mikro-orm/core", "@mikro-orm/decorators/legacy", "@mikro-orm/decorators/es"],
   documentedVersion: "7.2",
   category: "orm",
   type: "backend",
   language: "javascript",
+  locations: [
+    {
+      classification: "migration",
+      files: [{ glob: "mikro-orm.config.*" }, { glob: "src/mikro-orm.config.*" }],
+      keys: [
+        { key: "migrations.path", holds: "folders", default: ["migrations"] },
+        { key: "migrations.pathTs", holds: "folders" },
+      ],
+    },
+  ],
   patterns: [
     {
       kind: "factory",
@@ -70,6 +101,8 @@ export const mikroormLibrary: CatalogueLibrary = {
         { kind: "call", name: "fork", slots: [], makes: "data" },
       ],
     },
+    { kind: "decorator", name: "Entity", classifies: DATA_MODEL },
+    { kind: "call", name: "defineEntity", slots: [], classifies: DATA_MODEL },
   ],
 }
 
@@ -85,6 +118,7 @@ export const mongooseLibrary: CatalogueLibrary = {
       kind: "factory",
       name: "model",
       makes: "data",
+      classifies: DATA_MODEL,
       methods: [
         { kind: "call", name: "findOne", slots: [], makes: "data-fetch" },
         { kind: "call", name: "find", slots: [], makes: "data-fetch" },
@@ -94,6 +128,7 @@ export const mongooseLibrary: CatalogueLibrary = {
     {
       kind: "factory",
       name: "Schema",
+      classifies: DATA_MODEL,
       methods: [
         { kind: "call", name: "pre", slots: [{ at: 1, runs: "event" }], eventAt: 0 },
       ],
@@ -114,6 +149,7 @@ export const objectionJsLibrary: CatalogueLibrary = {
       kind: "class",
       name: "Model",
       makes: "data",
+      classifies: DATA_MODEL,
       members: [],
       methods: [
         { kind: "call", name: "query", slots: [], makes: "data" },
@@ -134,6 +170,7 @@ export const orangeOrmLibrary: CatalogueLibrary = {
     {
       kind: "factory",
       name: "default.map",
+      classifies: DATA_MODEL,
       slots: [{ at: 0, runs: "in-place" }],
       methods: [
         { kind: "call", name: "insert", slots: [], makes: "data" },
@@ -152,6 +189,16 @@ export const prismaLibrary: CatalogueLibrary = {
   category: "orm",
   type: "backend",
   language: "javascript",
+  locations: [
+    {
+      classification: "migration",
+      files: [{ glob: "prisma.config.*" }, { glob: "package.json", under: "prisma" }],
+      keys: [
+        { key: "migrations.path", holds: "folders" },
+        { key: "schema", holds: "file-folders", below: "migrations/**", default: ["prisma/schema.prisma"], unlessRead: "migrations.path" },
+      ],
+    },
+  ],
   patterns: [
     {
       kind: "factory",
@@ -183,6 +230,9 @@ export const sequelizeLibrary: CatalogueLibrary = {
   category: "orm",
   type: "backend",
   language: "javascript",
+  locations: [
+    { classification: "migration", files: [{ glob: ".sequelizerc" }], keys: [{ key: "migrations-path", holds: "folders", default: ["migrations"] }] },
+  ],
   patterns: [
     {
       kind: "factory",
@@ -192,6 +242,7 @@ export const sequelizeLibrary: CatalogueLibrary = {
           kind: "factory",
           name: "define",
           makes: "data",
+          classifies: DATA_MODEL,
           methods: [
             { kind: "call", name: "create", slots: [], makes: "data" },
             { kind: "call", name: "findAll", slots: [], makes: "data-fetch" },
@@ -204,6 +255,7 @@ export const sequelizeLibrary: CatalogueLibrary = {
       kind: "class",
       name: "Model",
       makes: "data",
+      classifies: DATA_MODEL,
       members: [],
       methods: [
         { kind: "call", name: "create", slots: [], makes: "data" },
@@ -226,12 +278,14 @@ export const typegooseLibrary: CatalogueLibrary = {
       kind: "factory",
       name: "getModelForClass",
       makes: "data",
+      classifies: DATA_MODEL,
       methods: [
         { kind: "call", name: "create", slots: [], makes: "data" },
         { kind: "call", name: "findById", slots: [], makes: "data-fetch" },
         { kind: "call", name: "find", slots: [], makes: "data-fetch" },
       ],
     },
+    { kind: "decorator", name: "prop", classifies: DATA_MODEL },
     { kind: "decorator", name: "pre", runs: "event", eventAt: 0 },
     { kind: "decorator", name: "post", runs: "event", eventAt: 0 },
   ],
@@ -244,8 +298,15 @@ export const typeormLibrary: CatalogueLibrary = {
   category: "orm",
   type: "backend",
   language: "javascript",
+  locations: [
+    {
+      classification: "migration",
+      files: [{ glob: "**/ormconfig.*", base: "package" }, { glob: "**/data-source.*", base: "package" }, { glob: "**/*-data-source.*", base: "package" }],
+      keys: [{ key: "migrations", holds: "paths" }],
+    },
+  ],
   patterns: [
-    { kind: "decorator", name: "Entity", makes: "data" },
+    { kind: "decorator", name: "Entity", makes: "data", classifies: DATA_MODEL },
     {
       kind: "factory",
       name: "DataSource",

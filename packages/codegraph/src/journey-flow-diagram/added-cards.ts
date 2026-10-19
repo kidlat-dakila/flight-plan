@@ -5,7 +5,7 @@ import { BLOCK_TYPE_LABELS, nameOfBlock } from "@/journey/names"
 import { languageOf } from "@/scaffold/review-artifact"
 import { buildSourceLines } from "@/scaffold/source-lines"
 import { firstOfEach } from "@/shared/first-of-each"
-import type { ASTCodeGroupGraph, ASTGraph, CodeBlock, CodeBlockType, JourneyFlowDiagram, JourneyNode, JourneyRow, LineRange, SourceFile } from "@flightplan/configurations"
+import type { ASTCodeGroupGraph, ASTGraph, CodeBlock, CodeBlockClassification, CodeBlockType, JourneyFlowDiagram, JourneyNode, JourneyRow, LineRange, SourceFile } from "@flightplan/configurations"
 import { listListedBlocks } from "./listed-blocks"
 import { nodeBlockAround } from "./node-blocks"
 import { toJourneyNode } from "."
@@ -175,10 +175,12 @@ const lineCountOf = (block: CodeBlock): number => {
   return lineEnd - lineStart
 }
 
-const typeOfLines = (astGraph: ASTGraph, lines: LineRange): CodeBlockType => {
+const narrowestHolderOf = (astGraph: ASTGraph, lines: LineRange): CodeBlock | null => {
   const holders = astGraph.codeBlocks.filter((block) => holdsLines(block, lines)).sort((one, two) => lineCountOf(one) - lineCountOf(two))
-  return holders.length === 0 ? WHOLE_FILE : holders[0].type
+  return holders.length === 0 ? null : holders[0]
 }
+
+const WHOLE_FILE_CLASSIFICATIONS: readonly CodeBlockClassification[] = [WHOLE_FILE]
 
 export const linesCardIdOf = (filePath: string, { lineStart, lineEnd }: LineRange): string =>
   `${filePath}#lines@${String(lineStart)}:${String(lineEnd)}`
@@ -186,26 +188,31 @@ export const linesCardIdOf = (filePath: string, { lineStart, lineEnd }: LineRang
 export const linesLabelOf = ({ lineStart, lineEnd }: LineRange): string =>
   lineStart === lineEnd ? `Line ${String(lineStart)}` : `Lines ${String(lineStart)} to ${String(lineEnd)}`
 
-const blockOfLines = (astGraph: ASTGraph, lines: LineRange): CodeBlock => ({
-  id: linesCardIdOf(astGraph.filePath, lines),
-  name: linesLabelOf(lines),
-  type: typeOfLines(astGraph, lines),
-  lineOfCodeRangeReference: [{ start: { line: lines.lineStart, column: FIRST_COLUMN }, end: { line: lines.lineEnd, column: FIRST_COLUMN } }],
-  parentBlock: null,
-  childrenBlocks: [],
-  isRoot: true,
-  isExported: false,
-  exportedBy: [],
-  lineOfCodeDiffs: null,
-  diffs: [],
-  diffSources: [],
-  outerSymbols: [],
-  usedBy: [],
-  nextBlocks: [],
-  handedFrom: [],
-  astGraph,
-  catalogue: null,
-})
+const blockOfLines = (astGraph: ASTGraph, lines: LineRange): CodeBlock => {
+  const holder = narrowestHolderOf(astGraph, lines)
+  return {
+    id: linesCardIdOf(astGraph.filePath, lines),
+    name: linesLabelOf(lines),
+    type: holder?.type ?? WHOLE_FILE,
+    lineOfCodeRangeReference: [{ start: { line: lines.lineStart, column: FIRST_COLUMN }, end: { line: lines.lineEnd, column: FIRST_COLUMN } }],
+    parentBlock: null,
+    childrenBlocks: [],
+    isRoot: true,
+    isExported: false,
+    exportedBy: [],
+    lineOfCodeDiffs: null,
+    diffs: [],
+    diffSources: [],
+    classifications: holder?.classifications ?? WHOLE_FILE_CLASSIFICATIONS,
+    diffClassifications: [],
+    outerSymbols: [],
+    usedBy: [],
+    nextBlocks: [],
+    handedFrom: [],
+    astGraph,
+    catalogue: null,
+  }
+}
 
 export const buildLinesCard = (astGraph: ASTGraph, lines: LineRange, isPrefilled: boolean): JourneyNode => {
   const block = blockOfLines(astGraph, lines)

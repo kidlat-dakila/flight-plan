@@ -45,57 +45,6 @@ export const apschedulerLibrary: CatalogueLibrary = {
   ],
 }
 
-export const cementLibrary: CatalogueLibrary = {
-  name: "Cement",
-  specifiers: ["cement"],
-  documentedVersion: "3.0",
-  category: "jobs",
-  type: "backend",
-  language: "python",
-  patterns: [
-    { kind: "decorator", name: "ex", runs: "command" },
-    {
-      kind: "class",
-      name: "App",
-      makes: "config",
-      members: [],
-      methods: [],
-    },
-  ],
-}
-
-export const clickLibrary: CatalogueLibrary = {
-  name: "Click",
-  specifiers: ["click"],
-  documentedVersion: "8.5",
-  category: "jobs",
-  type: "backend",
-  language: "python",
-  patterns: [
-    { kind: "decorator", name: "command", runs: "command" },
-    { kind: "decorator", name: "option", makes: "config" },
-    { kind: "decorator", name: "argument", makes: "config" },
-    { kind: "call", name: "echo", slots: [], makes: "telemetry" },
-  ],
-}
-
-export const cliffLibrary: CatalogueLibrary = {
-  name: "cliff",
-  specifiers: ["cliff", "cliff.command", "cliff.app"],
-  documentedVersion: "4.16",
-  category: "jobs",
-  type: "backend",
-  language: "python",
-  patterns: [
-    {
-      kind: "class",
-      name: "Command",
-      members: [{ name: "take_action", runs: "command" }, { name: "get_parser", runs: "in-place" }],
-      methods: [],
-    },
-  ],
-}
-
 export const joblibLibrary: CatalogueLibrary = {
   name: "Joblib",
   specifiers: ["joblib"],

@@ -1,6 +1,6 @@
 # Block types
 
-The types of a [code block](code-blocks.md), and the rules that decide the less obvious ones.
+The types of a [code block](code-blocks.md), and the rules that decide the less obvious ones. What each type gives a block's classifications is in [Classifications](classifications.md#its-type).
 
 ## The types
 
@@ -22,6 +22,7 @@ type CodeBlockType =
   | "loop"
   | "try-catch"
   | "throw"
+  | "call"
   | "effect"
   | "component-effect"
   | "effect-callback"

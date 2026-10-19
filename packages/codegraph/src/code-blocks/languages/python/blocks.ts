@@ -1,7 +1,7 @@
 import { targetNamesIn } from "@/ast-graph/languages/python/patterns"
 import type { SyntaxCursor, SyntaxNode } from "@/ast-graph/parser"
 import { isSameRange, rangeOf } from "@/ast-graph/source-range"
-import { memberNamed, pathBelow, type FileNaming, type NamedBlock } from "@/code-blocks/languages/typescript/named-by"
+import { catalogueOfMemberRun, memberNamed, pathBelow, type FileNaming, type NamedBlock } from "@/code-blocks/languages/typescript/named-by"
 import { blockIdOf, named, nodeAtRange, startOf } from "@/code-blocks/languages/typescript/syntax"
 import type { FindExport, ReadBlock } from "@/code-blocks/reading"
 import { compareRanges, rangeOfNode } from "@/code-blocks/source-range"
@@ -129,7 +129,7 @@ const catalogueOfFunction = (definition: SyntaxNode, reader: PythonBlockReader):
   const extended = holder === null ? null : reader.naming.blockAt(holder)
   const ownName = definition.childForFieldName("name")?.text ?? null
   const run = extended === null || ownName === null ? null : memberNamed(extended, ownName)
-  return extended === null || run === null ? null : { ...extended.catalogue, runs: run.runs, method: run.method ?? null }
+  return extended === null || run === null ? null : catalogueOfMemberRun(extended.catalogue, run)
 }
 
 const readFunction: ReadSeeds = (definition, context, reader) => {

@@ -200,3 +200,54 @@ describe("a hook RTK Query makes for an endpoint", () => {
     expect(edgeIds).not.toContain("src/list.tsx#component@2:1 -> src/api.ts#state@2:1")
   })
 })
+
+const MOBX_STORE = codeOf(
+  "import { makeAutoObservable } from \"mobx\"",
+  "export class CartStore {",
+  "  items = []",
+  "  constructor() {",
+  "    makeAutoObservable(this)",
+  "  }",
+  "  get count() {",
+  "    return this.items.length",
+  "  }",
+  "  addItem(product) {",
+  "    this.items.push(product)",
+  "  }",
+  "}",
+)
+
+const VALTIO_STORE = codeOf(
+  "import { proxy } from \"valtio\"",
+  "export const cart = proxy({",
+  "  items: [],",
+  "  addItem: (product) => { cart.items.push(product) },",
+  "})",
+)
+
+const EFFECTOR_STORE = codeOf(
+  "import { createEvent, createStore } from \"effector\"",
+  "export const addItem = createEvent()",
+  "export const $cart = createStore([]).on(addItem, (items, product) => [...items, product])",
+)
+
+describe("the card of a MobX, a Valtio, an XState Store or a Nano Stores store", () => {
+  it("is one node, with its state, its getters and its actions as rows", () => {
+    const mobx = presentDiagramOf({ "stores/cart.ts": MOBX_STORE }, { "stores/cart.ts": [rangeAt(11, 5, 11, 29)] })
+    const valtio = presentDiagramOf({ "stores/cart.ts": VALTIO_STORE }, { "stores/cart.ts": [rangeAt(4, 26, 4, 50)] })
+
+    expect(outlineOfNodes(mobx).filter((line) => line.includes("CartStore") || line.includes("addItem"))).toHaveLength(1)
+    expect(rowNamesOf(nodeNamed(mobx, "CartStore"))).toContain("CartStore.addItem")
+    expect(outlineOfNodes(valtio).filter((line) => line.includes("cart") || line.includes("addItem"))).toHaveLength(1)
+    expect(rowNamesOf(nodeNamed(valtio, "cart"))).toContain("addItem")
+  })
+})
+
+describe("the card of an Effector store", () => {
+  it("holds the cases of its .on as cards inside it", () => {
+    const diagram = presentDiagramOf({ "stores/cart.ts": EFFECTOR_STORE }, { "stores/cart.ts": [rangeAt(3, 60, 3, 87)] })
+    const store = nodeNamed(diagram, "$cart")
+
+    expect(store?.children.length ?? 0).toBeGreaterThan(0)
+  })
+})

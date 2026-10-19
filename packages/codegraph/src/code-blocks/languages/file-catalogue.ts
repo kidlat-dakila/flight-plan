@@ -40,7 +40,7 @@ const listRegistryNames = ({ specifiers, language }: CatalogueLibrary): string[]
     .filter((listed) => listed.language === language && listed.specifiers.some((specifier) => specifiers.includes(specifier)))
     .flatMap(registryNamesOf)
 
-const isUsed = (library: CatalogueLibrary, { packages }: FileManifest): boolean => {
+export const isUsed = (library: CatalogueLibrary, { packages }: Pick<FileManifest, "packages">): boolean => {
   const { specifiers, language } = library
   if (specifiers.length === 0) return true
   const installedAs = [...specifiers.map(packageNameOf), ...listRegistryNames(library)]
@@ -73,7 +73,7 @@ export const routePathOf = (glob: string, packagePath: string): string | null =>
 }
 
 const namingsOfPattern = (library: CatalogueLibrary, pattern: FilePattern, { packagePath }: FileManifest): ExportNaming[] =>
-  pattern.exports.map(({ name, runs, method }) => ({
+  pattern.exports.map(({ name, runs, method, classifies }) => ({
     exportedName: name,
     library: library.name,
     catalogue: {
@@ -84,6 +84,7 @@ const namingsOfPattern = (library: CatalogueLibrary, pattern: FilePattern, { pac
       method: method ?? null,
       event: null,
       certainty: pattern.versions === undefined ? "proven" : "assumed",
+      ...(classifies === undefined ? {} : { classifies }),
     },
   }))
 

@@ -17,6 +17,7 @@ export interface LanguageSource {
   readonly source: string
   readonly importedFilePaths: ReadonlyMap<string, string>
   readonly manifest?: FileManifest
+  readonly isUnread?: boolean
 }
 
 interface CodeBlockLanguage {
@@ -56,6 +57,7 @@ export const outlineWholeFile = ({ filePath, source }: LanguageSource): Outlined
     filePath,
     blocks: [{ id: fileBlockIdOf(filePath), type: WHOLE_FILE, ranges: [rangeOfText(source)], parentId: null, declaredAt: [] }],
     uses: [],
+    libraryUses: [],
     readSyntax: null,
   }),
 })
@@ -74,8 +76,11 @@ const withBlocksEnsured = (outlined: OutlinedFile, source: LanguageSource, langu
 export const grammarOfFile = (filePath: string): GrammarId | null =>
   CODE_BLOCK_LANGUAGES.find(({ extensions }) => hasExtension(filePath, extensions))?.grammar ?? null
 
+export const grammarOfSource = ({ filePath, isUnread }: Pick<LanguageSource, "filePath" | "isUnread">): GrammarId | null =>
+  isUnread === true ? null : grammarOfFile(filePath)
+
 export const outlineFile = (source: LanguageSource): OutlinedFile => {
   const language = CODE_BLOCK_LANGUAGES.find(({ extensions }) => hasExtension(source.filePath, extensions))
-  if (language === undefined) return outlineWholeFile(source)
+  if (language === undefined || source.isUnread === true) return outlineWholeFile(source)
   return withBlocksEnsured(language.outline(source), source, language.language)
 }

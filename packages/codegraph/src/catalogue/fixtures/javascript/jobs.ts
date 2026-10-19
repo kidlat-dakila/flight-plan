@@ -120,61 +120,6 @@ export const breeFixtures: readonly PatternFixture[] = [
   },
 ]
 
-const COMMANDER_JS = "Commander.js"
-
-export const commanderJsFixtures: readonly PatternFixture[] = [
-  {
-    library: COMMANDER_JS,
-    patternKey: "factory:Command:*",
-    matches: [
-      "import { Command } from \"commander\"\nconst program = new Command()",
-    ],
-    rejects: [
-      "const Command = (...parts) => parts\nconst program = new Command()",
-    ],
-  },
-  {
-    library: COMMANDER_JS,
-    patternKey: "factory:Command:*>call:command:*",
-    matches: [
-      "import { Command } from \"commander\"\nconst program = new Command()\nprogram.command(\"clone <source> [destination]\")",
-    ],
-    rejects: [
-      "const program = makeLocalRegistry()\nprogram.command(\"clone <source> [destination]\")",
-    ],
-  },
-  {
-    library: COMMANDER_JS,
-    patternKey: "factory:Command:*>call:action:*",
-    matches: [
-      "import { Command } from \"commander\"\nconst program = new Command()\nprogram.command(\"clone <source>\").action((source) => { clone(source) })",
-    ],
-    rejects: [
-      "const program = makeLocalRegistry()\nprogram.command(\"clone <source>\").action((source) => { clone(source) })",
-    ],
-  },
-  {
-    library: COMMANDER_JS,
-    patternKey: "factory:Command:*>call:parse:*",
-    matches: [
-      "import { Command } from \"commander\"\nconst program = new Command()\nprogram.parse()",
-    ],
-    rejects: [
-      "const program = makeLocalRegistry()\nprogram.parse()",
-    ],
-  },
-  {
-    library: COMMANDER_JS,
-    patternKey: "call:program.action:*",
-    matches: [
-      "import { program } from \"commander\"\nprogram.argument(\"<name>\").action((name) => { greet(name) })",
-    ],
-    rejects: [
-      "const program = makeLocalRegistry()\nprogram.argument(\"<name>\").action((name) => { greet(name) })",
-    ],
-  },
-]
-
 const CRON_SCHEDULE = "cron-schedule"
 
 export const cronScheduleFixtures: readonly PatternFixture[] = [
@@ -228,21 +173,6 @@ export const motiaFixtures: readonly PatternFixture[] = [
     rejects: [
       "steps/create-todo.ts",
       "steps/step.test.ts",
-    ],
-  },
-]
-
-const OCLIF = "oclif"
-
-export const oclifFixtures: readonly PatternFixture[] = [
-  {
-    library: OCLIF,
-    patternKey: "class:Command:*",
-    matches: [
-      "import { Command } from \"@oclif/core\"\nexport default class Hello extends Command {\n  static args = { person: Args.string() }\n  async run() { this.log(\"hello\") }\n}",
-    ],
-    rejects: [
-      "class Command {}\nexport default class Hello extends Command {\n  static args = { person: Args.string() }\n  async run() { this.log(\"hello\") }\n}",
     ],
   },
 ]
@@ -333,51 +263,6 @@ export const workflowFixtures: readonly PatternFixture[] = [
     ],
     rejects: [
       "const sleep = (...parts) => parts\nawait sleep(\"1 day\")",
-    ],
-  },
-]
-
-const YARGS = "yargs"
-
-export const yargsFixtures: readonly PatternFixture[] = [
-  {
-    library: YARGS,
-    patternKey: "factory:default:*",
-    matches: [
-      "import yargs from \"yargs\"\nconst cli = yargs(hideBin(process.argv))",
-    ],
-    rejects: [
-      "const yargs = (...parts) => parts\nconst cli = yargs(hideBin(process.argv))",
-    ],
-  },
-  {
-    library: YARGS,
-    patternKey: "factory:default:*>call:command:*",
-    matches: [
-      "import yargs from \"yargs\"\nconst cli = yargs(hideBin(process.argv))\ncli.command(\"serve [port]\", \"start the server\", (builder) => builder, (argv) => { serve(argv.port) })",
-    ],
-    rejects: [
-      "const cli = makeLocalRegistry()\ncli.command(\"serve [port]\", \"start the server\", (builder) => builder, (argv) => { serve(argv.port) })",
-    ],
-  },
-  {
-    library: YARGS,
-    patternKey: "factory:default:*>call:middleware:*",
-    matches: [
-      "import yargs from \"yargs\"\nconst cli = yargs(hideBin(process.argv))\ncli.middleware((argv) => { authenticateUser(argv) })",
-    ],
-    rejects: [
-      "const cli = makeLocalRegistry()\ncli.middleware((argv) => { authenticateUser(argv) })",
-    ],
-  },
-  {
-    library: YARGS,
-    patternKey: "factory:default:*>call:parse:*",
-    matches: [
-      "import yargs from \"yargs\"\nconst cli = yargs(hideBin(process.argv))\ncli.parse()",
-    ],
-    rejects: [
-      "const cli = makeLocalRegistry()\ncli.parse()",
     ],
   },
 ]

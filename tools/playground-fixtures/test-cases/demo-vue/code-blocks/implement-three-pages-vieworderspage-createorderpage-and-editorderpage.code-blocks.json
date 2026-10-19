@@ -662,6 +662,7 @@
           "src/router.ts#effect-callback@21:41"
         ],
         "diffContains": [
+          "ui",
           "effect",
           "logic"
         ],
@@ -1434,6 +1435,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#request@10:26"
@@ -1471,6 +1476,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#throw@14:21"
@@ -1507,6 +1516,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -1539,6 +1552,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#call@5:5"
@@ -1572,6 +1589,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1627,6 +1648,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "request"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1687,6 +1712,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#request@10:26"
@@ -1720,6 +1749,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#request@10:26"
@@ -1755,6 +1788,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "request"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#condition@14:3",
@@ -1791,6 +1828,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "request"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1873,6 +1914,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -1904,6 +1949,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -1936,6 +1985,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -1988,6 +2041,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2055,6 +2112,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2085,6 +2146,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2118,6 +2183,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2221,6 +2290,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2276,6 +2351,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -2361,6 +2442,12 @@
         ],
         "diffSourceIds": [
           "src/api/orders.ts#function@4:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -2521,6 +2608,12 @@
         "diffSourceIds": [
           "src/api/orders.ts#function@6:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2641,6 +2734,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/orders.ts#function@6:1"
@@ -2830,6 +2929,12 @@
         "diffSourceIds": [
           "src/api/orders.ts#function@8:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -2947,6 +3052,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3021,6 +3132,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3077,6 +3194,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3299,6 +3422,12 @@
         "diffSourceIds": [
           "src/api/orders.ts#function@11:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3439,6 +3568,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3514,6 +3649,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3570,6 +3711,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3626,6 +3773,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3673,6 +3826,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3703,6 +3860,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3736,6 +3897,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3814,6 +3979,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -3847,6 +4016,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3900,6 +4073,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -3976,6 +4153,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/RootLayout.vue#render@18:7",
@@ -4010,6 +4191,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/BaseButton.vue#render@7:3"
@@ -4043,6 +4228,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/BaseButton.vue#render@7:3"
@@ -4081,6 +4270,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/BaseButton.vue#render-event@7:74"
@@ -4114,6 +4307,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4145,6 +4342,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/BaseButton.vue#render-event@7:74"
@@ -4179,6 +4380,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4213,6 +4418,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4277,6 +4486,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4339,6 +4552,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4380,6 +4597,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4411,6 +4632,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/BaseInput.vue#render@7:3"
@@ -4444,6 +4669,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/BaseInput.vue#render@9:5"
@@ -4477,6 +4706,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/BaseInput.vue#render-event@9:32"
@@ -4510,6 +4743,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4541,6 +4778,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/components/ui/BaseInput.vue#render-event@9:32"
@@ -4575,6 +4816,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4608,6 +4853,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4658,6 +4907,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4706,6 +4959,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -4767,6 +5024,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4797,6 +5058,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4827,6 +5092,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4857,6 +5126,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -4889,6 +5162,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/composables/use-customers.ts#property@7:21"
@@ -4926,6 +5203,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/customers/CustomersPage.vue#external-value@5:1",
@@ -4962,6 +5243,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5019,6 +5304,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5067,6 +5356,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5147,6 +5440,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5202,6 +5501,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -5260,6 +5565,12 @@
         ],
         "diffSourceIds": [
           "src/composables/use-orders.ts#root-variable@4:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [],
         "usedByIds": [
@@ -5378,6 +5689,12 @@
           "src/composables/use-orders.ts#component-effect@7:10",
           "src/composables/use-orders.ts#effect-callback@7:49"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/ViewOrdersPage.vue#external-value@5:1"
@@ -5491,6 +5808,12 @@
           "src/composables/use-orders.ts#component-effect@7:10",
           "src/composables/use-orders.ts#effect-callback@7:49"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5591,6 +5914,12 @@
         "diffSourceIds": [
           "src/composables/use-orders.ts#root-variable@4:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -5681,6 +6010,12 @@
         "diffSourceIds": [
           "src/api/orders.ts#function@4:1",
           "src/composables/use-orders.ts#effect-callback@7:49"
+        ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
         ],
         "outerSymbols": [
           {
@@ -5846,6 +6181,12 @@
           "src/composables/use-orders.ts#effect-callback@11:63",
           "src/composables/use-orders.ts#function@11:72"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/EditOrderPage.vue#external-value@10:1"
@@ -5906,6 +6247,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/composables/use-orders.ts#property@11:21",
@@ -6024,6 +6371,12 @@
           "src/composables/use-orders.ts#effect-callback@11:63",
           "src/composables/use-orders.ts#function@11:72"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -6124,6 +6477,12 @@
         "diffSourceIds": [
           "src/composables/use-orders.ts#root-variable@4:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -6221,6 +6580,12 @@
           "src/composables/use-orders.ts#effect-callback@11:63",
           "src/composables/use-orders.ts#function@11:72"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -6301,6 +6666,12 @@
         "diffSourceIds": [
           "src/api/orders.ts#function@6:1",
           "src/composables/use-orders.ts#function@11:72"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -6449,6 +6820,16 @@
           "src/composables/use-orders.ts#component-effect@16:10",
           "src/composables/use-orders.ts#effect-callback@17:5"
         ],
+        "classifications": [
+          "database-operation",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [
+          "database-operation",
+          "effect",
+          "event"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/CreateOrderPage.vue#external-value@10:1"
@@ -6511,6 +6892,12 @@
         ],
         "diffSourceIds": [
           "src/composables/use-orders.ts#external-value@15:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -6663,6 +7050,16 @@
           "src/composables/use-orders.ts#component-effect@16:10",
           "src/composables/use-orders.ts#effect-callback@17:5"
         ],
+        "classifications": [
+          "database-operation",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [
+          "database-operation",
+          "effect",
+          "event"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -6763,6 +7160,12 @@
           "src/api/orders.ts#function@8:1",
           "src/composables/use-orders.ts#effect-callback@17:5"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -6854,6 +7257,14 @@
           "src/composables/use-orders.ts#function@18:16",
           "src/composables/use-orders.ts#cache@18:22"
         ],
+        "classifications": [
+          "database-operation",
+          "event"
+        ],
+        "diffClassifications": [
+          "database-operation",
+          "event"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -6917,6 +7328,12 @@
           "src/composables/use-orders.ts#external-value@15:3",
           "src/composables/use-orders.ts#function@18:16",
           "src/composables/use-orders.ts#cache@18:22"
+        ],
+        "classifications": [
+          "database-operation"
+        ],
+        "diffClassifications": [
+          "database-operation"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7016,6 +7433,12 @@
           "src/composables/use-orders.ts#root-variable@4:1",
           "src/composables/use-orders.ts#external-value@15:3",
           "src/composables/use-orders.ts#cache@18:22"
+        ],
+        "classifications": [
+          "database-operation"
+        ],
+        "diffClassifications": [
+          "database-operation"
         ],
         "outerSymbols": [
           {
@@ -7120,6 +7543,12 @@
         ],
         "diffSourceIds": [
           "src/composables/use-orders.ts#root-variable@4:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -7253,6 +7682,16 @@
           "src/composables/use-orders.ts#component-effect@24:10",
           "src/composables/use-orders.ts#effect-callback@25:5"
         ],
+        "classifications": [
+          "database-operation",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [
+          "database-operation",
+          "effect",
+          "event"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/EditOrderPage.vue#external-value@11:1"
@@ -7315,6 +7754,12 @@
         ],
         "diffSourceIds": [
           "src/composables/use-orders.ts#external-value@23:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -7467,6 +7912,16 @@
           "src/composables/use-orders.ts#component-effect@24:10",
           "src/composables/use-orders.ts#effect-callback@25:5"
         ],
+        "classifications": [
+          "database-operation",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [
+          "database-operation",
+          "effect",
+          "event"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -7567,6 +8022,12 @@
           "src/api/orders.ts#function@11:1",
           "src/composables/use-orders.ts#effect-callback@25:5"
         ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -7658,6 +8119,14 @@
           "src/composables/use-orders.ts#function@26:16",
           "src/composables/use-orders.ts#cache@26:22"
         ],
+        "classifications": [
+          "database-operation",
+          "event"
+        ],
+        "diffClassifications": [
+          "database-operation",
+          "event"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -7721,6 +8190,12 @@
           "src/composables/use-orders.ts#external-value@23:3",
           "src/composables/use-orders.ts#function@26:16",
           "src/composables/use-orders.ts#cache@26:22"
+        ],
+        "classifications": [
+          "database-operation"
+        ],
+        "diffClassifications": [
+          "database-operation"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7820,6 +8295,12 @@
           "src/composables/use-orders.ts#root-variable@4:1",
           "src/composables/use-orders.ts#external-value@23:3",
           "src/composables/use-orders.ts#cache@26:22"
+        ],
+        "classifications": [
+          "database-operation"
+        ],
+        "diffClassifications": [
+          "database-operation"
         ],
         "outerSymbols": [
           {
@@ -7925,6 +8406,12 @@
         "diffSourceIds": [
           "src/composables/use-orders.ts#root-variable@4:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -7974,6 +8461,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8004,6 +8495,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8036,6 +8531,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/composables/use-products.ts#property@7:21"
@@ -8073,6 +8572,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/components/OrderForm.vue#external-value@13:1",
@@ -8109,6 +8612,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8166,6 +8673,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8214,6 +8725,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8271,6 +8786,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/format.ts#function@5:1"
@@ -8308,6 +8827,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/format.ts#function@5:1"
@@ -8341,6 +8864,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8372,6 +8899,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8407,6 +8938,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8494,6 +9029,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/format.ts#function@5:1"
@@ -8526,6 +9065,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8556,6 +9099,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8586,6 +9133,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8616,6 +9167,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8646,6 +9201,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -8677,6 +9236,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8763,6 +9326,10 @@
         "diffSourceIds": [
           "src/router.ts#root-variable@10:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8835,6 +9402,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8906,6 +9477,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -8955,6 +9530,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9007,6 +9586,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9037,6 +9620,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9067,6 +9654,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9122,6 +9713,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9177,6 +9774,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9232,6 +9835,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9262,6 +9871,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9292,6 +9905,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9329,6 +9946,14 @@
         "diffs": [],
         "diffSourceIds": [
           "src/router.ts#root-variable@10:1"
+        ],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [
+          "page",
+          "effect"
         ],
         "outerSymbols": [
           {
@@ -9381,6 +10006,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9434,6 +10063,14 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [
+          "page",
+          "effect"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9465,6 +10102,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9512,6 +10153,11 @@
         "diffSourceIds": [
           "src/views/RootLayout.vue#render@15:7"
         ],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9792,6 +10438,14 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [
+          "page",
+          "effect"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9823,6 +10477,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9854,6 +10512,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -9910,6 +10573,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -9941,6 +10608,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10022,6 +10694,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10114,6 +10792,14 @@
           "src/views/orders/ViewOrdersPage.vue#render@20:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
         ],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [
+          "page",
+          "effect"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10197,6 +10883,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10292,6 +10984,14 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [
+          "page",
+          "effect"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10375,6 +11075,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10480,6 +11186,14 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [
+          "page",
+          "effect"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10538,6 +11252,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -10569,6 +11287,11 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "effect"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10627,6 +11350,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/customers.ts#function@4:1",
@@ -10688,6 +11415,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [
+          "type"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/types/order.ts#type-declaration@3:1"
@@ -10899,6 +11632,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [
+          "type"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -10993,6 +11732,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [
+          "type"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11049,6 +11794,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "type"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/products.ts#function@4:1"
@@ -11089,6 +11838,13 @@
         "diffSourceIds": [
           "src/views/RootLayout.vue#render@15:7"
         ],
+        "classifications": [
+          "component",
+          "context-and-wiring"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.ts#effect-callback@15:7"
@@ -11123,6 +11879,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11153,6 +11913,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11183,6 +11947,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11213,6 +11981,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11244,6 +12016,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "context-and-wiring"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11315,6 +12091,12 @@
         "diffSourceIds": [
           "src/views/RootLayout.vue#render@15:7"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -11352,6 +12134,12 @@
         "diffs": [],
         "diffSourceIds": [
           "src/views/RootLayout.vue#render@15:7"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -11395,6 +12183,12 @@
         "diffSourceIds": [
           "src/views/RootLayout.vue#render@15:7"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -11428,6 +12222,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11477,6 +12275,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11553,6 +12355,12 @@
         "diffSourceIds": [
           "src/views/RootLayout.vue#render@15:7"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11602,6 +12410,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11651,6 +12463,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11707,6 +12523,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11754,6 +12574,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11809,6 +12633,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11840,6 +12668,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -11894,6 +12726,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.ts#effect-callback@17:21"
@@ -11926,6 +12762,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11956,6 +12796,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -11987,6 +12831,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12041,6 +12889,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12073,6 +12925,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12104,6 +12960,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12158,6 +13018,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12189,6 +13053,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12243,6 +13111,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12276,6 +13148,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12309,6 +13185,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12341,6 +13221,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12372,6 +13256,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12446,6 +13334,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/customers/CustomersPage.vue#render@13:7"
@@ -12479,6 +13371,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/customers/components/CustomerRow.vue#render@9:5",
@@ -12512,6 +13408,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12543,6 +13443,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12591,6 +13495,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12625,6 +13533,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12656,6 +13568,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12709,6 +13625,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -12767,6 +13687,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.ts#effect-callback@22:25"
@@ -12800,6 +13724,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/help/HelpPage.vue#render@8:5"
@@ -12834,6 +13762,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12868,6 +13800,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12899,6 +13835,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -12930,6 +13870,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13059,6 +14003,18 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component",
+          "navigation",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [
+          "component",
+          "navigation",
+          "effect",
+          "event"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.ts#effect-callback@20:31"
@@ -13120,6 +14076,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13175,6 +14137,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13230,6 +14198,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13285,6 +14259,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13451,6 +14431,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -13525,6 +14511,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13581,6 +14573,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13637,6 +14635,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13693,6 +14697,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -13750,6 +14760,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/CreateOrderPage.vue#external-value@9:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -13846,6 +14862,12 @@
           "src/composables/use-orders.ts#component-effect@16:10",
           "src/composables/use-orders.ts#effect-callback@17:5",
           "src/views/orders/CreateOrderPage.vue#external-value@10:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -13982,6 +15004,16 @@
           "src/views/orders/CreateOrderPage.vue#function@12:1",
           "src/views/orders/CreateOrderPage.vue#effect@13:3"
         ],
+        "classifications": [
+          "navigation",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [
+          "navigation",
+          "effect",
+          "event"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/CreateOrderPage.vue#render-event@20:90"
@@ -14055,6 +15087,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14187,6 +15225,16 @@
           "src/views/orders/CreateOrderPage.vue#external-value@10:1",
           "src/views/orders/CreateOrderPage.vue#effect@13:3"
         ],
+        "classifications": [
+          "navigation",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [
+          "navigation",
+          "effect",
+          "event"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14290,6 +15338,14 @@
           "src/views/orders/CreateOrderPage.vue#function@13:33",
           "src/views/orders/CreateOrderPage.vue#navigation@13:39"
         ],
+        "classifications": [
+          "navigation",
+          "event"
+        ],
+        "diffClassifications": [
+          "navigation",
+          "event"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -14352,6 +15408,12 @@
           "src/views/orders/CreateOrderPage.vue#external-value@9:1",
           "src/views/orders/CreateOrderPage.vue#function@13:33",
           "src/views/orders/CreateOrderPage.vue#navigation@13:39"
+        ],
+        "classifications": [
+          "navigation"
+        ],
+        "diffClassifications": [
+          "navigation"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -14425,6 +15487,12 @@
         "diffSourceIds": [
           "src/views/orders/CreateOrderPage.vue#external-value@9:1",
           "src/views/orders/CreateOrderPage.vue#navigation@13:39"
+        ],
+        "classifications": [
+          "navigation"
+        ],
+        "diffClassifications": [
+          "navigation"
         ],
         "outerSymbols": [
           {
@@ -14561,6 +15629,12 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -14667,6 +15741,12 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -14727,6 +15807,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/CreateOrderPage.vue#render@19:5"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -14868,6 +15954,12 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -14995,6 +16087,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/CreateOrderPage.vue#render-event@20:90"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [
           {
@@ -15137,6 +16235,18 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component",
+          "navigation",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [
+          "component",
+          "navigation",
+          "effect",
+          "event"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.ts#effect-callback@21:41"
@@ -15201,6 +16311,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -15256,6 +16372,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -15311,6 +16433,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -15366,6 +16494,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -15423,6 +16557,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/EditOrderPage.vue#external-value@7:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -15501,6 +16641,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/EditOrderPage.vue#external-value@8:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -15592,6 +16738,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/EditOrderPage.vue#external-value@7:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -15711,6 +16863,12 @@
           "src/composables/use-orders.ts#function@11:72",
           "src/views/orders/EditOrderPage.vue#external-value@10:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -15826,6 +16984,12 @@
           "src/composables/use-orders.ts#component-effect@24:10",
           "src/composables/use-orders.ts#effect-callback@25:5",
           "src/views/orders/EditOrderPage.vue#external-value@11:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -15962,6 +17126,16 @@
           "src/views/orders/EditOrderPage.vue#function@13:1",
           "src/views/orders/EditOrderPage.vue#effect@14:3"
         ],
+        "classifications": [
+          "navigation",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [
+          "navigation",
+          "effect",
+          "event"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/EditOrderPage.vue#render-event@23:81"
@@ -16035,6 +17209,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -16191,6 +17371,16 @@
           "src/views/orders/EditOrderPage.vue#external-value@11:1",
           "src/views/orders/EditOrderPage.vue#effect@14:3"
         ],
+        "classifications": [
+          "navigation",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [
+          "navigation",
+          "effect",
+          "event"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -16300,6 +17490,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -16380,6 +17576,14 @@
           "src/views/orders/EditOrderPage.vue#function@14:53",
           "src/views/orders/EditOrderPage.vue#navigation@14:59"
         ],
+        "classifications": [
+          "navigation",
+          "event"
+        ],
+        "diffClassifications": [
+          "navigation",
+          "event"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -16442,6 +17646,12 @@
           "src/views/orders/EditOrderPage.vue#external-value@8:1",
           "src/views/orders/EditOrderPage.vue#function@14:53",
           "src/views/orders/EditOrderPage.vue#navigation@14:59"
+        ],
+        "classifications": [
+          "navigation"
+        ],
+        "diffClassifications": [
+          "navigation"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -16515,6 +17725,12 @@
         "diffSourceIds": [
           "src/views/orders/EditOrderPage.vue#external-value@8:1",
           "src/views/orders/EditOrderPage.vue#navigation@14:59"
+        ],
+        "classifications": [
+          "navigation"
+        ],
+        "diffClassifications": [
+          "navigation"
         ],
         "outerSymbols": [
           {
@@ -16662,6 +17878,12 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -16706,6 +17928,12 @@
           "src/composables/use-orders.ts#function@11:72",
           "src/views/orders/EditOrderPage.vue#external-value@10:1",
           "src/views/orders/EditOrderPage.vue#render@19:3"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -16787,6 +18015,12 @@
           "src/views/orders/EditOrderPage.vue#external-value@10:1",
           "src/views/orders/EditOrderPage.vue#render@19:3"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -16851,6 +18085,12 @@
           "src/composables/use-orders.ts#function@11:72",
           "src/views/orders/EditOrderPage.vue#external-value@10:1",
           "src/views/orders/EditOrderPage.vue#render@20:3"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -16931,6 +18171,12 @@
           "src/composables/use-orders.ts#function@11:72",
           "src/views/orders/EditOrderPage.vue#external-value@10:1",
           "src/views/orders/EditOrderPage.vue#render@20:3"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [
           {
@@ -17016,6 +18262,12 @@
           "src/views/orders/components/OrderForm.vue#render@26:7",
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -17143,6 +18395,12 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -17246,6 +18504,12 @@
           "src/composables/use-orders.ts#function@11:72",
           "src/views/orders/EditOrderPage.vue#external-value@10:1",
           "src/views/orders/EditOrderPage.vue#render@22:5"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [
           {
@@ -17419,6 +18683,12 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -17554,6 +18824,12 @@
         "diffSourceIds": [
           "src/views/orders/EditOrderPage.vue#render-event@23:81"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -17677,6 +18953,12 @@
           "src/views/orders/ViewOrdersPage.vue#render@20:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.ts#effect-callback@19:27"
@@ -17737,6 +19019,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -17792,6 +19080,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -17867,6 +19161,12 @@
           "src/composables/use-orders.ts#component-effect@7:10",
           "src/composables/use-orders.ts#effect-callback@7:49",
           "src/views/orders/ViewOrdersPage.vue#external-value@5:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -17993,6 +19293,12 @@
           "src/views/orders/ViewOrdersPage.vue#render@20:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -18036,6 +19342,12 @@
           "src/composables/use-orders.ts#effect-callback@7:49",
           "src/views/orders/ViewOrdersPage.vue#external-value@5:1",
           "src/views/orders/ViewOrdersPage.vue#render@9:3"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -18116,6 +19428,12 @@
           "src/views/orders/ViewOrdersPage.vue#external-value@5:1",
           "src/views/orders/ViewOrdersPage.vue#render@9:3"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -18179,6 +19497,12 @@
           "src/composables/use-orders.ts#effect-callback@7:49",
           "src/views/orders/ViewOrdersPage.vue#external-value@5:1",
           "src/views/orders/ViewOrdersPage.vue#render@10:3"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -18259,6 +19583,12 @@
           "src/views/orders/ViewOrdersPage.vue#external-value@5:1",
           "src/views/orders/ViewOrdersPage.vue#render@10:3"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -18332,6 +19662,12 @@
           "src/views/orders/ViewOrdersPage.vue#render@19:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -18436,6 +19772,12 @@
           "src/views/orders/ViewOrdersPage.vue#render@20:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -18498,6 +19840,12 @@
         "diffSourceIds": [
           "src/views/orders/ViewOrdersPage.vue#render@12:5"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -18555,6 +19903,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/ViewOrdersPage.vue#render@13:5"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [
           {
@@ -18670,6 +20024,12 @@
           "src/views/orders/ViewOrdersPage.vue#render@20:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -18767,6 +20127,12 @@
           "src/views/orders/ViewOrdersPage.vue#render@20:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -18813,6 +20179,12 @@
           "src/views/orders/ViewOrdersPage.vue#render@19:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -18926,6 +20298,12 @@
           "src/views/orders/ViewOrdersPage.vue#render@20:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -19012,6 +20390,12 @@
         "diffSourceIds": [
           "src/views/orders/ViewOrdersPage.vue#render@17:11"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -19070,6 +20454,12 @@
         "diffSourceIds": [
           "src/views/orders/ViewOrdersPage.vue#render@18:11"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -19127,6 +20517,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/ViewOrdersPage.vue#render@19:11"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -19212,6 +20608,12 @@
           "src/views/orders/ViewOrdersPage.vue#render@20:11",
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -19271,6 +20673,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/ViewOrdersPage.vue#render@20:15"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [
           {
@@ -19396,6 +20804,14 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component",
+          "state"
+        ],
+        "diffClassifications": [
+          "component",
+          "state"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/CreateOrderPage.vue#render@20:5",
@@ -19460,6 +20876,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/components/OrderForm.vue#state@11:1"
@@ -19527,6 +20949,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/components/OrderForm.vue#render@29:5"
@@ -19585,6 +21013,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/components/OrderForm.vue#render@29:5"
@@ -19669,6 +21103,12 @@
           "src/views/orders/EditOrderPage.vue#function@13:1",
           "src/views/orders/EditOrderPage.vue#effect@14:3"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/components/OrderForm.vue#call@16:3"
@@ -19738,6 +21178,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -19793,6 +21239,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -19848,6 +21300,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -19903,6 +21361,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -19958,6 +21422,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -20096,6 +21566,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -20204,6 +21680,12 @@
           }
         ],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -20279,6 +21761,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/components/OrderForm.vue#state@11:1"
+        ],
+        "classifications": [
+          "state"
+        ],
+        "diffClassifications": [
+          "state"
         ],
         "outerSymbols": [
           {
@@ -20385,6 +21873,12 @@
         "diffSourceIds": [
           "src/views/orders/components/OrderForm.vue#external-value@12:1"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -20460,6 +21954,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/components/OrderForm.vue#external-value@13:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -20580,6 +22080,12 @@
           "src/views/orders/components/OrderForm.vue#function@15:1",
           "src/views/orders/components/OrderForm.vue#call@16:3"
         ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
         "outerSymbols": [],
         "usedByIds": [
           "src/views/orders/components/OrderForm.vue#render-event@21:9"
@@ -20684,6 +22190,12 @@
           "src/views/orders/EditOrderPage.vue#effect@14:3",
           "src/views/orders/components/OrderForm.vue#state@11:1",
           "src/views/orders/components/OrderForm.vue#call@16:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
         ],
         "outerSymbols": [
           {
@@ -20827,6 +22339,12 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -20948,6 +22466,12 @@
           "src/views/orders/components/OrderForm.vue#render@28:5",
           "src/views/orders/components/OrderForm.vue#render@29:5"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [
@@ -21042,6 +22566,12 @@
           "src/views/orders/components/OrderForm.vue#function@15:1",
           "src/views/orders/components/OrderForm.vue#call@16:3",
           "src/views/orders/components/OrderForm.vue#render-event@21:9"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [
           {
@@ -21161,6 +22691,12 @@
           "src/views/orders/components/OrderForm.vue#render@22:5",
           "src/views/orders/components/OrderForm.vue#render@23:7"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -21220,6 +22756,12 @@
         "diffSourceIds": [
           "src/views/orders/components/OrderForm.vue#external-value@12:1",
           "src/views/orders/components/OrderForm.vue#render@23:7"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -21294,6 +22836,12 @@
         "diffSourceIds": [
           "src/views/orders/components/OrderForm.vue#external-value@12:1",
           "src/views/orders/components/OrderForm.vue#render@23:7"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [
           {
@@ -21418,6 +22966,12 @@
           "src/views/orders/components/OrderForm.vue#render@25:5",
           "src/views/orders/components/OrderForm.vue#render@26:7"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -21477,6 +23031,12 @@
         "diffSourceIds": [
           "src/views/orders/components/OrderForm.vue#external-value@13:1",
           "src/views/orders/components/OrderForm.vue#render@26:7"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -21551,6 +23111,12 @@
         "diffSourceIds": [
           "src/views/orders/components/OrderForm.vue#external-value@13:1",
           "src/views/orders/components/OrderForm.vue#render@26:7"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [
           {
@@ -21648,6 +23214,12 @@
           "src/views/orders/components/OrderForm.vue#state@11:1",
           "src/views/orders/components/OrderForm.vue#render@28:5"
         ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
         "outerSymbols": [
           {
             "usedAt": {
@@ -21729,6 +23301,12 @@
         ],
         "diffSourceIds": [
           "src/views/orders/components/OrderForm.vue#render@29:5"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
         ],
         "outerSymbols": [
           {
@@ -21814,6 +23392,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/router.ts#effect-callback@18:29"
@@ -21846,6 +23428,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -21876,6 +23462,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -21907,6 +23497,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -21961,6 +23555,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -21993,6 +23591,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -22024,6 +23626,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -22078,6 +23684,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -22109,6 +23719,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {
@@ -22163,6 +23777,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -22196,6 +23814,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -22228,6 +23850,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
@@ -22259,6 +23885,10 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
         "outerSymbols": [
           {
             "usedAt": {

@@ -20,6 +20,7 @@ export type EffectPlace = "component" | "elsewhere"
 const PROMISE_METHODS: ReadonlySet<string> = new Set(["then", "catch", "finally"])
 const LISTENING_METHODS: ReadonlySet<string> = new Set(["addEventListener", "on", "once", "addListener", "subscribe"])
 const CALL_TYPE = "call_expression"
+const CONSTRUCTION_TYPE = "new_expression"
 const MEMBER_TYPE = "member_expression"
 const NAME_TYPE = "identifier"
 const META_TYPE = "meta_property"
@@ -142,17 +143,21 @@ export const typeOfConstruction = (construction: SyntaxNode, reader: CallReader)
 
 const HANDED_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["effect", "component-effect", "code-event"])
 
+const HANDING_TYPES: ReadonlySet<string> = new Set([CALL_TYPE, CONSTRUCTION_TYPE])
+
 const callHandedThrough = (slotNode: SyntaxNode): SyntaxNode | null => {
   const holder = slotNode.parent?.type === OPTIONS_TYPE ? slotNode.parent : slotNode
   const call = holder.parent?.type === ARGUMENTS_TYPE ? holder.parent.parent : null
-  return call?.type === CALL_TYPE ? call : null
+  return call !== null && HANDING_TYPES.has(call.type) ? call : null
 }
 
 const valueOfSlot = (slot: SyntaxNode): SyntaxNode => (slot.type === PAIR_TYPE ? (slot.childForFieldName("value") ?? slot) : slot)
 
+const isCatalogueSlot = (node: SyntaxNode, reader: CallReader): boolean => reader.naming.slotAt(valueOfSlot(node)) !== null
+
 const findHandedSlot = (node: SyntaxNode, reader: CallReader): CallbackSlot | null => {
   const call = callHandedThrough(node)
-  if (call === null) return null
+  if (call === null || (call.type === CONSTRUCTION_TYPE && !isCatalogueSlot(node, reader))) return null
   const type = typeOfCall(call, "elsewhere", reader)
   if (type === null || !HANDED_TYPES.has(type)) return null
   return listCallbackSlots(call, reader).find((slot) => isSameNode(slot.node, node)) ?? null

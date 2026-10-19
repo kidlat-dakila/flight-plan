@@ -8,6 +8,7 @@ export type {
   CatalogueRuns,
   CodeBlock,
   CodeBlockCatalogue,
+  CodeBlockClassification,
   CodeBlockDiff,
   CodeBlockDiffType,
   CodeBlockSymbol,

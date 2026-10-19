@@ -70,41 +70,6 @@ export const hydraFixtures: readonly PatternFixture[] = [
   },
 ]
 
-const PROFIG = "profig"
-
-export const profigFixtures: readonly PatternFixture[] = [
-  {
-    library: PROFIG,
-    patternKey: "factory:Config:*",
-    matches: [
-      "from profig import Config\n\ncfg = Config(\"server.cfg\")",
-    ],
-    rejects: [
-      "def Config(*parts, **options):\n    return parts\n\ncfg = Config(\"server.cfg\")",
-    ],
-  },
-  {
-    library: PROFIG,
-    patternKey: "factory:Config:*>call:init:*",
-    matches: [
-      "from profig import Config\n\ncfg = Config(\"server.cfg\")\n\ncfg.init(\"server.host\", \"localhost\")",
-    ],
-    rejects: [
-      "cfg = LocalRegistry()\n\ncfg.init(\"server.host\", \"localhost\")",
-    ],
-  },
-  {
-    library: PROFIG,
-    patternKey: "factory:Config:*>call:sync:*",
-    matches: [
-      "from profig import Config\n\ncfg = Config(\"server.cfg\")\n\ncfg.sync()",
-    ],
-    rejects: [
-      "cfg = LocalRegistry()\n\ncfg.sync()",
-    ],
-  },
-]
-
 const PYTHON_DECOUPLE = "python-decouple"
 
 export const pythonDecoupleFixtures: readonly PatternFixture[] = [
@@ -136,6 +101,76 @@ export const pythonDecoupleFixtures: readonly PatternFixture[] = [
     ],
     rejects: [
       "env_config = LocalRegistry()\n\nDEBUG = env_config(\"DEBUG\", default=False, cast=bool)",
+    ],
+  },
+]
+
+const PYTHON_DOTENV = "python-dotenv"
+
+export const pythonDotenvFixtures: readonly PatternFixture[] = [
+  {
+    library: PYTHON_DOTENV,
+    patternKey: "call:load_dotenv:*",
+    matches: [
+      "from dotenv import load_dotenv\n\nload_dotenv()",
+    ],
+    rejects: [
+      "def load_dotenv(*parts, **options):\n    return parts\n\nload_dotenv()",
+    ],
+  },
+  {
+    library: PYTHON_DOTENV,
+    patternKey: "call:dotenv_values:*",
+    matches: [
+      "from dotenv import dotenv_values\n\nconfig = dotenv_values(\".env\")",
+    ],
+    rejects: [
+      "def dotenv_values(*parts, **options):\n    return parts\n\nconfig = dotenv_values(\".env\")",
+    ],
+  },
+]
+
+const DYNACONF = "Dynaconf"
+
+export const dynaconfFixtures: readonly PatternFixture[] = [
+  {
+    library: DYNACONF,
+    patternKey: "factory:Dynaconf:*",
+    matches: [
+      "from dynaconf import Dynaconf\n\nsettings = Dynaconf(settings_files=[\"settings.toml\", \".secrets.toml\"])",
+    ],
+    rejects: [
+      "def Dynaconf(*parts, **options):\n    return parts\n\nsettings = Dynaconf(settings_files=[\"settings.toml\", \".secrets.toml\"])",
+    ],
+  },
+  {
+    library: DYNACONF,
+    patternKey: "factory:Dynaconf:*>call:get:*",
+    matches: [
+      "from dynaconf import Dynaconf\n\nsettings = Dynaconf(settings_files=[\"settings.toml\"])\n\nport = settings.get(\"port\", 8000)",
+    ],
+    rejects: [
+      "settings = LocalRegistry()\n\nport = settings.get(\"port\", 8000)",
+    ],
+  },
+  {
+    library: DYNACONF,
+    patternKey: "call:FlaskDynaconf:*",
+    matches: [
+      "from dynaconf import FlaskDynaconf\n\nFlaskDynaconf(app, settings_files=[\"settings.toml\"])",
+    ],
+    rejects: [
+      "def FlaskDynaconf(*parts, **options):\n    return parts\n\nFlaskDynaconf(app, settings_files=[\"settings.toml\"])",
+    ],
+  },
+  {
+    library: DYNACONF,
+    patternKey: "call:Validator:*",
+    matches: [
+      "from dynaconf import Validator\n\nport_rule = Validator(\"port\", gte=5000, lte=8000)",
+    ],
+    rejects: [
+      "def Validator(*parts, **options):\n    return parts\n\nport_rule = Validator(\"port\", gte=5000, lte=8000)",
     ],
   },
 ]

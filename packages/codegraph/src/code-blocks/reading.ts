@@ -1,7 +1,7 @@
 import type { SyntaxNode } from "@/ast-graph/parser"
 import type { FileSyntax } from "@/ast-graph/types"
 import type { Binding, FindExportedBinding, FindHandedExport, HandedCallback } from "@/catalogue/matching/syntax-reader"
-import type { BlockCard, CodeBlockCatalogue, CodeBlockType, Position, SourceRange, SymbolUse } from "./types"
+import type { BlockCard, CodeBlockCatalogue, CodeBlockClassification, CodeBlockType, Position, SourceRange, SymbolUse } from "./types"
 
 export type ArgumentRole = "whole" | "key" | "member"
 
@@ -85,10 +85,16 @@ export interface FileExports {
   readonly forwarded: readonly ReadForwardedExport[]
 }
 
+export interface LibraryUse {
+  readonly range: SourceRange
+  readonly classification: CodeBlockClassification
+}
+
 export interface ScriptReading {
   readonly filePath: string
   readonly blocks: readonly ReadBlock[]
   readonly uses: readonly ReadUse[]
+  readonly libraryUses: readonly LibraryUse[]
 }
 
 export interface FileReading extends ScriptReading {

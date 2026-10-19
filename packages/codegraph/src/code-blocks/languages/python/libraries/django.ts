@@ -102,8 +102,10 @@ export const djangoLibrary: Library = {
   name: "Django",
   specifiers: [
     "django",
+    "asgiref.sync",
     "django.urls",
     "django.shortcuts",
+    "django.template.response",
     "django.contrib.auth",
     "django.contrib.auth.decorators",
     "django.views.decorators.cache",
@@ -116,12 +118,36 @@ export const djangoLibrary: Library = {
   category: "framework",
   type: "backend",
   language: "python",
+  locations: [
+    {
+      classification: "migration",
+      files: [{ glob: "**/settings.py", levelsUp: 1 }, { glob: "**/settings/*.py", levelsUp: 2 }],
+      keys: [
+        { key: "INSTALLED_APPS", holds: "modules", below: "migrations/**", default: ["*"] },
+        { key: "MIGRATION_MODULES.*", holds: "modules" },
+      ],
+    },
+    {
+      classification: "i18n",
+      files: [{ glob: "**/settings.py", levelsUp: 1 }, { glob: "**/settings/*.py", levelsUp: 2 }],
+      keys: [
+        { key: "LOCALE_PATHS", holds: "folders" },
+        { key: "INSTALLED_APPS", holds: "modules", below: "locale/**", default: ["*"] },
+      ],
+    },
+    { classification: "config", files: [{ glob: "**/settings.py" }, { glob: "**/settings/*.py" }], keys: [], marks: "file" },
+    { classification: "test", files: [], keys: [{ key: "pattern", holds: "names", default: ["test*.py"] }] },
+  ],
   readCards: readDjangoCards,
   patterns: [
+    { kind: "call", name: "async_to_sync", from: "asgiref.sync", slots: [], returnsAt: [0, "async_function"] },
+    { kind: "call", name: "sync_to_async", from: "asgiref.sync", slots: [], returnsAt: [0, "sync_function"] },
     { kind: "call", name: "path", slots: [{ at: DJANGO_VIEW, runs: "route" }], pathAt: DJANGO_ROUTE, method: EVERY_METHOD },
     { kind: "call", name: "re_path", slots: [{ at: DJANGO_VIEW, runs: "route" }], pathAt: DJANGO_ROUTE, method: EVERY_METHOD },
     { kind: "file", glob: "**/management/commands/[!_]*.py", exports: [{ name: "Command", runs: "command" }] },
     { kind: "call", name: "redirect", slots: [], makes: "navigation", pathAt: DJANGO_REDIRECT_TARGET },
+    { kind: "call", name: "render", slots: [], classifies: "page" },
+    { kind: "call", name: "TemplateResponse", slots: [], classifies: "page" },
     { kind: "call", name: "get_object_or_404", slots: [], makes: "data-fetch" },
     { kind: "call", name: "get_list_or_404", slots: [], makes: "data-fetch" },
     { kind: "call", name: "authenticate", slots: [], makes: "auth" },

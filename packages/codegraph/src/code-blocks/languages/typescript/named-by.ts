@@ -103,6 +103,13 @@ export const NO_NAMING: FileNaming = { blockAt: () => null, slotAt: () => null }
 export const memberNamed = (named: NamedBlock, name: string): ClassMember | null =>
   named.members.find((member) => (member.name.endsWith(MEMBER_WILDCARD) ? name.startsWith(member.name.slice(0, -MEMBER_WILDCARD.length)) : member.name === name)) ?? null
 
+export const catalogueOfMemberRun = (catalogue: CodeBlockCatalogue, run: ClassMember): CodeBlockCatalogue => ({
+  ...catalogue,
+  runs: run.runs,
+  method: run.method ?? null,
+  ...(run.classifies === undefined ? {} : { classifies: run.classifies }),
+})
+
 export const pathBelow = (prefix: string | null, path: string | null): string | null => {
   if (prefix === null || path === null) return path ?? prefix
   const parts = [prefix, path].flatMap((part) => part.split(PATH_SEPARATOR)).filter((part) => part !== "")

@@ -15,8 +15,8 @@ The rules below hold for the whole package. A folder with a guide of its own add
 | `src/journey/` | [src/journey/AGENTS.md](src/journey/AGENTS.md) |
 | `src/blast-radius-diagram/`, `src/blast/` | [Blast Diagram](../../docs/vocabulary/blast-diagram.md) |
 | `src/catalogue/` | [src/catalogue/AGENTS.md](src/catalogue/AGENTS.md), then [catalogue](../../docs/vocabulary/codegraph/catalogue.md) |
-| `src/code-blocks/` | [src/code-blocks/AGENTS.md](src/code-blocks/AGENTS.md), then [code blocks](../../docs/vocabulary/codegraph/code-blocks.md) |
-| Anything built on code blocks | The page of what you touch: [code blocks](../../docs/vocabulary/codegraph/code-blocks.md), [block types](../../docs/vocabulary/codegraph/block-types.md), [symbols](../../docs/vocabulary/codegraph/symbols.md), [chains](../../docs/vocabulary/codegraph/chains.md), [segments](../../docs/vocabulary/codegraph/segments.md), [catalogue](../../docs/vocabulary/codegraph/catalogue.md) |
+| `src/code-blocks/` | [src/code-blocks/AGENTS.md](src/code-blocks/AGENTS.md), then [code blocks](../../docs/vocabulary/codegraph/code-blocks.md) and [classifications](../../docs/vocabulary/codegraph/classifications.md) |
+| Anything built on code blocks | The page of what you touch: [code blocks](../../docs/vocabulary/codegraph/code-blocks.md), [block types](../../docs/vocabulary/codegraph/block-types.md), [classifications](../../docs/vocabulary/codegraph/classifications.md), [symbols](../../docs/vocabulary/codegraph/symbols.md), [chains](../../docs/vocabulary/codegraph/chains.md), [segments](../../docs/vocabulary/codegraph/segments.md), [catalogue](../../docs/vocabulary/codegraph/catalogue.md) |
 
 ## Rules
 

@@ -27,6 +27,13 @@ const flaskMethodFixture = (factoryKey: string, made: string, local: string, met
   rejects: codes.map((code) => `${local}\n\n${code}`),
 })
 
+const flaskImportedCall = (name: string, code: string): PatternFixture => ({
+  library: FLASK,
+  patternKey: `call:${name}:*`,
+  matches: [`from flask import ${name}\n\n${code}`],
+  rejects: [`def ${name}(*parts, **context):\n    return parts\n\n${code}`],
+})
+
 const flaskScaffoldFixtures = (factoryKey: string, made: string, local: string, receiver: string): PatternFixture[] => [
   flaskMethodFixture(factoryKey, made, local, "decorator:route:*", [
     flaskDecorated(`${receiver}.route("/login", methods=["GET", "POST"])`, "login()"),
@@ -39,6 +46,10 @@ const flaskScaffoldFixtures = (factoryKey: string, made: string, local: string, 
   ]),
   ...FLASK_HOOKS.map((name) => flaskMethodFixture(factoryKey, made, local, `decorator:${name}:*`, [flaskDecorated(`${receiver}.${name}`, "handle_request(value=None)")])),
   flaskMethodFixture(factoryKey, made, local, "decorator:errorhandler:*", [flaskDecorated(`${receiver}.errorhandler(404)`, "page_not_found(e)")]),
+  flaskMethodFixture(factoryKey, made, local, "call:register_error_handler:*", [
+    `${receiver}.register_error_handler(404, page_not_found)`,
+    `${receiver}.register_error_handler(code_or_exception=404, f=page_not_found)`,
+  ]),
   flaskMethodFixture(factoryKey, made, local, "decorator:command:*", [flaskDecorated(`${receiver}.cli.command("create-user")`, "create_user(name)")]),
   flaskMethodFixture(factoryKey, made, local, "call:register_blueprint:*", [
     `${receiver}.register_blueprint(admin, url_prefix="/admin")`,
@@ -49,6 +60,7 @@ const flaskScaffoldFixtures = (factoryKey: string, made: string, local: string, 
 export const flaskFixtures: readonly PatternFixture[] = [
   { library: FLASK, patternKey: FLASK_APP_KEY, matches: [FLASK_APP], rejects: ["def Flask(name):\n    return LocalRegistry()\n\napp = Flask(__name__)"] },
   ...flaskScaffoldFixtures(FLASK_APP_KEY, FLASK_APP, LOCAL_APP, "app"),
+  flaskMethodFixture(FLASK_APP_KEY, FLASK_APP, LOCAL_APP, "call:run:*", ["if __name__ == \"__main__\":\n    app.run(debug=True)"]),
   {
     library: FLASK,
     patternKey: FLASK_BLUEPRINT_KEY,
@@ -65,4 +77,6 @@ export const flaskFixtures: readonly PatternFixture[] = [
     matches: ["from flask import redirect, url_for\n\ndef index():\n    return redirect(url_for(\"login\"))"],
     rejects: ["def redirect(location):\n    return location\n\ndef index():\n    return redirect(\"/login\")"],
   },
+  flaskImportedCall("render_template", "def page_not_found(e):\n    return render_template(\"404.html\"), 404"),
+  flaskImportedCall("render_template_string", "def hello(name):\n    return render_template_string(\"Hello {{ name }}!\", name=name)"),
 ]

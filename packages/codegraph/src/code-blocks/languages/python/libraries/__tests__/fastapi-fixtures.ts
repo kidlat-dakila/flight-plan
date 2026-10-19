@@ -60,6 +60,12 @@ const fastapiCallFixture = (name: string, code: string): PatternFixture => ({
   rejects: [`def ${name}(*parts):\n    return parts\n\n${code}`],
 })
 
+const FASTAPI_TEMPLATES_KEY = "factory:Jinja2Templates:*"
+
+const FASTAPI_TEMPLATES = "from fastapi.templating import Jinja2Templates\n\ntemplates = Jinja2Templates(directory=\"templates\")"
+
+const FASTAPI_LOCAL_TEMPLATES = "templates = LocalRegistry()"
+
 export const fastapiFixtures: readonly PatternFixture[] = [
   { library: FASTAPI, patternKey: FASTAPI_APP_KEY, matches: [FASTAPI_APP], rejects: ["def FastAPI():\n    return LocalRegistry()\n\napp = FastAPI()"] },
   ...fastapiRouterMethodFixtures(FASTAPI_APP_KEY, FASTAPI_APP, LOCAL_APP, "app"),
@@ -87,5 +93,15 @@ export const fastapiFixtures: readonly PatternFixture[] = [
   },
   ...fastapiRouterMethodFixtures(FASTAPI_ROUTER_KEY, FASTAPI_ROUTER, LOCAL_ROUTER, "router"),
   fastapiCallFixture("Depends", "async def read_system_status(current_user: Annotated[User, Depends(get_current_user)]):\n    ..."),
+  {
+    library: FASTAPI,
+    patternKey: FASTAPI_TEMPLATES_KEY,
+    matches: [FASTAPI_TEMPLATES],
+    rejects: ["def Jinja2Templates(**options):\n    return LocalRegistry()\n\ntemplates = Jinja2Templates(directory=\"templates\")"],
+  },
+  fastapiMethodFixture(FASTAPI_TEMPLATES_KEY, FASTAPI_TEMPLATES, FASTAPI_LOCAL_TEMPLATES, "call:TemplateResponse:*", [
+    "async def read_item(request: Request, id: str):\n    return templates.TemplateResponse(request=request, name=\"item.html\", context={\"id\": id})",
+    "async def homepage(request: Request):\n    return templates.TemplateResponse(request, \"index.html\")",
+  ]),
   fastapiCallFixture("Security", "async def read_own_items(current_user: Annotated[User, Security(get_current_active_user, scopes=[\"items\"])]):\n    ..."),
 ]

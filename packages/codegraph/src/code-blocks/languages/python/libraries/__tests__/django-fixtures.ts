@@ -23,6 +23,18 @@ const djangoCacheCall = (method: string, call: string): PatternFixture =>
   djangoFixtureOf(`call:cache.${method}:*`, [`from django.core.cache import cache\n\n${call}`], [`cache = {}\n\n${call}`])
 
 export const djangoFixtures: readonly PatternFixture[] = [
+  {
+    library: DJANGO,
+    patternKey: "call:async_to_sync@asgiref.sync:*",
+    matches: ["from asgiref.sync import async_to_sync\n\nasync def get_data(): ...\n\nsync_get_data = async_to_sync(get_data)"],
+    rejects: ["def async_to_sync(function):\n    return function\n\nsync_get_data = async_to_sync(get_data)"],
+  },
+  {
+    library: DJANGO,
+    patternKey: "call:sync_to_async@asgiref.sync:*",
+    matches: ["from asgiref.sync import sync_to_async\n\nasync def view(request):\n    results = await sync_to_async(sync_function, thread_sensitive=True)(pk=123)"],
+    rejects: ["def sync_to_async(function):\n    return function\n\nasync def view(request):\n    results = await sync_to_async(sync_function)(pk=123)"],
+  },
   djangoFixtureOf(
     "call:path:*",
     [
@@ -42,6 +54,8 @@ export const djangoFixtures: readonly PatternFixture[] = [
     ["polls/management/commands/__init__.py", "polls/management/commands/_private.py", "polls/commands/closepoll.py"],
   ),
   djangoImportedCall("django.shortcuts", "redirect", "def my_view(request):\n    return redirect(\"/some/url/\")"),
+  djangoImportedCall("django.shortcuts", "render", "def my_view(request):\n    return render(request, \"myapp/index.html\", {\"foo\": \"bar\"})"),
+  djangoImportedCall("django.template.response", "TemplateResponse", "def blog_index(request):\n    return TemplateResponse(request, \"entry_list.html\", {\"entries\": Entry.objects.all()})"),
   djangoImportedCall("django.shortcuts", "get_object_or_404", "def my_view(request):\n    obj = get_object_or_404(MyModel, pk=1)"),
   djangoImportedCall("django.shortcuts", "get_list_or_404", "def my_view(request):\n    my_objects = get_list_or_404(MyModel, published=True)"),
   djangoImportedCall("django.contrib.auth", "authenticate", "def my_view(request):\n    user = authenticate(request, username=username, password=password)"),

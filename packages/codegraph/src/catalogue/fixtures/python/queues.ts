@@ -1,20 +1,5 @@
 import type { PatternFixture } from "@/catalogue/types"
 
-const AUTOBAHN = "Autobahn"
-
-export const autobahnFixtures: readonly PatternFixture[] = [
-  {
-    library: AUTOBAHN,
-    patternKey: "class:WebSocketServerProtocol:*",
-    matches: [
-      "from autobahn.twisted.websocket import WebSocketServerProtocol\n\nclass MyServerProtocol(WebSocketServerProtocol):\n    def onMessage(self, payload, isBinary):\n        self.sendMessage(payload, isBinary)",
-    ],
-    rejects: [
-      "class WebSocketServerProtocol:\n    pass\n\nclass MyServerProtocol(WebSocketServerProtocol):\n    def onMessage(self, payload, isBinary):\n        self.sendMessage(payload, isBinary)",
-    ],
-  },
-]
-
 const CELERY = "Celery"
 
 export const celeryFixtures: readonly PatternFixture[] = [
@@ -56,41 +41,6 @@ export const celeryFixtures: readonly PatternFixture[] = [
     ],
     rejects: [
       "def shared_task(*parts, **options):\n    return parts\n\n@shared_task\ndef add(x, y):\n    return x + y",
-    ],
-  },
-]
-
-const CHANNELS = "Channels"
-
-export const channelsFixtures: readonly PatternFixture[] = [
-  {
-    library: CHANNELS,
-    patternKey: "class:SyncConsumer:*",
-    matches: [
-      "from channels.consumer import SyncConsumer\n\nclass EchoConsumer(SyncConsumer):\n    def websocket_connect(self, event):\n        self.send({\"type\": \"websocket.accept\"})",
-    ],
-    rejects: [
-      "class SyncConsumer:\n    pass\n\nclass EchoConsumer(SyncConsumer):\n    def websocket_connect(self, event):\n        self.send({\"type\": \"websocket.accept\"})",
-    ],
-  },
-  {
-    library: CHANNELS,
-    patternKey: "class:AsyncHttpConsumer:*",
-    matches: [
-      "from channels.generic.http import AsyncHttpConsumer\n\nclass BasicHttpConsumer(AsyncHttpConsumer):\n    async def handle(self, body):\n        await self.send_response(200, b\"ok\")",
-    ],
-    rejects: [
-      "class AsyncHttpConsumer:\n    pass\n\nclass BasicHttpConsumer(AsyncHttpConsumer):\n    async def handle(self, body):\n        await self.send_response(200, b\"ok\")",
-    ],
-  },
-  {
-    library: CHANNELS,
-    patternKey: "class:WebsocketConsumer:*",
-    matches: [
-      "from channels.generic.websocket import WebsocketConsumer\n\nclass MyConsumer(WebsocketConsumer):\n    def receive(self, text_data=None, bytes_data=None):\n        self.send(text_data=\"Hello world!\")",
-    ],
-    rejects: [
-      "class WebsocketConsumer:\n    pass\n\nclass MyConsumer(WebsocketConsumer):\n    def receive(self, text_data=None, bytes_data=None):\n        self.send(text_data=\"Hello world!\")",
     ],
   },
 ]
@@ -231,31 +181,6 @@ export const rqFixtures: readonly PatternFixture[] = [
     ],
     rejects: [
       "def job(*parts, **options):\n    return parts\n\n@job(\"low\", connection=my_redis_conn, timeout=5)\ndef add(x, y):\n    return x + y",
-    ],
-  },
-]
-
-const WEBSOCKETS = "websockets"
-
-export const websocketsFixtures: readonly PatternFixture[] = [
-  {
-    library: WEBSOCKETS,
-    patternKey: "call:serve:*",
-    matches: [
-      "from websockets.asyncio.server import serve\n\nasync def main():\n    async with serve(hello, \"localhost\", 8765) as server:\n        await server.serve_forever()",
-    ],
-    rejects: [
-      "def serve(*parts, **options):\n    return parts\n\nasync def main():\n    async with serve(hello, \"localhost\", 8765) as server:\n        await server.serve_forever()",
-    ],
-  },
-  {
-    library: WEBSOCKETS,
-    patternKey: "call:broadcast:*",
-    matches: [
-      "from websockets.asyncio.server import broadcast\n\nbroadcast(connections, \"Hello!\")",
-    ],
-    rejects: [
-      "def broadcast(*parts, **options):\n    return parts\n\nbroadcast(connections, \"Hello!\")",
     ],
   },
 ]

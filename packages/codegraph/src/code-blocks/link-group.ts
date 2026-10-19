@@ -58,6 +58,8 @@ const linkBlock = (stored: StoredCodeBlock, lookup: GroupLookup): CodeBlock => {
     ...(stored.isAnnotatedAlias === true ? { isAnnotatedAlias: true } : {}),
     lineOfCodeDiffs: stored.lineOfCodeDiffs,
     diffs: stored.diffs,
+    classifications: stored.classifications,
+    diffClassifications: stored.diffClassifications,
     catalogue: stored.catalogue,
     ...(stored.card === undefined ? {} : { card: stored.card }),
     get cardOwner() {

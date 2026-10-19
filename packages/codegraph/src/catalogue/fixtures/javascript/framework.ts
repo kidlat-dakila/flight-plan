@@ -358,6 +358,12 @@ const HONO = "Hono"
 export const honoFixtures: readonly PatternFixture[] = [
   {
     library: HONO,
+    patternKey: "call:serve@@hono/node-server:*",
+    matches: ["import { serve } from \"@hono/node-server\"\nserve(app, (info) => console.log(info.port))"],
+    rejects: ["const serve = (app) => app\nserve(app, (info) => console.log(info.port))"],
+  },
+  {
+    library: HONO,
     patternKey: "factory:Hono:*",
     matches: [
       "import { Hono } from \"hono\"\nconst app = new Hono()",
@@ -558,6 +564,17 @@ const reactContextElementFixture = (name: string, element: string): PatternFixtu
 })
 
 export const reactFixtures: readonly PatternFixture[] = [
+  {
+    library: REACT,
+    patternKey: "class:Component:*",
+    matches: [
+      "import { Component } from \"react\"\nclass ErrorBoundary extends Component {\n  static getDerivedStateFromError(error) {\n    return { hasError: true }\n  }\n  componentDidCatch(error, info) {\n    report(error, info.componentStack)\n  }\n}",
+      "import React from \"react\"\nclass ErrorBoundary extends React.Component {\n  componentDidCatch(error, info) {\n    report(error)\n  }\n}",
+    ],
+    rejects: [
+      "class Component {}\nclass ErrorBoundary extends Component {\n  componentDidCatch(error, info) {\n    report(error)\n  }\n}",
+    ],
+  },
   reactCallFixture("useState", "const [isOpen, setIsOpen] = useState(() => readDraft())"),
   reactCallFixture("useReducer", "const [cart, dispatch] = useReducer(cartReducer, savedCart, restoreCart)"),
   reactCallFixture("useActionState", "const [message, submit, isPending] = useActionState(saveProfile, null)"),
@@ -683,6 +700,12 @@ export const vueFixtures: readonly PatternFixture[] = [
   },
   {
     library: VUE,
+    patternKey: "factory:createApp:*>assignment:config.errorHandler:*",
+    matches: ["import { createApp } from \"vue\"\nconst app = createApp(App)\napp.config.errorHandler = (err, instance, info) => {\n  report(err, info)\n}"],
+    rejects: ["const app = makeLocalRegistry()\napp.config.errorHandler = (err, instance, info) => {\n  report(err, info)\n}"],
+  },
+  {
+    library: VUE,
     patternKey: "factory:createApp:*>call:provide:*",
     matches: [
       "import { createApp } from \"vue\"\nconst app = createApp({})\napp.provide(\"message\", \"hello\")",
@@ -707,6 +730,12 @@ export const vueFixtures: readonly PatternFixture[] = [
 const KOA = "Koa"
 
 export const koaFixtures: readonly PatternFixture[] = [
+  {
+    library: KOA,
+    patternKey: "factory:default:*>call:listen:*",
+    matches: ["const Koa = require(\"koa\")\nconst app = new Koa()\napp.listen(3000)"],
+    rejects: ["const app = makeLocalRegistry()\napp.listen(3000)"],
+  },
   {
     library: KOA,
     patternKey: "factory:default:*",

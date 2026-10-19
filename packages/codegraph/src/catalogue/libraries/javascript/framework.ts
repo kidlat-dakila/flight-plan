@@ -111,12 +111,13 @@ export const hapiLibrary: CatalogueLibrary = {
 
 export const honoLibrary: CatalogueLibrary = {
   name: "Hono",
-  specifiers: ["hono"],
+  specifiers: ["hono", "@hono/node-server"],
   documentedVersion: "4.13",
   category: "framework",
   type: "backend",
   language: "javascript",
   patterns: [
+    { kind: "call", name: "serve", from: "@hono/node-server", slots: [{ at: SECOND_ARGUMENT, runs: "event" }], classifies: "context-and-wiring" },
     {
       kind: "factory",
       name: "Hono",
@@ -170,6 +171,15 @@ export const reactLibrary: CatalogueLibrary = {
   type: "frontend",
   language: "javascript",
   patterns: [
+    {
+      kind: "class",
+      name: "Component",
+      members: [
+        { name: "componentDidCatch", runs: "event", classifies: "error-handling" },
+        { name: "getDerivedStateFromError", runs: "event", classifies: "error-handling" },
+      ],
+      methods: [],
+    },
     { kind: "call", name: "useState", slots: [{ at: FIRST_ARGUMENT, runs: "in-place" }], makes: "state" },
     {
       kind: "call",
@@ -202,8 +212,9 @@ export const reactLibrary: CatalogueLibrary = {
       kind: "factory",
       name: "createContext",
       provides: { valueAt: REACT_CONTEXT_VALUE },
+      classifies: "context-and-wiring",
       methods: [
-        { kind: "element", name: "Provider", slots: [], provides: { valueAt: REACT_CONTEXT_VALUE } },
+        { kind: "element", name: "Provider", slots: [], provides: { valueAt: REACT_CONTEXT_VALUE }, classifies: "context-and-wiring" },
         { kind: "element", name: "Consumer", slots: [{ at: REACT_CHILDREN, runs: "in-place" }], reads: {} },
       ],
     },
@@ -276,14 +287,17 @@ export const vueLibrary: CatalogueLibrary = {
     { kind: "call", name: "onUnmounted", slots: VUE_HOOK_SLOTS },
     { kind: "call", name: "onActivated", slots: VUE_HOOK_SLOTS },
     { kind: "call", name: "onDeactivated", slots: VUE_HOOK_SLOTS },
-    { kind: "call", name: "onErrorCaptured", slots: VUE_HOOK_SLOTS },
+    { kind: "call", name: "onErrorCaptured", slots: VUE_HOOK_SLOTS, classifies: "error-handling" },
     { kind: "call", name: "onServerPrefetch", slots: VUE_HOOK_SLOTS },
     { kind: "call", name: "nextTick", slots: VUE_HOOK_SLOTS },
-    { kind: "call", name: "provide", slots: [], provides: { keyAt: FIRST_ARGUMENT, valueAt: SECOND_ARGUMENT } },
+    { kind: "call", name: "provide", slots: [], provides: { keyAt: FIRST_ARGUMENT, valueAt: SECOND_ARGUMENT }, classifies: "context-and-wiring" },
     {
       kind: "factory",
       name: "createApp",
-      methods: [{ kind: "call", name: "provide", slots: [], provides: { keyAt: FIRST_ARGUMENT, valueAt: SECOND_ARGUMENT } }],
+      methods: [
+        { kind: "call", name: "provide", slots: [], provides: { keyAt: FIRST_ARGUMENT, valueAt: SECOND_ARGUMENT }, classifies: "context-and-wiring" },
+        { kind: "assignment", name: "config.errorHandler", slots: [{ at: FIRST_ARGUMENT, runs: "event" }], classifies: "error-handling" },
+      ],
     },
     {
       kind: "call",
@@ -296,7 +310,7 @@ export const vueLibrary: CatalogueLibrary = {
         { at: "mounted", runs: "effect" },
       ],
     },
-    { kind: "call", name: "inject", slots: [], reads: { keyAt: FIRST_ARGUMENT } },
+    { kind: "call", name: "inject", slots: [], reads: { keyAt: FIRST_ARGUMENT }, classifies: "context-and-wiring" },
   ],
 }
 
@@ -311,7 +325,10 @@ export const koaLibrary: CatalogueLibrary = {
     {
       kind: "factory",
       name: "default",
-      methods: [{ kind: "call", name: "use", slots: [{ at: FIRST_ARGUMENT, runs: "middleware" }] }],
+      methods: [
+        { kind: "call", name: "use", slots: [{ at: FIRST_ARGUMENT, runs: "middleware" }] },
+        { kind: "call", name: "listen", slots: [], classifies: "context-and-wiring" },
+      ],
     },
   ],
 }

@@ -1,55 +1,5 @@
 import type { PatternFixture } from "@/catalogue/types"
 
-const APACHE_LIBCLOUD = "Apache Libcloud"
-
-export const apacheLibcloudFixtures: readonly PatternFixture[] = [
-  {
-    library: APACHE_LIBCLOUD,
-    patternKey: "factory:get_driver:*",
-    matches: [
-      "from libcloud.compute.providers import get_driver\n\ncls = get_driver(Provider.RACKSPACE)\ndriver = cls(\"username\", \"api key\", region=\"iad\")",
-    ],
-    rejects: [
-      "def get_driver(*parts, **options):\n    return parts\n\ncls = get_driver(Provider.RACKSPACE)\ndriver = cls(\"username\", \"api key\", region=\"iad\")",
-    ],
-  },
-]
-
-const BOTO3 = "boto3"
-
-export const boto3Fixtures: readonly PatternFixture[] = [
-  {
-    library: BOTO3,
-    patternKey: "factory:client:*",
-    matches: [
-      "from boto3 import client\n\nsqs = client(\"sqs\")",
-    ],
-    rejects: [
-      "def client(*parts, **options):\n    return parts\n\nsqs = client(\"sqs\")",
-    ],
-  },
-  {
-    library: BOTO3,
-    patternKey: "factory:client:*>call:send_message:*",
-    matches: [
-      "from boto3 import client\n\nsqs = client(\"sqs\")\n\nsqs.send_message(QueueUrl=queue_url, MessageBody=\"hello\")",
-    ],
-    rejects: [
-      "sqs = LocalRegistry()\n\nsqs.send_message(QueueUrl=queue_url, MessageBody=\"hello\")",
-    ],
-  },
-  {
-    library: BOTO3,
-    patternKey: "factory:resource:*",
-    matches: [
-      "from boto3 import resource\n\ns3 = resource(\"s3\")",
-    ],
-    rejects: [
-      "def resource(*parts, **options):\n    return parts\n\ns3 = resource(\"s3\")",
-    ],
-  },
-]
-
 const DJANGO_WORDPRESS = "django-wordpress"
 
 export const djangoWordpressFixtures: readonly PatternFixture[] = [
@@ -140,56 +90,6 @@ export const facebookSdkFixtures: readonly PatternFixture[] = [
   },
 ]
 
-const FLANKER = "Flanker"
-
-export const flankerFixtures: readonly PatternFixture[] = [
-  {
-    library: FLANKER,
-    patternKey: "call:address.parse:*",
-    matches: [
-      "from flanker.addresslib import address\n\nparsed = address.parse(\"Foo foo@example.com\")",
-    ],
-    rejects: [
-      "address = LocalRegistry()\n\nparsed = address.parse(\"Foo foo@example.com\")",
-    ],
-  },
-  {
-    library: FLANKER,
-    patternKey: "call:mime.from_string:*",
-    matches: [
-      "from flanker import mime\n\nmsg = mime.from_string(message_string)",
-    ],
-    rejects: [
-      "mime = LocalRegistry()\n\nmsg = mime.from_string(message_string)",
-    ],
-  },
-]
-
-const GOOGLE_API_PYTHON_CLIENT = "google-api-python-client"
-
-export const googleApiPythonClientFixtures: readonly PatternFixture[] = [
-  {
-    library: GOOGLE_API_PYTHON_CLIENT,
-    patternKey: "factory:build:*",
-    matches: [
-      "from googleapiclient.discovery import build\n\nservice = build(\"drive\", \"v3\", credentials=creds)",
-    ],
-    rejects: [
-      "def build(*parts, **options):\n    return parts\n\nservice = build(\"drive\", \"v3\", credentials=creds)",
-    ],
-  },
-  {
-    library: GOOGLE_API_PYTHON_CLIENT,
-    patternKey: "factory:build:*>call:execute:*",
-    matches: [
-      "from googleapiclient.discovery import build\n\nservice = build(\"drive\", \"v3\", credentials=creds)\n\nresults = service.files().list(pageSize=10).execute()",
-    ],
-    rejects: [
-      "service = LocalRegistry()\n\nresults = service.files().list(pageSize=10).execute()",
-    ],
-  },
-]
-
 const GSPREAD = "gspread"
 
 export const gspreadFixtures: readonly PatternFixture[] = [
@@ -235,31 +135,6 @@ export const gspreadFixtures: readonly PatternFixture[] = [
   },
 ]
 
-const IMBOX = "Imbox"
-
-export const imboxFixtures: readonly PatternFixture[] = [
-  {
-    library: IMBOX,
-    patternKey: "factory:Imbox:*",
-    matches: [
-      "from imbox import Imbox\n\nimbox = Imbox(\"imap.gmail.com\", username=\"username\", password=\"password\", ssl=True)",
-    ],
-    rejects: [
-      "def Imbox(*parts, **options):\n    return parts\n\nimbox = Imbox(\"imap.gmail.com\", username=\"username\", password=\"password\", ssl=True)",
-    ],
-  },
-  {
-    library: IMBOX,
-    patternKey: "factory:Imbox:*>call:messages:*",
-    matches: [
-      "from imbox import Imbox\n\nimbox = Imbox(\"imap.gmail.com\", username=\"username\", password=\"password\", ssl=True)\n\nall_inbox_messages = imbox.messages()",
-    ],
-    rejects: [
-      "imbox = LocalRegistry()\n\nall_inbox_messages = imbox.messages()",
-    ],
-  },
-]
-
 const TWYTHON = "Twython"
 
 export const twythonFixtures: readonly PatternFixture[] = [
@@ -301,31 +176,6 @@ export const twythonFixtures: readonly PatternFixture[] = [
     ],
     rejects: [
       "twitter = LocalRegistry()\n\ntwitter.search(q=\"python\")",
-    ],
-  },
-]
-
-const YAGMAIL = "yagmail"
-
-export const yagmailFixtures: readonly PatternFixture[] = [
-  {
-    library: YAGMAIL,
-    patternKey: "factory:SMTP:*",
-    matches: [
-      "from yagmail import SMTP\n\nyag = SMTP(\"mygmailusername\", \"mygmailpassword\")",
-    ],
-    rejects: [
-      "def SMTP(*parts, **options):\n    return parts\n\nyag = SMTP(\"mygmailusername\", \"mygmailpassword\")",
-    ],
-  },
-  {
-    library: YAGMAIL,
-    patternKey: "factory:SMTP:*>call:send:*",
-    matches: [
-      "from yagmail import SMTP\n\nyag = SMTP(\"mygmailusername\", \"mygmailpassword\")\n\nyag.send(\"to@someone.com\", \"subject\", contents)",
-    ],
-    rejects: [
-      "yag = LocalRegistry()\n\nyag.send(\"to@someone.com\", \"subject\", contents)",
     ],
   },
 ]

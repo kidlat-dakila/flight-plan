@@ -1,4 +1,5 @@
-import type { CodeBlock, CodeBlockType, JourneyFlowDiagram, JourneyNode, SourceFile } from "@flightplan/configurations"
+import { classificationOfType, diffKindsOf } from "@flightplan/codegraph"
+import type { CodeBlock, CodeBlockClassification, CodeBlockType, JourneyFlowDiagram, JourneyNode, SourceFile } from "@flightplan/configurations"
 
 export interface MockJourneyNode {
   readonly id: string
@@ -25,6 +26,7 @@ export type MockJourneyEdge = readonly [from: string, to: string]
 const FIRST_COLUMN = 1
 const FIRST_LINE = 1
 const EDGE_ID_SEPARATOR = " -> "
+const FALLBACK_CLASSIFICATION: CodeBlockClassification = "logic"
 
 const linesOf = (sources: readonly SourceFile[], path: string, declaration: string): readonly [number, number] => {
   const declarations = sources.find((source) => source.path === path)?.declarations ?? {}
@@ -42,6 +44,7 @@ interface MockBlock {
 
 const blockOf = ({ id, type, path, name, lines: [lineStart, lineEnd], isChanged }: MockBlock): CodeBlock => {
   const range = { start: { line: lineStart, column: FIRST_COLUMN }, end: { line: lineEnd, column: FIRST_COLUMN } }
+  const classifications = [classificationOfType(type) ?? FALLBACK_CLASSIFICATION]
   return {
     id,
     name,
@@ -55,6 +58,8 @@ const blockOf = ({ id, type, path, name, lines: [lineStart, lineEnd], isChanged 
     lineOfCodeDiffs: isChanged ? [range] : null,
     diffs: isChanged ? [{ type: "modified", range }] : [],
     diffSources: [],
+    classifications,
+    diffClassifications: isChanged ? classifications : [],
     outerSymbols: [],
     usedBy: [],
     nextBlocks: [],
@@ -105,7 +110,7 @@ export const mockJourney = (
       rootASTGraphs: [],
       codeBlocks,
       diffBlocks: everyNode.flatMap((node) => node.diffCodeBlocks),
-      diffContains: [],
+      diffContains: diffKindsOf(everyNode.flatMap((node) => node.diffCodeBlocks.flatMap((block) => block.diffClassifications))),
       chainContains: [],
       diffChains: [],
     },

@@ -25,7 +25,7 @@ import {
   returnedValueOf,
   returnsMarkup,
 } from "./markup"
-import { memberNamed, pathBelow, type NamedBlock } from "./named-by"
+import { catalogueOfMemberRun, memberNamed, pathBelow, type NamedBlock } from "./named-by"
 import type { FileOutline } from "./outline"
 import { parameterMemberWrittenIn } from "./parameter-writes"
 import { isPlainValue } from "./plain-values"
@@ -305,7 +305,7 @@ const catalogueOfMember = (member: SyntaxNode, reader: BlockReader): CodeBlockCa
   if (decorated !== null) return { ...decorated.catalogue, path: rootedPath(pathBelow(prefix, decorated.catalogue.path)) }
   const extended = declared === null ? null : reader.naming.blockAt(declared)
   const run = extended === null || ownName === null ? null : memberNamed(extended, textOfName(ownName))
-  return extended === null || run === null ? null : { ...extended.catalogue, runs: run.runs, method: run.method ?? null }
+  return extended === null || run === null ? null : catalogueOfMemberRun(extended.catalogue, run)
 }
 
 const readMethod: ReadSeeds = (method, context, reader) => {

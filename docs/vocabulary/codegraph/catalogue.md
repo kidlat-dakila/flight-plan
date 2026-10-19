@@ -392,9 +392,10 @@ interface CatalogueLibrary {
   type: "frontend" | "backend" | "fullstack"
   language: "javascript" | "python"
   patterns: CataloguePattern[]
+  locations?: LocationSetting[]        // where the tool keeps files of a classification, read from its configuration
 }
 
-type CataloguePattern = CallPattern | FactoryPattern | DecoratorPattern | ElementPattern | ClassPattern | FilePattern | DirectivePattern
+type CataloguePattern = CallPattern | FactoryPattern | DecoratorPattern | ElementPattern | AssignmentPattern | ClassPattern | FilePattern | DirectivePattern
 
 type SlotRuns = "route" | "resolver" | "page" | "middleware" | "job" | "command" | "event" | "effect" | "in-place" | "kept"
 
@@ -444,10 +445,12 @@ interface CallPattern {
   method?: string                      // the method of a route or of a request: "POST", or "*" for every method
   methodAt?: SlotPosition              // where the method is, when the call names it
   makes?: BlockMade                    // the type of block the call, or what keeps its result, is
+  classifies?: CodeBlockClassification // what the call is for, when that is not what its library's category gives
   eventAt?: SlotPosition               // where the name of an event, a channel or a queue is
   provides?: ContextProvision
   reads?: ContextRead
   isOwnNode?: boolean                  // the call is a node of its own in a Journey Flow Diagram, wherever it is written
+  returnsAt?: SlotPosition             // the call returns the value at this place, as async_to_sync(fn) returns fn wrapped
 }
 
 interface DecoratorPattern {
@@ -462,6 +465,7 @@ interface DecoratorPattern {
   method?: string                      // "GET", or "*" for every method
   methodAt?: SlotPosition              // alone, it names the methods of a route registered elsewhere: "@api_view([\"GET\"])"
   makes?: BlockMade                    // "@lru_cache" is a cache, "@login_required" is auth
+  classifies?: CodeBlockClassification
   eventAt?: SlotPosition
 }
 
@@ -473,6 +477,7 @@ interface ElementPattern {
   slots: Slot[]                        // attributes, and "children"
   pathAt?: SlotPosition                // the attribute that holds the path, such as "href"
   makes?: BlockMade
+  classifies?: CodeBlockClassification
   provides?: ContextProvision
   reads?: ContextRead
 }
@@ -482,14 +487,16 @@ interface FactoryPattern {
   versions?: string
   name: string                         // "createTRPCReact", or "default" for the default export
   from?: string
-  methods: (CallPattern | DecoratorPattern | ElementPattern | FactoryPattern)[]  // matched on the last name of the member path
+  methods: (CallPattern | DecoratorPattern | ElementPattern | FactoryPattern | AssignmentPattern)[]  // matched on the last name of the member path
   slots?: Slot[]                       // what is handed to the factory and runs later
   called?: {                           // what the made value is when it is called, or used as a tag
     slots: Slot[]
     makes?: BlockMade
-    methods?: (CallPattern | DecoratorPattern | ElementPattern | FactoryPattern)[]
+    classifies?: CodeBlockClassification
+    methods?: (CallPattern | DecoratorPattern | ElementPattern | FactoryPattern | AssignmentPattern)[]
   }
   makes?: BlockMade                    // what the factory makes
+  classifies?: CodeBlockClassification
   prefixAt?: SlotPosition              // where the prefix of every route below is
   provides?: ContextProvision          // what the made value provides when it is written as an element
   makesType?: string                   // the type code writes for the made value: "FastifyInstance"
@@ -497,22 +504,32 @@ interface FactoryPattern {
   isTypeOnly?: boolean                 // no call makes the value, code only writes its type: "MiddlewareConsumer" of NestJS
 }
 
+interface AssignmentPattern {
+  kind: "assignment"
+  versions?: string
+  name: string                         // the member path written to: "config.errorHandler" of a Vue app
+  from?: string
+  slots: Slot[]                        // 0 is the value assigned
+  makes?: BlockMade
+  classifies?: CodeBlockClassification
+}
+
 interface ClassPattern {
   kind: "class"
   versions?: string
   name: string                         // the export a class extends: "Model", "RequestHandler"
   from?: string
-  members: { name: string; runs: SlotRuns; method?: string }[]  // the methods of the class the library runs
-  methods: (CallPattern | DecoratorPattern | ElementPattern | FactoryPattern)[]  // calls on the class and on what is made from it
+  members: { name: string; runs: SlotRuns; method?: string; classifies?: CodeBlockClassification }[]  // the methods of the class the library runs
+  methods: (CallPattern | DecoratorPattern | ElementPattern | FactoryPattern | AssignmentPattern)[]  // calls on the class and on what is made from it
   makes?: BlockMade                    // what a use of the class is
+  classifies?: CodeBlockClassification // "data-model" for the class an ORM's models extend
 }
 
 interface FilePattern {
   kind: "file"
   versions?: string
   glob: string                         // "{app,src/app}/**/page.{js,jsx,ts,tsx}"
-  exports: { name: string; runs: SlotRuns; method?: string }[]
-  isIgnored?: boolean                  // true for tests and stories
+  exports: { name: string; runs: SlotRuns; method?: string; classifies?: CodeBlockClassification }[]
 }
 
 interface DirectivePattern {
@@ -605,6 +622,13 @@ A file is read once, and every call, `new`, tagged template, decorator, element 
 | `program.argument("<name>").action(…)` with `program` imported | `program.action`: a call no pattern names on a member of an export leaves the member |
 | `app.register(mercurius, { schema })` | The call pattern of the default export of `mercurius`, with the arguments after it as its own. An export handed to a method by name is called by that method. |
 | `class User extends Model {}`, then `User.findAll()` and `new User().save()` | The class pattern, and its methods on the class and on what is made from it |
+| `class Timestamped(models.Model)`, then `class Order(Timestamped)` in the same file | The class pattern of `Model` on both: a class that extends a local class takes what the local class extends |
+| `const EventEmitter = require("events")`, then `class Bus extends EventEmitter {}` | The class pattern `default`: a whole module required is its default export, for a class as for a call |
+| `import styled from "styled-components"`, then `` styled.li`…` `` | A pattern named `default.*`: each segment of the name of an export may hold `*`, so one pattern matches every member of one depth |
+| `open("orders.csv")` in a Python file that binds no `open` | The pattern `open` of the library whose specifier is `builtins`: a name the file never binds is read as a builtin of the language |
+| `this.broadcast(…)` in a method of `class ChatRoom extends Room`, `self.send(…)` in a method of `class Chat(WebsocketConsumer)` | The method of the class pattern: `this`, and the first parameter of a method that is no `@staticmethod`, are an instance of the class around them |
+| `async_to_sync(self.channel_layer.group_send)("chat", …)` | The method `group_send`: a call whose pattern says `returnsAt` is followed to the value at that place, so what calls its result calls that value |
+| `app.config.errorHandler = (err) => …` with `app` from `createApp` | The assignment pattern `config.errorHandler` of the factory: a member written to is matched as a method is, and the value assigned is its place 0 |
 | `"use server"` as the first statement of a file or of a function | The directive pattern |
 
 In a Vue file the script is read as JavaScript, an element of the template matches by the name the script imports, written `RouterLink` or `router-link`, and the options a script exports are read as the options of `defineComponent`. In Python a name is a member of a module at any depth: `from web.cache import cache`, `import web` and `web.cache.cache.get(…)` all lead to `cache.get` of `web.cache`.
@@ -649,16 +673,56 @@ A library changes between versions, and a pattern says which versions it holds f
 
 The fixture of a pattern with `versions` is code written for those versions, with code written for the others as what it must not match.
 
-## Files that are ignored
+## Where a tool keeps its files
 
-The catalogue also says which files are tests and stories, as file conventions: `*.test.*`, `*.spec.*`, `*.stories.*`, a `__tests__` folder, and what the repository adds to them. Those files are left out of the codegraph. See [Files that are ignored](code-blocks.md#files-that-are-ignored).
+A library also says where its tool keeps files of a [classification](classifications.md#placed-by-the-project), when the project's configuration decides it: where the tests of a test runner are, where the migrations of an ORM go, where the translations of an i18n library sit. A test runner or a migration tool that has no pattern is a library for this alone.
+
+```ts
+type LocationHolds = "globs" | "paths" | "folders" | "names" | "files" | "file-folders" | "modules" | "url-globs" | "regex"
+
+interface LocationSetting {
+  classification: CodeBlockClassification   // "test", "migration", "data-model", "config", "i18n", "build-and-infrastructure"
+  files: {
+    glob: string                            // the configuration file, from the folder of the manifest: "vitest.config.*"
+    under?: string                          // the key the configuration sits under: "jest" in package.json, "tool.pytest.ini_options"
+    base?: "config" | "package"             // what a value is relative to: the folder of the file (the default) or of the manifest
+    levelsUp?: number                       // folders to climb from the file's folder first: 1 for a Django settings.py
+  }[]
+  keys: {
+    key: string                             // "test.include", "*.migrations.directory", "config(0).path", "main(config_path)"
+    holds: LocationHolds                    // how a value becomes a glob
+    below?: string                          // what a folder holds: "versions/**" below Alembic's script_location
+    default?: string[]                      // what the tool does when the key is silent
+    unlessRead?: string | string[]          // the default gives way when one of these keys is read: testMatch to testRegex
+    defaultWhen?: string                    // the default holds only when this section is configured: Cypress "component"
+    defaultBase?: "config" | "package"      // what the default is relative to, when not the configuration: next-intl's messages folder
+    separator?: string                      // what a value is split on besides spaces: ";" in Flask-Babel's folders
+    isScope?: boolean                       // a folder the other keys are read below: Jest roots, pytest testpaths
+  }[]
+  marks?: "file" | "folder"                 // the configuration file, or its folder, is itself the location: a Helm Chart.yaml
+}
+```
+
+| `holds` | A value is |
+|---|---|
+| `globs` | A glob |
+| `paths` | A file, a folder or a glob, told apart by its extension and its wildcards |
+| `folders` | A folder, with what `below` names inside it, every file when it names nothing |
+| `names` | The name of a file anywhere below: pytest's `test_*.py` |
+| `files` | A file |
+| `file-folders` | A file, whose folder is meant: the folder of Prisma's schema |
+| `modules` | A dotted Python module, as a folder, or the module of a class: Django's `orders.apps.OrdersConfig` is `orders` |
+| `url-globs` | A path the app serves, below `public`, with `{{lng}}` as a wildcard |
+| `regex` | A regular expression, tested against the path from the folder of its configuration |
+
+A key is a path of names through the configuration, `*` for any name, and `name(argument)` for the argument of a call written anywhere in the file, by position or by keyword. A configuration in JSON, TOML, INI, YAML or `.env` is read as data, one in JavaScript, TypeScript or Python is parsed, and every value that is not written out is silent. A path built from fixed parts is written out: `path.join` and `path.resolve` of the path module with text and `__dirname`, and `fileURLToPath(new URL("./src/locales", import.meta.url))`. In Python a setting may be a name at the top of the file, a key written on an object (`app.config["BABEL_TRANSLATION_DIRECTORIES"] = …`), or a name in the body of a class at the top (`class Config:`).
 
 ## Where patterns come from
 
 | Source | Holds | Kept in |
 |---|---|---|
 | The built-in catalogue | The patterns of the libraries Flight Plan knows, one file of data per language and category | The codegraph package, `packages/codegraph` |
-| A library file | The patterns of a library that needs handling of its own, in the same shape, with the `readCards` that says which card of the Journey Flow Diagram each of its blocks belongs to, as [Which card a block belongs to](code-blocks.md#which-card-a-block-belongs-to) says. Express, Fastify, Next.js, NestJS, tRPC, Zustand, Pinia, Redux and RTK Query are files of JavaScript, Flask and FastAPI files of Python. A library whose routes come from the path of a file, as Next.js, also has a `readExportCards` that says the card of each block its file patterns name. A library is in the catalogue or in a file of its own, never both. | The codegraph package, one file per library in the folder of its language |
+| A library file | The patterns of a library that needs handling of its own, in the same shape, with the `readCards` that says which card of the Journey Flow Diagram each of its blocks belongs to, as [Which card a block belongs to](code-blocks.md#which-card-a-block-belongs-to) says. Express, Fastify, Next.js, NestJS, tRPC, Zustand, Pinia, Redux, RTK Query, MobX, Valtio, XState, Effector and Nano Stores are files of JavaScript, Flask, FastAPI and Django files of Python. The modules a language ships with are files of that language too: Node.js `fs`, `child_process`, `worker_threads`, `crypto`, `events` and `util`, and Python `builtins`, `pathlib`, `shutil`, `subprocess`, `multiprocessing`, `hashlib`, `hmac`, `secrets` and `functools`. A library whose routes come from the path of a file, as Next.js, also has a `readExportCards` that says the card of each block its file patterns name. A library is in the catalogue or in a file of its own, never both. | The codegraph package, one file per library in the folder of its language |
 | The repository's catalogue | The patterns of what the built-in one does not cover: an uncommon framework, the repository's own event bus, where its test files and story files are | The configuration of the repository |
 
 The repository's catalogue is written in setup. An agent reads the frameworks of the repository and proposes patterns for the gaps.

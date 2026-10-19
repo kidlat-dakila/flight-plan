@@ -1,47 +1,5 @@
 import type { CatalogueLibrary } from "@/catalogue/types"
 
-export const apacheLibcloudLibrary: CatalogueLibrary = {
-  name: "Apache Libcloud",
-  specifiers: ["libcloud", "libcloud.compute.providers", "libcloud.storage.providers", "libcloud.dns.providers"],
-  documentedVersion: "3.9",
-  category: "third-party-services",
-  type: "backend",
-  language: "python",
-  patterns: [
-    {
-      kind: "factory",
-      name: "get_driver",
-      makes: "request",
-      methods: [],
-    },
-  ],
-}
-
-export const boto3Library: CatalogueLibrary = {
-  name: "boto3",
-  specifiers: ["boto3"],
-  documentedVersion: "1.43",
-  category: "third-party-services",
-  type: "backend",
-  language: "python",
-  patterns: [
-    {
-      kind: "factory",
-      name: "client",
-      makes: "request",
-      methods: [
-        { kind: "call", name: "send_message", slots: [], makes: "publish" },
-      ],
-    },
-    {
-      kind: "factory",
-      name: "resource",
-      makes: "request",
-      methods: [],
-    },
-  ],
-}
-
 export const djangoWordpressLibrary: CatalogueLibrary = {
   name: "django-wordpress",
   specifiers: ["wordpress", "wordpress.models"],
@@ -77,37 +35,6 @@ export const facebookSdkLibrary: CatalogueLibrary = {
   ],
 }
 
-export const flankerLibrary: CatalogueLibrary = {
-  name: "Flanker",
-  specifiers: ["flanker", "flanker.addresslib", "flanker.mime"],
-  documentedVersion: "0.9",
-  category: "third-party-services",
-  type: "backend",
-  language: "python",
-  patterns: [
-    { kind: "call", name: "address.parse", slots: [], makes: "validation" },
-    { kind: "call", name: "mime.from_string", slots: [], makes: "validation" },
-  ],
-}
-
-export const googleApiPythonClientLibrary: CatalogueLibrary = {
-  name: "google-api-python-client",
-  specifiers: ["googleapiclient", "googleapiclient.discovery"],
-  documentedVersion: "2.201",
-  category: "third-party-services",
-  type: "backend",
-  language: "python",
-  patterns: [
-    {
-      kind: "factory",
-      name: "build",
-      methods: [
-        { kind: "call", name: "execute", slots: [], makes: "request" },
-      ],
-    },
-  ],
-}
-
 export const gspreadLibrary: CatalogueLibrary = {
   name: "gspread",
   specifiers: ["gspread"],
@@ -134,24 +61,6 @@ export const gspreadLibrary: CatalogueLibrary = {
   ],
 }
 
-export const imboxLibrary: CatalogueLibrary = {
-  name: "Imbox",
-  specifiers: ["imbox"],
-  documentedVersion: "0.10",
-  category: "third-party-services",
-  type: "backend",
-  language: "python",
-  patterns: [
-    {
-      kind: "factory",
-      name: "Imbox",
-      methods: [
-        { kind: "call", name: "messages", slots: [], makes: "request" },
-      ],
-    },
-  ],
-}
-
 export const twythonLibrary: CatalogueLibrary = {
   name: "Twython",
   specifiers: ["twython"],
@@ -167,24 +76,6 @@ export const twythonLibrary: CatalogueLibrary = {
         { kind: "call", name: "get_home_timeline", slots: [], makes: "data-fetch" },
         { kind: "call", name: "update_status", slots: [], makes: "request" },
         { kind: "call", name: "search", slots: [], makes: "data-fetch" },
-      ],
-    },
-  ],
-}
-
-export const yagmailLibrary: CatalogueLibrary = {
-  name: "yagmail",
-  specifiers: ["yagmail"],
-  documentedVersion: "0.16",
-  category: "third-party-services",
-  type: "backend",
-  language: "python",
-  patterns: [
-    {
-      kind: "factory",
-      name: "SMTP",
-      methods: [
-        { kind: "call", name: "send", slots: [], makes: "request" },
       ],
     },
   ],

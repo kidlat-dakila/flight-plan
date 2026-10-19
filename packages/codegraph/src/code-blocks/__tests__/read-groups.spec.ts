@@ -14,9 +14,12 @@ const CART = codeOf("import { priceOf } from \"./pricing\"", "", "export const t
 const CART_SPEC = codeOf("import { totalOf } from \"./cart\"", "import { log } from \"./logger\"", "", "it(\"adds\", () => log(totalOf([])))")
 const LOGGER = codeOf("export const log = (message) => {", "  console.log(message)", "}")
 
+const MANIFEST = JSON.stringify({ devDependencies: { vitest: "4.1.6" } })
+
 const CHANGE: FakeChange = {
-  base: { "src/pricing.ts": PRICING, "src/cart.ts": CART, "src/cart.spec.ts": CART_SPEC, "src/logger.ts": LOGGER, "schema.sql": "create table a;", "old.sql": "drop table b;" },
+  base: { "package.json": MANIFEST, "src/pricing.ts": PRICING, "src/cart.ts": CART, "src/cart.spec.ts": CART_SPEC, "src/logger.ts": LOGGER, "schema.sql": "create table a;", "old.sql": "drop table b;" },
   head: {
+    "package.json": MANIFEST,
     "src/pricing.ts": codeOf("export function priceOf(item) {", "  return item.price * 2", "}"),
     "src/cart.ts": CART,
     "src/cart.spec.ts": codeOf(CART_SPEC, "it(\"adds more\", () => 1)"),
@@ -29,14 +32,29 @@ describe("readCodeGroupGraphs", () => {
   it("builds one group per set of connected files, and one for each changed file nothing reads", async () => {
     const groups = await groupsOf(CHANGE)
 
-    expect(groups.map((group) => group.astGraphs.map((astGraph) => astGraph.filePath))).toStrictEqual([["src/cart.ts", "src/pricing.ts"], ["src/logger.ts"], ["schema.sql"]])
+    expect(groups.map((group) => group.astGraphs.map((astGraph) => astGraph.filePath))).toStrictEqual([
+      ["src/cart.ts", "src/pricing.ts"],
+      ["src/logger.ts"],
+      ["src/cart.spec.ts"],
+      ["schema.sql"],
+    ])
   })
 
-  it("leaves a test out of every group, changed or not, and does not join two files through it", async () => {
+  it("keeps a changed test as one unread file block classified test, and does not join two files through it", async () => {
     const groups = await groupsOf(CHANGE)
+    const testBlocks = groups.flatMap((group) => group.codeBlocks).filter((block) => block.filePath.includes(".spec."))
 
-    expect(groups.flatMap((group) => group.codeBlocks).filter((block) => block.filePath.includes(".spec."))).toStrictEqual([])
-    expect(groups.map((group) => group.rootASTGraphFilePaths)).toStrictEqual([["src/cart.ts"], ["src/logger.ts"], ["schema.sql"]])
+    expect(testBlocks.map(({ id, type, classifications, diffClassifications }) => ({ id, type, classifications, diffClassifications }))).toStrictEqual([
+      { id: "src/cart.spec.ts#file@1:1", type: "file", classifications: ["test"], diffClassifications: ["test"] },
+    ])
+    expect(groups.map((group) => group.rootASTGraphFilePaths)).toStrictEqual([["src/cart.ts"], ["src/logger.ts"], ["src/cart.spec.ts"], ["schema.sql"]])
+  })
+
+  it("reads a test as code when no test runner the repository installs names it", async () => {
+    const groups = await groupsOf({ base: CHANGE.base, head: { ...CHANGE.head, "package.json": JSON.stringify({ devDependencies: {} }) } })
+    const testBlocks = groups.flatMap((group) => group.codeBlocks).filter((block) => block.filePath.includes(".spec."))
+
+    expect(testBlocks.some((block) => block.type !== "file")).toBe(true)
   })
 
   it("places the changes of the patch of each file, with their columns", async () => {
@@ -46,9 +64,10 @@ describe("readCodeGroupGraphs", () => {
     expect(changed.map((block) => [block.id, block.lineOfCodeDiffs?.map(spanOf)])).toStrictEqual([
       ["src/pricing.ts#function@1:1", ["2:20-2:24"]],
       ["src/logger.ts#telemetry@2:3", ["2:11-2:15"]],
+      ["src/cart.spec.ts#file@1:1", ["5:1-5:25"]],
       ["schema.sql#file@1:1", ["1:14-1:20"]],
     ])
-    expect(groups.map((group) => group.diffContains)).toStrictEqual([["logic"], ["logic"], ["file"]])
+    expect(groups.map((group) => group.diffContains)).toStrictEqual([["logic"], ["logic"], ["logic"], ["file"]])
   })
 
   it("keeps each change of a block as a diff with its type and its range", async () => {
@@ -58,6 +77,7 @@ describe("readCodeGroupGraphs", () => {
     expect(blocks.filter((block) => changesOf(block).length > 0).map((block) => [block.id, changesOf(block).map((diff) => [diff.type, spanOf(diff.range)])])).toStrictEqual([
       ["src/pricing.ts#function@1:1", [["modified", "2:20-2:24"]]],
       ["src/logger.ts#telemetry@2:3", [["modified", "2:11-2:15"]]],
+      ["src/cart.spec.ts#file@1:1", [["added", "5:1-5:25"]]],
       ["schema.sql#file@1:1", [["modified", "1:14-1:20"]]],
     ])
     expect(blocks.every((block) => (block.lineOfCodeDiffs ?? []).length === changesOf(block).length)).toBe(true)
