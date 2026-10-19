@@ -3,15 +3,15 @@ import { SETUP_STEPS, type Setup, type SetupStep } from "./setup"
 export const EARLIER_STEPS_MESSAGE = "Finish the earlier steps of the setup first."
 
 const SAVED_CHECKS: Record<SetupStep, (setup: Setup) => boolean> = {
-  agents: (setup) => setup.agents !== null,
+  repositories: (setup) => setup.repositories.length > 0,
   forges: (setup) => setup.forges !== null,
-  configuration: (setup) => setup.defaultConfiguration !== null,
-  repositories: (setup) => setup.isComplete,
+  agents: (setup) => setup.agents !== null,
+  configuration: (setup) => setup.isComplete,
 }
 
-const LAST_STEP: SetupStep = "repositories"
+const LAST_STEP: SetupStep = "configuration"
 
-export const isStepSaved = (setup: Setup, step: SetupStep): boolean => SAVED_CHECKS[step](setup)
+export const isStepSaved = (setup: Setup, step: SetupStep): boolean => setup.isComplete || SAVED_CHECKS[step](setup)
 
 export const isStepReachable = (setup: Setup, step: SetupStep): boolean =>
   SETUP_STEPS.slice(0, SETUP_STEPS.indexOf(step)).every((earlierStep) => isStepSaved(setup, earlierStep))

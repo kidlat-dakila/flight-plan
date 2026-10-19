@@ -32,22 +32,26 @@ interface AuthorQuery {
 
 interface RepositoriesSectionProps {
   readonly repositories: React.ComponentProps<typeof RepositoriesStep>["repositories"]
-  readonly isReadyToFinish: boolean
-  readonly finishHint: string | null
+  readonly isReadyToContinue: boolean
+  readonly continueHint: string | null
   readonly backStep: string | null
+  readonly errorMessage: string | null
+  readonly isPending: boolean
   readonly onChanged: () => Promise<void>
+  readonly onContinue: () => void
 }
 
 const RepositoriesSection = ({
   repositories,
-  isReadyToFinish,
-  finishHint,
+  isReadyToContinue,
+  continueHint,
   backStep,
+  errorMessage,
+  isPending,
   onChanged,
+  onContinue,
 }: RepositoriesSectionProps) => {
   const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const navigate = Route.useNavigate()
   const [isAddOpen, setIsAddOpen] = useState(false)
   const [authorQuery, setAuthorQuery] = useState<AuthorQuery | null>(null)
   const finder = useRepositoryFinder(isAddOpen)
@@ -77,14 +81,6 @@ const RepositoriesSection = ({
   const removeRepository = useMutation(trpc.setup.removeRepository.mutationOptions({ onSuccess: onChanged }))
   const setAuthorTracking = useMutation(trpc.setup.setAuthorTracking.mutationOptions({ onSuccess: onChanged }))
   const setSelfAuthor = useMutation(trpc.setup.setSelfAuthor.mutationOptions({ onSuccess: onChanged }))
-  const completeSetup = useMutation(
-    trpc.setup.complete.mutationOptions({
-      onSuccess: async (completed) => {
-        queryClient.removeQueries({ type: "inactive" })
-        await navigate({ to: completed.redirectTo })
-      },
-    }),
-  )
 
   const handleAddClose = () => {
     addRepository.reset()
@@ -107,11 +103,11 @@ const RepositoriesSection = ({
           errorMessage:
             authorSuggestions.error?.message ?? setAuthorTracking.error?.message ?? setSelfAuthor.error?.message ?? null,
         }}
-        isReadyToFinish={isReadyToFinish}
-        finishHint={finishHint}
+        isReadyToContinue={isReadyToContinue}
+        continueHint={continueHint}
         backStep={backStep}
-        errorMessage={completeSetup.error?.message ?? null}
-        isPending={completeSetup.isPending}
+        errorMessage={errorMessage}
+        isPending={isPending}
         onOpenAddRepository={() => { setIsAddOpen(true) }}
         onRemoveRepository={(name) => { removeRepository.mutate({ name }) }}
         onAuthorQueryChange={(repositoryName, role, query) => { setAuthorQuery({ repositoryName, role, query }) }}
@@ -123,7 +119,7 @@ const RepositoriesSection = ({
           setAuthorQuery(null)
           setAuthorTracking.mutate({ repositoryName, authorId, isTracked })
         }}
-        onFinish={() => { completeSetup.mutate({}) }}
+        onContinue={onContinue}
       />
       <AddRepositoryDialog
         isOpen={isAddOpen}
@@ -205,8 +201,23 @@ const SetupPage = () => {
       },
     }),
   )
+  const completeSetup = useMutation(
+    trpc.setup.complete.mutationOptions({
+      onSuccess: async (completed) => {
+        queryClient.removeQueries({ type: "inactive" })
+        await navigate({ to: completed.redirectTo })
+      },
+    }),
+  )
+  const finishSetup = (configurationId: string) => {
+    saveStep.mutate(
+      { step: "configuration", configurationId },
+      { onSuccess: (saving) => { if (saving.kind === "accepted") completeSetup.mutate({}) } },
+    )
+  }
   const rejection = saveStep.data?.kind === "rejected" ? saveStep.data : null
-  const problem = saveStep.error === null ? rejection : { message: saveStep.error.message, field: null }
+  const saveProblem = saveStep.error === null ? rejection : { message: saveStep.error.message, field: null }
+  const problem = completeSetup.error === null ? saveProblem : { message: completeSetup.error.message, field: null }
   const { form } = page
 
   return (
@@ -243,8 +254,6 @@ const SetupPage = () => {
                   form={{
                     agents: form.agents,
                     defaultAgent: form.defaultAgent,
-                    connection: form.connection,
-                    connectionOptions: form.connectionOptions,
                     backStep: page.backStep,
                     problem,
                     isPending: saveStep.isPending,
@@ -274,8 +283,8 @@ const SetupPage = () => {
                   selectedConfigurationId={form.selectedConfigurationId}
                   backStep={page.backStep}
                   problem={problem}
-                  isPending={saveStep.isPending}
-                  onSubmit={(configurationId) => { saveStep.mutate({ step: "configuration", configurationId }) }}
+                  isPending={saveStep.isPending || completeSetup.isPending}
+                  onSubmit={finishSetup}
                 />
               )
             : null}
@@ -283,10 +292,13 @@ const SetupPage = () => {
             ? (
                 <RepositoriesSection
                   repositories={form.repositories}
-                  isReadyToFinish={form.isReadyToFinish}
-                  finishHint={form.finishHint}
+                  isReadyToContinue={form.isReadyToContinue}
+                  continueHint={form.continueHint}
                   backStep={page.backStep}
+                  errorMessage={problem?.message ?? null}
+                  isPending={saveStep.isPending}
                   onChanged={refreshSetup}
+                  onContinue={() => { saveStep.mutate({ step: "repositories" }) }}
                 />
               )
             : null}

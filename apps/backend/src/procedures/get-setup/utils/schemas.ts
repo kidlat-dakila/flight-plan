@@ -2,7 +2,7 @@ import { z } from "zod"
 import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
 import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
 import { FORGE_FIELD_NAMES } from "./forge-catalog"
-import { AGENT_CONNECTIONS, AGENT_NAMES, SETUP_FORGES, SETUP_STEPS } from "./setup"
+import { AGENT_NAMES, SETUP_FORGES, SETUP_STEPS } from "./setup"
 
 export const ROUTE_STOP_STATES = ["saved", "current", "upcoming"] as const
 
@@ -37,20 +37,10 @@ export const agentOptionSchema = z.strictObject({
   modelOptions: z.array(modelOptionSchema),
 })
 
-export const connectionOptionSchema = z.strictObject({
-  connection: z.enum(AGENT_CONNECTIONS),
-  label: z.string(),
-  tagLabel: z.string().nullable(),
-  description: z.string(),
-  unavailableFeatures: z.array(z.string()),
-})
-
 export const agentsStepSchema = z.strictObject({
   step: z.literal("agents"),
   agents: z.array(agentOptionSchema),
   defaultAgent: z.enum(AGENT_NAMES).nullable(),
-  connection: z.enum(AGENT_CONNECTIONS),
-  connectionOptions: z.array(connectionOptionSchema),
 })
 
 export const forgeAvailabilitySchema = z.discriminatedUnion("kind", [
@@ -114,7 +104,12 @@ export const setupRepositorySchema = z.strictObject({
   authorSearchHint: z.string(),
   authorSearchPlaceholder: z.string(),
   selfAuthor: z
-    .strictObject({ hint: z.string(), author: trackedAuthorSchema.nullable(), stateLabel: z.string() })
+    .strictObject({
+      hint: z.string(),
+      author: trackedAuthorSchema.nullable(),
+      stateLabel: z.string(),
+      isChangeable: z.boolean(),
+    })
     .nullable(),
   trackedAuthors: z.array(trackedAuthorSchema),
 })
@@ -122,8 +117,8 @@ export const setupRepositorySchema = z.strictObject({
 export const repositoriesStepSchema = z.strictObject({
   step: z.literal("repositories"),
   repositories: z.array(setupRepositorySchema),
-  isReadyToFinish: z.boolean(),
-  finishHint: z.string().nullable(),
+  isReadyToContinue: z.boolean(),
+  continueHint: z.string().nullable(),
 })
 
 export const setupStepSchema = z.discriminatedUnion("step", [

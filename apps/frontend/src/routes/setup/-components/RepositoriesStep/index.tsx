@@ -29,6 +29,7 @@ interface SelfAuthor {
   readonly hint: string
   readonly author: TrackedAuthor | null
   readonly stateLabel: string
+  readonly isChangeable: boolean
 }
 
 interface SetupRepository {
@@ -55,8 +56,8 @@ interface RepositoriesStepProps {
   readonly repositories: readonly SetupRepository[]
   readonly repositoryErrorMessage: string | null
   readonly authorSearch: AuthorSearch
-  readonly isReadyToFinish: boolean
-  readonly finishHint: string | null
+  readonly isReadyToContinue: boolean
+  readonly continueHint: string | null
   readonly backStep: string | null
   readonly errorMessage: string | null
   readonly isPending: boolean
@@ -65,7 +66,7 @@ interface RepositoriesStepProps {
   readonly onAuthorQueryChange: (repositoryName: string, role: AuthorRole, query: string) => void
   readonly onAuthorTrackingChange: (repositoryName: string, authorId: string, isTracked: boolean) => void
   readonly onSelfAuthorChange: (repositoryName: string, authorId: string | null) => void
-  readonly onFinish: () => void
+  readonly onContinue: () => void
 }
 
 interface RepositoryLineProps {
@@ -162,11 +163,15 @@ const SelfAuthorStop = ({
             <span className="min-w-0 truncate">{selfAuthor.author.name}</span>
             <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{selfAuthor.author.detail}</span>
             <span className="text-sm font-bold">{selfAuthor.stateLabel}</span>
-            <IconButton
-              icon="close"
-              label={`Choose another user as you in ${repositoryName}`}
-              onClick={() => { onSelfAuthorChange(null) }}
-            />
+            {selfAuthor.isChangeable
+              ? (
+                  <IconButton
+                    icon="close"
+                    label={`Choose another user as you in ${repositoryName}`}
+                    onClick={() => { onSelfAuthorChange(null) }}
+                  />
+                )
+              : null}
           </div>
         )}
   </div>
@@ -259,8 +264,8 @@ const RepositoriesStep = ({
   repositories,
   repositoryErrorMessage,
   authorSearch,
-  isReadyToFinish,
-  finishHint,
+  isReadyToContinue,
+  continueHint,
   backStep,
   errorMessage,
   isPending,
@@ -269,9 +274,9 @@ const RepositoriesStep = ({
   onAuthorQueryChange,
   onAuthorTrackingChange,
   onSelfAuthorChange,
-  onFinish,
+  onContinue,
 }: RepositoriesStepProps) => (
-  <form action={onFinish}>
+  <form action={onContinue}>
     <StepIntro title={TITLE}>
       Add the repositories you want to review. Flight Plan lists the pull requests and branches of each one on your
       home page. When your code is on GitHub, GitLab or Bitbucket, you see everyone's pull requests unless you pick
@@ -309,11 +314,11 @@ const RepositoriesStep = ({
     ))}
     <StepActions
       backStep={backStep}
-      submitLabel="Finish setup"
-      pendingLabel="Finishing…"
+      submitLabel="Save and continue"
+      pendingLabel="Saving…"
       isPending={isPending}
-      isReady={isReadyToFinish}
-      hint={finishHint}
+      isReady={isReadyToContinue}
+      hint={continueHint}
       errorMessage={errorMessage}
     />
   </form>

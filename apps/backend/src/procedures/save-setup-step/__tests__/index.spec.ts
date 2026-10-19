@@ -1,4 +1,10 @@
-import { AT_CONFIGURATION, AT_FORGES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import {
+  AT_AGENTS,
+  AT_CONFIGURATION,
+  AT_FORGES,
+  CHECKOUT_WEB,
+  createSetupContext,
+} from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { CredentialSaving, SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 import { saveSetupStep } from "@/procedures/save-setup-step"
@@ -8,7 +14,6 @@ const AGENTS_INPUT: SaveSetupStepInput = {
   step: "agents",
   agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default", effort: "default" }],
   defaultAgent: null,
-  connection: "direct",
 }
 
 const GITHUB_TOKEN_INPUT: SaveSetupStepInput = {
@@ -18,18 +23,46 @@ const GITHUB_TOKEN_INPUT: SaveSetupStepInput = {
 }
 
 describe("saveSetupStep", () => {
-  it("saves the agents and names the next step", async () => {
-    const context = createSetupContext(EMPTY_SETUP)
+  it("moves on from the repositories once they are ready, and changes nothing", async () => {
+    const context = createSetupContext(AT_FORGES)
 
-    await expect(saveSetupStep(AGENTS_INPUT, context)).resolves.toStrictEqual({ kind: "accepted", nextStep: "forges" })
+    await expect(saveSetupStep({ step: "repositories" }, context)).resolves.toStrictEqual({
+      kind: "accepted",
+      nextStep: "forges",
+    })
+    await expect(context.setupStore.read()).resolves.toStrictEqual(AT_FORGES)
+  })
+
+  it("holds the repositories step until a repository is added", async () => {
+    await expect(saveSetupStep({ step: "repositories" }, createSetupContext(EMPTY_SETUP))).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "Add at least one repository.",
+      field: null,
+    })
+  })
+
+  it("holds the repositories step on local git until the user says which user they are", async () => {
+    const withoutSelf = { ...EMPTY_SETUP, repositories: [CHECKOUT_WEB] }
+
+    await expect(saveSetupStep({ step: "repositories" }, createSetupContext(withoutSelf))).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "Pick which user you are in checkout-web.",
+      field: null,
+    })
+  })
+
+  it("saves the agents and names the next step", async () => {
+    const context = createSetupContext(AT_AGENTS)
+
+    await expect(saveSetupStep(AGENTS_INPUT, context)).resolves.toStrictEqual({ kind: "accepted", nextStep: "configuration" })
     await expect(context.setupStore.read()).resolves.toMatchObject({
-      agents: { defaultAgent: "claude", connection: "direct" },
-      forges: null,
+      agents: { defaultAgent: "claude" },
+      defaultConfiguration: null,
     })
   })
 
   it("leaves the stored setup unchanged when a step is rejected", async () => {
-    const context = createSetupContext(EMPTY_SETUP)
+    const context = createSetupContext(AT_AGENTS)
     const input: SaveSetupStepInput = { ...AGENTS_INPUT, agents: [] }
 
     await expect(saveSetupStep(input, context)).resolves.toStrictEqual({
@@ -37,11 +70,11 @@ describe("saveSetupStep", () => {
       message: "Pick at least one agent.",
       field: null,
     })
-    await expect(context.setupStore.read()).resolves.toStrictEqual(EMPTY_SETUP)
+    await expect(context.setupStore.read()).resolves.toStrictEqual(AT_AGENTS)
   })
 
   it("rejects a model the agent does not list and saves nothing", async () => {
-    const context = createSetupContext(EMPTY_SETUP)
+    const context = createSetupContext(AT_AGENTS)
     const input: SaveSetupStepInput = {
       ...AGENTS_INPUT,
       agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "gpt", effort: "default" }],
@@ -52,12 +85,12 @@ describe("saveSetupStep", () => {
       message: "Choose one of the models Claude offers.",
       field: { owner: "claude", name: "model" },
     })
-    await expect(context.setupStore.read()).resolves.toStrictEqual(EMPTY_SETUP)
+    await expect(context.setupStore.read()).resolves.toStrictEqual(AT_AGENTS)
   })
 
   it("installs Flight Plan for each picked agent before saving", async () => {
     const installAgent = vi.fn<SetupEnvironment["installAgent"]>().mockResolvedValue({ kind: "installed" })
-    const baseContext = createSetupContext(EMPTY_SETUP)
+    const baseContext = createSetupContext(AT_AGENTS)
     const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, installAgent } }
 
     await saveSetupStep(AGENTS_INPUT, context)
@@ -69,7 +102,7 @@ describe("saveSetupStep", () => {
     const installAgent = vi
       .fn<SetupEnvironment["installAgent"]>()
       .mockResolvedValue({ kind: "failed", reason: "The claude command was not found on this machine." })
-    const baseContext = createSetupContext(EMPTY_SETUP)
+    const baseContext = createSetupContext(AT_AGENTS)
     const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, installAgent } }
 
     await expect(saveSetupStep(AGENTS_INPUT, context)).resolves.toStrictEqual({
@@ -77,12 +110,12 @@ describe("saveSetupStep", () => {
       message: "Flight Plan could not be installed for Claude. The claude command was not found on this machine.",
       field: { owner: "claude", name: "installPath" },
     })
-    await expect(context.setupStore.read()).resolves.toStrictEqual(EMPTY_SETUP)
+    await expect(context.setupStore.read()).resolves.toStrictEqual(AT_AGENTS)
   })
 
   it("rejects an install folder that is not the agent's and installs nothing", async () => {
     const installAgent = vi.fn<SetupEnvironment["installAgent"]>().mockResolvedValue({ kind: "installed" })
-    const baseContext = createSetupContext(EMPTY_SETUP)
+    const baseContext = createSetupContext(AT_AGENTS)
     const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, installAgent } }
     const input: SaveSetupStepInput = {
       ...AGENTS_INPUT,
@@ -99,7 +132,7 @@ describe("saveSetupStep", () => {
   it("rejects an agent whose command line program is missing and installs nothing", async () => {
     const installAgent = vi.fn<SetupEnvironment["installAgent"]>().mockResolvedValue({ kind: "installed" })
     const hasAgentCli = vi.fn<SetupEnvironment["hasAgentCli"]>().mockResolvedValue(false)
-    const baseContext = createSetupContext(EMPTY_SETUP)
+    const baseContext = createSetupContext(AT_AGENTS)
     const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, installAgent, hasAgentCli } }
 
     await expect(saveSetupStep(AGENTS_INPUT, context)).resolves.toMatchObject({
@@ -128,7 +161,7 @@ describe("saveSetupStep", () => {
 
     await expect(saveSetupStep(GITHUB_TOKEN_INPUT, context)).resolves.toStrictEqual({
       kind: "accepted",
-      nextStep: "configuration",
+      nextStep: "agents",
     })
     expect(saveForgeCredential.mock.calls).toStrictEqual([["github", "secret"]])
     expect(JSON.stringify(await context.setupStore.read())).not.toContain("secret")
@@ -163,12 +196,12 @@ describe("saveSetupStep", () => {
     })
   })
 
-  it("saves the default configuration and moves to the repositories", async () => {
+  it("saves the default configuration and stays on the last step", async () => {
     const context = createSetupContext(AT_CONFIGURATION)
 
     await expect(saveSetupStep({ step: "configuration", configurationId: "onboardee" }, context)).resolves.toStrictEqual({
       kind: "accepted",
-      nextStep: "repositories",
+      nextStep: "configuration",
     })
     await expect(context.setupStore.read()).resolves.toMatchObject({ defaultConfiguration: "onboardee" })
   })

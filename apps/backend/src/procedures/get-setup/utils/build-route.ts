@@ -1,5 +1,5 @@
 import type { LabelSegment } from "@/procedures/list-repositories/utils/schemas"
-import { AGENT_LABELS, CONNECTION_OFFERS } from "./agent-catalog"
+import { AGENT_LABELS } from "./agent-catalog"
 import { effortLabelOf, modelLabelOf, type AgentModels } from "./agent-models"
 import { presetLabelOf } from "./default-configuration"
 import { FORGE_OFFERS } from "./forge-catalog"
@@ -10,17 +10,17 @@ import { isStepReachable, isStepSaved } from "./setup-progress"
 type SummaryLines = readonly LabelSegment[][]
 
 const STEP_LABELS: Record<SetupStep, string> = {
-  agents: "Agent integration",
-  forges: "Git integration",
-  configuration: "Prompt configurations",
   repositories: "Repositories",
+  forges: "Git integration",
+  agents: "Agent integration",
+  configuration: "Review configuration",
 }
 
 const STEP_PURPOSES: Record<SetupStep, string> = {
-  agents: "Configure how Flight Plan communicates with your agent",
-  forges: "Configure how Flight Plan communicates with your git setup",
-  configuration: "Configure how the agent writes your reviews",
   repositories: "Configure which repositories and team members Flight Plan follows",
+  forges: "Configure how Flight Plan communicates with your git setup",
+  agents: "Configure how Flight Plan communicates with your agent",
+  configuration: "Configure how Flight Plan puts your reviews together",
 }
 
 const STATE_LABELS: Record<RouteStop["state"], string> = {
@@ -56,7 +56,6 @@ const agentLines = (choice: AgentsChoice, agentModels: AgentModels): SummaryLine
       ),
     ),
   ),
-  [plain(CONNECTION_OFFERS[choice.connection].summary)],
 ]
 
 const forgeLines = (choice: ForgesChoice): SummaryLines => [
@@ -71,11 +70,11 @@ const forgeLines = (choice: ForgesChoice): SummaryLines => [
 ]
 
 const SUMMARY_LINES: Record<SetupStep, (setup: Setup, agentModels: AgentModels) => SummaryLines | null> = {
-  agents: (setup, agentModels) => (setup.agents === null ? null : agentLines(setup.agents, agentModels)),
-  forges: (setup) => (setup.forges === null ? null : forgeLines(setup.forges)),
-  configuration: (setup) => (setup.defaultConfiguration === null ? null : [[plain(presetLabelOf(setup.defaultConfiguration))]]),
   repositories: (setup) =>
     setup.repositories.length === 0 ? null : [setup.repositories.map((repository) => plain(repository.name))],
+  forges: (setup) => (setup.forges === null ? null : forgeLines(setup.forges)),
+  agents: (setup, agentModels) => (setup.agents === null ? null : agentLines(setup.agents, agentModels)),
+  configuration: (setup) => (setup.defaultConfiguration === null ? null : [[plain(presetLabelOf(setup.defaultConfiguration))]]),
 }
 
 const stopStateOf = (setup: Setup, step: SetupStep, currentStep: SetupStep): RouteStop["state"] => {

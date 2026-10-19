@@ -1,10 +1,7 @@
 import { z } from "zod"
-import {
-  AGENT_CONNECTIONS,
-  AGENT_NAMES,
-  SETUP_FORGES,
-  SETUP_STEPS,
-} from "@/procedures/get-setup/utils/setup"
+import { AGENT_NAMES, SETUP_FORGES, SETUP_STEPS } from "@/procedures/get-setup/utils/setup"
+
+export const repositoriesInputSchema = z.strictObject({ step: z.literal("repositories") })
 
 export const agentsInputSchema = z.strictObject({
   step: z.literal("agents"),
@@ -18,7 +15,6 @@ export const agentsInputSchema = z.strictObject({
     }),
   ),
   defaultAgent: z.enum(AGENT_NAMES).nullable(),
-  connection: z.enum(AGENT_CONNECTIONS),
 })
 
 export const forgesInputSchema = z.strictObject({
@@ -41,8 +37,9 @@ export const configurationInputSchema = z.strictObject({
 })
 
 export const saveSetupStepInputSchema = z.discriminatedUnion("step", [
-  agentsInputSchema,
+  repositoriesInputSchema,
   forgesInputSchema,
+  agentsInputSchema,
   configurationInputSchema,
 ])
 

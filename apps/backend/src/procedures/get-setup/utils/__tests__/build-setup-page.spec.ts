@@ -17,6 +17,7 @@ const sourceOf = (overrides: Partial<SetupPageSource>): SetupPageSource => ({
   agentModels: {},
   cliProbes: [],
   repositoryForges: {},
+  repositoryIdentities: {},
   ...overrides,
 })
 
@@ -39,33 +40,33 @@ describe("buildSetupPage", () => {
     const page = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "forges" }))
 
     expect(page.progressLabel).toBe("Step 2 of 4")
-    expect(page.backStep).toBe("agents")
-    expect(buildSetupPage(sourceOf({})).backStep).toBeNull()
+    expect(page.backStep).toBe("repositories")
+    expect(buildSetupPage(sourceOf({ step: "repositories" })).backStep).toBeNull()
   })
 
   it("draws every step as a stop that says what it is for until it is saved", () => {
-    const { route } = buildSetupPage(sourceOf({}))
+    const { route } = buildSetupPage(sourceOf({ step: "repositories" }))
 
     expect(route.map((stop) => [stop.label, stop.state, stop.isReachable])).toStrictEqual([
-      ["Agent integration", "current", true],
+      ["Repositories", "current", true],
       ["Git integration", "upcoming", false],
-      ["Prompt configurations", "upcoming", false],
-      ["Repositories", "upcoming", false],
+      ["Agent integration", "upcoming", false],
+      ["Review configuration", "upcoming", false],
     ])
     expect(route[1]?.lines).toStrictEqual([[{ text: "Configure how Flight Plan communicates with your git setup", kind: "plain" }]])
+    expect(route[3]?.lines).toStrictEqual([[{ text: "Configure how Flight Plan puts your reviews together", kind: "plain" }]])
   })
 
   it("writes what was saved beside each saved stop and marks the default among several", () => {
-    const { route } = buildSetupPage(sourceOf({ setup: READY_TO_FINISH, step: "repositories" }))
+    const { route } = buildSetupPage(sourceOf({ setup: READY_TO_FINISH, step: "configuration" }))
 
     expect(route.map((stop) => stop.state)).toStrictEqual(["saved", "saved", "saved", "current"])
-    expect(route[0]?.lines).toStrictEqual([
-      [{ text: "Claude", kind: "plain" }, { text: "Codex (default)", kind: "plain" }],
-      [{ text: "Manual", kind: "plain" }],
-    ])
+    expect(route[0]?.lines).toStrictEqual([[{ text: "checkout-web", kind: "plain" }]])
     expect(route[1]?.lines).toStrictEqual([[{ text: "Local git", kind: "plain" }]])
-    expect(route[2]?.lines).toStrictEqual([[{ text: "Minimal", kind: "plain" }]])
-    expect(route[3]?.lines).toStrictEqual([[{ text: "checkout-web", kind: "plain" }]])
+    expect(route[2]?.lines).toStrictEqual([
+      [{ text: "Claude", kind: "plain" }, { text: "Codex (default)", kind: "plain" }],
+    ])
+    expect(route[3]?.lines).toStrictEqual([[{ text: "Minimal", kind: "plain" }]])
   })
 
   it("prefills each agent's folder from what was detected and explains a missing one", () => {
@@ -82,7 +83,6 @@ describe("buildSetupPage", () => {
     expect(form).toMatchObject({
       step: "agents",
       defaultAgent: null,
-      connection: "direct",
       agents: [
         { agent: "claude", isPicked: false, installPath: "/Users/dev/.claude", unavailableReason: null },
         { agent: "codex", isPicked: false, installPath: "" },
@@ -97,18 +97,17 @@ describe("buildSetupPage", () => {
   })
 
   it("shows the saved agents, default and connection when the step is opened again", () => {
-    const { form } = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "agents", agentDetections: ALL_WITH_CLI }))
+    const { form } = buildSetupPage(sourceOf({ setup: AT_CONFIGURATION, step: "agents", agentDetections: ALL_WITH_CLI }))
 
     expect(form).toMatchObject({
       defaultAgent: "codex",
-      connection: "manual",
       agents: [{ agent: "claude", isPicked: true }, { agent: "codex", isPicked: true }, { agent: "cursor", isPicked: false }],
     })
   })
 
   it("offers each agent the models it lists and shows the saved one", () => {
     const setup = {
-      ...AT_FORGES,
+      ...AT_CONFIGURATION,
       agents: { ...SAVED_AGENTS, installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet", effort: "default" }] },
     } as const
     const { form } = buildSetupPage(
@@ -134,7 +133,7 @@ describe("buildSetupPage", () => {
 
   it("offers each model its efforts and shows the saved effort", () => {
     const setup = {
-      ...AT_FORGES,
+      ...AT_CONFIGURATION,
       agents: {
         ...SAVED_AGENTS,
         installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet", effort: "high" }],
@@ -179,14 +178,14 @@ describe("buildSetupPage", () => {
         defaultAgent: "claude",
       },
     } as const
-    const { route } = buildSetupPage(sourceOf({ setup, step: "repositories", agentModels: CLAUDE_MODELS }))
+    const { route } = buildSetupPage(sourceOf({ setup, step: "configuration", agentModels: CLAUDE_MODELS }))
 
-    expect(route[0]?.lines[0]).toStrictEqual([{ text: "Claude, Opus 5.5, High effort", kind: "plain" }])
+    expect(route[2]?.lines[0]).toStrictEqual([{ text: "Claude, Opus 5.5, High effort", kind: "plain" }])
   })
 
   it("offers the agent's default and the saved model when the agent lists no models", () => {
     const setup = {
-      ...AT_FORGES,
+      ...AT_CONFIGURATION,
       agents: { ...SAVED_AGENTS, installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet", effort: "default" }] },
     } as const
     const { form } = buildSetupPage(sourceOf({ setup, step: "agents", agentDetections: ALL_WITH_CLI }))
@@ -209,9 +208,9 @@ describe("buildSetupPage", () => {
       ...READY_TO_FINISH,
       agents: { ...SAVED_AGENTS, installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "opus", effort: "default" }], defaultAgent: "claude" },
     } as const
-    const { route } = buildSetupPage(sourceOf({ setup, step: "repositories", agentModels: CLAUDE_MODELS }))
+    const { route } = buildSetupPage(sourceOf({ setup, step: "configuration", agentModels: CLAUDE_MODELS }))
 
-    expect(route[0]?.lines[0]).toStrictEqual([{ text: "Claude, Opus 5.5", kind: "plain" }])
+    expect(route[2]?.lines[0]).toStrictEqual([{ text: "Claude, Opus 5.5", kind: "plain" }])
   })
 
   it("does not offer an agent whose command line program is not installed, and says why", () => {
@@ -239,7 +238,7 @@ describe("buildSetupPage", () => {
       { agent: "codex", installPath: "/Users/dev/.codex", hasCli: false },
     ] as const
 
-    const { form } = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "agents", agentDetections }))
+    const { form } = buildSetupPage(sourceOf({ setup: AT_CONFIGURATION, step: "agents", agentDetections }))
 
     expect(form).toMatchObject({
       defaultAgent: null,
@@ -247,20 +246,11 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("offers the automatic and the manual mode, with what the manual mode gives up and that the automatic one adds no billing", () => {
+  it("asks no way of talking to the agent, since Flight Plan always starts it itself", () => {
     const { form } = buildSetupPage(sourceOf({}))
 
-    expect(form).toMatchObject({
-      connectionOptions: [
-        { connection: "direct", label: "Automatic", tagLabel: "Recommended", unavailableFeatures: [] },
-        {
-          connection: "manual",
-          label: "Manual",
-          unavailableFeatures: ["Chatting with the agent from a review", "Applying a fix from a finding"],
-        },
-      ],
-    })
-    expect(JSON.stringify(form)).toContain("It doesn't use the agent's SDK")
+    expect(form).not.toHaveProperty("connection")
+    expect(form).not.toHaveProperty("connectionOptions")
   })
 
   it("offers every forge and marks a command line tool that cannot be used", () => {
@@ -369,24 +359,24 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("holds the finish on local git until the user says which user they are", () => {
+  it("holds the repositories step on local git until the user says which user they are", () => {
     const setup = { ...AT_REPOSITORIES, repositories: [CHECKOUT_WEB] }
 
     expect(buildSetupPage(sourceOf({ setup, step: "repositories" })).form).toMatchObject({
-      isReadyToFinish: false,
-      finishHint: "Pick which user you are in checkout-web.",
+      isReadyToContinue: false,
+      continueHint: "Pick which user you are in checkout-web.",
       repositories: [{ selfAuthor: { author: null, stateLabel: "Not chosen" } }],
     })
   })
 
-  it("holds the finish until a repository is added", () => {
-    const empty = buildSetupPage(sourceOf({ setup: AT_REPOSITORIES, step: "repositories" })).form
+  it("holds the repositories step until a repository is added", () => {
+    const empty = buildSetupPage(sourceOf({ setup: EMPTY_SETUP, step: "repositories" })).form
     const ready = buildSetupPage(sourceOf({ setup: READY_TO_FINISH, step: "repositories" })).form
 
-    expect(empty).toMatchObject({ isReadyToFinish: false, finishHint: "Add at least one repository." })
+    expect(empty).toMatchObject({ isReadyToContinue: false, continueHint: "Add at least one repository." })
     expect(ready).toMatchObject({
-      isReadyToFinish: true,
-      finishHint: null,
+      isReadyToContinue: true,
+      continueHint: null,
       repositories: [
         {
           name: "checkout-web",
@@ -398,12 +388,12 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("lets a forge user finish with nobody tracked, since Flight Plan then follows everyone", () => {
+  it("lets a forge user continue with nobody tracked, since Flight Plan then follows everyone", () => {
     const setup = { ...READY_TO_FINISH, forges: GITHUB_FORGES, repositories: [CHECKOUT_WEB] }
 
     expect(buildSetupPage(sourceOf({ setup, step: "repositories" })).form).toMatchObject({
-      isReadyToFinish: true,
-      finishHint: null,
+      isReadyToContinue: true,
+      continueHint: null,
       repositories: [{ trackedAuthors: [] }],
     })
   })
@@ -420,9 +410,10 @@ describe("buildSetupPage", () => {
           authorSearchHint: "Ask Flight Plan to look for branches made by your team members.",
           authorSearchPlaceholder: "Type a name or email",
           selfAuthor: {
-            hint: "Git cannot tell who you are here. Search for the name or email you commit with, then pick yourself.",
+            hint: "Git has no email set for you in this repository, so Flight Plan can't tell which commits are yours. Search for the name or email you commit with and pick yourself.",
             author: { name: "Dev Harper", monogram: "DH" },
             stateLabel: "You",
+            isChangeable: true,
           },
         },
       ],
@@ -438,6 +429,25 @@ describe("buildSetupPage", () => {
     })
   })
 
+  it("shows the user git config names in a local git repository, and does not let them change it", () => {
+    const setup = { ...AT_REPOSITORIES, repositories: [CHECKOUT_WEB] }
+    const repositoryIdentities = { [CHECKOUT_WEB.path]: { name: "Lena Okafor", email: "lena@acme.example" } }
+
+    expect(buildSetupPage(sourceOf({ setup, step: "repositories", repositoryIdentities })).form).toMatchObject({
+      repositories: [
+        {
+          selfAuthor: {
+            author: { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" },
+            stateLabel: "You, from git config",
+            isChangeable: false,
+          },
+        },
+      ],
+      isReadyToContinue: true,
+      continueHint: null,
+    })
+  })
+
   it("follows the forge that serves each repository, not only the default forge", () => {
     const forgeRepository = { ...CHECKOUT_WEB, name: "storefront", path: "/Users/dev/projects/storefront" }
     const setup = { ...READY_TO_FINISH, repositories: [...READY_TO_FINISH.repositories, forgeRepository] }
@@ -448,8 +458,8 @@ describe("buildSetupPage", () => {
         { name: "checkout-web", selfAuthor: { author: { name: "Dev Harper" } }, authorSearchPlaceholder: "Type a name or email" },
         { name: "storefront", selfAuthor: null, authorSearchPlaceholder: "Type a name or username" },
       ],
-      isReadyToFinish: true,
-      finishHint: null,
+      isReadyToContinue: true,
+      continueHint: null,
     })
   })
 })

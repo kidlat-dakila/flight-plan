@@ -30,7 +30,6 @@ export const SAVED_AGENTS: AgentsChoice = {
     { agent: "codex", installPath: "/Users/dev/.codex", model: "default", effort: "default" },
   ],
   defaultAgent: "codex",
-  connection: "manual",
 }
 
 export const LOCAL_GIT_FORGES: ForgesChoice = {
@@ -67,16 +66,17 @@ export const CHECKOUT_WEB: SetupRepository = {
   trackedAuthors: [],
 }
 
-export const AT_FORGES: Setup = { ...EMPTY_SETUP, agents: SAVED_AGENTS }
+const ADDED_CHECKOUT_WEB: SetupRepository = { ...CHECKOUT_WEB, selfAuthor: DEV, trackedAuthors: [LENA] }
 
-export const AT_CONFIGURATION: Setup = { ...AT_FORGES, forges: LOCAL_GIT_FORGES }
+export const AT_FORGES: Setup = { ...EMPTY_SETUP, repositories: [ADDED_CHECKOUT_WEB] }
 
-export const AT_REPOSITORIES: Setup = { ...AT_CONFIGURATION, defaultConfiguration: "minimal" }
+export const AT_AGENTS: Setup = { ...AT_FORGES, forges: LOCAL_GIT_FORGES }
 
-export const READY_TO_FINISH: Setup = {
-  ...AT_REPOSITORIES,
-  repositories: [{ ...CHECKOUT_WEB, selfAuthor: DEV, trackedAuthors: [LENA] }],
-}
+export const AT_CONFIGURATION: Setup = { ...AT_AGENTS, agents: SAVED_AGENTS }
+
+export const READY_TO_FINISH: Setup = { ...AT_CONFIGURATION, defaultConfiguration: "minimal" }
+
+export const AT_REPOSITORIES: Setup = { ...READY_TO_FINISH, repositories: [] }
 
 export const STOREFRONT: Repository = {
   name: "storefront",

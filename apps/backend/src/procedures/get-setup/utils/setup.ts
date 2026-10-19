@@ -1,14 +1,12 @@
-export const SETUP_STEPS = ["agents", "forges", "configuration", "repositories"] as const
+import type { ReviewPreferences } from "@/procedures/get-review-preferences/utils/review-preferences"
+
+export const SETUP_STEPS = ["repositories", "forges", "agents", "configuration"] as const
 
 export type SetupStep = (typeof SETUP_STEPS)[number]
 
 export const AGENT_NAMES = ["claude", "codex", "cursor"] as const
 
 export type AgentName = (typeof AGENT_NAMES)[number]
-
-export const AGENT_CONNECTIONS = ["direct", "manual"] as const
-
-export type AgentConnection = (typeof AGENT_CONNECTIONS)[number]
 
 export const SETUP_FORGES = ["git", "gh", "glab", "github", "gitlab", "bitbucket"] as const
 
@@ -32,7 +30,6 @@ export interface AgentInstall {
 export interface AgentsChoice {
   readonly installs: readonly AgentInstall[]
   readonly defaultAgent: AgentName
-  readonly connection: AgentConnection
 }
 
 export interface ForgeConnection {
@@ -66,6 +63,7 @@ export interface Setup {
   readonly forges: ForgesChoice | null
   readonly defaultConfiguration: string | null
   readonly repositories: readonly SetupRepository[]
+  readonly reviewPreferences: ReviewPreferences | null
   readonly isComplete: boolean
 }
 
@@ -74,6 +72,7 @@ export const EMPTY_SETUP: Setup = {
   forges: null,
   defaultConfiguration: null,
   repositories: [],
+  reviewPreferences: null,
   isComplete: false,
 }
 

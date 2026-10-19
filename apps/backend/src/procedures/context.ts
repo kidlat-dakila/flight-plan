@@ -50,11 +50,13 @@ import { createForgeCliProbe } from "@/utils/forge-cli-probe"
 import { createForgeCredentialReader, readFromKeychain } from "@/utils/forge-credential-reader"
 import { createForgeCredentialSaver, saveInKeychain } from "@/utils/forge-credential-saver"
 import { createGitChangeReader } from "@/utils/git-change-reader"
+import { createGitIdentityReader } from "@/utils/git-identity-reader"
 import { createImportFileStore } from "@/utils/import-file-store"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
 import { createPublishedPageWriter } from "@/utils/published-page-writer"
 import { createPullRequestForge } from "@/utils/pull-request-forge"
+import { createRepositoryActivityReader } from "@/utils/repository-activity-reader"
 import { createRepositoryAdapterOpener, type RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import { createRepositoryFolderFinder } from "@/utils/repository-folder-finder"
 import { createRepositoryForgeFinder } from "@/utils/repository-forge-finder"
@@ -203,6 +205,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
   }
   const openRepository = createRepositoryAdapterOpener(repositoryAdapterDependencies)
   const inspector = new RepositoryInspector({ ...repositoryAdapterDependencies, now: () => new Date() })
+  const readGitIdentity = createGitIdentityReader({ runCommand, environment: machine.environment })
   return {
     ...mockContext,
     setupStore,
@@ -229,6 +232,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
       setupStore,
       inspector,
       targetMemory: new FileTargetMemoryStore(machine.dataPath),
+      readGitIdentity,
       now: () => new Date(),
     }),
     setupEnvironment: {
@@ -252,6 +256,8 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
       readFolderEntries,
       isRepositoryFolder,
       findRepositoryForge: createRepositoryForgeFinder({ readRemote }),
+      readGitIdentity,
+      readRepositoryActivity: createRepositoryActivityReader({ runCommand, environment: machine.environment }),
     },
   }
 }

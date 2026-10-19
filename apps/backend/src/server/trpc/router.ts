@@ -32,6 +32,7 @@ import { getPublishedReviewRoute } from "./routes/get-published-review"
 import { getRebuildFormRoute } from "./routes/get-rebuild-form"
 import { getRepositoryConfigurationRoute } from "./routes/get-repository-configuration"
 import { getReviewRoute } from "./routes/get-review"
+import { getReviewPreferencesRoute } from "./routes/get-review-preferences"
 import { getSettingsRoute } from "./routes/get-settings"
 import { getSetupRoute } from "./routes/get-setup"
 import { getSetupGateRoute } from "./routes/get-setup-gate"
@@ -40,6 +41,7 @@ import { healthRoute } from "./routes/health"
 import { importReviewRoute } from "./routes/import-review"
 import { listCardBlocksRoute } from "./routes/list-card-blocks"
 import { listConfigurationsRoute } from "./routes/list-configurations"
+import { listRecentRepositoriesRoute } from "./routes/list-recent-repositories"
 import { listRepositoriesRoute } from "./routes/list-repositories"
 import { markCompleteRoute } from "./routes/mark-complete"
 import { publishArtifactRoute } from "./routes/publish-artifact"
@@ -52,6 +54,7 @@ import { requestReviewRoute } from "./routes/request-review"
 import { requestReviewerRoute } from "./routes/request-reviewer"
 import { resolveThreadRoute } from "./routes/resolve-thread"
 import { saveConfigurationRoute } from "./routes/save-configuration"
+import { saveReviewPreferencesRoute } from "./routes/save-review-preferences"
 import { saveSettingsRoute } from "./routes/save-settings"
 import { saveSetupStepRoute } from "./routes/save-setup-step"
 import { searchAddableTargetsRoute } from "./routes/search-addable-targets"
@@ -87,6 +90,7 @@ export const appRouter = createRouter({
     gate: getSetupGateRoute,
     get: getSetupRoute,
     saveStep: saveSetupStepRoute,
+    recentRepositories: listRecentRepositoriesRoute,
     searchFolders: searchRepositoryFoldersRoute,
     browseFolders: browseFoldersRoute,
     addRepository: addSetupRepositoryRoute,
@@ -99,6 +103,10 @@ export const appRouter = createRouter({
   settings: createRouter({
     get: getSettingsRoute,
     save: saveSettingsRoute,
+  }),
+  reviewPreferences: createRouter({
+    get: getReviewPreferencesRoute,
+    save: saveReviewPreferencesRoute,
   }),
   configuration: createRouter({
     list: listConfigurationsRoute,

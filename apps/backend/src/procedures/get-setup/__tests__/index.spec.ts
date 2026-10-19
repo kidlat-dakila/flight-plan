@@ -1,12 +1,20 @@
 import { getSetup } from "@/procedures/get-setup"
-import { AT_CONFIGURATION, AT_FORGES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { AT_AGENTS, AT_CONFIGURATION, AT_FORGES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 
 describe("getSetup", () => {
-  it("opens the agents step with the folders detected on the machine", async () => {
+  it("opens the repositories step when nothing is saved", async () => {
     const page = await getSetup({ step: null }, createSetupContext(EMPTY_SETUP))
 
     expect(page.progressLabel).toBe("Step 1 of 4")
+    expect(page.backStep).toBeNull()
+    expect(page.form).toMatchObject({ step: "repositories", repositories: [], isReadyToContinue: false })
+  })
+
+  it("opens the agents step third, with the folders detected on the machine", async () => {
+    const page = await getSetup({ step: null }, createSetupContext(AT_AGENTS))
+
+    expect(page.progressLabel).toBe("Step 3 of 4")
     expect(page.form).toMatchObject({
       step: "agents",
       agents: [{ installPath: "/Users/dev/.claude" }, { installPath: "/Users/dev/.codex" }, { installPath: "" }],
@@ -14,7 +22,7 @@ describe("getSetup", () => {
   })
 
   it("offers the models each agent with a command line program lists", async () => {
-    const page = await getSetup({ step: null }, createSetupContext(EMPTY_SETUP))
+    const page = await getSetup({ step: null }, createSetupContext(AT_AGENTS))
 
     expect(page.form).toMatchObject({
       agents: [
@@ -35,16 +43,15 @@ describe("getSetup", () => {
 
   it("asks an agent for its models again to name the saved model on a later step", async () => {
     const setup = {
-      ...AT_FORGES,
+      ...AT_CONFIGURATION,
       agents: {
         installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "haiku", effort: "default" }],
         defaultAgent: "claude",
-        connection: "direct",
       },
     } as const
-    const page = await getSetup({ step: "forges" }, createSetupContext(setup))
+    const page = await getSetup({ step: "configuration" }, createSetupContext(setup))
 
-    expect(page.route[0]?.lines[0]).toStrictEqual([{ text: "Claude, Haiku", kind: "plain" }])
+    expect(page.route[2]?.lines[0]).toStrictEqual([{ text: "Claude, Haiku", kind: "plain" }])
   })
 
   it("resumes at the first step that is not saved", async () => {
@@ -59,7 +66,7 @@ describe("getSetup", () => {
   it("opens an earlier step on request and refuses a later one", async () => {
     const context = createSetupContext(AT_CONFIGURATION)
 
-    await expect(getSetup({ step: "agents" }, context)).resolves.toMatchObject({ form: { step: "agents" } })
-    await expect(getSetup({ step: "repositories" }, context)).resolves.toMatchObject({ form: { step: "configuration" } })
+    await expect(getSetup({ step: "repositories" }, context)).resolves.toMatchObject({ form: { step: "repositories" } })
+    await expect(getSetup({ step: "agents" }, createSetupContext(AT_FORGES))).resolves.toMatchObject({ form: { step: "forges" } })
   })
 })

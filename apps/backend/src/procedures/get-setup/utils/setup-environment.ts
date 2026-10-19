@@ -1,5 +1,7 @@
+import type { RepositoryActivity } from "@/procedures/list-recent-repositories/utils/repository-activity"
 import type { ForgeProblem } from "@/procedures/list-repositories/utils/repository"
 import type { ListedModel } from "./agent-models"
+import type { GitIdentity } from "./git-identity"
 import type { AgentInstall, AgentName, ForgesChoice, RepositoryAuthor, SetupForge } from "./setup"
 
 export interface AgentDetection {
@@ -69,5 +71,7 @@ export interface SetupEnvironment {
   readonly findRepositoryForge: (path: string, forges: ForgesChoice | null) => Promise<SetupForge>
   readonly searchAuthors: (source: AuthorSource, query: string) => Promise<AuthorSearchResult>
   readonly findAuthor: (source: AuthorSource, authorId: string) => Promise<RepositoryAuthor | null>
+  readonly readGitIdentity: (repositoryPath: string) => Promise<GitIdentity | null>
+  readonly readRepositoryActivity: (repositoryPath: string, authorEmail: string) => Promise<RepositoryActivity | null>
   readonly saveForgeCredential: (forge: SetupForge, token: string) => Promise<CredentialSaving>
 }

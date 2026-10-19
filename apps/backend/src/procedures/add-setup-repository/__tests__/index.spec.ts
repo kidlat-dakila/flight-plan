@@ -1,6 +1,5 @@
 import { addSetupRepository } from "@/procedures/add-setup-repository"
 import {
-  AT_FORGES,
   AT_REPOSITORIES,
   CHECKOUT_WEB,
   createSetupContext,
@@ -9,6 +8,7 @@ import {
   LENA,
   servedByForge,
 } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 
 const SELF_AND_LENA = { selfAuthorId: DEV.id, trackedAuthorIds: [LENA.id] }
 
@@ -72,12 +72,12 @@ describe("addSetupRepository", () => {
     await expect(context.setupStore.read()).resolves.toStrictEqual(AT_REPOSITORIES)
   })
 
-  it("refuses to add a repository before the earlier steps are saved", async () => {
+  it("adds a repository before any other step is saved, since the repositories come first", async () => {
+    const context = createSetupContext(EMPTY_SETUP)
+
     await expect(
-      addSetupRepository({ path: CHECKOUT_WEB.path, ...SELF_AND_LENA }, createSetupContext(AT_FORGES)),
-    ).resolves.toStrictEqual({
-      kind: "rejected",
-      message: "Finish the earlier steps of the setup first.",
-    })
+      addSetupRepository({ path: CHECKOUT_WEB.path, ...SELF_AND_LENA }, context),
+    ).resolves.toMatchObject({ kind: "accepted" })
+    await expect(context.setupStore.read()).resolves.toMatchObject({ repositories: [{ name: "checkout-web" }] })
   })
 })

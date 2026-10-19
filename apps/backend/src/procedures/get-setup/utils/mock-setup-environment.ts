@@ -1,3 +1,4 @@
+import type { RepositoryActivity } from "@/procedures/list-recent-repositories/utils/repository-activity"
 import { matchUsers } from "@/procedures/search-repository-authors/utils/match-users"
 import type { AgentModels } from "./agent-models"
 import { DEFAULT_MODEL, type AgentName, type RepositoryAuthor, type SetupForge } from "./setup"
@@ -69,6 +70,27 @@ const MOCK_PEOPLE: readonly MockPerson[] = [
   { name: "Teo Marchetti", email: "teo@acme.example", handle: "@teo" },
 ]
 
+const MOCK_REPOSITORY_ACTIVITY: Readonly<Record<string, RepositoryActivity>> = {
+  "/Users/dev/projects/checkout-web": {
+    gitFolderPath: "/Users/dev/projects/checkout-web/.git",
+    isMainWorktree: true,
+    branch: "main",
+    latestCommitAt: new Date("2026-09-30T09:30:00.000Z"),
+  },
+  "/Users/dev/projects/payments-service": {
+    gitFolderPath: "/Users/dev/projects/payments-service/.git",
+    isMainWorktree: true,
+    branch: "master",
+    latestCommitAt: new Date("2026-10-01T10:00:00.000Z"),
+  },
+  "/Users/dev/work/mobile-app": {
+    gitFolderPath: "/Users/dev/work/mobile-app/.git",
+    isMainWorktree: true,
+    branch: "main",
+    latestCommitAt: new Date("2026-09-24T16:45:00.000Z"),
+  },
+}
+
 const parentPathOf = (path: string): string | null => {
   if (path === ROOT_PATH) return null
   const parentPath = path.slice(0, path.lastIndexOf(PATH_SEPARATOR))
@@ -134,5 +156,7 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
     await Promise.resolve({ authors: matchUsers(mockAuthorsOf(source), query), problem: null }),
   findAuthor: async (source, authorId) =>
     await Promise.resolve(mockAuthorsOf(source).find((author) => author.id === authorId) ?? null),
+  readGitIdentity: async () => await Promise.resolve(null),
+  readRepositoryActivity: async (path) => await Promise.resolve(MOCK_REPOSITORY_ACTIVITY[path] ?? null),
   saveForgeCredential: async () => await Promise.resolve({ kind: "saved" }),
 })

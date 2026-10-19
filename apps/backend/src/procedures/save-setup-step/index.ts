@@ -1,5 +1,8 @@
 import type { ProcedureContext } from "@/procedures/context"
+import { findRepositoriesProblem } from "@/procedures/get-setup/utils/completion-problem"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
+import { findRepositoryForges } from "@/procedures/get-setup/utils/repository-forges"
+import { findRepositoryIdentities } from "@/procedures/get-setup/utils/repository-identities"
 import type { AgentInstall, Setup } from "@/procedures/get-setup/utils/setup"
 import { EARLIER_STEPS_MESSAGE, isStepReachable, stepAfter } from "@/procedures/get-setup/utils/setup-progress"
 import { findConfiguration } from "@/procedures/list-configurations/utils/configuration"
@@ -48,7 +51,19 @@ const inspectMachine = async (input: AgentsInput, context: ProcedureContext): Pr
   return { folderContents, agentsWithCli, agentModels }
 }
 
+const planRepositoriesStep = async (setup: Setup, context: ProcedureContext): Promise<SetupPlan> => {
+  const [repositoryForges, repositoryIdentities] = await Promise.all([
+    findRepositoryForges(setup, context.setupEnvironment),
+    findRepositoryIdentities(setup, context.setupEnvironment),
+  ])
+  const problem = findRepositoriesProblem(setup, repositoryForges, repositoryIdentities)
+  return problem === null
+    ? { kind: "accepted", setup, installs: NO_INSTALLS, credentials: NO_CREDENTIALS }
+    : { kind: "rejected", message: problem, field: null }
+}
+
 const planSetup = async (input: SaveSetupStepInput, setup: Setup, context: ProcedureContext): Promise<SetupPlan> => {
+  if (input.step === "repositories") return await planRepositoriesStep(setup, context)
   if (input.step === "agents") {
     const plan = planAgentsChoice(input, await inspectMachine(input, context), setup.agents)
     return plan.kind === "rejected"

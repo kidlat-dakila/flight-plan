@@ -1,4 +1,4 @@
-import { AT_FORGES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { AT_CONFIGURATION, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP, type AgentInstall, type AgentName, type Setup } from "@/procedures/get-setup/utils/setup"
 import type { AgentInstallation } from "@/procedures/get-setup/utils/setup-environment"
 import { refreshAgentInstalls } from "@/procedures/refresh-agent-installs"
@@ -16,7 +16,7 @@ const createInstallingContext = (setup: Setup, failures: Partial<Record<AgentNam
 
 describe("refreshAgentInstalls", () => {
   it("installs every saved agent again", async () => {
-    const { context, installAgent } = createInstallingContext(AT_FORGES)
+    const { context, installAgent } = createInstallingContext(AT_CONFIGURATION)
 
     await expect(refreshAgentInstalls(context)).resolves.toStrictEqual([])
     expect(installAgent.mock.calls.map(([{ agent, installPath }]) => ({ agent, installPath }))).toStrictEqual([
@@ -33,7 +33,7 @@ describe("refreshAgentInstalls", () => {
   })
 
   it("names each agent that could not be installed, with the reason", async () => {
-    const { context } = createInstallingContext(AT_FORGES, { codex: "config.toml in that folder is not valid TOML." })
+    const { context } = createInstallingContext(AT_CONFIGURATION, { codex: "config.toml in that folder is not valid TOML." })
 
     await expect(refreshAgentInstalls(context)).resolves.toStrictEqual([
       { agent: "codex", reason: "config.toml in that folder is not valid TOML." },
