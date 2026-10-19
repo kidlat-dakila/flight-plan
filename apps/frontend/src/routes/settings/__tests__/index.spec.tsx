@@ -39,29 +39,47 @@ const forgesSection = {
 const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
 const lena = { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" }
 
+const LOCAL_SELF_HINT = "Git has no email set for you in this repository."
+
 const storefront = {
   name: "storefront",
-  path: "/work/storefront",
+  path: "/Users/dev/projects/storefront",
   lineColor: "blue",
   lineLabel: "S",
-  configurationHref: "/pr-reviews/storefront/configurations",
-  selfAuthor: dev,
+  authorSearchHint: "Ask Flight Plan to look for branches made by your team members.",
+  authorSearchPlaceholder: "Type a name or email",
+  selfAuthor: { hint: LOCAL_SELF_HINT, author: dev, stateLabel: "You", isChangeable: true },
   trackedAuthors: [lena],
+  configurationHref: "/pr-reviews/storefront/configurations",
   emptyMessage: null,
 }
 
-const docsSite = { ...storefront, name: "docs-site", path: "/work/docs-site", selfAuthor: null, trackedAuthors: [], emptyMessage: "No team members are picked, so Flight Plan follows everyone in this repository." }
+const docsSite = {
+  ...storefront,
+  name: "docs-site",
+  path: "/work/docs-site",
+  authorSearchHint: "Ask Flight Plan to look for pull requests made by your team members.",
+  authorSearchPlaceholder: "Type a name or username",
+  selfAuthor: null,
+  trackedAuthors: [],
+  configurationHref: "/pr-reviews/docs-site/configurations",
+  emptyMessage: "No team members are picked, so Flight Plan follows everyone in this repository.",
+}
 
-const repositoriesSection = { section: "repositories", repositories: [storefront, docsSite], emptyMessage: null }
+const repositoriesSection = { section: "repositories", repositories: [storefront, docsSite] }
 
-const storefrontConfiguration: ProcedureReply = {
-  data: {
-    name: "storefront",
-    path: "/work/storefront",
-    form: { selfAuthorHint: "Git cannot tell who you are here.", gitSelfAuthor: null, searchHint: "Search by name or email.", searchPlaceholder: "Type a name or email" },
-    selfAuthor: dev,
-    trackedAuthors: [lena],
-  },
+const recentOf = (name: string, latestCommitLabel: string, stateLabel: string | null = null) => ({
+  path: `/Users/dev/projects/${name}`,
+  name,
+  branch: "main",
+  latestCommitAt: "2026-10-18T09:30:00.000Z",
+  latestCommitLabel,
+  isAdded: stateLabel !== null,
+  stateLabel,
+})
+
+const recentRepositories: ProcedureReply = {
+  data: { repositories: [recentOf("storefront", "2 days ago", "Already in Flight Plan"), recentOf("ledger", "5 days ago")], message: null },
 }
 
 const SECTIONS: Readonly<Record<string, unknown>> = {
@@ -81,7 +99,9 @@ const renderApp = (handlers: ProcedureHandlers, path: string) =>
   render(
     createApp({
       queryClient: new QueryClient({ defaultOptions: { queries: { retry: false } } }),
-      trpcClient: createTrpcClient(fakeBackendLinks({ "settings.get": getSettings, ...handlers })),
+      trpcClient: createTrpcClient(
+        fakeBackendLinks({ "settings.get": getSettings, "setup.recentRepositories": () => recentRepositories, ...handlers }),
+      ),
       history: createMemoryHistory({ initialEntries: [path] }),
     }),
   )
@@ -198,24 +218,75 @@ describe("the settings pages", () => {
   })
 
   describe("the repositories page", () => {
-    it("lists each repository with its folder and the users followed in it", async () => {
+    it("draws setup step 1's list: recent repositories, the followed ones checked with their team members and links", async () => {
       renderApp({}, "/settings/repositories")
 
-      const users = await screen.findByRole("list", { name: "Users followed in storefront" })
-
-      expect(within(users).getAllByRole("listitem").map((user) => user.textContent)).toStrictEqual([
-        "DHDev Harperdev@acme.exampleYou",
-        "LOLena Okaforlena@acme.example",
+      const list = await screen.findByRole("list", { name: "Repositories" })
+      expect(screen.getByText(/Pick the repositories Flight Plan follows/)).toBeTruthy()
+      expect(within(list).getByRole<HTMLInputElement>("checkbox", { name: /storefront/ }).checked).toBe(true)
+      expect((await within(list).findByRole<HTMLInputElement>("checkbox", { name: /ledger/ })).checked).toBe(false)
+      expect(within(list).getByRole<HTMLInputElement>("checkbox", { name: /docs-site/ }).checked).toBe(true)
+      expect(within(list).getByText("Your last commit on main, 2 days ago")).toBeTruthy()
+      expect(within(screen.getByRole("list", { name: "Tracked team members of storefront" })).getByText("Lena Okafor")).toBeTruthy()
+      expect(within(list).getAllByRole("link", { name: "Prompt configurations" }).map((link) => link.getAttribute("href"))).toStrictEqual([
+        "/pr-reviews/storefront/configurations",
+        "/pr-reviews/docs-site/configurations",
       ])
-      expect(screen.getByText("/work/storefront")).toBeTruthy()
-      expect(screen.getByText("No team members are picked, so Flight Plan follows everyone in this repository.")).toBeTruthy()
+      expect(within(list).getByText("No team members are picked, so Flight Plan follows everyone in this repository.")).toBeTruthy()
+      expect(screen.queryByRole("button", { name: /Continue|Save/ })).toBeNull()
     })
 
-    it("says so when there is no repository", async () => {
-      const noRepositories = { section: "repositories", repositories: [], emptyMessage: "No repositories yet. Add one to start." }
-      renderApp({ "settings.get": () => ({ data: noRepositories }) }, "/settings/repositories")
+    it("follows a checked repository and stops following an unchecked one, then reads the list again", async () => {
+      const add = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "ledger" } })
+      const remove = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "docs-site" } })
+      const readSettings = vi.fn<(input: unknown) => ProcedureReply>(getSettings)
+      renderApp({ "settings.get": readSettings, "repository.add": add, "repository.remove": remove }, "/settings/repositories")
 
-      expect(await screen.findByText("No repositories yet. Add one to start.")).toBeTruthy()
+      const list = await screen.findByRole("list", { name: "Repositories" })
+      const ledger = await within(list).findByRole("checkbox", { name: /ledger/ })
+      const readsBefore = readSettings.mock.calls.length
+      fireEvent.click(ledger)
+
+      await waitFor(() => {
+        expect(add).toHaveBeenCalledWith({ path: "/Users/dev/projects/ledger", selfAuthorId: null, trackedAuthorIds: [] })
+      })
+      await waitFor(() => {
+        expect(readSettings.mock.calls.length).toBeGreaterThan(readsBefore)
+      })
+      fireEvent.click(within(list).getByRole("checkbox", { name: /docs-site/ }))
+
+      await waitFor(() => {
+        expect(remove).toHaveBeenCalledWith({ name: "docs-site" })
+      })
+    })
+
+    it("saves the whole author choice when the user stops tracking a team member", async () => {
+      const configure = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "accepted" } })
+      renderApp({ "repository.configure": configure }, "/settings/repositories")
+
+      fireEvent.click(await screen.findByRole("button", { name: "Stop tracking Lena Okafor" }))
+
+      await waitFor(() => {
+        expect(configure).toHaveBeenCalledWith({ repositoryName: "storefront", selfAuthorId: "dev@acme.example", trackedAuthorIds: [] })
+      })
+    })
+
+    it("searches team members of a followed repository with what is already chosen", async () => {
+      const search = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { options: [], message: "No one matches." } })
+      renderApp({ "repository.searchAuthors": search }, "/settings/repositories")
+
+      fireEvent.change(await screen.findByRole("combobox", { name: "Track specific team members in docs-site" }), { target: { value: "sam" } })
+
+      await waitFor(() => {
+        expect(search).toHaveBeenLastCalledWith({
+          path: "",
+          repositoryName: "docs-site",
+          role: "tracked",
+          query: "sam",
+          selfAuthorId: null,
+          trackedAuthorIds: [],
+        })
+      })
     })
 
     it("opens the Add repository dialog", async () => {
@@ -224,29 +295,6 @@ describe("the settings pages", () => {
       fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
 
       expect(await screen.findByRole("heading", { name: "Add repository" })).toBeTruthy()
-    })
-
-    it("removes a repository from its Configure dialog and reads the list again", async () => {
-      const remove = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "storefront" } })
-      const readSettings = vi.fn<(input: unknown) => ProcedureReply>(getSettings)
-      renderApp(
-        { "settings.get": readSettings, "repository.configuration": () => storefrontConfiguration, "repository.remove": remove },
-        "/settings/repositories",
-      )
-
-      fireEvent.click(await screen.findByRole("button", { name: "Configure storefront" }))
-      await screen.findByRole("heading", { name: "Configure storefront" })
-      const readsBeforeRemoval = readSettings.mock.calls.length
-      fireEvent.click(screen.getByRole("button", { name: "Remove repository" }))
-      fireEvent.click(screen.getByRole("button", { name: "Remove" }))
-
-      await waitFor(() => {
-        expect(screen.queryByRole("heading", { name: "Configure storefront" })).toBeNull()
-      })
-      expect(remove).toHaveBeenCalledWith({ name: "storefront" })
-      await waitFor(() => {
-        expect(readSettings.mock.calls.length).toBeGreaterThan(readsBeforeRemoval)
-      })
     })
   })
 })

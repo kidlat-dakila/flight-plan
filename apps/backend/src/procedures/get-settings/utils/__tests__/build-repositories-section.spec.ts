@@ -1,5 +1,6 @@
 import { buildRepositoriesSection } from "@/procedures/get-settings/utils/build-repositories-section"
 import { DEV, LENA } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { SELF_AUTHOR_HINT } from "@/procedures/get-setup/utils/build-repositories-step"
 
 const STOREFRONT = { name: "storefront", path: "/Users/dev/projects/storefront" }
 const CHECKOUT_API = { name: "checkout api", path: "/Users/dev/projects/checkout-api" }
@@ -16,11 +17,17 @@ describe("buildRepositoriesSection", () => {
     ])
 
     expect(section.repositories).toMatchObject([
-      { selfAuthor: { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" } },
+      {
+        selfAuthor: {
+          author: { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" },
+          stateLabel: "You, from git config",
+          isChangeable: false,
+        },
+      },
     ])
   })
 
-  it("lists each repository with its line, its folder and the users followed in it", () => {
+  it("lists each repository as setup step 1 draws it, with its configurations link and the users followed in it", () => {
     const section = buildRepositoriesSection([
       { repository: STOREFRONT, authors: { selfAuthor: DEV, trackedAuthors: [LENA] }, forge: "git", identity: null },
     ])
@@ -33,13 +40,14 @@ describe("buildRepositoriesSection", () => {
           path: "/Users/dev/projects/storefront",
           lineColor: "blue",
           lineLabel: "S",
-          configurationHref: "/pr-reviews/storefront/configurations",
-          selfAuthor: { ...DEV, monogram: "DH" },
+          authorSearchHint: "Ask Flight Plan to look for branches made by your team members.",
+          authorSearchPlaceholder: "Type a name or email",
+          selfAuthor: { hint: SELF_AUTHOR_HINT, author: { ...DEV, monogram: "DH" }, stateLabel: "You", isChangeable: true },
           trackedAuthors: [{ ...LENA, monogram: "LO" }],
+          configurationHref: "/pr-reviews/storefront/configurations",
           emptyMessage: null,
         },
       ],
-      emptyMessage: null,
     })
   })
 
@@ -65,11 +73,7 @@ describe("buildRepositoriesSection", () => {
     ])
   })
 
-  it("says so when there is no repository", () => {
-    expect(buildRepositoriesSection([])).toStrictEqual({
-      section: "repositories",
-      repositories: [],
-      emptyMessage: "No repositories yet. Add one to start.",
-    })
+  it("lists no repository when Flight Plan follows none", () => {
+    expect(buildRepositoriesSection([])).toStrictEqual({ section: "repositories", repositories: [] })
   })
 })

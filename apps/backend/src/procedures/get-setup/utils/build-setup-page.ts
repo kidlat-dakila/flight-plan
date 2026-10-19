@@ -23,7 +23,7 @@ export interface SetupPageSource {
 const FORM_BUILDERS: Record<SetupStep, (source: SetupPageSource) => SetupStepForm> = {
   agents: (source) => buildAgentsStep(source.setup.agents, source.agentDetections, source.agentModels),
   forges: (source) => buildForgesStep(source.setup.forges, source.cliProbes),
-  configuration: (source) => buildConfigurationStep(source.setup.defaultConfiguration),
+  configuration: (source) => buildConfigurationStep(source.setup),
   repositories: (source) => buildRepositoriesStep(source.setup, source.repositoryForges, source.repositoryIdentities),
 }
 

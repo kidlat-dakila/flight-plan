@@ -92,6 +92,19 @@ const configurationForm = {
     },
   ],
   selectedConfigurationId: "standard",
+  preferences: {
+    spotlight: [],
+    sectionWriteUps: { context: "always", traceDiagram: "always", blastDiagram: "on-demand", walkthrough: "on-demand", findings: "always" },
+    isSegmented: true,
+    walkthroughOrder: "imports-bottom-up",
+    sectionOrder: ["context", "traceDiagram", "blastDiagram", "walkthrough"],
+    ignoredPaths: ["**/*.spec.ts", "**/e2e/**"],
+  },
+  spotlightChoices: [
+    { classification: "migration", label: "Migration", description: "A change to the shape of the database" },
+    { classification: "api-route", label: "API route", description: "A route, a resolver or a middleware" },
+    { classification: "auth", label: "Auth", description: "A check of who the caller is, or what they may do" },
+  ],
 }
 
 const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
@@ -202,12 +215,19 @@ const incompleteSetupGate = (input: unknown): ProcedureReply => ({
   data: { redirectTo: JSON.stringify(input).includes("/setup") ? null : "/setup" },
 })
 
+const savedPreferences = (input: unknown): ProcedureReply => ({ data: { kind: "saved", preferences: input } })
+
 const renderApp = (handlers: ProcedureHandlers, path = "/setup") =>
   render(
     createApp({
       queryClient: new QueryClient({ defaultOptions: { queries: { retry: false } } }),
       trpcClient: createTrpcClient(
-        fakeBackendLinks({ "setup.gate": incompleteSetupGate, "setup.recentRepositories": () => noRecentRepositories, ...handlers }),
+        fakeBackendLinks({
+          "setup.gate": incompleteSetupGate,
+          "setup.recentRepositories": () => noRecentRepositories,
+          "reviewPreferences.save": savedPreferences,
+          ...handlers,
+        }),
       ),
       history: createMemoryHistory({ initialEntries: [path] }),
     }),
@@ -586,6 +606,136 @@ describe("the setup page", () => {
     await waitFor(() => {
       expect(saveStep).toHaveBeenCalledWith({ step: "configuration", configurationId: "minimal" })
     })
+  })
+
+  it("asks which kinds of change go in the spotlight and saves them before the step", async () => {
+    const savePreferences = vi.fn(savedPreferences)
+    const saveStep = vi
+      .fn<(input: unknown) => ProcedureReply>()
+      .mockReturnValue({ data: { kind: "accepted", nextStep: "configuration" } })
+    renderApp({
+      "setup.get": () => configurationPage,
+      "reviewPreferences.save": savePreferences,
+      "setup.saveStep": saveStep,
+      "setup.complete": () => ({ data: { redirectTo: "/" } }),
+      "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
+    })
+
+    const spotlight = await screen.findByRole("region", { name: "Spotlight" })
+    expect(within(spotlight).getByText(/Pick the kinds of change that matter most to you/)).toBeTruthy()
+    expect(within(spotlight).getByText(/Nothing is in the spotlight/)).toBeTruthy()
+    expect(within(spotlight).getByRole("button", { name: "Auth", description: "A check of who the caller is, or what they may do" })).toBeTruthy()
+
+    fireEvent.click(within(spotlight).getByRole("button", { name: "Auth" }))
+    fireEvent.click(within(spotlight).getByRole("button", { name: "Migration" }))
+
+    expect(within(spotlight).getByRole("button", { name: "Auth", pressed: true })).toBeTruthy()
+    expect(within(spotlight).queryByText(/Nothing is in the spotlight/)).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Finish setup" }))
+
+    await waitFor(() => {
+      expect(saveStep).toHaveBeenCalledWith({ step: "configuration", configurationId: "standard" })
+    })
+    expect(savePreferences).toHaveBeenCalledWith({ ...configurationForm.preferences, spotlight: ["migration", "auth"] })
+  })
+
+  it("asks which parts the agent writes up by default and saves the answers", async () => {
+    const savePreferences = vi.fn(savedPreferences)
+    renderApp({
+      "setup.get": () => configurationPage,
+      "reviewPreferences.save": savePreferences,
+      "setup.saveStep": () => ({ data: { kind: "accepted", nextStep: "configuration" } }),
+      "setup.complete": () => ({ data: { redirectTo: "/" } }),
+      "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
+    })
+
+    const writeUps = await screen.findByRole("region", { name: "Write-ups" })
+    expect(within(writeUps).getByText(/Which parts should the agent write up by default\?/)).toBeTruthy()
+    const findings = within(writeUps).getByRole("group", { name: "Findings" })
+    expect(within(findings).getByRole<HTMLInputElement>("radio", { name: "Always" }).checked).toBe(true)
+
+    fireEvent.click(within(findings).getByRole("radio", { name: "On demand" }))
+    fireEvent.click(screen.getByRole("button", { name: "Finish setup" }))
+
+    await waitFor(() => {
+      expect(savePreferences).toHaveBeenCalledWith({
+        ...configurationForm.preferences,
+        sectionWriteUps: { ...configurationForm.preferences.sectionWriteUps, findings: "on-demand" },
+      })
+    })
+  })
+
+  it("asks how a review is organized and arranged and saves the answers", async () => {
+    const savePreferences = vi.fn(savedPreferences)
+    renderApp({
+      "setup.get": () => configurationPage,
+      "reviewPreferences.save": savePreferences,
+      "setup.saveStep": () => ({ data: { kind: "accepted", nextStep: "configuration" } }),
+      "setup.complete": () => ({ data: { redirectTo: "/" } }),
+      "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
+    })
+
+    const organization = await screen.findByRole("region", { name: "Review organization" })
+    const segments = within(organization).getByRole<HTMLInputElement>("checkbox", { name: /Split reviews into segments/ })
+    expect(segments.checked).toBe(true)
+    expect(within(organization).getByRole<HTMLInputElement>("radio", { name: /Bottom up/ }).checked).toBe(true)
+
+    fireEvent.click(segments)
+    fireEvent.click(within(organization).getByRole("radio", { name: /Top down/ }))
+    fireEvent.click(within(screen.getByRole("region", { name: "Display arrangement" })).getByRole("button", { name: "Move Context down" }))
+    fireEvent.click(screen.getByRole("button", { name: "Finish setup" }))
+
+    await waitFor(() => {
+      expect(savePreferences).toHaveBeenCalledWith({
+        ...configurationForm.preferences,
+        isSegmented: false,
+        walkthroughOrder: "imports-top-down",
+        sectionOrder: ["traceDiagram", "context", "blastDiagram", "walkthrough"],
+      })
+    })
+  })
+
+  it("lists the ignored path patterns and saves the ones the user adds and removes", async () => {
+    const savePreferences = vi.fn(savedPreferences)
+    renderApp({
+      "setup.get": () => configurationPage,
+      "reviewPreferences.save": savePreferences,
+      "setup.saveStep": () => ({ data: { kind: "accepted", nextStep: "configuration" } }),
+      "setup.complete": () => ({ data: { redirectTo: "/" } }),
+      "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
+    })
+
+    const ignoredFiles = await screen.findByRole("region", { name: "Ignored files" })
+    expect(within(ignoredFiles).getByText(/as in a \.gitignore/)).toBeTruthy()
+
+    fireEvent.click(within(ignoredFiles).getByRole("button", { name: "Remove **/e2e/**" }))
+    fireEvent.click(within(ignoredFiles).getByRole("button", { name: "Add pattern" }))
+    fireEvent.change(within(ignoredFiles).getByRole("textbox", { name: "Path pattern 2" }), { target: { value: "**/*.stories.tsx" } })
+    fireEvent.click(screen.getByRole("button", { name: "Finish setup" }))
+
+    await waitFor(() => {
+      expect(savePreferences).toHaveBeenCalledWith({ ...configurationForm.preferences, ignoredPaths: ["**/*.spec.ts", "**/*.stories.tsx"] })
+    })
+  })
+
+  it("does not save the step when the review preferences are refused", async () => {
+    const saveStep = vi.fn<(input: unknown) => ProcedureReply>()
+    renderApp({
+      "setup.get": () => configurationPage,
+      "reviewPreferences.save": () => ({
+        data: { kind: "rejected", message: "This pattern is already in the list.", field: { owner: "ignoredPaths", name: "1" } },
+      }),
+      "setup.saveStep": saveStep,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Finish setup" }))
+
+    const ignoredFiles = screen.getByRole("region", { name: "Ignored files" })
+    expect(await within(ignoredFiles).findByText("This pattern is already in the list.")).toBeTruthy()
+    expect(within(ignoredFiles).getByRole("textbox", { name: "Path pattern 2" }).getAttribute("aria-invalid")).toBe("true")
+    expect(screen.queryByRole("alert")).toBeNull()
+    expect(saveStep).not.toHaveBeenCalled()
   })
 
   it("lists the user's recent repositories and follows the one checked", async () => {

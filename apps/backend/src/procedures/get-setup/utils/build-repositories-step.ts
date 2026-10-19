@@ -12,7 +12,7 @@ import {
   type SetupRepository,
 } from "./setup"
 
-type RepositoryEntry = RepositoriesStep["repositories"][number]
+export type RepositoryEntry = RepositoriesStep["repositories"][number]
 
 const COMMIT_SEARCH_PLACEHOLDER = "Type a name or email"
 const FORGE_SEARCH_PLACEHOLDER = "Type a name or username"
@@ -53,7 +53,7 @@ const toIdentitySelfAuthor = (identity: GitIdentity): NonNullable<RepositoryEntr
 const toSelfAuthor = (repository: SetupRepository, identity: GitIdentity | null): NonNullable<RepositoryEntry["selfAuthor"]> =>
   identity === null ? toChosenSelfAuthor(repository) : toIdentitySelfAuthor(identity)
 
-const toRepositoryEntry = (
+export const toRepositoryEntry = (
   repository: SetupRepository,
   position: number,
   forge: SetupForge,

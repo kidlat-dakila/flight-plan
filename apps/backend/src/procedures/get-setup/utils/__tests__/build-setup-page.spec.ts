@@ -1,5 +1,7 @@
+import { DEFAULT_REVIEW_PREFERENCES } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { buildSetupPage, type SetupPageSource } from "@/procedures/get-setup/utils/build-setup-page"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
+import { CODE_BLOCK_CLASSIFICATIONS } from "@flightplan/configurations"
 import {
   AT_AGENTS,
   AT_CONFIGURATION,
@@ -346,6 +348,18 @@ describe("buildSetupPage", () => {
     })
     expect(buildSetupPage(sourceOf({ setup: AT_REPOSITORIES, step: "configuration" })).form).toMatchObject({
       selectedConfigurationId: "minimal",
+    })
+  })
+
+  it("offers the review preferences with the defaults until they are saved, and every spotlight choice", () => {
+    const savedSetup = { ...AT_CONFIGURATION, reviewPreferences: { ...DEFAULT_REVIEW_PREFERENCES, spotlight: ["auth"] as const } }
+    const form = buildSetupPage(sourceOf({ setup: AT_CONFIGURATION, step: "configuration" })).form
+
+    expect(form).toMatchObject({ preferences: { spotlight: [], isSegmented: true } })
+    expect(form).toHaveProperty("spotlightChoices.length", CODE_BLOCK_CLASSIFICATIONS.length)
+    expect(form).toHaveProperty("spotlightChoices.0", { classification: "test", label: "Test", description: "A test or a story" })
+    expect(buildSetupPage(sourceOf({ setup: savedSetup, step: "configuration" })).form).toMatchObject({
+      preferences: { spotlight: ["auth"] },
     })
   })
 

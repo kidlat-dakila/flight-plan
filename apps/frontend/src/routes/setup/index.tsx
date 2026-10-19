@@ -1,20 +1,23 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
+import type { inferInput, TRPCOptionsProxy } from "@trpc/tanstack-react-query"
 import { use, useDeferredValue, useState } from "react"
 import { createPortal } from "react-dom"
 import { useAuthorsChoice } from "@/authors-choice"
 import { BandSlotContext } from "@/band-slot"
 import { useRepositoryFinder } from "@/repository-finder"
 import { useTRPC } from "@/trpc"
+import type { AppRouter } from "@flightplan/backend/router"
 import AddRepositoryDialog from "@flightplan/ui/AddRepositoryDialog"
 import BandLine from "@flightplan/ui/BandLine"
 import Button from "@flightplan/ui/blocks/button"
+import { toRepositoryRows } from "@flightplan/ui/lib/repository-rows"
 import { cn } from "@flightplan/ui/lib/utils"
+import type { ReviewConfigurationChoice } from "@flightplan/ui/ReviewConfigurationForm"
 import AgentsStep from "./-components/AgentsStep"
 import ConfigurationStep from "./-components/ConfigurationStep"
 import ForgesStep from "./-components/ForgesStep"
 import RepositoriesStep, { type AuthorRole, type SetupRepository } from "./-components/RepositoriesStep"
-import { toRepositoryRows } from "./-components/RepositoriesStep/repository-rows"
 import SetupRoute from "./-components/SetupRoute"
 import SetupSkeleton from "./-components/SetupSkeleton"
 
@@ -26,6 +29,8 @@ const DOCUMENT_TITLE = "Setup • Flight Plan"
 const SEARCHING_MESSAGE = "Searching…"
 const LOOKING_FOR_REPOSITORIES_MESSAGE = "Looking for your recent repositories…"
 const RECENT_REPOSITORIES_STALE_MS = 60_000
+
+type SpotlightClassification = inferInput<TRPCOptionsProxy<AppRouter>["reviewPreferences"]["save"]>["spotlight"][number]
 
 interface AuthorQuery {
   readonly repositoryName: string
@@ -231,14 +236,26 @@ const SetupPage = () => {
       },
     }),
   )
-  const finishSetup = (configurationId: string) => {
-    saveStep.mutate(
-      { step: "configuration", configurationId },
-      { onSuccess: (saving) => { if (saving.kind === "accepted") completeSetup.mutate({}) } },
-    )
+  const savePreferences = useMutation(trpc.reviewPreferences.save.mutationOptions())
+  const finishSetup = ({ configurationId, preferences }: ReviewConfigurationChoice<SpotlightClassification>) => {
+    saveStep.reset()
+    savePreferences.mutate(preferences, {
+      onSuccess: (preferencesSaving) => {
+        if (preferencesSaving.kind === "rejected") return
+        saveStep.mutate(
+          { step: "configuration", configurationId },
+          { onSuccess: (saving) => { if (saving.kind === "accepted") completeSetup.mutate({}) } },
+        )
+      },
+    })
   }
+  const preferencesRejection = savePreferences.data?.kind === "rejected" ? savePreferences.data : null
+  const preferencesProblem = savePreferences.error === null
+    ? preferencesRejection
+    : { message: savePreferences.error.message, field: null }
   const rejection = saveStep.data?.kind === "rejected" ? saveStep.data : null
-  const saveProblem = saveStep.error === null ? rejection : { message: saveStep.error.message, field: null }
+  const stepProblem = saveStep.error === null ? rejection : { message: saveStep.error.message, field: null }
+  const saveProblem = preferencesProblem ?? stepProblem
   const problem = completeSetup.error === null ? saveProblem : { message: completeSetup.error.message, field: null }
   const { form } = page
 
@@ -304,9 +321,11 @@ const SetupPage = () => {
                   key={form.step}
                   presets={form.presets}
                   selectedConfigurationId={form.selectedConfigurationId}
+                  preferences={form.preferences}
+                  spotlightChoices={form.spotlightChoices}
                   backStep={page.backStep}
                   problem={problem}
-                  isPending={saveStep.isPending || completeSetup.isPending}
+                  isPending={savePreferences.isPending || saveStep.isPending || completeSetup.isPending}
                   onSubmit={finishSetup}
                 />
               )

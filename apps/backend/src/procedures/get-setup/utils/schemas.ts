@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { reviewPreferencesSchema, spotlightChoiceSchema } from "@/procedures/get-review-preferences/utils/schemas"
 import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
 import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
 import { FORGE_FIELD_NAMES } from "./forge-catalog"
@@ -85,6 +86,8 @@ export const configurationStepSchema = z.strictObject({
   step: z.literal("configuration"),
   presets: z.array(presetOptionSchema),
   selectedConfigurationId: z.string(),
+  preferences: reviewPreferencesSchema,
+  spotlightChoices: z.array(spotlightChoiceSchema),
 })
 
 export const trackedAuthorSchema = z.strictObject({

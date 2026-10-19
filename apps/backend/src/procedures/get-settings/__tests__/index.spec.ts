@@ -49,7 +49,6 @@ describe("getSettings", () => {
     await expect(getSettings({ section: "repositories" }, context)).resolves.toMatchObject({
       section: "repositories",
       repositories: [{ name: "storefront", trackedAuthors: [{ name: "Lena Okafor" }], emptyMessage: null }],
-      emptyMessage: null,
     })
   })
 

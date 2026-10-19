@@ -6,12 +6,12 @@ export interface RecentRepository {
   readonly stateLabel: string | null
 }
 
-interface FollowedRepository {
+interface NamedRepository {
   readonly name: string
   readonly path: string
 }
 
-export interface RepositoryRow<Followed extends FollowedRepository> {
+export interface RepositoryRow<Followed extends NamedRepository> {
   readonly path: string
   readonly name: string
   readonly activityLabel: string | null
@@ -22,7 +22,7 @@ export interface RepositoryRow<Followed extends FollowedRepository> {
 const activityLabelOf = (recent: RecentRepository): string =>
   `Your last commit on ${recent.branch}, ${recent.latestCommitLabel}`
 
-const toRecentRow = <Followed extends FollowedRepository>(
+const toRecentRow = <Followed extends NamedRepository>(
   recent: RecentRepository,
   followedByPath: ReadonlyMap<string, Followed>,
 ): RepositoryRow<Followed> => {
@@ -36,7 +36,7 @@ const toRecentRow = <Followed extends FollowedRepository>(
   }
 }
 
-const toAddedRow = <Followed extends FollowedRepository>(followed: Followed): RepositoryRow<Followed> => ({
+const toAddedRow = <Followed extends NamedRepository>(followed: Followed): RepositoryRow<Followed> => ({
   path: followed.path,
   name: followed.name,
   activityLabel: null,
@@ -44,7 +44,7 @@ const toAddedRow = <Followed extends FollowedRepository>(followed: Followed): Re
   followed,
 })
 
-export const toRepositoryRows = <Followed extends FollowedRepository>(
+export const toRepositoryRows = <Followed extends NamedRepository>(
   recentRepositories: readonly RecentRepository[],
   followedRepositories: readonly Followed[],
 ): readonly RepositoryRow<Followed>[] => {
