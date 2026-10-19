@@ -1,14 +1,11 @@
-import { useId } from "react"
 import StepActions from "@/routes/setup/-components/StepActions"
 import StepIntro from "@/routes/setup/-components/StepIntro"
 import AuthorField from "@flightplan/ui/AuthorField"
 import Avatar from "@flightplan/ui/Avatar"
 import Button from "@flightplan/ui/blocks/button"
 import IconButton from "@flightplan/ui/IconButton"
-import { LINE_COLOR_CLASSES, type LineColor } from "@flightplan/ui/lib/line-color"
 import { cn } from "@flightplan/ui/lib/utils"
-import LineRoundel from "@flightplan/ui/LineRoundel"
-import StopRing from "@flightplan/ui/StopRing"
+import type { RepositoryRow } from "./repository-rows"
 
 interface TrackedAuthor {
   readonly id: string
@@ -32,11 +29,9 @@ interface SelfAuthor {
   readonly isChangeable: boolean
 }
 
-interface SetupRepository {
+export interface SetupRepository {
   readonly name: string
   readonly path: string
-  readonly lineColor: LineColor
-  readonly lineLabel: string
   readonly authorSearchHint: string
   readonly authorSearchPlaceholder: string
   readonly selfAuthor: SelfAuthor | null
@@ -53,8 +48,10 @@ export interface AuthorSearch {
 }
 
 interface RepositoriesStepProps {
-  readonly repositories: readonly SetupRepository[]
+  readonly rows: readonly RepositoryRow<SetupRepository>[]
+  readonly listMessage: string | null
   readonly repositoryErrorMessage: string | null
+  readonly isChangingRepositories: boolean
   readonly authorSearch: AuthorSearch
   readonly isReadyToContinue: boolean
   readonly continueHint: string | null
@@ -62,20 +59,12 @@ interface RepositoriesStepProps {
   readonly errorMessage: string | null
   readonly isPending: boolean
   readonly onOpenAddRepository: () => void
-  readonly onRemoveRepository: (name: string) => void
+  readonly onFollow: (path: string) => void
+  readonly onUnfollow: (name: string) => void
   readonly onAuthorQueryChange: (repositoryName: string, role: AuthorRole, query: string) => void
   readonly onAuthorTrackingChange: (repositoryName: string, authorId: string, isTracked: boolean) => void
   readonly onSelfAuthorChange: (repositoryName: string, authorId: string | null) => void
   readonly onContinue: () => void
-}
-
-interface RepositoryLineProps {
-  readonly repository: SetupRepository
-  readonly authorSearch: AuthorSearch
-  readonly onRemove: () => void
-  readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
-  readonly onAuthorTrackingChange: (authorId: string, isTracked: boolean) => void
-  readonly onSelfAuthorChange: (authorId: string | null) => void
 }
 
 interface RepositoryAuthorFieldProps {
@@ -89,7 +78,7 @@ interface RepositoryAuthorFieldProps {
   readonly onSelect: (authorId: string) => void
 }
 
-interface SelfAuthorStopProps {
+interface SelfAuthorPickProps {
   readonly repositoryName: string
   readonly selfAuthor: SelfAuthor
   readonly authorSearch: AuthorSearch
@@ -97,8 +86,24 @@ interface SelfAuthorStopProps {
   readonly onSelfAuthorChange: (authorId: string | null) => void
 }
 
-const TITLE = "Add your repositories"
-const RAIL_GRID = "grid grid-cols-[2.5rem_minmax(0,1fr)]"
+interface FollowedFieldsProps {
+  readonly repository: SetupRepository
+  readonly authorSearch: AuthorSearch
+  readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
+  readonly onAuthorTrackingChange: (authorId: string, isTracked: boolean) => void
+  readonly onSelfAuthorChange: (authorId: string | null) => void
+}
+
+interface RepositoryRowItemProps extends Omit<FollowedFieldsProps, "repository"> {
+  readonly row: RepositoryRow<SetupRepository>
+  readonly isChanging: boolean
+  readonly onFollow: () => void
+  readonly onUnfollow: (name: string) => void
+}
+
+const TITLE = "Select your repositories"
+const CHOICE_INPUT_CLASSES = "mt-1 size-4 shrink-0 accent-(--primary)"
+const AUTHOR_LINE_CLASSES = "flex max-w-md items-center gap-2 py-1"
 const NO_AUTHOR_OPTIONS: readonly AuthorOption[] = []
 
 const RepositoryAuthorField = ({
@@ -129,140 +134,151 @@ const RepositoryAuthorField = ({
   )
 }
 
-const SelfAuthorStop = ({
+const SelfAuthorPick = ({
   repositoryName,
   selfAuthor,
   authorSearch,
   onAuthorQueryChange,
   onSelfAuthorChange,
-}: SelfAuthorStopProps) => (
-  <div className={RAIL_GRID}>
-    <span aria-hidden="true" className="flex flex-col items-center">
-      <span className="h-2 w-1 bg-(--line)" />
-      <StopRing status={selfAuthor.author === null ? "no-review" : "merged"} />
-      <span className="w-1 flex-1 bg-(--line)" />
-    </span>
-    {selfAuthor.author === null
-      ? (
-          <div className="pt-1 pb-3">
-            <RepositoryAuthorField
-              label={`Which user are you in ${repositoryName}?`}
-              hint={selfAuthor.hint}
-              placeholder="Type your name or email"
-              authorRole="self"
-              repositoryName={repositoryName}
-              authorSearch={authorSearch}
-              onQueryChange={onAuthorQueryChange}
-              onSelect={onSelfAuthorChange}
+}: SelfAuthorPickProps) => {
+  if (selfAuthor.author === null) {
+    return (
+      <RepositoryAuthorField
+        label={`Which user are you in ${repositoryName}?`}
+        hint={selfAuthor.hint}
+        placeholder="Type your name or email"
+        authorRole="self"
+        repositoryName={repositoryName}
+        authorSearch={authorSearch}
+        onQueryChange={onAuthorQueryChange}
+        onSelect={onSelfAuthorChange}
+      />
+    )
+  }
+  return (
+    <div className={AUTHOR_LINE_CLASSES}>
+      <Avatar imageUrl={selfAuthor.author.avatarUrl} monogram={selfAuthor.author.monogram} />
+      <span className="min-w-0 truncate">{selfAuthor.author.name}</span>
+      <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{selfAuthor.author.detail}</span>
+      <span className="text-sm font-bold">{selfAuthor.stateLabel}</span>
+      {selfAuthor.isChangeable
+        ? (
+            <IconButton
+              icon="close"
+              label={`Choose another user as you in ${repositoryName}`}
+              onClick={() => { onSelfAuthorChange(null) }}
             />
-          </div>
-        )
+          )
+        : null}
+    </div>
+  )
+}
+
+const FollowedFields = ({
+  repository,
+  authorSearch,
+  onAuthorQueryChange,
+  onAuthorTrackingChange,
+  onSelfAuthorChange,
+}: FollowedFieldsProps) => (
+  <div className="grid max-w-xl gap-3 pt-3 pl-7">
+    {repository.selfAuthor === null
+      ? null
       : (
-          <div className="flex max-w-md items-center gap-2 py-1">
-            <Avatar imageUrl={selfAuthor.author.avatarUrl} monogram={selfAuthor.author.monogram} />
-            <span className="min-w-0 truncate">{selfAuthor.author.name}</span>
-            <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{selfAuthor.author.detail}</span>
-            <span className="text-sm font-bold">{selfAuthor.stateLabel}</span>
-            {selfAuthor.isChangeable
-              ? (
-                  <IconButton
-                    icon="close"
-                    label={`Choose another user as you in ${repositoryName}`}
-                    onClick={() => { onSelfAuthorChange(null) }}
-                  />
-                )
-              : null}
-          </div>
+          <SelfAuthorPick
+            repositoryName={repository.name}
+            selfAuthor={repository.selfAuthor}
+            authorSearch={authorSearch}
+            onAuthorQueryChange={onAuthorQueryChange}
+            onSelfAuthorChange={onSelfAuthorChange}
+          />
+        )}
+    <RepositoryAuthorField
+      label={`Track specific team members in ${repository.name}`}
+      hint={repository.authorSearchHint}
+      placeholder={repository.authorSearchPlaceholder}
+      authorRole="tracked"
+      repositoryName={repository.name}
+      authorSearch={authorSearch}
+      onQueryChange={onAuthorQueryChange}
+      onSelect={(authorId) => { onAuthorTrackingChange(authorId, true) }}
+    />
+    {repository.trackedAuthors.length === 0
+      ? null
+      : (
+          <ul aria-label={`Tracked team members of ${repository.name}`}>
+            {repository.trackedAuthors.map((author) => (
+              <li key={author.id} className={AUTHOR_LINE_CLASSES}>
+                <Avatar imageUrl={author.avatarUrl} monogram={author.monogram} />
+                <span className="min-w-0 truncate">{author.name}</span>
+                <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{author.detail}</span>
+                <IconButton
+                  icon="close"
+                  label={`Stop tracking ${author.name}`}
+                  onClick={() => { onAuthorTrackingChange(author.id, false) }}
+                />
+              </li>
+            ))}
+          </ul>
         )}
   </div>
 )
 
-const RepositoryLine = ({
-  repository,
+const RepositoryRowItem = ({
+  row,
+  isChanging,
   authorSearch,
-  onRemove,
+  onFollow,
+  onUnfollow,
   onAuthorQueryChange,
   onAuthorTrackingChange,
   onSelfAuthorChange,
-}: RepositoryLineProps) => {
-  const headingId = useId()
+}: RepositoryRowItemProps) => {
+  const { followed } = row
+  const isLocked = followed === null && row.stateLabel !== null
+  const handleFollowedChange = () => {
+    if (followed === null) onFollow()
+    else onUnfollow(followed.name)
+  }
   return (
-    <section
-      aria-labelledby={headingId}
-      className={cn("border-t-2 border-foreground pt-5 pb-6", LINE_COLOR_CLASSES[repository.lineColor])}
-    >
-      <div className={RAIL_GRID}>
-        <span aria-hidden="true" className="flex flex-col items-center">
-          <LineRoundel label={repository.lineLabel} />
-          <span className="w-1 flex-1 bg-(--line)" />
+    <li className="border-b border-border py-3 last:border-b-0">
+      <label className={cn("flex min-w-0 items-start gap-3", isLocked ? "" : "cursor-pointer")}>
+        <input
+          type="checkbox"
+          checked={followed !== null || isLocked}
+          disabled={isLocked || isChanging}
+          className={CHOICE_INPUT_CLASSES}
+          onChange={handleFollowedChange}
+        />
+        <span className="min-w-0">
+          <span className="font-bold">{row.name}</span>
+          {row.stateLabel === null ? null : <span className="ml-2 text-sm text-muted-foreground">{row.stateLabel}</span>}
+          {row.activityLabel === null
+            ? null
+            : <span className="block text-sm text-muted-foreground">{row.activityLabel}</span>}
+          <span className="block font-mono text-[0.82rem] wrap-anywhere text-muted-foreground">{row.path}</span>
         </span>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pb-2">
-          <div className="min-w-0 flex-1 basis-64">
-            <h2 id={headingId} className="text-xl leading-7 font-semibold tracking-[-0.01em] text-foreground">{repository.name}</h2>
-            <p className="font-mono text-[0.82rem] wrap-anywhere text-muted-foreground">{repository.path}</p>
-          </div>
-          <Button type="button" variant="ghost" size="sm" aria-label={`Remove ${repository.name}`} onClick={onRemove}>
-            Remove
-          </Button>
-        </div>
-      </div>
-      {repository.selfAuthor === null
+      </label>
+      {followed === null
         ? null
         : (
-            <SelfAuthorStop
-              repositoryName={repository.name}
-              selfAuthor={repository.selfAuthor}
+            <FollowedFields
+              repository={followed}
               authorSearch={authorSearch}
               onAuthorQueryChange={onAuthorQueryChange}
+              onAuthorTrackingChange={onAuthorTrackingChange}
               onSelfAuthorChange={onSelfAuthorChange}
             />
           )}
-      <ul aria-label={`Tracked team members of ${repository.name}`}>
-        {repository.trackedAuthors.map((author) => (
-          <li key={author.id} className={RAIL_GRID}>
-            <span aria-hidden="true" className="flex flex-col items-center">
-              <span className="h-2 w-1 bg-(--line)" />
-              <StopRing status="merged" />
-              <span className="w-1 flex-1 bg-(--line)" />
-            </span>
-            <div className="flex max-w-md items-center gap-2 py-1">
-              <Avatar imageUrl={author.avatarUrl} monogram={author.monogram} />
-              <span className="min-w-0 truncate">{author.name}</span>
-              <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{author.detail}</span>
-              <IconButton
-                icon="close"
-                label={`Stop tracking ${author.name}`}
-                onClick={() => { onAuthorTrackingChange(author.id, false) }}
-              />
-            </div>
-          </li>
-        ))}
-      </ul>
-      <div className={RAIL_GRID}>
-        <span aria-hidden="true" className="flex flex-col items-center">
-          <span className="h-6 w-1 bg-(--line)" />
-          <span className="h-1 w-4 bg-(--line)" />
-        </span>
-        <div className="pt-2">
-          <RepositoryAuthorField
-            label={`Track specific team members in ${repository.name}`}
-            hint={repository.authorSearchHint}
-            placeholder={repository.authorSearchPlaceholder}
-            authorRole="tracked"
-            repositoryName={repository.name}
-            authorSearch={authorSearch}
-            onQueryChange={onAuthorQueryChange}
-            onSelect={(authorId) => { onAuthorTrackingChange(authorId, true) }}
-          />
-        </div>
-      </div>
-    </section>
+    </li>
   )
 }
 
 const RepositoriesStep = ({
-  repositories,
+  rows,
+  listMessage,
   repositoryErrorMessage,
+  isChangingRepositories,
   authorSearch,
   isReadyToContinue,
   continueHint,
@@ -270,7 +286,8 @@ const RepositoriesStep = ({
   errorMessage,
   isPending,
   onOpenAddRepository,
-  onRemoveRepository,
+  onFollow,
+  onUnfollow,
   onAuthorQueryChange,
   onAuthorTrackingChange,
   onSelfAuthorChange,
@@ -278,40 +295,39 @@ const RepositoriesStep = ({
 }: RepositoriesStepProps) => (
   <form action={onContinue}>
     <StepIntro title={TITLE}>
-      Add the repositories you want to review. Flight Plan lists the pull requests and branches of each one on your
-      home page. When your code is on GitHub, GitLab or Bitbucket, you see everyone's pull requests unless you pick
-      specific team members. With local git, you see only the branches you add, plus those of any team members you pick.
+      Pick the repositories Flight Plan follows, and it lists their pull requests and branches on your home page. The
+      list starts with the ones you last committed to on main or master; add any other repository by hand. On GitHub,
+      GitLab or Bitbucket you see everyone&apos;s pull requests unless you pick team members. With local git you see
+      only the branches you add, plus those of the team members you pick.
     </StepIntro>
-    <div className="pb-6">
-      <Button type="button" onClick={onOpenAddRepository}>Add repository</Button>
+    {listMessage === null ? null : <p className="pb-3 text-sm text-muted-foreground">{listMessage}</p>}
+    {rows.length === 0
+      ? null
+      : (
+          <ul aria-label="Repositories" className="border-t border-border">
+            {rows.map((row) => (
+              <RepositoryRowItem
+                key={row.path}
+                row={row}
+                isChanging={isChangingRepositories}
+                authorSearch={authorSearch}
+                onFollow={() => { onFollow(row.path) }}
+                onUnfollow={onUnfollow}
+                onAuthorQueryChange={(role, query) => { onAuthorQueryChange(row.followed?.name ?? row.name, role, query) }}
+                onAuthorTrackingChange={(authorId, isTracked) => {
+                  onAuthorTrackingChange(row.followed?.name ?? row.name, authorId, isTracked)
+                }}
+                onSelfAuthorChange={(authorId) => { onSelfAuthorChange(row.followed?.name ?? row.name, authorId) }}
+              />
+            ))}
+          </ul>
+        )}
+    <div className="border-t border-border pt-4">
+      <Button type="button" variant="outline" onClick={onOpenAddRepository}>Add repository</Button>
       {repositoryErrorMessage === null
         ? null
         : <p role="alert" className="pt-2 text-sm text-destructive">{repositoryErrorMessage}</p>}
     </div>
-    {repositories.length === 0
-      ? (
-          <div className={cn(RAIL_GRID, "border-t-2 border-foreground pt-5 [--line:var(--muted-foreground)]")}>
-            <span aria-hidden="true" className="flex flex-col items-center">
-              <span className="h-4 w-1 bg-(--line)" />
-              <span className="h-1 w-4 bg-(--line)" />
-            </span>
-            <p className="py-1.5 text-sm text-muted-foreground">
-              No repositories yet. Add one to start.
-            </p>
-          </div>
-        )
-      : null}
-    {repositories.map((repository) => (
-      <RepositoryLine
-        key={repository.name}
-        repository={repository}
-        authorSearch={authorSearch}
-        onRemove={() => { onRemoveRepository(repository.name) }}
-        onAuthorQueryChange={(role, query) => { onAuthorQueryChange(repository.name, role, query) }}
-        onAuthorTrackingChange={(authorId, isTracked) => { onAuthorTrackingChange(repository.name, authorId, isTracked) }}
-        onSelfAuthorChange={(authorId) => { onSelfAuthorChange(repository.name, authorId) }}
-      />
-    ))}
     <StepActions
       backStep={backStep}
       submitLabel="Save and continue"

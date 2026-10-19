@@ -13,7 +13,8 @@ import { cn } from "@flightplan/ui/lib/utils"
 import AgentsStep from "./-components/AgentsStep"
 import ConfigurationStep from "./-components/ConfigurationStep"
 import ForgesStep from "./-components/ForgesStep"
-import RepositoriesStep, { type AuthorRole } from "./-components/RepositoriesStep"
+import RepositoriesStep, { type AuthorRole, type SetupRepository } from "./-components/RepositoriesStep"
+import { toRepositoryRows } from "./-components/RepositoriesStep/repository-rows"
 import SetupRoute from "./-components/SetupRoute"
 import SetupSkeleton from "./-components/SetupSkeleton"
 
@@ -23,6 +24,8 @@ const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
 const BAND_HEADING = "Setup"
 const DOCUMENT_TITLE = "Setup • Flight Plan"
 const SEARCHING_MESSAGE = "Searching…"
+const LOOKING_FOR_REPOSITORIES_MESSAGE = "Looking for your recent repositories…"
+const RECENT_REPOSITORIES_STALE_MS = 60_000
 
 interface AuthorQuery {
   readonly repositoryName: string
@@ -31,7 +34,7 @@ interface AuthorQuery {
 }
 
 interface RepositoriesSectionProps {
-  readonly repositories: React.ComponentProps<typeof RepositoriesStep>["repositories"]
+  readonly repositories: readonly SetupRepository[]
   readonly isReadyToContinue: boolean
   readonly continueHint: string | null
   readonly backStep: string | null
@@ -57,6 +60,11 @@ const RepositoriesSection = ({
   const finder = useRepositoryFinder(isAddOpen)
   const additionAuthors = useAuthorsChoice({ isEnabled: isAddOpen, folderPath: finder.search.query, repositoryName: null, saved: null })
   const deferredAuthorQuery = useDeferredValue(authorQuery)
+  const recentRepositories = useQuery({
+    ...trpc.setup.recentRepositories.queryOptions({}),
+    staleTime: RECENT_REPOSITORIES_STALE_MS,
+    placeholderData: keepPreviousData,
+  })
 
   const authorSuggestions = useQuery({
     ...trpc.setup.searchAuthors.queryOptions({
@@ -78,6 +86,7 @@ const RepositoriesSection = ({
       },
     }),
   )
+  const followRepository = useMutation(trpc.setup.addRepository.mutationOptions({ onSuccess: onChanged }))
   const removeRepository = useMutation(trpc.setup.removeRepository.mutationOptions({ onSuccess: onChanged }))
   const setAuthorTracking = useMutation(trpc.setup.setAuthorTracking.mutationOptions({ onSuccess: onChanged }))
   const setSelfAuthor = useMutation(trpc.setup.setSelfAuthor.mutationOptions({ onSuccess: onChanged }))
@@ -89,11 +98,17 @@ const RepositoriesSection = ({
     setIsAddOpen(false)
   }
 
+  const listMessage = recentRepositories.isPending
+    ? LOOKING_FOR_REPOSITORIES_MESSAGE
+    : (recentRepositories.error?.message ?? recentRepositories.data?.message ?? null)
+
   return (
     <>
       <RepositoriesStep
-        repositories={repositories}
-        repositoryErrorMessage={removeRepository.error?.message ?? null}
+        rows={toRepositoryRows(recentRepositories.data?.repositories ?? [], repositories)}
+        listMessage={listMessage}
+        repositoryErrorMessage={followRepository.error?.message ?? removeRepository.error?.message ?? null}
+        isChangingRepositories={followRepository.isPending || removeRepository.isPending}
         authorSearch={{
           repositoryName: authorQuery?.repositoryName ?? null,
           role: authorQuery?.role ?? null,
@@ -109,7 +124,14 @@ const RepositoriesSection = ({
         errorMessage={errorMessage}
         isPending={isPending}
         onOpenAddRepository={() => { setIsAddOpen(true) }}
-        onRemoveRepository={(name) => { removeRepository.mutate({ name }) }}
+        onFollow={(path) => {
+          removeRepository.reset()
+          followRepository.mutate({ path, selfAuthorId: null, trackedAuthorIds: [] })
+        }}
+        onUnfollow={(name) => {
+          followRepository.reset()
+          removeRepository.mutate({ name })
+        }}
         onAuthorQueryChange={(repositoryName, role, query) => { setAuthorQuery({ repositoryName, role, query }) }}
         onSelfAuthorChange={(repositoryName, authorId) => {
           setAuthorQuery(null)

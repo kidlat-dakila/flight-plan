@@ -179,6 +179,24 @@ const configurationPage = pageOf(configurationForm, { progressLabel: "Step 4 of 
 
 const noFolders: ProcedureReply = { data: { options: [], message: null } }
 
+const NO_RECENT_MESSAGE = "No repository in your home folder has a commit from you on main or master."
+
+const noRecentRepositories: ProcedureReply = { data: { repositories: [], message: NO_RECENT_MESSAGE } }
+
+const recentOf = (name: string, latestCommitLabel: string, stateLabel: string | null = null) => ({
+  path: `/Users/dev/projects/${name}`,
+  name,
+  branch: "main",
+  latestCommitAt: "2026-10-18T09:30:00.000Z",
+  latestCommitLabel,
+  isAdded: stateLabel !== null,
+  stateLabel,
+})
+
+const recentRepositoriesOf = (...repositories: ReturnType<typeof recentOf>[]): ProcedureReply => ({
+  data: { repositories, message: null },
+})
+
 const localGitAuthorForm: ProcedureReply = {
   data: {
     selfAuthorHint: SELF_HINT,
@@ -200,7 +218,9 @@ const renderApp = (handlers: ProcedureHandlers, path = "/setup") =>
   render(
     createApp({
       queryClient: new QueryClient({ defaultOptions: { queries: { retry: false } } }),
-      trpcClient: createTrpcClient(fakeBackendLinks({ "setup.gate": incompleteSetupGate, ...handlers })),
+      trpcClient: createTrpcClient(
+        fakeBackendLinks({ "setup.gate": incompleteSetupGate, "setup.recentRepositories": () => noRecentRepositories, ...handlers }),
+      ),
       history: createMemoryHistory({ initialEntries: [path] }),
     }),
   )
@@ -235,7 +255,7 @@ describe("the setup page", () => {
     expect(within(steps).queryByRole("link")).toBeNull()
     expect(screen.queryByRole("link", { name: "Back" })).toBeNull()
     expect(screen.getByRole("heading", { level: 1, name: "Welcome to Flight Plan" })).toBeTruthy()
-    expect(screen.getByRole("heading", { level: 2, name: "Add your repositories" })).toBeTruthy()
+    expect(screen.getByRole("heading", { level: 2, name: "Select your repositories" })).toBeTruthy()
   })
 
   it("links back to a saved step and to no step that is not reached", async () => {
@@ -569,6 +589,63 @@ describe("the setup page", () => {
     })
   })
 
+  it("lists the user's recent repositories and follows the one checked", async () => {
+    const getSetup = vi
+      .fn<() => ProcedureReply>()
+      .mockReturnValueOnce(pageOf(emptyRepositoriesForm))
+      .mockReturnValue(pageOf({ ...selfChosenRepositoriesForm, repositories: [{ ...checkoutWebWithSelf, selfAuthor: null }] }))
+    const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "accepted" } })
+    renderApp({
+      "setup.get": getSetup,
+      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("checkout-web", "2 days ago"), recentOf("storefront", "5 days ago")),
+      "setup.addRepository": addRepository,
+    })
+
+    const repositories = await screen.findByRole("list", { name: "Repositories" })
+    const checkoutWebRow = within(repositories).getByRole<HTMLInputElement>("checkbox", { name: /^checkout-web/ })
+
+    expect(within(repositories).getAllByRole("checkbox")).toHaveLength(2)
+    expect(checkoutWebRow.checked).toBe(false)
+    expect(within(repositories).getByText("Your last commit on main, 2 days ago")).toBeTruthy()
+    expect(within(repositories).getByText("/Users/dev/projects/checkout-web")).toBeTruthy()
+    expect(screen.queryByRole("combobox", { name: "Track specific team members in checkout-web" })).toBeNull()
+
+    fireEvent.click(checkoutWebRow)
+
+    expect(await screen.findByRole("combobox", { name: "Track specific team members in checkout-web" })).toBeTruthy()
+    expect(addRepository).toHaveBeenCalledWith({ path: "/Users/dev/projects/checkout-web", selfAuthorId: null, trackedAuthorIds: [] })
+    expect(within(repositories).getByRole<HTMLInputElement>("checkbox", { name: /^checkout-web/ }).checked).toBe(true)
+  })
+
+  it("keeps a repository Flight Plan already follows checked and locked", async () => {
+    renderApp({
+      "setup.get": () => pageOf(emptyRepositoriesForm),
+      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("storefront", "5 days ago", "Already in Flight Plan")),
+    })
+
+    const storefront = await screen.findByRole<HTMLInputElement>("checkbox", { name: /^storefront/ })
+
+    expect(storefront.checked).toBe(true)
+    expect(storefront.disabled).toBe(true)
+    expect(screen.getByText("Already in Flight Plan")).toBeTruthy()
+  })
+
+  it("lists a repository added by hand after the recent ones, checked", async () => {
+    renderApp({
+      "setup.get": () => pageOf(selfChosenRepositoriesForm),
+      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("storefront", "5 days ago")),
+    })
+
+    const repositories = await screen.findByRole("list", { name: "Repositories" })
+    await within(repositories).findByRole("checkbox", { name: /^storefront/ })
+    const rows = within(repositories).getAllByRole<HTMLInputElement>("checkbox")
+
+    expect(rows.map((row) => [row.closest("label")?.querySelector(".font-bold")?.textContent, row.checked])).toStrictEqual([
+      ["storefront", false],
+      ["checkout-web", true],
+    ])
+  })
+
   it("holds the repositories step and says what is missing", async () => {
     renderApp({ "setup.get": () => pageOf(emptyRepositoriesForm), "setup.searchFolders": () => noFolders })
 
@@ -576,7 +653,7 @@ describe("the setup page", () => {
 
     expect(saveAndContinue.disabled).toBe(true)
     expect(screen.getByText("Add at least one repository.")).toBeTruthy()
-    expect(screen.getByText("No repositories yet. Add one to start.")).toBeTruthy()
+    expect(await screen.findByText(NO_RECENT_MESSAGE)).toBeTruthy()
   })
 
   it("searches for repository folders as the user types, then adds the chosen folder with its authors", async () => {
@@ -612,7 +689,7 @@ describe("the setup page", () => {
     fireEvent.click(await screen.findByRole("option", { name: /Dev Harper/ }))
     fireEvent.click(screen.getByRole("button", { name: "Add" }))
 
-    expect(await screen.findByRole("region", { name: "checkout-web" })).toBeTruthy()
+    expect((await screen.findByRole<HTMLInputElement>("checkbox", { name: /^checkout-web/ })).checked).toBe(true)
     expect(searchFolders).toHaveBeenCalledWith({ query: "check" })
     expect(searchAuthors).toHaveBeenCalledWith({
       path: "/Users/dev/projects/checkout-web",
@@ -836,7 +913,7 @@ describe("the setup page", () => {
     })
 
     fireEvent.click(await screen.findByRole("button", { name: "Stop tracking Lena Okafor" }))
-    fireEvent.click(screen.getByRole("button", { name: "Remove checkout-web" }))
+    fireEvent.click(screen.getByRole("checkbox", { name: /^checkout-web/ }))
 
     await waitFor(() => {
       expect(removeRepository).toHaveBeenCalledWith({ name: "checkout-web" })
