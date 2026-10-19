@@ -195,9 +195,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/components/ThemeToggle.vue#component@1:1",
               "type": "component",
@@ -294,7 +294,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/components/ThemeToggle.vue#render-event@10:15 -> src/App.vue#component@1:1",
               "from": "src/components/ThemeToggle.vue#render-event@10:15",
@@ -312,7 +312,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/App.vue",
@@ -421,7 +421,7 @@
                     "lineEnd": 28
                   },
                   "category": "function",
-                  "journeyNodeId": "src/App.vue#component@1:1",
+                  "traceNodeId": "src/App.vue#component@1:1",
                   "codeBlockIds": [
                     "src/App.vue#component@1:1",
                     "src/App.vue#condition@8:26",
@@ -441,7 +441,7 @@
                         "lineEnd": 8
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/App.vue#component@1:1",
+                      "traceNodeId": "src/App.vue#component@1:1",
                       "codeBlockIds": [
                         "src/App.vue#condition@8:26",
                         "src/App.vue#storage@8:26"
@@ -460,7 +460,7 @@
                         "lineEnd": 11
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/App.vue#component@1:1",
+                      "traceNodeId": "src/App.vue#component@1:1",
                       "codeBlockIds": [
                         "src/App.vue#storage@11:3"
                       ],

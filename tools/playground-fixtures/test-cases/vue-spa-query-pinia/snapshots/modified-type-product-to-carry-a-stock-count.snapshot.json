@@ -253,8 +253,8 @@
             }
           }
         ],
-        "journeyFlowDiagram": null,
-        "blastRadiusDiagram": {
+        "traceDiagram": null,
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/types/product.ts",
@@ -450,7 +450,7 @@
                     "lineEnd": 6
                   },
                   "category": "type",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/types/product.ts#type-declaration@1:1"
                   ],

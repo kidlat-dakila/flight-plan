@@ -2,8 +2,8 @@ import { EVERY_FILE_REVIEWED_MESSAGE } from "@/labels"
 import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@/marks"
 import type { ReviewableFile } from "@/reviewable-file"
 import { hiddenFileAnchorIdsOf, withReviewedRail } from "@/reviewed-rail"
-import { reviewSegment, withReviewedJourney, withReviewedWalkthrough } from "@/reviewed-segment"
-import type { FileRow, FileSectionView, JourneyBand, WalkthroughBand, WaypointView } from "@flightplan/configurations"
+import { reviewSegment, withReviewedTrace, withReviewedWalkthrough } from "@/reviewed-segment"
+import type { FileRow, FileSectionView, TraceBand, WalkthroughBand, WaypointView } from "@flightplan/configurations"
 
 const ROOT = "src/price.ts#function:priceOf"
 
@@ -118,11 +118,11 @@ describe("withReviewedWalkthrough", () => {
   })
 })
 
-describe("withReviewedJourney", () => {
+describe("withReviewedTrace", () => {
   it("drops the reviewed waypoints from the code a node shows", () => {
-    const journey: JourneyBand = {
-      anchorId: "journey",
-      heading: "Journey",
+    const traceDiagram: TraceBand = {
+      anchorId: "traceDiagram",
+      heading: "Trace",
       diagram: {
         anchorId: "diagram",
         title: "Diagram",
@@ -166,7 +166,7 @@ describe("withReviewedJourney", () => {
       },
     }
 
-    const reviewed = withReviewedJourney(journey, reviewSegment(OUTLINE, markedRoot, false))
+    const reviewed = withReviewedTrace(traceDiagram, reviewSegment(OUTLINE, markedRoot, false))
 
     expect(reviewed.diagram?.nodes[0].codeViews[0].rows.map((row) => row.id)).toStrictEqual(["waypoint-tax"])
   })

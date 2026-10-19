@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import type { CardForm } from "@/routes/pr-reviews/$repoName/-hooks/use-journey-editing"
+import type { CardForm } from "@/routes/pr-reviews/$repoName/-hooks/use-trace-editing"
 import { useTRPC } from "@/trpc"
 
 interface CardKey {

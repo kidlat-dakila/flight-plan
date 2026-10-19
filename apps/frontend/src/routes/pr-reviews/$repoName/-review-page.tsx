@@ -14,7 +14,6 @@ import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
 import FileSection from "@flightplan/ui/FileSection"
 import GenerationOffer from "@flightplan/ui/GenerationOffer"
-import JourneyBand from "@flightplan/ui/JourneyBand"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
@@ -23,6 +22,7 @@ import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
 import SectionRail from "@flightplan/ui/SectionRail"
 import Toast from "@flightplan/ui/Toast"
+import TraceBand from "@flightplan/ui/TraceBand"
 import AddCardDialog from "./-components/AddCardDialog"
 import ArrangeDialog from "./-components/ArrangeDialog"
 import CodeLinkDialog from "./-components/CodeLinkDialog"
@@ -43,12 +43,12 @@ import { useAgentChat } from "./-hooks/use-agent-chat"
 import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
-import { useJourneyEditing } from "./-hooks/use-journey-editing"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
 import { useSectionGeneration } from "./-hooks/use-section-generation"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useTargetSwitching } from "./-hooks/use-target-switching"
 import { useToast } from "./-hooks/use-toast"
+import { useTraceEditing } from "./-hooks/use-trace-editing"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
 import { useWalkthroughNavigation } from "./-hooks/use-walkthrough-navigation"
 import { scrollToAnchor, useWaypointStepping } from "./-hooks/use-waypoint-stepping"
@@ -154,7 +154,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const codeSelection = useCodeSelection()
   const contextEditingOf = useContextEditing(reviewKey)
   const segmentEditing = useSegmentEditing(reviewKey, showToast)
-  const journeyEditing = useJourneyEditing(reviewKey, showToast)
+  const traceEditing = useTraceEditing(reviewKey, showToast)
   const walkthroughEditing = useWalkthroughEditing(reviewKey, showToast)
   const sectionGeneration = useSectionGeneration(reviewKey, showToast)
   const discussion = useReviewDiscussion(reviewKey, showToast)
@@ -465,15 +465,15 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
                           onOpenCodeLink={handleOpenCodeLink}
                         />
-                        {segment.offers.journey === null
+                        {segment.offers.traceDiagram === null
                           ? (
-                              <JourneyBand
-                                {...segment.journey}
+                              <TraceBand
+                                {...segment.traceDiagram}
                                 codeLinks={page.codeLinks}
                                 codeDefinitions={page.codeDefinitions}
                                 isReviewPending={setReviewed.isPending}
-                                authoring={isOwn ? journeyEditing.authoringOf(segment.id) : null}
-                                cardMoving={page.canMoveCards ? journeyEditing.cardMovingOf(segment.id) : null}
+                                authoring={isOwn ? traceEditing.authoringOf(segment.id) : null}
+                                cardMoving={page.canMoveCards ? traceEditing.cardMovingOf(segment.id) : null}
                                 renderDescriptionEditor={isOwn
                                   ? (request) => (
                                       <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
@@ -492,28 +492,28 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           : (
                               <GenerationOffer
                                 kind="board"
-                                {...segment.offers.journey}
-                                isGenerating={sectionGeneration.generatingSection === segment.offers.journey.section}
-                                errorMessage={sectionGeneration.errorMessageOf(segment.offers.journey.section)}
-                                onGenerate={() => { sectionGeneration.onGenerate("journey") }}
+                                {...segment.offers.traceDiagram}
+                                isGenerating={sectionGeneration.generatingSection === segment.offers.traceDiagram.section}
+                                errorMessage={sectionGeneration.errorMessageOf(segment.offers.traceDiagram.section)}
+                                onGenerate={() => { sectionGeneration.onGenerate("traceDiagram") }}
                               />
                             )}
-                        {segment.offers.blast === null
+                        {segment.offers.blastDiagram === null
                           ? null
                           : (
                               <GenerationOffer
                                 kind="board"
-                                {...segment.offers.blast}
-                                isGenerating={sectionGeneration.generatingSection === segment.offers.blast.section}
-                                errorMessage={sectionGeneration.errorMessageOf(segment.offers.blast.section)}
-                                onGenerate={() => { sectionGeneration.onGenerate("blast") }}
+                                {...segment.offers.blastDiagram}
+                                isGenerating={sectionGeneration.generatingSection === segment.offers.blastDiagram.section}
+                                errorMessage={sectionGeneration.errorMessageOf(segment.offers.blastDiagram.section)}
+                                onGenerate={() => { sectionGeneration.onGenerate("blastDiagram") }}
                               />
                             )}
-                        {segment.blast === null
+                        {segment.blastDiagram === null
                           ? null
                           : (
                               <BlastBand
-                                {...segment.blast}
+                                {...segment.blastDiagram}
                                 codeLinks={page.codeLinks}
                                 renderImpactEditor={isOwn
                                   ? (request) => (
@@ -674,16 +674,16 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                         onClose={() => { setArrangedWalkthroughSegmentId(null) }}
                       />
                     )}
-                {!isOwn || journeyEditing.cardAddition === null
+                {!isOwn || traceEditing.cardAddition === null
                   ? null
-                  : <AddCardDialog reviewKey={reviewKey} addition={journeyEditing.cardAddition} />}
-                {!isOwn || journeyEditing.cardChange === null
+                  : <AddCardDialog reviewKey={reviewKey} addition={traceEditing.cardAddition} />}
+                {!isOwn || traceEditing.cardChange === null
                   ? null
                   : (
                       <Suspense fallback={null}>
                         <ModifyCardDialog
                           reviewKey={reviewKey}
-                          change={journeyEditing.cardChange}
+                          change={traceEditing.cardChange}
                           renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
                         />
                       </Suspense>

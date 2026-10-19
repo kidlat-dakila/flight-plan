@@ -9,7 +9,7 @@ const LABEL_BY_PATH = new Map([
   ["src/logger.ts", "logger.ts"],
 ])
 
-const blast: Blast = {
+const blastDiagram: Blast = {
   nodes: [
     { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null },
     { path: "src/checkout.ts", diffType: null, impactType: null, impactReason: null },
@@ -34,44 +34,44 @@ const distanceBetween = (one: PlacedBlastNode, two: PlacedBlastNode): number => 
 
 describe("layoutBlast", () => {
   it("places every file once, inside the board", () => {
-    const layout = layoutBlast(blast, LABEL_BY_PATH)
+    const layout = layoutBlast(blastDiagram, LABEL_BY_PATH)
 
-    expect(layout.nodes.map((placed) => placed.node.path)).toStrictEqual(blast.nodes.map((node) => node.path))
+    expect(layout.nodes.map((placed) => placed.node.path)).toStrictEqual(blastDiagram.nodes.map((node) => node.path))
     expect(layout.nodes.every((placed) => placed.x > 0 && placed.x < layout.width && placed.y > 0 && placed.y < layout.height)).toBe(true)
   })
 
   it("gives the same places every time", () => {
-    expect(layoutBlast(blast, LABEL_BY_PATH)).toStrictEqual(layoutBlast(blast, LABEL_BY_PATH))
+    expect(layoutBlast(blastDiagram, LABEL_BY_PATH)).toStrictEqual(layoutBlast(blastDiagram, LABEL_BY_PATH))
   })
 
   it("draws a file larger the more files it is connected to", () => {
-    const { nodes } = layoutBlast(blast, LABEL_BY_PATH)
+    const { nodes } = layoutBlast(blastDiagram, LABEL_BY_PATH)
 
     expect(placedAt(nodes, "src/pricing.ts").radius).toBeGreaterThan(placedAt(nodes, "src/cart.ts").radius)
     expect(placedAt(nodes, "src/cart.ts").radius).toBeGreaterThan(placedAt(nodes, "src/logger.ts").radius)
   })
 
   it("keeps two files apart by at least their labels", () => {
-    const { nodes } = layoutBlast(blast, LABEL_BY_PATH)
+    const { nodes } = layoutBlast(blastDiagram, LABEL_BY_PATH)
     const pairs = nodes.flatMap((one, position) => nodes.slice(position + 1).map((two) => [one, two] as const))
 
     expect(pairs.every(([one, two]) => Math.abs(one.x - two.x) >= 40 || Math.abs(one.y - two.y) >= 30)).toBe(true)
   })
 
   it("draws an import as a straight line from the rim of the importer to the rim of the imported file", () => {
-    const layout = layoutBlast(blast, LABEL_BY_PATH)
+    const layout = layoutBlast(blastDiagram, LABEL_BY_PATH)
     const cart = placedAt(layout.nodes, "src/cart.ts")
     const pricing = placedAt(layout.nodes, "src/pricing.ts")
     const [start, end] = layout.edges[0].points
 
-    expect(layout.edges.map((placed) => placed.edge)).toStrictEqual(blast.edges)
+    expect(layout.edges.map((placed) => placed.edge)).toStrictEqual(blastDiagram.edges)
     expect(Math.hypot(start.x - cart.x, start.y - cart.y)).toBeLessThan(cart.radius + 8)
     expect(Math.hypot(end.x - pricing.x, end.y - pricing.y)).toBeLessThan(pricing.radius + 8)
     expect(Math.hypot(end.x - start.x, end.y - start.y)).toBeLessThan(distanceBetween(cart, pricing))
   })
 
   it("leaves out an import of a file that is not on the diagram", () => {
-    const layout = layoutBlast({ nodes: blast.nodes, edges: [{ importer: "src/cart.ts", imported: "src/missing.ts" }] }, LABEL_BY_PATH)
+    const layout = layoutBlast({ nodes: blastDiagram.nodes, edges: [{ importer: "src/cart.ts", imported: "src/missing.ts" }] }, LABEL_BY_PATH)
 
     expect(layout.edges).toStrictEqual([])
   })
@@ -96,7 +96,7 @@ describe("layoutBlast", () => {
   })
 
   it("stacks the files that import the same file in one column, at its left", () => {
-    const { nodes } = layoutBlast(blast, LABEL_BY_PATH)
+    const { nodes } = layoutBlast(blastDiagram, LABEL_BY_PATH)
     const importerColumns = ["src/cart.ts", "src/checkout.ts", "src/ui.ts"].map((path) => placedAt(nodes, path).x)
 
     expect(new Set(importerColumns).size).toBe(1)

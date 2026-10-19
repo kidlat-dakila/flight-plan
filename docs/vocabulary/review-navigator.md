@@ -6,7 +6,7 @@ The Review Navigator is the toolbar band fixed to the foot of a [Flight Plan Rev
 
 ## The section on screen
 
-The navigator always works on one section of the [review artifact](review-artifact.md): the Context, the [Journey Flow Diagram](journey-flow-diagram.md), the [Blast Diagram](blast-diagram.md) or the [Code Walkthrough](code-walkthrough.md) of a segment, or the Conversation. It is the section that fills most of the screen. A short section that is wholly in view counts as filling the screen, so a short Context still gets its own controls.
+The navigator always works on one section of the [review artifact](review-artifact.md): the Context, the [Trace Diagram](trace-diagram.md), the [Blast Diagram](blast-diagram.md) or the [Code Walkthrough](code-walkthrough.md) of a segment, or the Conversation. It is the section that fills most of the screen. A short section that is wholly in view counts as filling the screen, so a short Context still gets its own controls.
 
 When the section on screen changes, the navigator changes with it: the controls of the new section fade in and the navigator settles to its new width.
 
@@ -27,7 +27,7 @@ Back and Next follow the order of the section rail and carry on from the end of 
 | Section | Controls |
 |---|---|
 | Context | **Expand all** or **Collapse all** (Q), for the accordion sections of the context |
-| Journey Flow Diagram | **Collapse all** or **Expand all** nodes (Q), **Zoom in** (Z), **Zoom out** (X), **Full screen** (F), **Reset view** (T) |
+| Trace Diagram | **Collapse all** or **Expand all** nodes (Q), **Zoom in** (Z), **Zoom out** (X), **Full screen** (F), **Reset view** (T) |
 | Blast Diagram | **Export bound** (E) and **Import bound** (Q) when it has both views, **Zoom in** (Z), **Zoom out** (X), **Full screen** (F), **Reset view** (T) |
 | Code Walkthrough | **Previous waypoint** (A), the position, **Next waypoint** (D), **Mark as reviewed** (S), **Add comment** (C), **Filter** (F), **Collapse all** or **Expand all** files (Q), **Collapse file** or **Expand file** (E), **Expand waypoint** or **Collapse waypoint** (R) |
 

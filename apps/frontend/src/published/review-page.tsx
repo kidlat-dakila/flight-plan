@@ -12,7 +12,6 @@ import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import ContextSection, { CONTEXT_PROSE_CLASSES } from "@flightplan/ui/ContextSection"
 import FileSection from "@flightplan/ui/FileSection"
 import GenerationOffer from "@flightplan/ui/GenerationOffer"
-import JourneyBand from "@flightplan/ui/JourneyBand"
 import { AccordionOpeningContext, useAccordionNavigation } from "@flightplan/ui/lib/accordion-opening"
 import type { CodeLinkTargets, ProseBlocks } from "@flightplan/ui/lib/review-content"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
@@ -24,6 +23,7 @@ import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNaviga
 import SectionRail from "@flightplan/ui/SectionRail"
 import SegmentHeading from "@flightplan/ui/SegmentHeading"
 import SignBand from "@flightplan/ui/SignBand"
+import TraceBand from "@flightplan/ui/TraceBand"
 import type { PublishedReview } from "./published-review"
 import UnavailableFeatureDialog from "./unavailable-feature-dialog"
 import { useReviewedMarks } from "./use-reviewed-marks"
@@ -149,10 +149,10 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                     codeLinks={review.codeLinks}
                     onOpenCodeLink={stepping.onOpenCodeLink}
                   />
-                  {segment.offers.journey === null
+                  {segment.offers.traceDiagram === null
                     ? (
-                        <JourneyBand
-                          {...segment.journey}
+                        <TraceBand
+                          {...segment.traceDiagram}
                           codeLinks={review.codeLinks}
                           codeDefinitions={review.codeDefinitions}
                           isReviewPending={false}
@@ -163,28 +163,28 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                     : (
                         <GenerationOffer
                           kind="board"
-                          {...segment.offers.journey}
+                          {...segment.offers.traceDiagram}
                           isGenerating={false}
                           errorMessage={null}
                           onGenerate={showUnavailableFeature}
                         />
                       )}
-                  {segment.offers.blast === null
+                  {segment.offers.blastDiagram === null
                     ? null
                     : (
                         <GenerationOffer
                           kind="board"
-                          {...segment.offers.blast}
+                          {...segment.offers.blastDiagram}
                           isGenerating={false}
                           errorMessage={null}
                           onGenerate={showUnavailableFeature}
                         />
                       )}
-                  {segment.blast === null
+                  {segment.blastDiagram === null
                     ? null
                     : (
                         <BlastBand
-                          {...segment.blast}
+                          {...segment.blastDiagram}
                           codeLinks={review.codeLinks}
                           renderImpactEditor={null}
                           onOpenCodeLink={stepping.onOpenCodeLink}

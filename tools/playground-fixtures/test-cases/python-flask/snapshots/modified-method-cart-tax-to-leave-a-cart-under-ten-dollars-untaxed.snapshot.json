@@ -67,9 +67,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "shop/api.py#route@/cart/total",
               "type": "route",
@@ -155,7 +155,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "shop/api.py#function@8:1 -> shop/cart.py#class@4:1",
               "from": "shop/api.py#function@8:1",
@@ -183,7 +183,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "shop/cart.py",
@@ -240,7 +240,7 @@
                     "lineEnd": 17
                   },
                   "category": "method",
-                  "journeyNodeId": "shop/cart.py#class@4:1",
+                  "traceNodeId": "shop/cart.py#class@4:1",
                   "codeBlockIds": [
                     "shop/cart.py#method@14:5",
                     "shop/cart.py#condition@15:9"

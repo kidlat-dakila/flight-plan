@@ -45,16 +45,16 @@ type SwitchableSection = (typeof SWITCHABLE_SECTIONS)[number]
 const FIELD_GROUPS: readonly { readonly title: string, readonly rootPath: string, readonly section?: SwitchableSection }[] = [
   { title: "Voice", rootPath: "writingStyle" },
   { title: "Context", rootPath: "context" },
-  { title: "Journey Flow Diagram", rootPath: SECTION_FIELD_PATHS.journey, section: "journey" },
-  { title: "Blast Diagram", rootPath: SECTION_FIELD_PATHS.blast, section: "blast" },
+  { title: "Trace Diagram", rootPath: SECTION_FIELD_PATHS.traceDiagram, section: "traceDiagram" },
+  { title: "Blast Diagram", rootPath: SECTION_FIELD_PATHS.blastDiagram, section: "blastDiagram" },
   { title: "Findings", rootPath: SECTION_FIELD_PATHS.findings, section: "findings" },
   { title: "Code Walkthrough", rootPath: SECTION_FIELD_PATHS.walkthrough },
   { title: "Context code blocks", rootPath: CONTEXT_CODE_BLOCKS_FIELD_PATH },
 ]
 
 const SWITCH_DESCRIPTIONS: Readonly<Record<(typeof SWITCHABLE_SECTIONS)[number], string>> = {
-  journey: "The diagrams that show how the changed code runs, from what starts it to what it reaches.",
-  blast: "The diagram of the files the change can affect, with what it does to each.",
+  traceDiagram: "The diagrams that show how the changed code runs, from what starts it to what it reaches.",
+  blastDiagram: "The diagram of the files the change can affect, with what it does to each.",
   findings: "The bugs, risks, nits and questions the agent reports on a waypoint of the Code Walkthrough.",
 }
 

@@ -22,7 +22,7 @@ export const WALKTHROUGH_ORDER_OFFERS: Record<WalkthroughOrder, WalkthroughOrder
     label: "Along the path",
     summary: "The order the change runs in.",
     description:
-      "The entry point first, then each file the change reaches in turn, in the order the Journey Flow Diagram reads.",
+      "The entry point first, then each file the change reaches in turn, in the order the Trace Diagram reads.",
     instruction:
       "Order the Code Walkthrough along the path: the file where control arrives first, then each file the change reaches in turn.",
   },

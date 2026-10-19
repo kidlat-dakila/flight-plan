@@ -3,7 +3,7 @@ import type { inferInput, inferOutput, TRPCOptionsProxy } from "@trpc/tanstack-r
 import { useState } from "react"
 import { useTRPC } from "@/trpc"
 import type { AppRouter } from "@flightplan/backend/router"
-import type { CardMoving, JourneyBandAuthoring } from "@flightplan/ui/JourneyBand"
+import type { CardMoving, TraceBandAuthoring } from "@flightplan/ui/TraceBand"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -12,7 +12,7 @@ interface ReviewKey {
 
 type ReviewRoutes = TRPCOptionsProxy<AppRouter>["review"]
 
-export type DiagramEdit = inferInput<ReviewRoutes["editJourney"]>["edit"]
+export type DiagramEdit = inferInput<ReviewRoutes["editTrace"]>["edit"]
 export type CardForm = inferOutput<ReviewRoutes["cardForm"]>
 export type CardBlocks = inferOutput<ReviewRoutes["cardBlocks"]>
 type CardAdditionEdit = Extract<DiagramEdit, { readonly kind: "add-card" }>
@@ -39,8 +39,8 @@ export interface CardChange {
   readonly onClose: () => void
 }
 
-export interface JourneyEditing {
-  readonly authoringOf: (segmentId: string) => JourneyBandAuthoring
+export interface TraceEditing {
+  readonly authoringOf: (segmentId: string) => TraceBandAuthoring
   readonly cardMovingOf: (segmentId: string) => CardMoving
   readonly cardAddition: CardAddition | null
   readonly cardChange: CardChange | null
@@ -62,7 +62,7 @@ const FORM_EDIT_KINDS: readonly DiagramEdit["kind"][] = ["add-card", "change-car
 
 const isWrittenInForm = (edit: DiagramEdit): boolean => FORM_EDIT_KINDS.includes(edit.kind)
 
-export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: string) => void): JourneyEditing => {
+export const useTraceEditing = (reviewKey: ReviewKey, onProblem: (message: string) => void): TraceEditing => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const [addedCard, setAddedCard] = useState<AddedCard | null>(null)
@@ -71,8 +71,8 @@ export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: str
   const stopDescribing = (segmentId: string): void => {
     setDescribedSegmentIds((segmentIds) => segmentIds.filter((describedSegmentId) => describedSegmentId !== segmentId))
   }
-  const editJourney = useMutation(
-    trpc.review.editJourney.mutationOptions({
+  const editTrace = useMutation(
+    trpc.review.editTrace.mutationOptions({
       onSuccess: async (editing, { segmentId, edit }) => {
         if (editing.kind === "rejected") {
           if (!isWrittenInForm(edit)) onProblem(editing.message)
@@ -96,18 +96,18 @@ export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: str
     }),
   )
   const save = (segmentId: string, edit: DiagramEdit): void => {
-    editJourney.mutate({ ...reviewKey, segmentId, edit })
+    editTrace.mutate({ ...reviewKey, segmentId, edit })
   }
-  const lastEdit: DiagramEdit | null = editJourney.variables?.edit ?? null
-  const rejectionMessage = editJourney.data?.kind === "rejected" ? editJourney.data.message : null
-  const failureMessage = rejectionMessage ?? editJourney.error?.message ?? null
+  const lastEdit: DiagramEdit | null = editTrace.variables?.edit ?? null
+  const rejectionMessage = editTrace.data?.kind === "rejected" ? editTrace.data.message : null
+  const failureMessage = rejectionMessage ?? editTrace.error?.message ?? null
   const isLastAddition = lastEdit?.kind === "add-card"
   const startAddition = (added: AddedCard): void => {
-    if (isLastAddition) editJourney.reset()
+    if (isLastAddition) editTrace.reset()
     setAddedCard(added)
   }
   const isLastChange = lastEdit?.kind === "change-card"
-  const isLastDescriptionOf = (segmentId: string): boolean => lastEdit?.kind === "describe" && editJourney.variables?.segmentId === segmentId
+  const isLastDescriptionOf = (segmentId: string): boolean => lastEdit?.kind === "describe" && editTrace.variables?.segmentId === segmentId
 
   return {
     cardMovingOf: (segmentId) => ({
@@ -115,7 +115,7 @@ export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: str
     }),
     authoringOf: (segmentId) => ({
       board: {
-        isPending: editJourney.isPending,
+        isPending: editTrace.isPending,
         onAddCard: () => { startAddition({ segmentId, lineEnd: null }) },
         onClearDiagram: () => { save(segmentId, { kind: "clear-diagram" }) },
         onRemoveDiagram: () => { save(segmentId, { kind: "remove-diagram" }) },
@@ -123,22 +123,22 @@ export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: str
         onDrawLine: (line) => { save(segmentId, { kind: "add-line", ...line }) },
         onRemoveLine: (line) => { save(segmentId, { kind: "remove-line", ...line }) },
         onEditCard: (nodeId) => {
-          if (isLastChange) editJourney.reset()
+          if (isLastChange) editTrace.reset()
           setModifiedCard({ segmentId, nodeId })
         },
         onRemoveCard: (nodeId) => { save(segmentId, { kind: "remove-card", nodeId }) },
       },
       description: {
         isWriting: describedSegmentIds.includes(segmentId),
-        isSaving: isLastDescriptionOf(segmentId) && editJourney.isPending,
+        isSaving: isLastDescriptionOf(segmentId) && editTrace.isPending,
         errorMessage: isLastDescriptionOf(segmentId) ? failureMessage : null,
         onEdit: () => {
-          if (isLastDescriptionOf(segmentId)) editJourney.reset()
+          if (isLastDescriptionOf(segmentId)) editTrace.reset()
           setDescribedSegmentIds((segmentIds) => [...segmentIds, segmentId])
         },
         onSave: (markdown) => { save(segmentId, { kind: "describe", description: markdown }) },
         onCancel: () => {
-          if (isLastDescriptionOf(segmentId)) editJourney.reset()
+          if (isLastDescriptionOf(segmentId)) editTrace.reset()
           stopDescribing(segmentId)
         },
       },
@@ -149,7 +149,7 @@ export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: str
       : {
           segmentId: addedCard.segmentId,
           note: addedCard.lineEnd === null ? null : LINE_END_NOTE,
-          isSaving: isLastAddition && editJourney.isPending,
+          isSaving: isLastAddition && editTrace.isPending,
           errorMessage: isLastAddition ? failureMessage : null,
           onSubmit: (card) => {
             save(addedCard.segmentId, { kind: "add-card", ...card, ...(addedCard.lineEnd === null ? {} : { lineEnd: addedCard.lineEnd }) })
@@ -160,7 +160,7 @@ export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: str
       ? null
       : {
           ...modifiedCard,
-          isSaving: isLastChange && editJourney.isPending,
+          isSaving: isLastChange && editTrace.isPending,
           errorMessage: isLastChange ? failureMessage : null,
           onSave: (content) => { save(modifiedCard.segmentId, { kind: "change-card", nodeId: modifiedCard.nodeId, ...content }) },
           onClose: () => { setModifiedCard(null) },

@@ -214,9 +214,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/routes/cart/components/CartLine.tsx#component@6:1",
               "type": "component",
@@ -265,7 +265,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/routes/cart/components/CartLine.tsx#component@6:1 -> src/routes/cart/components/CartLine.tsx#render-event@18:31",
               "from": "src/routes/cart/components/CartLine.tsx#component@6:1",
@@ -273,7 +273,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/routes/cart/components/CartLine.tsx",
@@ -386,7 +386,7 @@
                     "lineEnd": 23
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
+                  "traceNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
                   "codeBlockIds": [
                     "src/routes/cart/components/CartLine.tsx#component@6:1",
                     "src/routes/cart/components/CartLine.tsx#function@9:3",
@@ -407,7 +407,7 @@
                         "lineEnd": 11
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
+                      "traceNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/cart/components/CartLine.tsx#function@9:3",
                         "src/routes/cart/components/CartLine.tsx#condition@10:5",
@@ -427,7 +427,7 @@
                         "lineEnd": 18
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
+                      "traceNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/cart/components/CartLine.tsx#render-event@18:31"
                       ],

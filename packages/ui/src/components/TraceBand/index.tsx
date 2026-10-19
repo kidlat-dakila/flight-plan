@@ -1,21 +1,21 @@
 import type { ReactNode } from "react"
 import Button from "@/components/blocks/button"
-import JourneyFlowDiagram, { type CardMoving, type JourneyAuthoring, type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
 import Prose from "@/components/Prose"
+import TraceDiagram, { type CardMoving, type TraceAuthoring, type TraceEdge, type TraceNode } from "@/components/TraceDiagram"
 import Unwritten from "@/components/Unwritten"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
 export type { CardMoving }
 
-interface JourneyDiagram {
+interface BandDiagram {
   readonly anchorId: string
   readonly title: string
   readonly description: ProseBlocks | null
   readonly descriptionMarkdown: string
   readonly unwrittenLabel: string
-  readonly nodes: readonly JourneyNode[]
-  readonly edges: readonly JourneyEdge[]
+  readonly nodes: readonly TraceNode[]
+  readonly edges: readonly TraceEdge[]
 }
 
 export interface DescriptionEditing {
@@ -36,20 +36,20 @@ export interface DescriptionEditorRequest {
   readonly onCancel: () => void
 }
 
-export interface JourneyBandAuthoring {
-  readonly board: JourneyAuthoring
+export interface TraceBandAuthoring {
+  readonly board: TraceAuthoring
   readonly description: DescriptionEditing
   readonly onAddDiagram: () => void
 }
 
-interface JourneyBandProps {
+interface TraceBandProps {
   readonly anchorId: string
   readonly heading: string
-  readonly diagram: JourneyDiagram | null
+  readonly diagram: BandDiagram | null
   readonly codeLinks: CodeLinkTargets
   readonly codeDefinitions: CodeDefinitions
   readonly isReviewPending: boolean
-  readonly authoring?: JourneyBandAuthoring | null
+  readonly authoring?: TraceBandAuthoring | null
   readonly cardMoving?: CardMoving | null
   readonly renderDescriptionEditor?: ((request: DescriptionEditorRequest) => ReactNode) | null
   readonly onOpenCodeLink: (anchorId: string) => void
@@ -58,13 +58,13 @@ interface JourneyBandProps {
 
 const ADD_DIAGRAM_LABEL = "Add a diagram"
 const EDIT_DESCRIPTION_LABEL = "Edit"
-const NO_DIAGRAM_MESSAGE = "This segment has no Journey Flow Diagram."
+const NO_DIAGRAM_MESSAGE = "This segment has no Trace Diagram."
 const DESCRIPTION_SKELETON_LINE_COUNT = 3
 const DESCRIPTION_CLASSES = "max-w-[55rem] pb-4"
 
 interface DescriptionProps {
   readonly heading: string
-  readonly diagram: JourneyDiagram
+  readonly diagram: BandDiagram
   readonly codeLinks: CodeLinkTargets
   readonly editing: DescriptionEditing | null
   readonly renderEditor: ((request: DescriptionEditorRequest) => ReactNode) | null
@@ -95,7 +95,7 @@ const Description = ({ heading, diagram, codeLinks, editing, renderEditor, onOpe
     : <Prose blocks={diagram.description} codeLinks={codeLinks} className={DESCRIPTION_CLASSES} onOpenCodeLink={onOpenCodeLink} />
 }
 
-const JourneyBand = ({
+const TraceBand = ({
   anchorId,
   heading,
   diagram,
@@ -107,7 +107,7 @@ const JourneyBand = ({
   renderDescriptionEditor = null,
   onOpenCodeLink,
   onWaypointReviewedChange,
-}: JourneyBandProps) => {
+}: TraceBandProps) => {
   const canEditDescription = authoring !== null && diagram !== null && renderDescriptionEditor !== null && !authoring.description.isWriting
   return (
     <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
@@ -131,7 +131,7 @@ const JourneyBand = ({
                 renderEditor={renderDescriptionEditor}
                 onOpenCodeLink={onOpenCodeLink}
               />
-              <JourneyFlowDiagram
+              <TraceDiagram
                 title={diagram.title}
                 nodes={diagram.nodes}
                 edges={diagram.edges}
@@ -150,4 +150,4 @@ const JourneyBand = ({
   )
 }
 
-export default JourneyBand
+export default TraceBand

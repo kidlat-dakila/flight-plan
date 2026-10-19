@@ -1,4 +1,4 @@
-import type { LibraryCardRules } from "@/journey-flow-diagram/cards/types"
+import type { LibraryCardRules } from "@/trace-diagram/cards/types"
 import { djangoCardRules } from "./libraries/django"
 import { fastapiCardRules } from "./libraries/fastapi"
 import { flaskCardRules } from "./libraries/flask"

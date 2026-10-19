@@ -8,8 +8,8 @@ const LINE_BREAK = "\n"
 const STRUCTURE_BUILT = "Flight Plan just built its structure, and the reviewer is reading it while you write."
 
 const TASKS: Readonly<Record<SectionName, string>> = {
-  journey: `${STRUCTURE_BUILT} Write every node, label and description of it, and nothing else of the review.`,
-  blast: `${STRUCTURE_BUILT} Assess every file it reaches, and write nothing else of the review.`,
+  traceDiagram: `${STRUCTURE_BUILT} Write every node, label and description of it, and nothing else of the review.`,
+  blastDiagram: `${STRUCTURE_BUILT} Assess every file it reaches, and write nothing else of the review.`,
   walkthrough: "Write every File Section and waypoint of it, and nothing else of the review.",
   findings: "Read the code of every waypoint of the Code Walkthrough and report what is wrong with it as findings on that waypoint. Write nothing else of the review.",
 }

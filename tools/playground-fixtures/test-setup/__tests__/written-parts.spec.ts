@@ -1,5 +1,5 @@
 import type { Codegraph, CodegraphSegment, LinkedWaypoint } from "@flightplan/codegraph"
-import type { CodeBlock, JourneyFlowDiagram, JourneyNode } from "@flightplan/configurations"
+import type { CodeBlock, TraceDiagram, TraceNode } from "@flightplan/configurations"
 import { NOTHING_WRITTEN, readWrittenParts, withWrittenParts } from "@test-setup/written-parts"
 
 const waypointOf = (declaration: string): LinkedWaypoint => ({
@@ -13,7 +13,7 @@ const waypointOf = (declaration: string): LinkedWaypoint => ({
   children: [],
   range: { lineStart: 4, lineEnd: 6 },
   category: "function",
-  journeyNodeId: "stock.ts#function@4:1",
+  traceNodeId: "stock.ts#function@4:1",
 })
 
 const FIRST_POSITION = { line: 1, column: 1 }
@@ -40,7 +40,7 @@ const blockOf = (id: string, type: CodeBlock["type"]): CodeBlock => ({
   catalogue: null,
 })
 
-const nodeOf = (id: string, overrides: Partial<JourneyNode> = {}): JourneyNode => ({
+const nodeOf = (id: string, overrides: Partial<TraceNode> = {}): TraceNode => ({
   id,
   type: "function",
   label: null,
@@ -53,11 +53,11 @@ const nodeOf = (id: string, overrides: Partial<JourneyNode> = {}): JourneyNode =
   ...overrides,
 })
 
-const generatedJourney: JourneyFlowDiagram = {
+const generatedTrace: TraceDiagram = {
   astCodeGroup: { astGraphs: [], rootASTGraphs: [], codeBlocks: [], diffBlocks: [], diffContains: [], chainContains: [], diffChains: [] },
   importGraphGroup: [],
   description: null,
-  journeyNodes: [
+  traceNodes: [
     nodeOf("reserve.tsx#component@1:1", {
       type: "component",
       triggerLabels: [{ label: null, codeBlock: blockOf("reserve.tsx#render-event@3:11", "render-event") }, { label: null, codeBlock: blockOf("reserve.tsx#data-fetch@2:9", "data-fetch") }],
@@ -65,15 +65,15 @@ const generatedJourney: JourneyFlowDiagram = {
     }),
     nodeOf("stock.ts#function@4:1"),
   ],
-  journeyNodeEdges: [{ id: "reserve.tsx#component@1:1 -> stock.ts#function@4:1", from: "reserve.tsx#component@1:1", to: "stock.ts#function@4:1" }],
+  traceNodeEdges: [{ id: "reserve.tsx#component@1:1 -> stock.ts#function@4:1", from: "reserve.tsx#component@1:1", to: "stock.ts#function@4:1" }],
 }
 
 const generatedSegment: CodegraphSegment = {
   title: null,
   kind: "entry",
   importGraph: [],
-  journeyFlowDiagram: generatedJourney,
-  blastRadiusDiagram: {
+  traceDiagram: generatedTrace,
+  blastDiagram: {
     nodes: [
       { path: "reserve.ts", diffType: null, impactType: null, impactReason: null },
       { path: "stock.ts", diffType: "modified", impactType: null, impactReason: null },
@@ -94,8 +94,8 @@ const writtenSnapshot = {
       {
         title: "Stock check",
         context: ["## Summary", "", "Held stock is subtracted."],
-        journeyFlowDiagram: {
-          journeyNodes: [
+        traceDiagram: {
+          traceNodes: [
             {
               id: "reserve.tsx#component@1:1",
               label: "Reserves an item",
@@ -107,7 +107,7 @@ const writtenSnapshot = {
             { id: "gone.ts#function@1:1", label: "A node the codegraph no longer has", description: null },
           ],
         },
-        blastRadiusDiagram: {
+        blastDiagram: {
           nodes: [
             { path: "reserve.ts", impactType: "behaviour-changes", impactReason: "A reservation is refused sooner." },
             { path: "stock.ts", impactType: "breaks", impactReason: "A file of the change takes none." },
@@ -140,7 +140,7 @@ describe("readWrittenParts", () => {
   })
 
   it("reads an empty context for a segment that has none written", () => {
-    const [segment] = readWrittenParts({ codegraph: { segments: [{ title: null, journeyFlowDiagram: null, codeWalkthrough: { files: [] } }] } }).codegraph.segments
+    const [segment] = readWrittenParts({ codegraph: { segments: [{ title: null, traceDiagram: null, codeWalkthrough: { files: [] } }] } }).codegraph.segments
 
     expect(segment.context).toStrictEqual([])
   })
@@ -157,8 +157,8 @@ describe("withWrittenParts", () => {
     expect(segment.title).toBe("Stock check")
   })
 
-  it("keeps what is written on the journey: the label and the description of each node at any depth, and the label of each trigger", () => {
-    expect(segment.journeyFlowDiagram?.journeyNodes).toMatchObject([
+  it("keeps what is written on the trace: the label and the description of each node at any depth, and the label of each trigger", () => {
+    expect(segment.traceDiagram?.traceNodes).toMatchObject([
       {
         id: "reserve.tsx#component@1:1",
         label: "Reserves an item",
@@ -171,7 +171,7 @@ describe("withWrittenParts", () => {
   })
 
   it("keeps the impact written on a file the change did not touch, and none on a file of the change", () => {
-    expect(segment.blastRadiusDiagram?.nodes).toStrictEqual([
+    expect(segment.blastDiagram?.nodes).toStrictEqual([
       { path: "reserve.ts", diffType: null, impactType: "behaviour-changes", impactReason: "A reservation is refused sooner." },
       { path: "stock.ts", diffType: "modified", impactType: null, impactReason: null },
     ])
@@ -188,25 +188,25 @@ describe("withWrittenParts", () => {
   })
 
   it("never takes what is generated from the snapshot: the nodes, the blocks, the edges, the ids and the lines stay the generated ones", () => {
-    const [reserve, stock] = segment.journeyFlowDiagram?.journeyNodes ?? []
+    const [reserve, stock] = segment.traceDiagram?.traceNodes ?? []
 
     expect([reserve.id, stock.id]).toStrictEqual(["reserve.tsx#component@1:1", "stock.ts#function@4:1"])
-    expect(reserve.codeBlocks).toStrictEqual(generatedJourney.journeyNodes[0].codeBlocks)
-    expect(reserve.triggerLabels.map((trigger) => trigger.codeBlock)).toStrictEqual(generatedJourney.journeyNodes[0].triggerLabels.map((trigger) => trigger.codeBlock))
-    expect(segment.journeyFlowDiagram?.journeyNodeEdges).toStrictEqual(generatedJourney.journeyNodeEdges)
-    expect(segment.blastRadiusDiagram?.edges).toStrictEqual(generatedSegment.blastRadiusDiagram?.edges)
+    expect(reserve.codeBlocks).toStrictEqual(generatedTrace.traceNodes[0].codeBlocks)
+    expect(reserve.triggerLabels.map((trigger) => trigger.codeBlock)).toStrictEqual(generatedTrace.traceNodes[0].triggerLabels.map((trigger) => trigger.codeBlock))
+    expect(segment.traceDiagram?.traceNodeEdges).toStrictEqual(generatedTrace.traceNodeEdges)
+    expect(segment.blastDiagram?.edges).toStrictEqual(generatedSegment.blastDiagram?.edges)
     expect(segment.codeWalkthrough.files[0].waypoints[0]).toMatchObject({ id: "w1", range: { lineStart: 4, lineEnd: 6 }, category: "function" })
   })
 
-  it("keeps the rest of a snapshot whose journey was written in a shape it no longer has", () => {
+  it("keeps the rest of a snapshot whose trace was written in a shape it no longer has", () => {
     const older = {
       ...writtenSnapshot,
-      codegraph: { segments: writtenSnapshot.codegraph.segments.map((writtenSegment) => ({ ...writtenSegment, journeyFlowDiagram: { title: "An older journey", nodes: [] } })) },
+      codegraph: { segments: writtenSnapshot.codegraph.segments.map((writtenSegment) => ({ ...writtenSegment, traceDiagram: { title: "An older trace", nodes: [] } })) },
     }
     const [olderSegment] = withWrittenParts(generated, readWrittenParts(older)).segments
 
     expect(olderSegment.title).toBe("Stock check")
-    expect(olderSegment.journeyFlowDiagram).toStrictEqual(generatedJourney)
+    expect(olderSegment.traceDiagram).toStrictEqual(generatedTrace)
   })
 
   it("leaves a node, a file or a waypoint the snapshot does not have as it was generated", () => {

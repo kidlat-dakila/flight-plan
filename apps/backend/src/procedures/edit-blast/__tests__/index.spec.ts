@@ -19,7 +19,7 @@ describe("editBlast", () => {
 
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ status: statusBefore })
     const page = await getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
-    const nodes = page?.kind === "artifact" ? page.segments.flatMap((segment) => segment.blast?.views[0].board.nodes ?? []) : []
+    const nodes = page?.kind === "artifact" ? page.segments.flatMap((segment) => segment.blastDiagram?.views[0].board.nodes ?? []) : []
 
     expect(nodes.find((node) => node.id === STOCK_ROUTE_PATH)).toMatchObject({
       mark: "breaks",

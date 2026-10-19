@@ -7,7 +7,7 @@ The codegraph is Flight Plan's map of how a change connects to the rest of the c
 - **Which files belong together.** The files that import a changed file and the files it imports, joined into groups that share a file.
 - **What each file is made of.** The code blocks of every file of a group: each piece a changed line can belong to, what it uses and what uses it, and which blocks the diff touched.
 - **What leads to the changed code.** From what starts a path, through the blocks it runs, to each changed block: a chain.
-- **The structure of a review.** The segments of each group, with the Journey Flow Diagram, the Blast Diagram and the Code Walkthrough of each.
+- **The structure of a review.** The segments of each group, with the Trace Diagram, the Blast Diagram and the Code Walkthrough of each.
 
 Flight Plan builds the codegraph from the syntax trees of the files themselves, read straight from git. It needs no language server, no prebuilt index and no checked-out working tree.
 
@@ -23,7 +23,7 @@ This page is the overview. Each mechanism and each language has a page of its ow
 | [Classifications](codegraph/classifications.md) | What a block is for and what a change to it does, and where a repository's tools keep its tests, migrations and configuration |
 | [Symbols](codegraph/symbols.md) | How a block refers to what it uses, and where a value comes from |
 | [Chains](codegraph/chains.md) | How a change is placed in a block and traced to what starts it |
-| [Steps](codegraph/steps.md) | How the blocks inside a declaration are compressed into the steps of a journey node and the children of a waypoint |
+| [Steps](codegraph/steps.md) | How the blocks inside a declaration are compressed into the steps of a trace node and the children of a waypoint |
 | [Segments](codegraph/segments.md) | Entry segments and the shared segment, and when a segment has a Blast Diagram |
 | [Catalogue](codegraph/catalogue.md) | What a call into a library means: routes, pages, events, effects, and which files are tests |
 | [AST graph](codegraph/ast-graph.md) | The syntax of one file, read from the same parse as its code blocks: names and their uses, syntax sites and statements |
@@ -34,17 +34,17 @@ This page is the overview. Each mechanism and each language has a page of its ow
 
 ## One way a change is drawn
 
-Every change is drawn from code blocks, whatever language it is written in: its segments are cut from the group, its Journey Flow Diagram is drawn from chains, and its Blast Diagram and its Code Walkthrough are read from the blocks.
+Every change is drawn from code blocks, whatever language it is written in: its segments are cut from the group, its Trace Diagram is drawn from chains, and its Blast Diagram and its Code Walkthrough are read from the blocks.
 
-| A cluster | Segments | Journey Flow Diagram | Blast Diagram | Code Walkthrough |
+| A cluster | Segments | Trace Diagram | Blast Diagram | Code Walkthrough |
 |---|---|---|---|---|
 | TypeScript, JavaScript, JSX, Vue, Python, and files no language reads | Cut from each group: entry segments and the shared segment | From chains | The files that use a changed block | One waypoint per changed block at the root of a file, or per method, with a child per changed step inside it |
 
-The diagrams the codegraph produces have entries of their own: [Journey Flow Diagram](journey-flow-diagram.md), [Blast Diagram](blast-diagram.md) and [Code Walkthrough](code-walkthrough.md).
+The diagrams the codegraph produces have entries of their own: [Trace Diagram](trace-diagram.md), [Blast Diagram](blast-diagram.md) and [Code Walkthrough](code-walkthrough.md).
 
 ## Why it exists
 
-The codegraph is what a review artifact is built from, and the artifact is only worth trusting if its structure is right. The Journey Flow Diagram and the Blast Diagram make claims about the code: this function uses that one, and this change reaches these places. If an agent drew those diagrams from reading the code, it could miss a user or invent a connection, and a reviewer would have no way to tell. Reading enough files to find every user would also cost the agent a large number of tokens on every review.
+The codegraph is what a review artifact is built from, and the artifact is only worth trusting if its structure is right. The Trace Diagram and the Blast Diagram make claims about the code: this function uses that one, and this change reaches these places. If an agent drew those diagrams from reading the code, it could miss a user or invent a connection, and a reviewer would have no way to tell. Reading enough files to find every user would also cost the agent a large number of tokens on every review.
 
 The codegraph splits the work in two. **Structure is derived**: Flight Plan computes who uses what, directly from the code, so the same change always gives the same structure. **Prose is authored**: the agent, or the author of the pull request, explains what the structure means, such as why a path matters or what could break along it. Neither side writes the other's half, so a writer cannot restructure a diagram and the codegraph never makes up an explanation. The structure needs no writer, so a review can be read as soon as Flight Plan builds it.
 
@@ -77,12 +77,12 @@ flowchart TD
   cluster["3. Join the import graphs<br/>that share a file into clusters"]
   group["4. Build the group of code blocks<br/>of each cluster, with its chains"]
   cut["5. Cut each group into segments"]
-  journey["Journey Flow Diagram"]
+  trace["Trace Diagram"]
   blast["Blast Diagram"]
   walkthrough["Code Walkthrough"]
 
   change --> trace --> cluster --> group --> cut
-  cut --> journey
+  cut --> trace
   cut --> blast
   cut --> walkthrough
 ```
@@ -151,8 +151,8 @@ interface CodegraphSegment {
   title: string | null
   kind: "entry" | "shared"
   importGraph: ImportGraphFile[]
-  journeyFlowDiagram: JourneyFlow | null
-  blastRadiusDiagram: Blast | null
+  traceDiagram: TraceFlow | null
+  blastDiagram: Blast | null
   codeWalkthrough: LinkedCodeWalkthrough
   codeReferences: FileCodeReferences[]
 }
@@ -163,10 +163,10 @@ interface CodegraphSegment {
 | `title` | `null` until a consumer writes it |
 | `kind` | Whether the segment is one line of change or the shared segment |
 | `importGraph` | The changed files of the segment, and the files of its group the diff did not touch. A deleted file of a cluster is with the first segment of that cluster. |
-| `journeyFlowDiagram` | `null` for a segment in which nothing that runs changed |
-| `blastRadiusDiagram` | `null` for an entry segment nothing outside the change uses. See [When a segment has a Blast Diagram](codegraph/segments.md#when-a-segment-has-a-blast-diagram). |
+| `traceDiagram` | `null` for a segment in which nothing that runs changed |
+| `blastDiagram` | `null` for an entry segment nothing outside the change uses. See [When a segment has a Blast Diagram](codegraph/segments.md#when-a-segment-has-a-blast-diagram). |
 
-A waypoint holds its `codeBlocks`: the block it stops at first, then the changed blocks inside it, each the same object as in the linked group its Journey Flow Diagram is drawn from. A waypoint of the codegraph carries more than the stored one: its line `range`, a `category` (`function`, `class`, `method`, `variable`, `import`, `type`, `statement` or `file`), and the id of the Journey Flow Diagram node it belongs to, `null` when the diagram has no node for it.
+A waypoint holds its `codeBlocks`: the block it stops at first, then the changed blocks inside it, each the same object as in the linked group its Trace Diagram is drawn from. A waypoint of the codegraph carries more than the stored one: its line `range`, a `category` (`function`, `class`, `method`, `variable`, `import`, `type`, `statement` or `file`), and the id of the Trace Diagram node it belongs to, `null` when the diagram has no node for it.
 
 ## Language support
 
@@ -190,15 +190,15 @@ What reads a segment, and what it takes from the codegraph:
 
 | Consumer | What the codegraph gives it | What is left to write |
 |---|---|---|
-| [Journey Flow Diagram](journey-flow-diagram.md) | Its nodes with their blocks, the nodes inside a node, the trigger labels and the edges, drawn from the chains of the group that lead to a change of the segment | The label and the description of each node, and the label of each trigger label |
+| [Trace Diagram](trace-diagram.md) | Its nodes with their blocks, the nodes inside a node, the trigger labels and the edges, drawn from the chains of the group that lead to a change of the segment | The label and the description of each node, and the label of each trigger label |
 | [Blast Diagram](blast-diagram.md) | One node per file of the segment's change and per file that uses a changed block, and one edge per use between two of them. Its `importBound` holds the other direction: one node per file of the segment's change and per file the root blocks around its changes use, directly or through other root blocks, and one edge per use. Which files the change reaches is derived, never stored. | The `impactType` and the `impactReason` of each file the change did not touch, both `null` from the codegraph |
-| [Code Walkthrough](code-walkthrough.md) | One File Section per changed file of the segment and one waypoint per changed block at the root of a file: a function, a class, a variable, a type or a statement, the method when the change is inside a class, and the whole file when no language reads it. A changed import has no waypoint. A waypoint of a declaration with two or more changed steps has one child per step. Each waypoint names the Journey Flow Diagram node it belongs to. | The reading of each waypoint |
+| [Code Walkthrough](code-walkthrough.md) | One File Section per changed file of the segment and one waypoint per changed block at the root of a file: a function, a class, a variable, a type or a statement, the method when the change is inside a class, and the whole file when no language reads it. A changed import has no waypoint. A waypoint of a declaration with two or more changed steps has one child per step. Each waypoint names the Trace Diagram node it belongs to. | The reading of each waypoint |
 
 ### Who calls it
 
 `tools/playground-fixtures` runs `buildBranchCodegraph` against whole repositories and keeps the results as snapshots, which the app shows as fixture reviews in a development build.
 
-A review requested in the app is built by `buildBranchReviewArtifact`, which runs the same pipeline on the branch of the review target and stores each segment of the codegraph as a segment of the review artifact, with its Journey Flow Diagram, its Blast Diagram and its Code Walkthrough, nothing written yet. The artifact is saved before the agent is started or the prompt is handed over, so the agent only writes.
+A review requested in the app is built by `buildBranchReviewArtifact`, which runs the same pipeline on the branch of the review target and stores each segment of the codegraph as a segment of the review artifact, with its Trace Diagram, its Blast Diagram and its Code Walkthrough, nothing written yet. The artifact is saved before the agent is started or the prompt is handed over, so the agent only writes.
 
 An agent's tools can fill in labels and explanations on existing nodes. They have no field for adding, moving or removing a node, and none for saying whether a segment has a diagram. The codegraph owns the structure, and the agent owns the prose.
 
@@ -214,14 +214,14 @@ The entry point is `buildBranchCodegraph` in `src/index.ts`. The work runs in th
 | Build the group of code blocks of each cluster, with its chains | `src/code-blocks/` |
 | Cut a group into segments, and find the files a change reaches | `src/code-blocks/segments.ts` |
 | Read what a call into a library means | `src/catalogue/` |
-| Trace the Journey Flow Diagram of a segment from its chains | `src/journey-flow-diagram/chain-facts.ts`, `scope.ts` and `index.ts` |
-| Build the Blast Diagram of a segment from the blocks that use its change | `src/blast-radius-diagram/from-blocks.ts` |
-| Build the import bound of a Blast Diagram from the blocks the change uses | `src/blast-radius-diagram/import-bound.ts` |
+| Trace the Trace Diagram of a segment from its chains | `src/trace-diagram/chain-facts.ts`, `scope.ts` and `index.ts` |
+| Build the Blast Diagram of a segment from the blocks that use its change | `src/blast-diagram/from-blocks.ts` |
+| Build the import bound of a Blast Diagram from the blocks the change uses | `src/blast-diagram/import-bound.ts` |
 | Derive which files of a Blast Diagram the change reaches | `src/blast/assessment.ts` |
 | Build the Code Walkthrough of a segment from its diff blocks | `src/code-walkthrough/from-blocks.ts` |
 | Read the names, the syntax sites and the statements of a file | `src/ast-graph/` |
-| Draw the import graph of a deleted file as its Blast Diagram | `src/blast-radius-diagram/index.ts` |
+| Draw the import graph of a deleted file as its Blast Diagram | `src/blast-diagram/index.ts` |
 
-The same package holds the builders that turn a stored review artifact into what the review page renders, in `src/journey/`, `src/blast/`, `src/walkthrough/`, `src/code/` and `src/prose/`, and, in `src/scaffold/`, what turns the segments of a codegraph into a first review artifact: `assembleReviewArtifact`, the hunks of a diff and the source lines.
+The same package holds the builders that turn a stored review artifact into what the review page renders, in `src/trace/`, `src/blast/`, `src/walkthrough/`, `src/code/` and `src/prose/`, and, in `src/scaffold/`, what turns the segments of a codegraph into a first review artifact: `assembleReviewArtifact`, the hunks of a diff and the source lines.
 
 Each `__tests__/` folder holds a test for each rule of the code beside it. The cases that run the whole pipeline over a repository are in `tools/playground-fixtures`.

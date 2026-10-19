@@ -6,18 +6,18 @@ A segment is one part of a review. A change is split into segments so that each 
 
 There are two kinds:
 
-| Segment | What it holds | Journey Flow Diagram | Blast Diagram | Code Walkthrough |
+| Segment | What it holds | Trace Diagram | Blast Diagram | Code Walkthrough |
 |---|---|---|---|---|
 | **Entry segment** | One line of change: a changed file and the changed files only it leads to, such as a page with its parts | Yes | Only when something outside the change uses it | Its own files |
 | **Shared segment** | The changed files that several lines of change have in common: routes, shared components, hooks, functions, types, and the changed files no language reads | Yes, of the shared files alone | Always | The shared files |
 
-A shared file is reviewed once, in the shared segment. An entry segment draws it in its Journey Flow Diagram, and leaves it out of its Blast Diagram and its Code Walkthrough. The Journey Flow Diagram of the shared segment draws the shared files and no line of change of an entry segment, so no line is drawn twice.
+A shared file is reviewed once, in the shared segment. An entry segment draws it in its Trace Diagram, and leaves it out of its Blast Diagram and its Code Walkthrough. The Trace Diagram of the shared segment draws the shared files and no line of change of an entry segment, so no line is drawn twice.
 
 A change has at most one shared segment. A file is in exactly one segment.
 
-**A shared segment is only there beside a line of change.** When every changed file of a group passes a test below and no file is left for an entry segment, such as a lone function two pages use, those files are one entry segment, with a Journey Flow Diagram. A file no language reads is a segment of its own when the change has no shared segment.
+**A shared segment is only there beside a line of change.** When every changed file of a group passes a test below and no file is left for an entry segment, such as a lone function two pages use, those files are one entry segment, with a Trace Diagram. A file no language reads is a segment of its own when the change has no shared segment.
 
-Every file of every segment is in the same [AST code group graph](code-blocks.md#the-group), shared or not, because a journey has to pass through shared code to be traced.
+Every file of every segment is in the same [AST code group graph](code-blocks.md#the-group), shared or not, because a trace has to pass through shared code to be traced.
 
 ## Which segment a file belongs to
 
@@ -87,7 +87,7 @@ flowchart TD
 | 2 | `EditPage.tsx`, `EditForm.tsx`, `parse-id.ts` | One line: the page and the two parts it runs |
 | 3 | `ListPage.tsx`, `TodoList.tsx` | One line |
 
-Each page has a journey of its own, and both draw the router and the table as shared.
+Each page has a trace of its own, and both draw the router and the table as shared.
 
 ### A page that renders two tabs
 
@@ -153,7 +153,7 @@ flowchart TD
 | 3 | `orders/edit.tsx` | A line of its own |
 | 4 | `orders/index.tsx` | A line of its own |
 
-The journey of each page starts at the router, which shows the route of that page only.
+The trace of each page starts at the router, which shows the route of that page only.
 
 ### A new page with its parts
 
@@ -170,13 +170,13 @@ flowchart TD
 |---|---|
 | 1 | `routes.ts`, `OrdersPage.tsx`, `useOrders.ts`, `OrderRow.tsx`, `OrderFilter.tsx` |
 
-The route table hands one line over, so it is on that line, and the page runs its three parts. A new page is one segment and one journey.
+The route table hands one line over, so it is on that line, and the page runs its three parts. A new page is one segment and one trace.
 
-## What a journey draws
+## What a trace draws
 
-An entry segment has the Journey Flow Diagram of its own line of change, and of no other. The diagram draws the shared changes the line passes through, above it or below it, as changed nodes that say they are shared: `isShared` on the node, and `Shared · Modified` or `Shared · Added` on the page. They are reviewed in the shared segment, so they are not in the Code Walkthrough of the entry segment. The shared segment has a Journey Flow Diagram of its own: the paths that lead to a shared change without passing through a changed file of an entry segment. It stops at the shared files, and never goes on into a line of change.
+An entry segment has the Trace Diagram of its own line of change, and of no other. The diagram draws the shared changes the line passes through, above it or below it, as changed nodes that say they are shared: `isShared` on the node, and `Shared · Modified` or `Shared · Added` on the page. They are reviewed in the shared segment, so they are not in the Code Walkthrough of the entry segment. The shared segment has a Trace Diagram of its own: the paths that lead to a shared change without passing through a changed file of an entry segment. It stops at the shared files, and never goes on into a line of change.
 
-| Example | Segment | Its journey |
+| Example | Segment | Its trace |
 |---|---|---|
 | A component two pages use | 1, shared | `Component` |
 | | 2 | `PageA → Component` |
@@ -204,9 +204,9 @@ flowchart LR
 
 **A shared file that hands over other lines is drawn with this line's part of it only.** A route table above a page draws the route of that page, and none of the routes of the pages of other segments: a root block outside the segment that holds a block leading only to the change of another line keeps only the blocks the line passes through.
 
-**A journey draws every changed block its chains pass through, shared or not.** A file that runs a line is drawn above it. A route table that only names its pages, as `[pageA, pageB]`, is not: handing a component over is no step of a [chain](chains.md#what-a-chain-steps-through), so the journey of a page starts at the page, and the route table is drawn in the journey of the shared segment. A route table the [catalogue](catalogue.md) reads, such as `createBrowserRouter`, is drawn above the page: its route elements are slots that run their page, so they are steps of the chain.
+**A trace draws every changed block its chains pass through, shared or not.** A file that runs a line is drawn above it. A route table that only names its pages, as `[pageA, pageB]`, is not: handing a component over is no step of a [chain](chains.md#what-a-chain-steps-through), so the trace of a page starts at the page, and the route table is drawn in the trace of the shared segment. A route table the [catalogue](catalogue.md) reads, such as `createBrowserRouter`, is drawn above the page: its route elements are slots that run their page, so they are steps of the chain.
 
-A type is in no journey. It is never traced, since nothing that runs is different.
+A type is in no trace. It is never traced, since nothing that runs is different.
 
 ## When a segment has a Blast Diagram
 

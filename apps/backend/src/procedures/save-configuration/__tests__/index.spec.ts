@@ -53,25 +53,25 @@ describe("saveConfiguration", () => {
     const page = await getConfiguration({ id: "custom-terse", field: null }, context)
     expect(page).toMatchObject({
       panel: {
-        sections: [{ section: "journey", isOn: false }, { section: "blast", isOn: false }, { section: "findings", isOn: true }],
+        sections: [{ section: "traceDiagram", isOn: false }, { section: "blastDiagram", isOn: false }, { section: "findings", isOn: true }],
         contextKinds: [{ kind: "codebase", isRequired: false }, { kind: "library", isRequired: true }, { kind: "language", isRequired: false }],
       },
     })
     const entries = page.kind === "found" ? page.index.flatMap((group) => group.entries) : []
     expect(entries.find((entry) => entry.key === "sections")).toMatchObject({ mark: "changed" })
     expect(entries.find((entry) => entry.key === "walkthrough.files.waypoints.title")).toMatchObject({ mark: "unchanged" })
-    expect(entries.find((entry) => entry.key === "journey.description")).toMatchObject({ mark: "off" })
+    expect(entries.find((entry) => entry.key === "traceDiagram.description")).toMatchObject({ mark: "off" })
   })
 
   it("switches one section and leaves the others as they are", async () => {
     const context = await createContextWithTerse()
 
-    await expect(saveConfiguration({ change: "section", id: "custom-terse", section: "blast", isOn: false }, context)).resolves.toStrictEqual({
+    await expect(saveConfiguration({ change: "section", id: "custom-terse", section: "blastDiagram", isOn: false }, context)).resolves.toStrictEqual({
       kind: "saved",
       message: "Blast Diagram: switched off.",
     })
     await expect(getConfiguration({ id: "custom-terse", field: null }, context)).resolves.toMatchObject({
-      index: [{}, {}, {}, { switch: { section: "journey", label: "Generate Journey Flow Diagrams", isOn: true } }, { switch: { section: "blast", isOn: false } }, { switch: { section: "findings", isOn: true } }, { switch: null }, { switch: null }],
+      index: [{}, {}, {}, { switch: { section: "traceDiagram", label: "Generate Trace Diagrams", isOn: true } }, { switch: { section: "blastDiagram", isOn: false } }, { switch: { section: "findings", isOn: true } }, { switch: null }, { switch: null }],
       panel: { sections: [{ isOn: true }, { isOn: false }, { isOn: true }] },
     })
   })

@@ -9,7 +9,7 @@ trap 'agent-browser record stop >/dev/null 2>&1; rm -rf "$WORK_DIR"' EXIT
 source "$SCRIPT_DIR/browser.sh"
 source "$SCRIPT_DIR/review-clip.sh"
 
-JOURNEY_HEADING="#fixture-segment-4-journey-flow-diagram-heading"
+TRACE_HEADING="#fixture-segment-4-trace-diagram-heading"
 
 row_named() {
   echo "[...$BOARD.querySelectorAll('button')].find(element=>(element.getAttribute('aria-label')||'').startsWith('$1'))"
@@ -19,11 +19,11 @@ waypoint_named() {
   echo "[...$PANEL.querySelectorAll('button[aria-expanded]')].find(element=>element.textContent.includes('$1'))"
 }
 
-open_journey() {
-  open_board_full_screen "$JOURNEY_HEADING"
+open_trace() {
+  open_board_full_screen "$TRACE_HEADING"
 }
 
-journey_scenario() {
+trace_scenario() {
   local poster="$1"
   click_marked "$(node_named "ViewOrdersPage")"
   bring_into_view "ViewOrdersPage"
@@ -47,4 +47,4 @@ journey_scenario() {
   browse wait "$READ_MS"
 }
 
-record_review_clip journey "$REVIEW_URL" open_journey journey_scenario
+record_review_clip trace "$REVIEW_URL" open_trace trace_scenario

@@ -253,8 +253,8 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": null,
-        "blastRadiusDiagram": {
+        "traceDiagram": null,
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/lib/format.ts",
@@ -291,7 +291,7 @@
                     "lineEnd": 8
                   },
                   "category": "statement",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/lib/format.ts#deleted@8:1"
                   ],
@@ -630,9 +630,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
               "type": "root-variable",
@@ -697,7 +697,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@7:1 -> src/routes/cart/index.tsx#component@5:1",
               "from": "src/router.tsx#root-variable@7:1",
@@ -710,7 +710,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/routes/cart/components/CartLine.tsx",
@@ -823,7 +823,7 @@
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
+                  "traceNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
                   "codeBlockIds": [
                     "src/routes/cart/components/CartLine.tsx#component@6:1",
                     "src/routes/cart/components/CartLine.tsx#render@11:7"

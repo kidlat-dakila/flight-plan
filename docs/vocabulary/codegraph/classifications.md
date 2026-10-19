@@ -248,13 +248,13 @@ A value is read the way its tool reads it: a Jest glob from the folder of its co
 
 ## Test files
 
-A test or a story is never read: its code stays out of the graph, the journeys and the walkthroughs. Which files are tests comes from the test runners the repository installs and their configuration, as "Placed by the project" says, and from nothing else.
+A test or a story is never read: its code stays out of the graph, the traces and the walkthroughs. Which files are tests comes from the test runners the repository installs and their configuration, as "Placed by the project" says, and from nothing else.
 
 | A file a test runner names | It follows that |
 |---|---|
 | It is one unread `file` block classified `test`, when the diff changed it | The change shows in the review as the test that changed, with no code of it read |
 | It is in no group of the files it imports, and joins none | A function its page and its test use is used from one place, when segments are found |
 | It hands nothing over | A value a story hands to a component is not an origin of that value |
-| It is not a top of a chain | No journey starts in a test |
+| It is not a top of a chain | No trace starts in a test |
 
 A repository that installs no test runner has no test files: a `cart.test.ts` there is read as any other file.

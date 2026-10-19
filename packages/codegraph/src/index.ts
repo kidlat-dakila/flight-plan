@@ -1,7 +1,7 @@
 import { listASTGraphFiles, type ASTGraphFile, type LineRange } from "@/ast-graph"
-import { generateBlastRadiusDiagram } from "@/blast-radius-diagram"
-import { generateBlastFromBlocks } from "@/blast-radius-diagram/from-blocks"
-import { generateImportBound } from "@/blast-radius-diagram/import-bound"
+import { generateBlastDiagram } from "@/blast-diagram"
+import { generateBlastFromBlocks } from "@/blast-diagram/from-blocks"
+import { generateImportBound } from "@/blast-diagram/import-bound"
 import { linkCodeGroupGraph, readCodeGroups, type ReadCodeGroup, type StoredCodeGroupGraph } from "@/code-blocks"
 import { cutSegments, listReachedFilePaths, type CodeSegmentKind } from "@/code-blocks/segments"
 import { generateCodeReferences, type ExportedNamesByPath, type FileCodeReferences } from "@/code-references"
@@ -16,13 +16,13 @@ import {
   type ImportGraphContext,
   type ImportGraphFile,
 } from "@/import-graph"
-import { generateJourneyFlowDiagram, listJourneyNodes } from "@/journey-flow-diagram"
 import { hunkOfPatch, type HunksByPath } from "@/scaffold/hunks"
 import { assembleReviewArtifact, listSourcePaths, segmentIdOf, type SegmentParts } from "@/scaffold/review-artifact"
-import type { ASTCodeGroupGraph, Blast, CodeBlockType, DiffType, JourneyFlowDiagram, ReviewArtifact } from "@flightplan/configurations"
+import { generateTraceDiagram, listTraceNodes } from "@/trace-diagram"
+import type { ASTCodeGroupGraph, Blast, CodeBlockType, DiffType, TraceDiagram, ReviewArtifact } from "@flightplan/configurations"
 import type { GitAdapter, TargetRef } from "@flightplan/git-forge"
 
-export * from "./blast-radius-diagram"
+export * from "./blast-diagram"
 export * from "./blast/assessment"
 export * from "./blast/build"
 export * from "./blast/layout"
@@ -47,13 +47,13 @@ export * from "./code/links"
 export * from "./code/marked-source"
 export * from "./diagram/settings"
 export * from "./diff-lines"
-export * from "./journey-flow-diagram"
-export * from "./journey-flow-diagram/added-cards"
-export { listJourneyPaths } from "./journey-flow-diagram/paths"
+export * from "./trace-diagram"
+export * from "./trace-diagram/added-cards"
+export { listTracePaths } from "./trace-diagram/paths"
 export * from "./diagram/reach"
-export * from "./journey-flow-diagram/stored"
-export * from "./journey/build"
-export * from "./journey/names"
+export * from "./trace-diagram/stored"
+export * from "./trace/build"
+export * from "./trace/names"
 export * from "./prose/parse-prose"
 export type * from "./review-view-context"
 export * from "./scaffold/context-code-blocks"
@@ -71,8 +71,8 @@ export interface CodegraphSegment {
   readonly title: string | null
   readonly kind: CodegraphSegmentKind
   readonly importGraph: readonly ImportGraphFile[]
-  readonly journeyFlowDiagram: JourneyFlowDiagram | null
-  readonly blastRadiusDiagram: Blast | null
+  readonly traceDiagram: TraceDiagram | null
+  readonly blastDiagram: Blast | null
   readonly codeWalkthrough: LinkedCodeWalkthrough
   readonly codeReferences: readonly FileCodeReferences[]
 }
@@ -119,9 +119,9 @@ const diffLinesIn = ({ diffTypes, patches }: ImportGraphContext): ReadonlyMap<st
 const waypointCountOf = (segments: readonly CodegraphSegment[]): number =>
   segments.flatMap((segment) => segment.codeWalkthrough.files).reduce((count, file) => count + file.waypoints.length, 0)
 
-const listViewedPaths = (journeyFlowDiagram: JourneyFlowDiagram | null, codeWalkthrough: LinkedCodeWalkthrough): string[] => [
+const listViewedPaths = (traceDiagram: TraceDiagram | null, codeWalkthrough: LinkedCodeWalkthrough): string[] => [
   ...codeWalkthrough.files.map((file) => file.path),
-  ...listJourneyNodes(journeyFlowDiagram?.journeyNodes ?? []).map((node) => node.codeBlocks[0].astGraph.filePath),
+  ...listTraceNodes(traceDiagram?.traceNodes ?? []).map((node) => node.codeBlocks[0].astGraph.filePath),
 ]
 
 const listGroupsWithin = (readGroups: readonly ReadCodeGroup[], importGraph: readonly ImportGraphFile[]): ReadCodeGroup[] => {
@@ -168,7 +168,7 @@ const importGraphOf = ({ cluster, group, filePaths, deletedFilePaths }: PlannedS
 
 const blastOfDeleted = (importGraph: readonly ImportGraphFile[], deletedFilePaths: readonly string[]): Blast => {
   const drawn = importGraph.filter((file) => deletedFilePaths.includes(file.filePath) || file.importsTo.some((imported) => deletedFilePaths.includes(imported)))
-  return generateBlastRadiusDiagram(drawn.map((file) => ({ ...file, importsTo: file.importsTo.filter((imported) => deletedFilePaths.includes(imported)) })))
+  return generateBlastDiagram(drawn.map((file) => ({ ...file, importsTo: file.importsTo.filter((imported) => deletedFilePaths.includes(imported)) })))
 }
 
 const joinBlasts = (one: Blast, two: Blast): Blast => ({
@@ -187,7 +187,7 @@ const blastOf = ({ cluster, group, kind, filePaths, sharedFilePaths, deletedFile
   return { ...exportBound, importBound: generateImportBound({ group, filePaths, diffTypes }) }
 }
 
-const journeyOf = ({ cluster, group, kind, filePaths, sharedFilePaths }: PlannedSegment, { linkedGroupOf }: Drawing): JourneyFlowDiagram | null => {
+const traceOf = ({ cluster, group, kind, filePaths, sharedFilePaths }: PlannedSegment, { linkedGroupOf }: Drawing): TraceDiagram | null => {
   if (group === null) return null
   const isWholeGroup = sharedFilePaths.length === 0 && group.astGraphs.every((astGraph) => astGraph.diffBlockIds.length === 0 || filePaths.includes(astGraph.filePath))
   const groupPaths = new Set(group.astGraphs.map((astGraph) => astGraph.filePath))
@@ -197,7 +197,7 @@ const journeyOf = ({ cluster, group, kind, filePaths, sharedFilePaths }: Planned
     .filter((astGraph) => astGraph.diffBlockIds.length > 0 && !filePaths.includes(astGraph.filePath) && !sharedFilePaths.includes(astGraph.filePath))
     .map((astGraph) => astGraph.filePath)
   const scope = { filePaths, sharedFilePaths: otherSharedFilePaths, otherLineFilePaths }
-  return generateJourneyFlowDiagram({ group: linkedGroupOf(group), importGraphGroup, scope: isWholeGroup ? null : scope })
+  return generateTraceDiagram({ group: linkedGroupOf(group), importGraphGroup, scope: isWholeGroup ? null : scope })
 }
 
 const NO_EXPORTED_NAMES: ExportedNamesByPath = new Map()
@@ -225,18 +225,18 @@ const exportedNamesIn = (group: StoredCodeGroupGraph | null, importGraph: readon
 
 const drawSegment = (planned: PlannedSegment, drawing: Drawing, firstWaypointNumber: number): CodegraphSegment => {
   const { cluster, group, kind, filePaths } = planned
-  const journeyFlowDiagram = journeyOf(planned, drawing)
+  const traceDiagram = traceOf(planned, drawing)
   const codeWalkthrough = group === null
     ? NO_WALKTHROUGH
-    : generateWalkthroughFromBlocks({ group: drawing.linkedGroupOf(group), filePaths, journeyFlowDiagram, firstWaypointNumber })
+    : generateWalkthroughFromBlocks({ group: drawing.linkedGroupOf(group), filePaths, traceDiagram, firstWaypointNumber })
   return {
     title: null,
     kind,
     importGraph: importGraphOf(planned),
-    journeyFlowDiagram,
-    blastRadiusDiagram: blastOf(planned, drawing),
+    traceDiagram,
+    blastDiagram: blastOf(planned, drawing),
     codeWalkthrough,
-    codeReferences: generateCodeReferences(cluster.astGraphFiles, listViewedPaths(journeyFlowDiagram, codeWalkthrough), exportedNamesIn(group, cluster.importGraph)),
+    codeReferences: generateCodeReferences(cluster.astGraphFiles, listViewedPaths(traceDiagram, codeWalkthrough), exportedNamesIn(group, cluster.importGraph)),
   }
 }
 
@@ -248,7 +248,7 @@ const joinDrawnBlasts = (one: Blast | null, two: Blast | null): Blast | null => 
 const withUnreadFiles = (segment: CodegraphSegment, unread: CodegraphSegment): CodegraphSegment => ({
   ...segment,
   importGraph: [...segment.importGraph, ...unread.importGraph],
-  blastRadiusDiagram: joinDrawnBlasts(segment.blastRadiusDiagram, unread.blastRadiusDiagram),
+  blastDiagram: joinDrawnBlasts(segment.blastDiagram, unread.blastDiagram),
   codeWalkthrough: { ...segment.codeWalkthrough, files: [...segment.codeWalkthrough.files, ...unread.codeWalkthrough.files] },
   codeReferences: [...segment.codeReferences, ...unread.codeReferences],
 })
@@ -328,8 +328,8 @@ const toSegmentParts = (segment: CodegraphSegment, id: string): SegmentParts => 
   title: segment.title,
   context: UNWRITTEN_CONTEXT,
   importGraph: segment.importGraph,
-  journey: segment.journeyFlowDiagram,
-  blast: segment.blastRadiusDiagram,
+  traceDiagram: segment.traceDiagram,
+  blastDiagram: segment.blastDiagram,
   walkthrough: segment.codeWalkthrough,
   codeReferences: segment.codeReferences,
 })

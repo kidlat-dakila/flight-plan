@@ -2,7 +2,7 @@ import { projectSegments } from "@/procedures/read-artifact/utils/project-artifa
 import type { Segment } from "@flightplan/configurations"
 import { DRAFT_ARTIFACT, DRAFT_SEGMENT } from "./artifact-fixture"
 
-const [BLOCK] = DRAFT_SEGMENT.journey?.journeyNodes[0].codeBlocks ?? []
+const [BLOCK] = DRAFT_SEGMENT.traceDiagram?.traceNodes[0].codeBlocks ?? []
 
 const withBlockOnFirstWaypoint = (segment: Segment): Segment => ({
   ...segment,

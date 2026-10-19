@@ -93,7 +93,7 @@ export interface BlockLabel {
   readonly codeBlock: CodeBlock
 }
 
-export interface JourneyRow {
+export interface TraceRow {
   readonly id: string
   readonly type: CodeBlockType
   readonly label: string | null
@@ -108,21 +108,21 @@ export interface CardPosition {
 
 export type CardSide = (typeof CARD_SIDES)[number]
 
-export interface JourneyNode {
+export interface TraceNode {
   readonly id: string
   readonly type: CodeBlockType
   readonly label: string | null
   readonly description: string | null
   readonly codeBlocks: readonly CodeBlock[]
   readonly diffCodeBlocks: readonly CodeBlock[]
-  readonly children: readonly JourneyNode[]
+  readonly children: readonly TraceNode[]
   readonly triggerLabels: readonly TriggerLabel[]
   readonly blockLabels: readonly BlockLabel[]
-  readonly rows?: readonly JourneyRow[] | undefined
+  readonly rows?: readonly TraceRow[] | undefined
   readonly position?: CardPosition | undefined
 }
 
-export interface JourneyNodeEdge {
+export interface TraceNodeEdge {
   readonly id: string
   readonly from: string
   readonly to: string
@@ -130,12 +130,12 @@ export interface JourneyNodeEdge {
   readonly toSide?: CardSide | undefined
 }
 
-export interface JourneyFlowDiagram {
+export interface TraceDiagram {
   readonly astCodeGroup: ASTCodeGroupGraph
   readonly importGraphGroup: ImportGraphGroup
   readonly description: string | null
-  readonly journeyNodes: readonly JourneyNode[]
-  readonly journeyNodeEdges: readonly JourneyNodeEdge[]
+  readonly traceNodes: readonly TraceNode[]
+  readonly traceNodeEdges: readonly TraceNodeEdge[]
 }
 
 export type DiffType = (typeof DIFF_TYPES)[number]
@@ -179,8 +179,8 @@ export interface Segment {
   readonly title: string
   readonly changedPaths: readonly string[]
   readonly context: string
-  readonly journey: JourneyFlowDiagram | null
-  readonly blast: Blast | null
+  readonly traceDiagram: TraceDiagram | null
+  readonly blastDiagram: Blast | null
   readonly walkthrough: CodeWalkthrough
 }
 

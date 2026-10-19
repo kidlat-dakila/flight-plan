@@ -1,5 +1,5 @@
 import { firstOfEach } from "@/shared/first-of-each"
-import type { CardKind, CardPart, CodeBlock, CodeBlockType, JourneyNode, JourneyNodeEdge } from "@flightplan/configurations"
+import type { CardKind, CardPart, CodeBlock, CodeBlockType, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 import { isNoNodeBlock, NOTHING_LEFT_OUT, rootBlockOfNode } from "./nodes"
 import { cardOfKind, holdsNoPart, listPartParents, toEdge } from "./parts"
 import type { CardContext, CardRules } from "./types"
@@ -37,14 +37,14 @@ const listBuiltOn = ({ nodes }: CardContext): BuiltOn[] => {
     }))
 }
 
-const listBaseEdges = (context: CardContext): JourneyNodeEdge[] => listBuiltOn(context).map(({ baseId, procedureId }) => toEdge(baseId, procedureId))
+const listBaseEdges = (context: CardContext): TraceNodeEdge[] => listBuiltOn(context).map(({ baseId, procedureId }) => toEdge(baseId, procedureId))
 
 const listProcedureToBaseIds = (context: CardContext): ReadonlySet<string> => {
   const ids = listBuiltOn(context).map(({ baseId, procedureId }) => toEdge(procedureId, baseId).id)
   return ids.length === 0 ? NOTHING_LEFT_OUT : new Set(ids)
 }
 
-export const isRouterNode = (node: JourneyNode): boolean => cardOfKind(rootBlockOfNode(node), ROUTER_KINDS)?.part === "holder"
+export const isRouterNode = (node: TraceNode): boolean => cardOfKind(rootBlockOfNode(node), ROUTER_KINDS)?.part === "holder"
 
 export const routerCard: CardRules = {
   kind: "router",

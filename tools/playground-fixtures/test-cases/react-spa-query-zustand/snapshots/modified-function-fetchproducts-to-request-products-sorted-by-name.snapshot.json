@@ -127,9 +127,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
               "type": "root-variable",
@@ -210,7 +210,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
               "from": "src/router.tsx#root-variable@7:1",
@@ -228,7 +228,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/api/products.ts",
@@ -323,7 +323,7 @@
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/products.ts#function@4:1",
+                  "traceNodeId": "src/api/products.ts#function@4:1",
                   "codeBlockIds": [
                     "src/api/products.ts#function@4:1"
                   ],

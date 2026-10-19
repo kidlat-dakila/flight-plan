@@ -11,7 +11,7 @@ import {
   codeLinkSchema,
   fileSectionSchema,
   inlinesSchema,
-  journeyBandSchema,
+  traceBandSchema,
   linkSchema,
   proseSchema,
   walkthroughBandSchema,
@@ -20,7 +20,7 @@ import { MANUAL_WRITER } from "./start/agent-offers"
 import { WALKTHROUGH_ORDERS } from "./start/review-request"
 
 export const REVIEWER_STATES = ["pending", "commented", "approved", "changes-requested"] as const
-export const SECTION_KINDS = ["context", "journey", "blast", "walkthrough", "conversation"] as const
+export const SECTION_KINDS = ["context", "traceDiagram", "blastDiagram", "walkthrough", "conversation"] as const
 
 const personSchema = z.strictObject({
   name: z.string(),
@@ -208,7 +208,7 @@ export const unassignedFilesSchema = z.strictObject({
   paths: z.array(z.string()),
 })
 
-export const OFFERED_SECTIONS = ["journey", "blast", "findings"] as const
+export const OFFERED_SECTIONS = ["traceDiagram", "blastDiagram", "findings"] as const
 
 export const generationOfferSchema = z.strictObject({
   section: z.enum(OFFERED_SECTIONS),
@@ -220,8 +220,8 @@ export const generationOfferSchema = z.strictObject({
 })
 
 export const generationOffersSchema = z.strictObject({
-  journey: generationOfferSchema.nullable(),
-  blast: generationOfferSchema.nullable(),
+  traceDiagram: generationOfferSchema.nullable(),
+  blastDiagram: generationOfferSchema.nullable(),
   findings: generationOfferSchema.nullable(),
 })
 
@@ -234,8 +234,8 @@ export const segmentViewSchema = z.strictObject({
   detailLabel: z.string().nullable(),
   outline: segmentOutlineSchema,
   context: contextBandSchema,
-  journey: journeyBandSchema,
-  blast: blastBandSchema.nullable(),
+  traceDiagram: traceBandSchema,
+  blastDiagram: blastBandSchema.nullable(),
   walkthrough: discussedWalkthroughBandSchema,
   offers: generationOffersSchema,
 })

@@ -41,7 +41,7 @@ function check() {
 
 The `condition` has the range and is the diff block. `check` has `null`, and its `diffSources` holds the `condition`. Had the change been on `const a = 1`, the `variable` block `a` would be the diff block.
 
-**Every changed range has a diff block**, in every file that is not ignored. No change is outside every block: a statement at the root of a file is a `root-statement`, a type is a `type-declaration` and an import is an `import`. The last two are never traced by the Journey Flow Diagram. They are blocks so that the Code Walkthrough always has a block for its waypoint, and so that a change with no diff block cannot happen.
+**Every changed range has a diff block**, in every file that is not ignored. No change is outside every block: a statement at the root of a file is a `root-statement`, a type is a `type-declaration` and an import is an `import`. The last two are never traced by the Trace Diagram. They are blocks so that the Code Walkthrough always has a block for its waypoint, and so that a change with no diff block cannot happen.
 
 **A change of a variable, a property or an argument is a change of the block that holds it, for the chains.** The diff block is the `variable`, the `property` or the `root-argument-value`, and the diff source a chain leads to is the block around it. A chain passes through a variable and a property to what they call, as it passes through any block nested in a block that runs. A `deleted` block is never traced, like a type and an import.
 

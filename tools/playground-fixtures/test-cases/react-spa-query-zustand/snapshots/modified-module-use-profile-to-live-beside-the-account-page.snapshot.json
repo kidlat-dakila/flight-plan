@@ -235,8 +235,8 @@
             }
           }
         ],
-        "journeyFlowDiagram": null,
-        "blastRadiusDiagram": {
+        "traceDiagram": null,
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/routes/account/components/ProfileForm.tsx",

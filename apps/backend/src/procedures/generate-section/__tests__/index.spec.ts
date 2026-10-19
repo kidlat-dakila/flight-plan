@@ -69,16 +69,16 @@ describe("generateSection", () => {
     await requestWith(context)
 
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
-      sections: { journey: false, blast: false, walkthrough: true, findings: false },
-      segments: [{ journey: null, blast: null, walkthrough: { files: [{ path: PATH }] } }],
+      sections: { traceDiagram: false, blastDiagram: false, walkthrough: true, findings: false },
+      segments: [{ traceDiagram: null, blastDiagram: null, walkthrough: { files: [{ path: PATH }] } }],
     })
     await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({
       segments: [{
-        journey: { diagram: null },
-        blast: null,
+        traceDiagram: { diagram: null },
+        blastDiagram: null,
         offers: {
-          journey: { section: "journey", heading: "Journey Flow Diagram", generateLabel: "Generate" },
-          blast: { section: "blast", heading: "Blast Diagram", anchorId: "blast-diagram" },
+          traceDiagram: { section: "traceDiagram", heading: "Trace Diagram", generateLabel: "Generate" },
+          blastDiagram: { section: "blastDiagram", heading: "Blast Diagram", anchorId: "blast-diagram" },
           findings: { section: "findings", heading: "Findings" },
         },
       }],
@@ -91,7 +91,7 @@ describe("generateSection", () => {
     await requestWith(context, { configurationId: "standard" })
 
     await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({
-      segments: [{ offers: { journey: null, blast: null, findings: null } }],
+      segments: [{ offers: { traceDiagram: null, blastDiagram: null, findings: null } }],
     })
   })
 
@@ -100,19 +100,19 @@ describe("generateSection", () => {
     await requestWith(context)
     await context.reviewStore.amendArtifact(KEY, (artifact) => ({ artifact: { ...artifact, status: "complete" }, outcome: null }))
 
-    const result = await generateSection({ ...KEY, section: "journey" }, context)
+    const result = await generateSection({ ...KEY, section: "traceDiagram" }, context)
 
     expect(result).toMatchObject({ kind: "generated", message: "Prompt copied" })
-    expect(result?.kind === "generated" ? result.prompt : null).toContain("The reviewer asked for the Journey Flow Diagram of the Flight Plan review of pull request #416 of storefront")
+    expect(result?.kind === "generated" ? result.prompt : null).toContain("The reviewer asked for the Trace Diagram of the Flight Plan review of pull request #416 of storefront")
     const artifact = await context.reviewStore.findArtifact(KEY)
     expect(artifact).toMatchObject({
       status: "drafting",
-      sections: { journey: true, blast: false, walkthrough: true, findings: false },
-      segments: [{ blast: null }],
+      sections: { traceDiagram: true, blastDiagram: false, walkthrough: true, findings: false },
+      segments: [{ blastDiagram: null }],
     })
-    expect(artifact?.segments.flatMap((segment) => segment.journey?.journeyNodes ?? []).length).toBeGreaterThan(0)
+    expect(artifact?.segments.flatMap((segment) => segment.traceDiagram?.traceNodes ?? []).length).toBeGreaterThan(0)
     await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({
-      segments: [{ journey: { diagram: { nodes: [{}] } }, offers: { journey: null, blast: { section: "blast" } } }],
+      segments: [{ traceDiagram: { diagram: { nodes: [{}] } }, offers: { traceDiagram: null, blastDiagram: { section: "blastDiagram" } } }],
     })
   })
 
@@ -124,11 +124,11 @@ describe("generateSection", () => {
     const waypointId = segments.flatMap(waypointsOf).map((located) => located.waypoint.id).slice(0, 1).join("")
     await updateNodes({ ...KEY, segmentId, context: "Estimates depend on the zone.", waypoints: [{ id: waypointId, reading: "Modified `estimate` condition." }] }, context)
 
-    await generateSection({ ...KEY, section: "blast" }, context)
+    await generateSection({ ...KEY, section: "blastDiagram" }, context)
 
     const artifact = await context.reviewStore.findArtifact(KEY)
-    expect(artifact?.segments).toMatchObject([{ id: segmentId, context: "Estimates depend on the zone.", journey: null }])
-    expect(artifact?.segments.flatMap((segment) => segment.blast?.nodes ?? []).map((node) => node.path)).toStrictEqual([PATH])
+    expect(artifact?.segments).toMatchObject([{ id: segmentId, context: "Estimates depend on the zone.", traceDiagram: null }])
+    expect(artifact?.segments.flatMap((segment) => segment.blastDiagram?.nodes ?? []).map((node) => node.path)).toStrictEqual([PATH])
     expect(artifact?.segments.flatMap(waypointsOf).map((located) => located.waypoint.reading).slice(0, 1)).toStrictEqual(["Modified `estimate` condition."])
   })
 
@@ -146,8 +146,8 @@ describe("generateSection", () => {
     expect(messages).toHaveLength(2)
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       status: "drafting",
-      sections: { journey: false, blast: false, findings: true },
-      segments: [{ journey: null, blast: null }],
+      sections: { traceDiagram: false, blastDiagram: false, findings: true },
+      segments: [{ traceDiagram: null, blastDiagram: null }],
     })
   })
 
@@ -156,27 +156,27 @@ describe("generateSection", () => {
     const context = createContext(spawner)
     await requestWith(context, { writer: { kind: "author", start: "scaffold" } })
 
-    await expect(generateSection({ ...KEY, section: "journey" }, context)).resolves.toStrictEqual({
+    await expect(generateSection({ ...KEY, section: "traceDiagram" }, context)).resolves.toStrictEqual({
       kind: "generated",
       prompt: null,
-      message: "Journey Flow Diagram generated",
+      message: "Trace Diagram generated",
     })
     expect(spawner.launches).toStrictEqual([])
-    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ status: "authoring", sections: { journey: true } })
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ status: "authoring", sections: { traceDiagram: true } })
   })
 
   it("does not generate a section twice", async () => {
     const context = createContext()
     await requestWith(context)
-    await generateSection({ ...KEY, section: "journey" }, context)
+    await generateSection({ ...KEY, section: "traceDiagram" }, context)
 
-    await expect(generateSection({ ...KEY, section: "journey" }, context)).resolves.toStrictEqual({
+    await expect(generateSection({ ...KEY, section: "traceDiagram" }, context)).resolves.toStrictEqual({
       kind: "unavailable",
-      message: "The Journey Flow Diagram is already generated.",
+      message: "The Trace Diagram is already generated.",
     })
   })
 
   it("returns null when there is no review artifact", async () => {
-    await expect(generateSection({ ...KEY, section: "journey" }, createContext())).resolves.toBeNull()
+    await expect(generateSection({ ...KEY, section: "traceDiagram" }, createContext())).resolves.toBeNull()
   })
 })

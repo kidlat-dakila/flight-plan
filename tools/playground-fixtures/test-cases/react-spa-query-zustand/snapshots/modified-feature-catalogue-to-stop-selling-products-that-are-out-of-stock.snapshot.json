@@ -369,9 +369,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/stores/cart-store.ts#state@11:1",
               "type": "state",
@@ -414,9 +414,9 @@
               ]
             }
           ],
-          "journeyNodeEdges": []
+          "traceNodeEdges": []
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/stores/cart-store.ts",
@@ -625,7 +625,7 @@
                     "lineEnd": 26
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
+                  "traceNodeId": "src/stores/cart-store.ts#state@11:1",
                   "codeBlockIds": [
                     "src/stores/cart-store.ts#state@11:1",
                     "src/stores/cart-store.ts#effect@14:5",
@@ -658,7 +658,7 @@
                     "lineEnd": 7
                   },
                   "category": "type",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/types/product.ts#type-declaration@1:1"
                   ],
@@ -1408,9 +1408,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
               "type": "root-variable",
@@ -1573,7 +1573,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
               "from": "src/router.tsx#root-variable@7:1",
@@ -1601,7 +1601,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/api/products.ts",
@@ -1792,7 +1792,7 @@
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/products.ts#function@4:1",
+                  "traceNodeId": "src/api/products.ts#function@4:1",
                   "codeBlockIds": [
                     "src/api/products.ts#function@4:1"
                   ],
@@ -1815,7 +1815,7 @@
                     "lineEnd": 6
                   },
                   "category": "variable",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/hooks/use-products.ts#root-variable@6:1"
                   ],
@@ -1833,7 +1833,7 @@
                     "lineEnd": 10
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-products.ts#hook@8:1",
+                  "traceNodeId": "src/hooks/use-products.ts#hook@8:1",
                   "codeBlockIds": [
                     "src/hooks/use-products.ts#hook@8:1",
                     "src/hooks/use-products.ts#component-effect@9:10",
@@ -1858,7 +1858,7 @@
                     "lineEnd": 9
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+                  "traceNodeId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
                   "codeBlockIds": [
                     "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
                     "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
@@ -1884,7 +1884,7 @@
                     "lineEnd": 23
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
+                  "traceNodeId": "src/routes/catalog/index.tsx#component@4:1",
                   "codeBlockIds": [
                     "src/routes/catalog/index.tsx#component@4:1",
                     "src/routes/catalog/index.tsx#variable@8:3",
@@ -1912,7 +1912,7 @@
                         "lineEnd": 8
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
+                      "traceNodeId": "src/routes/catalog/index.tsx#component@4:1",
                       "codeBlockIds": [
                         "src/routes/catalog/index.tsx#variable@8:3",
                         "src/routes/catalog/index.tsx#function@8:40",
@@ -1932,7 +1932,7 @@
                         "lineEnd": 19
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
+                      "traceNodeId": "src/routes/catalog/index.tsx#component@4:1",
                       "codeBlockIds": [
                         "src/routes/catalog/index.tsx#render-loop@15:10",
                         "src/routes/catalog/index.tsx#function@15:23",

@@ -1,8 +1,8 @@
-import { planDiagramEdit, type PlannedDiagramEdit } from "@/procedures/edit-journey/utils/plan-diagram-edit"
+import { planDiagramEdit, type PlannedDiagramEdit } from "@/procedures/edit-trace/utils/plan-diagram-edit"
 import { createMockReviews } from "@/procedures/get-review/utils/mocks/review-artifacts"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
-import { listJourneyNodes } from "@flightplan/codegraph"
-import type { JourneyNode, ReviewArtifact } from "@flightplan/configurations"
+import { listTraceNodes } from "@flightplan/codegraph"
+import type { TraceNode, ReviewArtifact } from "@flightplan/configurations"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 const SEGMENT_ID = "stock-check"
@@ -44,10 +44,10 @@ const artifactOf = (planned: PlannedDiagramEdit): ReviewArtifact => {
   return planned.artifact
 }
 
-const cardsOf = (artifact: ReviewArtifact | undefined): readonly JourneyNode[] =>
-  artifact?.segments.find((candidate) => candidate.id === SEGMENT_ID)?.journey?.journeyNodes ?? []
+const cardsOf = (artifact: ReviewArtifact | undefined): readonly TraceNode[] =>
+  artifact?.segments.find((candidate) => candidate.id === SEGMENT_ID)?.traceDiagram?.traceNodes ?? []
 
-const lastOf = (cards: readonly JourneyNode[]): JourneyNode => cards[cards.length - 1]
+const lastOf = (cards: readonly TraceNode[]): TraceNode => cards[cards.length - 1]
 
 describe("planDiagramEdit", () => {
   it("adds a card of a file the Flight Plan does not hold, and holds the file from then on", () => {
@@ -65,7 +65,7 @@ describe("planDiagramEdit", () => {
     const card = lastOf(cards)
 
     expect(card.children.map((child) => child.codeBlocks[0].name)).toStrictEqual(["CartLine"])
-    expect(listJourneyNodes(cards).map((node) => node.id)).toContain(card.children[0].id)
+    expect(listTraceNodes(cards).map((node) => node.id)).toContain(card.children[0].id)
   })
 
   it("refuses a file that could not be read", () => {
@@ -92,12 +92,12 @@ describe("planDiagramEdit", () => {
 
   it("writes the description of the diagram, trimmed, and leaves its cards and lines as they are", () => {
     const artifact = sampleArtifact()
-    const journey = artifact.segments.find((segment) => segment.id === SEGMENT_ID)?.journey
+    const traceDiagram = artifact.segments.find((segment) => segment.id === SEGMENT_ID)?.traceDiagram
 
     const planned = planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", description: "  Two endpoints run the stock guard.\n" }, null)
 
-    expect(planned.kind === "planned" ? planned.artifact.segments.find((segment) => segment.id === SEGMENT_ID)?.journey : null).toStrictEqual({
-      ...journey,
+    expect(planned.kind === "planned" ? planned.artifact.segments.find((segment) => segment.id === SEGMENT_ID)?.traceDiagram : null).toStrictEqual({
+      ...traceDiagram,
       description: "Two endpoints run the stock guard.",
     })
   })

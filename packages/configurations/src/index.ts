@@ -11,11 +11,11 @@ export type PresetName = (typeof PRESET_NAMES)[number]
 
 export const BASE_PRESET_NAME: PresetName = "standard"
 
-export const ALL_SECTIONS_ON: SectionSwitches = { journey: true, blast: true, walkthrough: true, findings: true }
+export const ALL_SECTIONS_ON: SectionSwitches = { traceDiagram: true, blastDiagram: true, walkthrough: true, findings: true }
 
 export const PRESET_SECTIONS: Readonly<Record<PresetName, SectionSwitches>> = {
   "standard": ALL_SECTIONS_ON,
-  "minimal": { journey: false, blast: false, walkthrough: true, findings: false },
+  "minimal": { traceDiagram: false, blastDiagram: false, walkthrough: true, findings: false },
   "onboardee": ALL_SECTIONS_ON,
   "unfamiliar-territory": ALL_SECTIONS_ON,
 }
@@ -30,15 +30,15 @@ export const PRESET_CONTEXT_CODE_BLOCK_KINDS: Readonly<Record<PresetName, readon
 export const CONTEXT_CODE_BLOCKS_FIELD_PATH = "contextCodeBlocks"
 
 export const SECTION_FIELD_PATHS: Readonly<Record<SectionName, string>> = {
-  journey: "journey",
-  blast: "blast",
+  traceDiagram: "traceDiagram",
+  blastDiagram: "blastDiagram",
   walkthrough: "walkthrough",
   findings: "walkthrough.files.waypoints.findings",
 }
 
 export const SECTION_LABELS: Readonly<Record<SectionName, string>> = {
-  journey: "Journey Flow Diagram",
-  blast: "Blast Diagram",
+  traceDiagram: "Trace Diagram",
+  blastDiagram: "Blast Diagram",
   walkthrough: "Code Walkthrough",
   findings: "findings",
 }

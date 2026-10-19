@@ -18,7 +18,7 @@ FRAMES_PER_SECOND=30
 OUTPUT_FILTER="crop=2160:1264:0:84,scale=1920:1124:flags=lanczos"
 
 stop_offsets() {
-  evaluate "(()=>{const top=(selector,offset)=>Math.round(document.querySelector(selector).getBoundingClientRect().top+scrollY-offset);return [top('#fixture-segment-1-context-heading',80),top('#fixture-segment-1-journey-fixture-segment-1 > div.rounded-md',90),top('#fixture-segment-1-blast-diagram',90),top('#capture-waypoint',300)].join(' ')})()"
+  evaluate "(()=>{const top=(selector,offset)=>Math.round(document.querySelector(selector).getBoundingClientRect().top+scrollY-offset);return [top('#fixture-segment-1-context-heading',80),top('#fixture-segment-1-trace-fixture-segment-1 > div.rounded-md',90),top('#fixture-segment-1-blast-diagram',90),top('#capture-waypoint',300)].join(' ')})()"
 }
 
 write_timeline() {

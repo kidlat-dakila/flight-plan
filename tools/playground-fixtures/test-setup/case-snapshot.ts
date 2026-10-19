@@ -3,11 +3,11 @@ import { dirname, join } from "node:path"
 import { expect } from "vitest"
 import {
   storeCodeWalkthrough,
-  storeJourneyFlowDiagram,
+  storeTraceDiagram,
   type Codegraph,
   type CodegraphSegment,
   type StoredCodeWalkthrough,
-  type StoredJourneyFlowDiagram,
+  type StoredTraceDiagram,
 } from "@flightplan/codegraph"
 import { assembleGitAdapter } from "@flightplan/git-forge"
 import { CASE_REF } from "./case-adapter"
@@ -37,9 +37,9 @@ export const snapshotPathOf = (testPath: string, testName: string): string =>
 const withMapsAsRecords = (_key: string, value: unknown): unknown =>
   value instanceof Map ? Object.fromEntries(value) : value
 
-export interface StoredCodegraphSegment extends Omit<CodegraphSegment, "journeyFlowDiagram" | "codeWalkthrough"> {
+export interface StoredCodegraphSegment extends Omit<CodegraphSegment, "traceDiagram" | "codeWalkthrough"> {
   readonly context: readonly string[]
-  readonly journeyFlowDiagram: StoredJourneyFlowDiagram | null
+  readonly traceDiagram: StoredTraceDiagram | null
   readonly codeWalkthrough: StoredCodeWalkthrough
 }
 
@@ -58,7 +58,7 @@ export const storeCodegraph = ({ segments }: Codegraph, written: WrittenParts): 
     title,
     context: writtenContextAt(written, position),
     ...segment,
-    journeyFlowDiagram: segment.journeyFlowDiagram === null ? null : storeJourneyFlowDiagram(segment.journeyFlowDiagram),
+    traceDiagram: segment.traceDiagram === null ? null : storeTraceDiagram(segment.traceDiagram),
     codeWalkthrough: storeCodeWalkthrough(segment.codeWalkthrough),
   })),
 })

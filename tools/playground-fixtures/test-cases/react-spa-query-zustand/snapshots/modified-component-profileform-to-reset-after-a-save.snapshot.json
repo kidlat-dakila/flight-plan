@@ -224,9 +224,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
               "type": "root-variable",
@@ -403,7 +403,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@7:1 -> src/routes/account/index.tsx#component@4:1",
               "from": "src/router.tsx#root-variable@7:1",
@@ -446,7 +446,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/routes/account/components/ProfileForm.tsx",
@@ -579,7 +579,7 @@
                     "lineEnd": 29
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                  "traceNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
                   "codeBlockIds": [
                     "src/routes/account/components/ProfileForm.tsx#component@7:1",
                     "src/routes/account/components/ProfileForm.tsx#state@9:3",
@@ -601,7 +601,7 @@
                         "lineEnd": 12
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                      "traceNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
                       "codeBlockIds": [
                         "src/routes/account/components/ProfileForm.tsx#state@9:3"
                       ],
@@ -619,7 +619,7 @@
                         "lineEnd": 15
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                      "traceNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
                       "codeBlockIds": [
                         "src/routes/account/components/ProfileForm.tsx#effect@15:5",
                         "src/routes/account/components/ProfileForm.tsx#code-event@15:27",

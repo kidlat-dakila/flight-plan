@@ -1,9 +1,9 @@
 import { waypointsOf, type LocatedWaypoint } from "@/procedures/read-artifact/utils/artifact-walk"
 import { lineRangeOfBlock, nameOfContext, pathOfBlock, placeOfBlock } from "@/procedures/read-artifact/utils/context-code-blocks"
 import { coverCode, coverRange, type CoveredCode } from "@/procedures/read-artifact/utils/covered-code"
-import { hasDrawnJourney, type Work, type WorkKind, type WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
-import { contextIdOf, flattenJourneyNodes, listCarriedImports, listJourneyNodes, nameOfBlock, type FlatJourneyNode } from "@flightplan/codegraph"
-import type { BlastNode, CodeBlock, ContextCodeBlock, JourneyNode, LineRange, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
+import { hasDrawnTrace, type Work, type WorkKind, type WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
+import { contextIdOf, flattenTraceNodes, listCarriedImports, listTraceNodes, nameOfBlock, type FlatTraceNode } from "@flightplan/codegraph"
+import type { BlastNode, CodeBlock, ContextCodeBlock, TraceNode, LineRange, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
 
 export interface NodeItem {
   readonly kind: WorkTarget | "unknown"
@@ -43,52 +43,52 @@ const waypointCandidate = ({ segment, file, waypoint, ancestors }: LocatedWaypoi
   }),
 })
 
-const lineRangeOf = ({ codeBlocks: [root] }: JourneyNode): LineRange => {
+const lineRangeOf = ({ codeBlocks: [root] }: TraceNode): LineRange => {
   const [{ start, end }] = root.lineOfCodeRangeReference
   return { lineStart: start.line, lineEnd: end.line }
 }
 
-const journeyLineageOf = (node: FlatJourneyNode, flatNodes: readonly FlatJourneyNode[]): unknown[] => {
+const traceLineageOf = (node: FlatTraceNode, flatNodes: readonly FlatTraceNode[]): unknown[] => {
   const parent = flatNodes.find((candidate) => candidate.id === node.parentId)
-  return parent === undefined ? [] : [...journeyLineageOf(parent, flatNodes), { id: parent.id, type: parent.type, label: parent.label }]
+  return parent === undefined ? [] : [...traceLineageOf(parent, flatNodes), { id: parent.id, type: parent.type, label: parent.label }]
 }
 
-const journeyCandidates = (segment: Segment): Candidate[] => {
-  const nodes = listJourneyNodes(segment.journey?.journeyNodes ?? [])
-  const flatNodes = flattenJourneyNodes(segment.journey?.journeyNodes ?? [])
+const traceCandidates = (segment: Segment): Candidate[] => {
+  const nodes = listTraceNodes(segment.traceDiagram?.traceNodes ?? [])
+  const flatNodes = flattenTraceNodes(segment.traceDiagram?.traceNodes ?? [])
   return nodes.map((node, index) => {
     const [root] = node.codeBlocks
     const path = root.astGraph.filePath
     return {
-      kind: "journey-node",
+      kind: "trace-node",
       id: node.id,
       segmentId: segment.id,
       describe: (sources, maxLineCount) => ({
         file: path,
         node: { ...flatNodes[index], name: nameOfBlock(root) },
-        lineage: journeyLineageOf(flatNodes[index], flatNodes),
+        lineage: traceLineageOf(flatNodes[index], flatNodes),
         code: coverRange(sources, path, lineRangeOf(node), maxLineCount),
       }),
     }
   })
 }
 
-const journeyStubOf = ({ id, parentId, type, label }: FlatJourneyNode): unknown => ({ id, parentId, type, label })
+const traceStubOf = ({ id, parentId, type, label }: FlatTraceNode): unknown => ({ id, parentId, type, label })
 
 const descriptionCandidates = (segment: Segment): Candidate[] => {
-  const { journey } = segment
-  return journey === null || !hasDrawnJourney(segment)
+  const { traceDiagram } = segment
+  return traceDiagram === null || !hasDrawnTrace(segment)
     ? []
     : [{
-        kind: "journey",
+        kind: "trace-diagram",
         id: null,
         segmentId: segment.id,
         describe: () => ({
           file: null,
           node: {
-            description: journey.description,
-            nodes: flattenJourneyNodes(journey.journeyNodes).map(journeyStubOf),
-            edges: journey.journeyNodeEdges.map(({ from, to }) => ({ from, to })),
+            description: traceDiagram.description,
+            nodes: flattenTraceNodes(traceDiagram.traceNodes).map(traceStubOf),
+            edges: traceDiagram.traceNodeEdges.map(({ from, to }) => ({ from, to })),
           },
           lineage: [],
           code: null,
@@ -102,7 +102,7 @@ const blastCandidate = (segment: Segment, node: BlastNode): Candidate => ({
   segmentId: segment.id,
   describe: () => ({
     file: node.path,
-    node: { ...node, importsCarryingTheChange: segment.blast === null ? [] : listCarriedImports(segment.blast, node.path) },
+    node: { ...node, importsCarryingTheChange: segment.blastDiagram === null ? [] : listCarriedImports(segment.blastDiagram, node.path) },
     lineage: [],
     code: null,
   }),
@@ -116,10 +116,10 @@ const contextCandidate = (segment: Segment): Candidate => ({
 })
 
 const candidatesIn = (segment: Segment): Candidate[] => [
-  ...(segment.blast?.nodes ?? []).filter((node) => node.diffType === null).map((node) => blastCandidate(segment, node)),
+  ...(segment.blastDiagram?.nodes ?? []).filter((node) => node.diffType === null).map((node) => blastCandidate(segment, node)),
   contextCandidate(segment),
   ...waypointsOf(segment).map(waypointCandidate),
-  ...journeyCandidates(segment),
+  ...traceCandidates(segment),
   ...descriptionCandidates(segment),
 ]
 

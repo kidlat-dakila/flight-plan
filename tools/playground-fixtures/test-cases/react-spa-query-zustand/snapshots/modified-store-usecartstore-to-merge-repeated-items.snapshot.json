@@ -235,9 +235,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
               "type": "component",
@@ -331,7 +331,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18 -> src/stores/cart-store.ts#state@11:1",
               "from": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
@@ -349,7 +349,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/stores/cart-store.ts",
@@ -512,7 +512,7 @@
                     "lineEnd": 30
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
+                  "traceNodeId": "src/stores/cart-store.ts#state@11:1",
                   "codeBlockIds": [
                     "src/stores/cart-store.ts#state@11:1",
                     "src/stores/cart-store.ts#effect@14:5",

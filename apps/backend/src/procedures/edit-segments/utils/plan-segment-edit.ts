@@ -50,8 +50,8 @@ const createSegment = (id: string, { title, paths }: SegmentContent): Segment =>
   title,
   changedPaths: paths,
   context: UNWRITTEN_CONTEXT,
-  journey: null,
-  blast: null,
+  traceDiagram: null,
+  blastDiagram: null,
   walkthrough: { files: [] },
 })
 

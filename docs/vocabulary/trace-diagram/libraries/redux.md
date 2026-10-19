@@ -173,7 +173,7 @@ export const { selectAll: selectAllTodos } = todosAdapter.getSelectors((state) =
 
 ## createAction and createReducer
 
-**`createAction` is a card of its own**, as [plain code](../../journey-flow-diagram.md#plain-code) says of every value made by a call. **`createReducer` is a state card**, with the headings STATE · CASES: the keys of its initial state are rows, and each `addCase` is a function card under CASES, named after its action.
+**`createAction` is a card of its own**, as [plain code](../../trace-diagram.md#plain-code) says of every value made by a call. **`createReducer` is a state card**, with the headings STATE · CASES: the keys of its initial state are rows, and each `addCase` is a function card under CASES, named after its action.
 
 ```ts
 export const increment = createAction("counter/increment")

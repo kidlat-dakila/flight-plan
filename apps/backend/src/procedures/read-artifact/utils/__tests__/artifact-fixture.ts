@@ -1,6 +1,6 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { createConversationContext, KEY, STARTED_AT } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
-import { mockJourney } from "@/procedures/get-review/utils/mocks/mock-journey"
+import { mockTrace } from "@/procedures/get-review/utils/mocks/mock-trace"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { parseMarkedSource } from "@flightplan/codegraph"
 import type { ReviewArtifact, Segment, SourceFile, Waypoint, PresetName } from "@flightplan/configurations"
@@ -49,17 +49,17 @@ const DRAFT_SOURCES: readonly SourceFile[] = [
   parseMarkedSource(SUBTOTAL_PATH, "typescript", SUBTOTAL),
 ]
 
-export const DRAFT_JOURNEY_NODE = { id: "j-subtotal", type: "function", path: SUBTOTAL_PATH, declaration: "subtotal", isChanged: true, label: null, description: null } as const
+export const DRAFT_TRACE_NODE = { id: "j-subtotal", type: "function", path: SUBTOTAL_PATH, declaration: "subtotal", isChanged: true, label: null, description: null } as const
 
-export const draftJourneyOf = (nodes: Parameters<typeof mockJourney>[1]): ReturnType<typeof mockJourney> => mockJourney(DRAFT_SOURCES, nodes, [])
+export const draftTraceOf = (nodes: Parameters<typeof mockTrace>[1]): ReturnType<typeof mockTrace> => mockTrace(DRAFT_SOURCES, nodes, [])
 
 export const DRAFT_SEGMENT: Segment = {
   id: "all",
   title: "Move price rounding into the cart total",
   changedPaths: [SUBTOTAL_PATH, PRICE_PATH, TEST_PATH],
   context: "",
-  journey: draftJourneyOf([DRAFT_JOURNEY_NODE]),
-  blast: {
+  traceDiagram: draftTraceOf([DRAFT_TRACE_NODE]),
+  blastDiagram: {
     nodes: [
       { path: "src/cart/CartPage.tsx", diffType: null, impactType: null, impactReason: null },
       { path: "src/cart/CartTotal.tsx", diffType: null, impactType: null, impactReason: null },
@@ -92,7 +92,7 @@ export const DRAFT_ARTIFACT: ReviewArtifact = {
   changedPaths: [SUBTOTAL_PATH, PRICE_PATH, TEST_PATH],
 }
 
-const [SUBTOTAL_NODE] = draftJourneyOf([DRAFT_JOURNEY_NODE]).journeyNodes
+const [SUBTOTAL_NODE] = draftTraceOf([DRAFT_TRACE_NODE]).traceNodes
 
 export const SUBTOTAL_BLOCK_ID = SUBTOTAL_NODE.codeBlocks[0].id
 
@@ -103,8 +103,8 @@ export const CONTEXT_ARTIFACT: ReviewArtifact = {
 
 export const WALKTHROUGH_ONLY_SEGMENT: Segment = {
   ...DRAFT_SEGMENT,
-  journey: null,
-  blast: null,
+  traceDiagram: null,
+  blastDiagram: null,
 }
 
 export const WALKTHROUGH_ONLY_ARTIFACT: ReviewArtifact = { ...DRAFT_ARTIFACT, segments: [WALKTHROUGH_ONLY_SEGMENT] }

@@ -1,3 +1,3 @@
-import type { LibraryCardRules } from "@/journey-flow-diagram/cards/types"
+import type { LibraryCardRules } from "@/trace-diagram/cards/types"
 
 export const flaskCardRules: LibraryCardRules = { library: "Flask", extends: "route", rules: {} }

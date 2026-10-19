@@ -4,8 +4,8 @@ import type { SourceRange } from "@/code-blocks/types"
 import type { LinkedCodeWalkthrough } from "@/code-walkthrough"
 import { generateWalkthroughFromBlocks } from "@/code-walkthrough/from-blocks"
 import { linkCodeWalkthrough, storeCodeWalkthrough } from "@/code-walkthrough/stored"
-import { generateJourneyFlowDiagram } from "@/journey-flow-diagram"
-import type { ASTCodeGroupGraph, JourneyFlowDiagram } from "@flightplan/configurations"
+import { generateTraceDiagram } from "@/trace-diagram"
+import type { ASTCodeGroupGraph, TraceDiagram } from "@flightplan/configurations"
 
 interface GroupFile {
   readonly filePath: string
@@ -29,7 +29,7 @@ const diffRangesOf = (lines: readonly string[], diffLines: readonly LineRange[])
 interface Drawn {
   readonly walkthrough: LinkedCodeWalkthrough
   readonly linkedGroup: ASTCodeGroupGraph
-  readonly journeyFlowDiagram: JourneyFlowDiagram | null
+  readonly traceDiagram: TraceDiagram | null
 }
 
 const drawnOf = (files: readonly GroupFile[], firstWaypointNumber = FIRST_WAYPOINT_NUMBER): Drawn => {
@@ -42,9 +42,9 @@ const drawnOf = (files: readonly GroupFile[], firstWaypointNumber = FIRST_WAYPOI
   }))
   const group = buildStoredCodeGroupGraph(sources)
   const linkedGroup = linkCodeGroupGraph(group)
-  const journeyFlowDiagram = generateJourneyFlowDiagram({ group: linkedGroup, importGraphGroup: [], scope: null })
+  const traceDiagram = generateTraceDiagram({ group: linkedGroup, importGraphGroup: [], scope: null })
   const filePaths = files.filter((file) => (file.diffLines ?? []).length > 0).map((file) => file.filePath)
-  return { walkthrough: generateWalkthroughFromBlocks({ group: linkedGroup, filePaths, journeyFlowDiagram, firstWaypointNumber }), linkedGroup, journeyFlowDiagram }
+  return { walkthrough: generateWalkthroughFromBlocks({ group: linkedGroup, filePaths, traceDiagram, firstWaypointNumber }), linkedGroup, traceDiagram }
 }
 
 const walkthroughOf = (files: readonly GroupFile[], firstWaypointNumber = FIRST_WAYPOINT_NUMBER): LinkedCodeWalkthrough => drawnOf(files, firstWaypointNumber).walkthrough
@@ -125,7 +125,7 @@ describe("generateWalkthroughFromBlocks", () => {
     expect(stopsOf(walkthroughOf([changedAt([4, 4])]))).toStrictEqual(["w1 src/checkout.ts Cart type 3-5"])
   })
 
-  it("links a waypoint to the node of its declaration in the journey", () => {
+  it("links a waypoint to the node of its declaration in the trace", () => {
     const [{ codeBlocks, ...waypoint }] = walkthroughOf([changedAt([11, 11])]).files[0].waypoints
 
     expect(codeBlocks[0].id).toBe("src/checkout.ts#function@9:1")
@@ -139,11 +139,11 @@ describe("generateWalkthroughFromBlocks", () => {
       children: [],
       range: { lineStart: 9, lineEnd: 12 },
       category: "function",
-      journeyNodeId: "src/checkout.ts#function@9:1",
+      traceNodeId: "src/checkout.ts#function@9:1",
     })
   })
 
-  it("links a waypoint of a changed nested function to the journey node of the function that holds it", () => {
+  it("links a waypoint of a changed nested function to the trace node of the function that holds it", () => {
     const page: GroupFile = {
       filePath: "src/page.ts",
       lines: ["export function render() {", "  const format = (value) => {", "    return String(value)", "  }", "  return format(1)", "}"],
@@ -151,13 +151,13 @@ describe("generateWalkthroughFromBlocks", () => {
     }
     const [waypoint] = walkthroughOf([page]).files[0].waypoints
 
-    expect([waypoint.declaration, waypoint.journeyNodeId]).toStrictEqual(["render", "src/page.ts#function@1:1"])
+    expect([waypoint.declaration, waypoint.traceNodeId]).toStrictEqual(["render", "src/page.ts#function@1:1"])
   })
 
   it("links a changed type and a changed statement at the top level of a file to no node", () => {
     const links = walkthroughOf([changedAt([1, 1], [4, 4], [26, 26])]).files[0].waypoints.map((waypoint) => [
       waypoint.declaration,
-      waypoint.journeyNodeId,
+      waypoint.traceNodeId,
     ])
 
     expect(links).toStrictEqual([
@@ -210,10 +210,10 @@ describe("the code blocks of a waypoint", () => {
     expect(new Set(waypoint.codeBlocks.map((block) => block.id)).size).toBe(waypoint.codeBlocks.length)
   })
 
-  it("holds each block as the block of the linked group, the one a journey node holds", () => {
-    const { walkthrough, linkedGroup, journeyFlowDiagram } = drawnOf(changed)
+  it("holds each block as the block of the linked group, the one a trace node holds", () => {
+    const { walkthrough, linkedGroup, traceDiagram } = drawnOf(changed)
     const [waypoint] = walkthrough.files[0].waypoints
-    const node = journeyFlowDiagram?.journeyNodes.find((one) => one.id === waypoint.journeyNodeId)
+    const node = traceDiagram?.traceNodes.find((one) => one.id === waypoint.traceNodeId)
 
     expect(waypoint.codeBlocks.every((block) => linkedGroup.codeBlocks.includes(block))).toBe(true)
     expect(node?.codeBlocks[0] === waypoint.codeBlocks[0]).toBe(true)

@@ -1,10 +1,10 @@
 # Component card
 
-The card of a node of the type `component` in a [Journey Flow Diagram](../journey-flow-diagram.md). The rules every card shares, its frame, its rows and its lines, are in [On the page](../journey-flow-diagram.md#on-the-page).
+The card of a node of the type `component` in a [Trace Diagram](../trace-diagram.md). The rules every card shares, its frame, its rows and its lines, are in [On the page](../trace-diagram.md#on-the-page).
 
 ## What is a component card
 
-**Every component is a component card, whatever its language makes it.** A function component is a function, and a class component a class with methods, but [component and route come first](../journey-flow-diagram.md#component-and-route-come-first): neither is drawn as a [function card](function-card.md) or a [class card](class-card.md).
+**Every component is a component card, whatever its language makes it.** A function component is a function, and a class component a class with methods, but [component and route come first](../trace-diagram.md#component-and-route-come-first): neither is drawn as a [function card](function-card.md) or a [class card](class-card.md).
 
 | Code | Card |
 |---|---|
@@ -52,7 +52,7 @@ A heading names the group of the rows below it. There is one group per kind of c
 
 ## Cards of its own
 
-**An event, an effect and a callback of a component are cards of their own**, beside the component card, never inside it. They run on an occasion of their own, after the markup is returned, as the table of [Nodes](../journey-flow-diagram.md#nodes) says. Each has a row in the component card, its trigger label or its row under Effects, and a line runs from that row to its card.
+**An event, an effect and a callback of a component are cards of their own**, beside the component card, never inside it. They run on an occasion of their own, after the markup is returned, as the table of [Nodes](../trace-diagram.md#nodes) says. Each has a row in the component card, its trigger label or its row under Effects, and a line runs from that row to its card.
 
 ## Components inside
 
@@ -75,6 +75,6 @@ flowchart LR
 | The top is a component no other component on a chain renders | It is where the rendering starts |
 | Among several tops, the one in the file the fewest files of the group import, directly or through other files, comes first | The import graph says which file is highest |
 | Components that render each other in a loop are opened at the one in the file the fewest files of the group import | The component that imports another is around it, never inside it |
-| The edge between a component and its child stays in `journeyNodeEdges` | The page leaves it out, and an agent still reads it |
+| The edge between a component and its child stays in `traceNodeEdges` | The page leaves it out, and an agent still reads it |
 
 A function of another root block that a component calls, and a block of a component that is a node of its own, is a card beside it, with a line from the component.

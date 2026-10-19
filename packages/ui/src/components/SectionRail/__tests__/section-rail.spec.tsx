@@ -8,7 +8,7 @@ const GROUPS: readonly RailGroup[] = [
     detailLabel: "5 files",
     sections: [
       { anchorId: "stock-context", label: "Context", children: [] },
-      { anchorId: "stock-journey", label: "Journey Flow Diagram", children: [{ anchorId: "stock-journey-a", label: "A checkout" }] },
+      { anchorId: "stock-trace", label: "Trace Diagram", children: [{ anchorId: "stock-trace-a", label: "A checkout" }] },
     ],
   },
   { anchorId: "segment-checkout", label: "Checkout", detailLabel: "3 files", sections: [{ anchorId: "checkout-context", label: "Context", children: [] }] },
@@ -25,8 +25,8 @@ describe("SectionRail", () => {
     expect(within(rail).getAllByRole("link").map((link) => link.getAttribute("href"))).toStrictEqual([
       "#segment-stock",
       "#stock-context",
-      "#stock-journey",
-      "#stock-journey-a",
+      "#stock-trace",
+      "#stock-trace-a",
       "#segment-checkout",
       "#checkout-context",
       "#conversation",
@@ -35,10 +35,10 @@ describe("SectionRail", () => {
   })
 
   it("marks the section the reader is in", () => {
-    render(<SectionRail label="Review sections" groups={GROUPS} sections={TRAILING} currentAnchorId="stock-journey-a" />)
+    render(<SectionRail label="Review sections" groups={GROUPS} sections={TRAILING} currentAnchorId="stock-trace-a" />)
 
     expect(screen.getByRole("link", { name: "A checkout" }).getAttribute("aria-current")).toBe("location")
-    expect(screen.getByRole("link", { name: "Journey Flow Diagram" }).getAttribute("aria-current")).toBeNull()
+    expect(screen.getByRole("link", { name: "Trace Diagram" }).getAttribute("aria-current")).toBeNull()
   })
 
   it("has no segment heading for a change that is not segmented", () => {

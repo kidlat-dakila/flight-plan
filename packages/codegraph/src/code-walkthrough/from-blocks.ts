@@ -1,14 +1,14 @@
 import { compareRanges } from "@/code-blocks/source-range"
 import type { CodeBlockType } from "@/code-blocks/types"
-import { listJourneyNodes } from "@/journey-flow-diagram"
-import type { ASTCodeGroupGraph, CodeBlock, JourneyFlowDiagram } from "@flightplan/configurations"
+import { listTraceNodes } from "@/trace-diagram"
+import type { ASTCodeGroupGraph, CodeBlock, TraceDiagram } from "@flightplan/configurations"
 import { listWaypointSteps, type WaypointStep } from "./steps"
 import type { LinkedCodeWalkthrough, LinkedFileSection, LinkedWaypoint, WaypointCategory } from "."
 
 export interface BlockWalkthroughSources {
   readonly group: ASTCodeGroupGraph
   readonly filePaths: readonly string[]
-  readonly journeyFlowDiagram: JourneyFlowDiagram | null
+  readonly traceDiagram: TraceDiagram | null
   readonly firstWaypointNumber: number
 }
 
@@ -124,7 +124,7 @@ const toStepWaypoint = ({ name, lines: [lineStart, lineEnd], blocks, children }:
     children: [],
     range: { lineStart, lineEnd },
     category: STEP_CATEGORY,
-    journeyNodeId: parent.journeyNodeId,
+    traceNodeId: parent.traceNodeId,
   }
   return withSteps(waypoint, children)
 }
@@ -137,8 +137,8 @@ const withSteps = (waypoint: LinkedWaypoint, steps: readonly WaypointStep[]): Li
 const listStepsOf = ({ category, blocks: [declarationBlock, ...changedBlocks] }: Stop): readonly WaypointStep[] =>
   READ_IN_PARTS_CATEGORIES.has(category) ? listWaypointSteps(declarationBlock, changedBlocks) : []
 
-export const generateWalkthroughFromBlocks = ({ group, filePaths, journeyFlowDiagram, firstWaypointNumber }: BlockWalkthroughSources): LinkedCodeWalkthrough => {
-  const journeyNodeIds = new Set(listJourneyNodes(journeyFlowDiagram?.journeyNodes ?? []).map((node) => node.id))
+export const generateWalkthroughFromBlocks = ({ group, filePaths, traceDiagram, firstWaypointNumber }: BlockWalkthroughSources): LinkedCodeWalkthrough => {
+  const traceNodeIds = new Set(listTraceNodes(traceDiagram?.traceNodes ?? []).map((node) => node.id))
   const toDeclarationWaypoint = ({ name, lines: [lineStart, lineEnd], category, rootBlockIds, blocks }: Stop & { readonly name: string }, number: number): LinkedWaypoint => ({
     id: `${WAYPOINT_ID_PREFIX}${String(number)}`,
     title: null,
@@ -150,7 +150,7 @@ export const generateWalkthroughFromBlocks = ({ group, filePaths, journeyFlowDia
     children: [],
     range: { lineStart, lineEnd },
     category,
-    journeyNodeId: rootBlockIds.find((rootBlockId) => journeyNodeIds.has(rootBlockId)) ?? null,
+    traceNodeId: rootBlockIds.find((rootBlockId) => traceNodeIds.has(rootBlockId)) ?? null,
   })
   const files = filePaths.reduce<readonly LinkedFileSection[]>((sections, filePath) => {
     const stops = listStops(filePath, group)

@@ -12,7 +12,7 @@ An artifact is stored as JSON, and its format is described in [data storage](dat
 |---|---|---|
 | Title | The pull request's own title, copied from the forge | Yes |
 | [Context Section](#context-section) | Why the change exists, what changes from outside, and what changed inside | Yes |
-| [Journey Flow Diagram](journey-flow-diagram.md) | The path the change runs through, with a description that tells the diagram in words, or one line saying why the change has none | Yes |
+| [Trace Diagram](trace-diagram.md) | The path the change runs through, with a description that tells the diagram in words, or one line saying why the change has none | Yes |
 | [Blast Diagram](blast-diagram.md) | The files the change is connected to through imports, and what it does to the ones it did not touch | No |
 | [Code Walkthrough](code-walkthrough.md) | The changed files, with explanations on top of the lines they are about | Yes |
 | [Segments](#segments) | A split of a large change into parts, each read on its own | Only when the reviewer splits the change |
@@ -25,11 +25,11 @@ An artifact also records where it is filed (the pull request number, or the bran
 |---|---|
 | `drafting` | The agent is still writing. The web app shows it anyway, with an indicator, so the reviewer can start reading and does not mistake a gap for an omission. |
 | `authoring` | The author is writing the artifact by hand. No agent writes it, and the web app shows no progress and no placeholder for a part that is not written. |
-| `complete` | The author marked it as complete with "Mark as complete", which runs no check. Or the agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context and a title on every segment, a title on every File Section, a title and a reading on every waypoint, a description on every Journey Flow Diagram that has a node, a label on every Journey Flow Diagram node and on each of its trigger labels, an impact type on every Blast Diagram file the change reaches, with a reason where the file breaks or changes behaviour, a solution on every bug, risk and nit, and a description on every context code block that is required. Writing to a complete artifact makes it `drafting` again. |
+| `complete` | The author marked it as complete with "Mark as complete", which runs no check. Or the agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context and a title on every segment, a title on every File Section, a title and a reading on every waypoint, a description on every Trace Diagram that has a node, a label on every Trace Diagram node and on each of its trigger labels, an impact type on every Blast Diagram file the change reaches, with a reason where the file breaks or changes behaviour, a solution on every bug, risk and nit, and a description on every context code block that is required. Writing to a complete artifact makes it `drafting` again. |
 
 ## Sections
 
-An artifact records which of its optional sections it generates: the Journey Flow Diagram, the Blast Diagram, the Code Walkthrough and the findings. They start as the [section switches](prompt-configurations.md#section-switches) of the configuration the review was requested with. A section that is off is not generated: the artifact holds no structure for it, a finished artifact is not checked for it, and the page offers to generate it. Generating it switches it on in the artifact. An artifact that records no sections generates all of them.
+An artifact records which of its optional sections it generates: the Trace Diagram, the Blast Diagram, the Code Walkthrough and the findings. They start as the [section switches](prompt-configurations.md#section-switches) of the configuration the review was requested with. A section that is off is not generated: the artifact holds no structure for it, a finished artifact is not checked for it, and the page offers to generate it. Generating it switches it on in the artifact. An artifact that records no sections generates all of them.
 
 ## Context code blocks
 
@@ -49,7 +49,7 @@ Each item holds:
 |---|---|
 | `isRequired` | Whether the [configuration](prompt-configurations.md#context-code-blocks) the review was requested with asks for a description of items of this kind. |
 | `kind` | `codebase`, `library` or `language`. |
-| `codeBlock` | The code block, as a reference to the block the Journey Flow Diagram and the waypoints already hold, never a copy. For a library it is the import statement of one file that imports the name, and for the language there is none. |
+| `codeBlock` | The code block, as a reference to the block the Trace Diagram and the waypoints already hold, never a copy. For a library it is the import statement of one file that imports the name, and for the language there is none. |
 | `specifier`, `name` | For a library, the library and the name imported from it. For the language, the name. |
 | `description` | Markdown, written by the agent, or nothing while it is not written. |
 
@@ -77,11 +77,11 @@ How it is laid out belongs to the [prompt configuration](prompt-configurations.m
 
 ## Segments
 
-A large pull request can be split into segments, so it can be read one part at a time. Segments are parts of one artifact, not separate artifacts. Each segment is a group of its own Context Section, Journey Flow Diagram, Blast Diagram and Code Walkthrough, for the files it covers. The web app draws every segment on the one review page, one after the other, each under its title. The reviewer decides whether to split a change and how.
+A large pull request can be split into segments, so it can be read one part at a time. Segments are parts of one artifact, not separate artifacts. Each segment is a group of its own Context Section, Trace Diagram, Blast Diagram and Code Walkthrough, for the files it covers. The web app draws every segment on the one review page, one after the other, each under its title. The reviewer decides whether to split a change and how.
 
 Every segment has an **id**, a short unique string that Flight Plan makes when it builds the segment, and a **title**, a very short text of what its context is about, which the agent writes. No tool changes an id. Every write an agent makes names the segment it writes by that id, and everything the agent reads comes back with the id of the segment it belongs to.
 
-Whether a segment has a Journey Flow Diagram or a Blast Diagram is decided by the [codegraph](codegraph.md). A segment without one stores `null` for it and no reason. The agent writes neither diagram's structure. A Blast Diagram stores two graphs of files: the files that use the change, which carry the impact types and reasons, and under `importBound` the files the change uses, which carry nothing written. See [Blast Diagram](blast-diagram.md#two-views).
+Whether a segment has a Trace Diagram or a Blast Diagram is decided by the [codegraph](codegraph.md). A segment without one stores `null` for it and no reason. The agent writes neither diagram's structure. A Blast Diagram stores two graphs of files: the files that use the change, which carry the impact types and reasons, and under `importBound` the files the change uses, which carry nothing written. See [Blast Diagram](blast-diagram.md#two-views).
 
 ## General components
 
@@ -111,6 +111,6 @@ A block usually shows both: it focuses on a declaration and marks what changed i
 
 Two ways of moving through an artifact:
 
-- **Section navigation**: a menu that jumps between the artifact's sections (Context, Journey Flow Diagram, Blast Diagram, Code Walkthrough). In a segmented artifact it lists each segment with that segment's sections under it.
+- **Section navigation**: a menu that jumps between the artifact's sections (Context, Trace Diagram, Blast Diagram, Code Walkthrough). In a segmented artifact it lists each segment with that segment's sections under it.
 - **Section stepping**: moving to the section before or after the one on screen, in the order of the section navigation, from the end of one segment into the next.
 - **Waypoint stepping**: moving to the previous or next waypoint of a segment's Code Walkthrough, across its files, in reading order. A waypoint's position counts the waypoints of its segment. Past the first or the last waypoint of a segment, stepping carries on as section stepping.

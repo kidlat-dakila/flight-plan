@@ -65,7 +65,7 @@ export default defineConfig({
               items: [
                 "docs/review-artifacts/parts/segments",
                 "docs/review-artifacts/parts/context",
-                "docs/review-artifacts/parts/journey-flow-diagram",
+                "docs/review-artifacts/parts/trace-diagram",
                 "docs/review-artifacts/parts/blast-diagram",
                 "docs/review-artifacts/parts/code-walkthrough",
                 "docs/review-artifacts/parts/findings",

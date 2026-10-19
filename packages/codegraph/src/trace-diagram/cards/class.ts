@@ -1,4 +1,4 @@
-import type { CardPart, CodeBlock, CodeBlockType, JourneyNode } from "@flightplan/configurations"
+import type { CardPart, CodeBlock, CodeBlockType, TraceNode } from "@flightplan/configurations"
 import { NOTHING_LEFT_OUT, rootBlockOfNode, SAME_NODES } from "./nodes"
 import type { CardContext, CardRules, ParentIdById } from "./types"
 
@@ -53,7 +53,7 @@ export const extendedClassOf = (block: CodeBlock): CodeBlock | null => {
   return extended === undefined || (extended.type !== "internal-code-block" && extended.type !== "external-block") ? null : extended.codeBlockReference
 }
 
-const isClassNode = (node: JourneyNode): boolean => node.type === CLASS
+const isClassNode = (node: TraceNode): boolean => node.type === CLASS
 
 const listClassAncestorIds = (block: CodeBlock, seenIds: ReadonlySet<string> = new Set()): string[] => {
   const extended = extendedClassOf(block)
@@ -75,7 +75,7 @@ const listClassParents = ({ nodes }: CardContext): ParentIdById => {
   return new Map([...methodParents, ...classParents])
 }
 
-const listOverriddenMethodIds = (nodes: readonly JourneyNode[]): string[] => {
+const listOverriddenMethodIds = (nodes: readonly TraceNode[]): string[] => {
   const methods = nodes.map(rootBlockOfNode).filter(isMethodOfClass)
   const isWrittenAgainBelow = (method: CodeBlock): boolean =>
     methods.some((other) => {
@@ -89,7 +89,7 @@ const listOverriddenMethodIds = (nodes: readonly JourneyNode[]): string[] => {
   return methods.filter(isWrittenAgainBelow).map((method) => method.id)
 }
 
-const holdsOnlyItsParameters = (node: JourneyNode): boolean => node.codeBlocks.slice(1).every((block) => block.type === PARAMETER)
+const holdsOnlyItsParameters = (node: TraceNode): boolean => node.codeBlocks.slice(1).every((block) => block.type === PARAMETER)
 
 const listDeclaringOnlyConstructorIds = ({ nodes, edges }: CardContext): string[] => {
   const leavingIds = new Set(edges.map((edge) => edge.from))

@@ -1044,7 +1044,7 @@ describe("the review page", () => {
     const ungeneratedPage = {
       ...artifactPage,
       segments: artifactPage.segments.map((segment) => (segment.id === "stock"
-        ? { ...segment, offers: { journey: offerOf("journey", "Journey Flow Diagram"), blast: offerOf("blast", "Blast Diagram"), findings: offerOf("findings", "Findings") } }
+        ? { ...segment, offers: { traceDiagram: offerOf("traceDiagram", "Trace Diagram"), blastDiagram: offerOf("blastDiagram", "Blast Diagram"), findings: offerOf("findings", "Findings") } }
         : segment)),
     }
     const getReview = vi.fn(() => ({ data: ungeneratedPage }))
@@ -1054,12 +1054,12 @@ describe("the review page", () => {
     const offer = stock.getByRole("region", { name: "Blast Diagram" })
 
     expect(within(offer).getByText("Blast Diagram was not generated.")).toBeTruthy()
-    expect(within(stock.getByRole("region", { name: "Journey Flow Diagram" })).getByRole("button", { name: "Generate" })).toBeTruthy()
+    expect(within(stock.getByRole("region", { name: "Trace Diagram" })).getByRole("button", { name: "Generate" })).toBeTruthy()
     expect(within(stock.getByRole("region", { name: "Findings" })).getByRole("button", { name: "Generate" })).toBeTruthy()
     fireEvent.click(within(offer).getByRole("button", { name: "Generate" }))
 
     await waitFor(() => {
-      expect(generateSection).toHaveBeenCalledWith(expect.objectContaining({ repositoryName: "storefront", targetId: "pr-412", section: "blast" }))
+      expect(generateSection).toHaveBeenCalledWith(expect.objectContaining({ repositoryName: "storefront", targetId: "pr-412", section: "blastDiagram" }))
     })
     expect(await screen.findByText("Writing the Blast Diagram")).toBeTruthy()
     expect(getReview.mock.calls.length).toBeGreaterThan(1)
@@ -1069,7 +1069,7 @@ describe("the review page", () => {
     const ungeneratedPage = {
       ...artifactPage,
       segments: artifactPage.segments.map((segment) => (segment.id === "stock"
-        ? { ...segment, offers: { ...NO_OFFERS, journey: offerOf("journey", "Journey Flow Diagram") } }
+        ? { ...segment, offers: { ...NO_OFFERS, traceDiagram: offerOf("traceDiagram", "Trace Diagram") } }
         : segment)),
     }
     renderReview({
@@ -1077,7 +1077,7 @@ describe("the review page", () => {
       "review.generateSection": () => ({ data: { kind: "unavailable", message: "feature/stock is not in this checkout." } }),
     })
     const stock = within(await screen.findByRole("region", { name: "Segment 1: Stock check" }))
-    const offer = stock.getByRole("region", { name: "Journey Flow Diagram" })
+    const offer = stock.getByRole("region", { name: "Trace Diagram" })
 
     fireEvent.click(within(offer).getByRole("button", { name: "Generate" }))
 

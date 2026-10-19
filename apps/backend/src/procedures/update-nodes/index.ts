@@ -11,10 +11,10 @@ export const updateNodes = async (input: UpdateNodesInput, context: ProcedureCon
   if (opened.kind === "rejected") return opened
   const edits: NodeEdits = {
     segmentId: input.segmentId,
-    segment: { title: input.title, context: input.context, order: input.order, journeyDescription: input.journeyDescription },
+    segment: { title: input.title, context: input.context, order: input.order, traceDiagramDescription: input.traceDiagramDescription },
     waypoints: input.waypoints ?? [],
-    journey: input.journey ?? [],
-    blast: input.blast ?? [],
+    traceDiagram: input.traceDiagram ?? [],
+    blastDiagram: input.blastDiagram ?? [],
     contextCodeBlocks: input.contextCodeBlocks ?? [],
   }
   const note = `Wrote ${countLabel(countEdits(edits), "entry", "entries")}.`

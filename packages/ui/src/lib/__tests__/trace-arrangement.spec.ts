@@ -1,5 +1,5 @@
-import { arrangeJourney, nearestSideOf, placeUnplacedCards } from "@/lib/journey-arrangement"
-import { EDGE_APPROACH, layoutJourney, NODE_HEAD_HEIGHT, type LayoutEdge, type LayoutNode } from "@/lib/journey-layout"
+import { arrangeTrace, nearestSideOf, placeUnplacedCards } from "@/lib/trace-arrangement"
+import { EDGE_APPROACH, layoutTrace, NODE_HEAD_HEIGHT, type LayoutEdge, type LayoutNode } from "@/lib/trace-layout"
 
 const leaf = (id: string, rowIds: readonly string[] = []): LayoutNode => ({ id, rows: rowIds.map((rowId) => ({ id: rowId, kind: "row" })), children: [] })
 
@@ -31,16 +31,16 @@ describe("nearestSideOf", () => {
   })
 })
 
-describe("arrangeJourney", () => {
+describe("arrangeTrace", () => {
   it("leaves a layout as it is when no card was moved and every line arrives on the left", () => {
-    const layout = layoutJourney(NODES, EDGES)
+    const layout = layoutTrace(NODES, EDGES)
 
-    expect(arrangeJourney(layout, NOTHING_MOVED, NO_SIDES)).toStrictEqual(layout)
+    expect(arrangeTrace(layout, NOTHING_MOVED, NO_SIDES)).toStrictEqual(layout)
   })
 
   it("puts a moved card, its rows and the ends of its lines at the stored position", () => {
-    const layout = layoutJourney(NODES, EDGES)
-    const arranged = arrangeJourney(layout, new Map([["form", { x: 400, y: 300 }]]), NO_SIDES)
+    const layout = layoutTrace(NODES, EDGES)
+    const arranged = arrangeTrace(layout, new Map([["form", { x: 400, y: 300 }]]), NO_SIDES)
     const form = placedOf(arranged.nodes, "form")
     const row = placedOf(arranged.rows, "apply")
     const line = placedOf(arranged.edges, "form-store")
@@ -53,15 +53,15 @@ describe("arrangeJourney", () => {
   })
 
   it("leaves the cards that were not moved where the layout put them", () => {
-    const layout = layoutJourney(NODES, EDGES)
-    const arranged = arrangeJourney(layout, new Map([["form", { x: 400, y: 300 }]]), NO_SIDES)
+    const layout = layoutTrace(NODES, EDGES)
+    const arranged = arrangeTrace(layout, new Map([["form", { x: 400, y: 300 }]]), NO_SIDES)
 
     expect(placedOf(arranged.nodes, "store")).toStrictEqual(placedOf(layout.nodes, "store"))
     expect(placedOf(arranged.edges, "store-price")).toStrictEqual(placedOf(layout.edges, "store-price"))
   })
 
   it("places nothing when no card has a stored position, or when every card has one", () => {
-    const layout = layoutJourney(NODES, EDGES)
+    const layout = layoutTrace(NODES, EDGES)
     const everyPosition = new Map(NODES.map((one, index) => [one.id, { x: index * 400, y: 0 }] as const))
 
     expect(placeUnplacedCards(layout, NOTHING_MOVED)).toBe(NOTHING_MOVED)
@@ -69,8 +69,8 @@ describe("arrangeJourney", () => {
   })
 
   it("stacks the cards with no stored position beside the cards that have one", () => {
-    const layout = layoutJourney(NODES, EDGES)
-    const arranged = arrangeJourney(layout, placeUnplacedCards(layout, new Map([["form", { x: 40, y: 60 }]])), NO_SIDES)
+    const layout = layoutTrace(NODES, EDGES)
+    const arranged = arrangeTrace(layout, placeUnplacedCards(layout, new Map([["form", { x: 40, y: 60 }]])), NO_SIDES)
     const form = placedOf(arranged.nodes, "form")
     const store = placedOf(arranged.nodes, "store")
     const price = placedOf(arranged.nodes, "price")
@@ -81,9 +81,9 @@ describe("arrangeJourney", () => {
   })
 
   it("ends a line at the top or the bottom of the card it reaches, arriving straight", () => {
-    const layout = layoutJourney(NODES, EDGES)
-    const fromAbove = placedOf(arrangeJourney(layout, NOTHING_MOVED, new Map([["store-price", "top"]])).edges, "store-price")
-    const fromBelow = placedOf(arrangeJourney(layout, NOTHING_MOVED, new Map([["store-price", "bottom"]])).edges, "store-price")
+    const layout = layoutTrace(NODES, EDGES)
+    const fromAbove = placedOf(arrangeTrace(layout, NOTHING_MOVED, new Map([["store-price", "top"]])).edges, "store-price")
+    const fromBelow = placedOf(arrangeTrace(layout, NOTHING_MOVED, new Map([["store-price", "bottom"]])).edges, "store-price")
     const price = placedOf(layout.nodes, "price")
     const middle = price.x + price.width / 2
 

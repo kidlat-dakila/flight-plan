@@ -1,4 +1,4 @@
-import { textAt, withoutDefault } from "@/journey/parameters"
+import { textAt, withoutDefault } from "@/trace/parameters"
 import type { SourceFile } from "@flightplan/configurations"
 
 const sourceOf = (lines: readonly string[]): SourceFile => ({

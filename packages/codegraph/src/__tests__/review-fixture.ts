@@ -4,9 +4,9 @@ import type { BlobLinker, ReviewViewContext } from "@/review-view-context"
 import type {
   CodeBlock,
   Finding,
-  JourneyFlowDiagram,
-  JourneyNode,
-  JourneyNodeEdge,
+  TraceDiagram,
+  TraceNode,
+  TraceNodeEdge,
   ReviewArtifact,
   Segment,
   SourceFile,
@@ -104,7 +104,7 @@ export const createCodeBlock = (id: string, filePath: string, overrides: Partial
   ...overrides,
 })
 
-export const createJourneyNode = (id: string, overrides: Partial<JourneyNode> = {}): JourneyNode => ({
+export const createTraceNode = (id: string, overrides: Partial<TraceNode> = {}): TraceNode => ({
   id,
   type: "function",
   label: id,
@@ -117,12 +117,12 @@ export const createJourneyNode = (id: string, overrides: Partial<JourneyNode> = 
   ...overrides,
 })
 
-export const createJourney = (journeyNodes: readonly JourneyNode[], journeyNodeEdges: readonly JourneyNodeEdge[] = []): JourneyFlowDiagram => ({
+export const createTrace = (traceNodes: readonly TraceNode[], traceNodeEdges: readonly TraceNodeEdge[] = []): TraceDiagram => ({
   astCodeGroup: { astGraphs: [], rootASTGraphs: [], codeBlocks: [], diffBlocks: [], diffContains: [], chainContains: [], diffChains: [] },
   importGraphGroup: [],
   description: null,
-  journeyNodes,
-  journeyNodeEdges,
+  traceNodes,
+  traceNodeEdges,
 })
 
 export const createSegment = (overrides: Partial<Segment> = {}): Segment => ({
@@ -130,8 +130,8 @@ export const createSegment = (overrides: Partial<Segment> = {}): Segment => ({
   title: "Everything",
   changedPaths: [PRICE_PATH, CART_PATH],
   context: "Why it matters.",
-  journey: null,
-  blast: null,
+  traceDiagram: null,
+  blastDiagram: null,
   walkthrough: {
     files: [
       {

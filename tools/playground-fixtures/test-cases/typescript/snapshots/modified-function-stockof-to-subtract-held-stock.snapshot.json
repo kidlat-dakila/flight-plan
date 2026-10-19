@@ -55,9 +55,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/checkout/reserve.ts#function@8:1",
               "type": "function",
@@ -115,7 +115,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/checkout/reserve.ts#function@8:1 -> src/inventory/stock.ts#function@8:1",
               "from": "src/checkout/reserve.ts#function@8:1",
@@ -128,7 +128,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/inventory/stock.ts",
@@ -176,7 +176,7 @@
                     "lineEnd": 2
                   },
                   "category": "variable",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/inventory/stock.ts#root-variable@2:1",
                     "src/inventory/stock.ts#property@2:45"
@@ -195,7 +195,7 @@
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyNodeId": "src/inventory/stock.ts#function@4:1",
+                  "traceNodeId": "src/inventory/stock.ts#function@4:1",
                   "codeBlockIds": [
                     "src/inventory/stock.ts#function@4:1"
                   ],

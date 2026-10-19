@@ -51,14 +51,14 @@ export const diagramEditSchema = z.discriminatedUnion("kind", [
   }),
 ])
 
-export const editJourneyInputSchema = z.strictObject({
+export const editTraceInputSchema = z.strictObject({
   repositoryName: z.string(),
   targetId: z.string(),
   segmentId: z.string(),
   edit: diagramEditSchema,
 })
 
-export const journeyEditingSchema = z.discriminatedUnion("kind", [
+export const traceEditingSchema = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("saved"), nodeId: z.string().nullable() }),
   z.strictObject({ kind: z.literal("rejected"), message: z.string() }),
 ])
@@ -67,5 +67,5 @@ export type DiagramEdit = z.infer<typeof diagramEditSchema>
 export type CardRowEdit = z.infer<typeof cardRowSchema>
 export type CardPlace = z.infer<typeof cardPlaceSchema>
 export type LineEnd = z.infer<typeof lineEndSchema>
-export type EditJourneyInput = z.infer<typeof editJourneyInputSchema>
-export type JourneyEditing = z.infer<typeof journeyEditingSchema>
+export type EditTraceInput = z.infer<typeof editTraceInputSchema>
+export type TraceEditing = z.infer<typeof traceEditingSchema>

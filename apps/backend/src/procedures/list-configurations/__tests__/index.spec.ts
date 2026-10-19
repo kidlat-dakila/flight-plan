@@ -37,7 +37,7 @@ describe("listConfigurations", () => {
         details: [
           { text: "Based on Minimal", kind: "plain" },
           { text: "1 instruction changed", kind: "plain" },
-          { text: "Journey Flow Diagrams off", kind: "plain" },
+          { text: "Trace Diagrams off", kind: "plain" },
           { text: "Blast Diagram off", kind: "plain" },
           { text: "Findings off", kind: "plain" },
         ],

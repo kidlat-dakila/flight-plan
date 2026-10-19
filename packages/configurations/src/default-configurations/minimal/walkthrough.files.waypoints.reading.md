@@ -40,7 +40,7 @@ this card must know why it is in the pull request. Cause not clear from order of
 fragments: write _so_ or _because_.
 
 **Consumer from the Blast Diagram, not a guess.** Where the artifact has one,
-`blast` lists files importing this card's file, with `impactType` and
+`blastDiagram` lists files importing this card's file, with `impactType` and
 `impactReason`. Name the one this card exists for. Link it. Nothing outside the
 change reaches this code: name what inside the pull request uses it. Neither
 shows a reason: say what the change does to its consumer, stop. Never invent the

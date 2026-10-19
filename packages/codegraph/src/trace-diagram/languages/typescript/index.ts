@@ -1,4 +1,4 @@
-import type { LibraryCardRules } from "@/journey-flow-diagram/cards/types"
+import type { LibraryCardRules } from "@/trace-diagram/cards/types"
 import { effectorCardRules } from "./libraries/effector"
 import { expressCardRules } from "./libraries/express"
 import { fastifyCardRules } from "./libraries/fastify"

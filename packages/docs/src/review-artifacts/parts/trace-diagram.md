@@ -1,11 +1,11 @@
 ---
-title: Journey Flow Diagram
+title: Trace Diagram
 description: How execution reaches the changed code, from what starts it.
 ---
 
-The Journey Flow Diagram shows how execution reaches the change. It reads left to right like a debugging trace: from the code that starts a path, such as a route, a page or an event handler, to the changed code. Each path stops at its last change.
+The Trace Diagram shows how execution reaches the change. It reads left to right like a debugging trace: from the code that starts a path, such as a route, a page or an event handler, to the changed code. Each path stops at its last change.
 
-![Opening a node of the Journey Flow Diagram and reading its code](../../../media/journey-flow-diagram-light.webm)
+![Opening a node of the Trace Diagram and reading its code](../../../media/trace-diagram-light.webm)
 
 ## What it shows
 
@@ -21,7 +21,7 @@ Components that render each other are drawn inside one another. Above the board,
 
 Flight Plan builds the nodes, the edges, the rows and the change marks from the code. The agent writes the description, the label and description of each node, and the labels of its rows. It can't add a node or draw an edge.
 
-A change that touches only types, imports or top-level statements has no Journey Flow Diagram, because nothing that runs has changed.
+A change that touches only types, imports or top-level statements has no Trace Diagram, because nothing that runs has changed.
 
 ## Reading it
 

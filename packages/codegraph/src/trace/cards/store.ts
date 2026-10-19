@@ -1,5 +1,5 @@
-import type { ListedBlock } from "@/journey-flow-diagram/listed-blocks"
-import type { JourneyNode, JourneyRowGroupView } from "@flightplan/configurations"
+import type { ListedBlock } from "@/trace-diagram/listed-blocks"
+import type { TraceNode, TraceRowGroupView } from "@flightplan/configurations"
 import { idsOf, labelOfHeading, PART } from "./labels"
 
 const STORE_HEADINGS: readonly string[] = [
@@ -19,16 +19,16 @@ const STORE_KINDS: readonly string[] = ["store", "api"]
 const API_KIND = "api"
 export const API_LABEL = "API"
 
-const headingOf = (card: JourneyNode["codeBlocks"][number]["card"]): string | null => card?.heading ?? null
+const headingOf = (card: TraceNode["codeBlocks"][number]["card"]): string | null => card?.heading ?? null
 
-export const isStoreNode = (node: JourneyNode): boolean => {
+export const isStoreNode = (node: TraceNode): boolean => {
   const card = node.codeBlocks[0].card
   return card !== undefined && STORE_KINDS.includes(card.kind) && card.part === "holder"
 }
 
-export const isApiNode = (node: JourneyNode): boolean => isStoreNode(node) && node.codeBlocks[0].card?.kind === API_KIND
+export const isApiNode = (node: TraceNode): boolean => isStoreNode(node) && node.codeBlocks[0].card?.kind === API_KIND
 
-export const listStoreGroups = (node: JourneyNode, rows: readonly ListedBlock[]): JourneyRowGroupView[] => {
+export const listStoreGroups = (node: TraceNode, rows: readonly ListedBlock[]): TraceRowGroupView[] => {
   const partRows = rows.filter((row) => row.kind === PART)
   const otherRows = rows.filter((row) => row.kind !== PART)
   return [

@@ -15,8 +15,8 @@ import { discardCommentRoute } from "./routes/discard-comment"
 import { dismissNewTargetRoute } from "./routes/dismiss-new-target"
 import { editBlastRoute } from "./routes/edit-blast"
 import { editContextRoute } from "./routes/edit-context"
-import { editJourneyRoute } from "./routes/edit-journey"
 import { editSegmentsRoute } from "./routes/edit-segments"
+import { editTraceRoute } from "./routes/edit-trace"
 import { editWalkthroughRoute } from "./routes/edit-walkthrough"
 import { generateSectionRoute } from "./routes/generate-section"
 import { getAuthorFormRoute } from "./routes/get-author-form"
@@ -121,7 +121,7 @@ export const appRouter = createRouter({
     setReviewed: setReviewedRoute,
     editContext: editContextRoute,
     editSegments: editSegmentsRoute,
-    editJourney: editJourneyRoute,
+    editTrace: editTraceRoute,
     editBlast: editBlastRoute,
     editWalkthrough: editWalkthroughRoute,
     cardBlocks: listCardBlocksRoute,

@@ -88,7 +88,7 @@ import Button from "@flightplan/ui/blocks/button"
 - Load non-critical third-party code (analytics, error reporting) after the app has rendered.
 
 ```tsx
-const JourneyFlowDiagram = lazy(() => import("./JourneyFlowDiagram"))
+const TraceDiagram = lazy(() => import("./TraceDiagram"))
 ```
 
 ### Preload on intent

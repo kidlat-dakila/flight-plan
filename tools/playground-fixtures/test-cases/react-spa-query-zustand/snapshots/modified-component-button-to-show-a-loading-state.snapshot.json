@@ -290,9 +290,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
               "type": "root-variable",
@@ -555,7 +555,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@7:1 -> src/routes/root-layout.tsx#component@6:1",
               "from": "src/router.tsx#root-variable@7:1",
@@ -638,7 +638,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/components/ui/button.tsx",
@@ -825,7 +825,7 @@
                     "lineEnd": 9
                   },
                   "category": "type",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/components/ui/button.tsx#type-declaration@6:1"
                   ],
@@ -843,7 +843,7 @@
                     "lineEnd": 33
                   },
                   "category": "function",
-                  "journeyNodeId": "src/components/ui/button.tsx#component@16:1",
+                  "traceNodeId": "src/components/ui/button.tsx#component@16:1",
                   "codeBlockIds": [
                     "src/components/ui/button.tsx#component@16:1",
                     "src/components/ui/button.tsx#root-argument-value@17:3",

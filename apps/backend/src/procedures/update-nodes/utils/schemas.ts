@@ -45,8 +45,8 @@ const blockLabelEditSchema = z.strictObject({
   label: prose.describe("What the argument, the state, the hook, the effect or the step is for, in the reader's terms."),
 })
 
-const journeyEditSchema = z.strictObject({
-  id: z.string().min(1).describe("The Journey Flow Diagram node's id, as the artifact has it. A node inside another is written by its own id."),
+const traceEditSchema = z.strictObject({
+  id: z.string().min(1).describe("The Trace Diagram node's id, as the artifact has it. A node inside another is written by its own id."),
   label: prose.optional().describe("What this step does, not which code it is."),
   description: prose.nullable().optional().describe("How the step is reached and what it runs next. The page draws every edge as the same line with no label, so what matters about a connection belongs here."),
   triggerLabels: z.array(triggerLabelEditSchema).min(1).optional().describe("Labels for the node's events and data fetches, each by its `codeBlockId`."),
@@ -72,7 +72,7 @@ const segmentEditShape = {
   title: prose.optional().describe("The segment's title: a very short text of what its context is about."),
   context: prose.optional().describe("The Context Section, as Markdown: why the change matters, what it changes from outside and what changed inside. Replaces the whole section."),
   order: fileOrderSchema.optional().describe("The order a reader walks the File Sections in."),
-  journeyDescription: prose.optional().describe("The Journey Flow Diagram told in words, shown above the diagram: where its paths start, what they run through and where they reach the change. Five sentences at most. Required where the segment has a diagram."),
+  traceDiagramDescription: prose.optional().describe("The Trace Diagram told in words, shown above the diagram: where its paths start, what they run through and where they reach the change. Five sentences at most. Required where the segment has a diagram."),
 }
 
 export const updateNodesInputShape = {
@@ -80,8 +80,8 @@ export const updateNodesInputShape = {
   segmentId: writtenSegmentIdShape,
   ...segmentEditShape,
   waypoints: z.array(waypointEditSchema).min(1).optional(),
-  journey: z.array(journeyEditSchema).min(1).optional().describe("Journey Flow Diagram nodes."),
-  blast: z.array(blastEditSchema).min(1).optional().describe("Blast Diagram files, by path. Work this before the prose."),
+  traceDiagram: z.array(traceEditSchema).min(1).optional().describe("Trace Diagram nodes."),
+  blastDiagram: z.array(blastEditSchema).min(1).optional().describe("Blast Diagram files, by path. Work this before the prose."),
   contextCodeBlocks: z
     .array(contextCodeBlockEditSchema)
     .min(1)
@@ -92,10 +92,10 @@ export const updateNodesInputShape = {
 export const updateNodesInputSchema = z.strictObject(updateNodesInputShape)
 
 export type UpdateNodesInput = z.infer<typeof updateNodesInputSchema>
-export type SegmentEdit = Pick<UpdateNodesInput, "title" | "context" | "order" | "journeyDescription">
+export type SegmentEdit = Pick<UpdateNodesInput, "title" | "context" | "order" | "traceDiagramDescription">
 export type FindingEdit = z.infer<typeof findingEditSchema>
 export type WaypointEdit = z.infer<typeof waypointEditSchema>
-export type JourneyEdit = z.infer<typeof journeyEditSchema>
+export type TraceEdit = z.infer<typeof traceEditSchema>
 export type BlastEdit = z.infer<typeof blastEditSchema>
 export type ContextCodeBlockEdit = z.infer<typeof contextCodeBlockEditSchema>
 

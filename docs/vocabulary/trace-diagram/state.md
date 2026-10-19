@@ -1,6 +1,6 @@
 # State card
 
-The card of a store in a [Journey Flow Diagram](../journey-flow-diagram.md): a value, made by a library, that keeps state for the code that reads and writes it. This page holds what every state library shares, and is where to start when a library is added. What one library writes and how its card looks is on the page of that library. The rules every card shares, its frame, its rows and its lines, are in [On the page](../journey-flow-diagram.md#on-the-page).
+The card of a store in a [Trace Diagram](../trace-diagram.md): a value, made by a library, that keeps state for the code that reads and writes it. This page holds what every state library shares, and is where to start when a library is added. What one library writes and how its card looks is on the page of that library. The rules every card shares, its frame, its rows and its lines, are in [On the page](../trace-diagram.md#on-the-page).
 
 | Library | Page | Shape |
 |---|---|---|
@@ -15,7 +15,7 @@ The card of a store in a [Journey Flow Diagram](../journey-flow-diagram.md): a v
 
 ## What is a state card
 
-**A store is one node, of the type `state`.** A library declares a store with a call, such as `create`, `defineStore`, `createSlice`, `proxy` or `createStore`, or with a class that hands itself to `makeAutoObservable`, and the value at the top level of a file that keeps the result of that call is the store: its **holder**. The holder is the node. A store is never [plain](../journey-flow-diagram.md#plain-code), since it is made by a call.
+**A store is one node, of the type `state`.** A library declares a store with a call, such as `create`, `defineStore`, `createSlice`, `proxy` or `createStore`, or with a class that hands itself to `makeAutoObservable`, and the value at the top level of a file that keeps the result of that call is the store: its **holder**. The holder is the node. A store is never [plain](../trace-diagram.md#plain-code), since it is made by a call.
 
 **Everything a store declares is a part of it.** A library declares the parts of a store in the arguments of the call that makes it, or beside it, and each part is one kind of the `part` of a block's `card`:
 
@@ -73,8 +73,8 @@ A state library is added in the folders of its language, one file in each, and n
 |---|---|---|
 | The library file | `packages/codegraph/src/code-blocks/languages/<language>/libraries/<library>.ts`, listed in `TYPESCRIPT_LIBRARIES` or `PYTHON_LIBRARIES` of that folder's `index.ts` | A `Library`: its name, specifiers and documented version, the patterns of the calls that make a store and its parts, and a `readCards` for what a pattern cannot say. It writes the `card` of each block: the library, the kind `store`, the part, the heading and, for a part beside the store, the `ownerId`. A library already in the catalogue moves its entry here, and leaves the catalogue. |
 | Its fixtures | `packages/codegraph/src/code-blocks/languages/<language>/libraries/__tests__/` | Code each pattern matches and code it rejects, and the `card` each block gets |
-| The card file | `packages/codegraph/src/journey-flow-diagram/languages/<language>/libraries/<library>.ts`, listed in `TYPESCRIPT_CARD_RULES` or `PYTHON_CARD_RULES` of `journey-flow-diagram/languages/<language>/index.ts` | A `LibraryCardRules` that extends the shared `store` card: its shape, `ROWS_ONLY_STORE` of `journey-flow-diagram/cards/store.ts` for rows only and no rules of its own for holding cards, and anything else its card does differently |
-| The band | `STORE_HEADINGS` in `packages/codegraph/src/journey/cards/store.ts` | The one order of the headings every state library shares. A library uses the headings of its parts, read from the `heading` of each; a new heading is added there, in its place. |
-| Its page | `docs/vocabulary/journey-flow-diagram/libraries/<library>.md`, and a row in the table at the top of this page | The parts the library has and under which names it writes them, its headings in order, its shape, an example of its code and a drawing of its card |
+| The card file | `packages/codegraph/src/trace-diagram/languages/<language>/libraries/<library>.ts`, listed in `TYPESCRIPT_CARD_RULES` or `PYTHON_CARD_RULES` of `trace-diagram/languages/<language>/index.ts` | A `LibraryCardRules` that extends the shared `store` card: its shape, `ROWS_ONLY_STORE` of `trace-diagram/cards/store.ts` for rows only and no rules of its own for holding cards, and anything else its card does differently |
+| The band | `STORE_HEADINGS` in `packages/codegraph/src/trace/cards/store.ts` | The one order of the headings every state library shares. A library uses the headings of its parts, read from the `heading` of each; a new heading is added there, in its place. |
+| Its page | `docs/vocabulary/trace-diagram/libraries/<library>.md`, and a row in the table at the top of this page | The parts the library has and under which names it writes them, its headings in order, its shape, an example of its code and a drawing of its card |
 
 **Start from the page of the closest library.** A library that keeps its parts as keys of one returned object or members of one class, as Zustand, Pinia, MobX and Valtio do, is drawn rows only. A library that declares each part as a function of its own, as Redux Toolkit does, holds cards. The parts and the rules of this page stay the same for every library; a library that needs a part this page has not got adds it to the table of parts and to `CardPart` in `packages/configurations/src/code-graph/code-blocks.ts`.

@@ -75,7 +75,7 @@ interface ASTCodeGroupGraph {
 
 ### What the diff contains
 
-`diffContains` says, in a few words, what the changes of the group are made of. It is read before anything is traced, so that what is built next can take the right path without looking at every block again. The Journey Flow Diagram is built differently when the diff has changes to the interface, and `diffContains` says so at once.
+`diffContains` says, in a few words, what the changes of the group are made of. It is read before anything is traced, so that what is built next can take the right path without looking at every block again. The Trace Diagram is built differently when the diff has changes to the interface, and `diffContains` says so at once.
 
 It is worked out from `diffBlocks` alone: the [classifications](classifications.md) each diff block earns by itself, each mapped to the kind it gives, and whether the block is inside a component.
 
@@ -94,7 +94,7 @@ Its values are the ten of `DiffKind`, and no other: a value that is not one of t
 | `file` | `file`: a file no language reads and no location names |
 | `logic` | Anything else, and a block that earns no classification: a function, a method, a condition, a loop, a request over the network, a migration |
 
-A diff can hold several: a change to a component and to the function it calls gives `["ui", "logic"]`. A group whose diff has no `ui` holds no change to the interface, and the Journey Flow Diagram needs none of what it builds for components.
+A diff can hold several: a change to a component and to the function it calls gives `["ui", "logic"]`. A group whose diff has no `ui` holds no change to the interface, and the Trace Diagram needs none of what it builds for components.
 
 ### What the chains contain
 
@@ -111,7 +111,7 @@ export const loadUsers = () => { … }      // the only change
 | Field | Filled | Holds here | Answers |
 |---|---|---|---|
 | `diffContains` | Before any chain is traced, from the changed blocks | `["logic"]` | What changed |
-| `chainContains` | With the chains, from the blocks they pass through | `["ui", "logic"]` | What the journey has to draw |
+| `chainContains` | With the chains, from the blocks they pass through | `["ui", "logic"]` | What the trace has to draw |
 
 When `diffContains` holds only `type` and `file`, nothing that runs changed: no chain is traced, and `chainContains` and `diffChains` are empty.
 
@@ -292,10 +292,10 @@ interface CodeBlock {
 | `childrenBlocks` | The blocks directly inside it |
 | `isRoot` | Whether it sits at the top level of the file |
 | `isExported` | Whether the file exports it. Being exported is a fact about a block, not a type: a function, a class and a root variable can each be exported or not. |
-| `isPlain` | On a `root-variable`, set when every value in it, at any depth, is written out as it is: no call but `new`, no function, no markup, and in Python no comprehension. Left out otherwise. The Journey Flow Diagram reads it as [Plain code](../journey-flow-diagram.md#plain-code) says. |
+| `isPlain` | On a `root-variable`, set when every value in it, at any depth, is written out as it is: no call but `new`, no function, no markup, and in Python no comprehension. Left out otherwise. The Trace Diagram reads it as [Plain code](../trace-diagram.md#plain-code) says. |
 | `isReturned` | On a `function`, a `hook`, a `component` or a `method`, set when the function around it returns it: written in the `return`, as the body of an arrow function, or named by the `return`. Left out otherwise. |
-| `isParameterProperty` | On a `root-argument-value` of a TypeScript constructor, set when the parameter is marked `private`, `protected`, `public` or `readonly`, so it declares a property of the class too. Left out otherwise. The Journey Flow Diagram draws it as a property of its class, as the [class card](../journey-flow-diagram/class-card.md#rows-and-methods) says. |
-| `isAnnotatedAlias` | On a Python `root-variable`, set when its value is `Annotated[…]`, written bare or as `typing.Annotated[…]`, so the name stands for a type and what the `Annotated` holds: `CurrentUser = Annotated[User, Depends(current_user)]`. Left out otherwise. A chain steps to it from a type that names it, as [Chains](chains.md#what-a-chain-steps-through) says, and the Journey Flow Diagram draws it as [plain code](../journey-flow-diagram.md#plain-code). |
+| `isParameterProperty` | On a `root-argument-value` of a TypeScript constructor, set when the parameter is marked `private`, `protected`, `public` or `readonly`, so it declares a property of the class too. Left out otherwise. The Trace Diagram draws it as a property of its class, as the [class card](../trace-diagram/class-card.md#rows-and-methods) says. |
+| `isAnnotatedAlias` | On a Python `root-variable`, set when its value is `Annotated[…]`, written bare or as `typing.Annotated[…]`, so the name stands for a type and what the `Annotated` holds: `CurrentUser = Annotated[User, Depends(current_user)]`. Left out otherwise. A chain steps to it from a type that names it, as [Chains](chains.md#what-a-chain-steps-through) says, and the Trace Diagram draws it as [plain code](../trace-diagram.md#plain-code). |
 | `exportedBy` | The AST graph of every file that exports the block: its own file, and each file that re-exports it, such as an `index.ts`. Empty when `isExported` is `false`. |
 | `lineOfCodeDiffs` | The ranges of the changes that belong to the block itself: those it is the innermost block around. `null` for every other block, including a block around a diff block. A block with ranges here is a diff block. |
 | `diffs` | What a change does to the block, each as a diff with a `type` and a `range`. The changes of `lineOfCodeDiffs` are here as `added`, `modified` or `deleted`. A use of a block with a change is here as `affected`. Empty on a block with neither. See [The diffs of a block](chains.md#the-diffs-of-a-block). |
@@ -308,7 +308,7 @@ interface CodeBlock {
 | `usedBy` | The blocks that have this block in their `outerSymbols`. It is the reverse of `outerSymbols`, filled once when the group is built, so that climbing from a block to what uses it is a lookup. |
 | `astGraph` | The AST graph of the file the block is in, an alias, so the file can be found from any block |
 | `catalogue` | What the [catalogue](catalogue.md) says about the block, or `null` when no pattern matched it. See "What the catalogue leaves on a block". |
-| `card` | Which card of the Journey Flow Diagram the block belongs to, and as what part: the library that says it, the kind of card, the part, the heading it is drawn under, the key its card is grouped by and the block it is drawn in, and for middleware that runs before a whole router, the route paths it reaches (`routePaths`), whether it reaches the whole app (`isAppWide`), for a `mount`, whether it hands over an app of its own (`isAppMount`) and the dotted name of the module it hands over (`mountedModule`, as Django's `include("shop.api_urls")` writes), and the routes it runs before (`routePatterns`) and the routes it leaves out (`excludedRoutePatterns`, also on a `mount` of the whole app), each a path pattern and a method or `null` for every method, and the versions of a handler or of a `versioning` part (`versions`, empty for a route of no version). Only a library with a file of its own writes it; left out otherwise. See "Which card a block belongs to". |
+| `card` | Which card of the Trace Diagram the block belongs to, and as what part: the library that says it, the kind of card, the part, the heading it is drawn under, the key its card is grouped by and the block it is drawn in, and for middleware that runs before a whole router, the route paths it reaches (`routePaths`), whether it reaches the whole app (`isAppWide`), for a `mount`, whether it hands over an app of its own (`isAppMount`) and the dotted name of the module it hands over (`mountedModule`, as Django's `include("shop.api_urls")` writes), and the routes it runs before (`routePatterns`) and the routes it leaves out (`excludedRoutePatterns`, also on a `mount` of the whole app), each a path pattern and a method or `null` for every method, and the versions of a handler or of a `versioning` part (`versions`, empty for a route of no version). Only a library with a file of its own writes it; left out otherwise. See "Which card a block belongs to". |
 | `cardOwner` | The block `card.ownerId` names, an alias, or `null` when the card names none. Only in memory: the stored form keeps the id in `card`. |
 
 ## Which card a block belongs to
@@ -441,6 +441,6 @@ Steps 5 and 6 make the two flat lists, and step 7 the chains: a chain cannot be 
 
 The references between blocks are part of step 5, and they need two passes of their own: every block is created first, and the references are filled in after, since a block can only point at a block that exists. The card links follow them, as [Which card a block belongs to](#which-card-a-block-belongs-to) says.
 
-From the finished group the diagrams are built: the [segments](segments.md), then the Journey Flow Diagram, the Blast Diagram and the Code Walkthrough of each.
+From the finished group the diagrams are built: the [segments](segments.md), then the Trace Diagram, the Blast Diagram and the Code Walkthrough of each.
 
 Nothing outside that function sees a block before it is complete, and nothing changes a group afterwards.

@@ -9,7 +9,7 @@ How the [codegraph](../../codegraph.md) reads a JavaScript or a JSX file. This p
 | **Reader of the import graph** | The script reader, shared with [TypeScript](typescript.md) and [Vue](vue.md) |
 | **Reader of the AST graph** | `readJsxSyntax` |
 | **Language of the code blocks** | `languages/typescript/`, with the `tsx` grammar |
-| **Journey Flow Diagram** | Drawn from chains: a node per component, with the components it renders inside it and its handlers and data fetches as trigger labels, and a node per handler and effect of a component |
+| **Trace Diagram** | Drawn from chains: a node per component, with the components it renders inside it and its handlers and data fetches as trigger labels, and a node per handler and effect of a component |
 
 JSX is TypeScript with elements. Everything in [TypeScript](typescript.md) holds for a JSX file, and this page lists what elements add. A [Vue](vue.md) component is traced by the same rules, said by its template. An element says things no call does: it has handlers, it renders other components, it hands a value to a context, and a route names it as a page.
 
@@ -52,9 +52,9 @@ A JSX file also has four kinds of syntax site a TypeScript file does not have:
 | `markup` | A stretch of markup |
 | `page` | A component named by a route, with its path |
 
-## Journey Flow Diagram
+## Trace Diagram
 
-See [Journey Flow Diagram](../../journey-flow-diagram.md) for the rules every language shares. A JSX file is traced by its chains, like any other file, and its blocks say what the diagram draws.
+See [Trace Diagram](../../trace-diagram.md) for the rules every language shares. A JSX file is traced by its chains, like any other file, and its blocks say what the diagram draws.
 
 | In the code | In the diagram |
 |---|---|
@@ -98,6 +98,6 @@ The click starts the chain, so the path starts at `CartLine`: its `render-event`
 | The element sites | `src/ast-graph/languages/jsx/syntax-sites.ts` |
 | The blocks, the uses and the markup of a file | `src/code-blocks/languages/typescript/` |
 | Where a value comes from: a prop, a context, a member | `src/code-blocks/link-references.ts`, `src/code-blocks/value-origins.ts` |
-| The nodes, the edges, the children and the trigger labels of a diagram, from chains | `src/journey-flow-diagram/index.ts` |
-| The band the page receives | `src/journey/build.ts` |
-| Placing the nodes on the page | `packages/ui/src/lib/journey-layout.ts` |
+| The nodes, the edges, the children and the trigger labels of a diagram, from chains | `src/trace-diagram/index.ts` |
+| The band the page receives | `src/trace/build.ts` |
+| Placing the nodes on the page | `packages/ui/src/lib/trace-layout.ts` |

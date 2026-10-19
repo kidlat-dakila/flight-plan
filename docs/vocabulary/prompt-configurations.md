@@ -22,7 +22,7 @@ Every field of a review artifact has guidance attached to it, and the configurat
 
 A field is either **editable**, when a configuration can change how it is written (a waypoint's reading, a finding's title), or **static**, when its wording is fixed by Flight Plan (an identifier, a range). A segment's id and title are static: they have a field description and no how-to-write instruction.
 
-A field is named by its path inside a segment, such as `context`, `journey.nodes.label` or `walkthrough.files.waypoints.findings.kind`. A finding lives on a waypoint, so every field of a finding is under `walkthrough.files.waypoints.findings`.
+A field is named by its path inside a segment, such as `context`, `traceDiagram.nodes.label` or `walkthrough.files.waypoints.findings.kind`. A finding lives on a waypoint, so every field of a finding is under `walkthrough.files.waypoints.findings`.
 
 Each field's guidance is attached to the field itself in the artifact's schema: a version, whether it is editable, its field description, an example value, and for an editable field the title and description the settings screen shows it with.
 
@@ -39,7 +39,7 @@ A preset is a complete configuration that ships with Flight Plan: a how-to-write
 | Preset | Written for |
 |---|---|
 | **Standard** | A reviewer who knows the codebase and wants the full review. The default. |
-| **Minimal** | A reviewer who wants the shortest artifact that still answers the review's questions. It writes every field in fragments that keep each fact once, and leaves the Journey Flow Diagram, the Blast Diagram and the findings out. |
+| **Minimal** | A reviewer who wants the shortest artifact that still answers the review's questions. It writes every field in fragments that keep each fact once, and leaves the Trace Diagram, the Blast Diagram and the findings out. |
 | **Onboardee** | A reader new to the codebase, who needs more context about the code around the change. It writes every field as Standard does, and it requires a description of every context code block. |
 | **Unfamiliar territory** | A reviewer who does not know the language or the libraries the change is written with. It writes every field as Onboardee does, and it also requires a description of every name of a library and of the language the shown code uses. |
 
@@ -51,11 +51,11 @@ A configuration the user creates as a copy of a preset or of another custom conf
 
 ## Section switches
 
-A configuration turns the optional parts of an artifact on or off. The Journey Flow Diagram, the Blast Diagram and the findings can be switched; the Code Walkthrough is always on:
+A configuration turns the optional parts of an artifact on or off. The Trace Diagram, the Blast Diagram and the findings can be switched; the Code Walkthrough is always on:
 
 | Section | Standard | Minimal | Onboardee | Unfamiliar territory |
 |---|---|---|---|---|
-| Journey Flow Diagram | On | Off | On | On |
+| Trace Diagram | On | Off | On | On |
 | Blast Diagram | On | Off | On | On |
 | Code Walkthrough | On | On | On | On |
 | Findings | On | Off | On | On |
@@ -70,7 +70,7 @@ The review also keeps the id of its configuration and the preset that configurat
 
 A section that is off is **not generated**:
 
-- Flight Plan builds no structure for it. The artifact holds no Journey Flow Diagram and no Blast Diagram.
+- Flight Plan builds no structure for it. The artifact holds no Trace Diagram and no Blast Diagram.
 - The agent is not asked to write it. It is no part of what is left to write, and its fields are not in the index of instructions.
 - The agent's tools refuse it. Reading it, asking how to write it and writing it each return a message that says the reviewer chose not to generate it.
 - The page says so where the section would be, and offers to generate it.

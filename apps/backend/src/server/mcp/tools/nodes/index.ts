@@ -7,7 +7,7 @@ import { errorResult, jsonResult } from "@/server/mcp/tool-result"
 const DESCRIPTION = [
   "Selects waypoints, File Sections and diagram nodes by id, or by what is still missing.",
   "Each item comes back with the code it covers, what the change did to those lines, its ancestors, and `needs`, which says what to write.",
-  "A Journey Flow Diagram node says how it stands to the diff with `changeType`, and a component lists its `events` and its `data`: a value its markup reads is an entry of `data` and has no node of its own.",
+  "A Trace Diagram node says how it stands to the diff with `changeType`, and a component lists its `events` and its `data`: a value its markup reads is an entry of `data` and has no node of its own.",
   "Work `unfilled` until `total` is zero. There is no page cursor, because the list shrinks as you fill it.",
 ].join(" ")
 

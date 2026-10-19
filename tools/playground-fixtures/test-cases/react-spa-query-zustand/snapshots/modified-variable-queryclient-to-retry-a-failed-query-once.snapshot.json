@@ -60,9 +60,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/lib/query-client.ts#root-variable@6:1",
               "type": "root-variable",
@@ -93,9 +93,9 @@
               ]
             }
           ],
-          "journeyNodeEdges": []
+          "traceNodeEdges": []
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/lib/query-client.ts",
@@ -143,7 +143,7 @@
                     "lineEnd": 4
                   },
                   "category": "variable",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/lib/query-client.ts#root-variable@4:1"
                   ],
@@ -161,7 +161,7 @@
                     "lineEnd": 10
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/lib/query-client.ts#root-variable@6:1",
+                  "traceNodeId": "src/lib/query-client.ts#root-variable@6:1",
                   "codeBlockIds": [
                     "src/lib/query-client.ts#root-variable@6:1",
                     "src/lib/query-client.ts#property@8:42"

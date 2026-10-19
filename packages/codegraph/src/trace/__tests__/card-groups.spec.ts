@@ -1,17 +1,17 @@
 import { createSegment, createViewContext } from "@/__tests__/review-fixture"
 import { codeOf, rangeAt, type FixtureDiffs, type FixtureFiles } from "@/code-blocks/__tests__/group-fixture"
-import { buildJourney } from "@/journey/build"
-import { presentDiagramOf } from "@/journey-flow-diagram/__tests__/diagram-fixture"
-import type { JourneyNodeView } from "@flightplan/configurations"
+import { buildTrace } from "@/trace/build"
+import { presentDiagramOf } from "@/trace-diagram/__tests__/diagram-fixture"
+import type { TraceNodeView } from "@flightplan/configurations"
 
-const listNodeViews = (nodes: readonly JourneyNodeView[]): JourneyNodeView[] => nodes.flatMap((node) => [node, ...listNodeViews(node.children)])
+const listNodeViews = (nodes: readonly TraceNodeView[]): TraceNodeView[] => nodes.flatMap((node) => [node, ...listNodeViews(node.children)])
 
-const nodeViewNamed = (files: FixtureFiles, diffs: FixtureDiffs, name: string): JourneyNodeView | undefined => {
-  const segment = createSegment({ journey: presentDiagramOf(files, diffs) })
-  return listNodeViews(buildJourney(segment, "", [], createViewContext()).diagram?.nodes ?? []).find((node) => node.name === name)
+const nodeViewNamed = (files: FixtureFiles, diffs: FixtureDiffs, name: string): TraceNodeView | undefined => {
+  const segment = createSegment({ traceDiagram: presentDiagramOf(files, diffs) })
+  return listNodeViews(buildTrace(segment, "", [], createViewContext()).diagram?.nodes ?? []).find((node) => node.name === name)
 }
 
-const groupsOf = (node: JourneyNodeView | undefined): [string | null, number, string[]][] =>
+const groupsOf = (node: TraceNodeView | undefined): [string | null, number, string[]][] =>
   (node?.rowGroups ?? []).map(({ label, rowIds, childIds }) => [label, rowIds.length, childIds.map((childId) => node?.children.find((child) => child.id === childId)?.name ?? childId)])
 
 describe("the row groups of a class card", () => {

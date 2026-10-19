@@ -11,14 +11,14 @@ import {
 
 describe("readArtifact", () => {
   it("rejects a section the reviewer chose not to generate, and shows its switch in the overview", async () => {
-    const sections = { journey: false, blast: true, walkthrough: true, findings: false }
+    const sections = { traceDiagram: false, blastDiagram: true, walkthrough: true, findings: false }
     const context = await createArtifactContext({ ...DRAFT_ARTIFACT, sections })
 
-    await expect(readArtifact({ ...KEY, section: "journey" }, context)).resolves.toStrictEqual({
+    await expect(readArtifact({ ...KEY, section: "trace-diagram" }, context)).resolves.toStrictEqual({
       kind: "rejected",
-      message: "The reviewer chose not to generate the Journey Flow Diagram for this review. Do not write this, and do not ask the reviewer about it.",
+      message: "The reviewer chose not to generate the Trace Diagram for this review. Do not write this, and do not ask the reviewer about it.",
     })
-    await expect(readArtifact({ ...KEY, section: "blast" }, context)).resolves.toMatchObject({ kind: "read" })
+    await expect(readArtifact({ ...KEY, section: "blast-diagram" }, context)).resolves.toMatchObject({ kind: "read" })
     await expect(readArtifact({ ...KEY, section: "overview" }, context)).resolves.toMatchObject({ content: { sections } })
   })
 
@@ -43,8 +43,8 @@ describe("readArtifact", () => {
             { path: PRICE_PATH, waypoints: [{ id: "w1", declaration: "priceOf", title: null, isReadingWritten: false }] },
             { path: SUBTOTAL_PATH, waypoints: [{ id: "w2" }, { id: "w3" }] },
           ],
-          journey: { isDescriptionWritten: false, nodes: [{ id: "j-subtotal", parentId: null, type: "function", label: null, isChanged: true }] },
-          blast: { nodes: [{ path: "src/cart/CartPage.tsx", diffType: null }, { path: "src/cart/CartTotal.tsx" }, { path: SUBTOTAL_PATH, diffType: "modified" }] },
+          traceDiagram: { isDescriptionWritten: false, nodes: [{ id: "j-subtotal", parentId: null, type: "function", label: null, isChanged: true }] },
+          blastDiagram: { nodes: [{ path: "src/cart/CartPage.tsx", diffType: null }, { path: "src/cart/CartTotal.tsx" }, { path: SUBTOTAL_PATH, diffType: "modified" }] },
         }],
       },
     })

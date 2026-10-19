@@ -39,6 +39,21 @@ describe("parseConfigurationFiles", () => {
     expect(parseConfigurationFiles("custom-terse", formatConfigurationFiles(TERSE))).toStrictEqual(TERSE)
   })
 
+  it("reads a configuration saved while the diagrams were named journey and blast under their current names", () => {
+    const { traceDiagram, blastDiagram, ...otherSections } = PRESET_SECTIONS.minimal
+    const older = new Map([
+      ["configuration.json", JSON.stringify({ ...JSON.parse(DESCRIPTION_TEXT), sections: { ...otherSections, journey: traceDiagram, blast: blastDiagram } })],
+      ["journey.nodes.label.md", "The step, in a verb."],
+      ["blast.nodes.impactReason.md", "What breaks."],
+    ])
+
+    expect(parseConfigurationFiles("custom-terse", older)).toStrictEqual({
+      ...TERSE,
+      sections: PRESET_SECTIONS.minimal,
+      instructions: { "traceDiagram.nodes.label": "The step, in a verb.", "blastDiagram.nodes.impactReason": "What breaks." },
+    })
+  })
+
   it("reads no configuration from a folder without a readable description", () => {
     expect(parseConfigurationFiles("notes", new Map([["context.md", "Two sentences."]]))).toBeNull()
     expect(parseConfigurationFiles("broken", new Map([["configuration.json", "{ broken"]]))).toBeNull()

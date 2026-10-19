@@ -1,12 +1,12 @@
 # Steps
 
-How the [code blocks](code-blocks.md) inside a declaration are compressed into steps. A block is small: a declared value, a property of an object and the function handed to `.map` are each one. Listing every block would give a node of the [Journey Flow Diagram](../journey-flow-diagram.md) thirteen rows for six lines of code. A step is the unit a reader thinks in: one statement, or a few that belong together.
+How the [code blocks](code-blocks.md) inside a declaration are compressed into steps. A block is small: a declared value, a property of an object and the function handed to `.map` are each one. Listing every block would give a node of the [Trace Diagram](../trace-diagram.md) thirteen rows for six lines of code. A step is the unit a reader thinks in: one statement, or a few that belong together.
 
 Two things are made of steps:
 
 | What | Its steps |
 |---|---|
-| A node of the Journey Flow Diagram | Its rows that are steps and calls: the rows under Calls and Steps of a component, and every row after the arguments of any other node |
+| A node of the Trace Diagram | Its rows that are steps and calls: the rows under Calls and Steps of a component, and every row after the arguments of any other node |
 | A waypoint of the [Code Walkthrough](../code-walkthrough.md) | Its children |
 
 Both use the same folding, each with rules of its own. [Two readers](#two-readers) lists where they differ.
@@ -103,7 +103,7 @@ A run ends at a step that stands alone. Only statements with the same step aroun
 
 ## Two readers
 
-| | A node of the Journey Flow Diagram | A waypoint of the Code Walkthrough |
+| | A node of the Trace Diagram | A waypoint of the Code Walkthrough |
 |---|---|---|
 | The declaration | The block of the node | The block the waypoint stops at: a root block, or a method of a class |
 | The blocks it starts from | The blocks of the node a chain passes through, and its blocks with a change. A call out on a chain is a row though its own line did not change. | The blocks of the declaration with a change |
@@ -119,7 +119,7 @@ A run ends at a step that stands alone. Only statements with the same step aroun
 
 For `renameUser`, with every line changed:
 
-| Step | Journey row | Waypoint child |
+| Step | Trace row | Waypoint child |
 |---|---|---|
 | `const users = getUsers()` | `users` | `renameUser › users` |
 | `if (!users) throw …` | `Condition :4` | `renameUser › Condition :4` |
@@ -147,6 +147,6 @@ A step is only as exact as the blocks under it. Five things follow from the bloc
 
 | File | What it holds |
 |---|---|
-| `packages/codegraph/src/journey-flow-diagram/step-folding.ts` | The folding: `statementOf`, `isStepRow`, `listRuns`, `nameOfRun`, and `StepRules`, the four rules a reader supplies |
-| `packages/codegraph/src/journey-flow-diagram/listed-blocks.ts` | The rules of a journey node, and its other lists |
+| `packages/codegraph/src/trace-diagram/step-folding.ts` | The folding: `statementOf`, `isStepRow`, `listRuns`, `nameOfRun`, and `StepRules`, the four rules a reader supplies |
+| `packages/codegraph/src/trace-diagram/listed-blocks.ts` | The rules of a trace node, and its other lists |
 | `packages/codegraph/src/code-walkthrough/steps.ts` | The rules of a waypoint, and the tree of its children |

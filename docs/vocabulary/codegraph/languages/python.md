@@ -8,7 +8,7 @@ How the [codegraph](../../codegraph.md) reads a Python file. This page holds wha
 | **Grammar** | tree-sitter `python` |
 | **Reader of the import graph** | The Python reader. A Python file is never in a cluster with a script file. |
 | **Reader of the AST graph** | `readPythonSyntax` |
-| **Journey Flow Diagram** | A node per function, class and statement at the root of a file, joined by calls |
+| **Trace Diagram** | A node per function, class and statement at the root of a file, joined by calls |
 
 ## Import graph
 
@@ -205,13 +205,13 @@ A `with` statement, a name bound in the body of a class and a plain local are no
 
 **A file exports every name its root binds, and every name it imports**, so `from shop import price_of` reaches `shop/pricing.py` through `shop/__init__.py`.
 
-## Journey Flow Diagram
+## Trace Diagram
 
-A Python file is traced by its calls, like a [TypeScript](typescript.md#journey-flow-diagram) file. A function at the root of a file is one node of the type `function`, and a class with a method one node of the type `class` that holds a node for each of its methods, as the [class card](../../journey-flow-diagram/class-card.md) says: `self` reaches the class as `this` does. A function a function returns, such as the `wrapper` of a decorator, is a node drawn inside it. A value at the root of a file that is [plain](../../journey-flow-diagram.md#plain-code), such as `MAX_ITEMS = 5`, is no node. A condition or a loop of a function or of a method is a step of its node, as [Journey Flow Diagram](../../journey-flow-diagram.md#nodes) says.
+A Python file is traced by its calls, like a [TypeScript](typescript.md#trace-diagram) file. A function at the root of a file is one node of the type `function`, and a class with a method one node of the type `class` that holds a node for each of its methods, as the [class card](../../trace-diagram/class-card.md) says: `self` reaches the class as `this` does. A function a function returns, such as the `wrapper` of a decorator, is a node drawn inside it. A value at the root of a file that is [plain](../../trace-diagram.md#plain-code), such as `MAX_ITEMS = 5`, is no node. A condition or a loop of a function or of a method is a step of its node, as [Trace Diagram](../../trace-diagram.md#nodes) says.
 
 | The top of the path | The node it is in |
 |---|---|
-| A function a catalogue pattern names as a route, such as one under `@app.get("/total")` | The handler inside the [route card](../../journey-flow-diagram/route-card.md) of its path |
+| A function a catalogue pattern names as a route, such as one under `@app.get("/total")` | The handler inside the [route card](../../trace-diagram/route-card.md) of its path |
 | A statement at the root of a file | Its own `root-statement` node |
 | A function nothing calls | The `function` node of that function |
 

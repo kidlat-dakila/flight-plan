@@ -7,7 +7,7 @@ The landing page shows the real Flight Plan app: a looping video behind the hero
 | Files | Where the site shows them | Made by |
 |---|---|---|
 | `public/media/hero-*.webm`, `hero-*.mp4`, `src/assets/screenshots/hero-poster-*.png` | The hero | `record-hero` |
-| `public/media/journey-*`, `src/assets/screenshots/journey-poster-*.png` | The Journey Flow Diagram panel | `record-journey` |
+| `public/media/trace-*`, `src/assets/screenshots/trace-poster-*.png` | The Trace Diagram panel | `record-trace` |
 | `public/media/blast-*`, `src/assets/screenshots/blast-poster-*.png` | The Blast Diagram panel | `record-blast` |
 | `public/media/walkthrough-waypoints-*`, `src/assets/screenshots/walkthrough-waypoints-poster-*.png` | The waypoints panel | `record-walkthrough` |
 | `public/media/walkthrough-filters-*`, `src/assets/screenshots/walkthrough-filters-poster-*.png` | The filters panel | `record-walkthrough` |
@@ -20,7 +20,7 @@ Every video is an H.264 MP4 and a VP9 WebM, and every file exists in a light and
 
 Every video comes from the review of the `demo-react` pull request, "Implement three pages ViewOrdersPage, CreateOrderPage and EditOrderPage". It is a playground fixture in `tools/playground-fixtures/test-cases/demo-react/`, and the review's prose is part of the fixture, so every machine shows the same review.
 
-The journey video records segment 4 of it, "New ViewOrdersPage", in the app, where the development build of the backend lists the fixtures on the index page as repositories. The other videos record segment 1 in the site's demo, at `http://localhost:4400/demo/demo-react/#/pr-reviews/orders-web/pr-128`, so they read no data of yours and start with no reviewed marks.
+The trace video records segment 4 of it, "New ViewOrdersPage", in the app, where the development build of the backend lists the fixtures on the index page as repositories. The other videos record segment 1 in the site's demo, at `http://localhost:4400/demo/demo-react/#/pr-reviews/orders-web/pr-128`, so they read no data of yours and start with no reviewed marks.
 
 The configurations screenshot is the settings page of the Standard preset, at `/settings/profiles/standard`, with the "Waypoint reading" field open.
 
@@ -28,8 +28,8 @@ The configurations screenshot is the settings page of the Standard preset, at `/
 
 - Install [agent-browser](https://github.com/vercel-labs/agent-browser), `ffmpeg` with the `libx264` and `libvpx-vp9` encoders, and `python3`.
 - For the hero, blast and walkthrough videos, start the site with `nx dev site`. They read the demo at `http://localhost:4400/demo/demo-react/`; set `DEMO_URL` to read it elsewhere.
-- For the journey video and the configurations screenshot, start the app with `pnpm dev`. `record-journey` and `capture-screenshots` read it at `http://localhost:4200`; set `APP_URL` to read it elsewhere.
-- Clear every reviewed mark in the `demo-react` review of the app. A reviewed waypoint is drawn faded, and the journey video shows it that way.
+- For the trace video and the configurations screenshot, start the app with `pnpm dev`. `record-trace` and `capture-screenshots` read it at `http://localhost:4200`; set `APP_URL` to read it elsewhere.
+- Clear every reviewed mark in the `demo-react` review of the app. A reviewed waypoint is drawn faded, and the trace video shows it that way.
 - Leave the Standard preset as it ships. The settings page shows your own changes to it, and the screenshot would show them too.
 
 ## Capturing
@@ -39,7 +39,7 @@ Each target writes over the files the site uses:
 | Target | Takes about |
 |---|---|
 | `nx run site:record-hero` | 3 minutes |
-| `nx run site:record-journey` | 2 minutes |
+| `nx run site:record-trace` | 2 minutes |
 | `nx run site:record-blast` | 2 minutes |
 | `nx run site:record-walkthrough` | 4 minutes |
 | `nx run site:capture-screenshots` | 30 seconds |
@@ -66,19 +66,19 @@ Then rebuild the site with `nx build site` and look at the landing page with `nx
 
 1. It opens the demo's review in a 1440 × 900 window at 1.5 times the pixel density, removes the demo's "Other repositories" link, and opens the waypoint for `updateOrder()`.
 2. It scrolls through the page once so that every part loads.
-3. It stops at four places: the Context of segment 1, its Journey Flow Diagram, its Blast Diagram and the `updateOrder()` waypoint. Between two stops it takes 36 frames along an ease-in-out curve.
+3. It stops at four places: the Context of segment 1, its Trace Diagram, its Blast Diagram and the `updateOrder()` waypoint. Between two stops it takes 36 frames along an ease-in-out curve.
 4. `ffmpeg` holds each stop for 2.4 seconds, crossfades from the last frame back to the first so the loop has no jump, cuts off the app's top band and scales the frames to 1920 × 1124.
 5. It writes the videos at 30 frames per second and saves the last frame as the poster.
 
 ### Panel videos
 
-`record-journey.sh`, `record-blast.sh` and `record-walkthrough.sh` record in real time, with agent-browser's pointer drawn over the page, so the clicks, drags and hovers show. What they share is in `review-clip.sh`. For each clip it opens the review in a 1200 × 750 window at twice the pixel density, removes the demo's "Other repositories" link, scrolls through the page once so that every part loads, and arranges the starting view. It then parks the pointer, takes the focus off the page, and records the clip's steps. Every clip ends in the view it started from, so it loops without a jump. The videos are scaled to 1600 × 1000 at 30 frames per second, and each script saves one moment of its clip as the poster.
+`record-trace.sh`, `record-blast.sh` and `record-walkthrough.sh` record in real time, with agent-browser's pointer drawn over the page, so the clicks, drags and hovers show. What they share is in `review-clip.sh`. For each clip it opens the review in a 1200 × 750 window at twice the pixel density, removes the demo's "Other repositories" link, scrolls through the page once so that every part loads, and arranges the starting view. It then parks the pointer, takes the focus off the page, and records the clip's steps. Every clip ends in the view it started from, so it loops without a jump. The videos are scaled to 1600 × 1000 at 30 frames per second, and each script saves one moment of its clip as the poster.
 
 The two diagrams are recorded in full screen. Before clicking a node that the side panel covers, or one pushed past the left edge, the script drags the board until the node is in view.
 
 | Clip | Starts at | Steps | Poster |
 |---|---|---|---|
-| Journey | The diagram of segment 4, in full screen | Clicks the `ViewOrdersPage` card, then its rows "The orders loaded from the API" and "Renders one table row per order", each of which marks its lines in the side panel. Clicks the `useOrders` card and its row "The query that loads the orders", and opens the waypoint of `useOrders()` in the panel. Closes the panel with Escape and resets the view with T. | The `useOrders()` waypoint open |
+| Trace | The diagram of segment 4, in full screen | Clicks the `ViewOrdersPage` card, then its rows "The orders loaded from the API" and "Renders one table row per order", each of which marks its lines in the side panel. Clicks the `useOrders` card and its row "The query that loads the orders", and opens the waypoint of `useOrders()` in the panel. Closes the panel with Escape and resets the view with T. | The `useOrders()` waypoint open |
 | Blast | The Blast Diagram of segment 1, in full screen | Clicks `router.tsx`, then `src/main.tsx`, the file the change reaches without changing what it does, then `use-orders.ts`. Closes the panel, presses Import bound to add the files the change did not touch, then presses Export bound and resets the view with T. | The Import bound view |
 | Waypoints | The waypoint for `updateOrder()`, marked Risk | Opens it, scrolls through its finding and trace, presses Preview the fix, then Hide the fix, scrolls back and closes it. | The fix open |
 | Filters | The heading of segment 1's Code Walkthrough | Opens the first waypoint, ticks Component and Hook in the Filter menu, then unticks them and closes the first waypoint. | The filtered walkthrough |
@@ -121,7 +121,7 @@ bash apps/site/capture/record-docs.sh /tmp/flight-plan-docs-media comments,agent
 | `setup-repositories` | Still of the Configure dialog of a repository | Setup → Repositories |
 | `review-page` | Still of the top of the review | Review artifacts |
 | `segments`, `context` | Stills of the review | Segments, Context |
-| `journey-flow-diagram`, `blast-diagram` | Clips that open a node of each diagram | Journey Flow Diagram, Blast Diagram |
+| `trace-diagram`, `blast-diagram` | Clips that open a node of each diagram | Trace Diagram, Blast Diagram |
 | `code-walkthrough` | Clip that steps through waypoints and filters them | Code Walkthrough |
 | `context-code-blocks` | Still of a hover card | Context code blocks |
 | `comments`, `reviewed-marks`, `submit-review`, `agent-chat` | Clips of each feature | The page of the same name |
@@ -137,7 +137,7 @@ Each name gives `<name>-light` and `<name>-dark` files in `packages/docs/media/`
 A page links the light file the way Markdown links an image:
 
 ```md
-![Opening a node of the Journey Flow Diagram](../../../media/journey-flow-diagram-light.webm)
+![Opening a node of the Trace Diagram](../../../media/trace-diagram-light.webm)
 ```
 
 `src/markdown/theme-media.ts` turns every link to a `-light` file into a light and a dark copy, a `<video>` for a clip and an `<img>` for a still, and `src/styles/docs.css` shows the one that matches the page's theme. Clips play muted in a loop, and stop for visitors who prefer reduced motion. `site:copy-docs-media` copies the folder to `public/docs-media/` before each build and dev run.

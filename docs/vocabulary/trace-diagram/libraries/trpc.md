@@ -1,6 +1,6 @@
 # tRPC router card
 
-The card of a tRPC router in a [Journey Flow Diagram](../../journey-flow-diagram.md). The rules every card shares, its frame, its rows and its lines, are in [On the page](../../journey-flow-diagram.md#on-the-page).
+The card of a tRPC router in a [Trace Diagram](../../trace-diagram.md). The rules every card shares, its frame, its rows and its lines, are in [On the page](../../trace-diagram.md#on-the-page).
 
 ## What is a tRPC router card
 
@@ -101,4 +101,4 @@ export const appRouter = createTRPCRouter({ todo: todoRouter, user: userRouter }
 
 `appRouter` has no card, and `todoRouter` and `userRouter` are each a router card.
 
-The edge from a router card to each procedure inside it stays in `journeyNodeEdges`, and the page leaves it out.
+The edge from a router card to each procedure inside it stays in `traceNodeEdges`, and the page leaves it out.

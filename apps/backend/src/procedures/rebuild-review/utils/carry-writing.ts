@@ -1,14 +1,14 @@
 import { waypointsOf } from "@/procedures/read-artifact/utils/artifact-walk"
 import { MARK_PREFIXES, rangeOfDeclaration } from "@/procedures/read-artifact/utils/covered-code"
-import { codeLinkIdsIn, contextIdOf, listJourneyNodes, rowSpanOf } from "@flightplan/codegraph"
+import { codeLinkIdsIn, contextIdOf, listTraceNodes, rowSpanOf } from "@flightplan/codegraph"
 import type {
   Blast,
   BlockLabel,
   CodeBlock,
   ContextCodeBlock,
   FileSection,
-  JourneyFlowDiagram,
-  JourneyNode,
+  TraceDiagram,
+  TraceNode,
   LineRange,
   ReviewArtifact,
   Segment,
@@ -37,7 +37,7 @@ interface Carry {
   readonly segments: ReadonlyMap<string, Segment>
   readonly files: ReadonlyMap<string, FileSection>
   readonly waypoints: ReadonlyMap<string, WrittenWaypoint>
-  readonly journeyNodes: ReadonlyMap<string, JourneyNode>
+  readonly traceNodes: ReadonlyMap<string, TraceNode>
   readonly contextDescriptions: ReadonlyMap<string, string>
 }
 
@@ -141,10 +141,10 @@ const carryBlockLabel = (listed: BlockLabel, writtenLabels: readonly BlockLabel[
   return written === undefined ? listed : { ...listed, label: written.label ?? listed.label }
 }
 
-const carryJourneyNode = (node: JourneyNode, carry: Carry): JourneyNode => {
-  const walked = { ...node, children: node.children.map((child) => carryJourneyNode(child, carry)) }
+const carryTraceNode = (node: TraceNode, carry: Carry): TraceNode => {
+  const walked = { ...node, children: node.children.map((child) => carryTraceNode(child, carry)) }
   const key = blockKeyOf(node.codeBlocks[0], carry.comparison.rebuilt)
-  const written = key === null ? undefined : carry.journeyNodes.get(key)
+  const written = key === null ? undefined : carry.traceNodes.get(key)
   if (written === undefined || !areLinksKept(carry.comparison, [written.description ?? UNWRITTEN])) return walked
   return {
     ...walked,
@@ -155,12 +155,12 @@ const carryJourneyNode = (node: JourneyNode, carry: Carry): JourneyNode => {
   }
 }
 
-const carryBlast = (blast: Blast | null, written: Blast | null): Blast | null =>
-  blast === null || written === null
-    ? blast
+const carryBlast = (blastDiagram: Blast | null, written: Blast | null): Blast | null =>
+  blastDiagram === null || written === null
+    ? blastDiagram
     : {
-        ...blast,
-        nodes: blast.nodes.map((node) => {
+        ...blastDiagram,
+        nodes: blastDiagram.nodes.map((node) => {
           const writtenNode = written.nodes.find((candidate) => candidate.path === node.path)
           return writtenNode === undefined || node.diffType !== null
             ? node
@@ -172,29 +172,29 @@ const segmentKeyOf = (segment: Segment): string => segment.changedPaths.join(KEY
 
 const textsOfSegment = (segment: Segment): string[] => [
   segment.context,
-  segment.journey?.description ?? UNWRITTEN,
-  ...(segment.blast?.nodes ?? []).map((node) => node.impactReason ?? UNWRITTEN),
+  segment.traceDiagram?.description ?? UNWRITTEN,
+  ...(segment.blastDiagram?.nodes ?? []).map((node) => node.impactReason ?? UNWRITTEN),
 ]
 
 const WRITTEN_ORDER: FileOrder = "written"
 
-const edgeKeysOf = (journey: JourneyFlowDiagram): string[] => journey.journeyNodeEdges.map((edge) => edge.id).sort()
+const edgeKeysOf = (traceDiagram: TraceDiagram): string[] => traceDiagram.traceNodeEdges.map((edge) => edge.id).sort()
 
-const isSameDrawing = (journey: JourneyFlowDiagram, written: JourneyFlowDiagram): boolean =>
-  edgeKeysOf(journey).join(KEY_SEPARATOR) === edgeKeysOf(written).join(KEY_SEPARATOR)
-  && listJourneyNodes(journey.journeyNodes).length === listJourneyNodes(written.journeyNodes).length
+const isSameDrawing = (traceDiagram: TraceDiagram, written: TraceDiagram): boolean =>
+  edgeKeysOf(traceDiagram).join(KEY_SEPARATOR) === edgeKeysOf(written).join(KEY_SEPARATOR)
+  && listTraceNodes(traceDiagram.traceNodes).length === listTraceNodes(written.traceNodes).length
 
-const carryDescription = (journey: JourneyFlowDiagram | null, written: JourneyFlowDiagram | null): JourneyFlowDiagram | null =>
-  journey === null || written === null || !isSameDrawing(journey, written)
-    ? journey
-    : { ...journey, description: written.description }
+const carryDescription = (traceDiagram: TraceDiagram | null, written: TraceDiagram | null): TraceDiagram | null =>
+  traceDiagram === null || written === null || !isSameDrawing(traceDiagram, written)
+    ? traceDiagram
+    : { ...traceDiagram, description: written.description }
 
 const carrySegmentWriting = (segment: Segment, written: Segment, fileOrder: FileOrder): Segment => ({
   ...segment,
   title: written.title.trim() === UNWRITTEN ? segment.title : written.title,
   context: written.context,
-  journey: carryDescription(segment.journey, written.journey),
-  blast: carryBlast(segment.blast, written.blast),
+  traceDiagram: carryDescription(segment.traceDiagram, written.traceDiagram),
+  blastDiagram: carryBlast(segment.blastDiagram, written.blastDiagram),
   walkthrough: {
     files: fileOrder === WRITTEN_ORDER
       ? inWrittenOrder(segment.walkthrough.files, written.walkthrough.files.map((file) => file.path), (file) => file.path)
@@ -205,9 +205,9 @@ const carrySegmentWriting = (segment: Segment, written: Segment, fileOrder: File
 const carrySegment = (segment: Segment, carry: Carry): Segment => {
   const walked: Segment = {
     ...segment,
-    journey: segment.journey === null
+    traceDiagram: segment.traceDiagram === null
       ? null
-      : { ...segment.journey, journeyNodes: segment.journey.journeyNodes.map((node) => carryJourneyNode(node, carry)) },
+      : { ...segment.traceDiagram, traceNodes: segment.traceDiagram.traceNodes.map((node) => carryTraceNode(node, carry)) },
     walkthrough: { ...segment.walkthrough, files: segment.walkthrough.files.map((file) => carryFile(file, carry)) },
   }
   const written = carry.segments.get(segmentKeyOf(segment))
@@ -217,10 +217,10 @@ const carrySegment = (segment: Segment, carry: Carry): Segment => {
     : walked
 }
 
-const writtenJourneyNodesIn = (artifact: ReviewArtifact, sources: SourcesByPath): ReadonlyMap<string, JourneyNode> =>
+const writtenTraceNodesIn = (artifact: ReviewArtifact, sources: SourcesByPath): ReadonlyMap<string, TraceNode> =>
   new Map(
     artifact.segments
-      .flatMap((segment) => listJourneyNodes(segment.journey?.journeyNodes ?? []))
+      .flatMap((segment) => listTraceNodes(segment.traceDiagram?.traceNodes ?? []))
       .flatMap((node) => {
         const key = blockKeyOf(node.codeBlocks[0], sources)
         return key === null ? [] : [[key, node] as const]
@@ -260,7 +260,7 @@ export const carryWriting = (previous: ReviewArtifact, rebuilt: ReviewArtifact, 
     segments: new Map(previous.segments.map((segment) => [segmentKeyOf(segment), segment])),
     files: new Map(previous.segments.flatMap((segment) => segment.walkthrough.files).map((file) => [file.path, file])),
     waypoints: writtenWaypointsIn(previous, comparison.previous),
-    journeyNodes: writtenJourneyNodesIn(previous, comparison.previous),
+    traceNodes: writtenTraceNodesIn(previous, comparison.previous),
     contextDescriptions: writtenContextDescriptionsIn(previous, comparison.previous),
   }
   return {

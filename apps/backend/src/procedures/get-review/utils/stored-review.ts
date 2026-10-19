@@ -1,6 +1,7 @@
 import { parse, stringify } from "devalue"
 import { z } from "zod"
 import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
+import { RENAMED_PARTS, withRenamedKeys } from "@/procedures/list-configurations/utils/renamed-parts"
 import { reviewArtifactSchema, type ReviewArtifact } from "@flightplan/configurations"
 import { AUTHOR_STARTS, WALKTHROUGH_ORDERS, type ReviewRequest } from "./start/review-request"
 
@@ -10,7 +11,8 @@ export interface ReviewScaffold {
   readonly baseCommit: string
 }
 
-const STORED_SCHEMA_VERSION = 2
+const STORED_SCHEMA_VERSION = 3
+const JOURNEY_SCHEMA_VERSION = 2
 
 const requestSchema = z.strictObject({
   configurationId: z.string().optional(),
@@ -49,6 +51,32 @@ const withoutRetiredKeys = (artifact: unknown): unknown =>
     ? { ...artifact, segments: artifact.segments.map(withoutRetiredSegmentKeys) }
     : artifact
 
+const RENAMED_TRACE_DIAGRAM_KEYS: ReadonlyMap<string, string> = new Map([
+  ["journeyNodes", "traceNodes"],
+  ["journeyNodeEdges", "traceNodeEdges"],
+])
+
+const withRenamedTraceDiagram = (segment: Readonly<Record<string, unknown>>): Readonly<Record<string, unknown>> =>
+  isRecord(segment.traceDiagram)
+    ? { ...segment, traceDiagram: withRenamedKeys(segment.traceDiagram, RENAMED_TRACE_DIAGRAM_KEYS) }
+    : segment
+
+const upgradedSegment = (segment: unknown): unknown =>
+  isRecord(segment) ? withRenamedTraceDiagram(withRenamedKeys(segment, RENAMED_PARTS)) : segment
+
+const upgradedSections = (artifact: Readonly<Record<string, unknown>>): Record<string, unknown> =>
+  isRecord(artifact.sections) ? { sections: withRenamedKeys(artifact.sections, RENAMED_PARTS) } : {}
+
+const upgradedArtifact = (artifact: unknown): unknown =>
+  isRecord(artifact) && Array.isArray(artifact.segments)
+    ? { ...artifact, ...upgradedSections(artifact), segments: artifact.segments.map(upgradedSegment) }
+    : artifact
+
+const upgradedStoredReview = (stored: unknown): unknown =>
+  isRecord(stored) && stored.schema === JOURNEY_SCHEMA_VERSION
+    ? { ...stored, schema: STORED_SCHEMA_VERSION, artifact: upgradedArtifact(stored.artifact) }
+    : stored
+
 const storedReviewSchema = z.strictObject({
   schema: z.literal(STORED_SCHEMA_VERSION),
   meta: z.strictObject({
@@ -68,7 +96,7 @@ const parseStored = (text: string): unknown => {
 }
 
 export const parseStoredReview = (text: string): ReviewScaffold | null => {
-  const stored = storedReviewSchema.safeParse(parseStored(text))
+  const stored = storedReviewSchema.safeParse(upgradedStoredReview(parseStored(text)))
   return stored.success
     ? { artifact: stored.data.artifact, request: stored.data.meta.request, baseCommit: stored.data.meta.baseCommit }
     : null

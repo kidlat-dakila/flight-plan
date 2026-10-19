@@ -13,7 +13,7 @@ A diff shows every changed line, one file at a time, in alphabetical order. It d
 A Flight Plan Review answers those questions directly:
 
 - **Why the change exists**, in a few sentences a reviewer can read before any code.
-- **How it runs**, as a [Journey Flow Diagram](journey-flow-diagram.md) from what starts it to the changed code.
+- **How it runs**, as a [Trace Diagram](trace-diagram.md) from what starts it to the changed code.
 - **What it can affect**, as a [Blast Diagram](blast-diagram.md) of the files the change is connected to through imports, and what it does to the ones it did not touch. Its second view shows the files the change itself uses.
 - **Where to look**, as a [Code Walkthrough](code-walkthrough.md) that puts an explanation on top of the lines it is about, with findings on the code they concern.
 
@@ -45,7 +45,7 @@ The request is saved inside the review artifact, so the choices are never lost. 
 
 ## Progress and completion
 
-While a review artifact is drafting, the page states how far the writing is: how many parts need nothing more, out of every part the agent writes. A part is what the MCP tools hand out as unwritten work: a segment's context and title, a File Section, a waypoint, a Journey Flow Diagram node, the description of a Journey Flow Diagram and a file of the Blast Diagram that the change reaches. A section the configuration turned off is not counted.
+While a review artifact is drafting, the page states how far the writing is: how many parts need nothing more, out of every part the agent writes. A part is what the MCP tools hand out as unwritten work: a segment's context and title, a File Section, a waypoint, a Trace Diagram node, the description of a Trace Diagram and a file of the Blast Diagram that the change reaches. A section the configuration turned off is not counted.
 
 The page also says who is writing:
 
@@ -116,7 +116,7 @@ The published copy is the reviewer's page, read-only, drawn from the review arti
 
 | In the published copy | Left out |
 |---|---|
-| Every segment with its context, its Journey Flow Diagram, its Blast Diagram and its Code Walkthrough | The pull request's status, its author and its reviewers |
+| Every segment with its context, its Trace Diagram, its Blast Diagram and its Code Walkthrough | The pull request's status, its author and its reviewers |
 | Every [CodeLink](review-artifact.md#codelink), with the code it points at | Comments, the conversation and the review draft |
 | The code of every file the review artifact holds: the changed files and the files the diagrams connect to them | The reviewed marks made in Flight Plan |
 | Section navigation and waypoint stepping | Chat, and "Ask the agent" on selected code: a Claude artifact has a chat of its own |
@@ -157,10 +157,10 @@ What an update keeps is decided part by part, by comparing the code as the two a
 | Part | Kept when |
 |---|---|
 | A waypoint's title, reading, attention note and findings | The lines of its declaration are the same |
-| A Journey Flow Diagram node's label, description, trigger labels and block labels | The lines of its code block are the same |
+| A Trace Diagram node's label, description, trigger labels and block labels | The lines of its code block are the same |
 | A File Section's title, summary and waypoint order | The whole file is the same |
 | A segment's title, context, walkthrough intro, file order and the impacts of its Blast Diagram | The segment has the same changed files and every one of them is the same |
-| The description of a Journey Flow Diagram | The same, and the diagram has the same edges and as many nodes |
+| The description of a Trace Diagram | The same, and the diagram has the same edges and as many nodes |
 
 A part is not kept when a code link in it no longer resolves, or points at lines of a file that changed. The order of the File Sections is kept only when the request asks for the same order. An update that leaves nothing to write keeps a complete artifact complete and starts no agent.
 

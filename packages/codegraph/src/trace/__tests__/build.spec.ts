@@ -1,8 +1,8 @@
 import { createSegment, createViewContext } from "@/__tests__/review-fixture"
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
-import { buildJourney } from "@/journey/build"
-import { presentDiagramOf } from "@/journey-flow-diagram/__tests__/diagram-fixture"
-import type { JourneyNodeView } from "@flightplan/configurations"
+import { buildTrace } from "@/trace/build"
+import { presentDiagramOf } from "@/trace-diagram/__tests__/diagram-fixture"
+import type { TraceNodeView } from "@flightplan/configurations"
 
 const PROMO = codeOf("export const fetchPromo = (code) => {", "  return code.trim()", "}")
 const USE_APPLY_PROMO = codeOf(
@@ -27,27 +27,27 @@ const PROMO_FORM = codeOf(
 const FILES = { "src/promo.ts": PROMO, "src/use-apply-promo.ts": USE_APPLY_PROMO, "src/promo-form.tsx": PROMO_FORM }
 const PROMO_CHANGE = { "src/promo.ts": [rangeAt(2, 10, 2, 20)] }
 
-const listNodeViews = (nodes: readonly JourneyNodeView[]): JourneyNodeView[] => nodes.flatMap((node) => [node, ...listNodeViews(node.children)])
+const listNodeViews = (nodes: readonly TraceNodeView[]): TraceNodeView[] => nodes.flatMap((node) => [node, ...listNodeViews(node.children)])
 
-const nodeViewsOf = (): JourneyNodeView[] => {
-  const segment = createSegment({ journey: presentDiagramOf(FILES, PROMO_CHANGE) })
-  return listNodeViews(buildJourney(segment, "", [], createViewContext()).diagram?.nodes ?? [])
+const nodeViewsOf = (): TraceNodeView[] => {
+  const segment = createSegment({ traceDiagram: presentDiagramOf(FILES, PROMO_CHANGE) })
+  return listNodeViews(buildTrace(segment, "", [], createViewContext()).diagram?.nodes ?? [])
 }
 
 const blockListsOf = (nodeId: string): [string, string, string[]][] =>
   (nodeViewsOf().find((node) => node.id === nodeId)?.blockLists ?? []).map(({ kind, label, blocks }) => [kind, label, blocks.map((block) => block.name)])
 
-describe("the head of a node of the journey band", () => {
+describe("the head of a node of the trace band", () => {
   it("gives the name of the code and its path down to the last two folders", () => {
     const deepPath = "apps/shop/src/routes/orders/index.ts"
-    const segment = createSegment({ journey: presentDiagramOf({ [deepPath]: PROMO }, { [deepPath]: [rangeAt(2, 10, 2, 20)] }) })
-    const [node] = buildJourney(segment, "", [], createViewContext()).diagram?.nodes ?? []
+    const segment = createSegment({ traceDiagram: presentDiagramOf({ [deepPath]: PROMO }, { [deepPath]: [rangeAt(2, 10, 2, 20)] }) })
+    const [node] = buildTrace(segment, "", [], createViewContext()).diagram?.nodes ?? []
 
     expect([node.name, node.shortPath]).toStrictEqual(["fetchPromo", "routes/orders/index.ts"])
   })
 })
 
-describe("the rows of a node of the journey band", () => {
+describe("the rows of a node of the trace band", () => {
   it("gives each listed block and each trigger label the lines of its block", () => {
     const form = nodeViewsOf().find((node) => node.name === "PromoForm")
     const rows = [...(form?.blockLists ?? []).flatMap(({ blocks }) => blocks), ...(form?.triggerLabels ?? [])]
@@ -58,27 +58,27 @@ describe("the rows of a node of the journey band", () => {
   })
 })
 
-describe("the block labels of a node of the journey band", () => {
+describe("the block labels of a node of the trace band", () => {
   it("gives a listed block the label written for it, and the name of its code as a draft until then", () => {
-    const journey = presentDiagramOf(FILES, PROMO_CHANGE)
-    const [written] = journey.journeyNodes.flatMap((node) => node.blockLabels)
+    const traceDiagram = presentDiagramOf(FILES, PROMO_CHANGE)
+    const [written] = traceDiagram.traceNodes.flatMap((node) => node.blockLabels)
     const labelled = {
-      ...journey,
-      journeyNodes: journey.journeyNodes.map((node) => ({ ...node, blockLabels: node.blockLabels.map((listed) => (listed === written ? { ...listed, label: "Holds the typed code" } : listed)) })),
+      ...traceDiagram,
+      traceNodes: traceDiagram.traceNodes.map((node) => ({ ...node, blockLabels: node.blockLabels.map((listed) => (listed === written ? { ...listed, label: "Holds the typed code" } : listed)) })),
     }
-    const views = listNodeViews(buildJourney(createSegment({ journey: labelled }), "", [], createViewContext()).diagram?.nodes ?? [])
+    const views = listNodeViews(buildTrace(createSegment({ traceDiagram: labelled }), "", [], createViewContext()).diagram?.nodes ?? [])
     const steps = views.flatMap((node) => node.blockLists).flatMap(({ blocks }) => blocks)
 
-    expect(journey.journeyNodes.flatMap((node) => node.blockLabels).every((listed) => listed.label === null)).toBe(true)
+    expect(traceDiagram.traceNodes.flatMap((node) => node.blockLabels).every((listed) => listed.label === null)).toBe(true)
     expect(steps.filter((block) => !block.isDraft).map((block) => [block.id, block.label])).toStrictEqual([[written.codeBlock.id, "Holds the typed code"]])
     expect(steps.filter((block) => block.isDraft).every((block) => block.label === block.name)).toBe(true)
   })
 })
 
-describe("the edges of the journey band", () => {
+describe("the edges of the trace band", () => {
   it("names the row of the block an edge leaves, one edge per row, and no row where it leaves or reaches the head of a node", () => {
-    const segment = createSegment({ journey: presentDiagramOf(FILES, PROMO_CHANGE) })
-    const edges = buildJourney(segment, "", [], createViewContext()).diagram?.edges ?? []
+    const segment = createSegment({ traceDiagram: presentDiagramOf(FILES, PROMO_CHANGE) })
+    const edges = buildTrace(segment, "", [], createViewContext()).diagram?.edges ?? []
 
     expect(edges.map(({ from, to, fromRowId, toRowId }) => [from, fromRowId, to, toRowId])).toStrictEqual([
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#external-value@6:3", "src/use-apply-promo.ts#hook@3:1", null],
@@ -95,7 +95,7 @@ describe("the edges of the journey band", () => {
   })
 })
 
-describe("the block lists of a node of the journey band", () => {
+describe("the block lists of a node of the trace band", () => {
   it("lists the state, the hooks and the effects of a node that are on a chain, each kind once, and leaves out the state no chain reads on the way to a change", () => {
     expect(blockListsOf("src/promo-form.tsx#component@4:1")).toStrictEqual([
       ["state", "State", ["shown"]],
@@ -123,9 +123,9 @@ describe("the block lists of a node of the journey band", () => {
       ),
     }
     const diagram = presentDiagramOf(files, { "src/cart-store.ts": [rangeAt(3, 44, 3, 52)], "src/poll.ts": [rangeAt(1, 31, 1, 36)] })
-    const [summary] = listNodeViews(buildJourney(createSegment({ journey: diagram }), "", [], createViewContext()).diagram?.nodes ?? [])
+    const [summary] = listNodeViews(buildTrace(createSegment({ traceDiagram: diagram }), "", [], createViewContext()).diagram?.nodes ?? [])
 
-    expect(diagram.journeyNodes[0].codeBlocks.map((block) => block.type)).not.toContain("state")
+    expect(diagram.traceNodes[0].codeBlocks.map((block) => block.type)).not.toContain("state")
     expect(summary.blockLists.map(({ kind, blocks }) => [kind, blocks.map((block) => block.name)])).toStrictEqual([["state", ["total"]], ["effect", ["poll"]]])
   })
 
@@ -170,13 +170,13 @@ const CHANGE_EVENT = "src/promo-form.tsx#render-event@11:48"
 const HOOK = "src/use-apply-promo.ts#hook@3:1"
 const FETCH_PROMO = "src/promo.ts#function@1:1"
 
-const handlersBand = (): NonNullable<ReturnType<typeof buildJourney>["diagram"]> => {
-  const diagram = buildJourney(createSegment({ journey: presentDiagramOf(HANDLERS, HANDLERS_CHANGE) }), "", [], createViewContext()).diagram
+const handlersBand = (): NonNullable<ReturnType<typeof buildTrace>["diagram"]> => {
+  const diagram = buildTrace(createSegment({ traceDiagram: presentDiagramOf(HANDLERS, HANDLERS_CHANGE) }), "", [], createViewContext()).diagram
   if (diagram === null) throw new Error("The fixture has no band.")
   return diagram
 }
 
-const handlerNodeOf = (nodeId: string): JourneyNodeView | undefined => listNodeViews(handlersBand().nodes).find((node) => node.id === nodeId)
+const handlerNodeOf = (nodeId: string): TraceNodeView | undefined => listNodeViews(handlersBand().nodes).find((node) => node.id === nodeId)
 
 const handlerRowsOf = (nodeId: string): [string, string[]][] => (handlerNodeOf(nodeId)?.blockLists ?? []).map(({ label, blocks }) => [label, blocks.map((block) => block.name)])
 
@@ -206,10 +206,10 @@ describe("the rows of a node that holds nodes of its own", () => {
   })
 
   it("has no row for changed markup: the node of the component holds its markup as one unit, and is marked as changed", () => {
-    const journey = presentDiagramOf(HANDLERS, { ...HANDLERS_CHANGE, "src/promo-form.tsx": [rangeAt(11, 10, 11, 15), rangeAt(11, 34, 11, 40)] })
-    const form = listNodeViews(buildJourney(createSegment({ journey }), "", [], createViewContext()).diagram?.nodes ?? []).find((node) => node.id === FORM)
+    const traceDiagram = presentDiagramOf(HANDLERS, { ...HANDLERS_CHANGE, "src/promo-form.tsx": [rangeAt(11, 10, 11, 15), rangeAt(11, 34, 11, 40)] })
+    const form = listNodeViews(buildTrace(createSegment({ traceDiagram }), "", [], createViewContext()).diagram?.nodes ?? []).find((node) => node.id === FORM)
 
-    expect(journey.journeyNodes.find((node) => node.id === FORM)?.diffCodeBlocks.map((block) => block.type)).toContain("render")
+    expect(traceDiagram.traceNodes.find((node) => node.id === FORM)?.diffCodeBlocks.map((block) => block.type)).toContain("render")
     expect(form?.blockLists.map(({ label, blocks }) => [label, blocks.map((block) => block.name)])).toStrictEqual([["Hooks", ["useApplyPromo"]], ["Calls", ["shown"]]])
     expect(form?.change).toBe("modified")
   })
@@ -233,7 +233,7 @@ describe("the edges of a node that holds nodes of its own", () => {
 
   it("has no node for the call that makes a state: the line to what its callback runs leaves the row of that state", () => {
     const files = { ...HANDLERS, "src/use-apply-promo.ts": HANDLERS["src/use-apply-promo.ts"].replace("const applyPromo = useMutation", "const [applyPromo] = useState").replace("@tanstack/react-query", "react").replace("useMutation }", "useState }") }
-    const band = buildJourney(createSegment({ journey: presentDiagramOf(files, HANDLERS_CHANGE) }), "", [], createViewContext()).diagram
+    const band = buildTrace(createSegment({ traceDiagram: presentDiagramOf(files, HANDLERS_CHANGE) }), "", [], createViewContext()).diagram
     const hook = listNodeViews(band?.nodes ?? []).find((node) => node.id === HOOK)
     const leaving = (band?.edges ?? []).filter((edge) => edge.from === HOOK)
 
@@ -313,13 +313,13 @@ const HELPER_FILES = {
 }
 const TOTALS = "src/totals.ts#function@2:1"
 
-const bandOf = (files: Parameters<typeof presentDiagramOf>[0], diffs: Parameters<typeof presentDiagramOf>[1]): NonNullable<ReturnType<typeof buildJourney>["diagram"]> => {
-  const diagram = buildJourney(createSegment({ journey: presentDiagramOf(files, diffs) }), "", [], createViewContext()).diagram
+const bandOf = (files: Parameters<typeof presentDiagramOf>[0], diffs: Parameters<typeof presentDiagramOf>[1]): NonNullable<ReturnType<typeof buildTrace>["diagram"]> => {
+  const diagram = buildTrace(createSegment({ traceDiagram: presentDiagramOf(files, diffs) }), "", [], createViewContext()).diagram
   if (diagram === null) throw new Error("The fixture has no band.")
   return diagram
 }
 
-type Row = JourneyNodeView["blockLists"][number]["blocks"][number]
+type Row = TraceNodeView["blockLists"][number]["blocks"][number]
 
 const rowsOf = (band: ReturnType<typeof bandOf>, nodeId: string): Row[] => {
   const node = listNodeViews(band.nodes).find((one) => one.id === nodeId)
@@ -329,7 +329,7 @@ const rowsOf = (band: ReturnType<typeof bandOf>, nodeId: string): Row[] => {
 
 const stepsOf = rowsOf
 
-describe("the steps of a node of the journey band", () => {
+describe("the steps of a node of the trace band", () => {
   it("lists every row in the order it is written, with no row for a read through an argument: the statements that follow each other as one step, and a block, a call out and a throw as a row of its own", () => {
     const steps = stepsOf(bandOf(RENAME_FILES, { "src/rename.ts": [rangeAt(3, 1, 14, 80)] }), RENAME)
 

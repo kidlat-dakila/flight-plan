@@ -59,7 +59,7 @@ Forge credentials are never stored in this directory. They go in the operating s
 
 A `.flightplan` file is one review artifact, written with [devalue](https://github.com/Rich-Harris/devalue). The extension marks it as a Flight Plan document, so it can be recognised, opened and shared on its own, outside the data directory.
 
-A [Journey Flow Diagram](journey-flow-diagram.md) refers to the [code blocks](codegraph/code-blocks.md) of its group, and a block refers to its parent, its file and the blocks that use it. JSON cannot write a reference that leads back to itself, and it would write a block two nodes hold twice. devalue writes every object once and every further reference as a pointer to it, so a file that is read back holds the same aliases it was written with: a block of a node is the block of the group, and the group of two segments is one group.
+A [Trace Diagram](trace-diagram.md) refers to the [code blocks](codegraph/code-blocks.md) of its group, and a block refers to its parent, its file and the blocks that use it. JSON cannot write a reference that leads back to itself, and it would write a block two nodes hold twice. devalue writes every object once and every further reference as a pointer to it, so a file that is read back holds the same aliases it was written with: a block of a node is the block of the group, and the group of two segments is one group.
 
 | Because the file keeps aliases | It follows that |
 |---|---|

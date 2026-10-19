@@ -1,5 +1,5 @@
 import type { Point } from "@/lib/diagram-path"
-import { COLUMN_GAP, EDGE_APPROACH, MARGIN, NODE_GAP, type JourneyLayout, type PlacedEdge, type PlacedNode } from "@/lib/journey-layout"
+import { COLUMN_GAP, EDGE_APPROACH, MARGIN, NODE_GAP, type TraceLayout, type PlacedEdge, type PlacedNode } from "@/lib/trace-layout"
 
 export type CardSide = "left" | "top" | "bottom"
 
@@ -42,7 +42,7 @@ export const nearestSideOf = (point: Point, { x, y, width, height }: Point & { r
   return nearest[0]
 }
 
-export const placeUnplacedCards = (layout: JourneyLayout, positionById: PositionById): PositionById => {
+export const placeUnplacedCards = (layout: TraceLayout, positionById: PositionById): PositionById => {
   const tops = layout.nodes.filter((node) => node.depth === 0)
   const placed = tops.filter((node) => positionById.has(node.id))
   const unplaced = tops.filter((node) => !positionById.has(node.id))
@@ -72,7 +72,7 @@ const rerouteEdge = (edge: PlacedEdge, fromShift: Point, toShift: Point, side: C
   }
 }
 
-export const arrangeJourney = (layout: JourneyLayout, positionById: PositionById, sideByEdgeId: SideByEdgeId): JourneyLayout => {
+export const arrangeTrace = (layout: TraceLayout, positionById: PositionById, sideByEdgeId: SideByEdgeId): TraceLayout => {
   const tops = layout.nodes.filter((node) => node.depth === 0)
   const shiftByTopId = new Map(
     tops.map((node) => {

@@ -1,6 +1,6 @@
 import { parseMarkedSource } from "@flightplan/codegraph"
 import type { ReviewArtifact, SourceFile } from "@flightplan/configurations"
-import { mockJourney } from "./mock-journey"
+import { mockTrace } from "./mock-trace"
 
 const WEBHOOK_RETRY_PATH = "src/payments/webhook-retry.ts"
 const WEBHOOK_QUEUE_PATH = "src/payments/webhook-queue.ts"
@@ -84,7 +84,7 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
         "",
         "- Retries up to five times in [`deliverWithRetry()`](code:src/payments/webhook-retry.ts#deliverWithRetry), with the pause from [`retryDelayMs()`](code:src/payments/webhook-retry.ts#retryDelayMs).",
       ].join("\n"),
-      journey: mockJourney(
+      traceDiagram: mockTrace(
         WEBHOOK_RETRY_SOURCES,
         [
           { id: "handle-queued-event", type: "function", path: WEBHOOK_QUEUE_PATH, declaration: "handleQueuedEvent", isChanged: true, label: null, description: null },
@@ -96,7 +96,7 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
           ["deliver-with-retry", "retry-delay-ms"],
         ],
       ),
-      blast: null,
+      blastDiagram: null,
       walkthrough: {
         files: [
           {

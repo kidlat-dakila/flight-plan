@@ -1,15 +1,15 @@
 import { TRPCError } from "@trpc/server"
-import { editJourney } from "@/procedures/edit-journey"
-import { editJourneyInputSchema, journeyEditingSchema } from "@/procedures/edit-journey/utils/schemas"
+import { editTrace } from "@/procedures/edit-trace"
+import { editTraceInputSchema, traceEditingSchema } from "@/procedures/edit-trace/utils/schemas"
 import { publicProcedure } from "@/server/trpc/trpc"
 
 const MISSING_ARTIFACT_MESSAGE = "This review target has no Flight Plan to edit."
 
-export const editJourneyRoute = publicProcedure
-  .input(editJourneyInputSchema)
-  .output(journeyEditingSchema)
+export const editTraceRoute = publicProcedure
+  .input(editTraceInputSchema)
+  .output(traceEditingSchema)
   .mutation(async ({ ctx, input }) => {
-    const editing = await editJourney(input, ctx)
+    const editing = await editTrace(input, ctx)
     if (editing === null) throw new TRPCError({ code: "NOT_FOUND", message: MISSING_ARTIFACT_MESSAGE })
     return editing
   })

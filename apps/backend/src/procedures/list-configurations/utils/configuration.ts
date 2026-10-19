@@ -30,11 +30,11 @@ export interface Configuration extends SavedConfiguration {
   readonly isPreset: boolean
 }
 
-export const SWITCHABLE_SECTIONS = ["journey", "blast", "findings"] as const satisfies readonly SectionName[]
+export const SWITCHABLE_SECTIONS = ["traceDiagram", "blastDiagram", "findings"] as const satisfies readonly SectionName[]
 
 export const SWITCH_LABELS: Readonly<Record<(typeof SWITCHABLE_SECTIONS)[number], string>> = {
-  journey: "Journey Flow Diagrams",
-  blast: "Blast Diagram",
+  traceDiagram: "Trace Diagrams",
+  blastDiagram: "Blast Diagram",
   findings: "Findings",
 }
 

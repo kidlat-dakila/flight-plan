@@ -1,6 +1,6 @@
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
-import { nameOfBlock } from "@/journey/names"
-import { listJourneyNodes } from "@/journey-flow-diagram"
+import { nameOfBlock } from "@/trace/names"
+import { listTraceNodes } from "@/trace-diagram"
 import { outlineOfNodes, presentDiagramOf } from "./diagram-fixture"
 
 const SAVE = codeOf(
@@ -22,7 +22,7 @@ describe("the card of a function that returns a function", () => {
 
   it("lists no row for a parameter of the returned function: it is a parameter of its card", () => {
     const diagram = presentDiagramOf({ "src/save.ts": SAVE }, { "src/save.ts": [rangeAt(3, 11, 3, 16)] })
-    const [, returned] = listJourneyNodes(diagram.journeyNodes)
+    const [, returned] = listTraceNodes(diagram.traceNodes)
 
     expect(returned.blockLabels.map(({ codeBlock }) => nameOfBlock(codeBlock))).not.toContain("draft")
   })
@@ -41,7 +41,7 @@ describe("the card of a function that returns a function", () => {
     }
     const diagram = presentDiagramOf(files, { "src/panel.tsx": [rangeAt(4, 12, 4, 23)] })
 
-    expect(listJourneyNodes(diagram.journeyNodes).every((node) => node.codeBlocks[0].isReturned !== true)).toBe(true)
+    expect(listTraceNodes(diagram.traceNodes).every((node) => node.codeBlocks[0].isReturned !== true)).toBe(true)
   })
 })
 

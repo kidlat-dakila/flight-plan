@@ -358,8 +358,8 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": null,
-        "blastRadiusDiagram": {
+        "traceDiagram": null,
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/components/ui/index.ts",
@@ -407,7 +407,7 @@
                     "lineEnd": 2
                   },
                   "category": "statement",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/components/ui/index.ts#deleted@2:1"
                   ],
@@ -709,9 +709,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
               "type": "root-variable",
@@ -796,7 +796,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@7:1 -> src/routes/cart/index.tsx#component@5:1",
               "from": "src/router.tsx#root-variable@7:1",
@@ -814,7 +814,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/routes/cart/components/CartSummary.tsx",
@@ -923,7 +923,7 @@
                     "lineEnd": 17
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                  "traceNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1",
                   "codeBlockIds": [
                     "src/routes/cart/components/CartSummary.tsx#component@5:1",
                     "src/routes/cart/components/CartSummary.tsx#deleted@8:1",
@@ -943,7 +943,7 @@
                         "lineEnd": 8
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                      "traceNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1",
                       "codeBlockIds": [
                         "src/routes/cart/components/CartSummary.tsx#deleted@8:1"
                       ],
@@ -961,7 +961,7 @@
                         "lineEnd": 12
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                      "traceNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1",
                       "codeBlockIds": [
                         "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
                       ],

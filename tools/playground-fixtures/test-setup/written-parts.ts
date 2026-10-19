@@ -1,24 +1,24 @@
 import { z } from "zod"
 import type { Codegraph, CodegraphSegment, LinkedCodeWalkthrough, LinkedFileSection, LinkedWaypoint } from "@flightplan/codegraph"
-import { artifactFindingSchema, IMPACT_TYPES, type Blast, type BlockLabel, type Finding, type JourneyFlowDiagram, type JourneyNode, type TriggerLabel } from "@flightplan/configurations"
+import { artifactFindingSchema, IMPACT_TYPES, type Blast, type BlockLabel, type Finding, type TraceDiagram, type TraceNode, type TriggerLabel } from "@flightplan/configurations"
 
-interface WrittenJourneyNode {
+interface WrittenTraceNode {
   readonly id: string
   readonly label: string | null
   readonly description: string | null
   readonly triggerLabels: readonly { readonly label: string | null, readonly codeBlockId: string }[]
   readonly blockLabels: readonly { readonly label: string | null, readonly codeBlockId: string }[]
-  readonly children: readonly WrittenJourneyNode[]
+  readonly children: readonly WrittenTraceNode[]
 }
 
-const writtenJourneyNodeSchema: z.ZodType<WrittenJourneyNode> = z.lazy(() =>
+const writtenTraceNodeSchema: z.ZodType<WrittenTraceNode> = z.lazy(() =>
   z.object({
     id: z.string(),
     label: z.string().nullable(),
     description: z.string().nullable(),
     triggerLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })).default([]),
     blockLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })).default([]),
-    children: z.array(writtenJourneyNodeSchema).default([]),
+    children: z.array(writtenTraceNodeSchema).default([]),
   }),
 )
 
@@ -56,8 +56,8 @@ const writtenFileSchema = z.object({
 const writtenSegmentSchema = z.object({
   title: z.string().nullable(),
   context: z.array(z.string()).default([]),
-  journeyFlowDiagram: z.object({ description: z.string().nullable().default(null), journeyNodes: z.array(writtenJourneyNodeSchema).default([]) }).nullable(),
-  blastRadiusDiagram: z.object({ nodes: z.array(z.unknown()) }).nullable().optional(),
+  traceDiagram: z.object({ description: z.string().nullable().default(null), traceNodes: z.array(writtenTraceNodeSchema).default([]) }).nullable(),
+  blastDiagram: z.object({ nodes: z.array(z.unknown()) }).nullable().optional(),
   codeWalkthrough: z.object({ files: z.array(writtenFileSchema) }),
 })
 
@@ -68,7 +68,7 @@ const writtenPartsSchema = z.object({
 export type WrittenParts = z.infer<typeof writtenPartsSchema>
 
 type WrittenSegment = z.infer<typeof writtenSegmentSchema>
-type WrittenJourney = NonNullable<WrittenSegment["journeyFlowDiagram"]>
+type WrittenTrace = NonNullable<WrittenSegment["traceDiagram"]>
 type WrittenFile = z.infer<typeof writtenFileSchema>
 
 export const NOTHING_WRITTEN: WrittenParts = { codegraph: { segments: [] } }
@@ -83,22 +83,22 @@ export const readWrittenParts = (snapshot: unknown): WrittenParts => {
 export const writtenContextAt = (written: WrittenParts, position: number): readonly string[] =>
   written.codegraph.segments.at(position)?.context ?? NO_CONTEXT
 
-const listWrittenJourneyNodes = (nodes: readonly WrittenJourneyNode[]): WrittenJourneyNode[] =>
-  nodes.flatMap((node) => [node, ...listWrittenJourneyNodes(node.children)])
+const listWrittenTraceNodes = (nodes: readonly WrittenTraceNode[]): WrittenTraceNode[] =>
+  nodes.flatMap((node) => [node, ...listWrittenTraceNodes(node.children)])
 
-const withWrittenTriggerLabel = (trigger: TriggerLabel, written: WrittenJourneyNode): TriggerLabel => {
+const withWrittenTriggerLabel = (trigger: TriggerLabel, written: WrittenTraceNode): TriggerLabel => {
   const writtenTrigger = written.triggerLabels.find((one) => one.codeBlockId === trigger.codeBlock.id)
   return writtenTrigger === undefined ? trigger : { ...trigger, label: writtenTrigger.label }
 }
 
-const withWrittenBlockLabel = (listed: BlockLabel, written: WrittenJourneyNode): BlockLabel => {
+const withWrittenBlockLabel = (listed: BlockLabel, written: WrittenTraceNode): BlockLabel => {
   const writtenBlock = written.blockLabels.find((one) => one.codeBlockId === listed.codeBlock.id)
   return writtenBlock === undefined ? listed : { ...listed, label: writtenBlock.label }
 }
 
-const withWrittenJourneyNode = (node: JourneyNode, writtenById: ReadonlyMap<string, WrittenJourneyNode>): JourneyNode => {
+const withWrittenTraceNode = (node: TraceNode, writtenById: ReadonlyMap<string, WrittenTraceNode>): TraceNode => {
   const written = writtenById.get(node.id)
-  const children = node.children.map((child) => withWrittenJourneyNode(child, writtenById))
+  const children = node.children.map((child) => withWrittenTraceNode(child, writtenById))
   return written === undefined
     ? { ...node, children }
     : {
@@ -111,14 +111,14 @@ const withWrittenJourneyNode = (node: JourneyNode, writtenById: ReadonlyMap<stri
       }
 }
 
-const withWrittenJourney = (journey: JourneyFlowDiagram | null, written: WrittenJourney | null | undefined): JourneyFlowDiagram | null => {
-  if (journey === null || written === null || written === undefined) return journey
-  const writtenById = new Map(listWrittenJourneyNodes(written.journeyNodes).map((node) => [node.id, node]))
-  return { ...journey, description: written.description, journeyNodes: journey.journeyNodes.map((node) => withWrittenJourneyNode(node, writtenById)) }
+const withWrittenTrace = (traceDiagram: TraceDiagram | null, written: WrittenTrace | null | undefined): TraceDiagram | null => {
+  if (traceDiagram === null || written === null || written === undefined) return traceDiagram
+  const writtenById = new Map(listWrittenTraceNodes(written.traceNodes).map((node) => [node.id, node]))
+  return { ...traceDiagram, description: written.description, traceNodes: traceDiagram.traceNodes.map((node) => withWrittenTraceNode(node, writtenById)) }
 }
 
-const withWrittenBlast = (blast: Blast | null, written: WrittenSegment["blastRadiusDiagram"]): Blast | null => {
-  if (written === undefined || written === null || blast === null) return blast
+const withWrittenBlast = (blastDiagram: Blast | null, written: WrittenSegment["blastDiagram"]): Blast | null => {
+  if (written === undefined || written === null || blastDiagram === null) return blastDiagram
   const writtenNodes = new Map(
     written.nodes.flatMap((node) => {
       const writtenNode = writtenBlastNodeSchema.safeParse(node)
@@ -126,8 +126,8 @@ const withWrittenBlast = (blast: Blast | null, written: WrittenSegment["blastRad
     }),
   )
   return {
-    ...blast,
-    nodes: blast.nodes.map((node) => {
+    ...blastDiagram,
+    nodes: blastDiagram.nodes.map((node) => {
       const writtenNode = writtenNodes.get(node.path)
       return writtenNode === undefined || node.diffType !== null
         ? node
@@ -171,8 +171,8 @@ const withWrittenSegment = (segment: CodegraphSegment, written: WrittenSegment |
     : {
         ...segment,
         title: written.title,
-        journeyFlowDiagram: withWrittenJourney(segment.journeyFlowDiagram, written.journeyFlowDiagram),
-        blastRadiusDiagram: withWrittenBlast(segment.blastRadiusDiagram, written.blastRadiusDiagram),
+        traceDiagram: withWrittenTrace(segment.traceDiagram, written.traceDiagram),
+        blastDiagram: withWrittenBlast(segment.blastDiagram, written.blastDiagram),
         codeWalkthrough: withWrittenWalkthrough(segment.codeWalkthrough, written.codeWalkthrough),
       }
 

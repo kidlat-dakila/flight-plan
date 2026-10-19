@@ -1,6 +1,6 @@
 import type { FileCodeReferences } from "@/code-references"
-import { listJourneyNodes } from "@/journey-flow-diagram"
 import { firstOfEach } from "@/shared/first-of-each"
+import { listTraceNodes } from "@/trace-diagram"
 import type {
   ASTGraph,
   CodeBlock,
@@ -8,12 +8,12 @@ import type {
   CodeBlockType,
   CodeReference,
   ContextCodeBlock,
-  JourneyFlowDiagram,
+  TraceDiagram,
   Waypoint,
 } from "@flightplan/configurations"
 
 export interface ViewedSegment {
-  readonly journey: JourneyFlowDiagram | null
+  readonly traceDiagram: TraceDiagram | null
   readonly walkthrough: { readonly files: readonly { readonly waypoints: readonly Waypoint[] }[] }
   readonly codeReferences: readonly FileCodeReferences[]
 }
@@ -40,9 +40,9 @@ export const contextIdOf = ({ kind, codeBlock, specifier, name }: ContextCodeBlo
 const listWaypoints = (waypoints: readonly Waypoint[]): Waypoint[] =>
   waypoints.flatMap((waypoint) => [waypoint, ...listWaypoints(waypoint.children)])
 
-const listViewedGraphs = ({ journey, walkthrough }: ViewedSegment): ASTGraph[] => [
+const listViewedGraphs = ({ traceDiagram, walkthrough }: ViewedSegment): ASTGraph[] => [
   ...walkthrough.files.flatMap((file) => listWaypoints(file.waypoints)).flatMap((waypoint) => waypoint.codeBlocks.map((block) => block.astGraph)),
-  ...listJourneyNodes(journey?.journeyNodes ?? []).map((node) => node.codeBlocks[0].astGraph),
+  ...listTraceNodes(traceDiagram?.traceNodes ?? []).map((node) => node.codeBlocks[0].astGraph),
 ]
 
 const usedBlockOf = (symbol: CodeBlockSymbol): CodeBlock[] => (symbol.type === USED_BLOCK_SYMBOL ? [symbol.codeBlockReference] : [])

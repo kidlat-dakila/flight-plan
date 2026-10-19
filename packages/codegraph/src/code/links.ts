@@ -1,8 +1,8 @@
-import { nameOfBlock } from "@/journey/names"
-import { listJourneyNodes } from "@/journey-flow-diagram"
 import { countLabel } from "@/prose/count-label"
 import type { BlobLinker } from "@/review-view-context"
-import type { CodeLink, ContextCodeBlock, Finding, JourneyNode, LineRange, Segment, Waypoint } from "@flightplan/configurations"
+import { nameOfBlock } from "@/trace/names"
+import { listTraceNodes } from "@/trace-diagram"
+import type { CodeLink, ContextCodeBlock, Finding, TraceNode, LineRange, Segment, Waypoint } from "@flightplan/configurations"
 import { codeLinesIn, findSource, rowSpanOf, type HighlightedSource, type RowSpan } from "./lines"
 
 const CODE_LINK_PATTERN = /\]\(code:([^)\s]+)\)/g
@@ -77,12 +77,12 @@ const waypointTexts = (waypoint: Waypoint): string[] => [
   ...waypoint.children.flatMap(waypointTexts),
 ]
 
-const journeyNodesOf = (segment: Segment): JourneyNode[] => listJourneyNodes(segment.journey?.journeyNodes ?? [])
+const traceNodesOf = (segment: Segment): TraceNode[] => listTraceNodes(segment.traceDiagram?.traceNodes ?? [])
 
 const segmentTexts = (segment: Segment): string[] => [
   segment.context,
-  ...journeyNodesOf(segment).map((node) => node.description ?? ""),
-  ...(segment.blast?.nodes ?? []).map((node) => node.impactReason ?? ""),
+  ...traceNodesOf(segment).map((node) => node.description ?? ""),
+  ...(segment.blastDiagram?.nodes ?? []).map((node) => node.impactReason ?? ""),
   ...segment.walkthrough.files.flatMap((file) => file.waypoints.flatMap(waypointTexts)),
 ]
 
@@ -92,7 +92,7 @@ const waypointLinkIds = (path: string, waypoint: Waypoint): string[] => [
 ]
 
 const declaredLinkIds = (segment: Segment): string[] => [
-  ...journeyNodesOf(segment).map(({ codeBlocks: [root] }) => codeLinkIdOf(root.astGraph.filePath, nameOfBlock(root))),
+  ...traceNodesOf(segment).map(({ codeBlocks: [root] }) => codeLinkIdOf(root.astGraph.filePath, nameOfBlock(root))),
   ...segment.walkthrough.files.flatMap((file) => file.waypoints.flatMap((waypoint) => waypointLinkIds(file.path, waypoint))),
 ]
 

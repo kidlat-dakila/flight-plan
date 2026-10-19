@@ -20,8 +20,8 @@ describe("getConfiguration", () => {
       panel: {
         kind: "switches",
         sections: [
-          { section: "journey", label: "Journey Flow Diagrams", isOn: false },
-          { section: "blast", label: "Blast Diagram", isOn: false },
+          { section: "traceDiagram", label: "Trace Diagrams", isOn: false },
+          { section: "blastDiagram", label: "Blast Diagram", isOn: false },
           { section: "findings", label: "Findings", isOn: false },
         ],
         contextKinds: [{ kind: "codebase", isRequired: false }, { kind: "library", isRequired: false }, { kind: "language", isRequired: false }],
@@ -37,7 +37,7 @@ describe("getConfiguration", () => {
       null,
       "Voice",
       "Context",
-      "Journey Flow Diagram",
+      "Trace Diagram",
       "Blast Diagram",
       "Findings",
       "Code Walkthrough",

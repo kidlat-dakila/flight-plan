@@ -34,7 +34,7 @@ describe("dominantAnchorIdOf", () => {
   it("picks a short section that is wholly on screen over a long one that runs past the screen", () => {
     const spans = [
       { anchorId: "context", top: 116, bottom: 470 },
-      { anchorId: "journey", top: 470, bottom: 3400 },
+      { anchorId: "traceDiagram", top: 470, bottom: 3400 },
     ]
 
     expect(dominantAnchorIdOf(spans, VIEWPORT)).toBe("context")

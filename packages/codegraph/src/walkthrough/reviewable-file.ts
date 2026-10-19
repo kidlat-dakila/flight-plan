@@ -1,5 +1,5 @@
 import { isInSpan, type RowSpan } from "@/code/lines"
-import { BLOCK_TYPE_LABELS, nameOfBlock } from "@/journey/names"
+import { BLOCK_TYPE_LABELS, nameOfBlock } from "@/trace/names"
 import { rootBlockSpanOf } from "@/walkthrough/root-blocks"
 import { fileFingerprint, fingerprintOf, flattenWaypoints, type FlatWaypoint } from "@/walkthrough/waypoints"
 import type { CodeBlock, FileSection, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"

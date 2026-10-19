@@ -1,6 +1,6 @@
-The Journey Flow Diagram: how execution reaches the change, read like a
+The Trace Diagram: how execution reaches the change, read like a
 debugging trace, from the code that starts a path to the changed code. A
-segment's `journey` is an object with a `description`, `nodes` and `edges`, or
+segment's `traceDiagram` is an object with a `description`, `nodes` and `edges`, or
 `null` when the segment has no diagram.
 
 **Flight Plan draws it, and you write the words on it.** The nodes and the edges
@@ -118,7 +118,7 @@ rendered, and it does not say whether the connection is proven or assumed.
 
 ## What you write
 
-With `update-nodes { segmentId, journey: [{ id, label, description, triggerLabels, blockLabels }] }`:
+With `update-nodes { segmentId, traceDiagram: [{ id, label, description, triggerLabels, blockLabels }] }`:
 
 - `label` — what the step does. Required on every node.
 - `description` — how the node is reached and what it runs next. Not the
@@ -130,15 +130,15 @@ With `update-nodes { segmentId, journey: [{ id, label, description, triggerLabel
 
 A node inside another is written by its own `id`, like any other.
 
-With `update-nodes { segmentId, journeyDescription }`:
+With `update-nodes { segmentId, traceDiagramDescription }`:
 
-- `journeyDescription` — the caption of the diagram, in five sentences at
+- `traceDiagramDescription` — the caption of the diagram, in five sentences at
   most. Required on every segment that has a diagram. See
-  `journey.description`.
+  `traceDiagram.description`.
 
 ## When there is no diagram
 
-A segment with `journey: null` has no Journey Flow Diagram, and the page shows
+A segment with `trace: null` has no Trace Diagram, and the page shows
 the heading of the band alone. Flight Plan decides whether a segment has a
 diagram, and no tool changes it. Where a change that runs code has none, tell
 the reviewer with `send-message`.

@@ -19,7 +19,7 @@ On the author's page every part can be edited:
 
 - [Segments](/docs/review-artifacts/parts/segments/): their labels, their files and their order.
 - [Context](/docs/review-artifacts/parts/context/): the text, with links to code.
-- [Journey Flow Diagram](/docs/review-artifacts/parts/journey-flow-diagram/): its cards, lines and description.
+- [Trace Diagram](/docs/review-artifacts/parts/trace-diagram/): its cards, lines and description.
 - [Blast Diagram](/docs/review-artifacts/parts/blast-diagram/): the impact of each file.
 - [Code Walkthrough](/docs/review-artifacts/parts/code-walkthrough/): the waypoints, the files and their order.
 

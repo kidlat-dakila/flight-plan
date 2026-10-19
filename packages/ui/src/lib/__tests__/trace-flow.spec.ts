@@ -1,5 +1,5 @@
-import { toJourneyFlow } from "@/lib/journey-flow"
-import { layoutJourney, type LayoutEdge, type LayoutNode } from "@/lib/journey-layout"
+import { toTraceFlow } from "@/lib/trace-flow"
+import { layoutTrace, type LayoutEdge, type LayoutNode } from "@/lib/trace-layout"
 
 const CART_LINE: LayoutNode = {
   id: "cart-line",
@@ -20,8 +20,8 @@ const EDGES: readonly LayoutEdge[] = [
   { id: "price-click", from: "price", to: "cart-line", fromRowId: null, toRowId: "click" },
 ]
 
-const layout = layoutJourney(NODES, EDGES)
-const flow = toJourneyFlow(NODES, layout)
+const layout = layoutTrace(NODES, EDGES)
+const flow = toTraceFlow(NODES, layout)
 
 const frameOf = (id: string) => flow.frames.find((frame) => frame.id === id)
 
@@ -32,7 +32,7 @@ const absoluteOf = (id: string): { x: number, y: number } => {
   return { x: parent.x + frame.position.x, y: parent.y + frame.position.y }
 }
 
-describe("toJourneyFlow", () => {
+describe("toTraceFlow", () => {
   it("gives a node inside another its parent and a position from the corner of that parent", () => {
     expect(frameOf("cart-page")?.parentId).toBeNull()
     expect(frameOf("cart-line")?.parentId).toBe("cart-page")
@@ -100,6 +100,6 @@ describe("toJourneyFlow", () => {
   })
 
   it("draws nothing for a diagram with no node", () => {
-    expect(toJourneyFlow([], layoutJourney([], []))).toStrictEqual({ frames: [], lines: [] })
+    expect(toTraceFlow([], layoutTrace([], []))).toStrictEqual({ frames: [], lines: [] })
   })
 })

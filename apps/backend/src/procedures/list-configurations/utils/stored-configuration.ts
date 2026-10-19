@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { CONTEXT_CODE_BLOCK_KINDS, PRESET_NAMES, SECTION_NAMES } from "@flightplan/configurations"
 import type { SavedConfiguration } from "./configuration"
+import { RENAMED_PARTS, renamedFieldPath, withRenamedKeys } from "./renamed-parts"
 
 export const CONFIGURATION_FILE_NAME = "configuration.json"
 export const INSTRUCTION_FILE_EXTENSION = ".md"
@@ -42,7 +43,16 @@ const parseJson = (text: string | undefined): unknown => {
 
 const isInstructionFileName = (fileName: string): boolean => fileName.endsWith(INSTRUCTION_FILE_EXTENSION)
 
-const instructionKeyOf = (fileName: string): string => fileName.slice(0, -INSTRUCTION_FILE_EXTENSION.length)
+const instructionKeyOf = (fileName: string): string =>
+  renamedFieldPath(fileName.slice(0, -INSTRUCTION_FILE_EXTENSION.length))
+
+const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
+  typeof value === "object" && value !== null && !Array.isArray(value)
+
+const withRenamedSections = (described: unknown): unknown =>
+  isRecord(described) && isRecord(described.sections)
+    ? { ...described, sections: withRenamedKeys(described.sections, RENAMED_PARTS) }
+    : described
 
 export const isStoredFileName = (fileName: string): boolean =>
   fileName === CONFIGURATION_FILE_NAME || isInstructionFileName(fileName)
@@ -56,7 +66,7 @@ export const formatConfigurationFiles = (configuration: SavedConfiguration): Con
 }
 
 export const parseConfigurationFiles = (id: string, files: ConfigurationFiles): SavedConfiguration | null => {
-  const described = configurationFileSchema.safeParse(parseJson(files.get(CONFIGURATION_FILE_NAME)))
+  const described = configurationFileSchema.safeParse(withRenamedSections(parseJson(files.get(CONFIGURATION_FILE_NAME))))
   if (!described.success) return null
   return {
     id,

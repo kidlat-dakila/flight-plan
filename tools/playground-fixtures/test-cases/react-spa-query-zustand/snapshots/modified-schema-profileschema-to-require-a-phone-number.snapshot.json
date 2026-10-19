@@ -216,9 +216,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
               "type": "root-variable",
@@ -251,9 +251,9 @@
               ]
             }
           ],
-          "journeyNodeEdges": []
+          "traceNodeEdges": []
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/routes/account/components/profile-schema.ts",
@@ -359,7 +359,7 @@
                     "lineEnd": 4
                   },
                   "category": "variable",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/routes/account/components/profile-schema.ts#root-variable@4:1"
                   ],
@@ -377,7 +377,7 @@
                     "lineEnd": 10
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
+                  "traceNodeId": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
                   "codeBlockIds": [
                     "src/routes/account/components/profile-schema.ts#root-variable@6:1",
                     "src/routes/account/components/profile-schema.ts#validation@6:30",
@@ -800,9 +800,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
               "type": "root-variable",
@@ -908,7 +908,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@7:1 -> src/routes/account/index.tsx#component@4:1",
               "from": "src/router.tsx#root-variable@7:1",
@@ -926,7 +926,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/routes/account/components/ProfileForm.tsx",
@@ -1059,7 +1059,7 @@
                     "lineEnd": 31
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                  "traceNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
                   "codeBlockIds": [
                     "src/routes/account/components/ProfileForm.tsx#component@7:1",
                     "src/routes/account/components/ProfileForm.tsx#render@19:5",

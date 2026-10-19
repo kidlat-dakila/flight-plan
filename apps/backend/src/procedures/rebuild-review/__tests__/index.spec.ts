@@ -13,8 +13,8 @@ import type { BranchPull, BranchPuller } from "@/procedures/rebuild-review/utils
 import type { RebuildReviewInput } from "@/procedures/rebuild-review/utils/schemas"
 import { requestReview } from "@/procedures/request-review"
 import { createChangeRepositoryOpener } from "@/procedures/request-review/__tests__/change-repository"
-import { listJourneyNodes } from "@flightplan/codegraph"
-import type { JourneyNode, ReviewArtifact, Waypoint } from "@flightplan/configurations"
+import { listTraceNodes } from "@flightplan/codegraph"
+import type { TraceNode, ReviewArtifact, Waypoint } from "@flightplan/configurations"
 
 const NOW = new Date("2026-10-12T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "pr-416" }
@@ -99,12 +99,12 @@ const writeWaypoint = (waypoint: Waypoint): Waypoint => ({
   children: waypoint.children.map(writeWaypoint),
 })
 
-const writeJourneyNode = (node: JourneyNode): JourneyNode => ({
+const writeTraceNode = (node: TraceNode): TraceNode => ({
   ...node,
   label: `Label of ${node.codeBlocks[0].name ?? ""}`,
   triggerLabels: node.triggerLabels.map((trigger) => ({ ...trigger, label: "Trigger" })),
   blockLabels: node.blockLabels.map((listed) => ({ ...listed, label: "Block" })),
-  children: node.children.map(writeJourneyNode),
+  children: node.children.map(writeTraceNode),
 })
 
 const writeEverything = (artifact: ReviewArtifact): ReviewArtifact => ({
@@ -114,9 +114,9 @@ const writeEverything = (artifact: ReviewArtifact): ReviewArtifact => ({
     ...segment,
     title: "Delivery estimates",
     context: "Estimates depend on the zone now.",
-    journey: segment.journey === null
+    traceDiagram: segment.traceDiagram === null
       ? null
-      : { ...segment.journey, description: "A shopper opens the cart, and the estimate is read.", journeyNodes: segment.journey.journeyNodes.map(writeJourneyNode) },
+      : { ...segment.traceDiagram, description: "A shopper opens the cart, and the estimate is read.", traceNodes: segment.traceDiagram.traceNodes.map(writeTraceNode) },
     walkthrough: {
       files: segment.walkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map(writeWaypoint) })),
     },
@@ -136,9 +136,9 @@ const readingsOf = async (reviewStore: ReviewStore): Promise<Record<string, stri
   )
 }
 
-const journeyLabelsOf = async (reviewStore: ReviewStore): Promise<(string | null)[]> => {
+const traceLabelsOf = async (reviewStore: ReviewStore): Promise<(string | null)[]> => {
   const artifact = await reviewStore.findArtifact(KEY)
-  return (artifact?.segments ?? []).flatMap((segment) => listJourneyNodes(segment.journey?.journeyNodes ?? [])).map((node) => node.label)
+  return (artifact?.segments ?? []).flatMap((segment) => listTraceNodes(segment.traceDiagram?.traceNodes ?? [])).map((node) => node.label)
 }
 
 const startWrittenReview = async (harness: Harness): Promise<void> => {
@@ -165,7 +165,7 @@ describe("rebuildReview", () => {
     await rebuildReview(createInput(), harness.contextAt(SECOND_CHANGE))
 
     await expect(readingsOf(harness.reviewStore)).resolves.toStrictEqual({ estimate: "Reading of estimate", label: "" })
-    await expect(journeyLabelsOf(harness.reviewStore)).resolves.toStrictEqual(["Label of estimate", null])
+    await expect(traceLabelsOf(harness.reviewStore)).resolves.toStrictEqual(["Label of estimate", null])
     await expect(contextDescriptionsOf(harness.reviewStore)).resolves.toMatchObject({ estimate: "Description of estimate" })
     await expect(harness.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       segments: [{ context: "", walkthrough: { files: [{ path: PATH }] } }],

@@ -1,7 +1,7 @@
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
-import { nameOfBlock } from "@/journey/names"
-import { listJourneyNodes } from "@/journey-flow-diagram"
-import type { JourneyNode } from "@flightplan/configurations"
+import { nameOfBlock } from "@/trace/names"
+import { listTraceNodes } from "@/trace-diagram"
+import type { TraceNode } from "@flightplan/configurations"
 import { diagramOf, outlineOfNodes, presentDiagramOf } from "./diagram-fixture"
 
 const PRICING = codeOf("export const priceOf = (item) => {", "  return item.price", "}")
@@ -20,28 +20,28 @@ const STORE = codeOf(
   "}",
 )
 
-const rowNamesOf = (node: JourneyNode | undefined): string[] => (node?.blockLabels ?? []).map(({ codeBlock }) => nameOfBlock(codeBlock))
+const rowNamesOf = (node: TraceNode | undefined): string[] => (node?.blockLabels ?? []).map(({ codeBlock }) => nameOfBlock(codeBlock))
 
-const nodeNamed = (nodes: readonly JourneyNode[], name: string): JourneyNode | undefined => listJourneyNodes(nodes).find((node) => node.codeBlocks[0].name === name)
+const nodeNamed = (nodes: readonly TraceNode[], name: string): TraceNode | undefined => listTraceNodes(nodes).find((node) => node.codeBlocks[0].name === name)
 
 describe("the card of a class", () => {
   it("makes a node of each method on a chain, drawn inside the node of its class", () => {
     const diagram = diagramOf({ "src/pricing.ts": PRICING, "src/store.ts": STORE }, PRICING_CHANGE)
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["class Store", "  method Store.total", "function priceOf (changed)"])
-    expect(diagram?.journeyNodeEdges.map((edge) => edge.id)).toContain("src/store.ts#method@7:3 -> src/pricing.ts#function@1:1")
+    expect(diagram?.traceNodeEdges.map((edge) => edge.id)).toContain("src/store.ts#method@7:3 -> src/pricing.ts#function@1:1")
   })
 
   it("lists a property of the class as a row of the class, and no method as a row", () => {
     const diagram = presentDiagramOf({ "src/store.ts": STORE }, { "src/store.ts": [rangeAt(3, 3, 3, 13)] })
 
-    expect(rowNamesOf(nodeNamed(diagram.journeyNodes, "Store"))).toStrictEqual(["Store.items"])
+    expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Store"))).toStrictEqual(["Store.items"])
   })
 
   it("gives a method no row for what it reaches through this", () => {
     const store = codeOf("export class Store {", "  items = []", "  add(item) {", "    this.items.push(item)", "    log(item)", "  }", "}")
     const diagram = presentDiagramOf({ "src/store.ts": store }, { "src/store.ts": [rangeAt(4, 5, 5, 14)] })
-    const add = nodeNamed(diagram.journeyNodes, "Store.add")
+    const add = nodeNamed(diagram.traceNodes, "Store.add")
 
     expect(add?.diffCodeBlocks.map((block) => block.name)).toContain("this.items.push")
     expect(rowNamesOf(add)).toStrictEqual(["log"])
@@ -94,7 +94,7 @@ describe("the card of a class that holds another class by type", () => {
     const diagram = presentDiagramOf(files, { "src/users.ts": [rangeAt(3, 5, 3, 22)] })
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["class UsersService (changed)", "  method UsersService.findAll (changed)", "class Report", "  method Report.run", "  method Report.old"])
-    expect(diagram.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual(expect.arrayContaining([
+    expect(diagram.traceNodeEdges.map((edge) => edge.id)).toStrictEqual(expect.arrayContaining([
       "src/report.ts#method@5:3 -> src/users.ts#method@2:3",
       "src/report.ts#method@8:3 -> src/users.ts#method@2:3",
     ]))
@@ -113,8 +113,8 @@ describe("the card of a class that holds another class by type", () => {
     )
     const diagram = presentDiagramOf({ "src/report.ts": report }, { "src/report.ts": [rangeAt(2, 15, 2, 87), rangeAt(3, 5, 3, 15)] })
 
-    expect(rowNamesOf(nodeNamed(diagram.journeyNodes, "Report"))).toStrictEqual(["users", "title"])
-    expect(rowNamesOf(nodeNamed(diagram.journeyNodes, "Report.constructor"))).toStrictEqual(["log"])
+    expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Report"))).toStrictEqual(["users", "title"])
+    expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Report.constructor"))).toStrictEqual(["log"])
   })
 })
 
@@ -159,13 +159,13 @@ describe("the card of a Python class", () => {
     const diagram = presentDiagramOf({ "shop/store.py": PYTHON_STORE }, { "shop/store.py": [rangeAt(5, 9, 5, 24)] })
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["class Store (changed)"])
-    expect(rowNamesOf(nodeNamed(diagram.journeyNodes, "Store"))).toStrictEqual(["Store.items"])
+    expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Store"))).toStrictEqual(["Store.items"])
   })
 
   it("gives a method no row for what it reaches through self", () => {
     const diagram = presentDiagramOf({ "shop/store.py": PYTHON_STORE }, { "shop/store.py": [rangeAt(8, 9, 9, 18)] })
 
-    expect(rowNamesOf(nodeNamed(diagram.journeyNodes, "Store.add"))).toStrictEqual(["log"])
+    expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Store.add"))).toStrictEqual(["log"])
   })
 
   it("nests a class that extends another from another file, and leaves out a method the class extending it writes again", () => {

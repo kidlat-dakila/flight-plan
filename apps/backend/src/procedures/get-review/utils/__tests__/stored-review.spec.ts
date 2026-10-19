@@ -1,6 +1,7 @@
-import { parse } from "devalue"
+import { parse, stringify } from "devalue"
 import { HELD_STOCK_ARTIFACT } from "@/procedures/get-review/utils/mocks/held-stock"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
+import type { TraceDiagram } from "@flightplan/configurations"
 
 const SCAFFOLD: ReviewScaffold = {
   artifact: HELD_STOCK_ARTIFACT,
@@ -15,6 +16,12 @@ const SCAFFOLD: ReviewScaffold = {
   },
 }
 
+const asJourney = ({ traceNodes, traceNodeEdges, ...diagram }: TraceDiagram) => ({
+  ...diagram,
+  journeyNodes: traceNodes,
+  journeyNodeEdges: traceNodeEdges,
+})
+
 const BLOCK_LABELS_AFTER_A_FIELD = /,"blockLabels":\d+/g
 const BLOCK_LABELS_BEFORE_A_FIELD = /"blockLabels":\d+,/g
 
@@ -25,7 +32,7 @@ describe("stored review", () => {
 
   it("writes the format version, the kind and the choices in the meta block", () => {
     expect(parse(formatStoredReview(SCAFFOLD))).toMatchObject({
-      schema: 2,
+      schema: 3,
       meta: {
         kind: "review",
         baseCommit: "0000000",
@@ -37,10 +44,10 @@ describe("stored review", () => {
 
   it("keeps a block that two nodes hold as one block, and the code group of two segments as one group", () => {
     const read = parseStoredReview(formatStoredReview(SCAFFOLD))
-    const [journey] = (read?.artifact.segments ?? []).flatMap((segment) => (segment.journey === null ? [] : [segment.journey]))
-    const [node] = journey.journeyNodes
+    const [traceDiagram] = (read?.artifact.segments ?? []).flatMap((segment) => (segment.traceDiagram === null ? [] : [segment.traceDiagram]))
+    const [node] = traceDiagram.traceNodes
 
-    expect(journey.astCodeGroup.codeBlocks).toContain(node.codeBlocks[0])
+    expect(traceDiagram.astCodeGroup.codeBlocks).toContain(node.codeBlocks[0])
     expect(node.diffCodeBlocks.every((block) => node.codeBlocks.includes(block))).toBe(true)
   })
 
@@ -63,6 +70,24 @@ describe("stored review", () => {
 
     expect(older).toContain("Subtracts held units.")
     expect(parseStoredReview(older)).toStrictEqual(SCAFFOLD)
+  })
+
+  it("reads a review saved while the diagrams were named journey and blast, under their current names", () => {
+    const olderArtifact = {
+      ...HELD_STOCK_ARTIFACT,
+      sections: { journey: true, blast: true, walkthrough: true, findings: true },
+      segments: HELD_STOCK_ARTIFACT.segments.map(({ traceDiagram, blastDiagram, ...segment }) => ({
+        ...segment,
+        journey: traceDiagram === null ? null : asJourney(traceDiagram),
+        blast: blastDiagram,
+      })),
+    }
+    const older = stringify({ ...parse(formatStoredReview(SCAFFOLD)), schema: 2, artifact: olderArtifact })
+
+    expect(parseStoredReview(older)).toStrictEqual({
+      ...SCAFFOLD,
+      artifact: { ...HELD_STOCK_ARTIFACT, sections: { traceDiagram: true, blastDiagram: true, walkthrough: true, findings: true } },
+    })
   })
 
   it("has no answer for text that is not a stored review", () => {

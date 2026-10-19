@@ -39,7 +39,7 @@ describe("the card of a tRPC router", () => {
 
   it("draws a line from the procedure a procedure is built on to it, and none back", () => {
     const diagram = presentDiagramOf(FILES, { "server/trpc.ts": [rangeAt(6, 3, 6, 50)], "server/todo.ts": [rangeAt(6, 5, 6, 31)] })
-    const edgeIds = diagram.journeyNodeEdges.map((edge) => edge.id)
+    const edgeIds = diagram.traceNodeEdges.map((edge) => edge.id)
 
     expect(edgeIds).toContain("server/trpc.ts#root-variable@5:1 -> server/todo.ts#resolver@4:11")
     expect(edgeIds).not.toContain("server/todo.ts#resolver@4:11 -> server/trpc.ts#root-variable@5:1")

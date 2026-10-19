@@ -23,7 +23,7 @@ Before any agent starts, Flight Plan reads the change from git and builds the wh
 2. It follows the imports of each changed file in both directions, to the files that import it and the files it imports.
 3. It joins changed files that share imports, and finds each changed block of code. It traces chains from what starts a path, such as a route, a page or an event handler, down to each changed block.
 4. It splits the change into [segments](/docs/review-artifacts/parts/segments/): one for each path through the change, plus one for code that several paths share.
-5. For each segment it builds the nodes and edges of the [Journey Flow Diagram](/docs/review-artifacts/parts/journey-flow-diagram/) and the [Blast Diagram](/docs/review-artifacts/parts/blast-diagram/), and the files and waypoints of the [Code Walkthrough](/docs/review-artifacts/parts/code-walkthrough/).
+5. For each segment it builds the nodes and edges of the [Trace Diagram](/docs/review-artifacts/parts/trace-diagram/) and the [Blast Diagram](/docs/review-artifacts/parts/blast-diagram/), and the files and waypoints of the [Code Walkthrough](/docs/review-artifacts/parts/code-walkthrough/).
 
 This runs on your machine, with tree-sitter. The page opens the review at once: the diagrams and the walkthrough are there to read, and each piece of prose is marked **Not written yet.**
 
@@ -57,4 +57,4 @@ Both pull the branch first. Choosing a different configuration in an update is a
 
 ## Sections that are off
 
-A configuration can leave a section out, such as the Journey Flow Diagram or the findings. The review then shows a **Generate** button in its place, and the agent writes that section when you ask for it.
+A configuration can leave a section out, such as the Trace Diagram or the findings. The review then shows a **Generate** button in its place, and the agent writes that section when you ask for it.

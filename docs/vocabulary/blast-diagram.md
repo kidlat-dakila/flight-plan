@@ -2,7 +2,7 @@
 
 ## Definition
 
-The Blast Diagram shows the files a change is connected to, and what the change does to the ones it did not touch. Where the [Journey Flow Diagram](journey-flow-diagram.md) follows the paths that lead to a change and stops there, the Blast Diagram shows what lies around the change. It answers the reviewer's second question: did the author forget something?
+The Blast Diagram shows the files a change is connected to, and what the change does to the ones it did not touch. Where the [Trace Diagram](trace-diagram.md) follows the paths that lead to a change and stops there, the Blast Diagram shows what lies around the change. It answers the reviewer's second question: did the author forget something?
 
 It has two views. The export bound, which the rest of this definition describes, is the view the diagram is named after and the one that is assessed. The import bound shows what the change itself uses. See [Two views](#two-views).
 
@@ -47,7 +47,7 @@ The import bound follows every use of a root block, so a change inside a block t
 
 The diagram opens on the export bound. When no file but those of the segment's change is in the export bound, nothing uses the change, and the diagram opens on the import bound.
 
-The import bound is stored with the diagram, as `importBound` of the `blast`: its own nodes and edges. A Flight Plan built before the import bound existed has none, and its diagram has the export bound alone, with no buttons, until it is regenerated.
+The import bound is stored with the diagram, as `importBound` of the `blastDiagram`: its own nodes and edges. A Flight Plan built before the import bound existed has none, and its diagram has the export bound alone, with no buttons, until it is regenerated.
 
 ## When a segment has one
 

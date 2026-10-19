@@ -2,12 +2,12 @@ import { z } from "zod"
 import {
   assembleReviewArtifact,
   linkCodeGroupGraph,
-  linkJourneyFlowDiagram,
+  linkTraceDiagram,
   parseHunks,
   type RangedWaypoint,
   type SegmentParts,
   type StoredCodeGroupGraph,
-  type StoredJourneyNode,
+  type StoredTraceNode,
 } from "@flightplan/codegraph"
 import {
   blastSchema,
@@ -21,7 +21,7 @@ import {
   type ASTCodeGroupGraph,
   type CodeBlock,
   type ImportGraphGroup,
-  type JourneyFlowDiagram,
+  type TraceDiagram,
   type ReviewArtifact,
 } from "@flightplan/configurations"
 import type { RepositoryFiles } from "./apply-diffs"
@@ -56,7 +56,7 @@ const storedFileSectionSchema = z.object({
   waypoints: z.array(storedWaypointSchema),
 })
 
-const storedJourneyNodeSchema: z.ZodType<StoredJourneyNode> = z.lazy(() =>
+const storedTraceNodeSchema: z.ZodType<StoredTraceNode> = z.lazy(() =>
   z.object({
     id: z.string(),
     type: z.enum(CODE_BLOCK_TYPES),
@@ -64,16 +64,16 @@ const storedJourneyNodeSchema: z.ZodType<StoredJourneyNode> = z.lazy(() =>
     description: z.string().nullable(),
     codeBlockIds: z.array(z.string()),
     diffCodeBlockIds: z.array(z.string()),
-    children: z.array(storedJourneyNodeSchema),
+    children: z.array(storedTraceNodeSchema),
     triggerLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })),
     blockLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })),
   }),
 )
 
-const storedJourneySchema = z.object({
+const storedTraceSchema = z.object({
   description: z.string().nullable().default(null),
-  journeyNodes: z.array(storedJourneyNodeSchema),
-  journeyNodeEdges: z.array(z.object({ id: z.string(), from: z.string(), to: z.string() })),
+  traceNodes: z.array(storedTraceNodeSchema),
+  traceNodeEdges: z.array(z.object({ id: z.string(), from: z.string(), to: z.string() })),
 })
 
 const importGraphFileSchema = z.object({
@@ -89,8 +89,8 @@ const codegraphSegmentSchema = z.object({
   title: z.string().nullable(),
   context: z.array(z.string()),
   importGraph: z.array(importGraphFileSchema),
-  journeyFlowDiagram: storedJourneySchema.nullable(),
-  blastRadiusDiagram: blastSchema.nullable(),
+  traceDiagram: storedTraceSchema.nullable(),
+  blastDiagram: blastSchema.nullable(),
   codeWalkthrough: z.object({ files: z.array(storedFileSectionSchema) }),
   codeReferences: z.array(z.object({ path: z.string(), references: z.array(codeReferenceSchema), languageReferences: z.array(languageReferenceSchema).default([]), exports: z.array(codeExportSchema).default([]) })),
 })
@@ -112,13 +112,13 @@ const importGraphGroupOf = (segment: CodegraphSegment, group: ASTCodeGroupGraph)
     .map((file) => ({ ...file, importedFilePaths: new Map(Object.entries(file.importedFilePaths)) }))
 }
 
-const journeyOf = (segment: CodegraphSegment, groups: readonly ASTCodeGroupGraph[]): JourneyFlowDiagram | null => {
-  const stored = segment.journeyFlowDiagram
+const traceOf = (segment: CodegraphSegment, groups: readonly ASTCodeGroupGraph[]): TraceDiagram | null => {
+  const stored = segment.traceDiagram
   if (stored === null) return null
-  const firstBlockId = stored.journeyNodes.at(0)?.codeBlockIds.at(0)
+  const firstBlockId = stored.traceNodes.at(0)?.codeBlockIds.at(0)
   const group = groups.find((candidate) => candidate.codeBlocks.some((block) => block.id === firstBlockId))
-  if (group === undefined) throw new Error("A journey of the snapshot names a block no group of its code blocks holds.")
-  return linkJourneyFlowDiagram(stored, group, importGraphGroupOf(segment, group))
+  if (group === undefined) throw new Error("A trace of the snapshot names a block no group of its code blocks holds.")
+  return linkTraceDiagram(stored, group, importGraphGroupOf(segment, group))
 }
 
 type BlockById = ReadonlyMap<string, CodeBlock>
@@ -140,17 +140,17 @@ const walkthroughOf = ({ codeWalkthrough }: CodegraphSegment, blockById: BlockBy
 })
 
 interface LinkedSegment {
-  readonly journey: JourneyFlowDiagram | null
+  readonly traceDiagram: TraceDiagram | null
   readonly walkthrough: SegmentParts["walkthrough"]
 }
 
-const toSegmentParts = (segment: CodegraphSegment, { journey, walkthrough }: LinkedSegment, position: number): SegmentParts => ({
+const toSegmentParts = (segment: CodegraphSegment, { traceDiagram, walkthrough }: LinkedSegment, position: number): SegmentParts => ({
   id: `${MOCK_SEGMENT_ID_PREFIX}${String(position + 1)}`,
   title: segment.title,
   context: segment.context.join(LINE_BREAK),
   importGraph: segment.importGraph,
-  journey,
-  blast: segment.blastRadiusDiagram,
+  traceDiagram,
+  blastDiagram: segment.blastDiagram,
   walkthrough,
   codeReferences: segment.codeReferences,
 })
@@ -161,7 +161,7 @@ export const toReviewArtifact = (snapshot: CaseSnapshot, headFiles: RepositoryFi
   const { segments } = snapshot.codegraph
   const groups = storedGroups.map(linkCodeGroupGraph)
   const blockById: BlockById = new Map([...groups.flatMap((group) => group.codeBlocks)].reverse().map((block) => [block.id, block] as const))
-  const linked = segments.map((segment) => ({ journey: journeyOf(segment, groups), walkthrough: walkthroughOf(segment, blockById) }))
+  const linked = segments.map((segment) => ({ traceDiagram: traceOf(segment, groups), walkthrough: walkthroughOf(segment, blockById) }))
   return reviewArtifactSchema.parse(
     assembleReviewArtifact({
       title: snapshot.title,

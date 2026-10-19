@@ -13,7 +13,7 @@ The order of the File Sections is chosen by the reviewer in the [review request]
 | Order | What comes first |
 |---|---|
 | **Foundations first** | The deepest changed code, then the code that calls it, then the wiring and configuration. A name is defined before it is used. The default. |
-| **Along the path** | The file where control arrives first, then each file the change reaches in turn, as the [Journey Flow Diagram](journey-flow-diagram.md) reads. |
+| **Along the path** | The file where control arrives first, then each file the change reaches in turn, as the [Trace Diagram](trace-diagram.md) reads. |
 | **Core change first** | The files that are the point of the change, then the code that supports them, then the callers that had to follow. |
 | **Risk first** | The files whose waypoints need the most attention, down to the ones that are safe to skim. |
 | **Custom** | The reviewer's own instruction for the order, passed to the agent as written. |
@@ -40,7 +40,7 @@ One stop on the tour: an explanation of one piece of the change, marked beside i
 | Title | What the reviewer is being shown and why, never just the declaration's name. Until the agent writes it, the title is the declaration's name, marked as a draft. |
 | Reading | The explanation: why this code runs and what goes wrong without it. |
 | Code | A [CodeBlock](review-artifact.md#codeblock) reference: the range the waypoint is about, and which of the file's changes it covers. The diff marks come from those changes. |
-| Code blocks | The [code blocks](codegraph/code-blocks.md) of the waypoint: the block it stops at first, then the changed blocks inside it, in the order they are written. A waypoint made of several types or statements holds each of them. Each is the same object as in the group, and as in a [Journey Flow Diagram](journey-flow-diagram.md) node that holds it. A waypoint in a file the codegraph does not trace has none. |
+| Code blocks | The [code blocks](codegraph/code-blocks.md) of the waypoint: the block it stops at first, then the changed blocks inside it, in the order they are written. A waypoint made of several types or statements holds each of them. Each is the same object as in the group, and as in a [Trace Diagram](trace-diagram.md) node that holds it. A waypoint in a file the codegraph does not trace has none. |
 | Needs attention | Present only when the agent judges the reviewer must not skim this change, and says why. |
 | Findings | The [findings](#findings) about this code. |
 | Children | Waypoints nested inside this one: the [changed steps](#the-steps-of-a-waypoint) of a declaration read in parts. Always two or more, never one: a single child would repeat its parent. |
@@ -53,7 +53,7 @@ Comment threads have their own column of the gutter, beside the last line they c
 
 ### The steps of a waypoint
 
-**A changed declaration is read in parts.** The waypoint of a function, a component, a hook, a method, a class or a value at the top level of a file says what the author did across the whole declaration, and its children are the changed steps inside it. The steps are found as the [steps of a Journey Flow Diagram node](journey-flow-diagram.md#steps) are, from the blocks that have a change. [Steps](codegraph/steps.md) has the whole of the folding:
+**A changed declaration is read in parts.** The waypoint of a function, a component, a hook, a method, a class or a value at the top level of a file says what the author did across the whole declaration, and its children are the changed steps inside it. The steps are found as the [steps of a Trace Diagram node](trace-diagram.md#steps) are, from the blocks that have a change. [Steps](codegraph/steps.md) has the whole of the folding:
 
 | A changed step | Its waypoint |
 |---|---|
@@ -62,7 +62,7 @@ Comment threads have their own column of the gutter, beside the last line they c
 | A condition, a switch, a loop, a `try-catch`, a `throw`, and a statement that calls out | One child each. What is written inside a condition, a switch, a loop or a `try-catch` is folded into it. |
 | A function with a name, an event, an effect and a callback, when its own lines changed | One child, and the changed steps inside it are its children, found the same way |
 
-**Only changed code has a waypoint.** A step is a child when it has a change, or when a block folded into it has one. A step a path only passes through is a row of the Journey Flow Diagram and no waypoint.
+**Only changed code has a waypoint.** A step is a child when it has a change, or when a block folded into it has one. A step a path only passes through is a row of the Trace Diagram and no waypoint.
 
 **A step ends at a line that did not change.** Two changed statements are one child only when every line between them changed too, so no child lies on top of unchanged code.
 
@@ -84,7 +84,7 @@ A type, a statement at the top level of a file and a file no language reads are 
 
 **An import has no waypoint.** A changed import is shown in the code, marked as added, removed or changed, but nothing stops at it: the waypoint of the code that uses what it imports says why it is there. A file whose only change is to its imports has no File Section.
 
-A waypoint holds its code blocks in three forms, as a [Journey Flow Diagram node](journey-flow-diagram.md#three-forms) does:
+A waypoint holds its code blocks in three forms, as a [Trace Diagram node](trace-diagram.md#three-forms) does:
 
 | Form | What it is for | Code blocks |
 |---|---|---|

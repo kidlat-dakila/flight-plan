@@ -31,13 +31,13 @@ const withImpact = (node: BlastNode, { path, impactType, impactReason }: BlastEd
     : node
 
 const withEditedBlast = (segment: Segment, edit: BlastEdit): Segment =>
-  segment.blast === null
+  segment.blastDiagram === null
     ? segment
-    : { ...segment, blast: { ...segment.blast, nodes: segment.blast.nodes.map((node) => withImpact(node, edit)) } }
+    : { ...segment, blastDiagram: { ...segment.blastDiagram, nodes: segment.blastDiagram.nodes.map((node) => withImpact(node, edit)) } }
 
 export const planBlastEdit = (artifact: ReviewArtifact, edit: BlastEdit): PlannedBlastEdit => {
   const impactReason = edit.impactReason.trim()
-  const nodes = artifact.segments.flatMap((segment) => segment.blast?.nodes ?? []).filter((node) => node.path === edit.path)
+  const nodes = artifact.segments.flatMap((segment) => segment.blastDiagram?.nodes ?? []).filter((node) => node.path === edit.path)
   if (nodes.length === 0) return reject(MISSING_FILE_MESSAGE)
   if (nodes.some(isChangedFile)) return reject(CHANGED_FILE_MESSAGE)
   if (!REASONED_IMPACT_TYPES.includes(edit.impactType)) {

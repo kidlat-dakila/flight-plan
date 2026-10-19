@@ -1,4 +1,4 @@
-import type { FileRow, FileSectionView, JourneyBand, JourneyNodeView, NodeCodeView, WalkthroughBand, WaypointView } from "@flightplan/configurations"
+import type { FileRow, FileSectionView, TraceBand, TraceNodeView, NodeCodeView, WalkthroughBand, WaypointView } from "@flightplan/configurations"
 import { EVERY_FILE_REVIEWED_MESSAGE, markLabelOf, positionLabelOf, reviewedToggleOf } from "./labels"
 import type { ReviewedMarks } from "./marks"
 import type { ReviewableFile } from "./reviewable-file"
@@ -86,13 +86,13 @@ const withReviewedCodeView = (codeView: NodeCodeView, review: SegmentReview): No
   rows: withReviewedRows(codeView.rows, review),
 })
 
-const withReviewedNode = (node: JourneyNodeView, review: SegmentReview): JourneyNodeView => ({
+const withReviewedNode = (node: TraceNodeView, review: SegmentReview): TraceNodeView => ({
   ...node,
   codeViews: node.codeViews.map((codeView) => withReviewedCodeView(codeView, review)),
   children: node.children.map((child) => withReviewedNode(child, review)),
 })
 
-export const withReviewedJourney = (journey: JourneyBand, review: SegmentReview): JourneyBand =>
-  journey.diagram === null
-    ? journey
-    : { ...journey, diagram: { ...journey.diagram, nodes: journey.diagram.nodes.map((node) => withReviewedNode(node, review)) } }
+export const withReviewedTrace = (traceDiagram: TraceBand, review: SegmentReview): TraceBand =>
+  traceDiagram.diagram === null
+    ? traceDiagram
+    : { ...traceDiagram, diagram: { ...traceDiagram.diagram, nodes: traceDiagram.diagram.nodes.map((node) => withReviewedNode(node, review)) } }

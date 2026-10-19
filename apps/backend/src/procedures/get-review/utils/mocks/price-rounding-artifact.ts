@@ -48,8 +48,8 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
         "- Removes the rounding from [`lineTotal()`](code:src/cart/subtotal.ts#lineTotal).",
         "- Rounds the sum in [`subtotal()`](code:src/cart/subtotal.ts#subtotal).",
       ].join("\n"),
-      journey: null,
-      blast: null,
+      traceDiagram: null,
+      blastDiagram: null,
       walkthrough: {
         files: [
           {

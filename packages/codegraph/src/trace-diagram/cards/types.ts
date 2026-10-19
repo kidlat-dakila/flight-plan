@@ -1,15 +1,15 @@
-import type { CardKind, CodeBlock, JourneyNode, JourneyNodeEdge } from "@flightplan/configurations"
+import type { CardKind, CodeBlock, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 
 export type ParentIdById = ReadonlyMap<string, string>
 
 export interface CardContext {
-  readonly nodes: readonly JourneyNode[]
-  readonly edges: readonly JourneyNodeEdge[]
+  readonly nodes: readonly TraceNode[]
+  readonly edges: readonly TraceNodeEdge[]
   readonly importerCountByPath: ReadonlyMap<string, number>
 }
 
 export interface NodeGroup {
-  readonly node: JourneyNode
+  readonly node: TraceNode
   readonly memberIds: readonly string[]
   readonly placedAtId: string
 }
@@ -20,8 +20,8 @@ export interface CardRules {
   readonly isNotNodeBlock: (block: CodeBlock) => boolean
   readonly listParents: (context: CardContext) => ParentIdById
   readonly listLeftOutNodeIds: (context: CardContext) => ReadonlySet<string>
-  readonly groupNodes: (nodes: readonly JourneyNode[]) => readonly NodeGroup[]
-  readonly listAddedEdges: (context: CardContext) => readonly JourneyNodeEdge[]
+  readonly groupNodes: (nodes: readonly TraceNode[]) => readonly NodeGroup[]
+  readonly listAddedEdges: (context: CardContext) => readonly TraceNodeEdge[]
   readonly listLeftOutEdgeIds: (context: CardContext) => ReadonlySet<string>
 }
 

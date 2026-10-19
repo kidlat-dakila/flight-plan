@@ -1,5 +1,5 @@
-import { contextIdOf, listJourneyNodes, listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
-import type { JourneyNode, ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
+import { contextIdOf, listTraceNodes, listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
+import type { TraceNode, ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
 import { isDescriptionOwed } from "./context-code-blocks"
 
@@ -12,14 +12,14 @@ export const WORK_KINDS = [
   "label",
   "trigger-label",
   "block-label",
-  "journey-description",
+  "trace-description",
   "solution",
   "context-description",
 ] as const
 
 export type WorkKind = (typeof WORK_KINDS)[number]
 
-export type WorkTarget = "blast-node" | "context" | "waypoint" | "journey-node" | "journey" | "context-code-block"
+export type WorkTarget = "blast-node" | "context" | "waypoint" | "trace-node" | "trace-diagram" | "context-code-block"
 
 export interface Work {
   readonly target: WorkTarget
@@ -42,9 +42,9 @@ export interface WorkTally {
 const QUESTION_KIND = "question"
 
 const blastWork = (segment: Segment): Work[] =>
-  segment.blast === null
+  segment.blastDiagram === null
     ? []
-    : listUnassessedNodes(segment.blast).map((node) => ({
+    : listUnassessedNodes(segment.blastDiagram).map((node) => ({
         target: "blast-node",
         id: node.path,
         segmentId: segment.id,
@@ -84,48 +84,48 @@ const waypointWork = (segment: Segment, sections: SectionSwitches): Work[] =>
     ]
   })
 
-const journeyNodesOf = (segment: Segment): JourneyNode[] => listJourneyNodes(segment.journey?.journeyNodes ?? [])
+const traceNodesOf = (segment: Segment): TraceNode[] => listTraceNodes(segment.traceDiagram?.traceNodes ?? [])
 
-const triggerLabelWork = (segment: Segment, node: JourneyNode): Work[] =>
+const triggerLabelWork = (segment: Segment, node: TraceNode): Work[] =>
   node.triggerLabels
     .filter((trigger) => trigger.label === null)
     .map((trigger) => ({
-      target: "journey-node",
+      target: "trace-node",
       id: node.id,
       segmentId: segment.id,
       needs: "trigger-label",
       message: `The trigger \`${trigger.codeBlock.id}\` of \`${node.id}\` has no label. Say what the user does, or what is loaded.`,
     } as const))
 
-const blockLabelWork = (segment: Segment, node: JourneyNode): Work[] =>
+const blockLabelWork = (segment: Segment, node: TraceNode): Work[] =>
   node.blockLabels
     .filter((listed) => listed.label === null)
     .map((listed) => ({
-      target: "journey-node",
+      target: "trace-node",
       id: node.id,
       segmentId: segment.id,
       needs: "block-label",
       message: `The block \`${listed.codeBlock.id}\` of \`${node.id}\` has no label. Say what the block does, starting with a verb.`,
     } as const))
 
-export const hasDrawnJourney = (segment: Segment): boolean => journeyNodesOf(segment).length > 0
+export const hasDrawnTrace = (segment: Segment): boolean => traceNodesOf(segment).length > 0
 
 const descriptionWork = (segment: Segment): Work[] =>
-  hasDrawnJourney(segment) && segment.journey?.description === null
+  hasDrawnTrace(segment) && segment.traceDiagram?.description === null
     ? [{
-        target: "journey",
+        target: "trace-diagram",
         id: null,
         segmentId: segment.id,
-        needs: "journey-description",
-        message: "The Journey Flow Diagram has no description. Tell the diagram in words, in five sentences at most: where its paths start, what they run through and where they reach the change.",
+        needs: "trace-description",
+        message: "The Trace Diagram has no description. Tell the diagram in words, in five sentences at most: where its paths start, what they run through and where they reach the change.",
       }]
     : []
 
 const nodeWork = (segment: Segment): Work[] =>
-  journeyNodesOf(segment).flatMap((node): Work[] => [
+  traceNodesOf(segment).flatMap((node): Work[] => [
     ...(node.label === null
       ? [{
-          target: "journey-node",
+          target: "trace-node",
           id: node.id,
           segmentId: segment.id,
           needs: "label",
@@ -135,13 +135,13 @@ const nodeWork = (segment: Segment): Work[] =>
     ...(node.rows === undefined ? [...triggerLabelWork(segment, node), ...blockLabelWork(segment, node)] : []),
   ])
 
-const journeyWork = (segment: Segment): Work[] => [...nodeWork(segment), ...descriptionWork(segment)]
+const traceWork = (segment: Segment): Work[] => [...nodeWork(segment), ...descriptionWork(segment)]
 
 const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
-  ...(sections.blast ? blastWork(segment) : []),
+  ...(sections.blastDiagram ? blastWork(segment) : []),
   ...contextWork(segment),
   ...(sections.walkthrough ? waypointWork(segment, sections) : []),
-  ...(sections.journey ? journeyWork(segment) : []),
+  ...(sections.traceDiagram ? traceWork(segment) : []),
 ]
 
 const contextCodeBlockWork = (artifact: ReviewArtifact): Work[] =>
@@ -160,17 +160,17 @@ export const unwrittenWork = (artifact: ReviewArtifact, sections: SectionSwitche
 
 const nodeKeyOf = (target: WorkTarget, id: string | null, segmentId: string | null): string => [segmentId ?? "", target, id ?? ""].join("\n")
 
-const assessedPathsOf = ({ blast }: Segment): string[] =>
-  blast === null ? [] : [...new Set([...listReachedPaths(blast), ...blast.nodes.filter((node) => node.impactType !== null).map((node) => node.path)])]
+const assessedPathsOf = ({ blastDiagram }: Segment): string[] =>
+  blastDiagram === null ? [] : [...new Set([...listReachedPaths(blastDiagram), ...blastDiagram.nodes.filter((node) => node.impactType !== null).map((node) => node.path)])]
 
 const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
-  ...(sections.blast ? assessedPathsOf(segment).map((path) => nodeKeyOf("blast-node", path, segment.id)) : []),
+  ...(sections.blastDiagram ? assessedPathsOf(segment).map((path) => nodeKeyOf("blast-node", path, segment.id)) : []),
   nodeKeyOf("context", null, segment.id),
   ...(sections.walkthrough ? waypointsOf(segment).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id)) : []),
-  ...(sections.journey
+  ...(sections.traceDiagram
     ? [
-        ...journeyNodesOf(segment).map((node) => nodeKeyOf("journey-node", node.id, segment.id)),
-        ...(hasDrawnJourney(segment) ? [nodeKeyOf("journey", null, segment.id)] : []),
+        ...traceNodesOf(segment).map((node) => nodeKeyOf("trace-node", node.id, segment.id)),
+        ...(hasDrawnTrace(segment) ? [nodeKeyOf("trace-diagram", null, segment.id)] : []),
       ]
     : []),
 ]

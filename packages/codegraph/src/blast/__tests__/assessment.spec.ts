@@ -45,7 +45,7 @@ describe("listReachedPaths", () => {
   })
 
   it("follows two files that import each other once", () => {
-    const blast: Blast = {
+    const blastDiagram: Blast = {
       nodes: [file("src/a.ts"), file("src/b.ts"), file("src/c.ts", { diffType: "added" })],
       edges: [
         { importer: "src/a.ts", imported: "src/b.ts" },
@@ -54,15 +54,15 @@ describe("listReachedPaths", () => {
       ],
     }
 
-    expect([...listReachedPaths(blast)].sort()).toStrictEqual(["src/a.ts", "src/b.ts"])
+    expect([...listReachedPaths(blastDiagram)].sort()).toStrictEqual(["src/a.ts", "src/b.ts"])
   })
 })
 
 describe("listUnassessedNodes", () => {
   it("lists the reached files with no impact type", () => {
-    const blast = blastWith({ impactType: "behaviour-changes", impactReason: "It rounds later." })
+    const blastDiagram = blastWith({ impactType: "behaviour-changes", impactReason: "It rounds later." })
 
-    expect(listUnassessedNodes(blast).map((node) => node.path)).toStrictEqual(["src/page.ts", "src/report.ts"])
+    expect(listUnassessedNodes(blastDiagram).map((node) => node.path)).toStrictEqual(["src/page.ts", "src/report.ts"])
   })
 })
 

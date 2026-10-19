@@ -58,8 +58,8 @@ const index = [
   },
   {
     title: "Blast Diagram",
-    switch: { section: "blast", label: "Generate Blast Diagram", isOn: false },
-    entries: [{ key: "blast.nodes.impactReason", label: "Blast file impact reason", mark: "off", markLabel: "Switched off", isOpen: false }],
+    switch: { section: "blastDiagram", label: "Generate Blast Diagram", isOn: false },
+    entries: [{ key: "blastDiagram.nodes.impactReason", label: "Blast file impact reason", mark: "off", markLabel: "Switched off", isOpen: false }],
   },
 ]
 
@@ -69,8 +69,8 @@ const switchesPanel = {
   summary: "Which optional parts of a review the agent writes.",
   sectionsTitle: "Optional sections",
   sections: [
-    { section: "journey", label: "Journey Flow Diagrams", description: "How the changed code runs.", isOn: true },
-    { section: "blast", label: "Blast Diagram", description: "The files the change can affect.", isOn: false },
+    { section: "traceDiagram", label: "Trace Diagrams", description: "How the changed code runs.", isOn: true },
+    { section: "blastDiagram", label: "Blast Diagram", description: "The files the change can affect.", isOn: false },
     { section: "findings", label: "Findings", description: "What the agent reports on a waypoint.", isOn: true },
   ],
   alwaysWrittenNote: "The Context Section and the Code Walkthrough are always written.",
@@ -248,7 +248,7 @@ describe("a configuration", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
     expect(await screen.findByText("The sections are saved.")).toBeTruthy()
-    expect(save).toHaveBeenCalledWith({ change: "switches", id: "custom-terse", sections: ["journey"], contextCodeBlockKinds: ["codebase"] })
+    expect(save).toHaveBeenCalledWith({ change: "switches", id: "custom-terse", sections: ["traceDiagram"], contextCodeBlockKinds: ["codebase"] })
   })
 
   it("switches a section from its heading in the field index", async () => {
@@ -258,7 +258,7 @@ describe("a configuration", () => {
     fireEvent.click(await screen.findByRole("checkbox", { name: "Generate Blast Diagram" }))
 
     await waitFor(() => {
-      expect(save).toHaveBeenCalledWith({ change: "section", id: "custom-terse", section: "blast", isOn: true })
+      expect(save).toHaveBeenCalledWith({ change: "section", id: "custom-terse", section: "blastDiagram", isOn: true })
     })
   })
 

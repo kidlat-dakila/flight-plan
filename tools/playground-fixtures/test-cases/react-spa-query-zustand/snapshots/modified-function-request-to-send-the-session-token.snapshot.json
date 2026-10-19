@@ -197,9 +197,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
               "type": "root-variable",
@@ -531,7 +531,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
               "from": "src/router.tsx#root-variable@7:1",
@@ -619,7 +619,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/api/client.ts",
@@ -755,7 +755,7 @@
                     "lineEnd": 2
                   },
                   "category": "variable",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/api/client.ts#root-variable@2:1"
                   ],
@@ -773,7 +773,7 @@
                     "lineEnd": 21
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/client.ts#function@19:1",
+                  "traceNodeId": "src/api/client.ts#function@19:1",
                   "codeBlockIds": [
                     "src/api/client.ts#function@19:1",
                     "src/api/client.ts#storage@20:10"
@@ -792,7 +792,7 @@
                     "lineEnd": 35
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/client.ts#function@23:1",
+                  "traceNodeId": "src/api/client.ts#function@23:1",
                   "codeBlockIds": [
                     "src/api/client.ts#function@23:1",
                     "src/api/client.ts#external-value@24:3",
@@ -816,7 +816,7 @@
                         "lineEnd": 24
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/api/client.ts#function@23:1",
+                      "traceNodeId": "src/api/client.ts#function@23:1",
                       "codeBlockIds": [
                         "src/api/client.ts#external-value@24:3"
                       ],
@@ -834,7 +834,7 @@
                         "lineEnd": 32
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/api/client.ts#function@23:1",
+                      "traceNodeId": "src/api/client.ts#function@23:1",
                       "codeBlockIds": [
                         "src/api/client.ts#request@25:26",
                         "src/api/client.ts#property@27:5",

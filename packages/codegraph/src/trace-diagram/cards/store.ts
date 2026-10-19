@@ -1,5 +1,5 @@
-import { calledNamesOf, nameOfBlock } from "@/journey/names"
-import type { CardKind, CardPart, CodeBlock, JourneyNode, JourneyNodeEdge } from "@flightplan/configurations"
+import { calledNamesOf, nameOfBlock } from "@/trace/names"
+import type { CardKind, CardPart, CodeBlock, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 import { NOTHING_LEFT_OUT, rootBlockOfNode } from "./nodes"
 import { cardOfKind, holdsNoPart, isHolderOfKind, isPartOfKind, listPartParents, toEdge } from "./parts"
 import type { CardContext, CardRules } from "./types"
@@ -43,7 +43,7 @@ const registersPartsElsewhere = (block: CodeBlock): boolean => {
 const isNoStoreNode = (block: CodeBlock): boolean => holdsNoPart(block, STORE_KINDS) || registersPartsElsewhere(block)
 
 interface HookStep {
-  readonly edge: JourneyNodeEdge
+  readonly edge: TraceNodeEdge
   readonly endpointId: string
 }
 
@@ -52,7 +52,7 @@ const endpointCalledBy = (name: string): string | null => {
   return endpoint === null ? null : `${endpoint.charAt(0).toLowerCase()}${endpoint.slice(1)}`
 }
 
-const isEndpointOf = (node: JourneyNode, api: CodeBlock): boolean => {
+const isEndpointOf = (node: TraceNode, api: CodeBlock): boolean => {
   const root = rootBlockOfNode(node)
   return cardOfKind(root, API_KINDS)?.part === ENDPOINT && ((root.cardOwner ?? null)?.id === api.id || rootOfBlock(root).id === api.id)
 }
@@ -72,7 +72,7 @@ const listHookSteps = ({ nodes, edges }: CardContext): HookStep[] => {
   })
 }
 
-const listHookEdges = (context: CardContext): JourneyNodeEdge[] => listHookSteps(context).map(({ edge, endpointId }) => toEdge(edge.from, endpointId))
+const listHookEdges = (context: CardContext): TraceNodeEdge[] => listHookSteps(context).map(({ edge, endpointId }) => toEdge(edge.from, endpointId))
 
 const listApiEdgeIdsOfHooks = (context: CardContext): ReadonlySet<string> => {
   const ids = listHookSteps(context).map(({ edge }) => edge.id)

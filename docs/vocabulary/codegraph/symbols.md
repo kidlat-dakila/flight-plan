@@ -74,7 +74,7 @@ A symbol is one use of a name, not one name. A name a block uses twice is two sy
 | `render` | Renders it as an element, inside markup a function returns | `<SaveButton />` in a `render-root` |
 | `value` | Hands it over without running it | `onSave={save}`, `{ mutationFn: save }` |
 | `read` | Takes a member from it without running it | `query.data`, `props.label` |
-| `type` | Names it as a type. Nothing runs, so the Journey Flow Diagram does not follow it, but it is an edge of the Blast Diagram. A name inside a call in a Python annotation is no type: the call runs. | `user: User` in a signature |
+| `type` | Names it as a type. Nothing runs, so the Trace Diagram does not follow it, but it is an edge of the Blast Diagram. A name inside a call in a Python annotation is no type: the call runs. | `user: User` in a signature |
 
 ```tsx
 const Page = () => {

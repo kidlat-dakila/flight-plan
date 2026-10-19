@@ -1,4 +1,4 @@
-import { createArtifactContext, DRAFT_ARTIFACT, DRAFT_JOURNEY_NODE, DRAFT_SEGMENT, draftJourneyOf, KEY, SUBTOTAL_PATH } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
+import { createArtifactContext, DRAFT_ARTIFACT, DRAFT_TRACE_NODE, DRAFT_SEGMENT, draftTraceOf, KEY, SUBTOTAL_PATH } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 import { readNodes } from "@/procedures/read-nodes"
 
 describe("readNodes", () => {
@@ -51,19 +51,19 @@ describe("readNodes", () => {
     expect(reading).toMatchObject({ kind: "unfilled", total: 1, items: [{ kind: "context", id: null, needs: ["context"], node: { context: "" } }] })
   })
 
-  it("lists an undescribed Journey Flow Diagram as one item with no id, with its nodes and its edges", async () => {
+  it("lists an undescribed Trace Diagram as one item with no id, with its nodes and its edges", async () => {
     const context = await createArtifactContext()
 
-    const reading = await readNodes({ ...KEY, unfilled: true, needs: ["journey-description"] }, context)
+    const reading = await readNodes({ ...KEY, unfilled: true, needs: ["trace-description"] }, context)
 
     expect(reading).toMatchObject({
       kind: "unfilled",
       total: 1,
       items: [{
-        kind: "journey",
+        kind: "trace-diagram",
         id: null,
         segmentId: "all",
-        needs: ["journey-description"],
+        needs: ["trace-description"],
         node: { description: null, nodes: [{ id: "j-subtotal", parentId: null, type: "function", label: null }], edges: [] },
         code: null,
       }],
@@ -79,17 +79,17 @@ describe("readNodes", () => {
       kind: "selected",
       items: [
         { kind: "waypoint", id: "w3", needs: ["title", "reading"] },
-        { kind: "journey-node", id: "j-subtotal", needs: ["label"], code: { lineStart: 6 } },
+        { kind: "trace-node", id: "j-subtotal", needs: ["label"], code: { lineStart: 6 } },
         { kind: "unknown", id: "w9", node: null },
       ],
     })
   })
 
   it("hands out a node inside another as an item of its own, flat, under the node that holds it", async () => {
-    const journey = draftJourneyOf([
-      { ...DRAFT_JOURNEY_NODE, children: [{ ...DRAFT_JOURNEY_NODE, id: "j-line-total", declaration: "lineTotal", triggers: [{ codeBlockId: "click", type: "render-event", name: "onClick", label: null }] }] },
+    const traceDiagram = draftTraceOf([
+      { ...DRAFT_TRACE_NODE, children: [{ ...DRAFT_TRACE_NODE, id: "j-line-total", declaration: "lineTotal", triggers: [{ codeBlockId: "click", type: "render-event", name: "onClick", label: null }] }] },
     ])
-    const context = await createArtifactContext({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, journey }] })
+    const context = await createArtifactContext({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, traceDiagram }] })
 
     const reading = await readNodes({ ...KEY, unfilled: true, needs: ["label", "trigger-label"], limit: 5 }, context)
 
@@ -97,9 +97,9 @@ describe("readNodes", () => {
       kind: "unfilled",
       total: 2,
       items: [
-        { kind: "journey-node", id: "j-subtotal", needs: ["label"], node: { parentId: null, type: "function", name: "subtotal" } },
+        { kind: "trace-node", id: "j-subtotal", needs: ["label"], node: { parentId: null, type: "function", name: "subtotal" } },
         {
-          kind: "journey-node",
+          kind: "trace-node",
           id: "j-line-total",
           needs: ["label", "trigger-label"],
           file: SUBTOTAL_PATH,

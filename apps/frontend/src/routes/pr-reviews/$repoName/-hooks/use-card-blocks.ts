@@ -1,5 +1,5 @@
 import { skipToken, useQuery } from "@tanstack/react-query"
-import type { CardBlocks } from "@/routes/pr-reviews/$repoName/-hooks/use-journey-editing"
+import type { CardBlocks } from "@/routes/pr-reviews/$repoName/-hooks/use-trace-editing"
 import { useTRPC } from "@/trpc"
 
 interface SegmentKey {

@@ -15,7 +15,7 @@ Flight Plan parses the changed code into syntax trees with tree-sitter, on your 
 For a file in one of these languages, Flight Plan builds every part of the review:
 
 - the [segments](/docs/review-artifacts/parts/segments/) the change is split into,
-- the [Journey Flow Diagram](/docs/review-artifacts/parts/journey-flow-diagram/) from what starts a path down to the changed code,
+- the [Trace Diagram](/docs/review-artifacts/parts/trace-diagram/) from what starts a path down to the changed code,
 - the [Blast Diagram](/docs/review-artifacts/parts/blast-diagram/) of the files connected through imports,
 - one [waypoint](/docs/review-artifacts/parts/code-walkthrough/) for each changed block of code,
 - the names you can hover in the code to read what they are, when the configuration asks for [context code blocks](/docs/review-artifacts/parts/context-code-blocks/).
@@ -37,6 +37,6 @@ A changed file in any other language, such as a migration, a schema, a styleshee
 
 - it gets one waypoint for the whole file in the Code Walkthrough,
 - it goes into the segment for shared code, or a segment of its own when there is none,
-- it has no Journey Flow Diagram and no place in the Blast Diagram.
+- it has no Trace Diagram and no place in the Blast Diagram.
 
-A change that touches only types, interfaces, imports or top-level statements has no Journey Flow Diagram either, because nothing that runs has changed.
+A change that touches only types, interfaces, imports or top-level statements has no Trace Diagram either, because nothing that runs has changed.

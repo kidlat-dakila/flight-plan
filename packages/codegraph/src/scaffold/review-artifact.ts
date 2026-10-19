@@ -1,13 +1,13 @@
 import type { FileCodeReferences } from "@/code-references"
-import { listJourneyNodes } from "@/journey-flow-diagram"
 import { firstOfEach } from "@/shared/first-of-each"
+import { listTraceNodes } from "@/trace-diagram"
 import type {
   Blast,
   CodeExport,
   CodeReference,
   DiffType,
   FileSection,
-  JourneyFlowDiagram,
+  TraceDiagram,
   LanguageReference,
   LineRange,
   ReviewArtifact,
@@ -38,8 +38,8 @@ export interface SegmentParts {
   readonly title: string | null
   readonly context: string
   readonly importGraph: readonly SegmentFile[]
-  readonly journey: JourneyFlowDiagram | null
-  readonly blast: Blast | null
+  readonly traceDiagram: TraceDiagram | null
+  readonly blastDiagram: Blast | null
   readonly walkthrough: { readonly files: readonly RangedFileSection[] }
   readonly codeReferences: readonly FileCodeReferences[]
 }
@@ -106,8 +106,8 @@ const toSegment = (parts: SegmentParts): Segment => ({
   title: parts.title ?? UNTITLED_SEGMENT,
   changedPaths: inOrder(parts.importGraph.filter((file) => file.diffType !== null).map((file) => file.filePath)),
   context: parts.context,
-  journey: parts.journey,
-  blast: parts.blast,
+  traceDiagram: parts.traceDiagram,
+  blastDiagram: parts.blastDiagram,
   walkthrough: { files: parts.walkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map(toWaypoint) })) },
 })
 
@@ -131,7 +131,7 @@ const exportsOf = (path: string, segments: readonly SegmentParts[]): CodeExport[
   firstOfEach(segments.flatMap((segment) => segment.codeReferences.filter((file) => file.path === path).flatMap((file) => file.exports)), exportPlaceOf)
 
 const listViewedPaths = (segments: readonly SegmentParts[]): string[] => [
-  ...segments.flatMap((segment) => listJourneyNodes(segment.journey?.journeyNodes ?? []).map((node) => node.codeBlocks[0].astGraph.filePath)),
+  ...segments.flatMap((segment) => listTraceNodes(segment.traceDiagram?.traceNodes ?? []).map((node) => node.codeBlocks[0].astGraph.filePath)),
   ...segments.flatMap((segment) => segment.codeReferences.flatMap((file) => file.references.map((reference) => reference.path))),
   ...listContextCodeBlocks(segments).flatMap((listed) => (listed.codeBlock === null ? [] : [listed.codeBlock.astGraph.filePath])),
 ]

@@ -1,14 +1,14 @@
 import { readCodeGroup } from "@/code-blocks/build-group"
 import { linkCodeGroupGraph } from "@/code-blocks/link-group"
 import { FIRST_COLUMN } from "@/code-blocks/source-range"
-import { BLOCK_TYPE_LABELS, nameOfBlock } from "@/journey/names"
 import { languageOf } from "@/scaffold/review-artifact"
 import { buildSourceLines } from "@/scaffold/source-lines"
 import { firstOfEach } from "@/shared/first-of-each"
-import type { ASTCodeGroupGraph, ASTGraph, CodeBlock, CodeBlockClassification, CodeBlockType, JourneyFlowDiagram, JourneyNode, JourneyRow, LineRange, SourceFile } from "@flightplan/configurations"
+import { BLOCK_TYPE_LABELS, nameOfBlock } from "@/trace/names"
+import type { ASTCodeGroupGraph, ASTGraph, CodeBlock, CodeBlockClassification, CodeBlockType, TraceDiagram, TraceNode, TraceRow, LineRange, SourceFile } from "@flightplan/configurations"
 import { listListedBlocks } from "./listed-blocks"
 import { nodeBlockAround } from "./node-blocks"
-import { toJourneyNode } from "."
+import { toTraceNode } from "."
 
 export interface CardBlock {
   readonly id: string
@@ -32,7 +32,7 @@ const WHOLE_FILE: CodeBlockType = "file"
 const RENDER = "render"
 const TRIGGER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event", "data-fetch"])
 const NO_IMPORTED_FILE_PATHS: ReadonlyMap<string, string> = new Map()
-const NO_ROWS: readonly JourneyRow[] = []
+const NO_ROWS: readonly TraceRow[] = []
 const EMPTY_GROUP: ASTCodeGroupGraph = {
   astGraphs: [],
   rootASTGraphs: [],
@@ -44,12 +44,12 @@ const EMPTY_GROUP: ASTCodeGroupGraph = {
 }
 const NO_CHANGE = { added: [], removed: [], isCreated: false }
 
-export const createEmptyJourney = (): JourneyFlowDiagram => ({
+export const createEmptyTrace = (): TraceDiagram => ({
   astCodeGroup: EMPTY_GROUP,
   importGraphGroup: [],
   description: null,
-  journeyNodes: [],
-  journeyNodeEdges: [],
+  traceNodes: [],
+  traceNodeEdges: [],
 })
 
 export const readFileGraph = (filePath: string, source: string): ASTGraph | null => {
@@ -88,10 +88,10 @@ const listRenderedComponents = (block: CodeBlock): CodeBlock[] =>
     (component) => component.id,
   ).filter((component) => component.id !== block.id)
 
-const inLineOrder = (rows: readonly JourneyRow[]): JourneyRow[] =>
+const inLineOrder = (rows: readonly TraceRow[]): TraceRow[] =>
   [...rows].sort((one, two) => one.lineStart - two.lineStart || one.lineEnd - two.lineEnd)
 
-const toRow = (block: CodeBlock, statements: readonly CodeBlock[]): JourneyRow => ({
+const toRow = (block: CodeBlock, statements: readonly CodeBlock[]): TraceRow => ({
   id: block.id,
   type: block.type,
   label: null,
@@ -101,7 +101,7 @@ const toRow = (block: CodeBlock, statements: readonly CodeBlock[]): JourneyRow =
 const listInsideBlocks = (nodeBlock: CodeBlock): CodeBlock[] =>
   listBlocksWithin(nodeBlock).filter((block) => block.id !== nodeBlock.id && nodeBlockAround(block)?.id === nodeBlock.id)
 
-const prefillRows = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): JourneyRow[] =>
+const prefillRows = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): TraceRow[] =>
   inLineOrder(
     firstOfEach(
       [
@@ -112,7 +112,7 @@ const prefillRows = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): 
     ),
   )
 
-export const listCardRows = (node: JourneyNode): JourneyRow[] => {
+export const listCardRows = (node: TraceNode): TraceRow[] => {
   if (node.rows !== undefined) return inLineOrder(node.rows)
   const [nodeBlock, ...insideBlocks] = node.codeBlocks
   const writtenById = new Map([...node.blockLabels, ...node.triggerLabels].map(({ label, codeBlock }) => [codeBlock.id, label] as const))
@@ -126,7 +126,7 @@ export const listCardRows = (node: JourneyNode): JourneyRow[] => {
   return inLineOrder(rows.map((row) => ({ ...row, label: writtenById.get(row.id) ?? null })))
 }
 
-export const nameOfCardRow = (node: JourneyNode, row: JourneyRow): string => {
+export const nameOfCardRow = (node: TraceNode, row: TraceRow): string => {
   const block = node.codeBlocks.find((candidate) => candidate.id === row.id)
   return block === undefined ? linesLabelOf(row) : nameOfBlock(block)
 }
@@ -144,7 +144,7 @@ export const listCardBlocks = (astGraph: ASTGraph): CardBlock[] =>
     }))
     .sort((one, two) => one.lineStart - two.lineStart)
 
-export const buildBlockCard = (block: CodeBlock, options: CardOptions): JourneyNode => {
+export const buildBlockCard = (block: CodeBlock, options: CardOptions): TraceNode => {
   const insideBlocks = listInsideBlocks(block)
   const heldCardIds = new Set([...options.heldCardIds, block.id])
   const childComponents = options.hasChildComponents && block.type === COMPONENT
@@ -152,7 +152,7 @@ export const buildBlockCard = (block: CodeBlock, options: CardOptions): JourneyN
     : []
   const idsHeldWithSiblings = new Set([...heldCardIds, ...childComponents.map((component) => component.id)])
   return {
-    ...toJourneyNode(block, insideBlocks),
+    ...toTraceNode(block, insideBlocks),
     triggerLabels: [],
     blockLabels: [],
     rows: options.isPrefilled ? prefillRows(block, insideBlocks) : NO_ROWS,
@@ -214,7 +214,7 @@ const blockOfLines = (astGraph: ASTGraph, lines: LineRange): CodeBlock => {
   }
 }
 
-export const buildLinesCard = (astGraph: ASTGraph, lines: LineRange, isPrefilled: boolean): JourneyNode => {
+export const buildLinesCard = (astGraph: ASTGraph, lines: LineRange, isPrefilled: boolean): TraceNode => {
   const block = blockOfLines(astGraph, lines)
   const blocksWithin = astGraph.codeBlocks.filter((inside) => isWithinLines(inside, lines))
   const outermost = blocksWithin.filter((inside) => inside.parentBlock === null || !isWithinLines(inside.parentBlock, lines))

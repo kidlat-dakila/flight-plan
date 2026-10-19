@@ -1,8 +1,8 @@
 The Blast Diagram: the files the change is connected to through imports. A
-segment's `blast` is an object with `nodes` and `edges`, or `null` when the
+segment's `blastDiagram` is an object with `nodes` and `edges`, or `null` when the
 segment has no diagram.
 
-It answers a different question from the Journey Flow Diagram. The journey is a
+It answers a different question from the Trace Diagram. The trace is a
 **trace**: one path through the change, in the order the code runs. The blast is
 **reach**: every file that uses what changed in a changed file, directly or
 through other files.
@@ -11,7 +11,7 @@ It exists for one question the reviewer cannot answer from the diff: **did the
 author forget something?** A file nobody touched can stop working, or start
 doing something else, because of what changed under it.
 
-A `blast` can also hold `importBound`, with `nodes` and `edges` of its own: the
+A `blastDiagram` can also hold `importBound`, with `nodes` and `edges` of its own: the
 files the change uses, and the files those use. It is the other direction of
 the same diagram. Read it to see what the change relies on. Write nothing in
 it: a file the change uses cannot be affected by the change.
@@ -30,8 +30,8 @@ You write two fields, only on a file the change did not touch:
 | `impactType` | What the change does to this file: `breaks`, `behaviour-changes` or `unaffected`. |
 | `impactReason` | On `breaks` and `behaviour-changes` only: why, in one or two sentences a reviewer can check against the code. |
 
-Write them with `update-nodes { segmentId, blast: [{ path, impactType, impactReason }] }`,
-and an unaffected file with `update-nodes { segmentId, blast: [{ path, impactType: "unaffected" }] }`.
+Write them with `update-nodes { segmentId, blastDiagram: [{ path, impactType, impactReason }] }`,
+and an unaffected file with `update-nodes { segmentId, blastDiagram: [{ path, impactType: "unaffected" }] }`.
 A file of the change takes neither: it is the change.
 
 An unaffected file takes no reason. The page says the same sentence for every

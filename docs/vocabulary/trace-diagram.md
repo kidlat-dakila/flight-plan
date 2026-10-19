@@ -1,10 +1,10 @@
-# Journey Flow Diagram
+# Trace Diagram
 
 ## Definition
 
-The Journey Flow Diagram shows how execution reaches a change. It answers the reviewer's first question about any change: when does this code run, and what leads to it?
+The Trace Diagram shows how execution reaches a change. It answers the reviewer's first question about any change: when does this code run, and what leads to it?
 
-The Journey Flow Diagram reads like a debugging trace of the change. It is drawn in the order the code runs, from the code that starts a path to the changed code:
+The Trace Diagram reads like a debugging trace of the change. It is drawn in the order the code runs, from the code that starts a path to the changed code:
 
 ```mermaid
 flowchart LR
@@ -24,39 +24,39 @@ On the page each node is a card. This entry holds the rules every card shares; e
 
 | Card | The node of | Its rows | Cards inside it |
 |---|---|---|---|
-| [Component card](journey-flow-diagram/component-card.md) | A component | Its parameters as chips under its head, then rows under headings: State, Hooks, Effects, Calls, Triggers, Steps | The components it renders |
-| [Function card](journey-flow-diagram/function-card.md) | A function, a hook, a method, an event, an effect, a callback, the handler of a route, a procedure | As written, no headings. Under the headings of a component card when it returns a function. | The function it returns |
-| [Class card](journey-flow-diagram/class-card.md) | A class with a method | Under Properties | Its methods, under Methods, then the classes that extend it |
-| [Route card](journey-flow-diagram/route-card.md) | A route path | None | The handler of each method, under a heading per method |
-| [tRPC router card](journey-flow-diagram/libraries/trpc.md) | A router of procedures, and a [GraphQL resolver of NestJS](journey-flow-diagram/libraries/nestjs.md#graphql-resolvers) | None | Each procedure, under a heading per procedure type |
-| [State card](journey-flow-diagram/state.md) | A store of Zustand, Pinia, Redux, MobX, Valtio, XState Store, Nano Stores or Effector, and an API of RTK Query | Under State, and under Getters, Actions and Selectors for the stores drawn rows only | For Redux, its reducers, thunks, extra reducers, listeners and selectors, the cases of an Effector store, and the endpoints of an API |
+| [Component card](trace-diagram/component-card.md) | A component | Its parameters as chips under its head, then rows under headings: State, Hooks, Effects, Calls, Triggers, Steps | The components it renders |
+| [Function card](trace-diagram/function-card.md) | A function, a hook, a method, an event, an effect, a callback, the handler of a route, a procedure | As written, no headings. Under the headings of a component card when it returns a function. | The function it returns |
+| [Class card](trace-diagram/class-card.md) | A class with a method | Under Properties | Its methods, under Methods, then the classes that extend it |
+| [Route card](trace-diagram/route-card.md) | A route path | None | The handler of each method, under a heading per method |
+| [tRPC router card](trace-diagram/libraries/trpc.md) | A router of procedures, and a [GraphQL resolver of NestJS](trace-diagram/libraries/nestjs.md#graphql-resolvers) | None | Each procedure, under a heading per procedure type |
+| [State card](trace-diagram/state.md) | A store of Zustand, Pinia, Redux, MobX, Valtio, XState Store, Nano Stores or Effector, and an API of RTK Query | Under State, and under Getters, Actions and Selectors for the stores drawn rows only | For Redux, its reducers, thunks, extra reducers, listeners and selectors, the cases of an Effector store, and the endpoints of an API |
 
 ## The shape
 
 ```ts
-interface JourneyFlowDiagram {
+interface TraceDiagram {
   astCodeGroup: ASTCodeGroupGraph
   importGraphGroup: ImportGraphGroup
   description: string | null
-  journeyNodes: JourneyNode[]
-  journeyNodeEdges: JourneyNodeEdge[]
+  traceNodes: TraceNode[]
+  traceNodeEdges: TraceNodeEdge[]
 }
 
-interface JourneyNode {
+interface TraceNode {
   id: string
   type: CodeBlockType
   label: string | null
   description: string | null
   codeBlocks: CodeBlock[]
   diffCodeBlocks: CodeBlock[]
-  children: JourneyNode[]
+  children: TraceNode[]
   triggerLabels: TriggerLabel[]
   blockLabels: BlockLabel[]
-  rows?: JourneyRow[]
+  rows?: TraceRow[]
   position?: { x: number, y: number }
 }
 
-interface JourneyRow {
+interface TraceRow {
   id: string
   type: CodeBlockType
   label: string | null
@@ -74,7 +74,7 @@ interface BlockLabel {
   codeBlock: CodeBlock
 }
 
-interface JourneyNodeEdge {
+interface TraceNodeEdge {
   id: string
   from: string
   to: string
@@ -87,8 +87,8 @@ interface JourneyNodeEdge {
 |---|---|
 | `astCodeGroup` | The [group](codegraph/code-blocks.md#the-group) the diagram is drawn from. An alias, not a copy. |
 | `importGraphGroup` | The files of the [import graph](codegraph/import-graph.md) that are in that group. An alias. |
-| `journeyNodes` | The nodes at the top level of the diagram. A node inside another is in its `children`, not here. |
-| `journeyNodeEdges` | Every edge of the diagram, between nodes at any depth |
+| `traceNodes` | The nodes at the top level of the diagram. A node inside another is in its `children`, not here. |
+| `traceNodeEdges` | Every edge of the diagram, between nodes at any depth |
 | `id` of a node | The id of the block the node stands for, such as `src/pricing.ts#function@3:1`, or `src/pricing.ts#condition@5:3` for a block inside a function. A route card stands for a route path, and its id is the file of its first registration and the path: `server/routes/users.ts#route@/api/users`. |
 | `type` | The [type](codegraph/block-types.md) of the block the node stands for |
 | `label`, `description` | What the agent writes. `null` until it is written. |
@@ -112,14 +112,14 @@ A node has no size, and no position until an author drags it. The page places th
 
 | Code | Node |
 |---|---|
-| A function or a hook with a block on a chain | One node of the type `function` or `hook`: a [function card](journey-flow-diagram/function-card.md) |
-| A component | One node of the type `component`: a [component card](journey-flow-diagram/component-card.md) |
-| A class with a method | One node of the type `class`: a [class card](journey-flow-diagram/class-card.md) |
+| A function or a hook with a block on a chain | One node of the type `function` or `hook`: a [function card](trace-diagram/function-card.md) |
+| A component | One node of the type `component`: a [component card](trace-diagram/component-card.md) |
+| A class with a method | One node of the type `class`: a [class card](trace-diagram/class-card.md) |
 | A value at the top level of a file that is not plain, such as `export const schema = z.object({})` | One node of the type `root-variable` or `state` |
-| A value at the top level of a file that holds procedures, such as `export const todoRouter = createTRPCRouter({ … })` | One node: a [tRPC router card](journey-flow-diagram/libraries/trpc.md) |
-| The registrations of a route path, such as `router.get("/api/users", …)` | One node for the path: a [route card](journey-flow-diagram/route-card.md) |
-| A store, such as `export const useCartStore = create(…)`, `defineStore(…)` or `createSlice(…)`, and an API of RTK Query | One node of the type `state`: a [state card](journey-flow-diagram/state.md) |
-| A value that only joins stores, such as `configureStore({ reducer: { cart: cartSlice.reducer } })` | No node, as [Values that join stores](journey-flow-diagram/state.md#values-that-join-stores) says |
+| A value at the top level of a file that holds procedures, such as `export const todoRouter = createTRPCRouter({ … })` | One node: a [tRPC router card](trace-diagram/libraries/trpc.md) |
+| The registrations of a route path, such as `router.get("/api/users", …)` | One node for the path: a [route card](trace-diagram/route-card.md) |
+| A store, such as `export const useCartStore = create(…)`, `defineStore(…)` or `createSlice(…)`, and an API of RTK Query | One node of the type `state`: a [state card](trace-diagram/state.md) |
+| A value that only joins stores, such as `configureStore({ reducer: { cart: cartSlice.reducer } })` | No node, as [Values that join stores](trace-diagram/state.md#values-that-join-stores) says |
 | A plain value or a class with no method, such as `export const MAX_RETRIES = 5` | No node. It is a step of every node that reads it, as [Plain code](#plain-code) says. |
 | A value at the top level of a file that is not exported and holds no function, such as `const ORDERS_KEY = ["orders"]` | No node. It is a step of every node that reads it, as [Values that are not exported](#values-that-are-not-exported) says. |
 | A statement at the top level of a file, such as `app.use(rateLimit())` or `"use client"` | No node, and no edge. A block it runs keeps its own node. |
@@ -132,7 +132,7 @@ A node has no size, and no position until an author drags it. The page places th
 | A class | Each `method`, and nothing inside a method |
 | A function, a hook or a method that returns a function | The function it returns |
 | A router | Each procedure |
-| A Redux slice, and an API of RTK Query | Its reducers, thunks, extra reducers, listeners and selectors, and the endpoints of the API, as [libraries/redux.md](journey-flow-diagram/libraries/redux.md) says |
+| A Redux slice, and an API of RTK Query | Its reducers, thunks, extra reducers, listeners and selectors, and the endpoints of the API, as [libraries/redux.md](trace-diagram/libraries/redux.md) says |
 | A component | The events, effects and callbacks that something triggers, drawn beside it, as the next paragraph says |
 
 **A block inside a component is a node when something triggers it.** An event, an effect and a callback that have a change, or that hold a block on a chain, are each a node of their own: they run on an occasion of their own, after the markup of their component is returned. Every other block stays in the node around it. A block that runs only to produce the markup is part of the render, and the render is one unit. A function or a condition is a step of the node it is written in.
@@ -142,14 +142,14 @@ Two other root blocks hold nodes of their own:
 | Root block | Why |
 |---|---|
 | A statement at the top level of a file | It is no node itself, so a route, an effect or a callback it runs keeps a node, as in `app.get("/orders", listOrders)` |
-| Any root block, for a block the [catalogue](codegraph/catalogue.md#a-call-that-is-a-node-of-its-own) says is a node of its own | Each procedure of a tRPC router is a node, named after its key, with what is inside it. Nothing inside such a node is a node. A procedure is drawn inside its [router card](journey-flow-diagram/libraries/trpc.md). The actions of a Zustand store are no nodes: they are rows of its [state card](journey-flow-diagram/libraries/zustand.md). |
+| Any root block, for a block the [catalogue](codegraph/catalogue.md#a-call-that-is-a-node-of-its-own) says is a node of its own | Each procedure of a tRPC router is a node, named after its key, with what is inside it. Nothing inside such a node is a node. A procedure is drawn inside its [router card](trace-diagram/libraries/trpc.md). The actions of a Zustand store are no nodes: they are rows of its [state card](trace-diagram/libraries/zustand.md). |
 
 The table below is for a block inside a component, or inside a statement at the top level of a file.
 
 | A block inside a root block | A node of its own |
 |---|---|
 | `render-event`, `code-event`, `effect-callback`, `resolver`, `middleware` | Yes. It is triggered. |
-| `route` | Yes, with every other registration of its route path: one [route card](journey-flow-diagram/route-card.md) per path |
+| `route` | Yes, with every other registration of its route path: one [route card](trace-diagram/route-card.md) per path |
 | The `effect-callback` of a route registration that runs its handler | Yes, drawn inside the route card. When it only names a function, as `listUsers` in `router.get("/api/users", listUsers)`, it is no node, and the function it names is the handler. |
 | The `effect-callback` of a route registration that runs a middleware | Yes when the middleware is written in place, a card of its own. When it only names a function, it is no node, and the node of that function is the middleware. |
 | `effect`, `component-effect` | Yes. What it is handed runs later. |
@@ -240,11 +240,11 @@ flowchart LR
 
 | Code | In its language | Card |
 |---|---|---|
-| `export const PromoForm = () => <form …/>` | A function | [Component card](journey-flow-diagram/component-card.md) |
+| `export const PromoForm = () => <form …/>` | A function | [Component card](trace-diagram/component-card.md) |
 | `export class Modal extends React.Component { render() { … } }` | A class with methods | Component card, not a class card |
-| `router.post("/api/users", async (req, res) => { … })` | A function | The POST handler inside the [route card](journey-flow-diagram/route-card.md) |
+| `router.post("/api/users", async (req, res) => { … })` | A function | The POST handler inside the [route card](trace-diagram/route-card.md) |
 | `router.get("/api/users", listUsers)` with `export const listUsers = async (req, res) => { … }` | A function | The GET handler inside the route card, not a function card |
-| `update: protectedProcedure.mutation(async ({ input }) => { … })` | A function | The `update` procedure inside the [tRPC router card](journey-flow-diagram/libraries/trpc.md) |
+| `update: protectedProcedure.mutation(async ({ input }) => { … })` | A function | The `update` procedure inside the [tRPC router card](trace-diagram/libraries/trpc.md) |
 
 A component is read first: a page component that is a route too, as in Next.js or Remix, is a component card.
 
@@ -260,7 +260,7 @@ An edge joins two nodes in the order the code runs. There is one edge for every 
 |---|---|---|
 | A step of a chain | The node of the block the step leaves | The node the step reaches: the block itself when it is a node, the node around it when it is not |
 | A block that is a node inside another | The node around it | The node of the block |
-| A middleware that runs before a handler | The node of the middleware | The handler of a [route card](journey-flow-diagram/route-card.md#middleware), or a procedure of a [tRPC router card](journey-flow-diagram/libraries/trpc.md#middleware) |
+| A middleware that runs before a handler | The node of the middleware | The handler of a [route card](trace-diagram/route-card.md#middleware), or a procedure of a [tRPC router card](trace-diagram/libraries/trpc.md#middleware) |
 
 A step that stays inside one node is no edge. The second kind is what joins a node to the units written inside it: a component to its events and its effects, an effect to its callbacks, a card to the cards drawn inside it.
 
@@ -274,14 +274,14 @@ An edge holds its two ends and nothing else. It has no kind and no label, and th
 
 | Card | Its children | Where they are drawn |
 |---|---|---|
-| [Component card](journey-flow-diagram/component-card.md#components-inside) | The components it renders, each with the first component that reaches it from the top | Below its rows |
-| [Function card](journey-flow-diagram/function-card.md#returning-a-function) | The function it returns | Below its rows |
-| [Class card](journey-flow-diagram/class-card.md) | Its methods, then the classes that extend it | Under Methods, then below the methods |
-| [Route card](journey-flow-diagram/route-card.md#methods-and-handlers) | The handler of each registration | Under the heading of its method |
-| [tRPC router card](journey-flow-diagram/libraries/trpc.md#procedures) | Its procedures | Under the heading of its procedure type |
-| [State card](journey-flow-diagram/libraries/redux.md) of a Redux slice or an RTK Query API | Its reducers, thunks, extra reducers, listeners and selectors, or its endpoints | Under the heading of each |
+| [Component card](trace-diagram/component-card.md#components-inside) | The components it renders, each with the first component that reaches it from the top | Below its rows |
+| [Function card](trace-diagram/function-card.md#returning-a-function) | The function it returns | Below its rows |
+| [Class card](trace-diagram/class-card.md) | Its methods, then the classes that extend it | Under Methods, then below the methods |
+| [Route card](trace-diagram/route-card.md#methods-and-handlers) | The handler of each registration | Under the heading of its method |
+| [tRPC router card](trace-diagram/libraries/trpc.md#procedures) | Its procedures | Under the heading of its procedure type |
+| [State card](trace-diagram/libraries/redux.md) of a Redux slice or an RTK Query API | Its reducers, thunks, extra reducers, listeners and selectors, or its endpoints | Under the heading of each |
 
-**The edge from a node to a child stays in `journeyNodeEdges`.** The page leaves it out, and an agent still reads it.
+**The edge from a node to a child stays in `traceNodeEdges`.** The page leaves it out, and an agent still reads it.
 
 Nothing else is nested. A function of another root block that a card calls, a block of a component that is a node of its own, a middleware, a child route and a router joined into another are each a card on the board, with a line from the card that leads to them.
 
@@ -309,7 +309,7 @@ A group cut into several [segments](codegraph/segments.md) has one diagram per s
 
 ## When there is no diagram
 
-A change that touches only types, interfaces or import lines changes nothing that runs, so it has no Journey Flow Diagram. Neither has a change that touches only statements at the top level of a file, which are no nodes. Neither has a file no language reads.
+A change that touches only types, interfaces or import lines changes nothing that runs, so it has no Trace Diagram. Neither has a change that touches only statements at the top level of a file, which are no nodes. Neither has a file no language reads.
 
 ## Three forms
 
@@ -322,7 +322,7 @@ The diagram in memory holds references, and two other forms hold ids in their pl
 | Flat | What an agent reads through the MCP tools | The stored form of each node, at any depth, as one entry of a list, with `parentId` in place of `children` |
 
 ```ts
-interface FlatJourneyNode {
+interface FlatTraceNode {
   id: string
   parentId: string | null
   type: CodeBlockType
@@ -342,7 +342,7 @@ An agent reads and writes one node at a time. A node that carried its children w
 | What is drawn | From |
 |---|---|
 | The description of the diagram, above the board | The `description` of the diagram: its caption, in five sentences at most. A diagram nobody has described yet says "Not written yet." there. The board is named after the code of its changed nodes for a screen reader, and shows no title. |
-| A node, headed by the name of its code and the path of its file, with its type and its label below | A `JourneyNode`. The path is cut to its last two folders and its file, such as `routes/orders/index.tsx`. A route card is headed by its route path, a router card reads Router for its type, a NestJS resolver Resolver, and a NestJS controller Controller. A node with no label has its header and its type alone. |
+| A node, headed by the name of its code and the path of its file, with its type and its label below | A `TraceNode`. The path is cut to its last two folders and its file, such as `routes/orders/index.tsx`. A route card is headed by its route path, a router card reads Router for its type, a NestJS resolver Resolver, and a NestJS controller Controller. A node with no label has its header and its type alone. |
 | A node as added or modified | Its `diffCodeBlocks`. A node whose every line is new is added. |
 | A node inside another | Its place in `children`, drawn inside the card of its parent, as [Children](#children) says |
 | The code of a pressed row | Pressing a row opens the panel of its node with the code focused on the lines of the block of that row: every other line is dimmed, and the first focused line is scrolled into view. Pressing the head of the node shows its code with no line dimmed. |
@@ -364,11 +364,11 @@ An agent reads and writes one node at a time. A node that carried its children w
 | Effects | `effect`, `component-effect`, `effect-callback`, when no declaration of state is around it | After what it calls, such as `useEffect` |
 | Calls | A statement that is itself a call out: an `external-value` that is no hook, a block the [catalogue](codegraph/catalogue.md) types, such as a `request` or a `storage`, and a `call` that leads to other code. It is listed whenever a chain passes through it, though its own line did not change. | After the declaration or after what is called: `users`, `saveUser`, `createTodo.mutate` |
 | Steps | A function, a method, a condition, a loop or a call that is invoked or executed after the render, as the table of [Nodes](#nodes) says, and any other block with a change that is not markup, each as the [statement](#steps) it is written in | After the block, or after its type and its line: `Condition :8`. A step of several statements is named after the first two, and counts the others: `user, stored +2` |
-| Parts | In a [state card](journey-flow-diagram/state.md), a part of the store that is no card of its own: a key of its state, a getter, an action or a selector. Every block written inside a part is folded into its row, and a block that holds parts, such as the call that makes the store, has no row. | After the part: `items`, `addItem`, `selectTotal` |
+| Parts | In a [state card](trace-diagram/state.md), a part of the store that is no card of its own: a key of its state, a getter, an action or a selector. Every block written inside a part is folded into its row, and a block that holds parts, such as the call that makes the store, has no row. | After the part: `items`, `addItem`, `selectTotal` |
 
 **Every block with a change is in a row, but markup.** A changed block of one of the first four kinds is in its list, also inside a listed block, a changed event or data fetch is a trigger label, and any other changed block is a step or is folded into one. A row is marked as changed when a block folded into it is.
 
-**Markup has no row**, as the [component card](journey-flow-diagram/component-card.md#rows) says. **Nothing a method reaches through `this` or `self` has a row**, as the [class card](journey-flow-diagram/class-card.md#rows-and-methods) says. **Reading a store has no row, and writing it has one**, as the [state card](journey-flow-diagram/state.md#reading-and-writing-the-store) says.
+**Markup has no row**, as the [component card](trace-diagram/component-card.md#rows) says. **Nothing a method reaches through `this` or `self` has a row**, as the [class card](trace-diagram/class-card.md#rows-and-methods) says. **Reading a store has no row, and writing it has one**, as the [state card](trace-diagram/state.md#reading-and-writing-the-store) says.
 
 **A step and a call have a row and no node.** The row is where it is written, in the node around it. A row that runs a block of another root block has a line from its row to the node of that block: the row `Condition :5` of the event `onSubmit` is joined to the node of `useApplyPromo`, and a call on the way to a change always has a row for that line to leave. A step through a value of the same node is carried on to what the value leads to, so the line leaves the row of the step, not only the row of the value.
 
@@ -380,12 +380,12 @@ A block inside a listed block is not listed again, unless it is a state, a hook 
 
 | Card | Headings, in order |
 |---|---|
-| [Component card](journey-flow-diagram/component-card.md#rows) | State, Hooks, Effects, one group per kind of call (Calls for a kept value and a plain call, and the name of its type for a call the catalogue types, such as Request or Storage), Triggers, Steps. None when its only rows are trigger labels. |
-| [Function card](journey-flow-diagram/function-card.md#rows) | None: every row in the order it is written, its trigger labels among them. The headings of a component card when it [returns a function](journey-flow-diagram/function-card.md#returning-a-function). |
-| [Class card](journey-flow-diagram/class-card.md#rows-and-methods) | Properties, Methods |
-| [Route card](journey-flow-diagram/route-card.md#methods-and-handlers) | POST, PUT, PATCH, GET, DELETE, HEAD, OPTIONS, ANY |
-| [tRPC router card](journey-flow-diagram/libraries/trpc.md#procedures) | QUERY, MUTATION, SUBSCRIPTION, and FIELD for a [NestJS resolver](journey-flow-diagram/libraries/nestjs.md#graphql-resolvers), then Methods for a method of a resolver with none of them |
-| [State card](journey-flow-diagram/state.md#the-shape-of-a-card) | STATE, then for Zustand ACTIONS, SELECTORS; for Pinia GETTERS, ACTIONS; for a Redux slice REDUCERS, THUNKS, EXTRA REDUCERS, LISTENERS, SELECTORS; for `createReducer` CASES. An RTK Query API has QUERY, MUTATION. |
+| [Component card](trace-diagram/component-card.md#rows) | State, Hooks, Effects, one group per kind of call (Calls for a kept value and a plain call, and the name of its type for a call the catalogue types, such as Request or Storage), Triggers, Steps. None when its only rows are trigger labels. |
+| [Function card](trace-diagram/function-card.md#rows) | None: every row in the order it is written, its trigger labels among them. The headings of a component card when it [returns a function](trace-diagram/function-card.md#returning-a-function). |
+| [Class card](trace-diagram/class-card.md#rows-and-methods) | Properties, Methods |
+| [Route card](trace-diagram/route-card.md#methods-and-handlers) | POST, PUT, PATCH, GET, DELETE, HEAD, OPTIONS, ANY |
+| [tRPC router card](trace-diagram/libraries/trpc.md#procedures) | QUERY, MUTATION, SUBSCRIPTION, and FIELD for a [NestJS resolver](trace-diagram/libraries/nestjs.md#graphql-resolvers), then Methods for a method of a resolver with none of them |
+| [State card](trace-diagram/state.md#the-shape-of-a-card) | STATE, then for Zustand ACTIONS, SELECTORS; for Pinia GETTERS, ACTIONS; for a Redux slice REDUCERS, THUNKS, EXTRA REDUCERS, LISTENERS, SELECTORS; for `createReducer` CASES. An RTK Query API has QUERY, MUTATION. |
 
 ### Steps
 
@@ -459,7 +459,7 @@ The author of a Flight Plan changes the diagram on their own page. Every change 
 
 | Change | What is stored |
 |---|---|
-| Remove the diagram | The `journey` of the segment is `null` |
+| Remove the diagram | The `traceDiagram` of the segment is `null` |
 | Clear the diagram | The diagram stays, with no nodes, no edges and no description |
 | Edit the description | The `description` of the diagram, as Markdown. An empty one is refused, and so is a code link to code the Flight Plan does not hold. |
 | Add a diagram | A diagram with no nodes, no edges and no description, drawn from no group |

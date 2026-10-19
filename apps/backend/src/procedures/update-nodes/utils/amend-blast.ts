@@ -27,13 +27,13 @@ const editNode = (node: BlastNode, edit: BlastEdit): BlastNode => ({
 })
 
 const amendSegment = (segment: Segment, editByPath: ReadonlyMap<string, BlastEdit>): Segment =>
-  segment.blast === null
+  segment.blastDiagram === null
     ? segment
     : {
         ...segment,
-        blast: {
-          ...segment.blast,
-          nodes: segment.blast.nodes.map((node) => {
+        blastDiagram: {
+          ...segment.blastDiagram,
+          nodes: segment.blastDiagram.nodes.map((node) => {
             const edit = editByPath.get(node.path)
             return edit === undefined ? node : editNode(node, edit)
           }),
@@ -61,7 +61,7 @@ const ruleProblemOf = (nodes: readonly BlastNode[], edits: readonly BlastEdit[])
 export const blastTextsOf = (edits: readonly BlastEdit[]): string[] => edits.map((edit) => edit.impactReason ?? "")
 
 export const amendBlast = (segments: readonly Segment[], edits: readonly BlastEdit[]): SegmentsOutcome => {
-  const nodes = segments.flatMap((segment) => segment.blast?.nodes ?? [])
+  const nodes = segments.flatMap((segment) => segment.blastDiagram?.nodes ?? [])
   if (nodes.length === 0) return refuse(NO_DIAGRAM_MESSAGE)
   const pathProblem = idProblemOf("Blast Diagram file", edits.map((edit) => edit.path), nodes.map((node) => node.path))
   if (pathProblem !== null) return refuse(pathProblem)

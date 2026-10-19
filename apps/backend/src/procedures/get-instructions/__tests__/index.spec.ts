@@ -1,7 +1,7 @@
 import { getInstructions } from "@/procedures/get-instructions"
 import { createArtifactContext, DRAFT_ARTIFACT, KEY } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 
-const OFF = { journey: false, blast: false, walkthrough: true, findings: false }
+const OFF = { traceDiagram: false, blastDiagram: false, walkthrough: true, findings: false }
 
 describe("getInstructions", () => {
   it("serves only the fields of the sections the review generates", async () => {
@@ -11,7 +11,7 @@ describe("getInstructions", () => {
     const everything = await getInstructions({ ...KEY, all: true }, context)
 
     expect(index).toMatchObject({ kind: "indexed", index: { configuration: "minimal", sections: OFF } })
-    expect(index.kind === "indexed" ? index.index.fields.filter((field) => field.path.startsWith("journey") || field.path.startsWith("blast")) : null).toStrictEqual([])
+    expect(index.kind === "indexed" ? index.index.fields.filter((field) => field.path.startsWith("traceDiagram") || field.path.startsWith("blastDiagram")) : null).toStrictEqual([])
     expect(everything.kind === "resolved" ? everything.fields.filter((field) => field.path.includes("findings")) : null).toStrictEqual([])
     await expect(getInstructions({ ...KEY, fields: ["walkthrough.files.waypoints.findings.title"] }, context)).resolves.toStrictEqual({
       kind: "rejected",
@@ -24,7 +24,7 @@ describe("getInstructions", () => {
 
     await expect(getInstructions(KEY, context)).resolves.toMatchObject({
       kind: "indexed",
-      index: { configuration: "unfamiliar-territory", sections: { journey: true, blast: true, walkthrough: true, findings: true } },
+      index: { configuration: "unfamiliar-territory", sections: { traceDiagram: true, blastDiagram: true, walkthrough: true, findings: true } },
     })
   })
 

@@ -119,7 +119,7 @@ const fileRowsOf = (paths: readonly string[]): BlastNodeView["imports"]["files"]
   [...paths].sort((one, two) => one.localeCompare(two)).map((path) => ({ id: path, label: path }))
 
 interface BlastViewSources {
-  readonly blast: Blast
+  readonly blastDiagram: Blast
   readonly standingByPath: ReadonlyMap<string, FileStanding>
   readonly labelByPath: ReadonlyMap<string, string>
   readonly fileAnchorIdByPath: ReadonlyMap<string, string>
@@ -128,11 +128,11 @@ interface BlastViewSources {
 
 const toNodeView = (
   { node, x, y, radius }: PlacedBlastNode,
-  { blast, standingByPath, labelByPath, fileAnchorIdByPath, knownLinkIds }: BlastViewSources,
+  { blastDiagram, standingByPath, labelByPath, fileAnchorIdByPath, knownLinkIds }: BlastViewSources,
 ): BlastNodeView => {
   const standing = standingByPath.get(node.path) ?? "unreached"
-  const importerPaths = blast.edges.filter((edge) => edge.imported === node.path).map((edge) => edge.importer)
-  const importedPaths = blast.edges.filter((edge) => edge.importer === node.path).map((edge) => edge.imported)
+  const importerPaths = blastDiagram.edges.filter((edge) => edge.imported === node.path).map((edge) => edge.importer)
+  const importedPaths = blastDiagram.edges.filter((edge) => edge.importer === node.path).map((edge) => edge.imported)
   const fileAnchorId = fileAnchorIdByPath.get(node.path)
   return {
     id: node.path,
@@ -200,23 +200,23 @@ const IMPORT_BOUND: ViewWording = {
 }
 
 interface ViewSources {
-  readonly blast: Blast
+  readonly blastDiagram: Blast
   readonly standingByPath: ReadonlyMap<string, FileStanding>
   readonly fileAnchorIdByPath: ReadonlyMap<string, string>
   readonly knownLinkIds: ReadonlySet<string>
 }
 
-const buildView = ({ id, label, description, legend }: ViewWording, { blast, standingByPath, fileAnchorIdByPath, knownLinkIds }: ViewSources): BlastView => {
-  const labelByPath = labelBlastFiles(blast.nodes.map((node) => node.path))
-  const layout = layoutBlast(blast, labelByPath)
+const buildView = ({ id, label, description, legend }: ViewWording, { blastDiagram, standingByPath, fileAnchorIdByPath, knownLinkIds }: ViewSources): BlastView => {
+  const labelByPath = labelBlastFiles(blastDiagram.nodes.map((node) => node.path))
+  const layout = layoutBlast(blastDiagram, labelByPath)
   const standings = [...standingByPath.values()]
   const shownMarks = new Set(standings.map((standing) => MARKS[standing]))
-  const sources: BlastViewSources = { blast, standingByPath, labelByPath, fileAnchorIdByPath, knownLinkIds }
+  const sources: BlastViewSources = { blastDiagram, standingByPath, labelByPath, fileAnchorIdByPath, knownLinkIds }
   return {
     id,
     label,
     description,
-    summary: summaryOf(blast, standings),
+    summary: summaryOf(blastDiagram, standings),
     legend: legend.filter((entry) => shownMarks.has(entry.mark)),
     edgeLegendLabel: EDGE_LEGEND_LABEL,
     board: {
@@ -228,15 +228,15 @@ const buildView = ({ id, label, description, legend }: ViewWording, { blast, sta
   }
 }
 
-const exportBoundStandings = (blast: Blast): ReadonlyMap<string, FileStanding> => {
-  const reachedPaths = listReachedPaths(blast)
-  return new Map(blast.nodes.map((node) => [node.path, standingOf(node, reachedPaths)] as const))
+const exportBoundStandings = (blastDiagram: Blast): ReadonlyMap<string, FileStanding> => {
+  const reachedPaths = listReachedPaths(blastDiagram)
+  return new Map(blastDiagram.nodes.map((node) => [node.path, standingOf(node, reachedPaths)] as const))
 }
 
 const blastOfImportBound = ({ nodes, edges }: ImportBound): Blast => ({ nodes: nodes.map((node) => ({ ...node, ...NO_IMPACT_TYPE })), edges: [...edges] })
 
-const importBoundStandings = (blast: Blast): ReadonlyMap<string, FileStanding> =>
-  new Map(blast.nodes.map((node) => [node.path, node.diffType ?? "used"] as const))
+const importBoundStandings = (blastDiagram: Blast): ReadonlyMap<string, FileStanding> =>
+  new Map(blastDiagram.nodes.map((node) => [node.path, node.diffType ?? "used"] as const))
 
 export const buildBlast = (
   segment: Segment,
@@ -244,19 +244,19 @@ export const buildBlast = (
   fileAnchorIdByPath: ReadonlyMap<string, string>,
   context: ReviewViewContext,
 ): BlastBand | null => {
-  const { blast } = segment
-  if (blast === null || blast.nodes.length === 0) return null
+  const { blastDiagram } = segment
+  if (blastDiagram === null || blastDiagram.nodes.length === 0) return null
   const shared = { fileAnchorIdByPath, knownLinkIds: context.knownLinkIds }
-  const used = blast.importBound === undefined ? null : blastOfImportBound(blast.importBound)
-  const isUsedByNothing = blast.nodes.every((node) => segment.changedPaths.includes(node.path))
+  const used = blastDiagram.importBound === undefined ? null : blastOfImportBound(blastDiagram.importBound)
+  const isUsedByNothing = blastDiagram.nodes.every((node) => segment.changedPaths.includes(node.path))
   return {
     anchorId: `${scope}${BLAST_ANCHOR_NAME}`,
     heading: "Blast Diagram",
     defaultViewId: used !== null && isUsedByNothing ? IMPORT_BOUND.id : EXPORT_BOUND.id,
     assessmentForm: ASSESSMENT_FORM,
     views: [
-      buildView(EXPORT_BOUND, { ...shared, blast, standingByPath: exportBoundStandings(blast) }),
-      ...(used === null ? [] : [buildView(IMPORT_BOUND, { ...shared, blast: used, standingByPath: importBoundStandings(used) })]),
+      buildView(EXPORT_BOUND, { ...shared, blastDiagram, standingByPath: exportBoundStandings(blastDiagram) }),
+      ...(used === null ? [] : [buildView(IMPORT_BOUND, { ...shared, blastDiagram: used, standingByPath: importBoundStandings(used) })]),
     ],
   }
 }

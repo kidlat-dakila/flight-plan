@@ -1,4 +1,4 @@
-import type { ASTCodeGroupGraph, BlockLabel, CodeBlock, CodeBlockType, ImportGraphGroup, JourneyFlowDiagram, JourneyNode, JourneyNodeEdge, TriggerLabel } from "@flightplan/configurations"
+import type { ASTCodeGroupGraph, BlockLabel, CodeBlock, CodeBlockType, ImportGraphGroup, TraceDiagram, TraceNode, TraceNodeEdge, TriggerLabel } from "@flightplan/configurations"
 
 export interface StoredTriggerLabel {
   readonly label: string | null
@@ -10,25 +10,25 @@ export interface StoredBlockLabel {
   readonly codeBlockId: string
 }
 
-export interface StoredJourneyNode {
+export interface StoredTraceNode {
   readonly id: string
   readonly type: CodeBlockType
   readonly label: string | null
   readonly description: string | null
   readonly codeBlockIds: readonly string[]
   readonly diffCodeBlockIds: readonly string[]
-  readonly children: readonly StoredJourneyNode[]
+  readonly children: readonly StoredTraceNode[]
   readonly triggerLabels: readonly StoredTriggerLabel[]
   readonly blockLabels: readonly StoredBlockLabel[]
 }
 
-export interface StoredJourneyFlowDiagram {
+export interface StoredTraceDiagram {
   readonly description: string | null
-  readonly journeyNodes: readonly StoredJourneyNode[]
-  readonly journeyNodeEdges: readonly JourneyNodeEdge[]
+  readonly traceNodes: readonly StoredTraceNode[]
+  readonly traceNodeEdges: readonly TraceNodeEdge[]
 }
 
-export interface FlatJourneyNode {
+export interface FlatTraceNode {
   readonly id: string
   readonly parentId: string | null
   readonly type: CodeBlockType
@@ -46,7 +46,7 @@ const storeTriggerLabel = ({ label, codeBlock }: TriggerLabel): StoredTriggerLab
 
 const storeBlockLabel = ({ label, codeBlock }: BlockLabel): StoredBlockLabel => ({ label, codeBlockId: codeBlock.id })
 
-const storeNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, children, triggerLabels, blockLabels }: JourneyNode): StoredJourneyNode => ({
+const storeNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, children, triggerLabels, blockLabels }: TraceNode): StoredTraceNode => ({
   id,
   type,
   label,
@@ -58,10 +58,10 @@ const storeNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, c
   blockLabels: blockLabels.map(storeBlockLabel),
 })
 
-export const storeJourneyFlowDiagram = ({ description, journeyNodes, journeyNodeEdges }: JourneyFlowDiagram): StoredJourneyFlowDiagram => ({
+export const storeTraceDiagram = ({ description, traceNodes, traceNodeEdges }: TraceDiagram): StoredTraceDiagram => ({
   description,
-  journeyNodes: journeyNodes.map(storeNode),
-  journeyNodeEdges,
+  traceNodes: traceNodes.map(storeNode),
+  traceNodeEdges,
 })
 
 const found = (blockById: ReadonlyMap<string, CodeBlock>, blockId: string): CodeBlock => {
@@ -70,7 +70,7 @@ const found = (blockById: ReadonlyMap<string, CodeBlock>, blockId: string): Code
   return block
 }
 
-const linkNode = (stored: StoredJourneyNode, blockById: ReadonlyMap<string, CodeBlock>): JourneyNode => ({
+const linkNode = (stored: StoredTraceNode, blockById: ReadonlyMap<string, CodeBlock>): TraceNode => ({
   id: stored.id,
   type: stored.type,
   label: stored.label,
@@ -82,18 +82,18 @@ const linkNode = (stored: StoredJourneyNode, blockById: ReadonlyMap<string, Code
   blockLabels: stored.blockLabels.map((listed) => ({ label: listed.label, codeBlock: found(blockById, listed.codeBlockId) })),
 })
 
-export const linkJourneyFlowDiagram = (stored: StoredJourneyFlowDiagram, astCodeGroup: ASTCodeGroupGraph, importGraphGroup: ImportGraphGroup): JourneyFlowDiagram => {
+export const linkTraceDiagram = (stored: StoredTraceDiagram, astCodeGroup: ASTCodeGroupGraph, importGraphGroup: ImportGraphGroup): TraceDiagram => {
   const blockById = new Map(astCodeGroup.codeBlocks.map((block) => [block.id, block] as const))
   return {
     astCodeGroup,
     importGraphGroup,
     description: stored.description,
-    journeyNodes: stored.journeyNodes.map((node) => linkNode(node, blockById)),
-    journeyNodeEdges: stored.journeyNodeEdges,
+    traceNodes: stored.traceNodes.map((node) => linkNode(node, blockById)),
+    traceNodeEdges: stored.traceNodeEdges,
   }
 }
 
-const toFlatNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, triggerLabels, blockLabels }: JourneyNode, parentId: string | null): FlatJourneyNode => ({
+const toFlatNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, triggerLabels, blockLabels }: TraceNode, parentId: string | null): FlatTraceNode => ({
   id,
   parentId,
   type,
@@ -105,9 +105,9 @@ const toFlatNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, 
   blockLabels: blockLabels.map(storeBlockLabel),
 })
 
-const flattenNode = (node: JourneyNode, parentId: string | null): FlatJourneyNode[] => [
+const flattenNode = (node: TraceNode, parentId: string | null): FlatTraceNode[] => [
   toFlatNode(node, parentId),
   ...node.children.flatMap((child) => flattenNode(child, node.id)),
 ]
 
-export const flattenJourneyNodes = (nodes: readonly JourneyNode[]): FlatJourneyNode[] => nodes.flatMap((node) => flattenNode(node, null))
+export const flattenTraceNodes = (nodes: readonly TraceNode[]): FlatTraceNode[] => nodes.flatMap((node) => flattenNode(node, null))

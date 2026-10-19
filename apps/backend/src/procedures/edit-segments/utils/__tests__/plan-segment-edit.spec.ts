@@ -71,8 +71,8 @@ describe("planSegmentEdit", () => {
       title: "Rates",
       changedPaths: [PRICE_PATH],
       context: "",
-      journey: null,
-      blast: null,
+      traceDiagram: null,
+      blastDiagram: null,
       walkthrough: { files: [] },
     })
   })

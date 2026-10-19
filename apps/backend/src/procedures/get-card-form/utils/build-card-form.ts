@@ -1,12 +1,12 @@
 import { waypointsOf } from "@/procedures/read-artifact/utils/artifact-walk"
 import { listCardRows, nameOfBlock, nameOfCardRow } from "@flightplan/codegraph"
-import type { JourneyNode, ReviewArtifact, Segment } from "@flightplan/configurations"
+import type { TraceNode, ReviewArtifact, Segment } from "@flightplan/configurations"
 import { DEFAULT_ROW_KIND, listRowKindOptions } from "./row-kinds"
 import type { CardForm } from "./schemas"
 
 const ATTENTION_LABEL = "Needs attention"
 
-const linesOf = ({ codeBlocks: [root] }: JourneyNode): { readonly lineStart: number, readonly lineEnd: number } => {
+const linesOf = ({ codeBlocks: [root] }: TraceNode): { readonly lineStart: number, readonly lineEnd: number } => {
   const ranges = root.lineOfCodeRangeReference
   return {
     lineStart: Math.min(...ranges.map((range) => range.start.line)),
@@ -32,7 +32,7 @@ const waypointsIn = (artifact: ReviewArtifact, segment: Segment, path: string): 
     })
 }
 
-export const buildCardForm = (artifact: ReviewArtifact, segment: Segment, node: JourneyNode): CardForm => {
+export const buildCardForm = (artifact: ReviewArtifact, segment: Segment, node: TraceNode): CardForm => {
   const [root] = node.codeBlocks
   const name = nameOfBlock(root)
   const path = root.astGraph.filePath

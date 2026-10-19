@@ -1,9 +1,9 @@
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
-import { nameOfBlock } from "@/journey/names"
-import { listJourneyNodes } from "@/journey-flow-diagram"
-import { listJourneyPaths } from "@/journey-flow-diagram/paths"
-import { flattenJourneyNodes, linkJourneyFlowDiagram, storeJourneyFlowDiagram } from "@/journey-flow-diagram/stored"
-import type { JourneyNode } from "@flightplan/configurations"
+import { nameOfBlock } from "@/trace/names"
+import { listTraceNodes } from "@/trace-diagram"
+import { listTracePaths } from "@/trace-diagram/paths"
+import { flattenTraceNodes, linkTraceDiagram, storeTraceDiagram } from "@/trace-diagram/stored"
+import type { TraceNode } from "@flightplan/configurations"
 import { diagramOf, outlineOfNodes, presentDiagramOf } from "./diagram-fixture"
 
 const PRICING = codeOf("export const priceOf = (item) => {", "  return item.price", "}")
@@ -22,19 +22,19 @@ const SHOP = {
 }
 const ORDERS_CHANGE = { "src/orders.ts": [rangeAt(2, 10, 2, 12)] }
 
-describe("the Journey Flow Diagram of a group", () => {
+describe("the Trace Diagram of a group", () => {
   it("makes one node per root block on a chain, typed as that block, and an edge where a chain steps from one root block into another", () => {
     const diagram = diagramOf({ "src/pricing.ts": PRICING, "src/cart.ts": CART }, PRICING_CHANGE)
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function subtotalOf", "function priceOf (changed)"])
-    expect(diagram?.journeyNodeEdges).toStrictEqual([
+    expect(diagram?.traceNodeEdges).toStrictEqual([
       { id: "src/cart.ts#function@2:1 -> src/pricing.ts#function@1:1", from: "src/cart.ts#function@2:1", to: "src/pricing.ts#function@1:1" },
     ])
   })
 
   it("holds the blocks of the group themselves, the root block first, and the changed ones again as its diff blocks", () => {
     const diagram = diagramOf({ "src/pricing.ts": PRICING, "src/cart.ts": CART }, PRICING_CHANGE)
-    const [cart, pricing] = diagram?.journeyNodes ?? []
+    const [cart, pricing] = diagram?.traceNodes ?? []
     const blockById = new Map(diagram?.astCodeGroup.codeBlocks.map((block) => [block.id, block] as const))
 
     expect([cart.codeBlocks[0].id, pricing.codeBlocks[0].id]).toStrictEqual([cart.id, pricing.id])
@@ -47,7 +47,7 @@ describe("the Journey Flow Diagram of a group", () => {
     const diagram = diagramOf(SHOP, ORDERS_CHANGE)
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["component OrdersPage", "  component OrderList", "function loadOrders (changed)", "render-event onClick"])
-    expect(diagram?.journeyNodeEdges.map((edge) => edge.id).sort()).toStrictEqual([
+    expect(diagram?.traceNodeEdges.map((edge) => edge.id).sort()).toStrictEqual([
       "src/order-list.tsx#component@2:1 -> src/order-list.tsx#render-event@3:14",
       "src/order-list.tsx#component@2:1 -> src/orders.ts#function@1:1",
       "src/order-list.tsx#render-event@3:14 -> src/orders.ts#function@1:1",
@@ -66,13 +66,13 @@ describe("the Journey Flow Diagram of a group", () => {
     }
     const diagram = diagramOf(files, { "src/orders.ts": [rangeAt(2, 10, 2, 12)] })
 
-    expect(diagram?.journeyNodeEdges.map((edge) => edge.id)).toContain("src/order-list.tsx#component@2:1 -> src/orders-page.tsx#component@2:1")
+    expect(diagram?.traceNodeEdges.map((edge) => edge.id)).toContain("src/order-list.tsx#component@2:1 -> src/orders-page.tsx#component@2:1")
     expect(outlineOfNodes(diagram)).toStrictEqual(["function loadOrders (changed)", "component OrdersPage", "  component OrderList"])
   })
 
   it("lists the events and the data fetches on a chain of a node as its trigger labels, with nothing written", () => {
     const withFetch = { ...SHOP, "src/orders.ts": codeOf("export const loadOrders = () => {", "  return fetch(\"/api/orders\")", "}") }
-    const nodes = listJourneyNodes(diagramOf(withFetch, { "src/orders.ts": [rangeAt(2, 10, 2, 30)] })?.journeyNodes ?? [])
+    const nodes = listTraceNodes(diagramOf(withFetch, { "src/orders.ts": [rangeAt(2, 10, 2, 30)] })?.traceNodes ?? [])
     const [, orderList, orders] = nodes
 
     expect(orderList.triggerLabels.map(({ label, codeBlock }) => [label, codeBlock.type, codeBlock.name ?? null])).toStrictEqual([[null, "render-event", "onClick"]])
@@ -84,7 +84,7 @@ describe("the Journey Flow Diagram of a group", () => {
     const diagram = diagramOf(files, PRICING_CHANGE)
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function priceOf (changed)"])
-    expect(diagram?.journeyNodeEdges).toStrictEqual([])
+    expect(diagram?.traceNodeEdges).toStrictEqual([])
   })
 
   it("has no diagram when only a statement at the top level of a file changed", () => {
@@ -110,10 +110,10 @@ describe("the Journey Flow Diagram of a group", () => {
       "}",
     )
     const diagram = diagramOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(1, 20, 1, 29)] })
-    const nodes = diagram?.journeyNodes ?? []
+    const nodes = diagram?.traceNodes ?? []
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function loadOrders (changed)", "function countOrders (changed)"])
-    expect(diagram?.journeyNodeEdges).toStrictEqual([])
+    expect(diagram?.traceNodeEdges).toStrictEqual([])
     expect(nodes.map((node) => node.blockLabels.map(({ codeBlock }) => codeBlock.id))).toStrictEqual([
       ["src/orders.ts#root-variable@1:1"],
       ["src/orders.ts#root-variable@1:1"],
@@ -125,7 +125,7 @@ describe("the Journey Flow Diagram of a group", () => {
     const diagram = diagramOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(1, 27, 1, 36)] })
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function loadOrders (changed)"])
-    expect(diagram?.journeyNodes[0].blockLabels.map(({ codeBlock }) => codeBlock.id)).toStrictEqual(["src/orders.ts#root-variable@1:1"])
+    expect(diagram?.traceNodes[0].blockLabels.map(({ codeBlock }) => codeBlock.id)).toStrictEqual(["src/orders.ts#root-variable@1:1"])
   })
 
   it("keeps a node for an exported value made by a call", () => {
@@ -143,7 +143,7 @@ describe("the Journey Flow Diagram of a group", () => {
     const diagram = diagramOf(files, PRICING_CHANGE)
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function defaultPriceOf", "function priceOf (changed)"])
-    expect(diagram?.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual(["src/cart.ts#function@3:1 -> src/pricing.ts#function@1:1"])
+    expect(diagram?.traceNodeEdges.map((edge) => edge.id)).toStrictEqual(["src/cart.ts#function@3:1 -> src/pricing.ts#function@1:1"])
   })
 
   it("keeps, for an entry segment, the chains that lead to its own change and what they run below it that leads to a shared change", () => {
@@ -174,7 +174,7 @@ describe("the Journey Flow Diagram of a group", () => {
     }
     const diffs = { "src/router.tsx": [rangeAt(5, 3, 6, 36)], "src/page-a.tsx": [rangeAt(1, 34, 1, 35)], "src/page-b.tsx": [rangeAt(1, 34, 1, 35)] }
     const diagram = diagramOf(files, diffs, { filePaths: ["src/page-a.tsx"], sharedFilePaths: ["src/router.tsx"], otherLineFilePaths: ["src/page-b.tsx"] })
-    const router = diagram?.journeyNodes.find((node) => node.type === "root-variable")
+    const router = diagram?.traceNodes.find((node) => node.type === "root-variable")
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["root-variable router (changed)", "component PageA (changed)"])
     expect(router?.codeBlocks.some((block) => block.lineOfCodeRangeReference[0].start.line === 6)).toBe(false)
@@ -249,18 +249,18 @@ const PANEL_MUTATION_FN = "src/promo-panel.tsx#effect-callback@4:36"
 const PANEL_ON_SUCCESS = "src/promo-panel.tsx#code-event@4:60"
 const PANEL_ON_SUCCESS_BODY = "src/promo-panel.tsx#function@4:71"
 
-const panelNodes = (): JourneyNode[] => listJourneyNodes(presentDiagramOf(PANEL_FILES, PROMO_FILES_CHANGE).journeyNodes)
+const panelNodes = (): TraceNode[] => listTraceNodes(presentDiagramOf(PANEL_FILES, PROMO_FILES_CHANGE).traceNodes)
 
 const panelBlockIdsOf = (nodeId: string): string[] => (panelNodes().find((node) => node.id === nodeId)?.codeBlocks ?? []).map((block) => block.id)
 
-const panelEdgeIds = (): string[] => presentDiagramOf(PANEL_FILES, PROMO_FILES_CHANGE).journeyNodeEdges.map((edge) => edge.id)
+const panelEdgeIds = (): string[] => presentDiagramOf(PANEL_FILES, PROMO_FILES_CHANGE).traceNodeEdges.map((edge) => edge.id)
 
-const promoNodeIds = (): string[] => listJourneyNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodes).map((node) => node.id)
+const promoNodeIds = (): string[] => listTraceNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).traceNodes).map((node) => node.id)
 
 const promoBlockIdsOf = (nodeId: string): string[] =>
-  (listJourneyNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodes).find((node) => node.id === nodeId)?.codeBlocks ?? []).map((block) => block.id)
+  (listTraceNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).traceNodes).find((node) => node.id === nodeId)?.codeBlocks ?? []).map((block) => block.id)
 
-const promoEdgeIds = (): string[] => presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodeEdges.map((edge) => edge.id)
+const promoEdgeIds = (): string[] => presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).traceNodeEdges.map((edge) => edge.id)
 
 describe("the nodes inside a root block", () => {
   it("makes one node of a root block that is no component, with the effects, the callbacks and the events inside it", () => {
@@ -286,7 +286,7 @@ describe("the nodes inside a root block", () => {
         "})",
       ),
     }
-    const nodes = listJourneyNodes(presentDiagramOf(files, { "src/todos.ts": [rangeAt(2, 10, 2, 12)] }).journeyNodes)
+    const nodes = listTraceNodes(presentDiagramOf(files, { "src/todos.ts": [rangeAt(2, 10, 2, 12)] }).traceNodes)
 
     expect(nodes.map((node) => [node.type, nameOfBlock(node.codeBlocks[0])])).toStrictEqual([
       ["root-variable", "todoRouter"],
@@ -317,7 +317,7 @@ describe("the nodes inside a root block", () => {
         "}",
       ),
     }
-    const nodes = listJourneyNodes(presentDiagramOf(files, PRICING_CHANGE).journeyNodes)
+    const nodes = listTraceNodes(presentDiagramOf(files, PRICING_CHANGE).traceNodes)
 
     expect(nodes.map((node) => [node.type, nameOfBlock(node.codeBlocks[0])])).toStrictEqual(expect.arrayContaining([
       ["state", "useCartStore"],
@@ -384,13 +384,13 @@ describe("the nodes inside a root block", () => {
         "}))",
       ),
     }
-    const nodes = listJourneyNodes(presentDiagramOf(files, PRICING_CHANGE).journeyNodes)
+    const nodes = listTraceNodes(presentDiagramOf(files, PRICING_CHANGE).traceNodes)
 
     expect(nodes.map((node) => [node.type, node.codeBlocks[0].name ?? null])).toStrictEqual([["state", "useCartStore"], ["function", "priceOf"]])
   })
 
   it("does not list the block a node stands for as a trigger label of that node", () => {
-    const nodes = listJourneyNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodes)
+    const nodes = listTraceNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).traceNodes)
     const triggerIdsOf = (nodeId: string): string[] => (nodes.find((node) => node.id === nodeId)?.triggerLabels ?? []).map((trigger) => trigger.codeBlock.id)
 
     const panelTriggerIds = (panelNodes().find((node) => node.id === PANEL_MUTATION)?.triggerLabels ?? []).map((trigger) => trigger.codeBlock.id)
@@ -399,19 +399,19 @@ describe("the nodes inside a root block", () => {
   })
 })
 
-describe("the forms of a Journey Flow Diagram", () => {
+describe("the forms of a Trace Diagram", () => {
   it("stores every block as its id and links the stored form back to the same blocks", () => {
     const diagram = presentDiagramOf(SHOP, ORDERS_CHANGE)
-    const stored = storeJourneyFlowDiagram(diagram)
+    const stored = storeTraceDiagram(diagram)
 
-    expect(stored.journeyNodes[0]).toMatchObject({ id: "src/orders-page.tsx#component@2:1", type: "component", label: null, children: [{ id: "src/order-list.tsx#component@2:1" }] })
-    expect(stored.journeyNodes[1].diffCodeBlockIds).toStrictEqual(["src/orders.ts#function@1:1"])
+    expect(stored.traceNodes[0]).toMatchObject({ id: "src/orders-page.tsx#component@2:1", type: "component", label: null, children: [{ id: "src/order-list.tsx#component@2:1" }] })
+    expect(stored.traceNodes[1].diffCodeBlockIds).toStrictEqual(["src/orders.ts#function@1:1"])
     expect(JSON.parse(JSON.stringify(stored))).toStrictEqual(stored)
-    expect(linkJourneyFlowDiagram(stored, diagram.astCodeGroup, diagram.importGraphGroup)).toStrictEqual(diagram)
+    expect(linkTraceDiagram(stored, diagram.astCodeGroup, diagram.importGraphGroup)).toStrictEqual(diagram)
   })
 
   it("flattens the nodes for an agent: every node at any depth once, with its parent and no children", () => {
-    const flat = flattenJourneyNodes(diagramOf(SHOP, ORDERS_CHANGE)?.journeyNodes ?? [])
+    const flat = flattenTraceNodes(diagramOf(SHOP, ORDERS_CHANGE)?.traceNodes ?? [])
 
     expect(flat.map(({ id, parentId }) => [id, parentId])).toStrictEqual([
       ["src/orders-page.tsx#component@2:1", null],
@@ -424,7 +424,7 @@ describe("the forms of a Journey Flow Diagram", () => {
   })
 
   it("lists every path of a diagram as a line, from a node nothing leads to down to its last node", () => {
-    expect(listJourneyPaths(presentDiagramOf(SHOP, ORDERS_CHANGE))).toStrictEqual([
+    expect(listTracePaths(presentDiagramOf(SHOP, ORDERS_CHANGE))).toStrictEqual([
       "src/orders-page.tsx#component@2:1 → src/order-list.tsx#component@2:1 → src/orders.ts#function@1:1",
       "src/orders-page.tsx#component@2:1 → src/order-list.tsx#component@2:1 → src/order-list.tsx#render-event@3:14 → src/orders.ts#function@1:1",
     ])

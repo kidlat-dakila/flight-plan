@@ -1,5 +1,5 @@
 import { BASE_COMMIT, createFakeGitAdapter, HEAD_COMMIT, type FakeChange } from "@/import-graph/__tests__/fake-git-adapter"
-import { buildBranchCodegraph, buildBranchReviewArtifact, buildCodegraph, storeCodeWalkthrough, storeJourneyFlowDiagram, type BranchReviewArtifact, type Codegraph } from "@/index"
+import { buildBranchCodegraph, buildBranchReviewArtifact, buildCodegraph, storeCodeWalkthrough, storeTraceDiagram, type BranchReviewArtifact, type Codegraph } from "@/index"
 import { STOREFRONT_CHANGE } from "./change-fixture"
 
 const codegraphOf = async (change: FakeChange): Promise<Codegraph> =>
@@ -8,7 +8,7 @@ const codegraphOf = async (change: FakeChange): Promise<Codegraph> =>
 const storedOf = ({ segments }: Codegraph): unknown[] =>
   segments.map((segment) => ({
     ...segment,
-    journeyFlowDiagram: segment.journeyFlowDiagram === null ? null : storeJourneyFlowDiagram(segment.journeyFlowDiagram),
+    traceDiagram: segment.traceDiagram === null ? null : storeTraceDiagram(segment.traceDiagram),
     codeWalkthrough: storeCodeWalkthrough(segment.codeWalkthrough),
   }))
 
@@ -61,15 +61,15 @@ describe("buildBranchReviewArtifact", () => {
       ["aa11bb22", "", "", ["src/logger.ts"]],
       ["cc33dd44", "", "", ["README.md"]],
     ])
-    expect(artifact.segments.map((segment) => [segment.journey === null, segment.blast === null])).toStrictEqual(
-      segments.map((segment) => [segment.journeyFlowDiagram === null, segment.blastRadiusDiagram === null]),
+    expect(artifact.segments.map((segment) => [segment.traceDiagram === null, segment.blastDiagram === null])).toStrictEqual(
+      segments.map((segment) => [segment.traceDiagram === null, segment.blastDiagram === null]),
     )
     expect(artifact.segments.map((segment) => segment.walkthrough.files.map((file) => file.path))).toStrictEqual(
       segments.map((segment) => segment.codeWalkthrough.files.map((file) => file.path)),
     )
   })
 
-  it("keeps the lines of every changed file and of every file a journey shows, with the diff marked on them", async () => {
+  it("keeps the lines of every changed file and of every file a trace shows, with the diff marked on them", async () => {
     const { artifact } = await reviewArtifactOf(STOREFRONT_CHANGE)
     const sourceOf = (path: string): (typeof artifact.sources)[number] | undefined => artifact.sources.find((source) => source.path === path)
 
@@ -117,17 +117,17 @@ describe("buildCodegraph", () => {
     ])
   })
 
-  it("draws the journey of each segment from the top of its chains down to its change, and none for a file no language reads", async () => {
+  it("draws the trace of each segment from the top of its chains down to its change, and none for a file no language reads", async () => {
     const { segments } = await codegraphOf(STOREFRONT_CHANGE)
 
-    expect(segments.map((segment) => segment.journeyFlowDiagram === null)).toStrictEqual([false, false, true])
-    expect(segments[0].journeyFlowDiagram?.journeyNodes.map((node) => [node.id, node.type])).toStrictEqual([
+    expect(segments.map((segment) => segment.traceDiagram === null)).toStrictEqual([false, false, true])
+    expect(segments[0].traceDiagram?.traceNodes.map((node) => [node.id, node.type])).toStrictEqual([
       ["src/ui.ts#function@3:1", "function"],
       ["src/cart.ts#class@3:1", "class"],
       ["src/pricing.ts#function@3:1", "function"],
     ])
-    expect(segments[0].journeyFlowDiagram?.journeyNodes[1].children.map((node) => [node.id, node.type])).toStrictEqual([["src/cart.ts#method@4:3", "method"]])
-    expect(segments[0].journeyFlowDiagram?.journeyNodeEdges.map((edge) => [edge.from, edge.to])).toStrictEqual([
+    expect(segments[0].traceDiagram?.traceNodes[1].children.map((node) => [node.id, node.type])).toStrictEqual([["src/cart.ts#method@4:3", "method"]])
+    expect(segments[0].traceDiagram?.traceNodeEdges.map((edge) => [edge.from, edge.to])).toStrictEqual([
       ["src/ui.ts#function@3:1", "src/cart.ts#class@3:1"],
       ["src/cart.ts#method@4:3", "src/pricing.ts#function@3:1"],
       ["src/cart.ts#class@3:1", "src/cart.ts#method@4:3"],
@@ -137,7 +137,7 @@ describe("buildCodegraph", () => {
   it("draws the blast of a segment from the blocks that use its change: its changed files, the files that use them, and each use once", async () => {
     const { segments } = await codegraphOf(STOREFRONT_CHANGE)
 
-    expect(segments[0].blastRadiusDiagram).toStrictEqual({
+    expect(segments[0].blastDiagram).toStrictEqual({
       nodes: [
         { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null },
         { path: "src/types.ts", diffType: "modified", impactType: null, impactReason: null },
@@ -171,7 +171,7 @@ describe("buildCodegraph", () => {
       head: { ...files, "src/cart.ts": cart(";") },
     })
 
-    expect(segments[0].blastRadiusDiagram?.importBound).toStrictEqual({
+    expect(segments[0].blastDiagram?.importBound).toStrictEqual({
       nodes: [
         { path: "src/cart.ts", diffType: "modified" },
         { path: "src/pricing.ts", diffType: null },
@@ -182,52 +182,52 @@ describe("buildCodegraph", () => {
         { importer: "src/pricing.ts", imported: "src/tax.ts" },
       ],
     })
-    expect(segments[0].blastRadiusDiagram?.nodes.map((node) => node.path)).toStrictEqual(["src/cart.ts", "src/page.ts"])
+    expect(segments[0].blastDiagram?.nodes.map((node) => node.path)).toStrictEqual(["src/cart.ts", "src/page.ts"])
   })
 
   it("gives an entry segment no blast when nothing outside the change uses it, in a change of several segments", async () => {
     const { segments } = await codegraphOf(STOREFRONT_CHANGE)
 
-    expect(segments.map((segment) => segment.blastRadiusDiagram === null)).toStrictEqual([false, true, true])
+    expect(segments.map((segment) => segment.blastDiagram === null)).toStrictEqual([false, true, true])
   })
 
   it("numbers the waypoints through every segment and links each to the diagrams of its own", async () => {
     const { segments } = await codegraphOf(STOREFRONT_CHANGE)
     const waypoints = segments.flatMap((segment) => segment.codeWalkthrough.files).flatMap((file) => file.waypoints.map((waypoint) => ({ path: file.path, ...waypoint })))
 
-    expect(waypoints.map(({ id, path, declaration, category, journeyNodeId }) => ({ id, path, declaration, category, journeyNodeId }))).toStrictEqual([
+    expect(waypoints.map(({ id, path, declaration, category, traceNodeId }) => ({ id, path, declaration, category, traceNodeId }))).toStrictEqual([
       {
         id: "w1",
         path: "src/pricing.ts",
         declaration: "priceOf",
         category: "function",
-        journeyNodeId: "src/pricing.ts#function@3:1",
+        traceNodeId: "src/pricing.ts#function@3:1",
       },
       {
         id: "w2",
         path: "src/types.ts",
         declaration: "Item",
         category: "type",
-        journeyNodeId: null,
+        traceNodeId: null,
       },
       {
         id: "w3",
         path: "src/logger.ts",
         declaration: "log",
         category: "function",
-        journeyNodeId: "src/logger.ts#function@1:1",
+        traceNodeId: "src/logger.ts#function@1:1",
       },
       {
         id: "w4",
         path: "README.md",
         declaration: "Lines 1–3",
         category: "file",
-        journeyNodeId: null,
+        traceNodeId: null,
       },
     ])
   })
 
-  it("gives the only segment of a change a blast, and no journey and no waypoint when its only change is an import", async () => {
+  it("gives the only segment of a change a blast, and no trace and no waypoint when its only change is an import", async () => {
     const pricing = "export const priceOf = (item) => item.price"
     const cart = (imported: string): string => [`import { ${imported} } from "./pricing"`, "", "export const subtotal = (items) => items.map(priceOf)"].join("\n")
     const { segments } = await codegraphOf({
@@ -236,8 +236,8 @@ describe("buildCodegraph", () => {
     })
 
     expect(segments).toHaveLength(1)
-    expect(segments[0].journeyFlowDiagram).toBeNull()
-    expect(segments[0].blastRadiusDiagram).toStrictEqual({
+    expect(segments[0].traceDiagram).toBeNull()
+    expect(segments[0].blastDiagram).toStrictEqual({
       nodes: [{ path: "src/cart.ts", diffType: "modified", impactType: null, impactReason: null }],
       edges: [],
       importBound: { nodes: [{ path: "src/cart.ts", diffType: "modified" }], edges: [] },
@@ -245,7 +245,7 @@ describe("buildCodegraph", () => {
     expect(segments[0].codeWalkthrough.files).toStrictEqual([])
   })
 
-  it("splits a change into the shared segment, with a journey of the shared files alone, and one entry segment per line of change, each with the journey of its own line", async () => {
+  it("splits a change into the shared segment, with a trace of the shared files alone, and one entry segment per line of change, each with the trace of its own line", async () => {
     const page = (name: string, mark: string): string => [`import { format } from "./format"`, `export const ${name} = () => format("${mark}")`].join("\n")
     const main = ["import { pageA } from \"./pageA\"", "import { pageB } from \"./pageB\"", "pageA()", "pageB()"].join("\n")
     const { segments } = await codegraphOf({
@@ -258,12 +258,12 @@ describe("buildCodegraph", () => {
       ["entry", ["src/pageA.ts"]],
       ["entry", ["src/pageB.ts"]],
     ])
-    expect(segments.map((segment) => segment.journeyFlowDiagram?.journeyNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
+    expect(segments.map((segment) => segment.traceDiagram?.traceNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
       ["format"],
       ["pageA", "format"],
       ["pageB", "format"],
     ])
-    expect(segments.map((segment) => segment.blastRadiusDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([
+    expect(segments.map((segment) => segment.blastDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([
       ["src/format.ts", "src/main.ts", "src/pageA.ts", "src/pageB.ts"],
       ["src/pageA.ts", "src/main.ts"],
       ["src/pageB.ts", "src/main.ts"],
@@ -287,7 +287,7 @@ describe("buildCodegraph", () => {
     expect(segments.flatMap((segment) => segment.codeWalkthrough.files.flatMap((file) => file.waypoints.map((waypoint) => waypoint.id)))).toStrictEqual(["w1", "w2", "w3", "w4"])
   })
 
-  it("draws a shared file above the lines of change in every journey, and leaves it and what uses a change only through it out of the Blast Diagram of an entry segment", async () => {
+  it("draws a shared file above the lines of change in every trace, and leaves it and what uses a change only through it out of the Blast Diagram of an entry segment", async () => {
     const page = (name: string, mark: string): string => `export const ${name} = () => "${mark}"`
     const routes = (mark: string): string => ["import { pageA } from \"./pageA\"", "import { pageB } from \"./pageB\"", `export const routes = () => [pageA(), pageB(), "${mark}"]`].join("\n")
     const main = ["import { routes } from \"./routes\"", "routes()"].join("\n")
@@ -301,8 +301,8 @@ describe("buildCodegraph", () => {
       ["entry", ["src/pageA.ts"]],
       ["entry", ["src/pageB.ts"]],
     ])
-    expect(segments.map((segment) => segment.blastRadiusDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([["src/routes.ts", "src/admin.ts", "src/main.ts"], null, null])
-    expect(segments.map((segment) => segment.journeyFlowDiagram?.journeyNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
+    expect(segments.map((segment) => segment.blastDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([["src/routes.ts", "src/admin.ts", "src/main.ts"], null, null])
+    expect(segments.map((segment) => segment.traceDiagram?.traceNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
       ["routes"],
       ["routes", "pageA"],
       ["routes", "pageB"],
@@ -315,8 +315,8 @@ describe("buildCodegraph", () => {
     const { segments } = await codegraphOf({ base: { "pricing.py": pricing("1"), "cart.py": cart }, head: { "pricing.py": pricing("2"), "cart.py": cart } })
 
     expect(segments.map((segment) => [segment.kind, segment.importGraph.map((file) => file.filePath)])).toStrictEqual([["entry", ["cart.py", "pricing.py"]]])
-    expect(segments[0].journeyFlowDiagram?.journeyNodes.map((node) => node.codeBlocks[0].name)).toStrictEqual(["subtotal", "price_of"])
-    expect(segments[0].blastRadiusDiagram?.edges).toStrictEqual([{ importer: "cart.py", imported: "pricing.py" }])
+    expect(segments[0].traceDiagram?.traceNodes.map((node) => node.codeBlocks[0].name)).toStrictEqual(["subtotal", "price_of"])
+    expect(segments[0].blastDiagram?.edges).toStrictEqual([{ importer: "cart.py", imported: "pricing.py" }])
     expect(segments[0].codeWalkthrough.files.flatMap((file) => file.waypoints).map((waypoint) => [waypoint.declaration, waypoint.category])).toStrictEqual([["price_of", "function"]])
   })
 
@@ -331,7 +331,7 @@ describe("buildCodegraph", () => {
     expect(segments.map((segment) => segment.importGraph.filter((file) => file.diffType !== null).map((file) => [file.filePath, file.diffType]))).toStrictEqual([
       [["src/cart.ts", "modified"], ["src/old-pricing.ts", "deleted"]],
     ])
-    expect(segments[0].blastRadiusDiagram?.nodes.map((node) => [node.path, node.diffType])).toStrictEqual([["src/cart.ts", "modified"], ["src/old-pricing.ts", "deleted"]])
+    expect(segments[0].blastDiagram?.nodes.map((node) => [node.path, node.diffType])).toStrictEqual([["src/cart.ts", "modified"], ["src/old-pricing.ts", "deleted"]])
   })
 })
 
@@ -346,10 +346,10 @@ const HOOKED_CHANGE: FakeChange = {
   },
 }
 
-describe("the components of a journey", () => {
+describe("the components of a trace", () => {
   it("are one node, typed as a component, that holds the hook, with the effect of the hook and its callback in the node of that effect", async () => {
     const { segments } = await codegraphOf(HOOKED_CHANGE)
-    const [component, , effect] = segments.flatMap((segment) => segment.journeyFlowDiagram?.journeyNodes ?? [])
+    const [component, , effect] = segments.flatMap((segment) => segment.traceDiagram?.traceNodes ?? [])
 
     expect([component.id, component.type]).toStrictEqual(["src/page.tsx#component@3:1", "component"])
     expect(component.codeBlocks.map((block) => block.type)).toContain("component-effect")

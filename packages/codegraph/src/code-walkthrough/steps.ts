@@ -1,6 +1,6 @@
 import { compareRanges } from "@/code-blocks/source-range"
-import { nameOfBlock } from "@/journey/names"
-import { isBodyBlock, isFoldedValue, isNodeBlock } from "@/journey-flow-diagram/node-blocks"
+import { nameOfBlock } from "@/trace/names"
+import { isBodyBlock, isFoldedValue, isNodeBlock } from "@/trace-diagram/node-blocks"
 import {
   callsCodeOutside,
   holderOf,
@@ -15,7 +15,7 @@ import {
   type StepCandidate,
   type StepFolding,
   type StepRules,
-} from "@/journey-flow-diagram/step-folding"
+} from "@/trace-diagram/step-folding"
 import type { CodeBlock, CodeBlockType } from "@flightplan/configurations"
 
 export interface WaypointStep {

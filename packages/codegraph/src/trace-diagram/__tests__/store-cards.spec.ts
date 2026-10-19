@@ -1,7 +1,7 @@
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
-import { nameOfBlock } from "@/journey/names"
-import { listJourneyNodes } from "@/journey-flow-diagram"
-import type { JourneyFlowDiagram, JourneyNode } from "@flightplan/configurations"
+import { nameOfBlock } from "@/trace/names"
+import { listTraceNodes } from "@/trace-diagram"
+import type { TraceDiagram, TraceNode } from "@flightplan/configurations"
 import { outlineOfNodes, presentDiagramOf } from "./diagram-fixture"
 
 const ZUSTAND_STORE = codeOf(
@@ -93,10 +93,10 @@ const MORE_API = codeOf(
   "export const moreApi = todosApi.injectEndpoints({ endpoints: (build) => ({ getDone: build.query({ query: () => donePath() }) }) })",
 )
 
-const nodeNamed = (diagram: JourneyFlowDiagram, name: string): JourneyNode | undefined =>
-  listJourneyNodes(diagram.journeyNodes).find((node) => nameOfBlock(node.codeBlocks[0]) === name)
+const nodeNamed = (diagram: TraceDiagram, name: string): TraceNode | undefined =>
+  listTraceNodes(diagram.traceNodes).find((node) => nameOfBlock(node.codeBlocks[0]) === name)
 
-const rowNamesOf = (node: JourneyNode | undefined): string[] => (node?.blockLabels ?? []).map(({ codeBlock }) => nameOfBlock(codeBlock))
+const rowNamesOf = (node: TraceNode | undefined): string[] => (node?.blockLabels ?? []).map(({ codeBlock }) => nameOfBlock(codeBlock))
 
 describe("the card of a Zustand store", () => {
   it("is one node, with its state, its actions and a selector handed to its hook as rows", () => {
@@ -155,7 +155,7 @@ describe("the card of a Redux slice", () => {
   it("gives configureStore, which only joins slices, no node", () => {
     const diagram = presentDiagramOf({ "store/cart-slice.ts": SLICE }, { "store/cart-slice.ts": [rangeAt(18, 39, 18, 71), rangeAt(7, 30, 7, 61)] })
 
-    expect(listJourneyNodes(diagram.journeyNodes).map((node) => nameOfBlock(node.codeBlocks[0]))).not.toContain("store")
+    expect(listTraceNodes(diagram.traceNodes).map((node) => nameOfBlock(node.codeBlocks[0]))).not.toContain("store")
   })
 
   it("holds each case of createReducer as a card inside it, named after its action", () => {
@@ -194,7 +194,7 @@ describe("a hook RTK Query makes for an endpoint", () => {
       "export const { useGetTodosQuery, useAddTodoMutation } = todosApi",
     )
     const list = codeOf("import { useAddTodoMutation } from \"./api\"", "export const List = () => {", "  const [add] = useAddTodoMutation()", "  return <ul onClick={() => add(1)} />", "}")
-    const edgeIds = presentDiagramOf({ "src/api.ts": api, "src/list.tsx": list }, { "src/api.ts": [rangeAt(5, 50, 5, 62)] }).journeyNodeEdges.map((edge) => edge.id)
+    const edgeIds = presentDiagramOf({ "src/api.ts": api, "src/list.tsx": list }, { "src/api.ts": [rangeAt(5, 50, 5, 62)] }).traceNodeEdges.map((edge) => edge.id)
 
     expect(edgeIds).toContain("src/list.tsx#component@2:1 -> src/api.ts#property@5:5")
     expect(edgeIds).not.toContain("src/list.tsx#component@2:1 -> src/api.ts#state@2:1")

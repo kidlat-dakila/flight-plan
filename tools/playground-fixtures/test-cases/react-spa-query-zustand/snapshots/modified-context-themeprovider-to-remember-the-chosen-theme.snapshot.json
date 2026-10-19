@@ -109,9 +109,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
               "type": "root-variable",
@@ -309,7 +309,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/components/ThemeProvider.tsx#component-effect@20:3 -> src/components/ThemeProvider.tsx#function@14:1",
               "from": "src/components/ThemeProvider.tsx#component-effect@20:3",
@@ -367,7 +367,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/components/ThemeProvider.tsx",
@@ -415,7 +415,7 @@
                     "lineEnd": 10
                   },
                   "category": "variable",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/components/ThemeProvider.tsx#root-variable@10:1"
                   ],
@@ -433,7 +433,7 @@
                     "lineEnd": 16
                   },
                   "category": "function",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#function@14:1",
+                  "traceNodeId": "src/components/ThemeProvider.tsx#function@14:1",
                   "codeBlockIds": [
                     "src/components/ThemeProvider.tsx#function@14:1",
                     "src/components/ThemeProvider.tsx#condition@15:10",
@@ -453,7 +453,7 @@
                     "lineEnd": 28
                   },
                   "category": "function",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#component@18:1",
+                  "traceNodeId": "src/components/ThemeProvider.tsx#component@18:1",
                   "codeBlockIds": [
                     "src/components/ThemeProvider.tsx#component@18:1",
                     "src/components/ThemeProvider.tsx#state@19:3",
@@ -476,7 +476,7 @@
                         "lineEnd": 19
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/components/ThemeProvider.tsx#component@18:1",
+                      "traceNodeId": "src/components/ThemeProvider.tsx#component@18:1",
                       "codeBlockIds": [
                         "src/components/ThemeProvider.tsx#state@19:3",
                         "src/components/ThemeProvider.tsx#component-effect@19:29",
@@ -496,7 +496,7 @@
                         "lineEnd": 22
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/components/ThemeProvider.tsx#component@18:1",
+                      "traceNodeId": "src/components/ThemeProvider.tsx#component@18:1",
                       "codeBlockIds": [
                         "src/components/ThemeProvider.tsx#component-effect@20:3",
                         "src/components/ThemeProvider.tsx#function@20:13",

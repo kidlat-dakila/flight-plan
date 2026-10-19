@@ -1,7 +1,7 @@
 import { compareRanges } from "@/code-blocks/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
-import type { BlockCard, CardKind, CardPart, CodeBlock, JourneyNode, JourneyNodeEdge } from "@flightplan/configurations"
+import type { BlockCard, CardKind, CardPart, CodeBlock, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 import { isController, isMethodOfClass } from "./class"
 import { filePathOfNode, NOTHING_LEFT_OUT, rootBlockOfNode } from "./nodes"
 import { cardOfKind, listPartParents, nodeIdByBlockIdOf, toEdge } from "./parts"
@@ -46,17 +46,17 @@ const isWrittenSlot = (block: CodeBlock): boolean => (isSlot(block) || isRouterW
 const isDecoratedHandler = (block: CodeBlock): boolean =>
   routeCardOf(block)?.part === HANDLER && (block.parentBlock === null || isMethodOfClass(block)) && (block.cardOwner ?? null) === null
 
-const groupKeyOf = (node: JourneyNode): string | null => {
+const groupKeyOf = (node: TraceNode): string | null => {
   const root = rootBlockOfNode(node)
   return isRegistration(root) || isDecoratedHandler(root) ? (routeCardOf(root)?.groupKey ?? null) : null
 }
 
 export const routeGroupIdOf = (filePath: string, groupKey: string): string => `${filePath}${GROUP_ID_MARK}${groupKey}`
 
-const compareNodes = (one: JourneyNode, two: JourneyNode): number =>
+const compareNodes = (one: TraceNode, two: TraceNode): number =>
   filePathOfNode(one).localeCompare(filePathOfNode(two)) || compareRanges(rootBlockOfNode(one).lineOfCodeRangeReference[0], rootBlockOfNode(two).lineOfCodeRangeReference[0])
 
-const toGroup = (groupKey: string, keyed: readonly JourneyNode[]): NodeGroup => {
+const toGroup = (groupKey: string, keyed: readonly TraceNode[]): NodeGroup => {
   const members = keyed.filter((node) => isRegistration(rootBlockOfNode(node))).sort(compareNodes)
   const codeBlocks = members.length === 0 ? [rootBlockOfNode(keyed[0])] : firstOfEach(members.flatMap((node) => node.codeBlocks), (block) => block.id)
   return {
@@ -76,7 +76,7 @@ const toGroup = (groupKey: string, keyed: readonly JourneyNode[]): NodeGroup => 
   }
 }
 
-const groupRouteNodes = (nodes: readonly JourneyNode[]): NodeGroup[] => {
+const groupRouteNodes = (nodes: readonly TraceNode[]): NodeGroup[] => {
   const keyed = nodes.flatMap((node) => {
     const groupKey = groupKeyOf(node)
     return groupKey === null ? [] : [{ groupKey, node }]
@@ -84,9 +84,9 @@ const groupRouteNodes = (nodes: readonly JourneyNode[]): NodeGroup[] => {
   return [...groupBy(keyed, ({ groupKey }) => groupKey)].map(([groupKey, entries]) => toGroup(groupKey, entries.map(({ node }) => node)))
 }
 
-const isRouteGroup = (node: JourneyNode): boolean => node.type === ROUTE_TYPE && routeCardOf(rootBlockOfNode(node)) !== null
+const isRouteGroup = (node: TraceNode): boolean => node.type === ROUTE_TYPE && routeCardOf(rootBlockOfNode(node)) !== null
 
-const groupIdByKeyOf = (nodes: readonly JourneyNode[]): ReadonlyMap<string, string> =>
+const groupIdByKeyOf = (nodes: readonly TraceNode[]): ReadonlyMap<string, string> =>
   new Map(nodes.filter(isRouteGroup).map((node) => [routeCardOf(rootBlockOfNode(node))?.groupKey ?? "", node.id] as const))
 
 const listDecoratedParents = ({ nodes }: CardContext): ParentIdById => {
@@ -119,7 +119,7 @@ const slotNodeIdsOf = (slot: CodeBlock, nodeIdByRootId: ReadonlyMap<string, stri
     return nodeId === undefined ? [] : [nodeId]
   })
 
-const listRegistrations = (nodes: readonly JourneyNode[]): CodeBlock[] =>
+const listRegistrations = (nodes: readonly TraceNode[]): CodeBlock[] =>
   firstOfEach(nodes.filter(isRouteGroup).flatMap((node) => node.codeBlocks.filter(isRegistration)), (block) => block.id)
 
 interface MiddlewareStep {
@@ -133,7 +133,7 @@ const isOwnedMiddleware = (block: CodeBlock): boolean => {
   return routeCardOf(block)?.part === MIDDLEWARE && owner !== null && isDecoratedHandler(owner)
 }
 
-const listOwnedMiddlewareSteps = (nodes: readonly JourneyNode[], nodeIdByRootId: ReadonlyMap<string, string>): MiddlewareStep[] =>
+const listOwnedMiddlewareSteps = (nodes: readonly TraceNode[], nodeIdByRootId: ReadonlyMap<string, string>): MiddlewareStep[] =>
   nodes.flatMap((node) =>
     node.codeBlocks.filter(isOwnedMiddleware).flatMap((slot) =>
       namedTargetsOf(slot).flatMap((target) => {
@@ -141,7 +141,7 @@ const listOwnedMiddlewareSteps = (nodes: readonly JourneyNode[], nodeIdByRootId:
         return middlewareId === undefined ? [] : [{ groupId: node.id, middlewareId, handlerId: node.id }]
       })))
 
-const listRegisteredMiddlewareSteps = (nodes: readonly JourneyNode[], nodeIdByRootId: ReadonlyMap<string, string>): MiddlewareStep[] => {
+const listRegisteredMiddlewareSteps = (nodes: readonly TraceNode[], nodeIdByRootId: ReadonlyMap<string, string>): MiddlewareStep[] => {
   const nodeIdByBlockId = nodeIdByBlockIdOf(nodes)
   return listRegistrations(nodes).flatMap((registration) => {
     const slots = registration.childrenBlocks.filter(isSlot)
@@ -156,15 +156,15 @@ const listMiddlewareSteps = ({ nodes }: CardContext): MiddlewareStep[] => {
   return [...listRegisteredMiddlewareSteps(nodes, nodeIdByRootId), ...listOwnedMiddlewareSteps(nodes, nodeIdByRootId)]
 }
 
-const listMiddlewareEdges = (context: CardContext): JourneyNodeEdge[] =>
+const listMiddlewareEdges = (context: CardContext): TraceNodeEdge[] =>
   listMiddlewareSteps(context).map(({ middlewareId, handlerId }) => toEdge(middlewareId, handlerId))
 
 const routePathsAt = (block: CodeBlock): string[] =>
   [...new Set([block, ...block.usedBy].filter(isRouterWideMiddleware).flatMap((middleware) => middleware.card?.routePaths ?? []))]
 
-const isPageNode = (node: JourneyNode): boolean => routeCardOf(rootBlockOfNode(node))?.part === PAGE
+const isPageNode = (node: TraceNode): boolean => routeCardOf(rootBlockOfNode(node))?.part === PAGE
 
-const listRouterWideEdges = ({ nodes }: CardContext): JourneyNodeEdge[] => {
+const listRouterWideEdges = ({ nodes }: CardContext): TraceNodeEdge[] => {
   const reached = nodes.filter((node) => isRouteGroup(node) || isPageNode(node))
   const reachedIdsByPath = groupBy(reached, (node) => routeCardOf(rootBlockOfNode(node))?.groupKey ?? "")
   return nodes.flatMap((node) =>
@@ -172,7 +172,7 @@ const listRouterWideEdges = ({ nodes }: CardContext): JourneyNodeEdge[] => {
       (reachedIdsByPath.get(path) ?? []).filter((target) => target.id !== node.id).map((target) => toEdge(node.id, target.id))))
 }
 
-const listControllerEdges = ({ nodes }: CardContext): JourneyNodeEdge[] => {
+const listControllerEdges = ({ nodes }: CardContext): TraceNodeEdge[] => {
   const nodeIdByRootId = new Map(nodes.map((node) => [rootBlockOfNode(node).id, node.id] as const))
   const groupIdByKey = groupIdByKeyOf(nodes)
   return nodes.flatMap((node) => {
@@ -203,7 +203,7 @@ const routerOf = (registration: CodeBlock): CodeBlock | null =>
       ? [symbol.codeBlockReference]
       : [])[0] ?? null
 
-const registrationsOfNode = (node: JourneyNode): CodeBlock[] => {
+const registrationsOfNode = (node: TraceNode): CodeBlock[] => {
   const root = rootBlockOfNode(node)
   if (isRouteGroup(node)) return node.codeBlocks.filter(isRegistration)
   return isDecoratedHandler(root) ? [root] : []
@@ -222,10 +222,10 @@ const listRouterSteps = ({ nodes }: CardContext): RouterStep[] => {
   })
 }
 
-const listRouterEdges = (context: CardContext): JourneyNodeEdge[] =>
+const listRouterEdges = (context: CardContext): TraceNodeEdge[] =>
   firstOfEach(listRouterSteps(context).map(({ routerId, routeCardId }) => toEdge(routerId, routeCardId)), (edge) => edge.id)
 
-const listRouteAddedEdges = (context: CardContext): JourneyNodeEdge[] =>
+const listRouteAddedEdges = (context: CardContext): TraceNodeEdge[] =>
   [...listMiddlewareEdges(context), ...listRouterWideEdges(context), ...listControllerEdges(context), ...listRouterEdges(context)]
 
 const listControllerToHandlerIds = ({ nodes }: CardContext): string[] => {

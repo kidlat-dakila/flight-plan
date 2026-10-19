@@ -9,8 +9,8 @@ import {
   BLAST_POSTER,
   BLAST_VIDEOS,
   CUSTOMIZE_SHOT,
-  JOURNEY_POSTER,
-  JOURNEY_VIDEOS,
+  TRACE_POSTER,
+  TRACE_VIDEOS,
   FILTERS_POSTER,
   FILTERS_VIDEOS,
   TOOLTIPS_POSTER,
@@ -52,13 +52,13 @@ const LOCAL_FACTS = [
 
   <div class="page-column">
     <FeatureSection
-      id="journey-flow"
+      id="trace-flow"
       title="See how the change runs."
       subtitle="From the first trigger to the changed line, on one board."
-      summary="Flight Plan draws a Journey Flow Diagram from the syntax trees: what starts the code, which functions it passes through, and where it reaches your change. Your agent labels each step in plain words, so you can follow the behaviour without jumping between files."
+      summary="Flight Plan draws a Trace Diagram from the syntax trees: what starts the code, which functions it passes through, and where it reaches your change. Your agent labels each step in plain words, so you can follow the behaviour without jumping between files."
       isFlipped={false}
     >
-      <FeatureVideo poster={JOURNEY_POSTER} videos={JOURNEY_VIDEOS} sizes={FEATURE_IMAGE_SIZES} />
+      <FeatureVideo poster={TRACE_POSTER} videos={TRACE_VIDEOS} sizes={FEATURE_IMAGE_SIZES} />
     </FeatureSection>
 
     <FeatureSection

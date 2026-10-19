@@ -50,9 +50,9 @@ const fileOrderOf = (files: readonly OrderedFile[]) =>
     canMoveDown: position < files.length - 1,
   }))
 
-export const NO_OFFERS = { journey: null, blast: null, findings: null }
+export const NO_OFFERS = { traceDiagram: null, blastDiagram: null, findings: null }
 
-export const offerOf = (section: "journey" | "blast" | "findings", heading: string) => ({
+export const offerOf = (section: "traceDiagram" | "blastDiagram" | "findings", heading: string) => ({
   section,
   anchorId: `stock-${section}`,
   heading,
@@ -61,7 +61,7 @@ export const offerOf = (section: "journey" | "blast" | "findings", heading: stri
   generatingLabel: "Generating",
 })
 
-const ABSENT_JOURNEY = { anchorId: "", heading: "Journey Flow Diagram", diagram: null }
+const ABSENT_TRACE = { anchorId: "", heading: "Trace Diagram", diagram: null }
 
 const segment = (id: string, title: string | null, position: number, files: readonly OrderedFile[]) => ({
   id,
@@ -86,8 +86,8 @@ const segment = (id: string, title: string | null, position: number, files: read
     isDraft: false,
     unwrittenLabel: "Not written yet.",
   },
-  journey: { ...ABSENT_JOURNEY, anchorId: `${id}-journey-flow-diagram` },
-  blast: null,
+  traceDiagram: { ...ABSENT_TRACE, anchorId: `${id}-trace-diagram` },
+  blastDiagram: null,
   offers: NO_OFFERS,
   walkthrough: {
     anchorId: `${id}-code-walkthrough`,
@@ -412,7 +412,7 @@ export const twoFilePage = {
 
 export const blastPage = {
   ...artifactPage,
-  segments: artifactPage.segments.map((held) => (held.id === "stock" ? { ...held, blast: stockBlast } : held)),
+  segments: artifactPage.segments.map((held) => (held.id === "stock" ? { ...held, blastDiagram: stockBlast } : held)),
 }
 
 export const unassignedFiles = {

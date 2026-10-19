@@ -301,9 +301,9 @@ The globals of the platform need no pattern. `fetch`, `EventSource`, `process.en
 
 ## A call that is a node of its own
 
-A Journey Flow Diagram has one node per root block, and a root block holds nodes of its own only as its card says. A library that declares several operations in one value breaks that rule: a tRPC router is one `root-variable`, and each procedure in it is called on an occasion of its own, from another page. Each procedure is drawn inside the [tRPC router card](../journey-flow-diagram/libraries/trpc.md) of its router.
+A Trace Diagram has one node per root block, and a root block holds nodes of its own only as its card says. A library that declares several operations in one value breaks that rule: a tRPC router is one `root-variable`, and each procedure in it is called on an occasion of its own, from another page. Each procedure is drawn inside the [tRPC router card](../trace-diagram/libraries/trpc.md) of its router.
 
-`isOwnNode: true` on a call pattern says each such call is a node of its own. The block of the call carries it in its `catalogue`, and [Nodes](../journey-flow-diagram.md#nodes) reads it. What is written inside the call stays in that node: its callback, and the effects and callbacks inside that.
+`isOwnNode: true` on a call pattern says each such call is a node of its own. The block of the call carries it in its `catalogue`, and [Nodes](../trace-diagram.md#nodes) reads it. What is written inside the call stays in that node: its callback, and the effects and callbacks inside that.
 
 ```ts
 { kind: "call", name: "query", slots: [{ at: 0, runs: "resolver" }], isOwnNode: true }
@@ -318,7 +318,7 @@ export const todoRouter = createTRPCRouter({
 
 A call written as the value of a key is named after that key, so the two nodes are `list` and `update`, not `query` and `mutation`. `query`, `mutation` and `subscription` of `initTRPC.create` are the only patterns that say it.
 
-A store declares its actions in one value too, with no call to name them: they are functions written under the keys of what a callback returns. They are no nodes. `holdsActions: true` on a slot says each function written under a key of what the callback in that slot returns is an action of the store, a row under Actions of its [state card](../journey-flow-diagram/libraries/zustand.md), named after its key. The first argument of `create`, of `createStore`, of `persist` and of `devtools` of Zustand say it.
+A store declares its actions in one value too, with no call to name them: they are functions written under the keys of what a callback returns. They are no nodes. `holdsActions: true` on a slot says each function written under a key of what the callback in that slot returns is an action of the store, a row under Actions of its [state card](../trace-diagram/libraries/zustand.md), named after its key. The first argument of `create`, of `createStore`, of `persist` and of `devtools` of Zustand say it.
 
 ```ts
 { kind: "factory", name: "create", slots: [{ at: 0, runs: "in-place", holdsActions: true }], makes: "state" }
@@ -449,7 +449,7 @@ interface CallPattern {
   eventAt?: SlotPosition               // where the name of an event, a channel or a queue is
   provides?: ContextProvision
   reads?: ContextRead
-  isOwnNode?: boolean                  // the call is a node of its own in a Journey Flow Diagram, wherever it is written
+  isOwnNode?: boolean                  // the call is a node of its own in a Trace Diagram, wherever it is written
   returnsAt?: SlotPosition             // the call returns the value at this place, as async_to_sync(fn) returns fn wrapped
 }
 
@@ -722,7 +722,7 @@ A key is a path of names through the configuration, `*` for any name, and `name(
 | Source | Holds | Kept in |
 |---|---|---|
 | The built-in catalogue | The patterns of the libraries Flight Plan knows, one file of data per language and category | The codegraph package, `packages/codegraph` |
-| A library file | The patterns of a library that needs handling of its own, in the same shape, with the `readCards` that says which card of the Journey Flow Diagram each of its blocks belongs to, as [Which card a block belongs to](code-blocks.md#which-card-a-block-belongs-to) says. Express, Fastify, Next.js, NestJS, tRPC, Zustand, Pinia, Redux, RTK Query, MobX, Valtio, XState, Effector and Nano Stores are files of JavaScript, Flask, FastAPI and Django files of Python. The modules a language ships with are files of that language too: Node.js `fs`, `child_process`, `worker_threads`, `crypto`, `events` and `util`, and Python `builtins`, `pathlib`, `shutil`, `subprocess`, `multiprocessing`, `hashlib`, `hmac`, `secrets` and `functools`. A library whose routes come from the path of a file, as Next.js, also has a `readExportCards` that says the card of each block its file patterns name. A library is in the catalogue or in a file of its own, never both. | The codegraph package, one file per library in the folder of its language |
+| A library file | The patterns of a library that needs handling of its own, in the same shape, with the `readCards` that says which card of the Trace Diagram each of its blocks belongs to, as [Which card a block belongs to](code-blocks.md#which-card-a-block-belongs-to) says. Express, Fastify, Next.js, NestJS, tRPC, Zustand, Pinia, Redux, RTK Query, MobX, Valtio, XState, Effector and Nano Stores are files of JavaScript, Flask, FastAPI and Django files of Python. The modules a language ships with are files of that language too: Node.js `fs`, `child_process`, `worker_threads`, `crypto`, `events` and `util`, and Python `builtins`, `pathlib`, `shutil`, `subprocess`, `multiprocessing`, `hashlib`, `hmac`, `secrets` and `functools`. A library whose routes come from the path of a file, as Next.js, also has a `readExportCards` that says the card of each block its file patterns name. A library is in the catalogue or in a file of its own, never both. | The codegraph package, one file per library in the folder of its language |
 | The repository's catalogue | The patterns of what the built-in one does not cover: an uncommon framework, the repository's own event bus, where its test files and story files are | The configuration of the repository |
 
 The repository's catalogue is written in setup. An agent reads the frameworks of the repository and proposes patterns for the gaps.

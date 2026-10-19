@@ -10,7 +10,7 @@ A prompt configuration is the set of instructions the agent follows when it writ
 | Preset | Best for | What changes |
 |---|---|---|
 | **Standard** | General pull requests | The full review, for a reviewer who knows the codebase. Every section is on. |
-| **Minimal** | Saving tokens | The agent writes in fragments: few words and no filler. Journey Flow Diagrams, the Blast Diagram and the findings are off. |
+| **Minimal** | Saving tokens | The agent writes in fragments: few words and no filler. Trace Diagrams, the Blast Diagram and the findings are off. |
 | **Onboardee** | Engineers new to the company and the codebase | The full review, with more about how the codebase works. Hovering a name in the code shows what it is, what it does and where the codebase uses it. |
 | **Unfamiliar territory** | A language or framework you don't know well | The full review, with more about how the technology works. Hovering a name shows what it is, for the repository's code, the libraries it imports and the language itself. |
 
@@ -40,8 +40,8 @@ Each configuration has two kinds of setting:
 
 ![A copy of Standard open in the editor, on its sections](../media/configuration-editor-light.webp)
 
-- **Sections.** Switch the Journey Flow Diagrams, the Blast Diagram and the findings on or off, and pick which kinds of name the agent describes for [context code blocks](/docs/review-artifacts/parts/context-code-blocks/): **Code of the repository**, **Libraries** and **Language**.
-- **Fields.** The index on the left lists every part the agent writes, grouped under **Voice**, **Context**, **Journey Flow Diagram**, **Blast Diagram**, **Findings**, **Code Walkthrough** and **Context code blocks**. Open a field to edit **How to write it**, and for a field with fixed options, what each option means. Marks in the index show which fields you changed.
+- **Sections.** Switch the Trace Diagrams, the Blast Diagram and the findings on or off, and pick which kinds of name the agent describes for [context code blocks](/docs/review-artifacts/parts/context-code-blocks/): **Code of the repository**, **Libraries** and **Language**.
+- **Fields.** The index on the left lists every part the agent writes, grouped under **Voice**, **Context**, **Trace Diagram**, **Blast Diagram**, **Findings**, **Code Walkthrough** and **Context code blocks**. Open a field to edit **How to write it**, and for a field with fixed options, what each option means. Marks in the index show which fields you changed.
 
 A changed field shows the instruction it started from, and a button to reset it. Your own configurations can be renamed and deleted. You can change a preset too, but a release of Flight Plan can overwrite what you change in it, so duplicate it to keep your changes.
 

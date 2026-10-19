@@ -49,7 +49,7 @@ export interface PlacedEdge extends LayoutEdge {
   readonly toRowPoints: readonly Point[] | null
 }
 
-export interface JourneyLayout {
+export interface TraceLayout {
   readonly width: number
   readonly height: number
   readonly nodes: readonly PlacedNode[]
@@ -461,7 +461,7 @@ const placeEdges = (links: readonly Link[], placement: Placement): PlacedEdge[] 
   return routes.map((route) => toPlacedEdge(route, routes, placement))
 }
 
-export const layoutJourney = (nodes: readonly LayoutNode[], edges: readonly LayoutEdge[]): JourneyLayout => {
+export const layoutTrace = (nodes: readonly LayoutNode[], edges: readonly LayoutEdge[]): TraceLayout => {
   if (nodes.length === 0) return { width: MARGIN * HALF, height: MARGIN * HALF, nodes: [], rows: [], edges: [] }
   const links = linksOf(nodes, edges)
   const columnById = columnsOf(nodes, links)

@@ -1,7 +1,7 @@
 import { useId, useState, type ReactNode } from "react"
 import { useCardForm } from "@/routes/pr-reviews/$repoName/-hooks/use-card-form"
 import { useFileCode } from "@/routes/pr-reviews/$repoName/-hooks/use-file-code"
-import type { CardChange, CardContent, CardForm } from "@/routes/pr-reviews/$repoName/-hooks/use-journey-editing"
+import type { CardChange, CardContent, CardForm } from "@/routes/pr-reviews/$repoName/-hooks/use-trace-editing"
 import Button from "@flightplan/ui/blocks/button"
 import Dialog, { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@flightplan/ui/blocks/dialog"
 import Input from "@flightplan/ui/blocks/input"

@@ -1,7 +1,7 @@
 import { classificationOfType, diffKindsOf } from "@flightplan/codegraph"
-import type { CodeBlock, CodeBlockClassification, CodeBlockType, JourneyFlowDiagram, JourneyNode, SourceFile } from "@flightplan/configurations"
+import type { CodeBlock, CodeBlockClassification, CodeBlockType, TraceDiagram, TraceNode, SourceFile } from "@flightplan/configurations"
 
-export interface MockJourneyNode {
+export interface MockTraceNode {
   readonly id: string
   readonly type: CodeBlockType
   readonly path: string
@@ -11,7 +11,7 @@ export interface MockJourneyNode {
   readonly description: string | null
   readonly triggers?: readonly MockTrigger[]
   readonly listedBlocks?: readonly MockTrigger[]
-  readonly children?: readonly MockJourneyNode[]
+  readonly children?: readonly MockTraceNode[]
 }
 
 export interface MockTrigger {
@@ -21,7 +21,7 @@ export interface MockTrigger {
   readonly label: string | null
 }
 
-export type MockJourneyEdge = readonly [from: string, to: string]
+export type MockTraceEdge = readonly [from: string, to: string]
 
 const FIRST_COLUMN = 1
 const FIRST_LINE = 1
@@ -69,7 +69,7 @@ const blockOf = ({ id, type, path, name, lines: [lineStart, lineEnd], isChanged 
   }
 }
 
-const nodeOf = (mock: MockJourneyNode, sources: readonly SourceFile[]): JourneyNode => {
+const nodeOf = (mock: MockTraceNode, sources: readonly SourceFile[]): TraceNode => {
   const lines = linesOf(sources, mock.path, mock.declaration)
   const block = blockOf({ id: mock.id, type: mock.type, path: mock.path, name: mock.declaration, lines, isChanged: mock.isChanged })
   const triggerLabels = (mock.triggers ?? []).map(({ codeBlockId, type, name, label }) => ({
@@ -93,16 +93,16 @@ const nodeOf = (mock: MockJourneyNode, sources: readonly SourceFile[]): JourneyN
   }
 }
 
-const listNodes = (nodes: readonly JourneyNode[]): JourneyNode[] => nodes.flatMap((node) => [node, ...listNodes(node.children)])
+const listNodes = (nodes: readonly TraceNode[]): TraceNode[] => nodes.flatMap((node) => [node, ...listNodes(node.children)])
 
-export const mockJourney = (
+export const mockTrace = (
   sources: readonly SourceFile[],
-  nodes: readonly MockJourneyNode[],
-  edges: readonly MockJourneyEdge[],
+  nodes: readonly MockTraceNode[],
+  edges: readonly MockTraceEdge[],
   description: string | null = null,
-): JourneyFlowDiagram => {
-  const journeyNodes = nodes.map((node) => nodeOf(node, sources))
-  const everyNode = listNodes(journeyNodes)
+): TraceDiagram => {
+  const traceNodes = nodes.map((node) => nodeOf(node, sources))
+  const everyNode = listNodes(traceNodes)
   const codeBlocks = everyNode.flatMap((node) => node.codeBlocks)
   return {
     astCodeGroup: {
@@ -116,7 +116,7 @@ export const mockJourney = (
     },
     importGraphGroup: [],
     description,
-    journeyNodes,
-    journeyNodeEdges: edges.map(([from, to]) => ({ id: [from, to].join(EDGE_ID_SEPARATOR), from, to })),
+    traceNodes,
+    traceNodeEdges: edges.map(([from, to]) => ({ id: [from, to].join(EDGE_ID_SEPARATOR), from, to })),
   }
 }

@@ -4,7 +4,7 @@ import { createArtifact, createSegment, PRICE_PATH } from "@/procedures/get-revi
 const REPORT_PATH = "src/report.ts"
 const CART_PATH = "src/cart.ts"
 
-const blast = {
+const blastDiagram = {
   nodes: [
     { path: CART_PATH, diffType: null, impactType: "breaks" as const, impactReason: "It assumes a price is never negative." },
     { path: PRICE_PATH, diffType: "modified" as const, impactType: null, impactReason: null },
@@ -17,11 +17,11 @@ const blast = {
 }
 
 const artifact = createArtifact({
-  segments: [createSegment({ id: "stock", blast }), createSegment({ id: "cart", blast }), createSegment({ id: "bare", blast: null })],
+  segments: [createSegment({ id: "stock", blastDiagram }), createSegment({ id: "cart", blastDiagram }), createSegment({ id: "bare", blastDiagram: null })],
 })
 
 const nodesOf = (planned: ReturnType<typeof planBlastEdit>, path: string): unknown =>
-  planned.kind === "planned" ? planned.artifact.segments.map((segment) => segment.blast?.nodes.find((node) => node.path === path) ?? null) : null
+  planned.kind === "planned" ? planned.artifact.segments.map((segment) => segment.blastDiagram?.nodes.find((node) => node.path === path) ?? null) : null
 
 describe("planBlastEdit", () => {
   it("writes the impact type and the trimmed reason on the file in every Blast Diagram that holds it, and keeps a code link the artifact resolves", () => {
@@ -36,7 +36,7 @@ describe("planBlastEdit", () => {
       impactReason: "It sums [`priceOf`](code:src/price.ts#priceOf), which can now be negative.",
     }
     expect(nodesOf(planned, REPORT_PATH)).toStrictEqual([written, written, null])
-    expect(nodesOf(planned, CART_PATH)).toStrictEqual([blast.nodes[0], blast.nodes[0], null])
+    expect(nodesOf(planned, CART_PATH)).toStrictEqual([blastDiagram.nodes[0], blastDiagram.nodes[0], null])
   })
 
   it("drops the reason of a file that becomes unaffected", () => {

@@ -8,7 +8,7 @@ How the [codegraph](../../codegraph.md) reads a Vue single-file component. This 
 | **Grammar** | tree-sitter `html` for the file, then `typescript` or `tsx` for each script block and each template expression |
 | **Reader of the import graph** | The script reader, shared with [TypeScript](typescript.md) and [JavaScript and JSX](jsx.md) |
 | **Reader of the AST graph** | `readVueSyntax` |
-| **Journey Flow Diagram** | The same as [JavaScript and JSX](jsx.md#journey-flow-diagram): the component of a file is a `component` node, the components its template renders are inside it, and a listener of the template is a trigger label and a node of its own, like an effect of the setup script |
+| **Trace Diagram** | The same as [JavaScript and JSX](jsx.md#trace-diagram): the component of a file is a `component` node, the components its template renders are inside it, and a listener of the template is a trigger label and a node of its own, like an effect of the setup script |
 
 ## A Vue file is three languages
 

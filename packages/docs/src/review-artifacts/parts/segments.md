@@ -3,7 +3,7 @@ title: Segments
 description: How Flight Plan splits a change into parts you can read one at a time.
 ---
 
-A large change is easier to read one path at a time. Flight Plan splits the change into segments, and each segment gets its own Context, Journey Flow Diagram, Blast Diagram and Code Walkthrough.
+A large change is easier to read one path at a time. Flight Plan splits the change into segments, and each segment gets its own Context, Trace Diagram, Blast Diagram and Code Walkthrough.
 
 ![Two segments of a review, each with its own heading](../../../media/segments-light.webp)
 

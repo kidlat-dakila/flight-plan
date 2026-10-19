@@ -8,7 +8,7 @@ import {
   buildBlast,
   buildCodeDefinitions,
   buildCodeLink,
-  buildJourney,
+  buildTrace,
   buildWalkthrough,
   collectCodeLinkIds,
   isSteppedWaypoint,
@@ -153,7 +153,7 @@ const buildSegment = (
     context,
   )
   const fileAnchorIdByPath = new Map(walkthrough.files.map((file) => [file.path, file.anchorId] as const))
-  const journey = buildJourney(segment, scope, places, context)
+  const traceDiagram = buildTrace(segment, scope, places, context)
   return {
     id: segment.id,
     anchorId: `segment-${segment.id}`,
@@ -163,12 +163,12 @@ const buildSegment = (
     detailLabel: isSegmented ? outline.detailLabel : null,
     outline,
     context: buildContext(segment, scope, context),
-    journey,
-    blast: buildBlast(segment, scope, fileAnchorIdByPath, context),
+    traceDiagram,
+    blastDiagram: buildBlast(segment, scope, fileAnchorIdByPath, context),
     walkthrough: attachThreads(walkthrough, discussion),
     offers: buildGenerationOffers(settings.sections, {
       scope,
-      journeyAnchorId: journey.anchorId,
+      traceAnchorId: traceDiagram.anchorId,
       walkthroughAnchorId: walkthrough.anchorId,
       isSegmented,
     }),

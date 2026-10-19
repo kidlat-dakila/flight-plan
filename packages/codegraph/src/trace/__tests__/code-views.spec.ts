@@ -1,5 +1,5 @@
 import { createViewContext, PRICE_PATH } from "@/__tests__/review-fixture"
-import { buildNodeCodeViews } from "@/journey/code-views"
+import { buildNodeCodeViews } from "@/trace/code-views"
 import type { WaypointPlace } from "@/walkthrough/build"
 import type { FileRow, LineSpan, WaypointView } from "@flightplan/configurations"
 

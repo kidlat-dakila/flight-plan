@@ -78,16 +78,16 @@ interface Imports {
   readonly importersOf: Links
 }
 
-const importsOf = (blast: Blast): Imports => {
-  const positionByPath = new Map(blast.nodes.map((node, position) => [node.path, position] as const))
-  const pairs = blast.edges.flatMap((edge) => {
+const importsOf = (blastDiagram: Blast): Imports => {
+  const positionByPath = new Map(blastDiagram.nodes.map((node, position) => [node.path, position] as const))
+  const pairs = blastDiagram.edges.flatMap((edge) => {
     const importer = positionByPath.get(edge.importer)
     const imported = positionByPath.get(edge.imported)
     return importer === undefined || imported === undefined || importer === imported ? [] : [{ importer, imported }]
   })
   return {
-    importedOf: blast.nodes.map((_node, position) => pairs.filter((pair) => pair.importer === position).map((pair) => pair.imported)),
-    importersOf: blast.nodes.map((_node, position) => pairs.filter((pair) => pair.imported === position).map((pair) => pair.importer)),
+    importedOf: blastDiagram.nodes.map((_node, position) => pairs.filter((pair) => pair.importer === position).map((pair) => pair.imported)),
+    importersOf: blastDiagram.nodes.map((_node, position) => pairs.filter((pair) => pair.imported === position).map((pair) => pair.importer)),
   }
 }
 
@@ -172,11 +172,11 @@ const placeColumn = (positions: readonly number[], footprints: readonly Footprin
   return positions.map((position, row) => [position, { x: columnCentre, y: tops[row] + radii[position] }] as const)
 }
 
-export const layoutBlast = (blast: Blast, labelByPath: ReadonlyMap<string, string>): BlastLayout => {
-  if (blast.nodes.length === 0) return { width: BOARD_MARGIN * BOTH_SIDES, height: BOARD_MARGIN * BOTH_SIDES, nodes: [], edges: [] }
-  const imports = importsOf(blast)
-  const radii = blast.nodes.map((_node, position) => radiusOf(imports.importedOf[position].length + imports.importersOf[position].length))
-  const footprints = blast.nodes.map((node, position) => footprintOf(radii[position], labelByPath.get(node.path) ?? node.path))
+export const layoutBlast = (blastDiagram: Blast, labelByPath: ReadonlyMap<string, string>): BlastLayout => {
+  if (blastDiagram.nodes.length === 0) return { width: BOARD_MARGIN * BOTH_SIDES, height: BOARD_MARGIN * BOTH_SIDES, nodes: [], edges: [] }
+  const imports = importsOf(blastDiagram)
+  const radii = blastDiagram.nodes.map((_node, position) => radiusOf(imports.importedOf[position].length + imports.importersOf[position].length))
+  const footprints = blastDiagram.nodes.map((node, position) => footprintOf(radii[position], labelByPath.get(node.path) ?? node.path))
   const rowsByColumn = orderRows(rowsByColumnOf(columnsOf(imports)), imports)
   const columnLefts = columnLeftsOf(rowsByColumn, footprints)
   const columnHalfWidths = rowsByColumn.map((rows) => highestOf(rows.map((position) => footprints[position].halfWidth)))
@@ -184,7 +184,7 @@ export const layoutBlast = (blast: Blast, labelByPath: ReadonlyMap<string, strin
   const pointByPosition = new Map(
     rowsByColumn.flatMap((rows, column) => placeColumn(rows, footprints, radii, columnLefts[column] + columnHalfWidths[column], boardHeight)),
   )
-  const nodes = blast.nodes.map((node, position) => {
+  const nodes = blastDiagram.nodes.map((node, position) => {
     const point = pointByPosition.get(position) ?? { x: 0, y: 0 }
     return { node, radius: radii[position], x: Math.round(point.x + BOARD_MARGIN), y: Math.round(point.y + BOARD_MARGIN) }
   })
@@ -194,6 +194,6 @@ export const layoutBlast = (blast: Blast, labelByPath: ReadonlyMap<string, strin
     width: Math.round(columnLefts[lastColumn] + columnHalfWidths[lastColumn] * BOTH_SIDES + BOARD_MARGIN * BOTH_SIDES),
     height: Math.round(boardHeight + BOARD_MARGIN * BOTH_SIDES),
     nodes,
-    edges: blast.edges.flatMap((edge) => placeEdge(edge, nodeByPath)),
+    edges: blastDiagram.edges.flatMap((edge) => placeEdge(edge, nodeByPath)),
   }
 }

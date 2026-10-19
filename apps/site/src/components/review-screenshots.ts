@@ -4,8 +4,8 @@ import customizeDark from "@/assets/screenshots/customize-dark.png"
 import customizeLight from "@/assets/screenshots/customize-light.png"
 import heroPosterDark from "@/assets/screenshots/hero-poster-dark.png"
 import heroPosterLight from "@/assets/screenshots/hero-poster-light.png"
-import journeyPosterDark from "@/assets/screenshots/journey-poster-dark.png"
-import journeyPosterLight from "@/assets/screenshots/journey-poster-light.png"
+import tracePosterDark from "@/assets/screenshots/trace-poster-dark.png"
+import tracePosterLight from "@/assets/screenshots/trace-poster-light.png"
 import filtersPosterDark from "@/assets/screenshots/walkthrough-filters-poster-dark.png"
 import filtersPosterLight from "@/assets/screenshots/walkthrough-filters-poster-light.png"
 import tooltipsPosterDark from "@/assets/screenshots/walkthrough-tooltips-poster-dark.png"
@@ -24,15 +24,15 @@ export const HERO_VIDEOS = {
   dark: { webm: "/media/hero-dark.webm", mp4: "/media/hero-dark.mp4" },
 } as const
 
-export const JOURNEY_POSTER = {
-  light: journeyPosterLight,
-  dark: journeyPosterDark,
-  alt: "A Journey Flow Diagram in full screen: the hook useOrders is open in the side panel, with its code and the waypoint that explains useOrders(), next to the ViewOrdersPage card that calls it.",
+export const TRACE_POSTER = {
+  light: tracePosterLight,
+  dark: tracePosterDark,
+  alt: "A Trace Diagram in full screen: the hook useOrders is open in the side panel, with its code and the waypoint that explains useOrders(), next to the ViewOrdersPage card that calls it.",
 } as const
 
-export const JOURNEY_VIDEOS = {
-  light: { webm: "/media/journey-light.webm", mp4: "/media/journey-light.mp4" },
-  dark: { webm: "/media/journey-dark.webm", mp4: "/media/journey-dark.mp4" },
+export const TRACE_VIDEOS = {
+  light: { webm: "/media/trace-light.webm", mp4: "/media/trace-light.mp4" },
+  dark: { webm: "/media/trace-dark.webm", mp4: "/media/trace-dark.mp4" },
 } as const
 
 export const BLAST_POSTER = {

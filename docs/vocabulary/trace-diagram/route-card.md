@@ -1,6 +1,6 @@
 # Route card
 
-The card of a route path in a [Journey Flow Diagram](../journey-flow-diagram.md): the handlers a framework runs when a request reaches one path. This page holds what every route library shares, and is where to start when a library is added. What one library writes and how its routes are read is on the page of that library. The rules every card shares, its frame, its rows and its lines, are in [On the page](../journey-flow-diagram.md#on-the-page).
+The card of a route path in a [Trace Diagram](../trace-diagram.md): the handlers a framework runs when a request reaches one path. This page holds what every route library shares, and is where to start when a library is added. What one library writes and how its routes are read is on the page of that library. The rules every card shares, its frame, its rows and its lines, are in [On the page](../trace-diagram.md#on-the-page).
 
 | Library | Page | Registration |
 |---|---|---|
@@ -63,7 +63,7 @@ A method the path has no registration of has no heading. **A registration that n
 
 **A registration that names no method puts a named handler under the methods the handler says it takes**, when it says any: Django's `path` names none, and a view decorated `@require_POST` sits under POST.
 
-**A named handler is drawn inside the route card**, wherever it is declared, and has no card of its own on the board. A route comes first, as [component and route come first](../journey-flow-diagram.md#component-and-route-come-first) says, so **a view class has no card of its own** when every method it has is drawn in a route card, a constructor that only takes its parameters aside. A view class with a method that is no route keeps its class card with that method, and has no line to its routes. **A class with a `controller` card always keeps its card**, typed Controller, holding the methods that are no route and with a line to each route card of the others, as a [NestJS controller](libraries/nestjs.md#controllers) is.
+**A named handler is drawn inside the route card**, wherever it is declared, and has no card of its own on the board. A route comes first, as [component and route come first](../trace-diagram.md#component-and-route-come-first) says, so **a view class has no card of its own** when every method it has is drawn in a route card, a constructor that only takes its parameters aside. A view class with a method that is no route keeps its class card with that method, and has no line to its routes. **A class with a `controller` card always keeps its card**, typed Controller, holding the methods that are no route and with a line to each route card of the others, as a [NestJS controller](libraries/nestjs.md#controllers) is.
 
 ## The path of a route card
 
@@ -112,7 +112,7 @@ flowchart LR
   app["The middleware of a whole router"] --> appCard["A card of its own, with a line to each route card it reaches"]
 ```
 
-The edge from a route card to each handler inside it stays in `journeyNodeEdges`, and the page leaves it out.
+The edge from a route card to each handler inside it stays in `traceNodeEdges`, and the page leaves it out.
 
 ## Adding a route library
 
@@ -122,8 +122,8 @@ A route library is added in the folders of its language, one file in each, and n
 |---|---|---|
 | The library file | `packages/codegraph/src/code-blocks/languages/<language>/libraries/<library>.ts`, listed in `TYPESCRIPT_LIBRARIES` or `PYTHON_LIBRARIES` of that folder's `index.ts` | A `Library`: its name, specifiers and documented version, the patterns of its registrations, and `readCards: readRouteCards` from `code-blocks/libraries/route-cards.ts`, with how to name a handler written in place. A registration has a slot that `runs: "route"`, or is a decorator that does, with its `pathAt` and its `method` or `methodAt`; a slot that `runs: "middleware"` is middleware; `prefixAt` on a factory is the prefix of its router, and on a call it makes the call a mount. A library already in the catalogue moves its entry here, and leaves the catalogue. |
 | Its fixtures | `packages/codegraph/src/code-blocks/languages/<language>/libraries/__tests__/` | Code each pattern matches and code it rejects, and the `card` each block gets |
-| The card file | `packages/codegraph/src/journey-flow-diagram/languages/<language>/libraries/<library>.ts`, listed in `TYPESCRIPT_CARD_RULES` or `PYTHON_CARD_RULES` of `journey-flow-diagram/languages/<language>/index.ts` | A `LibraryCardRules` that extends the shared `route` card, with no rules of its own unless its card does something differently |
-| The band | `METHOD_HEADINGS` in `packages/codegraph/src/journey/cards/route.ts` | The one order of the method headings every route library shares |
-| Its page | `docs/vocabulary/journey-flow-diagram/libraries/<library>.md`, and a row in the table at the top of this page | How the library registers routes, names handlers, mounts routers and runs middleware, an example of its code and a drawing of its card |
+| The card file | `packages/codegraph/src/trace-diagram/languages/<language>/libraries/<library>.ts`, listed in `TYPESCRIPT_CARD_RULES` or `PYTHON_CARD_RULES` of `trace-diagram/languages/<language>/index.ts` | A `LibraryCardRules` that extends the shared `route` card, with no rules of its own unless its card does something differently |
+| The band | `METHOD_HEADINGS` in `packages/codegraph/src/trace/cards/route.ts` | The one order of the method headings every route library shares |
+| Its page | `docs/vocabulary/trace-diagram/libraries/<library>.md`, and a row in the table at the top of this page | How the library registers routes, names handlers, mounts routers and runs middleware, an example of its code and a drawing of its card |
 
 **Start from the page of the closest library.** A library that registers with a call on a router, as Express and Fastify do, writes a `holder`, a `handler` slot and `middleware` slots. A library that registers with a decorator, as Flask and FastAPI do, makes the decorated function the handler, and the slots of the decorator its middleware. A library that registers with a decorator on a method of a class, as NestJS does, makes the method the handler and the class its router, and writes its own `readCards`, because the path of the class goes before the path of the decorator. A library that registers with the path of a file, as Next.js does, has file patterns whose exports `runs: "route"`, and `readExportCards: readExportRouteCards` makes each function they name a `handler` of the path its folders give. What a pattern cannot say goes in a `readCards` of the library's own, built on `readRouteCards`, as Flask's marks the hooks that run before every route of the app, FastAPI's marks its HTTP middleware `isAppWide` and its `mount` `isAppMount`, and Django's makes a `path` that holds an `include` a mount, roots every path and puts the path of an `include` written in place before the paths in it.

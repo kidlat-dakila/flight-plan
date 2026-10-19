@@ -1,5 +1,5 @@
 import { firstOfEach } from "@/shared/first-of-each"
-import type { BlockCard, CardKind, CardPart, CodeBlock, JourneyNode, JourneyNodeEdge } from "@flightplan/configurations"
+import type { BlockCard, CardKind, CardPart, CodeBlock, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 import { rootBlockOfNode } from "./nodes"
 import type { CardContext, ParentIdById } from "./types"
 
@@ -21,9 +21,9 @@ const listWithin = (block: CodeBlock): CodeBlock[] => block.childrenBlocks.flatM
 export const holdsNoPart = (block: CodeBlock, kinds: readonly CardKind[]): boolean =>
   isHolderOfKind(block, kinds) && block.parentBlock === null && !listWithin(block).some((inside) => isPartOfKind(inside, kinds))
 
-export const toEdge = (from: string, to: string): JourneyNodeEdge => ({ id: [from, to].join(EDGE_ID_SEPARATOR), from, to })
+export const toEdge = (from: string, to: string): TraceNodeEdge => ({ id: [from, to].join(EDGE_ID_SEPARATOR), from, to })
 
-export const nodeIdByBlockIdOf = (nodes: readonly JourneyNode[]): ReadonlyMap<string, string> =>
+export const nodeIdByBlockIdOf = (nodes: readonly TraceNode[]): ReadonlyMap<string, string> =>
   new Map(firstOfEach([
     ...nodes.map((node) => [rootBlockOfNode(node).id, node.id] as const),
     ...nodes.flatMap((node) => node.codeBlocks.slice(1).map((block) => [block.id, node.id] as const)),

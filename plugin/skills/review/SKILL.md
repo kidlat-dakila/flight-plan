@@ -77,7 +77,7 @@ context, the answer is already in a call below.
 5 update-nodes { segmentId, context, title }
                                      why the change matters, and a very short title for it
 6 nodes { unfilled: true }           the next few pieces of work, code attached
-   update-nodes { segmentId, waypoints | journey | journeyDescription }
+   update-nodes { segmentId, waypoints | traceDiagram | traceDiagramDescription }
    …repeat until only `context-description` is left
 7 nodes { unfilled: true, needs: ["context-description"] }
    update-nodes { segmentId, contextCodeBlocks }
@@ -87,7 +87,7 @@ context, the answer is already in a call below.
 ```
 
 **Step 0 is a read, and it comes before the prose.** `get-instructions` with no
-`fields` returns which of the Journey Flow Diagram, the Blast Diagram, the
+`fields` returns which of the Trace Diagram, the Blast Diagram, the
 Code Walkthrough and the findings this review generates, and an index of the
 fields you can ask about. A section that is on you write as normal. A section
 that is off is not yours to write: the reviewer chose not to generate it, the
@@ -107,14 +107,14 @@ written a word.
 
 ```
 before the first write   { fields: ["writingStyle", "codeLinks", "artifactFormat"] }
-before step 3            { fields: ["blast", "blast.nodes.impactType", "blast.nodes.impactReason"] }
+before step 3            { fields: ["blastDiagram", "blastDiagram.nodes.impactType", "blastDiagram.nodes.impactReason"] }
 before step 5            { fields: ["context", "title"] }
 before step 6            { fields: ["walkthrough.files", "walkthrough.files.waypoints",
                                     "walkthrough.files.waypoints.title", "walkthrough.files.waypoints.reading"] }
-before a journey label   { fields: ["journey", "journey.nodes.label", "journey.nodes.description",
-                                    "journey.nodes.triggerLabels.label"] }
-before a journey description
-                         { fields: ["journey.description"] }
+before a trace label     { fields: ["traceDiagram", "traceDiagram.nodes.label", "traceDiagram.nodes.description",
+                                    "traceDiagram.nodes.triggerLabels.label"] }
+before a trace description
+                         { fields: ["traceDiagram.description"] }
 before a finding         { fields: ["walkthrough.files.waypoints.findings"] }
 before step 7            { fields: ["contextCodeBlocks", "contextCodeBlocks.description"] }
 ```
@@ -172,7 +172,7 @@ Only where the overview shows a Blast Diagram.
 nodes { unfilled: true, needs: ["impact"] }
     → the files the change did not touch that import it, each with
       `importsCarryingTheChange`: the files it imports that bring the change to it
-update-nodes { segmentId, blast: [{ path, impactType, impactReason } | { path, impactType: "unaffected" }] }
+update-nodes { segmentId, blastDiagram: [{ path, impactType, impactReason } | { path, impactType: "unaffected" }] }
 ```
 
 The Blast Diagram is the files the change is connected to through imports.
@@ -234,13 +234,13 @@ nodes { unfilled: true, limit: 10 }
     → the next pieces of work, each with:
         segmentId the segment it belongs to, which the write names
         needs     what to write: title, reading, segment-title, label, trigger-label,
-                  journey-description …
+                  trace-description …
         node      what it holds now
         code      the lines it covers, with what the change did to them
         lineage   its ancestors, for a nested waypoint
 update-nodes { segmentId, waypoints: [{ id, title, reading }],
-               journey: [{ id, label, description, triggerLabels: [{ codeBlockId, label }] }],
-               journeyDescription }
+               traceDiagram: [{ id, label, description, triggerLabels: [{ codeBlockId, label }] }],
+               traceDiagramDescription }
 nodes { unfilled: true }    → total falls
 …until total is 0
 ```
@@ -269,11 +269,11 @@ the call names, a code link that does not resolve, a `question` carrying a
 solution. A batch is all or nothing. Fix the entry it names and send the batch
 again. Do not work around a refusal.
 
-**Every Journey Flow Diagram needs a description.** It is the diagram told in
+**Every Trace Diagram needs a description.** It is the diagram told in
 words, in five sentences at most, and the reviewer reads it above the diagram.
-`nodes` hands it out as `journey-description`, after the nodes of its diagram,
+`nodes` hands it out as `trace-description`, after the nodes of its diagram,
 with the diagram's nodes and edges. Write it with
-`update-nodes { segmentId, journeyDescription }` once the labels of that
+`update-nodes { segmentId, traceDiagramDescription }` once the labels of that
 diagram are written, so it uses their words. `complete` refuses an artifact
 where a diagram has none.
 

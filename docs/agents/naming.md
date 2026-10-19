@@ -28,7 +28,7 @@ When they conflict, put understandability first, then consistency with the codeb
 
 - Tiny scope (a short lambda, a loop counter): `i`, `x` and `acc` are fine.
 - Function scope: one or two clear words, such as `total` or `changedFiles`.
-- Module, exported or public API: fully descriptive, such as `DEFAULT_REQUEST_TIMEOUT_MS` or `buildJourneyFlow`.
+- Module, exported or public API: fully descriptive, such as `DEFAULT_REQUEST_TIMEOUT_MS` or `buildTraceFlow`.
 
 The wider a name's reach, the more carefully you choose it. tRPC procedure names, MCP tool names, schema fields and file formats are public API and are the hardest to change.
 

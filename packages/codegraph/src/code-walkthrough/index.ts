@@ -6,7 +6,7 @@ export type WaypointCategory = EncapsulationKind | "import" | "type" | "statemen
 export interface LinkedWaypoint extends Waypoint {
   readonly range: LineRange
   readonly category: WaypointCategory
-  readonly journeyNodeId: string | null
+  readonly traceNodeId: string | null
   readonly children: readonly LinkedWaypoint[]
 }
 

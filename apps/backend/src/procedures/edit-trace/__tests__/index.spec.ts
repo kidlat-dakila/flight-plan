@@ -1,9 +1,9 @@
 import { createMockProcedureContext, type ProcedureContext } from "@/procedures/context"
-import { editJourney } from "@/procedures/edit-journey"
-import type { DiagramEdit } from "@/procedures/edit-journey/utils/schemas"
+import { editTrace } from "@/procedures/edit-trace"
+import type { DiagramEdit } from "@/procedures/edit-trace/utils/schemas"
 import { getCardForm } from "@/procedures/get-card-form"
 import { getReview } from "@/procedures/get-review"
-import { listJourneyNodes } from "@flightplan/codegraph"
+import { listTraceNodes } from "@flightplan/codegraph"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "pr-412" }
@@ -15,28 +15,28 @@ const ROW = { id: null, type: "condition", label: "Refuses an empty cart", lineS
 const createContext = (): ProcedureContext => ({ ...createMockProcedureContext(NOW), now: () => NOW })
 
 const edit = async (context: ProcedureContext, diagramEdit: DiagramEdit) =>
-  await editJourney({ ...KEY, segmentId: SEGMENT_ID, edit: diagramEdit }, context)
+  await editTrace({ ...KEY, segmentId: SEGMENT_ID, edit: diagramEdit }, context)
 
-const readJourney = async (context: ProcedureContext) => {
+const readTrace = async (context: ProcedureContext) => {
   const artifact = await context.reviewStore.findArtifact(KEY)
   const segment = artifact?.segments.find((candidate) => candidate.id === SEGMENT_ID)
   if (artifact === null || segment === undefined) throw new Error("The sample Flight Plan is missing.")
-  return { artifact, journey: segment.journey }
+  return { artifact, traceDiagram: segment.traceDiagram }
 }
 
 const readDiagram = async (context: ProcedureContext) => {
   const page = await getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
   const segment = page?.kind === "artifact" ? page.segments.find((candidate) => candidate.id === SEGMENT_ID) : undefined
-  return segment?.journey.diagram ?? null
+  return segment?.traceDiagram.diagram ?? null
 }
 
 const cardIdsOf = async (context: ProcedureContext): Promise<string[]> =>
-  listJourneyNodes((await readJourney(context)).journey?.journeyNodes ?? []).map((node) => node.id)
+  listTraceNodes((await readTrace(context)).traceDiagram?.traceNodes ?? []).map((node) => node.id)
 
-describe("editJourney", () => {
+describe("editTrace", () => {
   it("removes the whole diagram and adds an empty one back, without changing the status of the artifact", async () => {
     const context = createContext()
-    const before = await readJourney(context)
+    const before = await readTrace(context)
 
     await expect(edit(context, { kind: "add-diagram" })).resolves.toMatchObject({ kind: "rejected" })
     await expect(edit(context, { kind: "remove-diagram" })).resolves.toStrictEqual({ kind: "saved", nodeId: null })
@@ -44,7 +44,7 @@ describe("editJourney", () => {
     await expect(edit(context, { kind: "remove-diagram" })).resolves.toMatchObject({ kind: "rejected" })
     await expect(edit(context, { kind: "add-diagram" })).resolves.toStrictEqual({ kind: "saved", nodeId: null })
     await expect(readDiagram(context)).resolves.toMatchObject({ nodes: [], edges: [] })
-    expect((await readJourney(context)).artifact.status).toBe(before.artifact.status)
+    expect((await readTrace(context)).artifact.status).toBe(before.artifact.status)
   })
 
   it("clears the diagram of every card and every line, and keeps the empty diagram", async () => {
@@ -110,14 +110,14 @@ describe("editJourney", () => {
 
     await edit(context, { kind: "change-card", nodeId: "post-checkout", label: "", description: "", rows: [] })
 
-    expect((await readJourney(context)).journey?.journeyNodeEdges.some((edge) => edge.from === "post-checkout" && edge.to === "stock-badge")).toBe(false)
+    expect((await readTrace(context)).traceDiagram?.traceNodeEdges.some((edge) => edge.from === "post-checkout" && edge.to === "stock-badge")).toBe(false)
   })
 
   it("removes a line the codegraph drew by the two cards it joins", async () => {
     const context = createContext()
 
     await expect(edit(context, { kind: "remove-line", edgeId: "a row -> checkout", from: "post-checkout", to: "checkout" })).resolves.toMatchObject({ kind: "saved" })
-    expect((await readJourney(context)).journey?.journeyNodeEdges.some((edge) => edge.id === "post-checkout -> checkout")).toBe(false)
+    expect((await readTrace(context)).traceDiagram?.traceNodeEdges.some((edge) => edge.id === "post-checkout -> checkout")).toBe(false)
     await expect(edit(context, { kind: "remove-line", edgeId: "gone", from: "post-checkout", to: "checkout" })).resolves.toMatchObject({ kind: "rejected" })
   })
 
@@ -129,7 +129,7 @@ describe("editJourney", () => {
     const cardIds = await cardIdsOf(context)
 
     expect(cardIds).toStrictEqual(["post-checkout", "checkout", "add-to-cart-route", "use-stock-level", "get-stock", "release-holds-job", "release-expired-holds"])
-    expect((await readJourney(context)).journey?.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual([
+    expect((await readTrace(context)).traceDiagram?.traceNodeEdges.map((edge) => edge.id)).toStrictEqual([
       "post-checkout -> checkout",
       "use-stock-level -> get-stock",
       "release-holds-job -> release-expired-holds",
@@ -181,11 +181,11 @@ describe("editJourney", () => {
     const before = await context.reviewStore.findArtifact(KEY)
 
     await expect(edit(context, { kind: "remove-card", nodeId: "gone" })).resolves.toStrictEqual({ kind: "rejected", message: "This card is no longer on the diagram." })
-    await expect(editJourney({ ...KEY, segmentId: "gone", edit: { kind: "remove-diagram" } }, context)).resolves.toMatchObject({ kind: "rejected" })
+    await expect(editTrace({ ...KEY, segmentId: "gone", edit: { kind: "remove-diagram" } }, context)).resolves.toMatchObject({ kind: "rejected" })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toStrictEqual(before)
   })
 
   it("reports nothing for a review target that has no Flight Plan", async () => {
-    await expect(editJourney({ ...KEY, targetId: "pr-416", segmentId: SEGMENT_ID, edit: { kind: "remove-diagram" } }, createContext())).resolves.toBeNull()
+    await expect(editTrace({ ...KEY, targetId: "pr-416", segmentId: SEGMENT_ID, edit: { kind: "remove-diagram" } }, createContext())).resolves.toBeNull()
   })
 })

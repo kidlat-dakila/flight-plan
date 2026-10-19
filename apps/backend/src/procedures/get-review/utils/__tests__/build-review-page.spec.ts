@@ -1,7 +1,7 @@
 import { NO_WRITING_ACTIVITY } from "@/procedures/get-review/utils/build-progress"
 import { buildReviewPage, type ReviewPageSource } from "@/procedures/get-review/utils/build-review-page"
 import { EMPTY_DISCUSSION, type CommentAuthor, type Discussion, type ForgeAbilities } from "@/procedures/get-review/utils/discussion"
-import { mockJourney } from "@/procedures/get-review/utils/mocks/mock-journey"
+import { mockTrace } from "@/procedures/get-review/utils/mocks/mock-trace"
 import type { PullRequestReading } from "@/procedures/get-review/utils/pull-request-forge"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
@@ -253,7 +253,7 @@ describe("buildReviewPage", () => {
       isSegmented: true,
       segments: [
         createSegment({ id: "one", title: "One", context: "First part." }),
-        createSegment({ id: "two", title: "Two", blast: { nodes: [{ path: PRICE_PATH, diffType: "modified", impactType: null, impactReason: null }], edges: [] }, walkthrough: { files: [] } }),
+        createSegment({ id: "two", title: "Two", blastDiagram: { nodes: [{ path: PRICE_PATH, diffType: "modified", impactType: null, impactReason: null }], edges: [] }, walkthrough: { files: [] } }),
       ],
     })
     const page = buildReviewPage(createSource({ artifact }), createInput())
@@ -267,11 +267,11 @@ describe("buildReviewPage", () => {
           heading: "Segment 1: One",
           detailLabel: "2 files",
           context: { anchorId: "one-context", context: [{ kind: "paragraph", inlines: [{ kind: "text", text: "First part." }] }] },
-          journey: { anchorId: "one-journey-flow-diagram" },
-          blast: null,
+          traceDiagram: { anchorId: "one-trace-diagram" },
+          blastDiagram: null,
           walkthrough: { anchorId: "one-code-walkthrough" },
         },
-        { id: "two", anchorId: "segment-two", title: "Two", heading: "Segment 2: Two", blast: { anchorId: "two-blast-diagram" } },
+        { id: "two", anchorId: "segment-two", title: "Two", heading: "Segment 2: Two", blastDiagram: { anchorId: "two-blast-diagram" } },
       ],
       rail: {
         groups: [
@@ -282,8 +282,8 @@ describe("buildReviewPage", () => {
       },
     })
     expect(page.kind === "artifact" ? page.rail.groups.map((group) => group.sections.map((section) => section.kind)) : []).toStrictEqual([
-      ["context", "journey", "walkthrough"],
-      ["context", "journey", "blast", "walkthrough"],
+      ["context", "traceDiagram", "walkthrough"],
+      ["context", "traceDiagram", "blastDiagram", "walkthrough"],
     ])
   })
 
@@ -354,8 +354,8 @@ describe("buildReviewPage", () => {
     })
   })
 
-  it("draws each Journey Flow Diagram with its configuration, and states why a change has none", () => {
-    const flow = mockJourney(
+  it("draws each Trace Diagram with its configuration, and states why a change has none", () => {
+    const flow = mockTrace(
       [priceSource, cartSource],
       [
         { id: "route", type: "function", path: PRICE_PATH, declaration: "format", isChanged: false, label: null, description: null },
@@ -374,18 +374,18 @@ describe("buildReviewPage", () => {
       [["route", "price"], ["price", "badge"]],
     )
     const drawn = buildReviewPage(
-      createSource({ artifact: createArtifact({ segments: [createSegment({ journey: flow })] }) }),
+      createSource({ artifact: createArtifact({ segments: [createSegment({ traceDiagram: flow })] }) }),
       createInput(),
     )
     const absent = buildReviewPage(
-      createSource({ artifact: createArtifact({ segments: [createSegment({ journey: null })] }) }),
+      createSource({ artifact: createArtifact({ segments: [createSegment({ traceDiagram: null })] }) }),
       createInput(),
     )
 
     expect(drawn).toMatchObject({ segments: [{
-      journey: {
+      traceDiagram: {
         diagram: {
-          anchorId: "journey-all",
+          anchorId: "trace-all",
           title: "priceOf",
           description: null,
           descriptionMarkdown: "",
@@ -414,11 +414,11 @@ describe("buildReviewPage", () => {
         },
       },
     }] })
-    expect(absent).toMatchObject({ segments: [{ journey: { diagram: null } }] })
+    expect(absent).toMatchObject({ segments: [{ traceDiagram: { diagram: null } }] })
   })
 
   it("draws the Blast Diagram from the files, the imports and the impacts of the segment, and leaves it out when the segment has none", () => {
-    const blast = {
+    const blastDiagram = {
       nodes: [
         { path: "src/cart.ts", diffType: null, impactType: "breaks" as const, impactReason: "It assumes a price is never negative." },
         { path: PRICE_PATH, diffType: "modified" as const, impactType: null, impactReason: null },
@@ -430,12 +430,12 @@ describe("buildReviewPage", () => {
       ],
     }
     const page = buildReviewPage(
-      createSource({ artifact: createArtifact({ segments: [createSegment({ blast })] }) }),
+      createSource({ artifact: createArtifact({ segments: [createSegment({ blastDiagram })] }) }),
       createInput(),
     )
 
     expect(page).toMatchObject({ segments: [{
-      blast: {
+      blastDiagram: {
         heading: "Blast Diagram",
         defaultViewId: "export-bound",
         views: [{
@@ -453,7 +453,7 @@ describe("buildReviewPage", () => {
         }],
       },
     }] })
-    expect(buildReviewPage(createSource(), createInput())).toMatchObject({ segments: [{ blast: null }] })
+    expect(buildReviewPage(createSource(), createInput())).toMatchObject({ segments: [{ blastDiagram: null }] })
   })
 
   it("applies the waypoint filter it is asked for to its own segment only", () => {

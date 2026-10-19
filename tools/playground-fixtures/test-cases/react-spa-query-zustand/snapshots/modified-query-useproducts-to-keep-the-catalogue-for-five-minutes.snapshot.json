@@ -132,9 +132,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@7:1",
               "type": "root-variable",
@@ -209,7 +209,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
               "from": "src/router.tsx#root-variable@7:1",
@@ -222,7 +222,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/hooks/use-products.ts",
@@ -315,7 +315,7 @@
                     "lineEnd": 6
                   },
                   "category": "variable",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/hooks/use-products.ts#root-variable@6:1"
                   ],
@@ -333,7 +333,7 @@
                     "lineEnd": 10
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-products.ts#hook@8:1",
+                  "traceNodeId": "src/hooks/use-products.ts#hook@8:1",
                   "codeBlockIds": [
                     "src/hooks/use-products.ts#hook@8:1",
                     "src/hooks/use-products.ts#component-effect@9:10",

@@ -1,4 +1,4 @@
-import { contextIdOf, flattenJourneyNodes, storeFileSection } from "@flightplan/codegraph"
+import { contextIdOf, flattenTraceNodes, storeFileSection } from "@flightplan/codegraph"
 import type {
   ReviewArtifact,
   SectionName,
@@ -11,13 +11,13 @@ import { contextStubOf } from "./context-code-blocks"
 import { changedHunksOf } from "./covered-code"
 import { tallyWork, unwrittenWork } from "./unwritten-work"
 
-export const ARTIFACT_SECTIONS = ["overview", "full", "context", "journey", "blast", "code-walkthrough", "diff"] as const
+export const ARTIFACT_SECTIONS = ["overview", "full", "context", "trace-diagram", "blast-diagram", "code-walkthrough", "diff"] as const
 
 export type ArtifactSection = (typeof ARTIFACT_SECTIONS)[number]
 
 const SECTION_NAME_BY_ARTIFACT_SECTION: Readonly<Partial<Record<ArtifactSection, SectionName>>> = {
-  "journey": "journey",
-  "blast": "blast",
+  "trace-diagram": "traceDiagram",
+  "blast-diagram": "blastDiagram",
   "code-walkthrough": "walkthrough",
 }
 
@@ -44,8 +44,8 @@ const waypointStubOf = (waypoint: Waypoint): unknown => ({
   children: waypoint.children.map(waypointStubOf),
 })
 
-const journeyStubsOf = (segment: Segment): unknown[] =>
-  flattenJourneyNodes(segment.journey?.journeyNodes ?? []).map(({ id, parentId, type, label, diffCodeBlockIds }) => ({
+const traceStubsOf = (segment: Segment): unknown[] =>
+  flattenTraceNodes(segment.traceDiagram?.traceNodes ?? []).map(({ id, parentId, type, label, diffCodeBlockIds }) => ({
     id,
     parentId,
     type,
@@ -53,10 +53,10 @@ const journeyStubsOf = (segment: Segment): unknown[] =>
     isChanged: diffCodeBlockIds.length > 0,
   }))
 
-const flatJourneyOf = (segment: Segment): unknown =>
-  segment.journey === null
+const flatTraceOf = (segment: Segment): unknown =>
+  segment.traceDiagram === null
     ? null
-    : { description: segment.journey.description, nodes: flattenJourneyNodes(segment.journey.journeyNodes), edges: segment.journey.journeyNodeEdges }
+    : { description: segment.traceDiagram.description, nodes: flattenTraceNodes(segment.traceDiagram.traceNodes), edges: segment.traceDiagram.traceNodeEdges }
 
 const storedWalkthroughOf = ({ walkthrough }: Segment): unknown => ({ ...walkthrough, files: walkthrough.files.map(storeFileSection) })
 
@@ -64,8 +64,8 @@ const segmentOverviewOf = (segment: Segment): unknown => ({
   segmentId: segment.id,
   title: segment.title,
   changedPaths: segment.changedPaths,
-  journey: segment.journey === null ? null : { isDescriptionWritten: segment.journey.description !== null, nodes: journeyStubsOf(segment) },
-  blast: segment.blast,
+  traceDiagram: segment.traceDiagram === null ? null : { isDescriptionWritten: segment.traceDiagram.description !== null, nodes: traceStubsOf(segment) },
+  blastDiagram: segment.blastDiagram,
   files: segment.walkthrough.files.map((file) => ({ path: file.path, waypoints: file.waypoints.map(waypointStubOf) })),
 })
 
@@ -83,8 +83,8 @@ export const projectOverview = (artifact: ReviewArtifact, configurationId: strin
 
 const SEGMENT_PARTS: Readonly<Record<Exclude<ArtifactSection, "overview" | "full" | "diff">, (segment: Segment) => unknown>> = {
   "context": (segment) => ({ segmentId: segment.id, context: segment.context }),
-  "journey": (segment) => ({ segmentId: segment.id, journey: flatJourneyOf(segment) }),
-  "blast": (segment) => ({ segmentId: segment.id, blast: segment.blast }),
+  "trace-diagram": (segment) => ({ segmentId: segment.id, traceDiagram: flatTraceOf(segment) }),
+  "blast-diagram": (segment) => ({ segmentId: segment.id, blastDiagram: segment.blastDiagram }),
   "code-walkthrough": (segment) => ({ segmentId: segment.id, walkthrough: storedWalkthroughOf(segment) }),
 }
 
@@ -98,7 +98,7 @@ export const projectSegments = (
         title: artifact.title,
         status: artifact.status,
         commit: artifact.commit,
-        segments: segments.map((segment) => ({ ...segment, journey: flatJourneyOf(segment), walkthrough: storedWalkthroughOf(segment) })),
+        segments: segments.map((segment) => ({ ...segment, traceDiagram: flatTraceOf(segment), walkthrough: storedWalkthroughOf(segment) })),
         contextCodeBlocks: artifact.contextCodeBlocks
           .filter((listed) => listed.description !== null)
           .map((listed) => ({ id: contextIdOf(listed), description: listed.description })),

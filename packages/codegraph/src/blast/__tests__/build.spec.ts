@@ -2,13 +2,13 @@ import { buildBlast, labelBlastFiles } from "@/blast/build"
 import type { ReviewViewContext } from "@/review-view-context"
 import type { Blast, Segment } from "@flightplan/configurations"
 
-const segmentWith = (blast: Blast | null): Segment => ({
+const segmentWith = (blastDiagram: Blast | null): Segment => ({
   id: "stock",
   title: "Stock check",
   changedPaths: [],
   context: "",
-  journey: null,
-  blast,
+  traceDiagram: null,
+  blastDiagram,
   walkthrough: { files: [] },
 })
 
@@ -127,13 +127,13 @@ describe("buildBlast", () => {
 
   it("opens on the import bound when no file but those of the change is in the export bound", () => {
     const pricing = { path: "src/pricing.ts", diffType: "modified" as const }
-    const blast = {
+    const blastDiagram = {
       nodes: [{ ...pricing, impactType: null, impactReason: null }],
       edges: [],
       importBound: { nodes: [pricing, { path: "src/rates.ts", diffType: null }], edges: [{ importer: "src/pricing.ts", imported: "src/rates.ts" }] },
     }
 
-    expect(buildBlast({ ...segmentWith(blast), changedPaths: ["src/pricing.ts"] }, "", NO_FILE_SECTIONS, CONTEXT)?.defaultViewId).toBe("import-bound")
+    expect(buildBlast({ ...segmentWith(blastDiagram), changedPaths: ["src/pricing.ts"] }, "", NO_FILE_SECTIONS, CONTEXT)?.defaultViewId).toBe("import-bound")
   })
 
   it("gives the assessment an author can edit to a file the change reaches, and none to a file of the change or an unreached file", () => {

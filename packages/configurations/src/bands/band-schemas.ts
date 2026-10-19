@@ -192,7 +192,7 @@ const pointSchema = z.strictObject({ x: z.number(), y: z.number() })
 
 const lineSpanSchema = z.tuple([z.number(), z.number()]).readonly()
 
-export const journeyTriggerLabelSchema = z.strictObject({
+export const traceTriggerLabelSchema = z.strictObject({
   id: z.string(),
   type: z.enum(CODE_BLOCK_TYPES),
   typeLabel: z.string(),
@@ -203,21 +203,21 @@ export const journeyTriggerLabelSchema = z.strictObject({
   lines: z.array(lineSpanSchema),
 })
 
-export type JourneyTriggerLabelView = z.infer<typeof journeyTriggerLabelSchema>
+export type TraceTriggerLabelView = z.infer<typeof traceTriggerLabelSchema>
 
-export const journeyBlockListSchema = z.strictObject({
+export const traceBlockListSchema = z.strictObject({
   kind: z.enum(NODE_BLOCK_LIST_KINDS),
   label: z.string(),
   blocks: z.array(z.strictObject({ id: z.string(), name: z.string(), label: z.string(), isDraft: z.boolean(), change: z.enum(NODE_CHANGES).nullable(), lines: z.array(lineSpanSchema) })),
 })
 
-export type JourneyBlockListView = z.infer<typeof journeyBlockListSchema>
+export type TraceBlockListView = z.infer<typeof traceBlockListSchema>
 
-export const journeyRowGroupSchema = z.strictObject({ label: z.string().nullable(), rowIds: z.array(z.string()), childIds: z.array(z.string()) })
+export const traceRowGroupSchema = z.strictObject({ label: z.string().nullable(), rowIds: z.array(z.string()), childIds: z.array(z.string()) })
 
-export type JourneyRowGroupView = z.infer<typeof journeyRowGroupSchema>
+export type TraceRowGroupView = z.infer<typeof traceRowGroupSchema>
 
-export interface JourneyNodeView {
+export interface TraceNodeView {
   id: string
   type: CodeBlockType
   typeLabel: string
@@ -231,14 +231,14 @@ export interface JourneyNodeView {
   codeLinkId: string | null
   codeViews: NodeCodeView[]
   parameters: string[]
-  blockLists: JourneyBlockListView[]
-  triggerLabels: JourneyTriggerLabelView[]
-  rowGroups: JourneyRowGroupView[]
+  blockLists: TraceBlockListView[]
+  triggerLabels: TraceTriggerLabelView[]
+  rowGroups: TraceRowGroupView[]
   position: { x: number, y: number } | null
-  children: JourneyNodeView[]
+  children: TraceNodeView[]
 }
 
-export const journeyNodeSchema: z.ZodType<JourneyNodeView> = z.lazy(() =>
+export const traceNodeSchema: z.ZodType<TraceNodeView> = z.lazy(() =>
   z.strictObject({
     id: z.string(),
     type: z.enum(CODE_BLOCK_TYPES),
@@ -253,15 +253,15 @@ export const journeyNodeSchema: z.ZodType<JourneyNodeView> = z.lazy(() =>
     codeLinkId: z.string().nullable(),
     codeViews: z.array(nodeCodeViewSchema),
     parameters: z.array(z.string()),
-    blockLists: z.array(journeyBlockListSchema),
-    triggerLabels: z.array(journeyTriggerLabelSchema),
-    rowGroups: z.array(journeyRowGroupSchema),
+    blockLists: z.array(traceBlockListSchema),
+    triggerLabels: z.array(traceTriggerLabelSchema),
+    rowGroups: z.array(traceRowGroupSchema),
     position: pointSchema.nullable(),
-    children: z.array(journeyNodeSchema),
+    children: z.array(traceNodeSchema),
   }),
 )
 
-export const journeyEdgeSchema = z.strictObject({
+export const traceEdgeSchema = z.strictObject({
   id: z.string(),
   from: z.string(),
   to: z.string(),
@@ -270,7 +270,7 @@ export const journeyEdgeSchema = z.strictObject({
   toSide: z.enum(CARD_SIDES),
 })
 
-export const journeyBandSchema = z.strictObject({
+export const traceBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
   diagram: z
@@ -280,8 +280,8 @@ export const journeyBandSchema = z.strictObject({
       description: proseSchema.nullable(),
       descriptionMarkdown: z.string(),
       unwrittenLabel: z.string(),
-      nodes: z.array(journeyNodeSchema),
-      edges: z.array(journeyEdgeSchema),
+      nodes: z.array(traceNodeSchema),
+      edges: z.array(traceEdgeSchema),
     })
     .nullable(),
 })
@@ -428,8 +428,8 @@ export type CodeDefinition = z.infer<typeof codeDefinitionSchema>
 export type NodeCodeView = z.infer<typeof nodeCodeViewSchema>
 export type NodeChange = (typeof NODE_CHANGES)[number]
 export type NodeBlockListKind = (typeof NODE_BLOCK_LIST_KINDS)[number]
-export type JourneyEdgeView = z.infer<typeof journeyEdgeSchema>
-export type JourneyBand = z.infer<typeof journeyBandSchema>
+export type TraceEdgeView = z.infer<typeof traceEdgeSchema>
+export type TraceBand = z.infer<typeof traceBandSchema>
 export type BlastNodeView = z.infer<typeof blastNodeSchema>
 export type BlastEdgeView = z.infer<typeof blastEdgeSchema>
 export type BlastBand = z.infer<typeof blastBandSchema>

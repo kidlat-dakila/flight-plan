@@ -5,7 +5,7 @@ import {
   NO_REVIEWED_MARKS,
   parseReviewedMarks,
   reviewSegment,
-  withReviewedJourney,
+  withReviewedTrace,
   withReviewedRail,
   withReviewedWalkthrough,
   type ReviewedMarks,
@@ -56,7 +56,7 @@ export const useReviewedMarks = (review: PublishedReview): ReviewedMarking => {
       segment: {
         ...segment,
         walkthrough: withReviewedWalkthrough(segment.walkthrough, segmentReview),
-        journey: withReviewedJourney(segment.journey, segmentReview),
+        traceDiagram: withReviewedTrace(segment.traceDiagram, segmentReview),
       },
       hiddenFileAnchorIds: hiddenFileAnchorIdsOf(segment.walkthrough.files, segmentReview),
     }

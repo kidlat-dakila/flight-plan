@@ -134,7 +134,7 @@ export async function createUser(formData) {
 
 **A page that hands an action to a form has a line to it.** `<form action={createUser}>` and `<button formAction={renameUser}>` are events, as `onSubmit` is: each is a Triggers row of the component, `form.action` and `button.formAction`, with a line to the server action it names, in its own file or another.
 
-**An action written inside a component is rows of that component.** The component is the card, as [component and route come first](../../journey-flow-diagram.md#component-and-route-come-first) says.
+**An action written inside a component is rows of that component.** The component is the card, as [component and route come first](../../trace-diagram.md#component-and-route-come-first) says.
 
 ## Pages
 

@@ -1,6 +1,6 @@
 import { findSource } from "@/code/lines"
-import { isParameterOf } from "@/journey-flow-diagram/listed-blocks"
 import type { ReviewViewContext } from "@/review-view-context"
+import { isParameterOf } from "@/trace-diagram/listed-blocks"
 import type { CodeBlock, SourceFile, SourceRange } from "@flightplan/configurations"
 
 const RECEIVER_NAMES: ReadonlySet<string> = new Set(["self", "cls"])

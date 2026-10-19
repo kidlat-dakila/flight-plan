@@ -3,7 +3,7 @@ import { CODE_BLOCK_TYPES, type ASTCodeGroupGraph, type CodeBlock } from "@/code
 import type { ImportGraphGroup } from "@/code-graph/import-graph"
 import { configurations } from "./field-configuration"
 import { ARTIFACT_STATUSES, CARD_SIDES, CONTEXT_CODE_BLOCK_KINDS, DIFF_TYPES, FINDING_KINDS, IMPACT_TYPES, LINE_MARKS, SECTION_NAMES } from "./kinds"
-import type { JourneyNode, Waypoint } from "./review-artifact"
+import type { TraceNode, Waypoint } from "./review-artifact"
 
 const lineRangeSchema = z.strictObject({ lineStart: z.number().int(), lineEnd: z.number().int() })
 
@@ -176,12 +176,12 @@ const triggerLabelSchema = z.strictObject({
       version: 0.1,
       configurationType: "editable",
       _ui: {
-        title: "Journey trigger label",
+        title: "Trace trigger label",
         description: "What an event or a data fetch of a node is, in the reader's terms.",
       },
-      fieldDescription: "journey.nodes.triggerLabels.label.md",
+      fieldDescription: "traceDiagram.nodes.triggerLabels.label.md",
       exampleValue: "A shopper clicks \"Place order\"",
-      defaultInstruction: "journey.nodes.triggerLabels.label.md",
+      defaultInstruction: "traceDiagram.nodes.triggerLabels.label.md",
     })
     .nullable(),
   codeBlock: codeBlockSchema,
@@ -194,18 +194,18 @@ const blockLabelSchema = z.strictObject({
       version: 0.1,
       configurationType: "editable",
       _ui: {
-        title: "Journey block label",
+        title: "Trace block label",
         description: "What an argument, a state, a hook, an effect or a step of a node is for, in the reader's terms.",
       },
-      fieldDescription: "journey.nodes.blockLabels.label.md",
+      fieldDescription: "traceDiagram.nodes.blockLabels.label.md",
       exampleValue: "Sends the promo code the shopper typed",
-      defaultInstruction: "journey.nodes.blockLabels.label.md",
+      defaultInstruction: "traceDiagram.nodes.blockLabels.label.md",
     })
     .nullable(),
   codeBlock: codeBlockSchema,
 })
 
-const journeyRowSchema = z.strictObject({
+const traceRowSchema = z.strictObject({
   id: z.string(),
   type: z.enum(CODE_BLOCK_TYPES),
   label: z.string().nullable(),
@@ -215,7 +215,7 @@ const journeyRowSchema = z.strictObject({
 
 const cardPositionSchema = z.strictObject({ x: z.number(), y: z.number() })
 
-const journeyNodeSchema: z.ZodType<JourneyNode> = z.lazy(() =>
+const traceNodeSchema: z.ZodType<TraceNode> = z.lazy(() =>
   z.strictObject({
     id: z.string(),
     type: z.enum(CODE_BLOCK_TYPES),
@@ -225,12 +225,12 @@ const journeyNodeSchema: z.ZodType<JourneyNode> = z.lazy(() =>
         version: 0.1,
         configurationType: "editable",
         _ui: {
-          title: "Journey node label",
+          title: "Trace node label",
           description: "What a step on the path does.",
         },
-        fieldDescription: "journey.nodes.label.md",
+        fieldDescription: "traceDiagram.nodes.label.md",
         exampleValue: "Refuses an order it cannot fulfil",
-        defaultInstruction: "journey.nodes.label.md",
+        defaultInstruction: "traceDiagram.nodes.label.md",
       })
       .nullable(),
     description: z
@@ -239,25 +239,25 @@ const journeyNodeSchema: z.ZodType<JourneyNode> = z.lazy(() =>
         version: 0.1,
         configurationType: "editable",
         _ui: {
-          title: "Journey node description",
+          title: "Trace node description",
           description: "How a step is reached, and what it runs next.",
         },
-        fieldDescription: "journey.nodes.description.md",
+        fieldDescription: "traceDiagram.nodes.description.md",
         exampleValue: "When a shopper places an order, `placeOrder()` calls this function with the lines of the cart.",
-        defaultInstruction: "journey.nodes.description.md",
+        defaultInstruction: "traceDiagram.nodes.description.md",
       })
       .nullable(),
     codeBlocks: z.array(codeBlockSchema),
     diffCodeBlocks: z.array(codeBlockSchema),
-    children: z.array(journeyNodeSchema),
+    children: z.array(traceNodeSchema),
     triggerLabels: z.array(triggerLabelSchema),
     blockLabels: z.array(blockLabelSchema).default([]),
-    rows: z.array(journeyRowSchema).optional(),
+    rows: z.array(traceRowSchema).optional(),
     position: cardPositionSchema.optional(),
   }),
 )
 
-export const journeyFlowDiagramSchema = z
+export const traceDiagramSchema = z
   .strictObject({
     astCodeGroup: z.custom<ASTCodeGroupGraph>(isReference),
     importGraphGroup: z.custom<ImportGraphGroup>(Array.isArray),
@@ -267,17 +267,17 @@ export const journeyFlowDiagramSchema = z
         version: 0.1,
         configurationType: "editable",
         _ui: {
-          title: "Journey Flow Diagram description",
+          title: "Trace Diagram description",
           description: "The caption of the diagram, in five sentences at most.",
         },
-        fieldDescription: "journey.description.md",
+        fieldDescription: "traceDiagram.description.md",
         exampleValue: "When a shopper places an order, `<Checkout />` calls `placeOrder()`, which asks `stockOf()` for every line of the cart before it charges the card.",
-        defaultInstruction: "journey.description.md",
+        defaultInstruction: "traceDiagram.description.md",
       })
       .nullable()
       .default(null),
-    journeyNodes: z.array(journeyNodeSchema),
-    journeyNodeEdges: z.array(
+    traceNodes: z.array(traceNodeSchema),
+    traceNodeEdges: z.array(
       z.strictObject({
         id: z.string(),
         from: z.string(),
@@ -290,8 +290,8 @@ export const journeyFlowDiagramSchema = z
   .register(configurations, {
     version: 0.1,
     configurationType: "static",
-    summary: "The Journey Flow Diagram: what its nodes are, and what is yours to write on them.",
-    fieldDescription: "journey.md",
+    summary: "The Trace Diagram: what its nodes are, and what is yours to write on them.",
+    fieldDescription: "traceDiagram.md",
   })
 
 const blastEdgeSchema = z.strictObject({ importer: z.string(), imported: z.string() })
@@ -311,13 +311,13 @@ export const blastSchema = z
               title: "Blast file impact type",
               description: "What the change does to a file it did not touch.",
             },
-            fieldDescription: "blast.nodes.impactType.md",
+            fieldDescription: "blastDiagram.nodes.impactType.md",
             exampleValue: "behaviour-changes",
-            defaultInstruction: "blast.nodes.impactType.md",
+            defaultInstruction: "blastDiagram.nodes.impactType.md",
             values: {
-              "breaks": "blast.nodes.impactType.breaks.md",
-              "behaviour-changes": "blast.nodes.impactType.behaviour-changes.md",
-              "unaffected": "blast.nodes.impactType.unaffected.md",
+              "breaks": "blastDiagram.nodes.impactType.breaks.md",
+              "behaviour-changes": "blastDiagram.nodes.impactType.behaviour-changes.md",
+              "unaffected": "blastDiagram.nodes.impactType.unaffected.md",
             },
           })
           .nullable(),
@@ -330,9 +330,9 @@ export const blastSchema = z
               title: "Blast file impact reason",
               description: "Why a file breaks or changes behaviour.",
             },
-            fieldDescription: "blast.nodes.impactReason.md",
+            fieldDescription: "blastDiagram.nodes.impactReason.md",
             exampleValue: "It shows the units left, and now shows a negative number when holds exceed the stock.",
-            defaultInstruction: "blast.nodes.impactReason.md",
+            defaultInstruction: "blastDiagram.nodes.impactReason.md",
           })
           .nullable(),
       }),
@@ -349,7 +349,7 @@ export const blastSchema = z
     version: 0.1,
     configurationType: "static",
     summary: "The Blast Diagram: which files to assess, and where to stop.",
-    fieldDescription: "blast.md",
+    fieldDescription: "blastDiagram.md",
   })
 
 const segmentSchema = z.strictObject({
@@ -385,8 +385,8 @@ const segmentSchema = z.strictObject({
       exampleValue: "A basket with an item that sold out a minute ago could still reach payment.",
       defaultInstruction: "context.md",
     }),
-  journey: journeyFlowDiagramSchema.nullable(),
-  blast: blastSchema.nullable(),
+  traceDiagram: traceDiagramSchema.nullable(),
+  blastDiagram: blastSchema.nullable(),
   walkthrough: z
     .strictObject({
       files: z

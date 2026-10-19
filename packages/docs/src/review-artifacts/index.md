@@ -13,7 +13,7 @@ A review artifact is the review Flight Plan builds for one pull request or branc
 |---|---|---|
 | [Segments](/docs/review-artifacts/parts/segments/) | How the change splits into parts you can read one at a time | Flight Plan |
 | [Context](/docs/review-artifacts/parts/context/) | Why the change exists | The agent |
-| [Journey Flow Diagram](/docs/review-artifacts/parts/journey-flow-diagram/) | How execution reaches the changed code | Flight Plan draws it, the agent labels it |
+| [Trace Diagram](/docs/review-artifacts/parts/trace-diagram/) | How execution reaches the changed code | Flight Plan draws it, the agent labels it |
 | [Blast Diagram](/docs/review-artifacts/parts/blast-diagram/) | What the change can affect outside itself | Flight Plan draws it, the agent judges each file |
 | [Code Walkthrough](/docs/review-artifacts/parts/code-walkthrough/) | Where to look, in what order | Flight Plan picks the files and lines, the agent explains them |
 | [Findings](/docs/review-artifacts/parts/findings/) | What might be wrong | The agent |

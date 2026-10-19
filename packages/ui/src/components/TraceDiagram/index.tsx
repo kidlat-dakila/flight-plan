@@ -43,16 +43,16 @@ import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
 import { straightPath, type Point } from "@/lib/diagram-path"
 import { cutOffBy, lineageOf, neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
-import { arrangeJourney, nearestSideOf, placeUnplacedCards, type CardSide, type PositionById } from "@/lib/journey-arrangement"
-import { toJourneyFlow, type FlowFrame, type FlowHandleType } from "@/lib/journey-flow"
-import { layoutJourney, NODE_HEAD_HEIGHT, ROW_WIDTH, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/journey-layout"
 import { navigatorButtonOf } from "@/lib/navigator-controls"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
+import { arrangeTrace, nearestSideOf, placeUnplacedCards, type CardSide, type PositionById } from "@/lib/trace-arrangement"
+import { toTraceFlow, type FlowFrame, type FlowHandleType } from "@/lib/trace-flow"
+import { layoutTrace, NODE_HEAD_HEIGHT, ROW_WIDTH, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/trace-layout"
 import { cn } from "@/lib/utils"
 
 export type NodeChange = "added" | "modified"
 
-export interface JourneyTriggerLabel {
+export interface TraceTriggerLabel {
   readonly id: string
   readonly type: string
   readonly typeLabel: string
@@ -63,7 +63,7 @@ export interface JourneyTriggerLabel {
   readonly lines: readonly LineSpan[]
 }
 
-export interface JourneyListedBlock {
+export interface TraceListedBlock {
   readonly id: string
   readonly name: string
   readonly label: string
@@ -72,19 +72,19 @@ export interface JourneyListedBlock {
   readonly lines: readonly LineSpan[]
 }
 
-export interface JourneyBlockList {
+export interface TraceBlockList {
   readonly kind: string
   readonly label: string
-  readonly blocks: readonly JourneyListedBlock[]
+  readonly blocks: readonly TraceListedBlock[]
 }
 
-export interface JourneyRowGroup {
+export interface TraceRowGroup {
   readonly label: string | null
   readonly rowIds: readonly string[]
   readonly childIds: readonly string[]
 }
 
-export interface JourneyNode {
+export interface TraceNode {
   readonly id: string
   readonly type: string
   readonly typeLabel: string
@@ -98,14 +98,14 @@ export interface JourneyNode {
   readonly codeLinkId: string | null
   readonly codeViews: readonly CodeView[]
   readonly parameters: readonly string[]
-  readonly blockLists: readonly JourneyBlockList[]
-  readonly triggerLabels: readonly JourneyTriggerLabel[]
-  readonly rowGroups: readonly JourneyRowGroup[]
+  readonly blockLists: readonly TraceBlockList[]
+  readonly triggerLabels: readonly TraceTriggerLabel[]
+  readonly rowGroups: readonly TraceRowGroup[]
   readonly position: Point | null
-  readonly children: readonly JourneyNode[]
+  readonly children: readonly TraceNode[]
 }
 
-export interface JourneyEdge {
+export interface TraceEdge {
   readonly id: string
   readonly from: string
   readonly to: string
@@ -143,7 +143,7 @@ interface DroppedLine extends Pick<LineEnd, "from" | "fromRowId"> {
   readonly cardCount: number
 }
 
-export interface JourneyAuthoring {
+export interface TraceAuthoring {
   readonly isPending: boolean
   readonly onAddCard: () => void
   readonly onClearDiagram: () => void
@@ -159,14 +159,14 @@ export interface CardMoving {
   readonly onMoveCards: (places: readonly CardPlace[]) => void
 }
 
-interface JourneyFlowDiagramProps {
+interface TraceDiagramProps {
   readonly title: string
-  readonly nodes: readonly JourneyNode[]
-  readonly edges: readonly JourneyEdge[]
+  readonly nodes: readonly TraceNode[]
+  readonly edges: readonly TraceEdge[]
   readonly codeLinks: CodeLinkTargets
   readonly codeDefinitions: CodeDefinitions
   readonly isReviewPending: boolean
-  readonly authoring?: JourneyAuthoring | null
+  readonly authoring?: TraceAuthoring | null
   readonly cardMoving?: CardMoving | null
   readonly navigatorAnchorId?: string | null
   readonly onOpenCodeLink: (anchorId: string) => void
@@ -224,15 +224,15 @@ const TRIGGER_EMPHASIS_CLASSES: Record<Emphasis, string> = {
 const NOTHING_CONCEALED: Concealment = { collapsedNodeIds: [], focusedNodeId: null }
 const EDGE_KIND: EdgeKind = "call"
 const HALF = 2
-const NODE_TYPE = "journey-node"
-const NEW_CARD_NODE_TYPE = "journey-new-card"
-const NEW_CARD_NODE_ID = "journey-new-card"
+const NODE_TYPE = "trace-node"
+const NEW_CARD_NODE_TYPE = "trace-new-card"
+const NEW_CARD_NODE_ID = "trace-new-card"
 const NEW_CARD_HANDLE_ID = "new-card:line-end"
-const NEW_CARD_LINE_ID = "journey-new-card-line"
+const NEW_CARD_LINE_ID = "trace-new-card-line"
 const NEW_CARD_SIZE = 32
 const NEW_CARD_LABEL = "Create Card"
 const NEW_CARD_CLASSES = "nodrag nopan flex size-full items-center justify-center rounded-full border border-dashed border-primary bg-card text-primary transition-colors duration-[180ms] ease-out hover:bg-accent disabled:opacity-60"
-const EDGE_TYPE = "journey-line"
+const EDGE_TYPE = "trace-line"
 const LINE_ABOVE_NODES_Z_INDEX = 1000
 const PAN_THRESHOLD_PX = 4
 const HANDLE_POSITIONS: Readonly<Record<FlowHandleType, Position>> = { source: Position.Right, target: Position.Left }
@@ -291,12 +291,12 @@ const COLLAPSE_ALL_LABEL = "Collapse all"
 const EXPAND_ALL_LABEL = "Expand all"
 const COLLAPSE_KEY = "q"
 
-const listNodes = (nodes: readonly JourneyNode[]): JourneyNode[] => nodes.flatMap((node) => [node, ...listNodes(node.children)])
+const listNodes = (nodes: readonly TraceNode[]): TraceNode[] => nodes.flatMap((node) => [node, ...listNodes(node.children)])
 
 interface BlockRow {
   readonly kind: string
   readonly kindLabel: string
-  readonly block: JourneyListedBlock
+  readonly block: TraceListedBlock
 }
 
 interface RowHeading {
@@ -306,12 +306,12 @@ interface RowHeading {
 
 const HEADING_ID_SEPARATOR = ":heading:"
 
-const headingIdOf = (node: JourneyNode, groupIndex: number): string => [node.id, String(groupIndex)].join(HEADING_ID_SEPARATOR)
+const headingIdOf = (node: TraceNode, groupIndex: number): string => [node.id, String(groupIndex)].join(HEADING_ID_SEPARATOR)
 
-const listBlockRows = (node: JourneyNode): BlockRow[] =>
+const listBlockRows = (node: TraceNode): BlockRow[] =>
   node.blockLists.flatMap(({ kind, label, blocks }) => blocks.map((block) => ({ kind, kindLabel: label, block })))
 
-const listRowHeadings = (node: JourneyNode): RowHeading[] =>
+const listRowHeadings = (node: TraceNode): RowHeading[] =>
   node.rowGroups.flatMap(({ label }, groupIndex) => (label === null ? [] : [{ id: headingIdOf(node, groupIndex), label }]))
 
 interface ChipPacking {
@@ -328,14 +328,14 @@ const parameterLineCountOf = (parameters: readonly string[]): number =>
     return widthOnLine <= ROW_WIDTH ? { lineCount, lineWidth: widthOnLine } : { lineCount: lineCount + 1, lineWidth: width }
   }, { lineCount: 1, lineWidth: 0 }).lineCount
 
-const parametersIdOf = (node: JourneyNode): string => `${node.id}${PARAMETERS_ID_SUFFIX}`
+const parametersIdOf = (node: TraceNode): string => `${node.id}${PARAMETERS_ID_SUFFIX}`
 
-const parametersRowsOf = (node: JourneyNode): LayoutRow[] =>
+const parametersRowsOf = (node: TraceNode): LayoutRow[] =>
   node.parameters.length === 0 ? [] : [{ id: parametersIdOf(node), kind: "parameters", lineCount: parameterLineCountOf(node.parameters) }]
 
-const rowKindOf = ({ isDraft }: Pick<JourneyTriggerLabel, "isDraft">): LayoutRowKind => (isDraft ? "row" : "two-line-row")
+const rowKindOf = ({ isDraft }: Pick<TraceTriggerLabel, "isDraft">): LayoutRowKind => (isDraft ? "row" : "two-line-row")
 
-const toLayoutRows = (node: JourneyNode): LayoutRow[] => {
+const toLayoutRows = (node: TraceNode): LayoutRow[] => {
   const rowById = new Map([...node.blockLists.flatMap(({ blocks }) => blocks), ...node.triggerLabels].map((row) => [row.id, row] as const))
   return [...parametersRowsOf(node), ...node.rowGroups.flatMap(({ label, rowIds, childIds }, groupIndex): LayoutRow[] => [
     ...(label === null ? [] : [{ id: headingIdOf(node, groupIndex), kind: "heading" as const }]),
@@ -347,23 +347,23 @@ const toLayoutRows = (node: JourneyNode): LayoutRow[] => {
   ])]
 }
 
-const toLayoutNode = (node: JourneyNode): LayoutNode => ({
+const toLayoutNode = (node: TraceNode): LayoutNode => ({
   id: node.id,
   rows: toLayoutRows(node),
   children: node.children.map(toLayoutNode),
 })
 
-const topIdsOf = (nodes: readonly JourneyNode[]): ReadonlyMap<string, string> =>
+const topIdsOf = (nodes: readonly TraceNode[]): ReadonlyMap<string, string> =>
   new Map(nodes.flatMap((node) => listNodes([node]).map((inside) => [inside.id, node.id] as const)))
 
-const connectionsBetween = (edges: readonly JourneyEdge[], topIdById: ReadonlyMap<string, string>): Connection[] =>
+const connectionsBetween = (edges: readonly TraceEdge[], topIdById: ReadonlyMap<string, string>): Connection[] =>
   edges.flatMap((edge) => {
     const from = topIdById.get(edge.from)
     const to = topIdById.get(edge.to)
     return from === undefined || to === undefined || from === to ? [] : [{ id: edge.id, from, to }]
   })
 
-const hiddenTopIdsOf = (nodes: readonly JourneyNode[], connections: readonly Connection[], { collapsedNodeIds, focusedNodeId }: Concealment): ReadonlySet<string> => {
+const hiddenTopIdsOf = (nodes: readonly TraceNode[], connections: readonly Connection[], { collapsedNodeIds, focusedNodeId }: Concealment): ReadonlySet<string> => {
   const rootIds = nodes.filter((node) => connections.every((connection) => connection.to !== node.id)).map((node) => node.id)
   const cutOff = [...cutOffBy(connections, collapsedNodeIds, rootIds)].filter((nodeId) => !collapsedNodeIds.includes(nodeId))
   const lineage = focusedNodeId === null ? null : lineageOf(connections, focusedNodeId)
@@ -393,7 +393,7 @@ interface CardActions {
 }
 
 interface NodeBoxProps {
-  readonly node: JourneyNode
+  readonly node: TraceNode
   readonly cardActions: CardActions | null
   readonly depth: number
   readonly emphasis: Emphasis | null
@@ -481,7 +481,7 @@ const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, 
 }
 
 interface TriggerRowProps {
-  readonly trigger: JourneyTriggerLabel
+  readonly trigger: TraceTriggerLabel
   readonly placed: PlacedRow
   readonly emphasis: Emphasis | null
   readonly onSelect: () => void
@@ -552,7 +552,7 @@ const BlockRowButton = ({ row: { kind, kindLabel, block }, placed, emphasis, onS
 }
 
 interface FlowNodeData extends Record<string, unknown> {
-  readonly node: JourneyNode
+  readonly node: TraceNode
   readonly frame: FlowFrame
   readonly cardActions: CardActions | null
   readonly emphasis: Emphasis | null
@@ -845,7 +845,7 @@ const lineOfConnection = ({ source, sourceHandle, target, targetHandle }: FlowCo
   return { from: source, fromRowId: sourceHandle.slice(ROW_HANDLE_PREFIX.length), to: target, toSide }
 }
 
-const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, cardMoving = null, navigatorAnchorId = null, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
+const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, cardMoving = null, navigatorAnchorId = null, onOpenCodeLink, onWaypointReviewedChange }: TraceDiagramProps) => {
   const [draggedPositionById, setDraggedPositionById] = useState<PositionById>(NO_POSITIONS)
   const [selectedLineId, setSelectedLineId] = useState<string | null>(null)
   const [droppedLine, setDroppedLine] = useState<DroppedLine | null>(null)
@@ -864,10 +864,10 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
   const shownIds = new Set(shownNodes.map((node) => node.id))
   const shownEdges = edges.filter((edge) => shownIds.has(edge.from) && shownIds.has(edge.to))
   const layoutNodes = shownTopNodes.map(toLayoutNode)
-  const computedLayout = layoutJourney(layoutNodes, shownEdges)
+  const computedLayout = layoutTrace(layoutNodes, shownEdges)
   const storedPositionById: PositionById = new Map(nodes.flatMap((node) => (node.position === null ? [] : [[node.id, node.position] as const])))
   const positionById: PositionById = new Map([...placeUnplacedCards(computedLayout, storedPositionById), ...draggedPositionById])
-  const layout = arrangeJourney(computedLayout, positionById, new Map(shownEdges.map((edge) => [edge.id, edge.toSide] as const)))
+  const layout = arrangeTrace(computedLayout, positionById, new Map(shownEdges.map((edge) => [edge.id, edge.toSide] as const)))
   const selectedLine = shownEdges.find((edge) => edge.id === selectedLineId) ?? null
   const placesOfTops: readonly CardPlace[] = layout.nodes.filter((placed) => placed.depth === 0).map((placed) => ({ nodeId: placed.id, x: placed.x, y: placed.y }))
   const canvasMoving: CanvasMoving | null = cardMoving === null
@@ -893,7 +893,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
         },
       }
   const lineToNewCard = authoring !== null && droppedLine !== null && droppedLine.cardCount === nodes.length && shownIds.has(droppedLine.from) ? droppedLine : null
-  const flow = toJourneyFlow(layoutNodes, layout)
+  const flow = toTraceFlow(layoutNodes, layout)
   const nodeById = new Map(shownNodes.map((node) => [node.id, node] as const))
   const blockRowById = new Map(shownNodes.flatMap((node) => listBlockRows(node).map((row) => [row.block.id, row] as const)))
   const triggerById = new Map(shownNodes.flatMap((node) => node.triggerLabels.map((trigger) => [trigger.id, trigger] as const)))
@@ -1089,4 +1089,4 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
   )
 }
 
-export default JourneyFlowDiagram
+export default TraceDiagram

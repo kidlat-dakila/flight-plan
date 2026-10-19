@@ -2,7 +2,7 @@ import type { ReviewWriter } from "@/procedures/get-review/utils/start/review-re
 import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
 import type { ReviewArtifact, SectionName, Segment, SourceFile } from "@flightplan/configurations"
 
-export const DIAGRAM_SECTIONS = ["journey", "blast"] as const
+export const DIAGRAM_SECTIONS = ["traceDiagram", "blastDiagram"] as const
 
 export type DiagramSection = (typeof DIAGRAM_SECTIONS)[number]
 

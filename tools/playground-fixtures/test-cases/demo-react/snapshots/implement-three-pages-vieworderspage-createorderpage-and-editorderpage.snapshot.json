@@ -620,9 +620,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": "This diagram shows how the route table opens the order pages, and how each hook loads or sends orders through its request. It also shows what happens when the user picks a customer, picks a product, types a quantity or submits the order form.",
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/hooks/use-orders.ts#hook@14:1",
               "type": "hook",
@@ -1181,7 +1181,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@10:1 -> src/routes/root-layout.tsx#component@5:1",
               "from": "src/router.tsx#root-variable@10:1",
@@ -1229,7 +1229,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/api/orders.ts",
@@ -1614,7 +1614,7 @@
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/orders.ts#function@4:1",
+                  "traceNodeId": "src/api/orders.ts#function@4:1",
                   "codeBlockIds": [
                     "src/api/orders.ts#function@4:1"
                   ],
@@ -1641,7 +1641,7 @@
                     "lineEnd": 10
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/orders.ts#function@8:1",
+                  "traceNodeId": "src/api/orders.ts#function@8:1",
                   "codeBlockIds": [
                     "src/api/orders.ts#function@8:1",
                     "src/api/orders.ts#root-argument-value@8:28"
@@ -1660,7 +1660,7 @@
                     "lineEnd": 14
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/orders.ts#function@12:1",
+                  "traceNodeId": "src/api/orders.ts#function@12:1",
                   "codeBlockIds": [
                     "src/api/orders.ts#function@12:1",
                     "src/api/orders.ts#root-argument-value@12:29",
@@ -1695,7 +1695,7 @@
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/orders.ts#function@16:1",
+                  "traceNodeId": "src/api/orders.ts#function@16:1",
                   "codeBlockIds": [
                     "src/api/orders.ts#function@16:1",
                     "src/api/orders.ts#root-argument-value@16:29",
@@ -1722,7 +1722,7 @@
                     "lineEnd": 4
                   },
                   "category": "variable",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/hooks/use-orders.ts#root-variable@4:1"
                   ],
@@ -1740,7 +1740,7 @@
                     "lineEnd": 8
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-orders.ts#hook@6:1",
+                  "traceNodeId": "src/hooks/use-orders.ts#hook@6:1",
                   "codeBlockIds": [
                     "src/hooks/use-orders.ts#hook@6:1",
                     "src/hooks/use-orders.ts#component-effect@7:10",
@@ -1761,7 +1761,7 @@
                     "lineEnd": 12
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-orders.ts#hook@10:1",
+                  "traceNodeId": "src/hooks/use-orders.ts#hook@10:1",
                   "codeBlockIds": [
                     "src/hooks/use-orders.ts#hook@10:1",
                     "src/hooks/use-orders.ts#root-argument-value@10:26",
@@ -1784,7 +1784,7 @@
                     "lineEnd": 20
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-orders.ts#hook@14:1",
+                  "traceNodeId": "src/hooks/use-orders.ts#hook@14:1",
                   "codeBlockIds": [
                     "src/hooks/use-orders.ts#hook@14:1",
                     "src/hooks/use-orders.ts#external-value@15:3",
@@ -1808,7 +1808,7 @@
                         "lineEnd": 15
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/hooks/use-orders.ts#hook@14:1",
+                      "traceNodeId": "src/hooks/use-orders.ts#hook@14:1",
                       "codeBlockIds": [
                         "src/hooks/use-orders.ts#external-value@15:3"
                       ],
@@ -1826,7 +1826,7 @@
                         "lineEnd": 19
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/hooks/use-orders.ts#hook@14:1",
+                      "traceNodeId": "src/hooks/use-orders.ts#hook@14:1",
                       "codeBlockIds": [
                         "src/hooks/use-orders.ts#component-effect@16:10",
                         "src/hooks/use-orders.ts#effect-callback@17:5",
@@ -1851,7 +1851,7 @@
                     "lineEnd": 28
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-orders.ts#hook@22:1",
+                  "traceNodeId": "src/hooks/use-orders.ts#hook@22:1",
                   "codeBlockIds": [
                     "src/hooks/use-orders.ts#hook@22:1",
                     "src/hooks/use-orders.ts#external-value@23:3",
@@ -1875,7 +1875,7 @@
                         "lineEnd": 23
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/hooks/use-orders.ts#hook@22:1",
+                      "traceNodeId": "src/hooks/use-orders.ts#hook@22:1",
                       "codeBlockIds": [
                         "src/hooks/use-orders.ts#external-value@23:3"
                       ],
@@ -1893,7 +1893,7 @@
                         "lineEnd": 27
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/hooks/use-orders.ts#hook@22:1",
+                      "traceNodeId": "src/hooks/use-orders.ts#hook@22:1",
                       "codeBlockIds": [
                         "src/hooks/use-orders.ts#component-effect@24:10",
                         "src/hooks/use-orders.ts#effect-callback@25:5",
@@ -1923,7 +1923,7 @@
                     "lineEnd": 23
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/router.tsx#root-variable@10:1",
+                  "traceNodeId": "src/router.tsx#root-variable@10:1",
                   "codeBlockIds": [
                     "src/router.tsx#root-variable@10:1",
                     "src/router.tsx#property@14:5",
@@ -1956,7 +1956,7 @@
                     "lineEnd": 12
                   },
                   "category": "type",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/routes/orders/components/OrderForm.tsx#type-declaration@7:1"
                   ],
@@ -1974,7 +1974,7 @@
                     "lineEnd": 60
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                  "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                   "codeBlockIds": [
                     "src/routes/orders/components/OrderForm.tsx#component@14:1",
                     "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:29",
@@ -2040,7 +2040,7 @@
                         "lineEnd": 15
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                      "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                       "codeBlockIds": [
                         "src/routes/orders/components/OrderForm.tsx#state@15:3",
                         "src/routes/orders/components/OrderForm.tsx#component-effect@15:29",
@@ -2060,7 +2060,7 @@
                         "lineEnd": 16
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                      "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                       "codeBlockIds": [
                         "src/routes/orders/components/OrderForm.tsx#external-value@16:3"
                       ],
@@ -2078,7 +2078,7 @@
                         "lineEnd": 17
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                      "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                       "codeBlockIds": [
                         "src/routes/orders/components/OrderForm.tsx#external-value@17:3"
                       ],
@@ -2111,7 +2111,7 @@
                         "lineEnd": 22
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                      "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                       "codeBlockIds": [
                         "src/routes/orders/components/OrderForm.tsx#function@19:3",
                         "src/routes/orders/components/OrderForm.tsx#variable@19:25",
@@ -2132,7 +2132,7 @@
                         "lineEnd": 25
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                      "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                       "codeBlockIds": [
                         "src/routes/orders/components/OrderForm.tsx#render-event@25:11"
                       ],
@@ -2150,7 +2150,7 @@
                         "lineEnd": 29
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                      "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                       "codeBlockIds": [
                         "src/routes/orders/components/OrderForm.tsx#render-event@29:9",
                         "src/routes/orders/components/OrderForm.tsx#function@29:19",
@@ -2171,7 +2171,7 @@
                         "lineEnd": 35
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                      "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                       "codeBlockIds": [
                         "src/routes/orders/components/OrderForm.tsx#render-loop@31:10",
                         "src/routes/orders/components/OrderForm.tsx#function@31:24",
@@ -2192,7 +2192,7 @@
                         "lineEnd": 40
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                      "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                       "codeBlockIds": [
                         "src/routes/orders/components/OrderForm.tsx#render-event@40:9",
                         "src/routes/orders/components/OrderForm.tsx#function@40:19",
@@ -2213,7 +2213,7 @@
                         "lineEnd": 46
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                      "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                       "codeBlockIds": [
                         "src/routes/orders/components/OrderForm.tsx#render-loop@42:10",
                         "src/routes/orders/components/OrderForm.tsx#function@42:23",
@@ -2234,7 +2234,7 @@
                         "lineEnd": 53
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
+                      "traceNodeId": "src/routes/orders/components/OrderForm.tsx#component@14:1",
                       "codeBlockIds": [
                         "src/routes/orders/components/OrderForm.tsx#render-event@53:9",
                         "src/routes/orders/components/OrderForm.tsx#function@53:19",
@@ -2262,7 +2262,7 @@
                     "lineEnd": 24
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/root-layout.tsx#component@5:1",
+                  "traceNodeId": "src/routes/root-layout.tsx#component@5:1",
                   "codeBlockIds": [
                     "src/routes/root-layout.tsx#component@5:1",
                     "src/routes/root-layout.tsx#render@12:9"
@@ -2286,7 +2286,7 @@
                     "lineEnd": 1
                   },
                   "category": "type",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/types/order.ts#type-declaration@1:1"
                   ],
@@ -2304,7 +2304,7 @@
                     "lineEnd": 9
                   },
                   "category": "type",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/types/order.ts#type-declaration@3:1"
                   ],
@@ -2322,7 +2322,7 @@
                     "lineEnd": 11
                   },
                   "category": "type",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/types/order.ts#type-declaration@11:1"
                   ],
@@ -4066,9 +4066,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": "This diagram shows how the create page opens with an empty draft in the form. It also shows what happens when the user submits the form, and how the new order reaches the API through [`createOrder()`](code:src/api/orders.ts#createOrder).",
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@10:1",
               "type": "root-variable",
@@ -4513,7 +4513,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@10:1 -> src/routes/orders/create.tsx#component@8:1",
               "from": "src/router.tsx#root-variable@10:1",
@@ -4586,7 +4586,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": null,
+        "blastDiagram": null,
         "codeWalkthrough": {
           "files": [
             {
@@ -4604,7 +4604,7 @@
                     "lineEnd": 6
                   },
                   "category": "variable",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/routes/orders/create.tsx#root-variable@6:1",
                     "src/routes/orders/create.tsx#property@6:35",
@@ -4626,7 +4626,7 @@
                     "lineEnd": 22
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/orders/create.tsx#component@8:1",
+                  "traceNodeId": "src/routes/orders/create.tsx#component@8:1",
                   "codeBlockIds": [
                     "src/routes/orders/create.tsx#component@8:1",
                     "src/routes/orders/create.tsx#external-value@9:3",
@@ -4656,7 +4656,7 @@
                         "lineEnd": 9
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/create.tsx#component@8:1",
+                      "traceNodeId": "src/routes/orders/create.tsx#component@8:1",
                       "codeBlockIds": [
                         "src/routes/orders/create.tsx#external-value@9:3"
                       ],
@@ -4674,7 +4674,7 @@
                         "lineEnd": 10
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/create.tsx#component@8:1",
+                      "traceNodeId": "src/routes/orders/create.tsx#component@8:1",
                       "codeBlockIds": [
                         "src/routes/orders/create.tsx#external-value@10:3"
                       ],
@@ -4706,7 +4706,7 @@
                         "lineEnd": 14
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/create.tsx#component@8:1",
+                      "traceNodeId": "src/routes/orders/create.tsx#component@8:1",
                       "codeBlockIds": [
                         "src/routes/orders/create.tsx#function@12:3",
                         "src/routes/orders/create.tsx#variable@12:25",
@@ -4729,7 +4729,7 @@
                         "lineEnd": 19
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/create.tsx#component@8:1",
+                      "traceNodeId": "src/routes/orders/create.tsx#component@8:1",
                       "codeBlockIds": [
                         "src/routes/orders/create.tsx#render-event@19:87"
                       ],
@@ -6308,9 +6308,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": "This diagram shows how the edit page loads an order and renders it in the form. It also shows what happens when the user saves the order, and how the changed order reaches the API through [`updateOrder()`](code:src/api/orders.ts#updateOrder).",
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@10:1",
               "type": "root-variable",
@@ -6839,7 +6839,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@10:1 -> src/routes/orders/edit.tsx#component@6:1",
               "from": "src/router.tsx#root-variable@10:1",
@@ -6922,7 +6922,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": null,
+        "blastDiagram": null,
         "codeWalkthrough": {
           "files": [
             {
@@ -6940,7 +6940,7 @@
                     "lineEnd": 24
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
+                  "traceNodeId": "src/routes/orders/edit.tsx#component@6:1",
                   "codeBlockIds": [
                     "src/routes/orders/edit.tsx#component@6:1",
                     "src/routes/orders/edit.tsx#external-value@7:3",
@@ -6979,7 +6979,7 @@
                         "lineEnd": 7
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
+                      "traceNodeId": "src/routes/orders/edit.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/orders/edit.tsx#external-value@7:3"
                       ],
@@ -6997,7 +6997,7 @@
                         "lineEnd": 8
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
+                      "traceNodeId": "src/routes/orders/edit.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/orders/edit.tsx#external-value@8:3"
                       ],
@@ -7015,7 +7015,7 @@
                         "lineEnd": 9
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
+                      "traceNodeId": "src/routes/orders/edit.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/orders/edit.tsx#external-value@9:3"
                       ],
@@ -7033,7 +7033,7 @@
                         "lineEnd": 10
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
+                      "traceNodeId": "src/routes/orders/edit.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/orders/edit.tsx#external-value@10:3"
                       ],
@@ -7051,7 +7051,7 @@
                         "lineEnd": 11
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
+                      "traceNodeId": "src/routes/orders/edit.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/orders/edit.tsx#condition@11:3",
                         "src/routes/orders/edit.tsx#render-root@11:18",
@@ -7071,7 +7071,7 @@
                         "lineEnd": 12
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
+                      "traceNodeId": "src/routes/orders/edit.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/orders/edit.tsx#condition@12:3",
                         "src/routes/orders/edit.tsx#render-root@12:16",
@@ -7091,7 +7091,7 @@
                         "lineEnd": 16
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
+                      "traceNodeId": "src/routes/orders/edit.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/orders/edit.tsx#function@14:3",
                         "src/routes/orders/edit.tsx#variable@14:25",
@@ -7115,7 +7115,7 @@
                         "lineEnd": 21
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/edit.tsx#component@6:1",
+                      "traceNodeId": "src/routes/orders/edit.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/orders/edit.tsx#render-event@21:78"
                       ],
@@ -8759,9 +8759,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": "This diagram shows how the orders list loads the orders and renders them in a table.",
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@10:1",
               "type": "root-variable",
@@ -8913,7 +8913,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.tsx#root-variable@10:1 -> src/routes/orders/index.tsx#component@4:1",
               "from": "src/router.tsx#root-variable@10:1",
@@ -8931,7 +8931,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": null,
+        "blastDiagram": null,
         "codeWalkthrough": {
           "files": [
             {
@@ -8949,7 +8949,7 @@
                     "lineEnd": 28
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/orders/index.tsx#component@4:1",
+                  "traceNodeId": "src/routes/orders/index.tsx#component@4:1",
                   "codeBlockIds": [
                     "src/routes/orders/index.tsx#component@4:1",
                     "src/routes/orders/index.tsx#external-value@5:3",
@@ -8988,7 +8988,7 @@
                         "lineEnd": 5
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/index.tsx#component@4:1",
+                      "traceNodeId": "src/routes/orders/index.tsx#component@4:1",
                       "codeBlockIds": [
                         "src/routes/orders/index.tsx#external-value@5:3"
                       ],
@@ -9006,7 +9006,7 @@
                         "lineEnd": 6
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/index.tsx#component@4:1",
+                      "traceNodeId": "src/routes/orders/index.tsx#component@4:1",
                       "codeBlockIds": [
                         "src/routes/orders/index.tsx#condition@6:3",
                         "src/routes/orders/index.tsx#render-root@6:18",
@@ -9026,7 +9026,7 @@
                         "lineEnd": 7
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/index.tsx#component@4:1",
+                      "traceNodeId": "src/routes/orders/index.tsx#component@4:1",
                       "codeBlockIds": [
                         "src/routes/orders/index.tsx#condition@7:3",
                         "src/routes/orders/index.tsx#render-root@7:16",
@@ -9046,7 +9046,7 @@
                         "lineEnd": 23
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/routes/orders/index.tsx#component@4:1",
+                      "traceNodeId": "src/routes/orders/index.tsx#component@4:1",
                       "codeBlockIds": [
                         "src/routes/orders/index.tsx#render-loop@14:12",
                         "src/routes/orders/index.tsx#function@14:23",

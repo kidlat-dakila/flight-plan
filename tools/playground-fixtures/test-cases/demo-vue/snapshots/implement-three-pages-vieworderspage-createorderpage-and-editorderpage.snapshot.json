@@ -581,9 +581,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": "This diagram shows how the router opens the order pages, and how each composable loads or sends orders through its request. It also shows what happens when the user submits the order form.",
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/composables/use-orders.ts#hook@14:1",
               "type": "hook",
@@ -1017,7 +1017,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.ts#root-variable@10:1 -> src/views/RootLayout.vue#component@1:1",
               "from": "src/router.ts#root-variable@10:1",
@@ -1050,7 +1050,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/api/orders.ts",
@@ -1427,7 +1427,7 @@
                     "lineEnd": 4
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/orders.ts#function@4:1",
+                  "traceNodeId": "src/api/orders.ts#function@4:1",
                   "codeBlockIds": [
                     "src/api/orders.ts#function@4:1"
                   ],
@@ -1454,7 +1454,7 @@
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/orders.ts#function@6:1",
+                  "traceNodeId": "src/api/orders.ts#function@6:1",
                   "codeBlockIds": [
                     "src/api/orders.ts#function@6:1",
                     "src/api/orders.ts#root-argument-value@6:28"
@@ -1473,7 +1473,7 @@
                     "lineEnd": 9
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/orders.ts#function@8:1",
+                  "traceNodeId": "src/api/orders.ts#function@8:1",
                   "codeBlockIds": [
                     "src/api/orders.ts#function@8:1",
                     "src/api/orders.ts#root-argument-value@8:29",
@@ -1508,7 +1508,7 @@
                     "lineEnd": 12
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/orders.ts#function@11:1",
+                  "traceNodeId": "src/api/orders.ts#function@11:1",
                   "codeBlockIds": [
                     "src/api/orders.ts#function@11:1",
                     "src/api/orders.ts#root-argument-value@11:29",
@@ -1535,7 +1535,7 @@
                     "lineEnd": 4
                   },
                   "category": "variable",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/composables/use-orders.ts#root-variable@4:1"
                   ],
@@ -1553,7 +1553,7 @@
                     "lineEnd": 8
                   },
                   "category": "function",
-                  "journeyNodeId": "src/composables/use-orders.ts#hook@6:1",
+                  "traceNodeId": "src/composables/use-orders.ts#hook@6:1",
                   "codeBlockIds": [
                     "src/composables/use-orders.ts#hook@6:1",
                     "src/composables/use-orders.ts#component-effect@7:10",
@@ -1574,7 +1574,7 @@
                     "lineEnd": 12
                   },
                   "category": "function",
-                  "journeyNodeId": "src/composables/use-orders.ts#hook@10:1",
+                  "traceNodeId": "src/composables/use-orders.ts#hook@10:1",
                   "codeBlockIds": [
                     "src/composables/use-orders.ts#hook@10:1",
                     "src/composables/use-orders.ts#root-argument-value@10:26",
@@ -1597,7 +1597,7 @@
                     "lineEnd": 20
                   },
                   "category": "function",
-                  "journeyNodeId": "src/composables/use-orders.ts#hook@14:1",
+                  "traceNodeId": "src/composables/use-orders.ts#hook@14:1",
                   "codeBlockIds": [
                     "src/composables/use-orders.ts#hook@14:1",
                     "src/composables/use-orders.ts#external-value@15:3",
@@ -1621,7 +1621,7 @@
                         "lineEnd": 15
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/composables/use-orders.ts#hook@14:1",
+                      "traceNodeId": "src/composables/use-orders.ts#hook@14:1",
                       "codeBlockIds": [
                         "src/composables/use-orders.ts#external-value@15:3"
                       ],
@@ -1639,7 +1639,7 @@
                         "lineEnd": 19
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/composables/use-orders.ts#hook@14:1",
+                      "traceNodeId": "src/composables/use-orders.ts#hook@14:1",
                       "codeBlockIds": [
                         "src/composables/use-orders.ts#component-effect@16:10",
                         "src/composables/use-orders.ts#effect-callback@17:5",
@@ -1664,7 +1664,7 @@
                     "lineEnd": 28
                   },
                   "category": "function",
-                  "journeyNodeId": "src/composables/use-orders.ts#hook@22:1",
+                  "traceNodeId": "src/composables/use-orders.ts#hook@22:1",
                   "codeBlockIds": [
                     "src/composables/use-orders.ts#hook@22:1",
                     "src/composables/use-orders.ts#external-value@23:3",
@@ -1688,7 +1688,7 @@
                         "lineEnd": 23
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/composables/use-orders.ts#hook@22:1",
+                      "traceNodeId": "src/composables/use-orders.ts#hook@22:1",
                       "codeBlockIds": [
                         "src/composables/use-orders.ts#external-value@23:3"
                       ],
@@ -1706,7 +1706,7 @@
                         "lineEnd": 27
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/composables/use-orders.ts#hook@22:1",
+                      "traceNodeId": "src/composables/use-orders.ts#hook@22:1",
                       "codeBlockIds": [
                         "src/composables/use-orders.ts#component-effect@24:10",
                         "src/composables/use-orders.ts#effect-callback@25:5",
@@ -1736,7 +1736,7 @@
                     "lineEnd": 26
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/router.ts#root-variable@10:1",
+                  "traceNodeId": "src/router.ts#root-variable@10:1",
                   "codeBlockIds": [
                     "src/router.ts#root-variable@10:1",
                     "src/router.ts#property@16:7",
@@ -1766,7 +1766,7 @@
                     "lineEnd": 1
                   },
                   "category": "type",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/types/order.ts#type-declaration@1:1"
                   ],
@@ -1784,7 +1784,7 @@
                     "lineEnd": 9
                   },
                   "category": "type",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/types/order.ts#type-declaration@3:1"
                   ],
@@ -1802,7 +1802,7 @@
                     "lineEnd": 11
                   },
                   "category": "type",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/types/order.ts#type-declaration@11:1"
                   ],
@@ -1825,7 +1825,7 @@
                     "lineEnd": 24
                   },
                   "category": "function",
-                  "journeyNodeId": "src/views/RootLayout.vue#component@1:1",
+                  "traceNodeId": "src/views/RootLayout.vue#component@1:1",
                   "codeBlockIds": [
                     "src/views/RootLayout.vue#component@1:1",
                     "src/views/RootLayout.vue#render@15:7"
@@ -1849,7 +1849,7 @@
                     "lineEnd": 31
                   },
                   "category": "function",
-                  "journeyNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
+                  "traceNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
                   "codeBlockIds": [
                     "src/views/orders/components/OrderForm.vue#component@1:1",
                     "src/views/orders/components/OrderForm.vue#variable@8:1",
@@ -1886,7 +1886,7 @@
                         "lineEnd": 9
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/components/OrderForm.vue#variable@8:1",
                         "src/views/orders/components/OrderForm.vue#variable@9:1"
@@ -1914,7 +1914,7 @@
                         "lineEnd": 11
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/components/OrderForm.vue#state@11:1"
                       ],
@@ -1932,7 +1932,7 @@
                         "lineEnd": 12
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/components/OrderForm.vue#external-value@12:1"
                       ],
@@ -1950,7 +1950,7 @@
                         "lineEnd": 13
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/components/OrderForm.vue#external-value@13:1"
                       ],
@@ -1983,7 +1983,7 @@
                         "lineEnd": 17
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/components/OrderForm.vue#function@15:1",
                         "src/views/orders/components/OrderForm.vue#call@16:3"
@@ -2002,7 +2002,7 @@
                         "lineEnd": 21
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/components/OrderForm.vue#render-event@21:9"
                       ],
@@ -2020,7 +2020,7 @@
                         "lineEnd": 23
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/components/OrderForm.vue#render-loop@23:7",
                         "src/views/orders/components/OrderForm.vue#render@23:7"
@@ -2039,7 +2039,7 @@
                         "lineEnd": 26
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/components/OrderForm.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/components/OrderForm.vue#render-loop@26:7",
                         "src/views/orders/components/OrderForm.vue#render@26:7"
@@ -3613,9 +3613,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": "This diagram shows how the create page opens with an empty draft in the form. It also shows what happens when the user submits the form, and how the new order reaches the API through [`createOrder()`](code:src/api/orders.ts#createOrder).",
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.ts#root-variable@10:1",
               "type": "root-variable",
@@ -3944,7 +3944,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.ts#root-variable@10:1 -> src/views/orders/CreateOrderPage.vue#component@1:1",
               "from": "src/router.ts#root-variable@10:1",
@@ -4002,7 +4002,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": null,
+        "blastDiagram": null,
         "codeWalkthrough": {
           "files": [
             {
@@ -4020,7 +4020,7 @@
                     "lineEnd": 22
                   },
                   "category": "function",
-                  "journeyNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
+                  "traceNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
                   "codeBlockIds": [
                     "src/views/orders/CreateOrderPage.vue#component@1:1",
                     "src/views/orders/CreateOrderPage.vue#variable@7:1",
@@ -4055,7 +4055,7 @@
                         "lineEnd": 7
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/CreateOrderPage.vue#variable@7:1",
                         "src/views/orders/CreateOrderPage.vue#property@7:35",
@@ -4077,7 +4077,7 @@
                         "lineEnd": 9
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/CreateOrderPage.vue#external-value@9:1"
                       ],
@@ -4095,7 +4095,7 @@
                         "lineEnd": 10
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/CreateOrderPage.vue#external-value@10:1"
                       ],
@@ -4127,7 +4127,7 @@
                         "lineEnd": 14
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/CreateOrderPage.vue#function@12:1",
                         "src/views/orders/CreateOrderPage.vue#variable@12:23",
@@ -4150,7 +4150,7 @@
                         "lineEnd": 20
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/CreateOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/CreateOrderPage.vue#render-event@20:90"
                       ],
@@ -5541,9 +5541,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": "This diagram shows how the edit page loads an order and renders it in the form. It also shows what happens when the user saves the order, and how the changed order reaches the API through [`updateOrder()`](code:src/api/orders.ts#updateOrder).",
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.ts#root-variable@10:1",
               "type": "root-variable",
@@ -5949,7 +5949,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.ts#root-variable@10:1 -> src/views/orders/EditOrderPage.vue#component@1:1",
               "from": "src/router.ts#root-variable@10:1",
@@ -6017,7 +6017,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": null,
+        "blastDiagram": null,
         "codeWalkthrough": {
           "files": [
             {
@@ -6035,7 +6035,7 @@
                     "lineEnd": 25
                   },
                   "category": "function",
-                  "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
+                  "traceNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
                   "codeBlockIds": [
                     "src/views/orders/EditOrderPage.vue#component@1:1",
                     "src/views/orders/EditOrderPage.vue#external-value@7:1",
@@ -6071,7 +6071,7 @@
                         "lineEnd": 7
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/EditOrderPage.vue#external-value@7:1"
                       ],
@@ -6089,7 +6089,7 @@
                         "lineEnd": 8
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/EditOrderPage.vue#external-value@8:1"
                       ],
@@ -6107,7 +6107,7 @@
                         "lineEnd": 9
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/EditOrderPage.vue#variable@9:1"
                       ],
@@ -6125,7 +6125,7 @@
                         "lineEnd": 10
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/EditOrderPage.vue#external-value@10:1"
                       ],
@@ -6143,7 +6143,7 @@
                         "lineEnd": 11
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/EditOrderPage.vue#external-value@11:1"
                       ],
@@ -6161,7 +6161,7 @@
                         "lineEnd": 15
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/EditOrderPage.vue#function@13:1",
                         "src/views/orders/EditOrderPage.vue#variable@13:23",
@@ -6185,7 +6185,7 @@
                         "lineEnd": 19
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/EditOrderPage.vue#render-condition@19:3",
                         "src/views/orders/EditOrderPage.vue#render@19:3"
@@ -6204,7 +6204,7 @@
                         "lineEnd": 20
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/EditOrderPage.vue#render-condition@20:3",
                         "src/views/orders/EditOrderPage.vue#render@20:3"
@@ -6223,7 +6223,7 @@
                         "lineEnd": 24
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/EditOrderPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/EditOrderPage.vue#render-condition@21:3",
                         "src/views/orders/EditOrderPage.vue#render@21:3",
@@ -7712,9 +7712,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": "This diagram shows how the orders list loads the orders and renders them in a table.",
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.ts#root-variable@10:1",
               "type": "root-variable",
@@ -7842,7 +7842,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/router.ts#root-variable@10:1 -> src/views/orders/ViewOrdersPage.vue#component@1:1",
               "from": "src/router.ts#root-variable@10:1",
@@ -7860,7 +7860,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": null,
+        "blastDiagram": null,
         "codeWalkthrough": {
           "files": [
             {
@@ -7878,7 +7878,7 @@
                     "lineEnd": 25
                   },
                   "category": "function",
-                  "journeyNodeId": "src/views/orders/ViewOrdersPage.vue#component@1:1",
+                  "traceNodeId": "src/views/orders/ViewOrdersPage.vue#component@1:1",
                   "codeBlockIds": [
                     "src/views/orders/ViewOrdersPage.vue#component@1:1",
                     "src/views/orders/ViewOrdersPage.vue#external-value@5:1",
@@ -7910,7 +7910,7 @@
                         "lineEnd": 5
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/ViewOrdersPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/ViewOrdersPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/ViewOrdersPage.vue#external-value@5:1"
                       ],
@@ -7928,7 +7928,7 @@
                         "lineEnd": 9
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/ViewOrdersPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/ViewOrdersPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/ViewOrdersPage.vue#render-condition@9:3",
                         "src/views/orders/ViewOrdersPage.vue#render@9:3"
@@ -7947,7 +7947,7 @@
                         "lineEnd": 10
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/ViewOrdersPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/ViewOrdersPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/ViewOrdersPage.vue#render-condition@10:3",
                         "src/views/orders/ViewOrdersPage.vue#render@10:3"
@@ -7966,7 +7966,7 @@
                         "lineEnd": 24
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/views/orders/ViewOrdersPage.vue#component@1:1",
+                      "traceNodeId": "src/views/orders/ViewOrdersPage.vue#component@1:1",
                       "codeBlockIds": [
                         "src/views/orders/ViewOrdersPage.vue#render-condition@11:3",
                         "src/views/orders/ViewOrdersPage.vue#render@11:3",

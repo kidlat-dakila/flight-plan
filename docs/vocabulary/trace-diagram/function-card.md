@@ -1,6 +1,6 @@
 # Function card
 
-The card of a node that runs as one function in a [Journey Flow Diagram](../journey-flow-diagram.md). The rules every card shares, its frame, its rows and its lines, are in [On the page](../journey-flow-diagram.md#on-the-page).
+The card of a node that runs as one function in a [Trace Diagram](../trace-diagram.md). The rules every card shares, its frame, its rows and its lines, are in [On the page](../trace-diagram.md#on-the-page).
 
 ## What is a function card
 
@@ -14,11 +14,11 @@ The card of a node that runs as one function in a [Journey Flow Diagram](../jour
 | A reducer, a thunk, an extra reducer, a listener or a selector of a Redux slice, and an endpoint of an RTK Query API | Inside the [state card](libraries/redux.md), under its heading |
 | A function that a function, a hook or a method returns | Inside the card of the function that returns it, as [Returning a function](#returning-a-function) says |
 
-A function that is a component is a [component card](component-card.md), and a function that a route runs is drawn inside the route card, as [component and route come first](../journey-flow-diagram.md#component-and-route-come-first) says.
+A function that is a component is a [component card](component-card.md), and a function that a route runs is drawn inside the route card, as [component and route come first](../trace-diagram.md#component-and-route-come-first) says.
 
 ## Rows
 
-**A function card has no headings.** Its parameters are chips under its head, `param`, each with its type when it has one, and they are no rows. Every row follows in the order it is written, its trigger labels among them, so the card reads as the code runs. A read through a parameter, `param.id`, is part of the statement that holds it and no row of its own. Each row is one [step](../journey-flow-diagram.md#steps).
+**A function card has no headings.** Its parameters are chips under its head, `param`, each with its type when it has one, and they are no rows. Every row follows in the order it is written, its trigger labels among them, so the card reads as the code runs. A read through a parameter, `param.id`, is part of the statement that holds it and no row of its own. Each row is one [step](../trace-diagram.md#steps).
 
 ```ts
 export const renameUser = (param) => {
@@ -121,4 +121,4 @@ flowchart LR
   inner --> r
 ```
 
-The edge from a function to the function it returns stays in `journeyNodeEdges`, and the page leaves it out, as it does for a component and its child.
+The edge from a function to the function it returns stays in `traceNodeEdges`, and the page leaves it out, as it does for a component and its child.

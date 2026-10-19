@@ -29,7 +29,7 @@ export const withSections = (artifact: ReviewArtifact, sections: SectionSwitches
   sections,
   segments: artifact.segments.map((segment) => ({
     ...segment,
-    journey: sections.journey ? segment.journey : null,
-    blast: sections.blast ? segment.blast : null,
+    traceDiagram: sections.traceDiagram ? segment.traceDiagram : null,
+    blastDiagram: sections.blastDiagram ? segment.blastDiagram : null,
   })),
 })

@@ -119,11 +119,11 @@
         "command": "bash capture/record-hero.sh"
       }
     },
-    "record-journey": {
+    "record-trace": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "bash capture/record-journey.sh"
+        "command": "bash capture/record-trace.sh"
       }
     },
     "record-blast": {

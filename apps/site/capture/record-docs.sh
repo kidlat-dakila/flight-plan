@@ -175,9 +175,9 @@ arrange_context() {
   settle_on "document.getElementById('fixture-segment-1-context-heading')" 150
 }
 
-journey_scenario() {
-  scroll_to "#fixture-segment-1-journey-flow-diagram-heading" 80
-  click_marked "[...document.querySelectorAll('#fixture-segment-1-journey-fixture-segment-1 button')].find(element=>(element.getAttribute('aria-label')||'').startsWith('Effects:'))"
+trace_scenario() {
+  scroll_to "#fixture-segment-1-trace-diagram-heading" 80
+  click_marked "[...document.querySelectorAll('#fixture-segment-1-trace-fixture-segment-1 button')].find(element=>(element.getAttribute('aria-label')||'').startsWith('Effects:'))"
 }
 
 blast_scenario() {
@@ -263,7 +263,7 @@ run_for_scheme() {
   is_selected review-page && capture_still review-page "$scheme" "$REVIEW_PATH" arrange_review_top
   is_selected segments && capture_still segments "$scheme" "$REVIEW_PATH" arrange_segments
   is_selected context && capture_still context "$scheme" "$REVIEW_PATH" arrange_context
-  is_selected journey-flow-diagram && record_clip journey-flow-diagram "$scheme" "$REVIEW_PATH" journey_scenario
+  is_selected trace-diagram && record_clip trace-diagram "$scheme" "$REVIEW_PATH" trace_scenario
   is_selected blast-diagram && record_clip blast-diagram "$scheme" "$REVIEW_PATH" blast_scenario
   is_selected code-walkthrough && record_clip code-walkthrough "$scheme" "$REVIEW_PATH" walkthrough_scenario prepare_walkthrough
   is_selected context-code-blocks && capture_still context-code-blocks "$scheme" "$REVIEW_PATH" arrange_context_code_block

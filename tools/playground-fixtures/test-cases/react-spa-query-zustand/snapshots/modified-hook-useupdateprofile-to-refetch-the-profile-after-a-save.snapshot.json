@@ -150,9 +150,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/hooks/use-profile.ts#hook@10:1",
               "type": "hook",
@@ -185,9 +185,9 @@
               ]
             }
           ],
-          "journeyNodeEdges": []
+          "traceNodeEdges": []
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/hooks/use-profile.ts",
@@ -290,7 +290,7 @@
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-profile.ts#hook@10:1",
+                  "traceNodeId": "src/hooks/use-profile.ts#hook@10:1",
                   "codeBlockIds": [
                     "src/hooks/use-profile.ts#hook@10:1",
                     "src/hooks/use-profile.ts#function@14:16",

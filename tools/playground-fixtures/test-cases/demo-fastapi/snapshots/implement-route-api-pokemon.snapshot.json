@@ -379,9 +379,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": "This diagram shows how `PokemonCreate` validates the body of a create request, and how its two validators check the types against `POKEMON_TYPES`.",
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/pokedex/pokemon/schemas.py#class@9:1",
               "type": "class",
@@ -499,7 +499,7 @@
               "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/pokedex/pokemon/schemas.py#method@16:5 -> src/pokedex/pokemon/schemas.py#root-variable@3:1",
               "from": "src/pokedex/pokemon/schemas.py#method@16:5",
@@ -517,7 +517,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/pokedex/pokemon/schemas.py",
@@ -579,7 +579,7 @@
                     "lineEnd": 6
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/pokedex/pokemon/schemas.py#root-variable@3:1",
+                  "traceNodeId": "src/pokedex/pokemon/schemas.py#root-variable@3:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/schemas.py#root-variable@3:1"
                   ],
@@ -597,7 +597,7 @@
                     "lineEnd": 27
                   },
                   "category": "class",
-                  "journeyNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
+                  "traceNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/schemas.py#class@9:1",
                     "src/pokedex/pokemon/schemas.py#property@10:5",
@@ -619,7 +619,7 @@
                         "lineEnd": 10
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
+                      "traceNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/schemas.py#property@10:5"
                       ],
@@ -637,7 +637,7 @@
                         "lineEnd": 11
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
+                      "traceNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/schemas.py#property@11:5"
                       ],
@@ -655,7 +655,7 @@
                         "lineEnd": 14
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
+                      "traceNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/schemas.py#property@12:5",
                         "src/pokedex/pokemon/schemas.py#property@13:5",
@@ -677,7 +677,7 @@
                     "lineEnd": 21
                   },
                   "category": "method",
-                  "journeyNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
+                  "traceNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/schemas.py#method@16:5",
                     "src/pokedex/pokemon/schemas.py#root-argument-value@18:31",
@@ -698,7 +698,7 @@
                     "lineEnd": 27
                   },
                   "category": "method",
-                  "journeyNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
+                  "traceNodeId": "src/pokedex/pokemon/schemas.py#class@9:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/schemas.py#method@23:5",
                     "src/pokedex/pokemon/schemas.py#condition@25:9",
@@ -745,7 +745,7 @@
                     "lineEnd": 35
                   },
                   "category": "class",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/pokedex/pokemon/schemas.py#class@30:1",
                     "src/pokedex/pokemon/schemas.py#property@31:5",
@@ -767,7 +767,7 @@
                         "lineEnd": 31
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/schemas.py#property@31:5"
                       ],
@@ -785,7 +785,7 @@
                         "lineEnd": 32
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/schemas.py#property@32:5"
                       ],
@@ -803,7 +803,7 @@
                         "lineEnd": 35
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/schemas.py#property@33:5",
                         "src/pokedex/pokemon/schemas.py#property@34:5",
@@ -825,7 +825,7 @@
                     "lineEnd": 46
                   },
                   "category": "class",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/pokedex/pokemon/schemas.py#class@38:1",
                     "src/pokedex/pokemon/schemas.py#property@39:5",
@@ -849,7 +849,7 @@
                         "lineEnd": 39
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/schemas.py#property@39:5"
                       ],
@@ -867,7 +867,7 @@
                         "lineEnd": 46
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/schemas.py#property@41:5",
                         "src/pokedex/pokemon/schemas.py#property@42:5",
@@ -897,7 +897,7 @@
                     "lineEnd": 17
                   },
                   "category": "file",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "tests/test_pokemon.py#file@1:1"
                   ],
@@ -1646,9 +1646,9 @@
             }
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": "This diagram shows how `GET /api/pokemon` and `GET /api/pokemon/{pokemon_id}` load Pokemon through `list_pokemon()` and `find_pokemon()`. It also shows what happens when a request reaches `POST /api/pokemon`, `PATCH /api/pokemon/{pokemon_id}` or `DELETE /api/pokemon/{pokemon_id}`, and how the new, changed or deleted Pokemon reaches the database through the session.",
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/pokedex/pokemon/routes.py#route@/api/pokemon",
               "type": "route",
@@ -2066,7 +2066,7 @@
               ]
             }
           ],
-          "journeyNodeEdges": [
+          "traceNodeEdges": [
             {
               "id": "src/pokedex/pokemon/routes.py#function@10:1 -> src/pokedex/pokemon/service.py#function@10:1",
               "from": "src/pokedex/pokemon/routes.py#function@10:1",
@@ -2114,7 +2114,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": null,
+        "blastDiagram": null,
         "codeWalkthrough": {
           "files": [
             {
@@ -2132,7 +2132,7 @@
                     "lineEnd": 16
                   },
                   "category": "statement",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/pokedex/main.py#root-statement@16:1",
                     "src/pokedex/main.py#middleware@16:1",
@@ -2158,7 +2158,7 @@
                     "lineEnd": 15
                   },
                   "category": "class",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/pokedex/pokemon/models.py#class@7:1",
                     "src/pokedex/pokemon/models.py#property@8:5",
@@ -2182,7 +2182,7 @@
                         "lineEnd": 8
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/models.py#property@8:5"
                       ],
@@ -2200,7 +2200,7 @@
                         "lineEnd": 10
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/models.py#property@10:5"
                       ],
@@ -2218,7 +2218,7 @@
                         "lineEnd": 11
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/models.py#property@11:5"
                       ],
@@ -2236,7 +2236,7 @@
                         "lineEnd": 12
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/models.py#property@12:5"
                       ],
@@ -2254,7 +2254,7 @@
                         "lineEnd": 13
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/models.py#property@13:5"
                       ],
@@ -2272,7 +2272,7 @@
                         "lineEnd": 14
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/models.py#property@14:5"
                       ],
@@ -2290,7 +2290,7 @@
                         "lineEnd": 15
                       },
                       "category": "statement",
-                      "journeyNodeId": null,
+                      "traceNodeId": null,
                       "codeBlockIds": [
                         "src/pokedex/pokemon/models.py#property@15:5"
                       ],
@@ -2315,7 +2315,7 @@
                     "lineEnd": 7
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/pokedex/pokemon/routes.py#root-variable@7:1",
+                  "traceNodeId": "src/pokedex/pokemon/routes.py#root-variable@7:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/routes.py#root-variable@7:1"
                   ],
@@ -2333,7 +2333,7 @@
                     "lineEnd": 12
                   },
                   "category": "function",
-                  "journeyNodeId": "src/pokedex/pokemon/routes.py#function@10:1",
+                  "traceNodeId": "src/pokedex/pokemon/routes.py#function@10:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/routes.py#function@10:1",
                     "src/pokedex/pokemon/routes.py#root-argument-value@11:22",
@@ -2353,7 +2353,7 @@
                     "lineEnd": 17
                   },
                   "category": "function",
-                  "journeyNodeId": "src/pokedex/pokemon/routes.py#function@15:1",
+                  "traceNodeId": "src/pokedex/pokemon/routes.py#function@15:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/routes.py#function@15:1",
                     "src/pokedex/pokemon/routes.py#root-argument-value@16:18",
@@ -2373,7 +2373,7 @@
                     "lineEnd": 22
                   },
                   "category": "function",
-                  "journeyNodeId": "src/pokedex/pokemon/routes.py#function@20:1",
+                  "traceNodeId": "src/pokedex/pokemon/routes.py#function@20:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/routes.py#function@20:1",
                     "src/pokedex/pokemon/routes.py#root-argument-value@21:17",
@@ -2393,7 +2393,7 @@
                     "lineEnd": 27
                   },
                   "category": "function",
-                  "journeyNodeId": "src/pokedex/pokemon/routes.py#function@25:1",
+                  "traceNodeId": "src/pokedex/pokemon/routes.py#function@25:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/routes.py#function@25:1",
                     "src/pokedex/pokemon/routes.py#root-argument-value@26:18",
@@ -2414,7 +2414,7 @@
                     "lineEnd": 32
                   },
                   "category": "function",
-                  "journeyNodeId": "src/pokedex/pokemon/routes.py#function@30:1",
+                  "traceNodeId": "src/pokedex/pokemon/routes.py#function@30:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/routes.py#function@30:1",
                     "src/pokedex/pokemon/routes.py#root-argument-value@31:20",
@@ -2440,7 +2440,7 @@
                     "lineEnd": 14
                   },
                   "category": "function",
-                  "journeyNodeId": "src/pokedex/pokemon/service.py#function@10:1",
+                  "traceNodeId": "src/pokedex/pokemon/service.py#function@10:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/service.py#function@10:1",
                     "src/pokedex/pokemon/service.py#root-argument-value@10:18",
@@ -2465,7 +2465,7 @@
                     "lineEnd": 21
                   },
                   "category": "function",
-                  "journeyNodeId": "src/pokedex/pokemon/service.py#function@17:1",
+                  "traceNodeId": "src/pokedex/pokemon/service.py#function@17:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/service.py#function@17:1",
                     "src/pokedex/pokemon/service.py#root-argument-value@17:18",
@@ -2489,7 +2489,7 @@
                     "lineEnd": 31
                   },
                   "category": "function",
-                  "journeyNodeId": "src/pokedex/pokemon/service.py#function@24:1",
+                  "traceNodeId": "src/pokedex/pokemon/service.py#function@24:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/service.py#function@24:1",
                     "src/pokedex/pokemon/service.py#root-argument-value@24:20",
@@ -2519,7 +2519,7 @@
                         "lineEnd": 26
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/service.py#function@24:1",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@24:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/service.py#condition@25:5",
                         "src/pokedex/pokemon/service.py#call@26:9"
@@ -2538,7 +2538,7 @@
                         "lineEnd": 27
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/service.py#function@24:1",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@24:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/service.py#external-value@27:5"
                       ],
@@ -2556,7 +2556,7 @@
                         "lineEnd": 30
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/service.py#function@24:1",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@24:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/service.py#call@28:5",
                         "src/pokedex/pokemon/service.py#call@29:5",
@@ -2578,7 +2578,7 @@
                     "lineEnd": 43
                   },
                   "category": "function",
-                  "journeyNodeId": "src/pokedex/pokemon/service.py#function@34:1",
+                  "traceNodeId": "src/pokedex/pokemon/service.py#function@34:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/service.py#function@34:1",
                     "src/pokedex/pokemon/service.py#root-argument-value@34:20",
@@ -2610,7 +2610,7 @@
                         "lineEnd": 35
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/service.py#function@34:1",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@34:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/service.py#external-value@35:5"
                       ],
@@ -2628,7 +2628,7 @@
                         "lineEnd": 36
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/service.py#function@34:1",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@34:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/service.py#variable@36:5"
                       ],
@@ -2646,7 +2646,7 @@
                         "lineEnd": 38
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/service.py#function@34:1",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@34:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/service.py#condition@37:5",
                         "src/pokedex/pokemon/service.py#call@38:9"
@@ -2665,7 +2665,7 @@
                         "lineEnd": 40
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/service.py#function@34:1",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@34:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/service.py#loop@39:5",
                         "src/pokedex/pokemon/service.py#variable@39:9",
@@ -2685,7 +2685,7 @@
                         "lineEnd": 42
                       },
                       "category": "statement",
-                      "journeyNodeId": "src/pokedex/pokemon/service.py#function@34:1",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@34:1",
                       "codeBlockIds": [
                         "src/pokedex/pokemon/service.py#call@41:5",
                         "src/pokedex/pokemon/service.py#call@42:5"
@@ -2706,7 +2706,7 @@
                     "lineEnd": 49
                   },
                   "category": "function",
-                  "journeyNodeId": "src/pokedex/pokemon/service.py#function@46:1",
+                  "traceNodeId": "src/pokedex/pokemon/service.py#function@46:1",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/service.py#function@46:1",
                     "src/pokedex/pokemon/service.py#root-argument-value@46:20",

@@ -51,8 +51,8 @@ describe("caseSnapshotOf", () => {
     title,
     kind: "entry",
     importGraph: [],
-    journeyFlowDiagram: null,
-    blastRadiusDiagram: null,
+    traceDiagram: null,
+    blastDiagram: null,
     codeWalkthrough: { files: [] },
     codeReferences: [],
   })
@@ -60,7 +60,7 @@ describe("caseSnapshotOf", () => {
   const writtenSegmentOf = (title: string, context: string[]) => ({
     title,
     context,
-    journeyFlowDiagram: null,
+    traceDiagram: null,
     codeWalkthrough: { files: [] },
   })
 

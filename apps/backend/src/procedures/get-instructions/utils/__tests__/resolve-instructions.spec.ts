@@ -14,7 +14,7 @@ describe("buildInstructionIndex", () => {
   it("names the configuration, its section switches and every field with what it is", () => {
     const index = buildInstructionIndex("onboardee", { sections: ALL_SECTIONS_ON, requiresContextCodeBlocks: true })
 
-    expect(index).toMatchObject({ configuration: "onboardee", sections: { journey: true, blast: true, walkthrough: true, findings: true } })
+    expect(index).toMatchObject({ configuration: "onboardee", sections: { traceDiagram: true, blastDiagram: true, walkthrough: true, findings: true } })
     expect(index.fields).toContainEqual({ path: "writingStyle", title: "The shared voice. Fetch before writing any prose." })
     expect(index.fields.map((field) => field.path)).toContain("contextCodeBlocks.description")
   })
@@ -27,10 +27,10 @@ describe("buildInstructionIndex", () => {
   })
 
   it("leaves out the fields of a section that is switched off", () => {
-    const index = buildInstructionIndex("minimal", { sections: { journey: false, blast: false, walkthrough: true, findings: false }, requiresContextCodeBlocks: false })
+    const index = buildInstructionIndex("minimal", { sections: { traceDiagram: false, blastDiagram: false, walkthrough: true, findings: false }, requiresContextCodeBlocks: false })
     const paths = index.fields.map((field) => field.path)
 
-    expect(paths.filter((path) => path.startsWith("journey") || path.startsWith("blast") || path.includes("findings"))).toStrictEqual([])
+    expect(paths.filter((path) => path.startsWith("traceDiagram") || path.startsWith("blastDiagram") || path.includes("findings"))).toStrictEqual([])
     expect(paths).toContain("walkthrough.files.waypoints.reading")
   })
 })

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useTRPC } from "@/trpc"
 
-type GeneratedSection = "journey" | "blast" | "findings"
+type GeneratedSection = "traceDiagram" | "blastDiagram" | "findings"
 
 interface ReviewKey {
   readonly repositoryName: string

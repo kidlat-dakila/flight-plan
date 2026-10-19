@@ -135,14 +135,14 @@ packages/codegraph/
   src/
     index.ts                      the package's only entry: the functions and types the backend imports
     import-graph/ ast-graph/      the files a change connects and what each one declares and uses
-    journey-flow-diagram/ blast-radius-diagram/ code-walkthrough/   generate the two diagrams and the walkthrough of a segment
+    trace-diagram/ blast-diagram/ code-walkthrough/   generate the two diagrams and the walkthrough of a segment
     scaffold/                     assembles the first review artifact from the segments of a codegraph, the diff and the files
-    journey/ blast/ diagram/      lay out and build the two diagram bands
+    trace/ blast/ diagram/      lay out and build the two diagram bands
     walkthrough/ code/ prose/     build the Code Walkthrough band, code links and prose
 ```
 
 - The package is consumed as source through the alias `@flightplan/codegraph`. It has no build step.
-- The builders in `journey/`, `blast/`, `walkthrough/`, `code/` and `prose/` turn a review artifact into the bands the page renders. They take the artifact's shapes and the band schemas from `packages/configurations`, and receive what only the backend knows (forge links, pinned lines, highlighted code) as arguments.
+- The builders in `trace/`, `blast/`, `walkthrough/`, `code/` and `prose/` turn a review artifact into the bands the page renders. They take the artifact's shapes and the band schemas from `packages/configurations`, and receive what only the backend knows (forge links, pinned lines, highlighted code) as arguments.
 - `buildCodegraph` in `index.ts` reads a change through git-forge and builds one segment per connected group of files. Everything under it is calculations over what it read. The rules are in [packages/codegraph/AGENTS.md](../../packages/codegraph/AGENTS.md).
 - Read [codegraph](../vocabulary/codegraph.md) before changing anything in it.
 
@@ -156,11 +156,11 @@ packages/reviewed-marks/src/
   reviewed-subject.ts             what a mark is put on: a waypoint, a file or a root code block
   reviewed-state.ts               what the marks make reviewed in a file
   reviewed-change.ts              the marks after one is put on or taken off
-  reviewed-segment.ts             a segment's Code Walkthrough and Journey Flow Diagram bands with the marks applied
+  reviewed-segment.ts             a segment's Code Walkthrough and Trace Diagram bands with the marks applied
   labels.ts                       the words both sides draw: the Reviewed toggle, step positions, waypoint mark labels, the empty message
 ```
 
-- The package is the one module the backend and the published copy share. `packages/codegraph` builds the outline of each file from the artifact, with its fingerprints, and asks `reviewedStateOf` what is reviewed. The backend's `set-reviewed` changes the marks with `applyReviewedChange`. The published copy reads the outline from the published review, keeps the marks in `localStorage`, and draws each segment through `reviewSegment`, `withReviewedWalkthrough` and `withReviewedJourney`.
+- The package is the one module the backend and the published copy share. `packages/codegraph` builds the outline of each file from the artifact, with its fingerprints, and asks `reviewedStateOf` what is reviewed. The backend's `set-reviewed` changes the marks with `applyReviewedChange`. The published copy reads the outline from the published review, keeps the marks in `localStorage`, and draws each segment through `reviewSegment`, `withReviewedWalkthrough` and `withReviewedTrace`.
 - It holds calculations over plain data and nothing else: no I/O, no `node:` module, no browser API and no React, so it runs on both sides. A fingerprint is computed by `packages/codegraph` and arrives in the outline.
 - It is consumed as source through the alias `@flightplan/reviewed-marks`. It has no build step, and it takes only the shapes of the bands from `packages/configurations`.
 

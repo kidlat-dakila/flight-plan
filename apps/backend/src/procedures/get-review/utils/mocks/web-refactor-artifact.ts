@@ -1,6 +1,6 @@
 import { parseMarkedSource } from "@flightplan/codegraph"
 import type { ReviewArtifact, SourceFile } from "@flightplan/configurations"
-import { mockJourney } from "./mock-journey"
+import { mockTrace } from "./mock-trace"
 
 const SERVER_CONFIG_PATH = "apps/backend/src/config.ts"
 const SERVER_MAIN_PATH = "apps/backend/src/main.ts"
@@ -63,7 +63,7 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
         "- Makes [`readServerConfig()`](code:apps/backend/src/config.ts#readServerConfig) take the environment as a parameter.",
         "- Passes `process.env` from [`start()`](code:apps/backend/src/main.ts#start).",
       ].join("\n"),
-      journey: mockJourney(
+      traceDiagram: mockTrace(
         WEB_REFACTOR_SOURCES,
         [
           { id: "start", type: "function", path: SERVER_MAIN_PATH, declaration: "start", isChanged: true, label: "Read settings, build, listen", description: "The only place that reads the environment." },
@@ -74,7 +74,7 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
         ],
         "When the server starts, `start()` reads the environment and hands it to `readServerConfig()`. The parser turns it into the host and the port, and reads nothing from the process itself.",
       ),
-      blast: null,
+      blastDiagram: null,
       walkthrough: {
         files: [
           {

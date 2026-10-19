@@ -1,10 +1,10 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
-import JourneyFlowDiagram, { type JourneyAuthoring, type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
+import TraceDiagram, { type TraceAuthoring, type TraceEdge, type TraceNode } from "@/components/TraceDiagram"
 import { findNavigatorButton, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
 import { CODE_LINKS, codeLine, paragraph } from "@/lib/__tests__/review-samples"
-import { NODE_HEAD_HEIGHT } from "@/lib/journey-layout"
+import { NODE_HEAD_HEIGHT } from "@/lib/trace-layout"
 
-const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "label">): JourneyNode => ({
+const node = (overrides: Partial<TraceNode> & Pick<TraceNode, "id" | "label">): TraceNode => ({
   type: "function",
   typeLabel: "Function",
   change: null,
@@ -76,14 +76,14 @@ const CART_LINE = node({
   ],
 })
 
-const NODES: readonly JourneyNode[] = [
+const NODES: readonly TraceNode[] = [
   node({ id: "cart-page", type: "component", typeLabel: "Component", label: "Shows the cart", children: [CART_LINE] }),
   node({ id: "route", label: "Checkout endpoint" }),
   PRICE,
   node({ id: "audit", label: "Audit log", change: "added", changedLabel: "Added" }),
 ]
 
-const EDGES: readonly JourneyEdge[] = [
+const EDGES: readonly TraceEdge[] = [
   { id: "page-line", from: "cart-page", to: "cart-line", fromRowId: null, toRowId: null, toSide: "left" },
   { id: "line-route", from: "cart-line", to: "route", fromRowId: null, toRowId: null, toSide: "left" },
   { id: "route-price", from: "route", to: "price", fromRowId: null, toRowId: null, toSide: "left" },
@@ -120,7 +120,7 @@ const ROW_LINE_PATHS: readonly string[] = [
 
 const renderDiagram = () =>
   render(
-    <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+    <TraceDiagram title="A checkout" nodes={NODES} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
   )
 
 const boxOf = (container: HTMLElement, nodeId: string): HTMLElement | null => container.querySelector(`[data-node-id="${nodeId}"]`)
@@ -152,7 +152,7 @@ const linePathsOf = (container: HTMLElement): (string | null)[] => [...container
 
 const menuButton = (nodeLabel: string, name: RegExp) => within(screen.getByRole("toolbar", { name: nodeLabel })).getByRole("button", { name })
 
-describe("JourneyFlowDiagram", () => {
+describe("TraceDiagram", () => {
   const scrollIntoView = vi.fn()
 
   beforeEach(() => {
@@ -194,9 +194,9 @@ describe("JourneyFlowDiagram", () => {
   })
 
   it("carries a line that passes a column level across it, and brings the lines that reach the same node in apart from each other", () => {
-    const edges: readonly JourneyEdge[] = [...EDGES, { id: "page-price", from: "cart-page", to: "price", fromRowId: null, toRowId: null, toSide: "left" }]
+    const edges: readonly TraceEdge[] = [...EDGES, { id: "page-price", from: "cart-page", to: "price", fromRowId: null, toRowId: null, toSide: "left" }]
     const { container } = render(
-      <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+      <TraceDiagram title="A checkout" nodes={NODES} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
     )
 
     expect(linePathsOf(container)).toStrictEqual(PASSING_LINE_PATHS)
@@ -209,12 +209,12 @@ describe("JourneyFlowDiagram", () => {
   })
 
   it("draws the line of an edge that leaves a row from that row, and ends the line of an edge that reaches a row with its arrow at that row", () => {
-    const edges: readonly JourneyEdge[] = [
+    const edges: readonly TraceEdge[] = [
       { id: "held-route", from: "cart-line", to: "route", fromRowId: "cart-line-held", toRowId: null, toSide: "left" },
       { id: "route-click", from: "route", to: "cart-line", fromRowId: null, toRowId: "cart-line-click", toSide: "left" },
     ]
     const { container } = render(
-      <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+      <TraceDiagram title="A checkout" nodes={NODES} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
     )
     const held = placeOf(screen.getByRole("button", { name: "State: held" }))
     const click = placeOf(screen.getByRole("button", { name: "Event: A shopper removes the line" }))
@@ -297,7 +297,7 @@ describe("JourneyFlowDiagram", () => {
       rowGroups: [{ label: null, rowIds: ["on-submit-event", "on-submit-prevent", "on-submit-mutate"], childIds: [] }],
     })
     const { container } = render(
-      <JourneyFlowDiagram title="A form" nodes={[handler]} edges={[]} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+      <TraceDiagram title="A form" nodes={[handler]} edges={[]} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
     )
     const rows = [...container.querySelectorAll<HTMLElement>("[data-block-id]")]
     const inPlace = [...rows].sort((one, two) => Number.parseFloat(one.style.top) - Number.parseFloat(two.style.top))
@@ -377,7 +377,7 @@ describe("JourneyFlowDiagram", () => {
 
   it("collapses every node that leads to another from the navigator, and expands them all again", async () => {
     const { container } = renderInNavigator(
-      <JourneyFlowDiagram
+      <TraceDiagram
         title="A checkout"
         nodes={NODES}
         edges={EDGES}
@@ -401,7 +401,7 @@ describe("JourneyFlowDiagram", () => {
   })
 })
 
-const createAuthoring = (): JourneyAuthoring => ({
+const createAuthoring = (): TraceAuthoring => ({
   isPending: false,
   onAddCard: vi.fn(),
   onClearDiagram: vi.fn(),
@@ -413,14 +413,14 @@ const createAuthoring = (): JourneyAuthoring => ({
   onRemoveCard: vi.fn(),
 })
 
-const renderAuthoredDiagram = (authoring: JourneyAuthoring, nodes: readonly JourneyNode[] = NODES, edges: readonly JourneyEdge[] = EDGES) =>
+const renderAuthoredDiagram = (authoring: TraceAuthoring, nodes: readonly TraceNode[] = NODES, edges: readonly TraceEdge[] = EDGES) =>
   render(
-    <JourneyFlowDiagram title="A checkout" nodes={nodes} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} authoring={authoring} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+    <TraceDiagram title="A checkout" nodes={nodes} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} authoring={authoring} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
   )
 
 const handleSelectorOf = (handleIdStart: string): string => `[data-handleid^="${handleIdStart}"]`
 
-describe("JourneyFlowDiagram for an author", () => {
+describe("TraceDiagram for an author", () => {
   it("asks to clear the diagram when the eraser of the toolbar is pressed", () => {
     const authoring = createAuthoring()
     renderAuthoredDiagram(authoring)
@@ -460,7 +460,7 @@ describe("JourneyFlowDiagram for an author", () => {
     const parameters = ["session: Session", "trainer_id: int | None"]
     const withParameters = NODES.map((one) => (one.id === "price" ? { ...one, parameters } : one))
     const { container } = render(
-      <JourneyFlowDiagram title="A checkout" nodes={withParameters} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+      <TraceDiagram title="A checkout" nodes={withParameters} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
     )
     const chips = screen.getByRole("list", { name: "Parameters" })
     const price = placeOf(boxOf(container, "price"))
@@ -475,7 +475,7 @@ describe("JourneyFlowDiagram for an author", () => {
     const draggableIdsOf = (container: HTMLElement): (string | null)[] =>
       [...container.querySelectorAll(".react-flow__node.draggable")].map((card) => card.getAttribute("data-id"))
     const moving = render(
-      <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} cardMoving={{ onMoveCards: vi.fn() }} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+      <TraceDiagram title="A checkout" nodes={NODES} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} cardMoving={{ onMoveCards: vi.fn() }} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
     )
 
     expect(draggableIdsOf(moving.container)).toStrictEqual(["cart-page", "route", "price", "audit"])

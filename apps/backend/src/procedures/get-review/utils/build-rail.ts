@@ -7,9 +7,9 @@ const walkthroughChildren = (segment: SegmentView): RailSection["children"] =>
 
 const segmentSections = (segment: SegmentView): RailSection[] => [
   { anchorId: segment.context.anchorId, kind: "context", label: segment.context.heading, children: [] },
-  { anchorId: segment.journey.anchorId, kind: "journey", label: segment.journey.heading, children: [] },
-  ...[segment.blast ?? segment.offers.blast].flatMap((blast) =>
-    blast === null ? [] : [{ anchorId: blast.anchorId, kind: "blast" as const, label: blast.heading, children: [] }]),
+  { anchorId: segment.traceDiagram.anchorId, kind: "traceDiagram", label: segment.traceDiagram.heading, children: [] },
+  ...[segment.blastDiagram ?? segment.offers.blastDiagram].flatMap((blastDiagram) =>
+    blastDiagram === null ? [] : [{ anchorId: blastDiagram.anchorId, kind: "blastDiagram" as const, label: blastDiagram.heading, children: [] }]),
   {
     anchorId: segment.walkthrough.anchorId,
     kind: "walkthrough",

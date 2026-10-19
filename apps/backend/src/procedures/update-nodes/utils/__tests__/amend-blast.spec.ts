@@ -5,7 +5,7 @@ const CART_TOTAL_PATH = "src/cart/CartTotal.tsx"
 const CHANGED_PATH = "src/cart/subtotal.ts"
 
 const nodeAt = (outcome: ReturnType<typeof amendBlast>, path: string): unknown =>
-  outcome.kind === "amended" ? outcome.segments[0].blast?.nodes.find((node) => node.path === path) : null
+  outcome.kind === "amended" ? outcome.segments[0].blastDiagram?.nodes.find((node) => node.path === path) : null
 
 describe("amendBlast", () => {
   it("writes an impact type with its reason on a file the change did not touch", () => {
@@ -76,7 +76,7 @@ describe("amendBlast", () => {
   })
 
   it("refuses to write into a segment with no Blast Diagram", () => {
-    expect(amendBlast([{ ...DRAFT_SEGMENT, blast: null }], [{ path: CART_TOTAL_PATH, impactType: "unaffected" }])).toStrictEqual({
+    expect(amendBlast([{ ...DRAFT_SEGMENT, blastDiagram: null }], [{ path: CART_TOTAL_PATH, impactType: "unaffected" }])).toStrictEqual({
       kind: "refused",
       message: "This artifact has no Blast Diagram to write into. Nothing was written.",
     })

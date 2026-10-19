@@ -378,9 +378,9 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": {
+        "traceDiagram": {
           "description": null,
-          "journeyNodes": [
+          "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@6:1",
               "type": "root-variable",
@@ -407,9 +407,9 @@
               ]
             }
           ],
-          "journeyNodeEdges": []
+          "traceNodeEdges": []
         },
-        "blastRadiusDiagram": {
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/router.tsx",
@@ -658,7 +658,7 @@
                     "lineEnd": 2
                   },
                   "category": "statement",
-                  "journeyNodeId": null,
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/router.tsx#deleted@2:1"
                   ],
@@ -676,7 +676,7 @@
                     "lineEnd": 16
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/router.tsx#root-variable@6:1",
+                  "traceNodeId": "src/router.tsx#root-variable@6:1",
                   "codeBlockIds": [
                     "src/router.tsx#root-variable@6:1",
                     "src/router.tsx#effect-callback@13:26",

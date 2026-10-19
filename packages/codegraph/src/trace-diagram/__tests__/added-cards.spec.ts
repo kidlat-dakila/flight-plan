@@ -1,4 +1,4 @@
-import { buildBlockCard, buildLinesCard, createEmptyJourney, linesCardIdOf, listCardBlocks, readFileGraph, sourceFileOf } from "@/journey-flow-diagram/added-cards"
+import { buildBlockCard, buildLinesCard, createEmptyTrace, linesCardIdOf, listCardBlocks, readFileGraph, sourceFileOf } from "@/trace-diagram/added-cards"
 
 const PATH = "src/cart/CartPage.tsx"
 const SOURCE = [
@@ -86,7 +86,7 @@ describe("cards an author adds", () => {
   })
 
   it("makes an empty diagram and a source file of a text", () => {
-    expect(createEmptyJourney()).toMatchObject({ journeyNodes: [], journeyNodeEdges: [] })
+    expect(createEmptyTrace()).toMatchObject({ traceNodes: [], traceNodeEdges: [] })
     expect(sourceFileOf("src/a.ts", "const a = 1\nconst b = 2\n")).toStrictEqual({
       path: "src/a.ts",
       language: "typescript",

@@ -1,6 +1,6 @@
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
-import { listJourneyNodes } from "@/journey-flow-diagram"
-import type { JourneyNode } from "@flightplan/configurations"
+import { listTraceNodes } from "@/trace-diagram"
+import type { TraceNode } from "@flightplan/configurations"
 import { outlineOfNodes, presentDiagramOf } from "./diagram-fixture"
 
 const ROUTES = codeOf(
@@ -31,7 +31,7 @@ const CHANGES = {
   "server/middleware/session.ts": [rangeAt(2, 3, 2, 50)],
 }
 
-const nodeWithId = (nodes: readonly JourneyNode[], id: string): JourneyNode | undefined => listJourneyNodes(nodes).find((node) => node.id === id)
+const nodeWithId = (nodes: readonly TraceNode[], id: string): TraceNode | undefined => listTraceNodes(nodes).find((node) => node.id === id)
 
 describe("the card of a route path", () => {
   it("makes one node of every registration of a path, with the handler of each inside it, and a node of its own for a child path", () => {
@@ -45,18 +45,18 @@ describe("the card of a route path", () => {
       "route",
       "  effect-callback (req, res) => … (changed)",
     ])
-    expect(diagram.journeyNodes.slice(1).map((node) => node.id)).toStrictEqual(["server/routes/users.ts#route@/api/users", "server/routes/users.ts#route@/api/users/:userId"])
+    expect(diagram.traceNodes.slice(1).map((node) => node.id)).toStrictEqual(["server/routes/users.ts#route@/api/users", "server/routes/users.ts#route@/api/users/:userId"])
   })
 
   it("holds every registration of the path in the route node, in the order they are written", () => {
     const diagram = presentDiagramOf(FILES, CHANGES)
-    const users = nodeWithId(diagram.journeyNodes, "server/routes/users.ts#route@/api/users")
+    const users = nodeWithId(diagram.traceNodes, "server/routes/users.ts#route@/api/users")
 
     expect(users?.codeBlocks.filter((block) => block.type === "route").map((block) => block.card?.heading)).toStrictEqual(["POST", "GET"])
   })
 
   it("draws a line from the middleware a registration names to the handler it runs before, and none from the route to the middleware", () => {
-    const edgeIds = presentDiagramOf(FILES, CHANGES).journeyNodeEdges.map((edge) => edge.id)
+    const edgeIds = presentDiagramOf(FILES, CHANGES).traceNodeEdges.map((edge) => edge.id)
 
     expect(edgeIds).toContain("server/middleware/session.ts#function@1:1 -> server/routes/users.ts#effect-callback@5:43")
     expect(edgeIds).not.toContain("server/routes/users.ts#route@/api/users -> server/middleware/session.ts#function@1:1")
@@ -65,7 +65,7 @@ describe("the card of a route path", () => {
   it("makes no node of a slot that only names its handler", () => {
     const diagram = presentDiagramOf(FILES, { "server/controllers/users.ts": [rangeAt(2, 3, 2, 41)] })
 
-    expect(listJourneyNodes(diagram.journeyNodes).map((node) => node.type)).not.toContain("effect-callback")
+    expect(listTraceNodes(diagram.traceNodes).map((node) => node.type)).not.toContain("effect-callback")
   })
 })
 
@@ -81,7 +81,7 @@ describe("the card of a route path of a Python framework", () => {
     const diagram = presentDiagramOf({ "shop/views.py": views }, { "shop/views.py": [rangeAt(5, 5, 5, 24)] })
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["route users", "  function users (changed)"])
-    expect(diagram.journeyNodes[0].id).toBe("shop/views.py#route@/users")
+    expect(diagram.traceNodes[0].id).toBe("shop/views.py#route@/users")
   })
 })
 
@@ -117,7 +117,7 @@ describe("the card of a Next.js route file", () => {
       "  function handler (changed)",
       "function createUser (changed)",
     ])
-    expect(diagram.journeyNodes.map((node) => node.id)).toStrictEqual([
+    expect(diagram.traceNodes.map((node) => node.id)).toStrictEqual([
       "app/api/users/[id]/route.ts#route@/api/users/[id]",
       "pages/api/posts.ts#route@/api/posts",
       "app/actions.ts#function@2:1",
@@ -136,7 +136,7 @@ describe("a server action a page hands to a form", () => {
         "}",
       ),
     }
-    const edgeIds = presentDiagramOf(files, { "app/actions.ts": [rangeAt(3, 3, 3, 33), rangeAt(6, 3, 6, 33)] }).journeyNodeEdges.map((edge) => edge.id)
+    const edgeIds = presentDiagramOf(files, { "app/actions.ts": [rangeAt(3, 3, 3, 33), rangeAt(6, 3, 6, 33)] }).traceNodeEdges.map((edge) => edge.id)
 
     expect(edgeIds).toContain("app/users/page.tsx#render-event@3:16 -> app/actions.ts#function@2:1")
     expect(edgeIds).toContain("app/users/page.tsx#render-event@3:44 -> app/actions.ts#function@5:1")
@@ -163,7 +163,7 @@ const MIDDLEWARE_CHANGES = {
 }
 
 const middlewareTargetsOf = (config: string): string[] =>
-  presentDiagramOf(middlewareFilesOf(config), MIDDLEWARE_CHANGES).journeyNodeEdges
+  presentDiagramOf(middlewareFilesOf(config), MIDDLEWARE_CHANGES).traceNodeEdges
     .filter((edge) => edge.id.startsWith("middleware.ts#"))
     .map((edge) => edge.id.slice(edge.id.indexOf(" -> ") + " -> ".length))
 
@@ -195,7 +195,7 @@ describe("the card of a route path below a mount", () => {
     const app = codeOf("import express from \"express\"", "import users from \"./users\"", "const app = express()", "app.use(\"/api\", users)")
     const diagram = presentDiagramOf({ "server/users.ts": users, "server/app.ts": app }, { "server/users.ts": [rangeAt(4, 3, 4, 37)] })
 
-    expect(diagram.journeyNodes.map((node) => node.id)).toStrictEqual(["server/users.ts#route@/api/users"])
+    expect(diagram.traceNodes.map((node) => node.id)).toStrictEqual(["server/users.ts#route@/api/users"])
   })
 
   it("puts the prefix of a blueprint and of an included router before their routes", () => {
@@ -204,8 +204,8 @@ describe("the card of a route path below a mount", () => {
     const router = codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/items\")", "@router.get(\"/\")", "async def items():", "    return list_items()")
     const fastapi = codeOf("from fastapi import FastAPI", "from shop.items import router", "app = FastAPI()", "app.include_router(router, prefix=\"/v1\")")
 
-    expect(presentDiagramOf({ "shop/users.py": blueprint, "shop/main.py": flask }, { "shop/users.py": [rangeAt(5, 5, 5, 24)] }).journeyNodes[0].id).toBe("shop/users.py#route@/api/users")
-    expect(presentDiagramOf({ "shop/items.py": router, "shop/main.py": fastapi }, { "shop/items.py": [rangeAt(5, 5, 5, 24)] }).journeyNodes[0].id).toBe("shop/items.py#route@/v1/items")
+    expect(presentDiagramOf({ "shop/users.py": blueprint, "shop/main.py": flask }, { "shop/users.py": [rangeAt(5, 5, 5, 24)] }).traceNodes[0].id).toBe("shop/users.py#route@/api/users")
+    expect(presentDiagramOf({ "shop/items.py": router, "shop/main.py": fastapi }, { "shop/items.py": [rangeAt(5, 5, 5, 24)] }).traceNodes[0].id).toBe("shop/items.py#route@/v1/items")
   })
 })
 
@@ -226,7 +226,7 @@ describe("the middleware of a whole app", () => {
     const session = codeOf("export const requireSession = (req, res, next) => {", "  if (!req.session) return res.status(401).end()", "  next()", "}")
     const diagram = presentDiagramOf({ "server/app.ts": app, "server/session.ts": session }, { "server/app.ts": [rangeAt(6, 3, 6, 37), rangeAt(9, 3, 9, 42)], "server/session.ts": [rangeAt(2, 3, 2, 50)] })
 
-    expect(diagram.journeyNodeEdges.map((edge) => edge.id).filter((id) => id.startsWith("server/session.ts"))).toStrictEqual(["server/session.ts#function@1:1 -> server/app.ts#route@/items"])
+    expect(diagram.traceNodeEdges.map((edge) => edge.id).filter((id) => id.startsWith("server/session.ts"))).toStrictEqual(["server/session.ts#function@1:1 -> server/app.ts#route@/items"])
   })
 
   it("draws a line from a Flask hook to the routes of its blueprint, and from an app-wide hook to every route of the app", () => {
@@ -248,7 +248,7 @@ describe("the middleware of a whole app", () => {
       { "shop/users.py": blueprint, "shop/main.py": app },
       { "shop/users.py": [rangeAt(5, 5, 5, 19), rangeAt(8, 5, 8, 23), rangeAt(11, 5, 11, 24)], "shop/main.py": [rangeAt(6, 5, 6, 17)] },
     )
-    const hookEdges = diagram.journeyNodeEdges.map((edge) => edge.id).filter((id) => id.startsWith("shop/users.py#function@3") || id.startsWith("shop/users.py#function@6"))
+    const hookEdges = diagram.traceNodeEdges.map((edge) => edge.id).filter((id) => id.startsWith("shop/users.py#function@3") || id.startsWith("shop/users.py#function@6"))
 
     expect(hookEdges).toStrictEqual([
       "shop/users.py#function@3:1 -> shop/users.py#route@/api/users",
@@ -263,10 +263,10 @@ describe("the card of a route path a view class handles", () => {
     const views = codeOf("from flask.views import MethodView", "class ItemAPI(MethodView):", "    def get(self, id):", "        return find(id)", "    def delete(self, id):", "        return remove(id)")
     const app = codeOf("from flask import Flask", "from shop.views import ItemAPI", "app = Flask(__name__)", "app.add_url_rule(\"/items/<int:id>\", view_func=ItemAPI.as_view(\"item\"))")
     const diagram = presentDiagramOf({ "shop/views.py": views, "shop/main.py": app }, { "shop/views.py": [rangeAt(4, 9, 4, 24), rangeAt(6, 9, 6, 26)] })
-    const route = nodeWithId(diagram.journeyNodes, "shop/main.py#route@/items/<int:id>")
+    const route = nodeWithId(diagram.traceNodes, "shop/main.py#route@/items/<int:id>")
 
     expect(route?.children.map((child) => [child.codeBlocks[0].name, child.codeBlocks[0].card?.heading])).toStrictEqual([["ItemAPI.get", "GET"], ["ItemAPI.delete", "DELETE"]])
-    expect(listJourneyNodes(diagram.journeyNodes).map((node) => node.type)).not.toContain("class")
+    expect(listTraceNodes(diagram.traceNodes).map((node) => node.type)).not.toContain("class")
   })
 })
 
@@ -285,7 +285,7 @@ describe("the dependencies of a FastAPI route", () => {
     "app.include_router(router, prefix=\"/api\")",
   )
   const diagram = presentDiagramOf({ "shop/main.py": app }, { "shop/main.py": [rangeAt(4, 5, 4, 23), rangeAt(6, 5, 6, 23), rangeAt(10, 5, 10, 20)] })
-  const edgeIds = diagram.journeyNodeEdges.map((edge) => edge.id)
+  const edgeIds = diagram.traceNodeEdges.map((edge) => edge.id)
 
   it("draws a line from a dependency of the route to its handler, and from a dependency of the router to the route card", () => {
     expect(edgeIds).toContain("shop/main.py#function@5:1 -> shop/main.py#function@8:1")
@@ -298,7 +298,7 @@ describe("the dependencies of a FastAPI route", () => {
   })
 
   it("makes no node of the Depends call that only names the dependency", () => {
-    expect(listJourneyNodes(diagram.journeyNodes).map((node) => node.type)).not.toContain("effect")
+    expect(listTraceNodes(diagram.traceNodes).map((node) => node.type)).not.toContain("effect")
   })
 
   it("draws a line from the router a route is registered on to its route card, and none back from the handler", () => {
@@ -317,15 +317,15 @@ describe("the dependencies of a FastAPI route", () => {
     const decorated = presentDiagramOf({ "shop/items.py": items }, { "shop/items.py": [rangeAt(1, 1, 9, 23)] })
     const called = presentDiagramOf({ "server/users.ts": express }, { "server/users.ts": [rangeAt(1, 1, 6, 22)] })
 
-    expect(decorated.journeyNodeEdges.map((edge) => edge.id).filter((id) => id.includes("root-variable@3:1"))).toStrictEqual(["shop/items.py#root-variable@3:1 -> shop/items.py#route@/items"])
-    expect(called.journeyNodeEdges.map((edge) => edge.id).filter((id) => id.includes("root-variable@2:1"))).toStrictEqual(["server/users.ts#root-variable@2:1 -> server/users.ts#route@/users"])
+    expect(decorated.traceNodeEdges.map((edge) => edge.id).filter((id) => id.includes("root-variable@3:1"))).toStrictEqual(["shop/items.py#root-variable@3:1 -> shop/items.py#route@/items"])
+    expect(called.traceNodeEdges.map((edge) => edge.id).filter((id) => id.includes("root-variable@2:1"))).toStrictEqual(["server/users.ts#root-variable@2:1 -> server/users.ts#route@/users"])
   })
 
   it("draws the line from the router whatever the layout, and keeps the line from a handler to any other value it reads", () => {
     const wholeOf = (code: string) => [rangeAt(1, 1, code.split("\n").length, 80)]
     const routerEdgesOf = (files: Record<string, string>, routerId: string): string[] => {
       const changedDiagram = presentDiagramOf(files, Object.fromEntries(Object.entries(files).map(([path, code]) => [path, wholeOf(code)])))
-      return changedDiagram.journeyNodeEdges.map((edge) => edge.id).filter((id) => id.includes(routerId))
+      return changedDiagram.traceNodeEdges.map((edge) => edge.id).filter((id) => id.includes(routerId))
     }
     const stacked = codeOf(
       "from fastapi import APIRouter",
@@ -362,7 +362,7 @@ describe("the dependencies of a FastAPI route", () => {
     const items = codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/items\")", "@router.get(\"/\")", "async def items():", "    return list_items()")
     const handlerOnly = presentDiagramOf({ "shop/items.py": items }, { "shop/items.py": [rangeAt(5, 5, 5, 24)] })
 
-    expect(handlerOnly.journeyNodeEdges).toStrictEqual([])
+    expect(handlerOnly.traceNodeEdges).toStrictEqual([])
   })
 
   it("makes no node of an include that only hands a dependency, and draws the dependency's line to the route card", () => {
@@ -377,8 +377,8 @@ describe("the dependencies of a FastAPI route", () => {
     )
     const included = presentDiagramOf({ "shop/items.py": items, "shop/main.py": main }, { "shop/items.py": [rangeAt(5, 5, 5, 24)], "shop/main.py": [rangeAt(4, 5, 4, 23), rangeAt(6, 1, 6, 80)] })
 
-    expect(listJourneyNodes(included.journeyNodes).map((node) => node.id)).toStrictEqual(["shop/items.py#route@/v1/items", "shop/items.py#function@3:1", "shop/main.py#function@3:1"])
-    expect(included.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual(["shop/main.py#function@3:1 -> shop/items.py#route@/v1/items"])
+    expect(listTraceNodes(included.traceNodes).map((node) => node.id)).toStrictEqual(["shop/items.py#route@/v1/items", "shop/items.py#function@3:1", "shop/main.py#function@3:1"])
+    expect(included.traceNodeEdges.map((edge) => edge.id)).toStrictEqual(["shop/main.py#function@3:1 -> shop/items.py#route@/v1/items"])
   })
 })
 
@@ -400,7 +400,7 @@ describe("the Annotated dependencies of a FastAPI route", () => {
       "    return list_items(user, page)",
     )
     const diagram = presentDiagramOf({ "shop/main.py": app }, { "shop/main.py": [rangeAt(5, 5, 5, 25), rangeAt(7, 5, 7, 25), rangeAt(10, 9, 10, 30), rangeAt(13, 5, 13, 34)] })
-    const edgeIds = diagram.journeyNodeEdges.map((edge) => edge.id)
+    const edgeIds = diagram.traceNodeEdges.map((edge) => edge.id)
 
     expect(edgeIds).toContain("shop/main.py#function@11:1 -> shop/main.py#function@6:1")
     expect(edgeIds).toContain("shop/main.py#function@6:1 -> shop/main.py#function@4:1")
@@ -428,13 +428,13 @@ describe("the Annotated dependencies of a FastAPI route", () => {
     )
     const diagram = presentDiagramOf({ "shop/deps.py": deps, "shop/routes.py": routes }, { "shop/deps.py": [rangeAt(4, 5, 4, 25)], "shop/routes.py": [rangeAt(6, 5, 6, 29)] })
 
-    expect(listJourneyNodes(diagram.journeyNodes).map((node) => node.id)).toStrictEqual([
+    expect(listTraceNodes(diagram.traceNodes).map((node) => node.id)).toStrictEqual([
       "shop/routes.py#route@/me",
       "shop/routes.py#function@4:1",
       "shop/deps.py#function@6:1",
       "shop/deps.py#function@3:1",
     ])
-    expect(diagram.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual([
+    expect(diagram.traceNodeEdges.map((edge) => edge.id)).toStrictEqual([
       "shop/routes.py#function@4:1 -> shop/deps.py#function@6:1",
       "shop/routes.py#function@4:1 -> shop/deps.py#function@3:1",
       "shop/deps.py#function@6:1 -> shop/deps.py#function@3:1",
@@ -455,7 +455,7 @@ describe("the middleware classes and mounted apps of FastAPI", () => {
       "async def home():",
       "    return read_home()",
     )
-    const edgeIds = presentDiagramOf({ "shop/main.py": app }, { "shop/main.py": [rangeAt(5, 9, 5, 50), rangeAt(9, 5, 9, 23)] }).journeyNodeEdges.map((edge) => edge.id)
+    const edgeIds = presentDiagramOf({ "shop/main.py": app }, { "shop/main.py": [rangeAt(5, 9, 5, 50), rangeAt(9, 5, 9, 23)] }).traceNodeEdges.map((edge) => edge.id)
 
     expect(edgeIds).toContain("shop/main.py#class@3:1 -> shop/main.py#route@/home")
   })
@@ -482,7 +482,7 @@ describe("the middleware classes and mounted apps of FastAPI", () => {
       "app.mount(\"/admin\", admin)",
     )
     const diagram = presentDiagramOf({ "shop/main.py": app }, { "shop/main.py": [rangeAt(3, 5, 3, 22), rangeAt(8, 5, 8, 46), rangeAt(11, 5, 11, 27), rangeAt(14, 5, 14, 24), rangeAt(17, 5, 17, 23)] })
-    const routeEdgeIds = diagram.journeyNodeEdges.map((edge) => edge.id).filter((edgeId) => edgeId.includes("#route@"))
+    const routeEdgeIds = diagram.traceNodeEdges.map((edge) => edge.id).filter((edgeId) => edgeId.includes("#route@"))
 
     expect([...routeEdgeIds].sort()).toStrictEqual([
       "shop/main.py#function@2:1 -> shop/main.py#route@/home",
@@ -504,8 +504,8 @@ describe("the middleware classes and mounted apps of FastAPI", () => {
     )
     const diagram = presentDiagramOf({ "shop/main.py": app }, { "shop/main.py": [rangeAt(3, 5, 3, 22), rangeAt(7, 5, 7, 23)] })
 
-    expect(listJourneyNodes(diagram.journeyNodes).map((node) => node.id)).toStrictEqual(["shop/main.py#route@/home", "shop/main.py#function@5:1", "shop/main.py#function@2:1"])
-    expect(diagram.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual(["shop/main.py#function@2:1 -> shop/main.py#route@/home"])
+    expect(listTraceNodes(diagram.traceNodes).map((node) => node.id)).toStrictEqual(["shop/main.py#route@/home", "shop/main.py#function@5:1", "shop/main.py#function@2:1"])
+    expect(diagram.traceNodeEdges.map((edge) => edge.id)).toStrictEqual(["shop/main.py#function@2:1 -> shop/main.py#route@/home"])
   })
 })
 
@@ -565,7 +565,7 @@ describe("the route cards of Django", () => {
       "  method AboutView.get (changed)",
       "  method AboutView.post (changed)",
     ])
-    expect(diagram.journeyNodes.map((node) => node.id)).toStrictEqual([
+    expect(diagram.traceNodes.map((node) => node.id)).toStrictEqual([
       "shop/urls.py#route@/teams",
       "shop/urls.py#route@/users",
       "shop/urls.py#route@/users/new",
@@ -576,7 +576,7 @@ describe("the route cards of Django", () => {
   })
 
   it("puts a function view under the methods its decorators allow, under ANY when none says, and a view class with no method of HTTP under ANY itself", () => {
-    const headings = listJourneyNodes(diagram.journeyNodes).flatMap((node) => node.codeBlocks.slice(0, 1).flatMap((block) => (block.card?.part === "handler" ? [`${block.name ?? ""} ${block.card.heading ?? ""}`] : [])))
+    const headings = listTraceNodes(diagram.traceNodes).flatMap((node) => node.codeBlocks.slice(0, 1).flatMap((block) => (block.card?.part === "handler" ? [`${block.name ?? ""} ${block.card.heading ?? ""}`] : [])))
 
     expect(headings).toStrictEqual(["TeamList ANY", "user_list ANY", "user_create POST", "user_detail GET · POST", "AboutView.get GET", "AboutView.post POST"])
   })
@@ -603,7 +603,7 @@ describe("the include of Django", () => {
       { "mysite/urls.py": [rangeAt(9, 5, 9, 23)], "shop/v1_urls.py": [rangeAt(3, 5, 3, 23)], "shop/admin_urls.py": [rangeAt(3, 5, 3, 23)] },
     )
 
-    expect(diagram.journeyNodes.map((node) => node.id)).toStrictEqual(["mysite/urls.py#route@/blog/posts", "shop/v1_urls.py#route@/api/v1/items", "shop/admin_urls.py#route@/admin/stats"])
+    expect(diagram.traceNodes.map((node) => node.id)).toStrictEqual(["mysite/urls.py#route@/blog/posts", "shop/v1_urls.py#route@/api/v1/items", "shop/admin_urls.py#route@/admin/stats"])
   })
 })
 
@@ -620,7 +620,7 @@ describe("the plugins and hooks of Fastify", () => {
     const app = codeOf("import Fastify from \"fastify\"", "import userRoutes from \"./plugin\"", "const app = Fastify()", "app.register(userRoutes, { prefix: \"/v1\" })")
     const diagram = presentDiagramOf({ "server/plugin.ts": plugin, "server/app.ts": app }, { "server/plugin.ts": [rangeAt(4, 5, 4, 30)] })
 
-    expect(listJourneyNodes(diagram.journeyNodes).map((node) => node.id)).toStrictEqual(["server/plugin.ts#route@/v1/users", "server/plugin.ts#effect-callback@3:25"])
+    expect(listTraceNodes(diagram.traceNodes).map((node) => node.id)).toStrictEqual(["server/plugin.ts#route@/v1/users", "server/plugin.ts#effect-callback@3:25"])
   })
 
   it("draws a line from a hook named in the options of a route to its handler, and from a hook of the app to the route card", () => {
@@ -638,7 +638,7 @@ describe("the plugins and hooks of Fastify", () => {
     )
     const hooks = codeOf("export const auth = async (request) => {", "  await verify(request)", "}", "export const audit = async (request) => {", "  await record(request)", "}")
     const diagram = presentDiagramOf({ "server/app.ts": app, "server/hooks.ts": hooks }, { "server/app.ts": [rangeAt(7, 5, 7, 30)], "server/hooks.ts": [rangeAt(2, 3, 2, 24), rangeAt(5, 3, 5, 24)] })
-    const edgeIds = diagram.journeyNodeEdges.map((edge) => edge.id)
+    const edgeIds = diagram.traceNodeEdges.map((edge) => edge.id)
 
     expect(edgeIds).toContain("server/hooks.ts#function@1:1 -> server/app.ts#effect-callback@6:49")
     expect(edgeIds).toContain("server/hooks.ts#function@4:1 -> server/app.ts#route@/v1/users")
@@ -702,25 +702,25 @@ describe("the card of a route path of a Nest controller", () => {
       "route UsersController.findOne",
       "  method UsersController.findOne",
     ])
-    expect(listJourneyNodes(diagram.journeyNodes).filter((node) => node.type === "route").map((node) => node.id)).toStrictEqual([
+    expect(listTraceNodes(diagram.traceNodes).filter((node) => node.type === "route").map((node) => node.id)).toStrictEqual([
       "src/users/users.controller.ts#route@/users",
       "src/users/users.controller.ts#route@/users/:id",
     ])
-    expect(diagram.journeyNodeEdges.filter((edge) => edge.from === "src/users/users.controller.ts#class@5:1").map((edge) => edge.to)).toStrictEqual([
+    expect(diagram.traceNodeEdges.filter((edge) => edge.from === "src/users/users.controller.ts#class@5:1").map((edge) => edge.to)).toStrictEqual([
       "src/users/users.controller.ts#route@/users",
       "src/users/users.controller.ts#route@/users/:id",
     ])
   })
 
   it("draws a line from a handler to the method of the service it calls through what the constructor injects", () => {
-    const edgeIds = presentDiagramOf(NEST_FILES, NEST_CHANGES).journeyNodeEdges.map((edge) => edge.id)
+    const edgeIds = presentDiagramOf(NEST_FILES, NEST_CHANGES).traceNodeEdges.map((edge) => edge.id)
 
     expect(edgeIds).toContain("src/users/users.controller.ts#method@9:3 -> src/users/users.service.ts#method@2:3")
     expect(edgeIds).toContain("src/users/users.controller.ts#method@14:3 -> src/users/users.service.ts#method@5:3")
   })
 
   it("draws a line from a guard of the controller to each of its route nodes, and from an interceptor of a method to that method only", () => {
-    const edgeIds = presentDiagramOf(NEST_FILES, NEST_CHANGES).journeyNodeEdges.map((edge) => edge.id)
+    const edgeIds = presentDiagramOf(NEST_FILES, NEST_CHANGES).traceNodeEdges.map((edge) => edge.id)
 
     expect(edgeIds).toStrictEqual(expect.arrayContaining([
       "src/auth.guard.ts#class@1:1 -> src/users/users.controller.ts#route@/users",
@@ -733,10 +733,10 @@ describe("the card of a route path of a Nest controller", () => {
   it("keeps a method that is no route in the card of its controller, and the line from the controller to the routes of its other methods", () => {
     const files = { ...NEST_FILES, "src/users/users.controller.ts": NEST_FILES["src/users/users.controller.ts"].replace("  @Get(\":id\")\n", "") }
     const diagram = presentDiagramOf(files, NEST_CHANGES)
-    const controller = listJourneyNodes(diagram.journeyNodes).find((node) => node.id === "src/users/users.controller.ts#class@5:1")
+    const controller = listTraceNodes(diagram.traceNodes).find((node) => node.id === "src/users/users.controller.ts#class@5:1")
 
     expect(controller?.children.map((child) => child.codeBlocks[0].name)).toStrictEqual(["UsersController.findOne"])
-    const targetIds = diagram.journeyNodeEdges.filter((edge) => edge.from === controller?.id).map((edge) => edge.to)
+    const targetIds = diagram.traceNodeEdges.filter((edge) => edge.from === controller?.id).map((edge) => edge.to)
 
     expect(targetIds.filter((targetId) => targetId.includes("#route@") || targetId === "src/users/users.controller.ts#method@9:3")).toStrictEqual(["src/users/users.controller.ts#route@/users"])
   })

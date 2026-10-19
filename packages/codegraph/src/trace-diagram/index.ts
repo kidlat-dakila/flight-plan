@@ -1,21 +1,21 @@
 import { compareRanges } from "@/code-blocks/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
-import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType, ImportGraphGroup, JourneyFlowDiagram, JourneyNode, JourneyNodeEdge } from "@flightplan/configurations"
+import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType, ImportGraphGroup, TraceDiagram, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 import { groupCardNodes, listCardAddedEdges, listCardLeftOutEdgeIds, listCardParents, listLeftOutNodeIds, type CardContext, type NodeGroup, type ParentIdById } from "./cards"
 import { listListedBlocks } from "./listed-blocks"
 import { foldedValueOf, listNodeSteps, nodeBlockAround, nodeBlockOf } from "./node-blocks"
 
-export interface JourneyScope {
+export interface TraceScope {
   readonly filePaths: readonly string[]
   readonly sharedFilePaths: readonly string[]
   readonly otherLineFilePaths: readonly string[]
 }
 
-export interface JourneySources {
+export interface TraceSources {
   readonly group: ASTCodeGroupGraph
   readonly importGraphGroup: ImportGraphGroup
-  readonly scope: JourneyScope | null
+  readonly scope: TraceScope | null
 }
 
 interface Reach {
@@ -65,7 +65,7 @@ export const rootBlockOf = (block: CodeBlock): CodeBlock => (block.parentBlock =
 
 const isChanged = (block: CodeBlock): boolean => block.lineOfCodeDiffs !== null
 
-const reachWithin = (group: ASTCodeGroupGraph, scope: JourneyScope | null): Reach => {
+const reachWithin = (group: ASTCodeGroupGraph, scope: TraceScope | null): Reach => {
   if (scope === null) {
     return {
       leadsToOwnChange: (block) => block.diffSources.length > 0,
@@ -125,7 +125,7 @@ const withoutOtherLines = ({ blocks, steps }: Walk, reach: Reach): Walk => {
 
 const compareBlocks = (one: CodeBlock, two: CodeBlock): number => compareRanges(one.lineOfCodeRangeReference[0], two.lineOfCodeRangeReference[0])
 
-export const toJourneyNode = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): JourneyNode => {
+export const toTraceNode = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): TraceNode => {
   const inside = [...insideBlocks].sort(compareBlocks)
   const codeBlocks = [nodeBlock, ...inside]
   return {
@@ -188,7 +188,7 @@ const listFoldedValueHolds = (steps: readonly Step[], shownBlocks: readonly Code
   })
 }
 
-const listNodes = (nodeBlocks: readonly CodeBlock[], shownBlocks: readonly CodeBlock[], steps: readonly Step[]): JourneyNode[] => {
+const listNodes = (nodeBlocks: readonly CodeBlock[], shownBlocks: readonly CodeBlock[], steps: readonly Step[]): TraceNode[] => {
   const heldBlocks = firstOfEach([...nodeBlocks, ...shownBlocks], (block) => block.id).filter((block) => block.parentBlock !== null)
   const heldByNodeId = groupBy(heldBlocks, (block) => nodeBlockAround(block)?.id ?? "")
   const foldedByNodeId = groupBy(listFoldedValueHolds(steps, shownBlocks), (hold) => hold.nodeId)
@@ -196,26 +196,26 @@ const listNodes = (nodeBlocks: readonly CodeBlock[], shownBlocks: readonly CodeB
     ...(heldByNodeId.get(nodeBlock.id) ?? []),
     ...(foldedByNodeId.get(nodeBlock.id) ?? []).map((hold) => hold.block),
   ]
-  return nodeBlocks.map((nodeBlock) => toJourneyNode(nodeBlock, insideBlocksOf(nodeBlock)))
+  return nodeBlocks.map((nodeBlock) => toTraceNode(nodeBlock, insideBlocksOf(nodeBlock)))
 }
 
 const edgeIdOf = (from: string, to: string): string => [from, to].join(EDGE_ID_SEPARATOR)
 
-const toBlockEdge = (from: CodeBlock, to: CodeBlock): JourneyNodeEdge => ({ id: edgeIdOf(from.id, to.id), from: from.id, to: to.id })
+const toBlockEdge = (from: CodeBlock, to: CodeBlock): TraceNodeEdge => ({ id: edgeIdOf(from.id, to.id), from: from.id, to: to.id })
 
-const listStepEdges = ({ blocks, steps }: Walk): JourneyNodeEdge[] => {
+const listStepEdges = ({ blocks, steps }: Walk): TraceNodeEdge[] => {
   const stepsByFromId = groupBy(steps, (step) => step.from.id)
   const nextBlocksOf = (block: CodeBlock): CodeBlock[] => (stepsByFromId.get(block.id) ?? []).map((step) => step.to)
   return listNodeSteps(blocks, nextBlocksOf).map(({ from, to }) => toBlockEdge(from, to))
 }
 
-const listHeldNodeEdges = (nodeBlocks: readonly CodeBlock[]): JourneyNodeEdge[] =>
+const listHeldNodeEdges = (nodeBlocks: readonly CodeBlock[]): TraceNodeEdge[] =>
   nodeBlocks.flatMap((nodeBlock) => {
     const around = nodeBlockAround(nodeBlock)
     return around === null ? [] : [toBlockEdge(around, nodeBlock)]
   })
 
-const listEdges = (walk: Walk, nodeBlocks: readonly CodeBlock[]): JourneyNodeEdge[] =>
+const listEdges = (walk: Walk, nodeBlocks: readonly CodeBlock[]): TraceNodeEdge[] =>
   firstOfEach([...listStepEdges(walk), ...listHeldNodeEdges(nodeBlocks)], (edge) => edge.id)
 
 const listImporterPaths = (pendingPaths: readonly string[], importersOf: (filePath: string) => readonly string[], foundPaths: ReadonlySet<string> = new Set()): ReadonlySet<string> => {
@@ -231,20 +231,20 @@ const countImportersByPath = (importGraphGroup: ImportGraphGroup, group: ASTCode
   return new Map(importGraphGroup.map((file) => [file.filePath, listImporterPaths(importersOf(file.filePath), importersOf).size] as const))
 }
 
-const nestNodes = (nodes: readonly JourneyNode[], parentIdById: ParentIdById): JourneyNode[] => {
+const nestNodes = (nodes: readonly TraceNode[], parentIdById: ParentIdById): TraceNode[] => {
   const childrenByParentId = groupBy(nodes.filter((node) => parentIdById.has(node.id)), (node) => parentIdById.get(node.id) ?? "")
-  const withChildren = (node: JourneyNode): JourneyNode => ({ ...node, children: (childrenByParentId.get(node.id) ?? []).map(withChildren) })
+  const withChildren = (node: TraceNode): TraceNode => ({ ...node, children: (childrenByParentId.get(node.id) ?? []).map(withChildren) })
   return nodes.filter((node) => !parentIdById.has(node.id)).map(withChildren)
 }
 
 interface Grouped {
-  readonly nodes: readonly JourneyNode[]
-  readonly edges: readonly JourneyNodeEdge[]
+  readonly nodes: readonly TraceNode[]
+  readonly edges: readonly TraceNodeEdge[]
 }
 
 const groupedIdOf = (id: string, groupIdByMemberId: ReadonlyMap<string, string>): string => groupIdByMemberId.get(id) ?? id
 
-const withGroups = (nodes: readonly JourneyNode[], edges: readonly JourneyNodeEdge[], groups: readonly NodeGroup[]): Grouped => {
+const withGroups = (nodes: readonly TraceNode[], edges: readonly TraceNodeEdge[], groups: readonly NodeGroup[]): Grouped => {
   const groupIdByMemberId = new Map(groups.flatMap(({ node, memberIds }) => memberIds.map((memberId) => [memberId, node.id] as const)))
   const groupsByPlaceId = groupBy(groups, (group) => group.placedAtId)
   const listed = nodes.flatMap((node) => [
@@ -257,16 +257,16 @@ const withGroups = (nodes: readonly JourneyNode[], edges: readonly JourneyNodeEd
   return { nodes: firstOfEach(listed, (node) => node.id), edges: firstOfEach(remapped, (edge) => edge.id) }
 }
 
-const toEdgeBetween = (from: string, to: string): JourneyNodeEdge => ({ id: edgeIdOf(from, to), from, to })
+const toEdgeBetween = (from: string, to: string): TraceNodeEdge => ({ id: edgeIdOf(from, to), from, to })
 
-const withCardEdges = (context: CardContext): JourneyNodeEdge[] => {
+const withCardEdges = (context: CardContext): TraceNodeEdge[] => {
   const leftOutIds = listCardLeftOutEdgeIds(context)
   return firstOfEach([...context.edges.filter((edge) => !leftOutIds.has(edge.id)), ...listCardAddedEdges(context)], (edge) => edge.id)
 }
 
-export const listJourneyNodes = (nodes: readonly JourneyNode[]): JourneyNode[] => nodes.flatMap((node) => [node, ...listJourneyNodes(node.children)])
+export const listTraceNodes = (nodes: readonly TraceNode[]): TraceNode[] => nodes.flatMap((node) => [node, ...listTraceNodes(node.children)])
 
-export const generateJourneyFlowDiagram = ({ group, importGraphGroup, scope }: JourneySources): JourneyFlowDiagram | null => {
+export const generateTraceDiagram = ({ group, importGraphGroup, scope }: TraceSources): TraceDiagram | null => {
   const reach = reachWithin(group, scope)
   const tops = group.diffChains.filter(reach.leadsToOwnChange).map((block) => ({ block, isBelowOwnChange: false }))
   const walk = withoutOtherLines(walkChains(tops, reach), reach)
@@ -280,7 +280,7 @@ export const generateJourneyFlowDiagram = ({ group, importGraphGroup, scope }: J
   const keptNodes = allNodes.filter((node) => !leftOutIds.has(node.id))
   const keptEdges = allEdges.filter((edge) => !leftOutIds.has(edge.from) && !leftOutIds.has(edge.to))
   const { nodes, edges } = withGroups(keptNodes, keptEdges, groupCardNodes(keptNodes))
-  const journeyNodeEdges = withCardEdges({ nodes, edges, importerCountByPath })
-  const parentIdById = listCardParents({ nodes, edges: journeyNodeEdges, importerCountByPath })
-  return { astCodeGroup: group, importGraphGroup, description: null, journeyNodes: nestNodes(nodes, parentIdById), journeyNodeEdges }
+  const traceNodeEdges = withCardEdges({ nodes, edges, importerCountByPath })
+  const parentIdById = listCardParents({ nodes, edges: traceNodeEdges, importerCountByPath })
+  return { astCodeGroup: group, importGraphGroup, description: null, traceNodes: nestNodes(nodes, parentIdById), traceNodeEdges }
 }

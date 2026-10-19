@@ -1,6 +1,6 @@
-import type { Blast, BlastNode, JourneyFlowDiagram, ReviewArtifact, Segment } from "@flightplan/configurations"
+import type { Blast, BlastNode, TraceDiagram, ReviewArtifact, Segment } from "@flightplan/configurations"
 import { HELD_STOCK_CHANGED_PATHS, HELD_STOCK_SOURCES, HELD_STOCK_UNCOVERED_PATH } from "./held-stock-sources"
-import { mockJourney } from "./mock-journey"
+import { mockTrace } from "./mock-trace"
 
 const STOCK_LEVEL_PATH = "src/inventory/stock-level.ts"
 const HOLDS_PATH = "src/inventory/holds.ts"
@@ -18,7 +18,7 @@ const RESTOCK_REPORT_PATH = "src/admin/restock-report.ts"
 const RESTOCK_TABLE_PATH = "src/admin/RestockTable.tsx"
 const BACK_IN_STOCK_PATH = "src/notifications/back-in-stock.ts"
 
-const STOCK_JOURNEY: JourneyFlowDiagram = mockJourney(
+const STOCK_TRACE: TraceDiagram = mockTrace(
   HELD_STOCK_SOURCES,
   [
     { id: "post-checkout", type: "function", path: CHECKOUT_ROUTE_PATH, declaration: "postCheckout", isChanged: false, label: "Checkout endpoint", description: "Reads the cart and turns an `OutOfStockError` into a 409 response." },
@@ -111,8 +111,8 @@ const STOCK_SEGMENT: Segment = {
     "",
     "- Adds [`releaseHoldsJob`](code:src/jobs/release-holds.ts#releaseHoldsJob), which runs every five minutes.",
   ].join("\n"),
-  journey: STOCK_JOURNEY,
-  blast: STOCK_BLAST,
+  traceDiagram: STOCK_TRACE,
+  blastDiagram: STOCK_BLAST,
   walkthrough: {
     files: [
       {
@@ -266,7 +266,7 @@ const STOCK_SEGMENT: Segment = {
   },
 }
 
-const CHECKOUT_FLOW: JourneyFlowDiagram = mockJourney(
+const CHECKOUT_FLOW: TraceDiagram = mockTrace(
   HELD_STOCK_SOURCES,
   [
     { id: "handle-checkout", type: "function", path: CHECKOUT_BUTTON_PATH, declaration: "handleCheckout", isChanged: true, label: "Checkout button handler", description: "Now tells a held item apart from any other failure." },
@@ -303,8 +303,8 @@ const CHECKOUT_SEGMENT: Segment = {
     "",
     "- Adds an optional `held` to [`CartLine`](code:src/cart/cart-line.ts#CartLine).",
   ].join("\n"),
-  journey: CHECKOUT_FLOW,
-  blast: null,
+  traceDiagram: CHECKOUT_FLOW,
+  blastDiagram: null,
   walkthrough: {
     files: [
       {

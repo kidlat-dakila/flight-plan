@@ -25,7 +25,7 @@ of one piece of the change, placed on top of its lines.
 - **`codeBlockIds`** are the blocks of the waypoint: the block it stops at
   first, then the changed blocks inside it, in the order they are written. An
   id names its file, its type and where it starts, as the `codeBlockIds` of a
-  Journey Flow Diagram node do, so the same id is the same block. Flight Plan
+  Trace Diagram node do, so the same id is the same block. Flight Plan
   sets them, and a waypoint in a file it does not trace has none.
 - **`title`** and **`reading`** are yours, and arrive empty. `nodes` hands you
   each waypoint that still needs one, with the code it covers.

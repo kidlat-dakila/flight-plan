@@ -1,5 +1,5 @@
-import { BLOCK_TYPE_LABELS } from "@/journey/names"
-import type { ListedBlock } from "@/journey-flow-diagram/listed-blocks"
+import { BLOCK_TYPE_LABELS } from "@/trace/names"
+import type { ListedBlock } from "@/trace-diagram/listed-blocks"
 import type { CodeBlockType, NodeBlockListKind } from "@flightplan/configurations"
 
 export const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = {

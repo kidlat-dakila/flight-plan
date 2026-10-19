@@ -1,5 +1,5 @@
 import { isInSpan, rowSpanOf, type RowSpan } from "@/code/lines"
-import { BLOCK_TYPE_LABELS } from "@/journey/names"
+import { BLOCK_TYPE_LABELS } from "@/trace/names"
 import {
   CODE_BLOCK_TYPES,
   ROOT_BLOCK_CHANGES,

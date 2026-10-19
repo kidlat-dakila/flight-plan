@@ -20,7 +20,7 @@ export const PRESET_OFFERS: Record<PresetName, PresetOffer> = {
     label: "Minimal",
     bestFor: "Best for saving tokens.",
     description: "The agent writes in fragments: few words and no filler.",
-    note: "Journey Flow Diagrams, the Blast Diagram and the findings on waypoints are off by default. You can generate each of them on demand.",
+    note: "Trace Diagrams, the Blast Diagram and the findings on waypoints are off by default. You can generate each of them on demand.",
   },
   "onboardee": {
     label: "Onboardee",

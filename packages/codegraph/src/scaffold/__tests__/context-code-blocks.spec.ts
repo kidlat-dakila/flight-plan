@@ -1,8 +1,8 @@
 import { buildStoredCodeGroupGraph, linkCodeGroupGraph } from "@/code-blocks"
 import type { FileCodeReferences } from "@/code-references"
 import { generateWalkthroughFromBlocks } from "@/code-walkthrough/from-blocks"
-import { generateJourneyFlowDiagram } from "@/journey-flow-diagram"
 import { contextIdOf, listContextCodeBlocks, type ViewedSegment } from "@/scaffold/context-code-blocks"
+import { generateTraceDiagram } from "@/trace-diagram"
 import type { CodeReference } from "@flightplan/configurations"
 
 const CHECKOUT_PATH = "src/checkout.ts"
@@ -59,9 +59,9 @@ const viewedSegment = (codeReferences: readonly FileCodeReferences[] = REFERENCE
     sourceOf(PRICING_PATH, PRICING_LINES, {}, [CHECKOUT_PATH]),
     sourceOf(UNUSED_PATH, UNUSED_LINES, {}, []),
   ]))
-  const journey = generateJourneyFlowDiagram({ group, importGraphGroup: [], scope: null })
-  const walkthrough = generateWalkthroughFromBlocks({ group, filePaths: [CHECKOUT_PATH], journeyFlowDiagram: journey, firstWaypointNumber: 1 })
-  return { journey: null, walkthrough, codeReferences }
+  const traceDiagram = generateTraceDiagram({ group, importGraphGroup: [], scope: null })
+  const walkthrough = generateWalkthroughFromBlocks({ group, filePaths: [CHECKOUT_PATH], traceDiagram, firstWaypointNumber: 1 })
+  return { traceDiagram: null, walkthrough, codeReferences }
 }
 
 const listed = listContextCodeBlocks([viewedSegment()])

@@ -1,26 +1,26 @@
 import { findSource, rowSpanOf } from "@/code/lines"
 import { codeLinkIdOf } from "@/code/links"
-import { listJourneyNodes } from "@/journey-flow-diagram"
-import { linesLabelOf } from "@/journey-flow-diagram/added-cards"
-import { listListedBlocks, type ListedBlock } from "@/journey-flow-diagram/listed-blocks"
-import { eventHandedTo, isFoldedValue, isHandlerBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
 import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
+import { listTraceNodes } from "@/trace-diagram"
+import { linesLabelOf } from "@/trace-diagram/added-cards"
+import { listListedBlocks, type ListedBlock } from "@/trace-diagram/listed-blocks"
+import { eventHandedTo, isFoldedValue, isHandlerBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/trace-diagram/node-blocks"
 import type { WaypointPlace } from "@/walkthrough/build"
 import type {
   CodeBlock,
-  JourneyBand,
-  JourneyBlockListView,
-  JourneyEdgeView,
-  JourneyFlowDiagram,
-  JourneyNode,
-  JourneyNodeEdge,
-  JourneyNodeView,
-  JourneyRow,
-  JourneyRowGroupView,
-  JourneyTriggerLabelView,
+  TraceBand,
+  TraceBlockListView,
+  TraceEdgeView,
+  TraceDiagram,
+  TraceNode,
+  TraceNodeEdge,
+  TraceNodeView,
+  TraceRow,
+  TraceRowGroupView,
+  TraceTriggerLabelView,
   LineSpan,
   NodeChange,
   Segment,
@@ -31,7 +31,7 @@ import { buildNodeCodeViews, type CodeViewSetting } from "./code-views"
 import { BLOCK_TYPE_LABELS, nameOfBlock } from "./names"
 import { parametersOf } from "./parameters"
 
-const JOURNEY_ANCHOR_NAME = "journey-flow-diagram"
+const TRACE_ANCHOR_NAME = "trace-diagram"
 
 const CHANGE_LABELS: Readonly<Record<NodeChange, string>> = { added: "Added", modified: "Modified" }
 const PATH_SEPARATOR = "/"
@@ -64,7 +64,7 @@ const isWhollyAdded = (block: CodeBlock, context: ReviewViewContext): boolean =>
   return rows.length > 0 && rows.every((row) => row.mark === "added")
 }
 
-const changeOfNode = ({ codeBlocks: [root], diffCodeBlocks }: JourneyNode, context: ReviewViewContext): NodeChange | null => {
+const changeOfNode = ({ codeBlocks: [root], diffCodeBlocks }: TraceNode, context: ReviewViewContext): NodeChange | null => {
   if (diffCodeBlocks.length === 0) return null
   return isWhollyAdded(root, context) ? "added" : "modified"
 }
@@ -84,7 +84,7 @@ const linesWithHandlers = (block: CodeBlock): LineSpan[] => inLineOrder([block, 
 
 const changeOfBlock = (block: CodeBlock): NodeChange | null => (hasChange(block) ? "modified" : null)
 
-const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): JourneyTriggerLabelView => {
+const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): TraceTriggerLabelView => {
   const name = nameOfBlock(codeBlock)
   return {
     id: codeBlock.id,
@@ -104,12 +104,12 @@ const rowIdAround = (block: CodeBlock, rowIdByBlockId: RowIdByBlockId): string |
   return block.parentBlock === null ? null : rowIdAround(block.parentBlock, rowIdByBlockId)
 }
 
-const listRows = (node: JourneyNode): ListedBlock[] => {
+const listRows = (node: TraceNode): ListedBlock[] => {
   const [nodeBlock, ...insideBlocks] = node.codeBlocks
   return listsNoRows(node) ? [] : listListedBlocks(nodeBlock, insideBlocks)
 }
 
-const rowIdByBlockIdOf = (node: JourneyNode): RowIdByBlockId =>
+const rowIdByBlockIdOf = (node: TraceNode): RowIdByBlockId =>
   node.rows === undefined
     ? new Map([
         ...listRows(node).flatMap(({ block, statements }) => statements.map((statement) => [statement.id, block.id] as const)),
@@ -117,10 +117,10 @@ const rowIdByBlockIdOf = (node: JourneyNode): RowIdByBlockId =>
       ])
     : new Map(node.rows.map((row) => [row.id, row.id] as const))
 
-const inRowOrder = (rows: readonly JourneyRow[]): JourneyRow[] =>
+const inRowOrder = (rows: readonly TraceRow[]): TraceRow[] =>
   [...rows].sort((one, two) => one.lineStart - two.lineStart || one.lineEnd - two.lineEnd)
 
-const toStoredRowView = (row: JourneyRow, node: JourneyNode): JourneyTriggerLabelView => {
+const toStoredRowView = (row: TraceRow, node: TraceNode): TraceTriggerLabelView => {
   const block = node.codeBlocks.find((candidate) => candidate.id === row.id)
   const name = block === undefined ? linesLabelOf(row) : nameOfBlock(block)
   return {
@@ -135,7 +135,7 @@ const toStoredRowView = (row: JourneyRow, node: JourneyNode): JourneyTriggerLabe
   }
 }
 
-const groupStoredRows = (rows: readonly JourneyRow[]): JourneyRowGroupView[] =>
+const groupStoredRows = (rows: readonly TraceRow[]): TraceRowGroupView[] =>
   rows.length === 0 ? [] : [{ label: null, rowIds: rows.map((row) => row.id), childIds: [] }]
 
 const linesOfRow = ({ statements }: ListedBlock): LineSpan[] => {
@@ -144,7 +144,7 @@ const linesOfRow = ({ statements }: ListedBlock): LineSpan[] => {
   return [[Math.min(...spans.map(([lineStart]) => lineStart)), Math.max(...spans.map(([, lineEnd]) => lineEnd))]]
 }
 
-const toBlockLists = (node: JourneyNode, rows: readonly ListedBlock[]): JourneyBlockListView[] => {
+const toBlockLists = (node: TraceNode, rows: readonly ListedBlock[]): TraceBlockListView[] => {
   const writtenById = new Map(node.blockLabels.map(({ label, codeBlock }) => [codeBlock.id, label] as const))
   const rowIdByBlockId = rowIdByBlockIdOf(node)
   const changedRowIds = new Set(node.codeBlocks.filter(hasChange).map((block) => rowIdAround(block, rowIdByBlockId)))
@@ -162,10 +162,10 @@ const toBlockLists = (node: JourneyNode, rows: readonly ListedBlock[]): JourneyB
   }))
 }
 
-const codeLinesOf = ({ codeBlocks: [root, ...insideBlocks] }: JourneyNode): LineSpan[] =>
+const codeLinesOf = ({ codeBlocks: [root, ...insideBlocks] }: TraceNode): LineSpan[] =>
   inLineOrder([root, ...insideBlocks.filter((block) => eventHandedTo(block)?.id === root.id || isFoldedValue(block))].flatMap(lineSpansOf))
 
-const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: ReviewViewContext): JourneyNodeView => {
+const toNodeView = (node: TraceNode, setting: CodeViewSetting, context: ReviewViewContext): TraceNodeView => {
   const [root] = node.codeBlocks
   const path = filePathOf(root)
   const { name, typeLabel } = headOfNode(node, { name: nameOfBlock(root), typeLabel: BLOCK_TYPE_LABELS[node.type] })
@@ -197,7 +197,7 @@ const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: Review
 
 const edgeIdOf = (from: string, to: string): string => [from, to].join(EDGE_END_SEPARATOR)
 
-const toEdgeView = ({ from, to }: JourneyNodeEdge, fromRowId: string | null, toRowId: string | null): JourneyEdgeView => ({
+const toEdgeView = ({ from, to }: TraceNodeEdge, fromRowId: string | null, toRowId: string | null): TraceEdgeView => ({
   id: edgeIdOf(fromRowId ?? from, toRowId ?? to),
   from,
   to,
@@ -206,9 +206,9 @@ const toEdgeView = ({ from, to }: JourneyNodeEdge, fromRowId: string | null, toR
   toSide: DEFAULT_SIDE,
 })
 
-const isDrawnByAuthor = (edge: JourneyNodeEdge): boolean => edge.fromRowId !== undefined || edge.toSide !== undefined
+const isDrawnByAuthor = (edge: TraceNodeEdge): boolean => edge.fromRowId !== undefined || edge.toSide !== undefined
 
-const toAuthorEdgeView = ({ id, from, to, fromRowId, toSide }: JourneyNodeEdge): JourneyEdgeView => ({
+const toAuthorEdgeView = ({ id, from, to, fromRowId, toSide }: TraceNodeEdge): TraceEdgeView => ({
   id,
   from,
   to,
@@ -217,13 +217,13 @@ const toAuthorEdgeView = ({ id, from, to, fromRowId, toSide }: JourneyNodeEdge):
   toSide: toSide ?? DEFAULT_SIDE,
 })
 
-const listDiagramSteps = (nodes: readonly JourneyNode[]): NodeStep[] => {
+const listDiagramSteps = (nodes: readonly TraceNode[]): NodeStep[] => {
   const blocks = firstOfEach(nodes.flatMap((node) => node.codeBlocks), (block) => block.id)
   const blockIds = new Set(blocks.map((block) => block.id))
   return listNodeSteps(blocks, (block) => block.nextBlocks.filter((next) => blockIds.has(next.id)))
 }
 
-const toEdgeViews = (edge: JourneyNodeEdge, steps: readonly NodeStep[], nodeById: ReadonlyMap<string, JourneyNode>, rowIdsByNodeId: ReadonlyMap<string, RowIdByBlockId>): JourneyEdgeView[] => {
+const toEdgeViews = (edge: TraceNodeEdge, steps: readonly NodeStep[], nodeById: ReadonlyMap<string, TraceNode>, rowIdsByNodeId: ReadonlyMap<string, RowIdByBlockId>): TraceEdgeView[] => {
   if (isDrawnByAuthor(edge)) return [toAuthorEdgeView(edge)]
   const fromRowIds = rowIdsByNodeId.get(edge.from) ?? NO_ROW_IDS
   const toRowIds = rowIdsByNodeId.get(edge.to) ?? NO_ROW_IDS
@@ -234,34 +234,34 @@ const toEdgeViews = (edge: JourneyNodeEdge, steps: readonly NodeStep[], nodeById
   return views.length === 0 ? [toEdgeView(edge, null, null)] : views
 }
 
-const titleOf = (nodes: readonly JourneyNode[]): string => {
+const titleOf = (nodes: readonly TraceNode[]): string => {
   const changed = nodes.filter((node) => node.diffCodeBlocks.length > 0)
   const titled = (changed.length === 0 ? nodes : changed).map((node) => headOfNode(node, { name: nameOfBlock(node.codeBlocks[0]), typeLabel: BLOCK_TYPE_LABELS[node.type] }).name)
   const shown = titled.slice(0, TITLED_NODE_COUNT).join(TITLE_SEPARATOR)
   return titled.length > TITLED_NODE_COUNT ? `${shown} +${String(titled.length - TITLED_NODE_COUNT)} more` : shown
 }
 
-const toDiagram = (journey: JourneyFlowDiagram, segmentId: string, scope: string, setting: CodeViewSetting, context: ReviewViewContext): NonNullable<JourneyBand["diagram"]> => {
-  const nodes = listJourneyNodes(journey.journeyNodes)
-  const nodeViews = journey.journeyNodes.map((node) => toNodeView(node, setting, context))
+const toDiagram = (traceDiagram: TraceDiagram, segmentId: string, scope: string, setting: CodeViewSetting, context: ReviewViewContext): NonNullable<TraceBand["diagram"]> => {
+  const nodes = listTraceNodes(traceDiagram.traceNodes)
+  const nodeViews = traceDiagram.traceNodes.map((node) => toNodeView(node, setting, context))
   const nodeById = new Map(nodes.map((node) => [node.id, node] as const))
   const rowIdsByNodeId = new Map(nodes.map((node) => [node.id, rowIdByBlockIdOf(node)] as const))
   const stepsByEdgeId = groupBy(listDiagramSteps(nodes), (step) => edgeIdOf(step.from.id, step.to.id))
   return {
-    anchorId: `${scope}journey-${segmentId}`,
+    anchorId: `${scope}trace-${segmentId}`,
     title: nodes.length === 0 ? EMPTY_TITLE : titleOf(nodes),
-    description: journey.description === null ? null : parseProse(journey.description, context.knownLinkIds),
-    descriptionMarkdown: journey.description ?? UNWRITTEN_MARKDOWN,
+    description: traceDiagram.description === null ? null : parseProse(traceDiagram.description, context.knownLinkIds),
+    descriptionMarkdown: traceDiagram.description ?? UNWRITTEN_MARKDOWN,
     unwrittenLabel: UNWRITTEN_LABEL,
     nodes: nodeViews,
-    edges: journey.journeyNodeEdges.flatMap((edge) => toEdgeViews(edge, stepsByEdgeId.get(edge.id) ?? [], nodeById, rowIdsByNodeId)),
+    edges: traceDiagram.traceNodeEdges.flatMap((edge) => toEdgeViews(edge, stepsByEdgeId.get(edge.id) ?? [], nodeById, rowIdsByNodeId)),
   }
 }
 
-export const buildJourney = (segment: Segment, scope: string, places: readonly WaypointPlace[], context: ReviewViewContext): JourneyBand => ({
-  anchorId: `${scope}${JOURNEY_ANCHOR_NAME}`,
-  heading: "Journey Flow Diagram",
-  diagram: segment.journey === null
+export const buildTrace = (segment: Segment, scope: string, places: readonly WaypointPlace[], context: ReviewViewContext): TraceBand => ({
+  anchorId: `${scope}${TRACE_ANCHOR_NAME}`,
+  heading: "Trace Diagram",
+  diagram: segment.traceDiagram === null
     ? null
-    : toDiagram(segment.journey, segment.id, scope, { places, changedPaths: segment.changedPaths }, context),
+    : toDiagram(segment.traceDiagram, segment.id, scope, { places, changedPaths: segment.changedPaths }, context),
 })

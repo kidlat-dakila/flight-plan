@@ -59,7 +59,7 @@ You can change all of these later in **Settings**. Flight Plan acts on your forg
 A review artifact has these parts:
 
 - **Context**: why the change exists, in a few sentences to read before any code.
-- **Journey Flow Diagram**: how execution reaches the changed code, from whatever starts it.
+- **Trace Diagram**: how execution reaches the changed code, from whatever starts it.
 - **Blast Diagram**: the files connected to the change through imports, and what the change does to the ones it did
   not touch.
 - **Code Walkthrough**: the changed code, one file at a time, with each explanation on the lines it is about and

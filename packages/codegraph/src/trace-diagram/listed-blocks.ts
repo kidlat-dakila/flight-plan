@@ -1,5 +1,5 @@
-import { calledNamesOf, nameOfBlock } from "@/journey/names"
 import { firstOfEach } from "@/shared/first-of-each"
+import { calledNamesOf, nameOfBlock } from "@/trace/names"
 import type { CardPart, CodeBlock, CodeBlockType, NodeBlockListKind } from "@flightplan/configurations"
 import { classOfDeclaredProperty, declaresProperty, isMethodOfClass } from "./cards/class"
 import { holdsStoreParts, storePartAround } from "./cards/store"

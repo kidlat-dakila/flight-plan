@@ -1,5 +1,5 @@
 import type { Point } from "@/lib/diagram-path"
-import type { JourneyLayout, LayoutNode, PlacedEdge, PlacedNode, PlacedRow } from "@/lib/journey-layout"
+import type { TraceLayout, LayoutNode, PlacedEdge, PlacedNode, PlacedRow } from "@/lib/trace-layout"
 
 export type FlowHandleType = "source" | "target"
 
@@ -31,7 +31,7 @@ export interface FlowLine {
   readonly isAboveNodes: boolean
 }
 
-export interface JourneyFlow {
+export interface TraceFlow {
   readonly frames: readonly FlowFrame[]
   readonly lines: readonly FlowLine[]
 }
@@ -84,7 +84,7 @@ const toLine = ({ id, edgeId, source, target, points, hasArrow, isAboveNodes }: 
   isAboveNodes,
 })
 
-export const toJourneyFlow = (nodes: readonly LayoutNode[], layout: JourneyLayout): JourneyFlow => {
+export const toTraceFlow = (nodes: readonly LayoutNode[], layout: TraceLayout): TraceFlow => {
   const parentIdById = new Map(parentIdsOf(nodes))
   const placedById = new Map(layout.nodes.map((placed) => [placed.id, placed] as const))
   const parts = partsUnderNodesFirst(layout.edges)

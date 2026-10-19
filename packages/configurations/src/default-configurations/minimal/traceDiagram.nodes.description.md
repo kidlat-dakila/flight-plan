@@ -1,4 +1,4 @@
-The journey that reaches this node, in drawn order: "{who} {action}: {caller}
+The trace that reaches this node, in drawn order: "{who} {action}: {caller}
 {calls, renders or reads} this {what}." Start with what starts the path, name
 each step between, end on what hands over to it.
 

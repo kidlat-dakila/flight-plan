@@ -215,8 +215,8 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": null,
-        "blastRadiusDiagram": {
+        "traceDiagram": null,
+        "blastDiagram": {
           "nodes": [
             {
               "path": "src/views/account/AccountPage.vue",

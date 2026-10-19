@@ -1,14 +1,14 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import type { ComponentProps } from "react"
-import JourneyBand, { type JourneyBandAuthoring } from "@/components/JourneyBand"
+import TraceBand, { type TraceBandAuthoring } from "@/components/TraceBand"
 
-type JourneyBandProps = ComponentProps<typeof JourneyBand>
+type TraceBandProps = ComponentProps<typeof TraceBand>
 
-const createProps = (overrides: Partial<JourneyBandProps> = {}): JourneyBandProps => ({
-  anchorId: "journey",
-  heading: "Journey Flow Diagram",
+const createProps = (overrides: Partial<TraceBandProps> = {}): TraceBandProps => ({
+  anchorId: "traceDiagram",
+  heading: "Trace Diagram",
   diagram: {
-    anchorId: "journey-price",
+    anchorId: "trace-price",
     title: "A shopper sees a price",
     description: [{ kind: "paragraph", inlines: [{ kind: "text", text: "A shopper opens a product, and the page asks for its price." }] }],
     descriptionMarkdown: "A shopper opens a product, and the page asks for its price.",
@@ -24,17 +24,17 @@ const createProps = (overrides: Partial<JourneyBandProps> = {}): JourneyBandProp
   ...overrides,
 })
 
-const createAuthoring = (): JourneyBandAuthoring => ({
+const createAuthoring = (): TraceBandAuthoring => ({
   board: { isPending: false, onAddCard: vi.fn(), onClearDiagram: vi.fn(), onRemoveDiagram: vi.fn(), onAddCardAtLineEnd: vi.fn(), onDrawLine: vi.fn(), onRemoveLine: vi.fn(), onEditCard: vi.fn(), onRemoveCard: vi.fn() },
   description: { isWriting: false, isSaving: false, errorMessage: null, onEdit: vi.fn(), onSave: vi.fn(), onCancel: vi.fn() },
   onAddDiagram: vi.fn(),
 })
 
-describe("JourneyBand", () => {
+describe("TraceBand", () => {
   it("shows its heading and the description of the diagram, and neither a title of the diagram nor a count of nodes", () => {
-    render(<JourneyBand {...createProps()} />)
+    render(<TraceBand {...createProps()} />)
 
-    expect(screen.getByRole("heading", { level: 2, name: "Journey Flow Diagram" })).toBeTruthy()
+    expect(screen.getByRole("heading", { level: 2, name: "Trace Diagram" })).toBeTruthy()
     expect(screen.getByText("A shopper opens a product, and the page asks for its price.")).toBeTruthy()
     expect(screen.queryByRole("heading", { level: 3 })).toBeNull()
     expect(screen.queryByText("A shopper sees a price")).toBeNull()
@@ -43,26 +43,26 @@ describe("JourneyBand", () => {
 
   it("says that a description is not written yet", () => {
     const { diagram } = createProps()
-    render(<JourneyBand {...createProps({ diagram: diagram === null ? null : { ...diagram, description: null } })} />)
+    render(<TraceBand {...createProps({ diagram: diagram === null ? null : { ...diagram, description: null } })} />)
 
     expect(screen.getByText("Not written yet.")).toBeTruthy()
   })
 
   it("offers an author to edit the description beside the heading, and a reviewer not", () => {
     const authoring = createAuthoring()
-    const { rerender } = render(<JourneyBand {...createProps({ authoring, renderDescriptionEditor: () => null })} />)
+    const { rerender } = render(<TraceBand {...createProps({ authoring, renderDescriptionEditor: () => null })} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Edit" }))
 
     expect(authoring.description.onEdit).toHaveBeenCalledTimes(1)
-    rerender(<JourneyBand {...createProps({ renderDescriptionEditor: () => null })} />)
+    rerender(<TraceBand {...createProps({ renderDescriptionEditor: () => null })} />)
     expect(screen.queryByRole("button", { name: "Edit" })).toBeNull()
   })
 
   it("puts the editor in place of the description while an author writes it, with what is written so far", () => {
     const authoring = createAuthoring()
     const renderDescriptionEditor = vi.fn(() => <p>The editor</p>)
-    render(<JourneyBand {...createProps({ authoring: { ...authoring, description: { ...authoring.description, isWriting: true } }, renderDescriptionEditor })} />)
+    render(<TraceBand {...createProps({ authoring: { ...authoring, description: { ...authoring.description, isWriting: true } }, renderDescriptionEditor })} />)
 
     expect(screen.getByText("The editor")).toBeTruthy()
     expect(screen.queryByRole("button", { name: "Edit" })).toBeNull()
@@ -70,27 +70,27 @@ describe("JourneyBand", () => {
     expect(renderDescriptionEditor).toHaveBeenCalledWith(expect.objectContaining({ markdown: "A shopper opens a product, and the page asks for its price.", onSave: authoring.description.onSave }))
   })
 
-  it("shows only its heading when the journey is absent", () => {
-    render(<JourneyBand {...createProps({ diagram: null })} />)
+  it("shows only its heading when the trace is absent", () => {
+    render(<TraceBand {...createProps({ diagram: null })} />)
 
-    expect(screen.getByRole("heading", { level: 2, name: "Journey Flow Diagram" })).toBeTruthy()
+    expect(screen.getByRole("heading", { level: 2, name: "Trace Diagram" })).toBeTruthy()
     expect(screen.queryByRole("heading", { level: 3 })).toBeNull()
   })
 
   it("offers an author to add a diagram where there is none", () => {
     const authoring = createAuthoring()
-    render(<JourneyBand {...createProps({ diagram: null, authoring })} />)
+    render(<TraceBand {...createProps({ diagram: null, authoring })} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Add a diagram" }))
 
     expect(authoring.onAddDiagram).toHaveBeenCalledTimes(1)
-    expect(screen.getByText("This segment has no Journey Flow Diagram.")).toBeTruthy()
+    expect(screen.getByText("This segment has no Trace Diagram.")).toBeTruthy()
     expect(screen.queryByRole("button", { name: "Add a card" })).toBeNull()
   })
 
   it("offers an author to add a card and to remove the diagram in the toolbar of the board, and nothing to clear in a diagram with no card", () => {
     const authoring = createAuthoring()
-    render(<JourneyBand {...createProps({ authoring })} />)
+    render(<TraceBand {...createProps({ authoring })} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Add a card" }))
     fireEvent.click(screen.getByRole("button", { name: "Remove the diagram" }))
@@ -101,13 +101,13 @@ describe("JourneyBand", () => {
   })
 
   it("gives an author no instructions above the board", () => {
-    render(<JourneyBand {...createProps({ authoring: createAuthoring() })} />)
+    render(<TraceBand {...createProps({ authoring: createAuthoring() })} />)
 
     expect(screen.queryByText(/Drag a card to move it/)).toBeNull()
   })
 
   it("offers a reviewer none of it", () => {
-    render(<JourneyBand {...createProps()} />)
+    render(<TraceBand {...createProps()} />)
 
     expect(screen.queryByRole("button", { name: "Add a card" })).toBeNull()
     expect(screen.queryByRole("button", { name: "Remove the diagram" })).toBeNull()

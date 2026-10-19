@@ -1,5 +1,5 @@
 import { createMockProcedureContext } from "@/procedures/context"
-import { editJourney } from "@/procedures/edit-journey"
+import { editTrace } from "@/procedures/edit-trace"
 import { listCardBlocks } from "@/procedures/list-card-blocks"
 
 const KEY = { repositoryName: "storefront", targetId: "pr-412", segmentId: "stock-check" }
@@ -22,7 +22,7 @@ describe("listCardBlocks", () => {
   it("says which block already has a card", async () => {
     const context = createContext()
     const [block] = (await listCardBlocks({ ...KEY, path: PATH }, context))?.blocks ?? []
-    await editJourney({ ...KEY, edit: { kind: "add-card", path: PATH, source: { kind: "block", blockId: block.id }, isPrefilled: false, hasChildComponents: false } }, context)
+    await editTrace({ ...KEY, edit: { kind: "add-card", path: PATH, source: { kind: "block", blockId: block.id }, isPrefilled: false, hasChildComponents: false } }, context)
 
     expect((await listCardBlocks({ ...KEY, path: PATH }, context))?.blocks[0]).toMatchObject({ heldLabel: "Already a card" })
   })
