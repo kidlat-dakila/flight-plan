@@ -25,7 +25,7 @@ const createProps = (overrides: Partial<JourneyBandProps> = {}): JourneyBandProp
 })
 
 const createAuthoring = (): JourneyBandAuthoring => ({
-  board: { isPending: false, onAddCard: vi.fn(), onClearDiagram: vi.fn(), onRemoveDiagram: vi.fn(), onAddCardAtLineEnd: vi.fn(), onMoveCards: vi.fn(), onDrawLine: vi.fn(), onRemoveLine: vi.fn(), onEditCard: vi.fn(), onRemoveCard: vi.fn() },
+  board: { isPending: false, onAddCard: vi.fn(), onClearDiagram: vi.fn(), onRemoveDiagram: vi.fn(), onAddCardAtLineEnd: vi.fn(), onDrawLine: vi.fn(), onRemoveLine: vi.fn(), onEditCard: vi.fn(), onRemoveCard: vi.fn() },
   description: { isWriting: false, isSaving: false, errorMessage: null, onEdit: vi.fn(), onSave: vi.fn(), onCancel: vi.fn() },
   onAddDiagram: vi.fn(),
 })

@@ -100,7 +100,7 @@ describe("the card of a class that holds another class by type", () => {
     ]))
   })
 
-  it("lists a parameter of the constructor marked as a property as a row of the class, and a parameter with no mark as no row", () => {
+  it("lists a parameter of the constructor marked as a property as a row of the class, and a parameter with no mark as no row of either", () => {
     const report = codeOf(
       "export class Report {",
       "  constructor(private readonly users: UsersService, public title: string, limit: number) {",
@@ -114,7 +114,7 @@ describe("the card of a class that holds another class by type", () => {
     const diagram = presentDiagramOf({ "src/report.ts": report }, { "src/report.ts": [rangeAt(2, 15, 2, 87), rangeAt(3, 5, 3, 15)] })
 
     expect(rowNamesOf(nodeNamed(diagram.journeyNodes, "Report"))).toStrictEqual(["users", "title"])
-    expect(rowNamesOf(nodeNamed(diagram.journeyNodes, "Report.constructor"))).toStrictEqual(["limit", "log"])
+    expect(rowNamesOf(nodeNamed(diagram.journeyNodes, "Report.constructor"))).toStrictEqual(["log"])
   })
 })
 

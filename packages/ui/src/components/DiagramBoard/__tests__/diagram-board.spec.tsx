@@ -48,6 +48,21 @@ describe("DiagramBoard", () => {
     expect(content?.style.transform).toBe("scale(1)")
   })
 
+  it("zooms in on a scroll up over the board and out on a scroll down, and keeps the page from scrolling", () => {
+    renderBoard(false)
+    const content = screen.getByText("Board content").parentElement
+    const board = screen.getByRole("group", { name: "A checkout" })
+    const scaleOf = (): number => Number(/scale\((?<scale>[\d.]+)\)/.exec(content?.style.transform ?? "")?.groups?.scale)
+
+    const isScrollingThePage = fireEvent.wheel(board, { deltaY: -100 })
+    const zoomedIn = scaleOf()
+    fireEvent.wheel(board, { deltaY: 200 })
+
+    expect(isScrollingThePage).toBe(false)
+    expect(zoomedIn).toBeGreaterThan(1)
+    expect(scaleOf()).toBeLessThan(1)
+  })
+
   it("hands its zoom and its pan to a canvas that draws itself, and takes the pan that canvas reports", async () => {
     renderInNavigator(
       <DiagramBoard

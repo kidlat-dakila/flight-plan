@@ -198,7 +198,7 @@ const blockLabelSchema = z.strictObject({
         description: "What an argument, a state, a hook, an effect or a step of a node is for, in the reader's terms.",
       },
       fieldDescription: "journey.nodes.blockLabels.label.md",
-      exampleValue: "The promo code the shopper typed",
+      exampleValue: "Sends the promo code the shopper typed",
       defaultInstruction: "journey.nodes.blockLabels.label.md",
     })
     .nullable(),

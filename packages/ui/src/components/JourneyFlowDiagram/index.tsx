@@ -45,7 +45,7 @@ import { straightPath, type Point } from "@/lib/diagram-path"
 import { cutOffBy, lineageOf, neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
 import { arrangeJourney, nearestSideOf, placeUnplacedCards, type CardSide, type PositionById } from "@/lib/journey-arrangement"
 import { toJourneyFlow, type FlowFrame, type FlowHandleType } from "@/lib/journey-flow"
-import { layoutJourney, NODE_HEAD_HEIGHT, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/journey-layout"
+import { layoutJourney, NODE_HEAD_HEIGHT, ROW_WIDTH, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/journey-layout"
 import { navigatorButtonOf } from "@/lib/navigator-controls"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
@@ -97,6 +97,7 @@ export interface JourneyNode {
   readonly description: ProseBlocks | null
   readonly codeLinkId: string | null
   readonly codeViews: readonly CodeView[]
+  readonly parameters: readonly string[]
   readonly blockLists: readonly JourneyBlockList[]
   readonly triggerLabels: readonly JourneyTriggerLabel[]
   readonly rowGroups: readonly JourneyRowGroup[]
@@ -148,11 +149,14 @@ export interface JourneyAuthoring {
   readonly onClearDiagram: () => void
   readonly onRemoveDiagram: () => void
   readonly onAddCardAtLineEnd: (lineEnd: LineEnd) => void
-  readonly onMoveCards: (places: readonly CardPlace[]) => void
   readonly onDrawLine: (line: RowLine) => void
   readonly onRemoveLine: (line: DrawnLine) => void
   readonly onEditCard: (nodeId: string) => void
   readonly onRemoveCard: (nodeId: string) => void
+}
+
+export interface CardMoving {
+  readonly onMoveCards: (places: readonly CardPlace[]) => void
 }
 
 interface JourneyFlowDiagramProps {
@@ -163,6 +167,7 @@ interface JourneyFlowDiagramProps {
   readonly codeDefinitions: CodeDefinitions
   readonly isReviewPending: boolean
   readonly authoring?: JourneyAuthoring | null
+  readonly cardMoving?: CardMoving | null
   readonly navigatorAnchorId?: string | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
@@ -251,6 +256,13 @@ const BLOCK_LIST_ICONS: Readonly<Record<string, LucideIcon>> = {
 const TRIGGER_CLASSES = "absolute flex items-center gap-2 rounded border border-input bg-card px-2 text-left transition-colors duration-[180ms] ease-out hover:bg-accent"
 const NODE_MENU_CLASSES = "absolute top-1 right-1 z-10 hidden gap-0.5 rounded-md border border-input bg-card p-0.5 group-focus-within:flex group-hover:flex data-[pinned=true]:flex"
 const NODE_MENU_BUTTON_CLASSES = "flex size-6 items-center justify-center rounded text-foreground transition-colors duration-[180ms] ease-out hover:bg-accent aria-pressed:text-primary-text"
+const PARAMETERS_LABEL = "Parameters"
+const PARAMETERS_ID_SUFFIX = ":parameters"
+const PARAMETER_CHAR_WIDTH_PX = 6.7
+const PARAMETER_CHIP_PADDING_PX = 14
+const PARAMETER_CHIP_GAP_PX = 4
+const PARAMETERS_CLASSES = "absolute flex flex-wrap content-start gap-1"
+const PARAMETER_CHIP_CLASSES = "flex h-5 max-w-full items-center rounded-sm border bg-muted px-1.5 font-mono text-[0.6875rem] leading-4 text-muted-foreground"
 const ROW_HEADING_CLASSES = "absolute flex items-end px-0.5 text-[0.625rem] leading-3 font-bold tracking-wide text-muted-foreground uppercase"
 const FOCUS_LABEL = "Show only the paths through this node"
 const COLLAPSE_LABEL = "Hide the nodes this node leads to"
@@ -302,18 +314,37 @@ const listBlockRows = (node: JourneyNode): BlockRow[] =>
 const listRowHeadings = (node: JourneyNode): RowHeading[] =>
   node.rowGroups.flatMap(({ label }, groupIndex) => (label === null ? [] : [{ id: headingIdOf(node, groupIndex), label }]))
 
+interface ChipPacking {
+  readonly lineCount: number
+  readonly lineWidth: number
+}
+
+const chipWidthOf = (parameter: string): number => Math.min(ROW_WIDTH, parameter.length * PARAMETER_CHAR_WIDTH_PX + PARAMETER_CHIP_PADDING_PX)
+
+const parameterLineCountOf = (parameters: readonly string[]): number =>
+  parameters.reduce<ChipPacking>(({ lineCount, lineWidth }, parameter) => {
+    const width = chipWidthOf(parameter)
+    const widthOnLine = lineWidth === 0 ? width : lineWidth + PARAMETER_CHIP_GAP_PX + width
+    return widthOnLine <= ROW_WIDTH ? { lineCount, lineWidth: widthOnLine } : { lineCount: lineCount + 1, lineWidth: width }
+  }, { lineCount: 1, lineWidth: 0 }).lineCount
+
+const parametersIdOf = (node: JourneyNode): string => `${node.id}${PARAMETERS_ID_SUFFIX}`
+
+const parametersRowsOf = (node: JourneyNode): LayoutRow[] =>
+  node.parameters.length === 0 ? [] : [{ id: parametersIdOf(node), kind: "parameters", lineCount: parameterLineCountOf(node.parameters) }]
+
 const rowKindOf = ({ isDraft }: Pick<JourneyTriggerLabel, "isDraft">): LayoutRowKind => (isDraft ? "row" : "two-line-row")
 
 const toLayoutRows = (node: JourneyNode): LayoutRow[] => {
   const rowById = new Map([...node.blockLists.flatMap(({ blocks }) => blocks), ...node.triggerLabels].map((row) => [row.id, row] as const))
-  return node.rowGroups.flatMap(({ label, rowIds, childIds }, groupIndex): LayoutRow[] => [
+  return [...parametersRowsOf(node), ...node.rowGroups.flatMap(({ label, rowIds, childIds }, groupIndex): LayoutRow[] => [
     ...(label === null ? [] : [{ id: headingIdOf(node, groupIndex), kind: "heading" as const }]),
     ...rowIds.flatMap((rowId): LayoutRow[] => {
       const row = rowById.get(rowId)
       return row === undefined ? [] : [{ id: rowId, kind: rowKindOf(row) }]
     }),
     ...childIds.map((childId): LayoutRow => ({ id: childId, kind: "card" })),
-  ])
+  ])]
 }
 
 const toLayoutNode = (node: JourneyNode): LayoutNode => ({
@@ -567,7 +598,7 @@ const aroundCentre = ({ x, y }: Point): Point => ({ x: x - CONNECT_HANDLE_RADIUS
 
 const connectHandlesOf = (frame: FlowFrame): ConnectHandle[] => [
   ...frame.rows
-    .filter((placed) => placed.kind !== "heading")
+    .filter((placed) => placed.kind !== "heading" && placed.kind !== "parameters")
     .map((placed) => ({
       id: rowHandleIdOf(placed.id),
       type: "source" as const,
@@ -608,6 +639,17 @@ const FlowNodeView = ({ data: { node, frame, cardActions, emphasis, isSelected, 
         const blockRow = blockRowById.get(placed.id)
         const trigger = triggerById.get(placed.id)
         if (heading !== undefined) return [<span key={placed.id} data-row-heading={node.id} className={ROW_HEADING_CLASSES} style={boxStyleOf(placed)}>{heading.label}</span>]
+        if (placed.kind === "parameters") {
+          return [
+            <ul key={placed.id} aria-label={PARAMETERS_LABEL} className={PARAMETERS_CLASSES} style={boxStyleOf(placed)}>
+              {node.parameters.map((parameter) => (
+                <li key={parameter} title={parameter} className={PARAMETER_CHIP_CLASSES}>
+                  <span className="truncate">{parameter}</span>
+                </li>
+              ))}
+            </ul>,
+          ]
+        }
         const selectRow = () => {
           onSelect(placed.id)
         }
@@ -690,9 +732,12 @@ const EDGE_TYPES = { [EDGE_TYPE]: FlowEdgeView }
 
 const paneWidthOf = (state: ReactFlowState): number => state.width
 
-interface CanvasAuthoring {
+interface CanvasMoving {
   readonly onCardDrag: (nodeId: string, position: Point) => void
   readonly onCardDrop: (nodeId: string, position: Point) => void
+}
+
+interface CanvasAuthoring {
   readonly onConnect: (connection: FlowConnection) => void
   readonly onLineDropOnBoard: (line: Pick<LineEnd, "from" | "fromRowId">, screenPoint: Point, toBoardPoint: (screenPoint: Point) => Point) => void
   readonly onLineSelect: (edgeId: string) => void
@@ -725,6 +770,7 @@ const lineDropOf = (event: MouseEvent | TouchEvent, { isValid, fromNode, fromHan
 interface FlowCanvasProps {
   readonly label: string
   readonly authoring: CanvasAuthoring | null
+  readonly moving: CanvasMoving | null
   readonly width: number
   readonly view: BoardView
   readonly nodes: CanvasNode[]
@@ -732,7 +778,7 @@ interface FlowCanvasProps {
   readonly markers: EdgeMarkers
 }
 
-const FlowCanvas = ({ label, authoring, width, view: { zoom, offset, onPan }, nodes, edges, markers }: FlowCanvasProps) => {
+const FlowCanvas = ({ label, authoring, moving, width, view: { zoom, offset, onPan }, nodes, edges, markers }: FlowCanvasProps) => {
   const paneWidth = useStore(paneWidthOf)
   const { screenToFlowPosition } = useReactFlow()
   const centringX = Math.max(0, (paneWidth - width * zoom) / HALF)
@@ -743,7 +789,7 @@ const FlowCanvas = ({ label, authoring, width, view: { zoom, offset, onPan }, no
   }
   const handleNodesChange = (changes: readonly FlowNodeChange<CanvasNode>[]) => {
     changes.forEach((change) => {
-      if (change.type === "position" && change.position !== undefined) authoring?.onCardDrag(change.id, change.position)
+      if (change.type === "position" && change.position !== undefined) moving?.onCardDrag(change.id, change.position)
     })
   }
   return (
@@ -763,11 +809,11 @@ const FlowCanvas = ({ label, authoring, width, view: { zoom, offset, onPan }, no
         onViewportChange={({ x, y }) => { onPan({ x: x - centringX, y }) }}
         zIndexMode="manual"
         paneClickDistance={PAN_THRESHOLD_PX}
-        nodesDraggable={authoring !== null}
+        nodesDraggable={moving !== null}
         nodesConnectable={authoring !== null}
         isValidConnection={isBetweenTwoCards}
-        onNodesChange={authoring === null ? undefined : handleNodesChange}
-        onNodeDragStop={authoring === null ? undefined : (_event, node) => { authoring.onCardDrop(node.id, node.position) }}
+        onNodesChange={moving === null ? undefined : handleNodesChange}
+        onNodeDragStop={moving === null ? undefined : (_event, node) => { moving.onCardDrop(node.id, node.position) }}
         onConnect={authoring === null ? undefined : authoring.onConnect}
         onConnectEnd={authoring === null ? undefined : handleConnectEnd}
         connectionRadius={CONNECTION_RADIUS}
@@ -799,7 +845,7 @@ const lineOfConnection = ({ source, sourceHandle, target, targetHandle }: FlowCo
   return { from: source, fromRowId: sourceHandle.slice(ROW_HANDLE_PREFIX.length), to: target, toSide }
 }
 
-const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, navigatorAnchorId = null, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
+const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, cardMoving = null, navigatorAnchorId = null, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
   const [draggedPositionById, setDraggedPositionById] = useState<PositionById>(NO_POSITIONS)
   const [selectedLineId, setSelectedLineId] = useState<string | null>(null)
   const [droppedLine, setDroppedLine] = useState<DroppedLine | null>(null)
@@ -824,13 +870,17 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
   const layout = arrangeJourney(computedLayout, positionById, new Map(shownEdges.map((edge) => [edge.id, edge.toSide] as const)))
   const selectedLine = shownEdges.find((edge) => edge.id === selectedLineId) ?? null
   const placesOfTops: readonly CardPlace[] = layout.nodes.filter((placed) => placed.depth === 0).map((placed) => ({ nodeId: placed.id, x: placed.x, y: placed.y }))
-  const canvasAuthoring: CanvasAuthoring | null = authoring === null
+  const canvasMoving: CanvasMoving | null = cardMoving === null
     ? null
     : {
         onCardDrag: (nodeId, position) => { setDraggedPositionById((dragged) => new Map([...dragged, [nodeId, position]])) },
         onCardDrop: (nodeId, position) => {
-          authoring.onMoveCards(placesOfTops.map((place) => (place.nodeId === nodeId ? { nodeId, x: position.x, y: position.y } : place)))
+          cardMoving.onMoveCards(placesOfTops.map((place) => (place.nodeId === nodeId ? { nodeId, x: position.x, y: position.y } : place)))
         },
+      }
+  const canvasAuthoring: CanvasAuthoring | null = authoring === null
+    ? null
+    : {
         onLineDropOnBoard: (line, screenPoint, toBoardPoint) => { setDroppedLine({ ...line, end: toBoardPoint(screenPoint), cardCount: nodes.length }) },
         onConnect: (connection) => {
           const line = lineOfConnection(connection)
@@ -876,7 +926,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
           width: frame.width,
           height: frame.height,
           zIndex: frame.depth,
-          draggable: authoring !== null && frame.depth === 0,
+          draggable: cardMoving !== null && frame.depth === 0,
           style: NODE_STYLE,
           handles: [
             ...frame.handles.map(({ id, type, x, y }) => ({ id, type, position: HANDLE_POSITIONS[type], x, y, width: 0, height: 0 })),
@@ -1032,7 +1082,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
           )}
       renderCanvas={(view) => (
         <ReactFlowProvider>
-          <FlowCanvas label={title} authoring={canvasAuthoring} width={layout.width} view={view} nodes={[...flowNodes, ...newCardNodes]} edges={[...flowEdges, ...newCardEdges]} markers={markers} />
+          <FlowCanvas label={title} authoring={canvasAuthoring} moving={canvasMoving} width={layout.width} view={view} nodes={[...flowNodes, ...newCardNodes]} edges={[...flowEdges, ...newCardEdges]} markers={markers} />
         </ReactFlowProvider>
       )}
     />

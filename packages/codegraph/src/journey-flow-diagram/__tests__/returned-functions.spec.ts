@@ -20,11 +20,11 @@ describe("the card of a function that returns a function", () => {
     expect(outlineOfNodes(diagram)).toStrictEqual(["function createSaveHandler", "  function  (changed)"])
   })
 
-  it("lists a parameter of the returned function as its argument", () => {
+  it("lists no row for a parameter of the returned function: it is a parameter of its card", () => {
     const diagram = presentDiagramOf({ "src/save.ts": SAVE }, { "src/save.ts": [rangeAt(3, 11, 3, 16)] })
     const [, returned] = listJourneyNodes(diagram.journeyNodes)
 
-    expect(returned.blockLabels.map(({ codeBlock }) => nameOfBlock(codeBlock))[0]).toBe("draft")
+    expect(returned.blockLabels.map(({ codeBlock }) => nameOfBlock(codeBlock))).not.toContain("draft")
   })
 
   it("makes no node of a function a callback returns", () => {

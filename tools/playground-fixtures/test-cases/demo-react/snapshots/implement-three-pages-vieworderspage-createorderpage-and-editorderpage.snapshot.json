@@ -872,22 +872,6 @@
               ],
               "blockLabels": [
                 {
-                  "label": "The draft the form starts from",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:29"
-                },
-                {
-                  "label": "The text of the submit button",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:43"
-                },
-                {
-                  "label": "Whether the order is saving",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:56"
-                },
-                {
-                  "label": "The function that receives the draft",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:66"
-                },
-                {
                   "label": "The draft the staff member edits",
                   "codeBlockId": "src/routes/orders/components/OrderForm.tsx#state@15:3"
                 },
@@ -991,10 +975,6 @@
                   "codeBlockId": "src/hooks/use-orders.ts#root-variable@4:1"
                 },
                 {
-                  "label": "The id of the order to load",
-                  "codeBlockId": "src/hooks/use-orders.ts#root-argument-value@10:26"
-                },
-                {
                   "label": "The query that loads the order",
                   "codeBlockId": "src/hooks/use-orders.ts#component-effect@11:10"
                 },
@@ -1040,10 +1020,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The order to create",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@12:29"
-                },
-                {
                   "label": "Sends the order as JSON in a POST",
                   "codeBlockId": "src/api/orders.ts#property@13:38"
                 }
@@ -1072,14 +1048,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The order to save",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@16:29"
-                },
-                {
-                  "label": "The id of the order in the URL",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@17:36"
-                },
-                {
                   "label": "Sends the order as JSON in a PUT",
                   "codeBlockId": "src/api/orders.ts#property@17:50"
                 }
@@ -1100,12 +1068,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "The id of the order",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@8:28"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/routes/orders/components/OrderForm.tsx#render-event@25:11",
@@ -1160,10 +1123,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The change event",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#variable@29:20"
-                },
-                {
                   "label": "The id of the chosen customer",
                   "codeBlockId": "src/routes/orders/components/OrderForm.tsx#property@29:51"
                 }
@@ -1190,10 +1149,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The change event",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#variable@40:20"
-                },
-                {
                   "label": "The id of the chosen product",
                   "codeBlockId": "src/routes/orders/components/OrderForm.tsx#property@40:51"
                 }
@@ -1219,10 +1174,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
-                {
-                  "label": "The change event",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#variable@53:20"
-                },
                 {
                   "label": "The typed quantity as a number",
                   "codeBlockId": "src/routes/orders/components/OrderForm.tsx#property@53:51"
@@ -4263,22 +4214,6 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "The draft the form starts from",
-                      "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:29"
-                    },
-                    {
-                      "label": "The text of the submit button",
-                      "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:43"
-                    },
-                    {
-                      "label": "Whether the order is saving",
-                      "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:56"
-                    },
-                    {
-                      "label": "The function that receives the draft",
-                      "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:66"
-                    },
-                    {
                       "label": "The draft the staff member edits",
                       "codeBlockId": "src/routes/orders/components/OrderForm.tsx#state@15:3"
                     },
@@ -4385,10 +4320,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
-                {
-                  "label": "The order to create",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@12:29"
-                },
                 {
                   "label": "Sends the order as JSON in a POST",
                   "codeBlockId": "src/api/orders.ts#property@13:38"
@@ -4524,10 +4455,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The change event",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#variable@29:20"
-                },
-                {
                   "label": "The id of the chosen customer",
                   "codeBlockId": "src/routes/orders/components/OrderForm.tsx#property@29:51"
                 }
@@ -4554,10 +4481,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The change event",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#variable@40:20"
-                },
-                {
                   "label": "The id of the chosen product",
                   "codeBlockId": "src/routes/orders/components/OrderForm.tsx#property@40:51"
                 }
@@ -4583,10 +4506,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
-                {
-                  "label": "The change event",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#variable@53:20"
-                },
                 {
                   "label": "The typed quantity as a number",
                   "codeBlockId": "src/routes/orders/components/OrderForm.tsx#property@53:51"
@@ -6543,22 +6462,6 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "The draft the form starts from",
-                      "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:29"
-                    },
-                    {
-                      "label": "The text of the submit button",
-                      "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:43"
-                    },
-                    {
-                      "label": "Whether the order is saving",
-                      "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:56"
-                    },
-                    {
-                      "label": "The function that receives the draft",
-                      "codeBlockId": "src/routes/orders/components/OrderForm.tsx#root-argument-value@14:66"
-                    },
-                    {
                       "label": "The draft the staff member edits",
                       "codeBlockId": "src/routes/orders/components/OrderForm.tsx#state@15:3"
                     },
@@ -6641,10 +6544,6 @@
                   "codeBlockId": "src/hooks/use-orders.ts#root-variable@4:1"
                 },
                 {
-                  "label": "The id of the order to load",
-                  "codeBlockId": "src/hooks/use-orders.ts#root-argument-value@10:26"
-                },
-                {
                   "label": "The query that loads the order",
                   "codeBlockId": "src/hooks/use-orders.ts#component-effect@11:10"
                 },
@@ -6724,14 +6623,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The order to save",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@16:29"
-                },
-                {
-                  "label": "The id of the order in the URL",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@17:36"
-                },
-                {
                   "label": "Sends the order as JSON in a PUT",
                   "codeBlockId": "src/api/orders.ts#property@17:50"
                 }
@@ -6752,12 +6643,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "The id of the order",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@8:28"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/routes/orders/components/OrderForm.tsx#render-event@25:11",
@@ -6895,10 +6781,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The change event",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#variable@29:20"
-                },
-                {
                   "label": "The id of the chosen customer",
                   "codeBlockId": "src/routes/orders/components/OrderForm.tsx#property@29:51"
                 }
@@ -6925,10 +6807,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The change event",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#variable@40:20"
-                },
-                {
                   "label": "The id of the chosen product",
                   "codeBlockId": "src/routes/orders/components/OrderForm.tsx#property@40:51"
                 }
@@ -6954,10 +6832,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
-                {
-                  "label": "The change event",
-                  "codeBlockId": "src/routes/orders/components/OrderForm.tsx#variable@53:20"
-                },
                 {
                   "label": "The typed quantity as a number",
                   "codeBlockId": "src/routes/orders/components/OrderForm.tsx#property@53:51"

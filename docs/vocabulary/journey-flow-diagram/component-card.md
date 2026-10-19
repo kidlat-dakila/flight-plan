@@ -14,10 +14,10 @@ The card of a node of the type `component` in a [Journey Flow Diagram](../journe
 
 ## Rows
 
-**A component card groups its rows under headings**, in this order:
+**A component card shows its parameters as chips under its head, and groups its rows under headings**, in this order:
 
 ```
-ARGS · STATE · HOOKS · EFFECTS · CALLS / REQUEST / STORAGE … · TRIGGERS · STEPS
+STATE · HOOKS · EFFECTS · CALLS / REQUEST / STORAGE … · TRIGGERS · STEPS
 ```
 
 A heading names the group of the rows below it. There is one group per kind of call: Calls for a kept value and a plain call, and the name of its type for a call the [catalogue](../codegraph/catalogue.md) types, such as Request or Storage. A group with no row has no heading, and a component whose only rows are trigger labels has no heading at all.
@@ -28,10 +28,7 @@ A heading names the group of the rows below it. There is one group per kind of c
  ┌ ⊞ PromoForm ───────────────────── routes/promo/index.tsx ┐
  │ Component                                       Modified │
  │ The form a shopper types a promo code in                 │
- │ ARGS                                                     │
- │ ┌──────────────────────────────────────────────────────┐ │
- │ │ props.onApplied                                      │ │
- │ └──────────────────────────────────────────────────────┘ │
+ │ [{ onApplied }]                                          │
  │ STATE                                                    │
  │ ┌──────────────────────────────────────────────────────┐ │
  │ │ The code being typed                                 │ │

@@ -9,7 +9,7 @@ import { findNothingHanded, type Binding, type FindExportedBinding, type FindHan
 import { LIBRARIES } from "@/code-blocks/libraries"
 import { nodeFinderOf, withCards } from "@/code-blocks/libraries/cards"
 import type { FileExports, FindExport, OutlinedFile, ScriptReading } from "@/code-blocks/reading"
-import { FIRST_COLUMN, fromSyntaxRange } from "@/code-blocks/source-range"
+import { fromSyntaxRange, toSyntaxRange } from "@/code-blocks/source-range"
 import type { SourceRange } from "@/code-blocks/types"
 import { readBlocks, type BlockReader } from "./blocks"
 import { withDirectives } from "./directives"
@@ -37,11 +37,6 @@ export const exportsOf = ({ localExports, forwardedExports }: FileOutline): File
     isFunction: declaration.type === FUNCTION_TYPE,
   })),
   forwarded: forwardedExports,
-})
-
-const toSyntaxRange = ({ start, end }: SourceRange): SourceRange => ({
-  start: { line: start.line, column: start.column - FIRST_COLUMN },
-  end: { line: end.line, column: end.column - FIRST_COLUMN },
 })
 
 const isDeclaredOutside = (outline: FileOutline, resolution: Resolution, isComponentBody: boolean): boolean =>

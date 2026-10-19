@@ -68,6 +68,7 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   lineColor: "green",
   target,
   isOwn: false,
+  isStored: true,
   branchLinking: null,
   detail: {
     headCommit: "abc1234",
@@ -698,6 +699,11 @@ describe("buildReviewPage", () => {
       reviewDraft: { isAvailable: false, unavailableReason: "A branch without a code host has no review to submit." },
       sharing: { options: [{ key: "description", isAvailable: false }, { key: "claude", isAvailable: true }] },
     })
+  })
+
+  it("lets the viewer move the cards of a stored review, and of no review read from elsewhere", () => {
+    expect(buildReviewPage(createSource(), createInput())).toMatchObject({ canMoveCards: true })
+    expect(buildReviewPage(createSource({ isStored: false }), createInput())).toMatchObject({ canMoveCards: false })
   })
 
   it("keeps the viewer's own Flight Plan to its author until it is uploaded", () => {

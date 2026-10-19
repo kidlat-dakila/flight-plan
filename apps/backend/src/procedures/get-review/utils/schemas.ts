@@ -385,6 +385,7 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
     kind: z.literal("artifact"),
     shell: shellSchema,
     isOwn: z.boolean(),
+    canMoveCards: z.boolean(),
     completeAction: completeActionSchema.nullable(),
     staleNotice: staleNoticeSchema.nullable(),
     progress: reviewProgressSchema.nullable(),

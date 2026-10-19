@@ -1,4 +1,4 @@
-import { EDGE_APPROACH, EDGE_SPACING, layoutJourney, NODE_HEAD_HEIGHT, NODE_WIDTH, ROW_HEADING_HEIGHT, ROW_HEIGHT, TWO_LINE_ROW_HEIGHT, type LayoutEdge, type LayoutNode } from "@/lib/journey-layout"
+import { EDGE_APPROACH, EDGE_SPACING, layoutJourney, MARGIN, NODE_GAP, NODE_HEAD_HEIGHT, NODE_WIDTH, ROW_HEADING_HEIGHT, ROW_HEIGHT, TWO_LINE_ROW_HEIGHT, type LayoutEdge, type LayoutNode } from "@/lib/journey-layout"
 
 const leaf = (id: string, rowIds: readonly string[] = []): LayoutNode => ({ id, rows: rowIds.map((rowId) => ({ id: rowId, kind: "row" })), children: [] })
 
@@ -26,6 +26,30 @@ describe("layoutJourney", () => {
 
     expect(tax.x).toBe(price.x)
     expect(tax.y).toBeGreaterThanOrEqual(price.y + price.height)
+  })
+
+  it("centres the nodes of one column that reach for the same height on it, and keeps the highest node at the margin", () => {
+    const { nodes } = layoutJourney([leaf("page"), leaf("price"), leaf("tax"), leaf("total")], [edge("a", "page", "price"), edge("b", "page", "tax"), edge("c", "page", "total")])
+    const [page, price, tax, total] = nodes
+    const headCentre = ({ y }: { readonly y: number }): number => y + NODE_HEAD_HEIGHT / HALF
+
+    expect(headCentre(tax)).toBe(headCentre(page))
+    expect(page.y - price.y).toBe(total.y - page.y)
+    expect(Math.min(...nodes.map(({ y }) => y))).toBe(MARGIN)
+  })
+
+  it("centres each run of overlapping nodes on its own, and leaves a node with room where it reaches for", () => {
+    const tall = leaf("tall", ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"])
+    const { nodes, rows } = layoutJourney(
+      [tall, leaf("first"), leaf("second"), leaf("last")],
+      [edge("a", "tall", "first", { fromRowId: "a" }), edge("b", "tall", "second", { fromRowId: "b" }), edge("l", "tall", "last", { fromRowId: "l" })],
+    )
+    const [, first, second, last] = nodes
+    const lastRow = rows.find((row) => row.id === "l")
+
+    expect(second.y - first.y).toBe(first.height + NODE_GAP)
+    expect(last.y).toBeGreaterThan(second.y + second.height + NODE_GAP)
+    expect(last.y + NODE_HEAD_HEIGHT / HALF).toBe((lastRow?.y ?? 0) + (lastRow?.height ?? 0) / HALF)
   })
 
   it("draws the children of a node inside it, below its rows, and draws no edge between the two", () => {

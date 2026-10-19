@@ -63,7 +63,7 @@ export class CartStore {
  └──────────────────────────────────────────────────────────────┘
 ```
 
-**A method card is drawn as every function card is**: its arguments first, then its rows as written, grouped and holding the function it returns when it [returns a function](function-card.md#returning-a-function).
+**A method card is drawn as every function card is**: its parameters as chips under its head, then its rows as written, grouped and holding the function it returns when it [returns a function](function-card.md#returning-a-function).
 
 **Nothing reached through `this` has a row.** In TypeScript and JavaScript `this`, and in Python `self`, reaches the class itself: its properties are rows under Properties, and its methods are cards under Methods. A statement whose call or whose value is reached through it is no row of the method card, and a line it leads to leaves the head of the method card.
 

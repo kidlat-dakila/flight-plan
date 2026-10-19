@@ -473,6 +473,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 codeDefinitions={page.codeDefinitions}
                                 isReviewPending={setReviewed.isPending}
                                 authoring={isOwn ? journeyEditing.authoringOf(segment.id) : null}
+                                cardMoving={page.canMoveCards ? journeyEditing.cardMovingOf(segment.id) : null}
                                 renderDescriptionEditor={isOwn
                                   ? (request) => (
                                       <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>

@@ -105,7 +105,7 @@ const blockLabelWork = (segment: Segment, node: JourneyNode): Work[] =>
       id: node.id,
       segmentId: segment.id,
       needs: "block-label",
-      message: `The block \`${listed.codeBlock.id}\` of \`${node.id}\` has no label. Say what the value holds, or what the step does.`,
+      message: `The block \`${listed.codeBlock.id}\` of \`${node.id}\` has no label. Say what the block does, starting with a verb.`,
     } as const))
 
 export const hasDrawnJourney = (segment: Segment): boolean => journeyNodesOf(segment).length > 0

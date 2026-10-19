@@ -1,10 +1,12 @@
 import type { ReactNode } from "react"
 import Button from "@/components/blocks/button"
-import JourneyFlowDiagram, { type JourneyAuthoring, type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
+import JourneyFlowDiagram, { type CardMoving, type JourneyAuthoring, type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
 import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
+
+export type { CardMoving }
 
 interface JourneyDiagram {
   readonly anchorId: string
@@ -48,6 +50,7 @@ interface JourneyBandProps {
   readonly codeDefinitions: CodeDefinitions
   readonly isReviewPending: boolean
   readonly authoring?: JourneyBandAuthoring | null
+  readonly cardMoving?: CardMoving | null
   readonly renderDescriptionEditor?: ((request: DescriptionEditorRequest) => ReactNode) | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
@@ -100,6 +103,7 @@ const JourneyBand = ({
   codeDefinitions,
   isReviewPending,
   authoring = null,
+  cardMoving = null,
   renderDescriptionEditor = null,
   onOpenCodeLink,
   onWaypointReviewedChange,
@@ -135,6 +139,7 @@ const JourneyBand = ({
                 codeDefinitions={codeDefinitions}
                 isReviewPending={isReviewPending}
                 authoring={authoring?.board ?? null}
+                cardMoving={cardMoving}
                 navigatorAnchorId={anchorId}
                 onOpenCodeLink={onOpenCodeLink}
                 onWaypointReviewedChange={onWaypointReviewedChange}

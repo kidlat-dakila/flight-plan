@@ -129,12 +129,11 @@ describe("the block lists of a node of the journey band", () => {
     expect(summary.blockLists.map(({ kind, blocks }) => [kind, blocks.map((block) => block.name)])).toStrictEqual([["state", ["total"]], ["effect", ["poll"]]])
   })
 
-  it("names a member read from an argument after the argument, and marks a changed block", () => {
+  it("lists no row for an argument or a read through it, and gives the argument to the card as a parameter", () => {
     const promo = nodeViewsOf().find((node) => node.id === "src/promo.ts#function@1:1")
 
-    expect(promo?.blockLists).toStrictEqual([
-      { kind: "argument", label: "Args", blocks: [{ id: "src/promo.ts#root-argument-value@2:10", name: "code.trim", label: "code.trim", isDraft: true, change: "modified", lines: [[2, 2]] }] },
-    ])
+    expect(promo?.blockLists).toStrictEqual([])
+    expect(promo?.parameters).toStrictEqual(["code"])
   })
 })
 
@@ -197,7 +196,7 @@ describe("the rows of a node that holds nodes of its own", () => {
   })
 
   it("lists a condition of a plain function as a step of it", () => {
-    expect(handlerRowsOf(FETCH_PROMO)).toStrictEqual([["Args", ["code.trim"]], ["Steps", ["Condition :2"]]])
+    expect(handlerRowsOf(FETCH_PROMO)).toStrictEqual([["Steps", ["Condition :2"]]])
   })
 
   it("lists a value kept from other code as a call, marked as changed when a block folded into it is", () => {
@@ -331,12 +330,10 @@ const rowsOf = (band: ReturnType<typeof bandOf>, nodeId: string): Row[] => {
 const stepsOf = rowsOf
 
 describe("the steps of a node of the journey band", () => {
-  it("lists the arguments first and then every row in the order it is written: the statements that follow each other as one step, and a block, a call out and a throw as a row of its own", () => {
+  it("lists every row in the order it is written, with no row for a read through an argument: the statements that follow each other as one step, and a block, a call out and a throw as a row of its own", () => {
     const steps = stepsOf(bandOf(RENAME_FILES, { "src/rename.ts": [rangeAt(3, 1, 14, 80)] }), RENAME)
 
     expect(steps.map(({ name, lines }) => [name, lines])).toStrictEqual([
-      ["param.id", [[5, 5]]],
-      ["param.name", [[6, 6]]],
       ["users", [[3, 3]]],
       ["Condition :4", [[4, 4]]],
       ["user, stored", [[5, 7]]],
@@ -452,10 +449,10 @@ describe("the rows of a card", () => {
     ])
   })
 
-  it("lists the rows of any other card in the order they are written, with no group, after the arguments of its function", () => {
+  it("lists the rows of any other card in the order they are written, with no group and no row for an argument of its function", () => {
     const band = bandOf(CALLER_FILES, { ...CALLEE_CHANGE, "src/list.tsx": [rangeAt(7, 17, 7, 22), rangeAt(8, 5, 8, 27)] })
 
-    expect(groupsOf(band, LIST_SUBMIT)).toStrictEqual([[null, ["event", "event.preventDefault", "saveUser"]]])
+    expect(groupsOf(band, LIST_SUBMIT)).toStrictEqual([[null, ["event.preventDefault", "saveUser"]]])
     expect(band.edges.filter((edge) => edge.from === LIST_SUBMIT).map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual(
       expect.arrayContaining([["src/users.ts#function@4:1", "src/list.tsx#call@9:5"]]),
     )

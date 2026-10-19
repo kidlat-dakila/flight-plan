@@ -12,6 +12,7 @@ const HOLDER: CardPart = "holder"
 const HANDLER: CardPart = "handler"
 const MIDDLEWARE: CardPart = "middleware"
 const PAGE: CardPart = "page"
+const MOUNT: CardPart = "mount"
 const ROUTE_TYPE = "route"
 const EFFECT = "effect"
 const ROOT_VARIABLE = "root-variable"
@@ -21,6 +22,9 @@ const CALLING = "call"
 const CLASS: CodeBlock["type"] = "class"
 const ARGUMENT_TYPES: ReadonlySet<CodeBlock["type"]> = new Set<CodeBlock["type"]>(["root-argument-value", "variable"])
 const PLUGIN_TYPES: ReadonlySet<CodeBlock["type"]> = new Set<CodeBlock["type"]>(["function"])
+const CALL_RECEIVER_OFFSET = 0
+const DECORATOR_RECEIVER_OFFSET = 1
+const RECEIVER_OFFSETS: ReadonlySet<number> = new Set([CALL_RECEIVER_OFFSET, DECORATOR_RECEIVER_OFFSET])
 
 const routeCardOf = (block: CodeBlock): BlockCard | null => cardOfKind(block, ROUTE_KINDS)
 
@@ -180,7 +184,49 @@ const listControllerEdges = ({ nodes }: CardContext): JourneyNodeEdge[] => {
   })
 }
 
-const listRouteAddedEdges = (context: CardContext): JourneyNodeEdge[] => [...listMiddlewareEdges(context), ...listRouterWideEdges(context), ...listControllerEdges(context)]
+interface RouterStep {
+  readonly routerId: string
+  readonly registeredId: string
+  readonly routeCardId: string
+}
+
+const isReceiverOf = (registration: CodeBlock, usedAt: CodeBlock["lineOfCodeRangeReference"][number]): boolean => {
+  const { start } = registration.lineOfCodeRangeReference[0]
+  return usedAt.start.line === start.line && RECEIVER_OFFSETS.has(usedAt.start.column - start.column)
+}
+
+const routerOf = (registration: CodeBlock): CodeBlock | null =>
+  registration.outerSymbols.flatMap((symbol) =>
+    (symbol.type === "internal-code-block" || symbol.type === "external-block")
+    && symbol.codeBlockReference.type === ROOT_VARIABLE
+    && isReceiverOf(registration, symbol.usedAt)
+      ? [symbol.codeBlockReference]
+      : [])[0] ?? null
+
+const registrationsOfNode = (node: JourneyNode): CodeBlock[] => {
+  const root = rootBlockOfNode(node)
+  if (isRouteGroup(node)) return node.codeBlocks.filter(isRegistration)
+  return isDecoratedHandler(root) ? [root] : []
+}
+
+const listRouterSteps = ({ nodes }: CardContext): RouterStep[] => {
+  const nodeIdByRootId = new Map(nodes.map((node) => [rootBlockOfNode(node).id, node.id] as const))
+  const groupIdByKey = groupIdByKeyOf(nodes)
+  return nodes.flatMap((node) => {
+    const routeCardId = isRouteGroup(node) ? node.id : groupIdByKey.get(routeCardOf(rootBlockOfNode(node))?.groupKey ?? "")
+    return registrationsOfNode(node).flatMap((registration) => {
+      const router = routerOf(registration)
+      const routerId = router === null ? undefined : nodeIdByRootId.get(router.id)
+      return routerId === undefined || routeCardId === undefined ? [] : [{ routerId, registeredId: node.id, routeCardId }]
+    })
+  })
+}
+
+const listRouterEdges = (context: CardContext): JourneyNodeEdge[] =>
+  firstOfEach(listRouterSteps(context).map(({ routerId, routeCardId }) => toEdge(routerId, routeCardId)), (edge) => edge.id)
+
+const listRouteAddedEdges = (context: CardContext): JourneyNodeEdge[] =>
+  [...listMiddlewareEdges(context), ...listRouterWideEdges(context), ...listControllerEdges(context), ...listRouterEdges(context)]
 
 const listControllerToHandlerIds = ({ nodes }: CardContext): string[] => {
   const nodeIdByRootId = new Map(nodes.map((node) => [rootBlockOfNode(node).id, node.id] as const))
@@ -207,6 +253,7 @@ const listRouteLeftOutEdgeIds = (context: CardContext): ReadonlySet<string> => {
     ...listMiddlewareSteps(context).map(({ groupId, middlewareId }) => toEdge(groupId, middlewareId).id),
     ...listControllerToHandlerIds(context),
     ...listControllerToMiddlewareIds(context),
+    ...listRouterSteps(context).map(({ registeredId, routerId }) => toEdge(registeredId, routerId).id),
   ]
   return ids.length === 0 ? NOTHING_LEFT_OUT : new Set(ids)
 }
@@ -217,8 +264,12 @@ const handsOnly = (block: CodeBlock, isHanded: (child: CodeBlock) => boolean): b
 
 const isCallHandingMiddleware = (block: CodeBlock): boolean => block.type === EFFECT && handsOnly(block, isNamingMiddleware)
 
-const isHandingMiddleware = (block: CodeBlock): boolean =>
-  handsOnly(block, isNamingMiddleware) || (block.type === ROOT_VARIABLE && handsOnly(block, (child) => isNamingMiddleware(child) || isCallHandingMiddleware(child)))
+const isMountBlock = (block: CodeBlock): boolean => routeCardOf(block)?.part === MOUNT
+
+const handsMiddlewareThroughCalls = (block: CodeBlock): boolean =>
+  (block.type === ROOT_VARIABLE || isMountBlock(block)) && handsOnly(block, (child) => isNamingMiddleware(child) || isCallHandingMiddleware(child))
+
+const isHandingMiddleware = (block: CodeBlock): boolean => handsOnly(block, isNamingMiddleware) || handsMiddlewareThroughCalls(block)
 
 const isRouteCardBlock = (block: CodeBlock): boolean => routeCardOf(block) !== null
 

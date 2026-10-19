@@ -21,6 +21,11 @@ export const fromSyntaxRange = ({ start, end }: SyntaxRange): SourceRange => ({
   end: { line: end.line, column: end.column + FIRST_COLUMN },
 })
 
+export const toSyntaxRange = ({ start, end }: SourceRange): SyntaxRange => ({
+  start: { line: start.line, column: start.column - FIRST_COLUMN },
+  end: { line: end.line, column: end.column - FIRST_COLUMN },
+})
+
 export const comparePositions = (one: Position, two: Position): number => {
   if (one.line !== two.line) return one.line < two.line ? BEFORE : AFTER
   if (one.column === two.column) return SAME

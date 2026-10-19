@@ -705,10 +705,6 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#variable@9:62"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/order-filter-store.ts#property@10:3"
                 },
                 {
@@ -2187,10 +2183,6 @@
                     },
                     {
                       "label": null,
-                      "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#variable@9:42"
-                    },
-                    {
-                      "label": null,
                       "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21"
                     }
                   ]
@@ -2220,12 +2212,7 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": [
-                    {
-                      "label": null,
-                      "codeBlockId": "src/routes/orders/components/OrderRow.tsx#root-argument-value@4:28"
-                    }
-                  ]
+                  "blockLabels": []
                 }
               ],
               "triggerLabels": [],
@@ -2289,10 +2276,6 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#variable@9:62"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/order-filter-store.ts#property@10:3"
                 },
                 {
@@ -2331,10 +2314,6 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/hooks/use-orders.ts#root-argument-value@5:27"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/hooks/use-orders.ts#component-effect@6:10"
                 },
                 {
@@ -2361,10 +2340,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@4:29"
-                },
                 {
                   "label": null,
                   "codeBlockId": "src/api/orders.ts#condition@5:27"

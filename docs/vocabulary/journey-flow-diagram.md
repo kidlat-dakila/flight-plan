@@ -24,7 +24,7 @@ On the page each node is a card. This entry holds the rules every card shares; e
 
 | Card | The node of | Its rows | Cards inside it |
 |---|---|---|---|
-| [Component card](journey-flow-diagram/component-card.md) | A component | Under headings: Args, State, Hooks, Effects, Calls, Triggers, Steps | The components it renders |
+| [Component card](journey-flow-diagram/component-card.md) | A component | Its parameters as chips under its head, then rows under headings: State, Hooks, Effects, Calls, Triggers, Steps | The components it renders |
 | [Function card](journey-flow-diagram/function-card.md) | A function, a hook, a method, an event, an effect, a callback, the handler of a route, a procedure | As written, no headings. Under the headings of a component card when it returns a function. | The function it returns |
 | [Class card](journey-flow-diagram/class-card.md) | A class with a method | Under Properties | Its methods, under Methods, then the classes that extend it |
 | [Route card](journey-flow-diagram/route-card.md) | A route path | None | The handler of each method, under a heading per method |
@@ -96,7 +96,7 @@ interface JourneyNodeEdge {
 | `diffCodeBlocks` | The blocks of `codeBlocks` that have a change. A node with none is only on the way to a change. |
 | `children` | The nodes drawn inside this one, as [Children](#children) says |
 | `triggerLabels` | The blocks of the node an agent writes a line about, each with that line |
-| `blockLabels` | The listed blocks of the node, its arguments, state, hooks, effects and steps, each with the label an agent writes about it. `null` until it is written. A step of several statements is listed by the block of its first statement. |
+| `blockLabels` | The listed blocks of the node, its state, hooks, effects, calls and steps, each with the label an agent writes about it. `null` until it is written. A step of several statements is listed by the block of its first statement. |
 | `from`, `to` of an edge | The ids of two nodes: the first runs the second |
 | `rows` | The rows of the node as an author chose them, each with its type, its label and its lines. A node without `rows` lists its rows from its `codeBlocks`, as [On the page](#on-the-page) says. |
 | `position` | Where an author dragged the node to, on the board. A node without one is placed by the page. |
@@ -347,7 +347,7 @@ An agent reads and writes one node at a time. A node that carried its children w
 | A node inside another | Its place in `children`, drawn inside the card of its parent, as [Children](#children) says |
 | The code of a pressed row | Pressing a row opens the panel of its node with the code focused on the lines of the block of that row: every other line is dimmed, and the first focused line is scrolled into view. Pressing the head of the node shows its code with no line dimmed. |
 | A row inside a node | A trigger label, with its label on one line and the name of its code, such as `button.onClick`, on the line below. A trigger label nobody has written yet is a row of one line, with the name of its code alone. |
-| A row inside a node | A listed block: an argument, a state, a hook, an effect, a call or a step among its `codeBlocks`, with its label on one line and the name of its code on the line below, as a trigger label has. One nobody has written yet is a row of one line, with the name of its code alone. A changed one has the border of the change. |
+| A row inside a node | A listed block: a state, a hook, an effect, a call or a step among its `codeBlocks`, with its label on one line and the name of its code on the line below, as a trigger label has. One nobody has written yet is a row of one line, with the name of its code alone. A changed one has the border of the change. |
 | A small heading above rows or cards | The group of the rows, or of the cards inside, below it, as the table below says |
 | A line between two nodes | An edge whose ends are not inside each other |
 | A line that leaves a row, or ends at one | A step of a chain between the blocks of the two nodes of an edge, or a block of the first node that the second node stands for. The line is joined to the row of the block the step leaves, and to the row of the block it reaches. |
@@ -357,7 +357,7 @@ An agent reads and writes one node at a time. A node that carried its children w
 
 | Kind | The blocks of it | Named |
 |---|---|---|
-| Args | `root-argument-value`, and a parameter of the function of an event, a callback or a node drawn inside another, such as `event` in `onSubmit={(event) => { … }}` or `draft` of a returned `(draft) => { … }` | After the argument, and a member read from one after both: `props.onSave` |
+| No row | A parameter, `root-argument-value`, and a read through one, such as `props.onSave` or `session.scalars`. The parameters of a function, method, hook or component card are chips under its head, each its name and its type as written, `session: Session`, with a default left out and `self` and `cls` left out. A parameter of a function written in place, such as `event` in `onSubmit={(event) => { … }}`, is no chip either | None |
 | Properties | `property` of a class, in a class card | After the property |
 | State | `state`, `derived`, and the declaration of one around an effect on a chain, such as `const total = useCartStore(selectTotal)` whose call a chain passes through | After the declaration |
 | Hooks | An `external-value` that keeps the result of a call named `use` and a capital letter | After the hook that is called, such as `useApplyPromo` |
@@ -374,14 +374,14 @@ An agent reads and writes one node at a time. A node that carried its children w
 
 **A block that is a node of its own has a row in the node around it.** An event has its trigger label for a row, and an effect its row under Effects. A line runs from the row to its node. A block inside a listed block has the row of that block: a `setTimeout` inside a function `retry` of the node has the row `retry`.
 
-A block inside a listed block is not listed again, unless it is an argument, a state, a hook or an effect with a change: the callbacks of a listed effect, and the call inside a `state` or a `derived`, are left out, and what is written inside a state, a hook or an effect is folded into its row. A function written in place of an event or a callback, and a function an event is handed by name, is never listed: a change in it marks the trigger label and the node of that event, and pressing that trigger label focuses the lines of the function too. A [chain does not pass through state](codegraph/chains.md#a-chain-and-state), so a state the chain only writes is not listed. Each listed block is drawn as a row like a trigger label. The lists are not in the diagram: the page builds them.
+A block inside a listed block is not listed again, unless it is a state, a hook or an effect with a change: the callbacks of a listed effect, and the call inside a `state` or a `derived`, are left out, and what is written inside a state, a hook or an effect is folded into its row. A function written in place of an event or a callback, and a function an event is handed by name, is never listed: a change in it marks the trigger label and the node of that event, and pressing that trigger label focuses the lines of the function too. A [chain does not pass through state](codegraph/chains.md#a-chain-and-state), so a state the chain only writes is not listed. Each listed block is drawn as a row like a trigger label. The lists are not in the diagram: the page builds them.
 
 **Each kind of card groups its rows and its cards inside as its page says.** A group with nothing in it has no heading.
 
 | Card | Headings, in order |
 |---|---|
-| [Component card](journey-flow-diagram/component-card.md#rows) | Args, State, Hooks, Effects, one group per kind of call (Calls for a kept value and a plain call, and the name of its type for a call the catalogue types, such as Request or Storage), Triggers, Steps. None when its only rows are trigger labels. |
-| [Function card](journey-flow-diagram/function-card.md#rows) | None: its arguments first, then every other row in the order it is written, its trigger labels among them. The headings of a component card when it [returns a function](journey-flow-diagram/function-card.md#returning-a-function). |
+| [Component card](journey-flow-diagram/component-card.md#rows) | State, Hooks, Effects, one group per kind of call (Calls for a kept value and a plain call, and the name of its type for a call the catalogue types, such as Request or Storage), Triggers, Steps. None when its only rows are trigger labels. |
+| [Function card](journey-flow-diagram/function-card.md#rows) | None: every row in the order it is written, its trigger labels among them. The headings of a component card when it [returns a function](journey-flow-diagram/function-card.md#returning-a-function). |
 | [Class card](journey-flow-diagram/class-card.md#rows-and-methods) | Properties, Methods |
 | [Route card](journey-flow-diagram/route-card.md#methods-and-handlers) | POST, PUT, PATCH, GET, DELETE, HEAD, OPTIONS, ANY |
 | [tRPC router card](journey-flow-diagram/libraries/trpc.md#procedures) | QUERY, MUTATION, SUBSCRIPTION, and FIELD for a [NestJS resolver](journey-flow-diagram/libraries/nestjs.md#graphql-resolvers), then Methods for a method of a resolver with none of them |

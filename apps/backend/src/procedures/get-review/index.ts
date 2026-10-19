@@ -46,6 +46,7 @@ const findListedSubject = async (key: ReviewKey, context: ProcedureContext): Pro
     lineColor: lineColorAt(repositories.indexOf(repository)),
     target,
     isOwn: isOwnTarget(target, { viewerLogin, selfAuthorId: authors?.selfAuthor?.id ?? null, branchAuthorEmail }),
+    isStored: true,
     artifact,
     detail: withForgeDetail(detail, forge),
     forge,

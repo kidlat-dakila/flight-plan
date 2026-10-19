@@ -223,6 +223,7 @@ export interface JourneyNodeView {
   description: Prose | null
   codeLinkId: string | null
   codeViews: NodeCodeView[]
+  parameters: string[]
   blockLists: JourneyBlockListView[]
   triggerLabels: JourneyTriggerLabelView[]
   rowGroups: JourneyRowGroupView[]
@@ -244,6 +245,7 @@ export const journeyNodeSchema: z.ZodType<JourneyNodeView> = z.lazy(() =>
     description: proseSchema.nullable(),
     codeLinkId: z.string().nullable(),
     codeViews: z.array(nodeCodeViewSchema),
+    parameters: z.array(z.string()),
     blockLists: z.array(journeyBlockListSchema),
     triggerLabels: z.array(journeyTriggerLabelSchema),
     rowGroups: z.array(journeyRowGroupSchema),

@@ -737,10 +737,6 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#property@10:3"
                 },
                 {
@@ -793,12 +789,7 @@
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#root-argument-value@20:32"
-                }
-              ]
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -2648,19 +2639,11 @@
                       "blockLabels": [
                         {
                           "label": null,
-                          "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#root-argument-value@5:34"
-                        },
-                        {
-                          "label": null,
                           "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#state@6:3"
                         },
                         {
                           "label": null,
                           "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#state@7:3"
-                        },
-                        {
-                          "label": null,
-                          "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#variable@7:43"
                         },
                         {
                           "label": null,
@@ -2730,10 +2713,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/routes/wishlist/index.tsx#variable@5:38"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/routes/wishlist/index.tsx#condition@6:3"
                 },
                 {
@@ -2790,10 +2769,6 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#property@10:3"
                 },
                 {
@@ -2846,12 +2821,7 @@
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#root-argument-value@20:32"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",

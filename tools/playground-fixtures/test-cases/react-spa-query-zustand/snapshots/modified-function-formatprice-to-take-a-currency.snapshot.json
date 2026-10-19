@@ -302,14 +302,6 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:29"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:49"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/lib/format.ts#variable@6:3"
                 }
               ]
@@ -975,14 +967,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:29"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:49"
-                },
                 {
                   "label": null,
                   "codeBlockId": "src/lib/format.ts#variable@6:3"
@@ -1977,14 +1961,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:29"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:49"
-                },
                 {
                   "label": null,
                   "codeBlockId": "src/lib/format.ts#variable@6:3"
@@ -3043,14 +3019,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:29"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:49"
-                },
                 {
                   "label": null,
                   "codeBlockId": "src/lib/format.ts#variable@6:3"

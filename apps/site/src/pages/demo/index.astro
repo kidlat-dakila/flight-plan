@@ -6,7 +6,7 @@ import SiteLayout from "../../layouts/SiteLayout.astro"
 const PAGE_TITLE = "Flight Plan demo: pick a repository"
 const PAGE_DESCRIPTION = "Open the Flight Plan review page for a real pull request, with reviewers, comment threads and a chat with the agent, right in your browser."
 
-const FRAMEWORK_NAMES: Readonly<Record<string, string>> = { react: "React", vue: "Vue" }
+const FRAMEWORK_NAMES: Readonly<Record<string, string>> = { react: "React", vue: "Vue", fastapi: "FastAPI" }
 const LINE_COLORS = ["var(--demo-line-blue)", "var(--demo-line-green)", "var(--demo-line-violet)", "var(--demo-line-magenta)"]
 
 const frameworkNameOf = (entry: DemoEntry): string =>

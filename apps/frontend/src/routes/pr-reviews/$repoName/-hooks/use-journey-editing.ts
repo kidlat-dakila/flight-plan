@@ -3,7 +3,7 @@ import type { inferInput, inferOutput, TRPCOptionsProxy } from "@trpc/tanstack-r
 import { useState } from "react"
 import { useTRPC } from "@/trpc"
 import type { AppRouter } from "@flightplan/backend/router"
-import type { JourneyBandAuthoring } from "@flightplan/ui/JourneyBand"
+import type { CardMoving, JourneyBandAuthoring } from "@flightplan/ui/JourneyBand"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -41,6 +41,7 @@ export interface CardChange {
 
 export interface JourneyEditing {
   readonly authoringOf: (segmentId: string) => JourneyBandAuthoring
+  readonly cardMovingOf: (segmentId: string) => CardMoving
   readonly cardAddition: CardAddition | null
   readonly cardChange: CardChange | null
 }
@@ -109,6 +110,9 @@ export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: str
   const isLastDescriptionOf = (segmentId: string): boolean => lastEdit?.kind === "describe" && editJourney.variables?.segmentId === segmentId
 
   return {
+    cardMovingOf: (segmentId) => ({
+      onMoveCards: (places) => { save(segmentId, { kind: "move-cards", places: [...places] }) },
+    }),
     authoringOf: (segmentId) => ({
       board: {
         isPending: editJourney.isPending,
@@ -116,7 +120,6 @@ export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: str
         onClearDiagram: () => { save(segmentId, { kind: "clear-diagram" }) },
         onRemoveDiagram: () => { save(segmentId, { kind: "remove-diagram" }) },
         onAddCardAtLineEnd: (lineEnd) => { startAddition({ segmentId, lineEnd: { ...lineEnd, places: [...lineEnd.places] } }) },
-        onMoveCards: (places) => { save(segmentId, { kind: "move-cards", places: [...places] }) },
         onDrawLine: (line) => { save(segmentId, { kind: "add-line", ...line }) },
         onRemoveLine: (line) => { save(segmentId, { kind: "remove-line", ...line }) },
         onEditCard: (nodeId) => {

@@ -2,6 +2,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react"
 import JourneyFlowDiagram, { type JourneyAuthoring, type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
 import { findNavigatorButton, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
 import { CODE_LINKS, codeLine, paragraph } from "@/lib/__tests__/review-samples"
+import { NODE_HEAD_HEIGHT } from "@/lib/journey-layout"
 
 const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "label">): JourneyNode => ({
   type: "function",
@@ -14,6 +15,7 @@ const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "label"
   description: null,
   codeLinkId: null,
   codeViews: [],
+  parameters: [],
   blockLists: [],
   triggerLabels: [],
   rowGroups: [],
@@ -92,21 +94,21 @@ const NODE_PLACES: readonly Place[] = [
   { left: 24, top: 24, width: 284, height: 472 },
   { left: 34, top: 120, width: 264, height: 362 },
   { left: 404, top: 120, width: 264, height: 104 },
-  { left: 764, top: 120, width: 264, height: 104 },
-  { left: 764, top: 256, width: 264, height: 104 },
+  { left: 764, top: 52, width: 264, height: 104 },
+  { left: 764, top: 188, width: 264, height: 104 },
 ]
 
 const LINE_PATHS: readonly string[] = [
   "M 308 168 L 380 168 L 404 168",
-  "M 668 168 L 740 168 L 764 168",
-  "M 668 168 L 740 304 L 764 304",
+  "M 668 168 L 740 100 L 764 100",
+  "M 668 168 L 740 236 L 764 236",
 ]
 
 const PASSING_LINE_PATHS: readonly string[] = [
   "M 308 168 L 380 168 L 404 168",
-  "M 668 168 L 740 129 L 764 129",
-  "M 668 168 L 740 256 L 764 256",
-  "M 308 72 L 404 72 L 668 72 L 740 111 L 764 111",
+  "M 668 168 L 740 85 L 764 85",
+  "M 668 168 L 740 212 L 764 212",
+  "M 308 72 L 404 72 L 668 72 L 740 67 L 764 67",
 ]
 
 const ROW_LINE_PATHS: readonly string[] = [
@@ -405,7 +407,6 @@ const createAuthoring = (): JourneyAuthoring => ({
   onClearDiagram: vi.fn(),
   onRemoveDiagram: vi.fn(),
   onAddCardAtLineEnd: vi.fn(),
-  onMoveCards: vi.fn(),
   onDrawLine: vi.fn(),
   onRemoveLine: vi.fn(),
   onEditCard: vi.fn(),
@@ -453,6 +454,33 @@ describe("JourneyFlowDiagram for an author", () => {
     const { container } = renderAuthoredDiagram(createAuthoring(), moved)
 
     expect(container.querySelector(`.react-flow__node[data-id="${PRICE.id}"]`)?.getAttribute("style")).toContain("translate(40px,500px)")
+  })
+
+  it("shows the parameters of a card as chips under its head, above its rows, and makes the card taller for them", () => {
+    const parameters = ["session: Session", "trainer_id: int | None"]
+    const withParameters = NODES.map((one) => (one.id === "price" ? { ...one, parameters } : one))
+    const { container } = render(
+      <JourneyFlowDiagram title="A checkout" nodes={withParameters} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+    )
+    const chips = screen.getByRole("list", { name: "Parameters" })
+    const price = placeOf(boxOf(container, "price"))
+    const listed = placeOf(chips)
+
+    expect(within(chips).getAllByRole("listitem").map((chip) => chip.textContent)).toStrictEqual(parameters)
+    expect(listed.top).toBeGreaterThanOrEqual(price.top + NODE_HEAD_HEIGHT)
+    expect(price.height).toBeGreaterThan(NODE_PLACES[3].height)
+  })
+
+  it("lets a reader with card moving drag every top card, and nobody else", () => {
+    const draggableIdsOf = (container: HTMLElement): (string | null)[] =>
+      [...container.querySelectorAll(".react-flow__node.draggable")].map((card) => card.getAttribute("data-id"))
+    const moving = render(
+      <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} cardMoving={{ onMoveCards: vi.fn() }} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+    )
+
+    expect(draggableIdsOf(moving.container)).toStrictEqual(["cart-page", "route", "price", "audit"])
+    moving.unmount()
+    expect(draggableIdsOf(renderDiagram().container)).toStrictEqual([])
   })
 
   it("gives every row a place to start a line and every card three sides to end one", () => {

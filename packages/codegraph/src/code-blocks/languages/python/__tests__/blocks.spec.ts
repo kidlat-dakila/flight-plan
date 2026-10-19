@@ -184,6 +184,30 @@ describe("the blocks of a Python file", () => {
 
     expect(blockNamed(group, "function", "list_users").catalogue).toMatchObject({ specifier: "flask", runs: "route", method: "GET", path: "/users" })
   })
+
+  it("follows a value a library makes through the import to the file that makes it, absolute, relative or re-exported by a package", () => {
+    const group = groupOf(
+      {
+        "shop/api/routes.py": codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/api\")"),
+        "shop/api/__init__.py": codeOf("from .routes import router"),
+        "shop/api/items.py": codeOf("from shop.api import router", "@router.get(\"/items\")", "async def items():", "    return []"),
+        "shop/main/__init__.py": codeOf("from flask import Blueprint", "bp = Blueprint(\"main\", __name__, url_prefix=\"/site\")"),
+        "shop/main/views.py": codeOf("from . import bp", "@bp.post(\"/login\")", "def login():", "    return 1"),
+        "shop/db.py": codeOf("from sqlalchemy.orm import Session", "session = Session(engine)"),
+        "shop/stock.py": codeOf("from shop.db import session", "def find(item_id):", "    return session.get(Item, item_id)"),
+      },
+      {
+        "shop/api/__init__.py": { ".routes:router": "shop/api/routes.py" },
+        "shop/api/items.py": { "shop.api:router": "shop/api/__init__.py" },
+        "shop/main/views.py": { ".:bp": "shop/main/__init__.py" },
+        "shop/stock.py": { "shop.db:session": "shop/db.py" },
+      },
+    )
+
+    expect(blockNamed(group, "function", "items").card).toMatchObject({ library: "FastAPI", part: "handler", heading: "GET", groupKey: "/api/items" })
+    expect(blockNamed(group, "function", "login").card).toMatchObject({ library: "Flask", part: "handler", heading: "POST", groupKey: "/site/login" })
+    expect(group.codeBlocks.filter((block) => block.filePath === "shop/stock.py" && block.catalogue?.name === "get").map((block) => block.type)).toStrictEqual(["data-fetch"])
+  })
 })
 
 describe("the uses of a Python file", () => {

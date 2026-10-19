@@ -26,6 +26,7 @@ export const getPublishedReview = async (
     {
       ...subject,
       isOwn: false,
+      isStored: false,
       detail: null,
       forge: null,
       notice: null,

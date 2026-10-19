@@ -300,6 +300,86 @@ describe("the dependencies of a FastAPI route", () => {
   it("makes no node of the Depends call that only names the dependency", () => {
     expect(listJourneyNodes(diagram.journeyNodes).map((node) => node.type)).not.toContain("effect")
   })
+
+  it("draws a line from the router a route is registered on to its route card, and none back from the handler", () => {
+    const items = codeOf(
+      "from fastapi import APIRouter",
+      "LIMIT = 20",
+      "router = APIRouter(prefix=\"/items\")",
+      "@router.get(\"/\")",
+      "async def items():",
+      "    return list_items(LIMIT)",
+      "@router.post(\"/\")",
+      "async def add_item():",
+      "    return save_item()",
+    )
+    const express = codeOf("import express from \"express\"", "const router = express.Router()", "router.get(\"/users\", async (req, res) => {", "  res.json(await listUsers())", "})", "export default router")
+    const decorated = presentDiagramOf({ "shop/items.py": items }, { "shop/items.py": [rangeAt(1, 1, 9, 23)] })
+    const called = presentDiagramOf({ "server/users.ts": express }, { "server/users.ts": [rangeAt(1, 1, 6, 22)] })
+
+    expect(decorated.journeyNodeEdges.map((edge) => edge.id).filter((id) => id.includes("root-variable@3:1"))).toStrictEqual(["shop/items.py#root-variable@3:1 -> shop/items.py#route@/items"])
+    expect(called.journeyNodeEdges.map((edge) => edge.id).filter((id) => id.includes("root-variable@2:1"))).toStrictEqual(["server/users.ts#root-variable@2:1 -> server/users.ts#route@/users"])
+  })
+
+  it("draws the line from the router whatever the layout, and keeps the line from a handler to any other value it reads", () => {
+    const wholeOf = (code: string) => [rangeAt(1, 1, code.split("\n").length, 80)]
+    const routerEdgesOf = (files: Record<string, string>, routerId: string): string[] => {
+      const changedDiagram = presentDiagramOf(files, Object.fromEntries(Object.entries(files).map(([path, code]) => [path, wholeOf(code)])))
+      return changedDiagram.journeyNodeEdges.map((edge) => edge.id).filter((id) => id.includes(routerId))
+    }
+    const stacked = codeOf(
+      "from fastapi import APIRouter",
+      "from slowapi import Limiter",
+      "limiter = Limiter(key_func=client_ip)",
+      "cache = make_cache()",
+      "router = APIRouter(prefix=\"/items\")",
+      "@router.get(\"/\")",
+      "@limiter.limit(\"5/minute\")",
+      "async def items():",
+      "    return cache.read()",
+    )
+
+    expect(routerEdgesOf({ "shop/main.py": codeOf("from fastapi import FastAPI", "app = FastAPI()", "@app.get(\"/health\")", "async def health():", "    return check()") }, "root-variable@2:1"))
+      .toStrictEqual(["shop/main.py#root-variable@2:1 -> shop/main.py#route@/health"])
+    expect(routerEdgesOf({ "shop/users.py": codeOf("from flask import Blueprint", "bp = Blueprint(\"users\", __name__)", "@bp.get(\"/users\")", "def users():", "    return list_users()") }, "root-variable@2:1"))
+      .toStrictEqual(["shop/users.py#root-variable@2:1 -> shop/users.py#route@/users"])
+    expect(routerEdgesOf({ "shop/items.py": stacked }, "root-variable@")).toStrictEqual([
+      "shop/items.py#function@6:1 -> shop/items.py#root-variable@3:1",
+      "shop/items.py#function@6:1 -> shop/items.py#root-variable@4:1",
+      "shop/items.py#root-variable@5:1 -> shop/items.py#route@/items",
+    ])
+    expect(routerEdgesOf({
+      "shop/api.py": codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/items\")"),
+      "shop/items.py": codeOf("from shop.api import router", "@router.get(\"/\")", "async def items():", "    return list_items()"),
+    }, "root-variable@2:1")).toStrictEqual(["shop/api.py#root-variable@2:1 -> shop/items.py#route@/items"])
+    expect(routerEdgesOf({
+      "server/router.ts": codeOf("import { Router } from \"express\"", "export const router = Router()"),
+      "server/users.ts": codeOf("import { router } from \"./router\"", "router.get(\"/users\", async (req, res) => {", "  res.json(await listUsers())", "})"),
+    }, "root-variable@2:1")).toStrictEqual(["server/router.ts#root-variable@2:1 -> server/users.ts#route@/users"])
+  })
+
+  it("draws no line between a router the change leaves alone and the routes it changes", () => {
+    const items = codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/items\")", "@router.get(\"/\")", "async def items():", "    return list_items()")
+    const handlerOnly = presentDiagramOf({ "shop/items.py": items }, { "shop/items.py": [rangeAt(5, 5, 5, 24)] })
+
+    expect(handlerOnly.journeyNodeEdges).toStrictEqual([])
+  })
+
+  it("makes no node of an include that only hands a dependency, and draws the dependency's line to the route card", () => {
+    const items = codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/items\")", "@router.get(\"/\")", "async def items():", "    return list_items()")
+    const main = codeOf(
+      "from fastapi import FastAPI, Depends",
+      "from shop.items import router",
+      "def verify_key():",
+      "    return check_key()",
+      "app = FastAPI()",
+      "app.include_router(router, prefix=\"/v1\", dependencies=[Depends(verify_key)])",
+    )
+    const included = presentDiagramOf({ "shop/items.py": items, "shop/main.py": main }, { "shop/items.py": [rangeAt(5, 5, 5, 24)], "shop/main.py": [rangeAt(4, 5, 4, 23), rangeAt(6, 1, 6, 80)] })
+
+    expect(listJourneyNodes(included.journeyNodes).map((node) => node.id)).toStrictEqual(["shop/items.py#route@/v1/items", "shop/items.py#function@3:1", "shop/main.py#function@3:1"])
+    expect(included.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual(["shop/main.py#function@3:1 -> shop/items.py#route@/v1/items"])
+  })
 })
 
 describe("the Annotated dependencies of a FastAPI route", () => {

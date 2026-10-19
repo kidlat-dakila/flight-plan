@@ -61,6 +61,7 @@ export interface ReviewPageSource {
   readonly lineColor: LineColor
   readonly target: ReviewTarget
   readonly isOwn: boolean
+  readonly isStored: boolean
   readonly branchLinking: BranchLinking | null
   readonly detail: ReviewTargetDetail | null
   readonly forge: PullRequestReading | null
@@ -273,6 +274,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     kind: "artifact",
     shell,
     isOwn: source.isOwn,
+    canMoveCards: source.isStored,
     completeAction: isLeftToComplete(source, artifact) ? buildCompleteAction(source.branchLinking, source.now) : null,
     staleNotice: buildStaleNotice(source.repository, source.target, artifact, source.detail),
     progress: buildProgress(artifact, source.activity),

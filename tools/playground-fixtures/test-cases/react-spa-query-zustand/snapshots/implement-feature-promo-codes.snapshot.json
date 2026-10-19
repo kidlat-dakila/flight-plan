@@ -696,12 +696,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/api/promo.ts#root-argument-value@8:28"
-                }
-              ]
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -2826,10 +2821,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/hooks/use-promo.ts#variable@6:36"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/hooks/use-promo.ts#component-effect@7:10"
                 },
                 {
@@ -3050,12 +3041,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/api/promo.ts#root-argument-value@8:28"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/routes/cart/components/PromoForm.tsx#render-event@15:11",
@@ -3106,12 +3092,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/cart/components/PromoForm.tsx#variable@16:62"
-                }
-              ]
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

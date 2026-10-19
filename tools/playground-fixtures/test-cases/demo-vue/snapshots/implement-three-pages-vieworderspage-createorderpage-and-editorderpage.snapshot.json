@@ -798,22 +798,6 @@
                   "codeBlockId": "src/views/orders/components/OrderForm.vue#variable@8:1"
                 },
                 {
-                  "label": "The draft the form starts from",
-                  "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@8:29"
-                },
-                {
-                  "label": "The text of the submit button",
-                  "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@8:55"
-                },
-                {
-                  "label": "Whether the order is saving",
-                  "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@8:76"
-                },
-                {
-                  "label": "The event that hands the draft to the page",
-                  "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@9:36"
-                },
-                {
                   "label": "The draft the staff member edits",
                   "codeBlockId": "src/views/orders/components/OrderForm.vue#state@11:1"
                 },
@@ -913,10 +897,6 @@
                   "codeBlockId": "src/composables/use-orders.ts#root-variable@4:1"
                 },
                 {
-                  "label": "The id of the order to load",
-                  "codeBlockId": "src/composables/use-orders.ts#root-argument-value@10:26"
-                },
-                {
                   "label": "The query that loads the order",
                   "codeBlockId": "src/composables/use-orders.ts#component-effect@11:10"
                 },
@@ -962,10 +942,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The order to create",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@8:29"
-                },
-                {
                   "label": "Sends the order as JSON in a POST",
                   "codeBlockId": "src/api/orders.ts#property@9:31"
                 }
@@ -994,14 +970,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The order to save",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@11:29"
-                },
-                {
-                  "label": "The id of the order in the URL",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@12:29"
-                },
-                {
                   "label": "Sends the order as JSON in a PUT",
                   "codeBlockId": "src/api/orders.ts#property@12:43"
                 }
@@ -1022,12 +990,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "The id of the order",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@6:28"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/views/orders/components/OrderForm.vue#render-event@21:9",
@@ -3772,22 +3735,6 @@
                       "codeBlockId": "src/views/orders/components/OrderForm.vue#variable@8:1"
                     },
                     {
-                      "label": "The draft the form starts from",
-                      "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@8:29"
-                    },
-                    {
-                      "label": "The text of the submit button",
-                      "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@8:55"
-                    },
-                    {
-                      "label": "Whether the order is saving",
-                      "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@8:76"
-                    },
-                    {
-                      "label": "The event that hands the draft to the page",
-                      "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@9:36"
-                    },
-                    {
                       "label": "The draft the staff member edits",
                       "codeBlockId": "src/views/orders/components/OrderForm.vue#state@11:1"
                     },
@@ -3890,10 +3837,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
-                {
-                  "label": "The order to create",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@8:29"
-                },
                 {
                   "label": "Sends the order as JSON in a POST",
                   "codeBlockId": "src/api/orders.ts#property@9:31"
@@ -5723,22 +5666,6 @@
                       "codeBlockId": "src/views/orders/components/OrderForm.vue#variable@8:1"
                     },
                     {
-                      "label": "The draft the form starts from",
-                      "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@8:29"
-                    },
-                    {
-                      "label": "The text of the submit button",
-                      "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@8:55"
-                    },
-                    {
-                      "label": "Whether the order is saving",
-                      "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@8:76"
-                    },
-                    {
-                      "label": "The event that hands the draft to the page",
-                      "codeBlockId": "src/views/orders/components/OrderForm.vue#root-argument-value@9:36"
-                    },
-                    {
                       "label": "The draft the staff member edits",
                       "codeBlockId": "src/views/orders/components/OrderForm.vue#state@11:1"
                     },
@@ -5811,10 +5738,6 @@
                 {
                   "label": "The key of the orders queries",
                   "codeBlockId": "src/composables/use-orders.ts#root-variable@4:1"
-                },
-                {
-                  "label": "The id of the order to load",
-                  "codeBlockId": "src/composables/use-orders.ts#root-argument-value@10:26"
                 },
                 {
                   "label": "The query that loads the order",
@@ -5896,14 +5819,6 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The order to save",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@11:29"
-                },
-                {
-                  "label": "The id of the order in the URL",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@12:29"
-                },
-                {
                   "label": "Sends the order as JSON in a PUT",
                   "codeBlockId": "src/api/orders.ts#property@12:43"
                 }
@@ -5924,12 +5839,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "The id of the order",
-                  "codeBlockId": "src/api/orders.ts#root-argument-value@6:28"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/views/orders/EditOrderPage.vue#render-event@23:81",

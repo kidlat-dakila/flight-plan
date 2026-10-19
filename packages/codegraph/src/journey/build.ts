@@ -29,6 +29,7 @@ import type {
 import { BLOCK_LIST_KINDS, headOfNode, labelOfRow, listRowGroups, listsNoRows } from "./cards"
 import { buildNodeCodeViews, type CodeViewSetting } from "./code-views"
 import { BLOCK_TYPE_LABELS, nameOfBlock } from "./names"
+import { parametersOf } from "./parameters"
 
 const JOURNEY_ANCHOR_NAME = "journey-flow-diagram"
 
@@ -185,6 +186,7 @@ const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: Review
     description: node.description === null ? null : parseProse(node.description, context.knownLinkIds),
     codeLinkId: context.knownLinkIds.has(linkId) ? linkId : null,
     codeViews: buildNodeCodeViews(node.id, { path, lines: codeLinesOf(node) }, setting, context),
+    parameters: parametersOf(node.type, root, context),
     blockLists: storedRows === null ? toBlockLists(node, rows) : [],
     triggerLabels: storedRows === null ? node.triggerLabels.map(toTriggerLabelView) : storedRows.map((row) => toStoredRowView(row, node)),
     rowGroups: storedRows === null ? listRowGroups(node, rows) : groupStoredRows(storedRows),

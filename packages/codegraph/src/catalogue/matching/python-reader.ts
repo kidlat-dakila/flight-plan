@@ -159,14 +159,20 @@ const propertyOf = (pair: SyntaxNode): PassedValue[] => {
 const readBindings = (tree: SyntaxTree): NamedBinding[] =>
   [...nodesMatching(GRAMMAR, tree, BINDING_PATTERN).flatMap(bindingsAt)].sort((one, two) => one.startIndex - two.startIndex)
 
-export const readPython = (source: string): SyntaxReader => {
-  const tree = parseWithGrammar(GRAMMAR, source)
+export type FindImportedBinding = (name: SyntaxNode) => Binding | null
+
+const findNothingImported: FindImportedBinding = () => null
+
+const followedImport = (binding: Binding | null, name: SyntaxNode, findImported: FindImportedBinding): Binding | null =>
+  binding?.kind === "import" ? (findImported(name) ?? binding) : binding
+
+export const pythonReaderOf = (tree: SyntaxTree, findImported: FindImportedBinding = findNothingImported): SyntaxReader => {
   const bindings = readBindings(tree)
   return {
     language: "python",
     tree,
     expressionOf,
-    bindingOf: (name) => bindingAmong(bindings, name),
+    bindingOf: (name) => followedImport(bindingAmong(bindings, name), name, findImported),
     basesOf,
     handedAt: () => null,
     parameterTypeOf: () => null,
@@ -180,4 +186,14 @@ export const readPython = (source: string): SyntaxReader => {
     textOf,
     isFunction: (value) => value.type === FUNCTION_VALUE_TYPE,
   }
+}
+
+export const readPython = (source: string): SyntaxReader => pythonReaderOf(parseWithGrammar(GRAMMAR, source))
+
+const withReader = (binding: Binding | null, reader: SyntaxReader): Binding | null =>
+  binding?.kind === "value" || binding?.kind === "class" ? { ...binding, reader } : binding
+
+export const declaredBindingAt = (reader: SyntaxReader, declaredName: SyntaxNode): Binding | null => {
+  const declared = readBindings(reader.tree).find(({ startIndex }) => startIndex === declaredName.startIndex)
+  return withReader(declared?.binding ?? null, reader)
 }

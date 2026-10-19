@@ -1,12 +1,13 @@
 import type { Point } from "@/lib/diagram-path"
 
-export type LayoutRowKind = "heading" | "row" | "two-line-row" | "card"
+export type LayoutRowKind = "heading" | "parameters" | "row" | "two-line-row" | "card"
 
 type DrawnRowKind = Exclude<LayoutRowKind, "card">
 
 export interface LayoutRow {
   readonly id: string
   readonly kind: LayoutRowKind
+  readonly lineCount?: number
 }
 
 export interface LayoutNode {
@@ -90,9 +91,20 @@ interface ColumnItem {
   readonly edgeIds: readonly string[]
 }
 
-interface Stack {
+interface OffsetStack {
   readonly bottom: number
-  readonly placement: Placement
+  readonly offsets: readonly number[]
+}
+
+interface WantedItem {
+  readonly item: ColumnItem
+  readonly index: number
+  readonly top: number
+}
+
+interface Cluster {
+  readonly members: readonly WantedItem[]
+  readonly top: number
 }
 
 interface LoopSearch {
@@ -116,6 +128,8 @@ export const NODE_HEAD_HEIGHT = 96
 export const ROW_HEIGHT = 36
 export const TWO_LINE_ROW_HEIGHT = 48
 export const ROW_HEADING_HEIGHT = 16
+export const PARAMETER_LINE_HEIGHT = 20
+export const PARAMETER_LINE_GAP = 4
 export const EDGE_APPROACH = 24
 export const EDGE_SPACING = 18
 const ARRIVAL_INSET = 6
@@ -126,11 +140,16 @@ export const COLUMN_GAP = 96
 export const NODE_GAP = 32
 export const MARGIN = 24
 const HALF = 2
+export const ROW_WIDTH = NODE_WIDTH - INSET * HALF
 const NOTHING_PLACED: Placement = { nodes: [], rows: [], lanes: [] }
 
 const sumOf = (numbers: readonly number[]): number => numbers.reduce((total, one) => total + one, 0)
 
-const ROW_HEIGHTS: Readonly<Record<DrawnRowKind, number>> = { "heading": ROW_HEADING_HEIGHT, "row": ROW_HEIGHT, "two-line-row": TWO_LINE_ROW_HEIGHT }
+const ROW_HEIGHTS: Readonly<Record<Exclude<DrawnRowKind, "parameters">, number>> = { "heading": ROW_HEADING_HEIGHT, "row": ROW_HEIGHT, "two-line-row": TWO_LINE_ROW_HEIGHT }
+const ONE_LINE = 1
+
+const rowHeightOf = ({ kind, lineCount = ONE_LINE }: LayoutRow & { readonly kind: DrawnRowKind }): number =>
+  kind === "parameters" ? lineCount * PARAMETER_LINE_HEIGHT + (lineCount - ONE_LINE) * PARAMETER_LINE_GAP : ROW_HEIGHTS[kind]
 const CARD_ROW: LayoutRowKind = "card"
 
 type LayoutPart = { readonly kind: "row", readonly row: LayoutRow & { readonly kind: DrawnRowKind } } | { readonly kind: "card", readonly node: LayoutNode }
@@ -155,7 +174,7 @@ const partsOf = (node: LayoutNode): LayoutPart[] => {
   ]
 }
 
-const heightOfPart = (part: LayoutPart): number => (part.kind === "row" ? ROW_HEIGHTS[part.row.kind] : sizeOf(part.node).height) + ROW_GAP
+const heightOfPart = (part: LayoutPart): number => (part.kind === "row" ? rowHeightOf(part.row) : sizeOf(part.node).height) + ROW_GAP
 
 const sizeOf = (node: LayoutNode): Size => {
   const childSizes = node.children.map(sizeOf)
@@ -170,7 +189,7 @@ const placeNode = (node: LayoutNode, box: Omit<Box, "height">, depth: number, to
   const inner = { x: box.x + INSET, width: box.width - INSET * HALF }
   const placeOne = (part: LayoutPart, y: number): Placement =>
     part.kind === "row"
-      ? { nodes: [], rows: [{ ...part.row, nodeId: node.id, ...inner, y, height: ROW_HEIGHTS[part.row.kind] }], lanes: [] }
+      ? { nodes: [], rows: [{ id: part.row.id, kind: part.row.kind, nodeId: node.id, ...inner, y, height: rowHeightOf(part.row) }], lanes: [] }
       : placeNode(part.node, { ...inner, y }, depth + 1, topId)
   const { placed } = partsOf(node).reduce<PartsPlacement>(
     ({ top, placed: soFar }, part) => ({ top: top + heightOfPart(part), placed: mergePlacements([soFar, placeOne(part, top)]) }),
@@ -301,19 +320,57 @@ const desiredTopOf = ({ toId, anchorHeight }: ColumnItem, anchorsOfItem: (toId: 
 const placeItem = ({ node, toId, edgeIds }: ColumnItem, column: number, box: Omit<Box, "height">): Placement =>
   node === null ? { ...NOTHING_PLACED, lanes: [{ toId, column, x: box.x, width: box.width, y: box.y, edgeIds }] } : placeNode(node, box, 0, node.id)
 
+const offsetsWithin = (members: readonly WantedItem[]): readonly number[] =>
+  members.reduce<OffsetStack>(
+    ({ bottom, offsets }, { item }) => ({ bottom: bottom + item.height + NODE_GAP, offsets: [...offsets, bottom] }),
+    { bottom: 0, offsets: [] },
+  ).offsets
+
+const heightOfCluster = ({ members }: Cluster): number => sumOf(members.map(({ item }) => item.height)) + NODE_GAP * (members.length - 1)
+
+const centredTopOf = (members: readonly WantedItem[]): number => {
+  const offsets = offsetsWithin(members)
+  return sumOf(members.map(({ top }, index) => top - offsets[index])) / members.length
+}
+
+const overlaps = (upper: Cluster, lower: Cluster): boolean => upper.top + heightOfCluster(upper) + NODE_GAP > lower.top
+
+const mergeClusters = (upper: Cluster, lower: Cluster): Cluster => {
+  const members = [...upper.members, ...lower.members]
+  return { members, top: centredTopOf(members) }
+}
+
+const withCluster = (clusters: readonly Cluster[], cluster: Cluster): Cluster[] => {
+  const upper = clusters.at(-1)
+  return upper !== undefined && overlaps(upper, cluster) ? withCluster(clusters.slice(0, -1), mergeClusters(upper, cluster)) : [...clusters, cluster]
+}
+
+const clustersOf = (wanted: readonly WantedItem[]): Cluster[] =>
+  wanted.reduce<Cluster[]>((clusters, member) => withCluster(clusters, { members: [member], top: member.top }), [])
+
 const placeColumn = (items: readonly ColumnItem[], column: number, x: number, anchorsOfItem: (toId: string) => readonly number[]): Placement => {
   const wanted = items
     .map((item, index) => ({ item, index, top: desiredTopOf(item, anchorsOfItem) }))
     .sort((one, two) => one.top - two.top || one.index - two.index)
   const width = Math.max(NODE_WIDTH, ...items.flatMap(({ node }) => (node === null ? [] : [sizeOf(node).width])))
-  return wanted.reduce<Stack>(
-    ({ bottom, placement }, { item, top }) => {
-      const y = Math.round(Math.max(top, bottom, MARGIN))
-      return { bottom: y + item.height + NODE_GAP, placement: mergePlacements([placement, placeItem(item, column, { x, y, width })]) }
-    },
-    { bottom: MARGIN, placement: NOTHING_PLACED },
-  ).placement
+  return mergePlacements(
+    clustersOf(wanted).flatMap((cluster) => {
+      const top = Math.round(cluster.top)
+      const offsets = offsetsWithin(cluster.members)
+      return cluster.members.map(({ item }, index) => placeItem(item, column, { x, y: top + offsets[index], width }))
+    }),
+  )
 }
+
+const topOf = ({ nodes, lanes }: Placement): number => Math.min(...nodes.map((placed) => placed.y), ...lanes.map((lane) => lane.y))
+
+const movedDown = ({ nodes, rows, lanes }: Placement, distance: number): Placement => ({
+  nodes: nodes.map((placed) => ({ ...placed, y: placed.y + distance })),
+  rows: rows.map((row) => ({ ...row, y: row.y + distance })),
+  lanes: lanes.map((lane) => ({ ...lane, y: lane.y + distance })),
+})
+
+const withTopAtMargin = (placement: Placement): Placement => movedDown(placement, MARGIN - topOf(placement))
 
 const rightOf = ({ nodes, lanes }: Placement): number =>
   Math.max(MARGIN - COLUMN_GAP, ...nodes.map((placed) => placed.x + placed.width), ...lanes.map((lane) => lane.x + lane.width))
@@ -408,7 +465,7 @@ export const layoutJourney = (nodes: readonly LayoutNode[], edges: readonly Layo
   if (nodes.length === 0) return { width: MARGIN * HALF, height: MARGIN * HALF, nodes: [], rows: [], edges: [] }
   const links = linksOf(nodes, edges)
   const columnById = columnsOf(nodes, links)
-  const placement = placeColumns(nodes, links, columnById)
+  const placement = withTopAtMargin(placeColumns(nodes, links, columnById))
   const placedEdges = placeEdges(links, placement)
   const points = placedEdges.flatMap((placed) => placed.points)
   return {

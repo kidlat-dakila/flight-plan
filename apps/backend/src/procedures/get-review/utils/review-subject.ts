@@ -9,6 +9,7 @@ export interface ReviewSubject {
   readonly lineColor: LineColor
   readonly target: ReviewTarget
   readonly isOwn: boolean
+  readonly isStored: boolean
   readonly artifact: ReviewArtifact | null
   readonly detail: ReviewTargetDetail | null
   readonly forge: PullRequestReading | null

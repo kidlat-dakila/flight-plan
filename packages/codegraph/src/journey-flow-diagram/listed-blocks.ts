@@ -12,7 +12,6 @@ import {
   isChanged,
   isControlBlock,
   isNamedFunction,
-  isParameter,
   isStepRow,
   listRuns,
   nameOfRun,
@@ -39,15 +38,14 @@ const TRIGGER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["rende
 const MARKUP_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-root", "render", "render-condition", "render-loop"])
 const STEP: NodeBlockListKind = "step"
 const EXTERNAL_CALL: NodeBlockListKind = "call"
-const ARGUMENT: NodeBlockListKind = "argument"
 const PROPERTY_KIND: NodeBlockListKind = "property"
 const PART: NodeBlockListKind = "part"
 const PROPERTY: CodeBlockType = "property"
+const PARAMETER: CodeBlockType = "root-argument-value"
 const CLASS: CodeBlockType = "class"
 const MIDDLEWARE: CardPart = "middleware"
 const RECEIVER_PREFIXES: readonly string[] = ["this.", "self."]
 const BLOCK_LIST_KIND_BY_TYPE: ReadonlyMap<CodeBlockType, NodeBlockListKind> = new Map<CodeBlockType, NodeBlockListKind>([
-  ["root-argument-value", "argument"],
   ["state", "state"],
   ["derived", "state"],
   ["effect", "effect"],
@@ -86,8 +84,10 @@ const toStepCandidate = (block: CodeBlock, nodeBlock: CodeBlock): Candidate => {
   return toCandidateOf(isExternalCall(statement, nodeBlock) ? EXTERNAL_CALL : STEP, statement, nameOfBlock(statement))
 }
 
-const isArgumentOfNode = (block: CodeBlock, nodeBlock: CodeBlock): boolean =>
-  isParameter(block) && block.parentBlock !== null && (isHandlerBlock(block.parentBlock) || block.parentBlock.id === nodeBlock.id)
+export const isParameterOf = (block: CodeBlock, nodeBlock: CodeBlock): boolean =>
+  block.type === PARAMETER && block.parentBlock !== null && (isHandlerBlock(block.parentBlock) || block.parentBlock.id === nodeBlock.id)
+
+const isReadThroughParameter = (block: CodeBlock): boolean => block.type === PARAMETER && block.parentBlock?.type === PARAMETER
 
 const isPropertyOfClass = (block: CodeBlock, nodeBlock: CodeBlock): boolean =>
   declaresProperty(block) && nodeBlock.type === CLASS && (classOfDeclaredProperty(block) ?? block.parentBlock)?.id === nodeBlock.id
@@ -106,8 +106,8 @@ const toCandidate = (block: CodeBlock, nodeBlock: CodeBlock): Candidate[] => {
   if (isNodeDrawnInside(block) || isOwnClassReach(block, nodeBlock) || holdsStoreParts(block, nodeBlock) || handsMiddlewareTo(block, nodeBlock)) return []
   const part = storePartAround(block, nodeBlock)
   if (part !== null) return [{ kind: PART, block: part, name: nameOfBlock(part), isStep: false }]
-  if (isArgumentOfNode(block, nodeBlock)) return [toCandidateOf(ARGUMENT, block, nameOfBlock(block))]
   if (isPropertyOfClass(block, nodeBlock)) return [toCandidateOf(PROPERTY_KIND, block, nameOfBlock(block))]
+  if (isParameterOf(block, nodeBlock) || isReadThroughParameter(block)) return []
   const kind = BLOCK_LIST_KIND_BY_TYPE.get(block.type)
   const state = kind === "effect" ? stateAround(block, nodeBlock) : null
   if (state !== null) return [toCandidateOf("state", state, nameOfBlock(state))]

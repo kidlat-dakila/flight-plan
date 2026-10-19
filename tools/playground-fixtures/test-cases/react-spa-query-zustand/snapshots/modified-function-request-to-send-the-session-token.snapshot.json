@@ -434,10 +434,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/api/client.ts#root-argument-value@30:10"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/api/client.ts#condition@33:3"
                 }
               ]

@@ -379,30 +379,6 @@
                   "blockLabels": [
                     {
                       "label": null,
-                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@17:3"
-                    },
-                    {
-                      "label": null,
-                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@18:3"
-                    },
-                    {
-                      "label": null,
-                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@19:3"
-                    },
-                    {
-                      "label": null,
-                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@20:3"
-                    },
-                    {
-                      "label": null,
-                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@21:3"
-                    },
-                    {
-                      "label": null,
-                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@22:3"
-                    },
-                    {
-                      "label": null,
                       "codeBlockId": "src/components/ui/button.tsx#condition@30:8"
                     }
                   ]

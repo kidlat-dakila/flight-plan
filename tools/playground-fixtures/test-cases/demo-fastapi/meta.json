@@ -1,0 +1,6 @@
+{
+  "title": "FastAPI demo with SQLAlchemy and pydantic",
+  "packages": ["fastapi", "starlette", "sqlalchemy", "pydantic", "pytest"],
+  "language": "python",
+  "mainFramework": "fastapi"
+}

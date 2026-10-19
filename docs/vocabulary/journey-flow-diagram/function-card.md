@@ -18,7 +18,7 @@ A function that is a component is a [component card](component-card.md), and a f
 
 ## Rows
 
-**A function card has no headings.** Its arguments come first, and every other row follows in the order it is written, its trigger labels among them, so the card reads as the code runs. Each row is one [step](../journey-flow-diagram.md#steps).
+**A function card has no headings.** Its parameters are chips under its head, `param`, each with its type when it has one, and they are no rows. Every row follows in the order it is written, its trigger labels among them, so the card reads as the code runs. A read through a parameter, `param.id`, is part of the statement that holds it and no row of its own. Each row is one [step](../journey-flow-diagram.md#steps).
 
 ```ts
 export const renameUser = (param) => {
@@ -38,9 +38,7 @@ export const renameUser = (param) => {
  ┌ ƒ renameUser ────────────────── services/users/rename.ts ┐
  │ Function                                        Modified │
  │ Renames a user and saves them                            │
- │ ┌──────────────────────────────────────────────────────┐ │
- │ │ param                                                │ │  ← an argument first
- │ └──────────────────────────────────────────────────────┘ │
+ │ [param]                                                  │  ← its parameters as chips
  │ ┌──────────────────────────────────────────────────────┐ │
  │ │ users                                                │○──▶ getUsers
  │ └──────────────────────────────────────────────────────┘ │
@@ -87,10 +85,7 @@ export const createSaveHandler = (userId, cache) => {
  ┌ ƒ createSaveHandler ───────────────── services/users/save.ts ┐
  │ Function                                            Modified │
  │ Makes the handler that saves a user draft                    │
- │ ARGS                                                         │
- │ ┌──────────────────────────────────────────────────────────┐ │
- │ │ userId                                                   │ │
- │ └──────────────────────────────────────────────────────────┘ │
+ │ [userId]                                                     │
  │ ┌──────────────────────────────────────────────────────────┐ │
  │ │ cache                                                    │ │
  │ └──────────────────────────────────────────────────────────┘ │
@@ -120,7 +115,7 @@ export const createSaveHandler = (userId, cache) => {
 ```mermaid
 flowchart LR
   f["Function card"] --> r{"Returns a function?"}
-  r -- no --> flat["No headings: arguments, then as written"]
+  r -- no --> flat["No headings: rows as written, parameters as chips"]
   r -- yes --> grouped["The headings of a component card"]
   grouped --> inner["The returned function inside, below the rows"]
   inner --> r
