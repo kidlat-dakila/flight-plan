@@ -947,25 +947,6 @@
               "waypoints": [
                 {
                   "id": "w2",
-                  "title": "Added the imports of `create` and `OrderStatus`",
-                  "declaration": "Lines 1–2",
-                  "reading": "The author added two imports that name `create` from `zustand` and the type [`OrderStatus`](code:src/types/order.ts#OrderStatus) from `@/types/order`. [`useOrderFilterStore` is the result of `create<OrderFilterState>()`](code:src/stores/order-filter-store.ts#L9), and [`status` is an `OrderStatus | null`](code:src/stores/order-filter-store.ts#L5).",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 2
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/stores/order-filter-store.ts#import@1:1",
-                    "src/stores/order-filter-store.ts#import@2:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w3",
                   "title": "Added `OrderFilterState`, the shape of the filter store",
                   "declaration": "OrderFilterState",
                   "reading": "The author added an interface `OrderFilterState` that has `status`, an `OrderStatus | null`, and `setStatus`, a function that takes an `OrderStatus | null` and returns nothing. [`useOrderFilterStore` is created with it](code:src/stores/order-filter-store.ts#L9) and [`selectStatus()` takes it as its argument](code:src/stores/order-filter-store.ts#L16), so that `null` is the one value for all orders in the store, in [the argument of `useOrders()`](code:src/hooks/use-orders.ts#L5) and in [the argument of `fetchOrders()`](code:src/api/orders.ts#L4). The interface is not exported.",
@@ -983,7 +964,7 @@
                   "children": []
                 },
                 {
-                  "id": "w4",
+                  "id": "w3",
                   "title": "Added `useOrderFilterStore` to hold the chosen status",
                   "declaration": "useOrderFilterStore",
                   "reading": "The author added a Zustand store `useOrderFilterStore` that starts with `status: null` and whose `setStatus()` calls `set({ status })`. [`<OrderStatusFilter />` calls `setStatus()` on a click](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-16) and [`<OrdersPage />` reads `status`](code:src/routes/orders/index.tsx#L7), so that the buttons and the list share one value with no prop between the two components. The store is a module-level value and no code sets `status` back to `null`, so the chosen status is still there when a shopper comes back to `/orders` without a reload.",
@@ -1009,7 +990,7 @@
                   "children": []
                 },
                 {
-                  "id": "w5",
+                  "id": "w4",
                   "title": "Added `selectStatus()` to read the chosen status",
                   "declaration": "selectStatus",
                   "reading": "The author added a function `selectStatus()` that takes an [`OrderFilterState`](code:src/stores/order-filter-store.ts#OrderFilterState) and returns its `status`. [`<OrdersPage />` passes it to `useOrderFilterStore`](code:src/routes/orders/index.tsx#L7), and [`<OrderStatusFilter />` passes it too](code:src/routes/orders/components/OrderStatusFilter.tsx#L8), so that both components read the chosen status through one function and render again when it changes.",
@@ -1034,7 +1015,7 @@
               "path": "src/types/order.ts",
               "waypoints": [
                 {
-                  "id": "w6",
+                  "id": "w5",
                   "title": "Added the type `OrderStatus`",
                   "declaration": "OrderStatus",
                   "reading": "The author added a type `OrderStatus` that is `\"open\"`, `\"shipped\"` or `\"cancelled\"`. It is the type of [`Order.status`](code:src/types/order.ts#L6), of [the argument of `fetchOrders()`](code:src/api/orders.ts#L4), of [the argument of `useOrders()`](code:src/hooks/use-orders.ts#L5), of [`status` in the filter store](code:src/stores/order-filter-store.ts#L5) and of [the entries of `STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#L5), so that a string outside the three gives a compile error in each.",
@@ -1052,7 +1033,7 @@
                   "children": []
                 },
                 {
-                  "id": "w7",
+                  "id": "w6",
                   "title": "Added the interface `Order`",
                   "declaration": "Order",
                   "reading": "The author added an interface `Order` that has `id` and `placedAt` as strings, `status` as an [`OrderStatus`](code:src/types/order.ts#OrderStatus) and `totalCents` as a number. [`fetchOrders()` returns a `Promise<Order[]>`](code:src/api/orders.ts#L4-5) and [`<OrderRow />` takes one `Order` as its prop](code:src/routes/orders/components/OrderRow.tsx#L4), so that the row reads the fields the request declares. [`request()` casts the JSON body to the type](code:src/api/client.ts#L24) and does not validate it.",
@@ -2927,26 +2908,7 @@
               "path": "src/api/orders.ts",
               "waypoints": [
                 {
-                  "id": "w8",
-                  "title": "Added the imports of `request`, `Order` and `OrderStatus`",
-                  "declaration": "Lines 1–2",
-                  "reading": "The author added two imports that name [`request()`](code:src/api/client.ts#L18-25) from `@/api/client` and the types [`Order`](code:src/types/order.ts#Order) and [`OrderStatus`](code:src/types/order.ts#OrderStatus) from `@/types/order`. [`fetchOrders()` calls `request<Order[]>()`](code:src/api/orders.ts#L5) and [takes an `OrderStatus | null`](code:src/api/orders.ts#L4).",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 2
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/api/orders.ts#import@1:1",
-                    "src/api/orders.ts#import@2:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w9",
+                  "id": "w7",
                   "title": "Added `fetchOrders()` to request the orders of a status",
                   "declaration": "fetchOrders",
                   "reading": "The author added a function `fetchOrders()` that requests `/orders` for a `status` of `null` and `/orders?status=shipped` for `\"shipped\"`, and returns a `Promise<Order[]>`. [`useOrders()` calls it in its query function](code:src/hooks/use-orders.ts#L6), so that [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) lists the orders of the status a shopper chose. [`request()` puts `/api` before the path](code:src/api/client.ts#L19) and [throws an `ApiError` when the response is not ok](code:src/api/client.ts#L23), and [`<OrdersPage />` then returns its error message](code:src/routes/orders/index.tsx#L10).",
@@ -2971,27 +2933,7 @@
               "path": "src/hooks/use-orders.ts",
               "waypoints": [
                 {
-                  "id": "w10",
-                  "title": "Added the imports of `useQuery`, `fetchOrders` and `OrderStatus`",
-                  "declaration": "Lines 1–3",
-                  "reading": "The author added three imports that name `useQuery` from `@tanstack/react-query`, [`fetchOrders()`](code:src/api/orders.ts#fetchOrders) from `@/api/orders` and the type [`OrderStatus`](code:src/types/order.ts#OrderStatus) from `@/types/order`. [`useOrders()` uses all three names](code:src/hooks/use-orders.ts#useOrders).",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 3
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/hooks/use-orders.ts#import@1:1",
-                    "src/hooks/use-orders.ts#import@2:1",
-                    "src/hooks/use-orders.ts#import@3:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w11",
+                  "id": "w8",
                   "title": "Added `useOrders()` to query the orders per status",
                   "declaration": "useOrders",
                   "reading": "The author added a function `useOrders()` that calls `useQuery` with the key `[\"orders\", status]` and a query function that calls [`fetchOrders(status)`](code:src/api/orders.ts#fetchOrders). The status is part of the key, so that [a new `status` in `<OrdersPage />`](code:src/routes/orders/index.tsx#L7-8) reads another cache entry, and starts a request when that entry has no data. `queryClient` in `src/lib/query-client.ts` sets `staleTime` to 30 000 ms and `retry` to `false`, so one failed request sets `isError` to `true`.",
@@ -3019,25 +2961,7 @@
               "path": "src/router.tsx",
               "waypoints": [
                 {
-                  "id": "w12",
-                  "title": null,
-                  "declaration": "Lines 5–5",
-                  "reading": "",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 5,
-                    "lineEnd": 5
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/router.tsx#import@5:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w13",
+                  "id": "w9",
                   "title": null,
                   "declaration": "router",
                   "reading": "",
@@ -3064,26 +2988,7 @@
               "path": "src/routes/orders/components/OrderRow.tsx",
               "waypoints": [
                 {
-                  "id": "w14",
-                  "title": null,
-                  "declaration": "Lines 1–2",
-                  "reading": "",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 2
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/orders/components/OrderRow.tsx#import@1:1",
-                    "src/routes/orders/components/OrderRow.tsx#import@2:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w15",
+                  "id": "w10",
                   "title": null,
                   "declaration": "OrderRow",
                   "reading": "",
@@ -3112,27 +3017,7 @@
               "path": "src/routes/orders/components/OrderStatusFilter.tsx",
               "waypoints": [
                 {
-                  "id": "w16",
-                  "title": null,
-                  "declaration": "Lines 1–3",
-                  "reading": "",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 3
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/orders/components/OrderStatusFilter.tsx#import@1:1",
-                    "src/routes/orders/components/OrderStatusFilter.tsx#import@2:1",
-                    "src/routes/orders/components/OrderStatusFilter.tsx#import@3:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w17",
+                  "id": "w11",
                   "title": null,
                   "declaration": "STATUSES",
                   "reading": "",
@@ -3150,7 +3035,7 @@
                   "children": []
                 },
                 {
-                  "id": "w18",
+                  "id": "w12",
                   "title": null,
                   "declaration": "OrderStatusFilter",
                   "reading": "",
@@ -3185,7 +3070,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w18.1",
+                      "id": "w12.1",
                       "title": null,
                       "declaration": "OrderStatusFilter › status",
                       "reading": "",
@@ -3205,7 +3090,7 @@
                       "children": []
                     },
                     {
-                      "id": "w18.2",
+                      "id": "w12.2",
                       "title": null,
                       "declaration": "OrderStatusFilter › setStatus",
                       "reading": "",
@@ -3226,7 +3111,7 @@
                       "children": []
                     },
                     {
-                      "id": "w18.3",
+                      "id": "w12.3",
                       "title": null,
                       "declaration": "OrderStatusFilter › Button.onClick",
                       "reading": "",
@@ -3245,7 +3130,7 @@
                       "children": []
                     },
                     {
-                      "id": "w18.4",
+                      "id": "w12.4",
                       "title": null,
                       "declaration": "OrderStatusFilter › Markup loop :15",
                       "reading": "",
@@ -3275,28 +3160,7 @@
               "path": "src/routes/orders/index.tsx",
               "waypoints": [
                 {
-                  "id": "w19",
-                  "title": null,
-                  "declaration": "Lines 1–4",
-                  "reading": "",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 4
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/orders/index.tsx#import@1:1",
-                    "src/routes/orders/index.tsx#import@2:1",
-                    "src/routes/orders/index.tsx#import@3:1",
-                    "src/routes/orders/index.tsx#import@4:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w20",
+                  "id": "w13",
                   "title": null,
                   "declaration": "OrdersPage",
                   "reading": "",
@@ -3334,7 +3198,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w20.1",
+                      "id": "w13.1",
                       "title": null,
                       "declaration": "OrdersPage › status",
                       "reading": "",
@@ -3354,7 +3218,7 @@
                       "children": []
                     },
                     {
-                      "id": "w20.2",
+                      "id": "w13.2",
                       "title": null,
                       "declaration": "OrdersPage › orders",
                       "reading": "",
@@ -3372,7 +3236,7 @@
                       "children": []
                     },
                     {
-                      "id": "w20.3",
+                      "id": "w13.3",
                       "title": null,
                       "declaration": "OrdersPage › Condition :9",
                       "reading": "",
@@ -3392,7 +3256,7 @@
                       "children": []
                     },
                     {
-                      "id": "w20.4",
+                      "id": "w13.4",
                       "title": null,
                       "declaration": "OrdersPage › Condition :10",
                       "reading": "",
@@ -3412,7 +3276,7 @@
                       "children": []
                     },
                     {
-                      "id": "w20.5",
+                      "id": "w13.5",
                       "title": null,
                       "declaration": "OrdersPage › Markup condition :15",
                       "reading": "",

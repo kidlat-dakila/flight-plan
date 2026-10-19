@@ -76,7 +76,7 @@ const NO_SEGMENTS: readonly never[] = []
 const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
 const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--section-scroll-margin:4.5rem] [--file-header-top:3.5rem] [--waypoint-scroll-margin:7rem] [--chat-width:26rem] [--navigator-inset-left:calc(1.5rem+13rem+2rem)]"
 const NAVIGATOR_INSET_RIGHT = "[--navigator-inset-right:1.5rem]"
-const NAVIGATOR_INSET_RIGHT_BESIDE_CHAT = "[--navigator-inset-right:calc(var(--chat-width)+1.5rem)]"
+const NAVIGATOR_INSET_RIGHT_BESIDE_CHAT = "[--navigator-inset-right:calc(var(--chat-width)+1.5rem)] [--navigator-band-right:var(--chat-width)]"
 
 type FilterKeysBySegment = Readonly<Record<string, readonly string[]>>
 
@@ -264,6 +264,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     onShowReviewedChange: isOwn
       ? null
       : (segmentId, isShown) => { onSearchChange({ reviewed: withSegmentReviewed(search.reviewed, segmentId, isShown) }) },
+    onCommentOnWaypoint: isOwn || artifact?.composer == null ? null : discussion.onStartRangeComment,
   })
 
   const handleEditRailGroup = (anchorId: string): void => {
@@ -560,7 +561,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                   openWaypointIds={openWaypointIds}
                                   currentWaypointId={currentWaypointId}
                                   isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
-                                  areWaypointsHidden={walkthroughLayout.areWaypointsHidden}
                                   isPending={walkthroughEditing.isPending}
                                   codeLinks={page.codeLinks}
                                   renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
@@ -580,7 +580,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                   focusedWaypointId={stepping.focusedWaypointId}
                                   previewVisit={stepping.previewVisit}
                                   isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
-                                  areWaypointsHidden={walkthroughLayout.areWaypointsHidden}
                                   isReviewPending={setReviewed.isPending}
                                   composer={page.composer}
                                   composingRange={discussion.composingRangeOf(file.path)}

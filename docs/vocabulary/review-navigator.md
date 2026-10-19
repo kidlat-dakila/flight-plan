@@ -2,7 +2,7 @@
 
 ## Definition
 
-The Review Navigator is the toolbar that floats at the foot of a [Flight Plan Review](flight-plan-review.md). It is on the reviewer's page, the author's page and a published Flight Plan, and it stays on screen while the reader scrolls. It holds the controls of the section the reader is looking at, and every control has a key. The keys are the main way to use it: a reader can go through a whole review without leaving the keyboard.
+The Review Navigator is the toolbar band fixed to the foot of a [Flight Plan Review](flight-plan-review.md), across the full width of the page. It is on the reviewer's page, the author's page and a published Flight Plan, and it stays on screen while the reader scrolls. It holds the controls of the section the reader is looking at, and every control has a key. The keys are the main way to use it: a reader can go through a whole review without leaving the keyboard.
 
 ## The section on screen
 
@@ -29,9 +29,9 @@ Back and Next follow the order of the section rail and carry on from the end of 
 | Context | **Expand all** or **Collapse all** (Q), for the accordion sections of the context |
 | Journey Flow Diagram | **Collapse all** or **Expand all** nodes (Q), **Zoom in** (Z), **Zoom out** (X), **Full screen** (F), **Reset view** (T) |
 | Blast Diagram | **Export bound** (E) and **Import bound** (Q) when it has both views, **Zoom in** (Z), **Zoom out** (X), **Full screen** (F), **Reset view** (T) |
-| Code Walkthrough | **Previous waypoint** (A), the position, **Next waypoint** (D), **Mark as reviewed** (S), **Filter** (F), **Collapse all** or **Expand all** files (Q), **Collapse file** or **Expand file** (E), **Hide waypoints** or **Show waypoints** (X) |
+| Code Walkthrough | **Previous waypoint** (A), the position, **Next waypoint** (D), **Mark as reviewed** (S), **Add comment** (C), **Filter** (F), **Collapse all** or **Expand all** files (Q), **Collapse file** or **Expand file** (E), **Expand waypoint** or **Collapse waypoint** (R) |
 
-A control that is on, such as Full screen or Hide waypoints, is drawn pressed. Pressing a key flashes its control, so the reader sees what the key did.
+A control that is on, such as Full screen or Reviewed, is drawn pressed. Pressing a key flashes its control, so the reader sees what the key did.
 
 ## Reading the Code Walkthrough
 
@@ -40,6 +40,8 @@ The Code Walkthrough is where the navigator does the most.
 ### Stepping through waypoints
 
 Previous waypoint and Next waypoint take the place of Back and Next. They step through the waypoints of the segment on screen, across its files, in reading order. Stepping to a waypoint makes it the **current waypoint**, shows its preview card and dims the rest of its file's code, so the lines it is about stand out. Only one card shows at a time: stepping on, or hovering another mark, closes it. On the author's page stepping opens the waypoint's box instead. The dimming ends when the reader scrolls away; the waypoint stays current.
+
+**Expand waypoint** (R) opens the current waypoint's box above its lines and scrolls to it, and **Collapse waypoint** (R) closes it again and brings back its card. The card of the current waypoint says "Click or press R to expand"; the card of any other waypoint, shown on hover, says "Click to expand". With no current waypoint the button is dimmed and says to pick one first.
 
 The position between the two buttons counts the waypoints of the segment: "4 of 8". Each segment counts on its own.
 
@@ -53,12 +55,13 @@ Going to a Code Walkthrough with Back, Next or Jump to makes its first waypoint 
 
 Mark as reviewed (S) marks the current waypoint reviewed. It is the one button in the navigator drawn in the primary colour. Once the waypoint is reviewed it reads "Reviewed", drawn pressed, and pressing it again takes the mark off. When reviewed waypoints are hidden, marking one moves on to the next waypoint first, so the reader is not left on a waypoint that has just disappeared.
 
-When there is nothing to mark, the button is dimmed. Clicking it, pressing S or resting on it shows a tooltip that says what to do next:
+When there is nothing to mark, the button is dimmed. Clicking it, pressing S or resting on it shows a tooltip that says what to do next: "Pick a waypoint first: press D to step to the next one."
 
-- with no current waypoint: "Pick a waypoint first: press D to step to the next one."
-- with the waypoints hidden: "Show the waypoints first: press X."
+### Commenting on a waypoint
 
-The author's page has no Mark as reviewed, since the author does not review their own Flight Plan. On a published Flight Plan, Mark as reviewed and the filter say that they are only available in Flight Plan.
+Add comment (C), to the right of Mark as reviewed, opens the comment composer on the current waypoint's lines. The lines are marked as the comment's range, as when the reader picks them by hand, and the composer opens under the last of them with the keyboard in it. With no current waypoint it is dimmed and says to pick one first; on a waypoint whose lines are not on the page it says there is nothing to comment on.
+
+The author's page has no Mark as reviewed and no Add comment, since the author does not review their own Flight Plan. On a published Flight Plan, Mark as reviewed, Add comment and the filter say that they are only available in Flight Plan.
 
 ### Filtering
 
@@ -77,7 +80,6 @@ Each segment has its own filter: ticking something in one segment leaves the oth
 
 - **Collapse all** or **Expand all** (Q) folds or opens every file of the walkthrough.
 - **Collapse file** or **Expand file** (E) folds or opens the file being read.
-- **Hide waypoints** or **Show waypoints** (X) hides every waypoint, its mark in the gutter and its box, and leaves the code. Stepping to a waypoint shows them again.
 
 A file folded by hand opens again when stepping reaches a waypoint inside it.
 

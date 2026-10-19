@@ -34,7 +34,8 @@ const CATEGORY_BY_TYPE: ReadonlyMap<CodeBlockType, WaypointCategory> = new Map<C
   ["root-statement", "statement"],
   ["file", "file"],
 ])
-const LOOSE_CATEGORIES: ReadonlySet<WaypointCategory> = new Set<WaypointCategory>(["import", "type", "statement"])
+const LOOSE_CATEGORIES: ReadonlySet<WaypointCategory> = new Set<WaypointCategory>(["type", "statement"])
+const UNMARKED_CATEGORIES: ReadonlySet<WaypointCategory> = new Set<WaypointCategory>(["import"])
 const READ_IN_PARTS_CATEGORIES: ReadonlySet<WaypointCategory> = new Set<WaypointCategory>(["function", "class", "method", "variable"])
 const DEFAULT_CATEGORY: WaypointCategory = "statement"
 const STEP_CATEGORY: WaypointCategory = "statement"
@@ -95,7 +96,10 @@ const withDistinctNames = (stops: readonly (Stop & { readonly name: string })[])
   })
 
 const listStops = (filePath: string, { codeBlocks }: ASTCodeGroupGraph): (Stop & { readonly name: string })[] => {
-  const stops = codeBlocks.filter((block) => block.astGraph.filePath === filePath && block.lineOfCodeDiffs !== null).map(stopOf)
+  const stops = codeBlocks
+    .filter((block) => block.astGraph.filePath === filePath && block.lineOfCodeDiffs !== null)
+    .map(stopOf)
+    .filter((stop) => !UNMARKED_CATEGORIES.has(stop.category))
   const distinct = [...new Set(stops.map(keyOf))].map((key) => joinChanges(stops.filter((stop) => keyOf(stop) === key)))
   const inLineOrder = [...distinct].sort((one, two) => one.lines[0] - two.lines[0] || one.lines[1] - two.lines[1])
   const joined = joinLoose(inLineOrder).map((stop) => ({ ...stop, blocks: inWrittenOrder(stop.blocks) }))

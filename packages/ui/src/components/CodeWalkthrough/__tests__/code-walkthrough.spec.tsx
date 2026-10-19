@@ -51,18 +51,18 @@ const createNavigation = (overrides: Partial<WalkthroughNavigation> = {}): Walkt
   positionLabel: null,
   canStepBack: true,
   canStepForward: true,
-  currentWaypoint: { isReviewed: false },
+  currentWaypoint: { isReviewed: false, isOpen: false, canComment: true },
   areFilesCollapsed: false,
   isFileCollapsed: false,
-  areWaypointsHidden: false,
   onPrevious: vi.fn(),
   onNext: vi.fn(),
   onCurrentReviewedChange: vi.fn(),
+  onCommentOnCurrent: vi.fn(),
   onFilterChange: vi.fn(),
   onShowReviewedChange: vi.fn(),
   onFilesCollapsedChange: vi.fn(),
   onFileCollapsedChange: vi.fn(),
-  onWaypointsHiddenChange: vi.fn(),
+  onCurrentOpenChange: vi.fn(),
   ...overrides,
 })
 
@@ -118,10 +118,11 @@ describe("CodeWalkthrough", () => {
       "Previous waypoint",
       "Next waypoint",
       "Mark as reviewed",
+      "Add comment",
       "Filter",
       "Collapse all",
       "Collapse file",
-      "Hide waypoints",
+      "Expand waypoint",
     ])
   })
 
@@ -180,7 +181,7 @@ describe("CodeWalkthrough", () => {
 
     expect(onCurrentReviewedChange).toHaveBeenCalledWith(true)
 
-    view.rerender(<CodeWalkthrough {...createProps({ navigation: createNavigation({ onCurrentReviewedChange, currentWaypoint: { isReviewed: true } }) })} />)
+    view.rerender(<CodeWalkthrough {...createProps({ navigation: createNavigation({ onCurrentReviewedChange, currentWaypoint: { isReviewed: true, isOpen: false, canComment: true } }) })} />)
     fireEvent.click(await findNavigatorButton("Reviewed"))
 
     expect(onCurrentReviewedChange).toHaveBeenLastCalledWith(false)
@@ -203,14 +204,42 @@ describe("CodeWalkthrough", () => {
     expect(onCurrentReviewedChange).not.toHaveBeenCalled()
   })
 
-  it("cannot mark a waypoint reviewed while the waypoints are hidden, and says how to show them", async () => {
-    renderWalkthrough({ areWaypointsHidden: true })
-    const button = await findNavigatorButton("Mark as reviewed")
+  it("starts a comment on the current waypoint with C, from the button right of Mark as reviewed", async () => {
+    const onCommentOnCurrent = vi.fn()
+    renderWalkthrough({ onCommentOnCurrent })
+    const labels = await navigatorLabels("Add comment")
 
-    fireEvent.click(button)
+    expect(labels.indexOf("Add comment")).toBe(labels.indexOf("Mark as reviewed") + 1)
 
-    expect(await screen.findByText("Show the waypoints first: press X.", { selector: "[data-slot=tooltip-content]" })).toBeTruthy()
-    expect(button.getAttribute("aria-describedby")).toBeTruthy()
+    fireEvent.keyDown(document.body, { key: "c" })
+
+    expect(onCommentOnCurrent).toHaveBeenCalledOnce()
+  })
+
+  it("cannot start a comment on a waypoint that has no lines on the page, and says why", async () => {
+    const onCommentOnCurrent = vi.fn()
+    renderWalkthrough({ currentWaypoint: { isReviewed: false, isOpen: false, canComment: false }, onCommentOnCurrent })
+    const button = await findNavigatorButton("Add comment")
+
+    expect(button.getAttribute("aria-disabled")).toBe("true")
+
+    fireEvent.keyDown(document.body, { key: "c" })
+
+    expect(await screen.findByText("This waypoint has no lines on the page to comment on.", { selector: "[data-slot=tooltip-content]" })).toBeTruthy()
+    expect(onCommentOnCurrent).not.toHaveBeenCalled()
+  })
+
+  it("cannot expand a waypoint before one is current, and says what to do when R is pressed", async () => {
+    const onCurrentOpenChange = vi.fn()
+    renderWalkthrough({ currentWaypoint: null, onCurrentOpenChange })
+    const button = await findNavigatorButton("Expand waypoint")
+
+    expect(button.getAttribute("aria-disabled")).toBe("true")
+
+    fireEvent.keyDown(document.body, { key: "r" })
+
+    expect(await screen.findByText("Pick a waypoint first: press D to step to the next one.", { selector: "[data-slot=tooltip-content]" })).toBeTruthy()
+    expect(onCurrentOpenChange).not.toHaveBeenCalled()
   })
 
   it("filters by kind and shows the reviewed waypoints from the filter menu", async () => {
@@ -276,29 +305,34 @@ describe("CodeWalkthrough", () => {
   })
 
   it("has no review button and no filter when the page does not track them", async () => {
-    renderWalkthrough({ onCurrentReviewedChange: null, onFilterChange: null, onShowReviewedChange: null })
+    renderWalkthrough({ onCurrentReviewedChange: null, onCommentOnCurrent: null, onFilterChange: null, onShowReviewedChange: null })
 
-    expect(await navigatorLabels("Next waypoint")).toStrictEqual(["Jump to", "Previous waypoint", "Next waypoint", "Collapse all", "Collapse file", "Hide waypoints"])
+    expect(await navigatorLabels("Next waypoint")).toStrictEqual(["Jump to", "Previous waypoint", "Next waypoint", "Collapse all", "Collapse file", "Expand waypoint"])
   })
 
-  it("collapses every file with Q, the file being read with E, and hides the waypoints with X", async () => {
+  it("collapses every file with Q, the file being read with E, and expands the current waypoint with R", async () => {
     const onFilesCollapsedChange = vi.fn()
     const onFileCollapsedChange = vi.fn()
-    const onWaypointsHiddenChange = vi.fn()
-    const view = renderWalkthrough({ onFilesCollapsedChange, onFileCollapsedChange, onWaypointsHiddenChange })
+    const onCurrentOpenChange = vi.fn()
+    const view = renderWalkthrough({ onFilesCollapsedChange, onFileCollapsedChange, onCurrentOpenChange })
     await findNavigatorButton("Collapse all")
 
     fireEvent.keyDown(document.body, { key: "q" })
     fireEvent.keyDown(document.body, { key: "e" })
-    fireEvent.keyDown(document.body, { key: "x" })
+    fireEvent.keyDown(document.body, { key: "r" })
 
     expect(onFilesCollapsedChange).toHaveBeenCalledWith(true)
     expect(onFileCollapsedChange).toHaveBeenCalledWith(true)
-    expect(onWaypointsHiddenChange).toHaveBeenCalledWith(true)
+    expect(onCurrentOpenChange).toHaveBeenCalledWith(true)
 
-    view.rerender(<CodeWalkthrough {...createProps({ navigation: createNavigation({ areFilesCollapsed: true, isFileCollapsed: true, areWaypointsHidden: true }) })} />)
+    const navigation = createNavigation({ areFilesCollapsed: true, isFileCollapsed: true, currentWaypoint: { isReviewed: false, isOpen: true, canComment: true }, onCurrentOpenChange })
+    view.rerender(<CodeWalkthrough {...createProps({ navigation })} />)
 
-    expect(await navigatorLabels("Expand all")).toStrictEqual(["Jump to", "Previous waypoint", "Next waypoint", "Mark as reviewed", "Filter", "Expand all", "Expand file", "Show waypoints"])
+    expect(await navigatorLabels("Expand all")).toStrictEqual(["Jump to", "Previous waypoint", "Next waypoint", "Mark as reviewed", "Add comment", "Filter", "Expand all", "Expand file", "Collapse waypoint"])
+
+    fireEvent.keyDown(document.body, { key: "r" })
+
+    expect(onCurrentOpenChange).toHaveBeenLastCalledWith(false)
   })
 
   it("leaves the keys to a field that is being typed in", async () => {

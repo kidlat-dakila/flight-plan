@@ -20,6 +20,7 @@ import {
 } from "@/lib/gutter-card"
 import type { CodeLinkTargets } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
+import { WAYPOINT_KEY } from "@/lib/walkthrough-navigation"
 
 export type WaypointMarkKind = FindingMarkKind | "plain"
 
@@ -58,7 +59,8 @@ interface WaypointMarkProps {
 }
 
 const HOVER_DELAY_MS = 150
-const OPEN_HINT = "Click or press Enter to open"
+const EXPAND_KEY_HINT = `Click or press ${WAYPOINT_KEY.toUpperCase()} to expand`
+const EXPAND_CLICK_HINT = "Click to expand"
 const STEM_CLASSES = "pointer-events-none absolute left-1/2 -ml-px w-0.5 bg-(--line) transition-opacity duration-[180ms] ease-out"
 const STEM_BELOW_CLASSES: Record<StemReach, string | null> = {
   start: "top-[1.3125rem] bottom-0",
@@ -97,11 +99,12 @@ const MarkGlyph = ({ kind }: { readonly kind: WaypointMarkKind }) =>
 
 const WaypointCard = ({
   waypoint,
+  isCurrent,
   isReviewPending,
   codeLinks,
   onOpenCodeLink,
   onReviewedChange,
-}: Pick<WaypointMarkProps, "waypoint" | "isReviewPending" | "codeLinks" | "onOpenCodeLink" | "onReviewedChange">) => {
+}: Pick<WaypointMarkProps, "waypoint" | "isCurrent" | "isReviewPending" | "codeLinks" | "onOpenCodeLink" | "onReviewedChange">) => {
   const firstBlock = waypoint.reading?.slice(0, 1) ?? null
   const metaSegments = [waypoint.rangeLabel, waypoint.positionLabel]
     .filter((label) => label !== null)
@@ -126,7 +129,7 @@ const WaypointCard = ({
           : <Prose blocks={firstBlock} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} className={GUTTER_CARD_PROSE_CLASSES} />}
       </div>
       <div className="flex min-h-9 items-center gap-2 border-t py-1 pr-1 pl-3 text-xs text-muted-foreground">
-        <span>{OPEN_HINT}</span>
+        <span>{isCurrent ? EXPAND_KEY_HINT : EXPAND_CLICK_HINT}</span>
         {onReviewedChange === null
           ? null
           : (
@@ -214,6 +217,7 @@ const WaypointMark = ({
               <HoverCardArrow />
               <WaypointCard
                 waypoint={waypoint}
+                isCurrent={isCurrent}
                 isReviewPending={isReviewPending}
                 codeLinks={codeLinks}
                 onOpenCodeLink={onOpenCodeLink}

@@ -969,24 +969,6 @@
               "waypoints": [
                 {
                   "id": "w1",
-                  "title": "Added the import of `request()`",
-                  "declaration": "Lines 1–1",
-                  "reading": "The author added an import of [`request()`](code:src/api/client.ts#L18-25) from `@/api/client`. [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) calls it, so that the request for a promo gets the `/api` prefix and the `ApiError` of every other request in `src/api/`.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 1
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/api/promo.ts#import@1:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w2",
                   "title": "Added the type `Promo`",
                   "declaration": "Promo",
                   "reading": "The author added a type `Promo` that has a `code`, a string, and a `percentOff`, a number. [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) returns one. [`CartState`](code:src/stores/cart-store.ts#CartState) keeps one as `promo`, so that [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents) can read its `percentOff`. No code checks the response against the type: [`request()` casts the JSON to it](code:src/api/client.ts#L24).",
@@ -1004,7 +986,7 @@
                   "children": []
                 },
                 {
-                  "id": "w3",
+                  "id": "w2",
                   "title": "Added `fetchPromo()` to request the promo of a code",
                   "declaration": "fetchPromo",
                   "reading": "The author added a function `fetchPromo()` that requests the promo of a code and returns it as a [`Promo`](code:src/api/promo.ts#Promo). `fetchPromo(\"TEA10\")` calls [`request()`](code:src/api/client.ts#L18-25) with `\"/promos/TEA10\"`, and it passes the code through `encodeURIComponent()` first, so `\"A/B\"` becomes `\"/promos/A%2FB\"`. [`request()` throws an `ApiError`](code:src/api/client.ts#L23) for a response that is not ok, and `fetchPromo()` does not catch it. [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) passes the function to `useMutation` as its `mutationFn`, so that the cart can ask the API which discount a typed code gives.",
@@ -1028,25 +1010,7 @@
               "path": "src/stores/cart-store.ts",
               "waypoints": [
                 {
-                  "id": "w4",
-                  "title": "Added the type import of `Promo`",
-                  "declaration": "Lines 2–2",
-                  "reading": "The author added a type-only import of [`Promo`](code:src/api/promo.ts#Promo) from `@/api/promo`. [`CartState`](code:src/stores/cart-store.ts#CartState) uses it for `promo` and for the argument of `applyPromo`, so that the store keeps the promo in the shape the API returns.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 2,
-                    "lineEnd": 2
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/stores/cart-store.ts#import@2:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w5",
+                  "id": "w3",
                   "title": "Modified `CartState` to have a promo",
                   "declaration": "CartState",
                   "reading": "The author modified a type `CartState` that now has:\n\n- `promo`, a [`Promo`](code:src/api/promo.ts#Promo), or `null` when no promo is applied\n- `applyPromo`, an action that takes a [`Promo`](code:src/api/promo.ts#Promo) and returns nothing\n\n[`useCartStore`](code:src/stores/cart-store.ts#useCartStore) gives both a value, and [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents) takes a `CartState`, so that the selector can read `promo` beside `items`.",
@@ -1064,7 +1028,7 @@
                   "children": []
                 },
                 {
-                  "id": "w6",
+                  "id": "w4",
                   "title": "Modified `useCartStore` to keep a promo until the cart is cleared",
                   "declaration": "useCartStore",
                   "reading": "The author modified a store `useCartStore` that now:\n\n- starts with `promo: null`\n- sets `promo` to the promo it is given in the new action `applyPromo`\n- sets `promo` to `null` in `clear`, with `items: []`\n\n[`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) passes `applyPromo` to `useMutation` as its `onSuccess`, so that a fetched promo is kept where [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents) reads it. `addItem` and `removeItem` do not write `promo`. A promo therefore stays applied when a shopper removes every line with [the \"Remove\" button of `<CartLine />`](code:src/routes/cart/components/CartLine.tsx#L13-15), and only [`handleConfirm()`](code:src/routes/cart/components/CartSummary.tsx#L13-16) removes it, through `clear`.",
@@ -1090,7 +1054,7 @@
                   "children": []
                 },
                 {
-                  "id": "w7",
+                  "id": "w5",
                   "title": "Added the constant `PERCENT`",
                   "declaration": "PERCENT",
                   "reading": "The author added a constant `PERCENT` with the value `100`. [`selectDiscountCents()` divides by it](code:src/stores/cart-store.ts#L43), so that a `percentOff` of `10` gives a tenth of the total.",
@@ -1108,7 +1072,7 @@
                   "children": []
                 },
                 {
-                  "id": "w8",
+                  "id": "w6",
                   "title": "Added `selectDiscountCents()` to compute the discount of the applied promo",
                   "declaration": "selectDiscountCents",
                   "reading": "The author added a function `selectDiscountCents()` that returns the discount of the cart in cents. It:\n\n- returns `0` when `promo` is `null`\n- returns the result of [`selectTotalCents()`](code:src/stores/cart-store.ts#L35-37) times `percentOff`, divided by [`PERCENT`](code:src/stores/cart-store.ts#PERCENT) and rounded with `Math.round()`, for any other `promo`\n\nA total of 1999 cents with `percentOff: 10` gives `200`. [`<CartSummary />` passes the function to `useCartStore` as a selector](code:src/routes/cart/components/CartSummary.tsx#L9), so that the summary can show the discount and subtract it from the total. The function does not limit `percentOff`: a value of `150` gives a discount over the total.",
@@ -3389,27 +3353,7 @@
               "path": "src/hooks/use-promo.ts",
               "waypoints": [
                 {
-                  "id": "w9",
-                  "title": "Added the imports of the mutation, the request and the store",
-                  "declaration": "Lines 1–3",
-                  "reading": "The author added three imports: `useMutation` from `@tanstack/react-query`, [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) and [`useCartStore`](code:src/stores/cart-store.ts#useCartStore). [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) uses all three, so that one function holds both the request for a promo and the write of its result.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 3
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/hooks/use-promo.ts#import@1:1",
-                    "src/hooks/use-promo.ts#import@2:1",
-                    "src/hooks/use-promo.ts#import@3:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w10",
+                  "id": "w7",
                   "title": "Added `useApplyPromo()` to write a fetched promo to the cart store",
                   "declaration": "useApplyPromo",
                   "reading": "The author added a function `useApplyPromo()` that returns a mutation, which:\n\n- runs [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) with the code it is called with, as its `mutationFn`\n- passes the returned [`Promo`](code:src/api/promo.ts#Promo) to [the store action `applyPromo`](code:src/stores/cart-store.ts#L23-25), as its `onSuccess`\n\n[`<PromoForm />` calls the mutation with the typed code](code:src/routes/cart/components/PromoForm.tsx#L9-12) and reads its `isPending` and `isError`, so that the form holds no request and no store access of its own. When `fetchPromo()` throws, `onSuccess` does not run, so a promo that was applied before stays in the store.",
@@ -3439,26 +3383,7 @@
               "path": "src/routes/cart/components/CartSummary.tsx",
               "waypoints": [
                 {
-                  "id": "w11",
-                  "title": "Added the imports of `selectDiscountCents()` and `<PromoForm />`",
-                  "declaration": "Lines 4–5",
-                  "reading": "The author modified an import from `@/stores/cart-store` that now also names [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents), and added an import of [`<PromoForm />`](code:src/routes/cart/components/PromoForm.tsx#PromoForm). [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary) reads the discount with the first and renders the second, so that the form and its result are in one component.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 4,
-                    "lineEnd": 5
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/cart/components/CartSummary.tsx#import@4:1",
-                    "src/routes/cart/components/CartSummary.tsx#import@5:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w12",
+                  "id": "w8",
                   "title": "Modified `<CartSummary />` to show the promo form and the discount",
                   "declaration": "CartSummary",
                   "reading": "The author modified a component `<CartSummary />` that now:\n\n- reads the discount in cents from the store with [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents)\n- renders [`<PromoForm />`](code:src/routes/cart/components/PromoForm.tsx#PromoForm) above the total\n- renders a line `Discount:` with the discount when it is over `0`\n- renders `totalCents - discountCents` in the line `Total:`, where it rendered `totalCents`\n\nA cart of $19.99 with a promo of 10 percent shows `Discount: $2.00` and `Total: $17.99`. [`<CartPage />` renders the component under the cart lines](code:src/routes/cart/index.tsx#L15), so that a shopper enters a code and reads its result in the same place. `handleConfirm()` did not change, and [the `clear` it calls now also sets `promo` to `null`](code:src/stores/cart-store.ts#L26-28).",
@@ -3483,7 +3408,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w12.1",
+                      "id": "w8.1",
                       "title": null,
                       "declaration": "CartSummary › discountCents",
                       "reading": "",
@@ -3503,7 +3428,7 @@
                       "children": []
                     },
                     {
-                      "id": "w12.2",
+                      "id": "w8.2",
                       "title": null,
                       "declaration": "CartSummary › Markup condition :21",
                       "reading": "",
@@ -3529,27 +3454,7 @@
               "path": "src/routes/cart/components/PromoForm.tsx",
               "waypoints": [
                 {
-                  "id": "w13",
-                  "title": "Added the imports of the form's state, controls and mutation",
-                  "declaration": "Lines 1–3",
-                  "reading": "The author added three imports: `useState` and the type `FormEvent` from `react`, [`<Button />`](code:src/components/ui/button.tsx#L15-17) and [`<Input />`](code:src/components/ui/input.tsx#L4-8) from the barrel `@/components/ui`, and [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo). [`<PromoForm />`](code:src/routes/cart/components/PromoForm.tsx#PromoForm) imports neither `fetchPromo()` nor the cart store, because the mutation of `useApplyPromo()` holds both.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 3
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/cart/components/PromoForm.tsx#import@1:1",
-                    "src/routes/cart/components/PromoForm.tsx#import@2:1",
-                    "src/routes/cart/components/PromoForm.tsx#import@3:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w14",
+                  "id": "w9",
                   "title": "Added `<PromoForm />` to submit a promo code",
                   "declaration": "PromoForm",
                   "reading": "The author added a component `<PromoForm />` that:\n\n- keeps the typed text in the state `code`, which starts as `\"\"`\n- calls `event.preventDefault()` on submit, then calls the mutation of [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) with `code`\n- disables the Apply button while `isPending` is `true`\n- renders `That code is not valid.` while `isError` is `true`\n\n[`<CartSummary />` renders it above the total](code:src/routes/cart/components/CartSummary.tsx#L20), so that a shopper can apply a promo to the cart they are looking at. `isError` is `true` for every error the request throws, so [a 500 response](code:src/api/client.ts#L23) shows the same message as a code the API does not know. The component does not check `code` before it submits: an empty field requests `/api/promos/`. The field keeps its text after a promo is applied.",
@@ -3582,7 +3487,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w14.1",
+                      "id": "w9.1",
                       "title": null,
                       "declaration": "PromoForm › code",
                       "reading": "",
@@ -3600,7 +3505,7 @@
                       "children": []
                     },
                     {
-                      "id": "w14.2",
+                      "id": "w9.2",
                       "title": null,
                       "declaration": "PromoForm › applyPromo",
                       "reading": "",
@@ -3618,7 +3523,7 @@
                       "children": []
                     },
                     {
-                      "id": "w14.3",
+                      "id": "w9.3",
                       "title": null,
                       "declaration": "PromoForm › handleSubmit",
                       "reading": "",
@@ -3639,7 +3544,7 @@
                       "children": []
                     },
                     {
-                      "id": "w14.4",
+                      "id": "w9.4",
                       "title": null,
                       "declaration": "PromoForm › form.onSubmit",
                       "reading": "",
@@ -3657,7 +3562,7 @@
                       "children": []
                     },
                     {
-                      "id": "w14.5",
+                      "id": "w9.5",
                       "title": null,
                       "declaration": "PromoForm › Input.onChange",
                       "reading": "",
@@ -3677,7 +3582,7 @@
                       "children": []
                     },
                     {
-                      "id": "w14.6",
+                      "id": "w9.6",
                       "title": null,
                       "declaration": "PromoForm › Markup condition :20",
                       "reading": "",

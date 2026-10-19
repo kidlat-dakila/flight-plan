@@ -92,15 +92,18 @@ const changedAt = (...diffLines: readonly LineRange[]): GroupFile => ({ ...CHECK
 describe("generateWalkthroughFromBlocks", () => {
   it("makes one waypoint per changed declaration, with the kind of change read from the syntax tree", () => {
     expect(stopsOf(walkthroughOf([changedAt([1, 26])]))).toStrictEqual([
-      "w1 src/checkout.ts Lines 1–1 import 1-1",
-      "w2 src/checkout.ts Cart type 3-5",
-      "w3 src/checkout.ts TAX_RATE variable 7-7",
-      "w4 src/checkout.ts subtotal function 9-12",
-      "w5 src/checkout.ts Checkout class 14-24",
-      "w6 src/checkout.ts Checkout.total method 15-17",
-      "w7 src/checkout.ts Checkout.Receipt.print method 20-22",
-      "w8 src/checkout.ts Lines 26–26 statement 26-26",
+      "w1 src/checkout.ts Cart type 3-5",
+      "w2 src/checkout.ts TAX_RATE variable 7-7",
+      "w3 src/checkout.ts subtotal function 9-12",
+      "w4 src/checkout.ts Checkout class 14-24",
+      "w5 src/checkout.ts Checkout.total method 15-17",
+      "w6 src/checkout.ts Checkout.Receipt.print method 20-22",
+      "w7 src/checkout.ts Lines 26–26 statement 26-26",
     ])
+  })
+
+  it("gives a changed import no waypoint", () => {
+    expect(stopsOf(walkthroughOf([changedAt([1, 1], [10, 10])]))).toStrictEqual(["w1 src/checkout.ts subtotal function 9-12"])
   })
 
   it("stops at the function a changed line is in, not at a function nested in it", () => {
@@ -151,14 +154,13 @@ describe("generateWalkthroughFromBlocks", () => {
     expect([waypoint.declaration, waypoint.journeyNodeId]).toStrictEqual(["render", "src/page.ts#function@1:1"])
   })
 
-  it("links a changed type, a changed import and a changed statement at the top level of a file to no node", () => {
+  it("links a changed type and a changed statement at the top level of a file to no node", () => {
     const links = walkthroughOf([changedAt([1, 1], [4, 4], [26, 26])]).files[0].waypoints.map((waypoint) => [
       waypoint.declaration,
       waypoint.journeyNodeId,
     ])
 
     expect(links).toStrictEqual([
-      ["Lines 1–1", null],
       ["Cart", null],
       ["Lines 26–26", null],
     ])

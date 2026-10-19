@@ -813,24 +813,6 @@
               "waypoints": [
                 {
                   "id": "w2",
-                  "title": "Removed `formatQuantity` from the `@/lib/format` import",
-                  "declaration": "Lines 2–2",
-                  "reading": "The author modified an import of `@/lib/format` that now names `formatPrice` alone, where it named `formatPrice` and `formatQuantity`. [`<CartLine />` renders `item.quantity` with no call to `formatQuantity()`](code:src/routes/cart/components/CartLine.tsx#L11), and the change removes `formatQuantity()` from `src/lib/format.ts`, which leaves [`formatPrice()`](code:src/lib/format.ts#formatPrice) as the one function that file exports.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 2,
-                    "lineEnd": 2
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/cart/components/CartLine.tsx#import@2:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w3",
                   "title": "Modified `<CartLine />` to render the quantity as a number",
                   "declaration": "CartLine",
                   "reading": "The author modified a component `<CartLine />` that now renders `item.quantity` as the number it is, in place of the text `formatQuantity(item.quantity)` returned. A line with 3 units shows `3`, where it showed `3 items`. A line with 1 unit shows `1`, where it showed `1 item`. [`<CartPage />` renders one `<CartLine />` per item of the cart](code:src/routes/cart/index.tsx#L11-13), so every line of the cart page shows the number alone.",

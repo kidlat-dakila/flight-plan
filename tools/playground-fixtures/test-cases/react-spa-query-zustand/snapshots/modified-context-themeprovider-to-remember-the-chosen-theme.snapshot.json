@@ -405,24 +405,6 @@
               "waypoints": [
                 {
                   "id": "w1",
-                  "title": "Added `useEffect` to the import from `react`",
-                  "declaration": "Lines 1–1",
-                  "reading": "The author added a name to the import from `react`, which now imports `useEffect` too. [`<ThemeProvider />` calls `useEffect`](code:src/components/ThemeProvider.tsx#L20-22) to write the theme to `localStorage`.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 1
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/components/ThemeProvider.tsx#import@1:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w2",
                   "title": "Added the constant `THEME_STORAGE_KEY` for the `localStorage` entry",
                   "declaration": "THEME_STORAGE_KEY",
                   "reading": "The author added a constant `THEME_STORAGE_KEY` that holds `\"storefront-theme\"`, the key of the `localStorage` entry for the theme. [`readStoredTheme()` reads the entry under this key](code:src/components/ThemeProvider.tsx#L15), and [the effect of `<ThemeProvider />` writes the entry under the same key](code:src/components/ThemeProvider.tsx#L21), so that the theme is read from the entry it was written to.",
@@ -440,7 +422,7 @@
                   "children": []
                 },
                 {
-                  "id": "w3",
+                  "id": "w2",
                   "title": "Added `readStoredTheme()` to return the theme from `localStorage`",
                   "declaration": "readStoredTheme",
                   "reading": "The author added a function `readStoredTheme()` that returns `\"dark\"` when `localStorage` holds `\"dark\"` under [`THEME_STORAGE_KEY`](code:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY), and `\"light\"` for `null` and for every other value. [`<ThemeProvider />` passes it to `useState` as the initial state](code:src/components/ThemeProvider.tsx#L19), so that a visitor who chose the dark theme starts in the dark theme after a reload.",
@@ -460,7 +442,7 @@
                   "children": []
                 },
                 {
-                  "id": "w4",
+                  "id": "w3",
                   "title": "Modified `<ThemeProvider />` to keep `theme` in `localStorage`",
                   "declaration": "ThemeProvider",
                   "reading": "The author modified a component `<ThemeProvider />` that now:\n\n- starts `theme` from the value [`readStoredTheme()`](code:src/components/ThemeProvider.tsx#readStoredTheme) returns, in place of `\"light\"`\n- calls `localStorage.setItem()` with [`THEME_STORAGE_KEY`](code:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY) and `theme`, after the first render and after each change of `theme`\n\n[`<RootLayout />` takes `theme` from `useTheme()`](code:src/routes/root-layout.tsx#L7) and [sets it as `data-theme` on the page](code:src/routes/root-layout.tsx#L9), so that every route starts in the theme the visitor chose before the reload.",
@@ -483,7 +465,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w4.1",
+                      "id": "w3.1",
                       "title": null,
                       "declaration": "ThemeProvider › theme",
                       "reading": "",
@@ -503,7 +485,7 @@
                       "children": []
                     },
                     {
-                      "id": "w4.2",
+                      "id": "w3.2",
                       "title": null,
                       "declaration": "ThemeProvider › useEffect",
                       "reading": "",

@@ -1111,24 +1111,6 @@
               "waypoints": [
                 {
                   "id": "w3",
-                  "title": "Modified the import from `@/lib/format` to add `STORE_CURRENCY`",
-                  "declaration": "Lines 2–2",
-                  "reading": "The author modified an import from `@/lib/format` that now also brings in [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), the constant `\"USD\"`. [`<CartLine />`](code:src/routes/cart/components/CartLine.tsx#CartLine) passes it to [`formatPrice()`](code:src/lib/format.ts#formatPrice), because [`formatPrice()`](code:src/lib/format.ts#formatPrice) now takes the currency from its caller.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 2,
-                    "lineEnd": 2
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/cart/components/CartLine.tsx#import@2:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w4",
                   "title": "Modified `<CartLine />` to pass the store currency for the line total",
                   "declaration": "CartLine",
                   "reading": "The author modified a component `<CartLine />` that now passes [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), which is `\"USD\"`, as the second argument of [`formatPrice()`](code:src/lib/format.ts#formatPrice). [`formatPrice()`](code:src/lib/format.ts#formatPrice) now takes the currency from its caller, so the line total still shows in US dollars: `$25.00` for two items of 1250 cents.",
@@ -2138,25 +2120,7 @@
               "path": "src/routes/cart/components/CartSummary.tsx",
               "waypoints": [
                 {
-                  "id": "w5",
-                  "title": "Modified the import from `@/lib/format` to add `STORE_CURRENCY`",
-                  "declaration": "Lines 3–3",
-                  "reading": "The author modified an import from `@/lib/format` that now also brings in [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), the constant `\"USD\"`. [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary) passes it to [`formatPrice()`](code:src/lib/format.ts#formatPrice), because [`formatPrice()`](code:src/lib/format.ts#formatPrice) now takes the currency from its caller.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 3,
-                    "lineEnd": 3
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/cart/components/CartSummary.tsx#import@3:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w6",
+                  "id": "w4",
                   "title": "Modified `<CartSummary />` to pass the store currency for the cart total",
                   "declaration": "CartSummary",
                   "reading": "The author modified a component `<CartSummary />` that now passes [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), which is `\"USD\"`, as the second argument of [`formatPrice()`](code:src/lib/format.ts#formatPrice). [`formatPrice()`](code:src/lib/format.ts#formatPrice) now takes the currency from its caller, so the cart total still shows in US dollars: `Total: $25.00` for a cart of 2500 cents.",
@@ -3226,25 +3190,7 @@
               "path": "src/routes/catalog/components/ProductCard.tsx",
               "waypoints": [
                 {
-                  "id": "w7",
-                  "title": "Modified the import from `@/lib/format` to add `STORE_CURRENCY`",
-                  "declaration": "Lines 1–1",
-                  "reading": "The author modified an import from `@/lib/format` that now also brings in [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), the constant `\"USD\"`. [`<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) passes it to [`formatPrice()`](code:src/lib/format.ts#formatPrice), because [`formatPrice()`](code:src/lib/format.ts#formatPrice) now takes the currency from its caller.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 1
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/catalog/components/ProductCard.tsx#import@1:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w8",
+                  "id": "w5",
                   "title": "Modified `<ProductCard />` to pass the store currency for the product price",
                   "declaration": "ProductCard",
                   "reading": "The author modified a component `<ProductCard />` that now passes [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), which is `\"USD\"`, as the second argument of [`formatPrice()`](code:src/lib/format.ts#formatPrice). [`formatPrice()`](code:src/lib/format.ts#formatPrice) now takes the currency from its caller, so the product price still shows in US dollars: `$12.50` for 1250 cents.",

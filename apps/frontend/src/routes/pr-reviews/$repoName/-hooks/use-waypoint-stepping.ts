@@ -51,6 +51,7 @@ export interface WaypointStepping {
   readonly steppingOf: (segment: SteppedSegment) => SegmentStepping
   readonly onSectionEntered: (anchorId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
+  readonly onCurrentOpenChange: (isOpen: boolean) => void
   readonly onOpenCodeLink: (anchorId: string) => void
 }
 
@@ -208,6 +209,10 @@ export const useWaypointStepping = (
       setCurrentWaypointId(waypointId)
       setOpenWaypointIds((openIds) =>
         new Set(openIds.has(waypointId) ? [...openIds].filter((openId) => openId !== waypointId) : [...openIds, waypointId]))
+    },
+    onCurrentOpenChange: (isOpen) => {
+      if (!isOpen) setOpenWaypointIds((openIds) => new Set([...openIds].filter((openId) => openId !== currentWaypointId)))
+      visitWaypoint(currentWaypointId, isOpen)
     },
     onOpenCodeLink: (anchorId) => {
       const waypoint = waypoints.find((candidate) => candidate.anchorId === anchorId)

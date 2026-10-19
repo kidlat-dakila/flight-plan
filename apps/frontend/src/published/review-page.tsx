@@ -80,6 +80,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
     onReviewedChange: showUnavailableFeature,
     onFilterChange: showUnavailableFeature,
     onShowReviewedChange: showUnavailableFeature,
+    onCommentOnWaypoint: showUnavailableFeature,
   })
 
   return (
@@ -213,7 +214,6 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                         focusedWaypointId={stepping.focusedWaypointId}
                         previewVisit={stepping.previewVisit}
                         isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
-                        areWaypointsHidden={walkthroughLayout.areWaypointsHidden}
                         isReviewPending={false}
                         composer={review.composer}
                         composingRange={null}

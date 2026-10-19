@@ -435,23 +435,38 @@ describe("the review page", () => {
     expect(markOf("The sum is rounded once").getAttribute("data-current")).toBe("true")
   })
 
-  it("hides the waypoints with X and shows them again when stepping", async () => {
+  it("expands the current waypoint with R, as its card says, and collapses it again", async () => {
     showSectionInView("stock-code-walkthrough")
     renderReview({ "review.get": () => ({ data: artifactPage }) })
-    await screen.findByRole("button", { name: "Waypoint 1 of 2: Held units reduce the price" })
-    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Hide waypoints" })
-
-    fireEvent.keyDown(window, { key: "x" })
-
-    await waitFor(() => {
-      expect(screen.queryByRole("button", { name: "Waypoint 1 of 2: Held units reduce the price" })).toBeNull()
-    })
-    expect(screen.getByText("export const priceOf = () => 1", { exact: false })).toBeTruthy()
+    const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
+    await within(navigator).findByRole("button", { name: "Expand waypoint" })
 
     fireEvent.keyDown(window, { key: "d" })
 
-    expect(await screen.findByText("Reading of Held units reduce the price.")).toBeTruthy()
-    expect(markOf("Held units reduce the price")).toBeTruthy()
+    expect(await screen.findByText("Click or press R to expand")).toBeTruthy()
+
+    fireEvent.keyDown(window, { key: "r" })
+
+    expect(await screen.findByRole("region", { name: "Held units reduce the price" })).toBeTruthy()
+    expect(await within(navigator).findByRole("button", { name: "Collapse waypoint" })).toBeTruthy()
+
+    fireEvent.keyDown(window, { key: "r" })
+
+    await waitFor(() => {
+      expect(screen.queryByRole("region", { name: "Held units reduce the price" })).toBeNull()
+    })
+  })
+
+  it("starts a comment on the lines of the current waypoint with C", async () => {
+    showSectionInView("stock-code-walkthrough")
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Add comment" })
+
+    fireEvent.keyDown(window, { key: "d" })
+    await screen.findByText("Reading of Held units reduce the price.")
+    fireEvent.keyDown(window, { key: "c" })
+
+    expect(await screen.findByRole("textbox", { name: "Leave a comment, src/price.ts 11" })).toBeTruthy()
   })
 
   it("collapses the files of the walkthrough on screen with Q", async () => {

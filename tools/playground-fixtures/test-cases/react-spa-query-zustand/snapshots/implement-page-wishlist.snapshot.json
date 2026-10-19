@@ -1244,24 +1244,6 @@
                 {
                   "id": "w1",
                   "title": null,
-                  "declaration": "Lines 6–6",
-                  "reading": "",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 6,
-                    "lineEnd": 6
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/router.tsx#import@6:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w2",
-                  "title": null,
                   "declaration": "router",
                   "reading": "",
                   "needsAttention": null,
@@ -1287,25 +1269,7 @@
               "path": "src/routes/catalog/components/ProductCard.tsx",
               "waypoints": [
                 {
-                  "id": "w3",
-                  "title": "Added the import of `WishlistButton`",
-                  "declaration": "Lines 4–4",
-                  "reading": "The author added an import that names `WishlistButton` from `./WishlistButton`. [`<ProductCard />` renders `<WishlistButton />`](code:src/routes/catalog/components/ProductCard.tsx#L13), and this pull request declares [the component](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton) in the same folder.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 4,
-                    "lineEnd": 4
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/catalog/components/ProductCard.tsx#import@4:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w4",
+                  "id": "w2",
                   "title": "Added the wishlist button to the product card",
                   "declaration": "ProductCard",
                   "reading": "The author added an element to the component `<ProductCard />` that renders [`<WishlistButton />`](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton) after `<AddToCartButton />`, with the product of the card as its `product` prop. [`<CatalogPage />` renders one card per product of the catalogue](code:src/routes/catalog/index.tsx#L10-14) and [`<WishlistPage />` renders one card per wished product](code:src/routes/wishlist/index.tsx#L9-13), so that a shopper can put a product on the wishlist or take it off on both pages. The image, the name, the price and \"Add to cart\" are the same as before.",
@@ -1329,7 +1293,7 @@
               "path": "src/routes/root-layout.tsx",
               "waypoints": [
                 {
-                  "id": "w5",
+                  "id": "w3",
                   "title": null,
                   "declaration": "RootLayout",
                   "reading": "",
@@ -1353,26 +1317,7 @@
               "path": "src/stores/wishlist-store.ts",
               "waypoints": [
                 {
-                  "id": "w6",
-                  "title": "Added the imports of `create` and `Product`",
-                  "declaration": "Lines 1–2",
-                  "reading": "The author added two imports that name `create` from `zustand` and the type [`Product`](code:src/types/product.ts#L1-6) from `@/types/product`. [`useWishlistStore` is the result of `create<WishlistState>()`](code:src/stores/wishlist-store.ts#L9), and [`products` is a `Product[]`](code:src/stores/wishlist-store.ts#L5).",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 2
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/stores/wishlist-store.ts#import@1:1",
-                    "src/stores/wishlist-store.ts#import@2:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w7",
+                  "id": "w4",
                   "title": "Added `WishlistState`, the shape of the wishlist store",
                   "declaration": "WishlistState",
                   "reading": "The author added an interface `WishlistState` that has `products`, a `Product[]`, and `toggleProduct`, a function that takes a `Product` and returns nothing. [`useWishlistStore` is created with `WishlistState`](code:src/stores/wishlist-store.ts#L9) and [the function that `selectIsWished()` returns takes a `WishlistState`](code:src/stores/wishlist-store.ts#L21). The store keeps whole products and not their ids, so that [`<WishlistPage />` passes each product to `<ProductCard />`](code:src/routes/wishlist/index.tsx#L11) with no request for the catalogue. The interface is not exported.",
@@ -1390,7 +1335,7 @@
                   "children": []
                 },
                 {
-                  "id": "w8",
+                  "id": "w5",
                   "title": "Added `useWishlistStore` to hold the wished products",
                   "declaration": "useWishlistStore",
                   "reading": "The author added a Zustand store `useWishlistStore` that:\n\n- starts with `products: []`\n- removes the product from `products` when `toggleProduct()` gets a product whose `id` is in the array\n- appends the product to the end of `products` when its `id` is not in the array\n\n[`<WishlistButton />` calls `toggleProduct(product)` on a click](code:src/routes/catalog/components/WishlistButton.tsx#L9) and [`<WishlistPage />` reads `products`](code:src/routes/wishlist/index.tsx#L5), so that the button and the page share one list with no import between the two components. The store is a module-level value and `create()` gets no `persist` middleware, so a reload of the app starts again with `products: []`.",
@@ -1423,7 +1368,7 @@
                   "children": []
                 },
                 {
-                  "id": "w9",
+                  "id": "w6",
                   "title": "Added `selectIsWished()` to read whether a product is wished",
                   "declaration": "selectIsWished",
                   "reading": "The author added a function `selectIsWished()` that takes a `productId` and returns a second function. The second function takes a `WishlistState`, and returns `true` when `products` has a product with that `id` and `false` when `products` has none. [`<WishlistButton />` passes `selectIsWished(product.id)` to `useWishlistStore`](code:src/routes/catalog/components/WishlistButton.tsx#L6), so that each button reads one boolean for its own product and [shows \"Remove from wishlist\" for `true`](code:src/routes/catalog/components/WishlistButton.tsx#L10).",
@@ -2991,27 +2936,7 @@
               "path": "src/routes/catalog/components/WishlistButton.tsx",
               "waypoints": [
                 {
-                  "id": "w10",
-                  "title": "Added the imports of `Button`, the wishlist store and `Product`",
-                  "declaration": "Lines 1–3",
-                  "reading": "The author added three imports that name [`Button`](code:src/components/ui/button.tsx#L15-17) from `@/components/ui`, [`selectIsWished()`](code:src/stores/wishlist-store.ts#selectIsWished) and [`useWishlistStore`](code:src/stores/wishlist-store.ts#useWishlistStore) from `@/stores/wishlist-store`, and the type [`Product`](code:src/types/product.ts#L1-6) from `@/types/product`. [`<WishlistButton />` uses all four names](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton), and this pull request declares the two names of the store.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 3
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/catalog/components/WishlistButton.tsx#import@1:1",
-                    "src/routes/catalog/components/WishlistButton.tsx#import@2:1",
-                    "src/routes/catalog/components/WishlistButton.tsx#import@3:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w11",
+                  "id": "w7",
                   "title": "Added `<WishlistButton />` to toggle a product on the wishlist",
                   "declaration": "WishlistButton",
                   "reading": "The author added a component `<WishlistButton />` that:\n\n- reads `isWished` with `useWishlistStore(selectIsWished(product.id))`, and `toggleProduct` from the same store\n- renders a `<Button>` with the variant `ghost` that calls `toggleProduct(product)` on a click\n- shows \"Remove from wishlist\" when `isWished` is `true`, and \"Add to wishlist\" when `isWished` is `false`\n\n[`<ProductCard />` renders one `<WishlistButton />` with the product of the card](code:src/routes/catalog/components/ProductCard.tsx#L13), so that a shopper changes the wishlist from the catalogue and from [the wishlist page](code:src/routes/wishlist/index.tsx#L11). [`toggleProduct()` removes a product that `products` has and appends a product that `products` does not have](code:src/stores/wishlist-store.ts#L11-17), so one `onClick` does both.",
@@ -3039,7 +2964,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w11.1",
+                      "id": "w7.1",
                       "title": null,
                       "declaration": "WishlistButton › isWished",
                       "reading": "",
@@ -3057,7 +2982,7 @@
                       "children": []
                     },
                     {
-                      "id": "w11.2",
+                      "id": "w7.2",
                       "title": null,
                       "declaration": "WishlistButton › toggleProduct",
                       "reading": "",
@@ -3078,7 +3003,7 @@
                       "children": []
                     },
                     {
-                      "id": "w11.3",
+                      "id": "w7.3",
                       "title": null,
                       "declaration": "WishlistButton › Button.onClick",
                       "reading": "",
@@ -3097,7 +3022,7 @@
                       "children": []
                     },
                     {
-                      "id": "w11.4",
+                      "id": "w7.4",
                       "title": null,
                       "declaration": "WishlistButton › Condition :10",
                       "reading": "",
@@ -3122,26 +3047,7 @@
               "path": "src/routes/wishlist/index.tsx",
               "waypoints": [
                 {
-                  "id": "w12",
-                  "title": "Added the imports of `ProductCard` and `useWishlistStore`",
-                  "declaration": "Lines 1–2",
-                  "reading": "The author added two imports that name [`ProductCard`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) from `@/routes/catalog/components/ProductCard` and [`useWishlistStore`](code:src/stores/wishlist-store.ts#useWishlistStore) from `@/stores/wishlist-store`. [`<WishlistPage />` uses both names](code:src/routes/wishlist/index.tsx#WishlistPage). The first import takes a component from the folder of the catalogue route, so the wishlist page now depends on that folder.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 2
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/wishlist/index.tsx#import@1:1",
-                    "src/routes/wishlist/index.tsx#import@2:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w13",
+                  "id": "w8",
                   "title": "Added `<WishlistPage />` to list the wished products",
                   "declaration": "WishlistPage",
                   "reading": "The author added a component `<WishlistPage />` that:\n\n- reads `products` with `useWishlistStore((state) => state.products)`\n- returns `<p>Your wishlist is empty.</p>` when `products.length` is `0`\n- renders a `<ul>` with one [`<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) per product, with `product.id` as the key\n\n[`router` renders `<WishlistPage />` at `/wishlist`](code:src/router.tsx#L16), so that a shopper has a page for the products they put on the wishlist. [Each card renders a `<WishlistButton />`](code:src/routes/catalog/components/ProductCard.tsx#L13) that shows \"Remove from wishlist\" on this page, and [a click on that button removes the product from `products`](code:src/stores/wishlist-store.ts#L13-15), so the card leaves the page.",
@@ -3172,7 +3078,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w13.1",
+                      "id": "w8.1",
                       "title": null,
                       "declaration": "WishlistPage › products",
                       "reading": "",
@@ -3193,7 +3099,7 @@
                       "children": []
                     },
                     {
-                      "id": "w13.2",
+                      "id": "w8.2",
                       "title": null,
                       "declaration": "WishlistPage › Condition :6",
                       "reading": "",
@@ -3213,7 +3119,7 @@
                       "children": []
                     },
                     {
-                      "id": "w13.3",
+                      "id": "w8.3",
                       "title": null,
                       "declaration": "WishlistPage › Markup loop :9",
                       "reading": "",

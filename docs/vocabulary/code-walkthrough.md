@@ -40,7 +40,7 @@ One stop on the tour: an explanation of one piece of the change, marked beside i
 | Title | What the reviewer is being shown and why, never just the declaration's name. Until the agent writes it, the title is the declaration's name, marked as a draft. |
 | Reading | The explanation: why this code runs and what goes wrong without it. |
 | Code | A [CodeBlock](review-artifact.md#codeblock) reference: the range the waypoint is about, and which of the file's changes it covers. The diff marks come from those changes. |
-| Code blocks | The [code blocks](codegraph/code-blocks.md) of the waypoint: the block it stops at first, then the changed blocks inside it, in the order they are written. A waypoint made of several imports, types or statements holds each of them. Each is the same object as in the group, and as in a [Journey Flow Diagram](journey-flow-diagram.md) node that holds it. A waypoint in a file the codegraph does not trace has none. |
+| Code blocks | The [code blocks](codegraph/code-blocks.md) of the waypoint: the block it stops at first, then the changed blocks inside it, in the order they are written. A waypoint made of several types or statements holds each of them. Each is the same object as in the group, and as in a [Journey Flow Diagram](journey-flow-diagram.md) node that holds it. A waypoint in a file the codegraph does not trace has none. |
 | Needs attention | Present only when the agent judges the reviewer must not skim this change, and says why. |
 | Findings | The [findings](#findings) about this code. |
 | Children | Waypoints nested inside this one: the [changed steps](#the-steps-of-a-waypoint) of a declaration read in parts. Always two or more, never one: a single child would repeat its parent. |
@@ -80,7 +80,9 @@ Comment threads have their own column of the gutter, beside the last line they c
 | `declaration` | The declaration of its parent and the name of the step, such as `renameUser › user, stored` or `Cart › button.onClick`. A step with no name is named after its type and its line: `renameUser › Condition :4`. |
 | Code blocks | The blocks of its statements, and the changed blocks folded into them |
 
-An import, a type, a statement at the top level of a file and a file no language reads are read whole, and have no children.
+A type, a statement at the top level of a file and a file no language reads are read whole, and have no children.
+
+**An import has no waypoint.** A changed import is shown in the code, marked as added, removed or changed, but nothing stops at it: the waypoint of the code that uses what it imports says why it is there. A file whose only change is to its imports has no File Section.
 
 A waypoint holds its code blocks in three forms, as a [Journey Flow Diagram node](journey-flow-diagram.md#three-forms) does:
 
@@ -131,7 +133,7 @@ The reviewer can narrow the tour to the waypoints worth stopping at. The filter 
 - The code blocks: the type of each [root block](codegraph/code-blocks.md) the waypoints of the segment are in, and what the change did to it, such as **Function** with **Added** or **Component** with **Modified**. Each reads the type, then what happened in its colour: added in the added colour, modified in blue, deleted in the removed colour. The four with the most waypoints are listed, with any that are ticked, and the others are under **More**. Imports are left out: a root block that is an import, added, modified or deleted, has no option and matches no code block filter.
 - **Change type**, a submenu: **Added**, **Modified**, **Removed**
 
-A root block is **added** when every row of it is added, with no removed lines just before it, so a rewritten block is modified. It is **deleted** when it is a `deleted` block, and it is then named by the type of what was taken out, or "Code" when that type is not known. It is **modified** otherwise. A waypoint is in the root blocks of its code blocks, and a step is in the root blocks of its waypoint. A waypoint that covers several root blocks, such as a run of imports, matches each of them.
+A root block is **added** when every row of it is added, with no removed lines just before it, so a rewritten block is modified. It is **deleted** when it is a `deleted` block, and it is then named by the type of what was taken out, or "Code" when that type is not known. It is **modified** otherwise. A waypoint is in the root blocks of its code blocks, and a step is in the root blocks of its waypoint. A waypoint that covers several root blocks, such as a run of statements, matches each of them.
 
 A waypoint is **added** when every line of it is added, **removed** when every code block of it is deleted code, and **modified** when it changes some of its lines. A waypoint on lines the change leaves alone has no change type.
 

@@ -113,7 +113,7 @@ export function checkout(cart: Cart) {
 Two rules place the lines:
 
 - **A location belongs to one root encapsulation.** A range that spans several, such as the whole of a new file, is split into one location per root encapsulation and cut to its lines.
-- **Changed lines outside every root encapsulation have no location.** An import, a type or a bare call at the root of a file is placed by its [code block](code-blocks.md), which gives it its waypoint.
+- **Changed lines outside every root encapsulation have no location.** An import, a type or a bare call at the root of a file is placed by its [code block](code-blocks.md), which gives a type or a bare call its waypoint; an import has none.
 
 ## Where a name is defined
 

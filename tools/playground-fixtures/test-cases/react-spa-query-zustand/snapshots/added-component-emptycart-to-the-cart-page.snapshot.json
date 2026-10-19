@@ -498,24 +498,6 @@
               "waypoints": [
                 {
                   "id": "w1",
-                  "title": "Added the import of `Link` from `react-router`",
-                  "declaration": "Lines 1–1",
-                  "reading": "The author added an import that names `Link` from `react-router`. [`<EmptyCart />` renders one `<Link to=\"/\">`](code:src/routes/cart/components/EmptyCart.tsx#L7) with it, so that the empty cart has a link to the catalogue page.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 1
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/cart/components/EmptyCart.tsx#import@1:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w2",
                   "title": "Added `<EmptyCart />` with a link to the catalogue",
                   "declaration": "EmptyCart",
                   "reading": "The author added a component `<EmptyCart />` that:\n\n- takes no props\n- renders `<p>Your cart is empty.</p>`, the text the cart page rendered before\n- renders `<Link to=\"/\">Browse the catalogue</Link>` under it, in the same `<section>`\n\n[`<CartPage />` returns it when `items.length === 0`](code:src/routes/cart/index.tsx#L8), so that a shopper with no items has a link to the catalogue page, which `router` in `src/router.tsx` renders at `/`. No other file imports it.",
@@ -542,25 +524,7 @@
               "path": "src/routes/cart/index.tsx",
               "waypoints": [
                 {
-                  "id": "w3",
-                  "title": "Added the import of `EmptyCart`",
-                  "declaration": "Lines 4–4",
-                  "reading": "The author added an import that names `EmptyCart` from `./components/EmptyCart`. [`<CartPage />` returns `<EmptyCart />`](code:src/routes/cart/index.tsx#L8) when the cart has no items, and [this pull request adds the component](code:src/routes/cart/components/EmptyCart.tsx#EmptyCart).",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 4,
-                    "lineEnd": 4
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/cart/index.tsx#import@4:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w4",
+                  "id": "w2",
                   "title": "Modified `<CartPage />` to return `<EmptyCart />` for an empty cart",
                   "declaration": "CartPage",
                   "reading": "The author modified a return in the component `<CartPage />` that now returns `<EmptyCart />` when `items.length === 0`, where it returned `<p>Your cart is empty.</p>` before. [`<EmptyCart />` renders the same message](code:src/routes/cart/components/EmptyCart.tsx#L6) and [a link to `/`](code:src/routes/cart/components/EmptyCart.tsx#L7), so that a shopper with no items sees the message with a link to the catalogue. The condition did not change, so `<CartPage />` returns the list of `<CartLine />` and `<CartSummary />` for the same carts as before. `router` in `src/router.tsx` renders the page at `cart` with no props, and the page still takes none.",

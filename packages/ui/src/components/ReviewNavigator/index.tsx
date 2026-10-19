@@ -574,6 +574,9 @@ export const ReviewNavigatorBar = ({ place = "page", ...props }: ReviewNavigator
   return (
     <>
       <div aria-hidden="true" ref={setTrack} className="pointer-events-none fixed bottom-0 left-6 h-0 right-[var(--navigator-inset-right,1.5rem)]" />
+      <div aria-hidden="true" className="fixed bottom-0 left-0 right-[var(--navigator-band-right,0px)] z-40 h-11 bg-sign">
+        <span className="absolute inset-x-0 top-0 h-1 bg-(--line,var(--primary-text))" />
+      </div>
       <div
         ref={setBar}
         role="toolbar"
@@ -581,7 +584,7 @@ export const ReviewNavigatorBar = ({ place = "page", ...props }: ReviewNavigator
         {...props}
         style={{ ...props.style, left: navigatorLeftOf(width) }}
         className={cn(
-          "fixed bottom-3.5 z-40 flex h-[2.875rem] -translate-x-1/2 items-center rounded-md border border-sign-foreground/16 bg-sign px-1 pt-1 pb-2 text-[0.8rem] whitespace-nowrap text-sign-foreground transition-[left] duration-200 ease-out",
+          "fixed bottom-0 z-40 flex h-10 -translate-x-1/2 items-center px-1 text-[0.8rem] whitespace-nowrap text-sign-foreground transition-[left] duration-200 ease-out",
           props.className,
         )}
       >
@@ -594,7 +597,6 @@ export const ReviewNavigatorBar = ({ place = "page", ...props }: ReviewNavigator
             </div>
           ))}
         </div>
-        <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-1 rounded-b-md bg-(--line,var(--primary-text))" />
       </div>
     </>
   )

@@ -53,7 +53,6 @@ const createProps = (overrides: Partial<FileSectionProps> = {}): FileSectionProp
   currentWaypointId: null,
   focusedWaypointId: null,
   isCollapsed: false,
-  areWaypointsHidden: false,
   isReviewPending: false,
   composer: null,
   composingRange: null,
@@ -260,12 +259,6 @@ describe("FileSection gutter", () => {
     expect(screen.getByRole("button", { name: "Waypoint 1 of 1: priceOf", expanded: true })).toBeTruthy()
   })
 
-  it("hides the marks with the waypoints", () => {
-    render(<FileSection {...createProps({ file: placedFile(), areWaypointsHidden: true })} />)
-
-    expect(screen.queryByRole("button", { name: "Waypoint 1 of 1: priceOf" })).toBeNull()
-  })
-
   it("opens and closes a thread from its mark, and shows the file's counts in its header", () => {
     render(<FileSection {...createProps({ file: discussedFile([thread()]), composer: COMPOSER })} />)
     const mark = screen.getByRole("button", { name: "Open thread, Lines 3–4" })
@@ -313,13 +306,6 @@ describe("FileSection", () => {
     fireEvent.click(screen.getByRole("button", { name: "Expand file: src/price.ts", expanded: false }))
 
     expect(onCollapsedChange).toHaveBeenLastCalledWith(false)
-  })
-
-  it("keeps the code and leaves out the waypoint boxes while the waypoints are hidden", () => {
-    render(<FileSection {...createProps({ areWaypointsHidden: true })} />)
-
-    expect(screen.queryByRole("region", { name: "priceOf" })).toBeNull()
-    expect(screen.getByText("12 unchanged lines")).toBeTruthy()
   })
 
   it("dims the code outside the lines of the waypoint in focus", () => {

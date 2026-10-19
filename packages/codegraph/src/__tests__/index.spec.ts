@@ -227,7 +227,7 @@ describe("buildCodegraph", () => {
     ])
   })
 
-  it("gives the only segment of a change a blast, and no journey when its only change is an import", async () => {
+  it("gives the only segment of a change a blast, and no journey and no waypoint when its only change is an import", async () => {
     const pricing = "export const priceOf = (item) => item.price"
     const cart = (imported: string): string => [`import { ${imported} } from "./pricing"`, "", "export const subtotal = (items) => items.map(priceOf)"].join("\n")
     const { segments } = await codegraphOf({
@@ -242,9 +242,7 @@ describe("buildCodegraph", () => {
       edges: [],
       importBound: { nodes: [{ path: "src/cart.ts", diffType: "modified" }], edges: [] },
     })
-    expect(segments[0].codeWalkthrough.files.flatMap((file) => file.waypoints).map((waypoint) => [waypoint.declaration, waypoint.category])).toStrictEqual([
-      ["Lines 1–1", "import"],
-    ])
+    expect(segments[0].codeWalkthrough.files).toStrictEqual([])
   })
 
   it("splits a change into the shared segment, with a journey of the shared files alone, and one entry segment per line of change, each with the journey of its own line", async () => {

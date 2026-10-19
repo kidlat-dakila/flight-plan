@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import type { WalkthroughNavigation } from "@flightplan/ui/CodeWalkthrough"
+import type { CommentRange } from "@flightplan/ui/FileSection"
 import type { WalkthroughControls } from "@flightplan/ui/lib/walkthrough-navigation"
 import type { SteppedWaypoint, WaypointStepping } from "./use-waypoint-stepping"
 
@@ -7,12 +8,14 @@ type FilterKeys = Parameters<NonNullable<WalkthroughNavigation["onFilterChange"]
 
 interface NavigatedWaypoint extends SteppedWaypoint {
   readonly isReviewed: boolean
+  readonly lines: { readonly lineStart: number, readonly lineEnd: number } | null
 }
 
 type NavigatedRow = { readonly kind: "waypoint", readonly waypoint: NavigatedWaypoint } | { readonly kind: "lines" | "gap" }
 
 interface NavigatedFile {
   readonly anchorId: string
+  readonly path: string
   readonly rows: readonly NavigatedRow[]
 }
 
@@ -25,6 +28,7 @@ interface WalkthroughHandlers {
   readonly onReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
   readonly onFilterChange: ((segmentId: string, keys: FilterKeys) => void) | null
   readonly onShowReviewedChange: ((segmentId: string, isShown: boolean) => void) | null
+  readonly onCommentOnWaypoint: ((path: string, range: CommentRange) => void) | null
 }
 
 interface Collapse {
@@ -33,7 +37,6 @@ interface Collapse {
 }
 
 export interface WalkthroughLayout {
-  readonly areWaypointsHidden: boolean
   readonly isFileCollapsed: (anchorId: string) => boolean
   readonly onFileCollapsedChange: (anchorId: string, isCollapsed: boolean) => void
   readonly navigationOf: (segment: NavigatedSegment) => WalkthroughNavigation
@@ -92,11 +95,22 @@ const holdsWaypoint = (file: NavigatedFile, waypointId: string | null): boolean 
 const fileHoldingWaypoint = (segments: readonly NavigatedSegment[], waypointId: string | null): string | null =>
   segments.flatMap((segment) => segment.walkthrough.files).find((file) => holdsWaypoint(file, waypointId))?.anchorId ?? null
 
-const waypointOf = (segments: readonly NavigatedSegment[], waypointId: string | null): NavigatedWaypoint | null =>
+interface WaypointPlace {
+  readonly path: string
+  readonly waypoint: NavigatedWaypoint
+}
+
+const placeOfWaypoint = (segments: readonly NavigatedSegment[], waypointId: string | null): WaypointPlace | null =>
   segments
-    .flatMap((segment) => segment.walkthrough.files.flatMap((file) => file.rows))
-    .flatMap((row) => (row.kind === "waypoint" && row.waypoint.id === waypointId ? [row.waypoint] : []))
+    .flatMap((segment) => segment.walkthrough.files)
+    .flatMap((file) => file.rows.flatMap((row) => (row.kind === "waypoint" && row.waypoint.id === waypointId ? [{ path: file.path, waypoint: row.waypoint }] : [])))
     .at(0) ?? null
+
+const commentRangeOf = (lines: NonNullable<NavigatedWaypoint["lines"]>): CommentRange => ({
+  side: "new",
+  startLineLabel: String(lines.lineStart),
+  lineLabel: String(lines.lineEnd),
+})
 
 const withCollapse = (anchorIds: ReadonlySet<string>, changedAnchorIds: readonly string[], isCollapsed: boolean): ReadonlySet<string> =>
   new Set(isCollapsed ? [...anchorIds, ...changedAnchorIds] : [...anchorIds].filter((anchorId) => !changedAnchorIds.includes(anchorId)))
@@ -110,7 +124,6 @@ export const useWalkthroughNavigation = (
   currentAnchorId: string | null,
   handlers: WalkthroughHandlers,
 ): WalkthroughLayout => {
-  const [areWaypointsHidden, setAreWaypointsHidden] = useState(false)
   const holdingAnchorId = fileHoldingWaypoint(segments, stepping.currentWaypointId)
   const [collapse, setCollapse] = useState<Collapse>({ collapsedAnchorIds: NOTHING_COLLAPSED, holdingAnchorId })
   if (collapse.holdingAnchorId !== holdingAnchorId) {
@@ -125,15 +138,11 @@ export const useWalkthroughNavigation = (
     holdPlace(readAnchorId)
     setCollapse((current) => ({ ...current, collapsedAnchorIds: withCollapse(current.collapsedAnchorIds, anchorIds, isCollapsed) }))
   }
-  const stepShowingWaypoints = (step: () => void) => (): void => {
-    setAreWaypointsHidden(false)
-    step()
-  }
-  const currentWaypoint = waypointOf(segments, stepping.currentWaypointId)
-  const { onReviewedChange, onFilterChange, onShowReviewedChange } = handlers
+  const currentPlace = placeOfWaypoint(segments, stepping.currentWaypointId)
+  const currentWaypoint = currentPlace?.waypoint ?? null
+  const { onReviewedChange, onFilterChange, onShowReviewedChange, onCommentOnWaypoint } = handlers
 
   return {
-    areWaypointsHidden,
     isFileCollapsed: (anchorId) => collapsedAnchorIds.has(anchorId),
     onFileCollapsedChange: (anchorId, isCollapsed) => { changeCollapse([anchorId], isCollapsed, anchorId) },
     navigationOf: (segment) => {
@@ -146,18 +155,25 @@ export const useWalkthroughNavigation = (
         positionLabel: segmentStepping.positionLabel,
         canStepBack: segmentStepping.canStepBack,
         canStepForward: segmentStepping.canStepForward,
-        currentWaypoint,
+        currentWaypoint: currentWaypoint === null
+          ? null
+          : { isReviewed: currentWaypoint.isReviewed, isOpen: stepping.openWaypointIds.has(currentWaypoint.id), canComment: currentWaypoint.lines !== null },
         areFilesCollapsed: fileAnchorIds.length > 0 && fileAnchorIds.every((anchorId) => collapsedAnchorIds.has(anchorId)),
         isFileCollapsed: fileUnderBand === null ? null : collapsedAnchorIds.has(fileUnderBand),
-        areWaypointsHidden,
-        onPrevious: stepShowingWaypoints(segmentStepping.onPrevious),
-        onNext: stepShowingWaypoints(segmentStepping.onNext),
+        onPrevious: segmentStepping.onPrevious,
+        onNext: segmentStepping.onNext,
         onCurrentReviewedChange: onReviewedChange === null
           ? null
           : (isReviewed) => {
               if (currentWaypoint === null) return
               if (isReviewed && !controls.reviewedToggle.isShown) segmentStepping.onNext()
               onReviewedChange(currentWaypoint.id, isReviewed)
+            },
+        onCommentOnCurrent: onCommentOnWaypoint === null
+          ? null
+          : () => {
+              if (currentPlace?.waypoint.lines == null) return
+              onCommentOnWaypoint(currentPlace.path, commentRangeOf(currentPlace.waypoint.lines))
             },
         onFilterChange: onFilterChange === null
           ? null
@@ -175,7 +191,7 @@ export const useWalkthroughNavigation = (
         onFileCollapsedChange: (isCollapsed) => {
           if (fileUnderBand !== null) changeCollapse([fileUnderBand], isCollapsed, fileUnderBand)
         },
-        onWaypointsHiddenChange: setAreWaypointsHidden,
+        onCurrentOpenChange: stepping.onCurrentOpenChange,
       }
     },
   }

@@ -57,36 +57,38 @@ export interface WalkthroughNavigationRequest {
   readonly positionLabel: string | null
   readonly canStepBack: boolean
   readonly canStepForward: boolean
-  readonly currentWaypoint: { readonly isReviewed: boolean } | null
+  readonly currentWaypoint: { readonly isReviewed: boolean, readonly isOpen: boolean, readonly canComment: boolean } | null
   readonly areFilesCollapsed: boolean
   readonly isFileCollapsed: boolean | null
-  readonly areWaypointsHidden: boolean
   readonly markerOf: (key: FindingFilterKey | "reviewed") => ReactNode
   readonly sectionSteps: SectionSteps
   readonly onPrevious: () => void
   readonly onNext: () => void
   readonly onCurrentReviewedChange: ((isReviewed: boolean) => void) | null
+  readonly onCommentOnCurrent: (() => void) | null
   readonly onFilterChange: ((keys: readonly string[] | null) => void) | null
   readonly onShowReviewedChange: ((isShown: boolean) => void) | null
   readonly onFilesCollapsedChange: (isCollapsed: boolean) => void
   readonly onFileCollapsedChange: (isCollapsed: boolean) => void
-  readonly onWaypointsHiddenChange: (isHidden: boolean) => void
+  readonly onCurrentOpenChange: (isOpen: boolean) => void
 }
 
 const REVIEW_KEY = "s"
+const COMMENT_KEY = "c"
 const FILTER_KEY = "f"
 const FILES_KEY = "q"
 const FILE_KEY = "e"
-const WAYPOINTS_KEY = "x"
+export const WAYPOINT_KEY = "r"
+const ADD_COMMENT_LABEL = "Add comment"
 const COLLAPSE_ALL_LABEL = "Collapse all"
 const EXPAND_ALL_LABEL = "Expand all"
 const COLLAPSE_FILE_LABEL = "Collapse file"
 const EXPAND_FILE_LABEL = "Expand file"
-const HIDE_WAYPOINTS_LABEL = "Hide waypoints"
-const SHOW_WAYPOINTS_LABEL = "Show waypoints"
+const EXPAND_WAYPOINT_LABEL = "Expand waypoint"
+const COLLAPSE_WAYPOINT_LABEL = "Collapse waypoint"
 const REVIEWED_CHOICE_ID = "reviewed"
 const PICK_WAYPOINT_HINT = `Pick a waypoint first: press ${NEXT_KEY.toUpperCase()} to step to the next one.`
-const SHOW_WAYPOINTS_HINT = `Show the waypoints first: press ${WAYPOINTS_KEY.toUpperCase()}.`
+const NO_LINES_HINT = "This waypoint has no lines on the page to comment on."
 
 const stepButtonOf = (canStep: boolean, sectionStep: NavigatorButton | null, waypointStep: NavigatorButton): NavigatorButton =>
   canStep || sectionStep === null ? waypointStep : sectionStep
@@ -109,7 +111,7 @@ const steppingGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup 
   ]
 }
 
-const reviewGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup => {
+const reviewButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButton[] => {
   const { onCurrentReviewedChange, currentWaypoint } = request
   if (onCurrentReviewedChange === null) return []
   const isReviewed = currentWaypoint?.isReviewed === true
@@ -120,12 +122,28 @@ const reviewGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup =>
       label: isReviewed ? currentReview.reviewedLabel : currentReview.markLabel,
       isPressed: isReviewed,
       isPrimary: !isReviewed,
-      isDisabled: currentWaypoint === null || request.areWaypointsHidden,
-      disabledHint: request.areWaypointsHidden ? SHOW_WAYPOINTS_HINT : PICK_WAYPOINT_HINT,
+      isDisabled: currentWaypoint === null,
+      disabledHint: PICK_WAYPOINT_HINT,
       onRun: () => { onCurrentReviewedChange(!isReviewed) },
     }),
   ]
 }
+
+const commentButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButton[] => {
+  const { onCommentOnCurrent, currentWaypoint } = request
+  if (onCommentOnCurrent === null) return []
+  return [
+    navigatorButtonOf({
+      key: COMMENT_KEY,
+      label: ADD_COMMENT_LABEL,
+      isDisabled: currentWaypoint?.canComment !== true,
+      disabledHint: currentWaypoint === null ? PICK_WAYPOINT_HINT : NO_LINES_HINT,
+      onRun: onCommentOnCurrent,
+    }),
+  ]
+}
+
+const reviewGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup => [...reviewButtonsOf(request), ...commentButtonsOf(request)]
 
 const reviewedChoicesOf = (request: WalkthroughNavigationRequest): NavigatorChoice[] => {
   const { onShowReviewedChange } = request
@@ -188,7 +206,8 @@ const filterGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup =>
 }
 
 const layoutGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup => {
-  const { isFileCollapsed, areWaypointsHidden } = request
+  const { isFileCollapsed, currentWaypoint } = request
+  const isCurrentOpen = currentWaypoint?.isOpen === true
   const fileButton = isFileCollapsed === null
     ? []
     : [navigatorButtonOf({
@@ -204,10 +223,11 @@ const layoutGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup =>
     }),
     ...fileButton,
     navigatorButtonOf({
-      key: WAYPOINTS_KEY,
-      label: areWaypointsHidden ? SHOW_WAYPOINTS_LABEL : HIDE_WAYPOINTS_LABEL,
-      isPressed: areWaypointsHidden,
-      onRun: () => { request.onWaypointsHiddenChange(!areWaypointsHidden) },
+      key: WAYPOINT_KEY,
+      label: isCurrentOpen ? COLLAPSE_WAYPOINT_LABEL : EXPAND_WAYPOINT_LABEL,
+      isDisabled: currentWaypoint === null,
+      disabledHint: PICK_WAYPOINT_HINT,
+      onRun: () => { request.onCurrentOpenChange(!isCurrentOpen) },
     }),
   ]
 }

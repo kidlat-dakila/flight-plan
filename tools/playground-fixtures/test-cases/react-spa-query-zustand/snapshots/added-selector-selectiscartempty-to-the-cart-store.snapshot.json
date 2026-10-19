@@ -1246,24 +1246,6 @@
               "waypoints": [
                 {
                   "id": "w2",
-                  "title": "Modified the cart store import to name `selectIsCartEmpty`",
-                  "declaration": "Lines 1–1",
-                  "reading": "The author modified an import that now names `selectIsCartEmpty` as well as `useCartStore`, both from `@/stores/cart-store`. [`<CartPage />` passes `selectIsCartEmpty` to `useCartStore`](code:src/routes/cart/index.tsx#L7), and [`src/stores/cart-store.ts` declares `selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty) in this pull request.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 1,
-                    "lineEnd": 1
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/routes/cart/index.tsx#import@1:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w3",
                   "title": "Modified `<CartPage />` to test `isCartEmpty` before it returns the empty message",
                   "declaration": "CartPage",
                   "reading": "The author modified a condition in the component `<CartPage />` that now tests `isCartEmpty`, where it tested `items.length === 0` before. `isCartEmpty` is the result of `useCartStore(selectIsCartEmpty)`, and [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty) [returns `state.items.length === 0`](code:src/stores/cart-store.ts#L33), so that `<CartPage />` returns `<p>Your cart is empty.</p>` for the same carts as before. `<CartPage />` still reads `items` from the store, because it renders one `<CartLine />` per item. `router` in `src/router.tsx` renders `<CartPage />` with no props, and `<CartPage />` still takes none.",
@@ -1286,7 +1268,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w3.1",
+                      "id": "w2.1",
                       "title": null,
                       "declaration": "CartPage › isCartEmpty",
                       "reading": "",
@@ -1306,7 +1288,7 @@
                       "children": []
                     },
                     {
-                      "id": "w3.2",
+                      "id": "w2.2",
                       "title": null,
                       "declaration": "CartPage › Condition :8",
                       "reading": "",

@@ -37,7 +37,6 @@ interface WalkthroughFileProps {
   readonly openWaypointIds: ReadonlySet<string>
   readonly currentWaypointId: string | null
   readonly isCollapsed: boolean
-  readonly areWaypointsHidden: boolean
   readonly isPending: boolean
   readonly codeLinks: CodeLinkTargets
   readonly renderCodeLinkDialog: (request: CodeLinkRequest) => ReactNode
@@ -71,7 +70,6 @@ const WalkthroughFile = ({
   openWaypointIds,
   currentWaypointId,
   isCollapsed,
-  areWaypointsHidden,
   isPending,
   codeLinks,
   renderCodeLinkDialog,
@@ -83,7 +81,7 @@ const WalkthroughFile = ({
 }: WalkthroughFileProps) => {
   const [editedWaypointId, setEditedWaypointId] = useState<string | null>(null)
   const fileCode = useFileCode(reviewKey, file.path)
-  const waypoints = areWaypointsHidden ? [] : waypointsOf(file)
+  const waypoints = waypointsOf(file)
   const lineLabels = new Set(fileCode.lines?.map((line) => line.numberLabel))
   const isInCode = (waypoint: AuthoredWaypoint): boolean => waypoint.lines !== null && lineLabels.has(String(waypoint.lines.lineEnd))
   const stopEditing = (): void => {

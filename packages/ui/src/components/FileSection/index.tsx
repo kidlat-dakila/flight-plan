@@ -84,7 +84,6 @@ interface FileSectionProps {
   readonly currentWaypointId: string | null
   readonly focusedWaypointId: string | null
   readonly isCollapsed: boolean
-  readonly areWaypointsHidden: boolean
   readonly isReviewPending: boolean
   readonly composer: ComposerLabels | null
   readonly composingRange: CommentRange | null
@@ -179,7 +178,6 @@ const FileSection = ({
   currentWaypointId,
   focusedWaypointId,
   isCollapsed,
-  areWaypointsHidden,
   isReviewPending,
   composer,
   composingRange,
@@ -203,7 +201,7 @@ const FileSection = ({
   const [previewedWaypointId, setPreviewedWaypointId] = useState<string | null>(null)
   const [toggledThreadIds, setToggledThreadIds] = useState<ReadonlySet<string>>(NO_IDS)
   const holdMark = useHeldMark(fileRef, openWaypointIds)
-  const placedWaypoints = areWaypointsHidden ? new Map<CodeLine, readonly WalkthroughWaypoint[]>() : placeWaypoints(file.rows)
+  const placedWaypoints = placeWaypoints(file.rows)
   const linesOfWaypoint = (waypointId: string | null): ReadonlySet<CodeLine> => (waypointId === null
     ? NO_LINES
     : new Set(stemsOf(file.rows, placedWaypoints, (stemmedId) => (stemmedId === waypointId ? "faint" : null)).keys()))
@@ -419,7 +417,6 @@ const FileSection = ({
                   </p>
                 )
               }
-              if (areWaypointsHidden) return null
               const isPlaced = placedWaypointIds.has(row.waypoint.id)
               const isOpen = openWaypointIds.has(row.waypoint.id)
               if (isPlaced && !isOpen) return null
