@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import type { CodeSelection } from "@/routes/pr-reviews/$repoName/-components/SelectionReference"
 import type { LineAddress } from "@flightplan/ui/CodeBlock"
-import type { CommentRange } from "@flightplan/ui/FileSection"
+import type { CommentRange } from "@flightplan/ui/FileRows"
 
 const LINE_SELECTOR = "[data-line]"
 const CODE_SELECTOR = "[data-path]"

@@ -1,5 +1,5 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
-import { useRef, useState, type ComponentProps, type ReactNode } from "react"
+import { useRef, useState, type ComponentProps, type ReactNode, type RefObject } from "react"
 import { ReviewNavigatorBar } from "@/components/ReviewNavigator"
 import { DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM, offsetZoomedAt, wheelTravelPx, zoomAfterWheel, zoomedIn, zoomedOut } from "@/lib/board-zoom"
 import type { Point } from "@/lib/diagram-path"
@@ -54,6 +54,15 @@ const ZOOM_IN_KEY = "z"
 const ZOOM_OUT_KEY = "x"
 const FULL_SCREEN_KEY = "f"
 const RESET_VIEW_KEY = "t"
+const LINE_COLOR_PROPERTY = "--line"
+
+const lineColorOf = (element: HTMLElement | null): string =>
+  element === null ? "" : getComputedStyle(element).getPropertyValue(LINE_COLOR_PROPERTY)
+
+const carryLineColorFrom = (board: RefObject<HTMLElement | null>) => (popup: HTMLElement | null): void => {
+  const lineColor = lineColorOf(board.current)
+  if (popup !== null && lineColor !== "") popup.style.setProperty(LINE_COLOR_PROPERTY, lineColor)
+}
 
 interface CanvasProps {
   readonly label: string
@@ -96,6 +105,7 @@ const FULL_SCREEN_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} absolute inset-x-0
 const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, panel, actions = null, navigation = null, renderCanvas = null, children = null, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {
   const [zoom, setZoom] = useState(DEFAULT_ZOOM)
   const { offset, isDragging, startDrag, swallowClickAfterDrag, panTo, resetPan } = useDragPan()
+  const boardRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLElement>(null)
   const measurePanelWidth = (): number => panelRef.current?.getBoundingClientRect().width ?? 0
   const { widthPx: panelWidthPx, isResizing, narrowestPx, startResize, resizeByKey, resetWidth } = usePanelResize(measurePanelWidth)
@@ -181,6 +191,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
   return (
     <>
       <div
+        ref={boardRef}
         className="relative flex flex-col justify-start rounded-md border"
         style={{ height: Math.max(MIN_INLINE_HEIGHT_PX, height * zoom + BORDER_ALLOWANCE_PX), maxHeight: MAX_INLINE_HEIGHT }}
       >
@@ -196,6 +207,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
       <DialogPrimitive.Root open={isFullScreen} onOpenChange={closeTopLayer}>
         <DialogPrimitive.Portal>
           <DialogPrimitive.Popup
+            ref={carryLineColorFrom(boardRef)}
             aria-label={label}
             data-navigator-scope=""
             className="fixed inset-0 z-50 flex bg-background text-foreground outline-none duration-150 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"

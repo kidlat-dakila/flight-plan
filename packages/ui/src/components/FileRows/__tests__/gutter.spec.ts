@@ -1,4 +1,4 @@
-import { placeWaypoints, stemsOf, type GutterRow, type StemTone } from "@/components/FileSection/gutter"
+import { placeWaypoints, stemsOf, type GutterRow, type StemTone } from "@/components/FileRows/gutter"
 import { codeLine } from "@/lib/__tests__/review-samples"
 
 interface SampleWaypoint {

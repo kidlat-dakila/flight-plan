@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from "react"
-import CodeBlock from "@/components/CodeBlock"
-import { referenceTabStopRowIdOf, type FileRow } from "@/components/FileSection"
+import FileRows, { type FileRootBlock, type FileRow, type FileThread } from "@/components/FileRows"
 import OutwardLink from "@/components/OutwardLink"
-import { HoverProse } from "@/components/Prose"
-import WaypointBox from "@/components/WaypointBox"
-import type { CodeDefinitions, CodeLine, CodeLinkTargets, ForgeLink, ProseBlocks } from "@/lib/review-content"
+import type { CodeDefinitions, CodeLine, CodeLinkTargets, ForgeLink } from "@/lib/review-content"
 
 export type LineSpan = readonly [number, number]
 
@@ -30,6 +27,8 @@ interface NodeCodeViewProps {
 }
 
 const NOTHING_OPEN: ReadonlySet<string> = new Set()
+const NO_ROOT_BLOCKS: readonly FileRootBlock[] = []
+const NO_THREADS: readonly FileThread[] = []
 
 const toggled = (openIds: ReadonlySet<string>, waypointId: string): ReadonlySet<string> =>
   new Set(openIds.has(waypointId) ? [...openIds].filter((openId) => openId !== waypointId) : [...openIds, waypointId])
@@ -44,14 +43,17 @@ const isWithin = (numberLabel: string, spans: readonly LineSpan[]): boolean => {
 const focusedOn = (lines: readonly CodeLine[], spans: readonly LineSpan[] | null): readonly CodeLine[] =>
   spans === null ? lines : lines.map((line) => ({ ...line, isFocused: isWithin(line.numberLabel, spans) }))
 
+const shownRowsOf = ({ id, rows }: CodeView, focusedLines: readonly LineSpan[] | null): readonly FileRow[] =>
+  rows.map((row) => {
+    if (row.kind === "lines") return { ...row, lines: focusedOn(row.lines, focusedLines) }
+    if (row.kind === "waypoint") return { ...row, waypoint: { ...row.waypoint, anchorId: `${id}-${row.waypoint.anchorId}` } }
+    return row
+  })
+
 const NodeCodeView = ({ view, focusedLines = null, isReviewPending, codeLinks, codeDefinitions, onOpenCodeLink, onWaypointReviewedChange }: NodeCodeViewProps) => {
   const [openWaypointIds, setOpenWaypointIds] = useState(NOTHING_OPEN)
   const label = `${view.pathLabel}, ${view.rangeLabel}`
-  const tabStopRowId = referenceTabStopRowIdOf(view.rows, codeDefinitions)
   const sectionRef = useRef<HTMLElement>(null)
-  const renderDefinitionDescription = (description: ProseBlocks) => (
-    <HoverProse blocks={description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
-  )
   useEffect(() => {
     if (focusedLines !== null) sectionRef.current?.querySelector(FOCUSED_LINE_SELECTOR)?.scrollIntoView({ block: "center" })
   }, [focusedLines])
@@ -66,41 +68,25 @@ const NodeCodeView = ({ view, focusedLines = null, isReviewPending, codeLinks, c
         <span className="text-xs text-muted-foreground tabular-nums">{view.rangeLabel}</span>
       </div>
       <div className="border-y bg-code">
-        {view.rows.map((row) => {
-          if (row.kind === "lines") {
-            return (
-              <CodeBlock
-                key={row.id}
-                lines={focusedOn(row.lines, focusedLines)}
-                definitions={codeDefinitions}
-                hasReferenceTabStop={row.id === tabStopRowId}
-                label={label}
-                path={view.pathLabel}
-                isWrapped
-                className="py-0"
-                renderDefinitionDescription={renderDefinitionDescription}
-              />
-            )
-          }
-          if (row.kind === "gap") {
-            return <p key={row.id} className="border-y bg-muted/60 py-0.5 pl-18 font-mono text-xs text-muted-foreground">{row.label}</p>
-          }
-          return (
-            <WaypointBox
-              key={row.id}
-              waypoint={{ ...row.waypoint, anchorId: `${view.id}-${row.waypoint.anchorId}` }}
-              isOpen={openWaypointIds.has(row.waypoint.id)}
-              isCurrent={false}
-              isReviewPending={isReviewPending}
-              codeLinks={codeLinks}
-              onOpenCodeLink={onOpenCodeLink}
-              onToggle={() => { setOpenWaypointIds((openIds) => toggled(openIds, row.waypoint.id)) }}
-              onReviewedChange={onWaypointReviewedChange === null
-                ? null
-                : (isReviewed) => { onWaypointReviewedChange(row.waypoint.id, isReviewed) }}
-            />
-          )
-        })}
+        <FileRows
+          path={view.pathLabel}
+          label={label}
+          rows={shownRowsOf(view, focusedLines)}
+          rootBlocks={NO_ROOT_BLOCKS}
+          threads={NO_THREADS}
+          openWaypointIds={openWaypointIds}
+          currentWaypointId={null}
+          focusedWaypointId={null}
+          isWrapped
+          isReviewPending={isReviewPending}
+          commenting={null}
+          codeLinks={codeLinks}
+          codeDefinitions={codeDefinitions}
+          onOpenCodeLink={onOpenCodeLink}
+          onToggleWaypoint={(waypointId) => { setOpenWaypointIds((openIds) => toggled(openIds, waypointId)) }}
+          onWaypointReviewedChange={onWaypointReviewedChange}
+          onRootBlockReviewedChange={null}
+        />
       </div>
       {view.note === null && view.forgeLink === null
         ? null

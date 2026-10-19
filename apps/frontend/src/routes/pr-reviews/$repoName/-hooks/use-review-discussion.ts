@@ -2,7 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { useDeferredValue, useState } from "react"
 import { useTRPC } from "@/trpc"
 import type { LineAddress } from "@flightplan/ui/CodeBlock"
-import type { CommentRange } from "@flightplan/ui/FileSection"
+import type { CommentRange } from "@flightplan/ui/FileRows"
 import type { ReviewerRequesting } from "@flightplan/ui/ReviewHeader"
 
 interface ReviewKey {

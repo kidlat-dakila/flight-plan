@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import type { WalkthroughNavigation } from "@flightplan/ui/CodeWalkthrough"
-import type { CommentRange } from "@flightplan/ui/FileSection"
+import type { CommentRange } from "@flightplan/ui/FileRows"
 import type { WalkthroughControls } from "@flightplan/ui/lib/walkthrough-navigation"
 import type { SteppedWaypoint, WaypointStepping } from "./use-waypoint-stepping"
 

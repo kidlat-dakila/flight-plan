@@ -1,5 +1,5 @@
 import Button from "@flightplan/ui/blocks/button"
-import type { CommentRange } from "@flightplan/ui/FileSection"
+import type { CommentRange } from "@flightplan/ui/FileRows"
 
 export interface CodeSelection {
   readonly path: string

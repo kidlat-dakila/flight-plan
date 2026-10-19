@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState, type ReactElement, type ReactNode } from "react"
 import { useFileCode } from "@/routes/pr-reviews/$repoName/-hooks/use-file-code"
 import CodeViewEditor, { type CodeViewWaypoint } from "@flightplan/ui/CodeViewEditor"
-import type { WalkthroughWaypoint } from "@flightplan/ui/FileSection"
+import type { WalkthroughWaypoint } from "@flightplan/ui/FileRows"
 import IconButton from "@flightplan/ui/IconButton"
 import type { CodeLinkTargets } from "@flightplan/ui/lib/review-content"
 import type { CodeLinkRequest } from "@flightplan/ui/TextEditor"
