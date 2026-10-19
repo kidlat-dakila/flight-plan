@@ -103,6 +103,18 @@ export const codeLinkSchema = z.strictObject({
   forgeLink: linkSchema.nullable(),
 })
 
+export const classificationViewSchema = z.strictObject({
+  key: z.enum(CODE_BLOCK_CLASSIFICATIONS),
+  label: z.string(),
+})
+
+export const spotlightViewSchema = z.strictObject({
+  label: z.string(),
+  classifications: z.array(classificationViewSchema),
+})
+
+export type SpotlightView = z.infer<typeof spotlightViewSchema>
+
 export const findingSchema = z.strictObject({
   id: z.string(),
   kind: z.enum(FINDING_KINDS),
@@ -131,6 +143,9 @@ export const waypointSchema = z.strictObject({
   coreChangeLabel: z.string().nullable(),
   reading: proseSchema.nullable(),
   unwrittenLabel: z.string(),
+  hint: z.string().nullable(),
+  isBeingWritten: z.boolean(),
+  spotlight: spotlightViewSchema.nullable(),
   coreChange: proseSchema.nullable(),
   findings: z.array(findingSchema),
   isReviewed: z.boolean(),
@@ -199,6 +214,7 @@ export const traceTriggerLabelSchema = z.strictObject({
   name: z.string(),
   label: z.string(),
   isDraft: z.boolean(),
+  hint: z.string().nullable(),
   change: z.enum(NODE_CHANGES).nullable(),
   lines: z.array(lineSpanSchema),
 })
@@ -208,7 +224,7 @@ export type TraceTriggerLabelView = z.infer<typeof traceTriggerLabelSchema>
 export const traceBlockListSchema = z.strictObject({
   kind: z.enum(NODE_BLOCK_LIST_KINDS),
   label: z.string(),
-  blocks: z.array(z.strictObject({ id: z.string(), name: z.string(), label: z.string(), isDraft: z.boolean(), change: z.enum(NODE_CHANGES).nullable(), lines: z.array(lineSpanSchema) })),
+  blocks: z.array(z.strictObject({ id: z.string(), name: z.string(), label: z.string(), isDraft: z.boolean(), hint: z.string().nullable(), change: z.enum(NODE_CHANGES).nullable(), lines: z.array(lineSpanSchema) })),
 })
 
 export type TraceBlockListView = z.infer<typeof traceBlockListSchema>
@@ -216,11 +232,6 @@ export type TraceBlockListView = z.infer<typeof traceBlockListSchema>
 export const traceRowGroupSchema = z.strictObject({ label: z.string().nullable(), rowIds: z.array(z.string()), childIds: z.array(z.string()) })
 
 export type TraceRowGroupView = z.infer<typeof traceRowGroupSchema>
-
-export const classificationViewSchema = z.strictObject({
-  key: z.enum(CODE_BLOCK_CLASSIFICATIONS),
-  label: z.string(),
-})
 
 export type ClassificationView = z.infer<typeof classificationViewSchema>
 
@@ -233,6 +244,8 @@ export interface TraceNodeView {
   changedLabel: string | null
   label: string
   isDraft: boolean
+  hint: string | null
+  isBeingWritten: boolean
   name: string
   shortPath: string
   description: Prose | null
@@ -256,6 +269,8 @@ export const traceNodeSchema: z.ZodType<TraceNodeView> = z.lazy(() =>
     changedLabel: z.string().nullable(),
     label: z.string(),
     isDraft: z.boolean(),
+    hint: z.string().nullable(),
+    isBeingWritten: z.boolean(),
     name: z.string(),
     shortPath: z.string(),
     description: proseSchema.nullable(),
@@ -279,20 +294,28 @@ export const traceEdgeSchema = z.strictObject({
   toSide: z.enum(CARD_SIDES),
 })
 
+export const traceDiagramViewSchema = z.strictObject({
+  anchorId: z.string(),
+  title: z.string(),
+  description: proseSchema.nullable(),
+  descriptionMarkdown: z.string(),
+  descriptionHint: z.string().nullable(),
+  unwrittenLabel: z.string(),
+  nodes: z.array(traceNodeSchema),
+  edges: z.array(traceEdgeSchema),
+})
+
+export const traceTabSchema = z.strictObject({
+  id: z.string(),
+  label: z.string(),
+  diagram: traceDiagramViewSchema,
+})
+
 export const traceBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
-  diagram: z
-    .strictObject({
-      anchorId: z.string(),
-      title: z.string(),
-      description: proseSchema.nullable(),
-      descriptionMarkdown: z.string(),
-      unwrittenLabel: z.string(),
-      nodes: z.array(traceNodeSchema),
-      edges: z.array(traceEdgeSchema),
-    })
-    .nullable(),
+  diagram: traceDiagramViewSchema.nullable(),
+  tabs: z.array(traceTabSchema),
 })
 
 const blastFileRowSchema = z.strictObject({ id: z.string(), label: z.string() })
@@ -309,6 +332,7 @@ export const blastNodeSchema = z.strictObject({
   impactReason: proseSchema.nullable(),
   impactNote: z.string().nullable(),
   isUnassessed: z.boolean(),
+  isBeingWritten: z.boolean(),
   assessment: z.strictObject({ impactType: z.enum(BLAST_IMPACT_CHOICES), impactReason: z.string() }).nullable(),
   importers: z.strictObject({ heading: z.string(), emptyLabel: z.string(), files: z.array(blastFileRowSchema) }),
   imports: z.strictObject({ heading: z.string(), emptyLabel: z.string(), files: z.array(blastFileRowSchema) }),
@@ -353,11 +377,34 @@ export const blastBandSchema = z.strictObject({
 export const rootBlockViewSchema = z.strictObject({
   id: z.string(),
   classification: classificationViewSchema,
+  spotlight: spotlightViewSchema.nullable(),
+  coreChangeLabel: z.string().nullable(),
   isReviewed: z.boolean(),
   reviewLabel: z.string(),
   reviewName: z.string(),
   expandLabel: z.string(),
   collapseLabel: z.string(),
+})
+
+export const changeOverviewCardSchema = z.strictObject({
+  id: z.string(),
+  label: z.string(),
+  typeLabel: z.string(),
+  path: z.string(),
+  change: z.enum(ROOT_BLOCK_CHANGES),
+  changeLabel: z.string(),
+  waypointAnchorId: z.string().nullable(),
+})
+
+export const changeOverviewRowSchema = z.strictObject({
+  classification: classificationViewSchema,
+  cards: z.array(changeOverviewCardSchema),
+})
+
+export const changeOverviewSchema = z.strictObject({
+  heading: z.string(),
+  emptyMessage: z.string().nullable(),
+  rows: z.array(changeOverviewRowSchema),
 })
 
 export const fileSectionSchema = z.strictObject({
@@ -440,6 +487,8 @@ export type NodeChange = (typeof NODE_CHANGES)[number]
 export type NodeBlockListKind = (typeof NODE_BLOCK_LIST_KINDS)[number]
 export type TraceEdgeView = z.infer<typeof traceEdgeSchema>
 export type TraceBand = z.infer<typeof traceBandSchema>
+export type TraceDiagramView = z.infer<typeof traceDiagramViewSchema>
+export type TraceTabView = z.infer<typeof traceTabSchema>
 export type BlastNodeView = z.infer<typeof blastNodeSchema>
 export type BlastEdgeView = z.infer<typeof blastEdgeSchema>
 export type BlastBand = z.infer<typeof blastBandSchema>
@@ -452,6 +501,9 @@ export type FileRow = z.infer<typeof fileRowSchema>
 export type FileSectionView = z.infer<typeof fileSectionSchema>
 export type LineCollapse = z.infer<typeof lineCollapseSchema>
 export type RootBlockView = z.infer<typeof rootBlockViewSchema>
+export type ChangeOverview = z.infer<typeof changeOverviewSchema>
+export type ChangeOverviewRow = z.infer<typeof changeOverviewRowSchema>
+export type ChangeOverviewCard = z.infer<typeof changeOverviewCardSchema>
 export type WaypointFilter = z.infer<typeof waypointFilterSchema>
 export type WaypointFilterKey = (typeof WAYPOINT_FILTER_KEYS)[number]
 export type WaypointChange = (typeof WAYPOINT_CHANGES)[number]

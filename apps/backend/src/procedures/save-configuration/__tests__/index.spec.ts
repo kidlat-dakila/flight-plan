@@ -45,35 +45,21 @@ describe("saveConfiguration", () => {
     await expect(getConfiguration({ id: "custom-terse", field: FINDING_KIND }, context)).resolves.toMatchObject({ panel: { resetLabel: null } })
   })
 
-  it("switches sections and context code block kinds, and keeps the Code Walkthrough on", async () => {
+  it("saves the kinds of name the agent describes, and marks the hover descriptions changed", async () => {
     const context = await createContextWithTerse()
 
-    await saveConfiguration({ change: "switches", id: "custom-terse", sections: ["findings"], contextCodeBlockKinds: ["library"] }, context)
+    await expect(saveConfiguration({ change: "switches", id: "custom-terse", contextCodeBlockKinds: ["library"] }, context)).resolves.toStrictEqual({
+      kind: "saved",
+      message: "The hover descriptions are saved.",
+    })
 
     const page = await getConfiguration({ id: "custom-terse", field: null }, context)
     expect(page).toMatchObject({
-      panel: {
-        sections: [{ section: "traceDiagram", isOn: false }, { section: "blastDiagram", isOn: false }, { section: "findings", isOn: true }],
-        contextKinds: [{ kind: "codebase", isRequired: false }, { kind: "library", isRequired: true }, { kind: "language", isRequired: false }],
-      },
+      panel: { contextKinds: [{ kind: "codebase", isRequired: false }, { kind: "library", isRequired: true }, { kind: "language", isRequired: false }] },
     })
     const entries = page.kind === "found" ? page.index.flatMap((group) => group.entries) : []
-    expect(entries.find((entry) => entry.key === "sections")).toMatchObject({ mark: "changed" })
-    expect(entries.find((entry) => entry.key === "walkthrough.files.waypoints.title")).toMatchObject({ mark: "unchanged" })
-    expect(entries.find((entry) => entry.key === "traceDiagram.description")).toMatchObject({ mark: "off" })
-  })
-
-  it("switches one section and leaves the others as they are", async () => {
-    const context = await createContextWithTerse()
-
-    await expect(saveConfiguration({ change: "section", id: "custom-terse", section: "blastDiagram", isOn: false }, context)).resolves.toStrictEqual({
-      kind: "saved",
-      message: "Blast Diagram: switched off.",
-    })
-    await expect(getConfiguration({ id: "custom-terse", field: null }, context)).resolves.toMatchObject({
-      index: [{}, {}, {}, { switch: { section: "traceDiagram", label: "Generate Trace Diagrams", isOn: true } }, { switch: { section: "blastDiagram", isOn: false } }, { switch: { section: "findings", isOn: true } }, { switch: null }, { switch: null }],
-      panel: { sections: [{ isOn: true }, { isOn: false }, { isOn: true }] },
-    })
+    expect(entries.find((entry) => entry.key === "hover-descriptions")).toMatchObject({ mark: "changed" })
+    expect(entries.find((entry) => entry.key === "traceDiagram.description")).toMatchObject({ mark: "unchanged" })
   })
 
   it("renames a configuration of the user's own and refuses to rename a preset", async () => {

@@ -4,6 +4,7 @@ import { EMPTY_DISCUSSION, type CommentAuthor, type Discussion, type ForgeAbilit
 import { mockTrace } from "@/procedures/get-review/utils/mocks/mock-trace"
 import type { PullRequestReading } from "@/procedures/get-review/utils/pull-request-forge"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
+import { DEFAULT_REVIEW_PREFERENCES } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { listConfigurationsOf } from "@/procedures/list-configurations/utils/configuration"
 import type { PullRequestTarget, Repository } from "@/procedures/list-repositories/utils/repository"
@@ -92,6 +93,7 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   chatLinkIds: [],
   agentModels: {},
   activity: NO_WRITING_ACTIVITY,
+  request: null,
   ...overrides,
 })
 
@@ -354,6 +356,46 @@ describe("buildReviewPage", () => {
     })
   })
 
+  it("shows a review whose segments are off as one segment, with a Trace Diagram tab for each segment that has one", () => {
+    const traceOf = (id: string, declaration: string) => mockTrace(
+      [priceSource, cartSource],
+      [{ id, type: "function", path: declaration === "subtotal" ? CART_PATH : PRICE_PATH, declaration, isChanged: true, label: null, description: null }],
+      [],
+    )
+    const artifact = createArtifact({
+      isSegmented: false,
+      segments: [
+        createSegment({ id: "price", title: "Price", context: "Prices round once.", traceDiagram: traceOf("price", "priceOf"), walkthrough: { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("price-of", "priceOf")] }] } }),
+        createSegment({ id: "cart", title: "Cart", context: "", traceDiagram: traceOf("cart", "subtotal"), walkthrough: { files: [{ path: CART_PATH, waypoints: [createWaypoint("subtotal", "subtotal")] }] } }),
+        createSegment({ id: "docs", title: "Docs", context: "", traceDiagram: null, walkthrough: { files: [] } }),
+      ],
+    })
+    const page = buildReviewPage(createSource({ artifact }), createInput())
+    const [segment] = page.kind === "artifact" ? page.segments : []
+
+    expect(page.kind === "artifact" ? page.segments.length : 0).toBe(1)
+    expect(segment).toMatchObject({ id: "price", title: null, heading: null, context: { markdown: "Prices round once." } })
+    expect(segment.walkthrough.files.map((file) => file.path)).toStrictEqual([PRICE_PATH, CART_PATH])
+    expect(segment.traceDiagram.diagram).toBeNull()
+    expect(segment.traceDiagram.tabs.map((tab) => [tab.id, tab.label, tab.diagram.anchorId])).toStrictEqual([
+      ["price", "priceOf", "price-trace-price"],
+      ["cart", "subtotal", "cart-trace-cart"],
+    ])
+  })
+
+  it("draws the one Trace Diagram of a review whose segments are off without tabs", () => {
+    const artifact = createArtifact({
+      isSegmented: false,
+      segments: [
+        createSegment({ id: "price", traceDiagram: mockTrace([priceSource, cartSource], [{ id: "price", type: "function", path: PRICE_PATH, declaration: "priceOf", isChanged: true, label: null, description: null }], []) }),
+        createSegment({ id: "docs", traceDiagram: null }),
+      ],
+    })
+    const page = buildReviewPage(createSource({ artifact }), createInput())
+
+    expect(page).toMatchObject({ segments: [{ traceDiagram: { diagram: { title: "priceOf" }, tabs: [] } }] })
+  })
+
   it("draws each Trace Diagram with its configuration, and states why a change has none", () => {
     const flow = mockTrace(
       [priceSource, cartSource],
@@ -456,10 +498,67 @@ describe("buildReviewPage", () => {
     expect(buildReviewPage(createSource(), createInput())).toMatchObject({ segments: [{ blastDiagram: null }] })
   })
 
+  it("puts the waypoints whose change is a classification of the user's spotlight in the spotlight", () => {
+    const [changedBlock] = mockTrace(fixtureSources.map(({ source }) => source), [
+      { id: "price-of", type: "function", path: PRICE_PATH, declaration: "priceOf", isChanged: true, label: null, description: null },
+    ], []).traceNodes[0].diffCodeBlocks
+    const walkthrough = { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("w", "priceOf", { codeBlocks: [changedBlock] })] }] }
+    const artifact = createArtifact({ segments: [createSegment({ walkthrough })] })
+    const setup = { ...EMPTY_SETUP, reviewPreferences: { ...DEFAULT_REVIEW_PREFERENCES, spotlight: ["logic"] as const } }
+
+    const page = buildReviewPage(createSource({ artifact, setup }), createInput())
+    const files = page.kind === "artifact" ? page.segments.flatMap((segment) => segment.walkthrough.files) : []
+    const spotlight = { label: "Spotlight", classifications: [{ key: "logic", label: "Logic" }] }
+
+    expect(files.flatMap((file) => file.rootBlocks.map((rootBlock) => rootBlock.spotlight))).toStrictEqual([spotlight])
+    expect(files.flatMap((file) => file.rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint.spotlight] : [])))).toStrictEqual([spotlight])
+    expect(page.kind === "artifact" ? page.segments[0].walkthrough.controls.filter.groups[1].options.map((option) => option.label) : []).toStrictEqual(["Logic"])
+  })
+
+  it("puts the Change Overview of the segment's root blocks under its Context", () => {
+    const [changedBlock] = mockTrace(fixtureSources.map(({ source }) => source), [
+      { id: "price-of", type: "function", path: PRICE_PATH, declaration: "priceOf", isChanged: true, label: null, description: null },
+    ], []).traceNodes[0].diffCodeBlocks
+    const walkthrough = { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("w", "priceOf", { codeBlocks: [changedBlock] })] }] }
+    const page = buildReviewPage(createSource({ artifact: createArtifact({ segments: [createSegment({ walkthrough })] }) }), createInput())
+
+    expect(page).toMatchObject({
+      segments: [{
+        context: {
+          changeOverview: {
+            heading: "Change Overview",
+            emptyMessage: null,
+            rows: [{ classification: { key: "logic", label: "Logic" }, cards: [{ label: "priceOf", typeLabel: "Function", path: PRICE_PATH, waypointAnchorId: "waypoint-w" }] }],
+          },
+        },
+      }],
+    })
+  })
+
+  it("sorts the walkthrough by the order the reviewer chose for this review over the review preferences", () => {
+    const cartUsingPrice = { ...cartSource, references: [{ line: 2, startColumn: 1, endColumn: 8, path: PRICE_PATH, lines: [11, 13] as [number, number], isLibrary: false }] }
+    const artifact = createArtifact({ sources: [priceSource, cartUsingPrice] })
+    const sources = [priceSource, cartUsingPrice].map((source) => ({ source, tokenLines: source.lines.map(() => []), usageTokenLines: new Map() }))
+    const request = { configurationId: "standard", preset: "standard", order: "foundations-first", customOrder: null, writer: { kind: "none" }, requestedAt: new Date(0), writeUp: { sections: ["walkthrough"], walkthroughOrder: "imports-top-down" } } as const
+    const filesOf = (page: ReturnType<typeof buildReviewPage>): string[] => (page.kind === "artifact" ? page.segments[0].walkthrough.files.map((file) => file.path) : [])
+
+    expect(filesOf(buildReviewPage(createSource({ artifact, sources }), createInput()))).toStrictEqual([PRICE_PATH, CART_PATH])
+    expect(filesOf(buildReviewPage(createSource({ artifact, sources, request }), createInput()))).toStrictEqual([CART_PATH, PRICE_PATH])
+  })
+
+  it("lays out each segment and its rail entries in the section order of the review preferences", () => {
+    const sectionOrder = ["walkthrough", "context", "blastDiagram", "traceDiagram"] as const
+    const setup = { ...EMPTY_SETUP, reviewPreferences: { ...DEFAULT_REVIEW_PREFERENCES, sectionOrder } }
+    const page = buildReviewPage(createSource({ setup }), createInput())
+
+    expect(page).toMatchObject({ segments: [{ sectionOrder: [...sectionOrder] }] })
+    expect(page.kind === "artifact" ? page.rail.groups[0].sections.map((section) => section.kind) : []).toStrictEqual(["walkthrough", "context", "traceDiagram"])
+  })
+
   it("applies the waypoint filter it is asked for to its own segment only", () => {
     const walkthrough = { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("w", "priceOf", { coreChange: "Slow." })] }] }
     const otherWalkthrough = { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("v", "priceOf", { coreChange: "Slow." })] }] }
-    const artifact = createArtifact({ segments: [createSegment({ id: "one", walkthrough }), createSegment({ id: "two", walkthrough: otherWalkthrough })] })
+    const artifact = createArtifact({ isSegmented: true, segments: [createSegment({ id: "one", walkthrough }), createSegment({ id: "two", walkthrough: otherWalkthrough })] })
     const page = buildReviewPage(createSource({ artifact }), createInput({ filterKeysBySegment: { one: ["bug"] } }))
 
     expect(page).toMatchObject({

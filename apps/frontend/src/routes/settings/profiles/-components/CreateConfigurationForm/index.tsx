@@ -21,7 +21,7 @@ interface CreateConfigurationFormProps {
 const NAME_LABEL = "Name"
 const NAME_HINT = "How the configuration is listed when you create a Flight Plan."
 const SOURCE_LABEL = "Start from"
-const SOURCE_HINT = "The new configuration is a copy: the same sections and the same instructions, yours to change."
+const SOURCE_HINT = "The new configuration is a copy of the same instructions, yours to change."
 
 const CreateConfigurationForm = ({ sources, selectedSourceId, nameError, sourceError, children, onSubmit }: CreateConfigurationFormProps) => {
   const nameId = useId()

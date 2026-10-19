@@ -1,9 +1,13 @@
 import { findSource, isInSpan, rowSpanOf, type HighlightedSource, type RowSpan } from "@/code/lines"
 import { classificationViewOf } from "@/code-blocks/classification-view"
+import { hintOf } from "@/code-blocks/hints"
+import { isInSpotlight, spotlightViewOf } from "@/code-blocks/spotlight"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
 import type {
+  CodeBlock,
+  CodeBlockClassification,
   FileSection,
   FileSectionView,
   LineRange,
@@ -23,6 +27,7 @@ import {
   type ReviewedMarks,
   type ReviewedState,
 } from "@flightplan/reviewed-marks"
+import { orderFiles, type OrderedFile } from "./file-order"
 import { buildFileRows, type PlacedWaypoint, type RootBlockSpan } from "./file-rows"
 import { listFileRootBlocks, reviewableFileOf, type FileRootBlock } from "./reviewable-file"
 import { rootBlockSpanOf } from "./root-blocks"
@@ -57,7 +62,7 @@ export interface WalkthroughRequest {
 
 export type PinnedLineFinder = (path: string) => readonly number[]
 
-interface FileEntry {
+export interface FileEntry {
   readonly file: FileSection
   readonly position: number
   readonly highlighted: HighlightedSource | null
@@ -150,6 +155,12 @@ const rangeLabelOf = (range: LineRange | null): string | null => {
     : `Lines ${String(range.lineStart)}${RANGE_DASH}${String(range.lineEnd)}`
 }
 
+const classifiedBlocksOf = (flat: FlatWaypoint): readonly CodeBlock[] =>
+  flat.waypoint.codeBlocks.length === 0 ? flat.rootBlocks : flat.waypoint.codeBlocks
+
+const waypointHintOf = (flat: FlatWaypoint): string | null =>
+  flat.waypoint.reading === "" ? hintOf(classifiedBlocksOf(flat), flat.change ?? "unchanged") : null
+
 const hasCoreChangeReason = (waypoint: Waypoint): waypoint is Waypoint & { readonly coreChange: string } =>
   waypoint.coreChange !== null && waypoint.coreChange !== ""
 
@@ -182,6 +193,9 @@ const toWaypointView = (
     coreChangeLabel: waypoint.coreChange === null ? null : CORE_CHANGE_LABEL,
     reading: waypoint.reading === "" ? null : parseProse(waypoint.reading, context.knownLinkIds),
     unwrittenLabel: "Not written yet.",
+    hint: waypointHintOf(flat),
+    isBeingWritten: context.isWriting && waypoint.isRequired && waypoint.reading === "",
+    spotlight: spotlightViewOf(classifiedBlocksOf(flat), context.spotlight),
     coreChange: hasCoreChangeReason(waypoint) ? parseProse(waypoint.coreChange, context.knownLinkIds) : null,
     findings: waypoint.findings.map((finding) => buildFinding(finding, replacedRows, context)),
     isReviewed,
@@ -191,10 +205,15 @@ const toWaypointView = (
   }
 }
 
-const toRootBlockView = (rootBlock: FileRootBlock, state: ReviewedState): RootBlockView => ({
+const holdsCoreChange = (rootBlock: FileRootBlock, waypoints: readonly FlatWaypoint[]): boolean =>
+  waypoints.some((flat) => flat.waypoint.coreChange !== null && flat.rootBlocks.includes(rootBlock.block))
+
+const toRootBlockView = (rootBlock: FileRootBlock, entry: FileEntry, context: ReviewViewContext): RootBlockView => ({
   id: rootBlock.id,
   classification: classificationViewOf(rootBlock.block),
-  isReviewed: state.rootBlockIds.has(rootBlock.id),
+  spotlight: spotlightViewOf([rootBlock.block], context.spotlight),
+  coreChangeLabel: holdsCoreChange(rootBlock, entry.waypoints) ? CORE_CHANGE_LABEL : null,
+  isReviewed: entry.state.rootBlockIds.has(rootBlock.id),
   reviewLabel: "Reviewed",
   reviewName: `Reviewed: ${rootBlock.label}`,
   expandLabel: `Expand ${rootBlock.label}`,
@@ -224,7 +243,7 @@ const toFileView = (
     reviewLabel: "File reviewed",
     countLabels: countLabelsOf(entry.waypoints),
     forgeLink: context.blobLinkOf(entry.file.path, null),
-    rootBlocks: entry.rootBlocks.map((rootBlock) => toRootBlockView(rootBlock, entry.state)),
+    rootBlocks: entry.rootBlocks.map((rootBlock) => toRootBlockView(rootBlock, entry, context)),
     rows: buildFileRows(
       entry.highlighted,
       placed,
@@ -235,8 +254,11 @@ const toFileView = (
   }
 }
 
+const inStoredOrder = (files: readonly VisibleFile[]): VisibleFile[] =>
+  [...files].sort((one, two) => one.entry.position - two.entry.position)
+
 const toFileOrder = (files: readonly VisibleFile[]): WalkthroughBand["fileOrder"] =>
-  files.map(({ entry }, position) => ({
+  inStoredOrder(files).map(({ entry }, position) => ({
     path: entry.file.path,
     heading: fileTitleOf(entry.file.path),
     detailLabel: countLabel(entry.waypoints.length, "waypoint", "waypoints"),
@@ -244,7 +266,7 @@ const toFileOrder = (files: readonly VisibleFile[]): WalkthroughBand["fileOrder"
     canMoveDown: position < files.length - 1,
   }))
 
-interface VisibleFile {
+export interface VisibleFile {
   readonly entry: FileEntry
   readonly waypointEntries: readonly WaypointEntry[]
   readonly focusSpans: readonly RowSpan[] | null
@@ -268,15 +290,32 @@ const isFileShown = ({ entry, waypointEntries }: VisibleFile, request: Walkthrou
   (request.isShowingReviewed || !entry.state.isFileReviewed)
   && (waypointEntries.length === 0 || waypointEntries.some((waypointEntry) => waypointEntry.isVisible))
 
+interface OrderedEntry extends OrderedFile {
+  readonly entry: FileEntry
+}
+
+const toOrderedEntry = (entry: FileEntry, context: ReviewViewContext): OrderedEntry => ({
+  path: entry.file.path,
+  isCoreChange: entry.waypoints.some((flat) => flat.waypoint.coreChange !== null),
+  isInSpotlight: entry.waypoints.some((flat) => isInSpotlight(classifiedBlocksOf(flat), context.spotlight)),
+  entry,
+})
+
+const orderEntries = (entries: readonly FileEntry[], context: ReviewViewContext): FileEntry[] =>
+  orderFiles(
+    entries.map((entry) => toOrderedEntry(entry, context)),
+    context.walkthroughOrder,
+    context.sources.map((highlighted) => highlighted.source),
+  ).map(({ entry }) => entry)
+
 export const prepareWalkthrough = (
   segment: Segment,
   marks: ReviewedMarks,
   request: WalkthroughRequest,
   context: ReviewViewContext,
 ): PreparedWalkthrough => {
-  const files = segment.walkthrough.files
-    .map((file, position) => toFileEntry(file, position, marks, context))
-    .map((entry) => withFocus(entry, toWaypointEntries(entry, request), request))
+  const entries = segment.walkthrough.files.map((file, position) => toFileEntry(file, position, marks, context))
+  const files = orderEntries(entries, context).map((entry) => withFocus(entry, toWaypointEntries(entry, request), request))
   return { segment, files, shownFiles: files.filter((file) => isFileShown(file, request)) }
 }
 
@@ -315,11 +354,11 @@ export const coverageLabelOf = (coveredCount: number, changedCount: number): str
     ? `All ${countLabel(changedCount, "changed file", "changed files")}`
     : `${String(coveredCount)} of ${countLabel(changedCount, "changed file", "changed files")}`
 
-export const buildWalkthroughControls = (prepared: PreparedWalkthrough, request: WalkthroughRequest): WalkthroughControls => {
+export const buildWalkthroughControls = (prepared: PreparedWalkthrough, request: WalkthroughRequest, spotlight: readonly CodeBlockClassification[]): WalkthroughControls => {
   const waypointEntries = prepared.files.flatMap((file) => file.waypointEntries)
   const reviewedCount = waypointEntries.filter((waypointEntry) => waypointEntry.isReviewed).length
   return {
-    filter: buildWaypointFilter(waypointEntries.map((waypointEntry) => waypointEntry.flat), request.filterKeys),
+    filter: buildWaypointFilter(waypointEntries.map((waypointEntry) => waypointEntry.flat), request.filterKeys, spotlight),
     reviewedToggle: reviewedToggleOf(reviewedCount, request.isShowingReviewed),
     stepping: {
       previousLabel: "Previous waypoint",
@@ -341,7 +380,7 @@ export const buildWalkthrough = (
   heading: "Code Walkthrough",
   coverageLabel: coverageLabelOf(prepared.files.length, prepared.segment.changedPaths.length),
   emptyMessage: emptyMessageOf(prepared, request),
-  controls: buildWalkthroughControls(prepared, request),
+  controls: buildWalkthroughControls(prepared, request, context.spotlight),
   files: prepared.shownFiles.map((file) =>
     toFileView(file, scope, stepping, pinnedLinesOf, context)),
   fileOrder: toFileOrder(prepared.files),

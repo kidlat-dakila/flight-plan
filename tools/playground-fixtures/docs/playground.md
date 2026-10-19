@@ -381,10 +381,10 @@ Only the written parts in the table above, and only where they are missing or wh
 - **An update starts from scratch.** To update a fixture, delete its snapshot and generate it again, then write every written part anew from the code. To fill in a new fixture, write what is missing and leave the rest.
 - **The instructions are never changed to fit what was written.**
 
-Each segment has its own context: what a reviewer needs to know about the files of that segment before reading its codegraph. Code from another segment is named and linked where the segment's code uses it, and gets no item of its own. The context is written from `context.md`, like every other written part, and so has the parts that file asks for:
+Each segment has its own context: what the segment's change does, for a reviewer who has not read its codegraph yet. The context is written from `context.md`, like every other written part, and so has the parts that file asks for:
 
 - **One or two sentences that start with "This segment".** What the segment's change does, with no identifier, path or link.
-- **An accordion, with a section for "What's added", "What's modified" and "What's removed".** `:::accordion` opens it, `::section <name>` starts each section and `:::` closes it; a list with nothing in it gets no section. Each section holds one item per main declaration of the segment's files: a link to the declaration, then the verb, the kind of code and what it does, in the code's own terms. An item that does several things puts each in a sub-item. Every other piece of code an item names links to the line where the item's code uses it.
+- **Nothing else.** Flight Plan lists what the segment adds, modifies and removes in the Change Overview under the context, so the context holds no list of changes.
 
 Write it from the diffs and the case repository, never from the codegraph: the context says what the change is, and the codegraph is what was generated from it.
 

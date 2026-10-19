@@ -10,7 +10,6 @@ import { shippedConfigurationOf } from "@/procedures/list-configurations/utils/c
 import { InMemoryConfigurationStore } from "@/procedures/list-configurations/utils/configuration-store"
 import { requestReview } from "@/procedures/request-review"
 import type { RequestReviewInput } from "@/procedures/request-review/utils/schemas"
-import { ALL_SECTIONS_ON } from "@flightplan/configurations"
 import { createChangeRepositoryOpener } from "./change-repository"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
@@ -39,6 +38,21 @@ const DELIVERY_CHANGE: RecordedChange = {
 }
 
 const DELIVERY_BASE_TEXTS = { "src/delivery/estimate.ts": "export const estimate = () => 2\n" }
+
+const TESTED_DELIVERY_CHANGE: RecordedChange = {
+  ...DELIVERY_CHANGE,
+  diff: [
+    DELIVERY_CHANGE.diff,
+    "diff --git a/src/delivery/estimate.test.ts b/src/delivery/estimate.test.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/delivery/estimate.test.ts",
+    "@@ -0,0 +1 @@",
+    "+import { estimate } from \"./estimate\"",
+  ].join("\n"),
+  changedPaths: ["src/delivery/estimate.ts", "src/delivery/estimate.test.ts"],
+  texts: { ...DELIVERY_CHANGE.texts, "src/delivery/estimate.test.ts": "import { estimate } from \"./estimate\"\n" },
+}
 
 const createInput = (overrides: Partial<RequestReviewInput> = {}): RequestReviewInput => ({
   ...KEY,
@@ -99,6 +113,17 @@ describe("requestReview", () => {
     })
   })
 
+  it("leaves out the changed files the ignored paths of the review preferences match", async () => {
+    const context = createContext(new FakeSpawner(), [TESTED_DELIVERY_CHANGE])
+
+    await requestReview(createInput(), context)
+
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
+      changedPaths: ["src/delivery/estimate.ts"],
+      segments: [{ changedPaths: ["src/delivery/estimate.ts"], walkthrough: { files: [{ path: "src/delivery/estimate.ts" }] } }],
+    })
+  })
+
   it("gives one line to run in an agent Flight Plan cannot start, and waits for that agent", async () => {
     const spawner = new FakeSpawner()
     const context = {
@@ -146,22 +171,20 @@ describe("requestReview", () => {
     })
   })
 
-  it("builds the review with the sections of a configuration of the user's own, and refuses one that does not exist", async () => {
+  it("builds the review with a configuration of the user's own, and refuses one that does not exist", async () => {
     const context = {
       ...createContext(),
-      configurationStore: new InMemoryConfigurationStore([
-        { ...shippedConfigurationOf("standard"), id: "no-findings", name: "No findings", sections: { ...ALL_SECTIONS_ON, findings: false } },
-      ]),
+      configurationStore: new InMemoryConfigurationStore([{ ...shippedConfigurationOf("standard"), id: "terse", name: "Terse" }]),
     }
 
     await expect(requestReview(createInput({ configurationId: "custom-gone" }), context)).resolves.toMatchObject({
       kind: "rejected",
       field: "configuration",
     })
-    await requestReview(createInput({ configurationId: "no-findings" }), context)
+    await requestReview(createInput({ configurationId: "terse" }), context)
 
-    await expect(context.reviewStore.findRequest(KEY)).resolves.toMatchObject({ configurationId: "no-findings", preset: "standard" })
-    expect((await context.reviewStore.findArtifact(KEY))?.sections).toMatchObject({ findings: false })
+    await expect(context.reviewStore.findRequest(KEY)).resolves.toMatchObject({ configurationId: "terse", preset: "standard" })
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ segments: [{ blastDiagram: { nodes: [{ path: "src/delivery/estimate.ts" }] } }] })
   })
 
   it("starts the chosen agent with its model, its effort and the prompt, without the configuration", async () => {
@@ -183,7 +206,7 @@ describe("requestReview", () => {
         isResume: false,
       },
     ])
-    expect(spawner.launches[0]?.prompt).toContain("Order the Code Walkthrough along the path")
+    expect(spawner.launches[0]?.prompt).not.toContain("Order the Code Walkthrough")
     expect(spawner.launches[0]?.prompt).not.toContain("Minimal")
     expect(spawner.launches[0]?.instructions).toContain("send-message")
   })

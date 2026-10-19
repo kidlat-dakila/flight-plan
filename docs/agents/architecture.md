@@ -113,7 +113,7 @@ apps/backend/src/
 
 ```
 packages/configurations/src/
-  index.ts                        the entry: every field an agent can ask about with its public path, the presets and their section switches, and the shapes below
+  index.ts                        the entry: every field an agent can ask about with its public path, the presets and the kinds of context code block each requires, and the shapes below
   artifact/                       the review artifact's types, its zod schema with each field's configuration registered on it, the registry and the catalog read from it, and the values they share
   bands/                          the schemas of what the review page renders: the diagrams, the Code Walkthrough, prose, code lines
   system-instructions/            <field>.md, what each field is; the same for every configuration

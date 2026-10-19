@@ -55,6 +55,51 @@ describe("the classification of a node of the trace band", () => {
   })
 })
 
+describe("the hints of the trace band", () => {
+  it("gives a card with no label a hint from what its code is and what changed in it", () => {
+    const hints = Object.fromEntries(nodeViewsOf().map((node) => [node.name, node.hint]))
+
+    expect(hints.fetchPromo).toBe("Changes plain logic.")
+    expect(hints.PromoForm).toBe("No lines changed in a component, but it uses code that did.")
+  })
+
+  it("gives each trigger label and listed block with no label a hint of its own", () => {
+    const form = nodeViewsOf().find((node) => node.name === "PromoForm")
+
+    expect(form?.triggerLabels.map((trigger) => [trigger.name, trigger.hint])).toStrictEqual([["form.onSubmit", "No lines changed in a component, but it uses code that did."]])
+    expect(form?.blockLists.flatMap((list) => list.blocks).find((block) => block.name === "useEffect")?.hint).toBe("No lines changed in an effect, but it uses code that did.")
+  })
+
+  it("gives a diagram with no description a hint naming what its cards are, once each", () => {
+    const segment = createSegment({ traceDiagram: presentDiagramOf(FILES, PROMO_CHANGE) })
+
+    expect(buildTrace(segment, "", [], createViewContext()).diagram?.descriptionHint).toBe("Runs through a component, an effect and plain logic.")
+  })
+
+  it("gives no hint to what is written", () => {
+    const diagram = presentDiagramOf(FILES, PROMO_CHANGE)
+    const written = { ...diagram, description: "A shopper types a code.", traceNodes: diagram.traceNodes.map((node) => ({ ...node, label: "Applies a promo code" })) }
+    const band = buildTrace(createSegment({ traceDiagram: written }), "", [], createViewContext())
+
+    expect(band.diagram?.descriptionHint).toBeNull()
+    expect(band.diagram?.nodes.map((node) => node.hint)).toStrictEqual(band.diagram?.nodes.map(() => null))
+  })
+})
+
+describe("a card of the trace band being written", () => {
+  it("is being written while the agent writes a required card that has a label to write", () => {
+    const diagram = presentDiagramOf(FILES, PROMO_CHANGE)
+    const required = { ...diagram, traceNodes: diagram.traceNodes.map((node) => ({ ...node, isRequired: true })) }
+    const writingOf = (isWriting: boolean): boolean[] =>
+      listNodeViews(buildTrace(createSegment({ traceDiagram: required }), "", [], { ...createViewContext(), isWriting }).diagram?.nodes ?? [])
+        .filter((node) => required.traceNodes.some((stored) => stored.id === node.id))
+        .map((node) => node.isBeingWritten)
+
+    expect(writingOf(true).every(Boolean)).toBe(true)
+    expect(writingOf(false).some(Boolean)).toBe(false)
+  })
+})
+
 describe("the rows of a node of the trace band", () => {
   it("gives each listed block and each trigger label the lines of its block", () => {
     const form = nodeViewsOf().find((node) => node.name === "PromoForm")

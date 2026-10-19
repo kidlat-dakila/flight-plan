@@ -18,7 +18,6 @@ import { editContextRoute } from "./routes/edit-context"
 import { editSegmentsRoute } from "./routes/edit-segments"
 import { editTraceRoute } from "./routes/edit-trace"
 import { editWalkthroughRoute } from "./routes/edit-walkthrough"
-import { generateSectionRoute } from "./routes/generate-section"
 import { getAuthorFormRoute } from "./routes/get-author-form"
 import { getCardFormRoute } from "./routes/get-card-form"
 import { getConfigurationRoute } from "./routes/get-configuration"
@@ -29,7 +28,6 @@ import { getFileCodeRoute } from "./routes/get-file-code"
 import { getImportFormRoute } from "./routes/get-import-form"
 import { getModelChoiceRoute } from "./routes/get-model-choice"
 import { getPublishedReviewRoute } from "./routes/get-published-review"
-import { getRebuildFormRoute } from "./routes/get-rebuild-form"
 import { getRepositoryConfigurationRoute } from "./routes/get-repository-configuration"
 import { getReviewRoute } from "./routes/get-review"
 import { getReviewPreferencesRoute } from "./routes/get-review-preferences"
@@ -37,6 +35,7 @@ import { getSettingsRoute } from "./routes/get-settings"
 import { getSetupRoute } from "./routes/get-setup"
 import { getSetupGateRoute } from "./routes/get-setup-gate"
 import { getTargetSwitcherRoute } from "./routes/get-target-switcher"
+import { getWriteUpPlanRoute } from "./routes/get-write-up-plan"
 import { healthRoute } from "./routes/health"
 import { importReviewRoute } from "./routes/import-review"
 import { listCardBlocksRoute } from "./routes/list-card-blocks"
@@ -45,13 +44,13 @@ import { listRecentRepositoriesRoute } from "./routes/list-recent-repositories"
 import { listRepositoriesRoute } from "./routes/list-repositories"
 import { markCompleteRoute } from "./routes/mark-complete"
 import { publishArtifactRoute } from "./routes/publish-artifact"
-import { rebuildReviewRoute } from "./routes/rebuild-review"
 import { removeRepositoryRoute } from "./routes/remove-repository"
 import { removeReviewRequestRoute } from "./routes/remove-review-request"
 import { removeSetupRepositoryRoute } from "./routes/remove-setup-repository"
 import { replyToThreadRoute } from "./routes/reply-to-thread"
 import { requestReviewRoute } from "./routes/request-review"
 import { requestReviewerRoute } from "./routes/request-reviewer"
+import { requestWriteUpRoute } from "./routes/request-write-up"
 import { resolveThreadRoute } from "./routes/resolve-thread"
 import { saveConfigurationRoute } from "./routes/save-configuration"
 import { saveReviewPreferencesRoute } from "./routes/save-review-preferences"
@@ -70,6 +69,7 @@ import { setReviewedRoute } from "./routes/set-reviewed"
 import { setSelfAuthorRoute } from "./routes/set-self-author"
 import { submitReviewRoute } from "./routes/submit-review"
 import { watchConversationRoute } from "./routes/watch-conversation"
+import { writeUpReviewRoute } from "./routes/write-up-review"
 import { createRouter } from "./trpc"
 
 export const appRouter = createRouter({
@@ -122,9 +122,9 @@ export const appRouter = createRouter({
     searchTargets: searchCreationTargetsRoute,
     targetSwitcher: getTargetSwitcherRoute,
     request: requestReviewRoute,
-    rebuildForm: getRebuildFormRoute,
-    rebuild: rebuildReviewRoute,
-    generateSection: generateSectionRoute,
+    writeUpPlan: getWriteUpPlanRoute,
+    writeUp: writeUpReviewRoute,
+    requestWriteUp: requestWriteUpRoute,
     delete: deleteReviewRoute,
     setReviewed: setReviewedRoute,
     editContext: editContextRoute,

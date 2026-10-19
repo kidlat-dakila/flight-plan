@@ -1,8 +1,6 @@
 import { contextIdOf, flattenTraceNodes, storeFileSection } from "@flightplan/codegraph"
 import type {
   ReviewArtifact,
-  SectionName,
-  SectionSwitches,
   Segment,
   Waypoint,
 } from "@flightplan/configurations"
@@ -14,14 +12,6 @@ import { tallyWork, unwrittenWork } from "./unwritten-work"
 export const ARTIFACT_SECTIONS = ["overview", "full", "context", "trace-diagram", "blast-diagram", "code-walkthrough", "diff"] as const
 
 export type ArtifactSection = (typeof ARTIFACT_SECTIONS)[number]
-
-const SECTION_NAME_BY_ARTIFACT_SECTION: Readonly<Partial<Record<ArtifactSection, SectionName>>> = {
-  "trace-diagram": "traceDiagram",
-  "blast-diagram": "blastDiagram",
-  "code-walkthrough": "walkthrough",
-}
-
-export const sectionNameOf = (section: ArtifactSection): SectionName | null => SECTION_NAME_BY_ARTIFACT_SECTION[section] ?? null
 
 export interface DiffPage {
   readonly paths: readonly string[] | null
@@ -83,16 +73,15 @@ const segmentOverviewOf = (segment: Segment): unknown => ({
   files: segment.walkthrough.files.map((file) => ({ path: file.path, waypoints: file.waypoints.map(waypointStubOf) })),
 })
 
-export const projectOverview = (artifact: ReviewArtifact, configurationId: string, sections: SectionSwitches): unknown => ({
+export const projectOverview = (artifact: ReviewArtifact, configurationId: string): unknown => ({
   title: artifact.title,
   status: artifact.status,
   commit: artifact.commit,
   configuration: configurationId,
-  sections,
   segments: artifact.segments.map(segmentOverviewOf),
   sources: artifact.sources.map((source) => ({ path: source.path, declarations: Object.keys(source.declarations) })),
   contextCodeBlocks: artifact.contextCodeBlocks.filter((listed) => listed.isRequired).map(contextStubOf),
-  unwritten: tallyWork(unwrittenWork(artifact, sections)),
+  unwritten: tallyWork(unwrittenWork(artifact)),
 })
 
 const SEGMENT_PARTS: Readonly<Record<Exclude<ArtifactSection, "overview" | "full" | "diff">, (segment: Segment) => unknown>> = {

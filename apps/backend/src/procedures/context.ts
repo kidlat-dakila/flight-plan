@@ -5,6 +5,7 @@ import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/c
 import { createDemoAgent } from "@/procedures/get-conversation/utils/demo-agent"
 import { createInMemoryConversationHub } from "@/procedures/get-conversation/utils/in-memory-conversation-hub"
 import { readSampleInstructionTexts, type InstructionReader } from "@/procedures/get-instructions/utils/instruction-texts"
+import { skipBranchPull, type BranchPuller } from "@/procedures/get-review/utils/branch-puller"
 import { InMemoryChangeReader, type ChangeReader } from "@/procedures/get-review/utils/change-reader"
 import {
   DEMO_VIEWER_LOGIN,
@@ -31,7 +32,6 @@ import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-ca
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { writeSamplePublishedPage, type PublishedPageWriter } from "@/procedures/publish-artifact/utils/published-page-writer"
-import { skipBranchPull, type BranchPuller } from "@/procedures/rebuild-review/utils/branch-puller"
 import { spawnPluginPathOf } from "@/procedures/save-setup-step/utils/claude-plugin"
 import { createAgentDetector } from "@/utils/agent-detector"
 import { createAgentInstaller } from "@/utils/agent-installer"

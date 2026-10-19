@@ -94,12 +94,18 @@ describe("planSegmentEdit", () => {
     })
   })
 
-  it("removes a segment, and the Flight Plan is segmented only while it has more than one", () => {
+  it("removes a segment, and keeps the Flight Plan split into segments", () => {
     const withTwo = artifactOf(planSegmentEdit(artifact, { kind: "remove", segmentId: "cart" }, NEW_SEGMENT_ID))
     const withOne = withTwo === null ? null : artifactOf(planSegmentEdit(withTwo, { kind: "remove", segmentId: "stock" }, NEW_SEGMENT_ID))
 
     expect(withTwo).toMatchObject({ isSegmented: true })
     expect(withOne?.segments.map((segment) => segment.id)).toStrictEqual(["price"])
-    expect(withOne).toMatchObject({ isSegmented: false })
+    expect(withOne).toMatchObject({ isSegmented: true })
+  })
+
+  it("splits a Flight Plan of one segment into segments once a second segment is added", () => {
+    const single = createArtifact({ isSegmented: false, segments: [createSegment({ id: "price", title: "Price", changedPaths: [PRICE_PATH] })] })
+
+    expect(artifactOf(planSegmentEdit(single, { kind: "add", title: "Cart", paths: [CART_PATH] }, NEW_SEGMENT_ID))).toMatchObject({ isSegmented: true })
   })
 })

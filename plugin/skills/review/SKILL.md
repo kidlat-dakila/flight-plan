@@ -73,7 +73,7 @@ context, the answer is already in a call below.
 3 nodes { unfilled: true, needs: ["impact"] }
    update-nodes { segmentId, blast }
                                      what the change does to the files it did not touch
-4 update-nodes { segmentId, order }  the order the reviewer chose for the File Sections
+4 (no call)                          Flight Plan orders the File Sections itself
 5 update-nodes { segmentId, context, title }
                                      why the change matters, and a very short title for it
 6 nodes { unfilled: true }           the next few pieces of work, code attached
@@ -87,14 +87,11 @@ context, the answer is already in a call below.
 ```
 
 **Step 0 is a read, and it comes before the prose.** `get-instructions` with no
-`fields` returns which of the Trace Diagram, the Blast Diagram, the
-Code Walkthrough and the findings this review generates, and an index of the
-fields you can ask about. A section that is on you write as normal. A section
-that is off is not yours to write: the reviewer chose not to generate it, the
-artifact holds no structure for it, its fields are not in the index, and
-`read`, `get-instructions` and `update-nodes` refuse it and say so. Do not ask
-the reviewer about it. They generate it from the page when they want it, and
-Flight Plan then sends you a message that asks for that section alone.
+`fields` returns an index of the fields you can ask about. Every review has a
+Trace Diagram, a Blast Diagram and a Code Walkthrough. What you write is what
+Flight Plan marked required: `nodes { unfilled: true }` and the overview's
+`unwritten` list only required nodes, so a part with nothing required is not
+yours to write. Do not ask the reviewer about it.
 
 The same call returns `requiresContextCodeBlocks`. Where it is `false`, the
 context code blocks are not yours to write either: their fields are not in the
@@ -196,24 +193,13 @@ a case the author did not handle.
 the change, of which one breaks" is what the reviewer wants before they hear
 anything else. Send it with `send-message`.
 
-## 4. Put the files in the reviewer's order
+## 4. Leave the order of the files to Flight Plan
 
-The reviewer chose the order of the Code Walkthrough when they started the
-review, and the prompt carries it as a line that starts "Order the Code
-Walkthrough". Apply it:
-
-```
-update-nodes { segmentId, order: { files: [every File Section's path, once] } }
-```
-
-**Do not ask the reviewer how to order it when the prompt says.** If you were
-started by hand and the prompt names no order, ask with `ask-questions`, with
-these as the options and your proposal first: foundations first, along the
-path, core change first, risk first. Until an order is written the files are in
-path order, which is nobody's choice.
-
-Risk first needs the waypoints read before it can be decided. Write the order
-again once you have read them.
+Flight Plan sorts the File Sections of the Code Walkthrough itself: by the
+import graph, from the bottom up or from the top down, or with the reviewer's
+spotlight and the core changes first, as the reviewer chose. It sorts them again
+when you mark a core change. Write no `order`, and do not ask the reviewer how
+to order the walkthrough.
 
 ## 5. Write the context and the segment's title
 

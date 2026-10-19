@@ -171,4 +171,7 @@ export const createViewContext = (knownLinkIds: readonly string[] = []): ReviewV
   knownLinkIds: new Set(knownLinkIds),
   definitionIds: new Set(),
   blobLinkOf: linkToFixtureForge,
+  spotlight: [],
+  walkthroughOrder: "imports-bottom-up",
+  isWriting: false,
 })

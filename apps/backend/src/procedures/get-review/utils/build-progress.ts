@@ -1,6 +1,5 @@
 import { openQuestionBatchesOf, type JournalEntry } from "@/procedures/get-conversation/utils/conversation"
 import { AGENT_LABELS } from "@/procedures/get-setup/utils/agent-catalog"
-import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
 import { tallyNodes } from "@/procedures/read-artifact/utils/unwritten-work"
 import { ALLOW_LABEL, DENY_LABEL } from "@/procedures/request-permission/utils/describe-permission"
 import type { ReviewArtifact } from "@flightplan/configurations"
@@ -82,12 +81,20 @@ const pendingPermissionOf = (journal: readonly JournalEntry[]): PermissionReques
 const countLabelOf = (writtenCount: number, totalCount: number): string =>
   `${String(writtenCount)} of ${String(totalCount)} parts written`
 
+const isAgentWriting = ({ request, isAgentRunning }: WritingActivity): boolean => {
+  if (request?.writer.kind === "external") return true
+  return request?.writer.kind === "agent" && isAgentRunning
+}
+
+export const isWritingNow = (artifact: ReviewArtifact, activity: WritingActivity): boolean =>
+  artifact.status === "drafting" && isAgentWriting(activity)
+
 const isLeftToNoAgent = (activity: WritingActivity): boolean =>
   activity.request?.writer.kind === "author" || activity.request?.writer.kind === "none"
 
 export const buildProgress = (artifact: ReviewArtifact, activity: WritingActivity): ReviewProgress | null => {
   if (artifact.status !== "drafting" || isLeftToNoAgent(activity)) return null
-  const tally = tallyNodes(artifact, sectionsOf(artifact))
+  const tally = tallyNodes(artifact)
   const totalCount = tally.complete + tally.incomplete
   const standing = standingOf(activity, tally.complete)
   return {

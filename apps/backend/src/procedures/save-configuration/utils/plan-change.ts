@@ -1,13 +1,7 @@
 import { nameProblemOf } from "@/procedures/create-configuration/utils/plan-creation"
 import type { InstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { presetKeysOf } from "@/procedures/get-instructions/utils/resolve-instructions"
-import {
-  EDITABLE_FIELDS,
-  shippedTextOf,
-  SWITCH_LABELS,
-  SWITCHABLE_SECTIONS,
-  type Configuration,
-} from "@/procedures/list-configurations/utils/configuration"
+import { EDITABLE_FIELDS, shippedTextOf, type Configuration } from "@/procedures/list-configurations/utils/configuration"
 import { CONTEXT_CODE_BLOCK_KINDS } from "@flightplan/configurations"
 import type { SaveConfigurationInput } from "./schemas"
 
@@ -58,21 +52,11 @@ const planReset = (configuration: Configuration, change: ChangeOf<"reset">): Cha
 
 const planSwitches = (configuration: Configuration, change: ChangeOf<"switches">): ChangePlan => ({
   kind: "planned",
-  message: "The sections are saved.",
+  message: "The hover descriptions are saved.",
   configuration: {
     ...configuration,
-    sections: {
-      ...configuration.sections,
-      ...Object.fromEntries(SWITCHABLE_SECTIONS.map((section) => [section, change.sections.includes(section)])),
-    },
     contextCodeBlockKinds: CONTEXT_CODE_BLOCK_KINDS.filter((kind) => change.contextCodeBlockKinds.includes(kind)),
   },
-})
-
-const planSection = (configuration: Configuration, change: ChangeOf<"section">): ChangePlan => ({
-  kind: "planned",
-  message: `${SWITCH_LABELS[change.section]}: ${change.isOn ? "switched on" : "switched off"}.`,
-  configuration: { ...configuration, sections: { ...configuration.sections, [change.section]: change.isOn } },
 })
 
 const planRename = (
@@ -99,6 +83,5 @@ export const planChange = (
   if (change.change === "field") return planFieldChange(configuration, change, texts)
   if (change.change === "reset") return planReset(configuration, change)
   if (change.change === "switches") return planSwitches(configuration, change)
-  if (change.change === "section") return planSection(configuration, change)
   return planRename(configuration, change, configurations.filter((listed) => listed.id !== change.id))
 }

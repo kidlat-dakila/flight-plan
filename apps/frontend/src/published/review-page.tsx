@@ -11,11 +11,11 @@ import BrandMark from "@flightplan/ui/BrandMark"
 import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import ContextSection, { CONTEXT_PROSE_CLASSES } from "@flightplan/ui/ContextSection"
 import FileSection from "@flightplan/ui/FileSection"
-import GenerationOffer from "@flightplan/ui/GenerationOffer"
 import { AccordionOpeningContext, useAccordionNavigation } from "@flightplan/ui/lib/accordion-opening"
 import type { CodeLinkTargets, ProseBlocks } from "@flightplan/ui/lib/review-content"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { cn } from "@flightplan/ui/lib/utils"
+import OrderedSections from "@flightplan/ui/OrderedSections"
 import Prose from "@flightplan/ui/Prose"
 import { BandLink, BandMenuButton, OptionsMenu } from "@flightplan/ui/ReviewActions"
 import { TitleHeader } from "@flightplan/ui/ReviewHeader"
@@ -105,7 +105,6 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                 <BandMenuButton label={review.actions.submitLabel} isPrimary onClick={showUnavailableFeature} />
                 <OptionsMenu
                   forgeLink={null}
-                  rebuild={{ onUpdate: showUnavailableFeature, onRegenerate: showUnavailableFeature }}
                   onDelete={showUnavailableFeature}
                 />
               </>
@@ -140,17 +139,21 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                   className="scroll-mt-(--section-scroll-margin) not-first:border-t-4 not-first:border-foreground"
                 >
                   {segment.heading === null ? null : <SegmentHeading heading={segment.heading} detailLabel={segment.detailLabel} />}
-                  <PublishedContext
-                    anchorId={segment.context.anchorId}
-                    heading={segment.context.heading}
-                    context={segment.context.context}
-                    isDraft={segment.context.isDraft}
-                    unwrittenLabel={segment.context.unwrittenLabel}
-                    codeLinks={review.codeLinks}
-                    onOpenCodeLink={stepping.onOpenCodeLink}
-                  />
-                  {segment.offers.traceDiagram === null
-                    ? (
+                  <OrderedSections
+                    order={segment.sectionOrder}
+                    sections={{
+                      context: (
+                        <PublishedContext
+                          anchorId={segment.context.anchorId}
+                          heading={segment.context.heading}
+                          context={segment.context.context}
+                          isDraft={segment.context.isDraft}
+                          unwrittenLabel={segment.context.unwrittenLabel}
+                          codeLinks={review.codeLinks}
+                          onOpenCodeLink={stepping.onOpenCodeLink}
+                        />
+                      ),
+                      traceDiagram: (
                         <TraceBand
                           {...segment.traceDiagram}
                           codeLinks={review.codeLinks}
@@ -159,88 +162,65 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                           onOpenCodeLink={stepping.onOpenCodeLink}
                           onWaypointReviewedChange={onWaypointReviewedChange}
                         />
-                      )
-                    : (
-                        <GenerationOffer
-                          kind="board"
-                          {...segment.offers.traceDiagram}
-                          isGenerating={false}
-                          errorMessage={null}
-                          onGenerate={showUnavailableFeature}
-                        />
-                      )}
-                  {segment.offers.blastDiagram === null
-                    ? null
-                    : (
-                        <GenerationOffer
-                          kind="board"
-                          {...segment.offers.blastDiagram}
-                          isGenerating={false}
-                          errorMessage={null}
-                          onGenerate={showUnavailableFeature}
-                        />
-                      )}
-                  {segment.blastDiagram === null
-                    ? null
-                    : (
-                        <BlastBand
-                          {...segment.blastDiagram}
-                          codeLinks={review.codeLinks}
-                          renderImpactEditor={null}
-                          onOpenCodeLink={stepping.onOpenCodeLink}
-                          onOpenFile={stepping.onOpenCodeLink}
-                        />
-                      )}
-                  <CodeWalkthrough
-                    anchorId={segment.walkthrough.anchorId}
-                    heading={segment.walkthrough.heading}
-                    coverageLabel={segment.walkthrough.coverageLabel}
-                    emptyMessage={segment.walkthrough.emptyMessage}
-                    navigation={walkthroughLayout.navigationOf(segment)}
-                    onArrangeFiles={null}
-                  >
-                    {segment.offers.findings === null
-                      ? null
-                      : (
-                          <GenerationOffer
-                            kind="notice"
-                            {...segment.offers.findings}
-                            isGenerating={false}
-                            errorMessage={null}
-                            onGenerate={showUnavailableFeature}
-                          />
-                        )}
-                    {segment.walkthrough.files.map((file) => (
-                      <FileSection
-                        key={file.anchorId}
-                        file={file}
-                        openWaypointIds={stepping.openWaypointIds}
-                        currentWaypointId={stepping.currentWaypointId}
-                        focusedWaypointId={stepping.focusedWaypointId}
-                        previewVisit={stepping.previewVisit}
-                        isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
-                        isReviewPending={false}
-                        composer={review.composer}
-                        composingRange={null}
-                        isCommentPending={false}
-                        renderCommentEditor={renderNoEditor}
-                        codeLinks={review.codeLinks}
-                        codeDefinitions={review.codeDefinitions}
-                        onOpenCodeLink={stepping.onOpenCodeLink}
-                        onToggleWaypoint={stepping.onToggleWaypoint}
-                        onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
-                        onWaypointReviewedChange={onWaypointReviewedChange}
-                        onFileReviewedChange={(path, isReviewed) => { marking.onReviewedChange({ kind: "file", path }, isReviewed) }}
-                        onRootBlockReviewedChange={(id, isReviewed) => { marking.onReviewedChange({ kind: "root-block", id }, isReviewed) }}
-                        onStartComment={showUnavailableFeature}
-                        onAddComment={showUnavailableFeature}
-                        onPostComment={showUnavailableFeature}
-                        onReply={showUnavailableFeature}
-                        onResolveThread={showUnavailableFeature}
-                        onDiscardComment={showUnavailableFeature}
-                      />
-                    ))}
-                  </CodeWalkthrough>
+                      ),
+                      blastDiagram: (
+                        <>
+                          {segment.blastDiagram === null
+                            ? null
+                            : (
+                                <BlastBand
+                                  {...segment.blastDiagram}
+                                  codeLinks={review.codeLinks}
+                                  renderImpactEditor={null}
+                                  onOpenCodeLink={stepping.onOpenCodeLink}
+                                  onOpenFile={stepping.onOpenCodeLink}
+                                />
+                              )}
+                        </>
+                      ),
+                      walkthrough: (
+                        <CodeWalkthrough
+                          anchorId={segment.walkthrough.anchorId}
+                          heading={segment.walkthrough.heading}
+                          coverageLabel={segment.walkthrough.coverageLabel}
+                          emptyMessage={segment.walkthrough.emptyMessage}
+                          navigation={walkthroughLayout.navigationOf(segment)}
+                          onArrangeFiles={null}
+                        >
+                          {segment.walkthrough.files.map((file) => (
+                            <FileSection
+                              key={file.anchorId}
+                              file={file}
+                              openWaypointIds={stepping.openWaypointIds}
+                              currentWaypointId={stepping.currentWaypointId}
+                              focusedWaypointId={stepping.focusedWaypointId}
+                              previewVisit={stepping.previewVisit}
+                              isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
+                              isReviewPending={false}
+                              composer={review.composer}
+                              composingRange={null}
+                              isCommentPending={false}
+                              renderCommentEditor={renderNoEditor}
+                              codeLinks={review.codeLinks}
+                              codeDefinitions={review.codeDefinitions}
+                              onOpenCodeLink={stepping.onOpenCodeLink}
+                              onToggleWaypoint={stepping.onToggleWaypoint}
+                              onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
+                              onWaypointReviewedChange={onWaypointReviewedChange}
+                              onFileReviewedChange={(path, isReviewed) => { marking.onReviewedChange({ kind: "file", path }, isReviewed) }}
+                              onRootBlockReviewedChange={(id, isReviewed) => { marking.onReviewedChange({ kind: "root-block", id }, isReviewed) }}
+                              onStartComment={showUnavailableFeature}
+                              onAddComment={showUnavailableFeature}
+                              onPostComment={showUnavailableFeature}
+                              onReply={showUnavailableFeature}
+                              onResolveThread={showUnavailableFeature}
+                              onDiscardComment={showUnavailableFeature}
+                            />
+                          ))}
+                        </CodeWalkthrough>
+                      ),
+                    }}
+                  />
                 </section>
               ))}
             </div>

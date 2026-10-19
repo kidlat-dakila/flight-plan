@@ -1,14 +1,15 @@
+import { reviewPreferencesOf, type ArrangedSection } from "@/procedures/get-review-preferences/utils/review-preferences"
 import type { AgentModels } from "@/procedures/get-setup/utils/agent-models"
 import type { AgentName, Setup } from "@/procedures/get-setup/utils/setup"
 import type { Configuration } from "@/procedures/list-configurations/utils/configuration"
 import type { LineColor } from "@/procedures/list-repositories/utils/line-color"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
-import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
 import {
   buildBlast,
   buildCodeDefinitions,
   buildCodeLink,
   buildTrace,
+  buildTraceTabs,
   buildWalkthrough,
   collectCodeLinkIds,
   isSteppedWaypoint,
@@ -27,11 +28,11 @@ import {
   type WalkthroughRequest,
   type WaypointPlace,
 } from "@flightplan/codegraph"
-import type { CodeLink, ReviewArtifact, SectionSwitches, Segment, TokenLine } from "@flightplan/configurations"
+import type { CodeLink, ReviewArtifact, Segment, TokenLine } from "@flightplan/configurations"
 import type { ReviewedMarks } from "@flightplan/reviewed-marks"
 import { buildCompleteAction, type BranchLinking } from "./build-complete-action"
 import { buildStaleNotice } from "./build-notices"
-import { buildCompletionNotice, buildProgress, type WritingActivity } from "./build-progress"
+import { buildCompletionNotice, buildProgress, isWritingNow, type WritingActivity } from "./build-progress"
 import { buildRail } from "./build-rail"
 import { buildShell, NO_REVIEWER_REQUESTS, type ReviewerRequestAbilities } from "./build-shell"
 import { buildContext } from "./context"
@@ -48,12 +49,14 @@ import {
   type Publication,
 } from "./discussion"
 import { blobLinkOf, type ForgeLocation } from "./forge-links"
-import { buildGenerationOffers } from "./generation-offers"
+import { mergeSegments } from "./merged-segment"
 import type { PullRequestReading } from "./pull-request-forge"
 import type { ReviewTargetDetail } from "./review-target-detail"
 import type { GetReviewInput, ReviewPage, ReviewShell, SegmentOutline, SegmentView } from "./schemas"
+import { isShownInSegments } from "./segmentation"
 import { buildChangedFiles } from "./start/build-changed-files"
 import { buildStartForm } from "./start/build-start-form"
+import type { ReviewRequest } from "./start/review-request"
 import { buildUnassignedFiles } from "./unassigned-files"
 
 export interface ReviewPageSource {
@@ -80,6 +83,7 @@ export interface ReviewPageSource {
   readonly agentModels: AgentModels
   readonly activity: WritingActivity
   readonly chatLinkIds: readonly string[]
+  readonly request: ReviewRequest | null
 }
 
 const buildCodeLinks = (
@@ -103,7 +107,7 @@ const buildCodeLinks = (
 
 interface SegmentSettings {
   readonly walkthroughOf: (segmentId: string) => WalkthroughRequest
-  readonly sections: SectionSwitches
+  readonly sectionOrder: readonly ArrangedSection[]
 }
 
 interface SegmentPlace {
@@ -130,8 +134,20 @@ const buildOutline = (segment: Segment, { position, segmentCount }: SegmentPlace
   canMoveDown: position < segmentCount,
 })
 
+interface ShownSegment {
+  readonly segment: Segment
+  readonly traceSegments: readonly Segment[]
+}
+
+const shownSegmentsOf = (artifact: ReviewArtifact, isSegmented: boolean): ShownSegment[] => {
+  const [first, ...others] = artifact.segments
+  if (isSegmented || others.length === 0) return artifact.segments.map((segment) => ({ segment, traceSegments: [segment] }))
+  return [{ segment: mergeSegments([first, ...others]), traceSegments: artifact.segments }]
+}
+
 const buildSegment = (
   prepared: PreparedWalkthrough,
+  traceSegments: readonly Segment[],
   isSegmented: boolean,
   place: SegmentPlace,
   settings: SegmentSettings,
@@ -153,7 +169,9 @@ const buildSegment = (
     context,
   )
   const fileAnchorIdByPath = new Map(walkthrough.files.map((file) => [file.path, file.anchorId] as const))
-  const traceDiagram = buildTrace(segment, scope, places, context)
+  const traceDiagram = traceSegments.length > 1
+    ? buildTraceTabs(traceSegments, scope, places, context)
+    : buildTrace(segment, scope, places, context)
   return {
     id: segment.id,
     anchorId: `segment-${segment.id}`,
@@ -162,16 +180,11 @@ const buildSegment = (
     isTitleDraft: isSegmented && isUntitled(segment),
     detailLabel: isSegmented ? outline.detailLabel : null,
     outline,
-    context: buildContext(segment, scope, context),
+    context: buildContext(prepared, scope, context),
     traceDiagram,
     blastDiagram: buildBlast(segment, scope, fileAnchorIdByPath, context),
     walkthrough: attachThreads(walkthrough, discussion),
-    offers: buildGenerationOffers(settings.sections, {
-      scope,
-      traceAnchorId: traceDiagram.anchorId,
-      walkthroughAnchorId: walkthrough.anchorId,
-      isSegmented,
-    }),
+    sectionOrder: [...settings.sectionOrder],
   }
 }
 
@@ -246,27 +259,33 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
   const linkToBlob: ReviewViewContext["blobLinkOf"] = (path, range) => blobLinkOf(forgeLocation, path, range)
   const knownLinkIds = new Set(resolvedTargets.keys())
   const codeDefinitions = buildCodeDefinitions(source.sources, linkToBlob, { contextCodeBlocks: artifact.contextCodeBlocks, knownLinkIds })
+  const preferences = reviewPreferencesOf(source.setup.reviewPreferences)
   const context: ReviewViewContext = {
     sources: source.sources,
     solutionTokens: source.solutionTokens,
     knownLinkIds,
     definitionIds: new Set(Object.keys(codeDefinitions)),
     blobLinkOf: linkToBlob,
+    spotlight: preferences.spotlight,
+    walkthroughOrder: source.request?.writeUp?.walkthroughOrder ?? preferences.walkthroughOrder,
+    isWriting: isWritingNow(artifact, source.activity),
   }
   const settings: SegmentSettings = {
     walkthroughOf: (segmentId) => ({
       filterKeys: selectFilterKeys(input.filterKeysBySegment[segmentId] ?? null),
       isShowingReviewed: source.isOwn || input.reviewedSegmentIds.includes(segmentId),
     }),
-    sections: sectionsOf(artifact),
+    sectionOrder: preferences.sectionOrder,
   }
-  const walkthroughs = artifact.segments.map((segment) =>
+  const isSegmented = isShownInSegments(artifact)
+  const shownSegments = shownSegmentsOf(artifact, isSegmented)
+  const walkthroughs = shownSegments.map(({ segment }) =>
     prepareWalkthrough(segment, source.marks, settings.walkthroughOf(segment.id), context))
   const stepping = steppingOf(walkthroughs)
   const places = walkthroughs.flatMap((prepared) => listWaypointPlaces(prepared, stepping, context))
   const discussion = discussionSourceOf(source, artifact)
   const segments = walkthroughs.map((prepared, index) =>
-    buildSegment(prepared, artifact.isSegmented, { position: index + 1, segmentCount: walkthroughs.length }, settings, stepping, places, discussion, context))
+    buildSegment(prepared, shownSegments[index].traceSegments, isSegmented, { position: index + 1, segmentCount: walkthroughs.length }, settings, stepping, places, discussion, context))
   const hasForge = source.detail?.forgeUrl != null
   const isReviewable = !isKeptPrivate(source)
   const conversation = discussion === null ? null : buildConversation(discussion, placedThreadIdsOf(segments))

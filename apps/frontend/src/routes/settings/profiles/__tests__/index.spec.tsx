@@ -48,33 +48,24 @@ const emptyList = {
 }
 
 const index = [
-  { title: null, switch: null, entries: [{ key: "sections", label: "Sections", mark: "unchanged", markLabel: "Not changed", isOpen: true }] },
+  { title: null, entries: [{ key: "hover-descriptions", label: "Hover descriptions", mark: "unchanged", markLabel: "Not changed", isOpen: true }] },
   {
     title: "Code Walkthrough",
-    switch: null,
     entries: [
       { key: "walkthrough.files.waypoints.title", label: "Waypoint title", mark: "changed", markLabel: "Changed", isOpen: false },
     ],
   },
   {
-    title: "Blast Diagram",
-    switch: { section: "blastDiagram", label: "Generate Blast Diagram", isOn: false },
-    entries: [{ key: "blastDiagram.nodes.impactReason", label: "Blast file impact reason", mark: "off", markLabel: "Switched off", isOpen: false }],
+    title: "Context code blocks",
+    entries: [{ key: "contextCodeBlocks.description", label: "Context code block description", mark: "off", markLabel: "Not written", isOpen: false }],
   },
 ]
 
 const switchesPanel = {
   kind: "switches",
-  title: "Sections",
-  summary: "Which optional parts of a review the agent writes.",
-  sectionsTitle: "Optional sections",
-  sections: [
-    { section: "traceDiagram", label: "Trace Diagrams", description: "How the changed code runs.", isOn: true },
-    { section: "blastDiagram", label: "Blast Diagram", description: "The files the change can affect.", isOn: false },
-    { section: "findings", label: "Findings", description: "What the agent reports on a waypoint.", isOn: true },
-  ],
-  alwaysWrittenNote: "The Context Section and the Code Walkthrough are always written.",
-  contextKindsTitle: "Context code blocks",
+  title: "Hover descriptions",
+  summary: "Which names in the code the agent describes, for a reader who hovers them.",
+  contextKindsTitle: "Kinds of name",
   contextKindsHint: "Pick the kinds of name the agent describes.",
   contextKinds: [{ kind: "codebase", label: "Code of the repository", description: "What the code is.", isRequired: false }],
 }
@@ -214,11 +205,12 @@ describe("a configuration", () => {
 
     expect(screen.queryByRole("navigation", { name: "Settings sections" })).toBeNull()
     expect(screen.getByRole("heading", { level: 2, name: "Terse" })).toBeTruthy()
-    expect(within(fields).getByRole("link", { name: /^Sections\s*Not changed$/ }).getAttribute("aria-current")).toBe("page")
+    expect(within(fields).getByRole("link", { name: /^Hover descriptions\s*Not changed$/ }).getAttribute("aria-current")).toBe("page")
     expect(within(fields).getByRole("link", { name: /^Waypoint title\s*Changed$/ }).getAttribute("href")).toBe(
       "/settings/profiles/custom-terse?field=walkthrough.files.waypoints.title",
     )
-    expect(within(fields).getByRole("link", { name: /^Blast file impact reason\s*Switched off$/ })).toBeTruthy()
+    expect(within(fields).getByRole("link", { name: /^Context code block description\s*Not written$/ })).toBeTruthy()
+    expect(within(fields).queryByRole("checkbox")).toBeNull()
   })
 
   it("warns that a release can overwrite a preset, and offers to duplicate it", async () => {
@@ -239,27 +231,15 @@ describe("a configuration", () => {
     expect(create).toHaveBeenCalledWith({ name: null, sourceId: "standard" })
   })
 
-  it("saves the sections that are ticked", async () => {
-    const save = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved", message: "The sections are saved." } })
+  it("saves the kinds of name that are ticked", async () => {
+    const save = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved", message: "The hover descriptions are saved." } })
     renderApp({ "configuration.save": save }, "/settings/profiles/custom-terse")
 
-    fireEvent.click(await screen.findByRole("checkbox", { name: "Findings" }))
-    fireEvent.click(screen.getByRole("checkbox", { name: "Code of the repository" }))
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Code of the repository" }))
     fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
-    expect(await screen.findByText("The sections are saved.")).toBeTruthy()
-    expect(save).toHaveBeenCalledWith({ change: "switches", id: "custom-terse", sections: ["traceDiagram"], contextCodeBlockKinds: ["codebase"] })
-  })
-
-  it("switches a section from its heading in the field index", async () => {
-    const save = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved", message: "Blast Diagram: switched on." } })
-    renderApp({ "configuration.save": save }, "/settings/profiles/custom-terse")
-
-    fireEvent.click(await screen.findByRole("checkbox", { name: "Generate Blast Diagram" }))
-
-    await waitFor(() => {
-      expect(save).toHaveBeenCalledWith({ change: "section", id: "custom-terse", section: "blastDiagram", isOn: true })
-    })
+    expect(await screen.findByText("The hover descriptions are saved.")).toBeTruthy()
+    expect(save).toHaveBeenCalledWith({ change: "switches", id: "custom-terse", contextCodeBlockKinds: ["codebase"] })
   })
 
   it("opens a field with its instruction in the text editor, without a code link control", async () => {

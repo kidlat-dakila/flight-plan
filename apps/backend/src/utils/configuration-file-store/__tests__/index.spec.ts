@@ -3,7 +3,7 @@ import { join } from "node:path"
 import type { SavedConfiguration } from "@/procedures/list-configurations/utils/configuration"
 import { FileConfigurationStore } from "@/utils/configuration-file-store"
 import { withTemporaryFolder } from "@/utils/text-file/__tests__/temporary-folder"
-import { PRESET_CONTEXT_CODE_BLOCK_KINDS, PRESET_SECTIONS } from "@flightplan/configurations"
+import { PRESET_CONTEXT_CODE_BLOCK_KINDS } from "@flightplan/configurations"
 
 const sortedNamesOf = async (folderPath: string): Promise<string[]> =>
   [...await readdir(folderPath)].sort((one, two) => one.localeCompare(two))
@@ -12,7 +12,6 @@ const TERSE: SavedConfiguration = {
   id: "custom-terse",
   name: "Terse",
   preset: "minimal",
-  sections: PRESET_SECTIONS.minimal,
   contextCodeBlockKinds: PRESET_CONTEXT_CODE_BLOCK_KINDS.minimal,
   instructions: { context: "Two sentences.", writingStyle: "Fragments." },
 }
@@ -21,7 +20,6 @@ const CHANGED_STANDARD: SavedConfiguration = {
   id: "standard",
   name: "Standard",
   preset: "standard",
-  sections: PRESET_SECTIONS.standard,
   contextCodeBlockKinds: PRESET_CONTEXT_CODE_BLOCK_KINDS.standard,
   instructions: { context: "One paragraph." },
 }

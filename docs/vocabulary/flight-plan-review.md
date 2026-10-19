@@ -36,12 +36,30 @@ A review request is what the reviewer makes to have Flight Plan build a review a
 | Choice | Content |
 |---|---|
 | Configuration | The [prompt configuration](prompt-configurations.md) the agent writes with. The default configuration is listed first and selected. |
-| Order of the Code Walkthrough | One of the [orders](code-walkthrough.md#order), or the reviewer's own instruction. |
+| Order of the Code Walkthrough | Saved with the request, and read by nothing: Flight Plan sorts the walkthrough itself by the [review preferences](code-walkthrough.md#order). |
 | Agent | A coding agent set up in Flight Plan, the model it runs and the effort it works at, or no agent. An agent Flight Plan can start is started; for one it cannot start, the reviewer gets one line to run in it, and the model and effort are that agent's own. |
 
 While a review target has no review artifact, the page's header also states how many files of each kind the change touches.
 
-The request is saved inside the review artifact, so the choices are never lost. The prompt names the review target, how to reach Flight Plan and the order of the Code Walkthrough. It never names the configuration: the agent reads that from Flight Plan's MCP tools.
+The request is saved inside the review artifact, so the choices are never lost. The prompt names the review target and how to reach Flight Plan. It never names the configuration, which the agent reads from Flight Plan's MCP tools, nor an order for the Code Walkthrough, which Flight Plan sorts itself.
+
+## Write-up
+
+The reviewer asks the agent to write a review up from the review page, choosing what it writes. `review.writeUpPlan` (`procedures/get-write-up-plan/`) gives what the choice is made from, and `review.writeUp` (`procedures/write-up-review/`) applies it.
+
+| `review.writeUpPlan` returns | What it is |
+|---|---|
+| `agentLabel` | The agent that writes: the setup's default agent, with its saved model and effort. With no agent set up the result is `{ kind: "no-agent", message }` instead. |
+| `summary` | The choice in short, as label and value pairs: what is written up, the prompt configuration, the Code Walkthrough order and whether segments are on |
+| `sections` | Context, Trace Diagram, Blast Diagram, Code Walkthrough and Findings, each with `count`, `countLabel` ("4 parts to write", "12 waypoints to check") and `isChosen` |
+| `totalLabel` | What the chosen sections add up to: "5 parts to write and 12 waypoints to check", or "Nothing to write" |
+| `configurations`, `configurationId` | Every prompt configuration, and the chosen one |
+| `walkthroughOrders`, `walkthroughOrder` | The three [walkthrough orders](code-walkthrough.md#order) with their labels and descriptions, and the chosen one |
+| `isSegmented` | Whether the review is split into segments |
+
+A count is of the parts still unwritten that choosing the section would require: the context of each segment (the first alone with segments off), the labels and descriptions of the Trace Diagram, the files of the Blast Diagram to assess, the titles and readings of the waypoints. Findings count the waypoints the agent reads for them. The plan is asked for again with the sections the reviewer ticks, and its counts and labels follow. Unless the reviewer chose otherwise, the sections are those of the last write-up of this review, or else those the Write-ups of the [review preferences](review-preferences.md) mark Always; the configuration is the review's, or else the default; the order is the last write-up's, or else the preference's.
+
+`review.writeUp` takes the sections, the configuration, the order and whether segments are on. It refuses, as data with the field it is about, an empty choice, a configuration that no longer exists and a review with no agent set up. Otherwise it sets segments on or off, requires the context code blocks of the configuration and every node of the chosen sections (a node once required stays required), stores the choice with the request as `writeUp`, makes the artifact drafting and hands it to the agent: started, or the one line to run for an agent Flight Plan cannot start. The prompt names the chosen parts, and asks the agent to check every waypoint for findings or to write none. When everything chosen is already written, nothing is started and the answer says so. The page sorts the Code Walkthrough by the order in `writeUp` over the preference.
 
 ## Progress and completion
 
@@ -136,33 +154,25 @@ The repository must be one the reader's Flight Plan follows, under the same name
 
 A Flight Plan made for a branch is stored under the branch, not under a pull request. Marking it as complete opens a dialog that lists the viewer's open pull requests that have no Flight Plan, with the pull request of the same branch chosen. Choosing one moves the Flight Plan to that pull request: it is stored under the pull request and takes its title, its reviewed marks, pending comments and publications move with it, the page moves to the pull request's address, and the branch has no Flight Plan any more. "Complete without a pull request" completes it where it is. The chat with the agent stays with the branch.
 
-## Rebuilding and deleting
+## Catching up and deleting
 
-The Options Menu of a review artifact holds three actions on it.
+A review catches up with its target on its own. When the page opens on a stored review whose target has moved past the commit it describes, and no agent is writing it, Flight Plan pulls the branch, builds the review artifact again at the new head and keeps what was written for code that has not changed since. What is new is left unwritten, with its hints, for the next [write-up](#write-up), which writes up only what is missing. The review keeps its status, its choice of segments, its context code block kinds and its request.
 
-| Action | What it does |
-|---|---|
-| Update the Flight Plan | Pulls the branch, builds the review artifact again at its latest commit, and keeps what was written for code that has not changed since the commit the artifact was pinned to. The agent writes the rest. |
-| Regenerate from scratch | Pulls the branch, builds the review artifact again and keeps nothing. The agent writes all of it. |
-| Delete | Deletes the review artifact. The page shows the request form again. |
+Pulling fetches the branch from `origin` and fast-forwards the local branch. A repository with no remote is built as it is. When the pull fails, or the build cannot be made, the review stays as it is and the page goes on saying it is out of date.
 
-On the author's page the Options Menu holds Delete and neither of the other two: there the Flight Plan is written by hand, and a rebuild would hand it to the agent.
-
-Update and Regenerate open the request form in a dialog, set to the choices of the last request. Choosing another configuration in an update is a total rewrite, and the form says so under the configuration: nothing is kept, because another configuration writes every part differently.
-
-Pulling fetches the branch from `origin` and fast-forwards the local branch. A repository with no remote is built as it is. When the pull fails, nothing is built: the review artifact stays as it is and the dialog says why the pull failed.
-
-What an update keeps is decided part by part, by comparing the code as the two artifacts hold it, diff marks included:
+What a refresh keeps is decided part by part, by comparing the code as the two artifacts hold it, diff marks included:
 
 | Part | Kept when |
 |---|---|
-| A waypoint's title, reading, attention note and findings | The lines of its declaration are the same |
+| A waypoint's title, reading, core change note and findings | The lines of its declaration are the same |
 | A Trace Diagram node's label, description, trigger labels and block labels | The lines of its code block are the same |
-| A File Section's title, summary and waypoint order | The whole file is the same |
-| A segment's title, context, walkthrough intro, file order and the impacts of its Blast Diagram | The segment has the same changed files and every one of them is the same |
+| A File Section's waypoint order | The whole file is the same |
+| A segment's title, context, file order and the impacts of its Blast Diagram | The segment has the same changed files and every one of them is the same |
 | The description of a Trace Diagram | The same, and the diagram has the same edges and as many nodes |
 
-A part is not kept when a code link in it no longer resolves, or points at lines of a file that changed. The order of the File Sections is kept only when the request asks for the same order. An update that leaves nothing to write keeps a complete artifact complete and starts no agent.
+A part is not kept when a code link in it no longer resolves, or points at lines of a file that changed.
+
+The Options Menu of a review artifact holds Delete, which deletes the review artifact; the page shows the review without one.
 
 ## Who writes what
 

@@ -171,6 +171,7 @@ export const toReviewArtifact = (snapshot: CaseSnapshot, headFiles: RepositoryFi
       hunks: parseHunks(snapshot.diff.join(LINE_BREAK)),
       textOf: (path) => headFiles.get(path) ?? null,
       segments: segments.map((segment, position) => toSegmentParts(segment, linked[position], position)),
+      isSegmented: segments.length > 1,
     }),
   )
 }

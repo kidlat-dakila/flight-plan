@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { SWITCHABLE_SECTIONS } from "@/procedures/list-configurations/utils/configuration"
 import { CONTEXT_CODE_BLOCK_KINDS } from "@flightplan/configurations"
 
 export const ENTRY_MARKS = ["changed", "unchanged", "off"] as const
@@ -14,19 +13,9 @@ export const indexEntrySchema = z.strictObject({
   isOpen: z.boolean(),
 })
 
-export const groupSwitchSchema = z.strictObject({ section: z.enum(SWITCHABLE_SECTIONS), label: z.string(), isOn: z.boolean() })
-
 export const indexGroupSchema = z.strictObject({
   title: z.string().nullable(),
-  switch: groupSwitchSchema.nullable(),
   entries: z.array(indexEntrySchema),
-})
-
-export const sectionSwitchSchema = z.strictObject({
-  section: z.enum(SWITCHABLE_SECTIONS),
-  label: z.string(),
-  description: z.string(),
-  isOn: z.boolean(),
 })
 
 export const contextKindSwitchSchema = z.strictObject({
@@ -40,9 +29,6 @@ export const switchesPanelSchema = z.strictObject({
   kind: z.literal("switches"),
   title: z.string(),
   summary: z.string(),
-  sectionsTitle: z.string(),
-  sections: z.array(sectionSwitchSchema),
-  alwaysWrittenNote: z.string(),
   contextKindsTitle: z.string(),
   contextKindsHint: z.string(),
   contextKinds: z.array(contextKindSwitchSchema),

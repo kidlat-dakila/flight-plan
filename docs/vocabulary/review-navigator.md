@@ -20,7 +20,7 @@ Three controls are on every section.
 | **Back** | A | Goes to the section before the one on screen. |
 | **Next** | D | Goes to the section after the one on screen. |
 
-Back and Next follow the order of the section rail and carry on from the end of one segment into the next. Each names where it goes: "Back: Context", "Next: Blast Diagram". When it goes into another segment it names that segment by its place: "Next: Segment (2/3)". The first section has no Back and the last has no Next.
+Back and Next follow the order of the section rail and carry on from the end of one segment into the next. The sections of every segment come in the `sectionOrder` of the [review preferences](review-preferences.md), by default Context, Trace Diagram, Blast Diagram, Code Walkthrough: the page data carries it as `sectionOrder` on each segment, the backend builds the rail in that order, and the page and the navigator draw what they receive, with no order of their own. Each names where it goes: "Back: Context", "Next: Blast Diagram". When it goes into another segment it names that segment by its place: "Next: Segment (2/3)". The first section has no Back and the last has no Next.
 
 ## The controls of each section
 
@@ -68,7 +68,7 @@ The author's page has no Mark as reviewed and no Add comment, since the author d
 Filter (F) opens a menu of ticks that narrows the walkthrough to the waypoints worth stopping at. It holds:
 
 - the finding kinds: Core change, Bug, Risk, Nit and Question;
-- the code blocks of the segment, each a kind of block with what the change did to it, such as "Function" with "Added" or "Component" with "Modified". The four with the most waypoints are listed, and the others are under **More**. Imports are left out;
+- the code blocks of the segment, each the classification of a root block with what the change did to it, such as "Database operation" with "Added" or "Component" with "Modified". The classifications of the user's spotlight come first and are always listed, then the four others with the most waypoints, and the rest are under **More**. Imports are left out;
 - **Change type**, a submenu of Added, Modified and Removed;
 - **Reviewed**, which brings back the waypoints already marked reviewed.
 

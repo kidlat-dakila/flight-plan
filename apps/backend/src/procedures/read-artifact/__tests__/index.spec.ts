@@ -10,16 +10,17 @@ import {
 } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 
 describe("readArtifact", () => {
-  it("rejects a section the reviewer chose not to generate, and shows its switch in the overview", async () => {
-    const sections = { traceDiagram: false, blastDiagram: true, walkthrough: true, findings: false }
-    const context = await createArtifactContext({ ...DRAFT_ARTIFACT, sections })
+  it("reads every section, and an overview with no section switches", async () => {
+    const context = await createArtifactContext(DRAFT_ARTIFACT)
 
-    await expect(readArtifact({ ...KEY, section: "trace-diagram" }, context)).resolves.toStrictEqual({
-      kind: "rejected",
-      message: "The reviewer chose not to generate the Trace Diagram for this review. Do not write this, and do not ask the reviewer about it.",
-    })
+    await expect(readArtifact({ ...KEY, section: "trace-diagram" }, context)).resolves.toMatchObject({ kind: "read" })
     await expect(readArtifact({ ...KEY, section: "blast-diagram" }, context)).resolves.toMatchObject({ kind: "read" })
-    await expect(readArtifact({ ...KEY, section: "overview" }, context)).resolves.toMatchObject({ content: { sections } })
+    const overview = await readArtifact({ ...KEY, section: "overview" }, context)
+
+    const content = overview.kind === "read" ? overview.content : null
+
+    expect(typeof content === "object" && content !== null && "sections" in content).toBe(false)
+    expect(content).not.toBeNull()
   })
 
   it("returns the skeleton, the files a code link can name and what is unwritten as the overview", async () => {

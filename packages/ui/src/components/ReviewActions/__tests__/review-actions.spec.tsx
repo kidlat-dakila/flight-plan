@@ -171,46 +171,27 @@ describe("ShareMenu while publishing", () => {
 const ignore = (): void => undefined
 
 describe("OptionsMenu", () => {
-  it("reports which artifact action was chosen", async () => {
-    const onUpdate = vi.fn()
-    const onRegenerate = vi.fn()
+  it("reports a delete", async () => {
     const onDelete = vi.fn()
-    render(<OptionsMenu forgeLink={null} rebuild={{ onUpdate, onRegenerate }} onDelete={onDelete} />)
+    render(<OptionsMenu forgeLink={null} onDelete={onDelete} />)
 
-    fireEvent.click(screen.getByRole("button", { name: "More actions" }))
-    fireEvent.click(await screen.findByRole("menuitem", { name: "Update the Flight Plan" }))
-    fireEvent.click(screen.getByRole("button", { name: "More actions" }))
-    fireEvent.click(await screen.findByRole("menuitem", { name: "Regenerate from scratch" }))
     fireEvent.click(screen.getByRole("button", { name: "More actions" }))
     fireEvent.click(await screen.findByRole("menuitem", { name: "Delete" }))
 
-    expect(onUpdate).toHaveBeenCalledTimes(1)
-    expect(onRegenerate).toHaveBeenCalledTimes(1)
     expect(onDelete).toHaveBeenCalledTimes(1)
   })
 
-  it("links to the pull request and lists the artifact actions", async () => {
-    render(<OptionsMenu forgeLink={{ href: "https://forge.test/pull/412", label: "View pull request" }} rebuild={{ onUpdate: ignore, onRegenerate: ignore }} onDelete={ignore} />)
+  it("links to the pull request above Delete", async () => {
+    render(<OptionsMenu forgeLink={{ href: "https://forge.test/pull/412", label: "View pull request" }} onDelete={ignore} />)
 
     fireEvent.click(screen.getByRole("button", { name: "More actions" }))
 
     expect((await screen.findByRole("menuitem", { name: "View pull request" })).getAttribute("href")).toBe("https://forge.test/pull/412")
-    expect(screen.getByRole("menuitem", { name: "Update the Flight Plan" })).toBeTruthy()
-    expect(screen.getByRole("menuitem", { name: "Regenerate from scratch" })).toBeTruthy()
-    expect(screen.getByRole("menuitem", { name: "Delete" })).toBeTruthy()
+    expect(screen.getAllByRole("menuitem").map((item) => item.textContent)).toStrictEqual(["View pull request", "Delete"])
   })
 
-  it("leaves the pull request link out where there is none", async () => {
-    render(<OptionsMenu forgeLink={null} rebuild={{ onUpdate: ignore, onRegenerate: ignore }} onDelete={ignore} />)
-
-    fireEvent.click(screen.getByRole("button", { name: "More actions" }))
-
-    expect(await screen.findByRole("menuitem", { name: "Update the Flight Plan" })).toBeTruthy()
-    expect(screen.queryByRole("menuitem", { name: "View pull request" })).toBeNull()
-  })
-
-  it("holds Delete alone where the artifact cannot be rebuilt", async () => {
-    render(<OptionsMenu forgeLink={null} rebuild={null} onDelete={ignore} />)
+  it("holds Delete alone where there is no pull request", async () => {
+    render(<OptionsMenu forgeLink={null} onDelete={ignore} />)
 
     fireEvent.click(screen.getByRole("button", { name: "More actions" }))
 

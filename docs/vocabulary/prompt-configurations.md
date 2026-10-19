@@ -39,45 +39,21 @@ A preset is a complete configuration that ships with Flight Plan: a how-to-write
 | Preset | Written for |
 |---|---|
 | **Standard** | A reviewer who knows the codebase and wants the full review. The default. |
-| **Minimal** | A reviewer who wants the shortest artifact that still answers the review's questions. It writes every field in fragments that keep each fact once, and leaves the Trace Diagram, the Blast Diagram and the findings out. |
+| **Minimal** | A reviewer who wants the shortest artifact that still answers the review's questions. It writes every field in fragments that keep each fact once. |
 | **Onboardee** | A reader new to the codebase, who needs more context about the code around the change. It writes every field as Standard does, and it requires a description of every context code block. |
 | **Unfamiliar territory** | A reviewer who does not know the language or the libraries the change is written with. It writes every field as Onboardee does, and it also requires a description of every name of a library and of the language the shown code uses. |
 
-The user can change a preset: its instructions, its section switches and the kinds of context code block it requires. A release of Flight Plan can overwrite such a change, so the page that edits a preset says so and offers to duplicate it. A preset cannot be renamed or deleted, and each of its fields can be reset to the instruction it shipped with.
+The user can change a preset: its instructions and the kinds of context code block it requires. A release of Flight Plan can overwrite such a change, so the page that edits a preset says so and offers to duplicate it. A preset cannot be renamed or deleted, and each of its fields can be reset to the instruction it shipped with.
 
 ## Custom configuration
 
-A configuration the user creates as a copy of a preset or of another custom configuration. Any configuration, a preset or a custom one, can be the default, chosen on the configurations list in the settings. It is based on the preset its source is based on, and starts with its source's switches and instructions. It overrides any how-to-write instruction, the writing style, and the section switches. Anything it does not override comes from its preset, so a custom configuration never becomes incomplete when Flight Plan adds a field.
+A configuration the user creates as a copy of a preset or of another custom configuration. Any configuration, a preset or a custom one, can be the default, chosen on the configurations list in the settings. It is based on the preset its source is based on, and starts with its source's instructions and kinds of context code block. It overrides any how-to-write instruction and the writing style. Anything it does not override comes from its preset, so a custom configuration never becomes incomplete when Flight Plan adds a field.
 
-## Section switches
+## Sections
 
-A configuration turns the optional parts of an artifact on or off. The Trace Diagram, the Blast Diagram and the findings can be switched; the Code Walkthrough is always on:
-
-| Section | Standard | Minimal | Onboardee | Unfamiliar territory |
-|---|---|---|---|---|
-| Trace Diagram | On | Off | On | On |
-| Blast Diagram | On | Off | On | On |
-| Code Walkthrough | On | On | On | On |
-| Findings | On | Off | On | On |
-
-The Context Section is always generated. The findings are a switch of their own, inside the Code Walkthrough: with it off, the waypoints are written and carry no findings.
-
-The switches are data of the configuration, and nothing else decides them: no preset is treated differently by name. When a review is requested, its switches are copied onto the [review artifact](review-artifact.md#sections), and from then on the artifact's own switches are what the page and the agent's tools read.
+A configuration says how the agent writes, never which sections a review has. The codegraph builds the Trace Diagram, the Blast Diagram and the Code Walkthrough of every review, and the agent writes up the sections the reviewer chose: by default those the Write-ups of the [review preferences](review-preferences.md) mark Always. A configuration stored with section switches is read, and its switches are dropped.
 
 The review also keeps the id of its configuration and the preset that configuration is based on. While the agent writes, its instructions come from that configuration, its own instructions first and its preset's for the rest. If the configuration is deleted later, the instructions come from the preset alone.
-
-### A section that is off
-
-A section that is off is **not generated**:
-
-- Flight Plan builds no structure for it. The artifact holds no Trace Diagram and no Blast Diagram.
-- The agent is not asked to write it. It is no part of what is left to write, and its fields are not in the index of instructions.
-- The agent's tools refuse it. Reading it, asking how to write it and writing it each return a message that says the reviewer chose not to generate it.
-- The page says so where the section would be, and offers to generate it.
-
-### Generating a section on demand
-
-"Generate" on that offer switches the section on for the whole Flight Plan, every segment of it. For a diagram, Flight Plan first builds its structure from the two commits the artifact compares, and puts it on each segment that still holds the same changed files, so nothing that is written changes. Then the review's writer is asked for that section alone, with the configuration the review was written with: the agent is started or sent a message, a reviewer who starts their agent themselves gets the line to run in it, and an author or a review without an agent gets the structure alone.
 
 ## Context code blocks
 
@@ -89,7 +65,7 @@ A configuration says which kinds of [context code block](review-artifact.md#cont
 | Libraries | No | No | No | Yes |
 | Language | No | No | No | Yes |
 
-Like a section switch, the requirement is data of the configuration and nothing else decides it. When a review is requested it is copied onto every context code block of the artifact, by the kind of each, and from then on the artifact's own blocks are what the page and the agent's tools read.
+The requirement is data of the configuration and nothing else decides it. When a review is requested it is copied onto every context code block of the artifact, by the kind of each, and from then on the artifact's own blocks are what the page and the agent's tools read.
 
 - **A block that is required** and has no description is work left to write, a finished artifact must have every one, and the page shows the description in the hover, above the code.
 - **A block that is not required** is not handed to the agent, and the agent's tools refuse a description of it. Where no block is required, the field is not in the index of instructions either.

@@ -33,8 +33,7 @@ const CreateConfigurationPage = () => {
     <>
       <title>{DOCUMENT_TITLE}</title>
       <SectionIntro title={TITLE}>
-        Name the configuration and choose what it starts from. You change its sections and its instructions on the
-        next page.
+        Name the configuration and choose what it starts from. You change its instructions on the next page.
       </SectionIntro>
       <CreateConfigurationForm
         sources={form.sources}

@@ -2,18 +2,14 @@ import type { InstructionTexts } from "@/procedures/get-instructions/utils/instr
 import { presetKeysOf, presetTextOf } from "@/procedures/get-instructions/utils/resolve-instructions"
 import { isPresetName } from "@/procedures/get-setup/utils/default-configuration"
 import { PRESET_OFFERS } from "@/procedures/get-setup/utils/preset-catalog"
-import { offSectionOfField } from "@/procedures/read-artifact/utils/artifact-sections"
 import { isContextCodeBlockField } from "@/procedures/read-artifact/utils/context-code-blocks"
 import {
   INSTRUCTION_FIELDS,
   PRESET_CONTEXT_CODE_BLOCK_KINDS,
   PRESET_NAMES,
-  PRESET_SECTIONS,
   type ContextCodeBlockKind,
   type InstructionField,
   type PresetName,
-  type SectionName,
-  type SectionSwitches,
 } from "@flightplan/configurations"
 import { unwrapSoftBreaks } from "./unwrap-soft-breaks"
 
@@ -21,7 +17,6 @@ export interface SavedConfiguration {
   readonly id: string
   readonly name: string
   readonly preset: PresetName
-  readonly sections: SectionSwitches
   readonly contextCodeBlockKinds: readonly ContextCodeBlockKind[]
   readonly instructions: Readonly<Record<string, string>>
 }
@@ -30,21 +25,12 @@ export interface Configuration extends SavedConfiguration {
   readonly isPreset: boolean
 }
 
-export const SWITCHABLE_SECTIONS = ["traceDiagram", "blastDiagram", "findings"] as const satisfies readonly SectionName[]
-
-export const SWITCH_LABELS: Readonly<Record<(typeof SWITCHABLE_SECTIONS)[number], string>> = {
-  traceDiagram: "Trace Diagrams",
-  blastDiagram: "Blast Diagram",
-  findings: "Findings",
-}
-
 export const EDITABLE_FIELDS: readonly InstructionField[] = INSTRUCTION_FIELDS.filter((field) => field.isEditable)
 
 export const shippedConfigurationOf = (preset: PresetName): Configuration => ({
   id: preset,
   name: PRESET_OFFERS[preset].label,
   preset,
-  sections: PRESET_SECTIONS[preset],
   contextCodeBlockKinds: PRESET_CONTEXT_CODE_BLOCK_KINDS[preset],
   instructions: {},
   isPreset: true,
@@ -66,7 +52,6 @@ export const toSaved = (configuration: Configuration): SavedConfiguration => ({
   id: configuration.id,
   name: configuration.name,
   preset: configuration.preset,
-  sections: configuration.sections,
   contextCodeBlockKinds: configuration.contextCodeBlockKinds,
   instructions: configuration.instructions,
 })
@@ -92,14 +77,10 @@ export const changedFieldsOf = (texts: InstructionTexts, configuration: Configur
   EDITABLE_FIELDS.filter((field) => isFieldChanged(texts, configuration, field))
 
 export const isFieldOff = (configuration: Configuration, path: string): boolean =>
-  offSectionOfField(path, configuration.sections) !== null
-  || (isContextCodeBlockField(path) && configuration.contextCodeBlockKinds.length === 0)
+  isContextCodeBlockField(path) && configuration.contextCodeBlockKinds.length === 0
 
 const hasSameKinds = (kinds: readonly ContextCodeBlockKind[], otherKinds: readonly ContextCodeBlockKind[]): boolean =>
   kinds.length === otherKinds.length && kinds.every((kind) => otherKinds.includes(kind))
 
-export const areSwitchesChanged = (configuration: Configuration): boolean => {
-  const shipped = shippedConfigurationOf(configuration.preset)
-  return SWITCHABLE_SECTIONS.some((section) => configuration.sections[section] !== shipped.sections[section])
-    || !hasSameKinds(configuration.contextCodeBlockKinds, shipped.contextCodeBlockKinds)
-}
+export const areContextKindsChanged = (configuration: Configuration): boolean =>
+  !hasSameKinds(configuration.contextCodeBlockKinds, shippedConfigurationOf(configuration.preset).contextCodeBlockKinds)

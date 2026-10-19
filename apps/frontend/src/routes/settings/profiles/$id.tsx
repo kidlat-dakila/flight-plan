@@ -92,25 +92,20 @@ const ConfigurationPage = () => {
           <FieldIndex
             configurationId={id}
             groups={page.index}
-            isSwitching={save.isPending}
-            onSwitch={(section, isOn) => { save.mutate({ change: "section", id, section, isOn }) }}
           />
         </div>
         <div className="min-w-0">
           {panel.kind === "switches"
             ? (
                 <SwitchesForm
-                  key={`${id}:${panel.sections.map((option) => String(option.isOn)).join()}`}
+                  key={`${id}:${panel.contextKinds.map((option) => String(option.isRequired)).join()}`}
                   title={panel.title}
                   summary={panel.summary}
-                  sectionsTitle={panel.sectionsTitle}
-                  sections={panel.sections}
-                  alwaysWrittenNote={panel.alwaysWrittenNote}
                   contextKindsTitle={panel.contextKindsTitle}
                   contextKindsHint={panel.contextKindsHint}
                   contextKinds={panel.contextKinds}
-                  onSubmit={(sections, contextCodeBlockKinds) => {
-                    save.mutate({ change: "switches", id, sections, contextCodeBlockKinds })
+                  onSubmit={(contextCodeBlockKinds) => {
+                    save.mutate({ change: "switches", id, contextCodeBlockKinds })
                   }}
                 >
                   <PanelActions {...panelActions} />

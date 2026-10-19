@@ -137,3 +137,5 @@ On the author's page, a file the change reaches and a file that has an impact ty
 | Impact types and impact reasons | The agent, or the author on their own Flight Plan |
 
 Whether a segment has a Blast Diagram is decided by the codegraph. See "When a segment has one".
+
+A file with no impact can be [assessed on demand](agent-conversation.md#write-up-on-demand) from its side panel; while the agent assesses it, the file carries `isBeingWritten` in the page data. A file of the change has no impact to assess.

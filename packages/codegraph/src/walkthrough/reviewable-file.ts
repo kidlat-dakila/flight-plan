@@ -93,5 +93,15 @@ const toReviewableFile = (file: FileSection, sources: readonly SourceFile[]): Re
 export const reviewableSegmentFilesOf = (segment: Segment, sources: readonly SourceFile[]): ReviewableFile[] =>
   segment.walkthrough.files.map((file) => toReviewableFile(file, sources))
 
+const waypointIdsInRootBlockOf = (file: FileSection, sources: readonly SourceFile[], rootBlockId: string): string[] => {
+  const source = sourceOf(sources, file.path)
+  const waypoints = flattenWaypoints(file, source)
+  const rootBlock = listFileRootBlocks(file.path, waypoints, source).find((candidate) => candidate.id === rootBlockId)
+  return rootBlock === undefined ? [] : waypoints.filter((flat) => flat.rootBlocks.includes(rootBlock.block)).map((flat) => flat.waypoint.id)
+}
+
+export const listRootBlockWaypointIds = (artifact: ReviewArtifact, rootBlockId: string): string[] =>
+  artifact.segments.flatMap((segment) => segment.walkthrough.files).flatMap((file) => waypointIdsInRootBlockOf(file, artifact.sources, rootBlockId))
+
 export const reviewableFilesOf = (artifact: ReviewArtifact): ReviewableFile[] =>
   artifact.segments.flatMap((segment) => reviewableSegmentFilesOf(segment, artifact.sources))

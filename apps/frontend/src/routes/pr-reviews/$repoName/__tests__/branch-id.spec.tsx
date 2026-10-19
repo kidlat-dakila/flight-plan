@@ -10,8 +10,6 @@ import {
   missingPage,
   modelChoiceReply,
   permissionReply,
-  NO_OFFERS,
-  offerOf,
   pendingComment,
   showSectionInView,
   twoFilePage,
@@ -128,8 +126,8 @@ describe("the review page", () => {
     fireEvent.click(within(band).getByRole("button", { name: "More actions" }))
 
     expect((await screen.findByRole("menuitem", { name: "View pull request" })).getAttribute("href")).toBe("https://forge.test/pull/412")
-    expect(screen.getByRole("menuitem", { name: "Update the Flight Plan" })).toBeTruthy()
-    expect(screen.getByRole("menuitem", { name: "Regenerate from scratch" })).toBeTruthy()
+    expect(screen.queryByRole("menuitem", { name: "Update the Flight Plan" })).toBeNull()
+    expect(screen.queryByRole("menuitem", { name: "Regenerate from scratch" })).toBeNull()
     expect(screen.getByRole("menuitem", { name: "Delete" })).toBeTruthy()
   })
 
@@ -150,71 +148,6 @@ describe("the review page", () => {
     expect(getSwitcher).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", query: "" })
     await waitFor(() => {
       expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ repositoryName: "storefront", targetId: "pr-416" }))
-    })
-  })
-
-  it("opens the start form in a dialog to update the Flight Plan and warns that another configuration is a total rewrite", async () => {
-    const rebuild = vi.fn(() => ({ data: { kind: "rebuilt", prompt: null, message: "Review started" } }))
-    const rebuildForm = vi.fn(() => ({
-      data: {
-        title: "Update the Flight Plan",
-        description: "Flight Plan pulls the branch and builds the review again.",
-        form: {
-          ...missingPage.form,
-          configuration: {
-            ...missingPage.form.configuration,
-            options: missingPage.form.configuration.options.map((option) => ({
-              ...option,
-              rewriteNotice: option.configurationId === "standard" ? null : "A different configuration is a total rewrite.",
-            })),
-          },
-        },
-      },
-    }))
-    renderReview({ "review.get": () => ({ data: artifactPage }), "review.rebuildForm": rebuildForm, "review.rebuild": rebuild })
-
-    fireEvent.click(await screen.findByRole("button", { name: "More actions" }))
-    fireEvent.click(await screen.findByRole("menuitem", { name: "Update the Flight Plan" }))
-
-    const dialog = await screen.findByRole("dialog", { name: "Update the Flight Plan" })
-    expect(rebuildForm).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", mode: "update" })
-    expect(within(dialog).queryByText("A different configuration is a total rewrite.")).toBeNull()
-
-    fireEvent.click(within(dialog).getByRole("button", { name: "Configuration: Standard" }))
-    fireEvent.click(await screen.findByRole("radio", { name: /Onboardee/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
-
-    expect(await screen.findByText("A different configuration is a total rewrite.")).toBeTruthy()
-
-    fireEvent.click(screen.getByRole("button", { name: "Start the review" }))
-
-    expect(await screen.findByText("Review started")).toBeTruthy()
-    expect(rebuild).toHaveBeenCalledWith(expect.objectContaining({
-      repositoryName: "storefront",
-      targetId: "pr-412",
-      mode: "update",
-      configurationId: "onboardee",
-    }))
-    await waitFor(() => {
-      expect(screen.queryByRole("dialog")).toBeNull()
-    })
-  })
-
-  it("asks for a regeneration from scratch from the same dialog", async () => {
-    const rebuild = vi.fn(() => ({ data: { kind: "rebuilt", prompt: null, message: "Review started" } }))
-    renderReview({
-      "review.get": () => ({ data: artifactPage }),
-      "review.rebuildForm": () => ({ data: { title: "Regenerate from scratch", description: "Everything is written again.", form: missingPage.form } }),
-      "review.rebuild": rebuild,
-    })
-
-    fireEvent.click(await screen.findByRole("button", { name: "More actions" }))
-    fireEvent.click(await screen.findByRole("menuitem", { name: "Regenerate from scratch" }))
-    const dialog = await screen.findByRole("dialog", { name: "Regenerate from scratch" })
-    fireEvent.click(within(dialog).getByRole("button", { name: "Start the review" }))
-
-    await waitFor(() => {
-      expect(rebuild).toHaveBeenCalledWith(expect.objectContaining({ mode: "regenerate", configurationId: "standard" }))
     })
   })
 
@@ -1053,50 +986,6 @@ describe("the review page", () => {
     expect(await within(band).findByRole("heading", { name: "Count held units in the stock check" })).toBeTruthy()
     expect(screen.queryByRole("region", { name: /Segment/ })).toBeNull()
     expect(screen.queryByRole("alert")).toBeNull()
-  })
-
-  it("offers to generate a section the configuration left out, and reads the review again once it is generated", async () => {
-    const ungeneratedPage = {
-      ...artifactPage,
-      segments: artifactPage.segments.map((segment) => (segment.id === "stock"
-        ? { ...segment, offers: { traceDiagram: offerOf("traceDiagram", "Trace Diagram"), blastDiagram: offerOf("blastDiagram", "Blast Diagram"), findings: offerOf("findings", "Findings") } }
-        : segment)),
-    }
-    const getReview = vi.fn(() => ({ data: ungeneratedPage }))
-    const generateSection = vi.fn(() => ({ data: { kind: "generated", prompt: null, message: "Writing the Blast Diagram" } }))
-    renderReview({ "review.get": getReview, "review.generateSection": generateSection })
-    const stock = within(await screen.findByRole("region", { name: "Segment 1: Stock check" }))
-    const offer = stock.getByRole("region", { name: "Blast Diagram" })
-
-    expect(within(offer).getByText("Blast Diagram was not generated.")).toBeTruthy()
-    expect(within(stock.getByRole("region", { name: "Trace Diagram" })).getByRole("button", { name: "Generate" })).toBeTruthy()
-    expect(within(stock.getByRole("region", { name: "Findings" })).getByRole("button", { name: "Generate" })).toBeTruthy()
-    fireEvent.click(within(offer).getByRole("button", { name: "Generate" }))
-
-    await waitFor(() => {
-      expect(generateSection).toHaveBeenCalledWith(expect.objectContaining({ repositoryName: "storefront", targetId: "pr-412", section: "blastDiagram" }))
-    })
-    expect(await screen.findByText("Writing the Blast Diagram")).toBeTruthy()
-    expect(getReview.mock.calls.length).toBeGreaterThan(1)
-  })
-
-  it("shows why a section could not be generated, beside its button", async () => {
-    const ungeneratedPage = {
-      ...artifactPage,
-      segments: artifactPage.segments.map((segment) => (segment.id === "stock"
-        ? { ...segment, offers: { ...NO_OFFERS, traceDiagram: offerOf("traceDiagram", "Trace Diagram") } }
-        : segment)),
-    }
-    renderReview({
-      "review.get": () => ({ data: ungeneratedPage }),
-      "review.generateSection": () => ({ data: { kind: "unavailable", message: "feature/stock is not in this checkout." } }),
-    })
-    const stock = within(await screen.findByRole("region", { name: "Segment 1: Stock check" }))
-    const offer = stock.getByRole("region", { name: "Trace Diagram" })
-
-    fireEvent.click(within(offer).getByRole("button", { name: "Generate" }))
-
-    expect((await within(offer).findByRole("alert")).textContent).toBe("feature/stock is not in this checkout.")
   })
 
   it("offers no editing of the context on the reviewer's page", async () => {

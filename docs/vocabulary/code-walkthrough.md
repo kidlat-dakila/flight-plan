@@ -8,15 +8,17 @@ It opens with one line saying what the tour follows, and states how many of the 
 
 ## Order
 
-The order of the File Sections is chosen by the reviewer in the [review request](flight-plan-review.md#review-request), before the agent starts.
+Flight Plan sorts the File Sections of each segment itself, each time the page is built, by the `walkthroughOrder` of the [review preferences](review-preferences.md). The agent is not told an order.
 
 | Order | What comes first |
 |---|---|
-| **Foundations first** | The deepest changed code, then the code that calls it, then the wiring and configuration. A name is defined before it is used. The default. |
-| **Along the path** | The file where control arrives first, then each file the change reaches in turn, as the [Trace Diagram](trace-diagram.md) reads. |
-| **Core change first** | The files that are the point of the change, then the code that supports them, then the callers that had to follow. |
-| **Risk first** | The files whose waypoints need the most attention, down to the ones that are safe to skim. |
-| **Custom** | The reviewer's own instruction for the order, passed to the agent as written. |
+| **From the bottom of the imports up** (`imports-bottom-up`) | A file before every file that uses it: with `a.ts` imported by `b.ts`, and `b.ts` by `c.ts`, the order is `a.ts`, `b.ts`, `c.ts`. A name is defined before it is used. The default. |
+| **From the top of the imports down** (`imports-top-down`) | A file before every file it uses: `c.ts`, `b.ts`, `a.ts`. |
+| **Important changes first** (`important-first`) | The files with a core change and a [spotlight](#spotlight-and-core-change) change, then those with a core change, then those in the spotlight, then the rest, each group from the bottom of the imports up. |
+
+A file uses another when a code reference in it, other than one into a library, is defined in the other, read from the `references` of the stored source files and followed through every file the review holds, so two walkthrough files are ordered through a file between them that has no section. Files the imports do not order keep their stored order, which the author can change with "Arrange files"; the files of an import cycle keep their stored order too, below the files that use them. The important-first order is sorted again when the agent marks a core change.
+
+`orderFiles` in `packages/codegraph/src/walkthrough/file-order.ts` sorts, and the backend passes the order to the codegraph in `ReviewViewContext.walkthroughOrder`. "Arrange files" lists the files in their stored order.
 
 ## File Section
 
@@ -112,6 +114,43 @@ A reviewed root code block folds to its first line that the change does not remo
 
 The chevron folds and unfolds any root code block by hand. Unfolding a reviewed one does not take its mark off, and it folds again the next time it is marked reviewed. Where a root code block runs across several pieces of the file, between gaps and waypoint boxes, every piece folds with it.
 
+### Hint
+
+A hint is one short sentence Flight Plan writes on its own, with no model, for a waypoint the agent has not written up yet: one whose reading is empty. It says what kind of code the waypoint is about and what the change does to it, read from the [classifications](codegraph/classifications.md) of the waypoint's code blocks. A hint is never stored in the artifact and never counts as a write-up; the page data carries it as `hint` on the waypoint, and `null` once the agent has written the reading.
+
+| The waypoint's change | Hint |
+|---|---|
+| Every line added | "Adds a component." |
+| Lines changed, and what changed is what the block is | "Changes an API route." |
+| Lines changed inside a block that is something else | "Changes a database read or write inside a component." |
+| Every code block deleted | "Removes a webhook." |
+| No line changed: the block uses code that did | "No lines changed in a page, but it uses code that did." |
+
+What the block is comes from the `classifications` of the waypoint's code blocks, and what changed from their `diffClassifications`: in each case the classification the hierarchy ranks highest across every code block of the waypoint, or `logic` ("plain logic") when none has one. A nested waypoint with no code blocks of its own is read by the root code blocks of the waypoint it sits in. A waypoint with no code block at all, in a file the codegraph does not trace, has no hint.
+
+A waypoint with no write-up can be [written up on demand](agent-conversation.md#write-up-on-demand), alone or with every waypoint of its root code block. While the agent writes it, the page data marks it `isBeingWritten`.
+
+`hintOf(blocks, change)` in `packages/codegraph/src/code-blocks/hints.ts` writes it, and `HINT_SUBJECTS` holds the words for each classification. It takes any blocks, so a Trace Diagram card is given its hints the same way.
+
+### Spotlight and Core change
+
+Two marks say which parts of the change matter most. Flight Plan computes the first; the agent writes the second.
+
+| Mark | Who decides | When it is on |
+|---|---|---|
+| **Spotlight** | Flight Plan, from the user's `spotlight` in the [review preferences](review-preferences.md) | What changed in the waypoint or root code block earns a classification the user chose: one of the `diffClassifications` of the waypoint's code blocks (or of the root code blocks it sits in, for a nested waypoint with none of its own) is in the spotlight |
+| **Core change** | The agent | The waypoint carries the agent's `coreChange`: this is where the pull request does its real work. A root code block is a core change when a waypoint in it is. |
+
+The page data carries them on each waypoint and each root code block of a File Section:
+
+| Field | On | Value |
+|---|---|---|
+| `spotlight` | `WaypointView`, `RootBlockView` | `{ label: "Spotlight", classifications }`, the matched spotlight classifications with their labels in the order of the hierarchy, or `null` |
+| `coreChangeLabel` | `WaypointView`, `RootBlockView` | "Core change", or `null` |
+| `coreChange` | `WaypointView` | The agent's reason, or `null` when it gave none |
+
+Spotlight reads what changed, not what the block is: a component in which only a database write changed is in the spotlight of a user who chose Database operation, and not of one who chose Component. `spotlightViewOf` and `isInSpotlight` in `packages/codegraph/src/code-blocks/spotlight.ts` compute it from any blocks, and the backend passes the spotlight to the codegraph in the `ReviewViewContext`.
+
 ## Editing on the author's page
 
 On the author's page the Code Walkthrough is edited, not reviewed. It has no Review Toggle on a file, a waypoint or a root code block, no Mark as reviewed and no Reviewed tick in the filter, and nothing is dimmed or hidden as reviewed.
@@ -148,10 +187,10 @@ A `question` has no trace and no solution: there is no claim to prove and no fix
 The reviewer can narrow the tour to the waypoints worth stopping at. The filter is a set of ticks in groups:
 
 - The finding kinds: **Core change**, **Bug**, **Risk**, **Nit**, **Question**
-- The code blocks: the type of each [root block](codegraph/code-blocks.md) the waypoints of the segment are in, and what the change did to it, such as **Function** with **Added** or **Component** with **Modified**. Each reads the type, then what happened in its colour: added in the added colour, modified in blue, deleted in the removed colour. The four with the most waypoints are listed, with any that are ticked, and the others are under **More**. Imports are left out: a root block that is an import, added, modified or deleted, has no option and matches no code block filter.
+- The code blocks: the primary [classification](codegraph/classifications.md) of each [root block](codegraph/code-blocks.md) the waypoints of the segment are in, the one it shows in the walkthrough, and what the change did to it, such as **Database operation** with **Added** or **Component** with **Modified**. Each reads the classification, then what happened in its colour: added in the added colour, modified in blue, deleted in the removed colour. The classifications of the user's [spotlight](#spotlight-and-core-change) come first and are always listed. Then come the four others with the most waypoints, with any that are ticked, and the rest are under **More**. Ties keep the order of the hierarchy. Imports are left out: a root block that is an import, added, modified or deleted, has no option and matches no code block filter. A code block option's key is `block:<classification>:<change>`.
 - **Change type**, a submenu: **Added**, **Modified**, **Removed**
 
-A root block is **added** when every row of it is added, with no removed lines just before it, so a rewritten block is modified. It is **deleted** when it is a `deleted` block, and it is then named by the type of what was taken out, or "Code" when that type is not known. It is **modified** otherwise. A waypoint is in the root blocks of its code blocks, and a step is in the root blocks of its waypoint. A waypoint that covers several root blocks, such as a run of statements, matches each of them.
+A root block is **added** when every row of it is added, with no removed lines just before it, so a rewritten block is modified. It is **deleted** when it is a `deleted` block, and it is then named by the classification of what was taken out. It is **modified** otherwise. A waypoint is in the root blocks of its code blocks, and a step is in the root blocks of its waypoint. A waypoint that covers several root blocks, such as a run of statements, matches each of them.
 
 A waypoint is **added** when every line of it is added, **removed** when every code block of it is deleted code, and **modified** when it changes some of its lines. A waypoint on lines the change leaves alone has no change type.
 

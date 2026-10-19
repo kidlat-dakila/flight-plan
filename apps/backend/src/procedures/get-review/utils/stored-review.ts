@@ -1,8 +1,8 @@
 import { parse, stringify } from "devalue"
 import { z } from "zod"
+import { WALKTHROUGH_ORDERS as SORTED_WALKTHROUGH_ORDERS, WRITE_UP_SECTIONS } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
 import { RENAMED_PARTS, withRenamedKeys } from "@/procedures/list-configurations/utils/renamed-parts"
-import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
 import { withRequiredSections } from "@/procedures/read-artifact/utils/required-nodes"
 import { reviewArtifactSchema, type ReviewArtifact } from "@flightplan/configurations"
 import { AUTHOR_STARTS, isWrittenByAgent, WALKTHROUGH_ORDERS, type ReviewRequest } from "./start/review-request"
@@ -32,8 +32,13 @@ const requestSchema = z.strictObject({
     z.strictObject({ kind: z.literal("author"), start: z.enum(AUTHOR_STARTS) }),
   ]),
   requestedAt: z.iso.datetime().transform((text) => new Date(text)),
+  writeUp: z.strictObject({
+    sections: z.array(z.enum(WRITE_UP_SECTIONS)),
+    walkthroughOrder: z.enum(SORTED_WALKTHROUGH_ORDERS),
+  }).optional(),
 }).transform((request) => ({ ...request, configurationId: request.configurationId ?? request.preset }))
 
+const RETIRED_ARTIFACT_KEYS: readonly string[] = ["sections"]
 const RETIRED_WALKTHROUGH_KEY = "intro"
 const RETIRED_FILE_KEYS: readonly string[] = ["title", "summary"]
 
@@ -55,7 +60,7 @@ const withoutRetiredSegmentKeys = (segment: unknown): unknown =>
 
 const withoutRetiredKeys = (artifact: unknown): unknown =>
   isRecord(artifact) && Array.isArray(artifact.segments)
-    ? { ...artifact, segments: artifact.segments.map(withoutRetiredSegmentKeys) }
+    ? { ...withoutKeys(artifact, RETIRED_ARTIFACT_KEYS), segments: artifact.segments.map(withoutRetiredSegmentKeys) }
     : artifact
 
 const RENAMED_TRACE_DIAGRAM_KEYS: ReadonlyMap<string, string> = new Map([
@@ -71,12 +76,9 @@ const withRenamedTraceDiagram = (segment: Readonly<Record<string, unknown>>): Re
 const upgradedSegment = (segment: unknown): unknown =>
   isRecord(segment) ? withRenamedTraceDiagram(withRenamedKeys(segment, RENAMED_PARTS)) : segment
 
-const upgradedSections = (artifact: Readonly<Record<string, unknown>>): Record<string, unknown> =>
-  isRecord(artifact.sections) ? { sections: withRenamedKeys(artifact.sections, RENAMED_PARTS) } : {}
-
 const upgradedArtifact = (artifact: unknown): unknown =>
   isRecord(artifact) && Array.isArray(artifact.segments)
-    ? { ...artifact, ...upgradedSections(artifact), segments: artifact.segments.map(upgradedSegment) }
+    ? { ...artifact, segments: artifact.segments.map(upgradedSegment) }
     : artifact
 
 const upgradedStoredReview = (stored: unknown): unknown =>
@@ -104,7 +106,7 @@ const parseStored = (text: string): unknown => {
 
 const withRequirementOf = (artifact: ReviewArtifact, request: ReviewRequest, schema: number): ReviewArtifact =>
   schema === PRE_REQUIREMENT_SCHEMA_VERSION && isWrittenByAgent(request.writer)
-    ? withRequiredSections(artifact, sectionsOf(artifact))
+    ? withRequiredSections(artifact, WRITE_UP_SECTIONS)
     : artifact
 
 export const parseStoredReview = (text: string): ReviewScaffold | null => {

@@ -1,10 +1,11 @@
 import { countLabel } from "@/prose/count-label"
-import { compareRootBlockKeys, isRootBlockKey, rootBlockLabelOf, rootBlockLabelsOf, type RootBlockKey } from "@/walkthrough/root-blocks"
+import { classificationOfKey, compareRootBlockKeys, isRootBlockKey, rootBlockLabelOf, rootBlockLabelsOf, type RootBlockKey } from "@/walkthrough/root-blocks"
 import { CORE_CHANGE_LABEL, FINDING_KIND_LABELS, type FlatWaypoint } from "@/walkthrough/waypoints"
 import {
   WAYPOINT_CHANGES,
   WAYPOINT_FILTER_KEYS,
   WAYPOINT_FINDING_FILTER_KEYS,
+  type CodeBlockClassification,
   type WaypointChange,
   type WaypointFilter,
   type WaypointFilterKey,
@@ -110,11 +111,22 @@ const rootBlockKeysByCount = (waypoints: readonly FlatWaypoint[], selected: read
   return [...new Set([...waypoints.flatMap((flat) => flat.rootBlockKeys), ...selected.filter(isRootBlockKey)])].sort(byCount)
 }
 
-const rootBlockGroupOf = (waypoints: readonly FlatWaypoint[], selected: readonly FilterKey[]): WaypointFilter["groups"][number] => {
+const isInSpotlight = (key: RootBlockKey, spotlight: readonly CodeBlockClassification[]): boolean => {
+  const classification = classificationOfKey(key)
+  return classification !== null && spotlight.includes(classification)
+}
+
+const rootBlockGroupOf = (
+  waypoints: readonly FlatWaypoint[],
+  selected: readonly FilterKey[],
+  spotlight: readonly CodeBlockClassification[],
+): WaypointFilter["groups"][number] => {
   const keys = rootBlockKeysByCount(waypoints, selected)
+  const spotlit = keys.filter((key) => isInSpotlight(key, spotlight))
+  const rest = keys.filter((key) => !isInSpotlight(key, spotlight))
   const isShown = (key: RootBlockKey, position: number): boolean => position < SHOWN_ROOT_BLOCK_COUNT || selected.includes(key)
-  const shown = keys.filter(isShown)
-  const others = keys.filter((key, position) => !isShown(key, position))
+  const shown = [...spotlit, ...rest.filter(isShown)]
+  const others = rest.filter((key, position) => !isShown(key, position))
   const optionOf = filterOptionOf(waypoints, selected)
   return {
     id: ROOT_BLOCK_GROUP_ID,
@@ -128,13 +140,14 @@ const rootBlockGroupOf = (waypoints: readonly FlatWaypoint[], selected: readonly
 export const buildWaypointFilter = (
   waypoints: readonly FlatWaypoint[],
   selected: readonly FilterKey[],
+  spotlight: readonly CodeBlockClassification[],
 ): WaypointFilter => ({
   buttonLabel: FILTER_BUTTON_LABEL,
   badge: badgeOf(selected),
   heading: FILTER_HEADING,
   groups: [
     { id: FINDING_GROUP_ID, options: WAYPOINT_FINDING_FILTER_KEYS.map(filterOptionOf(waypoints, selected)), more: null },
-    rootBlockGroupOf(waypoints, selected),
+    rootBlockGroupOf(waypoints, selected, spotlight),
   ],
   submenus: [{
     id: CHANGE_SUBMENU_ID,

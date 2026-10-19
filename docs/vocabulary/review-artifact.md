@@ -29,11 +29,11 @@ An artifact also records where it is filed (the pull request number, or the bran
 
 ## Required nodes
 
-Every node the agent writes says whether the review asks for it: `isRequired` on a waypoint, a Trace Diagram node, a Trace Diagram (its description), a Blast Diagram file and a [context code block](#context-code-blocks), and `isContextRequired` on a segment (its title and context). Flight Plan builds every node unrequired. When the review is handed to an agent, Flight Plan requires the context of every segment and every node of each section that is on; generating a section later for an agent requires that section's nodes. The agent may write only required nodes, its unwritten work lists only them, the progress counts only them, and the artifact is complete once each of them is written. A review built without an agent, or written by its author, requires nothing.
+Every node the agent writes says whether the review asks for it: `isRequired` on a waypoint, a Trace Diagram node, a Trace Diagram (its description), a Blast Diagram file and a [context code block](#context-code-blocks), and `isContextRequired` on a segment (its title and context). Flight Plan builds every node unrequired. When the review is handed to an agent, Flight Plan requires the nodes of the write-up sections it is given (`context`, `traceDiagram`, `blastDiagram`, `walkthrough`, `findings`), the context of the first segment alone when [segments are off](#segments-off), with `withRequiredSections`; a node once required stays required. The agent may write only required nodes, its unwritten work lists only them, the progress counts only them, and the artifact is complete once each of them is written. A review built without an agent, or written by its author, requires nothing.
 
 ## Sections
 
-An artifact records which of its optional sections it generates: the Trace Diagram, the Blast Diagram, the Code Walkthrough and the findings. They start as the [section switches](prompt-configurations.md#section-switches) of the configuration the review was requested with. A section that is off is not generated: the artifact holds no structure for it, a finished artifact is not checked for it, and the page offers to generate it. Generating it switches it on in the artifact. An artifact that records no sections generates all of them.
+Every artifact has every section: the codegraph builds the Trace Diagram, the Blast Diagram and the Code Walkthrough, and the findings are written on waypoints. No configuration and no artifact switches a section off; which nodes the agent writes is what is [required](#required-nodes). An artifact stored with section switches (`sections`) is read and the field dropped.
 
 ## Context code blocks
 
@@ -73,11 +73,17 @@ This is not the `stale` [branch status](branch-status.md), which describes a pul
 
 The first thing a reviewer reads, before any code. It is stored as one string of Markdown, and the review page draws its headings, paragraphs, lists, bold text, inline code and [CodeLinks](#codelink).
 
-How it is laid out belongs to the [prompt configuration](prompt-configurations.md). The Standard preset writes three parts:
+The agent writes only the summary: one or two sentences, starting "This segment" ("This change" for the one Context of a review whose segments are off), that say what the change does, with no identifiers, paths or links. How it is worded belongs to the [prompt configuration](prompt-configurations.md); every preset asks for the summary alone.
 
-- **An opening paragraph**: why anyone should care about this change, in five sentences at most, with no identifiers.
-- **Overview**: what changes from outside, as a list of scenarios. Each scenario has a **when**, a situation in the reader's terms, and a **then**, what a person or another system can observe.
-- **Implementation**: what changed inside, grouped by place. Each group has a label (a path, a directory or an area) and a list with one item per change a reader would have to notice, each starting with a verb and naming the code with a CodeLink.
+### Change Overview
+
+Under the summary, the Context band shows the **Change Overview**, which Flight Plan builds with no model: every root code block of the segment's [Code Walkthrough](code-walkthrough.md), as a card that says whether it was added, modified or deleted. It is not stored; the page data carries it as `changeOverview` on the Context band, built by `buildChangeOverview` in `packages/codegraph/src/walkthrough/change-overview.ts`.
+
+| Part | Content |
+|---|---|
+| Rows | One per primary [classification](codegraph/classifications.md) of the root code blocks, the same one each root code block shows, in the order of the hierarchy. A row holds `classification` (`key`, `label`) and its `cards`. |
+| Cards | In the order of the walkthrough. Each has the root code block's `id`, its name as `label`, its type as `typeLabel` ("Function", "Component"), its `path`, its `change` (`added`, `modified`, `deleted`) with `changeLabel`, and `waypointAnchorId`, the anchor of the first waypoint on it. An import is never a card. |
+| `emptyMessage` | "No code changed." when there is no card, else `null` |
 
 ## Segments
 
@@ -86,6 +92,22 @@ A large pull request can be split into segments, so it can be read one part at a
 Every segment has an **id**, a short unique string that Flight Plan makes when it builds the segment, and a **title**, a very short text of what its context is about, which the agent writes. No tool changes an id. Every write an agent makes names the segment it writes by that id, and everything the agent reads comes back with the id of the segment it belongs to.
 
 Whether a segment has a Trace Diagram or a Blast Diagram is decided by the [codegraph](codegraph.md). A segment without one stores `null` for it and no reason. The agent writes neither diagram's structure. A Blast Diagram stores two graphs of files: the files that use the change, which carry the impact types and reasons, and under `importBound` the files the change uses, which carry nothing written. See [Blast Diagram](blast-diagram.md#two-views).
+
+### Segments off
+
+`isSegmented` on the artifact is the choice the `isSegmented` of the [review preferences](review-preferences.md) made when the artifact was built. The codegraph always cuts the change into its segments and stores them; the choice only decides how the page shows them. A review is shown in segments when it is segmented and has more than one segment (`isShownInSegments` in `apps/backend/src/procedures/get-review/utils/segmentation.ts`).
+
+With segments off, the page shows the stored segments as one (`mergeSegments` in `merged-segment.ts`):
+
+| Part | What the page shows |
+|---|---|
+| Context | The first segment's context, the one Context of the whole change. Only the first segment's context is required, and no segment needs a title. |
+| Code Walkthrough | The File Sections of every segment, those of one path joined into one, sorted by the walkthrough [order](code-walkthrough.md#order) |
+| Blast Diagram | The Blast Diagrams of every segment joined: each file and each import once, a file's first impact winning |
+| Trace Diagram | One tab per segment that has a Trace Diagram, in `tabs` of the Trace band, each with the segment's id, the diagram's title as its label, and the diagram. With fewer than two, `tabs` is empty and `diagram` holds the one there is. |
+| Ids | The merged segment takes the first segment's id, so filters and reviewed marks are kept under it. Each tab's diagram keeps its own segment's id for the agent's writes. |
+
+Editing the segments keeps the choice; adding a second segment to an artifact of one makes it segmented.
 
 ## General components
 

@@ -1,6 +1,7 @@
 import { findSource, rowSpanOf } from "@/code/lines"
 import { codeLinkIdOf } from "@/code/links"
-import { classificationViewOf } from "@/code-blocks/classification-view"
+import { classificationOfBlock, classificationViewOf } from "@/code-blocks/classification-view"
+import { hintOf, traceHintOf } from "@/code-blocks/hints"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
 import { firstOfEach } from "@/shared/first-of-each"
@@ -13,9 +14,11 @@ import type { WaypointPlace } from "@/walkthrough/build"
 import type {
   CodeBlock,
   TraceBand,
+  TraceTabView,
   TraceBlockListView,
   TraceEdgeView,
   TraceDiagram,
+  TraceDiagramView,
   TraceNode,
   TraceNodeEdge,
   TraceNodeView,
@@ -85,6 +88,9 @@ const linesWithHandlers = (block: CodeBlock): LineSpan[] => inLineOrder([block, 
 
 const changeOfBlock = (block: CodeBlock): NodeChange | null => (hasChange(block) ? "modified" : null)
 
+const rowHintOf = (label: string | null, block: CodeBlock | undefined): string | null =>
+  label !== null || block === undefined ? null : hintOf([block], changeOfBlock(block) ?? "unchanged")
+
 const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): TraceTriggerLabelView => {
   const name = nameOfBlock(codeBlock)
   return {
@@ -94,6 +100,7 @@ const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): TraceTriggerLab
     name,
     label: label ?? name,
     isDraft: label === null,
+    hint: rowHintOf(label, codeBlock),
     change: changeOfBlock(codeBlock),
     lines: linesWithHandlers(codeBlock),
   }
@@ -131,6 +138,7 @@ const toStoredRowView = (row: TraceRow, node: TraceNode): TraceTriggerLabelView 
     name,
     label: row.label ?? name,
     isDraft: row.label === null,
+    hint: rowHintOf(row.label, block),
     change: block === undefined ? null : changeOfBlock(block),
     lines: [[row.lineStart, row.lineEnd]],
   }
@@ -158,13 +166,16 @@ const toBlockLists = (node: TraceNode, rows: readonly ListedBlock[]): TraceBlock
       const { block, name } = row
       const written = writtenById.get(block.id) ?? null
       const change: NodeChange | null = changedRowIds.has(block.id) ? "modified" : null
-      return { id: block.id, name, label: written ?? name, isDraft: written === null, change, lines: linesOfRow(row) }
+      return { id: block.id, name, label: written ?? name, isDraft: written === null, hint: rowHintOf(written, block), change, lines: linesOfRow(row) }
     }),
   }))
 }
 
 const codeLinesOf = ({ codeBlocks: [root, ...insideBlocks] }: TraceNode): LineSpan[] =>
   inLineOrder([root, ...insideBlocks.filter((block) => eventHandedTo(block)?.id === root.id || isFoldedValue(block))].flatMap(lineSpansOf))
+
+const isNodeUnwritten = (node: TraceNode): boolean =>
+  node.label === null || node.triggerLabels.some((trigger) => trigger.label === null) || node.blockLabels.some((listed) => listed.label === null)
 
 const toNodeView = (node: TraceNode, setting: CodeViewSetting, context: ReviewViewContext): TraceNodeView => {
   const [root] = node.codeBlocks
@@ -183,6 +194,8 @@ const toNodeView = (node: TraceNode, setting: CodeViewSetting, context: ReviewVi
     changedLabel: change === null ? null : CHANGE_LABELS[change],
     label: node.label ?? name,
     isDraft: node.label === null,
+    hint: node.label === null ? hintOf(node.codeBlocks, change ?? "unchanged") : null,
+    isBeingWritten: context.isWriting && node.isRequired && isNodeUnwritten(node),
     name,
     shortPath: shortPathOf(path),
     description: node.description === null ? null : parseProse(node.description, context.knownLinkIds),
@@ -243,7 +256,7 @@ const titleOf = (nodes: readonly TraceNode[]): string => {
   return titled.length > TITLED_NODE_COUNT ? `${shown} +${String(titled.length - TITLED_NODE_COUNT)} more` : shown
 }
 
-const toDiagram = (traceDiagram: TraceDiagram, segmentId: string, scope: string, setting: CodeViewSetting, context: ReviewViewContext): NonNullable<TraceBand["diagram"]> => {
+const toDiagram = (traceDiagram: TraceDiagram, segmentId: string, scope: string, setting: CodeViewSetting, context: ReviewViewContext): TraceDiagramView => {
   const nodes = listTraceNodes(traceDiagram.traceNodes)
   const nodeViews = traceDiagram.traceNodes.map((node) => toNodeView(node, setting, context))
   const nodeById = new Map(nodes.map((node) => [node.id, node] as const))
@@ -254,16 +267,41 @@ const toDiagram = (traceDiagram: TraceDiagram, segmentId: string, scope: string,
     title: nodes.length === 0 ? EMPTY_TITLE : titleOf(nodes),
     description: traceDiagram.description === null ? null : parseProse(traceDiagram.description, context.knownLinkIds),
     descriptionMarkdown: traceDiagram.description ?? UNWRITTEN_MARKDOWN,
+    descriptionHint: traceDiagram.description === null ? traceHintOf(nodes.map((node) => classificationOfBlock(node.codeBlocks[0]))) : null,
     unwrittenLabel: UNWRITTEN_LABEL,
     nodes: nodeViews,
     edges: traceDiagram.traceNodeEdges.flatMap((edge) => toEdgeViews(edge, stepsByEdgeId.get(edge.id) ?? [], nodeById, rowIdsByNodeId)),
   }
 }
 
+const TRACE_HEADING = "Trace Diagram"
+const SCOPE_SEPARATOR = "-"
+
 export const buildTrace = (segment: Segment, scope: string, places: readonly WaypointPlace[], context: ReviewViewContext): TraceBand => ({
   anchorId: `${scope}${TRACE_ANCHOR_NAME}`,
-  heading: "Trace Diagram",
+  heading: TRACE_HEADING,
   diagram: segment.traceDiagram === null
     ? null
     : toDiagram(segment.traceDiagram, segment.id, scope, { places, changedPaths: segment.changedPaths }, context),
+  tabs: [],
 })
+
+const toTab = (segment: Segment & { readonly traceDiagram: TraceDiagram }, places: readonly WaypointPlace[], context: ReviewViewContext): TraceTabView => {
+  const diagram = toDiagram(segment.traceDiagram, segment.id, `${segment.id}${SCOPE_SEPARATOR}`, { places, changedPaths: segment.changedPaths }, context)
+  return { id: segment.id, label: diagram.title, diagram }
+}
+
+const hasTrace = (segment: Segment): segment is Segment & { readonly traceDiagram: TraceDiagram } => segment.traceDiagram !== null
+
+const TABBED_MINIMUM = 2
+
+export const buildTraceTabs = (segments: readonly Segment[], scope: string, places: readonly WaypointPlace[], context: ReviewViewContext): TraceBand => {
+  const tabs = segments.filter(hasTrace).map((segment) => toTab(segment, places, context))
+  const isTabbed = tabs.length >= TABBED_MINIMUM
+  return {
+    anchorId: `${scope}${TRACE_ANCHOR_NAME}`,
+    heading: TRACE_HEADING,
+    diagram: isTabbed ? null : tabs[0]?.diagram ?? null,
+    tabs: isTabbed ? tabs : [],
+  }
+}

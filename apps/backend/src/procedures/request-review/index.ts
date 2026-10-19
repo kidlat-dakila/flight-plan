@@ -9,6 +9,7 @@ import { offerAgents } from "@/procedures/get-review/utils/start/agent-offers"
 import { buildReviewPrompt, toOneLine } from "@/procedures/get-review/utils/start/review-prompt"
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
+import { reviewPreferencesOf } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { AGENT_LABELS } from "@/procedures/get-setup/utils/agent-catalog"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
@@ -61,7 +62,7 @@ export interface Handover {
 export const handToWriter = async ({ key, repository, target, request }: WritingJob, context: ProcedureContext): Promise<Handover> => {
   const { writer } = request
   if (writer.kind === "author" || writer.kind === "none") return { prompt: null, message: CREATED_MESSAGE }
-  const prompt = buildReviewPrompt(repository, target, key, request)
+  const prompt = buildReviewPrompt(repository, target, key, request.writeUp)
   return writer.kind === "external"
     ? { prompt: toOneLine(prompt), message: externalStartMessage(writer.agent) }
     : { prompt: null, message: await startAgent(key, prompt, context) }
@@ -87,15 +88,17 @@ export const requestReview = async (
   const target = await findReviewTarget(repository, input.targetId, context)
   if (target === null) return null
   const opened = await context.openRepository(repository.path, setup.forges)
+  const preferences = reviewPreferencesOf(setup.reviewPreferences)
   const building = await buildArtifact(opened.resolved, {
     branchName: branchNameOf(target),
     title: targetTitleOf(target),
     newId: context.conversationEnvironment.newId,
+    ignoredPaths: preferences.ignoredPaths,
+    isSegmented: preferences.isSegmented,
   })
   if (building.kind === "unavailable") return building
   await context.reviewStore.writeScaffold(key, {
     artifact: startingArtifactOf(building.artifact, planned.request.writer, {
-      sections: planned.configuration.sections,
       requiredContextKinds: planned.configuration.contextCodeBlockKinds,
     }),
     request: planned.request,

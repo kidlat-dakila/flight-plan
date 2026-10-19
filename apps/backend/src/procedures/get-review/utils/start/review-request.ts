@@ -1,4 +1,6 @@
+import type { WriteUpSection } from "@/procedures/get-review-preferences/utils/review-preferences"
 import type { AgentName, PresetName } from "@/procedures/get-setup/utils/setup"
+import type { WalkthroughOrder as SortedWalkthroughOrder } from "@flightplan/configurations"
 
 export const WALKTHROUGH_ORDERS = [
   "foundations-first",
@@ -24,6 +26,11 @@ export type ReviewWriter
 
 export const isWrittenByAgent = (writer: ReviewWriter | null): boolean => writer?.kind === "agent" || writer?.kind === "external"
 
+export interface WriteUpChoice {
+  readonly sections: readonly WriteUpSection[]
+  readonly walkthroughOrder: SortedWalkthroughOrder
+}
+
 export interface ReviewRequest {
   readonly configurationId: string
   readonly preset: PresetName
@@ -31,4 +38,5 @@ export interface ReviewRequest {
   readonly customOrder: string | null
   readonly writer: ReviewWriter
   readonly requestedAt: Date
+  readonly writeUp?: WriteUpChoice | undefined
 }

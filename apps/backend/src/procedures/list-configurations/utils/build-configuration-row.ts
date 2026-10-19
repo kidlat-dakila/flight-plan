@@ -1,6 +1,6 @@
 import type { InstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { PRESET_OFFERS } from "@/procedures/get-setup/utils/preset-catalog"
-import { changedFieldsOf, SWITCH_LABELS, SWITCHABLE_SECTIONS, type Configuration } from "./configuration"
+import { changedFieldsOf, type Configuration } from "./configuration"
 import type { ConfigurationRow } from "./schemas"
 
 const SHIPPED_LABEL = "Ships with Flight Plan"
@@ -18,9 +18,6 @@ const changeLabelOf = (changedCount: number): string => {
   return changedCount === 1 ? "1 instruction changed" : `${String(changedCount)} instructions changed`
 }
 
-const offLabelsOf = (configuration: Configuration): string[] =>
-  SWITCHABLE_SECTIONS.filter((section) => !configuration.sections[section]).map((section) => `${SWITCH_LABELS[section]} off`)
-
 export const buildConfigurationRow = (
   configuration: Configuration,
   texts: InstructionTexts,
@@ -32,7 +29,6 @@ export const buildConfigurationRow = (
   details: [
     originLabelOf(configuration),
     changeLabelOf(changedFieldsOf(texts, configuration).length),
-    ...offLabelsOf(configuration),
   ].map(plain),
   defaultLabel: isDefault ? DEFAULT_LABEL : null,
   isDefault,

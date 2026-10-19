@@ -1,5 +1,6 @@
 import { createConversationEnvironment, type ProcedureContext, openSampleRepository } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
+import { skipBranchPull } from "@/procedures/get-review/utils/branch-puller"
 import { InMemoryChangeReader, type RecordedChange } from "@/procedures/get-review/utils/change-reader"
 import { WEBHOOK_RETRY_ARTIFACT } from "@/procedures/get-review/utils/mocks/webhook-retry-artifact"
 import { InMemoryPullRequestForge } from "@/procedures/get-review/utils/pull-request-forge"
@@ -15,7 +16,6 @@ import { listRepositories } from "@/procedures/list-repositories"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { writeSamplePublishedPage } from "@/procedures/publish-artifact/utils/published-page-writer"
-import { skipBranchPull } from "@/procedures/rebuild-review/utils/branch-puller"
 import { highlightAsPlainText } from "@flightplan/codegraph"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")

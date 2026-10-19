@@ -26,7 +26,7 @@ const reject = (message: string): PlannedSegmentEdit => ({ kind: "rejected", mes
 
 const plan = (artifact: ReviewArtifact, segments: readonly Segment[]): PlannedSegmentEdit => ({
   kind: "planned",
-  artifact: { ...artifact, segments, isSegmented: segments.length > 1 },
+  artifact: { ...artifact, segments, isSegmented: artifact.isSegmented || segments.length > 1 },
 })
 
 const quoted = (paths: readonly string[]): string => paths.map((path) => `\`${path}\``).join(", ")

@@ -191,12 +191,9 @@ export interface Segment {
 
 export type SectionName = (typeof SECTION_NAMES)[number]
 
-export type SectionSwitches = Readonly<Record<SectionName, boolean>>
-
 export interface ReviewArtifact {
   readonly title: string
   readonly status: ArtifactStatus
-  readonly sections?: SectionSwitches | undefined
   readonly commit: string
   readonly isSegmented: boolean
   readonly segments: readonly Segment[]

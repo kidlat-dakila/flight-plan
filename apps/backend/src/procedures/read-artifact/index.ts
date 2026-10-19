@@ -1,8 +1,7 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { notGeneratedMessage } from "./utils/artifact-sections"
 import { segmentsIn, unknownSegmentMessage } from "./utils/artifact-walk"
 import { openArtifact } from "./utils/open-artifact"
-import { projectDiff, projectOverview, projectSegments, sectionNameOf } from "./utils/project-artifact"
+import { projectDiff, projectOverview, projectSegments } from "./utils/project-artifact"
 import type { ArtifactReading, ReadArtifactInput } from "./utils/schemas"
 
 const DEFAULT_DIFF_FILE_LIMIT = 25
@@ -15,10 +14,8 @@ export const readArtifact = async (input: ReadArtifactInput, context: ProcedureC
   if (input.segmentId !== undefined && segments.length === 0) {
     return { kind: "rejected", message: unknownSegmentMessage(artifact, input.segmentId) }
   }
-  const section = sectionNameOf(input.section)
-  if (section !== null && !opened.sections[section]) return { kind: "rejected", message: notGeneratedMessage(section) }
   if (input.section === "overview") {
-    return { kind: "read", content: projectOverview(artifact, opened.configuration.id, opened.sections) }
+    return { kind: "read", content: projectOverview(artifact, opened.configuration.id) }
   }
   if (input.section !== "diff") return { kind: "read", content: projectSegments(input.section, artifact, segments) }
   const diff = projectDiff(artifact, segments, {

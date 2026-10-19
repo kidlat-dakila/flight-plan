@@ -7,7 +7,7 @@ const WAYPOINT_TITLE = "walkthrough.files.waypoints.title"
 const FINDING_KIND = "walkthrough.files.waypoints.findings.kind"
 
 describe("getConfiguration", () => {
-  it("opens the switches of a preset under a notice that a release can overwrite it", async () => {
+  it("opens the hover descriptions of a preset under a notice that a release can overwrite it", async () => {
     const page = await getConfiguration({ id: "minimal", field: null }, createSetupContext(AT_REPOSITORIES))
 
     expect(page).toMatchObject({
@@ -19,18 +19,17 @@ describe("getConfiguration", () => {
       canDelete: false,
       panel: {
         kind: "switches",
-        sections: [
-          { section: "traceDiagram", label: "Trace Diagrams", isOn: false },
-          { section: "blastDiagram", label: "Blast Diagram", isOn: false },
-          { section: "findings", label: "Findings", isOn: false },
-        ],
+        title: "Hover descriptions",
         contextKinds: [{ kind: "codebase", isRequired: false }, { kind: "library", isRequired: false }, { kind: "language", isRequired: false }],
       },
     })
   })
 
-  it("groups the editable fields in the index and marks the fields of a section that is off", async () => {
-    const page = await getConfiguration({ id: "minimal", field: null }, createSetupContext(AT_REPOSITORIES))
+  it("groups the editable fields in the index and marks the context code block fields not written while no kind is chosen", async () => {
+    const context = createSetupContext(AT_REPOSITORIES)
+    await createConfiguration({ name: "Terse", sourceId: "unfamiliar-territory" }, context)
+    await saveConfiguration({ change: "switches", id: "custom-terse", contextCodeBlockKinds: [] }, context)
+    const page = await getConfiguration({ id: "custom-terse", field: null }, context)
     const index = page.kind === "found" ? page.index : []
 
     expect(index.map((group) => group.title)).toStrictEqual([
@@ -44,10 +43,10 @@ describe("getConfiguration", () => {
       "Context code blocks",
     ])
     expect(index[0]?.entries).toStrictEqual([
-      { key: "sections", label: "Sections", mark: "unchanged", markLabel: "Not changed", isOpen: true },
+      { key: "hover-descriptions", label: "Hover descriptions", mark: "changed", markLabel: "Changed", isOpen: true },
     ])
-    expect(index[3]?.entries.every((entry) => entry.mark === "off")).toBe(true)
-    expect(index[6]?.entries.every((entry) => entry.mark === "unchanged")).toBe(true)
+    expect(index[3]?.entries.every((entry) => entry.mark === "unchanged")).toBe(true)
+    expect(index[7]?.entries.every((entry) => entry.mark === "off" && entry.markLabel === "Not written")).toBe(true)
   })
 
   it("opens a field with what the configuration writes beside what its preset ships", async () => {

@@ -12,6 +12,7 @@ import {
   clusterImportGraphs,
   createImportGraphContext,
   traceImportGraph,
+  withoutIgnoredPaths,
   type ImportGraphChange,
   type ImportGraphContext,
   type ImportGraphFile,
@@ -47,6 +48,7 @@ export * from "./code/links"
 export * from "./code/marked-source"
 export * from "./diagram/settings"
 export * from "./diff-lines"
+export { isIgnoredPath } from "./import-graph/ignored-paths"
 export * from "./trace-diagram"
 export * from "./trace-diagram/added-cards"
 export { listTracePaths } from "./trace-diagram/paths"
@@ -61,6 +63,7 @@ export * from "./scaffold/hunks"
 export * from "./scaffold/review-artifact"
 export * from "./scaffold/source-lines"
 export * from "./walkthrough/build"
+export * from "./walkthrough/change-overview"
 export * from "./walkthrough/reviewable-file"
 export * from "./walkthrough/waypoint-filter"
 export * from "./walkthrough/waypoints"
@@ -308,6 +311,8 @@ export const buildCodegraph = async (change: ImportGraphChange): Promise<Codegra
 export interface BranchReview extends BranchChange {
   readonly title: string
   readonly newId: () => string
+  readonly ignoredPaths: readonly string[]
+  readonly isSegmented: boolean
 }
 
 export interface BranchReviewArtifact {
@@ -340,10 +345,12 @@ export interface CommitReview {
   readonly headCommit: string
   readonly title: string
   readonly newId: () => string
+  readonly ignoredPaths: readonly string[]
+  readonly isSegmented: boolean
 }
 
-export const buildCommitReviewArtifact = async ({ gitAdapter, baseCommit, headCommit, title, newId }: CommitReview): Promise<ReviewArtifact> => {
-  const context = await createImportGraphContext({ gitAdapter, baseCommit, headCommit })
+export const buildCommitReviewArtifact = async ({ gitAdapter, baseCommit, headCommit, title, newId, ignoredPaths, isSegmented }: CommitReview): Promise<ReviewArtifact> => {
+  const context = withoutIgnoredPaths(await createImportGraphContext({ gitAdapter, baseCommit, headCommit }), ignoredPaths)
   const codegraph = await buildCodegraphIn(gitAdapter, context)
   const segments = codegraph.segments.map((segment) => toSegmentParts(segment, segmentIdOf(newId())))
   const hunks = hunksIn(context)
@@ -356,10 +363,11 @@ export const buildCommitReviewArtifact = async ({ gitAdapter, baseCommit, headCo
     hunks,
     textOf: (path) => texts.get(path) ?? null,
     segments,
+    isSegmented,
   })
 }
 
-export const buildBranchReviewArtifact = async ({ gitAdapter, ref, title, newId }: BranchReview): Promise<BranchReviewArtifact> => {
+export const buildBranchReviewArtifact = async ({ gitAdapter, ref, title, newId, ignoredPaths, isSegmented }: BranchReview): Promise<BranchReviewArtifact> => {
   const [baseCommit, headCommit] = await Promise.all([gitAdapter.baseSha(ref), gitAdapter.headSha(ref)])
-  return { artifact: await buildCommitReviewArtifact({ gitAdapter, baseCommit, headCommit, title, newId }), baseCommit }
+  return { artifact: await buildCommitReviewArtifact({ gitAdapter, baseCommit, headCommit, title, newId, ignoredPaths, isSegmented }), baseCommit }
 }

@@ -15,22 +15,28 @@ describe("rootBlockKeysOf of rootBlocksOf", () => {
   it("calls a root block added when every row of it is added", () => {
     const total = createCodeBlock("total", PRICE_PATH, { lineOfCodeRangeReference: spanning(1, 2) })
 
-    expect(keysOf(waypointOn(total), ADDED_SOURCE)).toStrictEqual(["block:function:added"])
+    expect(keysOf(waypointOn(total), ADDED_SOURCE)).toStrictEqual(["block:logic:added"])
+  })
+
+  it("names a root block by its primary classification", () => {
+    const form = createCodeBlock("form", PRICE_PATH, { type: "component", classifications: ["form", "component"], lineOfCodeRangeReference: spanning(1, 2) })
+
+    expect(keysOf(waypointOn(form), ADDED_SOURCE)).toStrictEqual(["block:form:added"])
   })
 
   it("calls a root block modified when it changes only some of its rows, or replaces lines that were there", () => {
-    const priceOf = createCodeBlock("priceOf", PRICE_PATH, { type: "root-variable", lineOfCodeRangeReference: spanning(11, 12) })
+    const priceOf = createCodeBlock("priceOf", PRICE_PATH, { type: "root-variable", classifications: ["state"], lineOfCodeRangeReference: spanning(11, 12) })
     const keep = createCodeBlock("keep", PRICE_PATH, { lineOfCodeRangeReference: spanning(2, 3) })
 
-    expect(keysOf(waypointOn(priceOf), priceSource)).toStrictEqual(["block:root-variable:modified"])
-    expect(keysOf(waypointOn(keep), ADDED_SOURCE)).toStrictEqual(["block:function:modified"])
+    expect(keysOf(waypointOn(priceOf), priceSource)).toStrictEqual(["block:state:modified"])
+    expect(keysOf(waypointOn(keep), ADDED_SOURCE)).toStrictEqual(["block:logic:modified"])
   })
 
-  it("names a deleted root block by the type of what was taken out", () => {
-    const deleted = createCodeBlock("gone", PRICE_PATH, { type: "deleted", deletedType: "hook" })
+  it("names a deleted root block by the classification of what was taken out", () => {
+    const deleted = createCodeBlock("gone", PRICE_PATH, { type: "deleted", deletedType: "component", classifications: ["component"] })
     const unread = createCodeBlock("note", PRICE_PATH, { type: "deleted" })
 
-    expect(keysOf(waypointOn(deleted, unread), priceSource)).toStrictEqual(["block:hook:deleted", "block:deleted:deleted"])
+    expect(keysOf(waypointOn(deleted, unread), priceSource)).toStrictEqual(["block:component:deleted", "block:logic:deleted"])
   })
 
   it("leaves imports out, added, changed or taken out", () => {
@@ -44,24 +50,23 @@ describe("rootBlockKeysOf of rootBlocksOf", () => {
     const root = createCodeBlock("total", PRICE_PATH, { lineOfCodeRangeReference: spanning(1, 2) })
     const inside = createCodeBlock("inside", PRICE_PATH, { type: "condition", parentBlock: root, isRoot: false })
 
-    expect(keysOf(waypointOn(root, inside), ADDED_SOURCE)).toStrictEqual(["block:function:added"])
+    expect(keysOf(waypointOn(root, inside), ADDED_SOURCE)).toStrictEqual(["block:logic:added"])
   })
 })
 
 describe("rootBlockLabelOf", () => {
-  it("names the type of the root block, then what happened to it", () => {
+  it("names the classification of the root block, then what happened to it", () => {
     expect(rootBlockLabelOf("block:component:modified")).toBe("Component – Modified")
-    expect(rootBlockLabelOf("block:root-variable:added")).toBe("Variable – Added")
-    expect(rootBlockLabelOf("block:deleted:deleted")).toBe("Code – Deleted")
+    expect(rootBlockLabelOf("block:database-operation:added")).toBe("Database operation – Added")
   })
 })
 
 describe("isRootBlockKey", () => {
-  it("knows a key only for a block type and a root block change", () => {
-    expect(isRootBlockKey("block:hook:deleted")).toBe(true)
-    expect(isRootBlockKey("block:hook:removed")).toBe(false)
-    expect(isRootBlockKey("block:gadget:added")).toBe(false)
-    expect(isRootBlockKey("block:hook:added:more")).toBe(false)
+  it("knows a key only for a classification and a root block change", () => {
+    expect(isRootBlockKey("block:component:deleted")).toBe(true)
+    expect(isRootBlockKey("block:component:removed")).toBe(false)
+    expect(isRootBlockKey("block:hook:added")).toBe(false)
+    expect(isRootBlockKey("block:component:added:more")).toBe(false)
     expect(isRootBlockKey("bug")).toBe(false)
   })
 })

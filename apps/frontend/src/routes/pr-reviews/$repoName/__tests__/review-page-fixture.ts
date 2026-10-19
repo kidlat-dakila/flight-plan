@@ -27,6 +27,9 @@ const waypoint = (id: string, title: string, positionLabel: string, previousId: 
   coreChangeLabel: null,
   reading: paragraph(`Reading of ${title}.`),
   unwrittenLabel: "Not written yet.",
+  hint: null,
+  isBeingWritten: false,
+  spotlight: null,
   coreChange: null,
   findings: [],
   isReviewed: false,
@@ -50,18 +53,9 @@ const fileOrderOf = (files: readonly OrderedFile[]) =>
     canMoveDown: position < files.length - 1,
   }))
 
-export const NO_OFFERS = { traceDiagram: null, blastDiagram: null, findings: null }
+const ABSENT_TRACE = { anchorId: "", heading: "Trace Diagram", diagram: null, tabs: [] }
 
-export const offerOf = (section: "traceDiagram" | "blastDiagram" | "findings", heading: string) => ({
-  section,
-  anchorId: `stock-${section}`,
-  heading,
-  message: `${heading} was not generated.`,
-  generateLabel: "Generate",
-  generatingLabel: "Generating",
-})
-
-const ABSENT_TRACE = { anchorId: "", heading: "Trace Diagram", diagram: null }
+export const SECTION_ORDER = ["context", "traceDiagram", "blastDiagram", "walkthrough"] as const
 
 const segment = (id: string, title: string | null, position: number, files: readonly OrderedFile[]) => ({
   id,
@@ -85,10 +79,10 @@ const segment = (id: string, title: string | null, position: number, files: read
     markdown: `Why ${id} matters.`,
     isDraft: false,
     unwrittenLabel: "Not written yet.",
+    changeOverview: { heading: "Change Overview", emptyMessage: null, rows: [] },
   },
   traceDiagram: { ...ABSENT_TRACE, anchorId: `${id}-trace-diagram` },
   blastDiagram: null,
-  offers: NO_OFFERS,
   walkthrough: {
     anchorId: `${id}-code-walkthrough`,
     heading: "Code Walkthrough",
@@ -98,6 +92,7 @@ const segment = (id: string, title: string | null, position: number, files: read
     files,
     fileOrder: fileOrderOf(files),
   },
+  sectionOrder: SECTION_ORDER,
 })
 
 const priceFile = {

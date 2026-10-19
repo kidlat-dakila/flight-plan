@@ -40,6 +40,9 @@ const waypointView = (id: string, positionLabel: string, previousId: string | nu
   coreChangeLabel: null,
   reading: null,
   unwrittenLabel: "Not written yet.",
+  hint: null,
+  isBeingWritten: false,
+  spotlight: null,
   coreChange: null,
   findings: [],
   isReviewed: false,
@@ -61,6 +64,8 @@ const fileView = (path: string, rows: FileRow[], rootBlockIds: readonly string[]
   rootBlocks: rootBlockIds.map((id) => ({
     id,
     classification: { key: "logic", label: "Logic" },
+    spotlight: null,
+    coreChangeLabel: null,
     isReviewed: false,
     reviewLabel: "Reviewed",
     reviewName: `Reviewed: ${id}`,
@@ -127,7 +132,7 @@ describe("withReviewedWalkthrough", () => {
 })
 
 describe("withReviewedTrace", () => {
-  it("drops the reviewed waypoints from the code a node shows", () => {
+  it("drops the reviewed waypoints from the code a node shows, in the diagram and in each tab", () => {
     const traceDiagram: TraceBand = {
       anchorId: "traceDiagram",
       heading: "Trace",
@@ -173,11 +178,17 @@ describe("withReviewedTrace", () => {
           },
         ],
       },
+      tabs: [],
     }
 
     const reviewed = withReviewedTrace(traceDiagram, reviewSegment(OUTLINE, markedRoot, false))
+    const tabbed = withReviewedTrace(
+      { ...traceDiagram, diagram: null, tabs: traceDiagram.diagram === null ? [] : [{ id: "tab", label: "Tab", diagram: traceDiagram.diagram }] },
+      reviewSegment(OUTLINE, markedRoot, false),
+    )
 
     expect(reviewed.diagram?.nodes[0].codeViews[0].rows.map((row) => row.id)).toStrictEqual(["waypoint-tax"])
+    expect(tabbed.tabs[0]?.diagram.nodes[0].codeViews[0].rows.map((row) => row.id)).toStrictEqual(["waypoint-tax"])
   })
 })
 

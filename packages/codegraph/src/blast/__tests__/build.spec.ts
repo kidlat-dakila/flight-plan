@@ -34,6 +34,9 @@ const CONTEXT: ReviewViewContext = {
   knownLinkIds: new Set(),
   definitionIds: new Set(),
   blobLinkOf: () => null,
+  spotlight: [],
+  walkthroughOrder: "imports-bottom-up",
+  isWriting: false,
 }
 
 const ASSESSED: Blast = {
@@ -203,5 +206,16 @@ describe("buildBlast", () => {
       ["src/cart/index.ts>src/pricing.ts", "src/cart/index.ts", "src/pricing.ts", 2],
       ["src/pricing.ts>src/types.ts", "src/pricing.ts", "src/types.ts", 2],
     ])
+  })
+})
+
+describe("a Blast Diagram file being written", () => {
+  it("is being written while the agent writes a required file that has no impact yet, and never for a file of the change", () => {
+    const required: Blast = { ...BLAST, nodes: BLAST.nodes.map((node) => ({ ...node, isRequired: true })) }
+    const writingOf = (context: ReviewViewContext): [string, boolean][] =>
+      (buildBlast(segmentWith(required), "", NO_FILE_SECTIONS, context)?.views[0]?.board.nodes ?? []).map((node) => [node.path, node.isBeingWritten])
+
+    expect(writingOf({ ...CONTEXT, isWriting: true })).toStrictEqual(expect.arrayContaining([["src/cart/index.ts", true], ["src/pricing.ts", false]]))
+    expect(writingOf(CONTEXT).every(([, isBeingWritten]) => !isBeingWritten)).toBe(true)
   })
 })

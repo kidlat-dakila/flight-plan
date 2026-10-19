@@ -48,8 +48,7 @@ const ConfigurationsPage = () => {
       <title>{DOCUMENT_TITLE}</title>
       <SectionIntro title={TITLE}>
         A prompt configuration is the set of instructions the agent follows when it writes a review: the tone it writes
-        in, how it words each part, and which sections it includes. A new Flight Plan uses the default unless you pick
-        another. Open one to read or change its instructions, or duplicate one to make your own.
+        in and how it words each part. A new Flight Plan uses the default unless you pick another. Open one to read or change its instructions, or duplicate one to make your own.
       </SectionIntro>
       <div className="pb-6">
         <Link to="/settings/profiles/create" className={buttonVariants()}>{CREATE_LABEL}</Link>

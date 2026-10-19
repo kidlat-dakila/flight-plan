@@ -1,4 +1,3 @@
-import { offSectionOfField } from "@/procedures/read-artifact/utils/artifact-sections"
 import { isContextCodeBlockField } from "@/procedures/read-artifact/utils/context-code-blocks"
 import {
   BASE_PRESET_NAME,
@@ -6,7 +5,6 @@ import {
   instructionFileKey,
   type InstructionField,
   type PresetName,
-  type SectionSwitches,
 } from "@flightplan/configurations"
 import type { InstructionTexts } from "./instruction-texts"
 
@@ -16,7 +14,6 @@ export interface IndexedField {
 }
 
 export interface WrittenParts {
-  readonly sections: SectionSwitches
   readonly requiresContextCodeBlocks: boolean
 }
 
@@ -28,7 +25,6 @@ export interface InstructionSource {
 
 export interface InstructionIndex {
   readonly configuration: string
-  readonly sections: SectionSwitches
   readonly requiresContextCodeBlocks: boolean
   readonly fields: readonly IndexedField[]
 }
@@ -48,15 +44,14 @@ export type FieldResolution
 
 const PATH_SEPARATOR = "."
 
-const isWritten = (path: string, { sections, requiresContextCodeBlocks }: WrittenParts): boolean =>
-  offSectionOfField(path, sections) === null && (requiresContextCodeBlocks || !isContextCodeBlockField(path))
+const isWritten = (path: string, { requiresContextCodeBlocks }: WrittenParts): boolean =>
+  requiresContextCodeBlocks || !isContextCodeBlockField(path)
 
 export const listFieldPaths = (written: WrittenParts): string[] =>
   INSTRUCTION_FIELDS.map((field) => field.path).filter((path) => isWritten(path, written))
 
 export const buildInstructionIndex = (configurationId: string, written: WrittenParts): InstructionIndex => ({
   configuration: configurationId,
-  sections: written.sections,
   requiresContextCodeBlocks: written.requiresContextCodeBlocks,
   fields: INSTRUCTION_FIELDS
     .filter((field) => isWritten(field.path, written))

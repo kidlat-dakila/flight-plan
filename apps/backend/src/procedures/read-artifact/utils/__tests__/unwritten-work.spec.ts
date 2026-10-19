@@ -1,14 +1,12 @@
 import { tallyNodes, tallyWork, unwrittenWork } from "@/procedures/read-artifact/utils/unwritten-work"
 import { DRAFT_ARTIFACT, DRAFT_TRACE_NODE, DRAFT_SEGMENT, draftTraceOf, WALKTHROUGH_ONLY_ARTIFACT } from "./artifact-fixture"
 
-const ALL_ON = { traceDiagram: true, blastDiagram: true, walkthrough: true, findings: true }
-
 const needsOf = (id: string | null, work: ReturnType<typeof unwrittenWork>): string[] =>
   work.filter((one) => one.id === id).map((one) => one.needs)
 
 describe("unwrittenWork", () => {
   it("lists everything a fresh scaffold still needs, the Blast Diagram first", () => {
-    const work = unwrittenWork(DRAFT_ARTIFACT, ALL_ON)
+    const work = unwrittenWork(DRAFT_ARTIFACT)
 
     expect(work.map((one) => `${one.target}:${one.id ?? ""}:${one.needs}`)).toStrictEqual([
       "blast-node:src/cart/CartPage.tsx:impact",
@@ -33,7 +31,7 @@ describe("unwrittenWork", () => {
     }
     const artifact = { ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, blastDiagram: assessed }] }
 
-    const work = unwrittenWork(artifact, ALL_ON)
+    const work = unwrittenWork(artifact)
 
     expect(needsOf("src/cart/CartTotal.tsx", work)).toStrictEqual([])
     expect(needsOf("src/cart/CartPage.tsx", work)).toStrictEqual([])
@@ -52,7 +50,7 @@ describe("unwrittenWork", () => {
       },
     ])
 
-    const work = unwrittenWork({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, traceDiagram }] }, ALL_ON)
+    const work = unwrittenWork({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, traceDiagram }] })
 
     expect(needsOf("j-subtotal", work)).toStrictEqual(["trigger-label"])
     expect(needsOf("j-line-total", work)).toStrictEqual(["label"])
@@ -70,16 +68,9 @@ describe("unwrittenWork", () => {
       },
     ])
 
-    const work = unwrittenWork({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, traceDiagram }] }, ALL_ON)
+    const work = unwrittenWork({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, traceDiagram }] })
 
     expect(needsOf("j-subtotal", work)).toStrictEqual(["block-label"])
-  })
-
-  it("leaves out the work of a section the configuration turned off", () => {
-    const work = unwrittenWork(DRAFT_ARTIFACT, { traceDiagram: false, blastDiagram: false, walkthrough: true, findings: true })
-
-    expect(work.filter((one) => one.target === "blast-node" || one.target === "trace-node")).toStrictEqual([])
-    expect(needsOf("w1", work)).toStrictEqual(["title", "reading"])
   })
 
   it("asks a solution of a bug, a risk and a nit, and none of a question", () => {
@@ -101,39 +92,43 @@ describe("unwrittenWork", () => {
       })),
     }
 
-    const work = unwrittenWork(withFindings, ALL_ON)
+    const work = unwrittenWork(withFindings)
 
     expect(work.filter((one) => one.needs === "solution").map((one) => one.message)).toStrictEqual([
       "The nit `f-nit` on `w1` has no solution. Every bug, risk and nit carries the lines as they should be.",
     ])
-    expect(unwrittenWork(withFindings, { ...ALL_ON, findings: false }).filter((one) => one.needs === "solution")).toStrictEqual([])
   })
 
   it("asks a description of a Trace Diagram that has a node and none of one that is described or empty", () => {
     const withTrace = (traceDiagram: ReturnType<typeof draftTraceOf>) => ({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, traceDiagram }] })
     const drawn = draftTraceOf([DRAFT_TRACE_NODE])
 
-    expect(needsOf(null, unwrittenWork(withTrace(drawn), ALL_ON))).toStrictEqual(["context", "trace-description"])
-    expect(needsOf(null, unwrittenWork(withTrace({ ...drawn, description: "A cart is shown, and its total is summed." }), ALL_ON))).toStrictEqual(["context"])
-    expect(needsOf(null, unwrittenWork(withTrace(draftTraceOf([])), ALL_ON))).toStrictEqual(["context"])
+    expect(needsOf(null, unwrittenWork(withTrace(drawn)))).toStrictEqual(["context", "trace-description"])
+    expect(needsOf(null, unwrittenWork(withTrace({ ...drawn, description: "A cart is shown, and its total is summed." })))).toStrictEqual(["context"])
+    expect(needsOf(null, unwrittenWork(withTrace(draftTraceOf([]))))).toStrictEqual(["context"])
   })
 
-  it("asks for a title on a segment that has none, after its context", () => {
-    const untitled = { ...WALKTHROUGH_ONLY_ARTIFACT, segments: WALKTHROUGH_ONLY_ARTIFACT.segments.map((segment) => ({ ...segment, title: "" })) }
+  it("asks for a title on a segment that has none, after its context, when the review is split into segments", () => {
+    const untitled = { ...WALKTHROUGH_ONLY_ARTIFACT, isSegmented: true, segments: WALKTHROUGH_ONLY_ARTIFACT.segments.map((segment) => ({ ...segment, title: "" })) }
 
-    expect(unwrittenWork(untitled, ALL_ON).slice(0, 2).map((one) => `${one.target}:${one.needs}`)).toStrictEqual([
+    expect(unwrittenWork(untitled).slice(0, 2).map((one) => `${one.target}:${one.needs}`)).toStrictEqual([
       "context:context",
       "context:segment-title",
     ])
   })
 
+  it("asks for no segment title when segments are off, since none is shown", () => {
+    const untitled = { ...WALKTHROUGH_ONLY_ARTIFACT, isSegmented: false, segments: WALKTHROUGH_ONLY_ARTIFACT.segments.map((segment) => ({ ...segment, title: "" })) }
+
+    expect(unwrittenWork(untitled).map((one) => one.needs)).not.toContain("segment-title")
+  })
+
   it("counts the nodes that still need writing apart from the ones that do not", () => {
-    expect(tallyNodes(WALKTHROUGH_ONLY_ARTIFACT, ALL_ON)).toStrictEqual({ complete: 0, incomplete: 4 })
-    expect(tallyNodes(DRAFT_ARTIFACT, { traceDiagram: false, blastDiagram: false, walkthrough: false, findings: false })).toStrictEqual({ complete: 0, incomplete: 1 })
+    expect(tallyNodes(WALKTHROUGH_ONLY_ARTIFACT)).toStrictEqual({ complete: 0, incomplete: 4 })
   })
 
   it("counts the work by kind, leaving out the kinds with none", () => {
-    expect(tallyWork(unwrittenWork(WALKTHROUGH_ONLY_ARTIFACT, ALL_ON))).toStrictEqual({
+    expect(tallyWork(unwrittenWork(WALKTHROUGH_ONLY_ARTIFACT))).toStrictEqual({
       total: 7,
       byKind: { context: 1, title: 3, reading: 3 },
     })

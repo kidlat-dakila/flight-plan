@@ -10,6 +10,8 @@ export interface ArtifactChange {
   readonly branchName: string
   readonly title: string
   readonly newId: () => string
+  readonly ignoredPaths: readonly string[]
+  readonly isSegmented: boolean
 }
 
 export interface CommitChange {
@@ -17,6 +19,8 @@ export interface CommitChange {
   readonly headCommit: string
   readonly title: string
   readonly newId: () => string
+  readonly ignoredPaths: readonly string[]
+  readonly isSegmented: boolean
 }
 
 const NO_CHANGE_MESSAGE = "This change touches no files, so there is nothing to review."
@@ -34,9 +38,9 @@ const buildWith = async (opened: Resolved, build: (gitAdapter: GitAdapter) => Pr
   }
 }
 
-export const buildArtifact = async (opened: Resolved, { branchName, title, newId }: ArtifactChange): Promise<ArtifactBuilding> =>
+export const buildArtifact = async (opened: Resolved, { branchName, ...choices }: ArtifactChange): Promise<ArtifactBuilding> =>
   await buildWith(opened, async (gitAdapter) =>
-    await buildBranchReviewArtifact({ gitAdapter, ref: { kind: "branch", name: branchName }, title, newId }))
+    await buildBranchReviewArtifact({ gitAdapter, ref: { kind: "branch", name: branchName }, ...choices }))
 
 const atCommits = (artifact: ReviewArtifact, baseCommit: string): BranchReviewArtifact => ({ artifact, baseCommit })
 

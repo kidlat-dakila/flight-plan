@@ -5,7 +5,7 @@ import { shippedConfigurationOf } from "@/procedures/list-configurations/utils/c
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { writeText } from "@/utils/text-file"
 import { withTemporaryFolder } from "@/utils/text-file/__tests__/temporary-folder"
-import { ALL_SECTIONS_ON, PRESET_NAMES, PRESET_CONTEXT_CODE_BLOCK_KINDS } from "@flightplan/configurations"
+import { PRESET_NAMES, PRESET_CONTEXT_CODE_BLOCK_KINDS } from "@flightplan/configurations"
 
 const SHIPPED_CONFIGURATIONS_PATH = fileURLToPath(new URL("../../../../../../packages/configurations/src", import.meta.url))
 
@@ -54,7 +54,7 @@ describe("InstructionFileReader", () => {
   it("finds a text for every field each preset writes in the shipped configurations", async () => {
     const texts = await new InstructionFileReader(SHIPPED_CONFIGURATIONS_PATH).read()
     const writtenPathsOf = (preset: (typeof PRESET_NAMES)[number]): string[] =>
-      listFieldPaths({ sections: ALL_SECTIONS_ON, requiresContextCodeBlocks: PRESET_CONTEXT_CODE_BLOCK_KINDS[preset].length > 0 })
+      listFieldPaths({ requiresContextCodeBlocks: PRESET_CONTEXT_CODE_BLOCK_KINDS[preset].length > 0 })
 
     const resolutions = PRESET_NAMES.map((preset) => resolveFields(writtenPathsOf(preset), texts, shippedConfigurationOf(preset)).kind)
 

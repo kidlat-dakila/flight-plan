@@ -17,6 +17,7 @@ import { branchNameOf } from "./utils/change-reader"
 import { findReviewTarget } from "./utils/find-review-target"
 import { readLiveTargetDetail, withForgeDetail } from "./utils/live-target-detail"
 import { isOwnTarget } from "./utils/own-target"
+import { refreshArtifact } from "./utils/refresh-artifact"
 import { isPullRequestSubject, type PullRequestSubject } from "./utils/review-action"
 import type { ReviewKey } from "./utils/review-store"
 import type { ReviewSubject } from "./utils/review-subject"
@@ -85,7 +86,7 @@ const readWritingActivity = async (subject: ReviewSubject, key: ReviewKey, conte
     request,
     isAgentRunning: agents.find(key) !== null,
     journal: conversation.journal,
-    prompt: request === null ? null : buildReviewPrompt(subject.repository, subject.target, key, request),
+    prompt: request === null ? null : buildReviewPrompt(subject.repository, subject.target, key, request.writeUp),
   }
 }
 
@@ -97,9 +98,10 @@ const readBranchLinking = async (subject: ReviewSubject, context: ProcedureConte
 
 export const getReview = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewPage | null> => {
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
-  const subject = await findReviewSubject(key, context)
-  if (subject === null) return null
-  const [marks, pendingComments, publications, publishingRequest, setup, activity, branchLinking, conversation] = await Promise.all([
+  const found = await findReviewSubject(key, context)
+  if (found === null) return null
+  const subject = { ...found, artifact: await refreshArtifact(found, key, context) }
+  const [marks, pendingComments, publications, publishingRequest, setup, activity, branchLinking, conversation, request] = await Promise.all([
     subject.isOwn ? NO_REVIEWED_MARKS : context.reviewStore.readReviewedMarks(key),
     context.reviewStore.readPendingComments(key),
     context.reviewStore.readPublications(key),
@@ -108,6 +110,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
     readWritingActivity(subject, key, context),
     readBranchLinking(subject, context),
     context.conversationEnvironment.store.read(key),
+    context.reviewStore.findRequest(key),
   ])
   const { artifact } = subject
   const agentModels = artifact === null ? await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment) : {}
@@ -127,6 +130,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
       startableAgents: startableAgentsOf(context.conversationEnvironment.spawners),
       agentModels,
       activity,
+      request,
       chatLinkIds: codeLinkIdsIn(messageBodiesOf(conversation.journal)),
       ...highlighted,
     },

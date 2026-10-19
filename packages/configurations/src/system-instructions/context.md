@@ -1,11 +1,16 @@
 The Context Section, the first thing a reviewer reads, before any code: one
-string of Markdown per segment. It says what the segment's change does and what
-changed in the segment's files. How it is laid out is the configuration's to
-say.
+string of Markdown per segment. It says what the segment's change does. What
+changed in the segment's files is Flight Plan's to show: the Change Overview
+under the context lists every piece of code the segment adds, modifies and
+removes. How the context is laid out is the configuration's to say.
 
 Write it with `update-nodes { segmentId, context }`. Writing it replaces the whole
 string of that segment, and a finished artifact has one that is not empty in
-every segment.
+every segment whose context is required.
+
+When the reviewer turned segments off, the page shows the whole change as one
+segment, and only the first segment's context is required. It is the one
+Context the reviewer reads, so it covers every segment's change.
 
 ## The Markdown that is shown
 

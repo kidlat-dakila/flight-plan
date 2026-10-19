@@ -84,6 +84,15 @@ describe("the published review page", () => {
     expect(screen.queryByText("The direction is right.")).toBeNull()
   })
 
+  it("draws a segment's sections in the order the page data gives", () => {
+    renderPublished({ segments: artifactPage.segments.map((segment) => ({ ...segment, sectionOrder: ["walkthrough", "traceDiagram", "blastDiagram", "context"] })) })
+
+    const walkthroughFile = screen.getByRole("heading", { name: "Price file" })
+    const context = screen.getByText("Why stock matters.")
+
+    expect(walkthroughFile.compareDocumentPosition(context) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
   it("steps through the waypoints from the data it holds", async () => {
     showSectionInView("stock-code-walkthrough")
     renderPublished()

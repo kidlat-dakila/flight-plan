@@ -89,7 +89,7 @@ flowchart TD
 
 | Step | What happens | Described in |
 |---|---|---|
-| 1. Read the change | The base commit, the head commit and the changed files between them are read once, each file with its patch and whether it was added, modified or deleted | [Import graph](codegraph/import-graph.md) |
+| 1. Read the change | The base commit, the head commit and the changed files between them are read once, each file with its patch and whether it was added, modified or deleted. The files the review preferences ignore are left out here. | [Import graph](codegraph/import-graph.md), [Ignored files](codegraph/import-graph.md#ignored-files) |
 | 2. Trace the import graph | For each changed file, the files that import it and the files it imports, followed through other files until nothing new is reached | [The trace of one file](codegraph/import-graph.md#the-trace-of-one-file) |
 | 3. Join into clusters | Two import graphs that share a file are one cluster | [Clusters](codegraph/import-graph.md#clusters) |
 | 4. Build the groups | The repository's tools say where its tests and other files live, the tests and the stories are taken out of each cluster, every file is read into code blocks, each change is placed in its innermost block, the chains that lead to a change are traced, and every block is classified | [How a group is built](codegraph/code-blocks.md#how-a-group-is-built) |

@@ -38,13 +38,20 @@ describe("buildBranchCodegraph", () => {
 
 const SEGMENT_UUIDS = ["3f9a1c2e-7b4d-4e1a-9c55-0d2f6a8b1e37", "aa11bb22-7b4d-4e1a-9c55-0d2f6a8b1e37", "cc33dd44-7b4d-4e1a-9c55-0d2f6a8b1e37"]
 
-const reviewArtifactOf = async (change: FakeChange): Promise<BranchReviewArtifact> => {
+interface ReviewChoices {
+  readonly ignoredPaths?: readonly string[]
+  readonly isSegmented?: boolean
+}
+
+const reviewArtifactOf = async (change: FakeChange, { ignoredPaths = [], isSegmented = true }: ReviewChoices = {}): Promise<BranchReviewArtifact> => {
   const uuids = SEGMENT_UUIDS[Symbol.iterator]()
   return await buildBranchReviewArtifact({
     gitAdapter: createFakeGitAdapter(change),
     ref: { kind: "branch", name: "sale-prices" },
     title: "Sale prices",
     newId: () => String(uuids.next().value),
+    ignoredPaths,
+    isSegmented,
   })
 }
 
@@ -92,12 +99,33 @@ describe("buildBranchReviewArtifact", () => {
     })).toBe(true)
   })
 
+  it("leaves the files the ignored paths match out of every segment, diagram and walkthrough", async () => {
+    const { artifact } = await reviewArtifactOf(STOREFRONT_CHANGE, { ignoredPaths: ["*.md", "src/logger.ts"] })
+    const shownPaths = artifact.segments.flatMap((segment) => [
+      ...segment.changedPaths,
+      ...segment.walkthrough.files.map((file) => file.path),
+      ...(segment.blastDiagram?.nodes.map((node) => node.path) ?? []),
+    ])
+
+    expect(artifact.changedPaths).toStrictEqual(["src/pricing.ts", "src/types.ts"])
+    expect(artifact.segments.map((segment) => segment.changedPaths)).toStrictEqual([["src/pricing.ts", "src/types.ts"]])
+    expect(shownPaths).not.toContain("README.md")
+    expect(shownPaths).not.toContain("src/logger.ts")
+  })
+
+  it("keeps every segment when segments are off, and says so for the page to show them as one", async () => {
+    const { artifact } = await reviewArtifactOf(STOREFRONT_CHANGE, { isSegmented: false })
+
+    expect(artifact.isSegmented).toBe(false)
+    expect(artifact.segments.map((segment) => segment.changedPaths)).toStrictEqual([["src/pricing.ts", "src/types.ts"], ["src/logger.ts"], ["README.md"]])
+  })
+
   it("names a deleted file among the changed files, and asks the head commit for none of its lines", async () => {
     const { "src/logger.ts": deleted, ...head } = STOREFRONT_CHANGE.base
     const gitAdapter = createFakeGitAdapter({ base: STOREFRONT_CHANGE.base, head })
     const blobs = vi.spyOn(gitAdapter, "blobs")
 
-    const { artifact } = await buildBranchReviewArtifact({ gitAdapter, ref: { kind: "branch", name: "no-logger" }, title: "No logger", newId: () => SEGMENT_UUIDS[0] })
+    const { artifact } = await buildBranchReviewArtifact({ gitAdapter, ref: { kind: "branch", name: "no-logger" }, title: "No logger", newId: () => SEGMENT_UUIDS[0], ignoredPaths: [], isSegmented: true })
 
     expect(deleted).toBeDefined()
     expect(artifact.changedPaths).toStrictEqual(["src/logger.ts"])

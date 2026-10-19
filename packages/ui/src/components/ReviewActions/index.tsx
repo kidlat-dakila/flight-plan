@@ -1,5 +1,5 @@
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
-import { ChevronDownIcon, CircleCheckIcon, DownloadIcon, EllipsisVerticalIcon, ExternalLinkIcon, LoaderCircleIcon, MessagesSquareIcon, RefreshCwIcon, SparklesIcon, Trash2Icon, TriangleAlertIcon } from "lucide-react"
+import { ChevronDownIcon, CircleCheckIcon, DownloadIcon, EllipsisVerticalIcon, ExternalLinkIcon, LoaderCircleIcon, MessagesSquareIcon, Trash2Icon, TriangleAlertIcon } from "lucide-react"
 import { useId, useState, type ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import DropdownMenu, { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/blocks/dropdown-menu"
@@ -93,14 +93,8 @@ interface ShareMenuProps {
   readonly onPublish: (destination: PublicationKind) => void
 }
 
-interface RebuildActions {
-  readonly onUpdate: () => void
-  readonly onRegenerate: () => void
-}
-
 interface OptionsMenuProps {
   readonly forgeLink: Link | null
-  readonly rebuild: RebuildActions | null
   readonly onDelete: () => void
 }
 
@@ -167,7 +161,7 @@ export const BandHint = ({ label, onClick }: BandHintProps) => (
   </button>
 )
 
-export const OptionsMenu = ({ forgeLink, rebuild, onDelete }: OptionsMenuProps) => (
+export const OptionsMenu = ({ forgeLink, onDelete }: OptionsMenuProps) => (
   <DropdownMenu>
     <DropdownMenuTrigger aria-label="More actions" className={cn(BAND_BUTTON_CLASSES, "px-1.5")}>
       <EllipsisVerticalIcon aria-hidden="true" className="size-3.5" />
@@ -181,21 +175,7 @@ export const OptionsMenu = ({ forgeLink, rebuild, onDelete }: OptionsMenuProps) 
               {forgeLink.label}
             </DropdownMenuItem>
           )}
-      {rebuild === null
-        ? null
-        : (
-            <>
-              <DropdownMenuItem onClick={rebuild.onUpdate}>
-                <RefreshCwIcon aria-hidden="true" className="size-3.5" />
-                Update the Flight Plan
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={rebuild.onRegenerate}>
-                <SparklesIcon aria-hidden="true" className="size-3.5" />
-                Regenerate from scratch
-              </DropdownMenuItem>
-            </>
-          )}
-      {forgeLink === null && rebuild === null ? null : <DropdownMenuSeparator />}
+      {forgeLink === null ? null : <DropdownMenuSeparator />}
       <DropdownMenuItem className="text-destructive focus:bg-destructive/10" onClick={onDelete}>
         <Trash2Icon aria-hidden="true" className="size-3.5" />
         Delete

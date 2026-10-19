@@ -11,7 +11,7 @@ export const completeArtifact = async (input: CompleteArtifactInput, context: Pr
   const opened = await openArtifact(key, context)
   if (opened.kind === "rejected") return opened
   const completion = await context.reviewStore.amendArtifact<ArtifactCompletion>(key, (artifact) => {
-    const work = unwrittenWork(artifact, opened.sections)
+    const work = unwrittenWork(artifact)
     const missing = work.slice(0, input.limit ?? DEFAULT_MISSING_LIMIT)
     if (work.length > 0) {
       return { artifact: null, outcome: { kind: "unfinished", missing, total: work.length, remaining: work.length - missing.length } }

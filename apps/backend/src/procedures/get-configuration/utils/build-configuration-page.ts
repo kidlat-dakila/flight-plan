@@ -2,14 +2,12 @@ import type { InstructionTexts } from "@/procedures/get-instructions/utils/instr
 import { PRESET_OFFERS } from "@/procedures/get-setup/utils/preset-catalog"
 import { originLabelOf } from "@/procedures/list-configurations/utils/build-configuration-row"
 import {
-  areSwitchesChanged,
+  areContextKindsChanged,
   EDITABLE_FIELDS,
   isFieldChanged,
   isFieldOff,
   isKeyChanged,
   shippedTextOf,
-  SWITCH_LABELS,
-  SWITCHABLE_SECTIONS,
   writtenTextOf,
   type Configuration,
 } from "@/procedures/list-configurations/utils/configuration"
@@ -23,40 +21,31 @@ import {
 } from "@flightplan/configurations"
 import type { ConfigurationPage, FieldPanel, IndexEntry, IndexGroup, SwitchesPanel } from "./schemas"
 
-export const SWITCHES_KEY = "sections"
+export const SWITCHES_KEY = "hover-descriptions"
 
 type FoundPage = Extract<ConfigurationPage, { kind: "found" }>
 type EntryMark = IndexEntry["mark"]
 
 const PATH_SEPARATOR = "."
-const SWITCHES_LABEL = "Sections"
+const SWITCHES_LABEL = "Hover descriptions"
 const DUPLICATE_LABEL = "Duplicate"
-const OFF_MESSAGE = "This field is not written while its section is switched off. You can still change its instruction."
-const ALWAYS_WRITTEN_NOTE = "The Context Section and the Code Walkthrough are always written."
+const OFF_MESSAGE = "The agent writes this only for the kinds of name chosen under Hover descriptions, and none is chosen. You can still change its instruction."
 
 const MARK_LABELS: Readonly<Record<EntryMark, string>> = {
   changed: "Changed",
   unchanged: "Not changed",
-  off: "Switched off",
+  off: "Not written",
 }
 
-type SwitchableSection = (typeof SWITCHABLE_SECTIONS)[number]
-
-const FIELD_GROUPS: readonly { readonly title: string, readonly rootPath: string, readonly section?: SwitchableSection }[] = [
+const FIELD_GROUPS: readonly { readonly title: string, readonly rootPath: string }[] = [
   { title: "Voice", rootPath: "writingStyle" },
   { title: "Context", rootPath: "context" },
-  { title: "Trace Diagram", rootPath: SECTION_FIELD_PATHS.traceDiagram, section: "traceDiagram" },
-  { title: "Blast Diagram", rootPath: SECTION_FIELD_PATHS.blastDiagram, section: "blastDiagram" },
-  { title: "Findings", rootPath: SECTION_FIELD_PATHS.findings, section: "findings" },
+  { title: "Trace Diagram", rootPath: SECTION_FIELD_PATHS.traceDiagram },
+  { title: "Blast Diagram", rootPath: SECTION_FIELD_PATHS.blastDiagram },
+  { title: "Findings", rootPath: SECTION_FIELD_PATHS.findings },
   { title: "Code Walkthrough", rootPath: SECTION_FIELD_PATHS.walkthrough },
   { title: "Context code blocks", rootPath: CONTEXT_CODE_BLOCKS_FIELD_PATH },
 ]
-
-const SWITCH_DESCRIPTIONS: Readonly<Record<(typeof SWITCHABLE_SECTIONS)[number], string>> = {
-  traceDiagram: "The diagrams that show how the changed code runs, from what starts it to what it reaches.",
-  blastDiagram: "The diagram of the files the change can affect, with what it does to each.",
-  findings: "The bugs, risks, nits and questions the agent reports on a waypoint of the Code Walkthrough.",
-}
 
 const CONTEXT_KIND_LABELS: Readonly<Record<ContextCodeBlockKind, string>> = {
   codebase: "Code of the repository",
@@ -91,18 +80,15 @@ const fieldEntryOf = (configuration: Configuration, texts: InstructionTexts, ope
   }
 
 const switchesEntryOf = (configuration: Configuration, openKey: string): IndexEntry => {
-  const mark: EntryMark = areSwitchesChanged(configuration) ? "changed" : "unchanged"
+  const mark: EntryMark = areContextKindsChanged(configuration) ? "changed" : "unchanged"
   return { key: SWITCHES_KEY, label: SWITCHES_LABEL, mark, markLabel: MARK_LABELS[mark], isOpen: openKey === SWITCHES_KEY }
 }
 
 const buildIndex = (configuration: Configuration, texts: InstructionTexts, openKey: string): IndexGroup[] => [
-  { title: null, switch: null, entries: [switchesEntryOf(configuration, openKey)] },
+  { title: null, entries: [switchesEntryOf(configuration, openKey)] },
   ...FIELD_GROUPS
     .map((group) => ({
       title: group.title,
-      switch: group.section === undefined
-        ? null
-        : { section: group.section, label: `Generate ${SWITCH_LABELS[group.section]}`, isOn: configuration.sections[group.section] },
       entries: EDITABLE_FIELDS
         .filter((field) => groupTitleOf(field.path) === group.title)
         .map(fieldEntryOf(configuration, texts, openKey)),
@@ -113,16 +99,8 @@ const buildIndex = (configuration: Configuration, texts: InstructionTexts, openK
 const buildSwitchesPanel = (configuration: Configuration): SwitchesPanel => ({
   kind: "switches",
   title: SWITCHES_LABEL,
-  summary: "Which optional parts of a review the agent writes. A part that is off can still be generated on demand from the review.",
-  sectionsTitle: "Optional sections",
-  sections: SWITCHABLE_SECTIONS.map((section) => ({
-    section,
-    label: SWITCH_LABELS[section],
-    description: SWITCH_DESCRIPTIONS[section],
-    isOn: configuration.sections[section],
-  })),
-  alwaysWrittenNote: ALWAYS_WRITTEN_NOTE,
-  contextKindsTitle: "Context code blocks",
+  summary: "Which names in the code the agent describes, for a reader who hovers them.",
+  contextKindsTitle: "Kinds of name",
   contextKindsHint: "A description the reader opens by hovering a name in the code. Pick the kinds of name the agent describes.",
   contextKinds: CONTEXT_CODE_BLOCK_KINDS.map((kind) => ({
     kind,

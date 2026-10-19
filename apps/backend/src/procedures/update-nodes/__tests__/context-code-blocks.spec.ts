@@ -1,15 +1,13 @@
 import { completeArtifact } from "@/procedures/complete-artifact"
 import { getInstructions } from "@/procedures/get-instructions"
-import { shippedConfigurationOf } from "@/procedures/list-configurations/utils/configuration"
+import { refreshedArtifactOf } from "@/procedures/get-review/utils/refresh-artifact"
 import { readArtifact } from "@/procedures/read-artifact"
 import { CONTEXT_ARTIFACT, createArtifactContext, DRAFT_ARTIFACT, KEY, messageOf, SEGMENT_KEY, SUBTOTAL_BLOCK_ID, SUBTOTAL_PATH } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 import { requiredContextKindsOf, requiresContextCodeBlocks, withContextRequirement } from "@/procedures/read-artifact/utils/context-code-blocks"
 import { tallyNodes, unwrittenWork } from "@/procedures/read-artifact/utils/unwritten-work"
 import { readNodes } from "@/procedures/read-nodes"
-import { planRebuild } from "@/procedures/rebuild-review/utils/plan-rebuild"
 import { startingArtifactOf } from "@/procedures/request-review/utils/starting-artifact"
 import { updateNodes } from "@/procedures/update-nodes"
-import { ALL_SECTIONS_ON } from "@flightplan/configurations"
 
 const DESCRIPTION = "`subtotal(cart)` is a utility function that adds the lines of a cart. It is used in [`lineTotal()`](code:src/cart/subtotal.ts#lineTotal)."
 const UNREQUIRED_ARTIFACT = withContextRequirement(CONTEXT_ARTIFACT, [])
@@ -20,23 +18,23 @@ const descriptionOf = async (context: Awaited<ReturnType<typeof createArtifactCo
 
 describe("the context code blocks of an artifact", () => {
   it("count a required block with no description as unwritten work of no segment, and as a part to write", () => {
-    const owed = unwrittenWork(CONTEXT_ARTIFACT, ALL_SECTIONS_ON).filter((one) => one.target === "context-code-block")
+    const owed = unwrittenWork(CONTEXT_ARTIFACT).filter((one) => one.target === "context-code-block")
 
     expect(owed).toMatchObject([{ id: SUBTOTAL_BLOCK_ID, segmentId: null, needs: "context-description" }])
     expect(owed[0].message).toContain(SUBTOTAL_BLOCK_ID)
-    expect(tallyNodes(CONTEXT_ARTIFACT, ALL_SECTIONS_ON).incomplete).toBe(tallyNodes(DRAFT_ARTIFACT, ALL_SECTIONS_ON).incomplete + 1)
+    expect(tallyNodes(CONTEXT_ARTIFACT).incomplete).toBe(tallyNodes(DRAFT_ARTIFACT).incomplete + 1)
   })
 
   it("ask nothing for a block the configuration does not require", () => {
-    expect(unwrittenWork(UNREQUIRED_ARTIFACT, ALL_SECTIONS_ON)).toStrictEqual(unwrittenWork(DRAFT_ARTIFACT, ALL_SECTIONS_ON))
-    expect(tallyNodes(UNREQUIRED_ARTIFACT, ALL_SECTIONS_ON)).toStrictEqual(tallyNodes(DRAFT_ARTIFACT, ALL_SECTIONS_ON))
+    expect(unwrittenWork(UNREQUIRED_ARTIFACT)).toStrictEqual(unwrittenWork(DRAFT_ARTIFACT))
+    expect(tallyNodes(UNREQUIRED_ARTIFACT)).toStrictEqual(tallyNodes(DRAFT_ARTIFACT))
   })
 
   it("take the requirement of the configuration the review is requested with", () => {
-    const required = startingArtifactOf(UNREQUIRED_ARTIFACT, REQUEST.writer, { sections: ALL_SECTIONS_ON, requiredContextKinds: ["codebase"] })
+    const required = startingArtifactOf(UNREQUIRED_ARTIFACT, REQUEST.writer, { requiredContextKinds: ["codebase"] })
 
     expect(requiresContextCodeBlocks(required)).toBe(true)
-    expect(requiresContextCodeBlocks(startingArtifactOf(CONTEXT_ARTIFACT, REQUEST.writer, { sections: ALL_SECTIONS_ON, requiredContextKinds: ["library"] }))).toBe(false)
+    expect(requiresContextCodeBlocks(startingArtifactOf(CONTEXT_ARTIFACT, REQUEST.writer, { requiredContextKinds: ["library"] }))).toBe(false)
   })
 })
 
@@ -54,10 +52,10 @@ describe("a library and a name of the language among the context code blocks", (
     expect(requiredWith([])).toStrictEqual([false, false, false])
   })
 
-  it("keep the kinds an artifact requires, and what is written by name, over an update", () => {
+  it("keep the kinds an artifact requires, and what is written by name, over a refresh", () => {
     const required = withContextRequirement(mixed, ["codebase", "library", "language"])
     const written = { ...required, contextCodeBlocks: required.contextCodeBlocks.map((listed) => ({ ...listed, description: `About ${listed.name ?? "subtotal"}.` })) }
-    const updated = planRebuild({ mode: "update", previous: written, previousRequest: REQUEST, rebuilt: withContextRequirement(mixed, []), request: REQUEST, configuration: shippedConfigurationOf("onboardee") })
+    const updated = refreshedArtifactOf(written, withContextRequirement(mixed, []))
 
     expect(requiredContextKindsOf(updated)).toStrictEqual(["codebase", "library", "language"])
     expect(updated.contextCodeBlocks.map((listed) => listed.description)).toStrictEqual(["About subtotal.", "About useState.", "About Promise."])
@@ -170,18 +168,10 @@ describe("completeArtifact", () => {
   })
 })
 
-describe("planRebuild", () => {
+describe("refreshedArtifactOf", () => {
   const written = { ...CONTEXT_ARTIFACT, contextCodeBlocks: [{ ...CONTEXT_ARTIFACT.contextCodeBlocks[0], description: DESCRIPTION }] }
 
-  it("keeps the requirement and a description over an update, where the block's code is the same", () => {
-    const updated = planRebuild({ mode: "update", previous: written, previousRequest: REQUEST, rebuilt: UNREQUIRED_ARTIFACT, request: REQUEST, configuration: shippedConfigurationOf("onboardee") })
-
-    expect(updated.contextCodeBlocks).toMatchObject([{ isRequired: true, description: DESCRIPTION }])
-  })
-
-  it("takes the requirement of the configuration again on a regenerate, and drops what was written", () => {
-    const regenerated = planRebuild({ mode: "regenerate", previous: written, previousRequest: REQUEST, rebuilt: UNREQUIRED_ARTIFACT, request: { ...REQUEST, configurationId: "standard", preset: "standard" }, configuration: shippedConfigurationOf("standard") })
-
-    expect(regenerated.contextCodeBlocks).toMatchObject([{ isRequired: false, description: null }])
+  it("keeps the requirement and a description over a refresh, where the block's code is the same", () => {
+    expect(refreshedArtifactOf(written, UNREQUIRED_ARTIFACT).contextCodeBlocks).toMatchObject([{ isRequired: true, description: DESCRIPTION }])
   })
 })

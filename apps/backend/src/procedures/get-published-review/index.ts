@@ -44,6 +44,7 @@ export const getPublishedReview = async (
       chatLinkIds: [],
       agentModels: {},
       activity: NO_WRITING_ACTIVITY,
+      request: scaffold?.request ?? null,
       ...highlighted,
     },
     { ...input, ...UNFILTERED },

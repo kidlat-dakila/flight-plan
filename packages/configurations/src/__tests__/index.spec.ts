@@ -11,7 +11,6 @@ import {
   INSTRUCTION_FIELDS,
   PRESET_NAMES,
   PRESET_CONTEXT_CODE_BLOCK_KINDS,
-  PRESET_SECTIONS,
   presetInstructionKeys,
   presetInstructionKeysOf,
   SECTION_FIELD_PATHS,
@@ -124,13 +123,6 @@ describe("the instruction catalog", () => {
           file !== configuration.fieldDescription.replace(INSTRUCTION_FILE_EXTENSION, `.${option}${INSTRUCTION_FILE_EXTENSION}`))))
 
     expect(misnamed).toStrictEqual([])
-  })
-
-  it("switches every section on or off for every preset", () => {
-    expect(Object.keys(PRESET_SECTIONS)).toStrictEqual([...PRESET_NAMES])
-    expect(Object.values(PRESET_SECTIONS).map((switches) => Object.keys(switches))).toStrictEqual(
-      PRESET_NAMES.map(() => [...SECTION_NAMES]),
-    )
   })
 
   it("holds a folder only for a preset, with no file that is not an editable field or an option", async () => {

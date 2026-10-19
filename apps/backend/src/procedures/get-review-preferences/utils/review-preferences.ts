@@ -1,4 +1,6 @@
-import type { CodeBlockClassification } from "@flightplan/configurations"
+import type { CodeBlockClassification, WalkthroughOrder } from "@flightplan/configurations"
+
+export { WALKTHROUGH_ORDERS, type WalkthroughOrder } from "@flightplan/configurations"
 
 export const WRITE_UP_TIMINGS = ["always", "on-demand"] as const
 
@@ -9,10 +11,6 @@ export const WRITE_UP_SECTIONS = ["context", "traceDiagram", "blastDiagram", "wa
 export type WriteUpSection = (typeof WRITE_UP_SECTIONS)[number]
 
 export type SectionWriteUps = Readonly<Record<WriteUpSection, WriteUpTiming>>
-
-export const WALKTHROUGH_ORDERS = ["imports-bottom-up", "imports-top-down", "important-first"] as const
-
-export type WalkthroughOrder = (typeof WALKTHROUGH_ORDERS)[number]
 
 export const ARRANGED_SECTIONS = ["context", "traceDiagram", "blastDiagram", "walkthrough"] as const
 

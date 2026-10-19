@@ -5,13 +5,12 @@ import {
   planFileChanges,
   storedConfigurationsOf,
 } from "@/procedures/list-configurations/utils/stored-configuration"
-import { PRESET_CONTEXT_CODE_BLOCK_KINDS, PRESET_SECTIONS } from "@flightplan/configurations"
+import { PRESET_CONTEXT_CODE_BLOCK_KINDS } from "@flightplan/configurations"
 
 const TERSE: SavedConfiguration = {
   id: "custom-terse",
   name: "Terse",
   preset: "standard",
-  sections: PRESET_SECTIONS.standard,
   contextCodeBlockKinds: PRESET_CONTEXT_CODE_BLOCK_KINDS.standard,
   instructions: { "context": "Two sentences.", "walkthrough.files.waypoints.findings.kind.bug": "Wrong on some input." },
 }
@@ -28,7 +27,6 @@ describe("formatConfigurationFiles", () => {
     expect(JSON.parse(DESCRIPTION_TEXT)).toStrictEqual({
       name: "Terse",
       preset: "standard",
-      sections: PRESET_SECTIONS.standard,
       contextCodeBlockKinds: PRESET_CONTEXT_CODE_BLOCK_KINDS.standard,
     })
   })
@@ -39,17 +37,15 @@ describe("parseConfigurationFiles", () => {
     expect(parseConfigurationFiles("custom-terse", formatConfigurationFiles(TERSE))).toStrictEqual(TERSE)
   })
 
-  it("reads a configuration saved while the diagrams were named journey and blast under their current names", () => {
-    const { traceDiagram, blastDiagram, ...otherSections } = PRESET_SECTIONS.minimal
+  it("reads a configuration saved while the diagrams were named journey and blast under their current names, and drops its section switches", () => {
     const older = new Map([
-      ["configuration.json", JSON.stringify({ ...JSON.parse(DESCRIPTION_TEXT), sections: { ...otherSections, journey: traceDiagram, blast: blastDiagram } })],
+      ["configuration.json", JSON.stringify({ ...JSON.parse(DESCRIPTION_TEXT), sections: { journey: false, blast: false, walkthrough: true, findings: false } })],
       ["journey.nodes.label.md", "The step, in a verb."],
       ["blast.nodes.impactReason.md", "What breaks."],
     ])
 
     expect(parseConfigurationFiles("custom-terse", older)).toStrictEqual({
       ...TERSE,
-      sections: PRESET_SECTIONS.minimal,
       instructions: { "traceDiagram.nodes.label": "The step, in a verb.", "blastDiagram.nodes.impactReason": "What breaks." },
     })
   })

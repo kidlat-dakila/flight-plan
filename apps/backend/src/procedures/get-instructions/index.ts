@@ -1,5 +1,4 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { notGeneratedMessage, offSectionOfField } from "@/procedures/read-artifact/utils/artifact-sections"
 import { isContextCodeBlockField, NO_CONTEXT_REQUIRED_MESSAGE } from "@/procedures/read-artifact/utils/context-code-blocks"
 import { openArtifact } from "@/procedures/read-artifact/utils/open-artifact"
 import { buildInstructionIndex, listFieldPaths, resolveFields, type FieldResolution } from "./utils/resolve-instructions"
@@ -18,8 +17,6 @@ export const getInstructions = async (input: GetInstructionsInput, context: Proc
   const opened = await openArtifact({ repositoryName: input.repositoryName, targetId: input.targetId }, context)
   if (opened.kind === "rejected") return opened
   if (input.fields === undefined && input.all !== true) return { kind: "indexed", index: buildInstructionIndex(opened.configuration.id, opened) }
-  const offSection = (input.fields ?? []).map((path) => offSectionOfField(path, opened.sections)).find((section) => section !== null)
-  if (offSection != null) return { kind: "rejected", message: notGeneratedMessage(offSection) }
   if (!opened.requiresContextCodeBlocks && (input.fields ?? []).some(isContextCodeBlockField)) return { kind: "rejected", message: NO_CONTEXT_REQUIRED_MESSAGE }
   const resolution = resolveFields(input.fields ?? listFieldPaths(opened), await context.readInstructionTexts(), opened.configuration)
   return resolution.kind === "resolved"

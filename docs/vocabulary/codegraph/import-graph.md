@@ -8,6 +8,22 @@ It groups files, and nothing more. It never looks inside a function: it reads th
 
 Every file, file list and search comes from a commit, through the git adapter. Nothing is read from a working tree.
 
+## Ignored files
+
+The `ignoredPaths` of the [review preferences](../review-preferences.md) leave files out of a review before anything is traced. `withoutIgnoredPaths` in `packages/codegraph/src/import-graph/ignored-paths.ts` takes them out of the changed files and their patches, and out of every importer a tracer finds, so an ignored file is never a changed file of a segment, a node of a diagram or a File Section of the Code Walkthrough, and a test that imports changed code does not show up as one of its importers. A kept file may still import an ignored one, so its imports still resolve. The review says nothing about the files it left out.
+
+The patterns are read the way `.gitignore` reads them, from the root of the repository:
+
+| Pattern | What it matches |
+|---|---|
+| With no `/`, such as `*.md` or `fixtures` | A file or a folder of that name at any depth |
+| With a `/`, such as `src/generated/*.ts` | That path from the root only |
+| Matching a folder | Every file below the folder |
+| Ending in `/`, such as `snapshots/` | Folders only |
+| Starting with `!` | A file an earlier pattern ignores, kept again. The last pattern that matches a file decides. |
+
+`isIgnoredPath(patterns, path)` matches one path, with the codegraph's own glob translation (`fitsGlob`).
+
 ## The trace of one file
 
 For each changed file the codegraph traces two things, and follows both through other files until nothing new is reached:

@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { SWITCHABLE_SECTIONS } from "@/procedures/list-configurations/utils/configuration"
 import { CONTEXT_CODE_BLOCK_KINDS } from "@flightplan/configurations"
 
 const writtenTextSchema = z.strictObject({ key: z.string(), text: z.string() })
@@ -10,10 +9,8 @@ export const saveConfigurationInputSchema = z.discriminatedUnion("change", [
   z.strictObject({
     change: z.literal("switches"),
     id: z.string(),
-    sections: z.array(z.enum(SWITCHABLE_SECTIONS)),
     contextCodeBlockKinds: z.array(z.enum(CONTEXT_CODE_BLOCK_KINDS)),
   }),
-  z.strictObject({ change: z.literal("section"), id: z.string(), section: z.enum(SWITCHABLE_SECTIONS), isOn: z.boolean() }),
   z.strictObject({ change: z.literal("rename"), id: z.string(), name: z.string() }),
 ])
 

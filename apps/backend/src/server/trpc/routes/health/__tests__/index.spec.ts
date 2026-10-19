@@ -1,5 +1,6 @@
 import { createConversationEnvironment, type ProcedureContext, openSampleRepository } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
+import { skipBranchPull } from "@/procedures/get-review/utils/branch-puller"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
 import { InMemoryPullRequestForge } from "@/procedures/get-review/utils/pull-request-forge"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
@@ -10,7 +11,6 @@ import { InMemoryImportFileStore } from "@/procedures/import-review/utils/import
 import { InMemoryConfigurationStore } from "@/procedures/list-configurations/utils/configuration-store"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { writeSamplePublishedPage } from "@/procedures/publish-artifact/utils/published-page-writer"
-import { skipBranchPull } from "@/procedures/rebuild-review/utils/branch-puller"
 import { appRouter } from "@/server/trpc/router"
 import { highlightAsPlainText } from "@flightplan/codegraph"
 

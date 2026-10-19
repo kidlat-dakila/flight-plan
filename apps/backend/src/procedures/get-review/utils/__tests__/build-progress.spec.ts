@@ -1,5 +1,5 @@
 import type { JournalEntry } from "@/procedures/get-conversation/utils/conversation"
-import { buildCompletionNotice, buildProgress, NO_WRITING_ACTIVITY, type WritingActivity } from "@/procedures/get-review/utils/build-progress"
+import { buildCompletionNotice, buildProgress, isWritingNow, NO_WRITING_ACTIVITY, type WritingActivity } from "@/procedures/get-review/utils/build-progress"
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import { createArtifact, createSegment, createWaypoint } from "./review-fixture"
 
@@ -143,5 +143,20 @@ describe("buildCompletionNotice", () => {
       body: "Count held units is ready to read.",
     })
     expect(buildCompletionNotice(drafting)).toBeNull()
+  })
+})
+
+describe("isWritingNow", () => {
+  const draftingArtifact = createArtifact({ status: "drafting" })
+
+  it("is writing while a drafting review's agent runs, or while the reviewer's own agent writes it", () => {
+    expect(isWritingNow(draftingArtifact, activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true }))).toBe(true)
+    expect(isWritingNow(draftingArtifact, activityOf({ request: EXTERNAL_REQUEST, isAgentRunning: false }))).toBe(true)
+  })
+
+  it("is not writing once the agent stopped, with no agent, or once the review is complete", () => {
+    expect(isWritingNow(draftingArtifact, activityOf({ request: CLAUDE_REQUEST, isAgentRunning: false }))).toBe(false)
+    expect(isWritingNow(draftingArtifact, activityOf({ request: NO_AGENT_REQUEST, isAgentRunning: false }))).toBe(false)
+    expect(isWritingNow(createArtifact({ status: "complete" }), activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true }))).toBe(false)
   })
 })

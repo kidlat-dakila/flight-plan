@@ -1,5 +1,6 @@
 import { createConversationEnvironment, openSampleRepository, type ProcedureContext } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
+import { skipBranchPull } from "@/procedures/get-review/utils/branch-puller"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
 import { InMemoryPullRequestForge } from "@/procedures/get-review/utils/pull-request-forge"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
@@ -19,7 +20,6 @@ import { InMemoryConfigurationStore } from "@/procedures/list-configurations/uti
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { writeSamplePublishedPage } from "@/procedures/publish-artifact/utils/published-page-writer"
-import { skipBranchPull } from "@/procedures/rebuild-review/utils/branch-puller"
 import { highlightAsPlainText } from "@flightplan/codegraph"
 
 export const NOW = new Date("2026-10-01T12:00:00.000Z")

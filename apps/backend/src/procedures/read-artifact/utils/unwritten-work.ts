@@ -1,5 +1,5 @@
 import { contextIdOf, listTraceNodes, listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
-import type { Blast, TraceNode, ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
+import type { Blast, TraceNode, ReviewArtifact, Segment } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
 import { isDescriptionOwed } from "./context-code-blocks"
 
@@ -52,20 +52,20 @@ const blastWork = (segment: Segment): Work[] =>
         message: `\`${node.path}\` imports the changed code and nobody assessed it. Give it an impact type and its reason, or mark the file that stops the change \`unaffected\`.`,
       }))
 
-const contextWork = (segment: Segment): Work[] => {
+const contextWork = (segment: Segment, isTitled: boolean): Work[] => {
   const located = { target: "context", id: null, segmentId: segment.id } as const
   if (!segment.isContextRequired) return []
   return [
     ...(segment.context.trim() === ""
       ? [{ ...located, needs: "context", message: "The context is not written. Say why anyone should care about this change, what it changes from outside and what changed inside." } as const]
       : []),
-    ...(segment.title.trim() === ""
+    ...(isTitled && segment.title.trim() === ""
       ? [{ ...located, needs: "segment-title", message: "The segment has no title. Say in a few words what its context is about." } as const]
       : []),
   ]
 }
 
-const waypointWork = (segment: Segment, sections: SectionSwitches): Work[] =>
+const waypointWork = (segment: Segment): Work[] =>
   waypointsOf(segment).filter(({ waypoint }) => waypoint.isRequired).flatMap(({ waypoint }): Work[] => {
     const located = { target: "waypoint", id: waypoint.id, segmentId: segment.id } as const
     return [
@@ -75,7 +75,7 @@ const waypointWork = (segment: Segment, sections: SectionSwitches): Work[] =>
       ...(waypoint.reading.trim() === ""
         ? [{ ...located, needs: "reading", message: `\`${waypoint.id}\` has no reading. Say what the author changed here and what it is for.` } as const]
         : []),
-      ...(sections.findings ? waypoint.findings : [])
+      ...waypoint.findings
         .filter((finding) => finding.kind !== QUESTION_KIND && finding.solution === null)
         .map((finding) => ({
           ...located,
@@ -142,11 +142,11 @@ const nodeWork = (segment: Segment): Work[] =>
 
 const traceWork = (segment: Segment): Work[] => [...nodeWork(segment), ...descriptionWork(segment)]
 
-const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
-  ...(sections.blastDiagram ? blastWork(segment) : []),
-  ...contextWork(segment),
-  ...(sections.walkthrough ? waypointWork(segment, sections) : []),
-  ...(sections.traceDiagram ? traceWork(segment) : []),
+const segmentWork = (segment: Segment, isTitled: boolean): Work[] => [
+  ...blastWork(segment),
+  ...contextWork(segment, isTitled),
+  ...waypointWork(segment),
+  ...traceWork(segment),
 ]
 
 const contextCodeBlockWork = (artifact: ReviewArtifact): Work[] =>
@@ -158,8 +158,8 @@ const contextCodeBlockWork = (artifact: ReviewArtifact): Work[] =>
     message: `The context code block \`${contextIdOf(listed)}\` has no description. Say what it is and what it does, for a reader who has not seen it.`,
   }))
 
-export const unwrittenWork = (artifact: ReviewArtifact, sections: SectionSwitches): Work[] => [
-  ...artifact.segments.flatMap((segment) => segmentWork(segment, sections)),
+export const unwrittenWork = (artifact: ReviewArtifact): Work[] => [
+  ...artifact.segments.flatMap((segment) => segmentWork(segment, artifact.isSegmented)),
   ...contextCodeBlockWork(artifact),
 ]
 
@@ -175,24 +175,18 @@ const assessedPathsOf = ({ blastDiagram }: Segment): string[] => {
   return [...new Set(assessablePaths.filter((path) => requiredPaths.has(path)))]
 }
 
-const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
-  ...(sections.blastDiagram ? assessedPathsOf(segment).map((path) => nodeKeyOf("blast-node", path, segment.id)) : []),
+const nodeKeysIn = (segment: Segment): string[] => [
+  ...assessedPathsOf(segment).map((path) => nodeKeyOf("blast-node", path, segment.id)),
   ...(segment.isContextRequired ? [nodeKeyOf("context", null, segment.id)] : []),
-  ...(sections.walkthrough
-    ? waypointsOf(segment).filter(({ waypoint }) => waypoint.isRequired).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id))
-    : []),
-  ...(sections.traceDiagram
-    ? [
-        ...requiredTraceNodesOf(segment).map((node) => nodeKeyOf("trace-node", node.id, segment.id)),
-        ...(isTraceDescriptionRequired(segment) ? [nodeKeyOf("trace-diagram", null, segment.id)] : []),
-      ]
-    : []),
+  ...waypointsOf(segment).filter(({ waypoint }) => waypoint.isRequired).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id)),
+  ...requiredTraceNodesOf(segment).map((node) => nodeKeyOf("trace-node", node.id, segment.id)),
+  ...(isTraceDescriptionRequired(segment) ? [nodeKeyOf("trace-diagram", null, segment.id)] : []),
 ]
 
-export const tallyNodes = (artifact: ReviewArtifact, sections: SectionSwitches): NodeTally => {
-  const incompleteKeys = new Set(unwrittenWork(artifact, sections).map((one) => nodeKeyOf(one.target, one.id, one.segmentId)))
+export const tallyNodes = (artifact: ReviewArtifact): NodeTally => {
+  const incompleteKeys = new Set(unwrittenWork(artifact).map((one) => nodeKeyOf(one.target, one.id, one.segmentId)))
   const nodeKeys = [
-    ...artifact.segments.flatMap((segment) => nodeKeysIn(segment, sections)),
+    ...artifact.segments.flatMap((segment) => nodeKeysIn(segment)),
     ...artifact.contextCodeBlocks.filter((listed) => listed.isRequired).map((listed) => nodeKeyOf("context-code-block", contextIdOf(listed), null)),
   ]
   const incomplete = nodeKeys.filter((key) => incompleteKeys.has(key)).length

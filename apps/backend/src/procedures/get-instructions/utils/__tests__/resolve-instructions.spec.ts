@@ -1,7 +1,6 @@
 import { createSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { buildInstructionIndex, resolveFields } from "@/procedures/get-instructions/utils/resolve-instructions"
 import { shippedConfigurationOf } from "@/procedures/list-configurations/utils/configuration"
-import { ALL_SECTIONS_ON } from "@flightplan/configurations"
 
 const TEXTS = createSampleInstructionTexts()
 
@@ -11,27 +10,20 @@ const STANDARD_ONLY = {
 }
 
 describe("buildInstructionIndex", () => {
-  it("names the configuration, its section switches and every field with what it is", () => {
-    const index = buildInstructionIndex("onboardee", { sections: ALL_SECTIONS_ON, requiresContextCodeBlocks: true })
+  it("names the configuration and every field with what it is, those of every section included", () => {
+    const index = buildInstructionIndex("onboardee", { requiresContextCodeBlocks: true })
 
-    expect(index).toMatchObject({ configuration: "onboardee", sections: { traceDiagram: true, blastDiagram: true, walkthrough: true, findings: true } })
+    expect(index).toMatchObject({ configuration: "onboardee", requiresContextCodeBlocks: true })
+    expect(index.fields.map((field) => field.path)).toStrictEqual(expect.arrayContaining(["traceDiagram.description", "blastDiagram.nodes.impactReason", "walkthrough.files.waypoints.findings.title"]))
     expect(index.fields).toContainEqual({ path: "writingStyle", title: "The shared voice. Fetch before writing any prose." })
     expect(index.fields.map((field) => field.path)).toContain("contextCodeBlocks.description")
   })
 
   it("leaves out the fields of the context code blocks where the configuration asks for none", () => {
-    const index = buildInstructionIndex("standard", { sections: ALL_SECTIONS_ON, requiresContextCodeBlocks: false })
+    const index = buildInstructionIndex("standard", { requiresContextCodeBlocks: false })
 
     expect(index.requiresContextCodeBlocks).toBe(false)
     expect(index.fields.map((field) => field.path).filter((path) => path.startsWith("contextCodeBlocks"))).toStrictEqual([])
-  })
-
-  it("leaves out the fields of a section that is switched off", () => {
-    const index = buildInstructionIndex("minimal", { sections: { traceDiagram: false, blastDiagram: false, walkthrough: true, findings: false }, requiresContextCodeBlocks: false })
-    const paths = index.fields.map((field) => field.path)
-
-    expect(paths.filter((path) => path.startsWith("traceDiagram") || path.startsWith("blastDiagram") || path.includes("findings"))).toStrictEqual([])
-    expect(paths).toContain("walkthrough.files.waypoints.reading")
   })
 })
 

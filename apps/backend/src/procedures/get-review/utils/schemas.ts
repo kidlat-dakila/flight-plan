@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { ARRANGED_SECTIONS } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { modelOptionSchema } from "@/procedures/get-setup/utils/schemas"
 import { AGENT_NAMES } from "@/procedures/get-setup/utils/setup"
 import { BRANCH_STATUSES } from "@/procedures/list-repositories/utils/branch-status"
@@ -6,6 +7,7 @@ import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
 import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
 import { targetOptionSchema } from "@/procedures/search-creation-targets/utils/schemas"
 import {
+  changeOverviewSchema,
   blastBandSchema,
   codeDefinitionSchema,
   codeLinkSchema,
@@ -140,6 +142,7 @@ export const contextBandSchema = z.strictObject({
   markdown: z.string(),
   isDraft: z.boolean(),
   unwrittenLabel: z.string(),
+  changeOverview: changeOverviewSchema,
 })
 
 export const REVIEW_VERDICTS = ["comment", "approve", "request-changes"] as const
@@ -208,23 +211,6 @@ export const unassignedFilesSchema = z.strictObject({
   paths: z.array(z.string()),
 })
 
-export const OFFERED_SECTIONS = ["traceDiagram", "blastDiagram", "findings"] as const
-
-export const generationOfferSchema = z.strictObject({
-  section: z.enum(OFFERED_SECTIONS),
-  anchorId: z.string(),
-  heading: z.string(),
-  message: z.string(),
-  generateLabel: z.string(),
-  generatingLabel: z.string(),
-})
-
-export const generationOffersSchema = z.strictObject({
-  traceDiagram: generationOfferSchema.nullable(),
-  blastDiagram: generationOfferSchema.nullable(),
-  findings: generationOfferSchema.nullable(),
-})
-
 export const segmentViewSchema = z.strictObject({
   id: z.string(),
   anchorId: z.string(),
@@ -237,7 +223,7 @@ export const segmentViewSchema = z.strictObject({
   traceDiagram: traceBandSchema,
   blastDiagram: blastBandSchema.nullable(),
   walkthrough: discussedWalkthroughBandSchema,
-  offers: generationOffersSchema,
+  sectionOrder: z.array(z.enum(ARRANGED_SECTIONS)),
 })
 
 export const conversationBandSchema = z.strictObject({
@@ -421,9 +407,6 @@ export type Rail = z.infer<typeof railSchema>
 export type ContextBand = z.infer<typeof contextBandSchema>
 export type SegmentOutline = z.infer<typeof segmentOutlineSchema>
 export type UnassignedFiles = z.infer<typeof unassignedFilesSchema>
-export type OfferedSection = (typeof OFFERED_SECTIONS)[number]
-export type GenerationOffer = z.infer<typeof generationOfferSchema>
-export type GenerationOffers = z.infer<typeof generationOffersSchema>
 export type SegmentView = z.infer<typeof segmentViewSchema>
 export type DiscussedFileSection = z.infer<typeof discussedFileSectionSchema>
 export type DiscussedWalkthroughBand = z.infer<typeof discussedWalkthroughBandSchema>

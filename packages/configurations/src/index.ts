@@ -1,6 +1,6 @@
 import { FIELD_CONFIGURATIONS } from "./artifact/field-catalog"
 import type { FieldConfiguration } from "./artifact/field-configuration"
-import type { ContextCodeBlockKind, SectionName, SectionSwitches } from "./artifact/review-artifact"
+import type { ContextCodeBlockKind, SectionName } from "./artifact/review-artifact"
 
 export const SYSTEM_INSTRUCTIONS_FOLDER = "system-instructions"
 export const DEFAULT_CONFIGURATIONS_FOLDER = "default-configurations"
@@ -10,15 +10,6 @@ export const PRESET_NAMES = ["standard", "minimal", "onboardee", "unfamiliar-ter
 export type PresetName = (typeof PRESET_NAMES)[number]
 
 export const BASE_PRESET_NAME: PresetName = "standard"
-
-export const ALL_SECTIONS_ON: SectionSwitches = { traceDiagram: true, blastDiagram: true, walkthrough: true, findings: true }
-
-export const PRESET_SECTIONS: Readonly<Record<PresetName, SectionSwitches>> = {
-  "standard": ALL_SECTIONS_ON,
-  "minimal": { traceDiagram: false, blastDiagram: false, walkthrough: true, findings: false },
-  "onboardee": ALL_SECTIONS_ON,
-  "unfamiliar-territory": ALL_SECTIONS_ON,
-}
 
 export const PRESET_CONTEXT_CODE_BLOCK_KINDS: Readonly<Record<PresetName, readonly ContextCodeBlockKind[]>> = {
   "standard": [],
@@ -89,5 +80,6 @@ export type * from "./artifact/review-artifact"
 export * from "./bands/band-schemas"
 export * from "./code-graph/classification-labels"
 export * from "./code-graph/code-blocks"
+export * from "./code-graph/walkthrough-orders"
 export type * from "./code-graph/import-graph"
 export * from "./bands/code-token"

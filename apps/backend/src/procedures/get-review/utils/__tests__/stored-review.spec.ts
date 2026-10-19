@@ -40,7 +40,10 @@ const BLOCK_LABELS_BEFORE_A_FIELD = /"blockLabels":\d+,/g
 
 describe("stored review", () => {
   it("reads back the artifact, the base commit and the reviewer's choices it wrote", () => {
+    const writtenUp = { ...SCAFFOLD, request: { ...SCAFFOLD.request, writeUp: { sections: ["context", "findings"], walkthroughOrder: "important-first" } as const } }
+
     expect(parseStoredReview(formatStoredReview(SCAFFOLD))).toStrictEqual(SCAFFOLD)
+    expect(parseStoredReview(formatStoredReview(writtenUp))).toStrictEqual(writtenUp)
   })
 
   it("writes the format version, the kind and the choices in the meta block", () => {
@@ -85,7 +88,7 @@ describe("stored review", () => {
     expect(parseStoredReview(older)).toStrictEqual(SCAFFOLD)
   })
 
-  it("reads a review saved while the diagrams were named journey and blast, under their current names", () => {
+  it("reads a review saved while the diagrams were named journey and blast, under their current names, and drops its section switches", () => {
     const olderArtifact = {
       ...HELD_STOCK_ARTIFACT,
       sections: { journey: true, blast: true, walkthrough: true, findings: true },
@@ -97,10 +100,7 @@ describe("stored review", () => {
     }
     const older = stringify({ ...parse(formatStoredReview(SCAFFOLD)), schema: 2, artifact: olderArtifact })
 
-    expect(parseStoredReview(older)).toStrictEqual({
-      ...SCAFFOLD,
-      artifact: { ...HELD_STOCK_ARTIFACT, sections: { traceDiagram: true, blastDiagram: true, walkthrough: true, findings: true } },
-    })
+    expect(parseStoredReview(older)).toStrictEqual(SCAFFOLD)
   })
 
   it("reads a review saved before nodes were required, with every node of its sections required when an agent writes it", () => {

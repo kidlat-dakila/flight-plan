@@ -2,7 +2,7 @@ import { z } from "zod"
 import { CODE_BLOCK_TYPES, type ASTCodeGroupGraph, type CodeBlock } from "@/code-graph/code-blocks"
 import type { ImportGraphGroup } from "@/code-graph/import-graph"
 import { configurations } from "./field-configuration"
-import { ARTIFACT_STATUSES, CARD_SIDES, CONTEXT_CODE_BLOCK_KINDS, DIFF_TYPES, FINDING_KINDS, IMPACT_TYPES, LINE_MARKS, SECTION_NAMES } from "./kinds"
+import { ARTIFACT_STATUSES, CARD_SIDES, CONTEXT_CODE_BLOCK_KINDS, DIFF_TYPES, FINDING_KINDS, IMPACT_TYPES, LINE_MARKS } from "./kinds"
 import type { TraceNode, Waypoint } from "./review-artifact"
 
 const lineRangeSchema = z.strictObject({ lineStart: z.number().int(), lineEnd: z.number().int() })
@@ -456,7 +456,6 @@ const contextCodeBlockSchema = z.strictObject({
 export const reviewArtifactSchema = z.strictObject({
   title: z.string(),
   status: z.enum(ARTIFACT_STATUSES),
-  sections: z.record(z.enum(SECTION_NAMES), z.boolean()).optional(),
   commit: z.string(),
   isSegmented: z.boolean(),
   segments: z.array(segmentSchema),

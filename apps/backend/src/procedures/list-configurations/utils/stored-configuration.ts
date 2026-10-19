@@ -1,7 +1,7 @@
 import { z } from "zod"
-import { CONTEXT_CODE_BLOCK_KINDS, PRESET_NAMES, SECTION_NAMES } from "@flightplan/configurations"
+import { CONTEXT_CODE_BLOCK_KINDS, PRESET_NAMES } from "@flightplan/configurations"
 import type { SavedConfiguration } from "./configuration"
-import { RENAMED_PARTS, renamedFieldPath, withRenamedKeys } from "./renamed-parts"
+import { renamedFieldPath } from "./renamed-parts"
 
 export const CONFIGURATION_FILE_NAME = "configuration.json"
 export const INSTRUCTION_FILE_EXTENSION = ".md"
@@ -28,9 +28,9 @@ export interface ConfigurationFileChanges {
 const configurationFileSchema = z.strictObject({
   name: z.string(),
   preset: z.enum(PRESET_NAMES),
-  sections: z.record(z.enum(SECTION_NAMES), z.boolean()),
+  sections: z.record(z.string(), z.boolean()).optional(),
   contextCodeBlockKinds: z.array(z.enum(CONTEXT_CODE_BLOCK_KINDS)),
-})
+}).transform(({ name, preset, contextCodeBlockKinds }) => ({ name, preset, contextCodeBlockKinds }))
 
 const parseJson = (text: string | undefined): unknown => {
   if (text === undefined) return null
@@ -46,27 +46,19 @@ const isInstructionFileName = (fileName: string): boolean => fileName.endsWith(I
 const instructionKeyOf = (fileName: string): string =>
   renamedFieldPath(fileName.slice(0, -INSTRUCTION_FILE_EXTENSION.length))
 
-const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
-  typeof value === "object" && value !== null && !Array.isArray(value)
-
-const withRenamedSections = (described: unknown): unknown =>
-  isRecord(described) && isRecord(described.sections)
-    ? { ...described, sections: withRenamedKeys(described.sections, RENAMED_PARTS) }
-    : described
-
 export const isStoredFileName = (fileName: string): boolean =>
   fileName === CONFIGURATION_FILE_NAME || isInstructionFileName(fileName)
 
 export const formatConfigurationFiles = (configuration: SavedConfiguration): ConfigurationFiles => {
-  const { name, preset, sections, contextCodeBlockKinds } = configuration
+  const { name, preset, contextCodeBlockKinds } = configuration
   return new Map([
-    [CONFIGURATION_FILE_NAME, `${JSON.stringify({ name, preset, sections, contextCodeBlockKinds }, null, JSON_INDENT)}\n`],
+    [CONFIGURATION_FILE_NAME, `${JSON.stringify({ name, preset, contextCodeBlockKinds }, null, JSON_INDENT)}\n`],
     ...Object.entries(configuration.instructions).map(([key, text]) => [`${key}${INSTRUCTION_FILE_EXTENSION}`, text] as const),
   ])
 }
 
 export const parseConfigurationFiles = (id: string, files: ConfigurationFiles): SavedConfiguration | null => {
-  const described = configurationFileSchema.safeParse(withRenamedSections(parseJson(files.get(CONFIGURATION_FILE_NAME))))
+  const described = configurationFileSchema.safeParse(parseJson(files.get(CONFIGURATION_FILE_NAME)))
   if (!described.success) return null
   return {
     id,

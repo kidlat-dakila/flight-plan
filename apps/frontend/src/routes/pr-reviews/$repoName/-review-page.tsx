@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { Link, useNavigate, type ErrorComponentProps } from "@tanstack/react-router"
 import { lazy, Suspense, use, useState } from "react"
 import { createPortal } from "react-dom"
@@ -13,10 +13,10 @@ import ChatPanel from "@flightplan/ui/ChatPanel"
 import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
 import FileSection from "@flightplan/ui/FileSection"
-import GenerationOffer from "@flightplan/ui/GenerationOffer"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
+import OrderedSections from "@flightplan/ui/OrderedSections"
 import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, OptionsMenu, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
@@ -31,7 +31,6 @@ import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
 import OwnFlightPlanStart from "./-components/OwnFlightPlanStart"
 import PermissionDialog from "./-components/PermissionDialog"
-import RebuildReviewDialog from "./-components/RebuildReviewDialog"
 import ReviewNotices from "./-components/ReviewNotices"
 import SegmentEditor from "./-components/SegmentEditor"
 import SegmentHeader from "./-components/SegmentHeader"
@@ -44,7 +43,6 @@ import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
-import { useSectionGeneration } from "./-hooks/use-section-generation"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useTargetSwitching } from "./-hooks/use-target-switching"
 import { useToast } from "./-hooks/use-toast"
@@ -61,7 +59,6 @@ const CommentEditor = lazy(async () => await import("./-components/CommentEditor
 const REFRESH_INTERVAL_MS = 5000
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const COPY_FAILED_MESSAGE = "Could not copy to the clipboard"
-const REBUILD_FORM_LOADING_LABEL = "Loading the options…"
 const EDITOR_LOADING_LABEL = "Loading the editor…"
 const ADD_SEGMENT_LABEL = "Add a segment"
 const NEW_SEGMENT_LEGEND = "New segment"
@@ -136,7 +133,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     refetchInterval: REFRESH_INTERVAL_MS,
     refetchIntervalInBackground: true,
   })
-  const [rebuildMode, setRebuildMode] = useState<"update" | "regenerate" | null>(null)
   const [unassignedFilesPrompt, setUnassignedFilesPrompt] = useState<UnassignedFilesPrompt | null>(null)
   const [isArranging, setIsArranging] = useState(false)
   const [isChoosingPullRequest, setIsChoosingPullRequest] = useState(false)
@@ -156,16 +152,9 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const segmentEditing = useSegmentEditing(reviewKey, showToast)
   const traceEditing = useTraceEditing(reviewKey, showToast)
   const walkthroughEditing = useWalkthroughEditing(reviewKey, showToast)
-  const sectionGeneration = useSectionGeneration(reviewKey, showToast)
   const discussion = useReviewDiscussion(reviewKey, showToast)
   const chat = useAgentChat(reviewKey, showToast)
   const targetSwitching = useTargetSwitching(reviewKey)
-
-  const rebuildForm = useQuery({
-    ...trpc.review.rebuildForm.queryOptions({ ...reviewKey, mode: rebuildMode ?? "update" }),
-    enabled: rebuildMode !== null,
-    gcTime: 0,
-  })
 
   const refreshReview = async (): Promise<void> => {
     await queryClient.invalidateQueries(trpc.review.get.pathFilter())
@@ -217,17 +206,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       },
     }),
   )
-  const rebuildReview = useMutation(
-    trpc.review.rebuild.mutationOptions({
-      onSuccess: async (result) => {
-        if (result.kind !== "rebuilt") return
-        setRebuildMode(null)
-        if (result.prompt === null) showToast(result.message)
-        else copyText(result.prompt, result.message)
-        await refreshReview()
-      },
-    }),
-  )
   const deleteReview = useMutation(
     trpc.review.delete.mutationOptions({
       onSuccess: async ({ message }) => {
@@ -237,10 +215,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       onError: reportError,
     }),
   )
-  const openRebuildDialog = (mode: "update" | "regenerate"): void => {
-    rebuildReview.reset()
-    setRebuildMode(mode)
-  }
 
   const artifact = page.kind === "artifact" ? page : null
   const arrangedWalkthroughSegment = artifact?.segments.find((segment) => segment.id === arrangedWalkthroughSegmentId) ?? null
@@ -366,12 +340,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                             )}
                         <OptionsMenu
                           forgeLink={page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null}
-                          rebuild={isOwn
-                            ? null
-                            : {
-                                onUpdate: () => { openRebuildDialog("update") },
-                                onRegenerate: () => { openRebuildDialog("regenerate") },
-                              }}
                           onDelete={() => { deleteReview.mutate(reviewKey) }}
                         />
                       </>
@@ -381,20 +349,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
             </>,
             bandSlot,
           )}
-      <RebuildReviewDialog
-        isOpen={rebuildMode !== null}
-        rebuildForm={rebuildForm.isFetching ? null : rebuildForm.data ?? null}
-        loadingLabel={REBUILD_FORM_LOADING_LABEL}
-        problem={rebuildReview.data?.kind === "rejected" ? rebuildReview.data : null}
-        errorMessage={rebuildReview.data?.kind === "unavailable" ? rebuildReview.data.message : rebuildReview.error?.message ?? rebuildForm.error?.message ?? null}
-        isPending={rebuildReview.isPending}
-        onSubmit={(choice) => {
-          if (rebuildMode === null) return
-          requestNotificationPermission()
-          rebuildReview.mutate({ ...reviewKey, ...choice, mode: rebuildMode })
-        }}
-        onClose={() => { setRebuildMode(null) }}
-      />
       {page.kind === "missing" && isOwn
         ? (
             <Suspense fallback={null}>
@@ -458,15 +412,19 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           outline={segment.outline}
                           authoring={isOwn ? segmentEditing.authoringOf(segment.id) : null}
                         />
-                        <ContextBand
-                          {...segment.context}
-                          codeLinks={page.codeLinks}
-                          editing={isOwn ? contextEditingOf(segment.id) : null}
-                          renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
-                          onOpenCodeLink={handleOpenCodeLink}
-                        />
-                        {segment.offers.traceDiagram === null
-                          ? (
+                        <OrderedSections
+                          order={segment.sectionOrder}
+                          sections={{
+                            context: (
+                              <ContextBand
+                                {...segment.context}
+                                codeLinks={page.codeLinks}
+                                editing={isOwn ? contextEditingOf(segment.id) : null}
+                                renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
+                                onOpenCodeLink={handleOpenCodeLink}
+                              />
+                            ),
+                            traceDiagram: (
                               <TraceBand
                                 {...segment.traceDiagram}
                                 codeLinks={page.codeLinks}
@@ -488,127 +446,104 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                       setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
                                     }}
                               />
-                            )
-                          : (
-                              <GenerationOffer
-                                kind="board"
-                                {...segment.offers.traceDiagram}
-                                isGenerating={sectionGeneration.generatingSection === segment.offers.traceDiagram.section}
-                                errorMessage={sectionGeneration.errorMessageOf(segment.offers.traceDiagram.section)}
-                                onGenerate={() => { sectionGeneration.onGenerate("traceDiagram") }}
-                              />
-                            )}
-                        {segment.offers.blastDiagram === null
-                          ? null
-                          : (
-                              <GenerationOffer
-                                kind="board"
-                                {...segment.offers.blastDiagram}
-                                isGenerating={sectionGeneration.generatingSection === segment.offers.blastDiagram.section}
-                                errorMessage={sectionGeneration.errorMessageOf(segment.offers.blastDiagram.section)}
-                                onGenerate={() => { sectionGeneration.onGenerate("blastDiagram") }}
-                              />
-                            )}
-                        {segment.blastDiagram === null
-                          ? null
-                          : (
-                              <BlastBand
-                                {...segment.blastDiagram}
-                                codeLinks={page.codeLinks}
-                                renderImpactEditor={isOwn
-                                  ? (request) => (
-                                      <Suspense fallback={<p className="text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
-                                        <BlastImpactEditor
-                                          key={request.path}
-                                          {...request}
-                                          reviewKey={reviewKey}
-                                          renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />}
-                                        />
-                                      </Suspense>
-                                    )
+                            ),
+                            blastDiagram: (
+                              <>
+                                {segment.blastDiagram === null
+                                  ? null
+                                  : (
+                                      <BlastBand
+                                        {...segment.blastDiagram}
+                                        codeLinks={page.codeLinks}
+                                        renderImpactEditor={isOwn
+                                          ? (request) => (
+                                              <Suspense fallback={<p className="text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
+                                                <BlastImpactEditor
+                                                  key={request.path}
+                                                  {...request}
+                                                  reviewKey={reviewKey}
+                                                  renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />}
+                                                />
+                                              </Suspense>
+                                            )
+                                          : null}
+                                        onOpenCodeLink={handleOpenCodeLink}
+                                        onOpenFile={handleOpenCodeLink}
+                                      />
+                                    )}
+                              </>
+                            ),
+                            walkthrough: (
+                              <CodeWalkthrough
+                                anchorId={segment.walkthrough.anchorId}
+                                heading={segment.walkthrough.heading}
+                                coverageLabel={segment.walkthrough.coverageLabel}
+                                emptyMessage={segment.walkthrough.emptyMessage}
+                                navigation={walkthroughLayout.navigationOf(segment)}
+                                onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
+                                  ? () => { setArrangedWalkthroughSegmentId(segment.id) }
                                   : null}
-                                onOpenCodeLink={handleOpenCodeLink}
-                                onOpenFile={handleOpenCodeLink}
-                              />
-                            )}
-                        <CodeWalkthrough
-                          anchorId={segment.walkthrough.anchorId}
-                          heading={segment.walkthrough.heading}
-                          coverageLabel={segment.walkthrough.coverageLabel}
-                          emptyMessage={segment.walkthrough.emptyMessage}
-                          navigation={walkthroughLayout.navigationOf(segment)}
-                          onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
-                            ? () => { setArrangedWalkthroughSegmentId(segment.id) }
-                            : null}
-                        >
-                          {segment.offers.findings === null
-                            ? null
-                            : (
-                                <GenerationOffer
-                                  kind="notice"
-                                  {...segment.offers.findings}
-                                  isGenerating={sectionGeneration.generatingSection === segment.offers.findings.section}
-                                  errorMessage={sectionGeneration.errorMessageOf(segment.offers.findings.section)}
-                                  onGenerate={() => { sectionGeneration.onGenerate("findings") }}
-                                />
-                              )}
-                          {isOwn
-                            ? segment.walkthrough.files.map((file) => (
-                                <WalkthroughFile
-                                  key={file.anchorId}
-                                  reviewKey={reviewKey}
-                                  segmentId={segment.id}
-                                  file={file}
-                                  openWaypointIds={openWaypointIds}
-                                  currentWaypointId={currentWaypointId}
-                                  isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
-                                  isPending={walkthroughEditing.isPending}
-                                  codeLinks={page.codeLinks}
-                                  renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
-                                  onOpenCodeLink={handleOpenCodeLink}
-                                  onToggleWaypoint={handleToggleWaypoint}
-                                  onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
-                                  onRemove={() => { walkthroughEditing.onRemoveFile(segment.id, file.path) }}
-                                  onRemoveWaypoint={(waypointId) => { walkthroughEditing.onRemoveWaypoint(segment.id, waypointId) }}
-                                />
-                              ))
-                            : segment.walkthrough.files.map((file) => (
-                                <FileSection
-                                  key={file.anchorId}
-                                  file={file}
-                                  openWaypointIds={openWaypointIds}
-                                  currentWaypointId={currentWaypointId}
-                                  focusedWaypointId={stepping.focusedWaypointId}
-                                  previewVisit={stepping.previewVisit}
-                                  isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
-                                  isReviewPending={setReviewed.isPending}
-                                  composer={page.composer}
-                                  composingRange={discussion.composingRangeOf(file.path)}
-                                  isCommentPending={discussion.isCommentPending}
-                                  renderCommentEditor={renderCommentEditor}
-                                  codeLinks={page.codeLinks}
-                                  codeDefinitions={page.codeDefinitions}
-                                  onOpenCodeLink={handleOpenCodeLink}
-                                  onToggleWaypoint={handleToggleWaypoint}
-                                  onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
-                                  onWaypointReviewedChange={(id, isReviewed) => {
-                                    setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
-                                  }}
-                                  onFileReviewedChange={(path, isReviewed) => {
-                                    setReviewed.mutate({ ...reviewKey, subject: { kind: "file", path }, isReviewed })
-                                  }}
-                                  onRootBlockReviewedChange={(id, isReviewed) => {
-                                    setReviewed.mutate({ ...reviewKey, subject: { kind: "root-block", id }, isReviewed })
-                                  }}
-                                  onStartComment={discussion.onStartComment}
-                                  onAddComment={discussion.onAddComment}
-                                  onPostComment={discussion.onPostComment}
-                                  onReply={discussion.onReply}
-                                  onResolveThread={discussion.onResolveThread}
-                                  onDiscardComment={discussion.onDiscardComment}
-                                />
-                              ))}
-                        </CodeWalkthrough>
+                              >
+                                {isOwn
+                                  ? segment.walkthrough.files.map((file) => (
+                                      <WalkthroughFile
+                                        key={file.anchorId}
+                                        reviewKey={reviewKey}
+                                        segmentId={segment.id}
+                                        file={file}
+                                        openWaypointIds={openWaypointIds}
+                                        currentWaypointId={currentWaypointId}
+                                        isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
+                                        isPending={walkthroughEditing.isPending}
+                                        codeLinks={page.codeLinks}
+                                        renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
+                                        onOpenCodeLink={handleOpenCodeLink}
+                                        onToggleWaypoint={handleToggleWaypoint}
+                                        onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
+                                        onRemove={() => { walkthroughEditing.onRemoveFile(segment.id, file.path) }}
+                                        onRemoveWaypoint={(waypointId) => { walkthroughEditing.onRemoveWaypoint(segment.id, waypointId) }}
+                                      />
+                                    ))
+                                  : segment.walkthrough.files.map((file) => (
+                                      <FileSection
+                                        key={file.anchorId}
+                                        file={file}
+                                        openWaypointIds={openWaypointIds}
+                                        currentWaypointId={currentWaypointId}
+                                        focusedWaypointId={stepping.focusedWaypointId}
+                                        previewVisit={stepping.previewVisit}
+                                        isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
+                                        isReviewPending={setReviewed.isPending}
+                                        composer={page.composer}
+                                        composingRange={discussion.composingRangeOf(file.path)}
+                                        isCommentPending={discussion.isCommentPending}
+                                        renderCommentEditor={renderCommentEditor}
+                                        codeLinks={page.codeLinks}
+                                        codeDefinitions={page.codeDefinitions}
+                                        onOpenCodeLink={handleOpenCodeLink}
+                                        onToggleWaypoint={handleToggleWaypoint}
+                                        onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
+                                        onWaypointReviewedChange={(id, isReviewed) => {
+                                          setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
+                                        }}
+                                        onFileReviewedChange={(path, isReviewed) => {
+                                          setReviewed.mutate({ ...reviewKey, subject: { kind: "file", path }, isReviewed })
+                                        }}
+                                        onRootBlockReviewedChange={(id, isReviewed) => {
+                                          setReviewed.mutate({ ...reviewKey, subject: { kind: "root-block", id }, isReviewed })
+                                        }}
+                                        onStartComment={discussion.onStartComment}
+                                        onAddComment={discussion.onAddComment}
+                                        onPostComment={discussion.onPostComment}
+                                        onReply={discussion.onReply}
+                                        onResolveThread={discussion.onResolveThread}
+                                        onDiscardComment={discussion.onDiscardComment}
+                                      />
+                                    ))}
+                              </CodeWalkthrough>
+                            ),
+                          }}
+                        />
                       </section>
                     ))}
                     {isOwn && page.segments.length === 0 && !segmentEditing.addition.isWriting

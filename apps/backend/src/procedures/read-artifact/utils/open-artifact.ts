@@ -3,8 +3,7 @@ import { findReviewTarget, markAgentActivity } from "@/procedures/get-conversati
 import type { InstructionSource } from "@/procedures/get-instructions/utils/resolve-instructions"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { findConfiguration, shippedConfigurationOf } from "@/procedures/list-configurations/utils/configuration"
-import { BASE_PRESET_NAME, type ReviewArtifact, type SectionSwitches } from "@flightplan/configurations"
-import { sectionsOf } from "./artifact-sections"
+import { BASE_PRESET_NAME, type ReviewArtifact } from "@flightplan/configurations"
 import { requiresContextCodeBlocks } from "./context-code-blocks"
 
 export interface ArtifactRejection {
@@ -16,7 +15,6 @@ export interface OpenedArtifact {
   readonly kind: "opened"
   readonly artifact: ReviewArtifact
   readonly configuration: InstructionSource
-  readonly sections: SectionSwitches
   readonly requiresContextCodeBlocks: boolean
 }
 
@@ -41,7 +39,6 @@ export const openArtifact = async (key: ReviewKey, context: ProcedureContext): P
     kind: "opened",
     artifact,
     configuration,
-    sections: sectionsOf(artifact),
     requiresContextCodeBlocks: requiresContextCodeBlocks(artifact),
   }
 }

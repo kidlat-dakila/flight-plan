@@ -4,12 +4,9 @@ has nothing to write.
 
 ## Ordering the files
 
-**Use the order the reviewer chose.** The request that started the review names
-it. Where it leaves a choice, order the files so a reader never meets a name
-before it is defined: the shape that changed first, then the code that uses it,
-then what wires them together, then configuration. What the order can never be
-is alphabetical or diff order by accident: the scaffold lists the files by path,
-so an order nobody wrote is that.
+**Flight Plan orders the files.** It sorts the File Sections by the import graph,
+or puts the reviewer's spotlight and the core changes first, as the reviewer
+chose. Write no order.
 
 **No test file gets a waypoint, and none gets a section.** A tour is a tour of
 the change, and a test is the evidence the change works. Flight Plan sets test

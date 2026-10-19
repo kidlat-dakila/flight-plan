@@ -18,7 +18,7 @@ export const readNodes = async (input: ReadNodesInput, context: ProcedureContext
   if (input.segmentId !== undefined && segments.length === 0) {
     return { kind: "rejected", message: unknownSegmentMessage(artifact, input.segmentId) }
   }
-  const work = unwrittenWork(artifact, opened.sections)
+  const work = unwrittenWork(artifact)
   const selection = { artifact, segments, work, maxLineCount: input.maxLines ?? DEFAULT_MAX_LINE_COUNT }
   if (input.ids !== undefined) return { kind: "selected", items: itemsWithIds(selection, input.ids) }
   const items = unwrittenItems(selection, input.needs ?? WORK_KINDS)

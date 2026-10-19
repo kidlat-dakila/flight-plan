@@ -48,7 +48,7 @@ describe("waypointChangeOf", () => {
 describe("selectFilterKeys", () => {
   it("keeps the known keys in menu order, then the root block keys in the order asked, and drops the rest", () => {
     expect(selectFilterKeys(["removed", "nit", "unknown", "core-change"])).toStrictEqual(["core-change", "nit", "removed"])
-    expect(selectFilterKeys(["block:hook:added", "bug", "block:gadget:added", "block:class:deleted", "block:hook:added"])).toStrictEqual(["bug", "block:hook:added", "block:class:deleted"])
+    expect(selectFilterKeys(["block:state:added", "bug", "block:gadget:added", "block:data-model:deleted", "block:state:added"])).toStrictEqual(["bug", "block:state:added", "block:data-model:deleted"])
     expect(selectFilterKeys(null)).toStrictEqual([])
   })
 })
@@ -73,13 +73,13 @@ describe("matchesFilter", () => {
   })
 
   it("shows a waypoint whose root block matches a ticked code block, together with the ticked kinds", () => {
-    const addedHook = flat(createWaypoint("hook", "useTotal"), "added", ["block:hook:added"])
-    const buggyHook = flat(createWaypoint("buggy-hook", "useCart", { findings: [createFinding("f4", "bug")] }), "modified", ["block:hook:added"])
+    const addedHook = flat(createWaypoint("hook", "useTotal"), "added", ["block:state:added"])
+    const buggyHook = flat(createWaypoint("buggy-hook", "useCart", { findings: [createFinding("f4", "bug")] }), "modified", ["block:state:added"])
 
-    expect(matchesFilter(addedHook, ["block:hook:added", "block:class:modified"])).toBe(true)
-    expect(matchesFilter(plain, ["block:hook:added"])).toBe(false)
-    expect(matchesFilter(buggyHook, ["bug", "block:hook:added"])).toBe(true)
-    expect(matchesFilter(addedHook, ["bug", "block:hook:added"])).toBe(false)
+    expect(matchesFilter(addedHook, ["block:state:added", "block:data-model:modified"])).toBe(true)
+    expect(matchesFilter(plain, ["block:state:added"])).toBe(false)
+    expect(matchesFilter(buggyHook, ["bug", "block:state:added"])).toBe(true)
+    expect(matchesFilter(addedHook, ["bug", "block:state:added"])).toBe(false)
   })
 
   it("asks a waypoint to match both the kinds and the change types when both are ticked", () => {
@@ -91,9 +91,11 @@ describe("matchesFilter", () => {
   })
 })
 
+const buildFilter = (waypoints: readonly FlatWaypoint[], selected: Parameters<typeof buildWaypointFilter>[1]) => buildWaypointFilter(waypoints, selected, [])
+
 describe("buildWaypointFilter", () => {
   it("counts the waypoints each option matches, over the whole walkthrough", () => {
-    const filter = buildWaypointFilter([plain, flagged, buggy], ["bug"])
+    const filter = buildFilter([plain, flagged, buggy], ["bug"])
 
     expect(filter.groups[0].options.map((option) => [option.key, option.detailLabel, option.isSelected])).toStrictEqual([
       ["core-change", "1 waypoint", false],
@@ -107,7 +109,7 @@ describe("buildWaypointFilter", () => {
 
   it("puts the change types in a submenu, counted over the whole walkthrough", () => {
     const added = flat(createWaypoint("new", "d"), "added")
-    const filter = buildWaypointFilter([plain, flagged, added], ["added"])
+    const filter = buildFilter([plain, flagged, added], ["added"])
 
     expect(filter.submenus.map((submenu) => [submenu.id, submenu.label, submenu.valueLabel])).toStrictEqual([["change", "Change type", "Added"]])
     expect(filter.submenus[0].options.map((option) => [option.key, option.detailLabel, option.isSelected])).toStrictEqual([
@@ -119,47 +121,69 @@ describe("buildWaypointFilter", () => {
   })
 
   it("gives each option the keys selected after it is toggled", () => {
-    const filter = buildWaypointFilter([plain], ["bug"])
+    const filter = buildFilter([plain], ["bug"])
 
     expect(filter.groups[0].options.find((option) => option.key === "bug")?.toggledKeys).toStrictEqual([])
     expect(filter.groups[0].options.find((option) => option.key === "nit")?.toggledKeys).toStrictEqual(["bug", "nit"])
-    expect(buildWaypointFilter([plain], [])).toMatchObject({ buttonLabel: "Filter", badge: null })
+    expect(buildFilter([plain], [])).toMatchObject({ buttonLabel: "Filter", badge: null })
   })
 
   it("lists the four code blocks with the most waypoints by their type and what happened to them, and the others under More", () => {
     const withBlocks = (id: string, ...keys: RootBlockKey[]) => flat(createWaypoint(id, id), "modified", keys)
     const waypoints = [
-      withBlocks("a", "block:function:added", "block:hook:modified"),
-      withBlocks("b", "block:function:added"),
+      withBlocks("a", "block:page:added", "block:state:modified"),
+      withBlocks("b", "block:page:added"),
       withBlocks("c", "block:component:modified"),
-      withBlocks("d", "block:class:deleted"),
-      withBlocks("e", "block:root-variable:added"),
-      withBlocks("f", "block:hook:modified"),
+      withBlocks("d", "block:data-model:deleted"),
+      withBlocks("e", "block:config:added"),
+      withBlocks("f", "block:state:modified"),
     ]
-    const [, blocks] = buildWaypointFilter(waypoints, []).groups
+    const [, blocks] = buildFilter(waypoints, []).groups
 
     expect(blocks.options.map((option) => [option.label, option.detailLabel, option.detailChange])).toStrictEqual([
-      ["Function", "Added", "added"],
-      ["Hook", "Modified", "modified"],
+      ["Page", "Added", "added"],
+      ["State", "Modified", "modified"],
       ["Component", "Modified", "modified"],
-      ["Class", "Deleted", "deleted"],
+      ["Data model", "Deleted", "deleted"],
     ])
-    expect(blocks.more).toMatchObject({ label: "More", heading: "Code blocks", valueLabel: null, options: [{ label: "Variable", detailLabel: "Added" }] })
+    expect(blocks.more).toMatchObject({ label: "More", heading: "Code blocks", valueLabel: null, options: [{ label: "Config", detailLabel: "Added" }] })
+  })
+
+  it("puts the classifications of the user's spotlight first, and never under More", () => {
+    const withBlocks = (id: string, ...keys: RootBlockKey[]) => flat(createWaypoint(id, id), "modified", keys)
+    const waypoints = [
+      withBlocks("a", "block:page:added", "block:state:modified"),
+      withBlocks("b", "block:page:added"),
+      withBlocks("c", "block:component:modified"),
+      withBlocks("d", "block:data-model:deleted"),
+      withBlocks("e", "block:config:added"),
+      withBlocks("f", "block:state:modified"),
+    ]
+    const [, blocks] = buildWaypointFilter(waypoints, [], ["config", "data-model"]).groups
+
+    expect(blocks.options.map((option) => option.key)).toStrictEqual([
+      "block:data-model:deleted",
+      "block:config:added",
+      "block:page:added",
+      "block:state:modified",
+      "block:component:modified",
+    ])
+    expect(blocks.more).toBeNull()
   })
 
   it("keeps a ticked code block among the first, and has no More when every code block fits", () => {
     const waypoints = ["a", "b", "c", "d", "e"].map((id, index) =>
-      flat(createWaypoint(id, id), "modified", index === 4 ? ["block:root-variable:added"] : ["block:function:added", `block:${(["hook", "class", "component", "function"] as const)[index]}:modified`]))
-    const [, ticked] = buildWaypointFilter(waypoints, ["block:root-variable:added"]).groups
+      flat(createWaypoint(id, id), "modified", index === 4 ? ["block:config:added"] : ["block:page:added", `block:${(["state", "data-model", "component", "page"] as const)[index]}:modified`]))
+    const [, ticked] = buildFilter(waypoints, ["block:config:added"]).groups
 
-    expect(ticked.options.map((option) => option.key)).toContain("block:root-variable:added")
-    expect(buildWaypointFilter([flat(createWaypoint("one", "a"), "added", ["block:hook:added"])], []).groups[1].more).toBeNull()
+    expect(ticked.options.map((option) => option.key)).toContain("block:config:added")
+    expect(buildFilter([flat(createWaypoint("one", "a"), "added", ["block:state:added"])], []).groups[1].more).toBeNull()
   })
 
   it("counts every ticked filter in a badge after the button, one included, and leaves the Reviewed tick out", () => {
-    expect(buildWaypointFilter([plain], ["bug"]).badge).toStrictEqual({ count: 1, label: "1 filter" })
-    expect(buildWaypointFilter([plain], ["bug", "block:hook:added", "added"]).badge).toStrictEqual({ count: 3, label: "3 filters" })
-    expect(buildWaypointFilter([plain], []).badge).toBeNull()
-    expect(buildWaypointFilter([plain], ["added", "removed"]).submenus[0].valueLabel).toBe("Added, Removed")
+    expect(buildFilter([plain], ["bug"]).badge).toStrictEqual({ count: 1, label: "1 filter" })
+    expect(buildFilter([plain], ["bug", "block:state:added", "added"]).badge).toStrictEqual({ count: 3, label: "3 filters" })
+    expect(buildFilter([plain], []).badge).toBeNull()
+    expect(buildFilter([plain], ["added", "removed"]).submenus[0].valueLabel).toBe("Added, Removed")
   })
 })

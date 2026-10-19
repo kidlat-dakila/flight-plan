@@ -51,6 +51,7 @@ export interface ReviewArtifactParts {
   readonly hunks: HunksByPath
   readonly textOf: (path: string) => string | null
   readonly segments: readonly SegmentParts[]
+  readonly isSegmented: boolean
 }
 
 const LANGUAGE_BY_EXTENSION: ReadonlyMap<string, string> = new Map(Object.entries({
@@ -163,7 +164,7 @@ export const assembleReviewArtifact = (parts: ReviewArtifactParts): ReviewArtifa
   title: parts.title,
   status: parts.status,
   commit: parts.commit,
-  isSegmented: parts.segments.length > 1,
+  isSegmented: parts.isSegmented,
   segments: parts.segments.map(toSegment),
   sources: listSourcePaths(parts.hunks, parts.segments).flatMap((path) => toSourceFile(path, parts)),
   contextCodeBlocks: listContextCodeBlocks(parts.segments),

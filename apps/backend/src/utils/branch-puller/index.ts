@@ -1,5 +1,5 @@
+import type { BranchPull, BranchPuller } from "@/procedures/get-review/utils/branch-puller"
 import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
-import type { BranchPull, BranchPuller } from "@/procedures/rebuild-review/utils/branch-puller"
 import type { CommandOutcome, CommandRunner } from "@/utils/run-command"
 
 export interface BranchPullerOptions {

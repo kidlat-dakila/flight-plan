@@ -6,6 +6,7 @@ import {
   createSegment,
   createViewContext,
   createWaypoint,
+  highlightPlainly,
   PRICE_PATH,
   priceSource,
 } from "@/__tests__/review-fixture"
@@ -35,7 +36,7 @@ const build = (segment: Segment, marks: ReviewedMarks = NO_REVIEWED_MARKS, reque
 
 const buildControls = (segment: Segment, marks: ReviewedMarks = NO_REVIEWED_MARKS, request = EVERYTHING): WalkthroughControls => {
   const prepared = prepareWalkthrough(segment, marks, request, createViewContext())
-  return buildWalkthroughControls(prepared, request)
+  return buildWalkthroughControls(prepared, request, [])
 }
 
 const rowKinds = (rows: readonly FileRow[]): string[] => rows.map((row) => row.kind)
@@ -181,6 +182,79 @@ describe("buildWalkthrough", () => {
 
     expect(found).toMatchObject({ chip: { kind: "risk", label: "Risk" }, coreChangeLabel: "Core change", isDraft: false })
     expect(unwritten).toMatchObject({ title: "format", isDraft: true, reading: null, chip: null })
+  })
+
+  it("gives a hint from the classification of its code blocks to each waypoint with no write-up, and none to a written one", () => {
+    const changedBlock = createCodeBlock("price-of", PRICE_PATH, {
+      classifications: ["component", "database-operation"],
+      diffClassifications: ["database-operation"],
+    })
+    const unchangedBlock = createCodeBlock("format", PRICE_PATH, { name: "format", classifications: ["page"] })
+    const segment = createSegment({
+      walkthrough: {
+        files: [
+          {
+            path: PRICE_PATH,
+            waypoints: [
+              createWaypoint("changed", "priceOf", { reading: "", codeBlocks: [changedBlock] }),
+              createWaypoint("unchanged", "format", { reading: "", codeBlocks: [unchangedBlock] }),
+            ],
+          },
+          { path: CART_PATH, waypoints: [createWaypoint("written", "subtotal", { codeBlocks: [changedBlock] })] },
+        ],
+      },
+    })
+    const hints = build(segment).files.flatMap((file) =>
+      file.rows.flatMap((row) => (row.kind === "waypoint" ? [[row.waypoint.id, row.waypoint.hint]] : [])))
+
+    expect(hints).toStrictEqual([
+      ["changed", "Changes a database read or write inside a component."],
+      ["unchanged", "No lines changed in a page, but it uses code that did."],
+      ["written", null],
+    ])
+  })
+
+  it("marks a required waypoint with no reading as being written while an agent writes the review", () => {
+    const segment = createSegment({
+      walkthrough: {
+        files: [{
+          path: PRICE_PATH,
+          waypoints: [
+            createWaypoint("asked", "priceOf", { reading: "", isRequired: true }),
+            createWaypoint("not-asked", "format", { reading: "" }),
+          ],
+        }],
+      },
+    })
+    const writingOf = (isWriting: boolean): [string, boolean][] => {
+      const context = { ...createViewContext(), isWriting }
+      const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, context)
+      return buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context).files
+        .flatMap((file) => file.rows.flatMap((row): [string, boolean][] => (row.kind === "waypoint" ? [[row.waypoint.id, row.waypoint.isBeingWritten]] : [])))
+    }
+
+    expect(writingOf(true)).toStrictEqual([["asked", true], ["not-asked", false]])
+    expect(writingOf(false)).toStrictEqual([["asked", false], ["not-asked", false]])
+  })
+
+  it("gives no hint to a waypoint with no code block, in a file the codegraph does not trace", () => {
+    const segment = createSegment({
+      walkthrough: { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("untraced", "priceOf", { reading: "" })] }] },
+    })
+    const [waypoint] = build(segment).files[0].rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint] : []))
+
+    expect(waypoint.hint).toBeNull()
+  })
+
+  it("shows the files in the order it is asked for, and lists them for arranging in their stored order", () => {
+    const cartUsingPrice = { ...cartSource, references: [{ line: 2, startColumn: 1, endColumn: 8, path: PRICE_PATH, lines: [11, 13] as [number, number], isLibrary: false }] }
+    const context = { ...createViewContext(), sources: [highlightPlainly(priceSource), highlightPlainly(cartUsingPrice)], walkthroughOrder: "imports-top-down" as const }
+    const prepared = prepareWalkthrough(createSegment(), NO_REVIEWED_MARKS, EVERYTHING, context)
+    const band = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context)
+
+    expect(band.files.map((file) => file.path)).toStrictEqual([CART_PATH, PRICE_PATH])
+    expect(waypointIds(band)).toStrictEqual(["subtotal", "price-of", "format"])
+    expect(band.fileOrder.map((file) => file.path)).toStrictEqual([PRICE_PATH, CART_PATH])
   })
 
   it("marks each waypoint by its most urgent finding, puts Core change before questions and nits, and counts a file's findings", () => {
@@ -406,6 +480,8 @@ describe("root blocks of a walkthrough file", () => {
       {
         id: PRICE_OF_ID,
         classification: { key: "database-operation", label: "Database operation" },
+        spotlight: null,
+        coreChangeLabel: null,
         isReviewed: false,
         reviewLabel: "Reviewed",
         reviewName: "Reviewed: Function priceOf",
@@ -415,12 +491,45 @@ describe("root blocks of a walkthrough file", () => {
       {
         id: FORMAT_ID,
         classification: { key: "logic", label: "Logic" },
+        spotlight: null,
+        coreChangeLabel: null,
         isReviewed: false,
         reviewLabel: "Reviewed",
         reviewName: "Reviewed: Function format",
         expandLabel: "Expand Function format",
         collapseLabel: "Collapse Function format",
       },
+    ])
+  })
+
+  it("puts a waypoint and a root block in the spotlight when what changed in them is a classification the user chose", () => {
+    const changedBlock = createCodeBlock(`${PRICE_PATH}#function@11:1`, PRICE_PATH, {
+      lineOfCodeRangeReference: spanning(11, 12),
+      classifications: ["database-operation", "validation"],
+      diffClassifications: ["validation"],
+    })
+    const segment = createSegment({
+      walkthrough: { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("price-of", "priceOf", { codeBlocks: [changedBlock] })] }] },
+    })
+    const context = { ...createViewContext(), spotlight: ["validation", "auth"] as const }
+    const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, context)
+    const [priceFile] = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context).files
+    const spotlight = { label: "Spotlight", classifications: [{ key: "validation", label: "Validation" }] }
+
+    expect(priceFile.rootBlocks.map((rootBlock) => rootBlock.spotlight)).toStrictEqual([spotlight])
+    expect(priceFile.rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint.spotlight] : []))).toStrictEqual([spotlight])
+  })
+
+  it("marks a root block that holds a core change", () => {
+    const segment = rootBlockSegment()
+    const [file] = segment.walkthrough.files
+    const marked = createSegment({
+      walkthrough: { files: [{ ...file, waypoints: file.waypoints.map((waypoint) => (waypoint.id === "price-of" ? { ...waypoint, coreChange: "" } : waypoint)) }] },
+    })
+
+    expect(build(marked).files[0].rootBlocks.map((rootBlock) => [rootBlock.id, rootBlock.coreChangeLabel])).toStrictEqual([
+      [PRICE_OF_ID, "Core change"],
+      [FORMAT_ID, null],
     ])
   })
 

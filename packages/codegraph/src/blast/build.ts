@@ -124,11 +124,12 @@ interface BlastViewSources {
   readonly labelByPath: ReadonlyMap<string, string>
   readonly fileAnchorIdByPath: ReadonlyMap<string, string>
   readonly knownLinkIds: ReadonlySet<string>
+  readonly isWriting: boolean
 }
 
 const toNodeView = (
   { node, x, y, radius }: PlacedBlastNode,
-  { blastDiagram, standingByPath, labelByPath, fileAnchorIdByPath, knownLinkIds }: BlastViewSources,
+  { blastDiagram, standingByPath, labelByPath, fileAnchorIdByPath, knownLinkIds, isWriting }: BlastViewSources,
 ): BlastNodeView => {
   const standing = standingByPath.get(node.path) ?? "unreached"
   const importerPaths = blastDiagram.edges.filter((edge) => edge.imported === node.path).map((edge) => edge.importer)
@@ -146,6 +147,7 @@ const toNodeView = (
     impactReason: node.impactReason === null ? null : parseProse(node.impactReason, knownLinkIds),
     impactNote: IMPACT_NOTES[standing] ?? null,
     isUnassessed: standing === "unassessed",
+    isBeingWritten: isWriting && node.isRequired && node.impactType === null && !isChangedFile(node),
     assessment: assessmentOf(node, standing),
     importers: {
       heading: `Imported by ${countLabel(importerPaths.length, "file", "files")}`,
@@ -204,14 +206,15 @@ interface ViewSources {
   readonly standingByPath: ReadonlyMap<string, FileStanding>
   readonly fileAnchorIdByPath: ReadonlyMap<string, string>
   readonly knownLinkIds: ReadonlySet<string>
+  readonly isWriting: boolean
 }
 
-const buildView = ({ id, label, description, legend }: ViewWording, { blastDiagram, standingByPath, fileAnchorIdByPath, knownLinkIds }: ViewSources): BlastView => {
+const buildView = ({ id, label, description, legend }: ViewWording, { blastDiagram, standingByPath, fileAnchorIdByPath, knownLinkIds, isWriting }: ViewSources): BlastView => {
   const labelByPath = labelBlastFiles(blastDiagram.nodes.map((node) => node.path))
   const layout = layoutBlast(blastDiagram, labelByPath)
   const standings = [...standingByPath.values()]
   const shownMarks = new Set(standings.map((standing) => MARKS[standing]))
-  const sources: BlastViewSources = { blastDiagram, standingByPath, labelByPath, fileAnchorIdByPath, knownLinkIds }
+  const sources: BlastViewSources = { blastDiagram, standingByPath, labelByPath, fileAnchorIdByPath, knownLinkIds, isWriting }
   return {
     id,
     label,
@@ -246,7 +249,7 @@ export const buildBlast = (
 ): BlastBand | null => {
   const { blastDiagram } = segment
   if (blastDiagram === null || blastDiagram.nodes.length === 0) return null
-  const shared = { fileAnchorIdByPath, knownLinkIds: context.knownLinkIds }
+  const shared = { fileAnchorIdByPath, knownLinkIds: context.knownLinkIds, isWriting: context.isWriting }
   const used = blastDiagram.importBound === undefined ? null : blastOfImportBound(blastDiagram.importBound)
   const isUsedByNothing = blastDiagram.nodes.every((node) => segment.changedPaths.includes(node.path))
   return {

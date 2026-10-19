@@ -16,25 +16,12 @@ const waypointOf = async (context: Awaited<ReturnType<typeof createArtifactConte
   return artifact?.segments.flatMap(waypointsOf).find((located) => located.waypoint.id === id)?.waypoint
 }
 
-const OFF = { traceDiagram: false, blastDiagram: false, walkthrough: true, findings: false }
-
 describe("updateNodes", () => {
-  it("refuses to write a section the reviewer chose not to generate, and says so", async () => {
-    const context = await createArtifactContext({ ...DRAFT_ARTIFACT, sections: OFF })
-    const refusalOf = async (edit: object): Promise<string> => messageOf(await updateNodes({ ...SEGMENT_KEY, ...edit }, context))
+  it("writes every section, a review having no section switched off", async () => {
+    const context = await createArtifactContext(DRAFT_ARTIFACT)
 
-    await expect(refusalOf({ traceDiagram: [{ id: "j-subtotal", label: "Rounds the cart total once" }] }))
-      .resolves.toBe("The reviewer chose not to generate the Trace Diagram for this review. Do not write this, and do not ask the reviewer about it. Nothing was written.")
-    await expect(refusalOf({ traceDiagramDescription: "A shopper opens the cart." })).resolves.toContain("the Trace Diagram")
-    await expect(refusalOf({ blastDiagram: [{ path: "src/cart/CartTotal.tsx", impactType: "unaffected" }] })).resolves.toContain("the Blast Diagram")
-    await expect(refusalOf({ waypoints: [{ id: "w3", reading: "Rounds once.", findings: [BUG] }] })).resolves.toContain("the findings")
-    await expect(waypointOf(context, "w3")).resolves.toMatchObject({ reading: "", findings: [] })
-  })
-
-  it("writes the sections that are on beside the ones that are off", async () => {
-    const context = await createArtifactContext({ ...DRAFT_ARTIFACT, sections: OFF })
-
-    await expect(updateNodes({ ...SEGMENT_KEY, waypoints: [{ id: "w3", reading: "Rounds once." }] }, context)).resolves.toMatchObject({ kind: "written" })
+    await expect(updateNodes({ ...SEGMENT_KEY, traceDiagram: [{ id: "j-subtotal", label: "Rounds the cart total once" }] }, context)).resolves.toMatchObject({ kind: "written" })
+    await expect(updateNodes({ ...SEGMENT_KEY, waypoints: [{ id: "w3", reading: "Rounds once.", findings: [BUG] }] }, context)).resolves.toMatchObject({ kind: "written" })
   })
 
   it("writes a waypoint's prose and findings, and reports what is left", async () => {

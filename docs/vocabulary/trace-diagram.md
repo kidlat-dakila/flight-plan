@@ -449,6 +449,18 @@ Collapsing a node hides the nodes it leads to, and focusing on a node shows only
 
 The agent cannot add, remove or move a node, and cannot write an edge.
 
+### Hints
+
+Until the agent writes them, Flight Plan fills the missing parts of a diagram with [hints](code-walkthrough.md#hint): short sentences it writes with no model, from the classifications of the code. A hint is never stored and never counts as a write-up; the page data carries it beside the part, and `null` once the part is written.
+
+| Part with no write-up | Hint, in the page data | Example |
+|---|---|---|
+| A card's label | `hint` on the node, from the classifications of the node's code blocks and its change, as `hintOf` writes for a waypoint | "Changes plain logic." |
+| A trigger label or a listed block | `hint` on the row, from its own block | "No lines changed in an effect, but it uses code that did." |
+| The description of the diagram | `descriptionHint` on the diagram: what its cards are, each once, in their order (`traceHintOf`) | "Runs through a component, an effect and plain logic." |
+
+Every card also carries its classification as `classification`, the one its root code block shows in the Code Walkthrough. A card can be [written up on demand](agent-conversation.md#write-up-on-demand) from its side panel, and carries `isBeingWritten` while the agent writes it.
+
 ## What an author changes
 
 The author of a Flight Plan changes the diagram on their own page. Every change is saved at once, and none of them changes the status of the artifact.

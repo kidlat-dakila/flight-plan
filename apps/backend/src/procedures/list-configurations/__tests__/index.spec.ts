@@ -22,7 +22,7 @@ describe("listConfigurations", () => {
     ])
   })
 
-  it("says where a configuration comes from, how many instructions it changed and which sections are off", async () => {
+  it("says where a configuration comes from and how many instructions it changed", async () => {
     const context = createSetupContext(AT_REPOSITORIES)
     await createConfiguration({ name: "Terse", sourceId: "minimal" }, context)
     await saveConfiguration({ change: "field", id: "custom-terse", path: "context", texts: [{ key: "context", text: "Two sentences." }] }, context)
@@ -37,9 +37,6 @@ describe("listConfigurations", () => {
         details: [
           { text: "Based on Minimal", kind: "plain" },
           { text: "1 instruction changed", kind: "plain" },
-          { text: "Trace Diagrams off", kind: "plain" },
-          { text: "Blast Diagram off", kind: "plain" },
-          { text: "Findings off", kind: "plain" },
         ],
         defaultLabel: null,
         isDefault: false,
