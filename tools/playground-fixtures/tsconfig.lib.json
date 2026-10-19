@@ -23,6 +23,9 @@
     },
     {
       "path": "../../packages/codegraph/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/reviewed-marks/tsconfig.lib.json"
     }
   ]
 }

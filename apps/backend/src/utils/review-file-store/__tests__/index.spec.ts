@@ -7,6 +7,7 @@ import type { ReviewScaffold } from "@/procedures/get-review/utils/stored-review
 import { FileReviewStore } from "@/utils/review-file-store"
 import { writeText } from "@/utils/text-file"
 import { withTemporaryFolder } from "@/utils/text-file/__tests__/temporary-folder"
+import { NO_REVIEWED_MARKS } from "@flightplan/reviewed-marks"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "branch-feature/web" }
@@ -15,6 +16,12 @@ const SCAFFOLD: ReviewScaffold = {
   artifact: WEBHOOK_RETRY_ARTIFACT,
   baseCommit: "0000000",
   request: { configurationId: "standard", preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: NOW },
+}
+
+const MARKS = {
+  waypoints: { "line-total": "1f2e" },
+  files: {},
+  rootBlocks: { "src/cart/subtotal.ts#function:subtotal": "5e6f" },
 }
 
 const createStore = (dataPath: string): FileReviewStore =>
@@ -180,6 +187,55 @@ describe("FileReviewStore", () => {
       await expect(createStore(dataPath).listTargetIds("storefront")).resolves.toStrictEqual(["branch-feature/web"])
       await createStore(dataPath).deleteScaffold(KEY)
       await expect(createStore(dataPath).readPendingComments(KEY)).resolves.toStrictEqual([])
+    })
+  })
+
+  it("keeps the reviewed marks of a review target on disk, beside its Flight Plan, and removes them with it", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      await createStore(dataPath).writeScaffold(KEY, SCAFFOLD)
+
+      await createStore(dataPath).writeReviewedMarks(KEY, MARKS)
+
+      await expect(readdir(join(dataPath, "reviews", "storefront"))).resolves.toStrictEqual([
+        "branch-feature%2Fweb.flightplan",
+        "branch-feature%2Fweb.reviewed.json",
+      ])
+      await expect(createStore(dataPath).readReviewedMarks(KEY)).resolves.toStrictEqual(MARKS)
+      await createStore(dataPath).deleteScaffold(KEY)
+      await expect(createStore(dataPath).readReviewedMarks(KEY)).resolves.toStrictEqual(NO_REVIEWED_MARKS)
+    })
+  })
+
+  it("reads the reviewed marks of the sample store where none are saved, and no marks from a file it cannot read", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const sampleStore = new InMemoryReviewStore(createMockReviews())
+      await sampleStore.writeReviewedMarks(KEY, MARKS)
+      const store = new FileReviewStore(dataPath, sampleStore)
+
+      await expect(store.readReviewedMarks(KEY)).resolves.toStrictEqual(MARKS)
+      await writeText(join(dataPath, "reviews", "storefront", "branch-feature%2Fweb.reviewed.json"), "{")
+      await expect(store.readReviewedMarks(KEY)).resolves.toStrictEqual(NO_REVIEWED_MARKS)
+    })
+  })
+
+  it("moves the reviewed marks, the pending comments and the publications with a moved scaffold", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const store = createStore(dataPath)
+      const pullRequestKey = { repositoryName: "storefront", targetId: "pr-500" }
+      const publications = [{ kind: "claude" as const, url: "https://claude.ai/artifact/abc123", publishedAt: NOW }]
+      await store.writeScaffold(KEY, SCAFFOLD)
+      await store.writeReviewedMarks(KEY, MARKS)
+      await store.writePublications(KEY, publications)
+
+      await store.moveScaffold(KEY, pullRequestKey)
+
+      await expect(readdir(join(dataPath, "reviews", "storefront"))).resolves.toStrictEqual([
+        "pr-500.flightplan",
+        "pr-500.publications.json",
+        "pr-500.reviewed.json",
+      ])
+      await expect(store.readReviewedMarks(pullRequestKey)).resolves.toStrictEqual(MARKS)
+      await expect(store.readPublications(pullRequestKey)).resolves.toStrictEqual(publications)
     })
   })
 

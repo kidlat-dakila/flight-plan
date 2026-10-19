@@ -324,12 +324,17 @@ importers:
       '@flightplan/git-forge':
         specifier: workspace:*
         version: link:../git-forge
+      '@flightplan/reviewed-marks':
+        specifier: workspace:*
+        version: link:../reviewed-marks
 
   packages/configurations: {}
 
   packages/docs: {}
 
   packages/git-forge: {}
+
+  packages/reviewed-marks: {}
 
   packages/ui:
     dependencies:

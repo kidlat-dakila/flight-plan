@@ -38,6 +38,9 @@
     },
     {
       "path": "../../packages/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/reviewed-marks/tsconfig.lib.json"
     }
   ]
 }

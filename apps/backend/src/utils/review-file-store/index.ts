@@ -6,16 +6,19 @@ import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-r
 import { formatStoredPendingComments, parseStoredPendingComments } from "@/procedures/get-review/utils/stored-pending-comments"
 import { formatStoredPublications, parseStoredPublications } from "@/procedures/get-review/utils/stored-publications"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
+import { formatStoredReviewedMarks, parseStoredReviewedMarks } from "@/procedures/get-review/utils/stored-reviewed-marks"
 import type { ImportRequest } from "@/procedures/import-review/utils/import-request"
 import { fromFileName, readFolderNames, toFileName } from "@/utils/conversation-file-store"
 import { readTextOrNull, removeFile, writeText } from "@/utils/text-file"
-import type { ReviewedMarks } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
+import type { ReviewedMarks } from "@flightplan/reviewed-marks"
 
 const REVIEWS_FOLDER_NAME = "reviews"
 const FILE_EXTENSION = ".flightplan"
 const PUBLICATIONS_EXTENSION = ".publications.json"
 const PENDING_COMMENTS_EXTENSION = ".pending-comments.json"
+const REVIEWED_MARKS_EXTENSION = ".reviewed.json"
+const SIDE_FILE_EXTENSIONS = [PUBLICATIONS_EXTENSION, PENDING_COMMENTS_EXTENSION, REVIEWED_MARKS_EXTENSION]
 const UNREADABLE_MESSAGE = "A saved review artifact cannot be read."
 
 export class FileReviewStore implements ReviewStore {
@@ -52,8 +55,7 @@ export class FileReviewStore implements ReviewStore {
   public readonly deleteScaffold = async (key: ReviewKey): Promise<void> => {
     await Promise.all([
       removeFile(this.pathOf(key)),
-      removeFile(this.publicationsPathOf(key)),
-      removeFile(this.pendingCommentsPathOf(key)),
+      ...SIDE_FILE_EXTENSIONS.map(async (extension) => { await removeFile(this.filePathOf(key, extension)) }),
     ])
     await this.sampleStore.deleteScaffold(key)
   }
@@ -62,6 +64,11 @@ export class FileReviewStore implements ReviewStore {
     const scaffold = await this.readStored(from)
     if (scaffold === null) return await this.sampleStore.moveScaffold(from, to)
     await this.writeScaffold(to, scaffold)
+    await Promise.all(
+      SIDE_FILE_EXTENSIONS.map(async (extension) => {
+        await this.moveSideFile(from, to, extension)
+      }),
+    )
     await removeFile(this.pathOf(from))
     return true
   }
@@ -77,29 +84,31 @@ export class FileReviewStore implements ReviewStore {
   public readonly findTargetDetail = async (key: ReviewKey): Promise<ReviewTargetDetail | null> =>
     await this.sampleStore.findTargetDetail(key)
 
-  public readonly readReviewedMarks = async (key: ReviewKey): Promise<ReviewedMarks> =>
-    await this.sampleStore.readReviewedMarks(key)
+  public readonly readReviewedMarks = async (key: ReviewKey): Promise<ReviewedMarks> => {
+    const text = await readTextOrNull(this.filePathOf(key, REVIEWED_MARKS_EXTENSION))
+    return text === null ? await this.sampleStore.readReviewedMarks(key) : parseStoredReviewedMarks(text)
+  }
 
   public readonly writeReviewedMarks = async (key: ReviewKey, marks: ReviewedMarks): Promise<void> => {
-    await this.sampleStore.writeReviewedMarks(key, marks)
+    await writeText(this.filePathOf(key, REVIEWED_MARKS_EXTENSION), formatStoredReviewedMarks(marks))
   }
 
   public readonly readPendingComments = async (key: ReviewKey): Promise<readonly PendingComment[]> => {
-    const text = await readTextOrNull(this.pendingCommentsPathOf(key))
+    const text = await readTextOrNull(this.filePathOf(key, PENDING_COMMENTS_EXTENSION))
     return text === null ? await this.sampleStore.readPendingComments(key) : parseStoredPendingComments(text)
   }
 
   public readonly writePendingComments = async (key: ReviewKey, pendingComments: readonly PendingComment[]): Promise<void> => {
-    await writeText(this.pendingCommentsPathOf(key), formatStoredPendingComments(pendingComments))
+    await writeText(this.filePathOf(key, PENDING_COMMENTS_EXTENSION), formatStoredPendingComments(pendingComments))
   }
 
   public readonly readPublications = async (key: ReviewKey): Promise<readonly Publication[]> => {
-    const text = await readTextOrNull(this.publicationsPathOf(key))
+    const text = await readTextOrNull(this.filePathOf(key, PUBLICATIONS_EXTENSION))
     return text === null ? await this.sampleStore.readPublications(key) : parseStoredPublications(text)
   }
 
   public readonly writePublications = async (key: ReviewKey, publications: readonly Publication[]): Promise<void> => {
-    await writeText(this.publicationsPathOf(key), formatStoredPublications(publications))
+    await writeText(this.filePathOf(key, PUBLICATIONS_EXTENSION), formatStoredPublications(publications))
   }
 
   public readonly readPublishingRequest = async (key: ReviewKey): Promise<PublishingRequest | null> =>
@@ -135,12 +144,15 @@ export class FileReviewStore implements ReviewStore {
     return scaffold
   }
 
-  private readonly pathOf = (key: ReviewKey): string =>
-    join(this.rootPath, toFileName(key.repositoryName), `${toFileName(key.targetId)}${FILE_EXTENSION}`)
+  private readonly moveSideFile = async (from: ReviewKey, to: ReviewKey, extension: string): Promise<void> => {
+    const text = await readTextOrNull(this.filePathOf(from, extension))
+    if (text === null) return
+    await writeText(this.filePathOf(to, extension), text)
+    await removeFile(this.filePathOf(from, extension))
+  }
 
-  private readonly publicationsPathOf = (key: ReviewKey): string =>
-    join(this.rootPath, toFileName(key.repositoryName), `${toFileName(key.targetId)}${PUBLICATIONS_EXTENSION}`)
+  private readonly pathOf = (key: ReviewKey): string => this.filePathOf(key, FILE_EXTENSION)
 
-  private readonly pendingCommentsPathOf = (key: ReviewKey): string =>
-    join(this.rootPath, toFileName(key.repositoryName), `${toFileName(key.targetId)}${PENDING_COMMENTS_EXTENSION}`)
+  private readonly filePathOf = (key: ReviewKey, extension: string): string =>
+    join(this.rootPath, toFileName(key.repositoryName), `${toFileName(key.targetId)}${extension}`)
 }

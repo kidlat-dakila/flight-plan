@@ -3,9 +3,11 @@ import { findReviewSubject } from "@/procedures/get-review"
 import { NO_WRITING_ACTIVITY } from "@/procedures/get-review/utils/build-progress"
 import { buildReviewPage } from "@/procedures/get-review/utils/build-review-page"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
-import { highlightReview, NO_REVIEWED_MARKS } from "@flightplan/codegraph"
+import { highlightReview } from "@flightplan/codegraph"
+import { NO_REVIEWED_MARKS } from "@flightplan/reviewed-marks"
 import { buildPublishedReview } from "./utils/build-published-review"
 import { buildImportLink } from "./utils/import-link"
+import { buildPublishedReviewed } from "./utils/published-reviewed"
 import type { GetPublishedReviewInput, PublishedReview } from "./utils/schemas"
 
 const UNFILTERED = { filterKeysBySegment: {}, reviewedSegmentIds: [] }
@@ -47,5 +49,6 @@ export const getPublishedReview = async (
     { ...input, ...UNFILTERED },
   )
   if (page.kind !== "artifact") return null
-  return buildPublishedReview(page, subject.target, artifactUrl === null || scaffold === null ? null : buildImportLink(input, artifactUrl, context.appUrl))
+  const importLink = artifactUrl === null || scaffold === null ? null : buildImportLink(input, artifactUrl, context.appUrl)
+  return buildPublishedReview(page, subject.target, importLink, buildPublishedReviewed(input, subject.artifact))
 }

@@ -41,6 +41,9 @@
     },
     {
       "path": "../../tools/playground-fixtures/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/reviewed-marks/tsconfig.lib.json"
     }
   ]
 }

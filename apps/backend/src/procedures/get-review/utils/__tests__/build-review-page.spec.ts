@@ -7,7 +7,7 @@ import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { listConfigurationsOf } from "@/procedures/list-configurations/utils/configuration"
 import type { PullRequestTarget, Repository } from "@/procedures/list-repositories/utils/repository"
-import { NO_REVIEWED_MARKS } from "@flightplan/codegraph"
+import { NO_REVIEWED_MARKS } from "@flightplan/reviewed-marks"
 import {
   cartSource,
   createArtifact,

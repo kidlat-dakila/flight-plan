@@ -597,6 +597,9 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                   onFileReviewedChange={(path, isReviewed) => {
                                     setReviewed.mutate({ ...reviewKey, subject: { kind: "file", path }, isReviewed })
                                   }}
+                                  onRootBlockReviewedChange={(id, isReviewed) => {
+                                    setReviewed.mutate({ ...reviewKey, subject: { kind: "root-block", id }, isReviewed })
+                                  }}
                                   onStartComment={discussion.onStartComment}
                                   onAddComment={discussion.onAddComment}
                                   onPostComment={discussion.onPostComment}

@@ -50,6 +50,9 @@
         "../../../packages/configurations/src/*",
         "../../../packages/git-forge/src/*",
         "../../../tools/playground-fixtures/src/*"
+      ],
+      "@flightplan/reviewed-marks": [
+        "../../../packages/reviewed-marks/src/index.ts"
       ]
     },
     "composite": false,

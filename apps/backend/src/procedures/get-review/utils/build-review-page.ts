@@ -22,13 +22,13 @@ import {
   type HighlightedSource,
   type PreparedWalkthrough,
   type ResolvedCodeTarget,
-  type ReviewedMarks,
   type ReviewViewContext,
   type Stepping,
   type WalkthroughRequest,
   type WaypointPlace,
 } from "@flightplan/codegraph"
 import type { CodeLink, ReviewArtifact, SectionSwitches, Segment, TokenLine } from "@flightplan/configurations"
+import type { ReviewedMarks } from "@flightplan/reviewed-marks"
 import { buildCompleteAction, type BranchLinking } from "./build-complete-action"
 import { buildStaleNotice } from "./build-notices"
 import { buildCompletionNotice, buildProgress, type WritingActivity } from "./build-progress"

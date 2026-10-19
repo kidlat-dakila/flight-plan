@@ -5,6 +5,7 @@ import { artifactPage, showSectionInView, unassignedFiles } from "@/routes/pr-re
 
 const UNAVAILABLE_TITLE = "Only available in Flight Plan"
 const UNAVAILABLE_DESCRIPTION = "Open the review in Flight Plan to use this."
+const STORAGE_KEY = "flight-plan:reviewed-marks:storefront:pr-412"
 
 const publishedReview = {
   documentTitle: "Count held units • storefront",
@@ -31,6 +32,19 @@ const publishedReview = {
   composer: artifactPage.composer,
   codeLinks: {},
   codeDefinitions: {},
+  reviewed: {
+    storageKey: STORAGE_KEY,
+    segments: [
+      {
+        segmentId: "stock",
+        files: [{ path: "src/price.ts", fingerprint: "price-file", waypoints: [{ id: "price-of", fingerprint: "price-of-1", depth: 0, rootBlockIds: [] }], rootBlocks: [] }],
+      },
+      {
+        segmentId: "checkout",
+        files: [{ path: "src/cart.ts", fingerprint: "cart-file", waypoints: [{ id: "subtotal", fingerprint: "subtotal-1", depth: 0, rootBlockIds: [] }], rootBlocks: [] }],
+      },
+    ],
+  },
 }
 
 const renderPublished = (overrides: Record<string, unknown> = {}) => {
@@ -50,6 +64,10 @@ const closeUnavailableDialog = async (): Promise<string | null> => {
 describe("the published review page", () => {
   beforeEach(() => {
     Reflect.defineProperty(Element.prototype, "scrollIntoView", { value: vi.fn(), configurable: true })
+  })
+
+  afterEach(() => {
+    window.localStorage.clear()
   })
 
   it("shows the Flight Plan under its title, with nothing from the forge", () => {
@@ -125,12 +143,27 @@ describe("the published review page", () => {
     await expect(closeUnavailableDialog()).resolves.toContain(UNAVAILABLE_DESCRIPTION)
   })
 
-  it("says so when a file is marked as reviewed", async () => {
-    renderPublished()
+  it("keeps a file marked as reviewed in the browser, so it stays hidden after a reload", () => {
+    const { unmount } = renderPublished()
 
     fireEvent.click(screen.getAllByRole("button", { name: "File reviewed" })[0] ?? document.body)
 
-    await expect(closeUnavailableDialog()).resolves.toContain(UNAVAILABLE_DESCRIPTION)
+    expect(screen.queryByRole("heading", { level: 3, name: "Price file" })).toBeNull()
+    expect(screen.queryByRole("dialog")).toBeNull()
+    expect(JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "{}")).toMatchObject({ files: { "src/price.ts": "price-file" } })
+
+    unmount()
+    renderPublished()
+
+    expect(screen.queryByRole("heading", { level: 3, name: "Price file" })).toBeNull()
+    expect(screen.getByRole("heading", { level: 3, name: "Cart file" })).toBeTruthy()
+  })
+
+  it("reads no marks when the browser's storage cannot be read", () => {
+    window.localStorage.setItem(STORAGE_KEY, "not json")
+    renderPublished()
+
+    expect(screen.getByRole("heading", { level: 3, name: "Price file" })).toBeTruthy()
   })
 
   it("lists the changed files that are in no segment from its own data", async () => {

@@ -1,6 +1,7 @@
-import { ChevronRightIcon } from "lucide-react"
+import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
 import { useLayoutEffect, useRef, useState, type RefObject } from "react"
-import CodeBlock, { hasKnownReference, lineAddressOf, lineKeyOf, type LineAddress } from "@/components/CodeBlock"
+import { CollapsibleTrigger } from "@/components/blocks/collapsible"
+import CodeBlock, { hasKnownReference, lineAddressOf, lineKeyOf, type LineAddress, type LineCollapse } from "@/components/CodeBlock"
 import CommentThread, {
   CommentComposer,
   type CommentEditorRenderer,
@@ -25,9 +26,18 @@ export interface WalkthroughWaypoint extends MarkedWaypoint {
 }
 
 export type FileRow
-  = | { readonly kind: "lines", readonly id: string, readonly lines: readonly CodeLine[] }
-    | { readonly kind: "gap", readonly id: string, readonly label: string }
-    | { readonly kind: "waypoint", readonly id: string, readonly waypoint: WalkthroughWaypoint }
+  = | { readonly kind: "lines", readonly id: string, readonly lines: readonly CodeLine[], readonly collapses: readonly LineCollapse[] }
+    | { readonly kind: "gap", readonly id: string, readonly label: string, readonly rootBlockId: string | null }
+    | { readonly kind: "waypoint", readonly id: string, readonly waypoint: WalkthroughWaypoint, readonly rootBlockId: string | null }
+
+export interface FileRootBlock {
+  readonly id: string
+  readonly isReviewed: boolean
+  readonly reviewLabel: string
+  readonly reviewName: string
+  readonly expandLabel: string
+  readonly collapseLabel: string
+}
 
 export interface FileThread extends MarkedThread {
   readonly id: string
@@ -68,6 +78,7 @@ export interface WalkthroughFile {
   readonly reviewLabel: string
   readonly countLabels: readonly string[]
   readonly forgeLink: ForgeLink | null
+  readonly rootBlocks: readonly FileRootBlock[]
   readonly rows: readonly FileRow[]
   readonly threads: readonly FileThread[]
 }
@@ -96,6 +107,7 @@ interface FileSectionProps {
   readonly onCollapsedChange: (isCollapsed: boolean) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
   readonly onFileReviewedChange: ((path: string, isReviewed: boolean) => void) | null
+  readonly onRootBlockReviewedChange: ((rootBlockId: string, isReviewed: boolean) => void) | null
   readonly onStartComment: (path: string, address: LineAddress | null, isExtending: boolean) => void
   readonly onAddComment: (path: string, range: CommentRange, body: string) => void
   readonly onPostComment: (path: string, range: CommentRange, body: string) => void
@@ -147,6 +159,48 @@ const withToggled = (ids: ReadonlySet<string>, toggledIds: readonly string[]): R
 const isThreadOpen = (thread: FileThread, toggledThreadIds: ReadonlySet<string>): boolean =>
   thread.startsOpen !== toggledThreadIds.has(thread.id)
 
+interface RootBlockOpening {
+  readonly reviewedIds: ReadonlySet<string>
+  readonly toggledIds: ReadonlySet<string>
+}
+
+const reviewedRootBlockIdsOf = (rootBlocks: readonly FileRootBlock[]): ReadonlySet<string> =>
+  new Set(rootBlocks.filter((rootBlock) => rootBlock.isReviewed).map((rootBlock) => rootBlock.id))
+
+const isRootBlockOpen = (rootBlock: FileRootBlock, toggledIds: ReadonlySet<string>): boolean =>
+  rootBlock.isReviewed === toggledIds.has(rootBlock.id)
+
+const withRootBlockOpen = (toggledIds: ReadonlySet<string>, rootBlock: FileRootBlock, isOpen: boolean): ReadonlySet<string> => {
+  const otherIds = [...toggledIds].filter((toggledId) => toggledId !== rootBlock.id)
+  return new Set(isOpen === rootBlock.isReviewed ? [...otherIds, rootBlock.id] : otherIds)
+}
+
+const openRootBlockIdsOf = (rootBlocks: readonly FileRootBlock[], toggledIds: ReadonlySet<string>): ReadonlySet<string> =>
+  new Set(rootBlocks.filter((rootBlock) => isRootBlockOpen(rootBlock, toggledIds)).map((rootBlock) => rootBlock.id))
+
+const changedIdsOf = (before: ReadonlySet<string>, after: ReadonlySet<string>): string[] =>
+  [...[...before].filter((id) => !after.has(id)), ...[...after].filter((id) => !before.has(id))]
+
+const useRootBlockOpening = (rootBlocks: readonly FileRootBlock[]) => {
+  const reviewedIds = reviewedRootBlockIdsOf(rootBlocks)
+  const [opening, setOpening] = useState<RootBlockOpening>({ reviewedIds, toggledIds: NO_IDS })
+  const changedIds = changedIdsOf(opening.reviewedIds, reviewedIds)
+  if (changedIds.length > 0) {
+    setOpening({ reviewedIds, toggledIds: new Set([...opening.toggledIds].filter((id) => !changedIds.includes(id))) })
+  }
+  return {
+    openRootBlockIds: openRootBlockIdsOf(rootBlocks, opening.toggledIds),
+    onRootBlockOpenChange: (rootBlockId: string, isOpen: boolean): void => {
+      const rootBlock = rootBlocks.find((candidate) => candidate.id === rootBlockId)
+      if (rootBlock === undefined) return
+      setOpening((current) => ({ ...current, toggledIds: withRootBlockOpen(current.toggledIds, rootBlock, isOpen) }))
+    },
+  }
+}
+
+const isInClosedRootBlock = (rootBlockId: string | null, openRootBlockIds: ReadonlySet<string>): boolean =>
+  rootBlockId !== null && !openRootBlockIds.has(rootBlockId)
+
 const markTopOf = (file: HTMLElement | null, waypointId: string): number | null =>
   [...(file?.querySelectorAll<HTMLElement>(WAYPOINT_MARK_SELECTOR) ?? [])]
     .find((mark) => mark.dataset.waypointMark === waypointId)
@@ -190,6 +244,7 @@ const FileSection = ({
   onCollapsedChange,
   onWaypointReviewedChange,
   onFileReviewedChange,
+  onRootBlockReviewedChange,
   onStartComment,
   onAddComment,
   onPostComment,
@@ -200,6 +255,7 @@ const FileSection = ({
   const fileRef = useRef<HTMLElement>(null)
   const [previewedWaypointId, setPreviewedWaypointId] = useState<string | null>(null)
   const [toggledThreadIds, setToggledThreadIds] = useState<ReadonlySet<string>>(NO_IDS)
+  const { openRootBlockIds, onRootBlockOpenChange } = useRootBlockOpening(file.rootBlocks)
   const holdMark = useHeldMark(fileRef, openWaypointIds)
   const placedWaypoints = placeWaypoints(file.rows)
   const linesOfWaypoint = (waypointId: string | null): ReadonlySet<CodeLine> => (waypointId === null
@@ -271,6 +327,36 @@ const FileSection = ({
           setToggledThreadIds((toggledIds) => withToggled(toggledIds, threads.map((thread) => thread.id)))
         }}
       />
+    )
+  }
+  const renderCollapseControls = (rootBlockId: string) => {
+    const rootBlock = file.rootBlocks.find((candidate) => candidate.id === rootBlockId)
+    if (rootBlock === undefined) return null
+    const isOpen = openRootBlockIds.has(rootBlockId)
+    return (
+      <>
+        {onRootBlockReviewedChange === null
+          ? null
+          : (
+              <ReviewToggle
+                label={rootBlock.reviewLabel}
+                accessibleLabel={rootBlock.reviewName}
+                isReviewed={rootBlock.isReviewed}
+                isDisabled={isReviewPending}
+                className="h-6"
+                onChange={(isReviewed) => { onRootBlockReviewedChange(rootBlockId, isReviewed) }}
+              />
+            )}
+        <CollapsibleTrigger
+          aria-label={isOpen ? rootBlock.collapseLabel : rootBlock.expandLabel}
+          className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <ChevronDownIcon
+            aria-hidden="true"
+            className={cn("size-4 transition-transform duration-[180ms] ease-out", isOpen ? "" : "-rotate-90")}
+          />
+        </CollapsibleTrigger>
+      </>
     )
   }
   const renderLineThreads = (address: LineAddress) => (composer === null
@@ -393,6 +479,10 @@ const FileSection = ({
                       path={file.path}
                       label={file.path}
                       className="py-0"
+                      collapses={row.collapses}
+                      openRootBlockIds={openRootBlockIds}
+                      renderCollapseControls={renderCollapseControls}
+                      onRootBlockOpenChange={onRootBlockOpenChange}
                       commentedLineKeys={commentedLineKeys}
                       markedLines={markedLines}
                       renderLineThreads={renderLineThreads}
@@ -410,6 +500,7 @@ const FileSection = ({
                   </div>
                 )
               }
+              if (isInClosedRootBlock(row.rootBlockId, openRootBlockIds)) return null
               if (row.kind === "gap") {
                 return (
                   <p key={row.id} className="border-y bg-muted/60 py-0.5 pl-28 font-mono text-xs text-muted-foreground first-of-type:border-t-0 last:border-b-0">

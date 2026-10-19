@@ -27,7 +27,7 @@ Guided review has one standing objection: a curated tour can leave out the file 
 4. The agent fills in the prose through the MCP tools: each segment's title and context, labels and explanations, findings. It can change the words, never the structure.
 5. The artifact opens in the web app while it is still being written, marked as drafting, and fills in as the agent works. The page shows the [progress](#progress-and-completion) at the top, and a skeleton in place of each part that is not written yet.
 6. The agent marks the artifact complete. Completing it runs the checks a finished artifact must pass.
-7. The reviewer reads it. Marking a waypoint or a file as reviewed hides it until its content changes. When the pull request moves past the commit the artifact describes, the web app says the artifact is stale.
+7. The reviewer reads it. Marking a waypoint or a file as reviewed hides it until its content changes, and a root code block marked as reviewed folds to its first line. When the pull request moves past the commit the artifact describes, the web app says the artifact is stale.
 
 ## Review request
 
@@ -118,10 +118,11 @@ The published copy is the reviewer's page, read-only, drawn from the review arti
 |---|---|
 | Every segment with its context, its Journey Flow Diagram, its Blast Diagram and its Code Walkthrough | The pull request's status, its author and its reviewers |
 | Every [CodeLink](review-artifact.md#codelink), with the code it points at | Comments, the conversation and the review draft |
-| The code of every file the review artifact holds: the changed files and the files the diagrams connect to them | Reviewed marks |
+| The code of every file the review artifact holds: the changed files and the files the diagrams connect to them | The reviewed marks made in Flight Plan |
 | Section navigation and waypoint stepping | Chat, and "Ask the agent" on selected code: a Claude artifact has a chat of its own |
+| Marking waypoints, files and root code blocks as reviewed, and showing the reviewed ones again | |
 
-Its header shows the review target's title and the label "Published Flight Plan". The other controls that need Flight Plan stay where they are on the reviewer's page: Share, Submit review, the Options Menu, the Review Toggles, Mark as reviewed, the waypoint filter and its Reviewed tick, the comment on a line and "Add comment" on selected code. Using one opens a dialog that says it is only available in Flight Plan and how to start Flight Plan: `npx @kidlat-dakila/flightplan`, or `npm install -g @kidlat-dakila/flightplan` once and then `flightplan`, each with a button that copies it.
+Its header shows the review target's title and the label "Published Flight Plan". The Review Toggles, Mark as reviewed and the Reviewed tick of the filter work as they do on the reviewer's page. The marks are kept in the browser's `localStorage`, under a key the published review names, so they stay with that reader and that browser across a reload, and a storage the browser blocks or that holds something unreadable counts as no marks. The page works out what the marks make reviewed with the same calculation the backend runs, from the outline of every file the published review carries: its waypoints and root code blocks with their fingerprints. The other controls that need Flight Plan stay where they are on the reviewer's page: Share, Submit review, the Options Menu, the ticks of the waypoint filter other than Reviewed, the comment on a line and "Add comment" on selected code. Using one opens a dialog that says it is only available in Flight Plan and how to start Flight Plan: `npx @kidlat-dakila/flightplan`, or `npm install -g @kidlat-dakila/flightplan` once and then `flightplan`, each with a button that copies it.
 
 ### Downloading a published Flight Plan
 
@@ -133,7 +134,7 @@ The published copy has a link in its header, "Download to Flight Plan", which op
 
 The repository must be one the reader's Flight Plan follows, under the same name. When no agent can be asked, or the agent stops before the Flight Plan is stored, the page says so and offers to try again.
 
-A Flight Plan made for a branch is stored under the branch, not under a pull request. Marking it as complete opens a dialog that lists the viewer's open pull requests that have no Flight Plan, with the pull request of the same branch chosen. Choosing one moves the Flight Plan to that pull request: it is stored under the pull request and takes its title, the page moves to the pull request's address, and the branch has no Flight Plan any more. "Complete without a pull request" completes it where it is. The chat with the agent stays with the branch.
+A Flight Plan made for a branch is stored under the branch, not under a pull request. Marking it as complete opens a dialog that lists the viewer's open pull requests that have no Flight Plan, with the pull request of the same branch chosen. Choosing one moves the Flight Plan to that pull request: it is stored under the pull request and takes its title, its reviewed marks, pending comments and publications move with it, the page moves to the pull request's address, and the branch has no Flight Plan any more. "Complete without a pull request" completes it where it is. The chat with the agent stays with the branch.
 
 ## Rebuilding and deleting
 

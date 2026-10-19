@@ -6,6 +6,7 @@ import {
   unassignedFilesSchema,
 } from "@/procedures/get-review/utils/schemas"
 import { codeDefinitionSchema, codeLinkSchema, linkSchema } from "@flightplan/configurations"
+import { reviewableFileSchema } from "@flightplan/reviewed-marks"
 
 export const getPublishedReviewInputSchema = z.strictObject({
   repositoryName: z.string(),
@@ -17,6 +18,11 @@ export const installGuideSchema = z.strictObject({
   commands: z.array(z.strictObject({ label: z.string(), command: z.string() })),
   copyLabel: z.string(),
   copiedLabel: z.string(),
+})
+
+export const publishedReviewedSchema = z.strictObject({
+  storageKey: z.string(),
+  segments: z.array(z.strictObject({ segmentId: z.string(), files: z.array(reviewableFileSchema) })),
 })
 
 export const publishedReviewSchema = z.strictObject({
@@ -36,8 +42,10 @@ export const publishedReviewSchema = z.strictObject({
   composer: composerLabelsSchema,
   codeLinks: z.record(z.string(), codeLinkSchema),
   codeDefinitions: z.record(z.string(), codeDefinitionSchema),
+  reviewed: publishedReviewedSchema,
 })
 
 export type GetPublishedReviewInput = z.infer<typeof getPublishedReviewInputSchema>
 export type PublishedReview = z.infer<typeof publishedReviewSchema>
 export type InstallGuide = z.infer<typeof installGuideSchema>
+export type PublishedReviewed = z.infer<typeof publishedReviewedSchema>

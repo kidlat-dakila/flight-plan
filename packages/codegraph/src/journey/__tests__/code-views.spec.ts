@@ -11,7 +11,7 @@ const waypointViewOf = (id: string): WaypointView => ({
   isDraft: false,
   positionLabel: "",
   rangeLabel: null,
-  mark: { kind: "plain", label: "" },
+  mark: { kind: "plain", kindLabel: "", label: "" },
   previousId: null,
   nextId: null,
   chip: null,

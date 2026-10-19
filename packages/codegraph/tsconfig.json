@@ -20,6 +20,9 @@
       ],
       "@flightplan/git-forge": [
         "../git-forge/src/index.ts"
+      ],
+      "@flightplan/reviewed-marks": [
+        "../reviewed-marks/src/index.ts"
       ]
     }
   }

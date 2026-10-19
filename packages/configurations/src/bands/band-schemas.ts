@@ -124,7 +124,7 @@ export const waypointSchema = z.strictObject({
   isDraft: z.boolean(),
   positionLabel: z.string(),
   rangeLabel: z.string().nullable(),
-  mark: z.strictObject({ kind: z.enum(WAYPOINT_MARK_KINDS), label: z.string() }),
+  mark: z.strictObject({ kind: z.enum(WAYPOINT_MARK_KINDS), kindLabel: z.string(), label: z.string() }),
   previousId: z.string().nullable(),
   nextId: z.string().nullable(),
   chip: z.strictObject({ kind: z.enum(FINDING_KINDS), label: z.string() }).nullable(),
@@ -139,10 +139,17 @@ export const waypointSchema = z.strictObject({
   text: z.strictObject({ title: z.string(), reading: z.string(), needsAttention: z.string().nullable() }),
 })
 
+export const lineCollapseSchema = z.strictObject({
+  rootBlockId: z.string(),
+  fromLine: z.number().int(),
+  toLine: z.number().int(),
+  hasTrigger: z.boolean(),
+})
+
 export const fileRowSchema = z.discriminatedUnion("kind", [
-  z.strictObject({ kind: z.literal("lines"), id: z.string(), lines: z.array(codeLineSchema) }),
-  z.strictObject({ kind: z.literal("gap"), id: z.string(), label: z.string() }),
-  z.strictObject({ kind: z.literal("waypoint"), id: z.string(), waypoint: waypointSchema }),
+  z.strictObject({ kind: z.literal("lines"), id: z.string(), lines: z.array(codeLineSchema), collapses: z.array(lineCollapseSchema) }),
+  z.strictObject({ kind: z.literal("gap"), id: z.string(), label: z.string(), rootBlockId: z.string().nullable() }),
+  z.strictObject({ kind: z.literal("waypoint"), id: z.string(), waypoint: waypointSchema, rootBlockId: z.string().nullable() }),
 ])
 
 export const codeUsageFileSchema = z.strictObject({
@@ -334,6 +341,15 @@ export const blastBandSchema = z.strictObject({
   views: z.array(blastViewSchema).min(1),
 })
 
+export const rootBlockViewSchema = z.strictObject({
+  id: z.string(),
+  isReviewed: z.boolean(),
+  reviewLabel: z.string(),
+  reviewName: z.string(),
+  expandLabel: z.string(),
+  collapseLabel: z.string(),
+})
+
 export const fileSectionSchema = z.strictObject({
   anchorId: z.string(),
   path: z.string(),
@@ -342,6 +358,7 @@ export const fileSectionSchema = z.strictObject({
   reviewLabel: z.string(),
   countLabels: z.array(z.string()),
   forgeLink: linkSchema.nullable(),
+  rootBlocks: z.array(rootBlockViewSchema),
   rows: z.array(fileRowSchema),
 })
 
@@ -423,6 +440,8 @@ export type FindingView = z.infer<typeof findingSchema>
 export type WaypointView = z.infer<typeof waypointSchema>
 export type FileRow = z.infer<typeof fileRowSchema>
 export type FileSectionView = z.infer<typeof fileSectionSchema>
+export type LineCollapse = z.infer<typeof lineCollapseSchema>
+export type RootBlockView = z.infer<typeof rootBlockViewSchema>
 export type WaypointFilter = z.infer<typeof waypointFilterSchema>
 export type WaypointFilterKey = (typeof WAYPOINT_FILTER_KEYS)[number]
 export type WaypointChange = (typeof WAYPOINT_CHANGES)[number]

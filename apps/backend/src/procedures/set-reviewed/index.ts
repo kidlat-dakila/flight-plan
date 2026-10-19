@@ -1,5 +1,5 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { applyReviewedChange } from "./utils/apply-reviewed-change"
+import { applyArtifactReviewedChange } from "./utils/apply-reviewed-change"
 import type { SetReviewedInput } from "./utils/schemas"
 
 export const setReviewed = async (
@@ -11,7 +11,7 @@ export const setReviewed = async (
     context.reviewStore.findArtifact(key),
     context.reviewStore.readReviewedMarks(key),
   ])
-  const changedMarks = artifact === null ? null : applyReviewedChange(artifact, marks, input.subject, input.isReviewed)
+  const changedMarks = artifact === null ? null : applyArtifactReviewedChange(artifact, marks, input.subject, input.isReviewed)
   if (changedMarks === null) return null
   await context.reviewStore.writeReviewedMarks(key, changedMarks)
   return { isReviewed: input.isReviewed }

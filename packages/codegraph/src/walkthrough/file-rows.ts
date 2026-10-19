@@ -1,7 +1,7 @@
 import { codeLinesIn, isInSpan, type HighlightedSource, type LineDecorations, type RowSpan } from "@/code/lines"
 import { countLabel } from "@/prose/count-label"
 import { lastOf } from "@/walkthrough/last-of"
-import type { FileRow, WaypointView } from "@flightplan/configurations"
+import type { FileRow, LineCollapse, WaypointView } from "@flightplan/configurations"
 
 const CONTEXT_ROWS = 3
 const SHORTEST_GAP_ROWS = 4
@@ -15,6 +15,15 @@ export interface PlacedWaypoint {
   readonly view: WaypointView
   readonly span: RowSpan | null
   readonly isVisible: boolean
+}
+
+export interface RootBlockSpan {
+  readonly id: string
+  readonly span: RowSpan
+}
+
+interface TriggeredRootBlock extends RootBlockSpan {
+  readonly triggerIndex: number
 }
 
 interface RowRun {
@@ -99,10 +108,55 @@ const rowRunsOf = (
     ),
   ).reduce<RowRun[]>(withRunMerged(waypoints), [])
 
-const toWaypointRow = (placed: PlacedWaypoint): FileRow => ({
+const isRunHolding = (run: RowRun, span: RowSpan): boolean =>
+  run.kind === "lines" && run.span.start <= span.end && run.span.end >= span.start
+
+const shownSpanOf = (run: RowRun, rootBlock: RootBlockSpan): RowSpan => ({
+  start: Math.max(run.span.start, rootBlock.span.start),
+  end: Math.min(run.span.end, rootBlock.span.end),
+})
+
+const NOT_FOUND = -1
+
+const triggerIndexIn = (highlighted: HighlightedSource, span: RowSpan): number => {
+  const firstKept = highlighted.source.lines.findIndex((line, index) => isInSpan(index, span) && line.mark !== "removed")
+  return firstKept === NOT_FOUND ? span.start : firstKept
+}
+
+const withTrigger = (highlighted: HighlightedSource, runs: readonly RowRun[]) => (rootBlock: RootBlockSpan): TriggeredRootBlock[] => {
+  const firstRun = runs.find((run) => isRunHolding(run, rootBlock.span))
+  return firstRun === undefined ? [] : [{ ...rootBlock, triggerIndex: triggerIndexIn(highlighted, shownSpanOf(firstRun, rootBlock)) }]
+}
+
+const isAfterTrigger = (rootBlock: TriggeredRootBlock, span: RowSpan): boolean =>
+  span.start > rootBlock.triggerIndex && span.end <= rootBlock.span.end
+
+const rootBlockIdHolding = (rootBlocks: readonly TriggeredRootBlock[], span: RowSpan): string | null =>
+  rootBlocks.find((rootBlock) => isAfterTrigger(rootBlock, span))?.id ?? null
+
+const toCollapse = (run: RowRun, rootBlock: TriggeredRootBlock, span: RowSpan): LineCollapse => ({
+  rootBlockId: rootBlock.id,
+  fromLine: span.start - run.span.start + 1,
+  toLine: span.end - run.span.start + 1,
+  hasTrigger: span.start === rootBlock.triggerIndex,
+})
+
+const piecesAroundTrigger = (span: RowSpan, triggerIndex: number): RowSpan[] =>
+  isInSpan(triggerIndex, span) && triggerIndex > span.start
+    ? [{ start: span.start, end: triggerIndex - 1 }, { start: triggerIndex, end: span.end }]
+    : [span]
+
+const collapsesOf = (run: RowRun, rootBlocks: readonly TriggeredRootBlock[]): LineCollapse[] =>
+  rootBlocks
+    .filter((rootBlock) => isRunHolding(run, rootBlock.span))
+    .flatMap((rootBlock) =>
+      piecesAroundTrigger(shownSpanOf(run, rootBlock), rootBlock.triggerIndex).map((span) => toCollapse(run, rootBlock, span)))
+
+const toWaypointRow = (placed: PlacedWaypoint, rootBlockId: string | null): FileRow => ({
   kind: "waypoint",
   id: `waypoint-${placed.view.id}`,
   waypoint: placed.view,
+  rootBlockId,
 })
 
 const holdsChange = (highlighted: HighlightedSource, span: RowSpan): boolean =>
@@ -113,16 +167,23 @@ const gapLabelOf = (highlighted: HighlightedSource, span: RowSpan): string =>
     ? countLabel(lengthOf({ kind: "gap", span }), "line hidden by the filter", "lines hidden by the filter")
     : countLabel(lengthOf({ kind: "gap", span }), "unchanged line", "unchanged lines")
 
-const toRunRow = (highlighted: HighlightedSource, run: RowRun, decorations: LineDecorations): FileRow =>
+const toRunRow = (highlighted: HighlightedSource, run: RowRun, rootBlocks: readonly TriggeredRootBlock[], decorations: LineDecorations): FileRow =>
   run.kind === "lines"
-    ? { kind: "lines", id: `lines-${String(run.span.start)}`, lines: codeLinesIn(highlighted, run.span, null, decorations) }
-    : { kind: "gap", id: `gap-${String(run.span.start)}`, label: gapLabelOf(highlighted, run.span) }
+    ? {
+        kind: "lines",
+        id: `lines-${String(run.span.start)}`,
+        lines: codeLinesIn(highlighted, run.span, null, decorations),
+        collapses: collapsesOf(run, rootBlocks),
+      }
+    : { kind: "gap", id: `gap-${String(run.span.start)}`, label: gapLabelOf(highlighted, run.span), rootBlockId: rootBlockIdHolding(rootBlocks, run.span) }
 
-const waypointRowsAt = (waypoints: readonly PlacedWaypoint[], index: number): FileRow[] =>
-  waypoints.filter((placed) => placed.isVisible && placed.span?.start === index).map(toWaypointRow)
+const waypointRowsAt = (waypoints: readonly PlacedWaypoint[], rootBlocks: readonly TriggeredRootBlock[], index: number): FileRow[] =>
+  waypoints
+    .filter((placed) => placed.isVisible && placed.span?.start === index)
+    .map((placed) => toWaypointRow(placed, rootBlockIdHolding(rootBlocks, { start: index, end: index })))
 
 const unplacedWaypointRows = (waypoints: readonly PlacedWaypoint[]): FileRow[] =>
-  waypoints.filter((placed) => placed.isVisible && placed.span === null).map(toWaypointRow)
+  waypoints.filter((placed) => placed.isVisible && placed.span === null).map((placed) => toWaypointRow(placed, null))
 
 const NO_MARKS: LineDecorations["marks"] = []
 
@@ -130,12 +191,14 @@ const toRows = (
   highlighted: HighlightedSource,
   waypoints: readonly PlacedWaypoint[],
   runs: readonly RowRun[],
+  rootBlockSpans: readonly RootBlockSpan[],
   definitionIds: ReadonlySet<string>,
 ): FileRow[] => {
   const decorations: LineDecorations = { marks: NO_MARKS, definitionIds }
+  const rootBlocks = rootBlockSpans.flatMap(withTrigger(highlighted, runs))
   return [
     ...unplacedWaypointRows(waypoints),
-    ...runs.flatMap((run) => [...waypointRowsAt(waypoints, run.span.start), toRunRow(highlighted, run, decorations)]),
+    ...runs.flatMap((run) => [...waypointRowsAt(waypoints, rootBlocks, run.span.start), toRunRow(highlighted, run, rootBlocks, decorations)]),
   ]
 }
 
@@ -143,8 +206,9 @@ export const buildFileRows = (
   highlighted: HighlightedSource | null,
   waypoints: readonly PlacedWaypoint[],
   shownRows: ShownRows,
+  rootBlockSpans: readonly RootBlockSpan[],
   definitionIds: ReadonlySet<string>,
 ): FileRow[] =>
   highlighted === null
-    ? waypoints.filter((placed) => placed.isVisible).map(toWaypointRow)
-    : toRows(highlighted, waypoints, rowRunsOf(highlighted, waypoints, shownRows), definitionIds)
+    ? unplacedWaypointRows(waypoints.map((placed) => ({ ...placed, span: null })))
+    : toRows(highlighted, waypoints, rowRunsOf(highlighted, waypoints, shownRows), rootBlockSpans, definitionIds)

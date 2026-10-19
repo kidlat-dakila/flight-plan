@@ -4,7 +4,7 @@ import type { ReviewPage } from "@/procedures/get-review/utils/schemas"
 import type { ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import type { ImportLink } from "./import-link"
 import { INSTALL_GUIDE } from "./install-guide"
-import type { PublishedReview } from "./schemas"
+import type { PublishedReview, PublishedReviewed } from "./schemas"
 
 export type WrittenReviewPage = Extract<ReviewPage, { kind: "artifact" }>
 
@@ -19,7 +19,12 @@ const UNAVAILABLE_FEATURE = {
   install: INSTALL_GUIDE,
 } as const
 
-export const buildPublishedReview = (page: WrittenReviewPage, target: ReviewTarget, importLink: ImportLink | null): PublishedReview => ({
+export const buildPublishedReview = (
+  page: WrittenReviewPage,
+  target: ReviewTarget,
+  importLink: ImportLink | null,
+  reviewed: PublishedReviewed,
+): PublishedReview => ({
   documentTitle: page.shell.documentTitle,
   header: { title: targetTitleOf(target), isBranch: target.kind === "branch", label: PUBLISHED_LABEL },
   importLink,
@@ -31,4 +36,5 @@ export const buildPublishedReview = (page: WrittenReviewPage, target: ReviewTarg
   composer: COMPOSER_LABELS,
   codeLinks: page.codeLinks,
   codeDefinitions: page.codeDefinitions,
+  reviewed,
 })

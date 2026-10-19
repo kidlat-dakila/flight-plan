@@ -3,7 +3,6 @@ import { rowSpanOf, isInSpan } from "@/code/lines"
 import { countLabel } from "@/prose/count-label"
 import { parseInlines, parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
-import type { ReviewedMarks } from "@/walkthrough/reviewed-marks"
 import { rootBlockKeysOf, rootBlocksOf, type RootBlockKey } from "@/walkthrough/root-blocks"
 import {
   FINDING_KINDS,
@@ -32,7 +31,7 @@ export interface FlatWaypoint {
 
 const DELETED_BLOCK_TYPE: CodeBlock["type"] = "deleted"
 
-const fingerprintOf = (content: unknown): string => createHash("sha1").update(JSON.stringify(content)).digest("hex")
+export const fingerprintOf = (content: unknown): string => createHash("sha1").update(JSON.stringify(content)).digest("hex")
 
 const waypointRowsOf = (source: SourceFile | null, waypoint: Waypoint): SourceLine[] => {
   const range = source?.declarations[waypoint.declaration]
@@ -88,21 +87,6 @@ export const flattenWaypoints = (file: FileSection, source: SourceFile | null): 
 export const fileFingerprint = (waypoints: readonly FlatWaypoint[]): string =>
   fingerprintOf(waypoints.map((flat) => flat.fingerprint))
 
-export const isWaypointReviewed = (marks: ReviewedMarks, flat: FlatWaypoint): boolean =>
-  marks.waypoints[flat.waypoint.id] === flat.fingerprint
-
-export const isFileReviewed = (marks: ReviewedMarks, path: string, waypoints: readonly FlatWaypoint[]): boolean =>
-  marks.files[path] === fileFingerprint(waypoints)
-  || (waypoints.length > 0 && waypoints.every((flat) => isWaypointReviewed(marks, flat)))
-
-export const descendantsOf = (waypoints: readonly FlatWaypoint[], waypointId: string): FlatWaypoint[] => {
-  const root = waypoints.find((flat) => flat.waypoint.id === waypointId)
-  if (root === undefined) return []
-  const followers = waypoints.slice(waypoints.indexOf(root) + 1)
-  const end = followers.findIndex((flat) => flat.depth <= root.depth)
-  return [root, ...(end < 0 ? followers : followers.slice(0, end))]
-}
-
 export const FINDING_KIND_LABELS: Readonly<Record<(typeof FINDING_KINDS)[number], string>> = {
   bug: "Bug",
   risk: "Risk",
@@ -114,7 +98,7 @@ export const ATTENTION_LABEL = "Needs Attention"
 
 type WaypointMarkKind = (typeof WAYPOINT_MARK_KINDS)[number]
 
-const WAYPOINT_MARK_LABELS: Readonly<Record<WaypointMarkKind, string>> = {
+export const WAYPOINT_MARK_LABELS: Readonly<Record<WaypointMarkKind, string>> = {
   ...FINDING_KIND_LABELS,
   attention: ATTENTION_LABEL,
   plain: "",
@@ -127,11 +111,6 @@ export const markKindOf = (waypoint: Waypoint): WaypointMarkKind => {
   const kinds = markKindsOf(waypoint)
   return WAYPOINT_MARK_KINDS.find((kind) => kinds.has(kind)) ?? "plain"
 }
-
-export const markLabelOf = (kind: WaypointMarkKind, positionLabel: string, title: string): string =>
-  kind === "plain"
-    ? `Waypoint ${positionLabel}: ${title}`
-    : `${WAYPOINT_MARK_LABELS[kind]} waypoint ${positionLabel}: ${title}`
 
 const COUNTED_MARK_KINDS = ["bug", "risk", "attention", "question", "nit"] as const satisfies readonly WaypointMarkKind[]
 

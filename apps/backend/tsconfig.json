@@ -27,6 +27,9 @@
       ],
       "@flightplan/playground-fixtures": [
         "../../tools/playground-fixtures/src/index.ts"
+      ],
+      "@flightplan/reviewed-marks": [
+        "../../packages/reviewed-marks/src/index.ts"
       ]
     }
   }

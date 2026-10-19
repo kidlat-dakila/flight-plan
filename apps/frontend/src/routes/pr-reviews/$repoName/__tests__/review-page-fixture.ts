@@ -20,7 +20,7 @@ const waypoint = (id: string, title: string, positionLabel: string, previousId: 
   isDraft: false,
   positionLabel,
   rangeLabel: `Line ${String(line)}`,
-  mark: { kind: "plain", label: `Waypoint ${positionLabel}: ${title}` },
+  mark: { kind: "plain", kindLabel: "", label: `Waypoint ${positionLabel}: ${title}` },
   previousId,
   nextId,
   chip: null,
@@ -110,9 +110,10 @@ const priceFile = {
   waypointCountLabel: "1 waypoint",
   countLabels: ["1 waypoint", "1 thread"],
   forgeLink: null,
+  rootBlocks: [],
   rows: [
-    { kind: "waypoint", id: "waypoint-price-of", waypoint: waypoint("price-of", "Held units reduce the price", "1 of 2", null, "subtotal", 11) },
-    { kind: "lines", id: "lines-0", lines: [codeLine("11", "export const priceOf = () => 1", "added")] },
+    { kind: "waypoint", id: "waypoint-price-of", waypoint: waypoint("price-of", "Held units reduce the price", "1 of 2", null, "subtotal", 11), rootBlockId: null },
+    { kind: "lines", id: "lines-0", lines: [codeLine("11", "export const priceOf = () => 1", "added")], collapses: [] },
   ],
   threads: [
     {
@@ -151,9 +152,10 @@ const cartFile = {
   waypointCountLabel: "1 waypoint",
   countLabels: ["1 waypoint"],
   forgeLink: null,
+  rootBlocks: [],
   rows: [
-    { kind: "waypoint", id: "waypoint-subtotal", waypoint: waypoint("subtotal", "The sum is rounded once", "2 of 2", "price-of", null, 3) },
-    { kind: "lines", id: "lines-0", lines: [codeLine("3", "export const subtotal = () => 2")] },
+    { kind: "waypoint", id: "waypoint-subtotal", waypoint: waypoint("subtotal", "The sum is rounded once", "2 of 2", "price-of", null, 3), rootBlockId: null },
+    { kind: "lines", id: "lines-0", lines: [codeLine("3", "export const subtotal = () => 2")], collapses: [] },
   ],
   threads: [],
 }

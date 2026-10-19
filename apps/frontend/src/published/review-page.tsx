@@ -26,6 +26,7 @@ import SegmentHeading from "@flightplan/ui/SegmentHeading"
 import SignBand from "@flightplan/ui/SignBand"
 import type { PublishedReview } from "./published-review"
 import UnavailableFeatureDialog from "./unavailable-feature-dialog"
+import { useReviewedMarks } from "./use-reviewed-marks"
 
 interface PublishedReviewPageProps {
   readonly review: PublishedReview
@@ -67,19 +68,23 @@ const PublishedContext = ({ anchorId, heading, context, isDraft, unwrittenLabel,
 const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
   const [isFeatureUnavailable, setIsFeatureUnavailable] = useState(false)
   const [isListingUnassignedFiles, setIsListingUnassignedFiles] = useState(false)
-  const stepping = useWaypointStepping(review.segments, { opensSteppedWaypoint: false })
+  const marking = useReviewedMarks(review)
+  const stepping = useWaypointStepping(marking.segments, { opensSteppedWaypoint: false })
   const codeSelection = useCodeSelection()
-  const railSections = [...review.rail.groups.flatMap((group) => group.sections), ...review.rail.sections]
+  const railSections = [...marking.rail.groups.flatMap((group) => group.sections), ...marking.rail.sections]
   const currentAnchorId = useCurrentAnchor(
     railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId)]),
   )
   const showUnavailableFeature = (): void => {
     setIsFeatureUnavailable(true)
   }
-  const walkthroughLayout = useWalkthroughNavigation(review.segments, stepping, currentAnchorId, {
-    onReviewedChange: showUnavailableFeature,
+  const onWaypointReviewedChange = (id: string, isReviewed: boolean): void => {
+    marking.onReviewedChange({ kind: "waypoint", id }, isReviewed)
+  }
+  const walkthroughLayout = useWalkthroughNavigation(marking.segments, stepping, currentAnchorId, {
+    onReviewedChange: onWaypointReviewedChange,
     onFilterChange: showUnavailableFeature,
-    onShowReviewedChange: showUnavailableFeature,
+    onShowReviewedChange: marking.onShowReviewedChange,
     onCommentOnWaypoint: showUnavailableFeature,
   })
 
@@ -109,7 +114,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
         </div>
       </SignBand>
       <main className={cn("w-full px-6 pb-24", ACCENT_LINE_CLASS, LAYOUT_VARIABLES)}>
-        <ReviewNavigator rail={review.rail} onSectionJump={stepping.onSectionEntered}>
+        <ReviewNavigator rail={marking.rail} onSectionJump={stepping.onSectionEntered}>
           <ReviewNotices
             staleNotice={null}
             unassignedFiles={review.unassignedFiles}
@@ -121,13 +126,13 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
             <aside className="sticky top-[calc(var(--band-height)+0.5rem)] max-h-[calc(100dvh-var(--band-height)-1rem)] self-start overflow-y-auto pt-5 pb-4">
               <SectionRail
                 label="Review sections"
-                groups={review.rail.groups}
-                sections={review.rail.sections}
+                groups={marking.rail.groups}
+                sections={marking.rail.sections}
                 currentAnchorId={currentAnchorId}
               />
             </aside>
             <div className="min-w-0">
-              {review.segments.map((segment) => (
+              {marking.segments.map((segment) => (
                 <section
                   key={segment.id}
                   id={segment.anchorId}
@@ -152,7 +157,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                           codeDefinitions={review.codeDefinitions}
                           isReviewPending={false}
                           onOpenCodeLink={stepping.onOpenCodeLink}
-                          onWaypointReviewedChange={showUnavailableFeature}
+                          onWaypointReviewedChange={onWaypointReviewedChange}
                         />
                       )
                     : (
@@ -224,8 +229,9 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                         onOpenCodeLink={stepping.onOpenCodeLink}
                         onToggleWaypoint={stepping.onToggleWaypoint}
                         onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
-                        onWaypointReviewedChange={showUnavailableFeature}
-                        onFileReviewedChange={showUnavailableFeature}
+                        onWaypointReviewedChange={onWaypointReviewedChange}
+                        onFileReviewedChange={(path, isReviewed) => { marking.onReviewedChange({ kind: "file", path }, isReviewed) }}
+                        onRootBlockReviewedChange={(id, isReviewed) => { marking.onReviewedChange({ kind: "root-block", id }, isReviewed) }}
                         onStartComment={showUnavailableFeature}
                         onAddComment={showUnavailableFeature}
                         onPostComment={showUnavailableFeature}

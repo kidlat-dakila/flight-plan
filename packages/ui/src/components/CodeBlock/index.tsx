@@ -1,6 +1,15 @@
-import { InnerLine, Pre, type AnnotationHandler, type CodeAnnotation, type HighlightedCode, type Token } from "codehike/code"
+import {
+  InnerLine,
+  Pre,
+  type AnnotationHandler,
+  type BlockAnnotation,
+  type CodeAnnotation,
+  type HighlightedCode,
+  type Token,
+} from "codehike/code"
 import { PlusIcon } from "lucide-react"
 import { createContext, use, useMemo, type KeyboardEvent, type ReactNode } from "react"
+import Collapsible, { CollapsibleContent } from "@/components/blocks/collapsible"
 import HoverCard, { HoverCardContent, HoverCardTrigger } from "@/components/blocks/hover-card"
 import OutwardLink from "@/components/OutwardLink"
 import type { CodeDeclaration, CodeDefinition, CodeDefinitions, CodeLine, CodeUsages, ProseBlocks, TokenKind } from "@/lib/review-content"
@@ -9,6 +18,13 @@ import { cn } from "@/lib/utils"
 export interface LineAddress {
   readonly side: "old" | "new"
   readonly lineLabel: string
+}
+
+export interface LineCollapse {
+  readonly rootBlockId: string
+  readonly fromLine: number
+  readonly toLine: number
+  readonly hasTrigger: boolean
 }
 
 interface CodeBlockProps {
@@ -29,6 +45,10 @@ interface CodeBlockProps {
   readonly renderWaypointLane?: (line: CodeLine) => ReactNode
   readonly renderThreadMark?: (address: LineAddress) => ReactNode
   readonly renderDefinitionDescription?: (description: ProseBlocks) => ReactNode
+  readonly collapses?: readonly LineCollapse[]
+  readonly openRootBlockIds?: ReadonlySet<string>
+  readonly renderCollapseControls?: (rootBlockId: string) => ReactNode
+  readonly onRootBlockOpenChange?: (rootBlockId: string, isOpen: boolean) => void
   readonly onAddComment?: (address: LineAddress, isExtending: boolean) => void
   readonly onSelectLine?: (numberLabel: string, isExtending: boolean) => void
 }
@@ -43,9 +63,12 @@ type LineSetting = Pick<
   | "renderWaypointLane"
   | "renderThreadMark"
   | "renderDefinitionDescription"
+  | "renderCollapseControls"
+  | "onRootBlockOpenChange"
   | "onAddComment"
   | "onSelectLine"
 > & {
+  readonly openRootBlockIds: ReadonlySet<string>
   readonly selectedLineLabels: ReadonlySet<string>
   readonly commentedLineKeys: ReadonlySet<string>
   readonly markedLines: ReadonlySet<CodeLine>
@@ -96,6 +119,16 @@ const LINE_BREAK = "\n"
 const LINE_HANDLER_NAME = "line"
 const MARK_HANDLER_NAME = "mark"
 const DEFINITION_HANDLER_NAME = "definition"
+const COLLAPSE_HANDLER_NAME = "collapse"
+const COLLAPSE_TRIGGER_HANDLER_NAME = "collapseTrigger"
+const COLLAPSE_CONTENT_HANDLER_NAME = "collapseContent"
+const CODE_CELL_CLASSES = "col-[-2/-1] row-start-1"
+const COLLAPSE_CONTROLS_CLASSES = cn(
+  CODE_CELL_CLASSES,
+  "sticky right-2 flex items-center gap-1 self-center justify-self-end rounded-md bg-code pl-1 font-sans",
+  "opacity-0 transition-opacity duration-[180ms] ease-out group-hover/line:opacity-100 focus-within:opacity-100",
+  "data-[open=false]:opacity-100 has-[[aria-pressed=true]]:opacity-100",
+)
 const HOVER_DELAY_MS = 150
 const NO_STYLE = {}
 const UNFOCUSED_ROW_CLASSES = "group-has-data-[focused=true]/code:opacity-55 data-[focused=true]:opacity-100"
@@ -129,6 +162,8 @@ const LINE_NUMBER_BUTTON_CLASSES = "cursor-pointer hover:text-foreground focus-v
 const NO_DEFINITIONS: CodeDefinitions = {}
 const NO_SELECTED_LINES: ReadonlySet<string> = new Set()
 const NO_MARKED_LINES: ReadonlySet<CodeLine> = new Set()
+const NO_COLLAPSES: readonly LineCollapse[] = []
+const NO_OPEN_ROOT_BLOCKS: ReadonlySet<string> = new Set()
 const NO_LINES: LineSetting = {
   lines: [],
   definitions: NO_DEFINITIONS,
@@ -136,6 +171,7 @@ const NO_LINES: LineSetting = {
   selectedLineLabels: NO_SELECTED_LINES,
   commentedLineKeys: NO_SELECTED_LINES,
   markedLines: NO_MARKED_LINES,
+  openRootBlockIds: NO_OPEN_ROOT_BLOCKS,
   tabStopReferenceKey: null,
 }
 
@@ -180,16 +216,82 @@ const toToken = ({ text, kind }: CodeLine["tokens"][number]): Token => [text, TO
 const toTokens = (lines: readonly CodeLine[]): HighlightedCode["tokens"] =>
   lines.flatMap((line, index) => [...line.tokens.map(toToken), ...(index === lines.length - 1 ? [] : [LINE_BREAK])])
 
-const toAnnotations = (lines: readonly CodeLine[]): CodeAnnotation[] =>
-  lines.flatMap((line, index) => [
+const toCollapseAnnotation = ({ rootBlockId, fromLine, toLine, hasTrigger }: LineCollapse): BlockAnnotation => ({
+  name: COLLAPSE_HANDLER_NAME,
+  query: rootBlockId,
+  fromLineNumber: fromLine,
+  toLineNumber: toLine,
+  data: { hasTrigger },
+})
+
+const toAnnotations = (lines: readonly CodeLine[], collapses: readonly LineCollapse[]): CodeAnnotation[] => [
+  ...collapses.map(toCollapseAnnotation),
+  ...lines.flatMap((line, index) => [
     ...line.marks.map((mark) => ({ name: MARK_HANDLER_NAME, query: "", lineNumber: index + 1, ...mark })),
     ...line.references.map(({ definitionId, ...span }) => ({ name: DEFINITION_HANDLER_NAME, query: definitionId, lineNumber: index + 1, ...span })),
-  ])
+  ]),
+]
 
-const toHighlightedCode = (lines: readonly CodeLine[]): HighlightedCode => {
+const toHighlightedCode = (lines: readonly CodeLine[], collapses: readonly LineCollapse[]): HighlightedCode => {
   const text = lines.map((line) => line.tokens.map((token) => token.text).join("")).join(LINE_BREAK)
-  return { value: text, code: text, annotations: toAnnotations(lines), tokens: toTokens(lines), lang: "", meta: "", themeName: "", style: NO_STYLE }
+  return {
+    value: text,
+    code: text,
+    annotations: toAnnotations(lines, collapses),
+    tokens: toTokens(lines),
+    lang: "",
+    meta: "",
+    themeName: "",
+    style: NO_STYLE,
+  }
 }
+
+const hasTriggerLine = (annotation: BlockAnnotation): boolean => {
+  const data: unknown = annotation.data
+  return typeof data === "object" && data !== null && "hasTrigger" in data && data.hasTrigger === true
+}
+
+const splitCollapse = (annotation: BlockAnnotation): BlockAnnotation[] => {
+  const { fromLineNumber, toLineNumber } = annotation
+  const contentStart = hasTriggerLine(annotation) ? fromLineNumber + 1 : fromLineNumber
+  return [
+    annotation,
+    ...(hasTriggerLine(annotation) ? [{ ...annotation, name: COLLAPSE_TRIGGER_HANDLER_NAME, toLineNumber: fromLineNumber }] : []),
+    ...(contentStart > toLineNumber ? [] : [{ ...annotation, name: COLLAPSE_CONTENT_HANDLER_NAME, fromLineNumber: contentStart }]),
+  ]
+}
+
+const CollapseRoot = ({ annotation, children }: { readonly annotation: BlockAnnotation, readonly children: ReactNode }) => {
+  const { openRootBlockIds, onRootBlockOpenChange } = use(LineSettingContext)
+  return (
+    <Collapsible
+      open={openRootBlockIds.has(annotation.query)}
+      className="contents"
+      onOpenChange={(isOpen) => { onRootBlockOpenChange?.(annotation.query, isOpen) }}
+    >
+      {children}
+    </Collapsible>
+  )
+}
+
+const collapseHandler: AnnotationHandler = {
+  name: COLLAPSE_HANDLER_NAME,
+  transform: splitCollapse,
+  Block: CollapseRoot,
+}
+
+const collapseTriggerHandler: AnnotationHandler = {
+  name: COLLAPSE_TRIGGER_HANDLER_NAME,
+  AnnotatedLine: ({ annotation, ...props }) => <InnerLine merge={props} data={{ ...props.data, triggeredRootBlockId: annotation.query }} />,
+}
+
+const collapseContentHandler: AnnotationHandler = {
+  name: COLLAPSE_CONTENT_HANDLER_NAME,
+  Block: ({ children }) => <CollapsibleContent>{children}</CollapsibleContent>,
+}
+
+const triggeredRootBlockIdOf = (data: Record<string, unknown> | undefined): string | null =>
+  typeof data?.triggeredRootBlockId === "string" ? data.triggeredRootBlockId : null
 
 const LineNumber = ({ numberLabel, isSelected }: { readonly numberLabel: string, readonly isSelected: boolean }) => {
   const { selectLineLabel, onSelectLine } = use(LineSettingContext)
@@ -223,9 +325,12 @@ const lineHandler: AnnotationHandler = {
       renderLineThreads,
       renderWaypointLane,
       renderThreadMark,
+      renderCollapseControls,
+      openRootBlockIds,
       onAddComment,
     } = use(LineSettingContext)
     const line = lines.find((_line, index) => index === props.lineNumber - 1)
+    const triggeredRootBlockId = triggeredRootBlockIdOf(props.data)
     if (line === undefined) return <InnerLine merge={props} />
     const isSelected = selectedLineLabels.has(line.numberLabel)
     const address = lineAddressOf(line)
@@ -282,9 +387,20 @@ const lineHandler: AnnotationHandler = {
           <InnerLine
             merge={props}
             data-marked={markedLines.has(line)}
-            className={cn(MARKED_LINE_CLASSES, isWrapped ? "wrap-anywhere whitespace-pre-wrap" : "whitespace-pre")}
+            className={cn(CODE_CELL_CLASSES, MARKED_LINE_CLASSES, isWrapped ? "wrap-anywhere whitespace-pre-wrap" : "whitespace-pre")}
           />
           {isGuttered ? null : addCommentButton}
+          {triggeredRootBlockId === null || renderCollapseControls === undefined
+            ? null
+            : (
+                <span
+                  data-collapse-controls=""
+                  data-open={openRootBlockIds.has(triggeredRootBlockId)}
+                  className={COLLAPSE_CONTROLS_CLASSES}
+                >
+                  {renderCollapseControls(triggeredRootBlockId)}
+                </span>
+              )}
         </div>
         {renderLineExtra === undefined || line.numberLabel === "" ? null : renderLineExtra(line.numberLabel)}
         {renderLineThreads === undefined || address === null ? null : renderLineThreads(address)}
@@ -376,7 +492,14 @@ const definitionHandler: AnnotationHandler = {
   },
 }
 
-const HANDLERS: AnnotationHandler[] = [lineHandler, markHandler, definitionHandler]
+const HANDLERS: AnnotationHandler[] = [
+  collapseHandler,
+  collapseContentHandler,
+  collapseTriggerHandler,
+  lineHandler,
+  markHandler,
+  definitionHandler,
+]
 
 function CodeBlock({
   lines,
@@ -396,6 +519,10 @@ function CodeBlock({
   renderWaypointLane,
   renderThreadMark,
   renderDefinitionDescription,
+  collapses = NO_COLLAPSES,
+  openRootBlockIds = NO_OPEN_ROOT_BLOCKS,
+  renderCollapseControls,
+  onRootBlockOpenChange,
   onAddComment,
   onSelectLine,
 }: CodeBlockProps) {
@@ -419,6 +546,9 @@ function CodeBlock({
       renderWaypointLane,
       renderThreadMark,
       renderDefinitionDescription,
+      openRootBlockIds,
+      renderCollapseControls,
+      onRootBlockOpenChange,
       onAddComment,
       onSelectLine,
     }),
@@ -437,11 +567,14 @@ function CodeBlock({
       renderWaypointLane,
       renderThreadMark,
       renderDefinitionDescription,
+      openRootBlockIds,
+      renderCollapseControls,
+      onRootBlockOpenChange,
       onAddComment,
       onSelectLine,
     ],
   )
-  const code = useMemo(() => toHighlightedCode(lines), [lines])
+  const code = useMemo(() => toHighlightedCode(lines, collapses), [lines, collapses])
   return (
     <div
       role="group"

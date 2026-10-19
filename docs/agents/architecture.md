@@ -26,6 +26,8 @@ Flight Plan is split into a backend that owns all logic and a frontend that rend
 
 If a component needs a value that is not in the response, change the backend response. Do not compute it in the component.
 
+The published copy of a Flight Plan is the one exception. It has no backend, so it works out what the reviewer's marks make reviewed in the browser, and only through `packages/reviewed-marks`, the same calculation the backend runs (see [Reviewed marks package structure](#reviewed-marks-package-structure)).
+
 **Example.** A review page shows files grouped by directory with a "3 findings" badge. The backend returns `{ groups: [{ label: "apps/backend/src", files: [{ path, findingCountLabel: "3 findings", hasFindings: true }] }] }`. The component maps over `groups` and `files` and renders what it gets. It never calls `groupBy`, `filter` or `.length`.
 
 ## Frontend structure
@@ -144,6 +146,24 @@ packages/codegraph/
 - `buildCodegraph` in `index.ts` reads a change through git-forge and builds one segment per connected group of files. Everything under it is calculations over what it read. The rules are in [packages/codegraph/AGENTS.md](../../packages/codegraph/AGENTS.md).
 - Read [codegraph](../vocabulary/codegraph.md) before changing anything in it.
 
+## Reviewed marks package structure
+
+```
+packages/reviewed-marks/src/
+  index.ts                        the package's only entry
+  marks.ts                        ReviewedMarks, its schema, and reading marks from anything
+  reviewable-file.ts              the outline of what a file holds to mark: its waypoints and root code blocks, each with a fingerprint
+  reviewed-subject.ts             what a mark is put on: a waypoint, a file or a root code block
+  reviewed-state.ts               what the marks make reviewed in a file
+  reviewed-change.ts              the marks after one is put on or taken off
+  reviewed-segment.ts             a segment's Code Walkthrough and Journey Flow Diagram bands with the marks applied
+  labels.ts                       the words both sides draw: the Reviewed toggle, step positions, waypoint mark labels, the empty message
+```
+
+- The package is the one module the backend and the published copy share. `packages/codegraph` builds the outline of each file from the artifact, with its fingerprints, and asks `reviewedStateOf` what is reviewed. The backend's `set-reviewed` changes the marks with `applyReviewedChange`. The published copy reads the outline from the published review, keeps the marks in `localStorage`, and draws each segment through `reviewSegment`, `withReviewedWalkthrough` and `withReviewedJourney`.
+- It holds calculations over plain data and nothing else: no I/O, no `node:` module, no browser API and no React, so it runs on both sides. A fingerprint is computed by `packages/codegraph` and arrives in the outline.
+- It is consumed as source through the alias `@flightplan/reviewed-marks`. It has no build step, and it takes only the shapes of the bands from `packages/configurations`.
+
 ## Git forge package structure
 
 ```
@@ -163,18 +183,19 @@ packages/git-forge/
 
 - Inside a project, import from a parent folder through its base path, `@/`, which points at that project's `src/`: `import { useTRPC } from "@/trpc"`, `import Button from "@/components/blocks/button"`. Lint rejects `../`. Siblings may use `./`.
 - Across projects, use the workspace aliases: `@flightplan/ui/<path>` for components, `@flightplan/ui/lib/<module>` for helpers, and `import type { AppRouter } from "@flightplan/backend/router"`.
-- Every tsconfig is a composite TypeScript project, and `typecheck` runs `tsc --build`. `apps/frontend/tsconfig.app.json` references `apps/backend/tsconfig.app.json` and `packages/ui/tsconfig.lib.json`, so the frontend reads their built declarations (in `dist/out-tsc/`) and each project's `@/` is resolved by that project. When the frontend starts importing another project, add it to the `references` of `tsconfig.app.json` and `tsconfig.spec.json`. The backend references `packages/configurations/tsconfig.lib.json`, `packages/codegraph/tsconfig.lib.json` and `packages/git-forge/tsconfig.lib.json` the same way, and its esbuild build type-checks with `apps/backend/tsconfig.build.json`, which includes the three packages' sources because the build does not follow project references. In that one file `@/` lists the backend's `src/` first and the packages' `src/` after it, so a package's own `@/` imports resolve inside the bundle. A top-level folder name must therefore not be shared between the backend's `src/` and a package's `src/`.
+- Every tsconfig is a composite TypeScript project, and `typecheck` runs `tsc --build`. `apps/frontend/tsconfig.app.json` references `apps/backend/tsconfig.app.json`, `packages/ui/tsconfig.lib.json` and `packages/reviewed-marks/tsconfig.lib.json`, so the frontend reads their built declarations (in `dist/out-tsc/`) and each project's `@/` is resolved by that project. When the frontend starts importing another project, add it to the `references` of `tsconfig.app.json` and `tsconfig.spec.json`. The backend references `packages/configurations/tsconfig.lib.json`, `packages/codegraph/tsconfig.lib.json`, `packages/git-forge/tsconfig.lib.json` and `packages/reviewed-marks/tsconfig.lib.json` the same way, and its esbuild build type-checks with `apps/backend/tsconfig.build.json`, which includes the four packages' sources because the build does not follow project references. In that one file `@/` lists the backend's `src/` first and the packages' `src/` after it, so a package's own `@/` imports resolve inside the bundle. A top-level folder name must therefore not be shared between the backend's `src/` and a package's `src/`.
 - Vite and Vitest resolve the same aliases through `vite-tsconfig-paths`, configured to read `tsconfig.app.json`, `tsconfig.lib.json` and `tsconfig.spec.json`.
 
 ## Dependency rules
 
-- `apps/frontend` → `packages/ui`, and `import type { AppRouter }` from `@flightplan/backend/router`.
+- `apps/frontend` → `packages/ui`, `packages/reviewed-marks`, and `import type { AppRouter }` from `@flightplan/backend/router`.
 - `packages/ui` → nothing in the workspace except its own modules.
-- `apps/backend` → `packages/configurations`, `packages/codegraph` and `packages/git-forge`, and no browser packages (React, TanStack, Base UI, lucide). In a development build only, it also reads `tools/playground-fixtures` (see [apps/backend/AGENTS.md](../../apps/backend/AGENTS.md)).
+- `apps/backend` → `packages/configurations`, `packages/codegraph`, `packages/git-forge` and `packages/reviewed-marks`, and no browser packages (React, TanStack, Base UI, lucide). In a development build only, it also reads `tools/playground-fixtures` (see [apps/backend/AGENTS.md](../../apps/backend/AGENTS.md)).
 - `tools/playground-fixtures` → `packages/configurations`, `packages/codegraph` and `packages/git-forge`.
 - `packages/configurations` → nothing in the workspace.
-- `packages/codegraph` → `packages/configurations` and `packages/git-forge`.
+- `packages/codegraph` → `packages/configurations`, `packages/git-forge` and `packages/reviewed-marks`.
+- `packages/reviewed-marks` → `packages/configurations`.
 - `packages/git-forge` → nothing in the workspace.
 - No project imports from `src/`.
 
-`@nx/enforce-module-boundaries` in `eslint.base.config.ts` enforces these rules through the project tags `type:app`, `type:ui`, `type:configuration`, `type:codegraph`, `type:git-forge`, `type:fixtures`, `platform:browser` and `platform:node`, and bans server packages from browser projects. A new project needs the right tags in its `project.json`. `apps/frontend/eslint.config.ts` allows the one type import from `@flightplan/backend/router` and rejects value imports from it. Do not weaken these rules to get an import through. Move the code instead.
+`@nx/enforce-module-boundaries` in `eslint.base.config.ts` enforces these rules through the project tags `type:app`, `type:ui`, `type:configuration`, `type:codegraph`, `type:git-forge`, `type:reviewed-marks`, `type:fixtures`, `platform:browser` and `platform:node`, and bans server packages from browser projects. A new project needs the right tags in its `project.json`. `apps/frontend/eslint.config.ts` allows the one type import from `@flightplan/backend/router` and rejects value imports from it. Do not weaken these rules to get an import through. Move the code instead.

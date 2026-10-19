@@ -91,14 +91,15 @@ export const moduleBoundaries = (allowedImports: readonly string[]) => ({
   enforceBuildableLibDependency: true,
   allow: [ESLINT_CONFIG_IMPORT, ...allowedImports],
   depConstraints: [
-    { sourceTag: "platform:browser", onlyDependOnLibsWithTags: ["type:ui"] },
+    { sourceTag: "platform:browser", onlyDependOnLibsWithTags: ["type:ui", "type:reviewed-marks"] },
     {
       sourceTag: "platform:node",
-      onlyDependOnLibsWithTags: ["type:configuration", "type:codegraph", "type:git-forge", "type:fixtures"],
+      onlyDependOnLibsWithTags: ["type:configuration", "type:codegraph", "type:git-forge", "type:fixtures", "type:reviewed-marks"],
     },
     { sourceTag: "type:fixtures", onlyDependOnLibsWithTags: ["type:configuration", "type:codegraph", "type:git-forge"] },
     { sourceTag: "type:configuration", onlyDependOnLibsWithTags: [] },
-    { sourceTag: "type:codegraph", onlyDependOnLibsWithTags: ["type:configuration", "type:git-forge"] },
+    { sourceTag: "type:codegraph", onlyDependOnLibsWithTags: ["type:configuration", "type:git-forge", "type:reviewed-marks"] },
+    { sourceTag: "type:reviewed-marks", onlyDependOnLibsWithTags: ["type:configuration"] },
     { sourceTag: "type:git-forge", onlyDependOnLibsWithTags: [] },
     { sourceTag: "type:ui", onlyDependOnLibsWithTags: ["type:ui"] },
     {

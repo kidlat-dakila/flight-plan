@@ -31,6 +31,9 @@
     },
     {
       "path": "../../packages/git-forge/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/reviewed-marks/tsconfig.lib.json"
     }
   ]
 }

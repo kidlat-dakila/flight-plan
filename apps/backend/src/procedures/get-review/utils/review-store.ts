@@ -1,6 +1,6 @@
 import type { ImportRequest } from "@/procedures/import-review/utils/import-request"
-import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
+import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@flightplan/reviewed-marks"
 import type { PendingComment, Publication, PublishingRequest } from "./discussion"
 import type { ReviewTargetDetail } from "./review-target-detail"
 import type { ReviewRequest } from "./start/review-request"

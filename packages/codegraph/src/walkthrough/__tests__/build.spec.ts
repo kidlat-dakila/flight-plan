@@ -17,9 +17,10 @@ import {
   type PinnedLineFinder,
   type WalkthroughRequest,
 } from "@/walkthrough/build"
-import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@/walkthrough/reviewed-marks"
+import { reviewableSegmentFilesOf } from "@/walkthrough/reviewable-file"
 import { flattenWaypoints } from "@/walkthrough/waypoints"
 import type { Segment, FileRow, WalkthroughBand, WalkthroughControls } from "@flightplan/configurations"
+import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@flightplan/reviewed-marks"
 
 const EVERYTHING: WalkthroughRequest = { filterKeys: [], isShowingReviewed: false }
 const findNoPinnedLines: PinnedLineFinder = () => []
@@ -49,7 +50,7 @@ const markWaypoint = (segment: Segment, waypointId: string): ReviewedMarks => {
   const flat = segment.walkthrough.files
     .flatMap((file) => flattenWaypoints(file, file.path === PRICE_PATH ? priceSource : cartSource))
     .find((candidate) => candidate.waypoint.id === waypointId)
-  return { waypoints: flat === undefined ? {} : { [waypointId]: flat.fingerprint }, files: {} }
+  return { ...NO_REVIEWED_MARKS, waypoints: flat === undefined ? {} : { [waypointId]: flat.fingerprint } }
 }
 
 describe("buildWalkthrough", () => {
@@ -201,9 +202,9 @@ describe("buildWalkthrough", () => {
     const waypoints = band.files.flatMap((file) => file.rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint] : [])))
 
     expect(waypoints.map((waypoint) => [waypoint.mark, waypoint.rangeLabel])).toStrictEqual([
-      [{ kind: "risk", label: "Risk waypoint 1 of 3: Waypoint risky" }, "Lines 11–12"],
-      [{ kind: "attention", label: "Needs Attention waypoint 2 of 3: Waypoint attended" }, "Line 14"],
-      [{ kind: "plain", label: "Waypoint 3 of 3: Waypoint plain" }, "Lines 1–2"],
+      [{ kind: "risk", kindLabel: "Risk", label: "Risk waypoint 1 of 3: Waypoint risky" }, "Lines 11–12"],
+      [{ kind: "attention", kindLabel: "Needs Attention", label: "Needs Attention waypoint 2 of 3: Waypoint attended" }, "Line 14"],
+      [{ kind: "plain", kindLabel: "", label: "Waypoint 3 of 3: Waypoint plain" }, "Lines 1–2"],
     ])
     expect(band.files.map((file) => file.countLabels)).toStrictEqual([
       ["2 waypoints", "1 risk", "1 needs attention", "1 question", "1 nit"],
@@ -358,6 +359,110 @@ describe("buildWalkthrough", () => {
       ["1", "removed"],
       ["2", "removed"],
       ["", "added"],
+    ])
+  })
+})
+
+const spanning = (lineStart: number, lineEnd: number) => [{ start: { line: lineStart, column: 1 }, end: { line: lineEnd, column: 1 } }]
+
+const PRICE_OF_ID = `${PRICE_PATH}#function:priceOf`
+const FORMAT_ID = `${PRICE_PATH}#function:format`
+
+const rootBlockSegment = (): Segment =>
+  createSegment({
+    walkthrough: {
+      files: [
+        {
+          path: PRICE_PATH,
+          waypoints: [
+            createWaypoint("price-of", "priceOf", { codeBlocks: [createCodeBlock(`${PRICE_PATH}#function@11:1`, PRICE_PATH, { lineOfCodeRangeReference: spanning(11, 12) })] }),
+            createWaypoint("format", "format", {
+              codeBlocks: [createCodeBlock(`${PRICE_PATH}#function@14:1`, PRICE_PATH, { name: "format", lineOfCodeRangeReference: spanning(14, 14) })],
+            }),
+          ],
+        },
+      ],
+    },
+  })
+
+const rootBlockMarks = (segment: Segment, rootBlockId: string): ReviewedMarks => {
+  const [file] = reviewableSegmentFilesOf(segment, [priceSource, cartSource])
+  const fingerprint = file.rootBlocks.find((rootBlock) => rootBlock.id === rootBlockId)?.fingerprint ?? ""
+  return { ...NO_REVIEWED_MARKS, rootBlocks: { [rootBlockId]: fingerprint } }
+}
+
+describe("root blocks of a walkthrough file", () => {
+  it("names each root block by its file, type and name, and says how to fold and mark it", () => {
+    const [priceFile] = build(rootBlockSegment()).files
+
+    expect(priceFile.rootBlocks).toStrictEqual([
+      {
+        id: PRICE_OF_ID,
+        isReviewed: false,
+        reviewLabel: "Reviewed",
+        reviewName: "Reviewed: Function priceOf",
+        expandLabel: "Expand Function priceOf",
+        collapseLabel: "Collapse Function priceOf",
+      },
+      {
+        id: FORMAT_ID,
+        isReviewed: false,
+        reviewLabel: "Reviewed",
+        reviewName: "Reviewed: Function format",
+        expandLabel: "Expand Function format",
+        collapseLabel: "Collapse Function format",
+      },
+    ])
+  })
+
+  it("folds a root block from its first line that is not removed, with the removed lines above it folded too", () => {
+    const [priceFile] = build(rootBlockSegment()).files
+    const collapses = priceFile.rows.flatMap((row) => (row.kind === "lines" ? row.collapses : []))
+
+    expect(collapses).toStrictEqual([
+      { rootBlockId: PRICE_OF_ID, fromLine: 1, toLine: 1, hasTrigger: false },
+      { rootBlockId: PRICE_OF_ID, fromLine: 2, toLine: 3, hasTrigger: true },
+      { rootBlockId: FORMAT_ID, fromLine: 1, toLine: 1, hasTrigger: true },
+    ])
+  })
+
+  it("reviews a root block marked reviewed and hides the waypoints that sit in it", () => {
+    const segment = rootBlockSegment()
+    const [priceFile] = build(segment, rootBlockMarks(segment, PRICE_OF_ID)).files
+
+    expect(priceFile.rootBlocks.map((rootBlock) => [rootBlock.id, rootBlock.isReviewed])).toStrictEqual([[PRICE_OF_ID, true], [FORMAT_ID, false]])
+    expect(waypointIds(build(segment, rootBlockMarks(segment, PRICE_OF_ID)))).toStrictEqual(["format"])
+  })
+
+  it("reviews a root block once every waypoint inside it is reviewed", () => {
+    const segment = rootBlockSegment()
+    const [priceFile] = build(segment, markWaypoint(segment, "format"), { filterKeys: [], isShowingReviewed: true }).files
+
+    expect(priceFile.rootBlocks.map((rootBlock) => [rootBlock.id, rootBlock.isReviewed])).toStrictEqual([[PRICE_OF_ID, false], [FORMAT_ID, true]])
+  })
+
+  it("tells apart two root blocks of one name, and names a root block with no name by its block id", () => {
+    const segment = createSegment({
+      walkthrough: {
+        files: [
+          {
+            path: PRICE_PATH,
+            waypoints: [
+              createWaypoint("first", "priceOf", { codeBlocks: [createCodeBlock("first-block", PRICE_PATH, { lineOfCodeRangeReference: spanning(3, 3) })] }),
+              createWaypoint("second", "format", { codeBlocks: [createCodeBlock("second-block", PRICE_PATH, { lineOfCodeRangeReference: spanning(14, 14) })] }),
+              createWaypoint("third", "format", {
+                codeBlocks: [createCodeBlock(`${PRICE_PATH}#root-statement@5:1`, PRICE_PATH, { name: undefined, type: "root-statement", lineOfCodeRangeReference: spanning(5, 5) })],
+              }),
+            ],
+          },
+        ],
+      },
+    })
+
+    expect(reviewableSegmentFilesOf(segment, [priceSource])[0].rootBlocks.map((rootBlock) => rootBlock.id)).toStrictEqual([
+      PRICE_OF_ID,
+      `${PRICE_PATH}#root-statement@5:1`,
+      `${PRICE_OF_ID}~2`,
     ])
   })
 })

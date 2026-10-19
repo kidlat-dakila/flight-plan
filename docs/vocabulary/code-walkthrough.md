@@ -47,7 +47,7 @@ One stop on the tour: an explanation of one piece of the change, marked beside i
 
 ### How a waypoint shows in the code
 
-A waypoint starts closed, as a mark in the gutter at the left of the code, beside the first line it explains, the way an editor marks a breakpoint. The mark is the waypoint's most urgent finding, in the order bug, risk, Needs Attention, question, nit; a waypoint with none is a pointer in the line colour. Hovering or focusing the mark shows a preview on top of the line, or under it when the line is too near the top: the title, the findings, the lines and the position, the first paragraph of the reading and the Reviewed toggle. Clicking the mark, or Enter on it, opens the waypoint: its box sits on top of its lines, and a stem in the gutter joins it to the last of them. Stepping to a waypoint with the Review Navigator shows its preview instead, one preview at a time.
+A waypoint starts closed, as a mark in the gutter at the left of the code, beside the first line it explains, the way an editor marks a breakpoint. The mark is the waypoint's most urgent finding, in the order bug, risk, Needs Attention, question, nit; a waypoint with none is a pointer in the line colour. A reviewed waypoint's mark is a checkmark in the line colour, whatever its findings. Hovering or focusing the mark shows a preview on top of the line, or under it when the line is too near the top: the title, the findings, the lines and the position, the first paragraph of the reading and the Reviewed toggle. Clicking the mark, or Enter on it, opens the waypoint: its box sits on top of its lines, and a stem in the gutter joins it to the last of them. Stepping to a waypoint with the Review Navigator shows its preview instead, one preview at a time.
 
 Comment threads have their own column of the gutter, beside the last line they cover: a filled speech mark for an open thread, a thin dashed one for a resolved thread, and an amber one for a comment of the reviewer's that is not sent yet. A thread opens under its line when its mark is clicked; a comment not sent yet starts open. The header of each file counts its waypoints, its findings by kind and its threads.
 
@@ -92,11 +92,29 @@ A waypoint holds its code blocks in three forms, as a [Journey Flow Diagram node
 | Stored | Snapshots | `codeBlockIds` in place of the blocks |
 | What an agent reads through the MCP tools | Writing the waypoint | `codeBlockIds` in place of the blocks |
 
-The reviewer can mark a waypoint, or a whole file, as reviewed. A reviewed waypoint hides, and comes back when its content changes. Reviewed marks belong to the reviewer's machine, not to the artifact.
+The reviewer can mark a waypoint, a whole file or a root code block as reviewed. A reviewed waypoint hides, and comes back when its content changes. Reviewed marks belong to the reviewer's machine, not to the artifact: Flight Plan keeps them in a `.reviewed.json` file beside the artifact (see [data storage](data-storage.md)), and a published copy keeps them in the reader's browser (see [Flight Plan Review](flight-plan-review.md#publishing-as-a-claude-artifact)).
+
+Each mark holds a fingerprint of what it was made on, and counts only while that is unchanged:
+
+| Mark on | Its fingerprint | It also makes reviewed |
+|---|---|---|
+| A waypoint | Its title, reading, Needs Attention, findings and lines | The waypoints nested in it |
+| A file | The fingerprints of its waypoints | Every waypoint and root code block of the file |
+| A root code block | Its lines and the fingerprints of the waypoints in it | Every waypoint that sits only in reviewed root code blocks |
+
+A file is also reviewed when every waypoint in it is, and a root code block when every waypoint in it is. Taking a mark off takes off the marks that would keep it reviewed: off a waypoint, the marks of its nested waypoints, of its file and of the root code blocks it sits in; off a root code block, the marks of its file and of the waypoints in it; off a file, every mark in it.
+
+A root code block is named by its file, its type and its name, `src/price.ts#function:priceOf`, so its mark holds when a regeneration moves it to other lines. A second root code block of the same type and name in the file is told apart by its place, `src/price.ts#function:priceOf~2`, and one with no name is named by its block id, which holds its first line.
+
+### Folding a root code block
+
+A reviewed root code block folds to its first line that the change does not remove, with Code Hike's collapse. Its other lines, the gaps inside it and the boxes of the waypoints that start after its first line are hidden; the lines it removes above that first line fold with it. The first line carries two controls at the right, over the end of the line: the Review Toggle of the root code block and a chevron that folds and unfolds it. They show while the pointer is on the line or a control has focus, and always while the block is folded or reviewed.
+
+The chevron folds and unfolds any root code block by hand. Unfolding a reviewed one does not take its mark off, and it folds again the next time it is marked reviewed. Where a root code block runs across several pieces of the file, between gaps and waypoint boxes, every piece folds with it.
 
 ## Editing on the author's page
 
-On the author's page the Code Walkthrough is edited, not reviewed. It has no Review Toggle on a file or a waypoint, no Mark as reviewed and no Reviewed tick in the filter, and nothing is dimmed or hidden as reviewed.
+On the author's page the Code Walkthrough is edited, not reviewed. It has no Review Toggle on a file, a waypoint or a root code block, no Mark as reviewed and no Reviewed tick in the filter, and nothing is dimmed or hidden as reviewed.
 
 - **The files are arranged.** "Arrange files" in the heading row opens a dialog that lists every File Section of the segment with Move up and Move down, one place per click, saved at once. It shows when the walkthrough has more than one file.
 - **A file is removed from the walkthrough.** The file stays among the files of its segment, and the diagrams stay as they were.

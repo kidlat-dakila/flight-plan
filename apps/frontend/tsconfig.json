@@ -25,6 +25,9 @@
       ],
       "@flightplan/backend/router": [
         "../backend/src/server/trpc/router.ts"
+      ],
+      "@flightplan/reviewed-marks": [
+        "../../packages/reviewed-marks/src/index.ts"
       ]
     }
   },

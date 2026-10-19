@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@flightplan/configurations": "workspace:*",
-    "@flightplan/git-forge": "workspace:*"
+    "@flightplan/git-forge": "workspace:*",
+    "@flightplan/reviewed-marks": "workspace:*"
   }
 }

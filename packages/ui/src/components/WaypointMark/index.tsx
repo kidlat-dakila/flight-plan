@@ -1,3 +1,4 @@
+import { CheckIcon } from "lucide-react"
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import HoverCard, { HoverCardArrow, HoverCardContent, HoverCardTrigger } from "@/components/blocks/hover-card"
 import FindingMark, { FindingChip, type FindingMarkKind } from "@/components/FindingMark"
@@ -71,7 +72,7 @@ const STEM_BELOW_CLASSES: Record<StemReach, string | null> = {
 const MARK_CLASSES = cn(
   "relative z-1 grid size-[1.125rem] shrink-0 scroll-mt-[calc(var(--waypoint-scroll-margin)+14rem)] place-items-center rounded-sm",
   "transition-[background-color,opacity,outline-color] duration-[180ms] ease-out hover:bg-muted aria-expanded:bg-muted",
-  "data-[current=true]:outline-1 data-[current=true]:outline-(--line) data-[reviewed=true]:opacity-45",
+  "data-[current=true]:outline-1 data-[current=true]:outline-(--line) data-[reviewed=true]:opacity-70",
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
 )
 const CARD_CLASSES = cn("flex flex-col font-sans", GUTTER_CARD_WIDTH_CLASSES)
@@ -94,8 +95,14 @@ const PointerGlyph = () => (
   </svg>
 )
 
-const MarkGlyph = ({ kind }: { readonly kind: WaypointMarkKind }) =>
-  (kind === "plain" ? <PointerGlyph /> : <FindingMark kind={kind} />)
+const ReviewedGlyph = () => (
+  <CheckIcon data-reviewed-glyph="" aria-hidden="true" className="size-3.5 shrink-0 text-(--line)" strokeWidth={3} />
+)
+
+const MarkGlyph = ({ kind, isReviewed }: { readonly kind: WaypointMarkKind, readonly isReviewed: boolean }) => {
+  if (isReviewed) return <ReviewedGlyph />
+  return kind === "plain" ? <PointerGlyph /> : <FindingMark kind={kind} />
+}
 
 const WaypointCard = ({
   waypoint,
@@ -200,7 +207,7 @@ const WaypointMark = ({
           onToggle()
         }}
       >
-        <MarkGlyph kind={waypoint.mark.kind} />
+        <MarkGlyph kind={waypoint.mark.kind} isReviewed={waypoint.isReviewed} />
       </HoverCardTrigger>
       {placement === null
         ? null

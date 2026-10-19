@@ -20,6 +20,9 @@
     },
     {
       "path": "../git-forge/tsconfig.lib.json"
+    },
+    {
+      "path": "../reviewed-marks/tsconfig.lib.json"
     }
   ]
 }

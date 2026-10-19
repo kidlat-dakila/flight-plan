@@ -3,15 +3,17 @@ import { cn } from "@/lib/utils"
 
 interface ReviewToggleProps {
   readonly label: string
+  readonly accessibleLabel?: string
   readonly isReviewed: boolean
   readonly isDisabled?: boolean
   readonly className?: string
   readonly onChange: (isReviewed: boolean) => void
 }
 
-const ReviewToggle = ({ label, isReviewed, isDisabled = false, className, onChange }: ReviewToggleProps) => (
+const ReviewToggle = ({ label, accessibleLabel, isReviewed, isDisabled = false, className, onChange }: ReviewToggleProps) => (
   <button
     type="button"
+    aria-label={accessibleLabel}
     aria-pressed={isReviewed}
     disabled={isDisabled}
     className={cn(

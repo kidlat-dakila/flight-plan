@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/packages/reviewed-marks/lib",
+    "types": [],
+    "rootDir": "src"
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "vitest.config.mts",
+    "src/**/*.spec.ts"
+  ],
+  "references": [
+    {
+      "path": "../configurations/tsconfig.lib.json"
+    }
+  ]
+}

@@ -29,6 +29,9 @@
     },
     {
       "path": "./tools/playground-fixtures"
+    },
+    {
+      "path": "./packages/reviewed-marks"
     }
   ]
 }

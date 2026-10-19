@@ -15,8 +15,8 @@ const createFile = (overrides: Partial<WalkthroughFile> = {}): WalkthroughFile =
   countLabels: ["1 waypoint", "1 risk"],
   forgeLink: null,
   rows: [
-    { kind: "lines", id: "lines-1", lines: [codeLine("3", "export const priceOf = () => 1", "added")] },
-    { kind: "gap", id: "gap-1", label: "12 unchanged lines" },
+    { kind: "lines", id: "lines-1", lines: [codeLine("3", "export const priceOf = () => 1", "added")], collapses: [] },
+    { kind: "gap", id: "gap-1", label: "12 unchanged lines", rootBlockId: null },
     {
       kind: "waypoint",
       id: "row-w1",
@@ -41,8 +41,10 @@ const createFile = (overrides: Partial<WalkthroughFile> = {}): WalkthroughFile =
         isReviewed: false,
         reviewLabel: "Reviewed",
       },
+      rootBlockId: null,
     },
   ],
+  rootBlocks: [],
   threads: [],
   ...overrides,
 })
@@ -65,6 +67,7 @@ const createProps = (overrides: Partial<FileSectionProps> = {}): FileSectionProp
   onCollapsedChange: vi.fn(),
   onWaypointReviewedChange: vi.fn(),
   onFileReviewedChange: vi.fn(),
+  onRootBlockReviewedChange: vi.fn(),
   onStartComment: vi.fn(),
   onAddComment: vi.fn(),
   onPostComment: vi.fn(),
@@ -95,6 +98,7 @@ const discussedFile = (threads: WalkthroughFile["threads"] = []): WalkthroughFil
         kind: "lines",
         id: "lines-1",
         lines: [removedLine, codeLine("3", "export const priceOf = () => 1", "added"), codeLine("4", "// held units", "added"), codeLine("5", "export const tax = 0")],
+        collapses: [],
       },
     ],
     threads,
@@ -231,7 +235,7 @@ describe("FileSection gutter", () => {
         waypointRow.kind === "waypoint"
           ? { ...waypointRow, waypoint: { ...waypointRow.waypoint, lines: { lineStart: 3, lineEnd: 4 }, rangeLabel: "Lines 3–4" } }
           : waypointRow,
-        { kind: "lines", id: "lines-3", lines: [codeLine("3", "export const priceOf = () => 1", "added"), codeLine("4", "// held units", "added")] },
+        { kind: "lines", id: "lines-3", lines: [codeLine("3", "export const priceOf = () => 1", "added"), codeLine("4", "// held units", "added")], collapses: [] },
       ],
     })
   }
@@ -249,6 +253,20 @@ describe("FileSection gutter", () => {
     fireEvent.click(mark)
 
     expect(onToggleWaypoint).toHaveBeenCalledWith("w1")
+  })
+
+  it("draws a checkmark for the mark of a reviewed waypoint", () => {
+    const file = placedFile()
+    const reviewedFile = createFile({
+      rows: file.rows.map((row) => (row.kind === "waypoint" ? { ...row, waypoint: { ...row.waypoint, isReviewed: true } } : row)),
+    })
+    const view = render(<FileSection {...createProps({ file })} />)
+
+    expect(screen.getByRole("button", { name: "Waypoint 1 of 1: priceOf" }).querySelector("[data-reviewed-glyph]")).toBeNull()
+
+    view.rerender(<FileSection {...createProps({ file: reviewedFile })} />)
+
+    expect(screen.getByRole("button", { name: "Waypoint 1 of 1: priceOf" }).querySelector("[data-reviewed-glyph]")).not.toBeNull()
   })
 
   it("draws an open waypoint's box above its lines, moves the anchor to the box, and keeps the mark", () => {
@@ -274,6 +292,85 @@ describe("FileSection gutter", () => {
     fireEvent.click(mark)
 
     expect(screen.queryByText("Clamp it.")).toBeNull()
+  })
+})
+
+const ROOT_BLOCK_ID = "src/price.ts#function:priceOf"
+
+const rootBlockFile = (isReviewed: boolean): WalkthroughFile =>
+  createFile({
+    rootBlocks: [
+      {
+        id: ROOT_BLOCK_ID,
+        isReviewed,
+        reviewLabel: "Reviewed",
+        reviewName: "Reviewed: Function priceOf",
+        expandLabel: "Expand Function priceOf",
+        collapseLabel: "Collapse Function priceOf",
+      },
+    ],
+    rows: [
+      {
+        kind: "lines",
+        id: "lines-1",
+        lines: [codeLine("3", "export const priceOf = () => {", "added"), codeLine("4", "  return held", "added")],
+        collapses: [{ rootBlockId: ROOT_BLOCK_ID, fromLine: 1, toLine: 2, hasTrigger: true }],
+      },
+      { kind: "gap", id: "gap-1", label: "12 unchanged lines", rootBlockId: ROOT_BLOCK_ID },
+      { kind: "lines", id: "lines-2", lines: [codeLine("17", "}", "added")], collapses: [{ rootBlockId: ROOT_BLOCK_ID, fromLine: 1, toLine: 1, hasTrigger: false }] },
+      { kind: "lines", id: "lines-3", lines: [codeLine("18", "export const tax = 0")], collapses: [] },
+    ],
+  })
+
+describe("FileSection root blocks", () => {
+  it("marks a root block as reviewed from its first line", () => {
+    const onRootBlockReviewedChange = vi.fn()
+    render(<FileSection {...createProps({ file: rootBlockFile(false), onRootBlockReviewedChange })} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Reviewed: Function priceOf", pressed: false }))
+
+    expect(onRootBlockReviewedChange).toHaveBeenCalledWith(ROOT_BLOCK_ID, true)
+  })
+
+  it("collapses a reviewed root block to its first line, gaps included, and opens it by hand without taking the mark off", () => {
+    const onRootBlockReviewedChange = vi.fn()
+    render(<FileSection {...createProps({ file: rootBlockFile(true), onRootBlockReviewedChange })} />)
+
+    expect(screen.getByText("export const priceOf = () => {")).toBeTruthy()
+    expect(screen.queryByText("return held", { exact: false })).toBeNull()
+    expect(screen.queryByText("12 unchanged lines")).toBeNull()
+    expect(screen.queryByText("}")).toBeNull()
+    expect(screen.getByText("export const tax = 0")).toBeTruthy()
+
+    fireEvent.click(screen.getByRole("button", { name: "Expand Function priceOf" }))
+
+    expect(screen.getByText("return held", { exact: false })).toBeTruthy()
+    expect(screen.getByText("12 unchanged lines")).toBeTruthy()
+    expect(screen.getByText("}")).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Reviewed: Function priceOf", pressed: true })).toBeTruthy()
+    expect(onRootBlockReviewedChange).not.toHaveBeenCalled()
+  })
+
+  it("collapses a root block again once it is marked reviewed after being opened", () => {
+    const view = render(<FileSection {...createProps({ file: rootBlockFile(true) })} />)
+    fireEvent.click(screen.getByRole("button", { name: "Expand Function priceOf" }))
+
+    view.rerender(<FileSection {...createProps({ file: rootBlockFile(false) })} />)
+
+    expect(screen.getByText("return held", { exact: false })).toBeTruthy()
+
+    view.rerender(<FileSection {...createProps({ file: rootBlockFile(true) })} />)
+
+    expect(screen.queryByText("return held", { exact: false })).toBeNull()
+  })
+
+  it("folds a root block by hand, and has no review toggle where the page does not track reviews", () => {
+    render(<FileSection {...createProps({ file: rootBlockFile(false), onRootBlockReviewedChange: null })} />)
+
+    expect(screen.queryByRole("button", { name: "Reviewed: Function priceOf" })).toBeNull()
+    fireEvent.click(screen.getByRole("button", { name: "Collapse Function priceOf" }))
+
+    expect(screen.queryByText("return held", { exact: false })).toBeNull()
   })
 })
 
@@ -312,9 +409,9 @@ describe("FileSection", () => {
     const file = createFile({
       rows: [
         ...createFile().rows,
-        { kind: "lines", id: "lines-2", lines: [codeLine("16", "export const total = 2", "added")] },
-        { kind: "gap", id: "gap-2", label: "4 unchanged lines" },
-        { kind: "lines", id: "lines-3", lines: [codeLine("21", "export const tax = 3", "added")] },
+        { kind: "lines", id: "lines-2", lines: [codeLine("16", "export const total = 2", "added")], collapses: [] },
+        { kind: "gap", id: "gap-2", label: "4 unchanged lines", rootBlockId: null },
+        { kind: "lines", id: "lines-3", lines: [codeLine("21", "export const tax = 3", "added")], collapses: [] },
       ],
     })
     const { container } = render(<FileSection {...createProps({ file, focusedWaypointId: "w1" })} />)
@@ -354,9 +451,9 @@ describe("FileSection", () => {
     const declaration = { kind: "declaration" as const, pathLabel: "src/rates.ts", rangeLabel: "Line 1", description: null, lines: [], note: null, forgeLink: null }
     const file = createFile({
       rows: [
-        { kind: "lines", id: "lines-1", lines: [{ ...codeLine("3", "return rates[sku]"), references: [{ fromColumn: 8, toColumn: 12, definitionId: "rates" }] }] },
-        { kind: "gap", id: "gap-1", label: "2 unchanged lines" },
-        { kind: "lines", id: "lines-2", lines: [{ ...codeLine("6", "return held"), references: [{ fromColumn: 8, toColumn: 11, definitionId: "held" }] }] },
+        { kind: "lines", id: "lines-1", lines: [{ ...codeLine("3", "return rates[sku]"), references: [{ fromColumn: 8, toColumn: 12, definitionId: "rates" }] }], collapses: [] },
+        { kind: "gap", id: "gap-1", label: "2 unchanged lines", rootBlockId: null },
+        { kind: "lines", id: "lines-2", lines: [{ ...codeLine("6", "return held"), references: [{ fromColumn: 8, toColumn: 11, definitionId: "held" }] }], collapses: [] },
       ],
     })
     render(<FileSection {...createProps({ file, codeDefinitions: { rates: declaration, held: declaration } })} />)

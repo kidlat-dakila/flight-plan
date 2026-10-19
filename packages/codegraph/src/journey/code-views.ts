@@ -43,7 +43,7 @@ const anchorsIn = (places: readonly WaypointPlace[], spans: readonly LineSpan[],
 const waypointRowsAt = (anchors: readonly WaypointAnchor[], line: number): FileRow[] =>
   anchors
     .filter((anchor) => anchor.line === line)
-    .map(({ place }) => ({ kind: "waypoint", id: `waypoint-${place.view.id}`, waypoint: place.view }))
+    .map(({ place }) => ({ kind: "waypoint", id: `waypoint-${place.view.id}`, waypoint: place.view, rootBlockId: null }))
 
 const partsOf = ([lineStart, lineEnd]: LineSpan, anchors: readonly WaypointAnchor[]): LineSpan[] => {
   const partStarts = [...new Set([lineStart, ...anchors.map((anchor) => anchor.line)])].sort((earlier, later) => earlier - later)
@@ -53,12 +53,12 @@ const partsOf = ([lineStart, lineEnd]: LineSpan, anchors: readonly WaypointAncho
 const gapRowsBefore = (spans: readonly LineSpan[], position: number): FileRow[] => {
   if (position === 0) return []
   const hiddenCount = spans[position][0] - spans[position - 1][1] - 1
-  return hiddenCount <= 0 ? [] : [{ kind: "gap", id: `gap-${String(position)}`, label: countLabel(hiddenCount, "line hidden", "lines hidden") }]
+  return hiddenCount <= 0 ? [] : [{ kind: "gap", id: `gap-${String(position)}`, label: countLabel(hiddenCount, "line hidden", "lines hidden"), rootBlockId: null }]
 }
 
 const linesRowsOf = (highlighted: HighlightedSource, [lineStart, lineEnd]: LineSpan, decorations: LineDecorations): FileRow[] => {
   const span = rowSpanOf(highlighted.source, { lineStart, lineEnd })
-  return span === null ? [] : [{ kind: "lines", id: `lines-${String(lineStart)}`, lines: codeLinesIn(highlighted, span, null, decorations) }]
+  return span === null ? [] : [{ kind: "lines", id: `lines-${String(lineStart)}`, lines: codeLinesIn(highlighted, span, null, decorations), collapses: [] }]
 }
 
 const rowsOf = (highlighted: HighlightedSource, spans: readonly LineSpan[], places: readonly WaypointPlace[], decorations: LineDecorations): FileRow[] =>

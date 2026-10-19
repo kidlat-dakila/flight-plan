@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react"
-import CodeBlock from "@/components/CodeBlock"
+import { CollapsibleTrigger } from "@/components/blocks/collapsible"
+import CodeBlock, { type LineCollapse } from "@/components/CodeBlock"
 import { codeLine } from "@/lib/__tests__/review-samples"
 
 const LINES = [codeLine("", "const old = 1", "removed"), codeLine("7", "const held = 2", "added"), codeLine("8", "return held")]
@@ -9,6 +10,64 @@ const referenceNamed = (name: string): HTMLElement => {
   if (found === undefined) throw new Error(`No reference named ${name}`)
   return found
 }
+
+const ROOT_LINES = [codeLine("1", "function total() {"), codeLine("2", "  return held", "added"), codeLine("3", "}"), codeLine("4", "export {}")]
+const ROOT_COLLAPSE: LineCollapse = { rootBlockId: "src/price.ts#function:total", fromLine: 1, toLine: 3, hasTrigger: true }
+
+const renderCollapseControls = (rootBlockId: string) => <CollapsibleTrigger aria-label={`Fold ${rootBlockId}`}>v</CollapsibleTrigger>
+
+describe("CodeBlock collapse", () => {
+  it("draws the controls on the first line of a root block and hides the rest of it while it is closed", () => {
+    render(
+      <CodeBlock
+        lines={ROOT_LINES}
+        label="src/price.ts"
+        collapses={[ROOT_COLLAPSE]}
+        renderCollapseControls={renderCollapseControls}
+      />,
+    )
+
+    expect(screen.getByText("function total() {").closest("[data-line]")?.querySelector("[data-collapse-controls]")).not.toBeNull()
+    expect(screen.queryByText("return held")).toBeNull()
+    expect(screen.queryByText("}")).toBeNull()
+    expect(screen.getByText("export {}")).toBeTruthy()
+  })
+
+  it("shows the whole root block while it is open, and asks to close it from its trigger", () => {
+    const onRootBlockOpenChange = vi.fn()
+    render(
+      <CodeBlock
+        lines={ROOT_LINES}
+        label="src/price.ts"
+        collapses={[ROOT_COLLAPSE]}
+        openRootBlockIds={new Set([ROOT_COLLAPSE.rootBlockId])}
+        renderCollapseControls={renderCollapseControls}
+        onRootBlockOpenChange={onRootBlockOpenChange}
+      />,
+    )
+
+    expect(screen.getByText("return held")).toBeTruthy()
+    fireEvent.click(screen.getByRole("button", { name: `Fold ${ROOT_COLLAPSE.rootBlockId}` }))
+
+    expect(onRootBlockOpenChange).toHaveBeenCalledWith(ROOT_COLLAPSE.rootBlockId, false)
+  })
+
+  it("hides every line of a piece of a root block that has no trigger of its own", () => {
+    render(
+      <CodeBlock
+        lines={ROOT_LINES}
+        label="src/price.ts"
+        collapses={[{ ...ROOT_COLLAPSE, toLine: 2, hasTrigger: false }]}
+        renderCollapseControls={renderCollapseControls}
+      />,
+    )
+
+    expect(screen.queryByText("function total() {")).toBeNull()
+    expect(screen.queryByText("return held")).toBeNull()
+    expect(screen.getByText("}")).toBeTruthy()
+    expect(document.querySelector("[data-collapse-controls]")).toBeNull()
+  })
+})
 
 describe("CodeBlock", () => {
   it("draws each line with its number and says whether it was added or removed", () => {

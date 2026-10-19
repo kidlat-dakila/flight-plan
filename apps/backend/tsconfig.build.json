@@ -13,6 +13,7 @@
         "../../packages/codegraph/src/*",
         "../../packages/configurations/src/*",
         "../../packages/git-forge/src/*",
+        "../../packages/reviewed-marks/src/*",
         "../../tools/playground-fixtures/src/*"
       ],
       "@flightplan/configurations": [
@@ -26,6 +27,9 @@
       ],
       "@flightplan/playground-fixtures": [
         "../../tools/playground-fixtures/src/index.ts"
+      ],
+      "@flightplan/reviewed-marks": [
+        "../../packages/reviewed-marks/src/index.ts"
       ]
     }
   },
@@ -34,6 +38,7 @@
     "../../packages/configurations/src/**/*.ts",
     "../../packages/codegraph/src/**/*.ts",
     "../../packages/git-forge/src/**/*.ts",
+    "../../packages/reviewed-marks/src/**/*.ts",
     "../../tools/playground-fixtures/src/**/*.ts"
   ],
   "exclude": [
@@ -44,6 +49,7 @@
     "../../packages/codegraph/src/**/__tests__/**",
     "../../packages/git-forge/src/**/*.spec.ts",
     "../../packages/git-forge/src/**/__tests__/**",
+    "../../packages/reviewed-marks/src/**/__tests__/**",
     "../../tools/playground-fixtures/src/**/*.spec.ts",
     "../../tools/playground-fixtures/src/**/__tests__/**"
   ],
@@ -59,6 +65,9 @@
     },
     {
       "path": "../../tools/playground-fixtures/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/reviewed-marks/tsconfig.lib.json"
     }
   ]
 }
