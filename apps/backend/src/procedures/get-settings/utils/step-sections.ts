@@ -7,8 +7,9 @@ export const toAgentsSection = ({ agents, defaultAgent }: AgentsStep): AgentsSec
   defaultAgent,
 })
 
-export const toForgesSection = ({ forges, defaultForge }: ForgesStep): ForgesSection => ({
+export const toForgesSection = ({ codeHostFeatures, hasCodeHost, forges }: ForgesStep): ForgesSection => ({
   section: "forges",
+  codeHostFeatures,
+  hasCodeHost,
   forges,
-  defaultForge,
 })

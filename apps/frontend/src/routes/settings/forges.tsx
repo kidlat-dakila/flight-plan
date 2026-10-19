@@ -22,13 +22,14 @@ const ForgesSettingsPage = () => {
     <>
       <title>{DOCUMENT_TITLE}</title>
       <SectionIntro title={TITLE}>
-        Your pull requests live on a code hosting site such as GitHub, GitLab or Bitbucket. Connect Flight Plan to each
-        one you use, through its command line tool or with a token, and pick which one to use by default. Local git
-        needs no account: it reviews the branches on this computer, with fewer features.
+        Flight Plan works with the git repositories on this computer. It reads branches and commits, fetches from your
+        remotes in the background, and fast-forwards a branch when you update a review. It never commits, pushes or
+        rewrites your history. Local git is always on, so every repository works without an account.
       </SectionIntro>
       <ForgesForm
+        codeHostFeatures={page.codeHostFeatures}
+        hasCodeHost={page.hasCodeHost}
         forges={page.forges}
-        defaultForge={page.defaultForge}
         problem={saving.problem}
         onSubmit={(choice) => { saving.save({ ...SECTION, ...choice }) }}
       >

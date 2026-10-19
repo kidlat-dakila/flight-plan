@@ -184,7 +184,6 @@ export const toDemoSetup = (demos: readonly DemoReview[]): Setup => ({
   },
   forges: {
     connections: [{ forge: "gh", username: DEMO_VIEWER, baseUrl: GITHUB_URL, hasCredential: true }],
-    defaultForge: "gh",
   },
   defaultConfiguration: "standard",
   repositories: demos.map((demo) => ({

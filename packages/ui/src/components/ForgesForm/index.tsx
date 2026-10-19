@@ -25,10 +25,13 @@ interface ForgeOption {
   readonly label: string
   readonly description: string
   readonly isPicked: boolean
-  readonly isRequired: boolean
   readonly availability: ForgeAvailability
   readonly fields: readonly ForgeField[]
-  readonly limitation: { readonly label: string, readonly items: readonly string[] } | null
+}
+
+interface CodeHostFeatures {
+  readonly label: string
+  readonly items: readonly string[]
 }
 
 export interface ForgesChoice {
@@ -39,12 +42,12 @@ export interface ForgesChoice {
     readonly token: string
     readonly baseUrl: string
   }[]
-  readonly defaultForge: ForgeName
 }
 
 interface ForgesFormProps {
+  readonly codeHostFeatures: CodeHostFeatures
+  readonly hasCodeHost: boolean
   readonly forges: readonly ForgeOption[]
-  readonly defaultForge: ForgeName
   readonly problem: FormProblem | null
   readonly children: ReactNode
   readonly onSubmit: (choice: ForgesChoice) => void
@@ -60,24 +63,22 @@ interface ForgeFieldInputProps {
 
 interface ForgeRowProps {
   readonly option: ForgeOption
-  readonly groupName: string
   readonly isPicked: boolean
-  readonly isDefault: boolean
   readonly valueByField: Readonly<Record<string, string>>
   readonly problem: FormProblem | null
   readonly onPickedChange: (isPicked: boolean) => void
-  readonly onDefaultChange: () => void
   readonly onFieldChange: (field: ForgeFieldName, value: string) => void
 }
 
-const CHOICE_INPUT_CLASSES = "size-4 shrink-0 accent-(--primary)"
-
-const LOCAL_FORGE: ForgeName = "git"
-
-const nextDefaultOf = (current: ForgeName, changedForge: ForgeName, isPicked: boolean): ForgeName => {
-  if (isPicked) return changedForge
-  return current === changedForge ? LOCAL_FORGE : current
+interface CodeHostQuestionProps {
+  readonly isCodeHostWanted: boolean
+  readonly onChange: (isCodeHostWanted: boolean) => void
 }
+
+const CHOICE_INPUT_CLASSES = "size-4 shrink-0 accent-(--primary)"
+const CODE_HOST_QUESTION = "Do you want to connect a code host?"
+const LOCAL_GIT_ONLY_LABEL = "No, local git only"
+const CODE_HOST_LABEL = "Yes"
 
 const fieldKey = (forge: ForgeName, field: ForgeFieldName): string => `${forge}:${field}`
 
@@ -113,59 +114,34 @@ const ForgeFieldInput = ({ forgeLabel, field, value, errorMessage, onChange }: F
   )
 }
 
-const ForgeRow = ({
-  option,
-  groupName,
-  isPicked,
-  isDefault,
-  valueByField,
-  problem,
-  onPickedChange,
-  onDefaultChange,
-  onFieldChange,
-}: ForgeRowProps) => {
+const ForgeRow = ({ option, isPicked, valueByField, problem, onPickedChange, onFieldChange }: ForgeRowProps) => {
   const isAvailable = option.availability.kind === "available"
-  const isLocked = !isAvailable || option.isRequired
   return (
     <li className="border-b border-border py-3 last:border-b-0">
-      <div className="flex items-start gap-4">
-        <label className={cn("flex min-w-0 flex-1 items-start gap-3", isLocked ? "" : "cursor-pointer")}>
-          <input
-            type="checkbox"
-            checked={isPicked}
-            disabled={isLocked}
-            className={`${CHOICE_INPUT_CLASSES} mt-1`}
-            onChange={(event) => { onPickedChange(event.target.checked) }}
-          />
-          <span className="min-w-0">
-            <span className="font-bold">{option.label}</span>
-            {option.availability.kind === "available" && option.availability.statusLabel !== null
-              ? <span className="ml-2 text-sm text-muted-foreground">{option.availability.statusLabel}</span>
-              : null}
-            <span className="block max-w-[62ch] text-sm text-muted-foreground">{option.description}</span>
-            {option.availability.kind === "unavailable"
-              ? (
-                  <span className="block max-w-[62ch] text-sm text-destructive">
-                    <span className="font-bold">Unavailable.</span>
-                    {` ${option.availability.reason}`}
-                  </span>
-                )
-              : null}
-          </span>
-        </label>
-        <label className="flex cursor-pointer items-center gap-2 pt-0.5 text-sm has-disabled:cursor-default has-disabled:text-muted-foreground">
-          <input
-            type="radio"
-            name={groupName}
-            checked={isDefault}
-            disabled={!isPicked}
-            className={CHOICE_INPUT_CLASSES}
-            onChange={onDefaultChange}
-          />
-          <span aria-hidden="true">Default</span>
-          <span className="sr-only">{`Default forge: ${option.label}`}</span>
-        </label>
-      </div>
+      <label className={cn("flex min-w-0 items-start gap-3", isAvailable ? "cursor-pointer" : "")}>
+        <input
+          type="checkbox"
+          checked={isPicked}
+          disabled={!isAvailable}
+          className={`${CHOICE_INPUT_CLASSES} mt-1`}
+          onChange={(event) => { onPickedChange(event.target.checked) }}
+        />
+        <span className="min-w-0">
+          <span className="font-bold">{option.label}</span>
+          {option.availability.kind === "available" && option.availability.statusLabel !== null
+            ? <span className="ml-2 text-sm text-muted-foreground">{option.availability.statusLabel}</span>
+            : null}
+          <span className="block max-w-[62ch] text-sm text-muted-foreground">{option.description}</span>
+          {option.availability.kind === "unavailable"
+            ? (
+                <span className="block max-w-[62ch] text-sm text-destructive">
+                  <span className="font-bold">Unavailable.</span>
+                  {` ${option.availability.reason}`}
+                </span>
+              )
+            : null}
+        </span>
+      </label>
       {isPicked && option.fields.length > 0
         ? (
             <div className="mt-3 grid max-w-xl gap-4 pl-7">
@@ -184,22 +160,43 @@ const ForgeRow = ({
             </div>
           )
         : null}
-      {isPicked && option.limitation !== null
-        ? (
-            <div className="mt-2 pl-7 text-sm">
-              <p>{option.limitation.label}</p>
-              <ul className="list-disc pl-5 text-muted-foreground">
-                {option.limitation.items.map((item) => <li key={item}>{item}</li>)}
-              </ul>
-            </div>
-          )
-        : null}
     </li>
   )
 }
 
-const ForgesForm = ({ forges, defaultForge, problem, children, onSubmit }: ForgesFormProps) => {
-  const defaultGroupId = useId()
+const CodeHostQuestion = ({ isCodeHostWanted, onChange }: CodeHostQuestionProps) => {
+  const radioGroupId = useId()
+  return (
+    <fieldset className="border-t border-border py-4">
+      <legend className="float-left w-full pb-2 font-bold">{CODE_HOST_QUESTION}</legend>
+      <div className="clear-left flex flex-wrap gap-x-6 gap-y-2">
+        <label className="flex cursor-pointer items-center gap-2">
+          <input
+            type="radio"
+            name={radioGroupId}
+            checked={!isCodeHostWanted}
+            className={CHOICE_INPUT_CLASSES}
+            onChange={() => { onChange(false) }}
+          />
+          {LOCAL_GIT_ONLY_LABEL}
+        </label>
+        <label className="flex cursor-pointer items-center gap-2">
+          <input
+            type="radio"
+            name={radioGroupId}
+            checked={isCodeHostWanted}
+            className={CHOICE_INPUT_CLASSES}
+            onChange={() => { onChange(true) }}
+          />
+          {CODE_HOST_LABEL}
+        </label>
+      </div>
+    </fieldset>
+  )
+}
+
+const ForgesForm = ({ codeHostFeatures, hasCodeHost, forges, problem, children, onSubmit }: ForgesFormProps) => {
+  const [isCodeHostWanted, setIsCodeHostWanted] = useState(hasCodeHost)
   const [pickedByForge, setPickedByForge] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(forges.map((option) => [option.forge, option.isPicked])),
   )
@@ -208,44 +205,49 @@ const ForgesForm = ({ forges, defaultForge, problem, children, onSubmit }: Forge
       forges.flatMap((option) => option.fields.map((field) => [fieldKey(option.forge, field.name), field.value])),
     ),
   )
-  const [chosenDefault, setChosenDefault] = useState(defaultForge)
 
   const handleSubmit = () => {
     onSubmit({
       forges: forges.map((option) => ({
         forge: option.forge,
-        isPicked: pickedByForge[option.forge] ?? false,
+        isPicked: isCodeHostWanted && (pickedByForge[option.forge] ?? false),
         username: valueByField[fieldKey(option.forge, "username")] ?? "",
         token: valueByField[fieldKey(option.forge, "token")] ?? "",
         baseUrl: valueByField[fieldKey(option.forge, "baseUrl")] ?? "",
       })),
-      defaultForge: chosenDefault,
     })
   }
 
   return (
     <form action={handleSubmit}>
-      <ul className="border-t border-border">
-        {forges.map((option) => (
-          <ForgeRow
-            key={option.forge}
-            option={option}
-            groupName={defaultGroupId}
-            isPicked={pickedByForge[option.forge] ?? false}
-            isDefault={chosenDefault === option.forge}
-            valueByField={valueByField}
-            problem={problem}
-            onPickedChange={(isPicked) => {
-              setPickedByForge((picked) => ({ ...picked, [option.forge]: isPicked }))
-              setChosenDefault((current) => nextDefaultOf(current, option.forge, isPicked))
-            }}
-            onDefaultChange={() => { setChosenDefault(option.forge) }}
-            onFieldChange={(field, value) => {
-              setValueByField((values) => ({ ...values, [fieldKey(option.forge, field)]: value }))
-            }}
-          />
-        ))}
-      </ul>
+      <div className="max-w-[62ch] pb-4 text-sm">
+        <p>{codeHostFeatures.label}</p>
+        <ul className="list-disc pl-5 text-muted-foreground">
+          {codeHostFeatures.items.map((item) => <li key={item}>{item}</li>)}
+        </ul>
+      </div>
+      <CodeHostQuestion isCodeHostWanted={isCodeHostWanted} onChange={setIsCodeHostWanted} />
+      {isCodeHostWanted
+        ? (
+            <ul aria-label="Code hosts" className="border-t border-border">
+              {forges.map((option) => (
+                <ForgeRow
+                  key={option.forge}
+                  option={option}
+                  isPicked={pickedByForge[option.forge] ?? false}
+                  valueByField={valueByField}
+                  problem={problem}
+                  onPickedChange={(isPicked) => {
+                    setPickedByForge((picked) => ({ ...picked, [option.forge]: isPicked }))
+                  }}
+                  onFieldChange={(field, value) => {
+                    setValueByField((values) => ({ ...values, [fieldKey(option.forge, field)]: value }))
+                  }}
+                />
+              ))}
+            </ul>
+          )
+        : null}
       {children}
     </form>
   )

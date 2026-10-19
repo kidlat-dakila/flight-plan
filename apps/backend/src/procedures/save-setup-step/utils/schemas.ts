@@ -28,7 +28,6 @@ export const forgesInputSchema = z.strictObject({
       baseUrl: z.string(),
     }),
   ),
-  defaultForge: z.enum(SETUP_FORGES).nullable(),
 })
 
 export const configurationInputSchema = z.strictObject({

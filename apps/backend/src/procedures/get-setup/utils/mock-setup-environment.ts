@@ -151,7 +151,8 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
     await Promise.resolve(listMockFolders(path)?.folders.map((folder) => folder.name) ?? null),
   isRepositoryFolder: async (path) =>
     await Promise.resolve(MOCK_FOLDERS.some((folder) => folder.path === path && folder.isRepository)),
-  findRepositoryForge: async (_path, forges) => await Promise.resolve(forges?.defaultForge ?? MOCK_FORGE_WITHOUT_ACCOUNT),
+  findRepositoryForge: async (_path, forges) =>
+    await Promise.resolve(forges?.connections.find((connection) => connection.forge !== MOCK_FORGE_WITHOUT_ACCOUNT)?.forge ?? MOCK_FORGE_WITHOUT_ACCOUNT),
   searchAuthors: async (source, query) =>
     await Promise.resolve({ authors: matchUsers(mockAuthorsOf(source), query), problem: null }),
   findAuthor: async (source, authorId) =>

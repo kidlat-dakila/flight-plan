@@ -43,52 +43,40 @@ const agentsForm = {
 
 const forgesForm = {
   step: "forges",
+  codeHostFeatures: {
+    label: "A code host connection adds:",
+    items: ["The pull requests to review, with their labels", "Links into the code host's diff view"],
+  },
+  hasCodeHost: false,
   forges: [
-    {
-      forge: "git",
-      label: "Local git",
-      description: "Reviews the branches of a repository on this machine.",
-      isPicked: true,
-      isRequired: true,
-      availability: { kind: "available", statusLabel: null },
-      fields: [],
-      limitation: { label: "With local git only, Flight Plan cannot:", items: ["List pull requests to review"] },
-    },
     {
       forge: "gh",
       label: "GitHub CLI",
       description: "Reaches GitHub through the GitHub command line tool.",
       isPicked: false,
-      isRequired: false,
       availability: { kind: "available", statusLabel: "Signed in as dev-harper" },
       fields: [],
-      limitation: null,
     },
     {
       forge: "glab",
       label: "GitLab CLI",
       description: "Reaches GitLab through the GitLab command line tool.",
       isPicked: false,
-      isRequired: false,
       availability: { kind: "unavailable", reason: "glab is not installed on this machine." },
       fields: [],
-      limitation: null,
     },
     {
       forge: "github",
       label: "GitHub token",
       description: "Reaches GitHub with a token.",
       isPicked: false,
-      isRequired: false,
       availability: { kind: "available", statusLabel: null },
       fields: [
         { name: "token", label: "Token", hint: "Kept on this machine.", placeholder: "", value: "", isSecret: true },
         { name: "baseUrl", label: "Base URL", hint: "Only for a self-hosted forge.", placeholder: "", value: "", isSecret: false },
       ],
-      limitation: null,
     },
   ],
-  defaultForge: "git",
 }
 
 const configurationForm = {
@@ -266,6 +254,15 @@ describe("the setup page", () => {
     expect(within(steps).getByRole("link", { name: "Repositories" }).getAttribute("href")).toBe("/setup?step=repositories")
     expect(within(steps).getAllByRole("link")).toHaveLength(1)
     expect(screen.getByRole("link", { name: "Back" }).getAttribute("href")).toBe("/setup?step=repositories")
+  })
+
+  it("explains that Flight Plan builds the review and the agent explains the change", async () => {
+    renderApp({ "setup.get": () => agentsPage })
+
+    const intro = await screen.findByText(/Flight Plan builds every review on its own, without a model/)
+
+    expect(intro.textContent).toContain("What it can't do is explain the change")
+    expect(intro.textContent).toContain("Your agent writes that part.")
   })
 
   it("asks for an install folder only for a picked agent, prefilled with the detected one", async () => {
@@ -497,42 +494,46 @@ describe("the setup page", () => {
     expect((await screen.findByRole("alert")).textContent).toBe("The data directory cannot be written.")
   })
 
-  it("shows a forge that cannot be used as unavailable, with the reason", async () => {
+  it("explains how Flight Plan works with git and what a code host adds", async () => {
     renderApp({ "setup.get": () => forgesPage })
 
-    const gitlabCli = await screen.findByRole<HTMLInputElement>("checkbox", { name: /GitLab CLI/ })
+    expect(await screen.findByText(/It never commits, pushes or rewrites your history\./)).toBeTruthy()
+    expect(screen.getByText("A code host connection adds:")).toBeTruthy()
+    expect(screen.getByText("Links into the code host's diff view")).toBeTruthy()
+    expect(screen.getByRole<HTMLInputElement>("radio", { name: "No, local git only" }).checked).toBe(true)
+    expect(screen.queryByRole("checkbox", { name: /Local git/ })).toBeNull()
+    expect(screen.queryByRole("radio", { name: /Default forge/ })).toBeNull()
+  })
+
+  it("shows a code host that cannot be used as unavailable, with the reason", async () => {
+    renderApp({ "setup.get": () => forgesPage })
+
+    fireEvent.click(await screen.findByRole("radio", { name: "Yes" }))
+    const gitlabCli = screen.getByRole<HTMLInputElement>("checkbox", { name: /GitLab CLI/ })
 
     expect(gitlabCli.disabled).toBe(true)
     expect(screen.getByText(/glab is not installed on this machine\./).classList.contains("text-destructive")).toBe(true)
     expect(screen.getByText("Signed in as dev-harper")).toBeTruthy()
   })
 
-  it("keeps local git picked, locked and the default, and lists what it cannot do", async () => {
-    renderApp({ "setup.get": () => forgesPage })
+  it("saves local git only when no code host is wanted", async () => {
+    const saveStep = vi
+      .fn<(input: unknown) => ProcedureReply>()
+      .mockReturnValue({ data: { kind: "accepted", nextStep: "agents" } })
+    renderApp({ "setup.get": () => forgesPage, "setup.saveStep": saveStep })
 
-    const localGit = await screen.findByRole<HTMLInputElement>("checkbox", { name: /Local git/ })
+    fireEvent.click(await screen.findByRole("button", { name: "Save and continue" }))
 
-    expect(localGit.checked).toBe(true)
-    expect(localGit.disabled).toBe(true)
-    expect(screen.getByRole<HTMLInputElement>("radio", { name: "Default forge: Local git" }).checked).toBe(true)
-    expect(screen.getByText("With local git only, Flight Plan cannot:")).toBeTruthy()
-    expect(screen.getByText("List pull requests to review")).toBeTruthy()
-  })
-
-  it("makes a forge the default when it is checked, and returns to local git when it is unchecked", async () => {
-    renderApp({ "setup.get": () => forgesPage })
-
-    const githubToken = await screen.findByRole("checkbox", { name: /GitHub token/ })
-    const defaultRadioOf = (label: string) => screen.getByRole<HTMLInputElement>("radio", { name: `Default forge: ${label}` })
-
-    fireEvent.click(githubToken)
-
-    expect(defaultRadioOf("GitHub token").checked).toBe(true)
-    expect(defaultRadioOf("Local git").checked).toBe(false)
-
-    fireEvent.click(githubToken)
-
-    expect(defaultRadioOf("Local git").checked).toBe(true)
+    await waitFor(() => {
+      expect(saveStep).toHaveBeenCalledWith({
+        step: "forges",
+        forges: [
+          { forge: "gh", isPicked: false, username: "", token: "", baseUrl: "" },
+          { forge: "glab", isPicked: false, username: "", token: "", baseUrl: "" },
+          { forge: "github", isPicked: false, username: "", token: "", baseUrl: "" },
+        ],
+      })
+    })
   })
 
   it("asks a token forge for its token in a hidden field and sends it with the step", async () => {
@@ -541,10 +542,10 @@ describe("the setup page", () => {
       .mockReturnValue({ data: { kind: "accepted", nextStep: "agents" } })
     renderApp({ "setup.get": () => forgesPage, "setup.saveStep": saveStep })
 
-    fireEvent.click(await screen.findByRole("checkbox", { name: /GitHub token/ }))
+    fireEvent.click(await screen.findByRole("radio", { name: "Yes" }))
+    fireEvent.click(screen.getByRole("checkbox", { name: /GitHub token/ }))
     const token = screen.getByLabelText<HTMLInputElement>("Token for GitHub token")
     fireEvent.change(token, { target: { value: "secret" } })
-    fireEvent.click(screen.getByRole("radio", { name: "Default forge: GitHub token" }))
     fireEvent.click(screen.getByRole("button", { name: "Save and continue" }))
 
     await waitFor(() => {
@@ -554,12 +555,10 @@ describe("the setup page", () => {
     expect(saveStep).toHaveBeenCalledWith({
       step: "forges",
       forges: [
-        { forge: "git", isPicked: true, username: "", token: "", baseUrl: "" },
         { forge: "gh", isPicked: false, username: "", token: "", baseUrl: "" },
         { forge: "glab", isPicked: false, username: "", token: "", baseUrl: "" },
         { forge: "github", isPicked: true, username: "", token: "secret", baseUrl: "" },
       ],
-      defaultForge: "github",
     })
   })
 

@@ -2,7 +2,6 @@ import { forgeAvailability } from "@/procedures/get-setup/utils/forge-availabili
 import { FORGE_OFFERS, type ForgeFieldName } from "@/procedures/get-setup/utils/forge-catalog"
 import type { ForgeConnection, ForgesChoice, SetupForge } from "@/procedures/get-setup/utils/setup"
 import type { CliProbe } from "@/procedures/get-setup/utils/setup-environment"
-import { resolveDefault } from "./resolve-default"
 import type { ForgesInput, StepRejection } from "./schemas"
 
 export interface ForgeCredential {
@@ -82,10 +81,9 @@ export const planForgesChoice = (input: ForgesInput, situation: ForgesSituation)
   const pickedEntries = pickedEntriesOf(input)
   const problem = pickedEntries.map((entry) => findEntryProblem(entry, situation)).find((found) => found !== null)
   if (problem !== undefined) return problem
-  const defaultForge = resolveDefault(pickedEntries.map((entry) => entry.forge), input.defaultForge) ?? LOCAL_FORGE
   return {
     kind: "accepted",
-    choice: { connections: pickedEntries.map((entry) => toConnection(entry, situation.savedChoice)), defaultForge },
+    choice: { connections: pickedEntries.map((entry) => toConnection(entry, situation.savedChoice)) },
     credentials: toCredentials(pickedEntries),
   }
 }

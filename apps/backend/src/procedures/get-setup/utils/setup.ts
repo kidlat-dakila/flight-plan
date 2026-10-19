@@ -41,7 +41,6 @@ export interface ForgeConnection {
 
 export interface ForgesChoice {
   readonly connections: readonly ForgeConnection[]
-  readonly defaultForge: SetupForge
 }
 
 export interface RepositoryAuthor {
@@ -76,13 +75,11 @@ export const EMPTY_SETUP: Setup = {
   isComplete: false,
 }
 
-const FORGE_WITHOUT_ACCOUNT: SetupForge = "git"
+export const LOCAL_GIT_FORGE: SetupForge = "git"
 
-export const authorForgeOf = (setup: Setup): SetupForge => setup.forges?.defaultForge ?? FORGE_WITHOUT_ACCOUNT
-
-export const needsSelfAuthor = (forge: SetupForge): boolean => forge === FORGE_WITHOUT_ACCOUNT
+export const needsSelfAuthor = (forge: SetupForge): boolean => forge === LOCAL_GIT_FORGE
 
 export type RepositoryForges = Readonly<Record<string, SetupForge>>
 
-export const repositoryForgeOf = (setup: Setup, repositoryForges: RepositoryForges, path: string): SetupForge =>
-  repositoryForges[path] ?? authorForgeOf(setup)
+export const repositoryForgeOf = (repositoryForges: RepositoryForges, path: string): SetupForge =>
+  repositoryForges[path] ?? LOCAL_GIT_FORGE

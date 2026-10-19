@@ -1,5 +1,5 @@
 import { adapterWith } from "@/__tests__/adapter-stub"
-import type { ForgesChoice } from "@/procedures/get-setup/utils/setup"
+import type { ForgesChoice, SetupForge } from "@/procedures/get-setup/utils/setup"
 import { RepositoryInspector, type InspectionRequest, type InspectorDependencies } from "@/utils/repository-inspector"
 import { type Resolved, type Remote,
   GitAdapterError,
@@ -66,9 +66,8 @@ const harness = (resolved: Resolved, remote: Remote | null = GITHUB_REMOTE): Har
 
 const ready = (gitAdapter: GitAdapter): Resolved => ({ ok: true, gitAdapter, repo: gitAdapter.repo })
 
-const forgesWith = (defaultForge: ForgesChoice["defaultForge"]): ForgesChoice => ({
-  connections: [{ forge: defaultForge, username: "dev", baseUrl: "", hasCredential: true }],
-  defaultForge,
+const forgesWith = (forge: SetupForge): ForgesChoice => ({
+  connections: [{ forge, username: "dev", baseUrl: "", hasCredential: true }],
 })
 
 const request = (overrides: Partial<InspectionRequest> = {}): InspectionRequest => ({
@@ -252,9 +251,9 @@ describe("RepositoryInspector on a forge", () => {
   })
 
   it("opens the adapter for the forge with its credential and the environment", async () => {
-    const { inspector, opened } = harness(ready(forgeAdapter()))
+    const { inspector, opened } = harness(ready(forgeAdapter()), { ...GITHUB_REMOTE, host: "ghe.acme.test" })
 
-    await inspector.inspect(request({ forges: { connections: [{ forge: "github", username: "dev", baseUrl: "https://ghe.acme.test", hasCredential: true }], defaultForge: "github" } }))
+    await inspector.inspect(request({ forges: { connections: [{ forge: "github", username: "dev", baseUrl: "https://ghe.acme.test", hasCredential: true }] } }))
 
     expect(opened()).toStrictEqual([
       { id: "github", root: "/work/storefront", secret: "secret-token", username: "dev", baseUrl: "https://ghe.acme.test", environment: { PATH: "/usr/bin" } },

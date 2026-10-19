@@ -19,8 +19,8 @@ const entryOf = (forge: ForgeEntry["forge"], overrides: Partial<ForgeEntry> = {}
   ...overrides,
 })
 
-const planOf = (forges: readonly ForgeEntry[], defaultForge: ForgesInput["defaultForge"] = null) =>
-  planForgesChoice({ step: "forges", forges: [...forges], defaultForge }, { savedChoice: null, cliProbes: CLI_PROBES })
+const planOf = (forges: readonly ForgeEntry[]) =>
+  planForgesChoice({ step: "forges", forges: [...forges] }, { savedChoice: null, cliProbes: CLI_PROBES })
 
 describe("planForgesChoice", () => {
   it("accepts local git alone as the default, with no credential", () => {
@@ -28,7 +28,6 @@ describe("planForgesChoice", () => {
       kind: "accepted",
       choice: {
         connections: [{ forge: "git", username: "", baseUrl: "", hasCredential: false }],
-        defaultForge: "git",
       },
       credentials: [],
     })
@@ -39,7 +38,6 @@ describe("planForgesChoice", () => {
       kind: "accepted",
       choice: {
         connections: [{ forge: "git", username: "", baseUrl: "", hasCredential: false }],
-        defaultForge: "git",
       },
       credentials: [],
     }
@@ -78,7 +76,7 @@ describe("planForgesChoice", () => {
   })
 
   it("hands the token over as a credential and keeps only the fact that one exists", () => {
-    const plan = planOf([entryOf("gitlab", { token: " secret ", baseUrl: "https://git.acme.example" })], "gitlab")
+    const plan = planOf([entryOf("gitlab", { token: " secret ", baseUrl: "https://git.acme.example" })])
 
     expect(plan).toStrictEqual({
       kind: "accepted",
@@ -87,7 +85,6 @@ describe("planForgesChoice", () => {
           { forge: "git", username: "", baseUrl: "", hasCredential: false },
           { forge: "gitlab", username: "", baseUrl: "https://git.acme.example", hasCredential: true },
         ],
-        defaultForge: "gitlab",
       },
       credentials: [{ forge: "gitlab", token: "secret" }],
     })
@@ -95,7 +92,7 @@ describe("planForgesChoice", () => {
 
   it("keeps a saved token when the token field is left empty", () => {
     const plan = planForgesChoice(
-      { step: "forges", forges: [entryOf("github")], defaultForge: null },
+      { step: "forges", forges: [entryOf("github")] },
       { savedChoice: GITHUB_FORGES, cliProbes: CLI_PROBES },
     )
 
@@ -106,12 +103,17 @@ describe("planForgesChoice", () => {
     })
   })
 
-  it("makes local git the default unless another picked forge is chosen", () => {
-    const forges = [entryOf("git"), entryOf("gh")]
-
-    expect(planOf(forges)).toMatchObject({ kind: "accepted", choice: { defaultForge: "git" } })
-    expect(planOf(forges, "gh")).toMatchObject({ kind: "accepted", choice: { defaultForge: "gh" } })
-    expect(planOf(forges, "glab")).toMatchObject({ kind: "accepted", choice: { defaultForge: "git" } })
+  it("always keeps local git, first, next to the code hosts picked", () => {
+    expect(planOf([entryOf("gh")])).toStrictEqual({
+      kind: "accepted",
+      choice: {
+        connections: [
+          { forge: "git", username: "", baseUrl: "", hasCredential: false },
+          { forge: "gh", username: "", baseUrl: "", hasCredential: false },
+        ],
+      },
+      credentials: [],
+    })
   })
 
   it("keeps the address of a Bitbucket Data Center instance", () => {

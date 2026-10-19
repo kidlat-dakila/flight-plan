@@ -1,3 +1,4 @@
+import type { Capability } from "@flightplan/git-forge"
 import type { SetupForge } from "./setup"
 import type { ForgeCli } from "./setup-environment"
 
@@ -51,12 +52,19 @@ export const FORGE_OFFERS: Record<SetupForge, ForgeOffer> = {
   },
 }
 
-export const LOCAL_GIT_LIMITATION_LABEL = "With local git only, Flight Plan cannot:"
+export interface CodeHostFeature {
+  readonly label: string
+  readonly capabilities: readonly Capability[]
+}
 
-export const LOCAL_GIT_LIMITATIONS: readonly string[] = [
-  "List pull requests to review",
-  "Filter pull requests by label",
-  "Filter pull requests by their review state",
-  "Show the author and each reviewer's state",
-  "Link into the forge's own diff view",
+export const CODE_HOST_FEATURES_LABEL = "A code host connection adds:"
+
+export const CODE_HOST_FEATURES: readonly CodeHostFeature[] = [
+  { label: "The pull requests to review, with their labels", capabilities: ["list", "history", "labels", "filters"] },
+  { label: "Who reviews each pull request, and their verdicts", capabilities: ["reviewers"] },
+  { label: "Requesting and removing reviewers", capabilities: ["reviewRequests"] },
+  { label: "The discussion: reading, writing, replying to and resolving comments", capabilities: ["discussion", "replies", "resolution"] },
+  { label: "Submitting your review: approve or request changes", capabilities: ["review"] },
+  { label: "Picking team members by their account", capabilities: ["people"] },
+  { label: "Links into the code host's diff view", capabilities: ["permalink"] },
 ]

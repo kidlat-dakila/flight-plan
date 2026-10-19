@@ -44,7 +44,7 @@ describe("planSetupCompletion", () => {
   it("lets a forge repository finish with nobody tracked", () => {
     const withoutTracked = { ...AT_REPOSITORIES, repositories: [CHECKOUT_WEB], forges: GITHUB_FORGES }
 
-    expect(planSetupCompletion(withoutTracked, [], {}, {})).toMatchObject({ kind: "accepted" })
+    expect(planSetupCompletion(withoutTracked, [], { [CHECKOUT_WEB.path]: "gh" }, {})).toMatchObject({ kind: "accepted" })
   })
 
   it("lets a local git repository finish with the user alone", () => {
@@ -53,8 +53,8 @@ describe("planSetupCompletion", () => {
     expect(planSetupCompletion(selfOnly, [], {}, {})).toMatchObject({ kind: "accepted" })
   })
 
-  it("completes the setup and lists its repositories under the default forge", () => {
-    expect(planSetupCompletion({ ...READY_TO_FINISH, forges: GITHUB_FORGES }, [STOREFRONT], {}, {})).toStrictEqual({
+  it("completes the setup and lists its repositories under the forge that serves them", () => {
+    expect(planSetupCompletion({ ...READY_TO_FINISH, forges: GITHUB_FORGES }, [STOREFRONT], { [CHECKOUT_WEB.path]: "gh" }, {})).toStrictEqual({
       kind: "accepted",
       setup: { ...READY_TO_FINISH, forges: GITHUB_FORGES, isComplete: true },
       additions: [

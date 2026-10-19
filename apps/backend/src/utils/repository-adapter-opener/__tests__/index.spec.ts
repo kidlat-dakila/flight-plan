@@ -3,11 +3,12 @@ import { createRepositoryAdapterOpener, problemOf } from "@/utils/repository-ada
 import { type GitAdapterInput, type Resolved, type Remote, GitAdapterError } from "@flightplan/git-forge"
 
 const REMOTE: Remote = { host: "gitlab.acme.test", owner: "platform", name: "ledger", fullName: "platform/ledger" }
+const GITHUB_REMOTE: Remote = { host: "github.com", owner: "platform", name: "ledger", fullName: "platform/ledger" }
+const CLI_REMOTES: Readonly<Record<"gh" | "glab", Remote>> = { gh: GITHUB_REMOTE, glab: REMOTE }
 const UNREADABLE: Resolved = { ok: false, repo: "", error: new GitAdapterError("no token", "auth") }
 
 const forgesOf = (...forges: readonly SetupForge[]): ForgesChoice => ({
   connections: forges.map((forge) => ({ forge, username: "dev", baseUrl: forge === "gitlab" ? "https://gitlab.acme.test" : "", hasCredential: true })),
-  defaultForge: forges[0] ?? "git",
 })
 
 const opener = (remote: Remote | null = REMOTE) => {
@@ -49,7 +50,7 @@ describe("createRepositoryAdapterOpener", () => {
   })
 
   it.each(["gh", "glab"] as const)("opens the %s command line tool without reading a token", async (forge) => {
-    const { open, opened, credentialLookups } = opener()
+    const { open, opened, credentialLookups } = opener(CLI_REMOTES[forge])
 
     await open("/work/ledger", forgesOf(forge))
 

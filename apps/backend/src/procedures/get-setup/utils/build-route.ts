@@ -59,14 +59,7 @@ const agentLines = (choice: AgentsChoice, agentModels: AgentModels): SummaryLine
 ]
 
 const forgeLines = (choice: ForgesChoice): SummaryLines => [
-  choice.connections.map((connection) =>
-    plain(
-      withDefaultMark(
-        FORGE_OFFERS[connection.forge].label,
-        choice.connections.length > 1 && connection.forge === choice.defaultForge,
-      ),
-    ),
-  ),
+  choice.connections.map((connection) => plain(FORGE_OFFERS[connection.forge].label)),
 ]
 
 const SUMMARY_LINES: Record<SetupStep, (setup: Setup, agentModels: AgentModels) => SummaryLines | null> = {

@@ -9,10 +9,10 @@ import {
 const FOLDER = "/Users/dev/projects/checkout-web"
 
 describe("getAuthorForm", () => {
-  it("builds the form from the default forge while no folder is typed", async () => {
+  it("builds the local git form while no folder is typed, whatever code host is connected", async () => {
     await expect(
       getAuthorForm({ path: "  " }, createSetupContext({ ...AT_REPOSITORIES, forges: GITHUB_FORGES })),
-    ).resolves.toMatchObject({ selfAuthorHint: null, searchPlaceholder: "Type a name or username" })
+    ).resolves.toMatchObject({ searchPlaceholder: "Type a name or email" })
   })
 
   it("builds the form from the forge that serves the folder typed", async () => {
@@ -21,7 +21,7 @@ describe("getAuthorForm", () => {
     await expect(getAuthorForm({ path: FOLDER }, forgeServed)).resolves.toMatchObject({ selfAuthorHint: null })
   })
 
-  it("builds the form from the default forge for a folder that is not a repository", async () => {
+  it("builds the local git form for a folder that is not a repository", async () => {
     const forgeServed = servedByForge(createSetupContext(AT_REPOSITORIES), "gh")
 
     await expect(getAuthorForm({ path: "/Users/dev/projects/meeting-notes" }, forgeServed)).resolves.toMatchObject({

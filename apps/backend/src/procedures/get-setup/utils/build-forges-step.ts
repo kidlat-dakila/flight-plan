@@ -1,7 +1,7 @@
 import { forgeAvailability } from "./forge-availability"
-import { FORGE_OFFERS, LOCAL_GIT_LIMITATION_LABEL, LOCAL_GIT_LIMITATIONS, type ForgeFieldName } from "./forge-catalog"
+import { CODE_HOST_FEATURES, CODE_HOST_FEATURES_LABEL, FORGE_OFFERS, type ForgeFieldName } from "./forge-catalog"
 import type { ForgeField, ForgeOption, ForgesStep } from "./schemas"
-import { SETUP_FORGES, type ForgeConnection, type ForgesChoice, type SetupForge } from "./setup"
+import { LOCAL_GIT_FORGE, SETUP_FORGES, type ForgeConnection, type ForgesChoice, type SetupForge } from "./setup"
 import type { CliProbe } from "./setup-environment"
 
 const SAVED_TOKEN_HINT = "A token is saved. Leave this empty to keep it."
@@ -36,10 +36,9 @@ const FIELD_BUILDERS: Record<ForgeFieldName, (connection: ForgeConnection | null
   }),
 }
 
-const LOCAL_FORGE: SetupForge = "git"
+const CODE_HOST_FORGES: readonly SetupForge[] = SETUP_FORGES.filter((forge) => forge !== LOCAL_GIT_FORGE)
 
-const limitationOf = (forge: SetupForge): ForgeOption["limitation"] =>
-  forge === LOCAL_FORGE ? { label: LOCAL_GIT_LIMITATION_LABEL, items: [...LOCAL_GIT_LIMITATIONS] } : null
+const isCodeHostConnection = (connection: ForgeConnection): boolean => connection.forge !== LOCAL_GIT_FORGE
 
 const toForgeOption = (forge: SetupForge, choice: ForgesChoice | null, cliProbes: readonly CliProbe[]): ForgeOption => {
   const connection = choice?.connections.find((saved) => saved.forge === forge) ?? null
@@ -47,16 +46,15 @@ const toForgeOption = (forge: SetupForge, choice: ForgesChoice | null, cliProbes
     forge,
     label: FORGE_OFFERS[forge].label,
     description: FORGE_OFFERS[forge].description,
-    isPicked: forge === LOCAL_FORGE || connection !== null,
-    isRequired: forge === LOCAL_FORGE,
+    isPicked: connection !== null,
     availability: forgeAvailability(forge, cliProbes),
     fields: FORGE_OFFERS[forge].fields.map((name) => FIELD_BUILDERS[name](connection)),
-    limitation: limitationOf(forge),
   }
 }
 
 export const buildForgesStep = (choice: ForgesChoice | null, cliProbes: readonly CliProbe[]): ForgesStep => ({
   step: "forges",
-  forges: SETUP_FORGES.map((forge) => toForgeOption(forge, choice, cliProbes)),
-  defaultForge: choice?.defaultForge ?? LOCAL_FORGE,
+  codeHostFeatures: { label: CODE_HOST_FEATURES_LABEL, items: CODE_HOST_FEATURES.map((feature) => feature.label) },
+  hasCodeHost: choice?.connections.some(isCodeHostConnection) ?? false,
+  forges: CODE_HOST_FORGES.map((forge) => toForgeOption(forge, choice, cliProbes)),
 })

@@ -41,8 +41,8 @@ const forgesChoiceSchema = z.strictObject({
       hasCredential: z.boolean(),
     }),
   ),
-  defaultForge: z.enum(SETUP_FORGES),
-})
+  defaultForge: z.enum(SETUP_FORGES).optional(),
+}).transform(({ connections }) => ({ connections }))
 
 const setupSchema = z.strictObject({
   agents: agentsChoiceSchema.nullable(),

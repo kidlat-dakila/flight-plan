@@ -34,7 +34,6 @@ export const SAVED_AGENTS: AgentsChoice = {
 
 export const LOCAL_GIT_FORGES: ForgesChoice = {
   connections: [{ forge: "git", username: "", baseUrl: "", hasCredential: false }],
-  defaultForge: "git",
 }
 
 export const GITHUB_FORGES: ForgesChoice = {
@@ -42,7 +41,6 @@ export const GITHUB_FORGES: ForgesChoice = {
     { forge: "gh", username: "", baseUrl: "", hasCredential: false },
     { forge: "github", username: "", baseUrl: "https://github.acme.example", hasCredential: true },
   ],
-  defaultForge: "gh",
 }
 
 export const LENA: RepositoryAuthor = {

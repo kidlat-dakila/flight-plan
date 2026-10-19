@@ -81,7 +81,7 @@ export const buildRepositoriesStep = (
       toRepositoryEntry(
         repository,
         position,
-        repositoryForgeOf(setup, repositoryForges, repository.path),
+        repositoryForgeOf(repositoryForges, repository.path),
         repositoryIdentityOf(repositoryIdentities, repository.path),
       ),
     ),

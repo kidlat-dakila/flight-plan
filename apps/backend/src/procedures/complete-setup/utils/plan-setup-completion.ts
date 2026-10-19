@@ -24,7 +24,7 @@ const newListings = (
     const addition = planRepositoryAddition(listedRepositories, path)
     return addition.kind === "accepted"
       ? [{
-          repository: { ...addition.repository, forge: FORGE_ADAPTERS[repositoryForgeOf(setup, repositoryForges, path)] },
+          repository: { ...addition.repository, forge: FORGE_ADAPTERS[repositoryForgeOf(repositoryForges, path)] },
           authors: { selfAuthor, trackedAuthors },
         }]
       : []

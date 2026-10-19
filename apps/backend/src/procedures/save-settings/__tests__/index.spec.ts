@@ -33,14 +33,13 @@ describe("saveSettings", () => {
     const input: SaveSettingsInput = {
       section: "forges",
       forges: [{ forge: "gh", isPicked: true, username: "", token: "", baseUrl: "" }],
-      defaultForge: "gh",
     }
 
     await expect(saveSettings(input, context)).resolves.toStrictEqual({
       kind: "saved",
       message: "Your git forges are saved.",
     })
-    await expect(context.setupStore.read()).resolves.toMatchObject({ forges: { defaultForge: "gh" } })
+    await expect(context.setupStore.read()).resolves.toMatchObject({ forges: { connections: [{ forge: "git" }, { forge: "gh" }] } })
   })
 
   it("saves the default configuration", async () => {

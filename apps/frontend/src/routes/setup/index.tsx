@@ -288,8 +288,9 @@ const SetupPage = () => {
             ? (
                 <ForgesStep
                   key={form.step}
+                  codeHostFeatures={form.codeHostFeatures}
+                  hasCodeHost={form.hasCodeHost}
                   forges={form.forges}
-                  defaultForge={form.defaultForge}
                   backStep={page.backStep}
                   problem={problem}
                   isPending={saveStep.isPending}

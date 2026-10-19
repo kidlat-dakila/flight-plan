@@ -22,29 +22,18 @@ const agentsSection = {
 
 const forgesSection = {
   section: "forges",
+  codeHostFeatures: { label: "A code host connection adds:", items: ["The pull requests to review, with their labels"] },
+  hasCodeHost: true,
   forges: [
-    {
-      forge: "git",
-      label: "Local git",
-      description: "Reviews the branches of a repository on this machine.",
-      isPicked: true,
-      isRequired: true,
-      availability: { kind: "available", statusLabel: null },
-      fields: [],
-      limitation: null,
-    },
     {
       forge: "github",
       label: "GitHub token",
       description: "Reaches GitHub with a token.",
       isPicked: true,
-      isRequired: false,
       availability: { kind: "available", statusLabel: null },
       fields: [{ name: "token", label: "Token", hint: "A token is saved. Leave this empty to keep it.", placeholder: "", value: "", isSecret: true }],
-      limitation: null,
     },
   ],
-  defaultForge: "github",
 }
 
 const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
@@ -189,11 +178,7 @@ describe("the settings pages", () => {
     expect(screen.getByLabelText("Token for GitHub token").getAttribute("aria-invalid")).toBe("true")
     expect(save).toHaveBeenCalledWith({
       section: "forges",
-      forges: [
-        { forge: "git", isPicked: true, username: "", token: "", baseUrl: "" },
-        { forge: "github", isPicked: true, username: "", token: "secret", baseUrl: "" },
-      ],
-      defaultForge: "github",
+      forges: [{ forge: "github", isPicked: true, username: "", token: "secret", baseUrl: "" }],
     })
   })
 

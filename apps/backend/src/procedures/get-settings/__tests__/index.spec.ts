@@ -31,15 +31,14 @@ describe("getSettings", () => {
 
     expect(page).toMatchObject({
       section: "forges",
+      hasCodeHost: true,
       forges: [
-        { forge: "git", isPicked: true },
         { forge: "gh", isPicked: true, availability: { kind: "available" } },
         { forge: "glab", isPicked: false, availability: { kind: "unavailable" } },
         { forge: "github", isPicked: true },
         { forge: "gitlab", isPicked: false },
         { forge: "bitbucket", isPicked: false },
       ],
-      defaultForge: "gh",
     })
   })
 

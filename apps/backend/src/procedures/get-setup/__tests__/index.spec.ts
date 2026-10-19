@@ -59,7 +59,7 @@ describe("getSetup", () => {
 
     expect(page.form).toMatchObject({
       step: "forges",
-      forges: [{ forge: "git" }, { forge: "gh", availability: { kind: "available" } }, { forge: "glab", availability: { kind: "unavailable" } }, {}, {}, {}],
+      forges: [{ forge: "gh", availability: { kind: "available" } }, { forge: "glab", availability: { kind: "unavailable" } }, {}, {}, {}],
     })
   })
 

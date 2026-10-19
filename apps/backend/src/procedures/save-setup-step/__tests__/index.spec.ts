@@ -19,7 +19,6 @@ const AGENTS_INPUT: SaveSetupStepInput = {
 const GITHUB_TOKEN_INPUT: SaveSetupStepInput = {
   step: "forges",
   forges: [{ forge: "github", isPicked: true, username: "", token: "secret", baseUrl: "" }],
-  defaultForge: null,
 }
 
 describe("saveSetupStep", () => {
@@ -186,7 +185,6 @@ describe("saveSetupStep", () => {
     const input: SaveSetupStepInput = {
       step: "forges",
       forges: [{ forge: "glab", isPicked: true, username: "", token: "", baseUrl: "" }],
-      defaultForge: null,
     }
 
     await expect(saveSetupStep(input, createSetupContext(AT_FORGES))).resolves.toStrictEqual({

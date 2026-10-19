@@ -1,6 +1,7 @@
 import { buildSetupPage, type SetupPageSource } from "@/procedures/get-setup/utils/build-setup-page"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import {
+  AT_AGENTS,
   AT_CONFIGURATION,
   AT_FORGES,
   AT_REPOSITORIES,
@@ -253,7 +254,7 @@ describe("buildSetupPage", () => {
     expect(form).not.toHaveProperty("connectionOptions")
   })
 
-  it("offers every forge and marks a command line tool that cannot be used", () => {
+  it("offers every code host and marks a command line tool that cannot be used", () => {
     const { form } = buildSetupPage(
       sourceOf({
         setup: AT_FORGES,
@@ -268,7 +269,6 @@ describe("buildSetupPage", () => {
     expect(form).toMatchObject({
       step: "forges",
       forges: [
-        { forge: "git", availability: { kind: "available", statusLabel: null } },
         { forge: "gh", availability: { kind: "available", statusLabel: "Signed in as dev-harper" } },
         { forge: "glab", availability: { kind: "unavailable", reason: "glab is not installed on this machine." } },
         { forge: "github", fields: [{ name: "token", isSecret: true }, { name: "baseUrl" }] },
@@ -278,56 +278,46 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("lists what local git cannot do", () => {
+  it("lists what a code host connection adds, and asks for no code host until one is saved", () => {
     const { form } = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "forges" }))
 
     expect(form).toMatchObject({
+      codeHostFeatures: {
+        label: "A code host connection adds:",
+        items: [
+          "The pull requests to review, with their labels",
+          "Who reviews each pull request, and their verdicts",
+          "Requesting and removing reviewers",
+          "The discussion: reading, writing, replying to and resolving comments",
+          "Submitting your review: approve or request changes",
+          "Picking team members by their account",
+          "Links into the code host's diff view",
+        ],
+      },
+      hasCodeHost: false,
       forges: [
-        {
-          forge: "git",
-          limitation: {
-            label: "With local git only, Flight Plan cannot:",
-            items: [
-              "List pull requests to review",
-              "Filter pull requests by label",
-              "Filter pull requests by their review state",
-              "Show the author and each reviewer's state",
-              "Link into the forge's own diff view",
-            ],
-          },
-        },
-        { forge: "gh", limitation: null },
-        { forge: "glab" },
-        { forge: "github" },
-        { forge: "gitlab" },
-        { forge: "bitbucket" },
+        { forge: "gh", isPicked: false },
+        { forge: "glab", isPicked: false },
+        { forge: "github", isPicked: false },
+        { forge: "gitlab", isPicked: false },
+        { forge: "bitbucket", isPicked: false },
       ],
     })
+    expect(form).not.toHaveProperty("defaultForge")
   })
 
-  it("always picks local git, locks it, and makes it the default until another default is saved", () => {
-    const { form } = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "forges" }))
+  it("asks for no code host when only local git is saved", () => {
+    const { form } = buildSetupPage(sourceOf({ setup: AT_AGENTS, step: "forges" }))
 
-    expect(form).toMatchObject({
-      defaultForge: "git",
-      forges: [
-        { forge: "git", isPicked: true, isRequired: true },
-        { forge: "gh", isPicked: false, isRequired: false },
-        { forge: "glab", isRequired: false },
-        { forge: "github", isRequired: false },
-        { forge: "gitlab", isRequired: false },
-        { forge: "bitbucket", isRequired: false },
-      ],
-    })
+    expect(form).toMatchObject({ hasCodeHost: false })
   })
 
   it("never sends a saved token back and says that one is saved", () => {
     const { form } = buildSetupPage(sourceOf({ setup: { ...AT_FORGES, forges: GITHUB_FORGES }, step: "forges" }))
 
     expect(form).toMatchObject({
-      defaultForge: "gh",
+      hasCodeHost: true,
       forges: [
-        { forge: "git", isPicked: true },
         { forge: "gh", isPicked: true },
         { forge: "glab" },
         {
@@ -390,8 +380,9 @@ describe("buildSetupPage", () => {
 
   it("lets a forge user continue with nobody tracked, since Flight Plan then follows everyone", () => {
     const setup = { ...READY_TO_FINISH, forges: GITHUB_FORGES, repositories: [CHECKOUT_WEB] }
+    const repositoryForges = { [CHECKOUT_WEB.path]: "gh" } as const
 
-    expect(buildSetupPage(sourceOf({ setup, step: "repositories" })).form).toMatchObject({
+    expect(buildSetupPage(sourceOf({ setup, step: "repositories", repositoryForges })).form).toMatchObject({
       isReadyToContinue: true,
       continueHint: null,
       repositories: [{ trackedAuthors: [] }],
@@ -401,7 +392,11 @@ describe("buildSetupPage", () => {
   it("asks a local git user which user they are, and no forge user", () => {
     const localGit = buildSetupPage(sourceOf({ setup: READY_TO_FINISH, step: "repositories" })).form
     const github = buildSetupPage(
-      sourceOf({ setup: { ...READY_TO_FINISH, forges: GITHUB_FORGES }, step: "repositories" }),
+      sourceOf({
+        setup: { ...READY_TO_FINISH, forges: GITHUB_FORGES },
+        step: "repositories",
+        repositoryForges: { [CHECKOUT_WEB.path]: "gh" },
+      }),
     ).form
 
     expect(localGit).toMatchObject({

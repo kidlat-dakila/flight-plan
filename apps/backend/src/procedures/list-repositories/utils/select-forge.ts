@@ -1,4 +1,4 @@
-import type { ForgeConnection, ForgesChoice, SetupForge } from "@/procedures/get-setup/utils/setup"
+import { LOCAL_GIT_FORGE, type ForgeConnection, type ForgesChoice, type SetupForge } from "@/procedures/get-setup/utils/setup"
 import { type Remote, expectedHost } from "@flightplan/git-forge"
 import type { ForgeAdapterName } from "./repository"
 
@@ -26,10 +26,9 @@ const isOnHost = (choice: ForgeChoice, host: string | null): boolean => {
   return expectedHost(FORGE_ADAPTERS[choice.forge], choice.connection?.baseUrl ?? "") === host
 }
 
+const LOCAL_GIT_CHOICE: ForgeChoice = { forge: LOCAL_GIT_FORGE, connection: null }
+
 export const selectForge = (forges: ForgesChoice | null, remote: Remote | null): ForgeChoice => {
-  const defaultForge = forges?.defaultForge ?? "git"
-  const choices = (forges?.connections ?? []).filter((connection) => connection.forge !== "git").map(toChoice)
-  const hostChoices = choices.filter((choice) => isOnHost(choice, remote?.host.toLowerCase() ?? null))
-  const hostChoice = hostChoices.find((choice) => choice.forge === defaultForge) ?? hostChoices.at(0)
-  return hostChoice ?? choices.find((choice) => choice.forge === defaultForge) ?? { forge: defaultForge, connection: null }
+  const choices = (forges?.connections ?? []).filter((connection) => connection.forge !== LOCAL_GIT_FORGE).map(toChoice)
+  return choices.find((choice) => isOnHost(choice, remote?.host.toLowerCase() ?? null)) ?? LOCAL_GIT_CHOICE
 }

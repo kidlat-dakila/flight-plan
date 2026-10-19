@@ -1,4 +1,4 @@
-import { CHECKOUT_WEB, GITHUB_FORGES, READY_TO_FINISH } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { CHECKOUT_WEB, READY_TO_FINISH } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
 import { findRepositoryForges } from "@/procedures/get-setup/utils/repository-forges"
 import { needsSelfAuthor, repositoryForgeOf, type SetupForge } from "@/procedures/get-setup/utils/setup"
@@ -14,13 +14,12 @@ describe("needsSelfAuthor", () => {
 })
 
 describe("repositoryForgeOf", () => {
-  it("is the forge found for the repository, whatever the default forge is", () => {
-    expect(repositoryForgeOf(READY_TO_FINISH, { [CHECKOUT_WEB.path]: "gh" }, CHECKOUT_WEB.path)).toBe("gh")
+  it("is the forge found for the repository", () => {
+    expect(repositoryForgeOf({ [CHECKOUT_WEB.path]: "gh" }, CHECKOUT_WEB.path)).toBe("gh")
   })
 
-  it("is the default forge for a repository with no forge found", () => {
-    expect(repositoryForgeOf({ ...READY_TO_FINISH, forges: GITHUB_FORGES }, {}, CHECKOUT_WEB.path)).toBe("gh")
-    expect(repositoryForgeOf(READY_TO_FINISH, {}, CHECKOUT_WEB.path)).toBe("git")
+  it("is local git for a repository with no forge found", () => {
+    expect(repositoryForgeOf({}, CHECKOUT_WEB.path)).toBe("git")
   })
 })
 

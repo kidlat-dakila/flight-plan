@@ -1,5 +1,5 @@
 import { DEFAULT_REVIEW_PREFERENCES } from "@/procedures/get-review-preferences/utils/review-preferences"
-import { READY_TO_FINISH } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { GITHUB_FORGES, READY_TO_FINISH } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { formatSettings, parseSettings } from "@/procedures/get-setup/utils/stored-settings"
 
@@ -55,6 +55,14 @@ describe("parseSettings", () => {
     }
 
     expect(parseSettings(JSON.stringify(settings))).toBeNull()
+  })
+
+  it("reads forges saved with a default forge, and drops the default", () => {
+    const saved = formatSettings({ ...READY_TO_FINISH, forges: GITHUB_FORGES })
+    const savedWithDefault = saved.replace("\"connections\":", "\"defaultForge\": \"gh\", \"connections\":")
+
+    expect(savedWithDefault).not.toBe(saved)
+    expect(parseSettings(savedWithDefault)).toStrictEqual({ ...READY_TO_FINISH, forges: GITHUB_FORGES })
   })
 
   it("refuses text that is not JSON", () => {

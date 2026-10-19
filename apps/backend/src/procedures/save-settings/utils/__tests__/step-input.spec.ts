@@ -14,10 +14,9 @@ describe("toStepInput", () => {
   it("names the setup step of the forges section", () => {
     const forges = [{ forge: "gh" as const, isPicked: true, username: "", token: "", baseUrl: "" }]
 
-    expect(toStepInput({ section: "forges", forges, defaultForge: null })).toStrictEqual({
+    expect(toStepInput({ section: "forges", forges })).toStrictEqual({
       step: "forges",
       forges,
-      defaultForge: null,
     })
   })
 
