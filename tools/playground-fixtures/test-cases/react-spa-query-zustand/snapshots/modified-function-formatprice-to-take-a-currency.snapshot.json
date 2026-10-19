@@ -418,7 +418,7 @@
                   "title": "Added the constant `STORE_CURRENCY` for the one currency of the store",
                   "declaration": "STORE_CURRENCY",
                   "reading": "The author added a constant `STORE_CURRENCY` that holds `\"USD\"`, the currency the removed `priceFormatter` was fixed to. [`<CartLine />`](code:src/routes/cart/components/CartLine.tsx#CartLine), [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary) and [`<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) each pass it to [`formatPrice()`](code:src/lib/format.ts#formatPrice) as the currency, so that every price on the catalogue and the cart still shows in US dollars.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 3,
@@ -436,7 +436,7 @@
                   "title": "Modified `formatPrice()` to take the currency as a parameter",
                   "declaration": "formatPrice",
                   "reading": "The author modified a function `formatPrice()` that:\n\n- takes a second parameter `currency`, which every caller now has to pass\n- builds an `Intl.NumberFormat` for `\"en-US\"` and that currency on each call, where the module built one formatter fixed to `\"USD\"` once\n- returns the same text as before for `\"USD\"`: `$12.50` for 1250 cents\n\n[`<CartLine />`](code:src/routes/cart/components/CartLine.tsx#CartLine), [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary) and [`<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) are its three callers. Each passes [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), so that no price on the catalogue or the cart changes.",
-                  "needsAttention": "This is the change the pull request exists for: `formatPrice()` no longer fixes the currency to `\"USD\"`, and every caller now has to name one. The other waypoints add [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY) and pass it at the three calls.",
+                  "coreChange": "This is the change the pull request exists for: `formatPrice()` no longer fixes the currency to `\"USD\"`, and every caller now has to name one. The other waypoints add [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY) and pass it at the three calls.",
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -1098,7 +1098,7 @@
                   "title": "Modified `<CartLine />` to pass the store currency for the line total",
                   "declaration": "CartLine",
                   "reading": "The author modified a component `<CartLine />` that now passes [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), which is `\"USD\"`, as the second argument of [`formatPrice()`](code:src/lib/format.ts#formatPrice). [`formatPrice()`](code:src/lib/format.ts#formatPrice) now takes the currency from its caller, so the line total still shows in US dollars: `$25.00` for two items of 1250 cents.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -2100,7 +2100,7 @@
                   "title": "Modified `<CartSummary />` to pass the store currency for the cart total",
                   "declaration": "CartSummary",
                   "reading": "The author modified a component `<CartSummary />` that now passes [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), which is `\"USD\"`, as the second argument of [`formatPrice()`](code:src/lib/format.ts#formatPrice). [`formatPrice()`](code:src/lib/format.ts#formatPrice) now takes the currency from its caller, so the cart total still shows in US dollars: `Total: $25.00` for a cart of 2500 cents.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -3162,7 +3162,7 @@
                   "title": "Modified `<ProductCard />` to pass the store currency for the product price",
                   "declaration": "ProductCard",
                   "reading": "The author modified a component `<ProductCard />` that now passes [`STORE_CURRENCY`](code:src/lib/format.ts#STORE_CURRENCY), which is `\"USD\"`, as the second argument of [`formatPrice()`](code:src/lib/format.ts#formatPrice). [`formatPrice()`](code:src/lib/format.ts#formatPrice) now takes the currency from its caller, so the product price still shows in US dollars: `$12.50` for 1250 cents.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 5,

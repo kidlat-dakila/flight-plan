@@ -748,7 +748,7 @@
                   "title": "Added the name of the `sessionStorage` entry that holds the token",
                   "declaration": "SESSION_TOKEN_KEY",
                   "reading": "The author added a constant `SESSION_TOKEN_KEY` that holds `\"storefront-session\"`, the name of the `sessionStorage` entry the session token is read from. [`readSessionToken()` passes it to `sessionStorage.getItem()`](code:src/api/client.ts#L20), so that [`request()`](code:src/api/client.ts#request) can send the token. No file of the repository writes that entry.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 2,
@@ -766,7 +766,7 @@
                   "title": "Added a function that reads the session token from `sessionStorage`",
                   "declaration": "readSessionToken",
                   "reading": "The author added a function `readSessionToken()` that returns the `sessionStorage` entry `\"storefront-session\"`, or `null` when `sessionStorage` has no such entry. The function is not exported. [`request()` calls it before every `fetch`](code:src/api/client.ts#L24), so that each request sends the token that is stored when the request starts.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 19,
@@ -785,7 +785,7 @@
                   "title": "Modified `request()` to send the session token as a Bearer header",
                   "declaration": "request",
                   "reading": "The author modified a function `request()` that now:\n\n- calls [`readSessionToken()`](code:src/api/client.ts#readSessionToken) before the `fetch`\n- adds the header `Authorization` with the value `Bearer ` and the token when the token is not `null`, and adds no header when the token is `null`\n- spreads `init?.headers` after that header, so an `Authorization` header of the caller replaces it\n\n[`fetchProducts()`](code:src/api/products.ts#L5), [`fetchProfile()`](code:src/api/profile.ts#L5) and [`updateProfile()`](code:src/api/profile.ts#L9) call `request()` and pass no `Authorization` header, so that the products request and both profile requests carry the token with no change in those files.",
-                  "needsAttention": "This is the change the pull request exists for: every request to the API goes through `request()`, so the header it adds reaches [`src/api/products.ts`](code:src/api/products.ts#L5) and [`src/api/profile.ts`](code:src/api/profile.ts#L5). The other two waypoints of this file supply the token.",
+                  "coreChange": "This is the change the pull request exists for: every request to the API goes through `request()`, so the header it adds reaches [`src/api/products.ts`](code:src/api/products.ts#L5) and [`src/api/profile.ts`](code:src/api/profile.ts#L5). The other two waypoints of this file supply the token.",
                   "findings": [],
                   "range": {
                     "lineStart": 23,
@@ -809,7 +809,7 @@
                       "title": null,
                       "declaration": "request › token",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 24,
@@ -827,7 +827,7 @@
                       "title": null,
                       "declaration": "request › Request :25",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 25,

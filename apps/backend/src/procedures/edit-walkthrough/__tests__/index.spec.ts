@@ -26,7 +26,7 @@ describe("editWalkthrough", () => {
 
     await expect(
       editWalkthrough(
-        { ...KEY, segmentId: SEGMENT_ID, edit: { kind: "change-waypoint", waypointId: WAYPOINT_ID, title: "Counts the holds", reading: "It **subtracts**.", needsAttention: "Can go negative." } },
+        { ...KEY, segmentId: SEGMENT_ID, edit: { kind: "change-waypoint", waypointId: WAYPOINT_ID, title: "Counts the holds", reading: "It **subtracts**.", coreChange: "Can go negative." } },
         context,
       ),
     ).resolves.toStrictEqual({ kind: "saved" })
@@ -34,8 +34,8 @@ describe("editWalkthrough", () => {
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ status: statusBefore })
     expect(waypointsOn(await readWalkthrough(context)).find((waypoint) => waypoint.id === WAYPOINT_ID)).toMatchObject({
       title: "Counts the holds",
-      attentionLabel: "Needs Attention",
-      text: { title: "Counts the holds", reading: "It **subtracts**.", needsAttention: "Can go negative." },
+      coreChangeLabel: "Core change",
+      text: { title: "Counts the holds", reading: "It **subtracts**.", coreChange: "Can go negative." },
     })
   })
 
@@ -43,14 +43,14 @@ describe("editWalkthrough", () => {
     const context = createContext()
 
     await editWalkthrough(
-      { ...KEY, segmentId: SEGMENT_ID, edit: { kind: "change-waypoint", waypointId: WAYPOINT_ID, title: "Counts the holds", reading: "", needsAttention: "" } },
+      { ...KEY, segmentId: SEGMENT_ID, edit: { kind: "change-waypoint", waypointId: WAYPOINT_ID, title: "Counts the holds", reading: "", coreChange: "" } },
       context,
     )
 
     expect(waypointsOn(await readWalkthrough(context)).find((waypoint) => waypoint.id === WAYPOINT_ID)).toMatchObject({
-      attentionLabel: "Needs Attention",
-      needsAttention: null,
-      text: { needsAttention: "" },
+      coreChangeLabel: "Core change",
+      coreChange: null,
+      text: { coreChange: "" },
     })
   })
 
@@ -93,7 +93,7 @@ describe("editWalkthrough", () => {
     const before = await context.reviewStore.findArtifact(KEY)
 
     await expect(
-      editWalkthrough({ ...KEY, segmentId: SEGMENT_ID, edit: { kind: "change-waypoint", waypointId: WAYPOINT_ID, title: " ", reading: "", needsAttention: null } }, context),
+      editWalkthrough({ ...KEY, segmentId: SEGMENT_ID, edit: { kind: "change-waypoint", waypointId: WAYPOINT_ID, title: " ", reading: "", coreChange: null } }, context),
     ).resolves.toMatchObject({ kind: "rejected" })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toStrictEqual(before)
   })

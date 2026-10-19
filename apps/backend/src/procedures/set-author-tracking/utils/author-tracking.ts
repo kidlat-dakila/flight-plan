@@ -1,4 +1,5 @@
 import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
+import { selfAuthorIdOf, type GitIdentity } from "@/procedures/get-setup/utils/git-identity"
 import type { RepositoryAuthor, Setup, SetupRepository } from "@/procedures/get-setup/utils/setup"
 
 type AuthorChange = (trackedAuthors: readonly RepositoryAuthor[]) => readonly RepositoryAuthor[]
@@ -15,11 +16,18 @@ const withAuthorChange = (setup: Setup, repositoryName: string, change: AuthorCh
 const withoutAuthor = (trackedAuthors: readonly RepositoryAuthor[], authorId: string): readonly RepositoryAuthor[] =>
   trackedAuthors.filter((tracked) => tracked.id !== authorId)
 
-const isSelfAuthor = (setup: Setup, repositoryName: string, author: RepositoryAuthor): boolean =>
-  setup.repositories.some((repository) => repository.name === repositoryName && repository.selfAuthor?.id === author.id)
+const isSelfAuthor = (setup: Setup, repositoryName: string, author: RepositoryAuthor, identity: GitIdentity | null): boolean =>
+  setup.repositories.some(
+    (repository) => repository.name === repositoryName && selfAuthorIdOf(identity, repository.selfAuthor) === author.id,
+  )
 
-export const withTrackedAuthor = (setup: Setup, repositoryName: string, author: RepositoryAuthor): Setup =>
-  isSelfAuthor(setup, repositoryName, author)
+export const withTrackedAuthor = (
+  setup: Setup,
+  repositoryName: string,
+  author: RepositoryAuthor,
+  identity: GitIdentity | null,
+): Setup =>
+  isSelfAuthor(setup, repositoryName, author, identity)
     ? setup
     : withAuthorChange(setup, repositoryName, (trackedAuthors) => [...withoutAuthor(trackedAuthors, author.id), author])
 

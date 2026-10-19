@@ -43,9 +43,11 @@ const createContext = (spawner = new FakeSpawner()): ProcedureContext => ({
   setupStore: new InMemorySetupStore({
     ...EMPTY_SETUP,
     agents: {
-      installs: [{ agent: "claude", installPath: "/home/.claude", model: "default", effort: "default" }],
+      installs: [
+        { agent: "claude", installPath: "/home/.claude", model: "default", effort: "default" },
+        { agent: "codex", installPath: "/home/.codex", model: "default", effort: "default" },
+      ],
       defaultAgent: "claude",
-      connection: "direct",
     },
   }),
   configurationStore: new InMemoryConfigurationStore([]),
@@ -57,7 +59,7 @@ const createContext = (spawner = new FakeSpawner()): ProcedureContext => ({
 })
 
 const requestWith = async (context: ProcedureContext, overrides: Partial<RequestReviewInput> = {}): Promise<void> => {
-  await requestReview({ ...KEY, configurationId: "minimal", order: "along-the-path", customOrder: "", writer: { kind: "manual" }, ...overrides }, context)
+  await requestReview({ ...KEY, configurationId: "minimal", order: "along-the-path", customOrder: "", writer: { kind: "none" }, ...overrides }, context)
 }
 
 const AGENT_WRITER = { kind: "agent", agent: "claude", model: "default", effort: "default" } as const
@@ -95,14 +97,15 @@ describe("generateSection", () => {
     })
   })
 
-  it("builds the diagram at the commits of the review, switches it on and returns the prompt to paste", async () => {
+  it("builds the diagram at the commits of the review, switches it on and gives the line to run in an agent Flight Plan cannot start", async () => {
     const context = createContext()
-    await requestWith(context)
+    await requestWith(context, { writer: { kind: "agent", agent: "codex", model: "default", effort: "default" } })
     await context.reviewStore.amendArtifact(KEY, (artifact) => ({ artifact: { ...artifact, status: "complete" }, outcome: null }))
 
     const result = await generateSection({ ...KEY, section: "traceDiagram" }, context)
 
-    expect(result).toMatchObject({ kind: "generated", message: "Prompt copied" })
+    expect(result).toMatchObject({ kind: "generated", message: "Run this line in Codex to start the write-up" })
+    expect(result?.kind === "generated" ? result.prompt : null).not.toContain("\n")
     expect(result?.kind === "generated" ? result.prompt : null).toContain("The reviewer asked for the Trace Diagram of the Flight Plan review of pull request #416 of storefront")
     const artifact = await context.reviewStore.findArtifact(KEY)
     expect(artifact).toMatchObject({
@@ -118,7 +121,7 @@ describe("generateSection", () => {
 
   it("keeps what is written when it generates a diagram", async () => {
     const context = createContext()
-    await requestWith(context)
+    await requestWith(context, { writer: AGENT_WRITER })
     const segments = (await context.reviewStore.findArtifact(KEY))?.segments ?? []
     const segmentId = segments.map((segment) => segment.id).join("")
     const waypointId = segments.flatMap(waypointsOf).map((located) => located.waypoint.id).slice(0, 1).join("")

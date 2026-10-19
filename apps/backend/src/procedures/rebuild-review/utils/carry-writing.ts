@@ -97,7 +97,7 @@ const waypointKeyOf = (path: string, declaration: string): string => [path, decl
 
 const textsOfWaypoint = (waypoint: Waypoint): string[] => [
   waypoint.reading,
-  waypoint.needsAttention ?? UNWRITTEN,
+  waypoint.coreChange ?? UNWRITTEN,
   ...waypoint.findings.flatMap((finding) => [finding.title, finding.reading, ...(finding.trace ?? [])]),
 ]
 
@@ -111,7 +111,7 @@ const carryWaypoint = (waypoint: Waypoint, path: string, carry: Carry): Waypoint
     ...walked,
     title: written.waypoint.title ?? waypoint.title,
     reading: written.waypoint.reading,
-    needsAttention: written.waypoint.needsAttention,
+    coreChange: written.waypoint.coreChange,
     findings: written.waypoint.findings,
   }
 }

@@ -44,9 +44,10 @@ const storedWaypointSchema: z.ZodType<StoredWaypoint> = z.lazy(() =>
     declaration: z.string(),
     codeBlockIds: z.array(z.string()),
     reading: z.string(),
-    needsAttention: z.string().nullable(),
+    coreChange: z.string().nullable(),
     findings: z.array(artifactFindingSchema),
     children: z.array(storedWaypointSchema),
+    isRequired: z.boolean().default(false),
     range: lineRangeSchema,
   }),
 )

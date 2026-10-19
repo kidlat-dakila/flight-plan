@@ -34,7 +34,7 @@ export const generateBlastFromBlocks = ({ group, filePaths, sharedFilePaths, dif
   const reachedPaths = inOrder([...new Set(using.map((block) => block.filePath))].filter((filePath) => !filePaths.includes(filePath)))
   const drawnPaths = [...inOrder(filePaths), ...reachedPaths]
   return {
-    nodes: drawnPaths.map((path) => ({ path, diffType: diffTypes.get(path) ?? null, impactType: null, impactReason: null })),
+    nodes: drawnPaths.map((path) => ({ path, diffType: diffTypes.get(path) ?? null, impactType: null, impactReason: null, isRequired: false })),
     edges: listUses(using, new Set(drawnPaths)),
   }
 }

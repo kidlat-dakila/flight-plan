@@ -1,5 +1,5 @@
 import type { StartForm } from "@/procedures/get-review/utils/schemas"
-import { MANUAL_WRITER } from "@/procedures/get-review/utils/start/agent-offers"
+import { NO_AGENT_WRITER } from "@/procedures/get-review/utils/start/agent-offers"
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import type { RebuildMode } from "@/procedures/rebuild-review/utils/schemas"
 import type { RebuildForm } from "./schemas"
@@ -37,9 +37,9 @@ const withStoredChoice = (option: AgentOption, { writer }: ReviewRequest): Agent
 }
 
 const writerKeyOf = (form: StartForm, { writer }: ReviewRequest): StartForm["writer"]["selectedKey"] => {
-  if (writer.kind !== "agent") return MANUAL_WRITER
+  if (writer.kind !== "agent" && writer.kind !== "external") return NO_AGENT_WRITER
   const option = form.writer.agents.find((candidate) => candidate.agent === writer.agent)
-  return option?.unavailableReason === null ? option.agent : form.writer.selectedKey
+  return option?.agent ?? form.writer.selectedKey
 }
 
 const withStoredChoices = (form: StartForm, request: ReviewRequest | null): StartForm =>

@@ -15,10 +15,10 @@ export interface WaypointContent {
   readonly isDraft: boolean
   readonly positionLabel: string
   readonly chip: { readonly kind: FindingKind, readonly label: string } | null
-  readonly attentionLabel: string | null
+  readonly coreChangeLabel: string | null
   readonly reading: ProseBlocks | null
   readonly unwrittenLabel: string
-  readonly needsAttention: ProseBlocks | null
+  readonly coreChange: ProseBlocks | null
   readonly findings: readonly Finding[]
   readonly isReviewed: boolean
   readonly reviewLabel: string
@@ -81,7 +81,7 @@ const WaypointBox = ({
           className={cn("size-4 shrink-0 text-muted-foreground transition-transform duration-[180ms] ease-out", isOpen ? "rotate-90" : "")}
         />
         {waypoint.chip === null ? null : <FindingChip kind={waypoint.chip.kind} label={waypoint.chip.label} />}
-        {waypoint.attentionLabel === null ? null : <FindingChip kind="attention" label={waypoint.attentionLabel} />}
+        {waypoint.coreChangeLabel === null ? null : <FindingChip kind="core-change" label={waypoint.coreChangeLabel} />}
         <Unwritten isPending={waypoint.isDraft} className="w-56 text-[0.9375rem]">
           <span
             className={cn(
@@ -116,12 +116,12 @@ const WaypointBox = ({
                   </Unwritten>
                 )
               : <Prose blocks={waypoint.reading} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
-            {waypoint.needsAttention === null || waypoint.attentionLabel === null
+            {waypoint.coreChange === null || waypoint.coreChangeLabel === null
               ? null
               : (
                   <div className="flex flex-col gap-2 border-t pt-3">
-                    <FindingChip kind="attention" label={waypoint.attentionLabel} />
-                    <Prose blocks={waypoint.needsAttention} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
+                    <FindingChip kind="core-change" label={waypoint.coreChangeLabel} />
+                    <Prose blocks={waypoint.coreChange} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
                   </div>
                 )}
             {waypoint.findings.map((finding) => (

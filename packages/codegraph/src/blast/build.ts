@@ -233,7 +233,7 @@ const exportBoundStandings = (blastDiagram: Blast): ReadonlyMap<string, FileStan
   return new Map(blastDiagram.nodes.map((node) => [node.path, standingOf(node, reachedPaths)] as const))
 }
 
-const blastOfImportBound = ({ nodes, edges }: ImportBound): Blast => ({ nodes: nodes.map((node) => ({ ...node, ...NO_IMPACT_TYPE })), edges: [...edges] })
+const blastOfImportBound = ({ nodes, edges }: ImportBound): Blast => ({ nodes: nodes.map((node) => ({ ...node, ...NO_IMPACT_TYPE, isRequired: false })), edges: [...edges] })
 
 const importBoundStandings = (blastDiagram: Blast): ReadonlyMap<string, FileStanding> =>
   new Map(blastDiagram.nodes.map((node) => [node.path, node.diffType ?? "used"] as const))

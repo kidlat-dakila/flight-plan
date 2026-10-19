@@ -9,10 +9,10 @@ const createWaypoint = (overrides: Partial<WaypointContent> = {}): WaypointConte
   isDraft: false,
   positionLabel: "2 of 7",
   chip: { kind: "risk", label: "Risk" },
-  attentionLabel: "Needs Attention",
+  coreChangeLabel: "Core change",
   reading: paragraph("It subtracts the held units."),
   unwrittenLabel: "Not written yet.",
-  needsAttention: paragraph("It can go below zero."),
+  coreChange: paragraph("It can go below zero."),
   findings: [createFinding()],
   isReviewed: false,
   reviewLabel: "Reviewed",
@@ -40,12 +40,12 @@ describe("WaypointBox", () => {
     const box = screen.getByRole("region", { name: "Held units reduce the price" })
 
     expect(within(box).getByText("Risk")).toBeTruthy()
-    expect(within(box).getByText("Needs Attention")).toBeTruthy()
+    expect(within(box).getByText("Core change")).toBeTruthy()
     expect(within(box).getByText("2 of 7")).toBeTruthy()
     expect(within(box).queryByText("It subtracts the held units.")).toBeNull()
   })
 
-  it("shows the reading, why it needs attention and its findings when open", () => {
+  it("shows the reading, why it is a core change and its findings when open", () => {
     renderBox(createWaypoint(), true)
 
     expect(screen.getByText("It subtracts the held units.")).toBeTruthy()
@@ -54,7 +54,7 @@ describe("WaypointBox", () => {
   })
 
   it("says so when the agent has not written it yet", () => {
-    renderBox(createWaypoint({ reading: null, isDraft: true, title: "priceOf", chip: null, attentionLabel: null, needsAttention: null, findings: [] }), true)
+    renderBox(createWaypoint({ reading: null, isDraft: true, title: "priceOf", chip: null, coreChangeLabel: null, coreChange: null, findings: [] }), true)
 
     expect(screen.getByText("Not written yet.")).toBeTruthy()
   })

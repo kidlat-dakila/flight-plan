@@ -52,6 +52,7 @@ const blastFile = (path: string, diffType: BlastNode["diffType"], impactType: Bl
   diffType,
   impactType,
   impactReason,
+  isRequired: true,
 })
 
 const STOCK_BLAST: Blast = {
@@ -86,6 +87,7 @@ const STOCK_BLAST: Blast = {
 
 const STOCK_SEGMENT: Segment = {
   id: "stock-check",
+  isContextRequired: true,
   title: "Stock check",
   changedPaths: [STOCK_LEVEL_PATH, HOLDS_PATH, HOLD_POLICY_PATH, RELEASE_JOB_PATH, HELD_STOCK_UNCOVERED_PATH],
   context: [
@@ -124,7 +126,7 @@ const STOCK_SEGMENT: Segment = {
             declaration: "availableUnits",
             codeBlocks: [],
             reading: "This is the number every stock decision reads. It used to be the units on hand. It now loads the stock and the active holds together and subtracts the holds, except the `held` units the caller says are its own.\n\nWithout the `held` parameter a shopper would be blocked by their own hold: the cart that holds the last unit could never buy it.",
-            needsAttention: "Nothing stops the result from going below zero. Holds are placed after the charge in [`checkout()`](code:src/checkout/checkout.ts#checkout.hold), so two carts can each hold the last unit.",
+            coreChange: "This is the rule the pull request exists for: a shopper can now buy only the stock that other carts do not hold, and the other waypoints wire it in.",
             findings: [
               {
                 id: "negative-available-units",
@@ -146,6 +148,7 @@ const STOCK_SEGMENT: Segment = {
               },
             ],
             children: [],
+            isRequired: true,
           },
           {
             id: "assert-in-stock",
@@ -153,7 +156,7 @@ const STOCK_SEGMENT: Segment = {
             declaration: "assertInStock",
             codeBlocks: [],
             reading: "The guard needs the line's `held` units to pass them on, so its two parameters became one cart line. Every caller has to change with it.",
-            needsAttention: null,
+            coreChange: null,
             findings: [
               {
                 id: "add-to-cart-old-signature",
@@ -177,6 +180,7 @@ const STOCK_SEGMENT: Segment = {
               },
             ],
             children: [],
+            isRequired: true,
           },
         ],
       },
@@ -189,9 +193,10 @@ const STOCK_SEGMENT: Segment = {
             declaration: "activeHolds",
             codeBlocks: [],
             reading: "The query now asks only for holds that expire after the current time. A hold therefore stops reducing the stock the moment it expires, even before the job deletes its row.",
-            needsAttention: null,
+            coreChange: null,
             findings: [],
             children: [],
+            isRequired: true,
           },
           {
             id: "place-hold",
@@ -199,7 +204,7 @@ const STOCK_SEGMENT: Segment = {
             declaration: "placeHold",
             codeBlocks: [],
             reading: "Creates the hold that [`availableUnits()`](code:src/inventory/stock-level.ts#availableUnits) later subtracts. The expiry is the current time plus [`HOLD_MINUTES`](code:src/inventory/hold-policy.ts#HOLD_MINUTES).",
-            needsAttention: null,
+            coreChange: null,
             findings: [
               {
                 id: "hold-reads-clock",
@@ -219,6 +224,7 @@ const STOCK_SEGMENT: Segment = {
               },
             ],
             children: [],
+            isRequired: true,
           },
           {
             id: "release-expired-holds",
@@ -226,9 +232,10 @@ const STOCK_SEGMENT: Segment = {
             declaration: "releaseExpiredHolds",
             codeBlocks: [],
             reading: "Deletes the rows and returns how many it deleted, which is all the job logs. No history of a hold is kept.",
-            needsAttention: null,
+            coreChange: null,
             findings: [],
             children: [],
+            isRequired: true,
           },
         ],
       },
@@ -241,9 +248,10 @@ const STOCK_SEGMENT: Segment = {
             declaration: "HOLD_MINUTES",
             codeBlocks: [],
             reading: "One constant decides how long an abandoned cart blocks a sale. It is not configurable per item.",
-            needsAttention: null,
+            coreChange: null,
             findings: [],
             children: [],
+            isRequired: true,
           },
         ],
       },
@@ -256,9 +264,10 @@ const STOCK_SEGMENT: Segment = {
             declaration: "releaseHoldsJob",
             codeBlocks: [],
             reading: "The stock check is already correct without this job, because [`activeHolds()`](code:src/inventory/holds.ts#activeHolds) ignores expired holds. The job keeps the table from growing.",
-            needsAttention: null,
+            coreChange: null,
             findings: [],
             children: [],
+            isRequired: true,
           },
         ],
       },
@@ -282,6 +291,7 @@ const CHECKOUT_FLOW: TraceDiagram = mockTrace(
 
 const CHECKOUT_SEGMENT: Segment = {
   id: "checkout",
+  isContextRequired: true,
   title: "Checkout",
   changedPaths: [CHECKOUT_PATH, CART_LINE_PATH, CHECKOUT_BUTTON_PATH],
   context: [
@@ -316,7 +326,7 @@ const CHECKOUT_SEGMENT: Segment = {
             declaration: "checkout",
             codeBlocks: [],
             reading: "The order of the steps is the review here. The guard runs first, the charge second and the hold third.",
-            needsAttention: null,
+            coreChange: null,
             findings: [],
             children: [
               {
@@ -325,9 +335,10 @@ const CHECKOUT_SEGMENT: Segment = {
                 declaration: "checkout.guard",
                 codeBlocks: [],
                 reading: "The call site follows the new signature of [`assertInStock()`](code:src/inventory/stock-level.ts#assertInStock). Nothing else changes on this line.",
-                needsAttention: null,
+                coreChange: null,
                 findings: [],
                 children: [],
+                isRequired: true,
               },
               {
                 id: "checkout-hold",
@@ -335,7 +346,7 @@ const CHECKOUT_SEGMENT: Segment = {
                 declaration: "checkout.hold",
                 codeBlocks: [],
                 reading: "A hold is what makes the next shopper's stock check fail. Here it is created only once the payment has gone through.",
-                needsAttention: "Between the guard and the hold, the cart holds nothing. A second cart can pass the guard for the same last unit during the charge, and both are charged.",
+                coreChange: "This is where checkout starts holding stock, which the new rule in `availableUnits()` counts on.",
                 findings: [
                   {
                     id: "hold-after-charge",
@@ -354,8 +365,10 @@ const CHECKOUT_SEGMENT: Segment = {
                   },
                 ],
                 children: [],
+                isRequired: true,
               },
             ],
+            isRequired: true,
           },
         ],
       },
@@ -368,7 +381,7 @@ const CHECKOUT_SEGMENT: Segment = {
             declaration: "CartLine",
             codeBlocks: [],
             reading: "The field is optional, so every place that builds a line keeps compiling. Nothing in this change sets it yet.",
-            needsAttention: null,
+            coreChange: null,
             findings: [
               {
                 id: "held-never-set",
@@ -380,6 +393,7 @@ const CHECKOUT_SEGMENT: Segment = {
               },
             ],
             children: [],
+            isRequired: true,
           },
         ],
       },
@@ -392,9 +406,10 @@ const CHECKOUT_SEGMENT: Segment = {
             declaration: "handleCheckout",
             codeBlocks: [],
             reading: "The endpoint already answers 409 for an `OutOfStockError`. The button used to show the general error for it, and now says what happened.",
-            needsAttention: null,
+            coreChange: null,
             findings: [],
             children: [],
+            isRequired: true,
           },
         ],
       },

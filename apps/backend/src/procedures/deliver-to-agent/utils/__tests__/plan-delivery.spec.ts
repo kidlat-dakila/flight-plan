@@ -71,7 +71,6 @@ describe("planDelivery", () => {
         { agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet", effort: "default" },
       ],
       defaultAgent: "codex",
-      connection: "direct",
     } as const
 
     expect(planDelivery(factsOf({ agents }))).toMatchObject({ kind: "spawn", install: { agent: "claude", model: "sonnet" } })

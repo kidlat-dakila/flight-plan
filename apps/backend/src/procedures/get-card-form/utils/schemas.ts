@@ -37,7 +37,7 @@ export const cardFormSchema = z.strictObject({
       title: z.string(),
       lineStart: z.number().int(),
       lineEnd: z.number().int(),
-      attentionLabel: z.string().nullable(),
+      coreChangeLabel: z.string().nullable(),
     }),
   ),
 })

@@ -43,7 +43,7 @@ const waypointFingerprint = (waypoint: Waypoint, rows: readonly SourceLine[]): s
   fingerprintOf({
     title: waypoint.title,
     reading: waypoint.reading,
-    needsAttention: waypoint.needsAttention,
+    coreChange: waypoint.coreChange,
     findings: waypoint.findings,
     rows: rows.map((line) => `${line.mark}${line.text}`),
   })
@@ -94,39 +94,39 @@ export const FINDING_KIND_LABELS: Readonly<Record<(typeof FINDING_KINDS)[number]
   question: "Question",
 }
 
-export const ATTENTION_LABEL = "Needs Attention"
+export const CORE_CHANGE_LABEL = "Core change"
 
 type WaypointMarkKind = (typeof WAYPOINT_MARK_KINDS)[number]
 
 export const WAYPOINT_MARK_LABELS: Readonly<Record<WaypointMarkKind, string>> = {
   ...FINDING_KIND_LABELS,
-  attention: ATTENTION_LABEL,
-  plain: "",
+  "core-change": CORE_CHANGE_LABEL,
+  "plain": "",
 }
 
 const markKindsOf = (waypoint: Waypoint): ReadonlySet<WaypointMarkKind> =>
-  new Set([...waypoint.findings.map((finding) => finding.kind), ...(waypoint.needsAttention === null ? [] : ["attention" as const])])
+  new Set([...waypoint.findings.map((finding) => finding.kind), ...(waypoint.coreChange === null ? [] : ["core-change" as const])])
 
 export const markKindOf = (waypoint: Waypoint): WaypointMarkKind => {
   const kinds = markKindsOf(waypoint)
   return WAYPOINT_MARK_KINDS.find((kind) => kinds.has(kind)) ?? "plain"
 }
 
-const COUNTED_MARK_KINDS = ["bug", "risk", "attention", "question", "nit"] as const satisfies readonly WaypointMarkKind[]
+const COUNTED_MARK_KINDS = ["bug", "risk", "core-change", "question", "nit"] as const satisfies readonly WaypointMarkKind[]
 
 type CountedMarkKind = (typeof COUNTED_MARK_KINDS)[number]
 
 const COUNT_NOUNS: Readonly<Record<CountedMarkKind, readonly [singular: string, plural: string]>> = {
-  bug: ["bug", "bugs"],
-  risk: ["risk", "risks"],
-  attention: ["needs attention", "need attention"],
-  question: ["question", "questions"],
-  nit: ["nit", "nits"],
+  "bug": ["bug", "bugs"],
+  "risk": ["risk", "risks"],
+  "core-change": ["core change", "core changes"],
+  "question": ["question", "questions"],
+  "nit": ["nit", "nits"],
 }
 
 const markCountOf = (waypoints: readonly FlatWaypoint[], kind: CountedMarkKind): number =>
-  kind === "attention"
-    ? waypoints.filter(({ waypoint }) => waypoint.needsAttention !== null).length
+  kind === "core-change"
+    ? waypoints.filter(({ waypoint }) => waypoint.coreChange !== null).length
     : waypoints.flatMap(({ waypoint }) => waypoint.findings).filter((finding) => finding.kind === kind).length
 
 export const countLabelsOf = (waypoints: readonly FlatWaypoint[]): string[] => [

@@ -1,3 +1,4 @@
+import { withIdentityAsSelf } from "@/procedures/add-repository/utils/find-selected-authors"
 import {
   missingRepositoryMessage,
   notRepositoryMessage,
@@ -45,10 +46,13 @@ export const searchAdditionAuthors = async (
   const setup = await context.setupStore.read()
   const folder = await chooseFolder(input, setup, context)
   if (folder.kind === "unusable") return withoutSuggestions(folder.message)
-  const forge = await context.setupEnvironment.findRepositoryForge(folder.path, setup.forges)
+  const [forge, identity] = await Promise.all([
+    context.setupEnvironment.findRepositoryForge(folder.path, setup.forges),
+    context.setupEnvironment.readGitIdentity(folder.path),
+  ])
   const found = await context.setupEnvironment.searchAuthors(
     { repositoryPath: folder.path, forge, forges: setup.forges },
     input.query,
   )
-  return buildAuthorSuggestions(found, input, { role: input.role, forge, query: input.query })
+  return buildAuthorSuggestions(found, withIdentityAsSelf(input, identity), { role: input.role, forge, query: input.query })
 }

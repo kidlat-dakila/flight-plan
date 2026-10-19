@@ -4,7 +4,7 @@ CONFIGURATION_URL="$APP_URL/settings/profiles/standard"
 PAGE_SETTLE_MS=3500
 SCROLL_SETTLE_MS=1200
 SIGN_BAND_HEIGHT=56
-OPEN_NEEDS_ATTENTION_WAYPOINT="(()=>{const waypoint=[...document.querySelectorAll('section[aria-label]')].find(section=>section.getAttribute('aria-label').includes('updateOrder()'));const toggle=waypoint.querySelector('button[aria-expanded]');if(toggle.getAttribute('aria-expanded')==='false'){toggle.click()};waypoint.id='capture-waypoint';return 1})()"
+OPEN_CORE_CHANGE_WAYPOINT="(()=>{const waypoint=[...document.querySelectorAll('section[aria-label]')].find(section=>section.getAttribute('aria-label').includes('updateOrder()'));const toggle=waypoint.querySelector('button[aria-expanded]');if(toggle.getAttribute('aria-expanded')==='false'){toggle.click()};waypoint.id='capture-waypoint';return 1})()"
 
 browse() {
   agent-browser "$@" >/dev/null 2>&1

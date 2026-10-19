@@ -27,7 +27,7 @@ export const createRequest = (overrides: Partial<ReviewRequest> = {}): ReviewReq
   preset: "standard",
   order: "foundations-first",
   customOrder: null,
-  writer: { kind: "manual" },
+  writer: { kind: "none" },
   requestedAt: new Date("2026-10-01T12:00:00.000Z"),
   ...overrides,
 })

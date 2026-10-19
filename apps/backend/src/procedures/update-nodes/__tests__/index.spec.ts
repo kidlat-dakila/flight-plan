@@ -46,7 +46,7 @@ describe("updateNodes", () => {
         id: "w3",
         title: "Rounded the sum once",
         reading: "The author moved the rounding here from [`lineTotal()`](code:src/cart/subtotal.ts#lineTotal).",
-        needsAttention: "This is the rule the pull request exists for.",
+        coreChange: "This is the rule the pull request exists for.",
         findings: [BUG],
       }],
     }, context)
@@ -58,9 +58,10 @@ describe("updateNodes", () => {
       codeBlocks: [],
       title: "Rounded the sum once",
       reading: "The author moved the rounding here from [`lineTotal()`](code:src/cart/subtotal.ts#lineTotal).",
-      needsAttention: "This is the rule the pull request exists for.",
+      coreChange: "This is the rule the pull request exists for.",
       findings: [BUG],
       children: [],
+      isRequired: true,
     })
   })
 
@@ -80,7 +81,7 @@ describe("updateNodes", () => {
       blastDiagram: {
         nodes: [
           { path: "src/cart/CartPage.tsx", impactType: null },
-          { path: "src/cart/CartTotal.tsx", impactType: "unaffected", impactReason: null },
+          { path: "src/cart/CartTotal.tsx", impactType: "unaffected", impactReason: null, isRequired: true },
           { path: SUBTOTAL_PATH, impactType: null },
         ],
       },
@@ -178,6 +179,28 @@ describe("updateNodes", () => {
     const writing = await updateNodes({ ...SEGMENT_KEY, context: "- [The total](code:src/cart/total.ts#total) is rounded once." }, context)
 
     expect(messageOf(writing)).toContain("`code:src/cart/total.ts#total`")
+  })
+
+  it("refuses to write a node the review does not ask for, and writes nothing", async () => {
+    const unrequiredW1 = {
+      ...DRAFT_ARTIFACT,
+      segments: DRAFT_ARTIFACT.segments.map((segment) => ({
+        ...segment,
+        isContextRequired: false,
+        walkthrough: {
+          files: segment.walkthrough.files.map((file) => ({
+            ...file,
+            waypoints: file.waypoints.map((waypoint) => (waypoint.id === "w1" ? { ...waypoint, isRequired: false } : waypoint)),
+          })),
+        },
+      })),
+    }
+    const context = await createArtifactContext(unrequiredW1)
+
+    const writing = await updateNodes({ ...SEGMENT_KEY, context: "Why.", waypoints: [{ id: "w1", title: "Rounded once" }] }, context)
+
+    expect(messageOf(writing)).toBe("This review does not ask you to write the context and the title, `w1`. Leave it as it is. Nothing was written.")
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toStrictEqual(unrequiredW1)
   })
 
   it("refuses a Trace Diagram description on a segment that has no diagram", async () => {

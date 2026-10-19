@@ -26,11 +26,12 @@ const readFollowings = async (setup: Setup, context: ProcedureContext): Promise<
   const repositories = await context.repositoryStore.listRegistered()
   return await Promise.all(
     repositories.map(async (repository) => {
-      const [authors, forge] = await Promise.all([
+      const [authors, forge, identity] = await Promise.all([
         context.repositoryStore.readAuthors(repository.name),
         context.setupEnvironment.findRepositoryForge(repository.path, setup.forges),
+        context.setupEnvironment.readGitIdentity(repository.path),
       ])
-      return { repository, authors: authors ?? NO_AUTHORS, forge }
+      return { repository, authors: authors ?? NO_AUTHORS, forge, identity }
     }),
   )
 }

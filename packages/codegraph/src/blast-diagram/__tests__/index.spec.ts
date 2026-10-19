@@ -20,10 +20,10 @@ describe("generateBlastDiagram", () => {
     ])
 
     expect(blastDiagram.nodes).toStrictEqual([
-      { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null },
-      { path: "src/legacy-pricing.ts", diffType: "deleted", impactType: null, impactReason: null },
-      { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null },
-      { path: "src/types.ts", diffType: "added", impactType: null, impactReason: null },
+      { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+      { path: "src/legacy-pricing.ts", diffType: "deleted", impactType: null, impactReason: null, isRequired: false },
+      { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null, isRequired: false },
+      { path: "src/types.ts", diffType: "added", impactType: null, impactReason: null, isRequired: false },
     ])
   })
 

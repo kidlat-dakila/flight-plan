@@ -1,7 +1,8 @@
 import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
 import type { ListedRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
 import { toTrackedAuthor } from "@/procedures/get-setup/utils/build-repositories-step"
-import type { SetupForge } from "@/procedures/get-setup/utils/setup"
+import { selfAuthorOf, type GitIdentity } from "@/procedures/get-setup/utils/git-identity"
+import type { RepositoryAuthor, SetupForge } from "@/procedures/get-setup/utils/setup"
 import { repositoryHref } from "@/procedures/list-repositories/utils/build-repository-index"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { isNobodyTracked } from "@/procedures/list-repositories/utils/tracked-authors"
@@ -11,6 +12,7 @@ export interface RepositoryFollowing {
   readonly repository: ListedRepository
   readonly authors: SelectedAuthors
   readonly forge: SetupForge
+  readonly identity: GitIdentity | null
 }
 
 const NO_REPOSITORIES_MESSAGE = "No repositories yet. Add one to start."
@@ -19,13 +21,19 @@ const ADDED_BRANCHES_MESSAGE = "No team members are picked, so Flight Plan lists
 
 const nobodyTrackedMessage = (forge: SetupForge): string => (forge === "git" ? ADDED_BRANCHES_MESSAGE : EVERYONE_FOLLOWED_MESSAGE)
 
-const toFollowedRepository = ({ repository, authors, forge }: RepositoryFollowing, position: number): FollowedRepository => ({
+const toSelfAuthorEntry = (selfAuthor: RepositoryAuthor | null): FollowedRepository["selfAuthor"] =>
+  selfAuthor === null ? null : toTrackedAuthor(selfAuthor)
+
+const toFollowedRepository = (
+  { repository, authors, forge, identity }: RepositoryFollowing,
+  position: number,
+): FollowedRepository => ({
   name: repository.name,
   path: repository.path,
   lineColor: lineColorAt(position),
   lineLabel: repository.name.charAt(0).toUpperCase(),
   configurationHref: `${repositoryHref(repository)}/configurations`,
-  selfAuthor: authors.selfAuthor === null ? null : toTrackedAuthor(authors.selfAuthor),
+  selfAuthor: toSelfAuthorEntry(selfAuthorOf(identity, authors.selfAuthor)),
   trackedAuthors: authors.trackedAuthors.map(toTrackedAuthor),
   emptyMessage: isNobodyTracked(authors.trackedAuthors.map((author) => author.id)) ? nobodyTrackedMessage(forge) : null,
 })

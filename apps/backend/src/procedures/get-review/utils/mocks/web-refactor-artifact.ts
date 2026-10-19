@@ -47,6 +47,7 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
   segments: [
     {
       id: "all",
+      isContextRequired: true,
       title: "refactor-to-full-web",
       changedPaths: [SERVER_CONFIG_PATH, SERVER_MAIN_PATH],
       context: [
@@ -86,9 +87,10 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
                 declaration: "readServerConfig",
                 codeBlocks: [],
                 reading: "With the environment as a parameter, a test can pass any values it wants. The port now goes through `parsePort`, which rejects a value that is not a positive integer.",
-                needsAttention: null,
+                coreChange: null,
                 findings: [],
                 children: [],
+                isRequired: true,
               },
             ],
           },
@@ -101,9 +103,10 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
                 declaration: "start",
                 codeBlocks: [],
                 reading: "One argument is all that changes at the call site.",
-                needsAttention: null,
+                coreChange: null,
                 findings: [],
                 children: [],
+                isRequired: true,
               },
             ],
           },

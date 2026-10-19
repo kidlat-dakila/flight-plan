@@ -21,7 +21,7 @@ export interface CodeViewWaypoint {
   readonly title: string
   readonly lineStart: number
   readonly lineEnd: number
-  readonly attentionLabel: string | null
+  readonly coreChangeLabel: string | null
 }
 
 interface CodeViewEditorProps {
@@ -86,7 +86,7 @@ const withFocus = (lines: readonly CodeLine[], focusOn: LineRange | null): reado
 
 const WaypointNote = ({ waypoint }: { readonly waypoint: CodeViewWaypoint }) => (
   <section aria-label={waypoint.title} className={cn(EXTRA_ROW_CLASSES, "flex items-center gap-2 px-2.5 py-2")}>
-    {waypoint.attentionLabel === null ? null : <FindingChip kind="attention" label={waypoint.attentionLabel} />}
+    {waypoint.coreChangeLabel === null ? null : <FindingChip kind="core-change" label={waypoint.coreChangeLabel} />}
     <span className="min-w-0 truncate text-[0.9375rem] font-semibold">{waypoint.title}</span>
     <span className="ml-auto shrink-0 pl-2 text-xs text-muted-foreground tabular-nums">{rangeLabelOf(waypoint)}</span>
   </section>

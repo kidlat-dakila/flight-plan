@@ -10,14 +10,15 @@ const segmentWith = (blastDiagram: Blast | null): Segment => ({
   traceDiagram: null,
   blastDiagram,
   walkthrough: { files: [] },
+  isContextRequired: false,
 })
 
 const BLAST: Blast = {
   nodes: [
-    { path: "src/cart/index.ts", diffType: null, impactType: null, impactReason: null },
-    { path: "src/legacy/pricing.ts", diffType: "deleted", impactType: null, impactReason: null },
-    { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null },
-    { path: "src/types.ts", diffType: "added", impactType: null, impactReason: null },
+    { path: "src/cart/index.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+    { path: "src/legacy/pricing.ts", diffType: "deleted", impactType: null, impactReason: null, isRequired: false },
+    { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null, isRequired: false },
+    { path: "src/types.ts", diffType: "added", impactType: null, impactReason: null, isRequired: false },
   ],
   edges: [
     { importer: "src/cart/index.ts", imported: "src/pricing.ts" },
@@ -37,12 +38,12 @@ const CONTEXT: ReviewViewContext = {
 
 const ASSESSED: Blast = {
   nodes: [
-    { path: "src/badge.ts", diffType: null, impactType: "breaks", impactReason: "It assumes the price is never negative." },
-    { path: "src/cart.ts", diffType: null, impactType: "unaffected", impactReason: null },
-    { path: "src/page.ts", diffType: null, impactType: null, impactReason: null },
-    { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null },
-    { path: "src/report.ts", diffType: null, impactType: null, impactReason: null },
-    { path: "src/types.ts", diffType: null, impactType: null, impactReason: null },
+    { path: "src/badge.ts", diffType: null, impactType: "breaks", impactReason: "It assumes the price is never negative.", isRequired: false },
+    { path: "src/cart.ts", diffType: null, impactType: "unaffected", impactReason: null, isRequired: false },
+    { path: "src/page.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+    { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null, isRequired: false },
+    { path: "src/report.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+    { path: "src/types.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
   ],
   edges: [
     { importer: "src/badge.ts", imported: "src/pricing.ts" },
@@ -128,7 +129,7 @@ describe("buildBlast", () => {
   it("opens on the import bound when no file but those of the change is in the export bound", () => {
     const pricing = { path: "src/pricing.ts", diffType: "modified" as const }
     const blastDiagram = {
-      nodes: [{ ...pricing, impactType: null, impactReason: null }],
+      nodes: [{ ...pricing, impactType: null, impactReason: null, isRequired: false }],
       edges: [],
       importBound: { nodes: [pricing, { path: "src/rates.ts", diffType: null }], edges: [{ importer: "src/pricing.ts", imported: "src/rates.ts" }] },
     }

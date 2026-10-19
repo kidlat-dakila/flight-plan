@@ -66,13 +66,13 @@ const BAR_CLASSES: Record<StopStatus, string> = {
 
 const SIGNAL_STROKE = "stroke-signal"
 
-const ATTENTION_LABEL = "font-bold text-signal-text"
+const CORE_CHANGE_LABEL = "font-bold text-signal-text"
 const QUIET_LABEL = "text-muted-foreground"
 
 export const STATUS_LABEL_CLASSES: Record<StopStatus, string> = {
   "no-review": "text-foreground",
-  "awaiting-review": ATTENTION_LABEL,
-  "awaiting-reply": ATTENTION_LABEL,
+  "awaiting-review": CORE_CHANGE_LABEL,
+  "awaiting-reply": CORE_CHANGE_LABEL,
   "stale": QUIET_LABEL,
   "draft": QUIET_LABEL,
   "closed": QUIET_LABEL,

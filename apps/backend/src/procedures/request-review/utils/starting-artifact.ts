@@ -1,6 +1,7 @@
-import type { ReviewWriter } from "@/procedures/get-review/utils/start/review-request"
+import { isWrittenByAgent, type ReviewWriter } from "@/procedures/get-review/utils/start/review-request"
 import { withSections } from "@/procedures/read-artifact/utils/artifact-sections"
 import { withContextRequirement } from "@/procedures/read-artifact/utils/context-code-blocks"
+import { withRequiredSections } from "@/procedures/read-artifact/utils/required-nodes"
 import type { ContextCodeBlockKind, ReviewArtifact, SectionSwitches } from "@flightplan/configurations"
 
 export interface ConfigurationChoices {
@@ -19,6 +20,7 @@ export const withConfiguration = (artifact: ReviewArtifact, { sections, required
   withContextRequirement(withSections(artifact, sections), requiredContextKinds)
 
 export const startingArtifactOf = (scaffold: ReviewArtifact, writer: ReviewWriter, choices: ConfigurationChoices): ReviewArtifact => {
-  const starting = authoredFrom(withConfiguration(scaffold, choices), writer)
+  const configured = withConfiguration(scaffold, choices)
+  const starting = authoredFrom(isWrittenByAgent(writer) ? withRequiredSections(configured, choices.sections) : configured, writer)
   return startsEmpty(writer) ? { ...starting, segments: [] } : starting
 }

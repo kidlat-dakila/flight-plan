@@ -18,7 +18,7 @@ const rowsMarked = (marks: readonly LineMark[]): SourceLine[] =>
   marks.map((mark, index) => ({ text: `line ${String(index)}`, mark, number: mark === "removed" ? null : index + 1 }))
 
 const plain = flat(createWaypoint("plain", "a"))
-const flagged = flat(createWaypoint("flagged", "b", { needsAttention: "Slow down." }))
+const flagged = flat(createWaypoint("flagged", "b", { coreChange: "Slow down." }))
 const buggy = flat(createWaypoint("buggy", "c", { findings: [createFinding("f1", "bug"), createFinding("f2", "nit")] }))
 
 describe("waypointChangeOf", () => {
@@ -47,7 +47,7 @@ describe("waypointChangeOf", () => {
 
 describe("selectFilterKeys", () => {
   it("keeps the known keys in menu order, then the root block keys in the order asked, and drops the rest", () => {
-    expect(selectFilterKeys(["removed", "nit", "unknown", "attention"])).toStrictEqual(["attention", "nit", "removed"])
+    expect(selectFilterKeys(["removed", "nit", "unknown", "core-change"])).toStrictEqual(["core-change", "nit", "removed"])
     expect(selectFilterKeys(["block:hook:added", "bug", "block:gadget:added", "block:class:deleted", "block:hook:added"])).toStrictEqual(["bug", "block:hook:added", "block:class:deleted"])
     expect(selectFilterKeys(null)).toStrictEqual([])
   })
@@ -59,9 +59,9 @@ describe("matchesFilter", () => {
   })
 
   it("shows a waypoint that matches any ticked key", () => {
-    expect(matchesFilter(flagged, ["attention", "bug"])).toBe(true)
-    expect(matchesFilter(buggy, ["attention", "bug"])).toBe(true)
-    expect(matchesFilter(plain, ["attention", "bug"])).toBe(false)
+    expect(matchesFilter(flagged, ["core-change", "bug"])).toBe(true)
+    expect(matchesFilter(buggy, ["core-change", "bug"])).toBe(true)
+    expect(matchesFilter(plain, ["core-change", "bug"])).toBe(false)
     expect(matchesFilter(buggy, ["risk"])).toBe(false)
   })
 
@@ -96,7 +96,7 @@ describe("buildWaypointFilter", () => {
     const filter = buildWaypointFilter([plain, flagged, buggy], ["bug"])
 
     expect(filter.groups[0].options.map((option) => [option.key, option.detailLabel, option.isSelected])).toStrictEqual([
-      ["attention", "1 waypoint", false],
+      ["core-change", "1 waypoint", false],
       ["bug", "1 waypoint", true],
       ["risk", "0 waypoints", false],
       ["nit", "1 waypoint", false],

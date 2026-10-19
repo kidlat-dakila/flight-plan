@@ -10,7 +10,6 @@ const AGENTS_INPUT: SaveSettingsInput = {
   section: "agents",
   agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default", effort: "default" }],
   defaultAgent: null,
-  connection: "direct",
 }
 
 describe("saveSettings", () => {
@@ -22,7 +21,7 @@ describe("saveSettings", () => {
       message: "Your agents are saved.",
     })
     await expect(context.setupStore.read()).resolves.toMatchObject({
-      agents: { installs: [{ agent: "claude" }], defaultAgent: "claude", connection: "direct" },
+      agents: { installs: [{ agent: "claude" }], defaultAgent: "claude" },
       forges: COMPLETE_SETUP.forges,
       defaultConfiguration: "minimal",
       isComplete: true,

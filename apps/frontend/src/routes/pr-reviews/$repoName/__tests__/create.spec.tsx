@@ -732,7 +732,7 @@ describe("the create Flight Plan page", () => {
     fireEvent.click(within(stock).getByRole("button", { name: "Edit the waypoint: Held units reduce the price" }))
     const form = await within(stock).findByRole("form", { name: "Edit the waypoint: Held units reduce the price" })
     fireEvent.change(within(form).getByRole("textbox", { name: "Title" }), { target: { value: "Subtracts the held units" } })
-    fireEvent.click(within(form).getByRole("checkbox", { name: "Needs Attention" }))
+    fireEvent.click(within(form).getByRole("checkbox", { name: "Core change" }))
 
     expect(within(form).getByText("Mark this change as an important part of the code review. This helps the reviewer see where to look first.")).toBeTruthy()
     expect(within(form).getByText("Additional context (optional)")).toBeTruthy()
@@ -751,7 +751,7 @@ describe("the create Flight Plan page", () => {
           waypointId: "price-of",
           title: "Subtracts the held units",
           reading: "Reading of Held units reduce the price.",
-          needsAttention: "",
+          coreChange: "",
         },
       })
     })

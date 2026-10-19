@@ -73,9 +73,10 @@ export interface Waypoint {
   readonly declaration: string
   readonly codeBlocks: readonly CodeBlock[]
   readonly reading: string
-  readonly needsAttention: string | null
+  readonly coreChange: string | null
   readonly findings: readonly Finding[]
   readonly children: readonly Waypoint[]
+  readonly isRequired: boolean
 }
 
 export interface FileSection {
@@ -120,6 +121,7 @@ export interface TraceNode {
   readonly blockLabels: readonly BlockLabel[]
   readonly rows?: readonly TraceRow[] | undefined
   readonly position?: CardPosition | undefined
+  readonly isRequired: boolean
 }
 
 export interface TraceNodeEdge {
@@ -136,6 +138,7 @@ export interface TraceDiagram {
   readonly description: string | null
   readonly traceNodes: readonly TraceNode[]
   readonly traceNodeEdges: readonly TraceNodeEdge[]
+  readonly isRequired: boolean
 }
 
 export type DiffType = (typeof DIFF_TYPES)[number]
@@ -147,6 +150,7 @@ export interface BlastNode {
   readonly diffType: DiffType | null
   readonly impactType: ImpactType | null
   readonly impactReason: string | null
+  readonly isRequired: boolean
 }
 
 export interface BlastEdge {
@@ -182,6 +186,7 @@ export interface Segment {
   readonly traceDiagram: TraceDiagram | null
   readonly blastDiagram: Blast | null
   readonly walkthrough: CodeWalkthrough
+  readonly isContextRequired: boolean
 }
 
 export type SectionName = (typeof SECTION_NAMES)[number]

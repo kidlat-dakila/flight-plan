@@ -922,7 +922,7 @@
                   "title": null,
                   "declaration": "RootLayout",
                   "reading": "",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -946,7 +946,7 @@
                   "title": "Added `OrderFilterState`, the shape of the filter store",
                   "declaration": "OrderFilterState",
                   "reading": "The author added an interface `OrderFilterState` that has `status`, an `OrderStatus | null`, and `setStatus`, a function that takes an `OrderStatus | null` and returns nothing. [`useOrderFilterStore` is created with it](code:src/stores/order-filter-store.ts#L9) and [`selectStatus()` takes it as its argument](code:src/stores/order-filter-store.ts#L16), so that `null` is the one value for all orders in the store, in [the argument of `useOrders()`](code:src/hooks/use-orders.ts#L5) and in [the argument of `fetchOrders()`](code:src/api/orders.ts#L4). The interface is not exported.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -964,7 +964,7 @@
                   "title": "Added `useOrderFilterStore` to hold the chosen status",
                   "declaration": "useOrderFilterStore",
                   "reading": "The author added a Zustand store `useOrderFilterStore` that starts with `status: null` and whose `setStatus()` calls `set({ status })`. [`<OrderStatusFilter />` calls `setStatus()` on a click](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-16) and [`<OrdersPage />` reads `status`](code:src/routes/orders/index.tsx#L7), so that the buttons and the list share one value with no prop between the two components. The store is a module-level value and no code sets `status` back to `null`, so the chosen status is still there when a shopper comes back to `/orders` without a reload.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 9,
@@ -990,7 +990,7 @@
                   "title": "Added `selectStatus()` to read the chosen status",
                   "declaration": "selectStatus",
                   "reading": "The author added a function `selectStatus()` that takes an [`OrderFilterState`](code:src/stores/order-filter-store.ts#OrderFilterState) and returns its `status`. [`<OrdersPage />` passes it to `useOrderFilterStore`](code:src/routes/orders/index.tsx#L7), and [`<OrderStatusFilter />` passes it too](code:src/routes/orders/components/OrderStatusFilter.tsx#L8), so that both components read the chosen status through one function and render again when it changes.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 16,
@@ -1015,7 +1015,7 @@
                   "title": "Added the type `OrderStatus`",
                   "declaration": "OrderStatus",
                   "reading": "The author added a type `OrderStatus` that is `\"open\"`, `\"shipped\"` or `\"cancelled\"`. It is the type of [`Order.status`](code:src/types/order.ts#L6), of [the argument of `fetchOrders()`](code:src/api/orders.ts#L4), of [the argument of `useOrders()`](code:src/hooks/use-orders.ts#L5), of [`status` in the filter store](code:src/stores/order-filter-store.ts#L5) and of [the entries of `STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#L5), so that a string outside the three gives a compile error in each.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 1,
@@ -1033,7 +1033,7 @@
                   "title": "Added the interface `Order`",
                   "declaration": "Order",
                   "reading": "The author added an interface `Order` that has `id` and `placedAt` as strings, `status` as an [`OrderStatus`](code:src/types/order.ts#OrderStatus) and `totalCents` as a number. [`fetchOrders()` returns a `Promise<Order[]>`](code:src/api/orders.ts#L4-5) and [`<OrderRow />` takes one `Order` as its prop](code:src/routes/orders/components/OrderRow.tsx#L4), so that the row reads the fields the request declares. [`request()` casts the JSON body to the type](code:src/api/client.ts#L24) and does not validate it.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 3,
@@ -2887,7 +2887,7 @@
                   "title": "Added `fetchOrders()` to request the orders of a status",
                   "declaration": "fetchOrders",
                   "reading": "The author added a function `fetchOrders()` that requests `/orders` for a `status` of `null` and `/orders?status=shipped` for `\"shipped\"`, and returns a `Promise<Order[]>`. [`useOrders()` calls it in its query function](code:src/hooks/use-orders.ts#L6), so that [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) lists the orders of the status a shopper chose. [`request()` puts `/api` before the path](code:src/api/client.ts#L19) and [throws an `ApiError` when the response is not ok](code:src/api/client.ts#L23), and [`<OrdersPage />` then returns its error message](code:src/routes/orders/index.tsx#L10).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -2912,7 +2912,7 @@
                   "title": "Added `useOrders()` to query the orders per status",
                   "declaration": "useOrders",
                   "reading": "The author added a function `useOrders()` that calls `useQuery` with the key `[\"orders\", status]` and a query function that calls [`fetchOrders(status)`](code:src/api/orders.ts#fetchOrders). The status is part of the key, so that [a new `status` in `<OrdersPage />`](code:src/routes/orders/index.tsx#L7-8) reads another cache entry, and starts a request when that entry has no data. `queryClient` in `src/lib/query-client.ts` sets `staleTime` to 30 000 ms and `retry` to `false`, so one failed request sets `isError` to `true`.",
-                  "needsAttention": "This function is where a chosen status becomes a request: the status is part of the query key, so `useQuery` requests and caches each status on its own. [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) shows what this function returns for the chosen status.",
+                  "coreChange": "This function is where a chosen status becomes a request: the status is part of the query key, so `useQuery` requests and caches each status on its own. [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) shows what this function returns for the chosen status.",
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -2940,7 +2940,7 @@
                   "title": null,
                   "declaration": "router",
                   "reading": "",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 8,
@@ -2967,7 +2967,7 @@
                   "title": null,
                   "declaration": "OrderRow",
                   "reading": "",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -2996,7 +2996,7 @@
                   "title": null,
                   "declaration": "STATUSES",
                   "reading": "",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -3014,7 +3014,7 @@
                   "title": null,
                   "declaration": "OrderStatusFilter",
                   "reading": "",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 7,
@@ -3049,7 +3049,7 @@
                       "title": null,
                       "declaration": "OrderStatusFilter › status",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 8,
@@ -3069,7 +3069,7 @@
                       "title": null,
                       "declaration": "OrderStatusFilter › setStatus",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,
@@ -3090,7 +3090,7 @@
                       "title": null,
                       "declaration": "OrderStatusFilter › Button.onClick",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 12,
@@ -3109,7 +3109,7 @@
                       "title": null,
                       "declaration": "OrderStatusFilter › Markup loop :15",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 15,
@@ -3139,7 +3139,7 @@
                   "title": null,
                   "declaration": "OrdersPage",
                   "reading": "",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -3177,7 +3177,7 @@
                       "title": null,
                       "declaration": "OrdersPage › status",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 7,
@@ -3197,7 +3197,7 @@
                       "title": null,
                       "declaration": "OrdersPage › orders",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 8,
@@ -3215,7 +3215,7 @@
                       "title": null,
                       "declaration": "OrdersPage › Condition :9",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,
@@ -3235,7 +3235,7 @@
                       "title": null,
                       "declaration": "OrdersPage › Condition :10",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 10,
@@ -3255,7 +3255,7 @@
                       "title": null,
                       "declaration": "OrdersPage › Markup condition :15",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 15,

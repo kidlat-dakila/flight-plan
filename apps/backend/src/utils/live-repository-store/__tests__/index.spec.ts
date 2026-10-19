@@ -1,3 +1,4 @@
+import type { GitIdentity } from "@/procedures/get-setup/utils/git-identity"
 import { type Setup, type SetupRepository, EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import type { RepositoryInspection } from "@/procedures/list-repositories/utils/build-repository"
@@ -59,7 +60,11 @@ interface StoreHarness {
   readonly forgottenPaths: () => string[]
 }
 
-const createStore = (setup: Setup, inspection: RepositoryInspection = branchInspection): StoreHarness => {
+const createStore = (
+  setup: Setup,
+  inspection: RepositoryInspection = branchInspection,
+  gitIdentity: GitIdentity | null = null,
+): StoreHarness => {
   const setupStore = new InMemorySetupStore(setup)
   const inspect = vi.fn<(request: InspectionRequest) => Promise<RepositoryInspection>>(async () => await Promise.resolve(inspection))
   const forget = vi.fn<(path: string) => void>()
@@ -67,6 +72,7 @@ const createStore = (setup: Setup, inspection: RepositoryInspection = branchInsp
     setupStore,
     inspector: { inspect, forget },
     targetMemory: new MemoryTargetMemoryStore(),
+    readGitIdentity: async () => await Promise.resolve(gitIdentity),
     now: () => AFTER_BASELINE,
   })
   return {
@@ -108,6 +114,17 @@ describe("LiveRepositoryStore", () => {
         addedPullRequestAuthors: [],
       },
     ])
+  })
+
+  it("inspects with the email git commits with as the own author, before the author chosen as the user", async () => {
+    const { store, requests } = createStore(setupWith(registered("storefront")), branchInspection, {
+      name: "Dev Harper",
+      email: "harper@acme.test",
+    })
+
+    await store.list()
+
+    expect(requests()).toMatchObject([{ selfAuthorId: "harper@acme.test" }])
   })
 
   it("adds a review target to a repository, forgets what was read of it and inspects it with the target", async () => {

@@ -77,7 +77,7 @@ A section that is off is **not generated**:
 
 ### Generating a section on demand
 
-"Generate" on that offer switches the section on for the whole Flight Plan, every segment of it. For a diagram, Flight Plan first builds its structure from the two commits the artifact compares, and puts it on each segment that still holds the same changed files, so nothing that is written changes. Then the review's writer is asked for that section alone, with the configuration the review was written with: the agent is started or sent a message, a reviewer who prompts their own agent gets the prompt to paste, and an author gets the structure to write themselves.
+"Generate" on that offer switches the section on for the whole Flight Plan, every segment of it. For a diagram, Flight Plan first builds its structure from the two commits the artifact compares, and puts it on each segment that still holds the same changed files, so nothing that is written changes. Then the review's writer is asked for that section alone, with the configuration the review was written with: the agent is started or sent a message, a reviewer who starts their agent themselves gets the line to run in it, and an author or a review without an agent gets the structure alone.
 
 ## Context code blocks
 

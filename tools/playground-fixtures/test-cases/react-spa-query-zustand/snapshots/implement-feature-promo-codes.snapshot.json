@@ -967,7 +967,7 @@
                   "title": "Added the type `Promo`",
                   "declaration": "Promo",
                   "reading": "The author added a type `Promo` that has a `code`, a string, and a `percentOff`, a number. [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) returns one. [`CartState`](code:src/stores/cart-store.ts#CartState) keeps one as `promo`, so that [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents) can read its `percentOff`. No code checks the response against the type: [`request()` casts the JSON to it](code:src/api/client.ts#L24).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 3,
@@ -985,7 +985,7 @@
                   "title": "Added `fetchPromo()` to request the promo of a code",
                   "declaration": "fetchPromo",
                   "reading": "The author added a function `fetchPromo()` that requests the promo of a code and returns it as a [`Promo`](code:src/api/promo.ts#Promo). `fetchPromo(\"TEA10\")` calls [`request()`](code:src/api/client.ts#L18-25) with `\"/promos/TEA10\"`, and it passes the code through `encodeURIComponent()` first, so `\"A/B\"` becomes `\"/promos/A%2FB\"`. [`request()` throws an `ApiError`](code:src/api/client.ts#L23) for a response that is not ok, and `fetchPromo()` does not catch it. [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) passes the function to `useMutation` as its `mutationFn`, so that the cart can ask the API which discount a typed code gives.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 8,
@@ -1009,7 +1009,7 @@
                   "title": "Modified `CartState` to have a promo",
                   "declaration": "CartState",
                   "reading": "The author modified a type `CartState` that now has:\n\n- `promo`, a [`Promo`](code:src/api/promo.ts#Promo), or `null` when no promo is applied\n- `applyPromo`, an action that takes a [`Promo`](code:src/api/promo.ts#Promo) and returns nothing\n\n[`useCartStore`](code:src/stores/cart-store.ts#useCartStore) gives both a value, and [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents) takes a `CartState`, so that the selector can read `promo` beside `items`.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -1027,7 +1027,7 @@
                   "title": "Modified `useCartStore` to keep a promo until the cart is cleared",
                   "declaration": "useCartStore",
                   "reading": "The author modified a store `useCartStore` that now:\n\n- starts with `promo: null`\n- sets `promo` to the promo it is given in the new action `applyPromo`\n- sets `promo` to `null` in `clear`, with `items: []`\n\n[`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) passes `applyPromo` to `useMutation` as its `onSuccess`, so that a fetched promo is kept where [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents) reads it. `addItem` and `removeItem` do not write `promo`. A promo therefore stays applied when a shopper removes every line with [the \"Remove\" button of `<CartLine />`](code:src/routes/cart/components/CartLine.tsx#L13-15), and only [`handleConfirm()`](code:src/routes/cart/components/CartSummary.tsx#L13-16) removes it, through `clear`.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 14,
@@ -1053,7 +1053,7 @@
                   "title": "Added the constant `PERCENT`",
                   "declaration": "PERCENT",
                   "reading": "The author added a constant `PERCENT` with the value `100`. [`selectDiscountCents()` divides by it](code:src/stores/cart-store.ts#L43), so that a `percentOff` of `10` gives a tenth of the total.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 39,
@@ -1071,7 +1071,7 @@
                   "title": "Added `selectDiscountCents()` to compute the discount of the applied promo",
                   "declaration": "selectDiscountCents",
                   "reading": "The author added a function `selectDiscountCents()` that returns the discount of the cart in cents. It:\n\n- returns `0` when `promo` is `null`\n- returns the result of [`selectTotalCents()`](code:src/stores/cart-store.ts#L35-37) times `percentOff`, divided by [`PERCENT`](code:src/stores/cart-store.ts#PERCENT) and rounded with `Math.round()`, for any other `promo`\n\nA total of 1999 cents with `percentOff: 10` gives `200`. [`<CartSummary />` passes the function to `useCartStore` as a selector](code:src/routes/cart/components/CartSummary.tsx#L9), so that the summary can show the discount and subtract it from the total. The function does not limit `percentOff`: a value of `150` gives a discount over the total.",
-                  "needsAttention": "This is the rule the pull request exists for: how much a promo takes off the cart. The other changes fetch the promo, keep it in [`useCartStore`](code:src/stores/cart-store.ts#useCartStore) and show this result in [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary).",
+                  "coreChange": "This is the rule the pull request exists for: how much a promo takes off the cart. The other changes fetch the promo, keep it in [`useCartStore`](code:src/stores/cart-store.ts#useCartStore) and show this result in [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary).",
                   "findings": [],
                   "range": {
                     "lineStart": 41,
@@ -3338,7 +3338,7 @@
                   "title": "Added `useApplyPromo()` to write a fetched promo to the cart store",
                   "declaration": "useApplyPromo",
                   "reading": "The author added a function `useApplyPromo()` that returns a mutation, which:\n\n- runs [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) with the code it is called with, as its `mutationFn`\n- passes the returned [`Promo`](code:src/api/promo.ts#Promo) to [the store action `applyPromo`](code:src/stores/cart-store.ts#L23-25), as its `onSuccess`\n\n[`<PromoForm />` calls the mutation with the typed code](code:src/routes/cart/components/PromoForm.tsx#L9-12) and reads its `isPending` and `isError`, so that the form holds no request and no store access of its own. When `fetchPromo()` throws, `onSuccess` does not run, so a promo that was applied before stays in the store.",
-                  "needsAttention": "This is where a promo goes from the API into the cart. The mutation is the only code that runs [the store action `applyPromo`](code:src/stores/cart-store.ts#L23-25), and it runs the action only after a request that succeeded.",
+                  "coreChange": "This is where a promo goes from the API into the cart. The mutation is the only code that runs [the store action `applyPromo`](code:src/stores/cart-store.ts#L23-25), and it runs the action only after a request that succeeded.",
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -3368,7 +3368,7 @@
                   "title": "Modified `<CartSummary />` to show the promo form and the discount",
                   "declaration": "CartSummary",
                   "reading": "The author modified a component `<CartSummary />` that now:\n\n- reads the discount in cents from the store with [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents)\n- renders [`<PromoForm />`](code:src/routes/cart/components/PromoForm.tsx#PromoForm) above the total\n- renders a line `Discount:` with the discount when it is over `0`\n- renders `totalCents - discountCents` in the line `Total:`, where it rendered `totalCents`\n\nA cart of $19.99 with a promo of 10 percent shows `Discount: $2.00` and `Total: $17.99`. [`<CartPage />` renders the component under the cart lines](code:src/routes/cart/index.tsx#L15), so that a shopper enters a code and reads its result in the same place. `handleConfirm()` did not change, and [the `clear` it calls now also sets `promo` to `null`](code:src/stores/cart-store.ts#L26-28).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 7,
@@ -3393,7 +3393,7 @@
                       "title": null,
                       "declaration": "CartSummary › discountCents",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,
@@ -3413,7 +3413,7 @@
                       "title": null,
                       "declaration": "CartSummary › Markup condition :21",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 21,
@@ -3439,7 +3439,7 @@
                   "title": "Added `<PromoForm />` to submit a promo code",
                   "declaration": "PromoForm",
                   "reading": "The author added a component `<PromoForm />` that:\n\n- keeps the typed text in the state `code`, which starts as `\"\"`\n- calls `event.preventDefault()` on submit, then calls the mutation of [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) with `code`\n- disables the Apply button while `isPending` is `true`\n- renders `That code is not valid.` while `isError` is `true`\n\n[`<CartSummary />` renders it above the total](code:src/routes/cart/components/CartSummary.tsx#L20), so that a shopper can apply a promo to the cart they are looking at. `isError` is `true` for every error the request throws, so [a 500 response](code:src/api/client.ts#L23) shows the same message as a code the API does not know. The component does not check `code` before it submits: an empty field requests `/api/promos/`. The field keeps its text after a promo is applied.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -3472,7 +3472,7 @@
                       "title": null,
                       "declaration": "PromoForm › code",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 6,
@@ -3490,7 +3490,7 @@
                       "title": null,
                       "declaration": "PromoForm › applyPromo",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 7,
@@ -3508,7 +3508,7 @@
                       "title": null,
                       "declaration": "PromoForm › handleSubmit",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,
@@ -3529,7 +3529,7 @@
                       "title": null,
                       "declaration": "PromoForm › form.onSubmit",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 15,
@@ -3547,7 +3547,7 @@
                       "title": null,
                       "declaration": "PromoForm › Input.onChange",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 16,
@@ -3567,7 +3567,7 @@
                       "title": null,
                       "declaration": "PromoForm › Markup condition :20",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 20,

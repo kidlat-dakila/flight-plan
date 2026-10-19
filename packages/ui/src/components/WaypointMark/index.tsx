@@ -119,12 +119,12 @@ const WaypointCard = ({
   return (
     <>
       <div className="flex flex-col gap-1 px-3 pt-2.5 pb-2">
-        {waypoint.chip === null && waypoint.attentionLabel === null
+        {waypoint.chip === null && waypoint.coreChangeLabel === null
           ? null
           : (
               <div className="flex flex-wrap gap-x-3 gap-y-1">
                 {waypoint.chip === null ? null : <FindingChip kind={waypoint.chip.kind} label={waypoint.chip.label} />}
-                {waypoint.attentionLabel === null ? null : <FindingChip kind="attention" label={waypoint.attentionLabel} />}
+                {waypoint.coreChangeLabel === null ? null : <FindingChip kind="core-change" label={waypoint.coreChangeLabel} />}
               </div>
             )}
         <p className={cn("leading-5", waypoint.isDraft ? "font-mono text-muted-foreground" : "font-semibold")}>{waypoint.title}</p>

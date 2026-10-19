@@ -34,7 +34,7 @@ const waypointCandidate = ({ segment, file, waypoint, ancestors }: LocatedWaypoi
       codeBlockIds: waypoint.codeBlocks.map((block) => block.id),
       title: waypoint.title,
       reading: waypoint.reading,
-      needsAttention: waypoint.needsAttention,
+      coreChange: waypoint.coreChange,
       findings: waypoint.findings,
       childIds: waypoint.children.map((child) => child.id),
     },

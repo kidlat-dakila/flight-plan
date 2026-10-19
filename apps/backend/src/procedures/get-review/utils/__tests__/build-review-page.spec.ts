@@ -253,7 +253,7 @@ describe("buildReviewPage", () => {
       isSegmented: true,
       segments: [
         createSegment({ id: "one", title: "One", context: "First part." }),
-        createSegment({ id: "two", title: "Two", blastDiagram: { nodes: [{ path: PRICE_PATH, diffType: "modified", impactType: null, impactReason: null }], edges: [] }, walkthrough: { files: [] } }),
+        createSegment({ id: "two", title: "Two", blastDiagram: { nodes: [{ path: PRICE_PATH, diffType: "modified", impactType: null, impactReason: null, isRequired: true }], edges: [] }, walkthrough: { files: [] } }),
       ],
     })
     const page = buildReviewPage(createSource({ artifact }), createInput())
@@ -420,9 +420,9 @@ describe("buildReviewPage", () => {
   it("draws the Blast Diagram from the files, the imports and the impacts of the segment, and leaves it out when the segment has none", () => {
     const blastDiagram = {
       nodes: [
-        { path: "src/cart.ts", diffType: null, impactType: "breaks" as const, impactReason: "It assumes a price is never negative." },
-        { path: PRICE_PATH, diffType: "modified" as const, impactType: null, impactReason: null },
-        { path: "src/report.ts", diffType: null, impactType: null, impactReason: null },
+        { path: "src/cart.ts", diffType: null, impactType: "breaks" as const, impactReason: "It assumes a price is never negative.", isRequired: true },
+        { path: PRICE_PATH, diffType: "modified" as const, impactType: null, impactReason: null, isRequired: true },
+        { path: "src/report.ts", diffType: null, impactType: null, impactReason: null, isRequired: true },
       ],
       edges: [
         { importer: "src/cart.ts", imported: PRICE_PATH },
@@ -457,8 +457,8 @@ describe("buildReviewPage", () => {
   })
 
   it("applies the waypoint filter it is asked for to its own segment only", () => {
-    const walkthrough = { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("w", "priceOf", { needsAttention: "Slow." })] }] }
-    const otherWalkthrough = { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("v", "priceOf", { needsAttention: "Slow." })] }] }
+    const walkthrough = { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("w", "priceOf", { coreChange: "Slow." })] }] }
+    const otherWalkthrough = { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("v", "priceOf", { coreChange: "Slow." })] }] }
     const artifact = createArtifact({ segments: [createSegment({ id: "one", walkthrough }), createSegment({ id: "two", walkthrough: otherWalkthrough })] })
     const page = buildReviewPage(createSource({ artifact }), createInput({ filterKeysBySegment: { one: ["bug"] } }))
 

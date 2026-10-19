@@ -8,6 +8,7 @@ import { amendTrace, traceTextsOf } from "./amend-trace"
 import { amendWaypoints, repeatedFindingIdsIn, waypointTextsOf } from "./amend-waypoints"
 import { refuse, withSegments, type ArtifactAmended, type Refusal, type SegmentsOutcome } from "./refusal"
 import type { BlastEdit, ContextCodeBlockEdit, TraceEdit, SegmentEdit, WaypointEdit } from "./schemas"
+import { unrequiredProblemOf } from "./unrequired-nodes"
 import { linkProblemOf } from "./written-links"
 
 export interface NodeEdits {
@@ -66,6 +67,8 @@ export const amendNodes = (artifact: ReviewArtifact, edits: NodeEdits): Artifact
   if (offSection !== null) return refuse(notGeneratedMessage(offSection))
   const segments = segmentsIn(artifact, edits.segmentId)
   if (segments.length === 0) return refuse(unknownSegmentMessage(artifact, edits.segmentId))
+  const unrequiredProblem = unrequiredProblemOf(segments, edits)
+  if (unrequiredProblem !== null) return refuse(unrequiredProblem)
   const linkProblem = linkProblemOf(textsOf(edits), artifact.sources)
   if (linkProblem !== null) return refuse(linkProblem)
   const outcome = runSteps(segments, [

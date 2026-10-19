@@ -1,7 +1,9 @@
 import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
 import type { ListedRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
 import { withRepository } from "@/procedures/add-setup-repository/utils/plan-setup-repository"
+import { selfAuthorIdOf } from "@/procedures/get-setup/utils/git-identity"
 import type { ForgesChoice, SetupRepository } from "@/procedures/get-setup/utils/setup"
+import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 import type { SetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { buildRepository, type RepositoryInspection } from "@/procedures/list-repositories/utils/build-repository"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
@@ -22,6 +24,7 @@ export interface LiveRepositoryStoreDependencies {
   readonly setupStore: SetupStore
   readonly inspector: Pick<RepositoryInspector, "inspect" | "forget">
   readonly targetMemory: TargetMemoryStore
+  readonly readGitIdentity: SetupEnvironment["readGitIdentity"]
   readonly now: () => Date
 }
 
@@ -118,7 +121,7 @@ export class LiveRepositoryStore implements RepositoryStore {
       path: registered.path,
       forges,
       trackedAuthorIds: registered.trackedAuthors.map((author) => author.id),
-      selfAuthorId: registered.selfAuthor?.id ?? null,
+      selfAuthorId: selfAuthorIdOf(await this.dependencies.readGitIdentity(registered.path), registered.selfAuthor),
       addedBranchNames: addedBranchNamesOf(memory),
       addedPullRequestAuthors: addedPullRequestAuthorsOf(memory),
     })

@@ -36,7 +36,7 @@ const withSubmitLabel = (startForm: StartForm): StartForm => ({
   writer: {
     ...startForm.writer,
     agents: startForm.writer.agents.map((agent) => ({ ...agent, submitLabel: SUBMIT_LABEL })),
-    manual: { ...startForm.writer.manual, submitLabel: SUBMIT_LABEL },
+    none: { ...startForm.writer.none, submitLabel: SUBMIT_LABEL },
   },
 })
 

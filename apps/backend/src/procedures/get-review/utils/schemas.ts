@@ -16,7 +16,7 @@ import {
   proseSchema,
   walkthroughBandSchema,
 } from "@flightplan/configurations"
-import { MANUAL_WRITER } from "./start/agent-offers"
+import { NO_AGENT_WRITER } from "./start/agent-offers"
 import { WALKTHROUGH_ORDERS } from "./start/review-request"
 
 export const REVIEWER_STATES = ["pending", "commented", "approved", "changes-requested"] as const
@@ -350,13 +350,12 @@ export const startFormSchema = z.strictObject({
   writer: z.strictObject({
     heading: z.string(),
     hint: z.string(),
-    selectedKey: z.enum([...AGENT_NAMES, MANUAL_WRITER]),
+    selectedKey: z.enum([...AGENT_NAMES, NO_AGENT_WRITER]),
     agents: z.array(
       z.strictObject({
         agent: z.enum(AGENT_NAMES),
         label: z.string(),
         description: z.string(),
-        unavailableReason: z.string().nullable(),
         modelLegend: z.string(),
         effortLegend: z.string(),
         hasModelChoice: z.boolean(),
@@ -366,7 +365,7 @@ export const startFormSchema = z.strictObject({
         submitLabel: z.string(),
       }),
     ),
-    manual: z.strictObject({ label: z.string(), description: z.string(), submitLabel: z.string() }),
+    none: z.strictObject({ label: z.string(), description: z.string(), submitLabel: z.string() }),
   }),
   pendingLabel: z.string(),
 })

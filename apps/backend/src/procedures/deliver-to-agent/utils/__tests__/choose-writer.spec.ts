@@ -34,7 +34,7 @@ describe("chooseWriter", () => {
     const fromSetup = { install: INSTALL, effort: "low" }
 
     expect(chooseWriter(INSTALL, null, null)).toStrictEqual(fromSetup)
-    expect(chooseWriter(INSTALL, createRequest({ kind: "manual" }), null)).toStrictEqual(fromSetup)
+    expect(chooseWriter(INSTALL, createRequest({ kind: "none" }), null)).toStrictEqual(fromSetup)
     expect(chooseWriter(INSTALL, createRequest({ kind: "agent", agent: "codex", model: "default", effort: "high" }), null)).toStrictEqual(fromSetup)
   })
 

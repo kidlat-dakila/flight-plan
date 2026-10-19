@@ -10,7 +10,7 @@ const DEFAULT_EFFORT_OFFER = { effort: "default", label: "Default" }
 const claude: AgentOffer = {
   agent: "claude",
   label: "Claude",
-  unavailableReason: null,
+  isStartable: true,
   models: [
     { model: "default", label: "Default (recommended)", efforts: [DEFAULT_EFFORT_OFFER, { effort: "high", label: "High" }] },
     { model: "opus", label: "Opus 5.5", efforts: [DEFAULT_EFFORT_OFFER, { effort: "high", label: "High" }] },
@@ -24,7 +24,7 @@ const claude: AgentOffer = {
 const codex: AgentOffer = {
   agent: "codex",
   label: "Codex",
-  unavailableReason: "Flight Plan cannot start Codex yet. Prompt it yourself instead.",
+  isStartable: false,
   models: [{ model: "default", label: "Your Codex default", efforts: [DEFAULT_EFFORT_OFFER] }],
   model: "default",
   effort: "default",
@@ -39,7 +39,7 @@ const createInput = (overrides: Partial<RequestReviewInput> = {}): RequestReview
   configurationId: "standard",
   order: "risk-first",
   customOrder: "",
-  writer: { kind: "manual" },
+  writer: { kind: "none" },
   ...overrides,
 })
 
@@ -53,7 +53,7 @@ describe("planReviewRequest", () => {
         preset: "standard",
         order: "risk-first",
         customOrder: null,
-        writer: { kind: "manual" },
+        writer: { kind: "none" },
         requestedAt: NOW,
       },
     })
@@ -114,20 +114,23 @@ describe("planReviewRequest", () => {
     })
   })
 
-  it("rejects an agent that is not set up, one that cannot be started and a model the agent does not offer", () => {
+  it("plans an agent Flight Plan cannot start as one the reviewer starts, with no model or effort to check", () => {
+    const codexRequest = createInput({ writer: { kind: "agent", agent: "codex", model: "retired", effort: "max" } })
+
+    expect(planReviewRequest(codexRequest, STANDARD, [claude, codex], NOW)).toMatchObject({
+      kind: "planned",
+      request: { writer: { kind: "external", agent: "codex" } },
+    })
+  })
+
+  it("rejects an agent that is not set up and a model the agent does not offer", () => {
     const claudeWith = (model: string) =>
       createInput({ writer: { kind: "agent", agent: "claude", model, effort: "default" } })
-    const codexRequest = createInput({ writer: { kind: "agent", agent: "codex", model: "default", effort: "default" } })
 
     expect(planReviewRequest(claudeWith("default"), STANDARD, [], NOW)).toMatchObject({
       kind: "rejected",
       field: "writer",
       message: "This agent is not set up in Flight Plan.",
-    })
-    expect(planReviewRequest(codexRequest, STANDARD, [claude, codex], NOW)).toMatchObject({
-      kind: "rejected",
-      field: "writer",
-      message: "Flight Plan cannot start Codex yet. Prompt it yourself instead.",
     })
     expect(planReviewRequest(claudeWith("gpt"), STANDARD, [claude], NOW)).toMatchObject({
       kind: "rejected",

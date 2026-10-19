@@ -411,7 +411,7 @@
                   "title": "Added `selectIsCartEmpty()` to return whether the cart has no items",
                   "declaration": "selectIsCartEmpty",
                   "reading": "The author added a function `selectIsCartEmpty()` that returns `true` when `state.items` has length 0, and `false` for every other length. [`<CartPage />` passes `selectIsCartEmpty` to `useCartStore`](code:src/routes/cart/index.tsx#L7) and [returns `<p>Your cart is empty.</p>` when the result is `true`](code:src/routes/cart/index.tsx#L8), so that `<CartPage />` does not test `items.length` itself. No other file of the repository imports `selectIsCartEmpty`.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 32,
@@ -1249,7 +1249,7 @@
                   "title": "Modified `<CartPage />` to test `isCartEmpty` before it returns the empty message",
                   "declaration": "CartPage",
                   "reading": "The author modified a condition in the component `<CartPage />` that now tests `isCartEmpty`, where it tested `items.length === 0` before. `isCartEmpty` is the result of `useCartStore(selectIsCartEmpty)`, and [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty) [returns `state.items.length === 0`](code:src/stores/cart-store.ts#L33), so that `<CartPage />` returns `<p>Your cart is empty.</p>` for the same carts as before. `<CartPage />` still reads `items` from the store, because it renders one `<CartLine />` per item. `router` in `src/router.tsx` renders `<CartPage />` with no props, and `<CartPage />` still takes none.",
-                  "needsAttention": "This is the one waypoint of the pull request where the code that runs is different: the first `return` now depends on the result of [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty), and not on `items.length`. The other two waypoints declare that function and import it.",
+                  "coreChange": "This is the one waypoint of the pull request where the code that runs is different: the first `return` now depends on the result of [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty), and not on `items.length`. The other two waypoints declare that function and import it.",
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -1272,7 +1272,7 @@
                       "title": null,
                       "declaration": "CartPage › isCartEmpty",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 7,
@@ -1292,7 +1292,7 @@
                       "title": null,
                       "declaration": "CartPage › Condition :8",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 8,

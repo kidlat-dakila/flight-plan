@@ -16,6 +16,7 @@ describe("amendBlast", () => {
       diffType: null,
       impactType: "breaks",
       impactReason: "It divides by the total.",
+      isRequired: true,
     })
   })
 
@@ -25,7 +26,7 @@ describe("amendBlast", () => {
 
     const outcome = amendBlast(segments, [{ path: CART_TOTAL_PATH, impactReason: "It divides by the total, which can now be zero." }])
 
-    expect(nodeAt(outcome, CART_TOTAL_PATH)).toMatchObject({ impactType: "breaks", impactReason: "It divides by the total, which can now be zero." })
+    expect(nodeAt(outcome, CART_TOTAL_PATH)).toMatchObject({ impactType: "breaks", impactReason: "It divides by the total, which can now be zero.", isRequired: true })
   })
 
   it("refuses an impact on a file of the change", () => {
@@ -45,7 +46,7 @@ describe("amendBlast", () => {
   it("writes an unaffected file with no reason", () => {
     const outcome = amendBlast([DRAFT_SEGMENT], [{ path: CART_TOTAL_PATH, impactType: "unaffected" }])
 
-    expect(nodeAt(outcome, CART_TOTAL_PATH)).toMatchObject({ impactType: "unaffected", impactReason: null })
+    expect(nodeAt(outcome, CART_TOTAL_PATH)).toMatchObject({ impactType: "unaffected", impactReason: null, isRequired: true })
   })
 
   it("refuses a reason on an unaffected file", () => {
@@ -61,7 +62,7 @@ describe("amendBlast", () => {
 
     const outcome = amendBlast(segments, [{ path: CART_TOTAL_PATH, impactType: "unaffected" }])
 
-    expect(nodeAt(outcome, CART_TOTAL_PATH)).toMatchObject({ impactType: "unaffected", impactReason: null })
+    expect(nodeAt(outcome, CART_TOTAL_PATH)).toMatchObject({ impactType: "unaffected", impactReason: null, isRequired: true })
   })
 
   it("refuses a reason on a file with no impact type", () => {

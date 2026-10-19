@@ -1,5 +1,6 @@
-import type { ReviewWriter } from "@/procedures/get-review/utils/start/review-request"
+import { isWrittenByAgent, type ReviewWriter } from "@/procedures/get-review/utils/start/review-request"
 import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
+import { withRequiredSection } from "@/procedures/read-artifact/utils/required-nodes"
 import type { ReviewArtifact, SectionName, Segment, SourceFile } from "@flightplan/configurations"
 
 export const DIAGRAM_SECTIONS = ["traceDiagram", "blastDiagram"] as const
@@ -17,8 +18,6 @@ const DRAFTING_STATUS = "drafting"
 
 export const isDiagramSection = (section: SectionName): section is DiagramSection =>
   DIAGRAM_SECTIONS.some((diagram) => diagram === section)
-
-export const isLeftToAgent = (writer: ReviewWriter | null): boolean => writer !== null && writer.kind !== "author"
 
 const segmentKeyOf = (segment: Segment): string => segment.changedPaths.join(KEY_SEPARATOR)
 
@@ -41,8 +40,9 @@ const withScaffold = (artifact: ReviewArtifact, section: SectionName, rebuilt: R
         sources: withSourcesOf(artifact.sources, rebuilt),
       }
 
-export const planGeneration = (artifact: ReviewArtifact, { section, rebuilt, writer }: Generation): ReviewArtifact => ({
-  ...withScaffold(artifact, section, rebuilt),
-  sections: { ...sectionsOf(artifact), [section]: true },
-  status: isLeftToAgent(writer) ? DRAFTING_STATUS : artifact.status,
-})
+export const planGeneration = (artifact: ReviewArtifact, { section, rebuilt, writer }: Generation): ReviewArtifact => {
+  const generated = { ...withScaffold(artifact, section, rebuilt), sections: { ...sectionsOf(artifact), [section]: true } }
+  return isWrittenByAgent(writer)
+    ? { ...withRequiredSection(generated, section), status: DRAFTING_STATUS }
+    : generated
+}

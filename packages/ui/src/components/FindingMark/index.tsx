@@ -1,7 +1,7 @@
 import { PaintbrushIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-export type FindingMarkKind = "bug" | "risk" | "nit" | "question" | "attention"
+export type FindingMarkKind = "bug" | "risk" | "nit" | "question" | "core-change"
 
 interface FindingMarkProps {
   readonly kind: FindingMarkKind
@@ -15,11 +15,11 @@ interface FindingChipProps {
 }
 
 const TONE_CLASSES: Record<FindingMarkKind, string> = {
-  bug: "text-destructive",
-  risk: "text-destructive",
-  nit: "text-nit",
-  question: "text-muted-foreground",
-  attention: "text-signal-text",
+  "bug": "text-destructive",
+  "risk": "text-destructive",
+  "nit": "text-nit",
+  "question": "text-muted-foreground",
+  "core-change": "text-signal-text",
 }
 
 const DIAMOND_PATH = "M7 1.5 12.5 7 7 12.5 1.5 7z"
@@ -32,7 +32,7 @@ const GeometricMark = ({ kind, className }: Required<FindingMarkProps>) => (
     {kind === "bug" ? <path d={DIAMOND_PATH} className="fill-current" /> : null}
     {kind === "risk" ? <path d={DIAMOND_PATH} className="fill-none stroke-current stroke-2" /> : null}
     {kind === "question" ? <circle cx="7" cy="7" r="4.5" className="fill-none stroke-current stroke-2" /> : null}
-    {kind === "attention" ? <path d={TRIANGLE_PATH} className="fill-signal" /> : null}
+    {kind === "core-change" ? <path d={TRIANGLE_PATH} className="fill-signal" /> : null}
   </svg>
 )
 

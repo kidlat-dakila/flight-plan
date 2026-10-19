@@ -651,7 +651,7 @@
                   "title": "Removed the static import of `AccountPage`",
                   "declaration": "Lines 2–2",
                   "reading": "The author removed an import of `AccountPage` from `@/routes/account`, which stood between the import of `createBrowserRouter` and the import of `CartPage`. `src/router.tsx` no longer loads `src/routes/account/index.tsx` when the app starts. [The `account` route loads that module with `import()`](code:src/router.tsx#L13) in its place. The imports of `CartPage`, `CatalogPage` and `RootLayout` are the same as before.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 2,
@@ -669,7 +669,7 @@
                   "title": "Modified the `account` route of `router` to load `AccountPage` with `lazy`",
                   "declaration": "router",
                   "reading": "The author modified a route in the route table `router` that now holds a `lazy` function, where it held `element: <AccountPage />` before. The `lazy` function:\n\n- awaits `import(\"@/routes/account\")`, which the alias `@/*` of `tsconfig.json` resolves to `src/routes/account/index.tsx`\n- returns `{ Component: AccountPage }`, the component React Router renders for the path `account`\n\n`<RouterProvider />` in `src/main.tsx` reads `router`, so that the module of the account page loads when a shopper opens `/account` and not when the app starts. The routes of the catalogue and the cart still hold `element` and keep their static imports. The route table declares no `errorElement` and no `HydrateFallback`, so it names nothing to render while the import is pending or after the import fails.",
-                  "needsAttention": "This is the one place where the pull request changes what runs: the `account` route now loads `src/routes/account/index.tsx` with `import()` when the route is matched. The other waypoint removes the static import that this `lazy` function replaces.",
+                  "coreChange": "This is the one place where the pull request changes what runs: the `account` route now loads `src/routes/account/index.tsx` with `import()` when the route is matched. The other waypoint removes the static import that this `lazy` function replaces.",
                   "findings": [],
                   "range": {
                     "lineStart": 6,

@@ -80,13 +80,14 @@ const noFolders = { data: { options: [], message: null } }
 const localGitAuthorForm = {
   data: {
     selfAuthorHint: "Git cannot tell who you are here.",
+    gitSelfAuthor: null,
     searchHint: "Search by name or email.",
     searchPlaceholder: "Type a name or email",
   },
 }
 
 const forgeAuthorForm = {
-  data: { selfAuthorHint: null, searchHint: "Search by name or username.", searchPlaceholder: "Type a name or username" },
+  data: { selfAuthorHint: null, gitSelfAuthor: null, searchHint: "Search by name or username.", searchPlaceholder: "Type a name or username" },
 }
 
 const devOption = {
@@ -107,6 +108,7 @@ const storefrontConfiguration = {
     path: "/work/storefront",
     form: {
       selfAuthorHint: "Git cannot tell who you are here.",
+      gitSelfAuthor: null,
       searchHint: "Search by name or email.",
       searchPlaceholder: "Type a name or email",
     },

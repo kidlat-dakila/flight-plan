@@ -55,13 +55,13 @@ describe("planWalkthroughEdit", () => {
     })
   })
 
-  it("writes the trimmed title, reading and attention reason of a waypoint, also one inside another, and keeps the rest of it", () => {
+  it("writes the trimmed title, reading and core change note of a waypoint, also one inside another, and keeps the rest of it", () => {
     const planned = planWalkthroughEdit(artifact, "nested", {
       kind: "change-waypoint",
       waypointId: "format",
       title: "  Formats in cents ",
       reading: " Reads [`priceOf`](code:src/price.ts#priceOf).\n",
-      needsAttention: " Rounds down. ",
+      coreChange: " Rounds down. ",
     })
 
     expect(filesOf(planned, "nested")?.[0].waypoints).toStrictEqual([
@@ -70,37 +70,37 @@ describe("planWalkthroughEdit", () => {
           createWaypoint("format", "format", {
             title: "Formats in cents",
             reading: "Reads [`priceOf`](code:src/price.ts#priceOf).",
-            needsAttention: "Rounds down.",
+            coreChange: "Rounds down.",
           }),
         ],
       }),
     ])
   })
 
-  it("takes the attention mark off a waypoint", () => {
+  it("takes the core change mark off a waypoint", () => {
     const marked = createArtifact({
       segments: [
         createSegment({
           walkthrough: {
-            files: [{ path: PRICE_PATH, waypoints: [createWaypoint("price-of", "priceOf", { needsAttention: "Look." })] }],
+            files: [{ path: PRICE_PATH, waypoints: [createWaypoint("price-of", "priceOf", { coreChange: "Look." })] }],
           },
         }),
       ],
     })
 
-    const planned = planWalkthroughEdit(marked, "all", { kind: "change-waypoint", waypointId: "price-of", title: "Price", reading: "", needsAttention: null })
+    const planned = planWalkthroughEdit(marked, "all", { kind: "change-waypoint", waypointId: "price-of", title: "Price", reading: "", coreChange: null })
 
-    expect(filesOf(planned, "all")?.[0].waypoints).toMatchObject([{ title: "Price", reading: "", needsAttention: null }])
+    expect(filesOf(planned, "all")?.[0].waypoints).toMatchObject([{ title: "Price", reading: "", coreChange: null }])
   })
 
-  it("marks a waypoint as needing attention with no reason", () => {
-    const planned = planWalkthroughEdit(artifact, "flat", { kind: "change-waypoint", waypointId: "subtotal", title: "Sums", reading: "Adds up.", needsAttention: " \n" })
+  it("marks a waypoint as a core change with no reason", () => {
+    const planned = planWalkthroughEdit(artifact, "flat", { kind: "change-waypoint", waypointId: "subtotal", title: "Sums", reading: "Adds up.", coreChange: " \n" })
 
-    expect(filesOf(planned, "flat")?.[1].waypoints).toMatchObject([{ needsAttention: "" }])
+    expect(filesOf(planned, "flat")?.[1].waypoints).toMatchObject([{ coreChange: "" }])
   })
 
   it("rejects a waypoint with no title and a code link the artifact does not hold", () => {
-    const change = { kind: "change-waypoint" as const, waypointId: "subtotal", title: "Sums", reading: "Adds up.", needsAttention: null }
+    const change = { kind: "change-waypoint" as const, waypointId: "subtotal", title: "Sums", reading: "Adds up.", coreChange: null }
 
     expect(planWalkthroughEdit(artifact, "flat", { ...change, title: " " })).toStrictEqual({
       kind: "rejected",

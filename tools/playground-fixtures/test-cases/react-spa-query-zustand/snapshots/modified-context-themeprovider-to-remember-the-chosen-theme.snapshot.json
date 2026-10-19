@@ -408,7 +408,7 @@
                   "title": "Added the constant `THEME_STORAGE_KEY` for the `localStorage` entry",
                   "declaration": "THEME_STORAGE_KEY",
                   "reading": "The author added a constant `THEME_STORAGE_KEY` that holds `\"storefront-theme\"`, the key of the `localStorage` entry for the theme. [`readStoredTheme()` reads the entry under this key](code:src/components/ThemeProvider.tsx#L15), and [the effect of `<ThemeProvider />` writes the entry under the same key](code:src/components/ThemeProvider.tsx#L21), so that the theme is read from the entry it was written to.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 10,
@@ -426,7 +426,7 @@
                   "title": "Added `readStoredTheme()` to return the theme from `localStorage`",
                   "declaration": "readStoredTheme",
                   "reading": "The author added a function `readStoredTheme()` that returns `\"dark\"` when `localStorage` holds `\"dark\"` under [`THEME_STORAGE_KEY`](code:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY), and `\"light\"` for `null` and for every other value. [`<ThemeProvider />` passes it to `useState` as the initial state](code:src/components/ThemeProvider.tsx#L19), so that a visitor who chose the dark theme starts in the dark theme after a reload.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 14,
@@ -446,7 +446,7 @@
                   "title": "Modified `<ThemeProvider />` to keep `theme` in `localStorage`",
                   "declaration": "ThemeProvider",
                   "reading": "The author modified a component `<ThemeProvider />` that now:\n\n- starts `theme` from the value [`readStoredTheme()`](code:src/components/ThemeProvider.tsx#readStoredTheme) returns, in place of `\"light\"`\n- calls `localStorage.setItem()` with [`THEME_STORAGE_KEY`](code:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY) and `theme`, after the first render and after each change of `theme`\n\n[`<RootLayout />` takes `theme` from `useTheme()`](code:src/routes/root-layout.tsx#L7) and [sets it as `data-theme` on the page](code:src/routes/root-layout.tsx#L9), so that every route starts in the theme the visitor chose before the reload.",
-                  "needsAttention": "This is where the pull request does its work: `theme` now starts from `localStorage` and is written back to it after each change. The other waypoints of the file add the import, the key and the function this component uses.",
+                  "coreChange": "This is where the pull request does its work: `theme` now starts from `localStorage` and is written back to it after each change. The other waypoints of the file add the import, the key and the function this component uses.",
                   "findings": [],
                   "range": {
                     "lineStart": 18,
@@ -469,7 +469,7 @@
                       "title": null,
                       "declaration": "ThemeProvider › theme",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 19,
@@ -489,7 +489,7 @@
                       "title": null,
                       "declaration": "ThemeProvider › useEffect",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 20,

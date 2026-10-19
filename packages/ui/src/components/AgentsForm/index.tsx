@@ -9,8 +9,6 @@ import { cn } from "@/lib/utils"
 
 type AgentName = "claude" | "codex" | "cursor"
 
-type AgentConnection = "direct" | "manual"
-
 interface ModelOption {
   readonly model: string
   readonly label: string
@@ -31,14 +29,6 @@ interface AgentOption {
   readonly modelOptions: readonly ModelOption[]
 }
 
-interface ConnectionOption {
-  readonly connection: AgentConnection
-  readonly label: string
-  readonly tagLabel: string | null
-  readonly description: string
-  readonly unavailableFeatures: readonly string[]
-}
-
 export interface AgentsChoice {
   readonly agents: {
     readonly agent: AgentName
@@ -48,14 +38,11 @@ export interface AgentsChoice {
     readonly effort: string
   }[]
   readonly defaultAgent: AgentName | null
-  readonly connection: AgentConnection
 }
 
 interface AgentsFormProps {
   readonly agents: readonly AgentOption[]
   readonly defaultAgent: AgentName | null
-  readonly connection: AgentConnection
-  readonly connectionOptions: readonly ConnectionOption[]
   readonly problem: FormProblem | null
   readonly children: ReactNode
   readonly folderBrowser: FolderBrowser | null
@@ -67,7 +54,6 @@ interface AgentsFormProps {
 
 interface AgentRowProps {
   readonly option: AgentOption
-  readonly isAutomatic: boolean
   readonly groupName: string
   readonly isPicked: boolean
   readonly isDefault: boolean
@@ -86,10 +72,7 @@ interface AgentRowProps {
 }
 
 const SECTION_HEADING_CLASSES = "pt-8 pb-2 text-xl leading-7 font-bold text-signal-text"
-const MODE_LEGEND = "How Flight Plan works with your agent"
 const AGENTS_HEADING = "Agents"
-const MANUAL_LIMITS_LABEL = "Not available in manual mode:"
-const MODE_CARD_CLASSES = "flex cursor-pointer items-start gap-3 rounded-md border border-border p-4 hover:bg-muted has-checked:border-primary has-checked:bg-primary/10"
 const CHOICE_INPUT_CLASSES = "size-4 shrink-0 accent-(--primary)"
 const BROWSER_DESCRIPTION = "Open folders until you reach the one to install into, then use it."
 
@@ -151,7 +134,6 @@ const AgentRunSettings = ({
 
 const AgentRow = ({
   option,
-  isAutomatic,
   groupName,
   isPicked,
   isDefault,
@@ -196,22 +178,18 @@ const AgentRow = ({
                 )}
           </span>
         </label>
-        {isAutomatic
-          ? (
-              <label className="flex cursor-pointer items-center gap-2 pt-0.5 text-sm has-disabled:cursor-default has-disabled:text-muted-foreground">
-                <input
-                  type="radio"
-                  name={groupName}
-                  checked={isDefault}
-                  disabled={!isPicked}
-                  className={CHOICE_INPUT_CLASSES}
-                  onChange={onDefaultChange}
-                />
-                <span aria-hidden="true" className="text-box-cap">Default</span>
-                <span className="sr-only">{`Default agent: ${option.label}`}</span>
-              </label>
-            )
-          : null}
+        <label className="flex cursor-pointer items-center gap-2 pt-0.5 text-sm has-disabled:cursor-default has-disabled:text-muted-foreground">
+          <input
+            type="radio"
+            name={groupName}
+            checked={isDefault}
+            disabled={!isPicked}
+            className={CHOICE_INPUT_CLASSES}
+            onChange={onDefaultChange}
+          />
+          <span aria-hidden="true" className="text-box-cap">Default</span>
+          <span className="sr-only">{`Default agent: ${option.label}`}</span>
+        </label>
       </div>
       {isPicked
         ? (
@@ -239,19 +217,15 @@ const AgentRow = ({
                 </Button>
               </div>
               {hasPathError ? <p id={errorId} role="alert" className="text-sm text-destructive">{pathErrorMessage}</p> : null}
-              {isAutomatic
-                ? (
-                    <AgentRunSettings
-                      option={option}
-                      model={model}
-                      effort={effort}
-                      modelErrorMessage={modelErrorMessage}
-                      effortErrorMessage={effortErrorMessage}
-                      onModelChange={onModelChange}
-                      onEffortChange={onEffortChange}
-                    />
-                  )
-                : null}
+              <AgentRunSettings
+                option={option}
+                model={model}
+                effort={effort}
+                modelErrorMessage={modelErrorMessage}
+                effortErrorMessage={effortErrorMessage}
+                onModelChange={onModelChange}
+                onEffortChange={onEffortChange}
+              />
             </div>
           )
         : null}
@@ -259,58 +233,9 @@ const AgentRow = ({
   )
 }
 
-interface ModeChoiceProps {
-  readonly options: readonly ConnectionOption[]
-  readonly chosen: AgentConnection
-  readonly onChange: (connection: AgentConnection) => void
-}
-
-const ModeChoice = ({ options, chosen, onChange }: ModeChoiceProps) => {
-  const groupId = useId()
-  return (
-    <fieldset>
-      <legend className="sr-only">{MODE_LEGEND}</legend>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {options.map((option) => (
-          <label key={option.connection} className={MODE_CARD_CLASSES}>
-            <input
-              type="radio"
-              name={groupId}
-              checked={chosen === option.connection}
-              className={`${CHOICE_INPUT_CLASSES} mt-1`}
-              onChange={() => { onChange(option.connection) }}
-            />
-            <span className="grid min-w-0 gap-1">
-              <span>
-                <span className="font-bold">{option.label}</span>
-                {option.tagLabel === null
-                  ? null
-                  : <span className="ml-2 text-sm text-muted-foreground">{option.tagLabel}</span>}
-              </span>
-              <span className="text-sm text-muted-foreground">{option.description}</span>
-              {option.unavailableFeatures.length > 0
-                ? (
-                    <span className="grid gap-0.5 pt-1 text-sm">
-                      <span>{MANUAL_LIMITS_LABEL}</span>
-                      <span className="grid list-disc pl-5 text-muted-foreground">
-                        {option.unavailableFeatures.map((feature) => <span key={feature} className="list-item">{feature}</span>)}
-                      </span>
-                    </span>
-                  )
-                : null}
-            </span>
-          </label>
-        ))}
-      </div>
-    </fieldset>
-  )
-}
-
 const AgentsForm = ({
   agents,
   defaultAgent,
-  connection,
-  connectionOptions,
   problem,
   children,
   folderBrowser,
@@ -333,7 +258,6 @@ const AgentsForm = ({
     Object.fromEntries(agents.map((option) => [option.agent, option.effort])),
   )
   const [chosenDefault, setChosenDefault] = useState(defaultAgent)
-  const [chosenConnection, setChosenConnection] = useState(connection)
   const [browsingOption, setBrowsingOption] = useState<AgentOption | null>(null)
 
   const handleBrowse = (option: AgentOption) => {
@@ -361,20 +285,17 @@ const AgentsForm = ({
         effort: effortByAgent[option.agent] ?? option.effort,
       })),
       defaultAgent: chosenDefault,
-      connection: chosenConnection,
     })
   }
 
   return (
     <form action={handleSubmit}>
-      <ModeChoice options={connectionOptions} chosen={chosenConnection} onChange={setChosenConnection} />
       <h3 className={SECTION_HEADING_CLASSES}>{AGENTS_HEADING}</h3>
       <ul className="border-t border-border">
         {agents.map((option) => (
           <AgentRow
             key={option.agent}
             option={option}
-            isAutomatic={chosenConnection === "direct"}
             groupName={defaultGroupId}
             isPicked={pickedByAgent[option.agent] ?? false}
             isDefault={chosenDefault === option.agent}

@@ -5,6 +5,7 @@ import type { ReviewRequest } from "./review-request"
 import { orderInstructionOf } from "./walkthrough-order-catalog"
 
 const LINE_BREAK = "\n"
+const SENTENCE_GAP = " "
 
 export const buildReviewPrompt = (
   repository: Repository,
@@ -19,3 +20,5 @@ export const buildReviewPrompt = (
     orderInstructionOf(request.order, request.customOrder),
     "Do not ask the reviewer how to order the review: the order above is their answer.",
   ].join(LINE_BREAK)
+
+export const toOneLine = (prompt: string): string => prompt.split(LINE_BREAK).join(SENTENCE_GAP)

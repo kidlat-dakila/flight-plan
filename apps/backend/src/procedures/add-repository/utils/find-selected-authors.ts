@@ -1,3 +1,4 @@
+import type { GitIdentity } from "@/procedures/get-setup/utils/git-identity"
 import type { RepositoryAuthor, SetupRepository } from "@/procedures/get-setup/utils/setup"
 
 export interface AuthorSelection {
@@ -18,6 +19,17 @@ export const authorSelectionOf = (repository: Pick<SetupRepository, "selfAuthor"
   selfAuthorId: repository.selfAuthor?.id ?? null,
   trackedAuthorIds: repository.trackedAuthors.map((author) => author.id),
 })
+
+export const withoutIdentityAuthor = (selection: AuthorSelection, identity: GitIdentity | null): AuthorSelection =>
+  identity === null
+    ? selection
+    : {
+        selfAuthorId: null,
+        trackedAuthorIds: selection.trackedAuthorIds.filter((authorId) => authorId.toLowerCase() !== identity.email),
+      }
+
+export const withIdentityAsSelf = (selection: AuthorSelection, identity: GitIdentity | null): AuthorSelection =>
+  identity === null ? selection : { ...selection, selfAuthorId: identity.email }
 
 type AuthorFinder = (authorId: string) => Promise<RepositoryAuthor | null>
 

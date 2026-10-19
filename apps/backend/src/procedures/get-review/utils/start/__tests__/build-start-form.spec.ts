@@ -23,7 +23,6 @@ const setup: Setup = {
       { agent: "cursor", installPath: "/home/.cursor", model: "default", effort: "default" },
     ],
     defaultAgent: "claude",
-    connection: "direct",
   },
 }
 
@@ -84,13 +83,13 @@ describe("buildStartForm", () => {
     })
   })
 
-  it("offers each installed agent with the models it lists, each with its own efforts, and prompting by hand", () => {
+  it("offers each installed agent with the models it lists, each with its own efforts, and building without an agent", () => {
     expect(buildStartForm(setup, CONFIGURATIONS, ["claude"], AGENT_MODELS).writer).toMatchObject({
       selectedKey: "claude",
       agents: [
         {
           agent: "claude",
-          unavailableReason: null,
+          description: "Flight Plan starts Claude in this repository and asks it to write the review.",
           modelLegend: "Model for Claude",
           effortLegend: "Effort for Claude",
           hasModelChoice: true,
@@ -120,12 +119,16 @@ describe("buildStartForm", () => {
         },
         {
           agent: "cursor",
-          unavailableReason: "Flight Plan cannot start Cursor yet. Prompt it yourself instead.",
+          description: "Flight Plan can't start Cursor itself, so it gives you one line to run in Cursor.",
           hasModelChoice: false,
-          modelOptions: [{ model: "default", label: "Your Cursor default", hasEffortChoice: false }],
+          submitLabel: "Get the line for Cursor",
         },
       ],
-      manual: { label: "I will prompt my agent myself", submitLabel: "Copy the prompt" },
+      none: {
+        label: "Without an agent",
+        description: "Flight Plan builds the review on its own, and you read it without a write-up.",
+        submitLabel: "Build the review",
+      },
     })
   })
 
@@ -135,7 +138,6 @@ describe("buildStartForm", () => {
       agents: {
         installs: [{ agent: "claude", installPath: "/home/.claude", model: "sonnet", effort: "xhigh" }],
         defaultAgent: "claude",
-        connection: "direct",
       },
     }
 
@@ -151,7 +153,7 @@ describe("buildStartForm", () => {
     ])
   })
 
-  it("selects prompting by hand when no agent is set up", () => {
-    expect(buildStartForm(EMPTY_SETUP, CONFIGURATIONS, ["claude"], AGENT_MODELS).writer).toMatchObject({ selectedKey: "manual", agents: [] })
+  it("selects building without an agent when no agent is set up", () => {
+    expect(buildStartForm(EMPTY_SETUP, CONFIGURATIONS, ["claude"], AGENT_MODELS).writer).toMatchObject({ selectedKey: "none", agents: [] })
   })
 })

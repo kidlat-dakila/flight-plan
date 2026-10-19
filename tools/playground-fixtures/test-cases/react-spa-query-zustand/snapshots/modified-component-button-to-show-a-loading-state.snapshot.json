@@ -818,7 +818,7 @@
                   "title": "Added `isLoading` to `ButtonProps`",
                   "declaration": "ButtonProps",
                   "reading": "The author added a property `isLoading` to the type `ButtonProps`, which is optional and takes a `boolean`. [`<Button />` reads `isLoading` from its props](code:src/components/ui/button.tsx#L18), so that a component that renders `<Button />` can pass it. No component in the repository passes it.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -836,7 +836,7 @@
                   "title": "Modified `<Button />` to render a loading state",
                   "declaration": "Button",
                   "reading": "The author modified a component `<Button />` that:\n\n- takes `isLoading`, `disabled` and `children` out of its props, with `isLoading` set to `false` by default\n- sets `disabled` on the `<button>` to `disabled || isLoading`\n- renders `\"Loading…\"` in place of `children` when `isLoading` is `true`\n\nA component can now show that its action is still running, which is what the pull request is for. `props` no longer holds `disabled` or `children`, so `{...props}` passes neither to the `<button>`. When `isLoading` is `false`, the `<button>` gets the `disabled` and the `children` of its caller, as before. [`<ProfileForm />` passes `disabled={isPending}` and no `isLoading`](code:src/routes/account/components/ProfileForm.tsx#L24), so its Save button is disabled during a save and still reads \"Save\".",
-                  "needsAttention": "This is the change the pull request exists for: `<Button />` now reads `isLoading` to choose what it renders and whether it is disabled. [`ButtonProps`](code:src/components/ui/button.tsx#ButtonProps) only declares the property.",
+                  "coreChange": "This is the change the pull request exists for: `<Button />` now reads `isLoading` to choose what it renders and whether it is disabled. [`ButtonProps`](code:src/components/ui/button.tsx#ButtonProps) only declares the property.",
                   "findings": [],
                   "range": {
                     "lineStart": 16,

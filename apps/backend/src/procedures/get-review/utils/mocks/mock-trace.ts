@@ -90,6 +90,7 @@ const nodeOf = (mock: MockTraceNode, sources: readonly SourceFile[]): TraceNode 
     children: (mock.children ?? []).map((child) => nodeOf(child, sources)),
     triggerLabels,
     blockLabels,
+    isRequired: true,
   }
 }
 
@@ -118,5 +119,6 @@ export const mockTrace = (
     description,
     traceNodes,
     traceNodeEdges: edges.map(([from, to]) => ({ id: [from, to].join(EDGE_ID_SEPARATOR), from, to })),
+    isRequired: true,
   }
 }

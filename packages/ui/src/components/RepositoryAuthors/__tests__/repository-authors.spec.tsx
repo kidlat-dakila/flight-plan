@@ -4,6 +4,7 @@ import RepositoryAuthors, { type AuthorsChoice } from "@/components/RepositoryAu
 const LOCAL_GIT_AUTHORS: AuthorsChoice = {
   form: {
     selfAuthorHint: "Git cannot tell who you are here.",
+    gitSelfAuthor: null,
     searchHint: "Search by name or email.",
     searchPlaceholder: "Type a name or email",
   },
@@ -13,7 +14,12 @@ const LOCAL_GIT_AUTHORS: AuthorsChoice = {
 }
 const FORGE_AUTHORS: AuthorsChoice = {
   ...LOCAL_GIT_AUTHORS,
-  form: { selfAuthorHint: null, searchHint: "Search by name or username.", searchPlaceholder: "Type a name or username" },
+  form: {
+    selfAuthorHint: null,
+    gitSelfAuthor: null,
+    searchHint: "Search by name or username.",
+    searchPlaceholder: "Type a name or username",
+  },
 }
 const DEV = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
 const LENA = { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" }
@@ -45,6 +51,22 @@ describe("RepositoryAuthors", () => {
 
     expect(screen.queryByRole("combobox", { name: "Which user are you?" })).toBeNull()
     expect(screen.getByRole("combobox", { name: "Track specific team members" }).getAttribute("placeholder")).toBe("Type a name or username")
+  })
+
+  it("shows the user git config names, with no way to remove them, instead of asking who the user is", () => {
+    renderAuthors({
+      form: {
+        selfAuthorHint: null,
+        gitSelfAuthor: { author: DEV, stateLabel: "You, from git config" },
+        searchHint: "Search by name or email.",
+        searchPlaceholder: "Type a name or email",
+      },
+    })
+
+    expect(screen.queryByRole("combobox", { name: "Which user are you?" })).toBeNull()
+    expect(screen.getByText("Dev Harper")).toBeTruthy()
+    expect(screen.getByText("You, from git config")).toBeTruthy()
+    expect(screen.queryByRole("button", { name: "Choose another user as you" })).toBeNull()
   })
 
   it("waits for the author form before asking about authors", () => {

@@ -6,11 +6,13 @@ import { branchNameOf } from "@/procedures/get-review/utils/change-reader"
 import { findReviewTarget } from "@/procedures/get-review/utils/find-review-target"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { offerAgents } from "@/procedures/get-review/utils/start/agent-offers"
-import { buildReviewPrompt } from "@/procedures/get-review/utils/start/review-prompt"
+import { buildReviewPrompt, toOneLine } from "@/procedures/get-review/utils/start/review-prompt"
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
+import { AGENT_LABELS } from "@/procedures/get-setup/utils/agent-catalog"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
+import type { AgentName } from "@/procedures/get-setup/utils/setup"
 import { findConfiguration } from "@/procedures/list-configurations/utils/configuration"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import { buildArtifact } from "./utils/build-artifact"
@@ -19,8 +21,10 @@ import type { RequestReviewInput, RequestReviewResult } from "./utils/schemas"
 import { startingArtifactOf } from "./utils/starting-artifact"
 
 const STARTED_MESSAGE = "Review started"
-const PROMPT_COPIED_MESSAGE = "Prompt copied"
 const CREATED_MESSAGE = "Flight Plan created"
+
+export const externalStartMessage = (agent: AgentName): string =>
+  `Run this line in ${AGENT_LABELS[agent]} to start the write-up`
 
 const unstartedMessage = (reason: string): string =>
   `The review is ready to read, but the agent did not start: ${reason}`
@@ -55,10 +59,11 @@ export interface Handover {
 }
 
 export const handToWriter = async ({ key, repository, target, request }: WritingJob, context: ProcedureContext): Promise<Handover> => {
-  if (request.writer.kind === "author") return { prompt: null, message: CREATED_MESSAGE }
+  const { writer } = request
+  if (writer.kind === "author" || writer.kind === "none") return { prompt: null, message: CREATED_MESSAGE }
   const prompt = buildReviewPrompt(repository, target, key, request)
-  return request.writer.kind === "manual"
-    ? { prompt, message: PROMPT_COPIED_MESSAGE }
+  return writer.kind === "external"
+    ? { prompt: toOneLine(prompt), message: externalStartMessage(writer.agent) }
     : { prompt: null, message: await startAgent(key, prompt, context) }
 }
 

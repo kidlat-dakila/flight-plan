@@ -11,11 +11,11 @@ const LABEL_BY_PATH = new Map([
 
 const blastDiagram: Blast = {
   nodes: [
-    { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null },
-    { path: "src/checkout.ts", diffType: null, impactType: null, impactReason: null },
-    { path: "src/logger.ts", diffType: null, impactType: null, impactReason: null },
-    { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null },
-    { path: "src/ui.ts", diffType: null, impactType: null, impactReason: null },
+    { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+    { path: "src/checkout.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+    { path: "src/logger.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+    { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null, isRequired: false },
+    { path: "src/ui.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
   ],
   edges: [
     { importer: "src/cart.ts", imported: "src/pricing.ts" },
@@ -79,9 +79,9 @@ describe("layoutBlast", () => {
   it("puts a file that imports at the left of the file it imports, one column for each import of the longest chain", () => {
     const chain: Blast = {
       nodes: [
-        { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null },
-        { path: "src/page.ts", diffType: null, impactType: null, impactReason: null },
-        { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null },
+        { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+        { path: "src/page.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+        { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null, isRequired: false },
       ],
       edges: [
         { importer: "src/cart.ts", imported: "src/pricing.ts" },
@@ -105,7 +105,7 @@ describe("layoutBlast", () => {
 
   it("puts a file beside the files it is joined to, so that imports cross as little as they can", () => {
     const fan: Blast = {
-      nodes: ["src/a.ts", "src/b.ts", "src/c.ts", "src/d.ts"].map((path) => ({ path, diffType: null, impactType: null, impactReason: null })),
+      nodes: ["src/a.ts", "src/b.ts", "src/c.ts", "src/d.ts"].map((path) => ({ path, diffType: null, impactType: null, impactReason: null, isRequired: false })),
       edges: [
         { importer: "src/a.ts", imported: "src/d.ts" },
         { importer: "src/b.ts", imported: "src/c.ts" },
@@ -119,7 +119,7 @@ describe("layoutBlast", () => {
 
   it("places every file of two files that import each other", () => {
     const loop: Blast = {
-      nodes: ["src/a.ts", "src/b.ts"].map((path) => ({ path, diffType: null, impactType: null, impactReason: null })),
+      nodes: ["src/a.ts", "src/b.ts"].map((path) => ({ path, diffType: null, impactType: null, impactReason: null, isRequired: false })),
       edges: [
         { importer: "src/a.ts", imported: "src/b.ts" },
         { importer: "src/b.ts", imported: "src/a.ts" },

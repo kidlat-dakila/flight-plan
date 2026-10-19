@@ -505,7 +505,7 @@
                   "title": "Modified `addItem` to add 1 to the quantity of a product already in the cart",
                   "declaration": "useCartStore",
                   "reading": "The author modified the function `addItem` in the store `useCartStore` that now:\n\n- returns `items` with `{ product, quantity: 1 }` appended only when no item has the same `product.id`\n- returns `items` with `quantity + 1` on the item that has the same `product.id`, in every other case\n\n[`<AddToCartButton />` calls `addItem(product)` on every click](code:src/routes/catalog/components/AddToCartButton.tsx#L7), and `CartPage` in `src/routes/cart/index.tsx` renders one `<CartLine />` per entry of `items`, so that a product added twice shows as one line of \"2 items\" and not as two lines. [`selectItemCount` adds up the `quantity` of every item](code:src/stores/cart-store.ts#L32-34) and [`selectTotalCents` multiplies each price by its `quantity`](code:src/stores/cart-store.ts#L36-38), so the cart count and the cart total stay the same.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 11,

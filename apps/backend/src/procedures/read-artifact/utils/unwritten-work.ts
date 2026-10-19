@@ -1,5 +1,5 @@
 import { contextIdOf, listTraceNodes, listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
-import type { TraceNode, ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
+import type { Blast, TraceNode, ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
 import { isDescriptionOwed } from "./context-code-blocks"
 
@@ -44,7 +44,7 @@ const QUESTION_KIND = "question"
 const blastWork = (segment: Segment): Work[] =>
   segment.blastDiagram === null
     ? []
-    : listUnassessedNodes(segment.blastDiagram).map((node) => ({
+    : listUnassessedNodes(segment.blastDiagram).filter((node) => node.isRequired).map((node) => ({
         target: "blast-node",
         id: node.path,
         segmentId: segment.id,
@@ -54,6 +54,7 @@ const blastWork = (segment: Segment): Work[] =>
 
 const contextWork = (segment: Segment): Work[] => {
   const located = { target: "context", id: null, segmentId: segment.id } as const
+  if (!segment.isContextRequired) return []
   return [
     ...(segment.context.trim() === ""
       ? [{ ...located, needs: "context", message: "The context is not written. Say why anyone should care about this change, what it changes from outside and what changed inside." } as const]
@@ -65,7 +66,7 @@ const contextWork = (segment: Segment): Work[] => {
 }
 
 const waypointWork = (segment: Segment, sections: SectionSwitches): Work[] =>
-  waypointsOf(segment).flatMap(({ waypoint }): Work[] => {
+  waypointsOf(segment).filter(({ waypoint }) => waypoint.isRequired).flatMap(({ waypoint }): Work[] => {
     const located = { target: "waypoint", id: waypoint.id, segmentId: segment.id } as const
     return [
       ...(waypoint.title === null
@@ -85,6 +86,12 @@ const waypointWork = (segment: Segment, sections: SectionSwitches): Work[] =>
   })
 
 const traceNodesOf = (segment: Segment): TraceNode[] => listTraceNodes(segment.traceDiagram?.traceNodes ?? [])
+
+export const hasDrawnTrace = (segment: Segment): boolean => traceNodesOf(segment).length > 0
+
+const requiredTraceNodesOf = (segment: Segment): TraceNode[] => traceNodesOf(segment).filter((node) => node.isRequired)
+
+const isTraceDescriptionRequired = (segment: Segment): boolean => hasDrawnTrace(segment) && segment.traceDiagram?.isRequired === true
 
 const triggerLabelWork = (segment: Segment, node: TraceNode): Work[] =>
   node.triggerLabels
@@ -108,10 +115,8 @@ const blockLabelWork = (segment: Segment, node: TraceNode): Work[] =>
       message: `The block \`${listed.codeBlock.id}\` of \`${node.id}\` has no label. Say what the block does, starting with a verb.`,
     } as const))
 
-export const hasDrawnTrace = (segment: Segment): boolean => traceNodesOf(segment).length > 0
-
 const descriptionWork = (segment: Segment): Work[] =>
-  hasDrawnTrace(segment) && segment.traceDiagram?.description === null
+  isTraceDescriptionRequired(segment) && segment.traceDiagram?.description === null
     ? [{
         target: "trace-diagram",
         id: null,
@@ -122,7 +127,7 @@ const descriptionWork = (segment: Segment): Work[] =>
     : []
 
 const nodeWork = (segment: Segment): Work[] =>
-  traceNodesOf(segment).flatMap((node): Work[] => [
+  requiredTraceNodesOf(segment).flatMap((node): Work[] => [
     ...(node.label === null
       ? [{
           target: "trace-node",
@@ -160,17 +165,26 @@ export const unwrittenWork = (artifact: ReviewArtifact, sections: SectionSwitche
 
 const nodeKeyOf = (target: WorkTarget, id: string | null, segmentId: string | null): string => [segmentId ?? "", target, id ?? ""].join("\n")
 
-const assessedPathsOf = ({ blastDiagram }: Segment): string[] =>
-  blastDiagram === null ? [] : [...new Set([...listReachedPaths(blastDiagram), ...blastDiagram.nodes.filter((node) => node.impactType !== null).map((node) => node.path)])]
+const requiredPathsOf = (blastDiagram: Blast): ReadonlySet<string> =>
+  new Set(blastDiagram.nodes.filter((node) => node.isRequired).map((node) => node.path))
+
+const assessedPathsOf = ({ blastDiagram }: Segment): string[] => {
+  if (blastDiagram === null) return []
+  const requiredPaths = requiredPathsOf(blastDiagram)
+  const assessablePaths = [...listReachedPaths(blastDiagram), ...blastDiagram.nodes.filter((node) => node.impactType !== null).map((node) => node.path)]
+  return [...new Set(assessablePaths.filter((path) => requiredPaths.has(path)))]
+}
 
 const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
   ...(sections.blastDiagram ? assessedPathsOf(segment).map((path) => nodeKeyOf("blast-node", path, segment.id)) : []),
-  nodeKeyOf("context", null, segment.id),
-  ...(sections.walkthrough ? waypointsOf(segment).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id)) : []),
+  ...(segment.isContextRequired ? [nodeKeyOf("context", null, segment.id)] : []),
+  ...(sections.walkthrough
+    ? waypointsOf(segment).filter(({ waypoint }) => waypoint.isRequired).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id))
+    : []),
   ...(sections.traceDiagram
     ? [
-        ...traceNodesOf(segment).map((node) => nodeKeyOf("trace-node", node.id, segment.id)),
-        ...(hasDrawnTrace(segment) ? [nodeKeyOf("trace-diagram", null, segment.id)] : []),
+        ...requiredTraceNodesOf(segment).map((node) => nodeKeyOf("trace-node", node.id, segment.id)),
+        ...(isTraceDescriptionRequired(segment) ? [nodeKeyOf("trace-diagram", null, segment.id)] : []),
       ]
     : []),
 ]

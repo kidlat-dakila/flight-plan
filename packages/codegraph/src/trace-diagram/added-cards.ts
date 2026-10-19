@@ -50,6 +50,7 @@ export const createEmptyTrace = (): TraceDiagram => ({
   description: null,
   traceNodes: [],
   traceNodeEdges: [],
+  isRequired: false,
 })
 
 export const readFileGraph = (filePath: string, source: string): ASTGraph | null => {
@@ -228,6 +229,7 @@ export const buildLinesCard = (astGraph: ASTGraph, lines: LineRange, isPrefilled
     children: [],
     triggerLabels: [],
     blockLabels: [],
+    isRequired: false,
     rows: isPrefilled ? inLineOrder(outermost.map((inside) => toRow(inside, [inside]))) : NO_ROWS,
   }
 }

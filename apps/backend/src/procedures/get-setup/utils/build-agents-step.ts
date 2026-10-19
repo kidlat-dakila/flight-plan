@@ -1,4 +1,4 @@
-import { AGENT_CLI_NAMES, AGENT_LABELS, CONNECTION_OFFERS } from "./agent-catalog"
+import { AGENT_CLI_NAMES, AGENT_LABELS } from "./agent-catalog"
 import {
   offeredEffortOf,
   offerModels,
@@ -8,21 +8,13 @@ import {
   type AgentModels,
 } from "./agent-models"
 import type { AgentsStep } from "./schemas"
-import {
-  AGENT_CONNECTIONS,
-  AGENT_NAMES,
-  DEFAULT_MODEL,
-  type AgentConnection,
-  type AgentName,
-  type AgentsChoice,
-} from "./setup"
+import { AGENT_NAMES, DEFAULT_MODEL, type AgentName, type AgentsChoice } from "./setup"
 import type { AgentDetection } from "./setup-environment"
 
 type AgentOption = AgentsStep["agents"][number]
 
 type AgentLocation = Pick<AgentOption, "isPicked" | "installPath" | "pathHint">
 
-const DEFAULT_CONNECTION: AgentConnection = "direct"
 const SAVED_PATH_HINT = "The folder you saved."
 const DETECTED_PATH_HINT = "Found on this machine. Change it to install somewhere else."
 
@@ -70,14 +62,6 @@ const toAgentOption = (
 const defaultAgentOf = (choice: AgentsChoice | null, detections: readonly AgentDetection[]): AgentName | null =>
   choice !== null && hasCli(choice.defaultAgent, detections) ? choice.defaultAgent : null
 
-const toConnectionOption = (connection: AgentConnection): AgentsStep["connectionOptions"][number] => ({
-  connection,
-  label: CONNECTION_OFFERS[connection].label,
-  tagLabel: CONNECTION_OFFERS[connection].tagLabel,
-  description: CONNECTION_OFFERS[connection].description,
-  unavailableFeatures: [...CONNECTION_OFFERS[connection].unavailableFeatures],
-})
-
 export const buildAgentsStep = (
   choice: AgentsChoice | null,
   detections: readonly AgentDetection[],
@@ -86,6 +70,4 @@ export const buildAgentsStep = (
   step: "agents",
   agents: AGENT_NAMES.map((agent) => toAgentOption(agent, choice, detections, agentModels)),
   defaultAgent: defaultAgentOf(choice, detections),
-  connection: choice?.connection ?? DEFAULT_CONNECTION,
-  connectionOptions: AGENT_CONNECTIONS.map(toConnectionOption),
 })

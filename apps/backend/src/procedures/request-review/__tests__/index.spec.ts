@@ -45,7 +45,7 @@ const createInput = (overrides: Partial<RequestReviewInput> = {}): RequestReview
   configurationId: "onboardee",
   order: "along-the-path",
   customOrder: "",
-  writer: { kind: "manual" },
+  writer: { kind: "none" },
   ...overrides,
 })
 
@@ -59,7 +59,6 @@ const createContext = (spawner = new FakeSpawner(), changes: readonly RecordedCh
     agents: {
       installs: [{ agent: "claude", installPath: "/home/.claude", model: "default", effort: "default" }],
       defaultAgent: "claude",
-      connection: "direct",
     },
   }),
   configurationStore: new InMemoryConfigurationStore([]),
@@ -71,18 +70,22 @@ const createContext = (spawner = new FakeSpawner(), changes: readonly RecordedCh
 })
 
 describe("requestReview", () => {
-  it("builds the review artifact from the change and returns the prompt to paste when the reviewer prompts the agent", async () => {
+  it("builds the review artifact from the change, with no agent and nothing to copy, when the reviewer builds it without an agent", async () => {
     const spawner = new FakeSpawner()
     const context = createContext(spawner)
 
-    const result = await requestReview(createInput(), context)
-
-    expect(result).toMatchObject({ kind: "requested", message: "Prompt copied" })
-    expect(result?.kind === "requested" ? result.prompt : null).toContain("Review pull request #416 of storefront")
+    await expect(requestReview(createInput(), context)).resolves.toStrictEqual({
+      kind: "requested",
+      prompt: null,
+      message: "Flight Plan created",
+    })
     expect(spawner.launches).toStrictEqual([])
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
+      segments: [{ isContextRequired: false, walkthrough: { files: [{ waypoints: [{ isRequired: false }] }] } }],
+    })
     await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({
       kind: "artifact",
-      progress: { state: "waiting", label: "Waiting for your agent", prompt: { label: "Copy the prompt" } },
+      progress: null,
       staleNotice: null,
       segments: [
         {
@@ -96,6 +99,38 @@ describe("requestReview", () => {
     })
   })
 
+  it("gives one line to run in an agent Flight Plan cannot start, and waits for that agent", async () => {
+    const spawner = new FakeSpawner()
+    const context = {
+      ...createContext(spawner),
+      setupStore: new InMemorySetupStore({
+        ...EMPTY_SETUP,
+        agents: {
+          installs: [{ agent: "codex", installPath: "/home/.codex", model: "default", effort: "default" }],
+          defaultAgent: "codex",
+        },
+      }),
+    }
+
+    const result = await requestReview(
+      createInput({ writer: { kind: "agent", agent: "codex", model: "default", effort: "default" } }),
+      context,
+    )
+
+    expect(result).toMatchObject({ kind: "requested", message: "Run this line in Codex to start the write-up" })
+    const line = result?.kind === "requested" ? result.prompt : null
+    expect(line).toContain("Review pull request #416 of storefront")
+    expect(line).not.toContain("\n")
+    expect(spawner.launches).toStrictEqual([])
+    await expect(context.reviewStore.findRequest(KEY)).resolves.toMatchObject({ writer: { kind: "external", agent: "codex" } })
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
+      segments: [{ isContextRequired: true, walkthrough: { files: [{ waypoints: [{ isRequired: true }] }] } }],
+    })
+    await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({
+      progress: { state: "waiting", label: "Waiting for your agent", prompt: { label: "Copy the line" } },
+    })
+  })
+
   it("keeps the reviewer's choices with the scaffold", async () => {
     const context = createContext()
 
@@ -106,7 +141,7 @@ describe("requestReview", () => {
       preset: "onboardee",
       order: "custom",
       customOrder: "Tests first.",
-      writer: { kind: "manual" },
+      writer: { kind: "none" },
       requestedAt: NOW,
     })
   })

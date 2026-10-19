@@ -32,7 +32,7 @@ interface WrittenWaypoint {
   readonly declaration: string
   readonly title: string | null
   readonly reading: string
-  readonly needsAttention: string | null
+  readonly coreChange: string | null
   readonly findings: readonly Finding[]
   readonly children: readonly WrittenWaypoint[]
 }
@@ -42,7 +42,7 @@ const writtenWaypointSchema: z.ZodType<WrittenWaypoint> = z.lazy(() =>
     declaration: z.string(),
     title: z.string().nullable(),
     reading: z.string(),
-    needsAttention: z.string().nullable(),
+    coreChange: z.string().nullable(),
     findings: z.array(artifactFindingSchema).default([]),
     children: z.array(writtenWaypointSchema),
   }),
@@ -144,7 +144,7 @@ const withWrittenWaypoint = (waypoint: LinkedWaypoint, writtenWaypoints: Readonl
   const children = waypoint.children.map((child) => withWrittenWaypoint(child, writtenWaypoints))
   return written === undefined
     ? { ...waypoint, children }
-    : { ...waypoint, title: written.title, reading: written.reading, needsAttention: written.needsAttention, findings: written.findings, children }
+    : { ...waypoint, title: written.title, reading: written.reading, coreChange: written.coreChange, findings: written.findings, children }
 }
 
 const withWrittenFile = (file: LinkedFileSection, written: WrittenFile | undefined): LinkedFileSection => {

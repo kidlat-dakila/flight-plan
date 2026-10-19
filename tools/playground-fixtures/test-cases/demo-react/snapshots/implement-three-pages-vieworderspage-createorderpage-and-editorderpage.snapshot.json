@@ -1607,7 +1607,7 @@
                   "title": "Added `fetchOrders()` to request every order",
                   "declaration": "fetchOrders",
                   "reading": "The author added a function `fetchOrders()` that sends a `GET` request to `/orders` and returns the orders of the response. [`useOrders()` passes it to `useQuery` as its query function](code:src/hooks/use-orders.ts#L7), so that [`<ViewOrdersPage />`](code:src/routes/orders/index.tsx#L5) can list the orders.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -1625,7 +1625,7 @@
                   "title": "Added `fetchOrder()` to request one order by its id",
                   "declaration": "fetchOrder",
                   "reading": "The author added a function `fetchOrder()` that sends a `GET` request to `/orders/<id>` and returns that one order. [`useOrder()` calls it in its query function](code:src/hooks/use-orders.ts#L11), so that [`<EditOrderPage />`](code:src/routes/orders/edit.tsx#L9) can load the order it edits.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [
                     {
                       "id": "finding-unencoded-order-id",
@@ -1653,7 +1653,7 @@
                   "title": "Added `createOrder()` to send a new order",
                   "declaration": "createOrder",
                   "reading": "The author added a function `createOrder()` that sends a `POST` request to `/orders` with the draft as its JSON body, and returns the order the server created. [`useCreateOrder()` runs it as its mutation function](code:src/hooks/use-orders.ts#L17), so that [`<CreateOrderPage />`](code:src/routes/orders/create.tsx#L13) saves a new order through it.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 12,
@@ -1674,7 +1674,7 @@
                   "title": "Added `updateOrder()` to save a changed order",
                   "declaration": "updateOrder",
                   "reading": "The author added a function `updateOrder()` that sends a `PUT` request to `/orders/<id>` with the whole order as its JSON body, and returns the order the server saved. [`useUpdateOrder()` runs it as its mutation function](code:src/hooks/use-orders.ts#L25), so that [`<EditOrderPage />`](code:src/routes/orders/edit.tsx#L15) saves its changes through it.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [
                     {
                       "id": "finding-stale-status",
@@ -1715,7 +1715,7 @@
                   "title": "Added the query key of the orders",
                   "declaration": "ORDERS_QUERY_KEY",
                   "reading": "The author added a constant `ORDERS_QUERY_KEY` that holds `[\"orders\"]`. [`useOrders()` loads the list under it](code:src/hooks/use-orders.ts#L7), and [`useOrder()` loads one order under a key that starts with it](code:src/hooks/use-orders.ts#L11). So [one call to `invalidateQueries()`](code:src/hooks/use-orders.ts#L18) marks the list and every single order as stale.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -1733,7 +1733,7 @@
                   "title": "Added `useOrders()` to load every order",
                   "declaration": "useOrders",
                   "reading": "The author added a hook `useOrders()` that loads every order with `useQuery`, under the key `[\"orders\"]`, with [`fetchOrders()`](code:src/api/orders.ts#fetchOrders) as its query function. [`<ViewOrdersPage />`](code:src/routes/orders/index.tsx#L5) calls it, so that the page lists the orders and shows a message while they load.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -1754,7 +1754,7 @@
                   "title": "Added `useOrder()` to load one order by its id",
                   "declaration": "useOrder",
                   "reading": "The author added a hook `useOrder()` that loads one order with `useQuery`, under a key of `\"orders\"` and the id, with a query function that calls [`fetchOrder()`](code:src/api/orders.ts#fetchOrder). [`<EditOrderPage />`](code:src/routes/orders/edit.tsx#L9) calls it with the id from the URL, so that the page fills its form with the saved order.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 10,
@@ -1777,7 +1777,7 @@
                   "title": "Added `useCreateOrder()` to create an order",
                   "declaration": "useCreateOrder",
                   "reading": "The author added a hook `useCreateOrder()` that returns a mutation that:\n\n- sends the draft with [`createOrder()`](code:src/api/orders.ts#createOrder)\n- marks every query under `[\"orders\"]` as stale when the request succeeds\n\n[`<CreateOrderPage />`](code:src/routes/orders/create.tsx#L10) calls it, so that the orders list loads again after a new order is saved.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 14,
@@ -1801,7 +1801,7 @@
                       "title": "Added the read of the query client",
                       "declaration": "useCreateOrder › queryClient",
                       "reading": "The author added a call to `useQueryClient()` that returns the `QueryClient` the app provides. [The success callback of the mutation calls `invalidateQueries()` on it](code:src/hooks/use-orders.ts#L18).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 15,
@@ -1819,7 +1819,7 @@
                       "title": "Added the mutation that creates an order",
                       "declaration": "useCreateOrder › useMutation",
                       "reading": "The author added a call to `useMutation` with [`createOrder()`](code:src/api/orders.ts#createOrder) as its mutation function, and an `onSuccess` callback that calls `invalidateQueries({ queryKey: [\"orders\"] })`. The callback marks the orders as stale, so that [`useOrders()`](code:src/hooks/use-orders.ts#L7) loads the list again after a new order is saved.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 16,
@@ -1844,7 +1844,7 @@
                   "title": "Added `useUpdateOrder()` to save a changed order",
                   "declaration": "useUpdateOrder",
                   "reading": "The author added a hook `useUpdateOrder()` that returns a mutation that:\n\n- sends the order with [`updateOrder()`](code:src/api/orders.ts#updateOrder)\n- marks every query under `[\"orders\"]` as stale when the request succeeds\n\n[`<EditOrderPage />`](code:src/routes/orders/edit.tsx#L10) calls it, so that the list and the edited order load again after the save.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 22,
@@ -1868,7 +1868,7 @@
                       "title": "Added the read of the query client",
                       "declaration": "useUpdateOrder › queryClient",
                       "reading": "The author added a call to `useQueryClient()` that returns the `QueryClient` the app provides. [The success callback of the mutation calls `invalidateQueries()` on it](code:src/hooks/use-orders.ts#L26).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 23,
@@ -1886,7 +1886,7 @@
                       "title": "Added the mutation that saves an order",
                       "declaration": "useUpdateOrder › useMutation",
                       "reading": "The author added a call to `useMutation` with [`updateOrder()`](code:src/api/orders.ts#updateOrder) as its mutation function, and an `onSuccess` callback that calls `invalidateQueries({ queryKey: [\"orders\"] })`. The callback marks the list and the saved order as stale, so that [`useOrders()`](code:src/hooks/use-orders.ts#L7) and [`useOrder()`](code:src/hooks/use-orders.ts#L11) load them again.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 24,
@@ -1916,7 +1916,7 @@
                   "title": "Modified the route table to add the three order pages",
                   "declaration": "router",
                   "reading": "The author modified the route table `router` to add three child routes of the layout:\n\n- `orders` renders [`<ViewOrdersPage />`](code:src/routes/orders/index.tsx#ViewOrdersPage)\n- `orders/new` renders [`<CreateOrderPage />`](code:src/routes/orders/create.tsx#CreateOrderPage)\n- `orders/:orderId/edit` renders [`<EditOrderPage />`](code:src/routes/orders/edit.tsx#EditOrderPage), which [reads `orderId` with `useParams()`](code:src/routes/orders/edit.tsx#L7)\n\n`src/main.tsx` passes this table to `<RouterProvider />`, so that the three pages open at these paths inside [`<RootLayout />`](code:src/routes/root-layout.tsx#RootLayout).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 10,
@@ -1949,7 +1949,7 @@
                   "title": "Added the props of the order form",
                   "declaration": "OrderFormProps",
                   "reading": "The author added an interface `OrderFormProps` that declares four props:\n\n- `initialDraft`, the [`OrderDraft`](code:src/types/order.ts#OrderDraft) the form starts from\n- `submitLabel`, the text of the submit button\n- `isSaving`, which disables the submit button\n- `onSubmit`, which receives the edited draft\n\n[`<CreateOrderPage />`](code:src/routes/orders/create.tsx#L19) and [`<EditOrderPage />`](code:src/routes/orders/edit.tsx#L21) pass all four, so that one form creates and edits an order.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 7,
@@ -1967,7 +1967,7 @@
                   "title": "Added `<OrderForm />` to edit the fields of an order",
                   "declaration": "OrderForm",
                   "reading": "The author added a component `<OrderForm />` that:\n\n- keeps a draft in state, starting from `initialDraft`\n- lists the customers and the products in two `<select>` elements, and the quantity in a number `<Input>`\n- writes each change into the draft\n- calls `onSubmit` with the draft when the form is submitted\n\n[`<CreateOrderPage />`](code:src/routes/orders/create.tsx#L19) and [`<EditOrderPage />`](code:src/routes/orders/edit.tsx#L21) both render it, so that the two pages share one set of fields.",
-                  "needsAttention": "Both order pages build on this form: it holds the draft a staff member edits and hands it to the page that saves it, so [creating](code:src/routes/orders/create.tsx#L13) and [editing](code:src/routes/orders/edit.tsx#L15) an order send what this form collects.",
+                  "coreChange": "Both order pages build on this form: it holds the draft a staff member edits and hands it to the page that saves it, so [creating](code:src/routes/orders/create.tsx#L13) and [editing](code:src/routes/orders/edit.tsx#L15) an order send what this form collects.",
                   "findings": [],
                   "range": {
                     "lineStart": 14,
@@ -2024,7 +2024,7 @@
                       "title": "Added the draft state of the form",
                       "declaration": "OrderForm › draft",
                       "reading": "The author added a state `draft` that starts as the `initialDraft` prop. The change handlers of the [customer](code:src/routes/orders/components/OrderForm.tsx#L29), [product](code:src/routes/orders/components/OrderForm.tsx#L40) and [quantity](code:src/routes/orders/components/OrderForm.tsx#L53) fields write into it, and [the submit handler passes it to `onSubmit`](code:src/routes/orders/components/OrderForm.tsx#L21).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [
                         {
                           "id": "finding-draft-ignores-reload",
@@ -2053,7 +2053,7 @@
                       "title": "Added the customers of the customer list",
                       "declaration": "OrderForm › customers",
                       "reading": "The author added a call to [`useCustomers()`](code:src/hooks/use-customers.ts#L6-8) that gives the customers, or `[]` while they load. [The customer `<select>` renders one `<option>` per customer](code:src/routes/orders/components/OrderForm.tsx#L31-35).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 16,
@@ -2071,7 +2071,7 @@
                       "title": "Added the products of the product list",
                       "declaration": "OrderForm › products",
                       "reading": "The author added a call to [`useProducts()`](code:src/hooks/use-products.ts#L6-8) that gives the products, or `[]` while they load. [The product `<select>` renders one `<option>` per product](code:src/routes/orders/components/OrderForm.tsx#L42-46).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 17,
@@ -2089,7 +2089,7 @@
                       "title": "Added the submit handler of the form",
                       "declaration": "OrderForm › handleSubmit",
                       "reading": "The author added a function `handleSubmit()` that calls `event.preventDefault()` and then `onSubmit(draft)`. [The `<form>` runs it when it is submitted](code:src/routes/orders/components/OrderForm.tsx#L25), so that the browser does not reload the page and the page gets the edited draft.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [
                         {
                           "id": "finding-empty-customer",
@@ -2125,7 +2125,7 @@
                       "title": "Added the submit event of the form",
                       "declaration": "OrderForm › form.onSubmit",
                       "reading": "The author added an `onSubmit` attribute that runs [`handleSubmit()`](code:src/routes/orders/components/OrderForm.tsx#L19-22) when the form is submitted. [The submit `<Button>` is disabled while the order saves](code:src/routes/orders/components/OrderForm.tsx#L55).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 25,
@@ -2143,7 +2143,7 @@
                       "title": "Added the change handler of the customer list",
                       "declaration": "OrderForm › select.onChange",
                       "reading": "The author added an `onChange` handler that copies the draft with `customerId` set to the chosen value. [The customer `<select>` shows `draft.customerId`](code:src/routes/orders/components/OrderForm.tsx#L28), so that the list shows the customer the draft holds.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 29,
@@ -2164,7 +2164,7 @@
                       "title": "Added one option per customer",
                       "declaration": "OrderForm › Markup loop :31",
                       "reading": "The author added a loop that renders one `<option>` per customer, with the id as its value and the name as its text. [The customers come from `useCustomers()`](code:src/routes/orders/components/OrderForm.tsx#L16).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 31,
@@ -2185,7 +2185,7 @@
                       "title": "Added the change handler of the product list",
                       "declaration": "OrderForm › select.onChange (2)",
                       "reading": "The author added an `onChange` handler that copies the draft with `productId` set to the chosen value. [The product `<select>` shows `draft.productId`](code:src/routes/orders/components/OrderForm.tsx#L39), so that the list shows the product the draft holds.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 40,
@@ -2206,7 +2206,7 @@
                       "title": "Added one option per product",
                       "declaration": "OrderForm › Markup loop :42",
                       "reading": "The author added a loop that renders one `<option>` per product, with the id as its value and the name as its text. [The products come from `useProducts()`](code:src/routes/orders/components/OrderForm.tsx#L17).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 42,
@@ -2227,7 +2227,7 @@
                       "title": "Added the change handler of the quantity field",
                       "declaration": "OrderForm › Input.onChange",
                       "reading": "The author added an `onChange` handler that copies the draft with `quantity` set to `Number(event.target.value)`, so that the draft holds a number and not the text of the field. [The field takes numbers from 1](code:src/routes/orders/components/OrderForm.tsx#L50-51).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 53,
@@ -2255,7 +2255,7 @@
                   "title": "Modified `<RootLayout />` to link to the orders",
                   "declaration": "RootLayout",
                   "reading": "The author modified the component `<RootLayout />` to render a `<Link to=\"/orders\">` with the text `Orders` in the header, between `Products` and `Help`. [The route table renders `<ViewOrdersPage />` at that path](code:src/router.tsx#L17), so that a staff member can reach the orders from every page.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -2279,7 +2279,7 @@
                   "title": "Added the type of the order status",
                   "declaration": "OrderStatus",
                   "reading": "The author added a type `OrderStatus` that is `\"pending\"` or `\"shipped\"`. [`Order` types its `status` with it](code:src/types/order.ts#L8), and [the create page starts a new order as `\"pending\"`](code:src/routes/orders/create.tsx#L6).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 1,
@@ -2297,7 +2297,7 @@
                   "title": "Added the type of an order",
                   "declaration": "Order",
                   "reading": "The author added an interface `Order` with an `id`, a `customerId`, a `productId`, a `quantity` and a `status` of type [`OrderStatus`](code:src/types/order.ts#OrderStatus). [The order requests return it](code:src/api/orders.ts#L4-18), and [`<EditOrderPage />` passes the loaded order to the form](code:src/routes/orders/edit.tsx#L21).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 3,
@@ -2315,7 +2315,7 @@
                   "title": "Added the type of an order draft",
                   "declaration": "OrderDraft",
                   "reading": "The author added a type `OrderDraft` that is [`Order`](code:src/types/order.ts#Order) without its `id`. [`<OrderForm />` edits one](code:src/routes/orders/components/OrderForm.tsx#L8) and [`createOrder()` sends one](code:src/api/orders.ts#L12), because the server gives a new order its id.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 11,
@@ -4597,7 +4597,7 @@
                   "title": "Added the draft a new order starts from",
                   "declaration": "EMPTY_DRAFT",
                   "reading": "The author added a constant `EMPTY_DRAFT` with no customer, no product, a `quantity` of `1` and the `status` `\"pending\"`. [`<CreateOrderPage />` passes it to the form as `initialDraft`](code:src/routes/orders/create.tsx#L19), so that the quantity field starts at [the lowest value it takes](code:src/routes/orders/components/OrderForm.tsx#L51).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -4619,7 +4619,7 @@
                   "title": "Added `<CreateOrderPage />` to create an order",
                   "declaration": "CreateOrderPage",
                   "reading": "The author added a page component `<CreateOrderPage />` that:\n\n- renders [`<OrderForm />`](code:src/routes/orders/components/OrderForm.tsx#OrderForm) with the empty draft and the label `Create`\n- creates the order with [`useCreateOrder()`](code:src/hooks/use-orders.ts#useCreateOrder) when the form is submitted\n- opens `/orders` when the save succeeds\n\n[The route table renders it at `/orders/new`](code:src/router.tsx#L18), and [the orders list links to it](code:src/routes/orders/index.tsx#L11), so that a staff member can add an order.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 8,
@@ -4649,7 +4649,7 @@
                       "title": "Added the navigate function of the page",
                       "declaration": "CreateOrderPage › navigate",
                       "reading": "The author added a call to `useNavigate()` that returns the function that changes the page. [The success callback of the save calls it with `\"/orders\"`](code:src/routes/orders/create.tsx#L13).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,
@@ -4667,7 +4667,7 @@
                       "title": "Added the mutation that creates the order",
                       "declaration": "CreateOrderPage › saveOrder",
                       "reading": "The author added a call to [`useCreateOrder()`](code:src/hooks/use-orders.ts#useCreateOrder) that gives the function `saveOrder` and the flag `isPending`. [The submit handler calls `saveOrder`](code:src/routes/orders/create.tsx#L13), and [the form disables its button while `isPending` is `true`](code:src/routes/orders/create.tsx#L19).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 10,
@@ -4685,7 +4685,7 @@
                       "title": "Added the submit handler that saves the new order",
                       "declaration": "CreateOrderPage › handleSubmit",
                       "reading": "The author added a function `handleSubmit()` that calls `saveOrder(draft)` with an `onSuccess` callback that calls `navigate(\"/orders\")`. [The form calls it with the draft when it is submitted](code:src/routes/orders/components/OrderForm.tsx#L21), so that the staff member is back on the orders list once the order is saved.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [
                         {
                           "id": "finding-silent-create-error",
@@ -4722,7 +4722,7 @@
                       "title": "Added the order form with the empty draft",
                       "declaration": "CreateOrderPage › OrderForm.onSubmit",
                       "reading": "The author added an `<OrderForm />` that starts from [the empty draft](code:src/routes/orders/create.tsx#L6), shows `Create` on its button, and calls [`handleSubmit()`](code:src/routes/orders/create.tsx#L12-14) with the submitted draft. The button is disabled while [the order saves](code:src/routes/orders/create.tsx#L10).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 19,
@@ -6933,7 +6933,7 @@
                   "title": "Added `<EditOrderPage />` to edit an order",
                   "declaration": "EditOrderPage",
                   "reading": "The author added a page component `<EditOrderPage />` that:\n\n- loads the order whose id is in the URL with [`useOrder()`](code:src/hooks/use-orders.ts#useOrder)\n- shows `Loading the order…` while it loads, and `The order could not be loaded.` when the request fails\n- renders [`<OrderForm />`](code:src/routes/orders/components/OrderForm.tsx#OrderForm) with the loaded order and the label `Save`\n- saves the edited order under the id from the URL with [`useUpdateOrder()`](code:src/hooks/use-orders.ts#useUpdateOrder), then opens `/orders`\n\n[The route table renders it at `/orders/:orderId/edit`](code:src/router.tsx#L19), and [each row of the orders list links to it](code:src/routes/orders/index.tsx#L20), so that a staff member can change an order.",
-                  "needsAttention": "This page puts the order id back into the saved order: the form edits an `OrderDraft`, which has no `id`, and [`updateOrder()` builds its URL from `order.id`](code:src/api/orders.ts#L17).",
+                  "coreChange": "This page puts the order id back into the saved order: the form edits an `OrderDraft`, which has no `id`, and [`updateOrder()` builds its URL from `order.id`](code:src/api/orders.ts#L17).",
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -6972,7 +6972,7 @@
                       "title": "Added the order id from the URL",
                       "declaration": "EditOrderPage › orderId",
                       "reading": "The author added a read of `orderId` from `useParams()`, with `\"\"` when the URL has none. [The route `orders/:orderId/edit` sets it](code:src/router.tsx#L19), and the page [loads](code:src/routes/orders/edit.tsx#L9) and [saves](code:src/routes/orders/edit.tsx#L15) the order under it.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 7,
@@ -6990,7 +6990,7 @@
                       "title": "Added the navigate function of the page",
                       "declaration": "EditOrderPage › navigate",
                       "reading": "The author added a call to `useNavigate()` that returns the function that changes the page. [The success callback of the save calls it with `\"/orders\"`](code:src/routes/orders/edit.tsx#L15).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 8,
@@ -7008,7 +7008,7 @@
                       "title": "Added the query of the order to edit",
                       "declaration": "EditOrderPage › order",
                       "reading": "The author added a call to [`useOrder()`](code:src/hooks/use-orders.ts#useOrder) with the id from the URL. It gives the loaded `order` and the flags `isPending` and `isError`. [The two conditions below read the flags](code:src/routes/orders/edit.tsx#L11-12), and [the form starts from the order](code:src/routes/orders/edit.tsx#L21).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,
@@ -7026,7 +7026,7 @@
                       "title": "Added the update mutation of the page",
                       "declaration": "EditOrderPage › saveOrder",
                       "reading": "The author added a call to [`useUpdateOrder()`](code:src/hooks/use-orders.ts#useUpdateOrder) that gives the function `saveOrder` and its own `isPending`, renamed to `isSaving` so that it does not clash with the flag of the query. [The submit handler calls `saveOrder`](code:src/routes/orders/edit.tsx#L15), and [the form disables its button while `isSaving` is `true`](code:src/routes/orders/edit.tsx#L21).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 10,
@@ -7044,7 +7044,7 @@
                       "title": "Added the loading message of the edit page",
                       "declaration": "EditOrderPage › Condition :11",
                       "reading": "The author added a condition that returns `<p>Loading the order…</p>` while the query of the order is pending. The page renders [the form](code:src/routes/orders/edit.tsx#L21) only after the order has loaded, so that the form never starts from an `undefined` order.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 11,
@@ -7064,7 +7064,7 @@
                       "title": "Added the error message of the edit page",
                       "declaration": "EditOrderPage › Condition :12",
                       "reading": "The author added a condition that returns `<p>The order could not be loaded.</p>` when the query of the order fails, as it does when [`request()` throws an `ApiError`](code:src/api/client.ts#L18) for an id the server does not have.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 12,
@@ -7084,7 +7084,7 @@
                       "title": "Added the submit handler that saves the edited order",
                       "declaration": "EditOrderPage › handleSubmit",
                       "reading": "The author added a function `handleSubmit()` that calls `saveOrder({ ...draft, id: orderId })` with an `onSuccess` callback that calls `navigate(\"/orders\")`. The draft from [the form](code:src/routes/orders/components/OrderForm.tsx#L21) has no `id`, so the handler adds the id from the URL, and [`updateOrder()` puts it in the URL of the `PUT` request](code:src/api/orders.ts#L17).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 14,
@@ -7108,7 +7108,7 @@
                       "title": "Added the order form with the loaded order",
                       "declaration": "EditOrderPage › OrderForm.onSubmit",
                       "reading": "The author added an `<OrderForm />` that starts from [the loaded order](code:src/routes/orders/edit.tsx#L9), shows `Save` on its button, and calls [`handleSubmit()`](code:src/routes/orders/edit.tsx#L14-16) with the submitted draft. The button is disabled while [the update saves](code:src/routes/orders/edit.tsx#L10).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 21,
@@ -8942,7 +8942,7 @@
                   "title": "Added `<ViewOrdersPage />` to list the orders",
                   "declaration": "ViewOrdersPage",
                   "reading": "The author added a page component `<ViewOrdersPage />` that:\n\n- loads every order with [`useOrders()`](code:src/hooks/use-orders.ts#useOrders)\n- shows `Loading the orders…` while they load, and `The orders could not be loaded.` when the request fails\n- links to `/orders/new` with the text `Create order`\n- renders a table row per order with its id, quantity and status, and a link to `/orders/<id>/edit`\n\n[The route table renders it at `/orders`](code:src/router.tsx#L17), and [the header links to it](code:src/routes/root-layout.tsx#L12), so that a staff member can find an order and open it.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -8981,7 +8981,7 @@
                       "title": "Added the query of the orders",
                       "declaration": "ViewOrdersPage › orders",
                       "reading": "The author added a call to [`useOrders()`](code:src/hooks/use-orders.ts#useOrders) that gives the loaded `orders` and the flags `isPending` and `isError`. [The two conditions below read the flags](code:src/routes/orders/index.tsx#L6-7), and [the table renders the orders](code:src/routes/orders/index.tsx#L14-23).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 5,
@@ -8999,7 +8999,7 @@
                       "title": "Added the loading message of the orders list",
                       "declaration": "ViewOrdersPage › Condition :6",
                       "reading": "The author added a condition that returns `<p>Loading the orders…</p>` while the query is pending, so that [the table](code:src/routes/orders/index.tsx#L14) never maps over an `undefined` list.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 6,
@@ -9019,7 +9019,7 @@
                       "title": "Added the error message of the orders list",
                       "declaration": "ViewOrdersPage › Condition :7",
                       "reading": "The author added a condition that returns `<p>The orders could not be loaded.</p>` when the query fails, as it does when [`request()` throws an `ApiError`](code:src/api/client.ts#L18).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 7,
@@ -9039,7 +9039,7 @@
                       "title": "Added one table row per order",
                       "declaration": "ViewOrdersPage › Markup loop :14",
                       "reading": "The author added a loop that renders one `<tr>` per order with its `id`, `quantity` and `status`, and a `<Link>` with the text `Edit` to `/orders/<id>/edit`. [The route table renders `<EditOrderPage />` at that path](code:src/router.tsx#L19).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 14,

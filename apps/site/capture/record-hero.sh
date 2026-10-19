@@ -60,7 +60,7 @@ record_frames() {
   browse open "about:blank"
   open_page 1440 900 "$SCALE" "$scheme" "$DEMO_URL$REVIEW_PATH"
   browse eval "document.querySelector('.demo-exit')?.remove()"
-  browse eval "$OPEN_NEEDS_ATTENTION_WAYPOINT"
+  browse eval "$OPEN_CORE_CHANGE_WAYPOINT"
   for warm_up in 2000 4000 6000 8000 10000 0; do
     browse eval "scrollTo(0,$warm_up)"
     browse wait 700

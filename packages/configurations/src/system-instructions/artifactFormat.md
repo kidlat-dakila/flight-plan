@@ -21,7 +21,7 @@ diff marks. The reviewer is already reading it while you write.
 |---|---|
 | A segment's title and its context | The title, copied from the change |
 | The order of the File Sections | Which files have a section, and their paths |
-| A waypoint's title, reading, needs-attention note and findings | Which waypoints exist, the declaration each is about, and its lines |
+| A waypoint's title, reading, core-change note and findings | Which waypoints exist, the declaration each is about, and its lines |
 | A Trace Diagram's description, a node's label and description, and the label of each of its trigger labels | Which nodes exist, how they connect, which node is inside which, and which trigger labels a node has |
 | A Blast Diagram file's impact type and impact reason, on a file the change did not touch | Which files exist, which the change touched and how they import each other |
 | A context code block's description, where the block is required | Which code blocks are listed, and which are required |
@@ -30,6 +30,16 @@ diff marks. The reviewer is already reading it while you write.
 
 So: **you change words, never structure.** No tool can add, remove or reparent a
 file, a waypoint or a node, and no tool takes a line number for a waypoint.
+
+## What this review asks you to write
+
+Each node says whether this review asks you to write it: `isRequired` on a
+waypoint, a Trace Diagram node, a Trace Diagram (its description) and a Blast
+Diagram file, and `isContextRequired` on a segment (its title and context).
+Write only the nodes marked `true`. A write to any other node is refused.
+`nodes` lists only the work on required nodes, and `complete` succeeds once
+every required node is written. The reviewer can ask for more later; those
+nodes are then marked required, and Flight Plan tells you.
 
 ## The shape
 

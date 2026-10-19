@@ -359,7 +359,7 @@ A snapshot is a complete review of its change, so it holds what an agent writes 
 | A trigger label of a trace node | `triggerLabels[]` of a node | `label` |
 | A block label of a trace node | `blockLabels[]` of a node | `label` |
 | A blast file the change did not touch | `blastDiagram.nodes[]` | `impactType` (`breaks`, `behaviour-changes` or `unaffected`), and `impactReason` on the first two |
-| A waypoint | `codeWalkthrough.files[].waypoints[]` | `title`, `reading`, `needsAttention`, and `findings`: each with an `id` unique in the snapshot, a `kind`, a `title`, a `reading`, a `trace` and a `solution` |
+| A waypoint | `codeWalkthrough.files[].waypoints[]` | `title`, `reading`, `coreChange`, and `findings`: each with an `id` unique in the snapshot, a `kind`, a `title`, a `reading`, a `trace` and a `solution` |
 
 Every other field of a snapshot is generated, and editing one fails the case.
 

@@ -11,7 +11,7 @@ const ASSIGNMENT = "globalThis.flightPlanReview = "
 const SCAFFOLD: ReviewScaffold = {
   artifact: WEBHOOK_RETRY_ARTIFACT,
   baseCommit: "0000000",
-  request: { configurationId: "standard", preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: new Date("2026-10-01T12:00:00.000Z") },
+  request: { configurationId: "standard", preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "none" }, requestedAt: new Date("2026-10-01T12:00:00.000Z") },
 }
 
 const readReview = async (): Promise<PublishedReview> => {

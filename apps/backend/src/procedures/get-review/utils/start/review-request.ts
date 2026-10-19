@@ -18,8 +18,11 @@ export type AuthorStart = (typeof AUTHOR_STARTS)[number]
 
 export type ReviewWriter
   = | { readonly kind: "agent", readonly agent: AgentName, readonly model: string, readonly effort: string }
-    | { readonly kind: "manual" }
+    | { readonly kind: "external", readonly agent: AgentName }
+    | { readonly kind: "none" }
     | { readonly kind: "author", readonly start: AuthorStart }
+
+export const isWrittenByAgent = (writer: ReviewWriter | null): boolean => writer?.kind === "agent" || writer?.kind === "external"
 
 export interface ReviewRequest {
   readonly configurationId: string

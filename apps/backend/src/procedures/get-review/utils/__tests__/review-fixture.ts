@@ -50,9 +50,10 @@ export const createWaypoint = (id: string, declaration: string, overrides: Parti
   declaration,
   codeBlocks: [],
   reading: "Explains the change.",
-  needsAttention: null,
+  coreChange: null,
   findings: [],
   children: [],
+  isRequired: true,
   ...overrides,
 })
 
@@ -63,6 +64,7 @@ export const createSegment = (overrides: Partial<Segment> = {}): Segment => ({
   context: "Why it matters.",
   traceDiagram: null,
   blastDiagram: null,
+  isContextRequired: true,
   walkthrough: {
     files: [
       {

@@ -7,6 +7,7 @@ const CLOSED_BROWSE: FolderBrowse = { isOpen: false, browser: null, errorMessage
 const LOCAL_GIT_AUTHORS: AuthorsChoice = {
   form: {
     selfAuthorHint: "Git cannot tell who you are here.",
+    gitSelfAuthor: null,
     searchHint: "Search by name or email.",
     searchPlaceholder: "Type a name or email",
   },

@@ -1,3 +1,4 @@
+import { DEFAULT_REVIEW_PREFERENCES } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { READY_TO_FINISH } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { formatSettings, parseSettings } from "@/procedures/get-setup/utils/stored-settings"
@@ -31,12 +32,37 @@ describe("parseSettings", () => {
     expect(parseSettings(saved)?.defaultConfiguration).toBe("short-reviews")
   })
 
+  it("saves the review preferences beside the setup and reads them back", () => {
+    const withPreferences = { ...READY_TO_FINISH, reviewPreferences: { ...DEFAULT_REVIEW_PREFERENCES, spotlight: ["auth" as const] } }
+    const settings: unknown = JSON.parse(formatSettings(withPreferences))
+
+    expect(settings).toMatchObject({ reviewPreferences: { spotlight: ["auth"] } })
+    expect(settings).not.toHaveProperty("setup.reviewPreferences")
+    expect(parseSettings(formatSettings(withPreferences))).toStrictEqual(withPreferences)
+  })
+
+  it("reads settings saved before review preferences existed as no saved preferences", () => {
+    const settings = { defaultConfiguration: null, setup: { agents: null, forges: null, repositories: [], isComplete: false } }
+
+    expect(parseSettings(JSON.stringify(settings))?.reviewPreferences).toBeNull()
+  })
+
+  it("refuses review preferences with a classification Flight Plan does not know", () => {
+    const settings = {
+      defaultConfiguration: null,
+      reviewPreferences: { ...DEFAULT_REVIEW_PREFERENCES, spotlight: ["sorcery"] },
+      setup: { agents: null, forges: null, repositories: [], isComplete: false },
+    }
+
+    expect(parseSettings(JSON.stringify(settings))).toBeNull()
+  })
+
   it("refuses text that is not JSON", () => {
     expect(parseSettings("{ not json")).toBeNull()
   })
 
   it("refuses a setup with an agent Flight Plan does not know", () => {
-    const settings = { defaultConfiguration: null, setup: { ...EMPTY_SETUP, agents: { installs: [], defaultAgent: "copilot", connection: "direct" } } }
+    const settings = { defaultConfiguration: null, setup: { ...EMPTY_SETUP, agents: { installs: [], defaultAgent: "copilot" } } }
 
     expect(parseSettings(JSON.stringify(settings))).toBeNull()
   })
@@ -45,7 +71,7 @@ describe("parseSettings", () => {
     const settings = {
       defaultConfiguration: null,
       setup: {
-        agents: { installs: [{ agent: "claude", installPath: "/Users/dev/.claude" }], defaultAgent: "claude", connection: "direct" },
+        agents: { installs: [{ agent: "claude", installPath: "/Users/dev/.claude" }], defaultAgent: "claude" },
         forges: null,
         repositories: [],
         isComplete: false,

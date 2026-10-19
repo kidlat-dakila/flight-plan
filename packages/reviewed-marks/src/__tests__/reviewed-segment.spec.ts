@@ -37,15 +37,15 @@ const waypointView = (id: string, positionLabel: string, previousId: string | nu
   previousId,
   nextId,
   chip: null,
-  attentionLabel: null,
+  coreChangeLabel: null,
   reading: null,
   unwrittenLabel: "Not written yet.",
-  needsAttention: null,
+  coreChange: null,
   findings: [],
   isReviewed: false,
   reviewLabel: "Reviewed",
   lines: null,
-  text: { title: id, reading: "", needsAttention: null },
+  text: { title: id, reading: "", coreChange: null },
 })
 
 const waypointRow = (waypoint: WaypointView): FileRow => ({ kind: "waypoint", id: `waypoint-${waypoint.id}`, waypoint, rootBlockId: null })
@@ -58,7 +58,15 @@ const fileView = (path: string, rows: FileRow[], rootBlockIds: readonly string[]
   reviewLabel: "File reviewed",
   countLabels: [],
   forgeLink: null,
-  rootBlocks: rootBlockIds.map((id) => ({ id, isReviewed: false, reviewLabel: "Reviewed", reviewName: `Reviewed: ${id}`, expandLabel: "", collapseLabel: "" })),
+  rootBlocks: rootBlockIds.map((id) => ({
+    id,
+    classification: { key: "logic", label: "Logic" },
+    isReviewed: false,
+    reviewLabel: "Reviewed",
+    reviewName: `Reviewed: ${id}`,
+    expandLabel: "",
+    collapseLabel: "",
+  })),
   rows,
 })
 
@@ -135,6 +143,7 @@ describe("withReviewedTrace", () => {
             id: "node",
             type: "function",
             typeLabel: "Function",
+            classification: { key: "logic", label: "Logic" },
             change: null,
             changedLabel: null,
             label: "priceOf",

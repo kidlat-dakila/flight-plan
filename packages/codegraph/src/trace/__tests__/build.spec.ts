@@ -47,6 +47,14 @@ describe("the head of a node of the trace band", () => {
   })
 })
 
+describe("the classification of a node of the trace band", () => {
+  it("gives each card the classification of its code block, picked by the hierarchy", () => {
+    const form = nodeViewsOf().find((node) => node.name === "PromoForm")
+
+    expect(form?.classification).toStrictEqual({ key: "component", label: "Component" })
+  })
+})
+
 describe("the rows of a node of the trace band", () => {
   it("gives each listed block and each trigger label the lines of its block", () => {
     const form = nodeViewsOf().find((node) => node.name === "PromoForm")

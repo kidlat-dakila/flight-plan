@@ -87,7 +87,7 @@ describe("readArtifact", () => {
 
     expect(reading).toStrictEqual({
       kind: "read",
-      content: { segments: [{ segmentId: "second", context: "" }] },
+      content: { segments: [{ segmentId: "second", context: "", isContextRequired: true }] },
     })
   })
 

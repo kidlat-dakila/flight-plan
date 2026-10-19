@@ -41,30 +41,44 @@ const waypointStubOf = (waypoint: Waypoint): unknown => ({
   title: waypoint.title,
   isReadingWritten: waypoint.reading.trim() !== "",
   findingCount: waypoint.findings.length,
+  isRequired: waypoint.isRequired,
   children: waypoint.children.map(waypointStubOf),
 })
 
 const traceStubsOf = (segment: Segment): unknown[] =>
-  flattenTraceNodes(segment.traceDiagram?.traceNodes ?? []).map(({ id, parentId, type, label, diffCodeBlockIds }) => ({
+  flattenTraceNodes(segment.traceDiagram?.traceNodes ?? []).map(({ id, parentId, type, label, diffCodeBlockIds, isRequired }) => ({
     id,
     parentId,
     type,
     label,
     isChanged: diffCodeBlockIds.length > 0,
+    isRequired,
   }))
 
 const flatTraceOf = (segment: Segment): unknown =>
   segment.traceDiagram === null
     ? null
-    : { description: segment.traceDiagram.description, nodes: flattenTraceNodes(segment.traceDiagram.traceNodes), edges: segment.traceDiagram.traceNodeEdges }
+    : {
+        description: segment.traceDiagram.description,
+        isDescriptionRequired: segment.traceDiagram.isRequired,
+        nodes: flattenTraceNodes(segment.traceDiagram.traceNodes),
+        edges: segment.traceDiagram.traceNodeEdges,
+      }
 
 const storedWalkthroughOf = ({ walkthrough }: Segment): unknown => ({ ...walkthrough, files: walkthrough.files.map(storeFileSection) })
 
 const segmentOverviewOf = (segment: Segment): unknown => ({
   segmentId: segment.id,
   title: segment.title,
+  isContextRequired: segment.isContextRequired,
   changedPaths: segment.changedPaths,
-  traceDiagram: segment.traceDiagram === null ? null : { isDescriptionWritten: segment.traceDiagram.description !== null, nodes: traceStubsOf(segment) },
+  traceDiagram: segment.traceDiagram === null
+    ? null
+    : {
+        isDescriptionWritten: segment.traceDiagram.description !== null,
+        isDescriptionRequired: segment.traceDiagram.isRequired,
+        nodes: traceStubsOf(segment),
+      },
   blastDiagram: segment.blastDiagram,
   files: segment.walkthrough.files.map((file) => ({ path: file.path, waypoints: file.waypoints.map(waypointStubOf) })),
 })
@@ -82,7 +96,7 @@ export const projectOverview = (artifact: ReviewArtifact, configurationId: strin
 })
 
 const SEGMENT_PARTS: Readonly<Record<Exclude<ArtifactSection, "overview" | "full" | "diff">, (segment: Segment) => unknown>> = {
-  "context": (segment) => ({ segmentId: segment.id, context: segment.context }),
+  "context": (segment) => ({ segmentId: segment.id, context: segment.context, isContextRequired: segment.isContextRequired }),
   "trace-diagram": (segment) => ({ segmentId: segment.id, traceDiagram: flatTraceOf(segment) }),
   "blast-diagram": (segment) => ({ segmentId: segment.id, blastDiagram: segment.blastDiagram }),
   "code-walkthrough": (segment) => ({ segmentId: segment.id, walkthrough: storedWalkthroughOf(segment) }),

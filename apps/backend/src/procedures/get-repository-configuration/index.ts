@@ -13,6 +13,9 @@ export const getRepositoryConfiguration = async (
   ])
   const repository = listedRepositories.find((listed) => listed.name === input.name)
   if (repository === undefined || authors === null) return null
-  const forge = await context.setupEnvironment.findRepositoryForge(repository.path, setup.forges)
-  return buildRepositoryConfiguration(repository, authors, forge)
+  const [forge, identity] = await Promise.all([
+    context.setupEnvironment.findRepositoryForge(repository.path, setup.forges),
+    context.setupEnvironment.readGitIdentity(repository.path),
+  ])
+  return buildRepositoryConfiguration(repository, authors, forge, identity)
 }

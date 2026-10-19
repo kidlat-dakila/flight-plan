@@ -67,7 +67,7 @@ The author's page has no Mark as reviewed and no Add comment, since the author d
 
 Filter (F) opens a menu of ticks that narrows the walkthrough to the waypoints worth stopping at. It holds:
 
-- the finding kinds: Needs Attention, Bug, Risk, Nit and Question;
+- the finding kinds: Core change, Bug, Risk, Nit and Question;
 - the code blocks of the segment, each a kind of block with what the change did to it, such as "Function" with "Added" or "Component" with "Modified". The four with the most waypoints are listed, and the others are under **More**. Imports are left out;
 - **Change type**, a submenu of Added, Modified and Removed;
 - **Reviewed**, which brings back the waypoints already marked reviewed.

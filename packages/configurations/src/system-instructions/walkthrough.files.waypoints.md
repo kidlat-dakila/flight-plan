@@ -11,7 +11,7 @@ of one piece of the change, placed on top of its lines.
   "declaration": "hasStock",
   "codeBlockIds": ["src/checkout/hasStock.ts#function@12:1", "src/checkout/hasStock.ts#condition@15:3"],
   "reading": "The author replaced the per-line stock lookup in `hasStock()` with one query for the whole basket, and it now returns every line that falls short, not the first. [`placeOrder()`](code:src/checkout/placeOrder.ts#placeOrder) calls it before it charges the card, so that a customer sees every short item in one refusal.",
-  "needsAttention": "This is the rule the pull request exists for: stock is now checked against one read for the whole basket, and the other waypoints wire it in.",
+  "coreChange": "This is the rule the pull request exists for: stock is now checked against one read for the whole basket, and the other waypoints wire it in.",
   "findings": [],
   "children": []
 }
@@ -29,7 +29,7 @@ of one piece of the change, placed on top of its lines.
   sets them, and a waypoint in a file it does not trace has none.
 - **`title`** and **`reading`** are yours, and arrive empty. `nodes` hands you
   each waypoint that still needs one, with the code it covers.
-- **`needsAttention`** and **`findings`** are yours, and most waypoints carry
+- **`coreChange`** and **`findings`** are yours, and most waypoints carry
   neither.
 
 **The structure is not yours to change.** Flight Plan makes one waypoint per

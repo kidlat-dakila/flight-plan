@@ -1,16 +1,15 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { findReviewTarget } from "@/procedures/get-review/utils/find-review-target"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
+import { toOneLine } from "@/procedures/get-review/utils/start/review-prompt"
 import type { ReviewWriter } from "@/procedures/get-review/utils/start/review-request"
 import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
-import { sendToAgent } from "@/procedures/request-review"
+import { externalStartMessage, sendToAgent } from "@/procedures/request-review"
 import { buildArtifactAt, type ArtifactBuilding } from "@/procedures/request-review/utils/build-artifact"
 import { SECTION_LABELS, type ReviewArtifact, type SectionName } from "@flightplan/configurations"
 import { buildGenerationPrompt } from "./utils/generation-prompt"
 import { isDiagramSection, planGeneration } from "./utils/plan-generation"
 import type { GenerateSectionInput, GenerateSectionResult } from "./utils/schemas"
-
-const PROMPT_COPIED_MESSAGE = "Prompt copied"
 
 const NO_SCAFFOLD: ArtifactBuilding = {
   kind: "unavailable",
@@ -39,8 +38,10 @@ interface Handover {
 }
 
 const handToWriter = async ({ key, section, writer, prompt }: Handover, context: ProcedureContext): Promise<GenerateSectionResult> => {
-  if (writer === null || writer.kind === "author") return { kind: "generated", prompt: null, message: generatedMessage(section) }
-  if (writer.kind === "manual") return { kind: "generated", prompt, message: PROMPT_COPIED_MESSAGE }
+  if (writer === null || writer.kind === "author" || writer.kind === "none") {
+    return { kind: "generated", prompt: null, message: generatedMessage(section) }
+  }
+  if (writer.kind === "external") return { kind: "generated", prompt: toOneLine(prompt), message: externalStartMessage(writer.agent) }
   const outcome = await sendToAgent(key, prompt, context)
   return {
     kind: "generated",

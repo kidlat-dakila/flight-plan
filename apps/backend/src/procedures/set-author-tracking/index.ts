@@ -15,13 +15,16 @@ export const setAuthorTracking = async (
     await context.setupStore.write(changedSetup)
     return changedSetup
   }
-  const forge = await context.setupEnvironment.findRepositoryForge(repository.path, setup.forges)
+  const [forge, identity] = await Promise.all([
+    context.setupEnvironment.findRepositoryForge(repository.path, setup.forges),
+    context.setupEnvironment.readGitIdentity(repository.path),
+  ])
   const author = await context.setupEnvironment.findAuthor(
     { repositoryPath: repository.path, forge, forges: setup.forges },
     input.authorId,
   )
   if (author === null) return null
-  const changedSetup = withTrackedAuthor(setup, repository.name, author)
+  const changedSetup = withTrackedAuthor(setup, repository.name, author, identity)
   await context.setupStore.write(changedSetup)
   return changedSetup
 }

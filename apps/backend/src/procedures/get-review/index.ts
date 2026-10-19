@@ -1,6 +1,7 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { messageBodiesOf } from "@/procedures/get-conversation/utils/conversation"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
+import { selfAuthorIdOf } from "@/procedures/get-setup/utils/git-identity"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { listConfigurationsOf, type Configuration } from "@/procedures/list-configurations/utils/configuration"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
@@ -33,12 +34,13 @@ const findListedSubject = async (key: ReviewKey, context: ProcedureContext): Pro
   if (repository === undefined) return null
   const target = await findReviewTarget(repository, key.targetId, context)
   if (target === null) return null
-  const [artifact, sampleDetail, viewerLogin, authors, branchAuthorEmail, forge] = await Promise.all([
+  const [artifact, sampleDetail, viewerLogin, authors, branchAuthorEmail, gitIdentity, forge] = await Promise.all([
     context.reviewStore.findArtifact(key),
     context.reviewStore.findTargetDetail(key),
     context.repositoryStore.readViewerLogin(repository.name),
     context.repositoryStore.readAuthors(repository.name),
     target.kind === "branch" ? readBranchAuthorEmail(repository, target.name, context) : null,
+    target.kind === "branch" ? context.setupEnvironment.readGitIdentity(repository.path) : null,
     target.kind === "pull-request" ? context.pullRequestForge.read(repository, target.number) : null,
   ])
   const detail = sampleDetail ?? await readLiveTargetDetail(context.changeReader, repository.path, branchNameOf(target))
@@ -46,7 +48,11 @@ const findListedSubject = async (key: ReviewKey, context: ProcedureContext): Pro
     repository,
     lineColor: lineColorAt(repositories.indexOf(repository)),
     target,
-    isOwn: isOwnTarget(target, { viewerLogin, selfAuthorId: authors?.selfAuthor?.id ?? null, branchAuthorEmail }),
+    isOwn: isOwnTarget(target, {
+      viewerLogin,
+      selfAuthorId: selfAuthorIdOf(gitIdentity, authors?.selfAuthor ?? null),
+      branchAuthorEmail,
+    }),
     isStored: true,
     artifact,
     detail: withForgeDetail(detail, forge),

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import FindingMark, { FindingChip, type FindingMarkKind } from "@/components/FindingMark"
 
-const KINDS: readonly FindingMarkKind[] = ["bug", "risk", "nit", "question", "attention"]
+const KINDS: readonly FindingMarkKind[] = ["bug", "risk", "nit", "question", "core-change"]
 
 const drawingOf = (kind: FindingMarkKind): string =>
   [...render(<FindingMark kind={kind} />).container.querySelectorAll("path, circle")]

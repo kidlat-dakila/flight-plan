@@ -9,7 +9,6 @@ const inputOf = (overrides: Partial<AgentsInput>): AgentsInput => ({
     { agent: "cursor", isPicked: false, installPath: "", model: "default", effort: "default" },
   ],
   defaultAgent: null,
-  connection: "direct",
   ...overrides,
 })
 
@@ -40,7 +39,6 @@ describe("planAgentsChoice", () => {
       choice: {
         installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "default", effort: "default" }],
         defaultAgent: "claude",
-        connection: "direct",
       },
     })
   })
@@ -120,9 +118,9 @@ describe("planAgentsChoice", () => {
       message: "Choose which of your agents is the default.",
       field: null,
     })
-    expect(planAgentsChoice(inputOf({ agents, defaultAgent: "codex", connection: "manual" }), MACHINE, null)).toMatchObject({
+    expect(planAgentsChoice(inputOf({ agents, defaultAgent: "codex" }), MACHINE, null)).toMatchObject({
       kind: "accepted",
-      choice: { defaultAgent: "codex", connection: "manual" },
+      choice: { defaultAgent: "codex" },
     })
   })
 
@@ -171,7 +169,6 @@ describe("planAgentsChoice", () => {
     const savedChoice = {
       installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet", effort: "default" }],
       defaultAgent: "claude",
-      connection: "direct",
     } as const
 
     expect(planAgentsChoice(inputOf({ agents }), MACHINE, savedChoice)).toMatchObject({

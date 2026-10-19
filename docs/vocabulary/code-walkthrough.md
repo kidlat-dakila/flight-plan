@@ -41,13 +41,13 @@ One stop on the tour: an explanation of one piece of the change, marked beside i
 | Reading | The explanation: why this code runs and what goes wrong without it. |
 | Code | A [CodeBlock](review-artifact.md#codeblock) reference: the range the waypoint is about, and which of the file's changes it covers. The diff marks come from those changes. |
 | Code blocks | The [code blocks](codegraph/code-blocks.md) of the waypoint: the block it stops at first, then the changed blocks inside it, in the order they are written. A waypoint made of several types or statements holds each of them. Each is the same object as in the group, and as in a [Trace Diagram](trace-diagram.md) node that holds it. A waypoint in a file the codegraph does not trace has none. |
-| Needs attention | Present only when the agent judges the reviewer must not skim this change, and says why. |
+| Core change | Present only on a waypoint where the pull request does its real work, with one or two sentences saying why. |
 | Findings | The [findings](#findings) about this code. |
 | Children | Waypoints nested inside this one: the [changed steps](#the-steps-of-a-waypoint) of a declaration read in parts. Always two or more, never one: a single child would repeat its parent. |
 
 ### How a waypoint shows in the code
 
-A waypoint starts closed, as a mark in the gutter at the left of the code, beside the first line it explains, the way an editor marks a breakpoint. The mark is the waypoint's most urgent finding, in the order bug, risk, Needs Attention, question, nit; a waypoint with none is a pointer in the line colour. A reviewed waypoint's mark is a checkmark in the line colour, whatever its findings. Hovering or focusing the mark shows a preview on top of the line, or under it when the line is too near the top: the title, the findings, the lines and the position, the first paragraph of the reading and the Reviewed toggle. Clicking the mark, or Enter on it, opens the waypoint: its box sits on top of its lines, and a stem in the gutter joins it to the last of them. Stepping to a waypoint with the Review Navigator shows its preview instead, one preview at a time.
+A waypoint starts closed, as a mark in the gutter at the left of the code, beside the first line it explains, the way an editor marks a breakpoint. The mark is the waypoint's most urgent finding, in the order bug, risk, Core change, question, nit; a waypoint with none is a pointer in the line colour. A reviewed waypoint's mark is a checkmark in the line colour, whatever its findings. Hovering or focusing the mark shows a preview on top of the line, or under it when the line is too near the top: the title, the findings, the lines and the position, the first paragraph of the reading and the Reviewed toggle. Clicking the mark, or Enter on it, opens the waypoint: its box sits on top of its lines, and a stem in the gutter joins it to the last of them. Stepping to a waypoint with the Review Navigator shows its preview instead, one preview at a time.
 
 Comment threads have their own column of the gutter, beside the last line they cover: a filled speech mark for an open thread, a thin dashed one for a resolved thread, and an amber one for a comment of the reviewer's that is not sent yet. A thread opens under its line when its mark is clicked; a comment not sent yet starts open. The header of each file counts its waypoints, its findings by kind and its threads.
 
@@ -98,7 +98,7 @@ Each mark holds a fingerprint of what it was made on, and counts only while that
 
 | Mark on | Its fingerprint | It also makes reviewed |
 |---|---|---|
-| A waypoint | Its title, reading, Needs Attention, findings and lines | The waypoints nested in it |
+| A waypoint | Its title, reading, core change note, findings and lines | The waypoints nested in it |
 | A file | The fingerprints of its waypoints | Every waypoint and root code block of the file |
 | A root code block | Its lines and the fingerprints of the waypoints in it | Every waypoint that sits only in reviewed root code blocks |
 
@@ -119,7 +119,7 @@ On the author's page the Code Walkthrough is edited, not reviewed. It has no Rev
 - **The files are arranged.** "Arrange files" in the heading row opens a dialog that lists every File Section of the segment with Move up and Move down, one place per click, saved at once. It shows when the walkthrough has more than one file.
 - **A file is removed from the walkthrough.** The file stays among the files of its segment, and the diagrams stay as they were.
 - **A file is shown whole.** Each File Section shows the file's whole code, with every waypoint set under its last line. A waypoint whose lines are not in the file is set above the code.
-- **A waypoint is edited.** Its form has the title, the reading in the text editor with CodeLink, and a "Needs Attention" checkbox, with a line under it that says what the mark is for, that opens the reason in the text editor. The reason is optional: a mark with no reason shows its chip on the waypoint and nothing under the reading. A waypoint needs a title; its reading may be empty.
+- **A waypoint is edited.** Its form has the title, the reading in the text editor with CodeLink, and a "Core change" checkbox, with a line under it that says what the mark is for, that opens the reason in the text editor. The reason is optional: a mark with no reason shows its chip on the waypoint and nothing under the reading. A waypoint needs a title; its reading may be empty.
 - **A waypoint is removed.** The waypoints inside it stay, in its place. Removing asks for no confirmation.
 
 The findings of a waypoint, the title and the summary of a file and the intro of the walkthrough are not edited there.
@@ -147,7 +147,7 @@ A `question` has no trace and no solution: there is no claim to prove and no fix
 
 The reviewer can narrow the tour to the waypoints worth stopping at. The filter is a set of ticks in groups:
 
-- The finding kinds: **Needs Attention**, **Bug**, **Risk**, **Nit**, **Question**
+- The finding kinds: **Core change**, **Bug**, **Risk**, **Nit**, **Question**
 - The code blocks: the type of each [root block](codegraph/code-blocks.md) the waypoints of the segment are in, and what the change did to it, such as **Function** with **Added** or **Component** with **Modified**. Each reads the type, then what happened in its colour: added in the added colour, modified in blue, deleted in the removed colour. The four with the most waypoints are listed, with any that are ticked, and the others are under **More**. Imports are left out: a root block that is an import, added, modified or deleted, has no option and matches no code block filter.
 - **Change type**, a submenu: **Added**, **Modified**, **Removed**
 

@@ -22,7 +22,7 @@ interface WaypointEditorProps {
 const TITLE_LABEL = "Title"
 const READING_LABEL = "Reading"
 const READING_HINT = "Say what you changed in this code and what the change is for."
-const ATTENTION_LABEL = "Needs Attention"
+const CORE_CHANGE_LABEL = "Core change"
 const ATTENTION_HINT = "Mark this change as an important part of the code review. This helps the reviewer see where to look first."
 const ATTENTION_REASON_LABEL = "Additional context (optional)"
 const ATTENTION_REASON_HINT = "Say why this change is important, or what the reviewer should check in it."
@@ -32,13 +32,13 @@ const WaypointEditor = ({ reviewKey, segmentId, waypointId, legend, text, render
   const attentionHintId = useId()
   const [title, setTitle] = useState(text.title)
   const [reading, setReading] = useState(text.reading)
-  const [hasAttentionMark, setHasAttentionMark] = useState(text.needsAttention !== null)
-  const [attentionReason, setAttentionReason] = useState(text.needsAttention ?? "")
+  const [isCoreChange, setIsCoreChange] = useState(text.coreChange !== null)
+  const [coreChangeReason, setCoreChangeReason] = useState(text.coreChange ?? "")
   const editing = useWaypointEditing(reviewKey, { segmentId, waypointId }, onClose)
   return (
     <form
       aria-label={legend}
-      action={() => { editing.onSave({ title, reading, needsAttention: hasAttentionMark ? attentionReason : null }) }}
+      action={() => { editing.onSave({ title, reading, coreChange: isCoreChange ? coreChangeReason : null }) }}
       className="grid gap-3"
     >
       <div className="grid gap-1.5">
@@ -57,19 +57,19 @@ const WaypointEditor = ({ reviewKey, segmentId, waypointId, legend, text, render
         />
       </div>
       <label className="flex items-center gap-2 text-sm font-bold">
-        <input type="checkbox" aria-describedby={attentionHintId} checked={hasAttentionMark} onChange={(event) => { setHasAttentionMark(event.target.checked) }} />
-        {ATTENTION_LABEL}
+        <input type="checkbox" aria-describedby={attentionHintId} checked={isCoreChange} onChange={(event) => { setIsCoreChange(event.target.checked) }} />
+        {CORE_CHANGE_LABEL}
       </label>
       <p id={attentionHintId} className="-mt-2 text-sm text-muted-foreground">{ATTENTION_HINT}</p>
-      <div hidden={!hasAttentionMark} className="grid gap-1.5">
+      <div hidden={!isCoreChange} className="grid gap-1.5">
         <p aria-hidden="true" className="text-sm font-bold">{ATTENTION_REASON_LABEL}</p>
         <p className="text-sm text-muted-foreground">{ATTENTION_REASON_HINT}</p>
         <TextEditor
           label={ATTENTION_REASON_LABEL}
-          value={text.needsAttention ?? ""}
+          value={text.coreChange ?? ""}
           errorMessage={null}
           renderCodeLinkDialog={renderCodeLinkDialog}
-          onChange={setAttentionReason}
+          onChange={setCoreChangeReason}
         />
       </div>
       {editing.errorMessage === null ? null : <p role="alert" className="text-sm text-destructive">{editing.errorMessage}</p>}

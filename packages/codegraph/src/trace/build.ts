@@ -1,5 +1,6 @@
 import { findSource, rowSpanOf } from "@/code/lines"
 import { codeLinkIdOf } from "@/code/links"
+import { classificationViewOf } from "@/code-blocks/classification-view"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
 import { firstOfEach } from "@/shared/first-of-each"
@@ -177,6 +178,7 @@ const toNodeView = (node: TraceNode, setting: CodeViewSetting, context: ReviewVi
     id: node.id,
     type: node.type,
     typeLabel,
+    classification: classificationViewOf(root),
     change,
     changedLabel: change === null ? null : CHANGE_LABELS[change],
     label: node.label ?? name,

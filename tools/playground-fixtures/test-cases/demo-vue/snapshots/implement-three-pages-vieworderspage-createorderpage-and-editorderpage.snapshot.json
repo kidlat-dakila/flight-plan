@@ -1420,7 +1420,7 @@
                   "title": "Added `fetchOrders()` to request every order",
                   "declaration": "fetchOrders",
                   "reading": "The author added a function `fetchOrders()` that sends a `GET` request to `/orders` and returns the orders of the response. [`useOrders()` passes it to `useQuery` as its query function](code:src/composables/use-orders.ts#L7), so that [`<ViewOrdersPage />`](code:src/views/orders/ViewOrdersPage.vue#L5) can list the orders.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -1438,7 +1438,7 @@
                   "title": "Added `fetchOrder()` to request one order by its id",
                   "declaration": "fetchOrder",
                   "reading": "The author added a function `fetchOrder()` that sends a `GET` request to `/orders/<id>` and returns that one order. [`useOrder()` calls it in its query function](code:src/composables/use-orders.ts#L11), so that [`<EditOrderPage />`](code:src/views/orders/EditOrderPage.vue#L10) can load the order it edits.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [
                     {
                       "id": "finding-unencoded-order-id",
@@ -1466,7 +1466,7 @@
                   "title": "Added `createOrder()` to send a new order",
                   "declaration": "createOrder",
                   "reading": "The author added a function `createOrder()` that sends a `POST` request to `/orders` with the draft as its JSON body, and returns the order the server created. [`useCreateOrder()` runs it as its mutation function](code:src/composables/use-orders.ts#L17), so that [`<CreateOrderPage />`](code:src/views/orders/CreateOrderPage.vue#L13) saves a new order through it.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 8,
@@ -1487,7 +1487,7 @@
                   "title": "Added `updateOrder()` to save a changed order",
                   "declaration": "updateOrder",
                   "reading": "The author added a function `updateOrder()` that sends a `PUT` request to `/orders/<id>` with the whole order as its JSON body, and returns the order the server saved. [`useUpdateOrder()` runs it as its mutation function](code:src/composables/use-orders.ts#L25), so that [`<EditOrderPage />`](code:src/views/orders/EditOrderPage.vue#L14) saves its changes through it.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [
                     {
                       "id": "finding-stale-status",
@@ -1528,7 +1528,7 @@
                   "title": "Added the query key of the orders",
                   "declaration": "ORDERS_QUERY_KEY",
                   "reading": "The author added a constant `ORDERS_QUERY_KEY` that holds `[\"orders\"]`. [`useOrders()` loads the list under it](code:src/composables/use-orders.ts#L7), and [`useOrder()` loads one order under a key that starts with it](code:src/composables/use-orders.ts#L11). So [one call to `invalidateQueries()`](code:src/composables/use-orders.ts#L18) marks the list and every single order as stale.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -1546,7 +1546,7 @@
                   "title": "Added `useOrders()` to load every order",
                   "declaration": "useOrders",
                   "reading": "The author added a composable `useOrders()` that loads every order with `useQuery`, under the key `[\"orders\"]`, with [`fetchOrders()`](code:src/api/orders.ts#fetchOrders) as its query function. [`<ViewOrdersPage />`](code:src/views/orders/ViewOrdersPage.vue#L5) calls it, so that the page lists the orders and shows a message while they load.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -1567,7 +1567,7 @@
                   "title": "Added `useOrder()` to load one order by its id",
                   "declaration": "useOrder",
                   "reading": "The author added a composable `useOrder()` that loads one order with `useQuery`, under a key of `\"orders\"` and the id, with a query function that calls [`fetchOrder()`](code:src/api/orders.ts#fetchOrder). [`<EditOrderPage />`](code:src/views/orders/EditOrderPage.vue#L10) calls it with the id from the URL, so that the page fills its form with the saved order.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 10,
@@ -1590,7 +1590,7 @@
                   "title": "Added `useCreateOrder()` to create an order",
                   "declaration": "useCreateOrder",
                   "reading": "The author added a composable `useCreateOrder()` that returns a mutation that:\n\n- sends the draft with [`createOrder()`](code:src/api/orders.ts#createOrder)\n- marks every query under `[\"orders\"]` as stale when the request succeeds\n\n[`<CreateOrderPage />`](code:src/views/orders/CreateOrderPage.vue#L10) calls it, so that the orders list loads again after a new order is saved.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 14,
@@ -1614,7 +1614,7 @@
                       "title": "Added the read of the query client",
                       "declaration": "useCreateOrder › queryClient",
                       "reading": "The author added a call to `useQueryClient()` that returns the `QueryClient` the app installs with `VueQueryPlugin`. [The success callback of the mutation calls `invalidateQueries()` on it](code:src/composables/use-orders.ts#L18).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 15,
@@ -1632,7 +1632,7 @@
                       "title": "Added the mutation that creates an order",
                       "declaration": "useCreateOrder › useMutation",
                       "reading": "The author added a call to `useMutation` with [`createOrder()`](code:src/api/orders.ts#createOrder) as its mutation function, and an `onSuccess` callback that calls `invalidateQueries({ queryKey: [\"orders\"] })`. The callback marks the orders as stale, so that [`useOrders()`](code:src/composables/use-orders.ts#L7) loads the list again after a new order is saved.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 16,
@@ -1657,7 +1657,7 @@
                   "title": "Added `useUpdateOrder()` to save a changed order",
                   "declaration": "useUpdateOrder",
                   "reading": "The author added a composable `useUpdateOrder()` that returns a mutation that:\n\n- sends the order with [`updateOrder()`](code:src/api/orders.ts#updateOrder)\n- marks every query under `[\"orders\"]` as stale when the request succeeds\n\n[`<EditOrderPage />`](code:src/views/orders/EditOrderPage.vue#L11) calls it, so that the list and the edited order load again after the save.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 22,
@@ -1681,7 +1681,7 @@
                       "title": "Added the read of the query client",
                       "declaration": "useUpdateOrder › queryClient",
                       "reading": "The author added a call to `useQueryClient()` that returns the `QueryClient` the app installs with `VueQueryPlugin`. [The success callback of the mutation calls `invalidateQueries()` on it](code:src/composables/use-orders.ts#L26).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 23,
@@ -1699,7 +1699,7 @@
                       "title": "Added the mutation that saves an order",
                       "declaration": "useUpdateOrder › useMutation",
                       "reading": "The author added a call to `useMutation` with [`updateOrder()`](code:src/api/orders.ts#updateOrder) as its mutation function, and an `onSuccess` callback that calls `invalidateQueries({ queryKey: [\"orders\"] })`. The callback marks the list and the saved order as stale, so that [`useOrders()`](code:src/composables/use-orders.ts#L7) and [`useOrder()`](code:src/composables/use-orders.ts#L11) load them again.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 24,
@@ -1729,7 +1729,7 @@
                   "title": "Modified the router to add the three order pages",
                   "declaration": "router",
                   "reading": "The author modified the router `router` to add three child routes of the layout:\n\n- `orders` renders [`ViewOrdersPage`](code:src/views/orders/ViewOrdersPage.vue#ViewOrdersPage)\n- `orders/new` renders [`CreateOrderPage`](code:src/views/orders/CreateOrderPage.vue#CreateOrderPage)\n- `orders/:orderId/edit` renders [`EditOrderPage`](code:src/views/orders/EditOrderPage.vue#EditOrderPage), which [reads `route.params.orderId`](code:src/views/orders/EditOrderPage.vue#L9)\n\n`src/main.ts` installs this router with `app.use(router)`, so that the three pages open at these paths inside [`RootLayout`](code:src/views/RootLayout.vue#RootLayout).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 10,
@@ -1759,7 +1759,7 @@
                   "title": "Added the type of the order status",
                   "declaration": "OrderStatus",
                   "reading": "The author added a type `OrderStatus` that is `\"pending\"` or `\"shipped\"`. [`Order` types its `status` with it](code:src/types/order.ts#L8), and [the create page starts a new order as `\"pending\"`](code:src/views/orders/CreateOrderPage.vue#L7).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 1,
@@ -1777,7 +1777,7 @@
                   "title": "Added the type of an order",
                   "declaration": "Order",
                   "reading": "The author added an interface `Order` with an `id`, a `customerId`, a `productId`, a `quantity` and a `status` of type [`OrderStatus`](code:src/types/order.ts#OrderStatus). [The order requests return it](code:src/api/orders.ts#L4-12), and [`<EditOrderPage />` passes the loaded order to the form](code:src/views/orders/EditOrderPage.vue#L23).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 3,
@@ -1795,7 +1795,7 @@
                   "title": "Added the type of an order draft",
                   "declaration": "OrderDraft",
                   "reading": "The author added a type `OrderDraft` that is [`Order`](code:src/types/order.ts#Order) without its `id`. [`<OrderForm />` edits one](code:src/views/orders/components/OrderForm.vue#L8) and [`createOrder()` sends one](code:src/api/orders.ts#L8), because the server gives a new order its id.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 11,
@@ -1818,7 +1818,7 @@
                   "title": "Modified `<RootLayout />` to link to the orders",
                   "declaration": "RootLayout",
                   "reading": "The author modified the component `<RootLayout />` to render a `<RouterLink to=\"/orders\">` with the text `Orders` in the header, between `Products` and `Help`. [The router renders `ViewOrdersPage` at that path](code:src/router.ts#L19), so that a staff member can reach the orders from every page.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 1,
@@ -1842,7 +1842,7 @@
                   "title": "Added `<OrderForm />` to edit the fields of an order",
                   "declaration": "OrderForm",
                   "reading": "The author added a component `<OrderForm />` that:\n\n- copies `initialDraft` into a reactive draft\n- binds the customers and the products to two `<select>` elements, and the quantity to a number `<input>`\n- emits `submit` with a copy of the draft when the form is submitted\n- disables its button while `isSaving` is `true`\n\n[`<CreateOrderPage />`](code:src/views/orders/CreateOrderPage.vue#L20) and [`<EditOrderPage />`](code:src/views/orders/EditOrderPage.vue#L23) both render it, so that the two pages share one set of fields.",
-                  "needsAttention": "Both order pages build on this form: it holds the draft a staff member edits and emits it to the page that saves it, so [creating](code:src/views/orders/CreateOrderPage.vue#L13) and [editing](code:src/views/orders/EditOrderPage.vue#L14) an order send what this form collects.",
+                  "coreChange": "Both order pages build on this form: it holds the draft a staff member edits and emits it to the page that saves it, so [creating](code:src/views/orders/CreateOrderPage.vue#L13) and [editing](code:src/views/orders/EditOrderPage.vue#L14) an order send what this form collects.",
                   "findings": [],
                   "range": {
                     "lineStart": 1,
@@ -1879,7 +1879,7 @@
                       "title": "Added the props and the event of the form",
                       "declaration": "OrderForm › props, emit",
                       "reading": "The author added three props, `initialDraft`, `submitLabel` and `isSaving`, and one event, `submit`, that carries an [`OrderDraft`](code:src/types/order.ts#OrderDraft). [The create page](code:src/views/orders/CreateOrderPage.vue#L20) and [the edit page](code:src/views/orders/EditOrderPage.vue#L23) pass the props and listen to `@submit`, so that one form creates and edits an order.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 8,
@@ -1898,7 +1898,7 @@
                       "title": "Added the draft of the form",
                       "declaration": "OrderForm › draft",
                       "reading": "The author added a `reactive()` copy of the `initialDraft` prop. [The two `<select>` elements](code:src/views/orders/components/OrderForm.vue#L22-27) and [the quantity `<input>`](code:src/views/orders/components/OrderForm.vue#L28) write into it through `v-model`, and [the submit handler emits a copy of it](code:src/views/orders/components/OrderForm.vue#L16).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [
                         {
                           "id": "finding-draft-ignores-reload",
@@ -1925,7 +1925,7 @@
                       "title": "Added the customers of the customer list",
                       "declaration": "OrderForm › customers",
                       "reading": "The author added a call to [`useCustomers()`](code:src/composables/use-customers.ts#L6-8) that gives the customers. [The customer `<select>` renders one `<option>` per customer](code:src/views/orders/components/OrderForm.vue#L23).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 12,
@@ -1943,7 +1943,7 @@
                       "title": "Added the products of the product list",
                       "declaration": "OrderForm › products",
                       "reading": "The author added a call to [`useProducts()`](code:src/composables/use-products.ts#L6-8) that gives the products. [The product `<select>` renders one `<option>` per product](code:src/views/orders/components/OrderForm.vue#L26).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 13,
@@ -1961,7 +1961,7 @@
                       "title": "Added the submit handler of the form",
                       "declaration": "OrderForm › handleSubmit",
                       "reading": "The author added a function `handleSubmit()` that emits `submit` with a copy of the draft. [The `<form>` runs it when it is submitted](code:src/views/orders/components/OrderForm.vue#L21), so that the page gets the edited draft and not the reactive object the form keeps changing.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [
                         {
                           "id": "finding-empty-customer",
@@ -1995,7 +1995,7 @@
                       "title": "Added the submit event of the form",
                       "declaration": "OrderForm › form.onSubmit",
                       "reading": "The author added a `@submit.prevent` listener that runs [`handleSubmit()`](code:src/views/orders/components/OrderForm.vue#L15-17) and stops the page reload. [The `<BaseButton>` is disabled while the order saves](code:src/views/orders/components/OrderForm.vue#L29), and it submits the form because [it renders a `<button>` with no `type`](code:src/components/ui/BaseButton.vue#L7).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 21,
@@ -2013,7 +2013,7 @@
                       "title": "Added one option per customer",
                       "declaration": "OrderForm › Markup loop :23",
                       "reading": "The author added a `v-for` that renders one `<option>` per customer, with the id as its value and the name as its text. [The customers come from `useCustomers()`](code:src/views/orders/components/OrderForm.vue#L12).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 23,
@@ -2032,7 +2032,7 @@
                       "title": "Added one option per product",
                       "declaration": "OrderForm › Markup loop :26",
                       "reading": "The author added a `v-for` that renders one `<option>` per product, with the id as its value and the name as its text. [The products come from `useProducts()`](code:src/views/orders/components/OrderForm.vue#L13).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 26,
@@ -4013,7 +4013,7 @@
                   "title": "Added `<CreateOrderPage />` to create an order",
                   "declaration": "CreateOrderPage",
                   "reading": "The author added a page component `<CreateOrderPage />` that:\n\n- renders [`<OrderForm />`](code:src/views/orders/components/OrderForm.vue#OrderForm) with the empty draft and the label `Create`\n- creates the order with [`useCreateOrder()`](code:src/composables/use-orders.ts#useCreateOrder) when the form emits `submit`\n- opens `/orders` when the save succeeds\n\n[The router renders it at `/orders/new`](code:src/router.ts#L20), and [the orders list links to it](code:src/views/orders/ViewOrdersPage.vue#L13), so that a staff member can add an order.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 1,
@@ -4048,7 +4048,7 @@
                       "title": "Added the draft a new order starts from",
                       "declaration": "CreateOrderPage › EMPTY_DRAFT",
                       "reading": "The author added a constant `EMPTY_DRAFT` with no customer, no product, a `quantity` of `1` and the `status` `\"pending\"`. [The page passes it to the form as `:initial-draft`](code:src/views/orders/CreateOrderPage.vue#L20), so that the quantity field starts at [the lowest value it takes](code:src/views/orders/components/OrderForm.vue#L28).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 7,
@@ -4070,7 +4070,7 @@
                       "title": "Added the router of the page",
                       "declaration": "CreateOrderPage › router",
                       "reading": "The author added a call to `useRouter()` that returns the router of the app. [The success callback of the save calls `router.push(\"/orders\")`](code:src/views/orders/CreateOrderPage.vue#L13).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,
@@ -4088,7 +4088,7 @@
                       "title": "Added the mutation that creates the order",
                       "declaration": "CreateOrderPage › saveOrder",
                       "reading": "The author added a call to [`useCreateOrder()`](code:src/composables/use-orders.ts#useCreateOrder) that gives the function `saveOrder` and the flag `isPending`. [The submit handler calls `saveOrder`](code:src/views/orders/CreateOrderPage.vue#L13), and [the form disables its button while `isPending` is `true`](code:src/views/orders/CreateOrderPage.vue#L20).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 10,
@@ -4106,7 +4106,7 @@
                       "title": "Added the submit handler that saves the new order",
                       "declaration": "CreateOrderPage › handleSubmit",
                       "reading": "The author added a function `handleSubmit()` that calls `saveOrder(draft)` with an `onSuccess` callback that calls `router.push(\"/orders\")`. [The form emits `submit` with the draft](code:src/views/orders/components/OrderForm.vue#L16), and [the page listens to it with this handler](code:src/views/orders/CreateOrderPage.vue#L20), so that the staff member is back on the orders list once the order is saved.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [
                         {
                           "id": "finding-silent-create-error",
@@ -4143,7 +4143,7 @@
                       "title": "Added the order form with the empty draft",
                       "declaration": "CreateOrderPage › OrderForm.onSubmit",
                       "reading": "The author added an `<OrderForm>` that starts from [the empty draft](code:src/views/orders/CreateOrderPage.vue#L7), shows `Create` on its button, and calls [`handleSubmit()`](code:src/views/orders/CreateOrderPage.vue#L12-14) when it emits `submit`. The button is disabled while [the order saves](code:src/views/orders/CreateOrderPage.vue#L10).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 20,
@@ -6028,7 +6028,7 @@
                   "title": "Added `<EditOrderPage />` to edit an order",
                   "declaration": "EditOrderPage",
                   "reading": "The author added a page component `<EditOrderPage />` that:\n\n- loads the order whose id is in the URL with [`useOrder()`](code:src/composables/use-orders.ts#useOrder)\n- shows `Loading the order…` while it loads, and `The order could not be loaded.` when the request fails\n- renders [`<OrderForm />`](code:src/views/orders/components/OrderForm.vue#OrderForm) with the loaded order and the label `Save`\n- saves the edited order under the id from the URL with [`useUpdateOrder()`](code:src/composables/use-orders.ts#useUpdateOrder), then opens `/orders`\n\n[The router renders it at `/orders/:orderId/edit`](code:src/router.ts#L21), and [each row of the orders list links to it](code:src/views/orders/ViewOrdersPage.vue#L20), so that a staff member can change an order.",
-                  "needsAttention": "This page puts the order id back into the saved order: the form emits an `OrderDraft`, which has no `id`, and [`updateOrder()` builds its URL from `order.id`](code:src/api/orders.ts#L12).",
+                  "coreChange": "This page puts the order id back into the saved order: the form emits an `OrderDraft`, which has no `id`, and [`updateOrder()` builds its URL from `order.id`](code:src/api/orders.ts#L12).",
                   "findings": [],
                   "range": {
                     "lineStart": 1,
@@ -6064,7 +6064,7 @@
                       "title": "Added the route of the page",
                       "declaration": "EditOrderPage › route",
                       "reading": "The author added a call to `useRoute()` that returns the route the page was opened at. [The page reads the order id from its params](code:src/views/orders/EditOrderPage.vue#L9).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 7,
@@ -6082,7 +6082,7 @@
                       "title": "Added the router of the page",
                       "declaration": "EditOrderPage › router",
                       "reading": "The author added a call to `useRouter()` that returns the router of the app. [The success callback of the save calls `router.push(\"/orders\")`](code:src/views/orders/EditOrderPage.vue#L14).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 8,
@@ -6100,7 +6100,7 @@
                       "title": "Added the order id from the URL",
                       "declaration": "EditOrderPage › orderId",
                       "reading": "The author added a constant `orderId` that holds `String(route.params.orderId)`. [The route `orders/:orderId/edit` sets the param](code:src/router.ts#L21), and the page [loads](code:src/views/orders/EditOrderPage.vue#L10) and [saves](code:src/views/orders/EditOrderPage.vue#L14) the order under it.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,
@@ -6118,7 +6118,7 @@
                       "title": "Added the query of the order to edit",
                       "declaration": "EditOrderPage › order",
                       "reading": "The author added a call to [`useOrder()`](code:src/composables/use-orders.ts#useOrder) with the id from the URL. It gives the loaded `order` and the flags `isPending` and `isError`. [The template reads the flags](code:src/views/orders/EditOrderPage.vue#L19-20), and [the form starts from the order](code:src/views/orders/EditOrderPage.vue#L23).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 10,
@@ -6136,7 +6136,7 @@
                       "title": "Added the update mutation of the page",
                       "declaration": "EditOrderPage › saveOrder",
                       "reading": "The author added a call to [`useUpdateOrder()`](code:src/composables/use-orders.ts#useUpdateOrder) that gives the function `saveOrder` and its own `isPending`, renamed to `isSaving` so that it does not clash with the flag of the query. [The submit handler calls `saveOrder`](code:src/views/orders/EditOrderPage.vue#L14), and [the form disables its button while `isSaving` is `true`](code:src/views/orders/EditOrderPage.vue#L23).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 11,
@@ -6154,7 +6154,7 @@
                       "title": "Added the submit handler that saves the edited order",
                       "declaration": "EditOrderPage › handleSubmit",
                       "reading": "The author added a function `handleSubmit()` that calls `saveOrder({ ...draft, id: orderId })` with an `onSuccess` callback that calls `router.push(\"/orders\")`. The draft [the form emits](code:src/views/orders/components/OrderForm.vue#L16) has no `id`, so the handler adds the id from the URL, and [`updateOrder()` puts it in the URL of the `PUT` request](code:src/api/orders.ts#L12).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 13,
@@ -6178,7 +6178,7 @@
                       "title": "Added the loading message of the edit page",
                       "declaration": "EditOrderPage › Markup condition :19",
                       "reading": "The author added a `v-if` that renders `<p>Loading the order…</p>` while the query of the order is pending. [The form](code:src/views/orders/EditOrderPage.vue#L23) renders only after the order has loaded, so that it never starts from an `undefined` order.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 19,
@@ -6197,7 +6197,7 @@
                       "title": "Added the error message of the edit page",
                       "declaration": "EditOrderPage › Markup condition :20",
                       "reading": "The author added a `v-else-if` that renders `<p>The order could not be loaded.</p>` when the query of the order fails, as it does when [`request()` throws an `ApiError`](code:src/api/client.ts#L14) for an id the server does not have.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 20,
@@ -6216,7 +6216,7 @@
                       "title": "Added the form of the order to edit",
                       "declaration": "EditOrderPage › Markup condition :21",
                       "reading": "The author added a `v-else-if=\"order\"` section with the heading `Edit order` and the id, and an `<OrderForm>` that starts from the loaded order, shows `Save` on its button, and calls [`handleSubmit()`](code:src/views/orders/EditOrderPage.vue#L13-15) when it emits `submit`. The button is disabled while [the update saves](code:src/views/orders/EditOrderPage.vue#L11).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 21,
@@ -7871,7 +7871,7 @@
                   "title": "Added `<ViewOrdersPage />` to list the orders",
                   "declaration": "ViewOrdersPage",
                   "reading": "The author added a page component `<ViewOrdersPage />` that:\n\n- loads every order with [`useOrders()`](code:src/composables/use-orders.ts#useOrders)\n- shows `Loading the orders…` while they load, and `The orders could not be loaded.` when the request fails\n- links to `/orders/new` with the text `Create order`\n- renders a table row per order with its id, quantity and status, and a link to `/orders/<id>/edit`\n\n[The router renders it at `/orders`](code:src/router.ts#L19), and [the header links to it](code:src/views/RootLayout.vue#L15), so that a staff member can find an order and open it.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 1,
@@ -7903,7 +7903,7 @@
                       "title": "Added the query of the orders",
                       "declaration": "ViewOrdersPage › orders",
                       "reading": "The author added a call to [`useOrders()`](code:src/composables/use-orders.ts#useOrders) that gives the loaded `orders` and the flags `isPending` and `isError`. [The template reads the flags](code:src/views/orders/ViewOrdersPage.vue#L9-10), and [the table renders the orders](code:src/views/orders/ViewOrdersPage.vue#L16-21).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 5,
@@ -7921,7 +7921,7 @@
                       "title": "Added the loading message of the orders list",
                       "declaration": "ViewOrdersPage › Markup condition :9",
                       "reading": "The author added a `v-if` that renders `<p>Loading the orders…</p>` while the query is pending, so that [the table](code:src/views/orders/ViewOrdersPage.vue#L16) renders only once the orders have loaded.",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,
@@ -7940,7 +7940,7 @@
                       "title": "Added the error message of the orders list",
                       "declaration": "ViewOrdersPage › Markup condition :10",
                       "reading": "The author added a `v-else-if` that renders `<p>The orders could not be loaded.</p>` when the query fails, as it does when [`request()` throws an `ApiError`](code:src/api/client.ts#L14).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 10,
@@ -7959,7 +7959,7 @@
                       "title": "Added the table of the orders",
                       "declaration": "ViewOrdersPage › Markup condition :11",
                       "reading": "The author added a `v-else` section with the heading `Orders`, a `<RouterLink>` to `/orders/new`, and a table with one `<tr>` per order: its `id`, `quantity` and `status`, and a `<RouterLink>` with the text `Edit` to `/orders/<id>/edit`. [The router renders `EditOrderPage` at that path](code:src/router.ts#L21).",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 11,

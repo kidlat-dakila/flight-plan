@@ -34,8 +34,6 @@ const AgentsSettingsPage = () => {
       <AgentsForm
         agents={page.agents}
         defaultAgent={page.defaultAgent}
-        connection={page.connection}
-        connectionOptions={page.connectionOptions}
         problem={saving.problem}
         folderBrowser={browsedPath === null ? null : (folderBrowser.data ?? null)}
         folderBrowserErrorMessage={folderBrowser.error?.message ?? null}

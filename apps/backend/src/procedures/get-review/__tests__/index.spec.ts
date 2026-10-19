@@ -31,7 +31,7 @@ describe("getReview", () => {
       kind: "missing",
       shell: { lineColor: "blue", notice: "Sample data. These repositories and pull requests are not real." },
       changedFiles: [{ text: "10 changed files" }, { text: "4 TypeScript" }, { text: "2 TSX" }, {}, {}, {}, {}],
-      form: { writer: { selectedKey: "manual", agents: [] } },
+      form: { writer: { selectedKey: "none", agents: [] } },
     })
   })
 

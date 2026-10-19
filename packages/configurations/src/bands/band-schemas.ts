@@ -1,9 +1,9 @@
 import { z } from "zod"
 import { CARD_SIDES, FINDING_KINDS, IMPACT_TYPES, WAYPOINT_MARK_KINDS } from "@/artifact/kinds"
-import { CODE_BLOCK_TYPES, type CodeBlockType } from "@/code-graph/code-blocks"
+import { CODE_BLOCK_CLASSIFICATIONS, CODE_BLOCK_TYPES, type CodeBlockType } from "@/code-graph/code-blocks"
 import { TOKEN_KINDS } from "./code-token"
 
-export const WAYPOINT_FINDING_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
+export const WAYPOINT_FINDING_FILTER_KEYS = ["core-change", ...FINDING_KINDS] as const
 export const WAYPOINT_CHANGES = ["added", "modified", "removed"] as const
 export const WAYPOINT_FILTER_KEYS = [...WAYPOINT_FINDING_FILTER_KEYS, ...WAYPOINT_CHANGES] as const
 export const ROOT_BLOCK_CHANGES = ["added", "modified", "deleted"] as const
@@ -128,15 +128,15 @@ export const waypointSchema = z.strictObject({
   previousId: z.string().nullable(),
   nextId: z.string().nullable(),
   chip: z.strictObject({ kind: z.enum(FINDING_KINDS), label: z.string() }).nullable(),
-  attentionLabel: z.string().nullable(),
+  coreChangeLabel: z.string().nullable(),
   reading: proseSchema.nullable(),
   unwrittenLabel: z.string(),
-  needsAttention: proseSchema.nullable(),
+  coreChange: proseSchema.nullable(),
   findings: z.array(findingSchema),
   isReviewed: z.boolean(),
   reviewLabel: z.string(),
   lines: z.strictObject({ lineStart: z.number(), lineEnd: z.number() }).nullable(),
-  text: z.strictObject({ title: z.string(), reading: z.string(), needsAttention: z.string().nullable() }),
+  text: z.strictObject({ title: z.string(), reading: z.string(), coreChange: z.string().nullable() }),
 })
 
 export const lineCollapseSchema = z.strictObject({
@@ -217,10 +217,18 @@ export const traceRowGroupSchema = z.strictObject({ label: z.string().nullable()
 
 export type TraceRowGroupView = z.infer<typeof traceRowGroupSchema>
 
+export const classificationViewSchema = z.strictObject({
+  key: z.enum(CODE_BLOCK_CLASSIFICATIONS),
+  label: z.string(),
+})
+
+export type ClassificationView = z.infer<typeof classificationViewSchema>
+
 export interface TraceNodeView {
   id: string
   type: CodeBlockType
   typeLabel: string
+  classification: ClassificationView
   change: NodeChange | null
   changedLabel: string | null
   label: string
@@ -243,6 +251,7 @@ export const traceNodeSchema: z.ZodType<TraceNodeView> = z.lazy(() =>
     id: z.string(),
     type: z.enum(CODE_BLOCK_TYPES),
     typeLabel: z.string(),
+    classification: classificationViewSchema,
     change: z.enum(NODE_CHANGES).nullable(),
     changedLabel: z.string().nullable(),
     label: z.string(),
@@ -343,6 +352,7 @@ export const blastBandSchema = z.strictObject({
 
 export const rootBlockViewSchema = z.strictObject({
   id: z.string(),
+  classification: classificationViewSchema,
   isReviewed: z.boolean(),
   reviewLabel: z.string(),
   reviewName: z.string(),

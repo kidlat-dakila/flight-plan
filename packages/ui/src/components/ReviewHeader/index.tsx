@@ -102,13 +102,13 @@ const STATE_PIP_CLASSES: Record<ReviewerState, string> = {
 const BAND_AVATAR_CLASSES = "border-sign-foreground bg-sign-foreground text-sign"
 const BAND_LINK_CLASSES = "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-sign-foreground/35 px-2.5 text-[0.8rem] text-sign-foreground hover:bg-sign-foreground/10"
 
-const BAND_ATTENTION_LABEL = "font-bold text-signal"
+const BAND_CORE_CHANGE_LABEL = "font-bold text-signal"
 const BAND_QUIET_LABEL = "text-sign-muted"
 
 const BAND_STATUS_LABEL_CLASSES: Record<StopStatus, string> = {
   "no-review": "text-sign-foreground",
-  "awaiting-review": BAND_ATTENTION_LABEL,
-  "awaiting-reply": BAND_ATTENTION_LABEL,
+  "awaiting-review": BAND_CORE_CHANGE_LABEL,
+  "awaiting-reply": BAND_CORE_CHANGE_LABEL,
   "stale": BAND_QUIET_LABEL,
   "draft": BAND_QUIET_LABEL,
   "closed": BAND_QUIET_LABEL,
@@ -116,7 +116,7 @@ const BAND_STATUS_LABEL_CLASSES: Record<StopStatus, string> = {
 }
 
 const ArtifactFreshnessLabel = ({ freshness }: { readonly freshness: ArtifactFreshness }) => (
-  <span className={cn("shrink-0 text-sm", freshness.isOutOfDate ? BAND_ATTENTION_LABEL : BAND_QUIET_LABEL)}>
+  <span className={cn("shrink-0 text-sm", freshness.isOutOfDate ? BAND_CORE_CHANGE_LABEL : BAND_QUIET_LABEL)}>
     {freshness.label}
   </span>
 )

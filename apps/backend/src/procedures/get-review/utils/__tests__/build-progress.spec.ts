@@ -15,7 +15,8 @@ const createRequest = (writer: ReviewRequest["writer"]): ReviewRequest => ({
 })
 
 const CLAUDE_REQUEST = createRequest({ kind: "agent", agent: "claude", model: "sonnet", effort: "high" })
-const MANUAL_REQUEST = createRequest({ kind: "manual" })
+const EXTERNAL_REQUEST = createRequest({ kind: "external", agent: "codex" })
+const NO_AGENT_REQUEST = createRequest({ kind: "none" })
 
 const FAILURE: JournalEntry = { sequence: 2, event: { kind: "agent-failure", id: "failure-1", reason: "The claude command was not found.", failedAt: NOW } }
 const DELIVERY: JournalEntry = { sequence: 3, event: { kind: "delivery", id: "delivery-1", throughSequence: 1, channel: "spawn", deliveredAt: NOW } }
@@ -116,16 +117,22 @@ describe("buildProgress", () => {
     expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, journal: open }))?.permission).toBeNull()
   })
 
-  it("waits for the reviewer's own agent with the prompt to copy again, until a part is written", () => {
-    const activity = activityOf({ request: MANUAL_REQUEST, prompt: "Review pull request #412." })
+  it("waits for the agent the reviewer starts, with the line to copy again, until a part is written", () => {
+    const activity = activityOf({ request: EXTERNAL_REQUEST, prompt: "Review pull request #412." })
 
     expect(buildProgress(unwritten, activity)).toMatchObject({
       state: "waiting",
       label: "Waiting for your agent",
       isWriting: true,
-      prompt: { label: "Copy the prompt", text: "Review pull request #412.", copiedMessage: "Prompt copied" },
+      prompt: { label: "Copy the line", text: "Review pull request #412.", copiedMessage: "Line copied" },
     })
     expect(buildProgress(drafting, activity)).toMatchObject({ state: "writing", label: "Your agent is writing the review" })
+  })
+})
+
+describe("buildProgress without an agent", () => {
+  it("shows no progress for a review built without an agent", () => {
+    expect(buildProgress(unwritten, activityOf({ request: NO_AGENT_REQUEST, prompt: null }))).toBeNull()
   })
 })
 

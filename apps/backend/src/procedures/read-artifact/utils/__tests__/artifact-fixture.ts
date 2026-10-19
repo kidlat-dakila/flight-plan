@@ -39,9 +39,10 @@ const unwrittenWaypoint = (id: string, declaration: string): Waypoint => ({
   declaration,
   codeBlocks: [],
   reading: "",
-  needsAttention: null,
+  coreChange: null,
   findings: [],
   children: [],
+  isRequired: true,
 })
 
 const DRAFT_SOURCES: readonly SourceFile[] = [
@@ -58,12 +59,13 @@ export const DRAFT_SEGMENT: Segment = {
   title: "Move price rounding into the cart total",
   changedPaths: [SUBTOTAL_PATH, PRICE_PATH, TEST_PATH],
   context: "",
+  isContextRequired: true,
   traceDiagram: draftTraceOf([DRAFT_TRACE_NODE]),
   blastDiagram: {
     nodes: [
-      { path: "src/cart/CartPage.tsx", diffType: null, impactType: null, impactReason: null },
-      { path: "src/cart/CartTotal.tsx", diffType: null, impactType: null, impactReason: null },
-      { path: SUBTOTAL_PATH, diffType: "modified", impactType: null, impactReason: null },
+      { path: "src/cart/CartPage.tsx", diffType: null, impactType: null, impactReason: null, isRequired: true },
+      { path: "src/cart/CartTotal.tsx", diffType: null, impactType: null, impactReason: null, isRequired: true },
+      { path: SUBTOTAL_PATH, diffType: "modified", impactType: null, impactReason: null, isRequired: true },
     ],
     edges: [
       { importer: "src/cart/CartTotal.tsx", imported: SUBTOTAL_PATH },
@@ -127,7 +129,7 @@ export const createArtifactContext = async (
     await reviewStore.writeScaffold(KEY, {
       artifact,
       baseCommit: "0000000",
-      request: { configurationId: preset, preset, order: "foundations-first", customOrder: null, writer: { kind: "manual" }, requestedAt: STARTED_AT },
+      request: { configurationId: preset, preset, order: "foundations-first", customOrder: null, writer: { kind: "none" }, requestedAt: STARTED_AT },
     })
   }
   return { ...createConversationContext().context, reviewStore }

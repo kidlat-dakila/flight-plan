@@ -111,5 +111,5 @@ export const planAgentsChoice = (
   if (folderRejection !== null) return folderRejection
   const defaultAgent = resolveDefault(installs.map((install) => install.agent), input.defaultAgent)
   if (defaultAgent === null) return reject(NO_DEFAULT_MESSAGE)
-  return { kind: "accepted", choice: { installs, defaultAgent, connection: input.connection } }
+  return { kind: "accepted", choice: { installs, defaultAgent } }
 }

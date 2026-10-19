@@ -148,7 +148,7 @@ describe("listRepositories", () => {
     await context.reviewStore.writeScaffold(key, {
       artifact: { ...WEBHOOK_RETRY_ARTIFACT, status: "complete" },
       baseCommit: "0000000",
-      request: { configurationId: "standard", preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: NOW },
+      request: { configurationId: "standard", preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "none" }, requestedAt: NOW },
     })
 
     await expect(promptedIds()).resolves.toStrictEqual(["branch-feature/web"])

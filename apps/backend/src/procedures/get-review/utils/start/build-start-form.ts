@@ -64,18 +64,22 @@ const toOrderOption = (order: WalkthroughOrder): StartForm["order"]["options"][n
 
 type AgentOption = StartForm["writer"]["agents"][number]
 
+const startDescriptionOf = (offer: AgentOffer): string =>
+  offer.isStartable
+    ? `Flight Plan starts ${offer.label} in this repository and asks it to write the review.`
+    : `Flight Plan can't start ${offer.label} itself, so it gives you one line to run in ${offer.label}.`
+
 const toAgentOption = (offer: AgentOffer): AgentOption => ({
   agent: offer.agent,
   label: offer.label,
-  description: `Flight Plan starts ${offer.label} in this repository and asks it to write the review.`,
-  unavailableReason: offer.unavailableReason,
+  description: startDescriptionOf(offer),
   modelLegend: `Model for ${offer.label}`,
   effortLegend: `Effort for ${offer.label}`,
-  hasModelChoice: offer.models.length > 1,
+  hasModelChoice: offer.isStartable && offer.models.length > 1,
   modelOptions: offer.models.map((model) => toModelOption(model, offer.preferredEffort)),
   selectedModel: offer.model,
   selectedEffort: offer.effort,
-  submitLabel: "Start the review",
+  submitLabel: offer.isStartable ? "Start the review" : `Get the line for ${offer.label}`,
 })
 
 export const buildStartForm = (
@@ -103,10 +107,10 @@ export const buildStartForm = (
       hint: "Who writes the review.",
       selectedKey: defaultWriterKeyOf(setup.agents, offers),
       agents: offers.map(toAgentOption),
-      manual: {
-        label: "I will prompt my agent myself",
-        description: "Flight Plan copies the prompt. Paste it into your own agent session.",
-        submitLabel: "Copy the prompt",
+      none: {
+        label: "Without an agent",
+        description: "Flight Plan builds the review on its own, and you read it without a write-up.",
+        submitLabel: "Build the review",
       },
     },
     pendingLabel: "Starting…",

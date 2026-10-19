@@ -139,10 +139,10 @@ describe("buildCodegraph", () => {
 
     expect(segments[0].blastDiagram).toStrictEqual({
       nodes: [
-        { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null },
-        { path: "src/types.ts", diffType: "modified", impactType: null, impactReason: null },
-        { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null },
-        { path: "src/ui.ts", diffType: null, impactType: null, impactReason: null },
+        { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null, isRequired: false },
+        { path: "src/types.ts", diffType: "modified", impactType: null, impactReason: null, isRequired: false },
+        { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+        { path: "src/ui.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
       ],
       edges: [
         { importer: "src/cart.ts", imported: "src/pricing.ts" },
@@ -238,7 +238,7 @@ describe("buildCodegraph", () => {
     expect(segments).toHaveLength(1)
     expect(segments[0].traceDiagram).toBeNull()
     expect(segments[0].blastDiagram).toStrictEqual({
-      nodes: [{ path: "src/cart.ts", diffType: "modified", impactType: null, impactReason: null }],
+      nodes: [{ path: "src/cart.ts", diffType: "modified", impactType: null, impactReason: null, isRequired: false }],
       edges: [],
       importBound: { nodes: [{ path: "src/cart.ts", diffType: "modified" }], edges: [] },
     })

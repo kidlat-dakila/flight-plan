@@ -18,7 +18,7 @@ const toLine = (text: string, index: number): CodeLine => ({
 const LINES: readonly CodeLine[] = ["const first = 1", "const second = 2", "const third = 3", "const fourth = 4"].map(toLine)
 
 const WAYPOINTS: readonly CodeViewWaypoint[] = [
-  { id: "active-holds", title: "Counts the holds that are still active", lineStart: 2, lineEnd: 3, attentionLabel: "Needs attention" },
+  { id: "active-holds", title: "Counts the holds that are still active", lineStart: 2, lineEnd: 3, coreChangeLabel: "Core change" },
 ]
 
 interface Setting {
@@ -74,7 +74,7 @@ describe("CodeViewEditor", () => {
     const waypoint = screen.getByRole("region", { name: "Counts the holds that are still active" })
 
     expect(within(waypoint).getByText("Lines 2 to 3")).toBeTruthy()
-    expect(within(waypoint).getByText("Needs attention")).toBeTruthy()
+    expect(within(waypoint).getByText("Core change")).toBeTruthy()
     expect(screen.getByRole("button", { name: "Hide waypoints" })).toBeTruthy()
   })
 

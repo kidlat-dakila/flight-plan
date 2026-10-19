@@ -54,6 +54,17 @@ describe("parseConfigurationFiles", () => {
     })
   })
 
+  it("reads an instruction saved for the needs-attention note as the core change instruction", () => {
+    const older = new Map([
+      ["configuration.json", DESCRIPTION_TEXT],
+      ["walkthrough.files.waypoints.needsAttention.md", "Name the rule the pull request exists for."],
+    ])
+
+    expect(parseConfigurationFiles("custom-terse", older)?.instructions).toStrictEqual({
+      "walkthrough.files.waypoints.coreChange": "Name the rule the pull request exists for.",
+    })
+  })
+
   it("reads no configuration from a folder without a readable description", () => {
     expect(parseConfigurationFiles("notes", new Map([["context.md", "Two sentences."]]))).toBeNull()
     expect(parseConfigurationFiles("broken", new Map([["configuration.json", "{ broken"]]))).toBeNull()

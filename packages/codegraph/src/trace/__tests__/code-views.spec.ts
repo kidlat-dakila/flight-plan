@@ -15,15 +15,15 @@ const waypointViewOf = (id: string): WaypointView => ({
   previousId: null,
   nextId: null,
   chip: null,
-  attentionLabel: null,
+  coreChangeLabel: null,
   reading: null,
   unwrittenLabel: "",
-  needsAttention: null,
+  coreChange: null,
   findings: [],
   isReviewed: false,
   reviewLabel: "",
   lines: null,
-  text: { title: "", reading: "", needsAttention: null },
+  text: { title: "", reading: "", coreChange: null },
 })
 
 const placeOf = (id: string, lineStart: number, lineEnd: number): WaypointPlace => ({

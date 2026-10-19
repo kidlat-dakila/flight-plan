@@ -233,7 +233,7 @@
                   "title": "Modified `Cart.tax()` to return 0 under 1000 cents",
                   "declaration": "Cart.tax",
                   "reading": "The author added a condition to the method `Cart.tax()` that now returns 0 when `self.subtotal()` is under 1000, where it returned 20% of the subtotal before. A subtotal of 1000 or more still returns `round(self.subtotal() * TAX_RATE)`. [`Cart.total()`](code:shop/cart.py#L11-12) adds this number to the subtotal, so that [`read_total()`](code:shop/api.py#L11) returns a total with no tax for a cart under ten dollars.",
-                  "needsAttention": "This is the rule the pull request exists for: `Cart.tax()` now has a threshold of 1000 cents, and [`Cart.total()`](code:shop/cart.py#L11-12) passes the result on unchanged.",
+                  "coreChange": "This is the rule the pull request exists for: `Cart.tax()` now has a threshold of 1000 cents, and [`Cart.total()`](code:shop/cart.py#L11-12) passes the result on unchanged.",
                   "findings": [],
                   "range": {
                     "lineStart": 14,

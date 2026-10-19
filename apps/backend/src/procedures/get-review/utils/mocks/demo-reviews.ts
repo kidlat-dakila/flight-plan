@@ -181,7 +181,6 @@ export const toDemoSetup = (demos: readonly DemoReview[]): Setup => ({
   agents: {
     installs: [{ agent: "claude", installPath: DEMO_AGENT_PATH, model: DEFAULT_MODEL, effort: DEFAULT_EFFORT }],
     defaultAgent: "claude",
-    connection: "direct",
   },
   forges: {
     connections: [{ forge: "gh", username: DEMO_VIEWER, baseUrl: GITHUB_URL, hasCredential: true }],
@@ -194,6 +193,7 @@ export const toDemoSetup = (demos: readonly DemoReview[]): Setup => ({
     selfAuthor: null,
     trackedAuthors: [],
   })),
+  reviewPreferences: null,
   isComplete: true,
 })
 

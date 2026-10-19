@@ -18,7 +18,7 @@ export const NO_WRITING_ACTIVITY: WritingActivity = { request: null, isAgentRunn
 
 type ProgressStanding = Pick<ReviewProgress, "state" | "label" | "message">
 
-const PROMPT_LABELS = { label: "Copy the prompt", copiedMessage: "Prompt copied" }
+const PROMPT_LABELS = { label: "Copy the line", copiedMessage: "Line copied" }
 const CHAT_HINT = "Send it a message in Chat to start it again."
 
 const PERMISSION_LABELS = {
@@ -82,10 +82,11 @@ const pendingPermissionOf = (journal: readonly JournalEntry[]): PermissionReques
 const countLabelOf = (writtenCount: number, totalCount: number): string =>
   `${String(writtenCount)} of ${String(totalCount)} parts written`
 
-const isLeftToAuthor = (activity: WritingActivity): boolean => activity.request?.writer.kind === "author"
+const isLeftToNoAgent = (activity: WritingActivity): boolean =>
+  activity.request?.writer.kind === "author" || activity.request?.writer.kind === "none"
 
 export const buildProgress = (artifact: ReviewArtifact, activity: WritingActivity): ReviewProgress | null => {
-  if (artifact.status !== "drafting" || isLeftToAuthor(activity)) return null
+  if (artifact.status !== "drafting" || isLeftToNoAgent(activity)) return null
   const tally = tallyNodes(artifact, sectionsOf(artifact))
   const totalCount = tally.complete + tally.incomplete
   const standing = standingOf(activity, tally.complete)
@@ -95,7 +96,7 @@ export const buildProgress = (artifact: ReviewArtifact, activity: WritingActivit
     countLabel: countLabelOf(tally.complete, totalCount),
     writtenCount: tally.complete,
     totalCount,
-    prompt: activity.request?.writer.kind === "manual" && activity.prompt !== null
+    prompt: activity.request?.writer.kind === "external" && activity.prompt !== null
       ? { ...PROMPT_LABELS, text: activity.prompt }
       : null,
     permission: activity.isAgentRunning ? pendingPermissionOf(activity.journal) : null,

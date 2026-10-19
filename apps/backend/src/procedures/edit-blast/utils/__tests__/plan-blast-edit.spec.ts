@@ -6,9 +6,9 @@ const CART_PATH = "src/cart.ts"
 
 const blastDiagram = {
   nodes: [
-    { path: CART_PATH, diffType: null, impactType: "breaks" as const, impactReason: "It assumes a price is never negative." },
-    { path: PRICE_PATH, diffType: "modified" as const, impactType: null, impactReason: null },
-    { path: REPORT_PATH, diffType: null, impactType: null, impactReason: null },
+    { path: CART_PATH, diffType: null, impactType: "breaks" as const, impactReason: "It assumes a price is never negative.", isRequired: true },
+    { path: PRICE_PATH, diffType: "modified" as const, impactType: null, impactReason: null, isRequired: true },
+    { path: REPORT_PATH, diffType: null, impactType: null, impactReason: null, isRequired: true },
   ],
   edges: [
     { importer: CART_PATH, imported: PRICE_PATH },
@@ -34,6 +34,7 @@ describe("planBlastEdit", () => {
       diffType: null,
       impactType: "behaviour-changes",
       impactReason: "It sums [`priceOf`](code:src/price.ts#priceOf), which can now be negative.",
+      isRequired: true,
     }
     expect(nodesOf(planned, REPORT_PATH)).toStrictEqual([written, written, null])
     expect(nodesOf(planned, CART_PATH)).toStrictEqual([blastDiagram.nodes[0], blastDiagram.nodes[0], null])
@@ -42,13 +43,13 @@ describe("planBlastEdit", () => {
   it("drops the reason of a file that becomes unaffected", () => {
     const planned = planBlastEdit(artifact, { path: CART_PATH, impactType: "unaffected", impactReason: "Left over." })
 
-    expect(nodesOf(planned, CART_PATH)).toMatchObject([{ impactType: "unaffected", impactReason: null }, { impactType: "unaffected", impactReason: null }, null])
+    expect(nodesOf(planned, CART_PATH)).toMatchObject([{ impactType: "unaffected", impactReason: null, isRequired: true }, { impactType: "unaffected", impactReason: null, isRequired: true }, null])
   })
 
   it("takes the assessment of a file back", () => {
     const planned = planBlastEdit(artifact, { path: CART_PATH, impactType: "unassessed", impactReason: "" })
 
-    expect(nodesOf(planned, CART_PATH)).toMatchObject([{ impactType: null, impactReason: null }, { impactType: null, impactReason: null }, null])
+    expect(nodesOf(planned, CART_PATH)).toMatchObject([{ impactType: null, impactReason: null, isRequired: true }, { impactType: null, impactReason: null, isRequired: true }, null])
   })
 
   it("rejects a file that breaks or changes behaviour with no reason", () => {

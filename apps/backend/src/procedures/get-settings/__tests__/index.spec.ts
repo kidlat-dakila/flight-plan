@@ -22,7 +22,6 @@ describe("getSettings", () => {
         { agent: "cursor", isPicked: false },
       ],
       defaultAgent: "codex",
-      connection: "manual",
     })
   })
 

@@ -69,6 +69,7 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
   segments: [
     {
       id: "all",
+      isContextRequired: true,
       title: "Retry failed payment webhooks with backoff",
       changedPaths: WEBHOOK_RETRY_CHANGED_PATHS,
       context: [
@@ -108,9 +109,10 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
                 declaration: "retryDelayMs",
                 codeBlocks: [],
                 reading: "Half a second, then one, two and four. With five attempts the last pause is four seconds, so a delivery gives up after about seven and a half seconds.",
-                needsAttention: null,
+                coreChange: null,
                 findings: [],
                 children: [],
+                isRequired: true,
               },
               {
                 id: "deliver-with-retry",
@@ -118,9 +120,10 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
                 declaration: "deliverWithRetry",
                 codeBlocks: [],
                 reading: "",
-                needsAttention: null,
+                coreChange: null,
                 findings: [],
                 children: [],
+                isRequired: true,
               },
             ],
           },
@@ -133,9 +136,10 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
                 declaration: "handleQueuedEvent",
                 codeBlocks: [],
                 reading: "",
-                needsAttention: null,
+                coreChange: null,
                 findings: [],
                 children: [],
+                isRequired: true,
               },
             ],
           },

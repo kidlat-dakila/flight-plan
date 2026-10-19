@@ -70,6 +70,7 @@ const toGroup = (groupKey: string, keyed: readonly TraceNode[]): NodeGroup => {
       children: [],
       triggerLabels: [],
       blockLabels: [],
+      isRequired: false,
     },
     memberIds: members.map((node) => node.id),
     placedAtId: keyed[0].id,

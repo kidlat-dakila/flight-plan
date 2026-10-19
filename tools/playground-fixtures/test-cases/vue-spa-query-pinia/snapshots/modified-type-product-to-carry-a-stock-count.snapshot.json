@@ -443,7 +443,7 @@
                   "title": "Added a required `stockCount` property to `Product`",
                   "declaration": "Product",
                   "reading": "The author added a property `stockCount: number` to the type `Product`, which now requires a number of units on every product. [`CartItem` holds a `Product`](code:src/types/product.ts#L8-11), so every item in the cart has the property too. No file reads `stockCount`. `fetchProducts()` in `src/api/products.ts` returns the body of the `/products` response as `Product[]` and does not check it, so `stockCount` is `undefined` on a product that the server sends without one.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 1,

@@ -16,7 +16,6 @@ const createAgents = (overrides: Partial<AgentsChoice> = {}): AgentsChoice => ({
     { agent: "claude", installPath: "/home/.claude", model: "opus", effort: "default" },
   ],
   defaultAgent: "claude",
-  connection: "direct",
   ...overrides,
 })
 
@@ -26,14 +25,14 @@ describe("offerAgents", () => {
       {
         agent: "codex",
         label: "Codex",
-        unavailableReason: null,
+        isStartable: true,
         model: "default",
         models: [{ model: "default", label: "Your Codex default", efforts: [{ effort: "default" }] }],
       },
       {
         agent: "claude",
         label: "Claude",
-        unavailableReason: null,
+        isStartable: true,
         model: "opus",
         effort: "default",
         models: [
@@ -73,10 +72,10 @@ describe("offerAgents", () => {
     ])
   })
 
-  it("says why an agent Flight Plan cannot start is unavailable", () => {
+  it("marks an agent Flight Plan cannot start, which the reviewer then starts", () => {
     expect(offerAgents(createAgents(), ["claude"], AGENT_MODELS)).toMatchObject([
-      { agent: "codex", unavailableReason: "Flight Plan cannot start Codex yet. Prompt it yourself instead." },
-      { agent: "claude", unavailableReason: null },
+      { agent: "codex", isStartable: false },
+      { agent: "claude", isStartable: true },
     ])
   })
 
@@ -86,24 +85,20 @@ describe("offerAgents", () => {
 })
 
 describe("defaultWriterKeyOf", () => {
-  it("picks the default agent of setup when Flight Plan can start it", () => {
+  it("picks the default agent of setup, whether or not Flight Plan can start it", () => {
     const agents = createAgents()
 
     expect(defaultWriterKeyOf(agents, offerAgents(agents, ["claude", "codex"], AGENT_MODELS))).toBe("claude")
+    expect(defaultWriterKeyOf(agents, offerAgents(agents, [], AGENT_MODELS))).toBe("claude")
   })
 
-  it("picks the first agent Flight Plan can start when it cannot start the default one", () => {
-    const agents = createAgents()
+  it("picks the first agent set up when the default one is not offered", () => {
+    const agents = createAgents({ defaultAgent: "cursor" })
 
-    expect(defaultWriterKeyOf(agents, offerAgents(agents, ["codex"], AGENT_MODELS))).toBe("codex")
+    expect(defaultWriterKeyOf(agents, offerAgents(agents, ["claude"], AGENT_MODELS))).toBe("codex")
   })
 
-  it("picks prompting by hand when setup chose it, when no agent can be started and when none is set up", () => {
-    const manual = createAgents({ connection: "manual" })
-    const direct = createAgents()
-
-    expect(defaultWriterKeyOf(manual, offerAgents(manual, ["claude"], AGENT_MODELS))).toBe("manual")
-    expect(defaultWriterKeyOf(direct, offerAgents(direct, [], AGENT_MODELS))).toBe("manual")
-    expect(defaultWriterKeyOf(null, [])).toBe("manual")
+  it("picks no agent when none is set up", () => {
+    expect(defaultWriterKeyOf(null, [])).toBe("none")
   })
 })

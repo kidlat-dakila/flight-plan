@@ -10,7 +10,7 @@ export interface StoredFileSection extends Omit<FileSection, "waypoints"> {
   readonly waypoints: readonly StoredWaypoint[]
 }
 
-export interface StoredLinkedWaypoint extends Omit<LinkedWaypoint, "codeBlocks" | "children"> {
+export interface StoredLinkedWaypoint extends Omit<LinkedWaypoint, "codeBlocks" | "children" | "isRequired"> {
   readonly codeBlockIds: readonly string[]
   readonly children: readonly StoredLinkedWaypoint[]
 }
@@ -41,10 +41,18 @@ export const storeWaypoint = ({ codeBlocks, children, ...written }: Waypoint): S
 
 export const storeFileSection = (file: FileSection): StoredFileSection => ({ ...file, waypoints: file.waypoints.map(storeWaypoint) })
 
-const storeLinkedWaypoint = ({ codeBlocks, children, ...written }: LinkedWaypoint): StoredLinkedWaypoint => ({
-  ...written,
-  codeBlockIds: idsOf(codeBlocks),
-  children: children.map(storeLinkedWaypoint),
+const storeLinkedWaypoint = (waypoint: LinkedWaypoint): StoredLinkedWaypoint => ({
+  id: waypoint.id,
+  title: waypoint.title,
+  declaration: waypoint.declaration,
+  reading: waypoint.reading,
+  coreChange: waypoint.coreChange,
+  findings: waypoint.findings,
+  range: waypoint.range,
+  category: waypoint.category,
+  traceNodeId: waypoint.traceNodeId,
+  codeBlockIds: idsOf(waypoint.codeBlocks),
+  children: waypoint.children.map(storeLinkedWaypoint),
 })
 
 export const storeCodeWalkthrough = (walkthrough: LinkedCodeWalkthrough): StoredCodeWalkthrough => ({
@@ -56,6 +64,7 @@ const linkWaypoint = ({ codeBlockIds, children, ...written }: StoredLinkedWaypoi
   ...written,
   codeBlocks: codeBlockIds.map((blockId) => found(blockById, blockId)),
   children: children.map((child) => linkWaypoint(child, blockById)),
+  isRequired: false,
 })
 
 export const linkCodeWalkthrough = (stored: StoredCodeWalkthrough, blockById: BlockById): LinkedCodeWalkthrough => ({

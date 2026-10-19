@@ -126,7 +126,7 @@
                   "title": "Modified `queryClient` to retry a failed query once",
                   "declaration": "queryClient",
                   "reading": "The author modified a constant `queryClient` that now sets `retry` to `1` in its default query options, where it set `false`. A query that fails now runs its query function a second time before it reports the error. `src/main.ts` passes `queryClient` to `VueQueryPlugin`, so that `useProducts()` in `src/composables/use-products.ts` and `useProfile()` in `src/composables/use-profile.ts`, which set no `retry`, send a failed request again. `useUpdateProfile()` in `src/composables/use-profile.ts` calls `useMutation()`, and the `queries` options do not apply to a mutation.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 3,

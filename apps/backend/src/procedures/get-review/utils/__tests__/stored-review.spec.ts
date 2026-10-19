@@ -1,7 +1,7 @@
 import { parse, stringify } from "devalue"
 import { HELD_STOCK_ARTIFACT } from "@/procedures/get-review/utils/mocks/held-stock"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
-import type { TraceDiagram } from "@flightplan/configurations"
+import { reviewArtifactSchema, type ReviewArtifact, type TraceDiagram } from "@flightplan/configurations"
 
 const SCAFFOLD: ReviewScaffold = {
   artifact: HELD_STOCK_ARTIFACT,
@@ -22,6 +22,19 @@ const asJourney = ({ traceNodes, traceNodeEdges, ...diagram }: TraceDiagram) => 
   journeyNodeEdges: traceNodeEdges,
 })
 
+const REQUIREMENT_KEYS: readonly string[] = ["isRequired", "isContextRequired"]
+
+const withRequirement = (value: unknown, isRequired: boolean): unknown => {
+  if (Array.isArray(value)) return value.map((item: unknown) => withRequirement(item, isRequired))
+  if (typeof value !== "object" || value === null) return value
+  return Object.fromEntries(
+    Object.entries(value).map(([key, field]) => [key, REQUIREMENT_KEYS.includes(key) ? isRequired : withRequirement(field, isRequired)]),
+  )
+}
+
+const withEveryRequirement = (artifact: ReviewArtifact, isRequired: boolean): ReviewArtifact =>
+  reviewArtifactSchema.parse(withRequirement(artifact, isRequired))
+
 const BLOCK_LABELS_AFTER_A_FIELD = /,"blockLabels":\d+/g
 const BLOCK_LABELS_BEFORE_A_FIELD = /"blockLabels":\d+,/g
 
@@ -32,7 +45,7 @@ describe("stored review", () => {
 
   it("writes the format version, the kind and the choices in the meta block", () => {
     expect(parse(formatStoredReview(SCAFFOLD))).toMatchObject({
-      schema: 3,
+      schema: 4,
       meta: {
         kind: "review",
         baseCommit: "0000000",
@@ -88,6 +101,28 @@ describe("stored review", () => {
       ...SCAFFOLD,
       artifact: { ...HELD_STOCK_ARTIFACT, sections: { traceDiagram: true, blastDiagram: true, walkthrough: true, findings: true } },
     })
+  })
+
+  it("reads a review saved before nodes were required, with every node of its sections required when an agent writes it", () => {
+    const nothingRequired = withEveryRequirement(HELD_STOCK_ARTIFACT, false)
+    const older = stringify({ ...parse(formatStoredReview({ ...SCAFFOLD, artifact: nothingRequired })), schema: 3 })
+
+    expect(parseStoredReview(older)?.artifact).toStrictEqual(withEveryRequirement(HELD_STOCK_ARTIFACT, true))
+  })
+
+  it("reads a review saved before nodes were required, with nothing required when no agent writes it", () => {
+    const nothingRequired = withEveryRequirement(HELD_STOCK_ARTIFACT, false)
+    const authored = { ...SCAFFOLD, artifact: nothingRequired, request: { ...SCAFFOLD.request, writer: { kind: "none" as const } } }
+    const older = stringify({ ...parse(formatStoredReview(authored)), schema: 3 })
+
+    expect(parseStoredReview(older)?.artifact).toStrictEqual(nothingRequired)
+  })
+
+  it("reads the needs-attention note of a review saved before it was named the core change as its core change", () => {
+    const older = formatStoredReview(SCAFFOLD).replaceAll("\"coreChange\"", "\"needsAttention\"").replace("\"schema\":4", "\"schema\":3")
+
+    expect(older).toContain("\"needsAttention\"")
+    expect(parseStoredReview(older)?.artifact).toStrictEqual(HELD_STOCK_ARTIFACT)
   })
 
   it("has no answer for text that is not a stored review", () => {

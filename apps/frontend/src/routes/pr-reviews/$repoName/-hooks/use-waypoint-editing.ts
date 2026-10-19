@@ -9,7 +9,7 @@ interface ReviewKey {
 export interface WaypointText {
   readonly title: string
   readonly reading: string
-  readonly needsAttention: string | null
+  readonly coreChange: string | null
 }
 
 interface WaypointLocation {

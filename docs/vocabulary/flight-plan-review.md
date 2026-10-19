@@ -23,7 +23,7 @@ Guided review has one standing objection: a curated tour can leave out the file 
 
 1. The reviewer picks a pull request or branch in the web app, from the list the forge provides.
 2. The reviewer makes a [review request](#review-request) on the review target's page.
-3. Flight Plan builds the structure of the artifact from the change and saves it with the request. The page opens the artifact at once, marked as drafting, so the reviewer can read the diagrams and the code before any prose is written. At the same time Flight Plan starts the chosen coding agent with a prompt, or gives the reviewer the prompt to paste into their own agent session. The agent works with the Flight Plan review skill.
+3. Flight Plan builds the structure of the artifact from the change and saves it with the request. The page opens the artifact at once, marked as drafting, so the reviewer can read the diagrams and the code before any prose is written. At the same time Flight Plan starts the chosen coding agent with a prompt. An agent Flight Plan cannot start itself, Codex or Cursor, gets the prompt as one line the reviewer runs in it. A review built without an agent stays Flight Plan's own build, with no write-up. The agent works with the Flight Plan review skill.
 4. The agent fills in the prose through the MCP tools: each segment's title and context, labels and explanations, findings. It can change the words, never the structure.
 5. The artifact opens in the web app while it is still being written, marked as drafting, and fills in as the agent works. The page shows the [progress](#progress-and-completion) at the top, and a skeleton in place of each part that is not written yet.
 6. The agent marks the artifact complete. Completing it runs the checks a finished artifact must pass.
@@ -37,7 +37,7 @@ A review request is what the reviewer makes to have Flight Plan build a review a
 |---|---|
 | Configuration | The [prompt configuration](prompt-configurations.md) the agent writes with. The default configuration is listed first and selected. |
 | Order of the Code Walkthrough | One of the [orders](code-walkthrough.md#order), or the reviewer's own instruction. |
-| Agent | A coding agent set up in Flight Plan, the model it runs and the effort it works at, or the reviewer prompting their agent themselves. |
+| Agent | A coding agent set up in Flight Plan, the model it runs and the effort it works at, or no agent. An agent Flight Plan can start is started; for one it cannot start, the reviewer gets one line to run in it, and the model and effort are that agent's own. |
 
 While a review target has no review artifact, the page's header also states how many files of each kind the change touches.
 
@@ -45,14 +45,14 @@ The request is saved inside the review artifact, so the choices are never lost. 
 
 ## Progress and completion
 
-While a review artifact is drafting, the page states how far the writing is: how many parts need nothing more, out of every part the agent writes. A part is what the MCP tools hand out as unwritten work: a segment's context and title, a File Section, a waypoint, a Trace Diagram node, the description of a Trace Diagram and a file of the Blast Diagram that the change reaches. A section the configuration turned off is not counted.
+While a review artifact is drafting, the page states how far the writing is: how many parts need nothing more, out of every part the agent writes. A part is what the MCP tools hand out as unwritten work: a segment's context and title, a waypoint, a Trace Diagram node, the description of a Trace Diagram and a file of the Blast Diagram that the change reaches. Only [required](review-artifact.md#required-nodes) parts are counted, so a section the configuration turned off is not counted.
 
 The page also says who is writing:
 
 | State | When | What the page says |
 |---|---|---|
-| `writing` | The agent Flight Plan started is running, or the reviewer's own agent has written a part | Who is writing, and that the code can be read meanwhile |
-| `waiting` | The reviewer prompts their own agent and nothing is written yet | That the prompt is to be pasted, with a button that copies it again |
+| `writing` | The agent Flight Plan started is running, or the agent the reviewer started has written a part | Who is writing, and that the code can be read meanwhile |
+| `waiting` | The reviewer starts an agent Flight Plan cannot start, and nothing is written yet | That the line is to be run in that agent, with a button that copies it again |
 | `stopped` | The agent Flight Plan started is not running and the artifact is not complete | That it stopped, the reason when it could not start, and that a message in Chat starts it again |
 
 A part that is not written is drawn as a skeleton while the state is `writing` or `waiting`, and as plain "not written" once it is `stopped`.

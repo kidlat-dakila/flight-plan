@@ -9,6 +9,7 @@ import {
   type StoredCodeWalkthrough,
   type StoredTraceDiagram,
 } from "@flightplan/codegraph"
+import type { Blast, BlastNode } from "@flightplan/configurations"
 import { assembleGitAdapter } from "@flightplan/git-forge"
 import { CASE_REF } from "./case-adapter"
 import { NOTHING_WRITTEN, readWrittenParts, withWrittenParts, writtenContextAt, type WrittenParts } from "./written-parts"
@@ -37,9 +38,14 @@ export const snapshotPathOf = (testPath: string, testName: string): string =>
 const withMapsAsRecords = (_key: string, value: unknown): unknown =>
   value instanceof Map ? Object.fromEntries(value) : value
 
-export interface StoredCodegraphSegment extends Omit<CodegraphSegment, "traceDiagram" | "codeWalkthrough"> {
+export interface StoredBlast extends Omit<Blast, "nodes"> {
+  readonly nodes: readonly Omit<BlastNode, "isRequired">[]
+}
+
+export interface StoredCodegraphSegment extends Omit<CodegraphSegment, "traceDiagram" | "codeWalkthrough" | "blastDiagram"> {
   readonly context: readonly string[]
   readonly traceDiagram: StoredTraceDiagram | null
+  readonly blastDiagram: StoredBlast | null
   readonly codeWalkthrough: StoredCodeWalkthrough
 }
 
@@ -53,12 +59,23 @@ export interface CaseSnapshot {
   readonly codegraph: StoredCodegraph
 }
 
+const storeBlast = (blastDiagram: Blast): StoredBlast => ({
+  ...blastDiagram,
+  nodes: blastDiagram.nodes.map((node) => ({
+    path: node.path,
+    diffType: node.diffType,
+    impactType: node.impactType,
+    impactReason: node.impactReason,
+  })),
+})
+
 export const storeCodegraph = ({ segments }: Codegraph, written: WrittenParts): StoredCodegraph => ({
   segments: segments.map(({ title, ...segment }, position) => ({
     title,
     context: writtenContextAt(written, position),
     ...segment,
     traceDiagram: segment.traceDiagram === null ? null : storeTraceDiagram(segment.traceDiagram),
+    blastDiagram: segment.blastDiagram === null ? null : storeBlast(segment.blastDiagram),
     codeWalkthrough: storeCodeWalkthrough(segment.codeWalkthrough),
   })),
 })

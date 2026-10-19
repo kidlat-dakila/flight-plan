@@ -53,6 +53,7 @@ const createSegment = (id: string, { title, paths }: SegmentContent): Segment =>
   traceDiagram: null,
   blastDiagram: null,
   walkthrough: { files: [] },
+  isContextRequired: false,
 })
 
 const withContent = (segment: Segment, { title, paths }: SegmentContent): Segment => {

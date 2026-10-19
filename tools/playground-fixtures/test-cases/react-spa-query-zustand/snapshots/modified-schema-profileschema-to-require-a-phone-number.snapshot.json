@@ -352,7 +352,7 @@
                   "title": "Added the pattern that a phone must match",
                   "declaration": "PHONE_PATTERN",
                   "reading": "The author added a constant `PHONE_PATTERN`, a regular expression that matches an optional `+` and then 7 to 15 characters that are each a digit or a space. [`profileSchema` passes the constant to `.regex()` for its `phone` property](code:src/routes/account/components/profile-schema.ts#L9), so that [`<ProfileForm />` shows an error](code:src/routes/account/components/ProfileForm.tsx#L25) for a phone such as `555-0100`.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -370,7 +370,7 @@
                   "title": "Modified the profile schema to require a phone",
                   "declaration": "profileSchema",
                   "reading": "The author modified a schema `profileSchema` that:\n\n- now has a `phone` property, a string that must match [`PHONE_PATTERN`](code:src/routes/account/components/profile-schema.ts#PHONE_PATTERN)\n- gives [the inferred type `Profile`](code:src/routes/account/components/profile-schema.ts#L12) a `phone: string`\n\n[`<ProfileForm />` passes the schema to `zodResolver()`](code:src/routes/account/components/ProfileForm.tsx#L10), so that the form does not call [`onSubmit()`](code:src/routes/account/components/ProfileForm.tsx#L14-16) for a profile whose phone is `\"\"`, `undefined` or `555-0100`. `fetchProfile()` and `updateProfile()` in `src/api/profile.ts` use `Profile`, so the body of `PUT /profile` now has a `phone`.",
-                  "needsAttention": "This is the rule the pull request exists for: `profileSchema` now returns an error for a profile with no phone that matches [`PHONE_PATTERN`](code:src/routes/account/components/profile-schema.ts#PHONE_PATTERN). The other waypoints add the pattern and [the input a shopper types the phone in](code:src/routes/account/components/ProfileForm.tsx#L24).",
+                  "coreChange": "This is the rule the pull request exists for: `profileSchema` now returns an error for a profile with no phone that matches [`PHONE_PATTERN`](code:src/routes/account/components/profile-schema.ts#PHONE_PATTERN). The other waypoints add the pattern and [the input a shopper types the phone in](code:src/routes/account/components/ProfileForm.tsx#L24).",
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -1052,7 +1052,7 @@
                   "title": "Added a Phone input to the profile form",
                   "declaration": "ProfileForm",
                   "reading": "The author added an input and a paragraph to a component `<ProfileForm />` that:\n\n- registers the input as `phone`, with the label `Phone`\n- shows `formState.errors.phone.message` under the input when the `phone` field has an error\n\n[`profileSchema` now requires a `phone`](code:src/routes/account/components/profile-schema.ts#L9), so that without this input no shopper can type one and no submit reaches `onSubmit()`. The input starts with `profile.phone`, because `defaultValues` is `profile`.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 7,

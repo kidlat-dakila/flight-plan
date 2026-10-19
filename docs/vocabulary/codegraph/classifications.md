@@ -39,6 +39,8 @@ export const OrderForm = ({ order }) => {
 
 The primary classification of either list is its first entry. It is never stored: `primaryClassificationOf` in `@flightplan/configurations` reads it, so a Flight Plan saved before the hierarchy changed reads its primary in the order of today.
 
+A root code block, and so every waypoint on it, and a Trace Diagram card are shown with the primary entry of their block's `classifications`, or `logic` when the list is empty. `classificationViewOf` in the codegraph gives it with its label from `CODE_BLOCK_CLASSIFICATION_LABELS`, and the review page data carries it as `classification` on each root block of a File Section and on each Trace Diagram node.
+
 ## The hierarchy
 
 When a block earns several classifications, the one higher in this list is its primary. `CODE_BLOCK_CLASSIFICATIONS` in `packages/configurations/src/code-graph/code-blocks.ts` holds the list in this order, and reordering the hierarchy is reordering that array.

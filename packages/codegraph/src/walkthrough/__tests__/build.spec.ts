@@ -131,17 +131,17 @@ describe("buildWalkthrough", () => {
     const second = prepareWalkthrough(
       createSegment({
         id: "two",
-        walkthrough: { files: [{ path: CART_PATH, waypoints: [createWaypoint("late", "subtotal", { needsAttention: "Check the rounding." })] }] },
+        walkthrough: { files: [{ path: CART_PATH, waypoints: [createWaypoint("late", "subtotal", { coreChange: "Check the rounding." })] }] },
       }),
       NO_REVIEWED_MARKS,
       EVERYTHING,
       context,
     )
     const stepping = steppingOf([first, second])
-    const attentionCountOf = (band: WalkthroughBand) => band.controls.filter.groups[0].options.find((option) => option.key === "attention")?.detailLabel
+    const coreChangeCountOf = (band: WalkthroughBand) => band.controls.filter.groups[0].options.find((option) => option.key === "core-change")?.detailLabel
 
-    expect(attentionCountOf(buildWalkthrough(first, "one-", EVERYTHING, stepping, findNoPinnedLines, context))).toBe("0 waypoints")
-    expect(attentionCountOf(buildWalkthrough(second, "two-", EVERYTHING, stepping, findNoPinnedLines, context))).toBe("1 waypoint")
+    expect(coreChangeCountOf(buildWalkthrough(first, "one-", EVERYTHING, stepping, findNoPinnedLines, context))).toBe("0 waypoints")
+    expect(coreChangeCountOf(buildWalkthrough(second, "two-", EVERYTHING, stepping, findNoPinnedLines, context))).toBe("1 waypoint")
   })
 
   it("places a nested waypoint one level deeper, after its parent", () => {
@@ -168,7 +168,7 @@ describe("buildWalkthrough", () => {
             path: PRICE_PATH,
             waypoints: [
               createWaypoint("found", "priceOf", {
-                needsAttention: "Slow down.",
+                coreChange: "Slow down.",
                 findings: [createFinding("nit", "nit"), createFinding("risk", "risk")],
               }),
               createWaypoint("unwritten", "format", { title: null, reading: "" }),
@@ -179,11 +179,11 @@ describe("buildWalkthrough", () => {
     })
     const [found, unwritten] = build(segment).files[0].rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint] : []))
 
-    expect(found).toMatchObject({ chip: { kind: "risk", label: "Risk" }, attentionLabel: "Needs Attention", isDraft: false })
+    expect(found).toMatchObject({ chip: { kind: "risk", label: "Risk" }, coreChangeLabel: "Core change", isDraft: false })
     expect(unwritten).toMatchObject({ title: "format", isDraft: true, reading: null, chip: null })
   })
 
-  it("marks each waypoint by its most urgent finding, puts Needs Attention before questions and nits, and counts a file's findings", () => {
+  it("marks each waypoint by its most urgent finding, puts Core change before questions and nits, and counts a file's findings", () => {
     const segment = createSegment({
       walkthrough: {
         files: [
@@ -191,7 +191,7 @@ describe("buildWalkthrough", () => {
             path: PRICE_PATH,
             waypoints: [
               createWaypoint("risky", "priceOf", { findings: [createFinding("nit", "nit"), createFinding("risk", "risk")] }),
-              createWaypoint("attended", "format", { needsAttention: "Slow down.", findings: [createFinding("question", "question")] }),
+              createWaypoint("attended", "format", { coreChange: "Slow down.", findings: [createFinding("question", "question")] }),
             ],
           },
           { path: CART_PATH, waypoints: [createWaypoint("plain", "subtotal")] },
@@ -203,11 +203,11 @@ describe("buildWalkthrough", () => {
 
     expect(waypoints.map((waypoint) => [waypoint.mark, waypoint.rangeLabel])).toStrictEqual([
       [{ kind: "risk", kindLabel: "Risk", label: "Risk waypoint 1 of 3: Waypoint risky" }, "Lines 11–12"],
-      [{ kind: "attention", kindLabel: "Needs Attention", label: "Needs Attention waypoint 2 of 3: Waypoint attended" }, "Line 14"],
+      [{ kind: "core-change", kindLabel: "Core change", label: "Core change waypoint 2 of 3: Waypoint attended" }, "Line 14"],
       [{ kind: "plain", kindLabel: "", label: "Waypoint 3 of 3: Waypoint plain" }, "Lines 1–2"],
     ])
     expect(band.files.map((file) => file.countLabels)).toStrictEqual([
-      ["2 waypoints", "1 risk", "1 needs attention", "1 question", "1 nit"],
+      ["2 waypoints", "1 risk", "1 core change", "1 question", "1 nit"],
       ["1 waypoint"],
     ])
   })
@@ -375,7 +375,14 @@ const rootBlockSegment = (): Segment =>
         {
           path: PRICE_PATH,
           waypoints: [
-            createWaypoint("price-of", "priceOf", { codeBlocks: [createCodeBlock(`${PRICE_PATH}#function@11:1`, PRICE_PATH, { lineOfCodeRangeReference: spanning(11, 12) })] }),
+            createWaypoint("price-of", "priceOf", {
+              codeBlocks: [
+                createCodeBlock(`${PRICE_PATH}#function@11:1`, PRICE_PATH, {
+                  lineOfCodeRangeReference: spanning(11, 12),
+                  classifications: ["database-operation", "validation"],
+                }),
+              ],
+            }),
             createWaypoint("format", "format", {
               codeBlocks: [createCodeBlock(`${PRICE_PATH}#function@14:1`, PRICE_PATH, { name: "format", lineOfCodeRangeReference: spanning(14, 14) })],
             }),
@@ -392,12 +399,13 @@ const rootBlockMarks = (segment: Segment, rootBlockId: string): ReviewedMarks =>
 }
 
 describe("root blocks of a walkthrough file", () => {
-  it("names each root block by its file, type and name, and says how to fold and mark it", () => {
+  it("names each root block by its file, type and name, classifies it by the hierarchy, and says how to fold and mark it", () => {
     const [priceFile] = build(rootBlockSegment()).files
 
     expect(priceFile.rootBlocks).toStrictEqual([
       {
         id: PRICE_OF_ID,
+        classification: { key: "database-operation", label: "Database operation" },
         isReviewed: false,
         reviewLabel: "Reviewed",
         reviewName: "Reviewed: Function priceOf",
@@ -406,6 +414,7 @@ describe("root blocks of a walkthrough file", () => {
       },
       {
         id: FORMAT_ID,
+        classification: { key: "logic", label: "Logic" },
         isReviewed: false,
         reviewLabel: "Reviewed",
         reviewName: "Reviewed: Function format",

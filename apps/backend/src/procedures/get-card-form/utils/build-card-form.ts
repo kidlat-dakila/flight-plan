@@ -4,7 +4,7 @@ import type { TraceNode, ReviewArtifact, Segment } from "@flightplan/configurati
 import { DEFAULT_ROW_KIND, listRowKindOptions } from "./row-kinds"
 import type { CardForm } from "./schemas"
 
-const ATTENTION_LABEL = "Needs attention"
+const CORE_CHANGE_LABEL = "Core change"
 
 const linesOf = ({ codeBlocks: [root] }: TraceNode): { readonly lineStart: number, readonly lineEnd: number } => {
   const ranges = root.lineOfCodeRangeReference
@@ -27,7 +27,7 @@ const waypointsIn = (artifact: ReviewArtifact, segment: Segment, path: string): 
             title: waypoint.title ?? waypoint.declaration,
             lineStart: range.lineStart,
             lineEnd: range.lineEnd,
-            attentionLabel: waypoint.needsAttention === null ? null : ATTENTION_LABEL,
+            coreChangeLabel: waypoint.coreChange === null ? null : CORE_CHANGE_LABEL,
           }]
     })
 }

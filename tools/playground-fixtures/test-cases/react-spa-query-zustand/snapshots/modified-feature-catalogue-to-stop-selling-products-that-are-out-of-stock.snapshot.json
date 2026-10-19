@@ -618,7 +618,7 @@
                   "title": "Modified `addItem` to add no more of a product than its stock",
                   "declaration": "useCartStore",
                   "reading": "The author modified a method `addItem` of the store `useCartStore` that now:\n\n- counts the items of `state.items` whose `product.id` is the id of the product, into `quantityInCart`\n- returns the same `state` when `quantityInCart >= product.stock`\n- appends `{ product, quantity: 1 }` otherwise, as it did on every call\n\n[The \"Add to cart\" button of `<AddToCartButton />` calls `addItem(product)`](code:src/routes/catalog/components/AddToCartButton.tsx#L8), and [that component returns a disabled button only when `product.stock === 0`](code:src/routes/catalog/components/AddToCartButton.tsx#L7), so that this condition is the one that keeps a product with a stock of 2 at two items in the cart. `addItem` reads [the `stock` that `Product` now declares](code:src/types/product.ts#L6). `<CartBadge />` in `src/components/CartBadge.tsx` and the three components under `src/routes/cart/` read `items`, `removeItem`, `clear` and the two selectors, and none of them calls `addItem`.",
-                  "needsAttention": "This is the rule the pull request exists for: `addItem` adds no item when the cart holds `product.stock` items of the product. [`<AddToCartButton />` has a condition for a stock of `0` only](code:src/routes/catalog/components/AddToCartButton.tsx#L7), and every other stock reaches this one.",
+                  "coreChange": "This is the rule the pull request exists for: `addItem` adds no item when the cart holds `product.stock` items of the product. [`<AddToCartButton />` has a condition for a stock of `0` only](code:src/routes/catalog/components/AddToCartButton.tsx#L7), and every other stock reaches this one.",
                   "findings": [],
                   "range": {
                     "lineStart": 11,
@@ -651,7 +651,7 @@
                   "title": "Added `stock` to the interface `Product`",
                   "declaration": "Product",
                   "reading": "The author added a field `stock: number` to the interface `Product`. [`<CatalogPage />` counts the products whose `stock` is over `0`](code:src/routes/catalog/index.tsx#L8), [`<AddToCartButton />` compares `stock` with `0`](code:src/routes/catalog/components/AddToCartButton.tsx#L7) and [`addItem` compares `stock` with the quantity in the cart](code:src/stores/cart-store.ts#L16), so that all three need the field on every product. [`fetchProducts()` requests `\"/products?include=stock\"`](code:src/api/products.ts#L5), and [`request()` returns the JSON of the response as `Product[]` with a cast](code:src/api/client.ts#L24). No code in the repository builds a `Product` itself.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 1,
@@ -1785,7 +1785,7 @@
                   "title": "Modified `fetchProducts()` to request the products with `include=stock`",
                   "declaration": "fetchProducts",
                   "reading": "The author modified a function `fetchProducts()` that now requests `\"/products?include=stock\"`, where it requested `\"/products\"`. [`request()` puts `/api` before the path](code:src/api/client.ts#L19), so the request goes to `/api/products?include=stock`. [`Product` now declares `stock: number`](code:src/types/product.ts#L6), and this request is the one place the app gets its products from, so that [`<CatalogPage />`](code:src/routes/catalog/index.tsx#L8), [`<AddToCartButton />`](code:src/routes/catalog/components/AddToCartButton.tsx#L7) and [`addItem`](code:src/stores/cart-store.ts#L16) read the `stock` this request returns. [`useProducts()` passes this function to `useQuery` as `queryFn`](code:src/hooks/use-products.ts#L9), and no other file uses it.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -1808,7 +1808,7 @@
                   "title": "Added the constant `STOCK_REFRESH_MS`",
                   "declaration": "STOCK_REFRESH_MS",
                   "reading": "The author added a constant `STOCK_REFRESH_MS` that has the value `60_000`. [`useProducts()` passes it to `useQuery` as `refetchInterval`](code:src/hooks/use-products.ts#L9), so that the query requests the products again every 60 seconds. The constant has no `export`, and nothing else reads it.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -1826,7 +1826,7 @@
                   "title": "Modified `useProducts()` to refetch the products on an interval",
                   "declaration": "useProducts",
                   "reading": "The author modified a function `useProducts()` that now passes `refetchInterval: STOCK_REFRESH_MS` to `useQuery`, where it passed no interval. [`STOCK_REFRESH_MS` is `60_000`](code:src/hooks/use-products.ts#L6), so `useQuery` calls [`fetchProducts()`](code:src/api/products.ts#fetchProducts) again every 60 seconds. [`<CatalogPage />` is the one caller](code:src/routes/catalog/index.tsx#L5), so that the `stock` the page counts and passes to its cards changes while the page stays open. `queryClient` in `src/lib/query-client.ts` sets `staleTime` to `30_000` and `retry` to `false` for every query, and this change leaves both as they are.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 8,
@@ -1851,7 +1851,7 @@
                   "title": null,
                   "declaration": "AddToCartButton",
                   "reading": "",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -1877,7 +1877,7 @@
                   "title": null,
                   "declaration": "CatalogPage",
                   "reading": "",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -1905,7 +1905,7 @@
                       "title": null,
                       "declaration": "CatalogPage › inStockCount",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 8,
@@ -1925,7 +1925,7 @@
                       "title": null,
                       "declaration": "CatalogPage › Markup loop :15",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 15,

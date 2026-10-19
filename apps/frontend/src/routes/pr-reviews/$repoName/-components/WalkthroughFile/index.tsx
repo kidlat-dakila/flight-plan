@@ -16,7 +16,7 @@ interface ReviewKey {
 
 interface AuthoredWaypoint extends WalkthroughWaypoint {
   readonly lines: { readonly lineStart: number, readonly lineEnd: number } | null
-  readonly text: { readonly title: string, readonly reading: string, readonly needsAttention: string | null }
+  readonly text: { readonly title: string, readonly reading: string, readonly coreChange: string | null }
 }
 
 type AuthoredRow
@@ -61,7 +61,7 @@ const waypointsOf = (file: AuthoredFile): AuthoredWaypoint[] =>
 const toCodeViewWaypoint = (waypoint: AuthoredWaypoint): CodeViewWaypoint[] =>
   waypoint.lines === null
     ? []
-    : [{ id: waypoint.id, title: waypoint.title, attentionLabel: waypoint.attentionLabel, ...waypoint.lines }]
+    : [{ id: waypoint.id, title: waypoint.title, coreChangeLabel: waypoint.coreChangeLabel, ...waypoint.lines }]
 
 const WalkthroughFile = ({
   reviewKey,

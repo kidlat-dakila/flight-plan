@@ -18,11 +18,6 @@ const agentsSection = {
     { agent: "codex", label: "Codex", isPicked: false, installPath: "/Users/dev/.codex", pathHint: "Found on this machine.", unavailableReason: null, model: "default", effort: "default", modelOptions: defaultOnly("Your Codex default") },
   ],
   defaultAgent: "claude",
-  connection: "direct",
-  connectionOptions: [
-    { connection: "direct", label: "Automatic", tagLabel: "Recommended", description: "It adds no billing.", unavailableFeatures: [] },
-    { connection: "manual", label: "Manual", tagLabel: null, description: "Flight Plan gives you each prompt.", unavailableFeatures: ["Chatting with the agent from a review"] },
-  ],
 }
 
 const forgesSection = {
@@ -74,7 +69,7 @@ const storefrontConfiguration: ProcedureReply = {
   data: {
     name: "storefront",
     path: "/work/storefront",
-    form: { selfAuthorHint: "Git cannot tell who you are here.", searchHint: "Search by name or email.", searchPlaceholder: "Type a name or email" },
+    form: { selfAuthorHint: "Git cannot tell who you are here.", gitSelfAuthor: null, searchHint: "Search by name or email.", searchPlaceholder: "Type a name or email" },
     selfAuthor: dev,
     trackedAuthors: [lena],
   },
@@ -167,8 +162,7 @@ describe("the settings pages", () => {
     const save = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(saved("Your agents are saved."))
     renderApp({ "settings.save": save }, "/settings/agents")
 
-    fireEvent.click(await screen.findByRole("radio", { name: /Manual/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Save" }))
+    fireEvent.click(await screen.findByRole("button", { name: "Save" }))
 
     expect(await screen.findByText("Your agents are saved.")).toBeTruthy()
     expect(save).toHaveBeenCalledWith({
@@ -178,7 +172,6 @@ describe("the settings pages", () => {
         { agent: "codex", isPicked: false, installPath: "/Users/dev/.codex", model: "default", effort: "default" },
       ],
       defaultAgent: "claude",
-      connection: "manual",
     })
     expect(screen.getByRole("heading", { level: 2, name: "Agent integration" })).toBeTruthy()
   })

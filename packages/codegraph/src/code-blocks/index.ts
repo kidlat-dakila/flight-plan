@@ -1,4 +1,5 @@
 export { buildStoredCodeGroupGraph, readCodeGroup, type CodeFileSource, type ReadCodeGroup } from "./build-group"
+export { classificationOfBlock, classificationViewOf } from "./classification-view"
 export { classificationOfType } from "./classifications"
 export { diffKindOf, diffKindsOf } from "./diff-contains"
 export { linkCodeGroupGraph } from "./link-group"

@@ -11,5 +11,11 @@ export const withRenamedKeys = (
 ): Record<string, unknown> =>
   Object.fromEntries(Object.entries(record).map(([key, value]) => [renamed.get(key) ?? key, value]))
 
-export const renamedFieldPath = (path: string): string =>
-  path.replace(FIELD_PATH_ROOT, (root) => RENAMED_PARTS.get(root) ?? root)
+const RENAMED_FIELD_PATHS: ReadonlyMap<string, string> = new Map([
+  ["walkthrough.files.waypoints.needsAttention", "walkthrough.files.waypoints.coreChange"],
+])
+
+export const renamedFieldPath = (path: string): string => {
+  const withRenamedRoot = path.replace(FIELD_PATH_ROOT, (root) => RENAMED_PARTS.get(root) ?? root)
+  return RENAMED_FIELD_PATHS.get(withRenamedRoot) ?? withRenamedRoot
+}

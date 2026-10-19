@@ -196,7 +196,7 @@ walkthrough_scenario() {
     click_marked "[...document.querySelectorAll('button[aria-label^=\"Next waypoint\"]')].find($VISIBLE)"
   done
   click_marked "[...document.querySelectorAll('button')].find(element=>element.textContent.trim().startsWith('Filter:')&&($VISIBLE)(element))"
-  click_marked "[...document.querySelectorAll('[role=menuitemcheckbox]')].find(element=>element.textContent.trim().startsWith('Needs Attention'))"
+  click_marked "[...document.querySelectorAll('[role=menuitemcheckbox]')].find(element=>element.textContent.trim().startsWith('Core change'))"
   browse press Escape
 }
 

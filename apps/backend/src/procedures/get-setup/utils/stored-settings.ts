@@ -1,6 +1,6 @@
 import { z } from "zod"
+import { reviewPreferencesSchema } from "@/procedures/get-review-preferences/utils/schemas"
 import {
-  AGENT_CONNECTIONS,
   AGENT_NAMES,
   DEFAULT_EFFORT,
   DEFAULT_MODEL,
@@ -10,6 +10,7 @@ import {
 } from "./setup"
 
 const JSON_INDENT = 2
+const RETIRED_AGENT_CONNECTIONS = ["direct", "manual"] as const
 
 const authorSchema = z.strictObject({
   id: z.string(),
@@ -28,8 +29,8 @@ const agentsChoiceSchema = z.strictObject({
     }),
   ),
   defaultAgent: z.enum(AGENT_NAMES),
-  connection: z.enum(AGENT_CONNECTIONS),
-})
+  connection: z.enum(RETIRED_AGENT_CONNECTIONS).optional(),
+}).transform(({ installs, defaultAgent }) => ({ installs, defaultAgent }))
 
 const forgesChoiceSchema = z.strictObject({
   connections: z.array(
@@ -59,6 +60,7 @@ const setupSchema = z.strictObject({
 
 const settingsSchema = z.strictObject({
   defaultConfiguration: z.string().nullable(),
+  reviewPreferences: reviewPreferencesSchema.nullable().default(null),
   setup: setupSchema,
 })
 
@@ -74,8 +76,12 @@ export const parseSettings = (text: string | null): Setup | null => {
   if (text === null) return EMPTY_SETUP
   const settings = settingsSchema.safeParse(parseJson(text))
   if (!settings.success) return null
-  return { ...settings.data.setup, defaultConfiguration: settings.data.defaultConfiguration }
+  return {
+    ...settings.data.setup,
+    defaultConfiguration: settings.data.defaultConfiguration,
+    reviewPreferences: settings.data.reviewPreferences,
+  }
 }
 
-export const formatSettings = ({ defaultConfiguration, ...setup }: Setup): string =>
-  `${JSON.stringify({ defaultConfiguration, setup }, null, JSON_INDENT)}\n`
+export const formatSettings = ({ defaultConfiguration, reviewPreferences, ...setup }: Setup): string =>
+  `${JSON.stringify({ defaultConfiguration, reviewPreferences, setup }, null, JSON_INDENT)}\n`

@@ -12,7 +12,7 @@ export const requestReviewInputSchema = z.strictObject({
   customOrder: z.string(),
   writer: z.discriminatedUnion("kind", [
     z.strictObject({ kind: z.literal("agent"), agent: z.enum(AGENT_NAMES), model: z.string(), effort: z.string() }),
-    z.strictObject({ kind: z.literal("manual") }),
+    z.strictObject({ kind: z.literal("none") }),
     z.strictObject({ kind: z.literal("author"), start: z.enum(AUTHOR_STARTS) }),
   ]),
 })

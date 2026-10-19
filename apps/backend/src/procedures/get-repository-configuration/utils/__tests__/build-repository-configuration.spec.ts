@@ -5,11 +5,12 @@ const LISTED = { name: CHECKOUT_WEB.name, path: CHECKOUT_WEB.path }
 
 describe("buildRepositoryConfiguration", () => {
   it("shows the saved user and tracked users of a repository local git serves, with the form to change them", () => {
-    expect(buildRepositoryConfiguration(LISTED, { selfAuthor: DEV, trackedAuthors: [LENA] }, "git")).toStrictEqual({
+    expect(buildRepositoryConfiguration(LISTED, { selfAuthor: DEV, trackedAuthors: [LENA] }, "git", null)).toStrictEqual({
       name: "checkout-web",
       path: "/Users/dev/projects/checkout-web",
       form: {
-        selfAuthorHint: "Git cannot tell who you are here. Search for the name or email you commit with, then pick yourself.",
+        selfAuthorHint: "Git has no email set for you in this repository, so Flight Plan can't tell which commits are yours. Search for the name or email you commit with and pick yourself.",
+        gitSelfAuthor: null,
         searchHint: "Ask Flight Plan to look for branches made by your team members.",
         searchPlaceholder: "Type a name or email",
       },
@@ -19,7 +20,7 @@ describe("buildRepositoryConfiguration", () => {
   })
 
   it("has no user to choose in a repository a forge serves", () => {
-    expect(buildRepositoryConfiguration(LISTED, { selfAuthor: null, trackedAuthors: [LENA] }, "gh")).toMatchObject({
+    expect(buildRepositoryConfiguration(LISTED, { selfAuthor: null, trackedAuthors: [LENA] }, "gh", null)).toMatchObject({
       form: { selfAuthorHint: null, searchPlaceholder: "Type a name or username" },
       selfAuthor: null,
     })

@@ -62,7 +62,6 @@ const createHarness = (): Harness => {
     agents: {
       installs: [{ agent: "claude", installPath: "/home/.claude", model: "default", effort: "default" }],
       defaultAgent: "claude",
-      connection: "direct",
     },
   })
   return {
@@ -88,7 +87,7 @@ const createInput = (overrides: Partial<RebuildReviewInput> = {}): RebuildReview
   configurationId: "onboardee",
   order: "along-the-path",
   customOrder: "",
-  writer: { kind: "manual" },
+  writer: { kind: "none" },
   ...overrides,
 })
 
@@ -142,7 +141,7 @@ const traceLabelsOf = async (reviewStore: ReviewStore): Promise<(string | null)[
 }
 
 const startWrittenReview = async (harness: Harness): Promise<void> => {
-  await requestReview({ ...KEY, configurationId: "onboardee", order: "along-the-path", customOrder: "", writer: { kind: "manual" } }, harness.contextAt(FIRST_CHANGE))
+  await requestReview({ ...KEY, configurationId: "onboardee", order: "along-the-path", customOrder: "", writer: { kind: "none" } }, harness.contextAt(FIRST_CHANGE))
   await harness.reviewStore.amendArtifact(KEY, (artifact) => ({ artifact: writeEverything(artifact), outcome: null }))
 }
 
@@ -153,7 +152,7 @@ describe("rebuildReview", () => {
 
     const result = await rebuildReview(createInput(), harness.contextAt(SECOND_CHANGE))
 
-    expect(result).toMatchObject({ kind: "rebuilt", message: "Prompt copied" })
+    expect(result).toMatchObject({ kind: "rebuilt", prompt: null, message: "Flight Plan created" })
     expect(harness.pullBranch).toHaveBeenCalledWith("/Users/dev/projects/storefront", "feature/gift-card-balance")
     await expect(harness.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ commit: "2222222aaaaaaa", status: "drafting" })
   })
@@ -265,7 +264,7 @@ describe("getRebuildForm", () => {
 
     expect(form).toMatchObject({
       title: "Update the Flight Plan",
-      form: { configuration: { selectedConfigurationId: "onboardee" }, order: { selectedOrder: "along-the-path" }, writer: { selectedKey: "manual" } },
+      form: { configuration: { selectedConfigurationId: "onboardee" }, order: { selectedOrder: "along-the-path" }, writer: { selectedKey: "none" } },
     })
     expect(form?.description).toContain("commit 1111111")
     expect(form?.form.configuration.options.map((option) => [option.configurationId, option.rewriteNotice !== null])).toStrictEqual(

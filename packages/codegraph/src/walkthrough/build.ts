@@ -1,4 +1,5 @@
 import { findSource, isInSpan, rowSpanOf, type HighlightedSource, type RowSpan } from "@/code/lines"
+import { classificationViewOf } from "@/code-blocks/classification-view"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
@@ -27,7 +28,7 @@ import { listFileRootBlocks, reviewableFileOf, type FileRootBlock } from "./revi
 import { rootBlockSpanOf } from "./root-blocks"
 import { buildWaypointFilter, matchesFilter, type FilterKey } from "./waypoint-filter"
 import {
-  ATTENTION_LABEL,
+  CORE_CHANGE_LABEL,
   buildFinding,
   countLabelsOf,
   FINDING_KIND_LABELS,
@@ -149,8 +150,8 @@ const rangeLabelOf = (range: LineRange | null): string | null => {
     : `Lines ${String(range.lineStart)}${RANGE_DASH}${String(range.lineEnd)}`
 }
 
-const hasAttentionReason = (waypoint: Waypoint): waypoint is Waypoint & { readonly needsAttention: string } =>
-  waypoint.needsAttention !== null && waypoint.needsAttention !== ""
+const hasCoreChangeReason = (waypoint: Waypoint): waypoint is Waypoint & { readonly coreChange: string } =>
+  waypoint.coreChange !== null && waypoint.coreChange !== ""
 
 const toWaypointView = (
   entry: FileEntry,
@@ -178,20 +179,21 @@ const toWaypointView = (
     previousId: neighbourOf(stepping, waypoint.id, -1),
     nextId: neighbourOf(stepping, waypoint.id, 1),
     chip: chipKind === null ? null : { kind: chipKind, label: FINDING_KIND_LABELS[chipKind] },
-    attentionLabel: waypoint.needsAttention === null ? null : ATTENTION_LABEL,
+    coreChangeLabel: waypoint.coreChange === null ? null : CORE_CHANGE_LABEL,
     reading: waypoint.reading === "" ? null : parseProse(waypoint.reading, context.knownLinkIds),
     unwrittenLabel: "Not written yet.",
-    needsAttention: hasAttentionReason(waypoint) ? parseProse(waypoint.needsAttention, context.knownLinkIds) : null,
+    coreChange: hasCoreChangeReason(waypoint) ? parseProse(waypoint.coreChange, context.knownLinkIds) : null,
     findings: waypoint.findings.map((finding) => buildFinding(finding, replacedRows, context)),
     isReviewed,
     reviewLabel: "Reviewed",
     lines,
-    text: { title: waypoint.title ?? "", reading: waypoint.reading, needsAttention: waypoint.needsAttention },
+    text: { title: waypoint.title ?? "", reading: waypoint.reading, coreChange: waypoint.coreChange },
   }
 }
 
 const toRootBlockView = (rootBlock: FileRootBlock, state: ReviewedState): RootBlockView => ({
   id: rootBlock.id,
+  classification: classificationViewOf(rootBlock.block),
   isReviewed: state.rootBlockIds.has(rootBlock.id),
   reviewLabel: "Reviewed",
   reviewName: `Reviewed: ${rootBlock.label}`,

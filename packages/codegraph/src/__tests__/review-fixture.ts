@@ -72,9 +72,10 @@ export const createWaypoint = (id: string, declaration: string, overrides: Parti
   declaration,
   codeBlocks: [],
   reading: "Explains the change.",
-  needsAttention: null,
+  coreChange: null,
   findings: [],
   children: [],
+  isRequired: false,
   ...overrides,
 })
 
@@ -114,6 +115,7 @@ export const createTraceNode = (id: string, overrides: Partial<TraceNode> = {}):
   children: [],
   triggerLabels: [],
   blockLabels: [],
+  isRequired: false,
   ...overrides,
 })
 
@@ -123,6 +125,7 @@ export const createTrace = (traceNodes: readonly TraceNode[], traceNodeEdges: re
   description: null,
   traceNodes,
   traceNodeEdges,
+  isRequired: false,
 })
 
 export const createSegment = (overrides: Partial<Segment> = {}): Segment => ({
@@ -132,6 +135,7 @@ export const createSegment = (overrides: Partial<Segment> = {}): Segment => ({
   context: "Why it matters.",
   traceDiagram: null,
   blastDiagram: null,
+  isContextRequired: false,
   walkthrough: {
     files: [
       {

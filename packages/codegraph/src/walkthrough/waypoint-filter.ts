@@ -1,6 +1,6 @@
 import { countLabel } from "@/prose/count-label"
 import { compareRootBlockKeys, isRootBlockKey, rootBlockLabelOf, rootBlockLabelsOf, type RootBlockKey } from "@/walkthrough/root-blocks"
-import { ATTENTION_LABEL, FINDING_KIND_LABELS, type FlatWaypoint } from "@/walkthrough/waypoints"
+import { CORE_CHANGE_LABEL, FINDING_KIND_LABELS, type FlatWaypoint } from "@/walkthrough/waypoints"
 import {
   WAYPOINT_CHANGES,
   WAYPOINT_FILTER_KEYS,
@@ -25,7 +25,7 @@ const WAYPOINT_CHANGE_LABELS: Readonly<Record<WaypointChange, string>> = {
 }
 
 const FILTER_LABELS: Readonly<Record<WaypointFilterKey, string>> = {
-  attention: ATTENTION_LABEL,
+  "core-change": CORE_CHANGE_LABEL,
   ...FINDING_KIND_LABELS,
   ...WAYPOINT_CHANGE_LABELS,
 }
@@ -64,7 +64,7 @@ export const selectFilterKeys = (requested: readonly string[] | null): FilterKey
 ]
 
 const matchesKey = (flat: FlatWaypoint, key: FilterKey): boolean => {
-  if (key === "attention") return flat.waypoint.needsAttention !== null
+  if (key === "core-change") return flat.waypoint.coreChange !== null
   if (isChangeKey(key)) return flat.change === key
   if (isRootBlockKey(key)) return flat.rootBlockKeys.includes(key)
   return flat.waypoint.findings.some((finding) => finding.kind === key)

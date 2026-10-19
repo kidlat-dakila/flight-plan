@@ -5,9 +5,24 @@ const STOREFRONT = { name: "storefront", path: "/Users/dev/projects/storefront" 
 const CHECKOUT_API = { name: "checkout api", path: "/Users/dev/projects/checkout-api" }
 
 describe("buildRepositoriesSection", () => {
+  it("shows the user git config names in place of the user picked by hand", () => {
+    const section = buildRepositoriesSection([
+      {
+        repository: STOREFRONT,
+        authors: { selfAuthor: DEV, trackedAuthors: [] },
+        forge: "git",
+        identity: { name: "Lena Okafor", email: "lena@acme.example" },
+      },
+    ])
+
+    expect(section.repositories).toMatchObject([
+      { selfAuthor: { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" } },
+    ])
+  })
+
   it("lists each repository with its line, its folder and the users followed in it", () => {
     const section = buildRepositoriesSection([
-      { repository: STOREFRONT, authors: { selfAuthor: DEV, trackedAuthors: [LENA] }, forge: "git" },
+      { repository: STOREFRONT, authors: { selfAuthor: DEV, trackedAuthors: [LENA] }, forge: "git", identity: null },
     ])
 
     expect(section).toStrictEqual({
@@ -30,8 +45,8 @@ describe("buildRepositoriesSection", () => {
 
   it("gives each repository the line colour of its place and an encoded link", () => {
     const section = buildRepositoriesSection([
-      { repository: STOREFRONT, authors: { selfAuthor: null, trackedAuthors: [LENA] }, forge: "gh" },
-      { repository: CHECKOUT_API, authors: { selfAuthor: null, trackedAuthors: [LENA] }, forge: "gh" },
+      { repository: STOREFRONT, authors: { selfAuthor: null, trackedAuthors: [LENA] }, forge: "gh", identity: null },
+      { repository: CHECKOUT_API, authors: { selfAuthor: null, trackedAuthors: [LENA] }, forge: "gh", identity: null },
     ])
 
     expect(section.repositories.map((repository) => repository.lineColor)).toStrictEqual(["blue", "green"])
@@ -40,8 +55,8 @@ describe("buildRepositoriesSection", () => {
 
   it("says what Flight Plan lists when a repository has no team member picked, by the forge that serves it", () => {
     const section = buildRepositoriesSection([
-      { repository: STOREFRONT, authors: { selfAuthor: null, trackedAuthors: [] }, forge: "gh" },
-      { repository: { ...STOREFRONT, name: "ledger-api" }, authors: { selfAuthor: DEV, trackedAuthors: [] }, forge: "git" },
+      { repository: STOREFRONT, authors: { selfAuthor: null, trackedAuthors: [] }, forge: "gh", identity: null },
+      { repository: { ...STOREFRONT, name: "ledger-api" }, authors: { selfAuthor: DEV, trackedAuthors: [] }, forge: "git", identity: null },
     ])
 
     expect(section.repositories.map((repository) => repository.emptyMessage)).toStrictEqual([

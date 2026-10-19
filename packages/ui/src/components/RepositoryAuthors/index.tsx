@@ -12,8 +12,14 @@ export interface ChosenAuthor {
   readonly monogram: string
 }
 
+export interface GitSelfAuthor {
+  readonly author: ChosenAuthor
+  readonly stateLabel: string
+}
+
 export interface AuthorForm {
   readonly selfAuthorHint: string | null
+  readonly gitSelfAuthor: GitSelfAuthor | null
   readonly searchHint: string
   readonly searchPlaceholder: string
 }
@@ -31,11 +37,15 @@ export interface AuthorsChoice {
   }
 }
 
+interface AuthorRemoval {
+  readonly label: string
+  readonly onRemove: () => void
+}
+
 interface ChosenAuthorRowProps {
   readonly author: ChosenAuthor
   readonly stateLabel: string | null
-  readonly removeLabel: string
-  readonly onRemove: () => void
+  readonly removal: AuthorRemoval | null
 }
 
 interface RepositoryAuthorsProps {
@@ -68,13 +78,13 @@ interface RoleFieldProps {
 
 const NO_AUTHOR_OPTIONS: readonly AuthorOption[] = []
 
-const ChosenAuthorRow = ({ author, stateLabel, removeLabel, onRemove }: ChosenAuthorRowProps) => (
+const ChosenAuthorRow = ({ author, stateLabel, removal }: ChosenAuthorRowProps) => (
   <div className="flex max-w-md items-center gap-2 py-1">
     <Avatar imageUrl={author.avatarUrl} monogram={author.monogram} />
     <span className="min-w-0 truncate">{author.name}</span>
     <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{author.detail}</span>
     {stateLabel === null ? null : <span className="text-sm font-bold">{stateLabel}</span>}
-    <IconButton icon="close" label={removeLabel} onClick={onRemove} />
+    {removal === null ? null : <IconButton icon="close" label={removal.label} onClick={removal.onRemove} />}
   </div>
 )
 
@@ -129,8 +139,7 @@ const SelfAuthorSlot = ({
         <ChosenAuthorRow
           author={selfAuthor}
           stateLabel="You"
-          removeLabel="Choose another user as you"
-          onRemove={onRemove}
+          removal={{ label: "Choose another user as you", onRemove }}
         />
       )
 
@@ -145,6 +154,9 @@ const RepositoryAuthors = ({
   if (form === null) return <p role="status" className="text-muted-foreground">Reading the author settings…</p>
   return (
     <div className="grid gap-4">
+      {form.gitSelfAuthor === null
+        ? null
+        : <ChosenAuthorRow author={form.gitSelfAuthor.author} stateLabel={form.gitSelfAuthor.stateLabel} removal={null} />}
       {form.selfAuthorHint === null
         ? null
         : (
@@ -173,8 +185,7 @@ const RepositoryAuthors = ({
             <ChosenAuthorRow
               author={author}
               stateLabel={null}
-              removeLabel={`Stop tracking ${author.name}`}
-              onRemove={() => { onTrackedAuthorRemove(author.id) }}
+              removal={{ label: `Stop tracking ${author.name}`, onRemove: () => { onTrackedAuthorRemove(author.id) } }}
             />
           </li>
         ))}

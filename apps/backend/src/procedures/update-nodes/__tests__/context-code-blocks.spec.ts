@@ -13,7 +13,7 @@ import { ALL_SECTIONS_ON } from "@flightplan/configurations"
 
 const DESCRIPTION = "`subtotal(cart)` is a utility function that adds the lines of a cart. It is used in [`lineTotal()`](code:src/cart/subtotal.ts#lineTotal)."
 const UNREQUIRED_ARTIFACT = withContextRequirement(CONTEXT_ARTIFACT, [])
-const REQUEST = { configurationId: "onboardee", preset: "onboardee", order: "foundations-first", customOrder: null, writer: { kind: "manual" }, requestedAt: new Date("2026-10-01T12:00:00.000Z") } as const
+const REQUEST = { configurationId: "onboardee", preset: "onboardee", order: "foundations-first", customOrder: null, writer: { kind: "none" }, requestedAt: new Date("2026-10-01T12:00:00.000Z") } as const
 
 const descriptionOf = async (context: Awaited<ReturnType<typeof createArtifactContext>>): Promise<string | null | undefined> =>
   (await context.reviewStore.findArtifact(KEY))?.contextCodeBlocks[0].description

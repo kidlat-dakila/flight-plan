@@ -400,7 +400,7 @@
                   "title": "Removed the export of `Dialog`",
                   "declaration": "Lines 2–2",
                   "reading": "The author removed an export, `Dialog`, from the barrel of the shared components, which now exports `Button` and `Input` only. `src/components/ui/dialog.tsx` is deleted in the same change, so the export had no file left to read from. [`<CartSummary />` was the one file that imported `Dialog`](code:src/routes/cart/components/CartSummary.tsx#L1), and its import now takes `Button` only, so that no file asks the barrel for the removed name.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 2,
@@ -916,7 +916,7 @@
                   "title": "Removed the confirmation step from `<CartSummary />`",
                   "declaration": "CartSummary",
                   "reading": "The author modified a component, `<CartSummary />`, that now:\n\n- runs `clear` when a shopper clicks \"Empty the cart\", where the `onClick` ran `() => setIsConfirming(true)` before\n- declares no state and no handler of its own: `isConfirming` and `handleConfirm()` are removed\n- renders no `<Dialog>`, so the title \"Empty the cart?\" and the \"Empty it\" button are removed with it\n\n[`clear` sets `items` to `[]`](code:src/stores/cart-store.ts#L19-21), so that one click empties the cart and [`<CartPage />` then returns \"Your cart is empty.\"](code:src/routes/cart/index.tsx#L7). `<Button>` passes `onClick` to its `<button>`, so `clear` now receives the click event, and [`clear` reads no argument](code:src/stores/cart-store.ts#L19-21).",
-                  "needsAttention": "This is the change the pull request exists for: one click on \"Empty the cart\" now runs [`clear`](code:src/stores/cart-store.ts#L19-21), and no step asks the shopper first. The other waypoints remove what the dialog needed.",
+                  "coreChange": "This is the change the pull request exists for: one click on \"Empty the cart\" now runs [`clear`](code:src/stores/cart-store.ts#L19-21), and no step asks the shopper first. The other waypoints remove what the dialog needed.",
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -936,7 +936,7 @@
                       "title": null,
                       "declaration": "CartSummary › Deleted code :8",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 8,
@@ -954,7 +954,7 @@
                       "title": null,
                       "declaration": "CartSummary › Button.onClick",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 12,

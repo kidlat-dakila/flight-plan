@@ -74,6 +74,23 @@ describe("addRepository", () => {
     await expect(context.repositoryStore.list()).resolves.toStrictEqual([storefront])
   })
 
+  it("accepts a local git repository without the user chosen when git config has the user's email", async () => {
+    const base = createContext([storefront])
+    const identity = { name: "Lena Okafor", email: LENA.id }
+    const context = {
+      ...base,
+      setupEnvironment: { ...base.setupEnvironment, readGitIdentity: async () => await Promise.resolve(identity) },
+    }
+
+    await expect(
+      addRepository({ path: "/work/ledger-api", selfAuthorId: null, trackedAuthorIds: [LENA.id, DEV.id] }, context),
+    ).resolves.toMatchObject({ kind: "accepted" })
+    await expect(context.repositoryStore.readAuthors("ledger-api")).resolves.toStrictEqual({
+      selfAuthor: null,
+      trackedAuthors: [DEV],
+    })
+  })
+
   it("accepts a forge repository with nobody tracked, so that Flight Plan follows everyone in it", async () => {
     const context = createContext([storefront], { ...EMPTY_SETUP, forges: GITHUB_FORGES })
 

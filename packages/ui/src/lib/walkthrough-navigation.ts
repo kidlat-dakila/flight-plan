@@ -14,9 +14,9 @@ import {
   type SectionSteps,
 } from "@/lib/navigator-controls"
 
-type FindingFilterKey = "attention" | "bug" | "risk" | "nit" | "question"
+type FindingFilterKey = "core-change" | "bug" | "risk" | "nit" | "question"
 
-const FINDING_FILTER_KEYS: readonly FindingFilterKey[] = ["attention", "bug", "risk", "nit", "question"]
+const FINDING_FILTER_KEYS: readonly FindingFilterKey[] = ["core-change", "bug", "risk", "nit", "question"]
 
 interface FilterOption {
   readonly key: string

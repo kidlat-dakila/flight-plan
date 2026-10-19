@@ -38,6 +38,7 @@ export interface FlatTraceNode {
   readonly diffCodeBlockIds: readonly string[]
   readonly triggerLabels: readonly StoredTriggerLabel[]
   readonly blockLabels: readonly StoredBlockLabel[]
+  readonly isRequired: boolean
 }
 
 const idsOf = (blocks: readonly CodeBlock[]): string[] => blocks.map((block) => block.id)
@@ -80,6 +81,7 @@ const linkNode = (stored: StoredTraceNode, blockById: ReadonlyMap<string, CodeBl
   children: stored.children.map((child) => linkNode(child, blockById)),
   triggerLabels: stored.triggerLabels.map((trigger) => ({ label: trigger.label, codeBlock: found(blockById, trigger.codeBlockId) })),
   blockLabels: stored.blockLabels.map((listed) => ({ label: listed.label, codeBlock: found(blockById, listed.codeBlockId) })),
+  isRequired: false,
 })
 
 export const linkTraceDiagram = (stored: StoredTraceDiagram, astCodeGroup: ASTCodeGroupGraph, importGraphGroup: ImportGraphGroup): TraceDiagram => {
@@ -90,10 +92,11 @@ export const linkTraceDiagram = (stored: StoredTraceDiagram, astCodeGroup: ASTCo
     description: stored.description,
     traceNodes: stored.traceNodes.map((node) => linkNode(node, blockById)),
     traceNodeEdges: stored.traceNodeEdges,
+    isRequired: false,
   }
 }
 
-const toFlatNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, triggerLabels, blockLabels }: TraceNode, parentId: string | null): FlatTraceNode => ({
+const toFlatNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, triggerLabels, blockLabels, isRequired }: TraceNode, parentId: string | null): FlatTraceNode => ({
   id,
   parentId,
   type,
@@ -103,6 +106,7 @@ const toFlatNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, 
   diffCodeBlockIds: idsOf(diffCodeBlocks),
   triggerLabels: triggerLabels.map(storeTriggerLabel),
   blockLabels: blockLabels.map(storeBlockLabel),
+  isRequired,
 })
 
 const flattenNode = (node: TraceNode, parentId: string | null): FlatTraceNode[] => [

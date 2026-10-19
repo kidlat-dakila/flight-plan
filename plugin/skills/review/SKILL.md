@@ -277,8 +277,8 @@ with the diagram's nodes and edges. Write it with
 diagram are written, so it uses their words. `complete` refuses an artifact
 where a diagram has none.
 
-**Decide which waypoints carry `needsAttention`** from
-`get-instructions { fields: ["walkthrough.files.waypoints.needsAttention"] }`.
+**Decide which waypoints carry `coreChange`** from
+`get-instructions { fields: ["walkthrough.files.waypoints.coreChange"] }`.
 One to three in a pull request is usual.
 
 ### Findings

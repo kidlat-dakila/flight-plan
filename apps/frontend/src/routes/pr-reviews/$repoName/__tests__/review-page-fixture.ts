@@ -24,15 +24,15 @@ const waypoint = (id: string, title: string, positionLabel: string, previousId: 
   previousId,
   nextId,
   chip: null,
-  attentionLabel: null,
+  coreChangeLabel: null,
   reading: paragraph(`Reading of ${title}.`),
   unwrittenLabel: "Not written yet.",
-  needsAttention: null,
+  coreChange: null,
   findings: [],
   isReviewed: false,
   reviewLabel: "Reviewed",
   lines: { lineStart: line, lineEnd: line },
-  text: { title, reading: `Reading of ${title}.`, needsAttention: null },
+  text: { title, reading: `Reading of ${title}.`, coreChange: null },
 })
 
 interface OrderedFile {
@@ -214,7 +214,7 @@ const WALKTHROUGH_CONTROLS = {
     badge: null,
     heading: "Show waypoints with",
     groups: [
-      { id: "finding", options: [filterOption("attention", "Needs Attention", false, ["attention"]), filterOption("bug", "Bug", false, ["bug"])], more: null },
+      { id: "finding", options: [filterOption("core-change", "Core change", false, ["core-change"]), filterOption("bug", "Bug", false, ["bug"])], more: null },
       { id: "block", options: [{ ...filterOption("block:function:modified", "Function", false, ["block:function:modified"]), detailLabel: "Modified", detailChange: "modified" }], more: null },
     ],
     submenus: [{
@@ -470,7 +470,6 @@ export const missingPage = {
           agent: "claude",
           label: "Claude",
           description: "Flight Plan starts Claude in this repository.",
-          unavailableReason: null,
           modelLegend: "Model for Claude",
           effortLegend: "Effort for Claude",
           hasModelChoice: true,
@@ -508,8 +507,7 @@ export const missingPage = {
         {
           agent: "codex",
           label: "Codex",
-          description: "Flight Plan starts Codex in this repository.",
-          unavailableReason: "Flight Plan cannot start Codex yet. Prompt it yourself instead.",
+          description: "Flight Plan can't start Codex itself, so it gives you one line to run in Codex.",
           modelLegend: "Model for Codex",
           effortLegend: "Effort for Codex",
           hasModelChoice: false,
@@ -524,13 +522,13 @@ export const missingPage = {
           ],
           selectedModel: "default",
           selectedEffort: "default",
-          submitLabel: "Start the review",
+          submitLabel: "Get the line for Codex",
         },
       ],
-      manual: {
-        label: "I will prompt my agent myself",
-        description: "Flight Plan copies the prompt.",
-        submitLabel: "Copy the prompt",
+      none: {
+        label: "Without an agent",
+        description: "Flight Plan builds the review on its own, and you read it without a write-up.",
+        submitLabel: "Build the review",
       },
     },
     pendingLabel: "Starting…",

@@ -8,9 +8,10 @@ const waypointOf = (declaration: string): LinkedWaypoint => ({
   declaration,
   codeBlocks: [],
   reading: "",
-  needsAttention: null,
+  coreChange: null,
   findings: [],
   children: [],
+  isRequired: false,
   range: { lineStart: 4, lineEnd: 6 },
   category: "function",
   traceNodeId: "stock.ts#function@4:1",
@@ -50,6 +51,7 @@ const nodeOf = (id: string, overrides: Partial<TraceNode> = {}): TraceNode => ({
   children: [],
   triggerLabels: [],
   blockLabels: [],
+  isRequired: false,
   ...overrides,
 })
 
@@ -66,6 +68,7 @@ const generatedTrace: TraceDiagram = {
     nodeOf("stock.ts#function@4:1"),
   ],
   traceNodeEdges: [{ id: "reserve.tsx#component@1:1 -> stock.ts#function@4:1", from: "reserve.tsx#component@1:1", to: "stock.ts#function@4:1" }],
+  isRequired: false,
 }
 
 const generatedSegment: CodegraphSegment = {
@@ -75,8 +78,8 @@ const generatedSegment: CodegraphSegment = {
   traceDiagram: generatedTrace,
   blastDiagram: {
     nodes: [
-      { path: "reserve.ts", diffType: null, impactType: null, impactReason: null },
-      { path: "stock.ts", diffType: "modified", impactType: null, impactReason: null },
+      { path: "reserve.ts", diffType: null, impactType: null, impactReason: null, isRequired: false },
+      { path: "stock.ts", diffType: "modified", impactType: null, impactReason: null, isRequired: false },
     ],
     edges: [{ importer: "reserve.ts", imported: "stock.ts" }],
   },
@@ -109,9 +112,9 @@ const writtenSnapshot = {
         },
         blastDiagram: {
           nodes: [
-            { path: "reserve.ts", impactType: "behaviour-changes", impactReason: "A reservation is refused sooner." },
-            { path: "stock.ts", impactType: "breaks", impactReason: "A file of the change takes none." },
-            { path: "gone.ts", impactType: "unaffected", impactReason: null },
+            { path: "reserve.ts", impactType: "behaviour-changes", impactReason: "A reservation is refused sooner.", isRequired: false },
+            { path: "stock.ts", impactType: "breaks", impactReason: "A file of the change takes none.", isRequired: false },
+            { path: "gone.ts", impactType: "unaffected", impactReason: null, isRequired: false },
           ],
         },
         codeWalkthrough: {
@@ -119,7 +122,7 @@ const writtenSnapshot = {
             {
               path: "stock.ts",
               waypoints: [
-                { declaration: "stockOf", title: "Subtract held units", reading: "The held units are subtracted.", needsAttention: "Every checkout depends on it.", children: [] },
+                { declaration: "stockOf", title: "Subtract held units", reading: "The held units are subtracted.", coreChange: "Every checkout depends on it.", children: [] },
               ],
             },
           ],
@@ -172,8 +175,8 @@ describe("withWrittenParts", () => {
 
   it("keeps the impact written on a file the change did not touch, and none on a file of the change", () => {
     expect(segment.blastDiagram?.nodes).toStrictEqual([
-      { path: "reserve.ts", diffType: null, impactType: "behaviour-changes", impactReason: "A reservation is refused sooner." },
-      { path: "stock.ts", diffType: "modified", impactType: null, impactReason: null },
+      { path: "reserve.ts", diffType: null, impactType: "behaviour-changes", impactReason: "A reservation is refused sooner.", isRequired: false },
+      { path: "stock.ts", diffType: "modified", impactType: null, impactReason: null, isRequired: false },
     ])
   })
 
@@ -181,7 +184,7 @@ describe("withWrittenParts", () => {
     expect(segment.codeWalkthrough).toMatchObject({
       files: [
         {
-          waypoints: [{ title: "Subtract held units", reading: "The held units are subtracted.", needsAttention: "Every checkout depends on it." }],
+          waypoints: [{ title: "Subtract held units", reading: "The held units are subtracted.", coreChange: "Every checkout depends on it." }],
         },
       ],
     })

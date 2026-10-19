@@ -72,7 +72,7 @@ const findingTexts = (finding: Finding): string[] => [finding.title, finding.rea
 
 const waypointTexts = (waypoint: Waypoint): string[] => [
   waypoint.reading,
-  waypoint.needsAttention ?? "",
+  waypoint.coreChange ?? "",
   ...waypoint.findings.flatMap(findingTexts),
   ...waypoint.children.flatMap(waypointTexts),
 ]

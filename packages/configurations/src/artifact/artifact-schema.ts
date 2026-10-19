@@ -88,8 +88,16 @@ const isReference = (value: unknown): boolean => typeof value === "object" && va
 
 const codeBlockSchema = z.custom<CodeBlock>(isReference)
 
+const RETIRED_CORE_CHANGE_KEY = "needsAttention"
+
+const withCurrentWaypointKeys = (waypoint: unknown): unknown => {
+  if (typeof waypoint !== "object" || waypoint === null || !(RETIRED_CORE_CHANGE_KEY in waypoint)) return waypoint
+  const { [RETIRED_CORE_CHANGE_KEY]: coreChange, ...rest } = waypoint as Readonly<Record<string, unknown>>
+  return { ...rest, coreChange }
+}
+
 const waypointSchema: z.ZodType<Waypoint> = z.lazy(() =>
-  z.strictObject({
+  z.preprocess(withCurrentWaypointKeys, z.strictObject({
     id: z.string(),
     title: z
       .string()
@@ -120,18 +128,18 @@ const waypointSchema: z.ZodType<Waypoint> = z.lazy(() =>
         exampleValue: "The author made `availableUnits()` subtract the units other carts hold.",
         defaultInstruction: "walkthrough.files.waypoints.reading.md",
       }),
-    needsAttention: z
+    coreChange: z
       .string()
       .register(configurations, {
         version: 0.1,
         configurationType: "editable",
         _ui: {
-          title: "Waypoint needs-attention note",
+          title: "Waypoint core-change note",
           description: "Why a waypoint is one of the few to focus on.",
         },
-        fieldDescription: "walkthrough.files.waypoints.needsAttention.md",
+        fieldDescription: "walkthrough.files.waypoints.coreChange.md",
         exampleValue: "Every checkout now depends on this subtraction.",
-        defaultInstruction: "walkthrough.files.waypoints.needsAttention.md",
+        defaultInstruction: "walkthrough.files.waypoints.coreChange.md",
       })
       .nullable(),
     findings: z
@@ -147,7 +155,8 @@ const waypointSchema: z.ZodType<Waypoint> = z.lazy(() =>
         defaultInstruction: "walkthrough.files.waypoints.findings.md",
       }),
     children: z.array(waypointSchema),
-  }),
+    isRequired: z.boolean().default(false),
+  })),
 )
 
 const lineSpanSchema = z.tuple([z.number().int(), z.number().int()])
@@ -254,6 +263,7 @@ const traceNodeSchema: z.ZodType<TraceNode> = z.lazy(() =>
     blockLabels: z.array(blockLabelSchema).default([]),
     rows: z.array(traceRowSchema).optional(),
     position: cardPositionSchema.optional(),
+    isRequired: z.boolean().default(false),
   }),
 )
 
@@ -286,6 +296,7 @@ export const traceDiagramSchema = z
         toSide: z.enum(CARD_SIDES).optional(),
       }),
     ),
+    isRequired: z.boolean().default(false),
   })
   .register(configurations, {
     version: 0.1,
@@ -335,6 +346,7 @@ export const blastSchema = z
             defaultInstruction: "blastDiagram.nodes.impactReason.md",
           })
           .nullable(),
+        isRequired: z.boolean().default(false),
       }),
     ),
     edges: z.array(blastEdgeSchema),
@@ -387,6 +399,7 @@ const segmentSchema = z.strictObject({
     }),
   traceDiagram: traceDiagramSchema.nullable(),
   blastDiagram: blastSchema.nullable(),
+  isContextRequired: z.boolean().default(false),
   walkthrough: z
     .strictObject({
       files: z

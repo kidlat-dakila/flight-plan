@@ -18,7 +18,7 @@ const editWaypoint = (waypoint: Waypoint, edit: WaypointEdit): Waypoint => ({
   ...waypoint,
   title: edit.title ?? waypoint.title,
   reading: edit.reading ?? waypoint.reading,
-  needsAttention: edit.needsAttention === undefined ? waypoint.needsAttention : edit.needsAttention,
+  coreChange: edit.coreChange === undefined ? waypoint.coreChange : edit.coreChange,
   findings: edit.findings === undefined ? waypoint.findings : edit.findings.map(toFinding),
 })
 
@@ -92,7 +92,7 @@ const amendSegment = (
 export const waypointTextsOf = (edits: readonly WaypointEdit[]): string[] =>
   edits.flatMap((edit) => [
     edit.reading ?? "",
-    edit.needsAttention ?? "",
+    edit.coreChange ?? "",
     ...(edit.findings ?? []).flatMap((finding) => [finding.title, finding.reading, ...(finding.trace ?? [])]),
   ])
 

@@ -22,7 +22,7 @@ const waypointEditSchema = z.strictObject({
   id: z.string().min(1).describe("The waypoint's id, as the artifact has it."),
   title: prose.optional().describe("What was done, and to what."),
   reading: prose.optional(),
-  needsAttention: prose.nullable().optional().describe("Why a reviewer must not skim this one. `null` takes it back."),
+  coreChange: prose.nullable().optional().describe("Why a reviewer must not skim this one. `null` takes it back."),
   findings: z
     .array(findingEditSchema)
     .optional()

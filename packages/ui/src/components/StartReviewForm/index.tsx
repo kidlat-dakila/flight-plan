@@ -3,13 +3,12 @@ import Button from "@/components/blocks/button"
 import SegmentedChoice from "@/components/SegmentedChoice"
 import SelectDialog from "@/components/SelectDialog"
 import SelectField from "@/components/SelectField"
-import { cn } from "@/lib/utils"
 
 type WalkthroughOrder = "foundations-first" | "along-the-path" | "core-change-first" | "risk-first" | "custom"
 
 type AgentName = "claude" | "codex" | "cursor"
 
-type WriterKey = AgentName | "manual"
+type WriterKey = AgentName | "none"
 
 interface ConfigurationOption {
   readonly configurationId: string
@@ -42,7 +41,6 @@ interface AgentOption {
   readonly agent: AgentName
   readonly label: string
   readonly description: string
-  readonly unavailableReason: string | null
   readonly modelLegend: string
   readonly effortLegend: string
   readonly hasModelChoice: boolean
@@ -79,7 +77,7 @@ export interface StartForm {
     readonly hint: string
     readonly selectedKey: WriterKey
     readonly agents: readonly AgentOption[]
-    readonly manual: { readonly label: string, readonly description: string, readonly submitLabel: string }
+    readonly none: { readonly label: string, readonly description: string, readonly submitLabel: string }
   }
   readonly pendingLabel: string
 }
@@ -90,7 +88,7 @@ export interface ReviewChoice {
   readonly customOrder: string
   readonly writer:
     | { readonly kind: "agent", readonly agent: AgentName, readonly model: string, readonly effort: string }
-    | { readonly kind: "manual" }
+    | { readonly kind: "none" }
     | { readonly kind: "author", readonly start: "scaffold" | "empty" }
 }
 
@@ -120,7 +118,7 @@ interface AgentRowProps {
   readonly onEffortChange: (effort: string) => void
 }
 
-const MANUAL_WRITER = "manual"
+const NO_AGENT_WRITER = "none"
 const WRITER_FIELDS: readonly RequestProblem["field"][] = ["writer", "model", "effort"]
 const SECTION_CLASSES = "border-t border-border pt-6 pb-5"
 const HEADING_CLASSES = "text-xl leading-7 font-semibold tracking-[-0.01em] text-foreground"
@@ -142,29 +140,20 @@ const AgentRow = ({
   onModelChange,
   onEffortChange,
 }: AgentRowProps) => {
-  const isAvailable = option.unavailableReason === null
   const chosenModelOption = option.modelOptions.find((modelOption) => modelOption.model === model)
   const hasEffortChoice = chosenModelOption?.hasEffortChoice === true
   return (
     <li className={ROW_CLASSES}>
-      <label className={cn(CHOICE_LABEL_CLASSES, isAvailable ? "" : "cursor-default")}>
+      <label className={CHOICE_LABEL_CLASSES}>
         <input
           type="radio"
           name={groupName}
           checked={isChosen}
-          disabled={!isAvailable}
           className={CHOICE_RADIO_CLASSES}
           onChange={onChoose}
         />
         <span className="font-bold">{option.label}</span>
-        {option.unavailableReason === null
-          ? <span className={DESCRIPTION_CLASSES}>{option.description}</span>
-          : (
-              <span className={DESCRIPTION_CLASSES}>
-                <span className="font-bold text-foreground">Unavailable.</span>
-                {` ${option.unavailableReason}`}
-              </span>
-            )}
+        <span className={DESCRIPTION_CLASSES}>{option.description}</span>
       </label>
       {isChosen && (option.hasModelChoice || hasEffortChoice)
         ? (
@@ -239,7 +228,7 @@ const StartReviewForm = ({
       order: chosenOrder,
       customOrder,
       writer: chosenAgent === undefined
-        ? { kind: "manual" }
+        ? { kind: "none" }
         : {
             kind: "agent",
             agent: chosenAgent.agent,
@@ -347,12 +336,12 @@ const StartReviewForm = ({
               <input
                 type="radio"
                 name={writerGroupId}
-                checked={chosenWriterKey === MANUAL_WRITER}
+                checked={chosenWriterKey === NO_AGENT_WRITER}
                 className={CHOICE_RADIO_CLASSES}
-                onChange={() => { setChosenWriterKey(MANUAL_WRITER) }}
+                onChange={() => { setChosenWriterKey(NO_AGENT_WRITER) }}
               />
-              <span className="font-bold">{form.writer.manual.label}</span>
-              <span className={DESCRIPTION_CLASSES}>{form.writer.manual.description}</span>
+              <span className="font-bold">{form.writer.none.label}</span>
+              <span className={DESCRIPTION_CLASSES}>{form.writer.none.description}</span>
             </label>
           </li>
         </ul>
@@ -363,7 +352,7 @@ const StartReviewForm = ({
         <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
           {dataNotice === null ? null : <p className="flex-1 text-sm text-muted-foreground">{dataNotice}</p>}
           <Button type="submit" disabled={isPending}>
-            {isPending ? form.pendingLabel : chosenAgent?.submitLabel ?? form.writer.manual.submitLabel}
+            {isPending ? form.pendingLabel : chosenAgent?.submitLabel ?? form.writer.none.submitLabel}
           </Button>
         </div>
       </footer>

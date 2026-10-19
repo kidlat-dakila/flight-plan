@@ -74,6 +74,7 @@ describe("planSegmentEdit", () => {
       traceDiagram: null,
       blastDiagram: null,
       walkthrough: { files: [] },
+      isContextRequired: false,
     })
   })
 

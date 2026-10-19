@@ -9,7 +9,7 @@ export const walkthroughEditSchema = z.discriminatedUnion("kind", [
     waypointId: z.string(),
     title: z.string(),
     reading: z.string(),
-    needsAttention: z.string().nullable(),
+    coreChange: z.string().nullable(),
   }),
   z.strictObject({ kind: z.literal("remove-waypoint"), waypointId: z.string() }),
 ])

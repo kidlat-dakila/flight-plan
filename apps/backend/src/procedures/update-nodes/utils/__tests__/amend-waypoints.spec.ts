@@ -19,16 +19,16 @@ const NESTED_SEGMENT = {
 }
 
 describe("amendWaypoints", () => {
-  it("keeps what an edit does not name, and takes a needs-attention note back with null", () => {
-    const flagged = amendWaypoints([DRAFT_SEGMENT], [{ id: "w1", title: "Returned zero", needsAttention: "Read this." }])
+  it("keeps what an edit does not name, and takes a core-change note back with null", () => {
+    const flagged = amendWaypoints([DRAFT_SEGMENT], [{ id: "w1", title: "Returned zero", coreChange: "Read this." }])
     const flaggedSegments = flagged.kind === "amended" ? flagged.segments : []
 
-    const cleared = amendWaypoints(flaggedSegments, [{ id: "w1", needsAttention: null }])
+    const cleared = amendWaypoints(flaggedSegments, [{ id: "w1", coreChange: null }])
 
-    expect(flagged).toMatchObject({ segments: [{ walkthrough: { files: [{ waypoints: [{ needsAttention: "Read this." }] }, {}] } }] })
+    expect(flagged).toMatchObject({ segments: [{ walkthrough: { files: [{ waypoints: [{ coreChange: "Read this." }] }, {}] } }] })
     expect(cleared).toMatchObject({
       kind: "amended",
-      segments: [{ walkthrough: { files: [{ waypoints: [{ id: "w1", title: "Returned zero", reading: "", needsAttention: null }] }, {}] } }],
+      segments: [{ walkthrough: { files: [{ waypoints: [{ id: "w1", title: "Returned zero", reading: "", coreChange: null }] }, {}] } }],
     })
   })
 

@@ -16,7 +16,7 @@ const createNavigation = (overrides: Partial<WalkthroughNavigation> = {}): Walkt
         {
           id: "finding",
           options: [
-            { key: "attention", label: "Needs Attention", detailLabel: "1 waypoint", detailChange: null, isSelected: false, toggledKeys: ["attention"] },
+            { key: "core-change", label: "Core change", detailLabel: "1 waypoint", detailChange: null, isSelected: false, toggledKeys: ["core-change"] },
             { key: "bug", label: "Bug", detailLabel: "2 waypoints", detailChange: null, isSelected: false, toggledKeys: ["bug"] },
           ],
           more: null,
@@ -252,7 +252,7 @@ describe("CodeWalkthrough", () => {
     const menu = await screen.findByRole("menu")
 
     expect(within(menu).getAllByRole("menuitemcheckbox").map((item) => item.textContent)).toStrictEqual([
-      "Needs Attention1 waypoint",
+      "Core change1 waypoint",
       "Bug2 waypoints",
       "HookAdded",
       "Reviewed1 waypoint",

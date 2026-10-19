@@ -1237,7 +1237,7 @@
                   "title": null,
                   "declaration": "router",
                   "reading": "",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 8,
@@ -1264,7 +1264,7 @@
                   "title": "Added the wishlist button to the product card",
                   "declaration": "ProductCard",
                   "reading": "The author added an element to the component `<ProductCard />` that renders [`<WishlistButton />`](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton) after `<AddToCartButton />`, with the product of the card as its `product` prop. [`<CatalogPage />` renders one card per product of the catalogue](code:src/routes/catalog/index.tsx#L10-14) and [`<WishlistPage />` renders one card per wished product](code:src/routes/wishlist/index.tsx#L9-13), so that a shopper can put a product on the wishlist or take it off on both pages. The image, the name, the price and \"Add to cart\" are the same as before.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -1288,7 +1288,7 @@
                   "title": null,
                   "declaration": "RootLayout",
                   "reading": "",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 6,
@@ -1312,7 +1312,7 @@
                   "title": "Added `WishlistState`, the shape of the wishlist store",
                   "declaration": "WishlistState",
                   "reading": "The author added an interface `WishlistState` that has `products`, a `Product[]`, and `toggleProduct`, a function that takes a `Product` and returns nothing. [`useWishlistStore` is created with `WishlistState`](code:src/stores/wishlist-store.ts#L9) and [the function that `selectIsWished()` returns takes a `WishlistState`](code:src/stores/wishlist-store.ts#L21). The store keeps whole products and not their ids, so that [`<WishlistPage />` passes each product to `<ProductCard />`](code:src/routes/wishlist/index.tsx#L11) with no request for the catalogue. The interface is not exported.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -1330,7 +1330,7 @@
                   "title": "Added `useWishlistStore` to hold the wished products",
                   "declaration": "useWishlistStore",
                   "reading": "The author added a Zustand store `useWishlistStore` that:\n\n- starts with `products: []`\n- removes the product from `products` when `toggleProduct()` gets a product whose `id` is in the array\n- appends the product to the end of `products` when its `id` is not in the array\n\n[`<WishlistButton />` calls `toggleProduct(product)` on a click](code:src/routes/catalog/components/WishlistButton.tsx#L9) and [`<WishlistPage />` reads `products`](code:src/routes/wishlist/index.tsx#L5), so that the button and the page share one list with no import between the two components. The store is a module-level value and `create()` gets no `persist` middleware, so a reload of the app starts again with `products: []`.",
-                  "needsAttention": "This is the rule the pull request exists for: one action appends a product whose `id` is not in `products` and removes a product whose `id` is. [`<WishlistButton />`](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton) and [`<WishlistPage />`](code:src/routes/wishlist/index.tsx#WishlistPage) call the action and show its result.",
+                  "coreChange": "This is the rule the pull request exists for: one action appends a product whose `id` is not in `products` and removes a product whose `id` is. [`<WishlistButton />`](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton) and [`<WishlistPage />`](code:src/routes/wishlist/index.tsx#WishlistPage) call the action and show its result.",
                   "findings": [],
                   "range": {
                     "lineStart": 9,
@@ -1363,7 +1363,7 @@
                   "title": "Added `selectIsWished()` to read whether a product is wished",
                   "declaration": "selectIsWished",
                   "reading": "The author added a function `selectIsWished()` that takes a `productId` and returns a second function. The second function takes a `WishlistState`, and returns `true` when `products` has a product with that `id` and `false` when `products` has none. [`<WishlistButton />` passes `selectIsWished(product.id)` to `useWishlistStore`](code:src/routes/catalog/components/WishlistButton.tsx#L6), so that each button reads one boolean for its own product and [shows \"Remove from wishlist\" for `true`](code:src/routes/catalog/components/WishlistButton.tsx#L10).",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 20,
@@ -2910,7 +2910,7 @@
                   "title": "Added `<WishlistButton />` to toggle a product on the wishlist",
                   "declaration": "WishlistButton",
                   "reading": "The author added a component `<WishlistButton />` that:\n\n- reads `isWished` with `useWishlistStore(selectIsWished(product.id))`, and `toggleProduct` from the same store\n- renders a `<Button>` with the variant `ghost` that calls `toggleProduct(product)` on a click\n- shows \"Remove from wishlist\" when `isWished` is `true`, and \"Add to wishlist\" when `isWished` is `false`\n\n[`<ProductCard />` renders one `<WishlistButton />` with the product of the card](code:src/routes/catalog/components/ProductCard.tsx#L13), so that a shopper changes the wishlist from the catalogue and from [the wishlist page](code:src/routes/wishlist/index.tsx#L11). [`toggleProduct()` removes a product that `products` has and appends a product that `products` does not have](code:src/stores/wishlist-store.ts#L11-17), so one `onClick` does both.",
-                  "needsAttention": null,
+                  "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 5,
@@ -2938,7 +2938,7 @@
                       "title": null,
                       "declaration": "WishlistButton › isWished",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 6,
@@ -2956,7 +2956,7 @@
                       "title": null,
                       "declaration": "WishlistButton › toggleProduct",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 7,
@@ -2977,7 +2977,7 @@
                       "title": null,
                       "declaration": "WishlistButton › Button.onClick",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,
@@ -2996,7 +2996,7 @@
                       "title": null,
                       "declaration": "WishlistButton › Condition :10",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 10,
@@ -3021,7 +3021,7 @@
                   "title": "Added `<WishlistPage />` to list the wished products",
                   "declaration": "WishlistPage",
                   "reading": "The author added a component `<WishlistPage />` that:\n\n- reads `products` with `useWishlistStore((state) => state.products)`\n- returns `<p>Your wishlist is empty.</p>` when `products.length` is `0`\n- renders a `<ul>` with one [`<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) per product, with `product.id` as the key\n\n[`router` renders `<WishlistPage />` at `/wishlist`](code:src/router.tsx#L16), so that a shopper has a page for the products they put on the wishlist. [Each card renders a `<WishlistButton />`](code:src/routes/catalog/components/ProductCard.tsx#L13) that shows \"Remove from wishlist\" on this page, and [a click on that button removes the product from `products`](code:src/stores/wishlist-store.ts#L13-15), so the card leaves the page.",
-                  "needsAttention": "This is the page the pull request is named for: it shows what [`useWishlistStore`](code:src/stores/wishlist-store.ts#useWishlistStore) holds, and returns the empty message or the list. It renders the cards of the catalogue, so [the new button of `<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#L13) is on this page too.",
+                  "coreChange": "This is the page the pull request is named for: it shows what [`useWishlistStore`](code:src/stores/wishlist-store.ts#useWishlistStore) holds, and returns the empty message or the list. It renders the cards of the catalogue, so [the new button of `<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#L13) is on this page too.",
                   "findings": [],
                   "range": {
                     "lineStart": 4,
@@ -3052,7 +3052,7 @@
                       "title": null,
                       "declaration": "WishlistPage › products",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 5,
@@ -3073,7 +3073,7 @@
                       "title": null,
                       "declaration": "WishlistPage › Condition :6",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 6,
@@ -3093,7 +3093,7 @@
                       "title": null,
                       "declaration": "WishlistPage › Markup loop :9",
                       "reading": "",
-                      "needsAttention": null,
+                      "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 9,

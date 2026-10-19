@@ -57,7 +57,7 @@ const withWaypointChanged = (waypoints: readonly Waypoint[], change: WaypointCha
   waypoints.map((waypoint) => {
     const withChildren = { ...waypoint, children: withWaypointChanged(waypoint.children, change) }
     return waypoint.id === change.waypointId
-      ? { ...withChildren, title: change.title, reading: change.reading, needsAttention: change.needsAttention }
+      ? { ...withChildren, title: change.title, reading: change.reading, coreChange: change.coreChange }
       : withChildren
   })
 
@@ -74,12 +74,12 @@ const normalize = (change: WaypointChange): WaypointChange => ({
   ...change,
   title: change.title.trim(),
   reading: change.reading.trim(),
-  needsAttention: change.needsAttention === null ? null : change.needsAttention.trim(),
+  coreChange: change.coreChange === null ? null : change.coreChange.trim(),
 })
 
 const planWaypointChange = (artifact: ReviewArtifact, segment: Segment, change: WaypointChange): PlannedWalkthroughEdit => {
   if (change.title === "") return reject(EMPTY_TITLE_MESSAGE)
-  const unresolvedLinkIds = unresolvedLinkIdsIn([change.reading, change.needsAttention ?? ""], artifact.sources)
+  const unresolvedLinkIds = unresolvedLinkIdsIn([change.reading, change.coreChange ?? ""], artifact.sources)
   return unresolvedLinkIds.length > 0
     ? reject(unresolvedLinksMessage(unresolvedLinkIds))
     : plan(artifact, segment, mapWaypoints(segment, (waypoints) => withWaypointChanged(waypoints, change)))

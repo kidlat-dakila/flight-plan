@@ -22,7 +22,6 @@ const AGENT_MODELS: AgentModels = {
 const CHOICE: AgentsChoice = {
   installs: [{ agent: "claude", installPath: "/home/.claude", model: "haiku", effort: "low" }],
   defaultAgent: "claude",
-  connection: "direct",
 }
 
 describe("offerModels", () => {

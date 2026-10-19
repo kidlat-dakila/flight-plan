@@ -8,7 +8,7 @@ const REQUEST = {
   configurationId: "standard",
   order: "foundations-first",
   customOrder: "",
-  writer: { kind: "manual" },
+  writer: { kind: "none" },
 } as const
 
 const createCaller = () => appRouter.createCaller(createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z")))

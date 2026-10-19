@@ -5,6 +5,7 @@ import type { AuthorsChoice } from "@/components/RepositoryAuthors"
 const AUTHORS: AuthorsChoice = {
   form: {
     selfAuthorHint: "Git cannot tell who you are here.",
+    gitSelfAuthor: null,
     searchHint: "Search by name or email.",
     searchPlaceholder: "Type a name or email",
   },

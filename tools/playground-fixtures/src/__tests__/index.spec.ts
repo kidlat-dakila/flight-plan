@@ -113,8 +113,8 @@ describe("getReviewArtifactFixture", () => {
 
     expect(Object.keys(file)).toStrictEqual(["path", "waypoints"])
     expect(file.waypoints.map((waypoint) => Object.keys(waypoint))).toStrictEqual([
-      ["id", "title", "declaration", "codeBlocks", "reading", "needsAttention", "findings", "children"],
-      ["id", "title", "declaration", "codeBlocks", "reading", "needsAttention", "findings", "children"],
+      ["id", "title", "declaration", "codeBlocks", "reading", "coreChange", "findings", "children", "isRequired"],
+      ["id", "title", "declaration", "codeBlocks", "reading", "coreChange", "findings", "children", "isRequired"],
     ])
     expect(file.waypoints.map((waypoint) => [waypoint.id, waypoint.declaration])).toStrictEqual([["w1", "heldBySku"], ["w2", "stockOf"]])
   })

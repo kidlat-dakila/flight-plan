@@ -2,8 +2,10 @@ import { parse, stringify } from "devalue"
 import { z } from "zod"
 import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
 import { RENAMED_PARTS, withRenamedKeys } from "@/procedures/list-configurations/utils/renamed-parts"
+import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
+import { withRequiredSections } from "@/procedures/read-artifact/utils/required-nodes"
 import { reviewArtifactSchema, type ReviewArtifact } from "@flightplan/configurations"
-import { AUTHOR_STARTS, WALKTHROUGH_ORDERS, type ReviewRequest } from "./start/review-request"
+import { AUTHOR_STARTS, isWrittenByAgent, WALKTHROUGH_ORDERS, type ReviewRequest } from "./start/review-request"
 
 export interface ReviewScaffold {
   readonly artifact: ReviewArtifact
@@ -11,7 +13,10 @@ export interface ReviewScaffold {
   readonly baseCommit: string
 }
 
-const STORED_SCHEMA_VERSION = 3
+const STORED_SCHEMA_VERSION = 4
+const PRE_REQUIREMENT_SCHEMA_VERSION = 3
+const RETIRED_MANUAL_WRITER = "manual"
+const NO_AGENT_WRITER = { kind: "none" } as const
 const JOURNEY_SCHEMA_VERSION = 2
 
 const requestSchema = z.strictObject({
@@ -19,9 +24,11 @@ const requestSchema = z.strictObject({
   preset: z.enum(PRESET_NAMES),
   order: z.enum(WALKTHROUGH_ORDERS),
   customOrder: z.string().nullable(),
-  writer: z.discriminatedUnion("kind", [
+  writer: z.union([
     z.strictObject({ kind: z.literal("agent"), agent: z.enum(AGENT_NAMES), model: z.string(), effort: z.string() }),
-    z.strictObject({ kind: z.literal("manual") }),
+    z.strictObject({ kind: z.literal("external"), agent: z.enum(AGENT_NAMES) }),
+    z.strictObject({ kind: z.literal("none") }),
+    z.strictObject({ kind: z.literal(RETIRED_MANUAL_WRITER) }).transform(() => NO_AGENT_WRITER),
     z.strictObject({ kind: z.literal("author"), start: z.enum(AUTHOR_STARTS) }),
   ]),
   requestedAt: z.iso.datetime().transform((text) => new Date(text)),
@@ -74,11 +81,11 @@ const upgradedArtifact = (artifact: unknown): unknown =>
 
 const upgradedStoredReview = (stored: unknown): unknown =>
   isRecord(stored) && stored.schema === JOURNEY_SCHEMA_VERSION
-    ? { ...stored, schema: STORED_SCHEMA_VERSION, artifact: upgradedArtifact(stored.artifact) }
+    ? { ...stored, schema: PRE_REQUIREMENT_SCHEMA_VERSION, artifact: upgradedArtifact(stored.artifact) }
     : stored
 
 const storedReviewSchema = z.strictObject({
-  schema: z.literal(STORED_SCHEMA_VERSION),
+  schema: z.union([z.literal(PRE_REQUIREMENT_SCHEMA_VERSION), z.literal(STORED_SCHEMA_VERSION)]),
   meta: z.strictObject({
     kind: z.literal("review"),
     baseCommit: z.string(),
@@ -95,11 +102,16 @@ const parseStored = (text: string): unknown => {
   }
 }
 
+const withRequirementOf = (artifact: ReviewArtifact, request: ReviewRequest, schema: number): ReviewArtifact =>
+  schema === PRE_REQUIREMENT_SCHEMA_VERSION && isWrittenByAgent(request.writer)
+    ? withRequiredSections(artifact, sectionsOf(artifact))
+    : artifact
+
 export const parseStoredReview = (text: string): ReviewScaffold | null => {
   const stored = storedReviewSchema.safeParse(upgradedStoredReview(parseStored(text)))
-  return stored.success
-    ? { artifact: stored.data.artifact, request: stored.data.meta.request, baseCommit: stored.data.meta.baseCommit }
-    : null
+  if (!stored.success) return null
+  const { schema, meta, artifact } = stored.data
+  return { artifact: withRequirementOf(artifact, meta.request, schema), request: meta.request, baseCommit: meta.baseCommit }
 }
 
 export const formatStoredReview = (scaffold: ReviewScaffold): string =>

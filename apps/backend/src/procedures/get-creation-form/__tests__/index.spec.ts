@@ -40,7 +40,7 @@ describe("getCreationForm", () => {
       },
       form: {
         configuration: { heading: "Configuration" },
-        writer: { heading: "Agent", manual: { submitLabel: "Start" } },
+        writer: { heading: "Agent", none: { submitLabel: "Start" } },
       },
       pendingLabel: "Starting…",
     })

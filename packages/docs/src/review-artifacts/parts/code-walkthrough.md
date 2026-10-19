@@ -17,10 +17,10 @@ A **waypoint** is a box over a block of changed code. Flight Plan gives each cha
 
 - its title and its position, such as **3 of 12**,
 - the agent's reading: what the code does now and why it changed,
-- **Needs Attention**, on the few waypoints that carry the change, with the reason,
+- **Core change**, on the few waypoints that carry the change, with the reason,
 - the [findings](/docs/review-artifacts/parts/findings/) on that code.
 
-Flight Plan picks the files, the blocks and the lines. The agent writes the titles, the readings, the attention notes and the findings.
+Flight Plan picks the files, the blocks and the lines. The agent writes the titles, the readings, the core change notes and the findings.
 
 ## The order of the files
 
@@ -29,9 +29,9 @@ You choose the order when you start a review: **Foundations first** (the default
 ## Moving through it
 
 - **J** goes to the next waypoint and **K** to the previous one, across files and segments. The stepper at the top of the walkthrough does the same.
-- **Filter** shows only waypoints that need attention, or that carry a bug, a risk, a nit or a question. The filter stays in the page's address, so you can share it.
+- **Filter** shows only the core changes, or the waypoints that carry a bug, a risk, a nit or a question. The filter stays in the page's address, so you can share it.
 - **Show reviewed** brings back the waypoints and files you've marked [reviewed](/docs/review-artifacts/features/reviewed-marks/).
 
 ## On your own Flight Plan
 
-On your own Flight Plan, every file shows its whole code. You can edit a waypoint's title, reading and **Needs Attention** mark, remove a waypoint or a file, and **Arrange files** to change their order.
+On your own Flight Plan, every file shows its whole code. You can edit a waypoint's title, reading and **Core change** mark, remove a waypoint or a file, and **Arrange files** to change their order.

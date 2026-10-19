@@ -32,6 +32,7 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
   segments: [
     {
       id: "all",
+      isContextRequired: true,
       title: "Move price rounding into the cart total",
       changedPaths: [SUBTOTAL_PATH],
       context: [
@@ -61,9 +62,10 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
                 declaration: "lineTotal",
                 codeBlocks: [],
                 reading: "The function now returns the exact product. Anything that shows a single line's total would show the unrounded number, and nothing outside this file calls it.",
-                needsAttention: null,
+                coreChange: null,
                 findings: [],
                 children: [],
+                isRequired: true,
               },
               {
                 id: "subtotal",
@@ -71,7 +73,7 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
                 declaration: "subtotal",
                 codeBlocks: [],
                 reading: "The rounding moved here unchanged: multiply by a hundred, round, divide by a hundred.",
-                needsAttention: null,
+                coreChange: null,
                 findings: [
                   {
                     id: "float-sum",
@@ -83,6 +85,7 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
                   },
                 ],
                 children: [],
+                isRequired: true,
               },
             ],
           },

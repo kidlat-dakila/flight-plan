@@ -7,6 +7,7 @@ const nestedNodesOf = (node: z.core.$ZodType): readonly z.core.$ZodType[] => {
   if (node instanceof z.ZodArray) return [node.element]
   if (node instanceof z.ZodNullable || node instanceof z.ZodOptional || node instanceof z.ZodLazy || node instanceof z.ZodDefault) return [node.unwrap()]
   if (node instanceof z.ZodUnion) return node.options
+  if (node instanceof z.ZodPipe) return [node.out]
   return []
 }
 

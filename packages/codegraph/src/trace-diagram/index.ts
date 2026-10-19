@@ -138,6 +138,7 @@ export const toTraceNode = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlo
     children: [],
     triggerLabels: inside.filter((block) => TRIGGER_TYPES.has(block.type)).map((codeBlock) => ({ label: null, codeBlock })),
     blockLabels: listListedBlocks(nodeBlock, inside).map(({ block }) => ({ label: null, codeBlock: block })),
+    isRequired: false,
   }
 }
 
@@ -282,5 +283,5 @@ export const generateTraceDiagram = ({ group, importGraphGroup, scope }: TraceSo
   const { nodes, edges } = withGroups(keptNodes, keptEdges, groupCardNodes(keptNodes))
   const traceNodeEdges = withCardEdges({ nodes, edges, importerCountByPath })
   const parentIdById = listCardParents({ nodes, edges: traceNodeEdges, importerCountByPath })
-  return { astCodeGroup: group, importGraphGroup, description: null, traceNodes: nestNodes(nodes, parentIdById), traceNodeEdges }
+  return { astCodeGroup: group, importGraphGroup, description: null, traceNodes: nestNodes(nodes, parentIdById), traceNodeEdges, isRequired: false }
 }

@@ -93,9 +93,10 @@ const toWaypoint = (waypoint: RangedWaypoint): Waypoint => ({
   declaration: waypoint.declaration,
   codeBlocks: waypoint.codeBlocks,
   reading: waypoint.reading,
-  needsAttention: waypoint.needsAttention,
+  coreChange: waypoint.coreChange,
   findings: waypoint.findings,
   children: waypoint.children.map(toWaypoint),
+  isRequired: waypoint.isRequired,
 })
 
 const listWaypoints = (waypoints: readonly RangedWaypoint[]): RangedWaypoint[] =>
@@ -109,6 +110,7 @@ const toSegment = (parts: SegmentParts): Segment => ({
   traceDiagram: parts.traceDiagram,
   blastDiagram: parts.blastDiagram,
   walkthrough: { files: parts.walkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map(toWaypoint) })) },
+  isContextRequired: false,
 })
 
 const declarationsOf = (path: string, sections: readonly RangedFileSection[]): Record<string, LineRange> =>

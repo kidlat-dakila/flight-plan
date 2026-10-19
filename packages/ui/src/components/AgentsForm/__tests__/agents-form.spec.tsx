@@ -14,18 +14,11 @@ const AGENTS = [
   { agent: "cursor" as const, label: "Cursor", isPicked: false, installPath: "", pathHint: "Cursor was not found on this machine.", unavailableReason: "cursor-agent is not installed on this machine.", model: "default", effort: "default", modelOptions: [] },
 ]
 
-const CONNECTION_OPTIONS = [
-  { connection: "direct" as const, label: "Automatic", tagLabel: "Recommended", description: "It adds no billing.", unavailableFeatures: [] },
-  { connection: "manual" as const, label: "Manual", tagLabel: null, description: "Flight Plan gives you each prompt.", unavailableFeatures: ["Chatting with the agent from a review"] },
-]
-
 const renderForm = (overrides: Partial<React.ComponentProps<typeof AgentsForm>> = {}) =>
   render(
     <AgentsForm
       agents={AGENTS}
       defaultAgent="claude"
-      connection="direct"
-      connectionOptions={CONNECTION_OPTIONS}
       problem={null}
       folderBrowser={null}
       folderBrowserErrorMessage={null}
@@ -46,16 +39,15 @@ describe("AgentsForm", () => {
     expect(screen.queryByLabelText("Install folder for Cursor")).toBeNull()
     expect(screen.getByRole<HTMLInputElement>("checkbox", { name: /Cursor/ }).disabled).toBe(true)
     expect(screen.getByText("cursor-agent is not installed on this machine.", { exact: false })).toBeTruthy()
-    expect(screen.getByText("Chatting with the agent from a review")).toBeTruthy()
+    expect(screen.queryByRole("radio", { name: /Manual/ })).toBeNull()
   })
 
-  it("submits the folder, the effort and the connection the user chose", () => {
+  it("submits the folder and the effort the user chose", () => {
     const onSubmit = vi.fn()
     renderForm({ onSubmit })
 
     fireEvent.change(screen.getByLabelText("Install folder for Claude"), { target: { value: "/Users/dev/.claude-work" } })
     fireEvent.click(screen.getByRole("radio", { name: "High" }))
-    fireEvent.click(screen.getByRole("radio", { name: /Manual/ }))
     fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
     expect(onSubmit).toHaveBeenCalledWith({
@@ -64,7 +56,6 @@ describe("AgentsForm", () => {
         { agent: "cursor", isPicked: false, installPath: "", model: "default", effort: "default" },
       ],
       defaultAgent: "claude",
-      connection: "manual",
     })
   })
 
