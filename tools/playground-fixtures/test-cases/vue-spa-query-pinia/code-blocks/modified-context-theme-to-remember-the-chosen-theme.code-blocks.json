@@ -569,8 +569,8 @@
         ],
         "classifications": [
           "component",
-          "state",
-          "context-and-wiring",
+          "ui-state",
+          "app-setup",
           "storage"
         ],
         "diffClassifications": [
@@ -789,7 +789,7 @@
           "src/App.vue#storage@8:26"
         ],
         "classifications": [
-          "state",
+          "ui-state",
           "storage"
         ],
         "diffClassifications": [
@@ -1276,7 +1276,7 @@
           "src/App.vue#storage@8:26"
         ],
         "classifications": [
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -2232,7 +2232,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -2371,7 +2371,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -2644,7 +2644,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -2684,7 +2684,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -5719,8 +5719,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -5775,8 +5774,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -5840,8 +5838,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -5895,8 +5892,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -5932,8 +5928,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -6025,8 +6020,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -6397,8 +6391,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -6793,7 +6786,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -7024,7 +7017,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -7524,7 +7517,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -7564,7 +7557,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [

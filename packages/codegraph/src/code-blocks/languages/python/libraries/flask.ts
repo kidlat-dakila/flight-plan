@@ -51,7 +51,7 @@ export const flaskLibrary: Library = {
   language: "python",
   readCards: readFlaskCards,
   patterns: [
-    { kind: "factory", name: "Flask", methods: [...FLASK_SCAFFOLD_METHODS, { kind: "call", name: "run", slots: [], classifies: "context-and-wiring" }] },
+    { kind: "factory", name: "Flask", methods: [...FLASK_SCAFFOLD_METHODS, { kind: "call", name: "run", slots: [], classifies: "app-setup" }] },
     {
       kind: "factory",
       name: "Blueprint",

@@ -1,4 +1,4 @@
-import { classificationsAt, readOwnClassifications, sortClassifications } from "@/code-blocks/classifications"
+import { CLASSIFICATION_BY_CATEGORY, classificationOfType, classificationsAt, readOwnClassifications, sortClassifications } from "@/code-blocks/classifications"
 import { LIBRARIES } from "@/code-blocks/libraries"
 import type { StoredCodeBlock, StoredCodeGroupGraph } from "@/code-blocks/stored-types"
 import type { CodeBlockClassification } from "@/code-blocks/types"
@@ -35,7 +35,7 @@ describe("the classifications of a code block", () => {
   it("keeps the hierarchy in one ordered list, from test down to logic", () => {
     expect(CODE_BLOCK_CLASSIFICATIONS[0]).toBe("test")
     expect(CODE_BLOCK_CLASSIFICATIONS[CODE_BLOCK_CLASSIFICATIONS.length - 1]).toBe("logic")
-    expect(sortClassifications(["logic", "state", "store", "component", "page"])).toStrictEqual(["page", "component", "store", "state", "logic"])
+    expect(sortClassifications(["logic", "ui-state", "security", "component", "page"])).toStrictEqual(["page", "component", "ui-state", "security", "logic"])
   })
 
   it("puts every narrower classification right above the one it narrows", () => {
@@ -44,10 +44,8 @@ describe("the classifications of a code block", () => {
       ["page", "component"],
       ["webhook", "api-route"],
       ["server-action", "api-route"],
-      ["queue-consumer", "job"],
-      ["third-party-integration", "request"],
-      ["form", "validation"],
-      ["store", "state"],
+      ["messaging", "job"],
+      ["third-party-integration", "api-request"],
     ]
 
     expect(narrowing.every(([narrower, wider]) => rankOf(narrower) < rankOf(wider))).toBe(true)
@@ -56,18 +54,18 @@ describe("the classifications of a code block", () => {
   it("gives a component its own classification and those of every block inside it, in the order of the hierarchy", () => {
     const group = groupOf({ "src/order-form.tsx": ORDER_FORM })
 
-    expect(classifiedOf(blockNamed(group, "component", "OrderForm"))).toStrictEqual({ classifications: ["component", "database-operation"], diffClassifications: [] })
-    expect(classifiedOf(blockOfType(group, "data"))).toStrictEqual({ classifications: ["database-operation"], diffClassifications: [] })
+    expect(classifiedOf(blockNamed(group, "component", "OrderForm"))).toStrictEqual({ classifications: ["component", "database-read-write"], diffClassifications: [] })
+    expect(classifiedOf(blockOfType(group, "data"))).toStrictEqual({ classifications: ["database-read-write"], diffClassifications: [] })
   })
 
   it("says what the change does apart from what the block is", () => {
     const group = groupOf({ "src/order-form.tsx": ORDER_FORM }, { "src/order-form.tsx": [rangeAt(5, 25, 5, 31)] })
 
     expect(classifiedOf(blockNamed(group, "component", "OrderForm"))).toStrictEqual({
-      classifications: ["component", "database-operation"],
-      diffClassifications: ["database-operation"],
+      classifications: ["component", "database-read-write"],
+      diffClassifications: ["database-read-write"],
     })
-    expect(primaryClassificationOf(blockNamed(group, "component", "OrderForm").diffClassifications)).toBe("database-operation")
+    expect(primaryClassificationOf(blockNamed(group, "component", "OrderForm").diffClassifications)).toBe("database-read-write")
   })
 
   it("keeps the change a subset of what the block is, and leaves it empty for a block nothing changed in", () => {
@@ -104,22 +102,32 @@ describe("the classifications of a code block", () => {
     expect(blockNamed(groupOf(files), "function", "submit").classifications).toStrictEqual(["logic"])
   })
 
-  it("classifies a read of a database as a database operation and a read over the network as a request", () => {
+  it("classifies a read of a database as a database read or write and a read over the network as an API request", () => {
     const files = {
       "src/orders.ts": codeOf(PRISMA_IMPORT, "const prisma = new PrismaClient()", "export const listOrders = () => prisma.order.findMany()"),
       "src/remote.ts": codeOf("export const listRemote = () => fetch(\"/api/orders\")"),
     }
     const group = groupOf(files)
 
-    expect(blockNamed(group, "function", "listOrders").classifications).toStrictEqual(["database-operation"])
-    expect(blockNamed(group, "function", "listRemote").classifications).toStrictEqual(["request"])
+    expect(blockNamed(group, "function", "listOrders").classifications).toStrictEqual(["database-read-write"])
+    expect(blockNamed(group, "function", "listRemote").classifications).toStrictEqual(["api-request"])
+  })
+
+  it("merges state and stores into UI state, auth into security, events and queues into messaging, and types into schemas", () => {
+    const types: readonly StoredCodeBlock["type"][] = ["state", "derived", "auth", "publish", "type-declaration", "request", "data"]
+
+    expect(types.map(classificationOfType)).toStrictEqual(["ui-state", "ui-state", "security", "messaging", "data-model", "api-request", "database-read-write"])
+  })
+
+  it("gives UI state to a form library, a WebSocket to a realtime library and app setup to dependency injection", () => {
+    expect(["forms", "realtime", "dependency-injection"].map((category) => CLASSIFICATION_BY_CATEGORY.get(category))).toStrictEqual(["ui-state", "websocket", "app-setup"])
   })
 
   it("classifies a removed block by the type it had", () => {
     const group = groupOf({ "src/orders.ts": codeOf(PRISMA_IMPORT, "const prisma = new PrismaClient()", "export const save = (order) => prisma.order.create({ data: order })") })
     const removed: StoredCodeBlock = { ...blockOfType(group, "data"), id: "src/orders.ts#deleted@3:32", type: "deleted", deletedType: "data" }
 
-    expect(readOwnClassifications(removed, [], { placedByPath: new Map(), libraries: LIBRARIES })).toStrictEqual(["database-operation"])
+    expect(readOwnClassifications(removed, [], { placedByPath: new Map(), libraries: LIBRARIES })).toStrictEqual(["database-read-write"])
   })
 
   it("earns the classification of a library call that makes no block type of its own", () => {
@@ -132,7 +140,7 @@ describe("the classifications of a code block", () => {
       "}",
     )
 
-    expect(blockNamed(groupOf({ "src/mail.ts": mailer }), "function", "sendReceipt").classifications).toStrictEqual(["third-party-integration", "request"])
+    expect(blockNamed(groupOf({ "src/mail.ts": mailer }), "function", "sendReceipt").classifications).toStrictEqual(["third-party-integration", "api-request"])
   })
 
   it("classifies a store by its card and a procedure as a server action", () => {
@@ -143,7 +151,7 @@ describe("the classifications of a code block", () => {
     }
     const group = groupOf(files)
 
-    expect(blockNamed(group, "state", "useCartStore").classifications).toContain("store")
+    expect(blockNamed(group, "state", "useCartStore").classifications).toContain("ui-state")
     expect(blockNamed(group, "root-variable", "appRouter").classifications).toContain("server-action")
   })
 
@@ -164,7 +172,7 @@ describe("the classifications of a code block", () => {
     }
     const group = groupOf(files)
 
-    expect(blockNamed(group, "root-variable", "worker").classifications).toContain("queue-consumer")
+    expect(blockNamed(group, "root-variable", "worker").classifications).toContain("messaging")
     expect(group.codeBlocks.filter((block) => block.filePath === "src/schedule.ts").flatMap((block) => block.classifications)).toContain("job")
   })
 })

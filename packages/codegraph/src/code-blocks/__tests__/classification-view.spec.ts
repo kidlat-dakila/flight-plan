@@ -2,7 +2,7 @@ import { classificationOfBlock, classificationViewOf } from "@/code-blocks/class
 
 describe("classificationOfBlock", () => {
   it("picks the first classification, which the hierarchy ranks highest", () => {
-    expect(classificationOfBlock({ classifications: ["page", "component", "database-operation"] })).toBe("page")
+    expect(classificationOfBlock({ classifications: ["page", "component", "database-read-write"] })).toBe("page")
   })
 
   it("reads a block with no classification as logic", () => {
@@ -12,7 +12,7 @@ describe("classificationOfBlock", () => {
 
 describe("classificationViewOf", () => {
   it("gives the classification with its label", () => {
-    expect(classificationViewOf({ classifications: ["third-party-integration", "request"] })).toStrictEqual({
+    expect(classificationViewOf({ classifications: ["third-party-integration", "api-request"] })).toStrictEqual({
       key: "third-party-integration",
       label: "Third-party integration",
     })

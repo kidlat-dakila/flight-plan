@@ -19,16 +19,16 @@ describe("rootBlockKeysOf of rootBlocksOf", () => {
   })
 
   it("names a root block by its primary classification", () => {
-    const form = createCodeBlock("form", PRICE_PATH, { type: "component", classifications: ["form", "component"], lineOfCodeRangeReference: spanning(1, 2) })
+    const page = createCodeBlock("page", PRICE_PATH, { type: "component", classifications: ["page", "component"], lineOfCodeRangeReference: spanning(1, 2) })
 
-    expect(keysOf(waypointOn(form), ADDED_SOURCE)).toStrictEqual(["block:form:added"])
+    expect(keysOf(waypointOn(page), ADDED_SOURCE)).toStrictEqual(["block:page:added"])
   })
 
   it("calls a root block modified when it changes only some of its rows, or replaces lines that were there", () => {
-    const priceOf = createCodeBlock("priceOf", PRICE_PATH, { type: "root-variable", classifications: ["state"], lineOfCodeRangeReference: spanning(11, 12) })
+    const priceOf = createCodeBlock("priceOf", PRICE_PATH, { type: "root-variable", classifications: ["ui-state"], lineOfCodeRangeReference: spanning(11, 12) })
     const keep = createCodeBlock("keep", PRICE_PATH, { lineOfCodeRangeReference: spanning(2, 3) })
 
-    expect(keysOf(waypointOn(priceOf), priceSource)).toStrictEqual(["block:state:modified"])
+    expect(keysOf(waypointOn(priceOf), priceSource)).toStrictEqual(["block:ui-state:modified"])
     expect(keysOf(waypointOn(keep), ADDED_SOURCE)).toStrictEqual(["block:logic:modified"])
   })
 
@@ -57,7 +57,7 @@ describe("rootBlockKeysOf of rootBlocksOf", () => {
 describe("rootBlockLabelOf", () => {
   it("names the classification of the root block, then what happened to it", () => {
     expect(rootBlockLabelOf("block:component:modified")).toBe("Component – Modified")
-    expect(rootBlockLabelOf("block:database-operation:added")).toBe("Database operation – Added")
+    expect(rootBlockLabelOf("block:database-read-write:added")).toBe("Database read/write – Added")
   })
 })
 

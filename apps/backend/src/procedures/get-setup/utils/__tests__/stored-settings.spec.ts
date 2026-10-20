@@ -33,10 +33,10 @@ describe("parseSettings", () => {
   })
 
   it("saves the review preferences beside the setup and reads them back", () => {
-    const withPreferences = { ...READY_TO_FINISH, reviewPreferences: { ...DEFAULT_REVIEW_PREFERENCES, spotlight: ["auth" as const] } }
+    const withPreferences = { ...READY_TO_FINISH, reviewPreferences: { ...DEFAULT_REVIEW_PREFERENCES, spotlight: ["security" as const] } }
     const settings: unknown = JSON.parse(formatSettings(withPreferences))
 
-    expect(settings).toMatchObject({ reviewPreferences: { spotlight: ["auth"] } })
+    expect(settings).toMatchObject({ reviewPreferences: { spotlight: ["security"] } })
     expect(settings).not.toHaveProperty("setup.reviewPreferences")
     expect(parseSettings(formatSettings(withPreferences))).toStrictEqual(withPreferences)
   })
@@ -45,6 +45,16 @@ describe("parseSettings", () => {
     const settings = { defaultConfiguration: null, setup: { agents: null, forges: null, repositories: [], isComplete: false } }
 
     expect(parseSettings(JSON.stringify(settings))?.reviewPreferences).toBeNull()
+  })
+
+  it("reads a spotlight saved before the classifications were renamed and merged under their current names", () => {
+    const settings = {
+      defaultConfiguration: null,
+      reviewPreferences: { ...DEFAULT_REVIEW_PREFERENCES, spotlight: ["auth", "state", "store", "realtime", "migration"] },
+      setup: { agents: null, forges: null, repositories: [], isComplete: false },
+    }
+
+    expect(parseSettings(JSON.stringify(settings))?.reviewPreferences?.spotlight).toStrictEqual(["migration", "websocket", "ui-state", "security"])
   })
 
   it("refuses review preferences with a classification Flight Plan does not know", () => {

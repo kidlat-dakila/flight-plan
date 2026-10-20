@@ -70,7 +70,7 @@ export const meowLibrary: CatalogueLibrary = {
   type: "backend",
   language: "javascript",
   patterns: [
-    { kind: "call", name: "default", slots: [], makes: "config", classifies: "command" },
+    { kind: "call", name: "default", slots: [], makes: "config", classifies: "cli-command" },
   ],
 }
 

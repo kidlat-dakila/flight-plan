@@ -7,7 +7,7 @@ const PRESETS = [
 ]
 
 const PREFERENCES = {
-  spotlight: ["auth" as const],
+  spotlight: ["security" as const],
   sectionWriteUps: { context: "always", traceDiagram: "always", blastDiagram: "on-demand", walkthrough: "on-demand", findings: "always" } as const,
   isSegmented: true,
   walkthroughOrder: "imports-bottom-up" as const,
@@ -17,7 +17,7 @@ const PREFERENCES = {
 
 const SPOTLIGHT_CHOICES = [
   { classification: "migration" as const, label: "Migration", description: "A change to the shape of the database" },
-  { classification: "auth" as const, label: "Auth", description: "A check of who the caller is, or what they may do" },
+  { classification: "security" as const, label: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting" },
 ]
 
 const renderForm = (onSubmit = vi.fn(), problem: React.ComponentProps<typeof ReviewConfigurationForm>["problem"] = null) =>
@@ -58,7 +58,7 @@ describe("ReviewConfigurationForm", () => {
       "Display arrangement",
       "Ignored files",
     ])
-    expect(within(regions[0]).getByRole("button", { name: "Auth", pressed: true })).toBeTruthy()
+    expect(within(regions[0]).getByRole("button", { name: "Security", pressed: true })).toBeTruthy()
     expect(within(regions[0]).getByRole("button", { name: "Migration", pressed: false })).toBeTruthy()
   })
 
@@ -83,7 +83,7 @@ describe("ReviewConfigurationForm", () => {
       configurationId: "standard",
       preferences: {
         ...PREFERENCES,
-        spotlight: ["migration", "auth"],
+        spotlight: ["migration", "security"],
         sectionWriteUps: { ...PREFERENCES.sectionWriteUps, blastDiagram: "always" },
         isSegmented: false,
         walkthroughOrder: "important-first",

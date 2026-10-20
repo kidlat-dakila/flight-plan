@@ -186,8 +186,8 @@ describe("buildWalkthrough", () => {
 
   it("gives a hint from the classification of its code blocks to each waypoint with no write-up, and none to a written one", () => {
     const changedBlock = createCodeBlock("price-of", PRICE_PATH, {
-      classifications: ["component", "database-operation"],
-      diffClassifications: ["database-operation"],
+      classifications: ["component", "database-read-write"],
+      diffClassifications: ["database-read-write"],
     })
     const unchangedBlock = createCodeBlock("format", PRICE_PATH, { name: "format", classifications: ["page"] })
     const segment = createSegment({
@@ -453,7 +453,7 @@ const rootBlockSegment = (): Segment =>
               codeBlocks: [
                 createCodeBlock(`${PRICE_PATH}#function@11:1`, PRICE_PATH, {
                   lineOfCodeRangeReference: spanning(11, 12),
-                  classifications: ["database-operation", "validation"],
+                  classifications: ["database-read-write", "validation"],
                 }),
               ],
             }),
@@ -479,7 +479,7 @@ describe("root blocks of a walkthrough file", () => {
     expect(priceFile.rootBlocks).toStrictEqual([
       {
         id: PRICE_OF_ID,
-        classification: { key: "database-operation", label: "Database operation" },
+        classification: { key: "database-read-write", label: "Database read/write" },
         spotlight: null,
         coreChangeLabel: null,
         isReviewed: false,
@@ -505,13 +505,13 @@ describe("root blocks of a walkthrough file", () => {
   it("puts a waypoint and a root block in the spotlight when what changed in them is a classification the user chose", () => {
     const changedBlock = createCodeBlock(`${PRICE_PATH}#function@11:1`, PRICE_PATH, {
       lineOfCodeRangeReference: spanning(11, 12),
-      classifications: ["database-operation", "validation"],
+      classifications: ["database-read-write", "validation"],
       diffClassifications: ["validation"],
     })
     const segment = createSegment({
       walkthrough: { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("price-of", "priceOf", { codeBlocks: [changedBlock] })] }] },
     })
-    const context = { ...createViewContext(), spotlight: ["validation", "auth"] as const }
+    const context = { ...createViewContext(), spotlight: ["validation", "security"] as const }
     const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, context)
     const [priceFile] = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context).files
     const spotlight = { label: "Spotlight", classifications: [{ key: "validation", label: "Validation" }] }

@@ -39,7 +39,7 @@ type DiffKind =
   | "route"
   | "data"
   | "data-fetch"
-  | "auth"
+  | "security"
   | "type"
   | "file"
   | "logic"
@@ -77,22 +77,22 @@ interface ASTCodeGroupGraph {
 
 `diffContains` says, in a few words, what the changes of the group are made of. It is read before anything is traced, so that what is built next can take the right path without looking at every block again. The Trace Diagram is built differently when the diff has changes to the interface, and `diffContains` says so at once.
 
-It is worked out from `diffBlocks` alone: the [classifications](classifications.md) each diff block earns by itself, each mapped to the kind it gives, and whether the block is inside a component.
+It is worked out from `diffBlocks` alone: the [classifications](classifications.md) each diff block earns by itself, each mapped to the kind it gives, and whether the block is inside a component. A type declaration gives `type` where it earns `data-model`.
 
 Its values are the ten of `DiffKind`, and no other: a value that is not one of them does not compile.
 
 | Value | The diff has a change in a block classified |
 |---|---|
 | `ui` | `page` or `component`, or any block inside a function that holds a `render-root` |
-| `state` | `state` or `store` |
+| `state` | `ui-state` |
 | `effect` | `effect` |
 | `event` | `event` |
 | `route` | `api-route`, `webhook` or `server-action` |
-| `data` | `database-operation`: a write or a read of a database or a cache |
-| `auth` | `auth` |
-| `type` | `type` |
+| `data` | `database-read-write`: a write or a read of a database or a cache |
+| `security` | `security`: an auth check, hashing, signing, encryption or rate limiting |
+| `type` | `data-model`, when the block is a type declaration |
 | `file` | `file`: a file no language reads and no location names |
-| `logic` | Anything else, and a block that earns no classification: a function, a method, a condition, a loop, a request over the network, a migration |
+| `logic` | Anything else, and a block that earns no classification: a function, a method, a condition, a loop, an API request, a migration, an ORM model |
 
 A diff can hold several: a change to a component and to the function it calls gives `["ui", "logic"]`. A group whose diff has no `ui` holds no change to the interface, and the Trace Diagram needs none of what it builds for components.
 

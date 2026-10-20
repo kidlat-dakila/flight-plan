@@ -59,7 +59,7 @@ export const docoptLibrary: CatalogueLibrary = {
   type: "backend",
   language: "python",
   patterns: [
-    { kind: "call", name: "docopt", slots: [], makes: "config", classifies: "command" },
+    { kind: "call", name: "docopt", slots: [], makes: "config", classifies: "cli-command" },
   ],
 }
 

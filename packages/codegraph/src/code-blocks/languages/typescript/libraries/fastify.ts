@@ -36,7 +36,7 @@ const FASTIFY_INSTANCE_METHODS: readonly MethodPattern[] = [
   { kind: "call", name: "addHook", slots: [{ at: SECOND_ARGUMENT, runs: "middleware" }], eventAt: FIRST_ARGUMENT },
   { kind: "call", name: "register", slots: [{ at: FIRST_ARGUMENT, runs: "in-place" }], prefixAt: "prefix" },
   { kind: "call", name: "setErrorHandler", slots: [{ at: FIRST_ARGUMENT, runs: "event" }], classifies: "error-handling" },
-  { kind: "call", name: "listen", slots: [{ at: LAST_ARGUMENT, runs: "event" }], classifies: "context-and-wiring" },
+  { kind: "call", name: "listen", slots: [{ at: LAST_ARGUMENT, runs: "event" }], classifies: "app-setup" },
 ]
 
 const readFastifyCards = (reading: CardReading): CardSeed[] => readRouteCards(reading, shortSignatureOf)

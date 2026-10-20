@@ -11934,10 +11934,10 @@
           "src/pokedex/pokemon/service.py#external-value@13:9"
         ],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [
           {
@@ -12316,10 +12316,10 @@
           "src/pokedex/pokemon/service.py#data-fetch@11:13"
         ],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [
           {
@@ -12419,10 +12419,10 @@
           "src/pokedex/pokemon/service.py#data-fetch@11:13"
         ],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [
           {
@@ -19905,7 +19905,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -20096,7 +20096,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [],
         "outerSymbols": [

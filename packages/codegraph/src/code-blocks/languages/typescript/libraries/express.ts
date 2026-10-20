@@ -106,7 +106,7 @@ export const expressLibrary: Library = {
     {
       kind: "factory",
       name: "default",
-      methods: [...EXPRESS_ROUTER_METHODS, { kind: "call", name: "listen", slots: [{ at: LAST_ARGUMENT, runs: "event" }], classifies: "context-and-wiring" }],
+      methods: [...EXPRESS_ROUTER_METHODS, { kind: "call", name: "listen", slots: [{ at: LAST_ARGUMENT, runs: "event" }], classifies: "app-setup" }],
     },
     { kind: "factory", name: "Router", methods: EXPRESS_ROUTER_METHODS },
   ],

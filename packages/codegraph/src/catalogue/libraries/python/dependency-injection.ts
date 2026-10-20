@@ -1,6 +1,6 @@
 import type { CatalogueLibrary } from "@/catalogue/types"
 
-const CONTEXT_AND_WIRING = "context-and-wiring"
+const APP_SETUP = "app-setup"
 
 export const dependencyInjectorLibrary: CatalogueLibrary = {
   name: "Dependency Injector",
@@ -13,16 +13,16 @@ export const dependencyInjectorLibrary: CatalogueLibrary = {
     {
       kind: "class",
       name: "DeclarativeContainer",
-      classifies: CONTEXT_AND_WIRING,
+      classifies: APP_SETUP,
       members: [],
       methods: [
-        { kind: "call", name: "wire", slots: [], classifies: CONTEXT_AND_WIRING },
+        { kind: "call", name: "wire", slots: [], classifies: APP_SETUP },
       ],
     },
-    { kind: "call", name: "Singleton", slots: [], classifies: CONTEXT_AND_WIRING },
-    { kind: "call", name: "Factory", slots: [], classifies: CONTEXT_AND_WIRING },
-    { kind: "call", name: "Configuration", slots: [], classifies: CONTEXT_AND_WIRING },
-    { kind: "decorator", name: "inject", classifies: CONTEXT_AND_WIRING },
+    { kind: "call", name: "Singleton", slots: [], classifies: APP_SETUP },
+    { kind: "call", name: "Factory", slots: [], classifies: APP_SETUP },
+    { kind: "call", name: "Configuration", slots: [], classifies: APP_SETUP },
+    { kind: "decorator", name: "inject", classifies: APP_SETUP },
   ],
 }
 
@@ -38,16 +38,16 @@ export const svcsLibrary: CatalogueLibrary = {
       kind: "factory",
       name: "Registry",
       methods: [
-        { kind: "call", name: "register_factory", slots: [], classifies: CONTEXT_AND_WIRING },
-        { kind: "call", name: "register_value", slots: [], classifies: CONTEXT_AND_WIRING },
+        { kind: "call", name: "register_factory", slots: [], classifies: APP_SETUP },
+        { kind: "call", name: "register_value", slots: [], classifies: APP_SETUP },
       ],
     },
     {
       kind: "factory",
       name: "Container",
       methods: [
-        { kind: "call", name: "get", slots: [], classifies: CONTEXT_AND_WIRING },
-        { kind: "call", name: "register_local_value", slots: [], classifies: CONTEXT_AND_WIRING },
+        { kind: "call", name: "get", slots: [], classifies: APP_SETUP },
+        { kind: "call", name: "register_local_value", slots: [], classifies: APP_SETUP },
       ],
     },
   ],
@@ -65,13 +65,13 @@ export const injectorLibrary: CatalogueLibrary = {
       kind: "factory",
       name: "Injector",
       methods: [
-        { kind: "call", name: "get", slots: [], classifies: CONTEXT_AND_WIRING },
+        { kind: "call", name: "get", slots: [], classifies: APP_SETUP },
       ],
     },
-    { kind: "class", name: "Module", classifies: CONTEXT_AND_WIRING, members: [], methods: [] },
-    { kind: "decorator", name: "inject", classifies: CONTEXT_AND_WIRING },
-    { kind: "decorator", name: "provider", classifies: CONTEXT_AND_WIRING },
-    { kind: "decorator", name: "singleton", classifies: CONTEXT_AND_WIRING },
+    { kind: "class", name: "Module", classifies: APP_SETUP, members: [], methods: [] },
+    { kind: "decorator", name: "inject", classifies: APP_SETUP },
+    { kind: "decorator", name: "provider", classifies: APP_SETUP },
+    { kind: "decorator", name: "singleton", classifies: APP_SETUP },
   ],
 }
 
@@ -83,11 +83,11 @@ export const pythonInjectLibrary: CatalogueLibrary = {
   type: "backend",
   language: "python",
   patterns: [
-    { kind: "call", name: "configure", slots: [], classifies: CONTEXT_AND_WIRING },
-    { kind: "call", name: "instance", slots: [], classifies: CONTEXT_AND_WIRING },
-    { kind: "call", name: "attr", slots: [], classifies: CONTEXT_AND_WIRING },
-    { kind: "decorator", name: "params", classifies: CONTEXT_AND_WIRING },
-    { kind: "decorator", name: "autoparams", classifies: CONTEXT_AND_WIRING },
+    { kind: "call", name: "configure", slots: [], classifies: APP_SETUP },
+    { kind: "call", name: "instance", slots: [], classifies: APP_SETUP },
+    { kind: "call", name: "attr", slots: [], classifies: APP_SETUP },
+    { kind: "decorator", name: "params", classifies: APP_SETUP },
+    { kind: "decorator", name: "autoparams", classifies: APP_SETUP },
   ],
 }
 
@@ -103,20 +103,20 @@ export const dishkaLibrary: CatalogueLibrary = {
       kind: "factory",
       name: "make_container",
       methods: [
-        { kind: "call", name: "get", slots: [], classifies: CONTEXT_AND_WIRING },
+        { kind: "call", name: "get", slots: [], classifies: APP_SETUP },
       ],
     },
     {
       kind: "factory",
       name: "make_async_container",
       methods: [
-        { kind: "call", name: "get", slots: [], classifies: CONTEXT_AND_WIRING },
+        { kind: "call", name: "get", slots: [], classifies: APP_SETUP },
       ],
     },
-    { kind: "class", name: "Provider", classifies: CONTEXT_AND_WIRING, members: [], methods: [] },
-    { kind: "factory", name: "Provider", methods: [], classifies: CONTEXT_AND_WIRING },
-    { kind: "decorator", name: "provide", classifies: CONTEXT_AND_WIRING },
-    { kind: "decorator", name: "inject", classifies: CONTEXT_AND_WIRING },
-    { kind: "call", name: "setup_dishka", slots: [], classifies: CONTEXT_AND_WIRING },
+    { kind: "class", name: "Provider", classifies: APP_SETUP, members: [], methods: [] },
+    { kind: "factory", name: "Provider", methods: [], classifies: APP_SETUP },
+    { kind: "decorator", name: "provide", classifies: APP_SETUP },
+    { kind: "decorator", name: "inject", classifies: APP_SETUP },
+    { kind: "call", name: "setup_dishka", slots: [], classifies: APP_SETUP },
   ],
 }

@@ -12,11 +12,11 @@ describe("planPreferencesSaving", () => {
   })
 
   it("trims each path pattern and keeps the spotlight in the order of the hierarchy, once each", () => {
-    const wanted = { ...withIgnoredPaths([" docs/** "]), spotlight: ["auth", "page", "auth"] as const }
+    const wanted = { ...withIgnoredPaths([" docs/** "]), spotlight: ["security", "page", "security"] as const }
 
     expect(planPreferencesSaving(wanted)).toStrictEqual({
       kind: "accepted",
-      preferences: { ...wanted, spotlight: ["page", "auth"], ignoredPaths: ["docs/**"] },
+      preferences: { ...wanted, spotlight: ["page", "security"], ignoredPaths: ["docs/**"] },
     })
   })
 

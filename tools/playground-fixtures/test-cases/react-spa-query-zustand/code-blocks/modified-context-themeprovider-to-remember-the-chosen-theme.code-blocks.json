@@ -392,7 +392,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -431,7 +431,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -553,7 +553,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -941,13 +941,13 @@
         ],
         "classifications": [
           "component",
-          "state",
+          "ui-state",
           "effect",
-          "context-and-wiring",
+          "app-setup",
           "storage"
         ],
         "diffClassifications": [
-          "state",
+          "ui-state",
           "effect",
           "storage"
         ],
@@ -1078,11 +1078,11 @@
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "outerSymbols": [],
@@ -1822,7 +1822,7 @@
           "src/components/ThemeProvider.tsx#effect-callback@19:45"
         ],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -2438,7 +2438,7 @@
         ],
         "classifications": [
           "component",
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -2483,7 +2483,7 @@
         ],
         "classifications": [
           "component",
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [

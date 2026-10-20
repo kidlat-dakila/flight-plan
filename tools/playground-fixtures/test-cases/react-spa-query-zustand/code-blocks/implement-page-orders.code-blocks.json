@@ -2604,7 +2604,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -2780,7 +2780,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -2820,7 +2820,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -4285,7 +4285,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -4325,7 +4325,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -4638,7 +4638,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -4676,7 +4676,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -4730,7 +4730,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -4809,9 +4809,9 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "state",
+          "ui-state",
           "effect",
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -4903,7 +4903,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -4985,7 +4985,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -5496,7 +5496,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -5532,7 +5532,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -5930,7 +5930,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -5968,7 +5968,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -6564,7 +6564,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -9218,7 +9218,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -9314,7 +9314,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -9439,7 +9439,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -9478,7 +9478,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -9552,7 +9552,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -12654,8 +12654,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "form",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -12808,8 +12807,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "form",
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -14272,7 +14270,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -14989,7 +14987,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -15090,7 +15088,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -15965,7 +15963,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -16005,7 +16003,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -16173,7 +16171,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -16440,7 +16438,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -17301,7 +17299,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -17341,7 +17339,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -18230,7 +18228,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -18328,7 +18326,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -21264,12 +21262,12 @@
         ],
         "classifications": [
           "component",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [
           "component",
-          "state",
+          "ui-state",
           "effect"
         ],
         "outerSymbols": [],
@@ -21341,11 +21339,11 @@
           "src/stores/order-filter-store.ts#function@16:1"
         ],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "outerSymbols": [],
@@ -21660,11 +21658,11 @@
           "src/stores/order-filter-store.ts#call@12:5"
         ],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "outerSymbols": [],
@@ -23893,12 +23891,12 @@
         ],
         "classifications": [
           "component",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [
           "component",
-          "state",
+          "ui-state",
           "effect"
         ],
         "outerSymbols": [],
@@ -23972,11 +23970,11 @@
           "src/stores/order-filter-store.ts#function@16:1"
         ],
         "classifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [
-          "state",
+          "ui-state",
           "effect"
         ],
         "outerSymbols": [],
@@ -27187,7 +27185,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -27261,8 +27259,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -27326,7 +27323,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -27405,7 +27402,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -27454,7 +27451,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -27529,7 +27526,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -27575,7 +27572,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -27969,7 +27966,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -28387,7 +28384,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -28523,7 +28520,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -28835,7 +28832,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -29406,10 +29403,10 @@
         ],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [
-          "type"
+          "data-model"
         ],
         "outerSymbols": [
           {
@@ -29510,13 +29507,11 @@
           "src/stores/order-filter-store.ts#function@9:61"
         ],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "outerSymbols": [],
@@ -29639,11 +29634,11 @@
           "src/stores/order-filter-store.ts#effect@9:36"
         ],
         "classifications": [
-          "store",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [
-          "store",
+          "ui-state",
           "effect"
         ],
         "outerSymbols": [
@@ -29723,11 +29718,11 @@
           "src/stores/order-filter-store.ts#function@9:61"
         ],
         "classifications": [
-          "store",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [
-          "store"
+          "ui-state"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -29893,10 +29888,10 @@
           "src/stores/order-filter-store.ts#function@9:61"
         ],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [
-          "store"
+          "ui-state"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -30019,10 +30014,10 @@
         ],
         "diffSourceIds": [],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [
-          "store"
+          "ui-state"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -30141,10 +30136,10 @@
           "src/stores/order-filter-store.ts#call@12:5"
         ],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [
-          "store"
+          "ui-state"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -30575,10 +30570,10 @@
           "src/stores/order-filter-store.ts#function@16:1"
         ],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [
-          "store"
+          "ui-state"
         ],
         "outerSymbols": [
           {
@@ -30844,10 +30839,10 @@
         ],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [
-          "type"
+          "data-model"
         ],
         "outerSymbols": [],
         "usedByIds": [
@@ -31043,10 +31038,10 @@
         ],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [
-          "type"
+          "data-model"
         ],
         "outerSymbols": [
           {
@@ -31101,7 +31096,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -31144,7 +31139,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [

@@ -1649,7 +1649,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -1789,7 +1789,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -1829,7 +1829,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -4017,7 +4017,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -6821,12 +6821,12 @@
           "src/composables/use-orders.ts#effect-callback@17:5"
         ],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
         "diffClassifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -7051,12 +7051,12 @@
           "src/composables/use-orders.ts#effect-callback@17:5"
         ],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
         "diffClassifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -7258,11 +7258,11 @@
           "src/composables/use-orders.ts#cache@18:22"
         ],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "event"
         ],
         "diffClassifications": [
-          "database-operation",
+          "database-read-write",
           "event"
         ],
         "outerSymbols": [],
@@ -7330,10 +7330,10 @@
           "src/composables/use-orders.ts#cache@18:22"
         ],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7435,10 +7435,10 @@
           "src/composables/use-orders.ts#cache@18:22"
         ],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [
           {
@@ -7683,12 +7683,12 @@
           "src/composables/use-orders.ts#effect-callback@25:5"
         ],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
         "diffClassifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -7913,12 +7913,12 @@
           "src/composables/use-orders.ts#effect-callback@25:5"
         ],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
         "diffClassifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -8120,11 +8120,11 @@
           "src/composables/use-orders.ts#cache@26:22"
         ],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "event"
         ],
         "diffClassifications": [
-          "database-operation",
+          "database-read-write",
           "event"
         ],
         "outerSymbols": [],
@@ -8192,10 +8192,10 @@
           "src/composables/use-orders.ts#cache@26:22"
         ],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8297,10 +8297,10 @@
           "src/composables/use-orders.ts#cache@26:22"
         ],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [
           {
@@ -11351,7 +11351,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -11416,10 +11416,10 @@
         ],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [
-          "type"
+          "data-model"
         ],
         "outerSymbols": [],
         "usedByIds": [
@@ -11633,10 +11633,10 @@
         ],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [
-          "type"
+          "data-model"
         ],
         "outerSymbols": [
           {
@@ -11733,10 +11733,10 @@
         ],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [
-          "type"
+          "data-model"
         ],
         "outerSymbols": [
           {
@@ -11795,7 +11795,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -11840,7 +11840,7 @@
         ],
         "classifications": [
           "component",
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [
           "component"
@@ -12017,7 +12017,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -20806,11 +20806,11 @@
         ],
         "classifications": [
           "component",
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [
           "component",
-          "state"
+          "ui-state"
         ],
         "outerSymbols": [],
         "usedByIds": [
@@ -21763,10 +21763,10 @@
           "src/views/orders/components/OrderForm.vue#state@11:1"
         ],
         "classifications": [
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [
-          "state"
+          "ui-state"
         ],
         "outerSymbols": [
           {

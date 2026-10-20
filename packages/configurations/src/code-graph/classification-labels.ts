@@ -20,32 +20,34 @@ export const CODE_BLOCK_CLASSIFICATION_LABELS: Readonly<Record<CodeBlockClassifi
     description: "A function the client calls as if it were local, which runs on the server",
   },
   "api-route": { label: "API route", description: "A route, a resolver or a middleware" },
-  "realtime": {
-    label: "Realtime",
+  "websocket": {
+    label: "WebSocket",
     description: "A socket or a stream that stays connected and answers messages as they come",
   },
-  "queue-consumer": { label: "Queue consumer", description: "The code that takes messages off a queue" },
+  "messaging": { label: "Messaging", description: "Code that puts a message on a queue or a bus, or takes one off it" },
   "job": { label: "Scheduled job", description: "Code that runs on a schedule" },
-  "command": { label: "Command", description: "Code that runs when someone calls it from a command line" },
-  "database-operation": { label: "Database operation", description: "A read or a write of a database or a cache" },
-  "data-model": { label: "Data model", description: "The definition of what is stored" },
+  "cli-command": { label: "CLI command", description: "Code that runs when someone calls it from a command line" },
+  "database-read-write": { label: "Database read/write", description: "A read or a write of a database or a cache" },
+  "data-model": {
+    label: "Schema / data model",
+    description: "The shape of what is stored or passed around, such as a schema, a model or a type",
+  },
   "third-party-integration": {
     label: "Third-party integration",
     description: "A call into an outside service's SDK: payments, email, messages, cloud storage, an LLM",
   },
-  "request": { label: "Network request", description: "A call to a server over the network" },
-  "form": { label: "Form", description: "The state, validation and submission of a form" },
+  "api-request": { label: "API request", description: "A call to a server over the network" },
   "validation": { label: "Validation", description: "A schema, or a check of a value against one" },
-  "store": { label: "Store", description: "A state container shared across components" },
-  "state": { label: "State", description: "State, or a value derived from it" },
-  "auth": { label: "Auth", description: "A check of who the caller is, or what they may do" },
-  "security": { label: "Security", description: "Hashing, signing, encryption and rate limiting" },
+  "ui-state": { label: "UI state", description: "State, a value derived from it, or a store shared across components" },
+  "security": {
+    label: "Security",
+    description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting",
+  },
   "file-io": { label: "File I/O", description: "A read or a write of files or object storage on the server" },
   "process-execution": {
     label: "Process execution",
     description: "Code that starts another program or a worker thread",
   },
-  "publish": { label: "Publish", description: "Code that emits an event or puts a job on a queue" },
   "navigation": { label: "Navigation", description: "Code that sends the user to a page" },
   "error-handling": {
     label: "Error handling",
@@ -53,8 +55,8 @@ export const CODE_BLOCK_CLASSIFICATION_LABELS: Readonly<Record<CodeBlockClassifi
   },
   "effect": { label: "Effect", description: "Code that runs after something else has run" },
   "event": { label: "Event", description: "Code that runs when something happens later" },
-  "context-and-wiring": {
-    label: "Context and wiring",
+  "app-setup": {
+    label: "App setup",
     description: "Code that makes something available to the code below it, or starts the app",
   },
   "feature-flag": { label: "Feature flag", description: "A read of a value switched from outside the code" },
@@ -66,7 +68,6 @@ export const CODE_BLOCK_CLASSIFICATION_LABELS: Readonly<Record<CodeBlockClassifi
   "telemetry": { label: "Telemetry", description: "Logging, analytics or error reporting" },
   "i18n": { label: "Translations", description: "Text looked up by key for the user's language, or a translation file" },
   "styling": { label: "Styling", description: "How something looks: a stylesheet, CSS-in-JS, a theme" },
-  "type": { label: "Type", description: "A type declaration" },
   "file": { label: "File", description: "A file no language reads and no location names" },
   "logic": { label: "Logic", description: "What a block is when nothing else applies" },
 }

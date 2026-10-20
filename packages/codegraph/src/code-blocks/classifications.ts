@@ -33,8 +33,8 @@ const FALLBACK: CodeBlockClassification = "logic"
 const UNREAD_FILE: CodeBlockType = "file"
 const DELETED: CodeBlockType = "deleted"
 const DATA_FETCH: CodeBlockType = "data-fetch"
-const NETWORK_READ: CodeBlockClassification = "request"
-const DATABASE_READ: CodeBlockClassification = "database-operation"
+const NETWORK_READ: CodeBlockClassification = "api-request"
+const DATABASE_READ: CodeBlockClassification = "database-read-write"
 const JOB_RUNS: CatalogueRuns = "job"
 const QUEUE_CATEGORY = "queues"
 const STORE_KIND: BlockCard["kind"] = "store"
@@ -52,15 +52,15 @@ const CLASSIFICATION_BY_TYPE: ReadonlyMap<CodeBlockType, CodeBlockClassification
   ["route", "api-route"],
   ["resolver", "api-route"],
   ["middleware", "api-route"],
-  ["data", "database-operation"],
-  ["transaction", "database-operation"],
-  ["cache", "database-operation"],
-  ["request", "request"],
+  ["data", "database-read-write"],
+  ["transaction", "database-read-write"],
+  ["cache", "database-read-write"],
+  ["request", "api-request"],
   ["validation", "validation"],
-  ["state", "state"],
-  ["derived", "state"],
-  ["auth", "auth"],
-  ["publish", "publish"],
+  ["state", "ui-state"],
+  ["derived", "ui-state"],
+  ["auth", "security"],
+  ["publish", "messaging"],
   ["navigation", "navigation"],
   ["effect", "effect"],
   ["component-effect", "effect"],
@@ -70,7 +70,7 @@ const CLASSIFICATION_BY_TYPE: ReadonlyMap<CodeBlockType, CodeBlockClassification
   ["config", "config"],
   ["storage", "storage"],
   ["telemetry", "telemetry"],
-  ["type-declaration", "type"],
+  ["type-declaration", "data-model"],
 ])
 
 const DATABASE_CATEGORIES: ReadonlySet<string> = new Set(["orm", "raw-sql", "caching"])
@@ -81,15 +81,15 @@ const CLASSIFICATION_BY_RUNS: ReadonlyMap<CatalogueRuns, CodeBlockClassification
   ["resolver", "api-route"],
   ["middleware", "api-route"],
   ["job", "job"],
-  ["command", "command"],
+  ["command", "cli-command"],
   ["event", "event"],
   ["effect", "effect"],
 ])
 
 export const CLASSIFICATION_BY_CATEGORY: ReadonlyMap<string, CodeBlockClassification> = new Map<string, CodeBlockClassification>([
   ["webhooks", "webhook"],
-  ["realtime", "realtime"],
-  ["forms", "form"],
+  ["realtime", "websocket"],
+  ["forms", "ui-state"],
   ["third-party-services", "third-party-integration"],
   ["payments", "third-party-integration"],
   ["email-and-messaging", "third-party-integration"],
@@ -99,7 +99,7 @@ export const CLASSIFICATION_BY_CATEGORY: ReadonlyMap<string, CodeBlockClassifica
   ["file-io", "file-io"],
   ["processes", "process-execution"],
   ["error-handling", "error-handling"],
-  ["dependency-injection", "context-and-wiring"],
+  ["dependency-injection", "app-setup"],
   ["i18n", "i18n"],
   ["styling", "styling"],
 ])
@@ -184,7 +184,7 @@ const classificationsOfType = (block: StoredCodeBlock, libraries: readonly Catal
 }
 
 const classificationOfRuns = (runs: CatalogueRuns, category: string | null): CodeBlockClassification | null =>
-  runs === JOB_RUNS && category === QUEUE_CATEGORY ? "queue-consumer" : (CLASSIFICATION_BY_RUNS.get(runs) ?? null)
+  runs === JOB_RUNS && category === QUEUE_CATEGORY ? "messaging" : (CLASSIFICATION_BY_RUNS.get(runs) ?? null)
 
 const classificationsOfCatalogue = (catalogue: CodeBlockCatalogue | null, libraries: readonly CatalogueLibrary[]): CodeBlockClassification[] => {
   if (catalogue === null) return []
@@ -198,7 +198,7 @@ const classificationsOfCard = (card: BlockCard | undefined): CodeBlockClassifica
   if (card === undefined) return []
   const byPart = CLASSIFICATION_BY_CARD_PART.get(card.part)
   const isRoutePart = ROUTE_CARD_KINDS.has(card.kind) && ROUTE_PARTS.has(card.part)
-  return [...(card.kind === STORE_KIND ? ["store" as const] : []), ...(isRoutePart ? [ROUTE_CLASSIFICATION] : []), ...(byPart === undefined ? [] : [byPart])]
+  return [...(card.kind === STORE_KIND ? ["ui-state" as const] : []), ...(isRoutePart ? [ROUTE_CLASSIFICATION] : []), ...(byPart === undefined ? [] : [byPart])]
 }
 
 const classificationsOfLocation = (block: StoredCodeBlock, placed: readonly CodeBlockClassification[]): CodeBlockClassification[] => {

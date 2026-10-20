@@ -81,7 +81,7 @@ const recentRepositories: ProcedureReply = {
 }
 
 const reviewPreferences = {
-  spotlight: ["auth"],
+  spotlight: ["security"],
   sectionWriteUps: { context: "always", traceDiagram: "always", blastDiagram: "on-demand", walkthrough: "on-demand", findings: "always" },
   isSegmented: true,
   walkthroughOrder: "imports-bottom-up",
@@ -99,7 +99,7 @@ const reviewSection = {
   preferences: reviewPreferences,
   spotlightChoices: [
     { classification: "migration", label: "Migration", description: "A change to the shape of the database" },
-    { classification: "auth", label: "Auth", description: "A check of who the caller is, or what they may do" },
+    { classification: "security", label: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting" },
   ],
 }
 
@@ -254,7 +254,7 @@ describe("the settings pages", () => {
         "Display arrangement",
         "Ignored files",
       ])
-      expect(screen.getByRole("button", { name: "Auth", pressed: true })).toBeTruthy()
+      expect(screen.getByRole("button", { name: "Security", pressed: true })).toBeTruthy()
       expect(screen.getByRole<HTMLInputElement>("radio", { name: /Terse/ }).checked).toBe(true)
       expect(screen.getByText("You can pick another prompt configuration each time you create a Flight Plan.")).toBeTruthy()
       expect(screen.queryByText("You can make your own later, in the settings.")).toBeNull()
@@ -272,7 +272,7 @@ describe("the settings pages", () => {
       expect(save).toHaveBeenCalledWith({
         section: "review",
         configurationId: "standard",
-        preferences: { ...reviewPreferences, spotlight: ["migration", "auth"] },
+        preferences: { ...reviewPreferences, spotlight: ["migration", "security"] },
       })
     })
 

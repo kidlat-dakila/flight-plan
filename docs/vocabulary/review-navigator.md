@@ -72,7 +72,7 @@ The author's page has no Mark as reviewed and no Add comment, since the author d
 Filter (F) opens a menu of ticks that narrows the walkthrough to the waypoints worth stopping at. It holds:
 
 - the finding kinds: Core change, Bug, Risk, Nit and Question;
-- the code blocks of the segment, each the classification of a root block with what the change did to it, such as "Database operation" with "Added" or "Component" with "Modified". The classifications of the user's spotlight come first and are always listed, then the four others with the most waypoints, and the rest are under **More**. Imports are left out;
+- the code blocks of the segment, each the classification of a root block with what the change did to it, such as "Database read/write" with "Added" or "Component" with "Modified". The classifications of the user's spotlight come first and are always listed, then the four others with the most waypoints, and the rest are under **More**. Imports are left out;
 - **Change type**, a submenu of Added, Modified and Removed;
 - **Reviewed**, which brings back the waypoints already marked reviewed.
 

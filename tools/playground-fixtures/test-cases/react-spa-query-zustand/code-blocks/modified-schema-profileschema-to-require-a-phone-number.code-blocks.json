@@ -1357,7 +1357,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -1531,7 +1531,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -1571,7 +1571,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -2323,7 +2323,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -2361,7 +2361,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -2950,7 +2950,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -4431,7 +4431,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4527,7 +4527,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4652,7 +4652,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4691,7 +4691,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -4765,7 +4765,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -6915,8 +6915,7 @@
         ],
         "classifications": [
           "component",
-          "form",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [
@@ -7078,8 +7077,7 @@
           "src/routes/account/components/profile-schema.ts#validation@9:10"
         ],
         "classifications": [
-          "form",
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -9333,7 +9331,7 @@
         ],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [

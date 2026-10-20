@@ -16,7 +16,7 @@ describe("hintOf", () => {
   })
 
   it("names what changed inside a block when it is not what the block is", () => {
-    expect(hintOf([classified(["component", "database-operation"], ["database-operation"])], "modified"))
+    expect(hintOf([classified(["component", "database-read-write"], ["database-read-write"])], "modified"))
       .toBe("Changes a database read or write inside a component.")
   })
 
@@ -29,9 +29,9 @@ describe("hintOf", () => {
   })
 
   it("takes the classification the hierarchy ranks highest across every block of a waypoint", () => {
-    const blocks = [classified(["state"], ["state"]), classified(["form", "validation"], ["validation"])]
+    const blocks = [classified(["ui-state"], ["ui-state"]), classified(["component", "validation"], ["validation"])]
 
-    expect(hintOf(blocks, "modified")).toBe("Changes a validation rule inside a form.")
+    expect(hintOf(blocks, "modified")).toBe("Changes a validation rule inside a component.")
   })
 
   it("reads a block with no classification as plain logic", () => {
@@ -55,7 +55,7 @@ describe("hintOf", () => {
 
 describe("traceHintOf", () => {
   it("names what the cards of a diagram are, each once, in their order", () => {
-    expect(traceHintOf(["page", "api-route", "page", "database-operation"])).toBe("Runs through a page, an API route and a database read or write.")
+    expect(traceHintOf(["page", "api-route", "page", "database-read-write"])).toBe("Runs through a page, an API route and a database read or write.")
     expect(traceHintOf(["component"])).toBe("Runs through a component.")
   })
 

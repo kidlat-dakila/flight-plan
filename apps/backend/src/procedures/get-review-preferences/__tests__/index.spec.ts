@@ -35,7 +35,7 @@ describe("getReviewPreferences", () => {
   it("offers every classification for the spotlight, in the order of the hierarchy, with its label and description", async () => {
     const page = await getReviewPreferences({}, createSetupContext(AT_REPOSITORIES))
 
-    expect(page.spotlightChoices).toHaveLength(39)
+    expect(page.spotlightChoices).toHaveLength(34)
     expect(page.spotlightChoices.slice(0, 2)).toStrictEqual([
       { classification: "test", label: "Test", description: "A test or a story" },
       {

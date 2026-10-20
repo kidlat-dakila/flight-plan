@@ -769,8 +769,8 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "state",
-          "context-and-wiring"
+          "ui-state",
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -977,7 +977,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -1180,7 +1180,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "context-and-wiring"
+          "app-setup"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -3906,8 +3906,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -3965,8 +3964,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -4030,8 +4028,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -4085,8 +4082,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -4122,8 +4118,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -4215,8 +4210,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -4587,8 +4581,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -4983,7 +4976,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -5228,7 +5221,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "store"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -5753,10 +5746,10 @@
         ],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [
-          "type"
+          "data-model"
         ],
         "outerSymbols": [],
         "usedByIds": [
@@ -5812,7 +5805,7 @@
         ],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -7168,7 +7161,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -7396,7 +7389,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [

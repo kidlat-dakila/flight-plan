@@ -5,7 +5,7 @@ import { saveReviewPreferences } from "@/procedures/save-review-preferences"
 describe("saveReviewPreferences", () => {
   it("saves the preferences into the setup and returns them as saved", async () => {
     const context = createSetupContext(AT_REPOSITORIES)
-    const wanted = { ...DEFAULT_REVIEW_PREFERENCES, spotlight: ["auth" as const], isSegmented: false }
+    const wanted = { ...DEFAULT_REVIEW_PREFERENCES, spotlight: ["security" as const], isSegmented: false }
 
     await expect(saveReviewPreferences({ ...wanted, spotlight: [...wanted.spotlight], sectionOrder: [...wanted.sectionOrder], ignoredPaths: [...wanted.ignoredPaths] }, context))
       .resolves.toStrictEqual({ kind: "saved", preferences: wanted })

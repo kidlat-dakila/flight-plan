@@ -117,7 +117,7 @@ export const honoLibrary: CatalogueLibrary = {
   type: "backend",
   language: "javascript",
   patterns: [
-    { kind: "call", name: "serve", from: "@hono/node-server", slots: [{ at: SECOND_ARGUMENT, runs: "event" }], classifies: "context-and-wiring" },
+    { kind: "call", name: "serve", from: "@hono/node-server", slots: [{ at: SECOND_ARGUMENT, runs: "event" }], classifies: "app-setup" },
     {
       kind: "factory",
       name: "Hono",
@@ -212,9 +212,9 @@ export const reactLibrary: CatalogueLibrary = {
       kind: "factory",
       name: "createContext",
       provides: { valueAt: REACT_CONTEXT_VALUE },
-      classifies: "context-and-wiring",
+      classifies: "app-setup",
       methods: [
-        { kind: "element", name: "Provider", slots: [], provides: { valueAt: REACT_CONTEXT_VALUE }, classifies: "context-and-wiring" },
+        { kind: "element", name: "Provider", slots: [], provides: { valueAt: REACT_CONTEXT_VALUE }, classifies: "app-setup" },
         { kind: "element", name: "Consumer", slots: [{ at: REACT_CHILDREN, runs: "in-place" }], reads: {} },
       ],
     },
@@ -290,12 +290,12 @@ export const vueLibrary: CatalogueLibrary = {
     { kind: "call", name: "onErrorCaptured", slots: VUE_HOOK_SLOTS, classifies: "error-handling" },
     { kind: "call", name: "onServerPrefetch", slots: VUE_HOOK_SLOTS },
     { kind: "call", name: "nextTick", slots: VUE_HOOK_SLOTS },
-    { kind: "call", name: "provide", slots: [], provides: { keyAt: FIRST_ARGUMENT, valueAt: SECOND_ARGUMENT }, classifies: "context-and-wiring" },
+    { kind: "call", name: "provide", slots: [], provides: { keyAt: FIRST_ARGUMENT, valueAt: SECOND_ARGUMENT }, classifies: "app-setup" },
     {
       kind: "factory",
       name: "createApp",
       methods: [
-        { kind: "call", name: "provide", slots: [], provides: { keyAt: FIRST_ARGUMENT, valueAt: SECOND_ARGUMENT }, classifies: "context-and-wiring" },
+        { kind: "call", name: "provide", slots: [], provides: { keyAt: FIRST_ARGUMENT, valueAt: SECOND_ARGUMENT }, classifies: "app-setup" },
         { kind: "assignment", name: "config.errorHandler", slots: [{ at: FIRST_ARGUMENT, runs: "event" }], classifies: "error-handling" },
       ],
     },
@@ -310,7 +310,7 @@ export const vueLibrary: CatalogueLibrary = {
         { at: "mounted", runs: "effect" },
       ],
     },
-    { kind: "call", name: "inject", slots: [], reads: { keyAt: FIRST_ARGUMENT }, classifies: "context-and-wiring" },
+    { kind: "call", name: "inject", slots: [], reads: { keyAt: FIRST_ARGUMENT }, classifies: "app-setup" },
   ],
 }
 
@@ -327,7 +327,7 @@ export const koaLibrary: CatalogueLibrary = {
       name: "default",
       methods: [
         { kind: "call", name: "use", slots: [{ at: FIRST_ARGUMENT, runs: "middleware" }] },
-        { kind: "call", name: "listen", slots: [], classifies: "context-and-wiring" },
+        { kind: "call", name: "listen", slots: [], classifies: "app-setup" },
       ],
     },
   ],

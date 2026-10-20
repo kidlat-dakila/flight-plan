@@ -102,7 +102,7 @@ const configurationForm = {
   spotlightChoices: [
     { classification: "migration", label: "Migration", description: "A change to the shape of the database" },
     { classification: "api-route", label: "API route", description: "A route, a resolver or a middleware" },
-    { classification: "auth", label: "Auth", description: "A check of who the caller is, or what they may do" },
+    { classification: "security", label: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting" },
   ],
 }
 
@@ -635,12 +635,12 @@ describe("the setup page", () => {
     const spotlight = await screen.findByRole("region", { name: "Spotlight" })
     expect(within(spotlight).getByText(/Pick the kinds of change that matter most to you/)).toBeTruthy()
     expect(within(spotlight).getByText(/Nothing is in the spotlight/)).toBeTruthy()
-    expect(within(spotlight).getByRole("button", { name: "Auth", description: "A check of who the caller is, or what they may do" })).toBeTruthy()
+    expect(within(spotlight).getByRole("button", { name: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting" })).toBeTruthy()
 
-    fireEvent.click(within(spotlight).getByRole("button", { name: "Auth" }))
+    fireEvent.click(within(spotlight).getByRole("button", { name: "Security" }))
     fireEvent.click(within(spotlight).getByRole("button", { name: "Migration" }))
 
-    expect(within(spotlight).getByRole("button", { name: "Auth", pressed: true })).toBeTruthy()
+    expect(within(spotlight).getByRole("button", { name: "Security", pressed: true })).toBeTruthy()
     expect(within(spotlight).queryByText(/Nothing is in the spotlight/)).toBeNull()
 
     fireEvent.click(screen.getByRole("button", { name: "Finish setup" }))
@@ -648,7 +648,7 @@ describe("the setup page", () => {
     await waitFor(() => {
       expect(saveStep).toHaveBeenCalledWith({ step: "configuration", configurationId: "standard" })
     })
-    expect(savePreferences).toHaveBeenCalledWith({ ...configurationForm.preferences, spotlight: ["migration", "auth"] })
+    expect(savePreferences).toHaveBeenCalledWith({ ...configurationForm.preferences, spotlight: ["migration", "security"] })
   })
 
   it("asks which parts the agent writes up by default and saves the answers", async () => {

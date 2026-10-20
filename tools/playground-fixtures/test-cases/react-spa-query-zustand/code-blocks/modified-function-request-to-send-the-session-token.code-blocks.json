@@ -1518,10 +1518,10 @@
           "src/api/client.ts#condition@29:11"
         ],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [
-          "request"
+          "api-request"
         ],
         "outerSymbols": [
           {
@@ -1836,10 +1836,10 @@
           "src/api/client.ts#condition@29:11"
         ],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [
-          "request"
+          "api-request"
         ],
         "outerSymbols": [],
         "usedByIds": [
@@ -1912,10 +1912,10 @@
           "src/api/client.ts#condition@29:11"
         ],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [
-          "request"
+          "api-request"
         ],
         "outerSymbols": [
           {
@@ -4031,7 +4031,7 @@
           "src/api/client.ts#condition@29:11"
         ],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4137,7 +4137,7 @@
           "src/api/client.ts#condition@29:11"
         ],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4274,7 +4274,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4313,7 +4313,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -4387,7 +4387,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -6340,8 +6340,7 @@
         ],
         "classifications": [
           "component",
-          "form",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -6509,8 +6508,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "form",
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [

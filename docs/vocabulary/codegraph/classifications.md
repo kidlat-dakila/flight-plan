@@ -4,7 +4,7 @@ What a [code block](code-blocks.md) is for, read from the code it holds, and wha
 
 ## Definition
 
-A classification names the role a block plays: a page, a database operation, a webhook, a test. Its [type](block-types.md) says what shape the code has; its classification says what that code is for. A function that saves an order through an ORM is a `function` block classified `database-operation`. A function that returns markup is a `component` block classified `component`.
+A classification names the role a block plays: a page, a database operation, a webhook, a test. Its [type](block-types.md) says what shape the code has; its classification says what that code is for. A function that saves an order through an ORM is a `function` block classified `database-read-write`. A function that returns markup is a `component` block classified `component`.
 
 Every block carries two lists:
 
@@ -33,9 +33,9 @@ export const OrderForm = ({ order }) => {
 
 | Block | `classifications` | `diffClassifications` |
 |---|---|---|
-| `OrderForm` | `component`, `database-operation` | `database-operation` |
-| The `prisma.order.create` call | `database-operation` | `database-operation` |
-| `save` | `database-operation` | `database-operation` |
+| `OrderForm` | `component`, `database-read-write` | `database-read-write` |
+| The `prisma.order.create` call | `database-read-write` | `database-read-write` |
+| `save` | `database-read-write` | `database-read-write` |
 
 The primary classification of either list is its first entry. It is never stored: `primaryClassificationOf` in `@flightplan/configurations` reads it, so a Flight Plan saved before the hierarchy changed reads its primary in the order of today.
 
@@ -55,39 +55,52 @@ When a block earns several classifications, the one higher in this list is its p
 | 6 | `webhook` | A route a third party calls, which checks the sender's signature |
 | 7 | `server-action` | A function the client calls as if it were local, which runs on the server |
 | 8 | `api-route` | A route, a resolver or a middleware |
-| 9 | `realtime` | A socket or a stream that stays connected and answers messages as they come |
-| 10 | `queue-consumer` | The code that takes messages off a queue |
+| 9 | `websocket` | A socket or a stream that stays connected and answers messages as they come |
+| 10 | `messaging` | Code that puts a message on a queue or a bus, or takes one off it |
 | 11 | `job` | Code that runs on a schedule |
-| 12 | `command` | Code that runs when someone calls it from a command line |
-| 13 | `database-operation` | A read or a write of a database or a cache |
-| 14 | `data-model` | The definition of what is stored |
+| 12 | `cli-command` | Code that runs when someone calls it from a command line |
+| 13 | `database-read-write` | A read or a write of a database or a cache |
+| 14 | `data-model` | The shape of what is stored or passed around: a schema, a model, a type declaration |
 | 15 | `third-party-integration` | A call into an outside service's SDK: payments, email, messages, cloud storage, an LLM |
-| 16 | `request` | A call to a server over the network |
-| 17 | `form` | The state, validation and submission of a form |
-| 18 | `validation` | A schema, or a check of a value against one |
-| 19 | `store` | A state container shared across components |
-| 20 | `state` | State, or a value derived from it |
-| 21 | `auth` | A check of who the caller is, or what they may do |
-| 22 | `security` | Hashing, signing, encryption and rate limiting |
-| 23 | `file-io` | A read or a write of files or object storage on the server |
-| 24 | `process-execution` | Code that starts another program or a worker thread |
-| 25 | `publish` | Code that emits an event or puts a job on a queue |
-| 26 | `navigation` | Code that sends the user to a page |
-| 27 | `error-handling` | Code whose job is to turn a failure into a response or a fallback |
-| 28 | `effect` | Code that runs after something else has run |
-| 29 | `event` | Code that runs when something happens later |
-| 30 | `context-and-wiring` | Code that makes something available to the code below it, or starts the app |
-| 31 | `feature-flag` | A read of a value switched from outside the code |
-| 32 | `config` | A read of an environment variable or a configuration value, or a configuration file |
-| 33 | `storage` | A read or a write of what the browser keeps for the user |
-| 34 | `telemetry` | Logging, analytics or error reporting |
-| 35 | `i18n` | Text looked up by key for the user's language, or a translation file |
-| 36 | `styling` | How something looks: a stylesheet, CSS-in-JS, a theme |
-| 37 | `type` | A type declaration |
-| 38 | `file` | A file no language reads and no location names |
-| 39 | `logic` | What a block is when nothing else applies |
+| 16 | `api-request` | A call to a server over the network |
+| 17 | `validation` | A schema, or a check of a value against one |
+| 18 | `ui-state` | State, a value derived from it, or a store shared across components |
+| 19 | `security` | A check of who the caller is or what they may do, hashing, signing, encryption and rate limiting |
+| 20 | `file-io` | A read or a write of files or object storage on the server |
+| 21 | `process-execution` | Code that starts another program or a worker thread |
+| 22 | `navigation` | Code that sends the user to a page |
+| 23 | `error-handling` | Code whose job is to turn a failure into a response or a fallback |
+| 24 | `effect` | Code that runs after something else has run |
+| 25 | `event` | Code that runs when something happens later |
+| 26 | `app-setup` | Code that makes something available to the code below it, or starts the app |
+| 27 | `feature-flag` | A read of a value switched from outside the code |
+| 28 | `config` | A read of an environment variable or a configuration value, or a configuration file |
+| 29 | `storage` | A read or a write of what the browser keeps for the user |
+| 30 | `telemetry` | Logging, analytics or error reporting |
+| 31 | `i18n` | Text looked up by key for the user's language, or a translation file |
+| 32 | `styling` | How something looks: a stylesheet, CSS-in-JS, a theme |
+| 33 | `file` | A file no language reads and no location names |
+| 34 | `logic` | What a block is when nothing else applies |
 
-`test`, `build-and-infrastructure` and `migration` come first because the file they live in decides them, whatever code is inside. A classification that narrows another sits right above it, or it would never win: `page` above `component`, `webhook` and `server-action` above `api-route`, `queue-consumer` above `job`, `third-party-integration` above `request`, `form` above `validation`, `store` above `state`. `logic` is last because it is what a block is when nothing else applies.
+`test`, `build-and-infrastructure` and `migration` come first because the file they live in decides them, whatever code is inside. A classification that narrows another sits right above it, or it would never win: `page` above `component`, `webhook` and `server-action` above `api-route`, `messaging` above `job`, `third-party-integration` above `api-request`. `logic` is last because it is what a block is when nothing else applies.
+
+### Names a stored review or spotlight may hold
+
+A spotlight saved in `settings.json` and the code blocks of a stored review may hold names the hierarchy no longer has. They are read as the classification that took their place, then put in the order of the hierarchy, once each. `upgradedClassifications` in `apps/backend/src/procedures/get-review-preferences/utils/legacy-classifications.ts` holds the names.
+
+| Stored name | Read as |
+|---|---|
+| `realtime` | `websocket` |
+| `queue-consumer`, `publish` | `messaging` |
+| `command` | `cli-command` |
+| `database-operation` | `database-read-write` |
+| `request` | `api-request` |
+| `form`, `store`, `state` | `ui-state` |
+| `auth` | `security` |
+| `context-and-wiring` | `app-setup` |
+| `type` | `data-model` |
+
+A spotlight with a name that is neither in the hierarchy nor in this table is refused.
 
 ## What a block earns by itself
 
@@ -101,17 +114,18 @@ A `deleted` block is read by its `deletedType`, so a removed ORM write is still 
 |---|---|
 | `component`, `render-root`, `render`, `render-condition`, `render-loop`, `render-event` | `component` |
 | `route`, `resolver`, `middleware` | `api-route` |
-| `data`, `transaction`, `cache` | `database-operation` |
-| `data-fetch` from a library of the `orm`, `raw-sql` or `caching` category | `database-operation` |
-| Any other `data-fetch`: a `GET` `fetch`, a GraphQL query, an `EventSource`, a call of an HTTP client | `request` |
-| `request` | `request` |
+| `data`, `transaction`, `cache` | `database-read-write` |
+| `data-fetch` from a library of the `orm`, `raw-sql` or `caching` category | `database-read-write` |
+| Any other `data-fetch`: a `GET` `fetch`, a GraphQL query, an `EventSource`, a call of an HTTP client | `api-request` |
+| `request` | `api-request` |
 | `validation` | `validation` |
-| `state`, `derived` | `state` |
-| `auth` | `auth` |
-| `publish`, `navigation`, `feature-flag`, `config`, `storage`, `telemetry` | The classification of the same name |
+| `state`, `derived` | `ui-state` |
+| `auth` | `security` |
+| `publish` | `messaging` |
+| `navigation`, `feature-flag`, `config`, `storage`, `telemetry` | The classification of the same name |
 | `effect`, `component-effect`, `effect-callback` | `effect` |
 | `code-event` | `event` |
-| `type-declaration` | `type` |
+| `type-declaration` | `data-model` |
 | `file` | `file`, when no location names the file |
 
 ### Its catalogue entry
@@ -122,9 +136,9 @@ What the [catalogue](catalogue.md) left on the block, in `catalogue`: when its c
 |---|---|
 | `page` | `page` |
 | `route`, `resolver`, `middleware` | `api-route` |
-| `job`, from a library of the `queues` category | `queue-consumer` |
+| `job`, from a library of the `queues` category | `messaging` |
 | `job`, from any other library | `job` |
-| `command` | `command` |
+| `command` | `cli-command` |
 | `event` | `event` |
 | `effect` | `effect` |
 
@@ -133,14 +147,14 @@ What the [catalogue](catalogue.md) left on the block, in `catalogue`: when its c
 | Category of the library | Classification |
 |---|---|
 | `webhooks` | `webhook` |
-| `realtime` | `realtime` |
-| `forms` | `form` |
+| `realtime` | `websocket` |
+| `forms` | `ui-state` |
 | `payments`, `email-and-messaging`, `cloud`, `ai`, `third-party-services` | `third-party-integration` |
 | `security` | `security` |
 | `file-io` | `file-io` |
 | `processes` | `process-execution` |
 | `error-handling` | `error-handling` |
-| `dependency-injection` | `context-and-wiring` |
+| `dependency-injection` | `app-setup` |
 | `i18n` | `i18n` |
 | `styling` | `styling` |
 
@@ -155,7 +169,7 @@ export const sendReceipt = async (user) => {
 }
 ```
 
-`sendReceipt` earns `third-party-integration` from the use inside it, and `request` from the `request` block `sendMail` makes.
+`sendReceipt` earns `third-party-integration` from the use inside it, and `api-request` from the `request` block `sendMail` makes.
 
 A pattern says `classifies` when its role is not that of its whole library: the class an ORM's models extend is a `data-model`, and a call that verifies a webhook's signature is a `webhook` though its library is a payments SDK.
 
@@ -165,7 +179,7 @@ A library with a file of its own can add uses no pattern can say, with `readUses
 
 | Card | Classification |
 |---|---|
-| Kind `store`, any part | `store` |
+| Kind `store`, any part | `ui-state` |
 | Kind `route` or `router`, part `handler`, `middleware` or `controller`: the function a route names, in its file or another | `api-route` |
 | Part `server-action` or `procedure` | `server-action` |
 | Part `page` | `page` |
@@ -199,9 +213,10 @@ The ten values of `DiffKind` that [`diffContains` and `chainContains`](code-bloc
 |---|---|
 | `ui` | `page`, `component` |
 | `route` | `api-route`, `webhook`, `server-action` |
-| `data` | `database-operation` |
-| `state` | `state`, `store` |
-| `effect`, `event`, `auth`, `type`, `file` | The classification of the same name |
+| `data` | `database-read-write` |
+| `state` | `ui-state` |
+| `type` | `data-model`, on a type declaration |
+| `effect`, `event`, `security`, `file` | The classification of the same name |
 | `logic` | Every other classification |
 
 `diffContains` maps the classifications each changed block earns by itself, and `chainContains` those of each block on a chain. A block inside a function that holds a `render-root` also counts as `ui`, and a block that earns nothing counts as `logic`. `diffKindOf` and `diffKindsOf` in `packages/codegraph/src/code-blocks/diff-contains.ts` give the kind of a classification and the kinds of a list.

@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { STORED_CLASSIFICATION_NAMES, upgradedClassifications } from "@/procedures/get-review-preferences/utils/legacy-classifications"
 import { reviewPreferencesSchema } from "@/procedures/get-review-preferences/utils/schemas"
 import {
   AGENT_NAMES,
@@ -58,9 +59,13 @@ const setupSchema = z.strictObject({
   isComplete: z.boolean(),
 })
 
+const storedReviewPreferencesSchema = reviewPreferencesSchema.extend({
+  spotlight: z.array(z.enum(STORED_CLASSIFICATION_NAMES)).transform(upgradedClassifications),
+})
+
 const settingsSchema = z.strictObject({
   defaultConfiguration: z.string().nullable(),
-  reviewPreferences: reviewPreferencesSchema.nullable().default(null),
+  reviewPreferences: storedReviewPreferencesSchema.nullable().default(null),
   setup: setupSchema,
 })
 

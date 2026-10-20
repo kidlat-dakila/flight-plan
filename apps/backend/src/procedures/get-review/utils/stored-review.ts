@@ -1,4 +1,4 @@
-import { parse, stringify } from "devalue"
+import { stringify, unflatten } from "devalue"
 import { z } from "zod"
 import { WALKTHROUGH_ORDERS as SORTED_WALKTHROUGH_ORDERS, WRITE_UP_SECTIONS } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
@@ -6,6 +6,7 @@ import { RENAMED_PARTS, withRenamedKeys } from "@/procedures/list-configurations
 import { withRequiredSections } from "@/procedures/read-artifact/utils/required-nodes"
 import { reviewArtifactSchema, type ReviewArtifact } from "@flightplan/configurations"
 import { AUTHOR_STARTS, isWrittenByAgent, WALKTHROUGH_ORDERS, type ReviewRequest } from "./start/review-request"
+import { withCurrentClassifications } from "./stored-classifications"
 
 export interface ReviewScaffold {
   readonly artifact: ReviewArtifact
@@ -97,9 +98,11 @@ const storedReviewSchema = z.strictObject({
   artifact: z.preprocess(withoutRetiredKeys, reviewArtifactSchema),
 })
 
+const unflattenedOf = (flat: unknown): unknown => (Array.isArray(flat) ? unflatten([...withCurrentClassifications(flat)]) : null)
+
 const parseStored = (text: string): unknown => {
   try {
-    return parse(text)
+    return unflattenedOf(JSON.parse(text))
   } catch {
     return null
   }

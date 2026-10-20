@@ -15,7 +15,7 @@ export const deformLibrary: CatalogueLibrary = {
       name: "Form",
       methods: [
         { kind: "call", name: "validate", slots: [], makes: "validation" },
-        { kind: "call", name: "render", slots: [], classifies: "form" },
+        { kind: "call", name: "render", slots: [], classifies: "ui-state" },
       ],
     },
   ],
@@ -32,7 +32,7 @@ export const djangoCrispyFormsLibrary: CatalogueLibrary = {
     {
       kind: "factory",
       name: "FormHelper",
-      classifies: "form",
+      classifies: "ui-state",
       methods: [],
     },
   ],
@@ -52,7 +52,7 @@ export const wtformsLibrary: CatalogueLibrary = {
       members: [],
       methods: [
         { kind: "call", name: "validate", slots: [], makes: "validation" },
-        { kind: "call", name: "populate_obj", slots: [], classifies: "form" },
+        { kind: "call", name: "populate_obj", slots: [], classifies: "ui-state" },
       ],
     },
   ],

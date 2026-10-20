@@ -78,9 +78,9 @@ describe("the cards MobX writes", () => {
   })
 
   it("classifies the holder of each store as a store", () => {
-    expect(classificationsOf(MOBX_CLASS_STORE, "class", "CartStore")).toContain("store")
-    expect(classificationsOf(MOBX_ANNOTATED_STORE, "class", "Doubler")).toContain("store")
-    expect(classificationsOf(MOBX_OBJECT_STORE, "state", "timer")).toContain("store")
+    expect(classificationsOf(MOBX_CLASS_STORE, "class", "CartStore")).toContain("ui-state")
+    expect(classificationsOf(MOBX_ANNOTATED_STORE, "class", "Doubler")).toContain("ui-state")
+    expect(classificationsOf(MOBX_OBJECT_STORE, "state", "timer")).toContain("ui-state")
   })
 })
 
@@ -108,7 +108,7 @@ describe("the cards Valtio writes", () => {
   })
 
   it("classifies the holder as a store", () => {
-    expect(classificationsOf(VALTIO_STORE, "state", "state")).toContain("store")
+    expect(classificationsOf(VALTIO_STORE, "state", "state")).toContain("ui-state")
   })
 })
 
@@ -137,7 +137,7 @@ describe("the cards XState writes", () => {
   })
 
   it("classifies the holder as a store", () => {
-    expect(classificationsOf(XSTATE_STORE, "state", "counterStore")).toContain("store")
+    expect(classificationsOf(XSTATE_STORE, "state", "counterStore")).toContain("ui-state")
   })
 })
 
@@ -166,8 +166,8 @@ describe("the cards Effector writes", () => {
   })
 
   it("classifies the holder as a store", () => {
-    expect(classificationsOf(EFFECTOR_STORE, "root-variable", "$counter")).toContain("store")
-    expect(classificationsOf(EFFECTOR_STORE, "state", "$name")).toContain("store")
+    expect(classificationsOf(EFFECTOR_STORE, "root-variable", "$counter")).toContain("ui-state")
+    expect(classificationsOf(EFFECTOR_STORE, "state", "$name")).toContain("ui-state")
   })
 })
 
@@ -190,7 +190,7 @@ describe("the cards Nano Stores writes", () => {
   })
 
   it("classifies the holder as a store", () => {
-    expect(classificationsOf(NANOSTORES_STORE, "state", "$profile")).toContain("store")
-    expect(classificationsOf(NANOSTORES_STORE, "state", "$count")).toContain("store")
+    expect(classificationsOf(NANOSTORES_STORE, "state", "$profile")).toContain("ui-state")
+    expect(classificationsOf(NANOSTORES_STORE, "state", "$count")).toContain("ui-state")
   })
 })

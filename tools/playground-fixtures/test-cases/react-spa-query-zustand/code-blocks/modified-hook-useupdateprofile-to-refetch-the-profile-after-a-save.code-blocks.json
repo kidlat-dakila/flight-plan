@@ -1138,7 +1138,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -1312,7 +1312,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -1352,7 +1352,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -2364,12 +2364,12 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [],
         "usedByIds": [
@@ -2462,12 +2462,12 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [
           {
@@ -2592,11 +2592,11 @@
           "src/hooks/use-profile.ts#cache@15:12"
         ],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "event"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2684,10 +2684,10 @@
           "src/hooks/use-profile.ts#cache@15:12"
         ],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2774,10 +2774,10 @@
           "src/hooks/use-profile.ts#cache@15:12"
         ],
         "classifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "diffClassifications": [
-          "database-operation"
+          "database-read-write"
         ],
         "outerSymbols": [
           {
@@ -4685,8 +4685,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "form",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -4853,8 +4852,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "form",
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -6323,7 +6321,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [

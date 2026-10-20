@@ -20,7 +20,7 @@ const spanning = (lineStart: number, lineEnd: number): CodeBlock["lineOfCodeRang
 const overviewOf = (segment: Segment): ChangeOverview =>
   buildChangeOverview(prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, createViewContext()))
 
-const PRICE_OF = createCodeBlock("price-of", PRICE_PATH, { name: "priceOf", lineOfCodeRangeReference: spanning(11, 13), classifications: ["database-operation", "validation"] })
+const PRICE_OF = createCodeBlock("price-of", PRICE_PATH, { name: "priceOf", lineOfCodeRangeReference: spanning(11, 13), classifications: ["database-read-write", "validation"] })
 const FORMAT = createCodeBlock("format", PRICE_PATH, { name: "format", lineOfCodeRangeReference: spanning(14, 14), classifications: ["logic"] })
 const SUBTOTAL = createCodeBlock("subtotal", CART_PATH, { name: "subtotal", type: "component", lineOfCodeRangeReference: spanning(1, 2), classifications: ["component"] })
 
@@ -44,7 +44,7 @@ describe("buildChangeOverview", () => {
           cards: [{ id: `${CART_PATH}#component:subtotal`, label: "subtotal", typeLabel: "Component", path: CART_PATH, change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-w-subtotal" }],
         },
         {
-          classification: { key: "database-operation", label: "Database operation" },
+          classification: { key: "database-read-write", label: "Database read/write" },
           cards: [{ id: `${PRICE_PATH}#function:priceOf`, label: "priceOf", typeLabel: "Function", path: PRICE_PATH, change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-w-price-of" }],
         },
         {

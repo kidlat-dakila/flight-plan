@@ -5,9 +5,9 @@ const changed = (...diffClassifications: CodeBlockClassification[]) => ({ diffCl
 
 describe("spotlightClassificationsOf", () => {
   it("gives the spotlight classifications what changed in the blocks earns, in the order of the hierarchy", () => {
-    const blocks = [changed("validation"), changed("component", "database-operation")]
+    const blocks = [changed("validation"), changed("component", "database-read-write")]
 
-    expect(spotlightClassificationsOf(blocks, ["validation", "database-operation", "auth"])).toStrictEqual(["database-operation", "validation"])
+    expect(spotlightClassificationsOf(blocks, ["validation", "database-read-write", "security"])).toStrictEqual(["database-read-write", "validation"])
   })
 
   it("reads what changed, not what the block is", () => {
@@ -18,23 +18,23 @@ describe("spotlightClassificationsOf", () => {
 describe("isInSpotlight", () => {
   it("puts a block in the spotlight when one of its changed classifications is", () => {
     expect(isInSpotlight([changed("page")], ["page"])).toBe(true)
-    expect(isInSpotlight([changed("page")], ["auth"])).toBe(false)
+    expect(isInSpotlight([changed("page")], ["security"])).toBe(false)
     expect(isInSpotlight([changed("page")], [])).toBe(false)
   })
 })
 
 describe("spotlightViewOf", () => {
   it("names the matched classifications with their labels", () => {
-    expect(spotlightViewOf([changed("database-operation", "request")], ["request", "database-operation"])).toStrictEqual({
+    expect(spotlightViewOf([changed("database-read-write", "api-request")], ["api-request", "database-read-write"])).toStrictEqual({
       label: "Spotlight",
       classifications: [
-        { key: "database-operation", label: "Database operation" },
-        { key: "request", label: "Network request" },
+        { key: "database-read-write", label: "Database read/write" },
+        { key: "api-request", label: "API request" },
       ],
     })
   })
 
   it("gives nothing outside the spotlight", () => {
-    expect(spotlightViewOf([changed("logic")], ["auth"])).toBeNull()
+    expect(spotlightViewOf([changed("logic")], ["security"])).toBeNull()
   })
 })

@@ -1396,7 +1396,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -1570,7 +1570,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -1610,7 +1610,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -2364,7 +2364,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -2402,7 +2402,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -2991,7 +2991,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -4469,7 +4469,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4563,7 +4563,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4688,7 +4688,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4727,7 +4727,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -4801,7 +4801,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -6950,8 +6950,7 @@
         "diffSourceIds": [],
         "classifications": [
           "component",
-          "form",
-          "state",
+          "ui-state",
           "effect"
         ],
         "diffClassifications": [],
@@ -7104,8 +7103,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "form",
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -8568,7 +8566,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -9497,7 +9495,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -9593,7 +9591,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -9718,7 +9716,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -9757,7 +9755,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -9831,7 +9829,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],

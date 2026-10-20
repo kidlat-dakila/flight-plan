@@ -71,35 +71,30 @@ export const CODE_BLOCK_CLASSIFICATIONS = [
   "webhook",
   "server-action",
   "api-route",
-  "realtime",
-  "queue-consumer",
+  "websocket",
+  "messaging",
   "job",
-  "command",
-  "database-operation",
+  "cli-command",
+  "database-read-write",
   "data-model",
   "third-party-integration",
-  "request",
-  "form",
+  "api-request",
   "validation",
-  "store",
-  "state",
-  "auth",
+  "ui-state",
   "security",
   "file-io",
   "process-execution",
-  "publish",
   "navigation",
   "error-handling",
   "effect",
   "event",
-  "context-and-wiring",
+  "app-setup",
   "feature-flag",
   "config",
   "storage",
   "telemetry",
   "i18n",
   "styling",
-  "type",
   "file",
   "logic",
 ] as const
@@ -116,7 +111,7 @@ export type DiffKind
     | "event"
     | "route"
     | "data"
-    | "auth"
+    | "security"
     | "type"
     | "file"
     | "logic"

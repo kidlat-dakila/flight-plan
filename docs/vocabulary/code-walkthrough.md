@@ -151,7 +151,7 @@ The page data carries them on each waypoint and each root code block of a File S
 | `coreChangeLabel` | `WaypointView`, `RootBlockView` | "Core change", or `null` |
 | `coreChange` | `WaypointView` | The agent's reason, or `null` when it gave none |
 
-Spotlight reads what changed, not what the block is: a component in which only a database write changed is in the spotlight of a user who chose Database operation, and not of one who chose Component. `spotlightViewOf` and `isInSpotlight` in `packages/codegraph/src/code-blocks/spotlight.ts` compute it from any blocks, and the backend passes the spotlight to the codegraph in the `ReviewViewContext`.
+Spotlight reads what changed, not what the block is: a component in which only a database write changed is in the spotlight of a user who chose Database read/write, and not of one who chose Component. `spotlightViewOf` and `isInSpotlight` in `packages/codegraph/src/code-blocks/spotlight.ts` compute it from any blocks, and the backend passes the spotlight to the codegraph in the `ReviewViewContext`.
 
 The page draws both side by side, Core change first: the Core change mark with its label, then the [Spotlight Mark](../DESIGN.md#spotlight-mark) with "Spotlight" and the matched classifications. A waypoint shows them in its box and its card, and a root code block on its first line. They replace the Needs Attention mark, which no view draws any more.
 

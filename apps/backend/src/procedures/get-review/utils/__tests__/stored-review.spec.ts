@@ -1,7 +1,7 @@
 import { parse, stringify } from "devalue"
 import { HELD_STOCK_ARTIFACT } from "@/procedures/get-review/utils/mocks/held-stock"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
-import { reviewArtifactSchema, type ReviewArtifact, type TraceDiagram } from "@flightplan/configurations"
+import { reviewArtifactSchema, type CodeBlock, type ReviewArtifact, type TraceDiagram } from "@flightplan/configurations"
 
 const SCAFFOLD: ReviewScaffold = {
   artifact: HELD_STOCK_ARTIFACT,
@@ -34,6 +34,11 @@ const withRequirement = (value: unknown, isRequired: boolean): unknown => {
 
 const withEveryRequirement = (artifact: ReviewArtifact, isRequired: boolean): ReviewArtifact =>
   reviewArtifactSchema.parse(withRequirement(artifact, isRequired))
+
+const isStored = (value: unknown): value is Readonly<Record<string, unknown>> => typeof value === "object" && value !== null
+
+const firstTraceBlockOf = (artifact: ReviewArtifact): CodeBlock | undefined =>
+  artifact.segments.flatMap((segment) => segment.traceDiagram?.traceNodes ?? [])[0]?.codeBlocks[0]
 
 const BLOCK_LABELS_AFTER_A_FIELD = /,"blockLabels":\d+/g
 const BLOCK_LABELS_BEFORE_A_FIELD = /"blockLabels":\d+,/g
@@ -123,6 +128,15 @@ describe("stored review", () => {
 
     expect(older).toContain("\"needsAttention\"")
     expect(parseStoredReview(older)?.artifact).toStrictEqual(HELD_STOCK_ARTIFACT)
+  })
+
+  it("reads the classifications of a review saved before they were renamed and merged under their current names", () => {
+    const older: unknown = parse(formatStoredReview(SCAFFOLD))
+    const olderBlock = isStored(older) ? firstTraceBlockOf(reviewArtifactSchema.parse(older.artifact)) : undefined
+    Object.assign(olderBlock ?? {}, { classifications: ["state", "store", "auth", "logic"], diffClassifications: ["form"] })
+    const read = parseStoredReview(stringify(older))
+
+    expect(firstTraceBlockOf(read?.artifact ?? SCAFFOLD.artifact)).toMatchObject({ classifications: ["ui-state", "security", "logic"], diffClassifications: ["ui-state"] })
   })
 
   it("has no answer for text that is not a stored review", () => {

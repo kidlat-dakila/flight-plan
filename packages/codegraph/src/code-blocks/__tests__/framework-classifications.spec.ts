@@ -113,12 +113,12 @@ describe("the classifications a framework gives", () => {
   it("classifies a React context, a NestJS module and the call that starts a server as context and wiring", () => {
     const group = groupOf({ "src/theme.tsx": REACT_THEME, "src/app.module.ts": NEST_MODULE, "src/main.ts": NEST_MAIN, "src/server.ts": EXPRESS_SERVER, "app.py": FLASK_APP })
 
-    expect(blockNamed(group, "root-variable", "ThemeContext").classifications).toStrictEqual(["context-and-wiring"])
-    expect(blockNamed(group, "component", "ThemeRoot").classifications).toStrictEqual(["component", "context-and-wiring"])
-    expect(blockNamed(group, "class", "AppModule").classifications).toStrictEqual(["context-and-wiring"])
-    expect(blockNamed(group, "call", "app.listen").classifications).toStrictEqual(["context-and-wiring"])
-    expect(classificationsIn(group, "src/server.ts")).toContain("context-and-wiring")
-    expect(blockNamed(group, "call", "app.run").classifications).toStrictEqual(["context-and-wiring"])
+    expect(blockNamed(group, "root-variable", "ThemeContext").classifications).toStrictEqual(["app-setup"])
+    expect(blockNamed(group, "component", "ThemeRoot").classifications).toStrictEqual(["component", "app-setup"])
+    expect(blockNamed(group, "class", "AppModule").classifications).toStrictEqual(["app-setup"])
+    expect(blockNamed(group, "call", "app.listen").classifications).toStrictEqual(["app-setup"])
+    expect(classificationsIn(group, "src/server.ts")).toContain("app-setup")
+    expect(blockNamed(group, "call", "app.run").classifications).toStrictEqual(["app-setup"])
   })
 
   it("puts page above api-route for a view that renders a template", () => {

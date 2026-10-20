@@ -62,7 +62,7 @@ Two more properties follow from that goal:
 | **Cluster** | The import graphs that share a file, joined into one. A cluster is one connected part of one language. |
 | **Group** | The files of a cluster without its tests and stories, split again where only they joined it. A changed file no cluster holds, a changed test among them, is a group of its own. See [The group](codegraph/code-blocks.md#the-group). |
 | **Code block** | One piece of a file a changed line can belong to: a function, a condition, a render, an event. See [Code blocks](codegraph/code-blocks.md). |
-| **Classification** | What a code block is for, read from the code it holds and from where its file is: a page, a database operation, a webhook, a test. Its first is its primary. See [Classifications](codegraph/classifications.md). |
+| **Classification** | What a code block is for, read from the code it holds and from where its file is: a page, a database read or write, a webhook, a test. Its first is its primary. See [Classifications](codegraph/classifications.md). |
 | **Diff block** | The innermost block around a change. |
 | **Symbol** | One use of a name a block does not declare itself, with what the name leads to. See [Symbols](codegraph/symbols.md). |
 | **Chain** | A path from the block that starts it, through the blocks it runs, to a changed block. See [Chains](codegraph/chains.md). |

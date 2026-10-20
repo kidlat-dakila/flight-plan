@@ -96,7 +96,7 @@ describe("saveSettings", () => {
 
   it("saves the review preferences and the default configuration together", async () => {
     const context = createSetupContext(COMPLETE_SETUP)
-    const preferences = { ...PREFERENCES, spotlight: ["auth" as const], isSegmented: false }
+    const preferences = { ...PREFERENCES, spotlight: ["security" as const], isSegmented: false }
 
     await expect(saveSettings({ section: "review", configurationId: "onboardee", preferences }, context)).resolves.toStrictEqual({
       kind: "saved",
@@ -104,7 +104,7 @@ describe("saveSettings", () => {
     })
     await expect(context.setupStore.read()).resolves.toMatchObject({
       defaultConfiguration: "onboardee",
-      reviewPreferences: { spotlight: ["auth"], isSegmented: false },
+      reviewPreferences: { spotlight: ["security"], isSegmented: false },
     })
   })
 

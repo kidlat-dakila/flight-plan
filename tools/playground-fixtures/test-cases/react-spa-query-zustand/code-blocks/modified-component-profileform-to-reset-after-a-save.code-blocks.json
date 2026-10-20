@@ -539,8 +539,7 @@
           "ui",
           "state",
           "effect",
-          "event",
-          "logic"
+          "event"
         ],
         "renderRootBlockIds": [
           "src/routes/account/components/ProfileForm.tsx#render-root@18:3"
@@ -1343,7 +1342,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -1517,7 +1516,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -1557,7 +1556,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "request"
+          "api-request"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -2309,7 +2308,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [],
@@ -2347,7 +2346,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -2936,7 +2935,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -4416,7 +4415,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4512,7 +4511,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4637,7 +4636,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect",
           "event"
         ],
@@ -4676,7 +4675,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -4750,7 +4749,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "database-operation",
+          "database-read-write",
           "effect"
         ],
         "diffClassifications": [],
@@ -6882,14 +6881,12 @@
         ],
         "classifications": [
           "component",
-          "form",
-          "state",
+          "ui-state",
           "effect",
           "event"
         ],
         "diffClassifications": [
-          "form",
-          "state",
+          "ui-state",
           "effect",
           "event"
         ],
@@ -7072,12 +7069,10 @@
           "src/routes/account/components/ProfileForm.tsx#state@9:3"
         ],
         "classifications": [
-          "form",
-          "state"
+          "ui-state"
         ],
         "diffClassifications": [
-          "form",
-          "state"
+          "ui-state"
         ],
         "outerSymbols": [
           {
@@ -9043,7 +9038,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "type"
+          "data-model"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -9634,15 +9629,13 @@
       "ui",
       "state",
       "effect",
-      "event",
-      "logic"
+      "event"
     ],
     "chainContains": [
       "ui",
       "state",
       "effect",
-      "event",
-      "logic"
+      "event"
     ],
     "diffChainIds": [
       "src/router.tsx#effect-callback@14:26",

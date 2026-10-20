@@ -1,7 +1,7 @@
 import type { StoredCodeBlock } from "./stored-types"
 import type { CodeBlockClassification, CodeBlockType, DiffKind } from "./types"
 
-const DIFF_KINDS: readonly DiffKind[] = ["ui", "state", "effect", "event", "route", "data", "auth", "type", "file", "logic"]
+const DIFF_KINDS: readonly DiffKind[] = ["ui", "state", "effect", "event", "route", "data", "security", "type", "file", "logic"]
 
 const KIND_BY_CLASSIFICATION: ReadonlyMap<CodeBlockClassification, DiffKind> = new Map<CodeBlockClassification, DiffKind>([
   ["page", "ui"],
@@ -9,18 +9,20 @@ const KIND_BY_CLASSIFICATION: ReadonlyMap<CodeBlockClassification, DiffKind> = n
   ["api-route", "route"],
   ["webhook", "route"],
   ["server-action", "route"],
-  ["database-operation", "data"],
-  ["state", "state"],
-  ["store", "state"],
+  ["database-read-write", "data"],
+  ["ui-state", "state"],
   ["effect", "effect"],
   ["event", "event"],
-  ["auth", "auth"],
-  ["type", "type"],
+  ["security", "security"],
   ["file", "file"],
 ])
 
 const CALLABLE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component", "method"])
 const RENDER_ROOT: CodeBlockType = "render-root"
+const TYPE_DECLARATION: CodeBlockType = "type-declaration"
+const DELETED: CodeBlockType = "deleted"
+const TYPE_KIND: DiffKind = "type"
+const SHAPE_CLASSIFICATION: CodeBlockClassification = "data-model"
 const INTERFACE_KIND: DiffKind = "ui"
 const OTHER_KIND: DiffKind = "logic"
 const RUNNING_NOTHING: ReadonlySet<DiffKind> = new Set<DiffKind>(["type", "file"])
@@ -35,6 +37,11 @@ export const diffKindsOf = (classifications: readonly CodeBlockClassification[])
   const found = new Set(classifications.map(diffKindOf))
   return DIFF_KINDS.filter((kind) => found.has(kind))
 }
+
+const isTypeDeclaration = ({ type, deletedType }: StoredCodeBlock): boolean => (type === DELETED ? deletedType : type) === TYPE_DECLARATION
+
+const diffKindOfOwn = (block: StoredCodeBlock, classification: CodeBlockClassification): DiffKind =>
+  classification === SHAPE_CLASSIFICATION && isTypeDeclaration(block) ? TYPE_KIND : diffKindOf(classification)
 
 const withAncestors = (block: StoredCodeBlock, blockById: BlockById): StoredCodeBlock[] => {
   const parent = block.parentBlockId === null ? undefined : blockById.get(block.parentBlockId)
@@ -54,7 +61,7 @@ interface KindReading {
 
 const kindsOf = (block: StoredCodeBlock, { componentIds, blockById, ownClassificationsOf }: KindReading): DiffKind[] => {
   const isInComponent = withAncestors(block, blockById).some((holder) => componentIds.has(holder.id))
-  const kinds = [...(isInComponent ? [INTERFACE_KIND] : []), ...ownClassificationsOf(block).map(diffKindOf)]
+  const kinds = [...(isInComponent ? [INTERFACE_KIND] : []), ...ownClassificationsOf(block).map((classification) => diffKindOfOwn(block, classification))]
   return kinds.length === 0 ? [OTHER_KIND] : kinds
 }
 
