@@ -244,3 +244,158 @@ export const voluptuousFixtures: readonly PatternFixture[] = [
     ],
   },
 ]
+
+const PYDANTIC = "Pydantic"
+
+export const pydanticFixtures: readonly PatternFixture[] = [
+  {
+    library: PYDANTIC,
+    patternKey: "class:BaseModel:*",
+    matches: [
+      "from pydantic import BaseModel\n\nclass Order(BaseModel):\n    quantity: int",
+    ],
+    rejects: [
+      "class BaseModel:\n    pass\n\nclass Order(BaseModel):\n    quantity: int",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "class:BaseModel:*>call:model_validate:*",
+    matches: [
+      "from pydantic import BaseModel\n\nclass Order(BaseModel):\n    quantity: int\n\norder = Order.model_validate({\"quantity\": 2})",
+    ],
+    rejects: [
+      "class BaseModel:\n    pass\n\nclass Order(BaseModel):\n    quantity: int\n\norder = Order.model_validate({\"quantity\": 2})",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "class:BaseModel:*>call:model_validate_json:*",
+    matches: [
+      "from pydantic import BaseModel\n\nclass Order(BaseModel):\n    quantity: int\n\norder = Order.model_validate_json('{\"quantity\": 2}')",
+    ],
+    rejects: [
+      "class BaseModel:\n    pass\n\nclass Order(BaseModel):\n    quantity: int\n\norder = Order.model_validate_json('{\"quantity\": 2}')",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "class:BaseModel:*>call:model_validate_strings:*",
+    matches: [
+      "from pydantic import BaseModel\n\nclass Order(BaseModel):\n    quantity: int\n\norder = Order.model_validate_strings({\"quantity\": \"2\"})",
+    ],
+    rejects: [
+      "class BaseModel:\n    pass\n\nclass Order(BaseModel):\n    quantity: int\n\norder = Order.model_validate_strings({\"quantity\": \"2\"})",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "class:BaseModel:*>call:parse_obj:*",
+    matches: [
+      "from pydantic import BaseModel\n\nclass Order(BaseModel):\n    quantity: int\n\norder = Order.parse_obj({\"quantity\": 2})",
+    ],
+    rejects: [
+      "class BaseModel:\n    pass\n\nclass Order(BaseModel):\n    quantity: int\n\norder = Order.parse_obj({\"quantity\": 2})",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "class:BaseModel:*>call:parse_raw:*",
+    matches: [
+      "from pydantic import BaseModel\n\nclass Order(BaseModel):\n    quantity: int\n\norder = Order.parse_raw('{\"quantity\": 2}')",
+    ],
+    rejects: [
+      "class BaseModel:\n    pass\n\nclass Order(BaseModel):\n    quantity: int\n\norder = Order.parse_raw('{\"quantity\": 2}')",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "factory:TypeAdapter:*",
+    matches: [
+      "from pydantic import TypeAdapter\n\nadapter = TypeAdapter(list[int])",
+    ],
+    rejects: [
+      "def TypeAdapter(*parts, **options):\n    return parts\n\nadapter = TypeAdapter(list[int])",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "factory:TypeAdapter:*>call:validate_python:*",
+    matches: [
+      "from pydantic import TypeAdapter\n\nadapter = TypeAdapter(list[int])\n\nnumbers = adapter.validate_python([1, \"2\"])",
+    ],
+    rejects: [
+      "def TypeAdapter(*parts, **options):\n    return parts\n\nadapter = TypeAdapter(list[int])\n\nnumbers = adapter.validate_python([1, \"2\"])",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "factory:TypeAdapter:*>call:validate_json:*",
+    matches: [
+      "from pydantic import TypeAdapter\n\nadapter = TypeAdapter(list[int])\n\nnumbers = adapter.validate_json('[1, 2]')",
+    ],
+    rejects: [
+      "def TypeAdapter(*parts, **options):\n    return parts\n\nadapter = TypeAdapter(list[int])\n\nnumbers = adapter.validate_json('[1, 2]')",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "factory:TypeAdapter:*>call:validate_strings:*",
+    matches: [
+      "from pydantic import TypeAdapter\n\nadapter = TypeAdapter(list[int])\n\nnumbers = adapter.validate_strings([\"1\", \"2\"])",
+    ],
+    rejects: [
+      "def TypeAdapter(*parts, **options):\n    return parts\n\nadapter = TypeAdapter(list[int])\n\nnumbers = adapter.validate_strings([\"1\", \"2\"])",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "decorator:field_validator:*",
+    matches: [
+      "from pydantic import BaseModel, field_validator\n\nclass Order(BaseModel):\n    quantity: int\n\n    @field_validator(\"quantity\")\n    @classmethod\n    def check_quantity(cls, value):\n        return value",
+    ],
+    rejects: [
+      "def field_validator(*parts, **options):\n    return lambda function: function\n\nclass Order:\n    quantity: int\n\n    @field_validator(\"quantity\")\n    @classmethod\n    def check_quantity(cls, value):\n        return value",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "decorator:model_validator:*",
+    matches: [
+      "from pydantic import BaseModel, model_validator\n\nclass Order(BaseModel):\n    quantity: int\n\n    @model_validator(mode=\"after\")\n    def check_order(self):\n        return self",
+    ],
+    rejects: [
+      "def model_validator(*parts, **options):\n    return lambda function: function\n\nclass Order:\n    quantity: int\n\n    @model_validator(mode=\"after\")\n    def check_order(self):\n        return self",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "decorator:validator:*",
+    matches: [
+      "from pydantic import BaseModel, validator\n\nclass Order(BaseModel):\n    quantity: int\n\n    @validator(\"quantity\")\n    def check_quantity(cls, value):\n        return value",
+    ],
+    rejects: [
+      "def validator(*parts, **options):\n    return lambda function: function\n\nclass Order:\n    quantity: int\n\n    @validator(\"quantity\")\n    def check_quantity(cls, value):\n        return value",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "decorator:root_validator:*",
+    matches: [
+      "from pydantic import BaseModel, root_validator\n\nclass Order(BaseModel):\n    quantity: int\n\n    @root_validator\n    def check_order(cls, values):\n        return values",
+    ],
+    rejects: [
+      "def root_validator(*parts, **options):\n    return lambda function: function\n\nclass Order:\n    quantity: int\n\n    @root_validator\n    def check_order(cls, values):\n        return values",
+    ],
+  },
+  {
+    library: PYDANTIC,
+    patternKey: "decorator:validate_call:*",
+    matches: [
+      "from pydantic import validate_call\n\n@validate_call\ndef repeat(text: str, count: int) -> str:\n    return text * count",
+    ],
+    rejects: [
+      "def validate_call(function):\n    return function\n\n@validate_call\ndef repeat(text: str, count: int) -> str:\n    return text * count",
+    ],
+  },
+]

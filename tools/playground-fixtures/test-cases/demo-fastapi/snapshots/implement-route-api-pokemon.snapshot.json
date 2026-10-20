@@ -1774,6 +1774,7 @@
                 "src/pokedex/pokemon/service.py#data-fetch@11:13",
                 "src/pokedex/pokemon/service.py#condition@12:5",
                 "src/pokedex/pokemon/service.py#external-value@13:9",
+                "src/pokedex/pokemon/service.py#data-fetch@14:17",
                 "src/pokedex/pokemon/service.py#root-argument-value@14:17"
               ],
               "diffCodeBlockIds": [
@@ -1784,6 +1785,7 @@
                 "src/pokedex/pokemon/service.py#data-fetch@11:13",
                 "src/pokedex/pokemon/service.py#condition@12:5",
                 "src/pokedex/pokemon/service.py#external-value@13:9",
+                "src/pokedex/pokemon/service.py#data-fetch@14:17",
                 "src/pokedex/pokemon/service.py#root-argument-value@14:17"
               ],
               "children": [],
@@ -1791,6 +1793,10 @@
                 {
                   "label": "The Pokemon are loaded, sorted by name",
                   "codeBlockId": "src/pokedex/pokemon/service.py#data-fetch@11:13"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/pokedex/pokemon/service.py#data-fetch@14:17"
                 }
               ],
               "blockLabels": [
@@ -1818,6 +1824,7 @@
                 "src/pokedex/pokemon/service.py#root-argument-value@17:18",
                 "src/pokedex/pokemon/service.py#root-argument-value@17:36",
                 "src/pokedex/pokemon/service.py#external-value@18:5",
+                "src/pokedex/pokemon/service.py#data-fetch@18:15",
                 "src/pokedex/pokemon/service.py#root-argument-value@18:15",
                 "src/pokedex/pokemon/service.py#condition@19:5",
                 "src/pokedex/pokemon/service.py#throw@20:9"
@@ -1827,12 +1834,18 @@
                 "src/pokedex/pokemon/service.py#root-argument-value@17:18",
                 "src/pokedex/pokemon/service.py#root-argument-value@17:36",
                 "src/pokedex/pokemon/service.py#external-value@18:5",
+                "src/pokedex/pokemon/service.py#data-fetch@18:15",
                 "src/pokedex/pokemon/service.py#root-argument-value@18:15",
                 "src/pokedex/pokemon/service.py#condition@19:5",
                 "src/pokedex/pokemon/service.py#throw@20:9"
               ],
               "children": [],
-              "triggerLabels": [],
+              "triggerLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/pokedex/pokemon/service.py#data-fetch@18:15"
+                }
+              ],
               "blockLabels": [
                 {
                   "label": "Loads the row of the id, or None",
@@ -1866,11 +1879,11 @@
                 "src/pokedex/pokemon/service.py#call@26:9",
                 "src/pokedex/pokemon/service.py#external-value@27:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@27:25",
-                "src/pokedex/pokemon/service.py#call@28:5",
+                "src/pokedex/pokemon/service.py#data@28:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@28:5",
-                "src/pokedex/pokemon/service.py#call@29:5",
+                "src/pokedex/pokemon/service.py#data@29:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@29:5",
-                "src/pokedex/pokemon/service.py#call@30:5",
+                "src/pokedex/pokemon/service.py#data@30:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@30:5"
               ],
               "diffCodeBlockIds": [
@@ -1890,11 +1903,11 @@
                 "src/pokedex/pokemon/service.py#call@26:9",
                 "src/pokedex/pokemon/service.py#external-value@27:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@27:25",
-                "src/pokedex/pokemon/service.py#call@28:5",
+                "src/pokedex/pokemon/service.py#data@28:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@28:5",
-                "src/pokedex/pokemon/service.py#call@29:5",
+                "src/pokedex/pokemon/service.py#data@29:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@29:5",
-                "src/pokedex/pokemon/service.py#call@30:5",
+                "src/pokedex/pokemon/service.py#data@30:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@30:5"
               ],
               "children": [],
@@ -1917,8 +1930,16 @@
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@27:5"
                 },
                 {
-                  "label": "Inserts the row, commits, and reloads it",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#call@28:5"
+                  "label": null,
+                  "codeBlockId": "src/pokedex/pokemon/service.py#data@28:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/pokedex/pokemon/service.py#data@29:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/pokedex/pokemon/service.py#data@30:5"
                 }
               ]
             },
@@ -1940,9 +1961,9 @@
                 "src/pokedex/pokemon/service.py#loop@39:5",
                 "src/pokedex/pokemon/service.py#variable@39:9",
                 "src/pokedex/pokemon/service.py#call@40:9",
-                "src/pokedex/pokemon/service.py#call@41:5",
+                "src/pokedex/pokemon/service.py#data@41:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@41:5",
-                "src/pokedex/pokemon/service.py#call@42:5",
+                "src/pokedex/pokemon/service.py#data@42:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@42:5"
               ],
               "diffCodeBlockIds": [
@@ -1958,9 +1979,9 @@
                 "src/pokedex/pokemon/service.py#loop@39:5",
                 "src/pokedex/pokemon/service.py#variable@39:9",
                 "src/pokedex/pokemon/service.py#call@40:9",
-                "src/pokedex/pokemon/service.py#call@41:5",
+                "src/pokedex/pokemon/service.py#data@41:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@41:5",
-                "src/pokedex/pokemon/service.py#call@42:5",
+                "src/pokedex/pokemon/service.py#data@42:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@42:5"
               ],
               "children": [],
@@ -1987,8 +2008,12 @@
                   "codeBlockId": "src/pokedex/pokemon/service.py#loop@39:5"
                 },
                 {
-                  "label": "Commits the row and reloads it",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#call@41:5"
+                  "label": null,
+                  "codeBlockId": "src/pokedex/pokemon/service.py#data@41:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/pokedex/pokemon/service.py#data@42:5"
                 }
               ]
             },
@@ -2002,9 +2027,9 @@
                 "src/pokedex/pokemon/service.py#root-argument-value@46:20",
                 "src/pokedex/pokemon/service.py#root-argument-value@46:38",
                 "src/pokedex/pokemon/service.py#external-value@47:5",
-                "src/pokedex/pokemon/service.py#call@48:5",
+                "src/pokedex/pokemon/service.py#data@48:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@48:5",
-                "src/pokedex/pokemon/service.py#call@49:5",
+                "src/pokedex/pokemon/service.py#data@49:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@49:5"
               ],
               "diffCodeBlockIds": [
@@ -2012,9 +2037,9 @@
                 "src/pokedex/pokemon/service.py#root-argument-value@46:20",
                 "src/pokedex/pokemon/service.py#root-argument-value@46:38",
                 "src/pokedex/pokemon/service.py#external-value@47:5",
-                "src/pokedex/pokemon/service.py#call@48:5",
+                "src/pokedex/pokemon/service.py#data@48:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@48:5",
-                "src/pokedex/pokemon/service.py#call@49:5",
+                "src/pokedex/pokemon/service.py#data@49:5",
                 "src/pokedex/pokemon/service.py#root-argument-value@49:5"
               ],
               "children": [],
@@ -2025,8 +2050,12 @@
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@47:5"
                 },
                 {
-                  "label": "Deletes the row and commits",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#call@48:5"
+                  "label": null,
+                  "codeBlockId": "src/pokedex/pokemon/service.py#data@48:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/pokedex/pokemon/service.py#data@49:5"
                 }
               ]
             }
@@ -2414,6 +2443,7 @@
                     "src/pokedex/pokemon/service.py#data-fetch@11:13",
                     "src/pokedex/pokemon/service.py#condition@12:5",
                     "src/pokedex/pokemon/service.py#external-value@13:9",
+                    "src/pokedex/pokemon/service.py#data-fetch@14:17",
                     "src/pokedex/pokemon/service.py#root-argument-value@14:17"
                   ],
                   "children": []
@@ -2436,6 +2466,7 @@
                     "src/pokedex/pokemon/service.py#root-argument-value@17:18",
                     "src/pokedex/pokemon/service.py#root-argument-value@17:36",
                     "src/pokedex/pokemon/service.py#external-value@18:5",
+                    "src/pokedex/pokemon/service.py#data-fetch@18:15",
                     "src/pokedex/pokemon/service.py#root-argument-value@18:15",
                     "src/pokedex/pokemon/service.py#condition@19:5",
                     "src/pokedex/pokemon/service.py#throw@20:9"
@@ -2464,11 +2495,11 @@
                     "src/pokedex/pokemon/service.py#call@26:9",
                     "src/pokedex/pokemon/service.py#external-value@27:5",
                     "src/pokedex/pokemon/service.py#root-argument-value@27:25",
-                    "src/pokedex/pokemon/service.py#call@28:5",
+                    "src/pokedex/pokemon/service.py#data@28:5",
                     "src/pokedex/pokemon/service.py#root-argument-value@28:5",
-                    "src/pokedex/pokemon/service.py#call@29:5",
+                    "src/pokedex/pokemon/service.py#data@29:5",
                     "src/pokedex/pokemon/service.py#root-argument-value@29:5",
-                    "src/pokedex/pokemon/service.py#call@30:5",
+                    "src/pokedex/pokemon/service.py#data@30:5",
                     "src/pokedex/pokemon/service.py#root-argument-value@30:5"
                   ],
                   "children": [
@@ -2511,21 +2542,55 @@
                     },
                     {
                       "id": "w18.3",
-                      "title": "Added the insert of the new row",
-                      "declaration": "create_pokemon › session.add, session.commit +1",
-                      "reading": "The author added `session.add()`, `session.commit()` and `session.refresh()`, so the row is in the database and its `id` is set when [`add_pokemon()` returns it](code:src/pokedex/pokemon/routes.py#L22).",
+                      "title": null,
+                      "declaration": "create_pokemon › add",
+                      "reading": "",
                       "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 28,
+                        "lineEnd": 28
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@24:1",
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/service.py#data@28:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w18.4",
+                      "title": null,
+                      "declaration": "create_pokemon › commit",
+                      "reading": "",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 29,
+                        "lineEnd": 29
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@24:1",
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/service.py#data@29:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w18.5",
+                      "title": null,
+                      "declaration": "create_pokemon › refresh",
+                      "reading": "",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 30,
                         "lineEnd": 30
                       },
                       "category": "statement",
                       "traceNodeId": "src/pokedex/pokemon/service.py#function@24:1",
                       "codeBlockIds": [
-                        "src/pokedex/pokemon/service.py#call@28:5",
-                        "src/pokedex/pokemon/service.py#call@29:5",
-                        "src/pokedex/pokemon/service.py#call@30:5"
+                        "src/pokedex/pokemon/service.py#data@30:5"
                       ],
                       "children": []
                     }
@@ -2557,9 +2622,9 @@
                     "src/pokedex/pokemon/service.py#loop@39:5",
                     "src/pokedex/pokemon/service.py#variable@39:9",
                     "src/pokedex/pokemon/service.py#call@40:9",
-                    "src/pokedex/pokemon/service.py#call@41:5",
+                    "src/pokedex/pokemon/service.py#data@41:5",
                     "src/pokedex/pokemon/service.py#root-argument-value@41:5",
-                    "src/pokedex/pokemon/service.py#call@42:5",
+                    "src/pokedex/pokemon/service.py#data@42:5",
                     "src/pokedex/pokemon/service.py#root-argument-value@42:5"
                   ],
                   "children": [
@@ -2640,20 +2705,37 @@
                     },
                     {
                       "id": "w19.5",
-                      "title": "Added the save of the changed row",
-                      "declaration": "update_pokemon › session.commit, session.refresh",
-                      "reading": "The author added `session.commit()` and `session.refresh()`, so the changes are in the database and [`edit_pokemon()` returns the row](code:src/pokedex/pokemon/routes.py#L27) as it is stored.",
+                      "title": null,
+                      "declaration": "update_pokemon › commit",
+                      "reading": "",
                       "coreChange": null,
                       "findings": [],
                       "range": {
                         "lineStart": 41,
+                        "lineEnd": 41
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/pokedex/pokemon/service.py#function@34:1",
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/service.py#data@41:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w19.6",
+                      "title": null,
+                      "declaration": "update_pokemon › refresh",
+                      "reading": "",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 42,
                         "lineEnd": 42
                       },
                       "category": "statement",
                       "traceNodeId": "src/pokedex/pokemon/service.py#function@34:1",
                       "codeBlockIds": [
-                        "src/pokedex/pokemon/service.py#call@41:5",
-                        "src/pokedex/pokemon/service.py#call@42:5"
+                        "src/pokedex/pokemon/service.py#data@42:5"
                       ],
                       "children": []
                     }
@@ -2677,9 +2759,9 @@
                     "src/pokedex/pokemon/service.py#root-argument-value@46:20",
                     "src/pokedex/pokemon/service.py#root-argument-value@46:38",
                     "src/pokedex/pokemon/service.py#external-value@47:5",
-                    "src/pokedex/pokemon/service.py#call@48:5",
+                    "src/pokedex/pokemon/service.py#data@48:5",
                     "src/pokedex/pokemon/service.py#root-argument-value@48:5",
-                    "src/pokedex/pokemon/service.py#call@49:5",
+                    "src/pokedex/pokemon/service.py#data@49:5",
                     "src/pokedex/pokemon/service.py#root-argument-value@49:5"
                   ],
                   "children": []

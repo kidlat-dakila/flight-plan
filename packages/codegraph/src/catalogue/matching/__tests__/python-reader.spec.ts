@@ -31,8 +31,8 @@ describe("a name the file never binds", () => {
     expect(bindingOfCallee(lines("def open(path):", "    return path", "", "open(\"report.csv\")"), "open")).toBeNull()
   })
 
-  it("does not come from builtins when a parameter binds it", () => {
-    expect(bindingOfCallee(lines("def read_report(open):", "    return open(\"report.csv\")"), "open")).toBeNull()
+  it("comes from the parameter that binds it, not from builtins", () => {
+    expect(bindingOfCallee(lines("def read_report(path, open):", "    return open(path)"), "open")).toMatchObject({ kind: "parameter", position: 1 })
   })
 
   it("does not come from builtins when a loop binds it", () => {

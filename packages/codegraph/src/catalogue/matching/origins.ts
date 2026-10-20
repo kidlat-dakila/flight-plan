@@ -3,7 +3,7 @@ import type { SyntaxNode } from "@/ast-graph/parser"
 import { patternKeyOf } from "@/catalogue/pattern-keys"
 import type { CalledValue, CallPattern, CatalogueLibrary, CataloguePattern, ClassPattern, FactoryPattern, MethodPattern, SlotPosition } from "@/catalogue/types"
 import { nodesAt } from "./places"
-import type { Binding, SyntaxReader } from "./syntax-reader"
+import type { Binding, DeclaredMember, ParameterBinding, SyntaxReader } from "./syntax-reader"
 
 export interface ExportOrigin {
   readonly kind: "export"
@@ -216,14 +216,17 @@ function originOfType(type: SyntaxNode | null, context: OriginContext, depth: nu
   return origin?.kind === "export" ? madeFor(origin, context, isMadeFor) : null
 }
 
-function originOfParameter(holder: SyntaxNode, context: OriginContext, depth: number): Origin | null {
-  return originOfHandedFunction(holder, context, depth)
-    ?? originOfType(context.reader.parameterTypeOf(holder), context, depth, isMakingType)
-    ?? originOfType(context.reader.functionTypeOf(holder), context, depth, isParameterOfType)
+const FIRST_PARAMETER = 0
+
+function originOfParameter({ holder, parameter, position }: ParameterBinding, context: OriginContext, depth: number): Origin | null {
+  const isFirst = position === FIRST_PARAMETER
+  return (isFirst ? originOfHandedFunction(holder, context, depth) : null)
+    ?? originOfType(context.reader.parameterTypeOf(parameter), context, depth, isMakingType)
+    ?? (isFirst ? originOfType(context.reader.functionTypeOf(holder), context, depth, isParameterOfType) : null)
 }
 
 function originOfBinding(binding: Binding, context: OriginContext, depth: number): Origin | null {
-  if (binding.kind === "parameter") return originOfParameter(binding.holder, context, depth)
+  if (binding.kind === "parameter") return originOfParameter(binding, context, depth)
   if (binding.kind === "import") return { kind: "export", specifier: binding.specifier, paths: pathsOfImport(binding.importedName) }
   const declaring = { ...context, reader: binding.reader ?? context.reader }
   if (binding.kind === "class") return originOfClass(binding.declaration, declaring, depth)
@@ -263,11 +266,26 @@ function originAt(node: SyntaxNode, context: OriginContext, depth: number): Orig
   if (depth > DEEPEST_ORIGIN) return null
   const expression = context.reader.expressionOf(node)
   if (expression.kind === "wrapped") return originAt(expression.inner, context, depth + 1)
-  if (expression.kind === "member") return withMember(originAt(expression.object, context, depth + 1), expression.property)
+  if (expression.kind === "member") return originOfMember(expression.object, expression.property, context, depth + 1)
   if (expression.kind === "call") return originOfCall(node, expression.callee, context, depth + 1)
   if (expression.kind !== "name") return null
   const binding = context.reader.bindingOf(expression.name)
   return binding === null ? null : originOfBinding(binding, context, depth + 1)
+}
+
+function originOfDeclaredMember({ kind, node }: DeclaredMember, context: OriginContext, depth: number): Origin | null {
+  return kind === "type" ? originOfType(node, context, depth, isMakingType) : originAt(node, context, depth)
+}
+
+function originOfOwnMember(object: SyntaxNode, property: string, context: OriginContext, depth: number): Origin | null {
+  const expression = context.reader.expressionOf(object)
+  const binding = expression.kind === "name" ? context.reader.bindingOf(expression.name) : null
+  if (binding?.kind !== "class") return null
+  return context.reader.listDeclaredMembers(binding.declaration, property).map((declared) => originOfDeclaredMember(declared, context, depth)).find((origin) => origin !== null) ?? null
+}
+
+function originOfMember(object: SyntaxNode, property: string, context: OriginContext, depth: number): Origin | null {
+  return originOfOwnMember(object, property, context, depth) ?? withMember(originAt(object, context, depth), property)
 }
 
 export const originOf = (node: SyntaxNode, context: OriginContext): Origin | null => originAt(node, context, START_DEPTH)

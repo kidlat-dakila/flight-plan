@@ -1,4 +1,4 @@
-import type { CatalogueLibrary } from "@/catalogue/types"
+import type { CallPattern, CatalogueLibrary } from "@/catalogue/types"
 
 const DATA_MODEL = "data-model"
 
@@ -227,29 +227,55 @@ export const pydalLibrary: CatalogueLibrary = {
   ],
 }
 
+const SQLALCHEMY_SESSION_METHODS: readonly CallPattern[] = [
+  { kind: "call", name: "execute", slots: [], makes: "data" },
+  { kind: "call", name: "scalars", slots: [], makes: "data-fetch" },
+  { kind: "call", name: "scalar", slots: [], makes: "data-fetch" },
+  { kind: "call", name: "get", slots: [], makes: "data-fetch" },
+  { kind: "call", name: "add", slots: [], makes: "data" },
+  { kind: "call", name: "add_all", slots: [], makes: "data" },
+  { kind: "call", name: "delete", slots: [], makes: "data" },
+  { kind: "call", name: "merge", slots: [], makes: "data" },
+  { kind: "call", name: "flush", slots: [], makes: "data" },
+  { kind: "call", name: "refresh", slots: [], makes: "data" },
+  { kind: "call", name: "commit", slots: [], makes: "data" },
+  { kind: "call", name: "rollback", slots: [], makes: "data" },
+]
+
 export const sqlalchemyLibrary: CatalogueLibrary = {
   name: "SQLAlchemy",
-  specifiers: ["sqlalchemy", "sqlalchemy.orm"],
+  specifiers: ["sqlalchemy", "sqlalchemy.orm", "sqlalchemy.ext.asyncio"],
   documentedVersion: "2.1",
   category: "orm",
   type: "backend",
   language: "python",
   patterns: [
-    {
-      kind: "factory",
-      name: "Session",
-      methods: [
-        { kind: "call", name: "execute", slots: [], makes: "data" },
-        { kind: "call", name: "scalars", slots: [], makes: "data-fetch" },
-        { kind: "call", name: "get", slots: [], makes: "data-fetch" },
-        { kind: "call", name: "add", slots: [], makes: "data" },
-      ],
-    },
+    { kind: "factory", name: "Session", makesType: "Session", methods: SQLALCHEMY_SESSION_METHODS },
+    { kind: "factory", name: "AsyncSession", makesType: "AsyncSession", methods: SQLALCHEMY_SESSION_METHODS },
     { kind: "call", name: "select", slots: [], makes: "data-fetch" },
     { kind: "call", name: "text", slots: [], makes: "data" },
     { kind: "class", name: "DeclarativeBase", classifies: DATA_MODEL, members: [], methods: [] },
     { kind: "call", name: "declarative_base", slots: [], classifies: DATA_MODEL },
     { kind: "call", name: "mapped_column", slots: [], classifies: DATA_MODEL },
     { kind: "call", name: "Column", slots: [], classifies: DATA_MODEL },
+  ],
+}
+
+const SQLMODEL_SESSION_METHODS: readonly CallPattern[] = [
+  { kind: "call", name: "exec", slots: [], makes: "data" },
+  ...SQLALCHEMY_SESSION_METHODS,
+]
+
+export const sqlmodelLibrary: CatalogueLibrary = {
+  name: "SQLModel",
+  specifiers: ["sqlmodel"],
+  documentedVersion: "0.0.24",
+  category: "orm",
+  type: "backend",
+  language: "python",
+  patterns: [
+    { kind: "factory", name: "Session", makesType: "Session", methods: SQLMODEL_SESSION_METHODS },
+    { kind: "call", name: "select", slots: [], makes: "data-fetch" },
+    { kind: "class", name: "SQLModel", classifies: DATA_MODEL, members: [], methods: [] },
   ],
 }

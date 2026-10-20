@@ -306,6 +306,7 @@ import {
   ponyFixtures,
   pydalFixtures,
   sqlalchemyFixtures,
+  sqlmodelFixtures,
 } from "./python/orm"
 import { adyenPythonFixtures, braintreeFixtures, razorpayPythonFixtures, squarePythonFixtures, stripePythonFixtures } from "./python/payments"
 import { delegatorPyFixtures, pexpectFixtures, plumbumFixtures, sargeFixtures, shFixtures } from "./python/processes"
@@ -330,6 +331,7 @@ import {
   cerberusFixtures,
   colanderFixtures,
   jsonschemaFixtures,
+  pydanticFixtures,
   schemaFixtures,
   schematicsFixtures,
   valideerFixtures,
@@ -585,6 +587,7 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...psycopg2Fixtures,
   ...py2neoFixtures,
   ...pydalFixtures,
+  ...pydanticFixtures,
   ...pyjwtFixtures,
   ...pylibmcFixtures,
   ...pymongoFixtures,
@@ -636,6 +639,7 @@ export const BUILT_IN_FIXTURES: readonly PatternFixture[] = [
   ...splitFixtures,
   ...sqlJsFixtures,
   ...sqlalchemyFixtures,
+  ...sqlmodelFixtures,
   ...sseStarletteFixtures,
   ...stackAuthFixtures,
   ...statsigFixtures,

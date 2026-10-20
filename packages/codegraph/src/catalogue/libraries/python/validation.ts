@@ -1,5 +1,7 @@
 import type { CatalogueLibrary } from "@/catalogue/types"
 
+const VALIDATION = "validation"
+
 export const cerberusLibrary: CatalogueLibrary = {
   name: "Cerberus",
   specifiers: ["cerberus"],
@@ -147,5 +149,45 @@ export const voluptuousLibrary: CatalogueLibrary = {
         makes: "validation",
       },
     },
+  ],
+}
+
+export const pydanticLibrary: CatalogueLibrary = {
+  name: "Pydantic",
+  specifiers: ["pydantic"],
+  documentedVersion: "2.14",
+  category: "validation",
+  type: "backend",
+  language: "python",
+  patterns: [
+    {
+      kind: "class",
+      name: "BaseModel",
+      makes: "validation",
+      classifies: "data-model",
+      members: [],
+      methods: [
+        { kind: "call", name: "model_validate", slots: [], makes: "validation" },
+        { kind: "call", name: "model_validate_json", slots: [], makes: "validation" },
+        { kind: "call", name: "model_validate_strings", slots: [], makes: "validation" },
+        { kind: "call", name: "parse_obj", slots: [], makes: "validation" },
+        { kind: "call", name: "parse_raw", slots: [], makes: "validation" },
+      ],
+    },
+    {
+      kind: "factory",
+      name: "TypeAdapter",
+      makes: "validation",
+      methods: [
+        { kind: "call", name: "validate_python", slots: [], makes: "validation" },
+        { kind: "call", name: "validate_json", slots: [], makes: "validation" },
+        { kind: "call", name: "validate_strings", slots: [], makes: "validation" },
+      ],
+    },
+    { kind: "decorator", name: "field_validator", classifies: VALIDATION },
+    { kind: "decorator", name: "model_validator", classifies: VALIDATION },
+    { kind: "decorator", name: "validator", classifies: VALIDATION },
+    { kind: "decorator", name: "root_validator", classifies: VALIDATION },
+    { kind: "decorator", name: "validate_call", makes: "validation" },
   ],
 }

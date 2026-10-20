@@ -25,6 +25,8 @@ const annotatedElementsOf = (holder: SyntaxNode | null): readonly SyntaxNode[] =
   return isAnnotated(holder) ? holder.childrenForFieldName("subscript") : []
 }
 
+export const annotatedTypeOf = (holder: SyntaxNode): SyntaxNode | null => annotatedElementsOf(holder)[0] ?? null
+
 const holderOfElement = (element: SyntaxNode): SyntaxNode | null => {
   const { parent } = element
   return parent?.type === TYPE_TYPE && parent.parent?.type === TYPE_PARAMETER_TYPE ? parent.parent.parent : parent

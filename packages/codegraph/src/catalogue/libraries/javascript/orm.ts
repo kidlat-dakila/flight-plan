@@ -1,4 +1,4 @@
-import type { CatalogueLibrary } from "@/catalogue/types"
+import type { CallPattern, CatalogueLibrary } from "@/catalogue/types"
 
 const DATA_MODEL = "data-model"
 
@@ -73,7 +73,18 @@ export const drizzleOrmLibrary: CatalogueLibrary = {
 
 export const mikroormLibrary: CatalogueLibrary = {
   name: "MikroORM",
-  specifiers: ["@mikro-orm/core", "@mikro-orm/decorators/legacy", "@mikro-orm/decorators/es"],
+  specifiers: [
+    "@mikro-orm/core",
+    "@mikro-orm/decorators/legacy",
+    "@mikro-orm/decorators/es",
+    "@mikro-orm/postgresql",
+    "@mikro-orm/mysql",
+    "@mikro-orm/mariadb",
+    "@mikro-orm/sqlite",
+    "@mikro-orm/libsql",
+    "@mikro-orm/mssql",
+    "@mikro-orm/mongodb",
+  ],
   documentedVersion: "7.2",
   category: "orm",
   type: "backend",
@@ -99,6 +110,21 @@ export const mikroormLibrary: CatalogueLibrary = {
         { kind: "call", name: "flush", slots: [], makes: "data" },
         { kind: "call", name: "create", slots: [], makes: "data" },
         { kind: "call", name: "fork", slots: [], makes: "data" },
+      ],
+    },
+    {
+      kind: "factory",
+      name: "EntityManager",
+      makesType: "EntityManager",
+      isTypeOnly: true,
+      methods: [
+        { kind: "call", name: "find", slots: [], makes: "data-fetch" },
+        { kind: "call", name: "findOne", slots: [], makes: "data-fetch" },
+        { kind: "call", name: "findOneOrFail", slots: [], makes: "data-fetch" },
+        { kind: "call", name: "count", slots: [], makes: "data-fetch" },
+        { kind: "call", name: "persist", slots: [], makes: "data" },
+        { kind: "call", name: "flush", slots: [], makes: "data" },
+        { kind: "call", name: "remove", slots: [], makes: "data" },
       ],
     },
     { kind: "decorator", name: "Entity", classifies: DATA_MODEL },
@@ -203,6 +229,7 @@ export const prismaLibrary: CatalogueLibrary = {
     {
       kind: "factory",
       name: "PrismaClient",
+      makesType: "PrismaClient",
       methods: [
         { kind: "call", name: "findMany", slots: [], makes: "data-fetch" },
         { kind: "call", name: "findUnique", slots: [], makes: "data-fetch" },
@@ -237,6 +264,7 @@ export const sequelizeLibrary: CatalogueLibrary = {
     {
       kind: "factory",
       name: "Sequelize",
+      makesType: "Sequelize",
       methods: [
         {
           kind: "factory",
@@ -291,6 +319,19 @@ export const typegooseLibrary: CatalogueLibrary = {
   ],
 }
 
+const TYPEORM_STORE_METHODS: readonly CallPattern[] = [
+  { kind: "call", name: "find", slots: [], makes: "data-fetch" },
+  { kind: "call", name: "findBy", slots: [], makes: "data-fetch" },
+  { kind: "call", name: "findOne", slots: [], makes: "data-fetch" },
+  { kind: "call", name: "findOneBy", slots: [], makes: "data-fetch" },
+  { kind: "call", name: "count", slots: [], makes: "data-fetch" },
+  { kind: "call", name: "save", slots: [], makes: "data" },
+  { kind: "call", name: "insert", slots: [], makes: "data" },
+  { kind: "call", name: "update", slots: [], makes: "data" },
+  { kind: "call", name: "delete", slots: [], makes: "data" },
+  { kind: "call", name: "remove", slots: [], makes: "data" },
+]
+
 export const typeormLibrary: CatalogueLibrary = {
   name: "TypeORM",
   specifiers: ["typeorm"],
@@ -310,18 +351,13 @@ export const typeormLibrary: CatalogueLibrary = {
     {
       kind: "factory",
       name: "DataSource",
+      makesType: "DataSource",
       methods: [
-        {
-          kind: "factory",
-          name: "getRepository",
-          methods: [
-            { kind: "call", name: "findOneBy", slots: [], makes: "data-fetch" },
-            { kind: "call", name: "findOne", slots: [], makes: "data-fetch" },
-            { kind: "call", name: "save", slots: [], makes: "data" },
-          ],
-        },
+        { kind: "factory", name: "getRepository", methods: TYPEORM_STORE_METHODS },
         { kind: "call", name: "transaction", slots: [{ at: "last", runs: "in-place" }], makes: "transaction" },
       ],
     },
+    { kind: "factory", name: "Repository", makesType: "Repository", isTypeOnly: true, methods: TYPEORM_STORE_METHODS },
+    { kind: "factory", name: "EntityManager", makesType: "EntityManager", isTypeOnly: true, methods: TYPEORM_STORE_METHODS },
   ],
 }

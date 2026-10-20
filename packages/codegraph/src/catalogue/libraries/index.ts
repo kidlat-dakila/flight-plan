@@ -309,6 +309,7 @@ import {
   ponyLibrary,
   pydalLibrary,
   sqlalchemyLibrary,
+  sqlmodelLibrary,
 } from "./python/orm"
 import { adyenPythonLibrary, braintreeLibrary, razorpayPythonLibrary, squarePythonLibrary, stripePythonLibrary } from "./python/payments"
 import { delegatorPyLibrary, pexpectLibrary, plumbumLibrary, sargeLibrary, shLibrary } from "./python/processes"
@@ -334,6 +335,7 @@ import {
   cerberusLibrary,
   colanderLibrary,
   jsonschemaLibrary,
+  pydanticLibrary,
   schemaLibrary,
   schematicsLibrary,
   valideerLibrary,
@@ -600,6 +602,7 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   psycopg2Library,
   py2neoLibrary,
   pydalLibrary,
+  pydanticLibrary,
   pyjwtLibrary,
   pylibmcLibrary,
   pymongoLibrary,
@@ -660,6 +663,7 @@ export const BUILT_IN_LIBRARIES: readonly CatalogueLibrary[] = [
   splitLibrary,
   sqlJsLibrary,
   sqlalchemyLibrary,
+  sqlmodelLibrary,
   sseStarletteLibrary,
   stackAuthLibrary,
   statsigLibrary,

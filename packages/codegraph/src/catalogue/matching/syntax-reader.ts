@@ -23,9 +23,16 @@ export interface ClassBinding {
 export interface ParameterBinding {
   readonly kind: "parameter"
   readonly holder: SyntaxNode
+  readonly parameter: SyntaxNode
+  readonly position: number
 }
 
 export type Binding = ImportBinding | ValueBinding | ClassBinding | ParameterBinding
+
+export interface DeclaredMember {
+  readonly kind: "type" | "value"
+  readonly node: SyntaxNode
+}
 
 export interface NameExpression {
   readonly kind: "name"
@@ -116,8 +123,9 @@ export interface SyntaxReader {
   readonly bindingOf: (name: SyntaxNode) => Binding | null
   readonly basesOf: (declaration: SyntaxNode) => readonly SyntaxNode[]
   readonly handedAt: (callback: SyntaxNode) => HandedCallback | null
-  readonly parameterTypeOf: (holder: SyntaxNode) => SyntaxNode | null
+  readonly parameterTypeOf: (parameter: SyntaxNode) => SyntaxNode | null
   readonly functionTypeOf: (holder: SyntaxNode) => SyntaxNode | null
+  readonly listDeclaredMembers: (declaration: SyntaxNode, name: string) => readonly DeclaredMember[]
   readonly requiredSpecifierOf: (call: SyntaxNode) => string | null
   readonly listSites: () => readonly Site[]
   readonly listDirectives: () => readonly Directive[]

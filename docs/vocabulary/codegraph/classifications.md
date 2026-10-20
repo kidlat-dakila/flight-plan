@@ -173,7 +173,7 @@ export const sendReceipt = async (user) => {
 
 `sendReceipt` earns `third-party-integration` from the use inside it, and `api-request` from the `request` block `sendMail` makes.
 
-A pattern says `classifies` when its role is not that of its whole library: the class an ORM's models extend is a `data-model`, and a call that verifies a webhook's signature is a `webhook` though its library is a payments SDK.
+A pattern says `classifies` when its role is not that of its whole library: the class an ORM's models extend is a `data-model`, and a call that verifies a webhook's signature is a `webhook` though its library is a payments SDK. Pydantic is a validation library, and its `BaseModel` is a `data-model` too: a model is the shape a request or a response passes around. A `field_validator` written in one is a `validation`, so a model with validators is `data-model` first and `validation` after.
 
 A library with a file of its own can add uses no pattern can say, with `readUses`. Express gives `error-handling` to a handler of four arguments it is handed, written in place or by name: `app.use((error, req, res, next) => …)`.
 

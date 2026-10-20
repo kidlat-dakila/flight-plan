@@ -2,8 +2,8 @@ import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
 import { readBindings as readScopedBindings } from "@/ast-graph/languages/python/bindings"
 import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
 import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
-import { annotatedTypeFilling } from "@/code-blocks/languages/python/annotated"
-import { NO_EXPRESSION, type Binding, type Expression, type PassedValue, type Site, type SyntaxReader } from "./syntax-reader"
+import { annotatedTypeFilling, annotatedTypeOf } from "@/code-blocks/languages/python/annotated"
+import { NO_EXPRESSION, type Binding, type DeclaredMember, type Expression, type ParameterBinding, type PassedValue, type Site, type SyntaxReader } from "./syntax-reader"
 
 const GRAMMAR: GrammarId = "python"
 const NAME_TYPE = "identifier"
@@ -51,7 +51,7 @@ const expressionOf = (node: SyntaxNode): Expression => {
   const callee = node.type === CALL_TYPE ? node.childForFieldName("function") : null
   if (callee !== null) return { kind: "call", callee }
   const wrapped = WRAPPING_TYPES.has(node.type) ? node.firstNamedChild : null
-  const inner = node.type === SUBSCRIPT_TYPE ? node.childForFieldName("value") : wrapped
+  const inner = annotatedTypeOf(node) ?? (node.type === SUBSCRIPT_TYPE ? node.childForFieldName("value") : wrapped)
   return inner === null ? NO_EXPRESSION : { kind: "wrapped", inner }
 }
 
@@ -191,8 +191,20 @@ const STATIC_METHOD = "staticmethod"
 const nameOfParameter = (parameter: SyntaxNode): string | null =>
   parameter.type === NAME_TYPE ? parameter.text : (parameter.namedChildren.find((child) => child.type === NAME_TYPE)?.text ?? null)
 
-const parameterNamesOf = (definition: SyntaxNode): (string | null)[] =>
-  (definition.childForFieldName(PARAMETERS_FIELD)?.namedChildren ?? []).filter((parameter) => parameter.type !== COMMENT_TYPE).map(nameOfParameter)
+const parametersOf = (definition: SyntaxNode): SyntaxNode[] =>
+  (definition.childForFieldName(PARAMETERS_FIELD)?.namedChildren ?? []).filter((parameter) => parameter.type !== COMMENT_TYPE)
+
+const parameterNamesOf = (definition: SyntaxNode): (string | null)[] => parametersOf(definition).map(nameOfParameter)
+
+const TYPE_NAME_TYPES: ReadonlySet<string> = new Set([NAME_TYPE, MEMBER_TYPE])
+
+const typeNameOf = (annotation: SyntaxNode | null): SyntaxNode | null => {
+  if (annotation === null) return null
+  if (TYPE_NAME_TYPES.has(annotation.type)) return annotation
+  return typeNameOf(annotatedTypeOf(annotation))
+}
+
+const parameterTypeOf = (parameter: SyntaxNode): SyntaxNode | null => typeNameOf(parameter.childForFieldName("type")?.firstNamedChild ?? null)
 
 const isStaticMethod = (definition: SyntaxNode): boolean =>
   definition.parent?.type === DECORATED_TYPE && definition.parent.namedChildren.some((child) => child.type === DECORATOR_TYPE && child.text.endsWith(STATIC_METHOD))
@@ -215,6 +227,45 @@ const receiverBindingOf = (name: SyntaxNode): Binding | null => {
   return declaration === null ? null : { kind: "class", declaration }
 }
 
+const parameterBindingOf = (name: SyntaxNode): ParameterBinding | null => {
+  const definition = definingFunctionOf(name.parent, name.text)
+  const parameters = definition === null ? [] : parametersOf(definition)
+  const position = parameters.findIndex((parameter) => nameOfParameter(parameter) === name.text)
+  return definition === null || position < 0 ? null : { kind: "parameter", holder: definition, parameter: parameters[position], position }
+}
+
+const typeDeclared = (annotation: SyntaxNode | null): DeclaredMember[] => {
+  const type = typeNameOf(annotation?.firstNamedChild ?? null)
+  return type === null ? [] : [{ kind: "type", node: type }]
+}
+
+const valueDeclared = (value: SyntaxNode | null): DeclaredMember[] => (value === null ? [] : [{ kind: "value", node: value }])
+
+const declaredBy = (assignment: SyntaxNode): DeclaredMember[] => [
+  ...typeDeclared(assignment.childForFieldName("type")),
+  ...valueDeclared(assignment.childForFieldName("right")),
+]
+
+const isNameAssigned = (assignment: SyntaxNode, name: string): boolean => {
+  const target = assignment.childForFieldName("left")
+  return target?.type === NAME_TYPE && target.text === name
+}
+
+const isOwnMemberAssigned = (assignment: SyntaxNode, declaration: SyntaxNode, name: string): boolean => {
+  const target = assignment.childForFieldName("left")
+  const receiver = target?.type === MEMBER_TYPE ? target.childForFieldName("object") : null
+  const bound = receiver?.type === NAME_TYPE ? receiverBindingOf(receiver) : null
+  return target?.childForFieldName("attribute")?.text === name && bound?.kind === "class" && bound.declaration.id === declaration.id
+}
+
+const listDeclaredMembers = (declaration: SyntaxNode, name: string): DeclaredMember[] => {
+  const body = declaration.childForFieldName("body")
+  if (body === null) return []
+  const atClass = body.namedChildren.flatMap((statement) => statement.namedChildren).filter((assignment) => assignment.type === ASSIGNMENT_TYPE && isNameAssigned(assignment, name))
+  const inMethods = body.descendantsOfType(ASSIGNMENT_TYPE).filter((assignment) => isOwnMemberAssigned(assignment, declaration, name))
+  return [...atClass, ...inMethods].flatMap(declaredBy)
+}
+
 const builtinBindingOf = (name: SyntaxNode, boundNames: ReadonlySet<string>): Binding | null =>
   boundNames.has(name.text) ? null : { kind: "import", specifier: BUILTINS_MODULE, importedName: name.text }
 
@@ -225,10 +276,12 @@ export const pythonReaderOf = (tree: SyntaxTree, findImported: FindImportedBindi
     language: "python",
     tree,
     expressionOf,
-    bindingOf: (name) => receiverBindingOf(name) ?? followedImport(bindingAmong(bindings, name), name, findImported) ?? builtinBindingOf(name, boundNames),
+    bindingOf: (name) =>
+      receiverBindingOf(name) ?? followedImport(bindingAmong(bindings, name), name, findImported) ?? parameterBindingOf(name) ?? builtinBindingOf(name, boundNames),
     basesOf,
     handedAt: () => null,
-    parameterTypeOf: () => null,
+    parameterTypeOf,
+    listDeclaredMembers,
     functionTypeOf: () => null,
     requiredSpecifierOf: () => null,
     listSites: () => nodesMatching(GRAMMAR, tree, SITE_PATTERN).flatMap(siteOf),

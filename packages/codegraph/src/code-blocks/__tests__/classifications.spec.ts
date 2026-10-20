@@ -175,6 +175,173 @@ describe("the classifications of a code block", () => {
     expect(blockNamed(group, "root-variable", "worker").classifications).toContain("messaging")
     expect(group.codeBlocks.filter((block) => block.filePath === "src/schedule.ts").flatMap((block) => block.classifications)).toContain("job")
   })
+
+  it("classifies a Python function that writes through a parameter typed as a database session as a database read or write", () => {
+    const files = {
+      "requirements.txt": "sqlalchemy",
+      "shop/service.py": codeOf(
+        "from sqlalchemy.orm import Session",
+        "",
+        "def create_order(quantity: int, session: Session) -> None:",
+        "    session.add(quantity)",
+        "    session.commit()",
+      ),
+    }
+
+    expect(blockNamed(groupOf(files), "function", "create_order").classifications).toStrictEqual(["database-read-write"])
+  })
+
+  it("classifies a TypeScript function that writes through a parameter typed as a database client as a database read or write, at any position", () => {
+    const files = {
+      "src/orders.ts": codeOf(
+        "import { PrismaClient } from \"@prisma/client\"",
+        "export const createOrder = async (quantity: number, prisma: PrismaClient) => {",
+        "  await prisma.order.create({ data: { quantity } })",
+        "}",
+      ),
+    }
+
+    expect(blockNamed(groupOf(files), "function", "createOrder").classifications).toContain("database-read-write")
+  })
+
+  it("follows a parameter typed with an Annotated alias of a session, from another file and written in place", () => {
+    const files = {
+      "requirements.txt": "fastapi\nsqlalchemy",
+      "shop/__init__.py": "",
+      "shop/database.py": codeOf(
+        "from typing import Annotated",
+        "from fastapi import Depends",
+        "from sqlalchemy.orm import Session",
+        "",
+        "def get_session():",
+        "    return None",
+        "",
+        "SessionDep = Annotated[Session, Depends(get_session)]",
+      ),
+      "shop/service.py": codeOf(
+        "from typing import Annotated",
+        "from fastapi import Depends",
+        "from sqlalchemy.orm import Session",
+        "from shop.database import SessionDep, get_session",
+        "",
+        "def create_order(quantity: int, session: SessionDep) -> None:",
+        "    session.add(quantity)",
+        "",
+        "def delete_order(order_id: int, session: Annotated[Session, Depends(get_session)]) -> None:",
+        "    session.delete(order_id)",
+      ),
+    }
+    const group = groupOf(files)
+
+    expect(["create_order", "delete_order"].map((name) => primaryClassificationOf(blockNamed(group, "function", name).classifications))).toStrictEqual(["database-read-write", "database-read-write"])
+  })
+
+  it("classifies a function that reads through a SQLModel session as a database read or write, and a SQLModel table as a data model", () => {
+    const files = {
+      "requirements.txt": "sqlmodel",
+      "shop/heroes.py": codeOf(
+        "from sqlmodel import Field, Session, SQLModel, select",
+        "",
+        "class Hero(SQLModel, table=True):",
+        "    id: int | None = Field(default=None, primary_key=True)",
+        "",
+        "def list_heroes(session: Session) -> list[Hero]:",
+        "    return session.exec(select(Hero)).all()",
+      ),
+    }
+    const group = groupOf(files)
+
+    expect([blockNamed(group, "class", "Hero").classifications, blockNamed(group, "function", "list_heroes").classifications]).toStrictEqual([["data-model"], ["database-read-write"]])
+  })
+
+  it("classifies a method that writes through a member typed as a repository or an entity manager as a database read or write", () => {
+    const files = {
+      "src/users.service.ts": codeOf(
+        "import { EntityManager, Repository } from \"typeorm\"",
+        "import { EntityManager as MikroEntityManager } from \"@mikro-orm/postgresql\"",
+        "export class UsersService {",
+        "  private readonly audit: EntityManager",
+        "  constructor(private readonly users: Repository<User>, private readonly em: MikroEntityManager) {}",
+        "  findUser(id: number) {",
+        "    return this.users.findOneBy({ id })",
+        "  }",
+        "  logVisit(visit: Visit) {",
+        "    return this.audit.save(visit)",
+        "  }",
+        "  async renameUser(user: User) {",
+        "    await this.em.flush()",
+        "  }",
+        "}",
+        "export const removeUser = (manager: EntityManager, user: User) => manager.remove(user)",
+      ),
+    }
+    const group = groupOf(files)
+
+    expect(["UsersService.findUser", "UsersService.logVisit", "UsersService.renameUser"].map((name) => blockNamed(group, "method", name).classifications)).toStrictEqual([
+      ["database-read-write"],
+      ["database-read-write"],
+      ["database-read-write"],
+    ])
+    expect(blockNamed(group, "function", "removeUser").classifications).toContain("database-read-write")
+  })
+
+  it("classifies a Python method that writes through a member it was handed a session for as a database read or write", () => {
+    const files = {
+      "requirements.txt": "sqlalchemy",
+      "shop/orders.py": codeOf(
+        "from sqlalchemy.orm import Session",
+        "",
+        "class OrderStore:",
+        "    def __init__(self, session: Session) -> None:",
+        "        self.session = session",
+        "",
+        "    def save(self, order) -> None:",
+        "        self.session.add(order)",
+      ),
+    }
+
+    expect(blockNamed(groupOf(files), "method", "OrderStore.save").classifications).toStrictEqual(["database-read-write"])
+  })
+
+  it("keeps the hierarchy for a route that writes through its session, an api route first", () => {
+    const files = {
+      "requirements.txt": "fastapi\nsqlalchemy",
+      "shop/routes.py": codeOf(
+        "from fastapi import APIRouter",
+        "from sqlalchemy.orm import Session",
+        "",
+        "router = APIRouter()",
+        "",
+        "@router.delete(\"/orders/{order_id}\")",
+        "def delete_order(order_id: int, session: Session) -> None:",
+        "    session.delete(order_id)",
+      ),
+    }
+    const classifications = blockNamed(groupOf(files), "function", "delete_order").classifications
+
+    expect([primaryClassificationOf(classifications), classifications.includes("database-read-write")]).toStrictEqual(["api-route", true])
+  })
+
+  it("classifies a Pydantic model as a data model, and a validator written in it as a validation", () => {
+    const files = {
+      "requirements.txt": "pydantic",
+      "shop/schemas.py": codeOf(
+        "from pydantic import BaseModel, field_validator",
+        "",
+        "class OrderCreate(BaseModel):",
+        "    quantity: int",
+        "",
+        "    @field_validator(\"quantity\")",
+        "    @classmethod",
+        "    def check_quantity(cls, value: int) -> int:",
+        "        return value",
+      ),
+    }
+    const group = groupOf(files)
+
+    expect(primaryClassificationOf(blockNamed(group, "class", "OrderCreate").classifications)).toBe("data-model")
+    expect(blockNamed(group, "class", "OrderCreate").classifications).toContain("validation")
+  })
 })
 
 describe("the classifications a file location gives", () => {

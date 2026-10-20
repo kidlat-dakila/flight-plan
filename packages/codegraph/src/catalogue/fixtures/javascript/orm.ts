@@ -253,6 +253,76 @@ export const mikroormFixtures: readonly PatternFixture[] = [
       "const defineEntity = (...parts) => parts\nexport const Book = defineEntity({ name: \"Book\", properties: { id: p.bigint().primary(), title: p.string() } })",
     ],
   },
+  {
+    library: MIKROORM,
+    patternKey: "factory:EntityManager:*>call:find:*",
+    matches: [
+      "import { EntityManager } from \"@mikro-orm/postgresql\"\nexport const run = (em: EntityManager) => em.find(User, {})",
+    ],
+    rejects: [
+      "export const run = (em) => em.find(User, {})",
+    ],
+  },
+  {
+    library: MIKROORM,
+    patternKey: "factory:EntityManager:*>call:findOne:*",
+    matches: [
+      "import { EntityManager } from \"@mikro-orm/postgresql\"\nexport const run = (em: EntityManager) => em.findOne(User, { id: 1 })",
+    ],
+    rejects: [
+      "export const run = (em) => em.findOne(User, { id: 1 })",
+    ],
+  },
+  {
+    library: MIKROORM,
+    patternKey: "factory:EntityManager:*>call:findOneOrFail:*",
+    matches: [
+      "import { EntityManager } from \"@mikro-orm/postgresql\"\nexport const run = (em: EntityManager) => em.findOneOrFail(User, { id: 1 })",
+    ],
+    rejects: [
+      "export const run = (em) => em.findOneOrFail(User, { id: 1 })",
+    ],
+  },
+  {
+    library: MIKROORM,
+    patternKey: "factory:EntityManager:*>call:count:*",
+    matches: [
+      "import { EntityManager } from \"@mikro-orm/postgresql\"\nexport const run = (em: EntityManager) => em.count(User)",
+    ],
+    rejects: [
+      "export const run = (em) => em.count(User)",
+    ],
+  },
+  {
+    library: MIKROORM,
+    patternKey: "factory:EntityManager:*>call:persist:*",
+    matches: [
+      "import { EntityManager } from \"@mikro-orm/postgresql\"\nexport const run = (em: EntityManager) => em.persist(user)",
+    ],
+    rejects: [
+      "export const run = (em) => em.persist(user)",
+    ],
+  },
+  {
+    library: MIKROORM,
+    patternKey: "factory:EntityManager:*>call:flush:*",
+    matches: [
+      "import { EntityManager } from \"@mikro-orm/postgresql\"\nexport const run = (em: EntityManager) => em.flush()",
+    ],
+    rejects: [
+      "export const run = (em) => em.flush()",
+    ],
+  },
+  {
+    library: MIKROORM,
+    patternKey: "factory:EntityManager:*>call:remove:*",
+    matches: [
+      "import { EntityManager } from \"@mikro-orm/postgresql\"\nexport const run = (em: EntityManager) => em.remove(user)",
+    ],
+    rejects: [
+      "export const run = (em) => em.remove(user)",
+    ],
+  },
 ]
 
 const MONGOOSE = "Mongoose"
@@ -816,6 +886,296 @@ export const typeormFixtures: readonly PatternFixture[] = [
     ],
     rejects: [
       "const dataSource = makeLocalRegistry()\nawait dataSource.manager.transaction(async (manager) => { await manager.save(user) })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:DataSource:*>factory:getRepository:*>call:find:*",
+    matches: [
+      "import { DataSource } from \"typeorm\"\nconst dataSource = new DataSource({ type: \"postgres\", entities: [User] })\nconst userRepository = dataSource.getRepository(User)\nuserRepository.find({ where: { active: true } })",
+    ],
+    rejects: [
+      "const userRepository = makeLocalRegistry()\nuserRepository.find({ where: { active: true } })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:DataSource:*>factory:getRepository:*>call:findBy:*",
+    matches: [
+      "import { DataSource } from \"typeorm\"\nconst dataSource = new DataSource({ type: \"postgres\", entities: [User] })\nconst userRepository = dataSource.getRepository(User)\nuserRepository.findBy({ active: true })",
+    ],
+    rejects: [
+      "const userRepository = makeLocalRegistry()\nuserRepository.findBy({ active: true })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:DataSource:*>factory:getRepository:*>call:count:*",
+    matches: [
+      "import { DataSource } from \"typeorm\"\nconst dataSource = new DataSource({ type: \"postgres\", entities: [User] })\nconst userRepository = dataSource.getRepository(User)\nuserRepository.count()",
+    ],
+    rejects: [
+      "const userRepository = makeLocalRegistry()\nuserRepository.count()",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:DataSource:*>factory:getRepository:*>call:insert:*",
+    matches: [
+      "import { DataSource } from \"typeorm\"\nconst dataSource = new DataSource({ type: \"postgres\", entities: [User] })\nconst userRepository = dataSource.getRepository(User)\nuserRepository.insert(user)",
+    ],
+    rejects: [
+      "const userRepository = makeLocalRegistry()\nuserRepository.insert(user)",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:DataSource:*>factory:getRepository:*>call:update:*",
+    matches: [
+      "import { DataSource } from \"typeorm\"\nconst dataSource = new DataSource({ type: \"postgres\", entities: [User] })\nconst userRepository = dataSource.getRepository(User)\nuserRepository.update({ id: 1 }, { active: false })",
+    ],
+    rejects: [
+      "const userRepository = makeLocalRegistry()\nuserRepository.update({ id: 1 }, { active: false })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:DataSource:*>factory:getRepository:*>call:delete:*",
+    matches: [
+      "import { DataSource } from \"typeorm\"\nconst dataSource = new DataSource({ type: \"postgres\", entities: [User] })\nconst userRepository = dataSource.getRepository(User)\nuserRepository.delete({ id: 1 })",
+    ],
+    rejects: [
+      "const userRepository = makeLocalRegistry()\nuserRepository.delete({ id: 1 })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:DataSource:*>factory:getRepository:*>call:remove:*",
+    matches: [
+      "import { DataSource } from \"typeorm\"\nconst dataSource = new DataSource({ type: \"postgres\", entities: [User] })\nconst userRepository = dataSource.getRepository(User)\nuserRepository.remove(user)",
+    ],
+    rejects: [
+      "const userRepository = makeLocalRegistry()\nuserRepository.remove(user)",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:Repository:*>call:find:*",
+    matches: [
+      "import { Repository } from \"typeorm\"\nexport const run = (repository: Repository<User>) => repository.find({ where: { active: true } })",
+      "import { Repository } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly repository: Repository<User>) {}\n  run() {\n    return this.repository.find({ where: { active: true } })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (repository) => repository.find({ where: { active: true } })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:Repository:*>call:findBy:*",
+    matches: [
+      "import { Repository } from \"typeorm\"\nexport const run = (repository: Repository<User>) => repository.findBy({ active: true })",
+      "import { Repository } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly repository: Repository<User>) {}\n  run() {\n    return this.repository.findBy({ active: true })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (repository) => repository.findBy({ active: true })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:Repository:*>call:findOne:*",
+    matches: [
+      "import { Repository } from \"typeorm\"\nexport const run = (repository: Repository<User>) => repository.findOne({ where: { id: 1 } })",
+      "import { Repository } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly repository: Repository<User>) {}\n  run() {\n    return this.repository.findOne({ where: { id: 1 } })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (repository) => repository.findOne({ where: { id: 1 } })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:Repository:*>call:findOneBy:*",
+    matches: [
+      "import { Repository } from \"typeorm\"\nexport const run = (repository: Repository<User>) => repository.findOneBy({ id: 1 })",
+      "import { Repository } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly repository: Repository<User>) {}\n  run() {\n    return this.repository.findOneBy({ id: 1 })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (repository) => repository.findOneBy({ id: 1 })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:Repository:*>call:count:*",
+    matches: [
+      "import { Repository } from \"typeorm\"\nexport const run = (repository: Repository<User>) => repository.count()",
+      "import { Repository } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly repository: Repository<User>) {}\n  run() {\n    return this.repository.count()\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (repository) => repository.count()",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:Repository:*>call:save:*",
+    matches: [
+      "import { Repository } from \"typeorm\"\nexport const run = (repository: Repository<User>) => repository.save(user)",
+      "import { Repository } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly repository: Repository<User>) {}\n  run() {\n    return this.repository.save(user)\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (repository) => repository.save(user)",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:Repository:*>call:insert:*",
+    matches: [
+      "import { Repository } from \"typeorm\"\nexport const run = (repository: Repository<User>) => repository.insert(user)",
+      "import { Repository } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly repository: Repository<User>) {}\n  run() {\n    return this.repository.insert(user)\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (repository) => repository.insert(user)",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:Repository:*>call:update:*",
+    matches: [
+      "import { Repository } from \"typeorm\"\nexport const run = (repository: Repository<User>) => repository.update({ id: 1 }, { active: false })",
+      "import { Repository } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly repository: Repository<User>) {}\n  run() {\n    return this.repository.update({ id: 1 }, { active: false })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (repository) => repository.update({ id: 1 }, { active: false })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:Repository:*>call:delete:*",
+    matches: [
+      "import { Repository } from \"typeorm\"\nexport const run = (repository: Repository<User>) => repository.delete({ id: 1 })",
+      "import { Repository } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly repository: Repository<User>) {}\n  run() {\n    return this.repository.delete({ id: 1 })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (repository) => repository.delete({ id: 1 })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:Repository:*>call:remove:*",
+    matches: [
+      "import { Repository } from \"typeorm\"\nexport const run = (repository: Repository<User>) => repository.remove(user)",
+      "import { Repository } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly repository: Repository<User>) {}\n  run() {\n    return this.repository.remove(user)\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (repository) => repository.remove(user)",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:EntityManager:*>call:find:*",
+    matches: [
+      "import { EntityManager } from \"typeorm\"\nexport const run = (manager: EntityManager) => manager.find(User, { where: { active: true } })",
+      "import { EntityManager } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly manager: EntityManager) {}\n  run() {\n    return this.manager.find(User, { where: { active: true } })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (manager) => manager.find(User, { where: { active: true } })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:EntityManager:*>call:findBy:*",
+    matches: [
+      "import { EntityManager } from \"typeorm\"\nexport const run = (manager: EntityManager) => manager.findBy(User, { active: true })",
+      "import { EntityManager } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly manager: EntityManager) {}\n  run() {\n    return this.manager.findBy(User, { active: true })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (manager) => manager.findBy(User, { active: true })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:EntityManager:*>call:findOne:*",
+    matches: [
+      "import { EntityManager } from \"typeorm\"\nexport const run = (manager: EntityManager) => manager.findOne(User, { where: { id: 1 } })",
+      "import { EntityManager } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly manager: EntityManager) {}\n  run() {\n    return this.manager.findOne(User, { where: { id: 1 } })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (manager) => manager.findOne(User, { where: { id: 1 } })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:EntityManager:*>call:findOneBy:*",
+    matches: [
+      "import { EntityManager } from \"typeorm\"\nexport const run = (manager: EntityManager) => manager.findOneBy(User, { id: 1 })",
+      "import { EntityManager } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly manager: EntityManager) {}\n  run() {\n    return this.manager.findOneBy(User, { id: 1 })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (manager) => manager.findOneBy(User, { id: 1 })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:EntityManager:*>call:count:*",
+    matches: [
+      "import { EntityManager } from \"typeorm\"\nexport const run = (manager: EntityManager) => manager.count(User)",
+      "import { EntityManager } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly manager: EntityManager) {}\n  run() {\n    return this.manager.count(User)\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (manager) => manager.count(User)",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:EntityManager:*>call:save:*",
+    matches: [
+      "import { EntityManager } from \"typeorm\"\nexport const run = (manager: EntityManager) => manager.save(user)",
+      "import { EntityManager } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly manager: EntityManager) {}\n  run() {\n    return this.manager.save(user)\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (manager) => manager.save(user)",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:EntityManager:*>call:insert:*",
+    matches: [
+      "import { EntityManager } from \"typeorm\"\nexport const run = (manager: EntityManager) => manager.insert(user)",
+      "import { EntityManager } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly manager: EntityManager) {}\n  run() {\n    return this.manager.insert(user)\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (manager) => manager.insert(user)",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:EntityManager:*>call:update:*",
+    matches: [
+      "import { EntityManager } from \"typeorm\"\nexport const run = (manager: EntityManager) => manager.update({ id: 1 }, { active: false })",
+      "import { EntityManager } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly manager: EntityManager) {}\n  run() {\n    return this.manager.update({ id: 1 }, { active: false })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (manager) => manager.update({ id: 1 }, { active: false })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:EntityManager:*>call:delete:*",
+    matches: [
+      "import { EntityManager } from \"typeorm\"\nexport const run = (manager: EntityManager) => manager.delete({ id: 1 })",
+      "import { EntityManager } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly manager: EntityManager) {}\n  run() {\n    return this.manager.delete({ id: 1 })\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (manager) => manager.delete({ id: 1 })",
+    ],
+  },
+  {
+    library: TYPEORM,
+    patternKey: "factory:EntityManager:*>call:remove:*",
+    matches: [
+      "import { EntityManager } from \"typeorm\"\nexport const run = (manager: EntityManager) => manager.remove(user)",
+      "import { EntityManager } from \"typeorm\"\nexport class UsersService {\n  constructor(private readonly manager: EntityManager) {}\n  run() {\n    return this.manager.remove(user)\n  }\n}",
+    ],
+    rejects: [
+      "export const run = (manager) => manager.remove(user)",
     ],
   },
 ]

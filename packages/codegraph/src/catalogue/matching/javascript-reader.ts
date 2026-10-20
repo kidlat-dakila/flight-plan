@@ -6,8 +6,9 @@ import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } fr
 import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
 import { isSameRange, rangeOf } from "@/ast-graph/source-range"
 import type { FileVariable } from "@/ast-graph/types"
+import { classBodyBoundTo, isParameterProperty, memberAssignedIn } from "@/code-blocks/languages/typescript/class-members"
 import { readOutline, resolutionOf, type FileOutline } from "@/code-blocks/languages/typescript/outline"
-import { NO_EXPRESSION, type Binding, type Directive, type Expression, type FindExportedBinding, type FindHandedAway, type HandedCallback, type ImportBinding, type PassedValue, type Site, type SyntaxReader } from "./syntax-reader"
+import { NO_EXPRESSION, type Binding, type DeclaredMember, type Directive, type Expression, type FindExportedBinding, type FindHandedAway, type HandedCallback, type ImportBinding, type ParameterBinding, type PassedValue, type Site, type SyntaxReader } from "./syntax-reader"
 
 const FIRST_LINE = 1
 const NAME_TYPES: ReadonlySet<string> = new Set(["identifier", "type_identifier", "property_identifier"])
@@ -98,12 +99,16 @@ const nameNodeOf = (tree: SyntaxTree, { range }: { readonly range: FileVariable[
     { row: range.end.line - FIRST_LINE, column: range.end.column },
   )
 
-const functionOfFirstParameter = (name: SyntaxNode): SyntaxNode | null => {
+const ONLY_PARAMETER = 0
+
+const parameterBindingOf = (name: SyntaxNode): ParameterBinding | null => {
   const holder = name.parent
   if (holder === null) return null
-  if (isFieldOf(name, "parameter")) return holder
+  if (isFieldOf(name, "parameter")) return { kind: "parameter", holder, parameter: name, position: ONLY_PARAMETER }
   const parameters = PARAMETER_TYPES.has(holder.type) && isFieldOf(name, "pattern") ? holder.parent : null
-  return parameters?.type === PARAMETERS_TYPE && parameters.firstNamedChild?.id === holder.id ? parameters.parent : null
+  const declaring = parameters?.type === PARAMETERS_TYPE ? parameters.parent : null
+  if (parameters === null || declaring === null) return null
+  return { kind: "parameter", holder: declaring, parameter: holder, position: parameters.namedChildren.findIndex((parameter) => parameter.id === holder.id) }
 }
 
 const callOfPassed = (passed: SyntaxNode): SyntaxNode | null => {
@@ -154,10 +159,43 @@ const handedAt = (outline: FileOutline, callback: SyntaxNode, findHandedAway: Fi
 const nameOfType = (type: SyntaxNode | null): SyntaxNode | null =>
   type?.type === GENERIC_TYPE ? type.childForFieldName("name") : type
 
-const parameterTypeOf = (holder: SyntaxNode): SyntaxNode | null => {
-  const first = holder.childForFieldName("parameters")?.firstNamedChild ?? null
-  const annotation = first !== null && PARAMETER_TYPES.has(first.type) ? first.childForFieldName("type") : null
+const parameterTypeOf = (parameter: SyntaxNode): SyntaxNode | null => {
+  const annotation = PARAMETER_TYPES.has(parameter.type) ? parameter.childForFieldName("type") : null
   return nameOfType(annotation?.firstNamedChild ?? null)
+}
+
+const FIELD_TYPE = "public_field_definition"
+const CONSTRUCTOR_NAME = "constructor"
+const MEMBER_ASSIGNMENT_TYPE = "assignment_expression"
+
+const declaredType = (annotation: SyntaxNode | null): DeclaredMember[] => {
+  const type = nameOfType(annotation?.firstNamedChild ?? null)
+  return type === null ? [] : [{ kind: "type", node: type }]
+}
+
+const declaredValue = (value: SyntaxNode | null): DeclaredMember[] => (value === null ? [] : [{ kind: "value", node: value }])
+
+const listDeclaredFields = (body: SyntaxNode, name: string): DeclaredMember[] =>
+  body.namedChildren
+    .filter((member) => member.type === FIELD_TYPE && member.childForFieldName("name")?.text === name)
+    .flatMap((field) => [...declaredType(field.childForFieldName("type")), ...declaredValue(field.childForFieldName("value"))])
+
+const isConstructor = (member: SyntaxNode): boolean => member.type === METHOD_TYPE && member.childForFieldName("name")?.text === CONSTRUCTOR_NAME
+
+const listDeclaredParameterProperties = (body: SyntaxNode, name: string): DeclaredMember[] =>
+  (body.namedChildren.find(isConstructor)?.childForFieldName("parameters")?.namedChildren ?? [])
+    .filter((parameter) => isParameterProperty(parameter) && parameter.childForFieldName("pattern")?.text === name)
+    .flatMap((parameter) => declaredType(parameter.childForFieldName("type")))
+
+const listAssignedValues = (body: SyntaxNode, name: string): DeclaredMember[] =>
+  body
+    .descendantsOfType(MEMBER_ASSIGNMENT_TYPE)
+    .filter((assignment) => classBodyBoundTo(assignment)?.id === body.id && memberAssignedIn(assignment)?.text === name)
+    .flatMap((assignment) => declaredValue(assignment.childForFieldName("right")))
+
+const listDeclaredMembers = (declaration: SyntaxNode, name: string): DeclaredMember[] => {
+  const body = declaration.childForFieldName("body")
+  return body === null ? [] : [...listDeclaredFields(body, name), ...listDeclaredParameterProperties(body, name), ...listAssignedValues(body, name)]
 }
 
 const functionTypeOf = (holder: SyntaxNode): SyntaxNode | null => {
@@ -200,8 +238,8 @@ export const listHandedImports = ({ grammar, outline, importedFilePaths, reader 
 
 const bindingOfDeclared = (name: SyntaxNode): Binding | null => {
   const holder = name.parent
-  const parameterised = functionOfFirstParameter(name)
-  if (parameterised !== null) return { kind: "parameter", holder: parameterised }
+  const parameter = parameterBindingOf(name)
+  if (parameter !== null) return parameter
   if (holder !== null && CLASS_TYPES.has(holder.type) && isFieldOf(name, "name")) return { kind: "class", declaration: holder }
   const declared = declaredFrom(name, name.type === SHORTHAND_PATTERN_TYPE ? [name.text] : [])
   const value = declared?.declarator.childForFieldName("value") ?? null
@@ -343,6 +381,7 @@ export const javascriptReaderOf = (grammar: GrammarId, outline: FileOutline, fin
   handedAt: (callback) => handedAt(outline, callback, findHandedAway),
   parameterTypeOf,
   functionTypeOf,
+  listDeclaredMembers,
   requiredSpecifierOf: (call) => requiredSpecifierOf(outline, call),
   listSites: () => nodesMatching(grammar, outline.tree, SITE_PATTERNS[grammar] ?? SITE_PATTERNS.typescript).flatMap(siteOf),
   listDirectives: () => listDirectives(grammar, outline.tree),

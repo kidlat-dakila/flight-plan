@@ -543,6 +543,7 @@ export const sqlalchemyFixtures: readonly PatternFixture[] = [
     patternKey: "factory:Session:*>call:execute:*",
     matches: [
       "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.execute(select(User))",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.execute(select(User))",
     ],
     rejects: [
       "session = LocalRegistry()\n\nsession.execute(select(User))",
@@ -553,6 +554,7 @@ export const sqlalchemyFixtures: readonly PatternFixture[] = [
     patternKey: "factory:Session:*>call:scalars:*",
     matches: [
       "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.scalars(select(User))",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.scalars(select(User))",
     ],
     rejects: [
       "session = LocalRegistry()\n\nsession.scalars(select(User))",
@@ -560,22 +562,254 @@ export const sqlalchemyFixtures: readonly PatternFixture[] = [
   },
   {
     library: SQLALCHEMY,
-    patternKey: "factory:Session:*>call:get:*",
+    patternKey: "factory:Session:*>call:scalar:*",
     matches: [
-      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.get(select(User))",
+      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.scalar(select(User))",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.scalar(select(User))",
     ],
     rejects: [
-      "session = LocalRegistry()\n\nsession.get(select(User))",
+      "session = LocalRegistry()\n\nsession.scalar(select(User))",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:Session:*>call:get:*",
+    matches: [
+      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.get(User, 5)",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.get(User, 5)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.get(User, 5)",
     ],
   },
   {
     library: SQLALCHEMY,
     patternKey: "factory:Session:*>call:add:*",
     matches: [
-      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.add(select(User))",
+      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.add(user)",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.add(user)",
     ],
     rejects: [
-      "session = LocalRegistry()\n\nsession.add(select(User))",
+      "session = LocalRegistry()\n\nsession.add(user)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:Session:*>call:add_all:*",
+    matches: [
+      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.add_all([user])",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.add_all([user])",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.add_all([user])",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:Session:*>call:delete:*",
+    matches: [
+      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.delete(user)",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.delete(user)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.delete(user)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:Session:*>call:merge:*",
+    matches: [
+      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.merge(user)",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.merge(user)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.merge(user)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:Session:*>call:flush:*",
+    matches: [
+      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.flush()",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.flush()",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.flush()",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:Session:*>call:refresh:*",
+    matches: [
+      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.refresh(user)",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.refresh(user)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.refresh(user)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:Session:*>call:commit:*",
+    matches: [
+      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.commit()",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.commit()",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.commit()",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:Session:*>call:rollback:*",
+    matches: [
+      "from sqlalchemy.orm import Session\n\nsession = Session(engine)\n\nsession.rollback()",
+      "from sqlalchemy.orm import Session\n\ndef save(user, session: Session):\n    session.rollback()",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.rollback()",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)",
+    ],
+    rejects: [
+      "def AsyncSession(*parts, **options):\n    return parts\n\nsession = AsyncSession(engine)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:execute:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.execute(select(User))",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.execute(select(User))",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.execute(select(User))",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:scalars:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.scalars(select(User))",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.scalars(select(User))",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.scalars(select(User))",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:scalar:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.scalar(select(User))",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.scalar(select(User))",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.scalar(select(User))",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:get:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.get(User, 5)",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.get(User, 5)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.get(User, 5)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:add:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.add(user)",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.add(user)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.add(user)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:add_all:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.add_all([user])",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.add_all([user])",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.add_all([user])",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:delete:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.delete(user)",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.delete(user)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.delete(user)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:merge:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.merge(user)",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.merge(user)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.merge(user)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:flush:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.flush()",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.flush()",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.flush()",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:refresh:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.refresh(user)",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.refresh(user)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.refresh(user)",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:commit:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.commit()",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.commit()",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.commit()",
+    ],
+  },
+  {
+    library: SQLALCHEMY,
+    patternKey: "factory:AsyncSession:*>call:rollback:*",
+    matches: [
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\nsession = AsyncSession(engine)\n\nsession.rollback()",
+      "from sqlalchemy.ext.asyncio import AsyncSession\n\ndef save(user, session: AsyncSession):\n    session.rollback()",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.rollback()",
     ],
   },
   {
@@ -636,6 +870,184 @@ export const sqlalchemyFixtures: readonly PatternFixture[] = [
     ],
     rejects: [
       "def Column(*parts, **options):\n    return parts\n\nclass User(Base):\n    __tablename__ = \"user\"\n\n    id = Column(Integer, primary_key=True)",
+    ],
+  },
+]
+
+const SQLMODEL = "SQLModel"
+
+export const sqlmodelFixtures: readonly PatternFixture[] = [
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)",
+    ],
+    rejects: [
+      "def Session(*parts, **options):\n    return parts\n\nsession = Session(engine)",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:exec:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.exec(select(Hero))",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.exec(select(Hero))",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.exec(select(Hero))",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:execute:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.execute(select(Hero))",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.execute(select(Hero))",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.execute(select(Hero))",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:scalars:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.scalars(select(Hero))",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.scalars(select(Hero))",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.scalars(select(Hero))",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:scalar:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.scalar(select(Hero))",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.scalar(select(Hero))",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.scalar(select(Hero))",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:get:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.get(Hero, 1)",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.get(Hero, 1)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.get(Hero, 1)",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:add:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.add(hero)",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.add(hero)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.add(hero)",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:add_all:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.add_all([hero])",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.add_all([hero])",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.add_all([hero])",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:delete:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.delete(hero)",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.delete(hero)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.delete(hero)",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:merge:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.merge(hero)",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.merge(hero)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.merge(hero)",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:flush:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.flush()",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.flush()",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.flush()",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:refresh:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.refresh(hero)",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.refresh(hero)",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.refresh(hero)",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:commit:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.commit()",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.commit()",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.commit()",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "factory:Session:*>call:rollback:*",
+    matches: [
+      "from sqlmodel import Session\n\nsession = Session(engine)\n\nsession.rollback()",
+      "from sqlmodel import Session\n\ndef save(hero, session: Session):\n    session.rollback()",
+    ],
+    rejects: [
+      "session = LocalRegistry()\n\nsession.rollback()",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "call:select:*",
+    matches: [
+      "from sqlmodel import select\n\nstatement = select(Hero).where(Hero.name == \"Deadpond\")",
+    ],
+    rejects: [
+      "def select(*parts):\n    return parts\n\nstatement = select(Hero)",
+    ],
+  },
+  {
+    library: SQLMODEL,
+    patternKey: "class:SQLModel:*",
+    matches: [
+      "from sqlmodel import SQLModel\n\nclass Hero(SQLModel, table=True):\n    name: str",
+    ],
+    rejects: [
+      "class SQLModel:\n    pass\n\nclass Hero(SQLModel, table=True):\n    name: str",
     ],
   },
 ]

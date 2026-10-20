@@ -82,6 +82,7 @@ export const knexJsLibrary: CatalogueLibrary = {
     {
       kind: "factory",
       name: "default",
+      makesType: "Knex",
       methods: [
         { kind: "call", name: "raw", slots: [], makes: "data" },
         { kind: "call", name: "transaction", slots: [{ at: 0, runs: "in-place" }], makes: "transaction" },
@@ -105,6 +106,7 @@ export const kyselyLibrary: CatalogueLibrary = {
     {
       kind: "factory",
       name: "Kysely",
+      makesType: "Kysely",
       methods: [
         { kind: "call", name: "selectFrom", slots: [], makes: "data-fetch" },
         { kind: "call", name: "insertInto", slots: [], makes: "data" },
