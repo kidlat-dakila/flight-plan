@@ -22,7 +22,7 @@ const agentsSection = {
 
 const forgesSection = {
   section: "forges",
-  codeHostFeatures: { label: "A code host connection adds:", items: ["The pull requests to review, with their labels"] },
+  codeHostFeatures: { label: "Connecting a git forge also enables these features.", items: ["Fetching the open pull requests of you and your team members"] },
   forges: [
     {
       forge: "github",

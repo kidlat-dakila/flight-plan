@@ -283,15 +283,12 @@ describe("buildSetupPage", () => {
 
     expect(form).toMatchObject({
       codeHostFeatures: {
-        label: "A code host connection adds:",
+        label: "Connecting a git forge also enables these features.",
         items: [
-          "The pull requests to review, with their labels",
-          "Who reviews each pull request, and their verdicts",
-          "Requesting and removing reviewers",
-          "The discussion: reading, writing, replying to and resolving comments",
-          "Submitting your review: approve or request changes",
-          "Picking team members by their account",
-          "Links into the code host's diff view",
+          "Fetching the open pull requests of you and your team members",
+          "Reading the comments and reviews on a pull request",
+          "Adding comments and submitting pull request reviews",
+          "Most other features your git provider offers",
         ],
       },
       forges: [

@@ -4,8 +4,8 @@ import ForgesForm from "@/components/ForgesForm"
 const AVAILABLE = { kind: "available" as const, statusLabel: null }
 
 const CODE_HOST_FEATURES = {
-  label: "A code host connection adds:",
-  items: ["The pull requests to review, with their labels", "Links into the code host's diff view"],
+  label: "Connecting a git forge also enables these features.",
+  items: ["Fetching the open pull requests of you and your team members", "Most other features your git provider offers"],
 }
 
 const FORGES = [
@@ -43,8 +43,8 @@ describe("ForgesForm", () => {
   it("lists what a code host adds and every code host at once, none picked", () => {
     renderForm()
 
-    expect(screen.getByText("A code host connection adds:")).toBeTruthy()
-    expect(screen.getByText("Links into the code host's diff view")).toBeTruthy()
+    expect(screen.getByText("Connecting a git forge also enables these features.")).toBeTruthy()
+    expect(screen.getByText("Most other features your git provider offers")).toBeTruthy()
     expect(screen.getAllByRole<HTMLInputElement>("checkbox").map((checkbox) => checkbox.checked)).toStrictEqual([false, false])
     expect(screen.queryByRole("radio")).toBeNull()
   })

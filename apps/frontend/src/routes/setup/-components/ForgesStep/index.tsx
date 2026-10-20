@@ -16,12 +16,11 @@ const TITLE = "Git integration"
 const ForgesStep = ({ backStep, problem, isPending, onSkip, ...form }: ForgesStepProps) => (
   <>
     <StepIntro title={TITLE}>
-      Flight Plan reads the git repositories on this machine via the
+      By default, Flight Plan uses the
       {" "}
       <code className="rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[0.875em]">git</code>
       {" "}
-      command, so every repository works without an account. It fetches from your remotes and fast-forwards a
-      branch when its review refreshes, but never commits, pushes or rewrites your history.
+      command to read and fetch your local and remote branches and their commits.
     </StepIntro>
     <ForgesForm {...form} problem={problem}>
       <StepActions

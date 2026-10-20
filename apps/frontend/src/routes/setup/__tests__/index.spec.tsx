@@ -44,8 +44,8 @@ const agentsForm = {
 const forgesForm = {
   step: "forges",
   codeHostFeatures: {
-    label: "A code host connection adds:",
-    items: ["The pull requests to review, with their labels", "Links into the code host's diff view"],
+    label: "Connecting a git forge also enables these features.",
+    items: ["Fetching the open pull requests of you and your team members", "Most other features your git provider offers"],
   },
   forges: [
     {
@@ -520,9 +520,9 @@ describe("the setup page", () => {
   it("explains how Flight Plan works with git and what a code host adds", async () => {
     renderApp({ "setup.get": () => forgesPage })
 
-    expect(await screen.findByText(/never commits, pushes or rewrites your history\./)).toBeTruthy()
-    expect(screen.getByText("A code host connection adds:")).toBeTruthy()
-    expect(screen.getByText("Links into the code host's diff view")).toBeTruthy()
+    expect(await screen.findByText(/to read and fetch your local and remote branches and their commits\./)).toBeTruthy()
+    expect(screen.getByText("Connecting a git forge also enables these features.")).toBeTruthy()
+    expect(screen.getByText("Most other features your git provider offers")).toBeTruthy()
     expect(screen.getByRole("list", { name: "Code hosts" })).toBeTruthy()
     expect(screen.queryByRole("radio")).toBeNull()
     expect(screen.queryByRole("checkbox", { name: /Local git/ })).toBeNull()

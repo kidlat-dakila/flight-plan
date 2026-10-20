@@ -57,14 +57,11 @@ export interface CodeHostFeature {
   readonly capabilities: readonly Capability[]
 }
 
-export const CODE_HOST_FEATURES_LABEL = "A code host connection adds:"
+export const CODE_HOST_FEATURES_LABEL = "Connecting a git forge also enables these features."
 
 export const CODE_HOST_FEATURES: readonly CodeHostFeature[] = [
-  { label: "The pull requests to review, with their labels", capabilities: ["list", "history", "labels", "filters"] },
-  { label: "Who reviews each pull request, and their verdicts", capabilities: ["reviewers"] },
-  { label: "Requesting and removing reviewers", capabilities: ["reviewRequests"] },
-  { label: "The discussion: reading, writing, replying to and resolving comments", capabilities: ["discussion", "replies", "resolution"] },
-  { label: "Submitting your review: approve or request changes", capabilities: ["review"] },
-  { label: "Picking team members by their account", capabilities: ["people"] },
-  { label: "Links into the code host's diff view", capabilities: ["permalink"] },
+  { label: "Fetching the open pull requests of you and your team members", capabilities: ["list", "history", "labels", "filters", "people"] },
+  { label: "Reading the comments and reviews on a pull request", capabilities: ["discussion", "reviewers"] },
+  { label: "Adding comments and submitting pull request reviews", capabilities: ["replies", "resolution", "review"] },
+  { label: "Most other features your git provider offers", capabilities: ["reviewRequests", "permalink"] },
 ]
