@@ -1,3 +1,4 @@
+import { closeAgent } from "@/procedures/close-agent"
 import { createConversationEnvironment, createMockProcedureContext, type ProcedureContext } from "@/procedures/context"
 import { FakeSpawner, SequentialIds } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
@@ -45,6 +46,27 @@ describe("requestWriteUp", () => {
     expect(artifact?.segments.flatMap(waypointsOf).find(({ waypoint }) => waypoint.id === "w2")?.waypoint.isRequired).toBe(true)
     await expect(context.reviewStore.findRequest(KEY)).resolves.toMatchObject({ writer: { kind: "agent", agent: "claude" } })
     expect(spawner.launches[0]?.prompt).toContain("The reviewer asks for the write-up of the waypoint `w2` alone: write its title and its reading, and nothing else.")
+  })
+
+  it("queues the write-up while an agent is running and asks for it once the agent exits", async () => {
+    const spawner = new FakeSpawner()
+    const context = await createWritingContext(spawner)
+    await requestWriteUp({ ...KEY, target: { kind: "waypoint", waypointId: "w2" } }, context)
+
+    await expect(requestWriteUp({ ...KEY, target: { kind: "waypoint", waypointId: "w3" } }, context)).resolves.toStrictEqual({
+      kind: "queued",
+      message: "The agent is still writing. If this is still missing when it finishes, Flight Plan asks for it next.",
+    })
+    expect(spawner.launches).toHaveLength(1)
+    const { journal } = await context.conversationEnvironment.store.read(KEY)
+    expect(journal.filter(({ event }) => event.kind === "reviewer-message")).toHaveLength(1)
+
+    closeAgent(KEY, "turn-ended", context)
+
+    await vi.waitFor(() => {
+      expect(spawner.launches).toHaveLength(2)
+    })
+    expect(spawner.launches[1]?.prompt).toContain("The reviewer asks for the write-up of the waypoint `w3` alone")
   })
 
   it("refuses when no agent is set up", async () => {

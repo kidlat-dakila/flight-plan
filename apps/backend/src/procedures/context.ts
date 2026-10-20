@@ -32,6 +32,7 @@ import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-ca
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { writeSamplePublishedPage, type PublishedPageWriter } from "@/procedures/publish-artifact/utils/published-page-writer"
+import { InMemoryWriteUpQueue } from "@/procedures/request-write-up/utils/write-up-queue"
 import { spawnPluginPathOf } from "@/procedures/save-setup-step/utils/claude-plugin"
 import { createAgentDetector } from "@/utils/agent-detector"
 import { createAgentInstaller } from "@/utils/agent-installer"
@@ -99,6 +100,7 @@ export const createConversationEnvironment = (
   store: new InMemoryConversationStore(),
   hub: createConversationHub(),
   agents: new InMemoryAgentRegistry(),
+  writeUpQueue: new InMemoryWriteUpQueue(),
   spawners: NO_SPAWNERS,
   serverUrl: MOCK_SERVER_URL,
   newId: randomUUID,
@@ -163,6 +165,7 @@ export const createDemoProcedureContext = async (
       store: conversationStore,
       hub: createInMemoryConversationHub(),
       agents: new InMemoryAgentRegistry(),
+      writeUpQueue: new InMemoryWriteUpQueue(),
       spawners: {
         claude: createDemoAgent({ repliesFor: (key) => repliesByRepository.get(key.repositoryName) ?? [], readContext: () => context }),
       },

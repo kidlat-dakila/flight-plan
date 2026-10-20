@@ -17,6 +17,7 @@ import type { AgentExit, AgentSpawner } from "@/procedures/get-conversation/util
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { AGENT_NAMES, type AgentInstall, type AgentName } from "@/procedures/get-setup/utils/setup"
 import { handleAgentExit } from "@/procedures/handle-agent-exit"
+import { requestQueuedWriteUps } from "@/procedures/request-queued-write-ups"
 import { chooseWriter } from "./utils/choose-writer"
 import { planDelivery, type DeliveryPlan } from "./utils/plan-delivery"
 
@@ -52,7 +53,8 @@ const startingAgent = (key: ReviewKey, agent: AgentName, sessionId: string, now:
 
 const onExitOf = (key: ReviewKey, sessionId: string, context: ProcedureContext) => (exit: AgentExit): void => {
   void handleAgentExit({ key, sessionId, exitCode: exit.exitCode }, context).then(async (outcome) => {
-    if (outcome.shouldRedeliver) await deliverToAgent(key, context)
+    const hasQueuedWriteUps = await requestQueuedWriteUps(key, context)
+    if (outcome.shouldRedeliver || hasQueuedWriteUps) await deliverToAgent(key, context)
   })
 }
 

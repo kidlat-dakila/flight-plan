@@ -11,8 +11,8 @@ describe("planSetupGate", () => {
     expect(planSetupGate(false, "/setup/")).toStrictEqual({ redirectTo: null })
   })
 
-  it("sends the setup page to the repositories once the setup is complete", () => {
-    expect(planSetupGate(true, "/setup")).toStrictEqual({ redirectTo: "/" })
+  it("lets every page through once the setup is complete, the setup page included", () => {
+    expect(planSetupGate(true, "/setup")).toStrictEqual({ redirectTo: null })
     expect(planSetupGate(true, "/")).toStrictEqual({ redirectTo: null })
   })
 })

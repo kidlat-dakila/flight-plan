@@ -1,4 +1,5 @@
 import type { AgentName } from "@/procedures/get-setup/utils/setup"
+import type { WriteUpQueue } from "@/procedures/request-write-up/utils/write-up-queue"
 import type { AgentProcess, AgentRegistry } from "./agent-registry"
 import type { ConversationHub } from "./conversation-hub"
 import type { ConversationStore } from "./conversation-store"
@@ -31,6 +32,7 @@ export interface ConversationEnvironment {
   readonly store: ConversationStore
   readonly hub: ConversationHub
   readonly agents: AgentRegistry
+  readonly writeUpQueue: WriteUpQueue
   readonly spawners: AgentSpawners
   readonly serverUrl: string
   readonly newId: () => string

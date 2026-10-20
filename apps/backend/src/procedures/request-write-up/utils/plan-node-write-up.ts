@@ -8,7 +8,7 @@ import type { WriteUpRequestResult, WriteUpTarget } from "./schemas"
 
 export type PlannedNodeWriteUp
   = | { readonly kind: "planned", readonly artifact: ReviewArtifact, readonly ask: string, readonly message: string }
-    | Exclude<WriteUpRequestResult, { kind: "started" }>
+    | Exclude<WriteUpRequestResult, { kind: "started" | "queued" }>
 
 type TargetOf<Kind extends WriteUpTarget["kind"]> = Extract<WriteUpTarget, { kind: Kind }>
 

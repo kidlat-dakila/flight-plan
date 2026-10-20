@@ -17,6 +17,7 @@ export const WRITE_UP_REQUEST_FIELDS = ["target", "agent"] as const
 
 export const writeUpRequestResultSchema = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("started"), prompt: z.string().nullable(), message: z.string() }),
+  z.strictObject({ kind: z.literal("queued"), message: z.string() }),
   z.strictObject({ kind: z.literal("written"), message: z.string() }),
   z.strictObject({ kind: z.literal("rejected"), field: z.enum(WRITE_UP_REQUEST_FIELDS), message: z.string() }),
 ])
