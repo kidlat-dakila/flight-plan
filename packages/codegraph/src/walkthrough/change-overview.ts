@@ -1,4 +1,6 @@
+import { buildCodeLink } from "@/code/links"
 import { classificationOfBlock, classificationViewOf } from "@/code-blocks/classification-view"
+import type { BlobLinker } from "@/review-view-context"
 import { nameOfBlock } from "@/trace/names"
 import {
   CODE_BLOCK_CLASSIFICATIONS,
@@ -7,8 +9,10 @@ import {
   type ChangeOverviewRow,
   type CodeBlock,
   type CodeBlockClassification,
+  type CodeLink,
 } from "@flightplan/configurations"
 import { waypointAnchorId, type FileEntry, type PreparedWalkthrough } from "./build"
+import type { FileRootBlock } from "./reviewable-file"
 import { labelsOfRootBlock } from "./root-blocks"
 
 const CHANGE_OVERVIEW_HEADING = "Change Overview"
@@ -23,10 +27,19 @@ interface ClassifiedCard {
 const firstWaypointOn = (entry: FileEntry, root: CodeBlock): string | null =>
   entry.waypoints.find((flat) => flat.rootBlocks.includes(root))?.waypoint.id ?? null
 
-const cardsOfFile = (entry: FileEntry): ClassifiedCard[] =>
-  entry.rootBlocks.flatMap(({ id, block }): ClassifiedCard[] => {
+const previewOf = (entry: FileEntry, { block, span }: FileRootBlock, anchorId: string | null, blobLinkOf: BlobLinker): CodeLink | null => {
+  const [{ start, end }] = block.lineOfCodeRangeReference
+  return entry.highlighted === null || span === null
+    ? null
+    : buildCodeLink({ highlighted: entry.highlighted, range: { lineStart: start.line, lineEnd: end.line }, span }, anchorId, blobLinkOf)
+}
+
+const cardsOfFile = (entry: FileEntry, blobLinkOf: BlobLinker): ClassifiedCard[] =>
+  entry.rootBlocks.flatMap((rootBlock): ClassifiedCard[] => {
+    const { id, block } = rootBlock
     const labels = labelsOfRootBlock(block, entry.highlighted?.source ?? null)
     const waypointId = firstWaypointOn(entry, block)
+    const anchorId = waypointId === null ? null : waypointAnchorId(waypointId)
     return labels === null
       ? []
       : [{
@@ -39,7 +52,8 @@ const cardsOfFile = (entry: FileEntry): ClassifiedCard[] =>
             path: entry.file.path,
             change: labels.change,
             changeLabel: labels.changeLabel,
-            waypointAnchorId: waypointId === null ? null : waypointAnchorId(waypointId),
+            waypointAnchorId: anchorId,
+            preview: previewOf(entry, rootBlock, anchorId, blobLinkOf),
           },
         }]
   })
@@ -49,8 +63,8 @@ const toRow = (classification: CodeBlockClassification, cards: readonly Classifi
   return inRow.length === 0 ? [] : [{ classification: classificationViewOf(inRow[0].block), cards: inRow.map(({ card }) => card) }]
 }
 
-export const buildChangeOverview = (prepared: PreparedWalkthrough): ChangeOverview => {
-  const cards = prepared.files.flatMap(({ entry }) => cardsOfFile(entry))
+export const buildChangeOverview = (prepared: PreparedWalkthrough, blobLinkOf: BlobLinker): ChangeOverview => {
+  const cards = prepared.files.flatMap(({ entry }) => cardsOfFile(entry, blobLinkOf))
   return {
     heading: CHANGE_OVERVIEW_HEADING,
     emptyMessage: cards.length === 0 ? NO_CHANGES_MESSAGE : null,

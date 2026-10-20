@@ -17,8 +17,15 @@ const spanning = (lineStart: number, lineEnd: number): CodeBlock["lineOfCodeRang
   { start: { line: lineStart, column: 1 }, end: { line: lineEnd, column: 1 } },
 ]
 
-const overviewOf = (segment: Segment): ChangeOverview =>
-  buildChangeOverview(prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, createViewContext()))
+const overviewOf = (segment: Segment): ChangeOverview => {
+  const context = createViewContext()
+  return buildChangeOverview(prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, context), context.blobLinkOf)
+}
+
+const withoutPreviews = (overview: ChangeOverview): ChangeOverview => ({
+  ...overview,
+  rows: overview.rows.map((row) => ({ ...row, cards: row.cards.map((card) => ({ ...card, preview: null })) })),
+})
 
 const PRICE_OF = createCodeBlock("price-of", PRICE_PATH, { name: "priceOf", lineOfCodeRangeReference: spanning(11, 13), classifications: ["database-read-write", "validation"] })
 const FORMAT = createCodeBlock("format", PRICE_PATH, { name: "format", lineOfCodeRangeReference: spanning(14, 14), classifications: ["logic"] })
@@ -35,24 +42,35 @@ describe("buildChangeOverview", () => {
       },
     })
 
-    expect(overviewOf(segment)).toStrictEqual({
+    expect(withoutPreviews(overviewOf(segment))).toStrictEqual({
       heading: "Change Overview",
       emptyMessage: null,
       rows: [
         {
           classification: { key: "component", label: "Component" },
-          cards: [{ id: `${CART_PATH}#component:subtotal`, label: "subtotal", typeLabel: "Component", path: CART_PATH, change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-w-subtotal" }],
+          cards: [{ id: `${CART_PATH}#component:subtotal`, label: "subtotal", typeLabel: "Component", path: CART_PATH, change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-w-subtotal", preview: null }],
         },
         {
           classification: { key: "database-read-write", label: "Database read/write" },
-          cards: [{ id: `${PRICE_PATH}#function:priceOf`, label: "priceOf", typeLabel: "Function", path: PRICE_PATH, change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-w-price-of" }],
+          cards: [{ id: `${PRICE_PATH}#function:priceOf`, label: "priceOf", typeLabel: "Function", path: PRICE_PATH, change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-w-price-of", preview: null }],
         },
         {
           classification: { key: "logic", label: "Logic" },
-          cards: [{ id: `${PRICE_PATH}#function:format`, label: "format", typeLabel: "Function", path: PRICE_PATH, change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-w-format" }],
+          cards: [{ id: `${PRICE_PATH}#function:format`, label: "format", typeLabel: "Function", path: PRICE_PATH, change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-w-format", preview: null }],
         },
       ],
     })
+  })
+
+  it("previews the code of each block as a code link does, opening its waypoint", () => {
+    const segment = createSegment({
+      walkthrough: { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("w-price-of", "priceOf", { codeBlocks: [PRICE_OF] })] }] },
+    })
+
+    const [{ cards: [{ preview }] }] = overviewOf(segment).rows
+
+    expect(preview).toMatchObject({ pathLabel: PRICE_PATH, rangeLabel: "Lines 11 to 13, 3 lines", anchorId: "waypoint-w-price-of" })
+    expect(preview?.lines.length).toBeGreaterThan(0)
   })
 
   it("marks a deleted root block deleted, and leaves imports out", () => {

@@ -1,24 +1,25 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import ChangeOverview, { type ChangeOverviewRow } from "@/components/ChangeOverview"
+import { CODE_LINKS } from "@/lib/__tests__/review-samples"
 
 const ROWS: readonly ChangeOverviewRow[] = [
   {
     classification: { key: "component", label: "Component" },
     cards: [
-      { id: "form", label: "AddTodoForm", typeLabel: "Component", path: "src/app/_components/add-todo-form.tsx", change: "added", changeLabel: "Added", waypointAnchorId: "waypoint-w1" },
-      { id: "page", label: "CreatePage", typeLabel: "Component", path: "src/app/create/page.tsx", change: "modified", changeLabel: "Modified", waypointAnchorId: null },
+      { id: "form", label: "AddTodoForm", typeLabel: "Component", path: "src/app/_components/add-todo-form.tsx", change: "added", changeLabel: "Added", waypointAnchorId: "waypoint-w1", preview: null },
+      { id: "page", label: "CreatePage", typeLabel: "Component", path: "src/app/create/page.tsx", change: "modified", changeLabel: "Modified", waypointAnchorId: null, preview: null },
     ],
   },
   {
     classification: { key: "database-write", label: "Database write" },
     cards: [
-      { id: "insert", label: "createTodo", typeLabel: "Function", path: "src/server/api/routers/todo.ts", change: "deleted", changeLabel: "Deleted", waypointAnchorId: "waypoint-w3" },
+      { id: "insert", label: "createTodo", typeLabel: "Function", path: "src/server/api/routers/todo.ts", change: "deleted", changeLabel: "Deleted", waypointAnchorId: "waypoint-w3", preview: null },
     ],
   },
 ]
 
 describe("ChangeOverview", () => {
-  it("lists a row per classification, each card with its change, name, type and path", () => {
+  it("groups the plates under their classification, each with its change, name, type and path", () => {
     render(<ChangeOverview heading="Change Overview" emptyMessage={null} rows={ROWS} onOpenWaypoint={vi.fn()} />)
 
     const section = screen.getByRole("region", { name: "Change Overview" })
@@ -39,6 +40,25 @@ describe("ChangeOverview", () => {
     expect(onOpenWaypoint).toHaveBeenCalledWith("waypoint-w1")
     expect(screen.queryByRole("button", { name: /CreatePage/ })).toBeNull()
     expect(screen.getAllByRole("button")).toHaveLength(2)
+  })
+
+  it("shows the code of a block when its plate takes focus, and still opens its waypoint", async () => {
+    const onOpenWaypoint = vi.fn()
+    const rows: readonly ChangeOverviewRow[] = [{
+      classification: { key: "logic", label: "Logic" },
+      cards: [{ id: "price", label: "priceOf", typeLabel: "Function", path: "src/price.ts", change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-w2", preview: CODE_LINKS["src/price.ts#priceOf"] }],
+    }]
+    render(<ChangeOverview heading="Change Overview" emptyMessage={null} rows={rows} onOpenWaypoint={onOpenWaypoint} />)
+
+    const plate = screen.getByRole("button", { name: /priceOf/ })
+    fireEvent.focus(plate)
+
+    expect(await screen.findByText("Lines 3 to 4, 2 lines")).toBeTruthy()
+    expect(screen.getByText("export const priceOf = () => 1")).toBeTruthy()
+
+    fireEvent.click(plate)
+
+    expect(onOpenWaypoint).toHaveBeenCalledWith("waypoint-w2")
   })
 
   it("says so when no code changed", () => {

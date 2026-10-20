@@ -82,7 +82,7 @@ Under the summary, the Context band shows the **Change Overview**, which Flight 
 | Part | Content |
 |---|---|
 | Rows | One per primary [classification](codegraph/classifications.md) of the root code blocks, the same one each root code block shows, in the order of the hierarchy. A row holds `classification` (`key`, `label`) and its `cards`. |
-| Cards | In the order of the walkthrough. Each has the root code block's `id`, its name as `label`, its type as `typeLabel` ("Function", "Component"), its `path`, its `change` (`added`, `modified`, `deleted`) with `changeLabel`, and `waypointAnchorId`, the anchor of the first waypoint on it. An import is never a card. |
+| Cards | In the order of the walkthrough. Each has the root code block's `id`, its name as `label`, its type as `typeLabel` ("Function", "Component"), its `path`, its `change` (`added`, `modified`, `deleted`) with `changeLabel`, `waypointAnchorId`, the anchor of the first waypoint on it, and `preview`, the root code block's code as a code link (path, line range, lines, the waypoint anchor and the forge link), or `null` when its lines cannot be found. An import is never a card. |
 | `emptyMessage` | "No code changed." when there is no card, else `null` |
 
 ## Segments

@@ -385,7 +385,7 @@ describe("the review page", () => {
       emptyMessage: null,
       rows: [{
         classification: { key: "logic", label: "Logic" },
-        cards: [{ id: "price-of", label: "priceOf", typeLabel: "Function", path: "src/price.ts", change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-price-of" }],
+        cards: [{ id: "price-of", label: "priceOf", typeLabel: "Function", path: "src/price.ts", change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-price-of", preview: null }],
       }],
     }
     renderReview({

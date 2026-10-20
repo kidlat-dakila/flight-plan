@@ -394,6 +394,7 @@ export const changeOverviewCardSchema = z.strictObject({
   change: z.enum(ROOT_BLOCK_CHANGES),
   changeLabel: z.string(),
   waypointAnchorId: z.string().nullable(),
+  preview: codeLinkSchema.nullable(),
 })
 
 export const changeOverviewRowSchema = z.strictObject({
