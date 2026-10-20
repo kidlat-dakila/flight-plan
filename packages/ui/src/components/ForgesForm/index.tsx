@@ -178,7 +178,12 @@ const ForgesForm = ({ codeHostFeatures, forges, problem, children, onSubmit }: F
   }
 
   return (
-    <form action={handleSubmit}>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        handleSubmit()
+      }}
+    >
       <div className="max-w-[62ch] pb-4 text-sm">
         <p>{codeHostFeatures.label}</p>
         <ul className="list-disc pl-5 text-muted-foreground">

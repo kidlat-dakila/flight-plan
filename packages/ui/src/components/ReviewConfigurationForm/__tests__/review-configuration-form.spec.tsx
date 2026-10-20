@@ -33,7 +33,6 @@ const renderForm = (onSubmit = vi.fn(), problem: React.ComponentProps<typeof Rev
       preferences={PREFERENCES}
       spotlightGroups={SPOTLIGHT_GROUPS}
       problem={problem}
-      promptConfigurationNotes={["You can pick another prompt configuration each time you create a Flight Plan."]}
       onSubmit={onSubmit}
     >
       <button type="submit">Save</button>
@@ -47,6 +46,7 @@ describe("ReviewConfigurationForm", () => {
     const promptConfiguration = screen.getByRole("region", { name: "Which writing style should the agent use?" })
     const trigger = within(promptConfiguration).getByRole("button", { name: "Prompt configuration, Minimal" })
     expect(trigger.textContent).toContain("Best for saving tokens.")
+    expect(within(promptConfiguration).getByRole("note").textContent).toContain("You can fully customize the prompt instructions")
 
     fireEvent.click(trigger)
 

@@ -120,7 +120,7 @@ const checkoutWeb = {
   path: "/Users/dev/projects/checkout-web",
   lineColor: "blue",
   lineLabel: "C",
-  authorSearchHint: "You see your own branches. Add team members to see theirs too.",
+  authorSearchHint: "Flight Plan will show all pull requests by default. However, you can choose to show only pull requests from your teammates (and from you).",
   authorSearchPlaceholder: "Type a name or email",
   selfAuthor: null,
   trackedAuthors: [],
@@ -269,13 +269,16 @@ describe("the setup page", () => {
     expect(screen.getByRole("link", { name: "Back" }).getAttribute("href")).toBe("/setup?step=repositories")
   })
 
-  it("explains that Flight Plan builds the review and the agent explains the change", async () => {
+  it("says what the step configures and explains how Flight Plan works with the agent on request", async () => {
     renderApp({ "setup.get": () => agentsPage })
 
-    const intro = await screen.findByText(/Flight Plan builds almost everything on its own/)
+    expect(await screen.findByText("Configure which agent you prefer and where Flight Plan installs the agent plugin and the MCP server.")).toBeTruthy()
+    expect(screen.queryByText("What the agent does")).toBeNull()
 
-    expect(intro.textContent).toContain("What it can't do is explain how the code works or find potential issues.")
-    expect(intro.textContent).toContain("That's where your agent comes in")
+    fireEvent.click(screen.getByRole("button", { name: /How does Flight Plan interact with the agent\?/ }))
+
+    expect(await screen.findByText("What Flight Plan does")).toBeTruthy()
+    expect(screen.getByText("What the agent does")).toBeTruthy()
   })
 
   it("asks for an install folder only for a picked agent, prefilled with the detected one", async () => {
@@ -602,8 +605,7 @@ describe("the setup page", () => {
     expect(await screen.findByRole("region", { name: "Which writing style should the agent use?" })).toBeTruthy()
     expect(screen.getByText(/Each prompt configuration gives the agent a different way of writing/)).toBeTruthy()
     expect(screen.getByRole("button", { name: "Prompt configuration, Standard" })).toBeTruthy()
-    expect(screen.getByText("You can pick another prompt configuration each time you create a Flight Plan.")).toBeTruthy()
-    expect(screen.getByText("You can make your own later, in the settings.")).toBeTruthy()
+    expect(screen.getByRole("note").textContent).toContain("You can fully customize the prompt instructions")
 
     fireEvent.click(screen.getByRole("button", { name: "Prompt configuration, Standard" }))
     fireEvent.click(await screen.findByRole("radio", { name: /Minimal/ }))
@@ -792,6 +794,26 @@ describe("the setup page", () => {
 
     expect(await screen.findByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
     expect(screen.getByRole("heading", { level: 2, name: "Select your repositories" })).toBeTruthy()
+    expect(screen.queryByRole("heading", { name: "Git integration" })).toBeNull()
+  })
+
+  it("stays on the repositories step after following the first repository from the address of a later step", async () => {
+    const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "accepted" } })
+    const getSetup = (input: unknown): ProcedureReply => {
+      const isStepRequested = JSON.stringify(input).includes("repositories")
+      if (addRepository.mock.calls.length === 0) return pageOf(emptyRepositoriesForm)
+      return isStepRequested ? pageOf(selfChosenRepositoriesForm) : forgesPage
+    }
+    renderApp({
+      "setup.get": getSetup,
+      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("checkout-web")),
+      "setup.addRepository": addRepository,
+    }, "/setup?step=forges")
+
+    const repositories = await screen.findByRole("list", { name: "Repositories" })
+    fireEvent.click(within(repositories).getByRole("checkbox", { name: /^checkout-web/ }))
+
+    expect(await screen.findByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
     expect(screen.queryByRole("heading", { name: "Git integration" })).toBeNull()
   })
 

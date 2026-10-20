@@ -26,7 +26,12 @@ const RepositoriesStep = ({
   onContinue,
   ...list
 }: RepositoriesStepProps) => (
-  <form action={onContinue}>
+  <form
+    onSubmit={(event) => {
+      event.preventDefault()
+      onContinue()
+    }}
+  >
     <StepIntro title={TITLE}>
       Choose the repositories you review. Flight Plan shows their pull requests and branches on your home page.
     </StepIntro>

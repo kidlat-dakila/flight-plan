@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import ForgesForm from "@/components/ForgesForm"
 
 const AVAILABLE = { kind: "available" as const, statusLabel: null }
@@ -86,6 +86,21 @@ describe("ForgesForm", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
     expect(onSubmit).toHaveBeenCalledWith({ forges: NONE_PICKED })
+  })
+
+  it("keeps a picked code host and its typed fields after saving", async () => {
+    const onSubmit = vi.fn()
+    renderForm({ onSubmit })
+
+    fireEvent.click(screen.getByRole("checkbox", { name: /GitHub token/ }))
+    fireEvent.change(screen.getByLabelText("Token for GitHub token"), { target: { value: "secret" } })
+    fireEvent.click(screen.getByRole("button", { name: "Save" }))
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalled()
+    })
+
+    expect(screen.getByRole<HTMLInputElement>("checkbox", { name: /GitHub token/ }).checked).toBe(true)
+    expect(screen.getByLabelText<HTMLInputElement>("Token for GitHub token").value).toBe("secret")
   })
 
   it("shows a problem about a field under that field", () => {

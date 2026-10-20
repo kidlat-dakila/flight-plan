@@ -4,7 +4,7 @@ import RepositoryList, { type FollowedRepository } from "@/components/Repository
 const FOLLOWED: FollowedRepository = {
   name: "storefront",
   path: "/work/storefront",
-  authorSearchHint: "You see your own branches. Add team members to see theirs too.",
+  authorSearchHint: "Flight Plan will show all pull requests by default. However, you can choose to show only pull requests from your teammates (and from you).",
   authorSearchPlaceholder: "Type a name or email",
   selfAuthor: null,
   trackedAuthors: [],

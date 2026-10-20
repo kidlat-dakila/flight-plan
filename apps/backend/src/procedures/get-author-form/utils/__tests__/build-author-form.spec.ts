@@ -6,7 +6,7 @@ describe("buildAuthorForm", () => {
   it("shows no user when local git serves the repository and git config has no email", () => {
     expect(buildAuthorForm("git", null, "storefront")).toStrictEqual({
       gitSelfAuthor: null,
-      searchHint: "You see your own branches. Add team members to see theirs too.",
+      searchHint: "Flight Plan will show all pull requests by default. However, you can choose to show only pull requests from your teammates (and from you).",
       searchPlaceholder: "Type a name or email",
     })
   })

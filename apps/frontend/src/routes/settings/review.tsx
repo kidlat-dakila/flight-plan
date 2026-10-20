@@ -11,7 +11,6 @@ import SettingsSkeleton from "./-components/SettingsSkeleton"
 const SECTION = { section: "review" } as const
 const DOCUMENT_TITLE = "Review configuration • Settings • Flight Plan"
 const TITLE = "Review configuration"
-const PROMPT_CONFIGURATION_NOTES = ["You can pick another prompt configuration each time you create a Flight Plan."]
 
 const ReviewSettingsPage = () => {
   const trpc = useTRPC()
@@ -29,7 +28,6 @@ const ReviewSettingsPage = () => {
         preferences={page.preferences}
         spotlightGroups={page.spotlightGroups}
         problem={saving.problem}
-        promptConfigurationNotes={PROMPT_CONFIGURATION_NOTES}
         onSubmit={(choice) => { saving.save({ ...SECTION, ...choice }) }}
       >
         <SettingsActions

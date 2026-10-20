@@ -18,7 +18,7 @@ export type RepositoryEntry = RepositoriesStep["repositories"][number]
 const COMMIT_SEARCH_PLACEHOLDER = "Type a name or email"
 const FORGE_SEARCH_PLACEHOLDER = "Type a name or username"
 
-const LOCAL_GIT_AUTHOR_SEARCH_HINT = "You see your own branches. Add team members to see theirs too."
+const LOCAL_GIT_AUTHOR_SEARCH_HINT = "Flight Plan will show all pull requests by default. However, you can choose to show only pull requests from your teammates (and from you)."
 const forgeAuthorSearchHint = (repositoryName: string): string =>
   `By default, Flight Plan shows every branch in ${repositoryName}. To see only your teammates' pull requests, add them here.`
 

@@ -2,6 +2,7 @@ import { ChevronDownIcon } from "lucide-react"
 import { useId, useState, type ReactNode } from "react"
 import Collapsible, { CollapsibleContent, CollapsibleTrigger } from "@/components/blocks/collapsible"
 import IgnoredPathsField, { type RowProblem } from "@/components/IgnoredPathsField"
+import InfoCallout from "@/components/InfoCallout"
 import SectionOrderField, { type ArrangedSection } from "@/components/SectionOrderField"
 import SectionWriteUpsField, { type SectionWriteUps } from "@/components/SectionWriteUpsField"
 import SelectDialog, { type SelectDialogOption } from "@/components/SelectDialog"
@@ -37,7 +38,6 @@ interface ReviewConfigurationFormProps<Classification extends string> {
   readonly preferences: ReviewPreferences<Classification>
   readonly spotlightGroups: readonly SpotlightGroup<Classification>[]
   readonly problem: FormProblem | null
-  readonly promptConfigurationNotes: readonly string[]
   readonly children: ReactNode
   readonly onSubmit: (choice: ReviewConfigurationChoice<Classification>) => void
 }
@@ -54,6 +54,8 @@ const PROMPT_CONFIGURATION_INTRO = "Each prompt configuration gives the agent a 
 const PROMPT_CONFIGURATION_DIALOG_TITLE = "Choose a prompt configuration"
 const PROMPT_CONFIGURATION_DIALOG_DESCRIPTION = "It sets the tone the agent writes in and how it words each part."
 const CHOOSE_LABEL = "Choose"
+const CUSTOMIZATION_TITLE = "You can fully customize the prompt instructions"
+const CUSTOMIZATION_TEXT = "You can make your own prompt configuration in Settings > Prompt configurations and rewrite how the agent words each part of the review, down to its writing style. You can also pick a different configuration each time you create a Flight Plan."
 const CANCEL_LABEL = "Cancel"
 const ORGANIZATION_TITLE = "Review organization"
 const ORGANIZATION_INTRO = "Choose whether a review is split into segments."
@@ -144,7 +146,6 @@ const ReviewConfigurationForm = <Classification extends string>({
   preferences,
   spotlightGroups,
   problem,
-  promptConfigurationNotes,
   children,
   onSubmit,
 }: ReviewConfigurationFormProps<Classification>) => {
@@ -160,7 +161,10 @@ const ReviewConfigurationForm = <Classification extends string>({
   return (
     <form
       className="grid gap-10"
-      action={() => { onSubmit({ configurationId, preferences: { spotlight, sectionWriteUps, isSegmented, walkthroughOrder, sectionOrder, ignoredPaths } }) }}
+      onSubmit={(event) => {
+        event.preventDefault()
+        onSubmit({ configurationId, preferences: { spotlight, sectionWriteUps, isSegmented, walkthroughOrder, sectionOrder, ignoredPaths } })
+      }}
     >
       <PartSection title={SPOTLIGHT_TITLE} intro={SPOTLIGHT_INTRO}>
         {(headingId) => (
@@ -183,13 +187,7 @@ const ReviewConfigurationForm = <Classification extends string>({
               selectedKey={configurationId}
               onChoose={setConfigurationId}
             />
-            {promptConfigurationNotes.length === 0
-              ? null
-              : (
-                  <ul className="max-w-[62ch] list-disc pt-4 pl-5 text-sm text-muted-foreground">
-                    {promptConfigurationNotes.map((note) => <li key={note}>{note}</li>)}
-                  </ul>
-                )}
+            <InfoCallout title={CUSTOMIZATION_TITLE} className="mt-4 max-w-xl">{CUSTOMIZATION_TEXT}</InfoCallout>
           </>
         )}
       </PartSection>

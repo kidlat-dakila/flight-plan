@@ -43,7 +43,7 @@ const storefront = {
   path: "/Users/dev/projects/storefront",
   lineColor: "blue",
   lineLabel: "S",
-  authorSearchHint: "You see your own branches. Add team members to see theirs too.",
+  authorSearchHint: "Flight Plan will show all pull requests by default. However, you can choose to show only pull requests from your teammates (and from you).",
   authorSearchPlaceholder: "Type a name or email",
   selfAuthor: dev,
   trackedAuthors: [lena],
@@ -258,8 +258,7 @@ describe("the settings pages", () => {
       expect(screen.getByRole("button", { name: /Advanced options/ }).getAttribute("aria-expanded")).toBe("false")
       expect(screen.getByRole<HTMLInputElement>("checkbox", { name: "Security" }).checked).toBe(true)
       expect(screen.getByRole("button", { name: "Prompt configuration, Terse" })).toBeTruthy()
-      expect(screen.getByText("You can pick another prompt configuration each time you create a Flight Plan.")).toBeTruthy()
-      expect(screen.queryByText("You can make your own later, in the settings.")).toBeNull()
+      expect(screen.getByRole("note").textContent).toContain("You can fully customize the prompt instructions")
     })
 
     it("saves the preferences and the default configuration together and says so", async () => {

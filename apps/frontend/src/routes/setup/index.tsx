@@ -365,7 +365,7 @@ export const Route = createFileRoute("/setup/")({
   loaderDeps: ({ search }) => ({ step: search.step ?? null }),
   loader: async ({ context: { queryClient, trpc }, deps }) => {
     const page = await queryClient.query({ ...trpc.setup.get.queryOptions(deps), staleTime: "static" })
-    if (deps.step !== null) return
+    if (deps.step === page.form.step) return
     queryClient.setQueryData(trpc.setup.get.queryKey({ step: page.form.step }), page)
     redirect({ to: "/setup", search: { step: page.form.step }, replace: true, throw: true })
   },

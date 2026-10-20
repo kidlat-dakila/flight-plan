@@ -71,8 +71,6 @@ interface AgentRowProps {
   readonly onBrowse: () => void
 }
 
-const SECTION_HEADING_CLASSES = "pt-8 pb-2 text-xl leading-7 font-bold text-signal-text"
-const AGENTS_HEADING = "Agents"
 const CHOICE_INPUT_CLASSES = "size-4 shrink-0 accent-(--primary)"
 const BROWSER_DESCRIPTION = "Open folders until you reach the one to install into, then use it."
 
@@ -289,8 +287,12 @@ const AgentsForm = ({
   }
 
   return (
-    <form action={handleSubmit}>
-      <h3 className={SECTION_HEADING_CLASSES}>{AGENTS_HEADING}</h3>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        handleSubmit()
+      }}
+    >
       <ul className="border-t border-border">
         {agents.map((option) => (
           <AgentRow

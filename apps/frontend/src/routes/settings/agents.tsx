@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 import { useSettingsSaving } from "@/settings-saving"
 import { useTRPC } from "@/trpc"
+import AgentInteraction from "@flightplan/ui/AgentInteraction"
 import AgentsForm from "@flightplan/ui/AgentsForm"
 import SectionIntro from "./-components/SectionIntro"
 import SettingsActions from "./-components/SettingsActions"
@@ -28,9 +29,7 @@ const AgentsSettingsPage = () => {
     <>
       <title>{DOCUMENT_TITLE}</title>
       <SectionIntro title={TITLE}>
-        Flight Plan builds almost everything on its own. It draws the Trace Diagram and the Blast Diagram, and arranges
-        the Code Walkthrough the way you prefer. What it can&apos;t do is explain how the code works or find potential issues.
-        That&apos;s where your agent comes in, to make the change easier to understand.
+        Configure which agent you prefer and where Flight Plan installs the agent plugin and the MCP server.
       </SectionIntro>
       <AgentsForm
         agents={page.agents}
@@ -42,6 +41,7 @@ const AgentsSettingsPage = () => {
         onBrowseEnd={() => { setBrowsedPath(null) }}
         onSubmit={(choice) => { saving.save({ ...SECTION, ...choice }) }}
       >
+        <AgentInteraction />
         <SettingsActions
           isPending={saving.isPending}
           errorMessage={saving.errorMessage}
