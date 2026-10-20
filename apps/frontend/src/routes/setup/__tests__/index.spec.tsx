@@ -609,13 +609,15 @@ describe("the setup page", () => {
       "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
     })
 
-    expect(await screen.findByRole("region", { name: "Prompt configuration" })).toBeTruthy()
-    expect(screen.getByText(/A prompt configuration is the set of instructions the agent follows/)).toBeTruthy()
-    expect(screen.getByRole<HTMLInputElement>("radio", { name: /Standard/ }).checked).toBe(true)
+    expect(await screen.findByRole("region", { name: "Which writing style should the agent use?" })).toBeTruthy()
+    expect(screen.getByText(/Each prompt configuration gives the agent a different way of writing/)).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Prompt configuration, Standard" })).toBeTruthy()
     expect(screen.getByText("You can pick another prompt configuration each time you create a Flight Plan.")).toBeTruthy()
     expect(screen.getByText("You can make your own later, in the settings.")).toBeTruthy()
 
-    fireEvent.click(screen.getByRole("radio", { name: /Minimal/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Prompt configuration, Standard" }))
+    fireEvent.click(await screen.findByRole("radio", { name: /Minimal/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
     fireEvent.click(screen.getByRole("button", { name: "Finish setup" }))
 
     await waitFor(() => {
@@ -637,7 +639,7 @@ describe("the setup page", () => {
     })
 
     const spotlight = await screen.findByRole("region", { name: "Which topics do you care about most in a code review?" })
-    expect(within(spotlight).getByText(/Flight Plan will mark changes on these topics in every review/)).toBeTruthy()
+    expect(within(spotlight).getByText(/Selecting a topic helps Flight Plan organize the changes/)).toBeTruthy()
     expect(within(spotlight).getByRole("checkbox", { name: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting" })).toBeTruthy()
 
     fireEvent.click(within(spotlight).getByRole("checkbox", { name: "Security" }))
@@ -663,12 +665,12 @@ describe("the setup page", () => {
       "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
     })
 
-    const writeUps = await screen.findByRole("region", { name: "Write-ups" })
-    expect(within(writeUps).getByText(/Which parts should the agent write up by default\?/)).toBeTruthy()
-    const findings = within(writeUps).getByRole("group", { name: "Findings" })
-    expect(within(findings).getByRole<HTMLInputElement>("radio", { name: "Always" }).checked).toBe(true)
+    const writeUps = await screen.findByRole("region", { name: "Which parts should the agent write for you by default?" })
+    expect(within(writeUps).getByText(/Pick the sections you want the agent to write in every review/)).toBeTruthy()
+    const findings = within(writeUps).getByRole<HTMLInputElement>("checkbox", { name: "Findings" })
+    expect(findings.checked).toBe(true)
 
-    fireEvent.click(within(findings).getByRole("radio", { name: "On demand" }))
+    fireEvent.click(findings)
     fireEvent.click(screen.getByRole("button", { name: "Finish setup" }))
 
     await waitFor(() => {
@@ -689,13 +691,16 @@ describe("the setup page", () => {
       "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
     })
 
-    const organization = await screen.findByRole("region", { name: "Review organization" })
+    fireEvent.click(await screen.findByRole("button", { name: /Advanced options/ }))
+    const organization = screen.getByRole("region", { name: "Review organization" })
     const segments = within(organization).getByRole<HTMLInputElement>("checkbox", { name: /Split reviews into segments/ })
     expect(segments.checked).toBe(true)
-    expect(within(organization).getByRole<HTMLInputElement>("radio", { name: /Bottom up/ }).checked).toBe(true)
+    const walkthroughOrder = within(screen.getByRole("region", { name: "Code Walkthrough order" })).getByRole("button", { name: "Code Walkthrough order, Building blocks first" })
 
     fireEvent.click(segments)
-    fireEvent.click(within(organization).getByRole("radio", { name: /Top down/ }))
+    fireEvent.click(walkthroughOrder)
+    fireEvent.click(await screen.findByRole("radio", { name: /Entry points first/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
     fireEvent.click(within(screen.getByRole("region", { name: "Display arrangement" })).getByRole("button", { name: "Move Context down" }))
     fireEvent.click(screen.getByRole("button", { name: "Finish setup" }))
 
@@ -719,7 +724,8 @@ describe("the setup page", () => {
       "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
     })
 
-    const ignoredFiles = await screen.findByRole("region", { name: "Ignored files" })
+    fireEvent.click(await screen.findByRole("button", { name: /Advanced options/ }))
+    const ignoredFiles = screen.getByRole("region", { name: "Ignored files" })
     expect(within(ignoredFiles).getByText(/as in a \.gitignore/)).toBeTruthy()
 
     fireEvent.click(within(ignoredFiles).getByRole("button", { name: "Remove **/e2e/**" }))
@@ -744,7 +750,7 @@ describe("the setup page", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Finish setup" }))
 
-    const ignoredFiles = screen.getByRole("region", { name: "Ignored files" })
+    const ignoredFiles = await screen.findByRole("region", { name: "Ignored files" })
     expect(await within(ignoredFiles).findByText("This pattern is already in the list.")).toBeTruthy()
     expect(within(ignoredFiles).getByRole("textbox", { name: "Path pattern 2" }).getAttribute("aria-invalid")).toBe("true")
     expect(screen.queryByRole("alert")).toBeNull()

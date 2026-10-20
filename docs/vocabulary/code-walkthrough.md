@@ -12,9 +12,9 @@ Flight Plan sorts the File Sections of each segment itself, each time the page i
 
 | Order | What comes first |
 |---|---|
-| **From the bottom of the imports up** (`imports-bottom-up`) | A file before every file that uses it: with `a.ts` imported by `b.ts`, and `b.ts` by `c.ts`, the order is `a.ts`, `b.ts`, `c.ts`. A name is defined before it is used. The default. |
-| **From the top of the imports down** (`imports-top-down`) | A file before every file it uses: `c.ts`, `b.ts`, `a.ts`. |
-| **Important changes first** (`important-first`) | The files with a core change and a [spotlight](#spotlight-and-core-change) change, then those with a core change, then those in the spotlight, then the rest, each group from the bottom of the imports up. |
+| **Building blocks first** (`imports-bottom-up`) | A file before every file that uses it: with `a.ts` imported by `b.ts`, and `b.ts` by `c.ts`, the order is `a.ts`, `b.ts`, `c.ts`. A name is defined before it is used. The default. |
+| **Entry points first** (`imports-top-down`) | A file before every file it uses: `c.ts`, `b.ts`, `a.ts`. |
+| **Most important first** (`important-first`) | The files with a core change and a [spotlight](#spotlight-and-core-change) change, then those with a core change, then those in the spotlight, then the rest, each group from the bottom of the imports up. |
 
 A file uses another when a code reference in it, other than one into a library, is defined in the other, read from the `references` of the stored source files and followed through every file the review holds, so two walkthrough files are ordered through a file between them that has no section. Files the imports do not order keep their stored order, which the author can change with "Arrange files"; the files of an import cycle keep their stored order too, below the files that use them. The important-first order is sorted again when the agent marks a core change.
 

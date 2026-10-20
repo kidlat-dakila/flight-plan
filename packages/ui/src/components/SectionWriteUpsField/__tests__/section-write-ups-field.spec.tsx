@@ -18,28 +18,29 @@ const renderField = (onChange = vi.fn()) =>
   )
 
 describe("SectionWriteUpsField", () => {
-  it("asks Always or On demand for each part, in the order of a review, with the saved choice ticked", () => {
+  it("draws a checkbox per part, in the order of a review, ticked where the agent always writes it", () => {
     renderField()
 
-    const field = screen.getByRole("group", { name: "Write-ups" })
-    expect(within(field).getAllByRole("group").map((choice) => choice.querySelector("legend")?.textContent)).toStrictEqual([
-      "Context",
-      "Trace Diagram",
-      "Blast Diagram",
-      "Code Walkthrough",
-      "Findings",
+    const checkboxes = within(screen.getByRole("group", { name: "Write-ups" })).getAllByRole<HTMLInputElement>("checkbox")
+    expect(checkboxes.map((checkbox) => [checkbox.closest("label")?.textContent, checkbox.checked])).toStrictEqual([
+      ["Context", true],
+      ["Trace Diagram", true],
+      ["Blast Diagram", false],
+      ["Code Walkthrough", false],
+      ["Findings", true],
     ])
-    const blastDiagram = within(field).getByRole("group", { name: "Blast Diagram" })
-    expect(within(blastDiagram).getByRole<HTMLInputElement>("radio", { name: "On demand" }).checked).toBe(true)
-    expect(within(blastDiagram).getByRole<HTMLInputElement>("radio", { name: "Always" }).checked).toBe(false)
   })
 
-  it("changes only the part the user answers", () => {
+  it("makes a ticked part always written and an unticked one on demand, changing only that part", () => {
     const onChange = vi.fn()
     renderField(onChange)
 
-    fireEvent.click(within(screen.getByRole("group", { name: "Code Walkthrough" })).getByRole("radio", { name: "Always" }))
+    fireEvent.click(screen.getByRole("checkbox", { name: "Code Walkthrough" }))
+    fireEvent.click(screen.getByRole("checkbox", { name: "Findings" }))
 
-    expect(onChange).toHaveBeenCalledWith({ ...DEFAULTS, walkthrough: "always" })
+    expect(onChange.mock.calls).toStrictEqual([
+      [{ ...DEFAULTS, walkthrough: "always" }],
+      [{ ...DEFAULTS, findings: "on-demand" }],
+    ])
   })
 })

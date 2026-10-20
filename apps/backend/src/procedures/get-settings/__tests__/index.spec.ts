@@ -67,7 +67,7 @@ describe("getSettings", () => {
     expect(page).toMatchObject({
       section: "review",
       selectedConfigurationId: "minimal",
-      preferences: { spotlight: [], isSegmented: true, walkthroughOrder: "imports-bottom-up" },
+      preferences: { spotlight: ["page", "component", "api-route", "database-read-write", "data-model", "hook"], isSegmented: true, walkthroughOrder: "imports-bottom-up" },
     })
     expect(page.section === "review" ? page.presets.map((option) => option.configurationId) : []).toStrictEqual([
       "standard",
@@ -83,6 +83,6 @@ describe("getSettings", () => {
       description: "The agent writes in fragments: few words and no filler.",
       note: null,
     })
-    expect(page).toHaveProperty("spotlightGroups.0.label", "Frontend")
+    expect(page).toHaveProperty("spotlightGroups.0.label", "General")
   })
 })

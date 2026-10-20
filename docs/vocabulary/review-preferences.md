@@ -17,7 +17,7 @@ interface ReviewPreferences {
 
 | Field | What it holds | Default |
 |---|---|---|
-| `spotlight` | The [classifications](codegraph/classifications.md) of the changes that matter most to the user, in the order of the hierarchy, each once | None |
+| `spotlight` | The [classifications](codegraph/classifications.md) of the changes that matter most to the user, in the order of the hierarchy, each once | Page, Component, API route, Database read/write, Schema / data model and Hook |
 | `sectionWriteUps` | For each section, whether the agent always writes its write-up when it writes a review, or only when the reviewer asks | Context, Trace Diagram and Findings always; Blast Diagram and Code Walkthrough on demand |
 | `isSegmented` | Whether a review is split into [segments](review-artifact.md#segments) | Yes |
 | `walkthroughOrder` | How the files of a [Code Walkthrough](code-walkthrough.md) are ordered: by the [import graph](codegraph/import-graph.md) from the file others import up to the files that import it, the other way round, or the spotlight and the core changes first | From the bottom of the import graph up |
@@ -32,6 +32,6 @@ A **write-up** is everything the agent writes into a review: the summary, the la
 
 ## Saving
 
-`reviewPreferences.save` saves the whole set. It trims each path pattern and refuses, with the row it is about, a pattern that is empty, starts with `/`, holds a backslash, or is already in the list. It refuses a section order that leaves a section out or places one twice. It stores the spotlight in the order of the hierarchy, each classification once. `reviewPreferences.get` returns the set, whether it was saved, the default [prompt configuration](prompt-configurations.md), and every classification the spotlight can hold with its label and description, from `CODE_BLOCK_CLASSIFICATION_LABELS` in `@flightplan/configurations`. They come as four groups, Frontend, Backend, Infrastructure and Miscellaneous, each in the order of the hierarchy. Eight are featured and shown before the rest are opened: Page, Component, API request, Server action, API route, Database read/write, Schema / data model and Validation.
+`reviewPreferences.save` saves the whole set. It trims each path pattern and refuses, with the row it is about, a pattern that is empty, starts with `/`, holds a backslash, or is already in the list. It refuses a section order that leaves a section out or places one twice. It stores the spotlight in the order of the hierarchy, each classification once. `reviewPreferences.get` returns the set, whether it was saved, the default [prompt configuration](prompt-configurations.md), and every classification the spotlight can hold with its label and description, from `CODE_BLOCK_CLASSIFICATION_LABELS` in `@flightplan/configurations`. They come as five groups, each in the order of the hierarchy: General for what is as true of the frontend as of the backend, Frontend, Backend, Infrastructure and Miscellaneous. Nine are featured and shown before the rest are opened: Schema / data model, Validation, Page, Component, API request, Hook, Server action, API route and Database read/write.
 
 The default prompt configuration is not part of the set. It stays in its own field of the settings, as the setup page and the settings page already save it.

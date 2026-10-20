@@ -1,4 +1,4 @@
-import { useId } from "react"
+import SelectDialog, { type SelectDialogOption } from "@/components/SelectDialog"
 
 export type WalkthroughOrder = "imports-bottom-up" | "imports-top-down" | "important-first"
 
@@ -7,50 +7,55 @@ interface WalkthroughOrderFieldProps {
   readonly onChange: (value: WalkthroughOrder) => void
 }
 
-const LEGEND = "Code Walkthrough order"
+const LABEL = "Code Walkthrough order"
+const DIALOG_TITLE = "Choose a Code Walkthrough order"
+const DIALOG_DESCRIPTION = "It decides which changed file you read first."
+const CHOOSE_LABEL = "Choose"
+const CANCEL_LABEL = "Cancel"
 
 const ORDERS: readonly { readonly value: WalkthroughOrder, readonly label: string, readonly description: string }[] = [
   {
     value: "imports-bottom-up",
-    label: "Bottom up",
-    description: "A file comes before the files that import it. If c.ts imports b.ts and b.ts imports a.ts, the walkthrough reads a.ts, b.ts, c.ts.",
+    label: "Building blocks first",
+    description: "Start with the files the rest of the change depends on, then read the code that uses them.",
   },
   {
     value: "imports-top-down",
-    label: "Top down",
-    description: "A file comes before the files it imports: c.ts, b.ts, a.ts.",
+    label: "Entry points first",
+    description: "Start where the change is used, like pages and routes, then follow it down to the details.",
   },
   {
     value: "important-first",
-    label: "Important changes first",
-    description: "Files with a core change and a spotlight change come first, then the core changes, then the spotlight changes, then the rest.",
+    label: "Most important first",
+    description: "Start with the heart of the change and the topics you picked above, then read the rest.",
   },
 ]
 
-const WalkthroughOrderField = ({ value, onChange }: WalkthroughOrderFieldProps) => {
-  const groupId = useId()
-  return (
-    <fieldset>
-      <legend className="pb-2 font-bold">{LEGEND}</legend>
-      <ul className="border-t border-border">
-        {ORDERS.map((order) => (
-          <li key={order.value} className="border-b border-border py-3">
-            <label className="grid cursor-pointer grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3">
-              <input
-                type="radio"
-                name={groupId}
-                checked={value === order.value}
-                className="mt-1 size-4 shrink-0 accent-(--primary)"
-                onChange={() => { onChange(order.value) }}
-              />
-              <span className="font-bold">{order.label}</span>
-              <span className="col-start-2 max-w-[62ch] text-sm text-muted-foreground">{order.description}</span>
-            </label>
-          </li>
-        ))}
-      </ul>
-    </fieldset>
-  )
-}
+const OPTIONS: readonly SelectDialogOption[] = ORDERS.map((order) => ({
+  key: order.value,
+  label: order.label,
+  summary: null,
+  description: order.description,
+  note: null,
+}))
+
+const orderOf = (key: string): WalkthroughOrder | null =>
+  ORDERS.find((order) => order.value === key)?.value ?? null
+
+const WalkthroughOrderField = ({ value, onChange }: WalkthroughOrderFieldProps) => (
+  <SelectDialog
+    label={LABEL}
+    dialogTitle={DIALOG_TITLE}
+    dialogDescription={DIALOG_DESCRIPTION}
+    chooseLabel={CHOOSE_LABEL}
+    cancelLabel={CANCEL_LABEL}
+    options={OPTIONS}
+    selectedKey={value}
+    onChoose={(key) => {
+      const order = orderOf(key)
+      if (order !== null) onChange(order)
+    }}
+  />
+)
 
 export default WalkthroughOrderField

@@ -1,13 +1,14 @@
 import { CODE_BLOCK_CLASSIFICATION_LABELS, CODE_BLOCK_CLASSIFICATIONS, type CodeBlockClassification } from "@flightplan/configurations"
 import type { SpotlightGroup } from "./schemas"
 
-const SPOTLIGHT_AREAS = ["frontend", "backend", "infrastructure", "miscellaneous"] as const
+const SPOTLIGHT_AREAS = ["general", "frontend", "backend", "infrastructure", "miscellaneous"] as const
 
 type SpotlightArea = (typeof SPOTLIGHT_AREAS)[number]
 
 const SPOTLIGHT_AREA_LABELS: Readonly<Record<SpotlightArea, string>> = {
   frontend: "Frontend",
   backend: "Backend",
+  general: "General",
   infrastructure: "Infrastructure",
   miscellaneous: "Miscellaneous",
 }
@@ -26,10 +27,10 @@ const SPOTLIGHT_AREA_OF: Readonly<Record<CodeBlockClassification, SpotlightArea>
   "job": "infrastructure",
   "cli-command": "infrastructure",
   "database-read-write": "backend",
-  "data-model": "backend",
+  "data-model": "general",
   "third-party-integration": "backend",
   "api-request": "frontend",
-  "validation": "backend",
+  "validation": "general",
   "ui-state": "frontend",
   "hook": "frontend",
   "security": "backend",
@@ -54,6 +55,7 @@ const FEATURED_CLASSIFICATIONS: ReadonlySet<CodeBlockClassification> = new Set([
   "page",
   "component",
   "api-request",
+  "hook",
   "server-action",
   "api-route",
   "database-read-write",

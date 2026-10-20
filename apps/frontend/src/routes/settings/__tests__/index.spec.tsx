@@ -253,14 +253,13 @@ describe("the settings pages", () => {
       expect(await screen.findByRole("heading", { level: 2, name: "Review configuration" })).toBeTruthy()
       expect(screen.getAllByRole("region").map((region) => within(region).getByRole("heading").textContent)).toStrictEqual([
         "Which topics do you care about most in a code review?",
-        "Write-ups",
-        "Prompt configuration",
-        "Review organization",
-        "Display arrangement",
-        "Ignored files",
+        "Which parts should the agent write for you by default?",
+        "Which writing style should the agent use?",
+        "Code Walkthrough order",
       ])
+      expect(screen.getByRole("button", { name: /Advanced options/ }).getAttribute("aria-expanded")).toBe("false")
       expect(screen.getByRole<HTMLInputElement>("checkbox", { name: "Security" }).checked).toBe(true)
-      expect(screen.getByRole<HTMLInputElement>("radio", { name: /Terse/ }).checked).toBe(true)
+      expect(screen.getByRole("button", { name: "Prompt configuration, Terse" })).toBeTruthy()
       expect(screen.getByText("You can pick another prompt configuration each time you create a Flight Plan.")).toBeTruthy()
       expect(screen.queryByText("You can make your own later, in the settings.")).toBeNull()
     })
@@ -270,7 +269,9 @@ describe("the settings pages", () => {
       renderApp({ "settings.save": save }, "/settings/review")
 
       fireEvent.click(await screen.findByRole("checkbox", { name: "Migration" }))
-      fireEvent.click(screen.getByRole("radio", { name: /Standard/ }))
+      fireEvent.click(screen.getByRole("button", { name: "Prompt configuration, Terse" }))
+      fireEvent.click(await screen.findByRole("radio", { name: /Standard/ }))
+      fireEvent.click(screen.getByRole("button", { name: "Choose" }))
       fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
       expect(await screen.findByText("Your review configuration is saved.")).toBeTruthy()
@@ -331,7 +332,7 @@ describe("the settings pages", () => {
 
       fireEvent.click(await screen.findByRole("button", { name: "Save" }))
 
-      const ignoredFiles = screen.getByRole("region", { name: "Ignored files" })
+      const ignoredFiles = await screen.findByRole("region", { name: "Ignored files" })
       expect(await within(ignoredFiles).findByText("This pattern is already in the list.")).toBeTruthy()
       expect(within(ignoredFiles).getByRole("textbox", { name: "Path pattern 2" }).getAttribute("aria-invalid")).toBe("true")
     })

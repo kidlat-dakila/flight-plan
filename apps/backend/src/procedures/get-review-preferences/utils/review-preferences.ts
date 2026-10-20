@@ -41,7 +41,7 @@ export const DEFAULT_IGNORED_PATHS: readonly string[] = [
 ]
 
 export const DEFAULT_REVIEW_PREFERENCES: ReviewPreferences = {
-  spotlight: [],
+  spotlight: ["page", "component", "api-route", "database-read-write", "data-model", "hook"],
   sectionWriteUps: {
     context: "always",
     traceDiagram: "always",

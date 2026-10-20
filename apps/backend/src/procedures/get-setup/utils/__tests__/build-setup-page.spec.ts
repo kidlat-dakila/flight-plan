@@ -345,9 +345,9 @@ describe("buildSetupPage", () => {
     const savedSetup = { ...AT_CONFIGURATION, reviewPreferences: { ...DEFAULT_REVIEW_PREFERENCES, spotlight: ["security"] as const } }
     const form = buildSetupPage(sourceOf({ setup: AT_CONFIGURATION, step: "configuration" })).form
 
-    expect(form).toMatchObject({ preferences: { spotlight: [], isSegmented: true } })
-    expect(form).toHaveProperty("spotlightGroups.length", 4)
-    expect(form).toHaveProperty("spotlightGroups.0.choices.0", { classification: "page", label: "Page", description: "Code that renders on a visit to a path", isFeatured: true })
+    expect(form).toMatchObject({ preferences: { spotlight: ["page", "component", "api-route", "database-read-write", "data-model", "hook"], isSegmented: true } })
+    expect(form).toHaveProperty("spotlightGroups.length", 5)
+    expect(form).toHaveProperty("spotlightGroups.1.choices.0", { classification: "page", label: "Page", description: "Code that renders on a visit to a path", isFeatured: true })
     expect(buildSetupPage(sourceOf({ setup: savedSetup, step: "configuration" })).form).toMatchObject({
       preferences: { spotlight: ["security"] },
     })

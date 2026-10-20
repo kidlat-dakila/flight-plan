@@ -1,4 +1,4 @@
-import SegmentedChoice from "@/components/SegmentedChoice"
+import CheckboxChip from "@/components/CheckboxChip"
 
 export type WriteUpSection = "context" | "traceDiagram" | "blastDiagram" | "walkthrough" | "findings"
 
@@ -20,27 +20,18 @@ const SECTIONS: readonly { readonly section: WriteUpSection, readonly label: str
   { section: "findings", label: "Findings" },
 ]
 
-const TIMINGS: readonly { readonly value: WriteUpTiming, readonly label: string }[] = [
-  { value: "always", label: "Always" },
-  { value: "on-demand", label: "On demand" },
-]
-
-const timingOf = (value: string): WriteUpTiming | null =>
-  TIMINGS.find((timing) => timing.value === value)?.value ?? null
+const toggledTiming = (timing: WriteUpTiming): WriteUpTiming => timing === "always" ? "on-demand" : "always"
 
 const SectionWriteUpsField = ({ labelledBy, value, onChange }: SectionWriteUpsFieldProps) => (
   <div role="group" aria-labelledby={labelledBy}>
-    <ul className="flex flex-wrap gap-x-8 gap-y-4">
+    <ul className="flex flex-wrap gap-2">
       {SECTIONS.map(({ section, label }) => (
         <li key={section}>
-          <SegmentedChoice
+          <CheckboxChip
             label={label}
-            options={TIMINGS}
-            value={value[section]}
-            onChange={(chosen) => {
-              const timing = timingOf(chosen)
-              if (timing !== null) onChange({ ...value, [section]: timing })
-            }}
+            description={null}
+            isChecked={value[section] === "always"}
+            onToggle={() => { onChange({ ...value, [section]: toggledTiming(value[section]) }) }}
           />
         </li>
       ))}

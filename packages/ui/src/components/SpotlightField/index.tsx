@@ -9,6 +9,7 @@ import Dialog, {
   DialogTitle,
   DialogTrigger,
 } from "@/components/blocks/dialog"
+import CheckboxChip from "@/components/CheckboxChip"
 
 export interface SpotlightChoice<Classification extends string> {
   readonly classification: Classification
@@ -35,7 +36,6 @@ const DIALOG_DESCRIPTION = "Pick as many as you like. Each topic says which code
 const DONE_LABEL = "Done"
 
 const CHECKBOX_CLASSES = "size-4 shrink-0 cursor-pointer accent-(--primary) focus-visible:outline-none"
-const CHIP_CLASSES = "flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-input bg-card pr-3.5 pl-3 text-sm transition-colors duration-[180ms] ease-out select-none hover:bg-muted has-checked:border-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring"
 const ROW_CLASSES = "grid cursor-pointer grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 rounded-sm px-2 py-2.5 transition-colors duration-[180ms] ease-out hover:bg-muted has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring"
 
 const choicesOf = <Classification extends string>(groups: readonly SpotlightGroup<Classification>[]): SpotlightChoice<Classification>[] =>
@@ -67,25 +67,6 @@ interface SpotlightCheckboxProps {
   readonly choice: SpotlightChoice<string>
   readonly isPicked: boolean
   readonly onToggle: () => void
-}
-
-const SpotlightChip = ({ choice, isPicked, onToggle }: SpotlightCheckboxProps) => {
-  const descriptionId = useId()
-  return (
-    <li>
-      <label className={CHIP_CLASSES}>
-        <input
-          type="checkbox"
-          checked={isPicked}
-          aria-describedby={descriptionId}
-          className={CHECKBOX_CLASSES}
-          onChange={onToggle}
-        />
-        <span className="text-box-cap">{choice.label}</span>
-      </label>
-      <span id={descriptionId} className="sr-only">{choice.description}</span>
-    </li>
-  )
 }
 
 const SpotlightRow = ({ choice, isPicked, onToggle }: SpotlightCheckboxProps) => {
@@ -130,12 +111,14 @@ const FeaturedGroup = <Classification extends string>({
       <span id={labelId} className="text-sm font-bold sm:pt-2">{group.label}</span>
       <ul className="flex flex-wrap gap-2">
         {group.choices.map((choice) => (
-          <SpotlightChip
-            key={choice.classification}
-            choice={choice}
-            isPicked={picked.includes(choice.classification)}
-            onToggle={() => { onToggle(choice.classification) }}
-          />
+          <li key={choice.classification}>
+            <CheckboxChip
+              label={choice.label}
+              description={choice.description}
+              isChecked={picked.includes(choice.classification)}
+              onToggle={() => { onToggle(choice.classification) }}
+            />
+          </li>
         ))}
       </ul>
     </li>
