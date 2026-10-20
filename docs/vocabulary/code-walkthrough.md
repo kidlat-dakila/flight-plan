@@ -8,7 +8,7 @@ It opens with one line saying what the tour follows, and states how many of the 
 
 ## Order
 
-Flight Plan sorts the File Sections of each segment itself, each time the page is built, by the `walkthroughOrder` of the [review preferences](review-preferences.md). The agent is not told an order.
+Flight Plan sorts the File Sections of each segment itself, each time the page is built, by the `walkthroughOrder` of the [review preferences](review-preferences.md). The agent is not told an order and cannot write one: `update-nodes` takes no order, and the instructions tell the agent not to ask the reviewer for one.
 
 | Order | What comes first |
 |---|---|

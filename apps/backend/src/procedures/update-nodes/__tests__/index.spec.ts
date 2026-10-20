@@ -124,40 +124,20 @@ describe("updateNodes", () => {
       ...SEGMENT_KEY,
       title: "Rounding moves to the total",
       context: markdown,
-      order: { files: [SUBTOTAL_PATH, PRICE_PATH] },
       traceDiagramDescription: "When a cart is shown, the total is summed and rounded once.",
       waypoints: [{ id: "w1", title: "Returned zero" }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 5 entries.", unwritten: { total: 8 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 4 entries.", unwritten: { total: 8 } })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       segments: [{
         id: "all",
         title: "Rounding moves to the total",
         context: markdown,
         traceDiagram: { description: "When a cart is shown, the total is summed and rounded once." },
-        walkthrough: { files: [{ path: SUBTOTAL_PATH }, { path: PRICE_PATH, waypoints: [{ title: "Returned zero" }] }] },
+        walkthrough: { files: [{ path: PRICE_PATH, waypoints: [{ title: "Returned zero" }] }, { path: SUBTOTAL_PATH }] },
       }],
     })
-  })
-
-  it("writes none of a call when its order leaves a File Section out", async () => {
-    const context = await createArtifactContext()
-
-    const writing = await updateNodes({ ...SEGMENT_KEY, context: "A cart could be a cent off.", order: { files: [SUBTOTAL_PATH] } }, context)
-
-    expect(writing).toStrictEqual({
-      kind: "rejected",
-      message: "An order names every File Section exactly once, and this one leaves out `src/catalog/price.ts`. Nothing was written.",
-    })
-    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ segments: [{ context: "" }] })
-  })
-
-  it("refuses an order that names a path twice or a path with no File Section", async () => {
-    const context = await createArtifactContext()
-
-    expect(messageOf(await updateNodes({ ...SEGMENT_KEY, order: { files: [SUBTOTAL_PATH, PRICE_PATH, PRICE_PATH] } }, context))).toContain("names a path twice")
-    expect(messageOf(await updateNodes({ ...SEGMENT_KEY, order: { files: [SUBTOTAL_PATH, PRICE_PATH, "src/gone.ts"] } }, context))).toContain("no File Section for `src/gone.ts`")
   })
 
   it("refuses a context whose code link does not resolve", async () => {
@@ -211,7 +191,7 @@ describe("updateNodes", () => {
   it("refuses a call that writes nothing", async () => {
     const context = await createArtifactContext()
 
-    await expect(updateNodes(SEGMENT_KEY, context)).resolves.toMatchObject({ kind: "rejected", message: "Give at least one of title, context, order, traceDiagramDescription, waypoints, trace, blast or contextCodeBlocks. Nothing was written." })
+    await expect(updateNodes(SEGMENT_KEY, context)).resolves.toMatchObject({ kind: "rejected", message: "Give at least one of title, context, traceDiagramDescription, waypoints, trace, blast or contextCodeBlocks. Nothing was written." })
   })
 
   it("rejects a review target with no artifact", async () => {

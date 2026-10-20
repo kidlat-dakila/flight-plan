@@ -21,7 +21,7 @@ export interface NodeEdits {
 
 type AmendStep = (segments: readonly Segment[]) => SegmentsOutcome
 
-const NOTHING_GIVEN_MESSAGE = "Give at least one of title, context, order, traceDiagramDescription, waypoints, trace, blast or contextCodeBlocks."
+const NOTHING_GIVEN_MESSAGE = "Give at least one of title, context, traceDiagramDescription, waypoints, trace, blast or contextCodeBlocks."
 
 const stepFor = <Edit>(edits: readonly Edit[], amend: (segments: readonly Segment[], edits: readonly Edit[]) => SegmentsOutcome): AmendStep[] =>
   edits.length === 0 ? [] : [(segments) => amend(segments, edits)]

@@ -20,7 +20,7 @@ diff marks. The reviewer is already reading it while you write.
 | You write | Flight Plan already set |
 |---|---|
 | A segment's title and its context | The title, copied from the change |
-| The order of the File Sections | Which files have a section, and their paths |
+| | Which files have a section, their paths and their order |
 | A waypoint's title, reading, core-change note and findings | Which waypoints exist, the declaration each is about, and its lines |
 | A Trace Diagram's description, a node's label and description, and the label of each of its trigger labels | Which nodes exist, how they connect, which node is inside which, and which trigger labels a node has |
 | A Blast Diagram file's impact type and impact reason, on a file the change did not touch | Which files exist, which the change touched and how they import each other |
@@ -82,7 +82,7 @@ names a `segmentId`, and any segment of the artifact will do.
 | `get-instructions` | How to write each field, for the configuration the reviewer chose |
 | `read` | One part of the artifact: `overview` to get oriented, `diff` for the change |
 | `nodes` | What is still unwritten, each piece with the code it covers |
-| `update-nodes` | Every word you write, on one segment, in one batch: its title, context, file order and Trace Diagram description by name, and its waypoints, diagram nodes and context code blocks by id. Answers with how many nodes are complete and how many are not |
+| `update-nodes` | Every word you write, on one segment, in one batch: its title, context and Trace Diagram description by name, and its waypoints, diagram nodes and context code blocks by id. Answers with how many nodes are complete and how many are not |
 | `complete` | Says the artifact is finished, and checks it |
 
 ## What is refused
@@ -98,7 +98,6 @@ none of it, and the refusal names the entry.
 - A `question` carrying a trace or a solution.
 - An `impactType` or an `impactReason` on a file of the change.
 - A `breaks` or a `behaviour-changes` with no `impactReason`, or an `impactReason` on an `unaffected` file.
-- A file order that does not name every File Section exactly once.
 - A `traceDiagramDescription` on a segment that has no Trace Diagram.
 - A `position` on a nested waypoint, past the end of its file, or given to two
   waypoints of one file.

@@ -15,5 +15,13 @@
         "./src/*"
       ]
     }
-  }
+  },
+  "references": [
+    {
+      "path": "../../tools/playground-fixtures"
+    },
+    {
+      "path": "../backend"
+    }
+  ]
 }

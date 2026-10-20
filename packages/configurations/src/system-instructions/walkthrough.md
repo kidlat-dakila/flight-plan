@@ -3,12 +3,10 @@ toured file in reading order.
 
 ## Reading order
 
-**A tour reads top to bottom, and so does the code it points at.** File Sections
-in the order the reviewer asked for; inside a file, waypoints in the order the
+**A tour reads top to bottom, and so does the code it points at.** Flight Plan
+orders the File Sections itself, as the reviewer chose, so write no order and do
+not ask the reviewer for one. Inside a file, waypoints come in the order the
 file declares their code.
 
-The order of the File Sections is the reviewer's choice, and it reaches you in
-the request that started the review. Apply it with
-`update-nodes { segmentId, order: { files: [...] } }`, naming every File Section exactly
-once. Inside one file, `update-nodes { segmentId, waypoints: [{ id, position }] }` moves a
+Inside one file, `update-nodes { segmentId, waypoints: [{ id, position }] }` moves a
 top-level waypoint among its siblings, and is rarely needed.

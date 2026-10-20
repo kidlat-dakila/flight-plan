@@ -64,14 +64,9 @@ const contextCodeBlockEditSchema = z.strictObject({
   description: prose.describe("What the code is and what it does, as Markdown, for a reader who has not seen it."),
 })
 
-const fileOrderSchema = z.strictObject({
-  files: z.array(z.string().min(1)).min(1).describe("Every File Section's path exactly once. One left out is refused, not dropped."),
-})
-
 const segmentEditShape = {
   title: prose.optional().describe("The segment's title: a very short text of what its context is about."),
   context: prose.optional().describe("The Context Section, as Markdown: why the change matters, what it changes from outside and what changed inside. Replaces the whole section."),
-  order: fileOrderSchema.optional().describe("The order a reader walks the File Sections in."),
   traceDiagramDescription: prose.optional().describe("The Trace Diagram told in words, shown above the diagram: where its paths start, what they run through and where they reach the change. Five sentences at most. Required where the segment has a diagram."),
 }
 
@@ -92,7 +87,7 @@ export const updateNodesInputShape = {
 export const updateNodesInputSchema = z.strictObject(updateNodesInputShape)
 
 export type UpdateNodesInput = z.infer<typeof updateNodesInputSchema>
-export type SegmentEdit = Pick<UpdateNodesInput, "title" | "context" | "order" | "traceDiagramDescription">
+export type SegmentEdit = Pick<UpdateNodesInput, "title" | "context" | "traceDiagramDescription">
 export type FindingEdit = z.infer<typeof findingEditSchema>
 export type WaypointEdit = z.infer<typeof waypointEditSchema>
 export type TraceEdit = z.infer<typeof traceEditSchema>

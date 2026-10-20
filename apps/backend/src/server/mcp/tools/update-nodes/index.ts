@@ -7,7 +7,8 @@ import { errorResult, jsonResult } from "@/server/mcp/tool-result"
 const DESCRIPTION = [
   "Writes prose onto what one segment of the artifact already has, by id, in one batch.",
   "`segmentId` names that segment, and every id in the call is looked up inside it.",
-  "The segment's own fields are written by name: `title`, `context` and `order` for the order of the File Sections.",
+  "The segment's own fields are written by name: `title` and `context`, and `traceDiagramDescription` for its Trace Diagram.",
+  "Flight Plan orders the File Sections itself, so no call orders them.",
   "Three lists write what is inside it, and each names where its work goes: `waypoints` for the Code Walkthrough, `traceDiagram` for the Trace Diagram, `blastDiagram` for what the change does to the files it did not touch.",
   "On the Trace Diagram a component is a frame of one card for its page, a user action is a row inside its component, and every edge is one plain line with no label, so the words on a node carry what the reviewer reads.",
   "The result counts the nodes that are complete and the ones that are not, and what is still unwritten by kind.",
