@@ -20,7 +20,7 @@ describe("buildRepositoriesSection", () => {
       {
         selfAuthor: {
           author: { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" },
-          stateLabel: "You, from git config",
+          stateLabel: null,
           isChangeable: false,
         },
       },
@@ -40,7 +40,7 @@ describe("buildRepositoriesSection", () => {
           path: "/Users/dev/projects/storefront",
           lineColor: "blue",
           lineLabel: "S",
-          authorSearchHint: "Ask Flight Plan to look for branches made by your team members.",
+          authorSearchHint: "You see your own branches. Add team members to see theirs too.",
           authorSearchPlaceholder: "Type a name or email",
           selfAuthor: { hint: SELF_AUTHOR_HINT, author: { ...DEV, monogram: "DH" }, stateLabel: "You", isChangeable: true },
           trackedAuthors: [{ ...LENA, monogram: "LO" }],

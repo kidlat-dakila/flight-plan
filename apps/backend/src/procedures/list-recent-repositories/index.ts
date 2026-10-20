@@ -27,5 +27,5 @@ export const listRecentRepositories = async (
     repositoryFolders.paths.map(async (path) => await readFolderActivity(path, context.setupEnvironment)),
   )
   const rankedFolders = rankRecentRepositories(folders.filter(isFolderActivity))
-  return buildRecentRepositories(rankedFolders, addedRepositoryPaths(setup, listedRepositories), context.now())
+  return buildRecentRepositories(rankedFolders, addedRepositoryPaths(setup, listedRepositories))
 }

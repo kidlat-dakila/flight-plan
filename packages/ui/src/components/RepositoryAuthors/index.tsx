@@ -14,7 +14,6 @@ export interface ChosenAuthor {
 
 export interface GitSelfAuthor {
   readonly author: ChosenAuthor
-  readonly stateLabel: string
 }
 
 export interface AuthorForm {
@@ -156,7 +155,7 @@ const RepositoryAuthors = ({
     <div className="grid gap-4">
       {form.gitSelfAuthor === null
         ? null
-        : <ChosenAuthorRow author={form.gitSelfAuthor.author} stateLabel={form.gitSelfAuthor.stateLabel} removal={null} />}
+        : <ChosenAuthorRow author={form.gitSelfAuthor.author} stateLabel={null} removal={null} />}
       {form.selfAuthorHint === null
         ? null
         : (

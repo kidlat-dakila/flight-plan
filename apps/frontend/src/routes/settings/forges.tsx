@@ -22,13 +22,15 @@ const ForgesSettingsPage = () => {
     <>
       <title>{DOCUMENT_TITLE}</title>
       <SectionIntro title={TITLE}>
-        Flight Plan works with the git repositories on this computer. It reads branches and commits, fetches from your
-        remotes in the background, and fast-forwards a branch when you update a review. It never commits, pushes or
-        rewrites your history. Local git is always on, so every repository works without an account.
+        Flight Plan reads the git repositories on this machine via the
+        {" "}
+        <code className="rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[0.875em]">git</code>
+        {" "}
+        command, so every repository works without an account. It fetches from your remotes and fast-forwards a
+        branch when its review refreshes, but never commits, pushes or rewrites your history.
       </SectionIntro>
       <ForgesForm
         codeHostFeatures={page.codeHostFeatures}
-        hasCodeHost={page.hasCodeHost}
         forges={page.forges}
         problem={saving.problem}
         onSubmit={(choice) => { saving.save({ ...SECTION, ...choice }) }}

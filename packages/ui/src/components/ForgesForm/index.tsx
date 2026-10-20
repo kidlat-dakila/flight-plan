@@ -46,7 +46,6 @@ export interface ForgesChoice {
 
 interface ForgesFormProps {
   readonly codeHostFeatures: CodeHostFeatures
-  readonly hasCodeHost: boolean
   readonly forges: readonly ForgeOption[]
   readonly problem: FormProblem | null
   readonly children: ReactNode
@@ -70,15 +69,7 @@ interface ForgeRowProps {
   readonly onFieldChange: (field: ForgeFieldName, value: string) => void
 }
 
-interface CodeHostQuestionProps {
-  readonly isCodeHostWanted: boolean
-  readonly onChange: (isCodeHostWanted: boolean) => void
-}
-
 const CHOICE_INPUT_CLASSES = "size-4 shrink-0 accent-(--primary)"
-const CODE_HOST_QUESTION = "Do you want to connect a code host?"
-const LOCAL_GIT_ONLY_LABEL = "No, local git only"
-const CODE_HOST_LABEL = "Yes"
 
 const fieldKey = (forge: ForgeName, field: ForgeFieldName): string => `${forge}:${field}`
 
@@ -164,39 +155,7 @@ const ForgeRow = ({ option, isPicked, valueByField, problem, onPickedChange, onF
   )
 }
 
-const CodeHostQuestion = ({ isCodeHostWanted, onChange }: CodeHostQuestionProps) => {
-  const radioGroupId = useId()
-  return (
-    <fieldset className="border-t border-border py-4">
-      <legend className="float-left w-full pb-2 font-bold">{CODE_HOST_QUESTION}</legend>
-      <div className="clear-left flex flex-wrap gap-x-6 gap-y-2">
-        <label className="flex cursor-pointer items-center gap-2">
-          <input
-            type="radio"
-            name={radioGroupId}
-            checked={!isCodeHostWanted}
-            className={CHOICE_INPUT_CLASSES}
-            onChange={() => { onChange(false) }}
-          />
-          {LOCAL_GIT_ONLY_LABEL}
-        </label>
-        <label className="flex cursor-pointer items-center gap-2">
-          <input
-            type="radio"
-            name={radioGroupId}
-            checked={isCodeHostWanted}
-            className={CHOICE_INPUT_CLASSES}
-            onChange={() => { onChange(true) }}
-          />
-          {CODE_HOST_LABEL}
-        </label>
-      </div>
-    </fieldset>
-  )
-}
-
-const ForgesForm = ({ codeHostFeatures, hasCodeHost, forges, problem, children, onSubmit }: ForgesFormProps) => {
-  const [isCodeHostWanted, setIsCodeHostWanted] = useState(hasCodeHost)
+const ForgesForm = ({ codeHostFeatures, forges, problem, children, onSubmit }: ForgesFormProps) => {
   const [pickedByForge, setPickedByForge] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(forges.map((option) => [option.forge, option.isPicked])),
   )
@@ -210,7 +169,7 @@ const ForgesForm = ({ codeHostFeatures, hasCodeHost, forges, problem, children, 
     onSubmit({
       forges: forges.map((option) => ({
         forge: option.forge,
-        isPicked: isCodeHostWanted && (pickedByForge[option.forge] ?? false),
+        isPicked: pickedByForge[option.forge] ?? false,
         username: valueByField[fieldKey(option.forge, "username")] ?? "",
         token: valueByField[fieldKey(option.forge, "token")] ?? "",
         baseUrl: valueByField[fieldKey(option.forge, "baseUrl")] ?? "",
@@ -226,28 +185,23 @@ const ForgesForm = ({ codeHostFeatures, hasCodeHost, forges, problem, children, 
           {codeHostFeatures.items.map((item) => <li key={item}>{item}</li>)}
         </ul>
       </div>
-      <CodeHostQuestion isCodeHostWanted={isCodeHostWanted} onChange={setIsCodeHostWanted} />
-      {isCodeHostWanted
-        ? (
-            <ul aria-label="Code hosts" className="border-t border-border">
-              {forges.map((option) => (
-                <ForgeRow
-                  key={option.forge}
-                  option={option}
-                  isPicked={pickedByForge[option.forge] ?? false}
-                  valueByField={valueByField}
-                  problem={problem}
-                  onPickedChange={(isPicked) => {
-                    setPickedByForge((picked) => ({ ...picked, [option.forge]: isPicked }))
-                  }}
-                  onFieldChange={(field, value) => {
-                    setValueByField((values) => ({ ...values, [fieldKey(option.forge, field)]: value }))
-                  }}
-                />
-              ))}
-            </ul>
-          )
-        : null}
+      <ul aria-label="Code hosts" className="border-t border-border">
+        {forges.map((option) => (
+          <ForgeRow
+            key={option.forge}
+            option={option}
+            isPicked={pickedByForge[option.forge] ?? false}
+            valueByField={valueByField}
+            problem={problem}
+            onPickedChange={(isPicked) => {
+              setPickedByForge((picked) => ({ ...picked, [option.forge]: isPicked }))
+            }}
+            onFieldChange={(field, value) => {
+              setValueByField((values) => ({ ...values, [fieldKey(option.forge, field)]: value }))
+            }}
+          />
+        ))}
+      </ul>
       {children}
     </form>
   )

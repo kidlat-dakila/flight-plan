@@ -9,9 +9,9 @@ describe("buildRepositoryConfiguration", () => {
       name: "checkout-web",
       path: "/Users/dev/projects/checkout-web",
       form: {
-        selfAuthorHint: "Git has no email set for you in this repository, so Flight Plan can't tell which commits are yours. Search for the name or email you commit with and pick yourself.",
+        selfAuthorHint: "Git has no email for you in this repository. Search for the name or email you commit with and pick yourself.",
         gitSelfAuthor: null,
-        searchHint: "Ask Flight Plan to look for branches made by your team members.",
+        searchHint: "You see your own branches. Add team members to see theirs too.",
         searchPlaceholder: "Type a name or email",
       },
       selfAuthor: { ...DEV, monogram: "DH" },

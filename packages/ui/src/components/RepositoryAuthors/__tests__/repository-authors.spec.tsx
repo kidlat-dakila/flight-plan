@@ -57,7 +57,7 @@ describe("RepositoryAuthors", () => {
     renderAuthors({
       form: {
         selfAuthorHint: null,
-        gitSelfAuthor: { author: DEV, stateLabel: "You, from git config" },
+        gitSelfAuthor: { author: DEV },
         searchHint: "Search by name or email.",
         searchPlaceholder: "Type a name or email",
       },
@@ -65,7 +65,7 @@ describe("RepositoryAuthors", () => {
 
     expect(screen.queryByRole("combobox", { name: "Which user are you?" })).toBeNull()
     expect(screen.getByText("Dev Harper")).toBeTruthy()
-    expect(screen.getByText("You, from git config")).toBeTruthy()
+    expect(screen.queryByText("You, from git config")).toBeNull()
     expect(screen.queryByRole("button", { name: "Choose another user as you" })).toBeNull()
   })
 

@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
+import { createFileRoute, redirect, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
 import type { inferInput, TRPCOptionsProxy } from "@trpc/tanstack-react-query"
 import { use, useDeferredValue, useState } from "react"
 import { createPortal } from "react-dom"
@@ -306,12 +306,12 @@ const SetupPage = () => {
                 <ForgesStep
                   key={form.step}
                   codeHostFeatures={form.codeHostFeatures}
-                  hasCodeHost={form.hasCodeHost}
                   forges={form.forges}
                   backStep={page.backStep}
                   problem={problem}
                   isPending={saveStep.isPending}
                   onSubmit={(choice) => { saveStep.mutate({ step: "forges", ...choice }) }}
+                  onSkip={() => { saveStep.mutate({ step: "forges", forges: [] }) }}
                 />
               )
             : null}
@@ -371,7 +371,10 @@ export const Route = createFileRoute("/setup/")({
   }),
   loaderDeps: ({ search }) => ({ step: search.step ?? null }),
   loader: async ({ context: { queryClient, trpc }, deps }) => {
-    await queryClient.query({ ...trpc.setup.get.queryOptions(deps), staleTime: "static" })
+    const page = await queryClient.query({ ...trpc.setup.get.queryOptions(deps), staleTime: "static" })
+    if (deps.step !== null) return
+    queryClient.setQueryData(trpc.setup.get.queryKey({ step: page.form.step }), page)
+    redirect({ to: "/setup", search: { step: page.form.step }, replace: true, throw: true })
   },
   component: SetupPage,
   pendingComponent: SetupSkeleton,

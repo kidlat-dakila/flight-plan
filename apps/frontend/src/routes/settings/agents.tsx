@@ -28,10 +28,9 @@ const AgentsSettingsPage = () => {
     <>
       <title>{DOCUMENT_TITLE}</title>
       <SectionIntro title={TITLE}>
-        Flight Plan builds every review on its own, without a model: it splits the change into segments, draws the
-        Trace Diagram and the Blast Diagram, and lays out the files and lines of the Code Walkthrough. What it
-        can&apos;t do is explain the change: say what each part does and why, and spot the bugs it might hide. Your
-        agent writes that part. Pick the agents you use, and where Flight Plan installs its plugin for each one.
+        Flight Plan builds almost everything on its own. It draws the Trace Diagram and the Blast Diagram, and arranges
+        the Code Walkthrough the way you prefer. What it can&apos;t do is explain how the code works or find potential issues.
+        That&apos;s where your agent comes in, to make the change easier to understand.
       </SectionIntro>
       <AgentsForm
         agents={page.agents}

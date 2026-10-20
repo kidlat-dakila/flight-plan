@@ -47,7 +47,6 @@ const forgesForm = {
     label: "A code host connection adds:",
     items: ["The pull requests to review, with their labels", "Links into the code host's diff view"],
   },
-  hasCodeHost: false,
   forges: [
     {
       forge: "gh",
@@ -109,7 +108,7 @@ const configurationForm = {
 
 const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
 
-const SELF_HINT = "Git has no email set for you in this repository, so Flight Plan can't tell which commits are yours. Search for the name or email you commit with and pick yourself."
+const SELF_HINT = "Git has no email for you in this repository. Search for the name or email you commit with and pick yourself."
 
 const lena = { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" }
 
@@ -118,7 +117,7 @@ const checkoutWeb = {
   path: "/Users/dev/projects/checkout-web",
   lineColor: "blue",
   lineLabel: "C",
-  authorSearchHint: "Ask Flight Plan to look for branches made by your team members.",
+  authorSearchHint: "You see your own branches. Add team members to see theirs too.",
   authorSearchPlaceholder: "Type a name or email",
   selfAuthor: { hint: SELF_HINT, author: null, stateLabel: "Not chosen", isChangeable: true },
   trackedAuthors: [],
@@ -184,12 +183,11 @@ const NO_RECENT_MESSAGE = "No repository in your home folder has a commit from y
 
 const noRecentRepositories: ProcedureReply = { data: { repositories: [], message: NO_RECENT_MESSAGE } }
 
-const recentOf = (name: string, latestCommitLabel: string, stateLabel: string | null = null) => ({
+const recentOf = (name: string, stateLabel: string | null = null) => ({
   path: `/Users/dev/projects/${name}`,
   name,
   branch: "main",
   latestCommitAt: "2026-10-18T09:30:00.000Z",
-  latestCommitLabel,
   isAdded: stateLabel !== null,
   stateLabel,
 })
@@ -279,10 +277,10 @@ describe("the setup page", () => {
   it("explains that Flight Plan builds the review and the agent explains the change", async () => {
     renderApp({ "setup.get": () => agentsPage })
 
-    const intro = await screen.findByText(/Flight Plan builds every review on its own, without a model/)
+    const intro = await screen.findByText(/Flight Plan builds almost everything on its own/)
 
-    expect(intro.textContent).toContain("What it can't do is explain the change")
-    expect(intro.textContent).toContain("Your agent writes that part.")
+    expect(intro.textContent).toContain("What it can't do is explain how the code works or find potential issues.")
+    expect(intro.textContent).toContain("That's where your agent comes in")
   })
 
   it("asks for an install folder only for a picked agent, prefilled with the detected one", async () => {
@@ -517,10 +515,11 @@ describe("the setup page", () => {
   it("explains how Flight Plan works with git and what a code host adds", async () => {
     renderApp({ "setup.get": () => forgesPage })
 
-    expect(await screen.findByText(/It never commits, pushes or rewrites your history\./)).toBeTruthy()
+    expect(await screen.findByText(/never commits, pushes or rewrites your history\./)).toBeTruthy()
     expect(screen.getByText("A code host connection adds:")).toBeTruthy()
     expect(screen.getByText("Links into the code host's diff view")).toBeTruthy()
-    expect(screen.getByRole<HTMLInputElement>("radio", { name: "No, local git only" }).checked).toBe(true)
+    expect(screen.getByRole("list", { name: "Code hosts" })).toBeTruthy()
+    expect(screen.queryByRole("radio")).toBeNull()
     expect(screen.queryByRole("checkbox", { name: /Local git/ })).toBeNull()
     expect(screen.queryByRole("radio", { name: /Default forge/ })).toBeNull()
   })
@@ -528,15 +527,14 @@ describe("the setup page", () => {
   it("shows a code host that cannot be used as unavailable, with the reason", async () => {
     renderApp({ "setup.get": () => forgesPage })
 
-    fireEvent.click(await screen.findByRole("radio", { name: "Yes" }))
-    const gitlabCli = screen.getByRole<HTMLInputElement>("checkbox", { name: /GitLab CLI/ })
+    const gitlabCli = await screen.findByRole<HTMLInputElement>("checkbox", { name: /GitLab CLI/ })
 
     expect(gitlabCli.disabled).toBe(true)
     expect(screen.getByText(/glab is not installed on this machine\./).classList.contains("text-destructive")).toBe(true)
     expect(screen.getByText("Signed in as dev-harper")).toBeTruthy()
   })
 
-  it("saves local git only when no code host is wanted", async () => {
+  it("saves local git only when no code host is checked", async () => {
     const saveStep = vi
       .fn<(input: unknown) => ProcedureReply>()
       .mockReturnValue({ data: { kind: "accepted", nextStep: "agents" } })
@@ -556,14 +554,27 @@ describe("the setup page", () => {
     })
   })
 
+  it("skips the git integration with local git only, whatever was checked, and opens the next step", async () => {
+    const getSetup = vi.fn<() => ProcedureReply>().mockReturnValueOnce(forgesPage).mockReturnValue(agentsPage)
+    const saveStep = vi
+      .fn<(input: unknown) => ProcedureReply>()
+      .mockReturnValue({ data: { kind: "accepted", nextStep: "agents" } })
+    renderApp({ "setup.get": getSetup, "setup.saveStep": saveStep })
+
+    fireEvent.click(await screen.findByRole("checkbox", { name: /GitHub token/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Skip for now" }))
+
+    expect(await screen.findByRole("heading", { name: "Agent integration" })).toBeTruthy()
+    expect(saveStep).toHaveBeenCalledWith({ step: "forges", forges: [] })
+  })
+
   it("asks a token forge for its token in a hidden field and sends it with the step", async () => {
     const saveStep = vi
       .fn<(input: unknown) => ProcedureReply>()
       .mockReturnValue({ data: { kind: "accepted", nextStep: "agents" } })
     renderApp({ "setup.get": () => forgesPage, "setup.saveStep": saveStep })
 
-    fireEvent.click(await screen.findByRole("radio", { name: "Yes" }))
-    fireEvent.click(screen.getByRole("checkbox", { name: /GitHub token/ }))
+    fireEvent.click(await screen.findByRole("checkbox", { name: /GitHub token/ }))
     const token = screen.getByLabelText<HTMLInputElement>("Token for GitHub token")
     fireEvent.change(token, { target: { value: "secret" } })
     fireEvent.click(screen.getByRole("button", { name: "Save and continue" }))
@@ -746,7 +757,7 @@ describe("the setup page", () => {
     const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "accepted" } })
     renderApp({
       "setup.get": getSetup,
-      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("checkout-web", "2 days ago"), recentOf("storefront", "5 days ago")),
+      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("checkout-web"), recentOf("storefront")),
       "setup.addRepository": addRepository,
     })
 
@@ -755,7 +766,6 @@ describe("the setup page", () => {
 
     expect(within(repositories).getAllByRole("checkbox")).toHaveLength(2)
     expect(checkoutWebRow.checked).toBe(false)
-    expect(within(repositories).getByText("Your last commit on main, 2 days ago")).toBeTruthy()
     expect(within(repositories).getByText("/Users/dev/projects/checkout-web")).toBeTruthy()
     expect(screen.queryByRole("combobox", { name: "Track specific team members in checkout-web" })).toBeNull()
 
@@ -766,10 +776,31 @@ describe("the setup page", () => {
     expect(within(repositories).getByRole<HTMLInputElement>("checkbox", { name: /^checkout-web/ }).checked).toBe(true)
   })
 
+  it("stays on the repositories step after following the first repository", async () => {
+    const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "accepted" } })
+    const getSetup = (input: unknown): ProcedureReply => {
+      const isStepRequested = JSON.stringify(input).includes("repositories")
+      if (addRepository.mock.calls.length === 0) return pageOf(emptyRepositoriesForm)
+      return isStepRequested ? pageOf(selfChosenRepositoriesForm) : forgesPage
+    }
+    renderApp({
+      "setup.get": getSetup,
+      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("checkout-web")),
+      "setup.addRepository": addRepository,
+    })
+
+    const repositories = await screen.findByRole("list", { name: "Repositories" })
+    fireEvent.click(within(repositories).getByRole("checkbox", { name: /^checkout-web/ }))
+
+    expect(await screen.findByRole("combobox", { name: "Track specific team members in checkout-web" })).toBeTruthy()
+    expect(screen.getByRole("heading", { level: 2, name: "Select your repositories" })).toBeTruthy()
+    expect(screen.queryByRole("heading", { name: "Git integration" })).toBeNull()
+  })
+
   it("keeps a repository Flight Plan already follows checked and locked", async () => {
     renderApp({
       "setup.get": () => pageOf(emptyRepositoriesForm),
-      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("storefront", "5 days ago", "Already in Flight Plan")),
+      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("storefront", "Already in Flight Plan")),
     })
 
     const storefront = await screen.findByRole<HTMLInputElement>("checkbox", { name: /^storefront/ })
@@ -782,7 +813,7 @@ describe("the setup page", () => {
   it("lists a repository added by hand after the recent ones, checked", async () => {
     renderApp({
       "setup.get": () => pageOf(selfChosenRepositoriesForm),
-      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("storefront", "5 days ago")),
+      "setup.recentRepositories": () => recentRepositoriesOf(recentOf("storefront")),
     })
 
     const repositories = await screen.findByRole("list", { name: "Repositories" })
@@ -1006,14 +1037,14 @@ describe("the setup page", () => {
   it("shows the user git config names in a local git repository, without asking or letting them change it", async () => {
     const fromGitConfig = {
       ...checkoutWeb,
-      selfAuthor: { hint: SELF_HINT, author: dev, stateLabel: "You, from git config", isChangeable: false },
+      selfAuthor: { hint: SELF_HINT, author: dev, stateLabel: null, isChangeable: false },
     }
     renderApp({
       "setup.get": () => pageOf({ ...selfChosenRepositoriesForm, repositories: [fromGitConfig] }),
       "setup.searchFolders": () => noFolders,
     })
 
-    expect(await screen.findByText("You, from git config")).toBeTruthy()
+    expect(await screen.findByText("Dev Harper")).toBeTruthy()
     expect(screen.queryByRole("combobox", { name: "Which user are you in checkout-web?" })).toBeNull()
     expect(screen.queryByRole("button", { name: "Choose another user as you in checkout-web" })).toBeNull()
   })

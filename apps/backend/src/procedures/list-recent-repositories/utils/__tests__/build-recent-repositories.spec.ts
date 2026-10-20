@@ -5,8 +5,6 @@ import {
 } from "@/procedures/list-recent-repositories/utils/build-recent-repositories"
 import type { FolderActivity } from "@/procedures/list-recent-repositories/utils/rank-recent-repositories"
 
-const NOW = new Date("2026-10-19T12:00:00.000Z")
-
 const SHOP: FolderActivity = {
   path: "/Users/dev/projects/shop",
   activity: {
@@ -18,15 +16,14 @@ const SHOP: FolderActivity = {
 }
 
 describe("buildRecentRepositories", () => {
-  it("lists each repository with its main branch and when the user last committed on it", () => {
-    expect(buildRecentRepositories([SHOP], NO_ADDED_PATHS, NOW)).toStrictEqual({
+  it("lists each repository with its main branch and the time of the user's latest commit on it", () => {
+    expect(buildRecentRepositories([SHOP], NO_ADDED_PATHS)).toStrictEqual({
       repositories: [
         {
           path: "/Users/dev/projects/shop",
           name: "shop",
           branch: "master",
           latestCommitAt: "2026-10-17T12:00:00.000Z",
-          latestCommitLabel: "2 days ago",
           isAdded: false,
           stateLabel: null,
         },
@@ -38,7 +35,7 @@ describe("buildRecentRepositories", () => {
   it("marks a repository the setup already holds", () => {
     const addedPaths = { inSetup: [SHOP.path], inFlightPlan: [] }
 
-    expect(buildRecentRepositories([SHOP], addedPaths, NOW)).toMatchObject({
+    expect(buildRecentRepositories([SHOP], addedPaths)).toMatchObject({
       repositories: [{ isAdded: true, stateLabel: "Added" }],
     })
   })
@@ -46,13 +43,13 @@ describe("buildRecentRepositories", () => {
   it("marks a repository Flight Plan already follows", () => {
     const addedPaths = { inSetup: [], inFlightPlan: [SHOP.path] }
 
-    expect(buildRecentRepositories([SHOP], addedPaths, NOW)).toMatchObject({
+    expect(buildRecentRepositories([SHOP], addedPaths)).toMatchObject({
       repositories: [{ isAdded: true, stateLabel: "Already in Flight Plan" }],
     })
   })
 
   it("says so when no repository was found", () => {
-    expect(buildRecentRepositories([], NO_ADDED_PATHS, NOW)).toStrictEqual({
+    expect(buildRecentRepositories([], NO_ADDED_PATHS)).toStrictEqual({
       repositories: [],
       message: NO_RECENT_REPOSITORY_MESSAGE,
     })

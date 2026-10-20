@@ -8,16 +8,20 @@ interface ForgesStepProps extends Omit<ForgesFormProps, "problem" | "children"> 
   readonly backStep: string | null
   readonly problem: StepProblem | null
   readonly isPending: boolean
+  readonly onSkip: () => void
 }
 
 const TITLE = "Git integration"
 
-const ForgesStep = ({ backStep, problem, isPending, ...form }: ForgesStepProps) => (
+const ForgesStep = ({ backStep, problem, isPending, onSkip, ...form }: ForgesStepProps) => (
   <>
     <StepIntro title={TITLE}>
-      Flight Plan works with the git repositories on this computer. It reads branches and commits, fetches from your
-      remotes in the background, and fast-forwards a branch when you update a review. It never commits, pushes or
-      rewrites your history. Local git is always on, so every repository works without an account.
+      Flight Plan reads the git repositories on this machine via the
+      {" "}
+      <code className="rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[0.875em]">git</code>
+      {" "}
+      command, so every repository works without an account. It fetches from your remotes and fast-forwards a
+      branch when its review refreshes, but never commits, pushes or rewrites your history.
     </StepIntro>
     <ForgesForm {...form} problem={problem}>
       <StepActions
@@ -26,6 +30,7 @@ const ForgesStep = ({ backStep, problem, isPending, ...form }: ForgesStepProps) 
         pendingLabel="Saving…"
         isPending={isPending}
         errorMessage={problem !== null && problem.field === null ? problem.message : null}
+        onSkip={onSkip}
       />
     </ForgesForm>
   </>

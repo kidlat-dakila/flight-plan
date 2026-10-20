@@ -38,8 +38,6 @@ const FIELD_BUILDERS: Record<ForgeFieldName, (connection: ForgeConnection | null
 
 const CODE_HOST_FORGES: readonly SetupForge[] = SETUP_FORGES.filter((forge) => forge !== LOCAL_GIT_FORGE)
 
-const isCodeHostConnection = (connection: ForgeConnection): boolean => connection.forge !== LOCAL_GIT_FORGE
-
 const toForgeOption = (forge: SetupForge, choice: ForgesChoice | null, cliProbes: readonly CliProbe[]): ForgeOption => {
   const connection = choice?.connections.find((saved) => saved.forge === forge) ?? null
   return {
@@ -55,6 +53,5 @@ const toForgeOption = (forge: SetupForge, choice: ForgesChoice | null, cliProbes
 export const buildForgesStep = (choice: ForgesChoice | null, cliProbes: readonly CliProbe[]): ForgesStep => ({
   step: "forges",
   codeHostFeatures: { label: CODE_HOST_FEATURES_LABEL, items: CODE_HOST_FEATURES.map((feature) => feature.label) },
-  hasCodeHost: choice?.connections.some(isCodeHostConnection) ?? false,
   forges: CODE_HOST_FORGES.map((forge) => toForgeOption(forge, choice, cliProbes)),
 })

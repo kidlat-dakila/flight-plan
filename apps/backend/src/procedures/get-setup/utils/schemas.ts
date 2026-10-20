@@ -70,7 +70,6 @@ export const forgeOptionSchema = z.strictObject({
 export const forgesStepSchema = z.strictObject({
   step: z.literal("forges"),
   codeHostFeatures: z.strictObject({ label: z.string(), items: z.array(z.string()) }),
-  hasCodeHost: z.boolean(),
   forges: z.array(forgeOptionSchema),
 })
 
@@ -109,7 +108,7 @@ export const setupRepositorySchema = z.strictObject({
     .strictObject({
       hint: z.string(),
       author: trackedAuthorSchema.nullable(),
-      stateLabel: z.string(),
+      stateLabel: z.string().nullable(),
       isChangeable: z.boolean(),
     })
     .nullable(),

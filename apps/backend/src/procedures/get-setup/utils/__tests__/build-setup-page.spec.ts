@@ -3,7 +3,6 @@ import { buildSetupPage, type SetupPageSource } from "@/procedures/get-setup/uti
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { CODE_BLOCK_CLASSIFICATIONS } from "@flightplan/configurations"
 import {
-  AT_AGENTS,
   AT_CONFIGURATION,
   AT_FORGES,
   AT_REPOSITORIES,
@@ -280,7 +279,7 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("lists what a code host connection adds, and asks for no code host until one is saved", () => {
+  it("lists what a code host connection adds and every code host, none picked until one is saved", () => {
     const { form } = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "forges" }))
 
     expect(form).toMatchObject({
@@ -296,7 +295,6 @@ describe("buildSetupPage", () => {
           "Links into the code host's diff view",
         ],
       },
-      hasCodeHost: false,
       forges: [
         { forge: "gh", isPicked: false },
         { forge: "glab", isPicked: false },
@@ -308,17 +306,10 @@ describe("buildSetupPage", () => {
     expect(form).not.toHaveProperty("defaultForge")
   })
 
-  it("asks for no code host when only local git is saved", () => {
-    const { form } = buildSetupPage(sourceOf({ setup: AT_AGENTS, step: "forges" }))
-
-    expect(form).toMatchObject({ hasCodeHost: false })
-  })
-
   it("never sends a saved token back and says that one is saved", () => {
     const { form } = buildSetupPage(sourceOf({ setup: { ...AT_FORGES, forges: GITHUB_FORGES }, step: "forges" }))
 
     expect(form).toMatchObject({
-      hasCodeHost: true,
       forges: [
         { forge: "gh", isPicked: true },
         { forge: "glab" },
@@ -416,10 +407,10 @@ describe("buildSetupPage", () => {
     expect(localGit).toMatchObject({
       repositories: [
         {
-          authorSearchHint: "Ask Flight Plan to look for branches made by your team members.",
+          authorSearchHint: "You see your own branches. Add team members to see theirs too.",
           authorSearchPlaceholder: "Type a name or email",
           selfAuthor: {
-            hint: "Git has no email set for you in this repository, so Flight Plan can't tell which commits are yours. Search for the name or email you commit with and pick yourself.",
+            hint: "Git has no email for you in this repository. Search for the name or email you commit with and pick yourself.",
             author: { name: "Dev Harper", monogram: "DH" },
             stateLabel: "You",
             isChangeable: true,
@@ -430,7 +421,7 @@ describe("buildSetupPage", () => {
     expect(github).toMatchObject({
       repositories: [
         {
-          authorSearchHint: "Ask Flight Plan to look for pull requests made by your team members.",
+          authorSearchHint: "You see everyone's pull requests. Add team members to see only theirs.",
           authorSearchPlaceholder: "Type a name or username",
           selfAuthor: null,
         },
@@ -447,7 +438,7 @@ describe("buildSetupPage", () => {
         {
           selfAuthor: {
             author: { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" },
-            stateLabel: "You, from git config",
+            stateLabel: null,
             isChangeable: false,
           },
         },

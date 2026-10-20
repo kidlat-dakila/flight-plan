@@ -5,7 +5,6 @@ export const getAuthorFormInputSchema = z.strictObject({ path: z.string() })
 
 export const gitSelfAuthorSchema = z.strictObject({
   author: trackedAuthorSchema,
-  stateLabel: z.string(),
 })
 
 export const authorFormSchema = z.strictObject({

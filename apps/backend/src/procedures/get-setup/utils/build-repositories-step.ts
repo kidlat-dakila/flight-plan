@@ -17,13 +17,15 @@ export type RepositoryEntry = RepositoriesStep["repositories"][number]
 const COMMIT_SEARCH_PLACEHOLDER = "Type a name or email"
 const FORGE_SEARCH_PLACEHOLDER = "Type a name or username"
 export const SELF_AUTHOR_HINT
-  = "Git has no email set for you in this repository, so Flight Plan can't tell which commits are yours. Search for the name or email you commit with and pick yourself."
-export const SELF_FROM_GIT_CONFIG_LABEL = "You, from git config"
+  = "Git has no email for you in this repository. Search for the name or email you commit with and pick yourself."
 const SELF_CHOSEN_LABEL = "You"
 const SELF_MISSING_LABEL = "Not chosen"
 
+const LOCAL_GIT_AUTHOR_SEARCH_HINT = "You see your own branches. Add team members to see theirs too."
+const FORGE_AUTHOR_SEARCH_HINT = "You see everyone's pull requests. Add team members to see only theirs."
+
 export const authorSearchHint = (forge: SetupForge): string =>
-  `Ask Flight Plan to look for ${forge === "git" ? "branches" : "pull requests"} made by your team members.`
+  forge === "git" ? LOCAL_GIT_AUTHOR_SEARCH_HINT : FORGE_AUTHOR_SEARCH_HINT
 
 export const authorSearchPlaceholder = (forge: SetupForge): string =>
   forge === "git" ? COMMIT_SEARCH_PLACEHOLDER : FORGE_SEARCH_PLACEHOLDER
@@ -46,7 +48,7 @@ const toChosenSelfAuthor = (repository: SetupRepository): NonNullable<Repository
 const toIdentitySelfAuthor = (identity: GitIdentity): NonNullable<RepositoryEntry["selfAuthor"]> => ({
   hint: SELF_AUTHOR_HINT,
   author: toTrackedAuthor(toIdentityAuthor(identity)),
-  stateLabel: SELF_FROM_GIT_CONFIG_LABEL,
+  stateLabel: null,
   isChangeable: false,
 })
 

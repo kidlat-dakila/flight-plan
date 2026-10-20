@@ -28,10 +28,7 @@ const RepositoriesStep = ({
 }: RepositoriesStepProps) => (
   <form action={onContinue}>
     <StepIntro title={TITLE}>
-      Pick the repositories Flight Plan follows, and it lists their pull requests and branches on your home page. The
-      list starts with the ones you last committed to on main or master; add any other repository by hand. On GitHub,
-      GitLab or Bitbucket you see everyone&apos;s pull requests unless you pick team members. With local git you see
-      only the branches you add, plus those of the team members you pick.
+      Choose the repositories you review. Flight Plan shows their pull requests and branches on your home page.
     </StepIntro>
     <RepositoryList {...list} />
     <StepActions

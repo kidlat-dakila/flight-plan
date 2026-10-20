@@ -14,9 +14,11 @@ interface StepActionsProps {
   readonly isReady?: boolean
   readonly hint?: string | null
   readonly errorMessage: string | null
+  readonly onSkip?: (() => void) | null
 }
 
 const BACK_LABEL = "Back"
+const SKIP_LABEL = "Skip for now"
 
 const StepActions = ({
   backStep,
@@ -26,6 +28,7 @@ const StepActions = ({
   isReady = true,
   hint = null,
   errorMessage,
+  onSkip = null,
 }: StepActionsProps) => (
   <footer className="mt-6 border-t border-border pt-4">
     {errorMessage === null ? null : <p role="alert" className="pb-3 text-sm text-destructive">{errorMessage}</p>}
@@ -39,6 +42,9 @@ const StepActions = ({
           )}
       <span className="flex-1" />
       {hint === null ? null : <p className="text-sm text-muted-foreground">{hint}</p>}
+      {onSkip === null
+        ? null
+        : <Button type="button" variant="outline" disabled={isPending} onClick={onSkip}>{SKIP_LABEL}</Button>}
       <Button type="submit" disabled={isPending || !isReady}>{isPending ? pendingLabel : submitLabel}</Button>
     </div>
   </footer>

@@ -5,9 +5,9 @@ const IDENTITY = { name: "Dev Harper", email: "dev@acme.example" }
 describe("buildAuthorForm", () => {
   it("asks the user to pick themselves from the commit authors when local git serves the repository and git config has no email", () => {
     expect(buildAuthorForm("git", null)).toStrictEqual({
-      selfAuthorHint: "Git has no email set for you in this repository, so Flight Plan can't tell which commits are yours. Search for the name or email you commit with and pick yourself.",
+      selfAuthorHint: "Git has no email for you in this repository. Search for the name or email you commit with and pick yourself.",
       gitSelfAuthor: null,
-      searchHint: "Ask Flight Plan to look for branches made by your team members.",
+      searchHint: "You see your own branches. Add team members to see theirs too.",
       searchPlaceholder: "Type a name or email",
     })
   })
@@ -17,7 +17,6 @@ describe("buildAuthorForm", () => {
       selfAuthorHint: null,
       gitSelfAuthor: {
         author: { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" },
-        stateLabel: "You, from git config",
       },
     })
   })
@@ -26,7 +25,7 @@ describe("buildAuthorForm", () => {
     expect(buildAuthorForm("gh", null)).toStrictEqual({
       selfAuthorHint: null,
       gitSelfAuthor: null,
-      searchHint: "Ask Flight Plan to look for pull requests made by your team members.",
+      searchHint: "You see everyone's pull requests. Add team members to see only theirs.",
       searchPlaceholder: "Type a name or username",
     })
   })

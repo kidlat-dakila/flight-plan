@@ -24,7 +24,7 @@ export type AuthorRole = "self" | "tracked"
 interface SelfAuthor {
   readonly hint: string
   readonly author: TrackedAuthor | null
-  readonly stateLabel: string
+  readonly stateLabel: string | null
   readonly isChangeable: boolean
 }
 
@@ -99,6 +99,8 @@ interface RepositoryRowItemProps<Followed extends FollowedRepository> extends Om
 const CHOICE_INPUT_CLASSES = "mt-1 size-4 shrink-0 accent-(--primary)"
 const AUTHOR_LINE_CLASSES = "flex max-w-md items-center gap-2 py-1"
 const NO_AUTHOR_OPTIONS: readonly AuthorOption[] = []
+const RECENT_HEADING = "Recent repositories"
+const MISSING_REPOSITORY_PROMPT = "Can't find your repository?"
 
 const RepositoryAuthorField = ({
   label,
@@ -154,7 +156,7 @@ const SelfAuthorPick = ({
       <Avatar imageUrl={selfAuthor.author.avatarUrl} monogram={selfAuthor.author.monogram} />
       <span className="min-w-0 truncate">{selfAuthor.author.name}</span>
       <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{selfAuthor.author.detail}</span>
-      <span className="text-sm font-bold">{selfAuthor.stateLabel}</span>
+      {selfAuthor.stateLabel === null ? null : <span className="text-sm font-bold">{selfAuthor.stateLabel}</span>}
       {selfAuthor.isChangeable
         ? (
             <IconButton
@@ -248,9 +250,6 @@ const RepositoryRowItem = <Followed extends FollowedRepository>({
         <span className="min-w-0">
           <span className="font-bold">{row.name}</span>
           {row.stateLabel === null ? null : <span className="ml-2 text-sm text-muted-foreground">{row.stateLabel}</span>}
-          {row.activityLabel === null
-            ? null
-            : <span className="block text-sm text-muted-foreground">{row.activityLabel}</span>}
           <span className="block font-mono text-[0.82rem] wrap-anywhere text-muted-foreground">{row.path}</span>
         </span>
       </label>
@@ -287,6 +286,7 @@ const RepositoryList = <Followed extends FollowedRepository>({
   onSelfAuthorChange,
 }: RepositoryListProps<Followed>) => (
   <>
+    <h3 className="pb-2 text-sm font-bold">{RECENT_HEADING}</h3>
     {listMessage === null ? null : <p className="pb-3 text-sm text-muted-foreground">{listMessage}</p>}
     {rows.length === 0
       ? null
@@ -311,7 +311,10 @@ const RepositoryList = <Followed extends FollowedRepository>({
           </ul>
         )}
     <div className="border-t border-border pt-4">
-      <Button type="button" variant="outline" onClick={onOpenAddRepository}>Add repository</Button>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <p className="text-sm text-muted-foreground">{MISSING_REPOSITORY_PROMPT}</p>
+        <Button type="button" variant="outline" onClick={onOpenAddRepository}>Add repository</Button>
+      </div>
       {repositoryErrorMessage === null
         ? null
         : <p role="alert" className="pt-2 text-sm text-destructive">{repositoryErrorMessage}</p>}

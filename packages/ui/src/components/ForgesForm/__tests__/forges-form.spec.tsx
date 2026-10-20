@@ -29,7 +29,7 @@ const FORGES = [
 
 const renderForm = (overrides: Partial<React.ComponentProps<typeof ForgesForm>> = {}) =>
   render(
-    <ForgesForm codeHostFeatures={CODE_HOST_FEATURES} hasCodeHost={false} forges={FORGES} problem={null} onSubmit={vi.fn()} {...overrides}>
+    <ForgesForm codeHostFeatures={CODE_HOST_FEATURES} forges={FORGES} problem={null} onSubmit={vi.fn()} {...overrides}>
       <button type="submit">Save</button>
     </ForgesForm>,
   )
@@ -40,30 +40,25 @@ const NONE_PICKED = [
 ]
 
 describe("ForgesForm", () => {
-  it("lists what a code host adds and starts on local git only, with the code hosts closed", () => {
+  it("lists what a code host adds and every code host at once, none picked", () => {
     renderForm()
 
     expect(screen.getByText("A code host connection adds:")).toBeTruthy()
     expect(screen.getByText("Links into the code host's diff view")).toBeTruthy()
-    expect(screen.getByRole<HTMLInputElement>("radio", { name: "No, local git only" }).checked).toBe(true)
-    expect(screen.queryByRole("list", { name: "Code hosts" })).toBeNull()
-    expect(screen.queryByRole("radio", { name: /Default/ })).toBeNull()
+    expect(screen.getAllByRole<HTMLInputElement>("checkbox").map((checkbox) => checkbox.checked)).toStrictEqual([false, false])
+    expect(screen.queryByRole("radio")).toBeNull()
   })
 
-  it("opens the code hosts on yes, and locks one that is unavailable, with the reason", () => {
+  it("locks a code host that is unavailable, with the reason", () => {
     renderForm()
 
-    fireEvent.click(screen.getByRole("radio", { name: "Yes" }))
-
-    expect(screen.getByRole("list", { name: "Code hosts" })).toBeTruthy()
     expect(screen.getByRole<HTMLInputElement>("checkbox", { name: /GitLab CLI/ }).disabled).toBe(true)
     expect(screen.getByText("glab is not installed on this machine.", { exact: false })).toBeTruthy()
   })
 
-  it("opens the code hosts at once when one is saved", () => {
-    renderForm({ hasCodeHost: true, forges: FORGES.map((option) => (option.forge === "github" ? { ...option, isPicked: true } : option)) })
+  it("checks a code host that is saved", () => {
+    renderForm({ forges: FORGES.map((option) => (option.forge === "github" ? { ...option, isPicked: true } : option)) })
 
-    expect(screen.getByRole<HTMLInputElement>("radio", { name: "Yes" }).checked).toBe(true)
     expect(screen.getByRole<HTMLInputElement>("checkbox", { name: /GitHub token/ }).checked).toBe(true)
   })
 
@@ -71,7 +66,6 @@ describe("ForgesForm", () => {
     const onSubmit = vi.fn()
     renderForm({ onSubmit })
 
-    fireEvent.click(screen.getByRole("radio", { name: "Yes" }))
     fireEvent.click(screen.getByRole("checkbox", { name: /GitHub token/ }))
     fireEvent.change(screen.getByLabelText("Token for GitHub token"), { target: { value: "secret" } })
     fireEvent.click(screen.getByRole("button", { name: "Save" }))
@@ -84,11 +78,11 @@ describe("ForgesForm", () => {
     })
   })
 
-  it("submits no code host after going back to local git only", () => {
+  it("submits no code host after the saved one is unchecked", () => {
     const onSubmit = vi.fn()
-    renderForm({ onSubmit, hasCodeHost: true, forges: FORGES.map((option) => (option.forge === "github" ? { ...option, isPicked: true } : option)) })
+    renderForm({ onSubmit, forges: FORGES.map((option) => (option.forge === "github" ? { ...option, isPicked: true } : option)) })
 
-    fireEvent.click(screen.getByRole("radio", { name: "No, local git only" }))
+    fireEvent.click(screen.getByRole("checkbox", { name: /GitHub token/ }))
     fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
     expect(onSubmit).toHaveBeenCalledWith({ forges: NONE_PICKED })
@@ -97,7 +91,6 @@ describe("ForgesForm", () => {
   it("shows a problem about a field under that field", () => {
     const picked = FORGES.map((option) => (option.forge === "github" ? { ...option, isPicked: true } : option))
     renderForm({
-      hasCodeHost: true,
       forges: picked,
       problem: { message: "GitHub did not accept this token.", field: { owner: "github", name: "token" } },
     })

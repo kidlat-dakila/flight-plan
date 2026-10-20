@@ -23,7 +23,6 @@ const agentsSection = {
 const forgesSection = {
   section: "forges",
   codeHostFeatures: { label: "A code host connection adds:", items: ["The pull requests to review, with their labels"] },
-  hasCodeHost: true,
   forges: [
     {
       forge: "github",
@@ -46,7 +45,7 @@ const storefront = {
   path: "/Users/dev/projects/storefront",
   lineColor: "blue",
   lineLabel: "S",
-  authorSearchHint: "Ask Flight Plan to look for branches made by your team members.",
+  authorSearchHint: "You see your own branches. Add team members to see theirs too.",
   authorSearchPlaceholder: "Type a name or email",
   selfAuthor: { hint: LOCAL_SELF_HINT, author: dev, stateLabel: "You", isChangeable: true },
   trackedAuthors: [lena],
@@ -58,7 +57,7 @@ const docsSite = {
   ...storefront,
   name: "docs-site",
   path: "/work/docs-site",
-  authorSearchHint: "Ask Flight Plan to look for pull requests made by your team members.",
+  authorSearchHint: "You see everyone's pull requests. Add team members to see only theirs.",
   authorSearchPlaceholder: "Type a name or username",
   selfAuthor: null,
   trackedAuthors: [],
@@ -68,18 +67,17 @@ const docsSite = {
 
 const repositoriesSection = { section: "repositories", repositories: [storefront, docsSite] }
 
-const recentOf = (name: string, latestCommitLabel: string, stateLabel: string | null = null) => ({
+const recentOf = (name: string, stateLabel: string | null = null) => ({
   path: `/Users/dev/projects/${name}`,
   name,
   branch: "main",
   latestCommitAt: "2026-10-18T09:30:00.000Z",
-  latestCommitLabel,
   isAdded: stateLabel !== null,
   stateLabel,
 })
 
 const recentRepositories: ProcedureReply = {
-  data: { repositories: [recentOf("storefront", "2 days ago", "Already in Flight Plan"), recentOf("ledger", "5 days ago")], message: null },
+  data: { repositories: [recentOf("storefront", "Already in Flight Plan"), recentOf("ledger")], message: null },
 }
 
 const reviewPreferences = {
@@ -339,11 +337,10 @@ describe("the settings pages", () => {
       renderApp({}, "/settings/repositories")
 
       const list = await screen.findByRole("list", { name: "Repositories" })
-      expect(screen.getByText(/Pick the repositories Flight Plan follows/)).toBeTruthy()
+      expect(screen.getByText(/Choose the repositories you review/)).toBeTruthy()
       expect(within(list).getByRole<HTMLInputElement>("checkbox", { name: /storefront/ }).checked).toBe(true)
       expect((await within(list).findByRole<HTMLInputElement>("checkbox", { name: /ledger/ })).checked).toBe(false)
       expect(within(list).getByRole<HTMLInputElement>("checkbox", { name: /docs-site/ }).checked).toBe(true)
-      expect(within(list).getByText("Your last commit on main, 2 days ago")).toBeTruthy()
       expect(within(screen.getByRole("list", { name: "Tracked team members of storefront" })).getByText("Lena Okafor")).toBeTruthy()
       expect(within(list).getAllByRole("link", { name: "Prompt configurations" }).map((link) => link.getAttribute("href"))).toStrictEqual([
         "/pr-reviews/storefront/configurations",
