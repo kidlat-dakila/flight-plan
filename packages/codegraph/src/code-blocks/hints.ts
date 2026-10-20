@@ -27,6 +27,7 @@ export const HINT_SUBJECTS: Readonly<Record<CodeBlockClassification, string>> = 
   "api-request": "an API request",
   "validation": "a validation rule",
   "ui-state": "UI state",
+  "hook": "a hook",
   "security": "auth or security code",
   "file-io": "a file read or write",
   "process-execution": "code that starts a process",

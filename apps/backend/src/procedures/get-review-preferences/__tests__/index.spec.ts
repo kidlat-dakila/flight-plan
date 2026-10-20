@@ -1,6 +1,7 @@
 import { getReviewPreferences } from "@/procedures/get-review-preferences"
 import { DEFAULT_REVIEW_PREFERENCES } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { AT_REPOSITORIES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { CODE_BLOCK_CLASSIFICATIONS } from "@flightplan/configurations"
 
 describe("getReviewPreferences", () => {
   it("reads the defaults, marked as not saved, before the user saves any", async () => {
@@ -32,17 +33,31 @@ describe("getReviewPreferences", () => {
     })
   })
 
-  it("offers every classification for the spotlight, in the order of the hierarchy, with its label and description", async () => {
+  it("offers every classification for the spotlight once, grouped by area, in the order of the hierarchy within each group", async () => {
     const page = await getReviewPreferences({}, createSetupContext(AT_REPOSITORIES))
+    const classifications = page.spotlightGroups.flatMap((group) => group.choices.map((choice) => choice.classification))
 
-    expect(page.spotlightChoices).toHaveLength(34)
-    expect(page.spotlightChoices.slice(0, 2)).toStrictEqual([
-      { classification: "test", label: "Test", description: "A test or a story" },
-      {
-        classification: "build-and-infrastructure",
-        label: "Build and infrastructure",
-        description: "Code that builds, deploys or runs the app rather than being the app",
-      },
+    expect(page.spotlightGroups.map((group) => group.label)).toStrictEqual(["Frontend", "Backend", "Infrastructure", "Miscellaneous"])
+    expect([...classifications].sort()).toStrictEqual([...CODE_BLOCK_CLASSIFICATIONS].sort())
+    expect(page.spotlightGroups[0]?.choices.slice(0, 2)).toStrictEqual([
+      { classification: "page", label: "Page", description: "Code that renders on a visit to a path", isFeatured: true },
+      { classification: "component", label: "Component", description: "Markup, or a function that returns it", isFeatured: true },
+    ])
+  })
+
+  it("features the eight most common kinds of change, shown before the rest are opened", async () => {
+    const page = await getReviewPreferences({}, createSetupContext(AT_REPOSITORIES))
+    const featured = page.spotlightGroups.flatMap((group) => group.choices.filter((choice) => choice.isFeatured).map((choice) => choice.label))
+
+    expect(featured).toStrictEqual([
+      "Page",
+      "Component",
+      "API request",
+      "Server action",
+      "API route",
+      "Database read/write",
+      "Schema / data model",
+      "Validation",
     ])
   })
 

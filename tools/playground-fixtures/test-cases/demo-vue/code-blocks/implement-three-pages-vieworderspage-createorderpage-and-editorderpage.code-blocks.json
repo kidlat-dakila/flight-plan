@@ -5204,6 +5204,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -5690,9 +5691,11 @@
           "src/composables/use-orders.ts#effect-callback@7:49"
         ],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [
+          "hook",
           "effect"
         ],
         "outerSymbols": [],
@@ -6182,9 +6185,11 @@
           "src/composables/use-orders.ts#function@11:72"
         ],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [
+          "hook",
           "effect"
         ],
         "outerSymbols": [],
@@ -6822,11 +6827,13 @@
         ],
         "classifications": [
           "database-read-write",
+          "hook",
           "effect",
           "event"
         ],
         "diffClassifications": [
           "database-read-write",
+          "hook",
           "effect",
           "event"
         ],
@@ -7684,11 +7691,13 @@
         ],
         "classifications": [
           "database-read-write",
+          "hook",
           "effect",
           "event"
         ],
         "diffClassifications": [
           "database-read-write",
+          "hook",
           "effect",
           "event"
         ],
@@ -8573,6 +8582,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],

@@ -322,7 +322,7 @@ const SetupPage = () => {
                   presets={form.presets}
                   selectedConfigurationId={form.selectedConfigurationId}
                   preferences={form.preferences}
-                  spotlightChoices={form.spotlightChoices}
+                  spotlightGroups={form.spotlightGroups}
                   backStep={page.backStep}
                   problem={problem}
                   isPending={savePreferences.isPending || saveStep.isPending || completeSetup.isPending}

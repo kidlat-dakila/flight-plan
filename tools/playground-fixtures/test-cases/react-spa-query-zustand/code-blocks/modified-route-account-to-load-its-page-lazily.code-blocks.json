@@ -3889,7 +3889,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "logic"
+          "hook"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -6084,6 +6084,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],

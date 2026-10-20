@@ -83,6 +83,6 @@ describe("getSettings", () => {
       description: "The agent writes in fragments: few words and no filler.",
       note: null,
     })
-    expect(page).toHaveProperty("spotlightChoices.0.label", "Test")
+    expect(page).toHaveProperty("spotlightGroups.0.label", "Frontend")
   })
 })

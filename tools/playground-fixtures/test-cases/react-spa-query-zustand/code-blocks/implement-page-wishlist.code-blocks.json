@@ -4873,7 +4873,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "logic"
+          "hook"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -7073,6 +7073,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -7396,6 +7397,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -7614,6 +7616,7 @@
         "diffSourceIds": [],
         "classifications": [
           "database-read-write",
+          "hook",
           "effect",
           "event"
         ],

@@ -1,7 +1,6 @@
 import { DEFAULT_REVIEW_PREFERENCES } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { buildSetupPage, type SetupPageSource } from "@/procedures/get-setup/utils/build-setup-page"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
-import { CODE_BLOCK_CLASSIFICATIONS } from "@flightplan/configurations"
 import {
   AT_CONFIGURATION,
   AT_FORGES,
@@ -347,8 +346,8 @@ describe("buildSetupPage", () => {
     const form = buildSetupPage(sourceOf({ setup: AT_CONFIGURATION, step: "configuration" })).form
 
     expect(form).toMatchObject({ preferences: { spotlight: [], isSegmented: true } })
-    expect(form).toHaveProperty("spotlightChoices.length", CODE_BLOCK_CLASSIFICATIONS.length)
-    expect(form).toHaveProperty("spotlightChoices.0", { classification: "test", label: "Test", description: "A test or a story" })
+    expect(form).toHaveProperty("spotlightGroups.length", 4)
+    expect(form).toHaveProperty("spotlightGroups.0.choices.0", { classification: "page", label: "Page", description: "Code that renders on a visit to a path", isFeatured: true })
     expect(buildSetupPage(sourceOf({ setup: savedSetup, step: "configuration" })).form).toMatchObject({
       preferences: { spotlight: ["security"] },
     })

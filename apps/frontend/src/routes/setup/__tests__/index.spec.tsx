@@ -99,10 +99,15 @@ const configurationForm = {
     sectionOrder: ["context", "traceDiagram", "blastDiagram", "walkthrough"],
     ignoredPaths: ["**/*.spec.ts", "**/e2e/**"],
   },
-  spotlightChoices: [
-    { classification: "migration", label: "Migration", description: "A change to the shape of the database" },
-    { classification: "api-route", label: "API route", description: "A route, a resolver or a middleware" },
-    { classification: "security", label: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting" },
+  spotlightGroups: [
+    {
+      label: "Backend",
+      choices: [
+        { classification: "migration", label: "Migration", description: "A change to the shape of the database", isFeatured: true },
+        { classification: "api-route", label: "API route", description: "A route, a resolver or a middleware", isFeatured: true },
+        { classification: "security", label: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting", isFeatured: true },
+      ],
+    },
   ],
 }
 
@@ -358,7 +363,7 @@ describe("the setup page", () => {
     fireEvent.click(await screen.findByRole("checkbox", { name: "Claude" }))
     fireEvent.click(screen.getByRole("button", { name: "Save and continue" }))
 
-    expect(await screen.findByRole("heading", { name: "Review configuration" })).toBeTruthy()
+    expect(await screen.findByRole("region", { name: "Which topics do you care about most in a code review?" })).toBeTruthy()
     expect(saveStep).toHaveBeenCalledWith({
       step: "agents",
       agents: [
@@ -604,8 +609,7 @@ describe("the setup page", () => {
       "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
     })
 
-    expect(await screen.findByRole("heading", { level: 2, name: "Review configuration" })).toBeTruthy()
-    expect(screen.getByRole("region", { name: "Prompt configuration" })).toBeTruthy()
+    expect(await screen.findByRole("region", { name: "Prompt configuration" })).toBeTruthy()
     expect(screen.getByText(/A prompt configuration is the set of instructions the agent follows/)).toBeTruthy()
     expect(screen.getByRole<HTMLInputElement>("radio", { name: /Standard/ }).checked).toBe(true)
     expect(screen.getByText("You can pick another prompt configuration each time you create a Flight Plan.")).toBeTruthy()
@@ -632,16 +636,14 @@ describe("the setup page", () => {
       "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
     })
 
-    const spotlight = await screen.findByRole("region", { name: "Spotlight" })
-    expect(within(spotlight).getByText(/Pick the kinds of change that matter most to you/)).toBeTruthy()
-    expect(within(spotlight).getByText(/Nothing is in the spotlight/)).toBeTruthy()
-    expect(within(spotlight).getByRole("button", { name: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting" })).toBeTruthy()
+    const spotlight = await screen.findByRole("region", { name: "Which topics do you care about most in a code review?" })
+    expect(within(spotlight).getByText(/Flight Plan will mark changes on these topics in every review/)).toBeTruthy()
+    expect(within(spotlight).getByRole("checkbox", { name: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting" })).toBeTruthy()
 
-    fireEvent.click(within(spotlight).getByRole("button", { name: "Security" }))
-    fireEvent.click(within(spotlight).getByRole("button", { name: "Migration" }))
+    fireEvent.click(within(spotlight).getByRole("checkbox", { name: "Security" }))
+    fireEvent.click(within(spotlight).getByRole("checkbox", { name: "Migration" }))
 
-    expect(within(spotlight).getByRole("button", { name: "Security", pressed: true })).toBeTruthy()
-    expect(within(spotlight).queryByText(/Nothing is in the spotlight/)).toBeNull()
+    expect(within(spotlight).getByRole<HTMLInputElement>("checkbox", { name: "Security" }).checked).toBe(true)
 
     fireEvent.click(screen.getByRole("button", { name: "Finish setup" }))
 

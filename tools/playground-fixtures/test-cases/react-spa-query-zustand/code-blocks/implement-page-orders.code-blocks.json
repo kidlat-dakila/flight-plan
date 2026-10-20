@@ -5634,7 +5634,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "logic"
+          "hook"
         ],
         "diffClassifications": [],
         "outerSymbols": [
@@ -8012,9 +8012,11 @@
           "src/hooks/use-orders.ts#function@6:60"
         ],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [
+          "hook",
           "effect"
         ],
         "outerSymbols": [],
@@ -8678,6 +8680,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -9001,6 +9004,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -9219,6 +9223,7 @@
         "diffSourceIds": [],
         "classifications": [
           "database-read-write",
+          "hook",
           "effect",
           "event"
         ],

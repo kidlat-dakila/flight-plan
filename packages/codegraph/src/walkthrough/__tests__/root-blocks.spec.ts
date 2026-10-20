@@ -65,7 +65,7 @@ describe("isRootBlockKey", () => {
   it("knows a key only for a classification and a root block change", () => {
     expect(isRootBlockKey("block:component:deleted")).toBe(true)
     expect(isRootBlockKey("block:component:removed")).toBe(false)
-    expect(isRootBlockKey("block:hook:added")).toBe(false)
+    expect(isRootBlockKey("block:render:added")).toBe(false)
     expect(isRootBlockKey("block:component:added:more")).toBe(false)
     expect(isRootBlockKey("bug")).toBe(false)
   })

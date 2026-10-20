@@ -5472,11 +5472,13 @@
         ],
         "classifications": [
           "ui-state",
+          "hook",
           "effect",
           "event"
         ],
         "diffClassifications": [
           "ui-state",
+          "hook",
           "effect",
           "event"
         ],

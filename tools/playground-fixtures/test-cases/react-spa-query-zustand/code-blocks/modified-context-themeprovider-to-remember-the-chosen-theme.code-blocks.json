@@ -2587,7 +2587,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
-          "logic"
+          "hook"
         ],
         "diffClassifications": [],
         "outerSymbols": [

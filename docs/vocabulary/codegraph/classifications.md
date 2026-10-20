@@ -65,24 +65,25 @@ When a block earns several classifications, the one higher in this list is its p
 | 16 | `api-request` | A call to a server over the network |
 | 17 | `validation` | A schema, or a check of a value against one |
 | 18 | `ui-state` | State, a value derived from it, or a store shared across components |
-| 19 | `security` | A check of who the caller is or what they may do, hashing, signing, encryption and rate limiting |
-| 20 | `file-io` | A read or a write of files or object storage on the server |
-| 21 | `process-execution` | Code that starts another program or a worker thread |
-| 22 | `navigation` | Code that sends the user to a page |
-| 23 | `error-handling` | Code whose job is to turn a failure into a response or a fallback |
-| 24 | `effect` | Code that runs after something else has run |
-| 25 | `event` | Code that runs when something happens later |
-| 26 | `app-setup` | Code that makes something available to the code below it, or starts the app |
-| 27 | `feature-flag` | A read of a value switched from outside the code |
-| 28 | `config` | A read of an environment variable or a configuration value, or a configuration file |
-| 29 | `storage` | A read or a write of what the browser keeps for the user |
-| 30 | `telemetry` | Logging, analytics or error reporting |
-| 31 | `i18n` | Text looked up by key for the user's language, or a translation file |
-| 32 | `styling` | How something looks: a stylesheet, CSS-in-JS, a theme |
-| 33 | `file` | A file no language reads and no location names |
-| 34 | `logic` | What a block is when nothing else applies |
+| 19 | `hook` | A custom hook or composable, a function whose name starts with `use` |
+| 20 | `security` | A check of who the caller is or what they may do, hashing, signing, encryption and rate limiting |
+| 21 | `file-io` | A read or a write of files or object storage on the server |
+| 22 | `process-execution` | Code that starts another program or a worker thread |
+| 23 | `navigation` | Code that sends the user to a page |
+| 24 | `error-handling` | Code whose job is to turn a failure into a response or a fallback |
+| 25 | `effect` | Code that runs after something else has run |
+| 26 | `event` | Code that runs when something happens later |
+| 27 | `app-setup` | Code that makes something available to the code below it, or starts the app |
+| 28 | `feature-flag` | A read of a value switched from outside the code |
+| 29 | `config` | A read of an environment variable or a configuration value, or a configuration file |
+| 30 | `storage` | A read or a write of what the browser keeps for the user |
+| 31 | `telemetry` | Logging, analytics or error reporting |
+| 32 | `i18n` | Text looked up by key for the user's language, or a translation file |
+| 33 | `styling` | How something looks: a stylesheet, CSS-in-JS, a theme |
+| 34 | `file` | A file no language reads and no location names |
+| 35 | `logic` | What a block is when nothing else applies |
 
-`test`, `build-and-infrastructure` and `migration` come first because the file they live in decides them, whatever code is inside. A classification that narrows another sits right above it, or it would never win: `page` above `component`, `webhook` and `server-action` above `api-route`, `messaging` above `job`, `third-party-integration` above `api-request`. `logic` is last because it is what a block is when nothing else applies.
+`test`, `build-and-infrastructure` and `migration` come first because the file they live in decides them, whatever code is inside. A classification that narrows another sits right above it, or it would never win: `page` above `component`, `webhook` and `server-action` above `api-route`, `messaging` above `job`, `third-party-integration` above `api-request`. `hook` sits between `ui-state` and `effect`: a hook that holds state is UI state first, and a hook outranks the effects it runs. `logic` is last because it is what a block is when nothing else applies.
 
 ### Names a stored review or spotlight may hold
 
@@ -120,6 +121,7 @@ A `deleted` block is read by its `deletedType`, so a removed ORM write is still 
 | `request` | `api-request` |
 | `validation` | `validation` |
 | `state`, `derived` | `ui-state` |
+| `hook` | `hook` |
 | `auth` | `security` |
 | `publish` | `messaging` |
 | `navigation`, `feature-flag`, `config`, `storage`, `telemetry` | The classification of the same name |

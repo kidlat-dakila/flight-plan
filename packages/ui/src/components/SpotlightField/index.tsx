@@ -1,22 +1,45 @@
 import { useId } from "react"
-import Tooltip, { TooltipContent, TooltipTrigger } from "@/components/blocks/tooltip"
+import Button from "@/components/blocks/button"
+import Dialog, {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/blocks/dialog"
 
 export interface SpotlightChoice<Classification extends string> {
   readonly classification: Classification
   readonly label: string
   readonly description: string
+  readonly isFeatured: boolean
+}
+
+export interface SpotlightGroup<Classification extends string> {
+  readonly label: string
+  readonly choices: readonly SpotlightChoice<Classification>[]
 }
 
 interface SpotlightFieldProps<Classification extends string> {
   readonly labelledBy: string
-  readonly choices: readonly SpotlightChoice<Classification>[]
+  readonly groups: readonly SpotlightGroup<Classification>[]
   readonly picked: readonly Classification[]
   readonly onChange: (picked: Classification[]) => void
 }
 
-const EMPTY_HINT = "Nothing is in the spotlight. A review then marks no change, and \"Important changes first\" sorts by core changes alone."
+const SHOW_ALL_LABEL = "Show all topics"
+const DIALOG_TITLE = "All topics"
+const DIALOG_DESCRIPTION = "Pick as many as you like. Each topic says which code it covers."
+const DONE_LABEL = "Done"
 
-const TOGGLE_CLASSES = "flex h-8 cursor-pointer items-center rounded-lg border border-input bg-card px-3 text-sm transition-colors duration-[180ms] ease-out hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-pressed:border-foreground aria-pressed:bg-foreground aria-pressed:text-background"
+const CHECKBOX_CLASSES = "size-4 shrink-0 cursor-pointer accent-(--primary) focus-visible:outline-none"
+const CHIP_CLASSES = "flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-input bg-card pr-3.5 pl-3 text-sm transition-colors duration-[180ms] ease-out select-none hover:bg-muted has-checked:border-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring"
+const ROW_CLASSES = "grid cursor-pointer grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 rounded-sm px-2 py-2.5 transition-colors duration-[180ms] ease-out hover:bg-muted has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring"
+
+const choicesOf = <Classification extends string>(groups: readonly SpotlightGroup<Classification>[]): SpotlightChoice<Classification>[] =>
+  groups.flatMap((group) => group.choices)
 
 const toggledIn = <Classification extends string>(
   choices: readonly SpotlightChoice<Classification>[],
@@ -29,56 +52,158 @@ const toggledIn = <Classification extends string>(
     .filter((candidate) => candidate === classification ? !isPicked : picked.includes(candidate))
 }
 
-interface SpotlightToggleProps {
+const shownGroupsOf = <Classification extends string>(
+  groups: readonly SpotlightGroup<Classification>[],
+  picked: readonly Classification[],
+): SpotlightGroup<Classification>[] =>
+  groups
+    .map((group) => ({
+      ...group,
+      choices: group.choices.filter((choice) => choice.isFeatured || picked.includes(choice.classification)),
+    }))
+    .filter((group) => group.choices.length > 0)
+
+interface SpotlightCheckboxProps {
   readonly choice: SpotlightChoice<string>
   readonly isPicked: boolean
   readonly onToggle: () => void
 }
 
-const SpotlightToggle = ({ choice, isPicked, onToggle }: SpotlightToggleProps) => {
+const SpotlightChip = ({ choice, isPicked, onToggle }: SpotlightCheckboxProps) => {
   const descriptionId = useId()
   return (
     <li>
-      <Tooltip>
-        <TooltipTrigger
-          render={(
-            <button
-              type="button"
-              aria-pressed={isPicked}
-              aria-describedby={descriptionId}
-              className={TOGGLE_CLASSES}
-              onClick={onToggle}
-            />
-          )}
-        >
-          <span className="text-box-cap">{choice.label}</span>
-        </TooltipTrigger>
-        <TooltipContent>{choice.description}</TooltipContent>
-      </Tooltip>
+      <label className={CHIP_CLASSES}>
+        <input
+          type="checkbox"
+          checked={isPicked}
+          aria-describedby={descriptionId}
+          className={CHECKBOX_CLASSES}
+          onChange={onToggle}
+        />
+        <span className="text-box-cap">{choice.label}</span>
+      </label>
       <span id={descriptionId} className="sr-only">{choice.description}</span>
     </li>
   )
 }
 
+const SpotlightRow = ({ choice, isPicked, onToggle }: SpotlightCheckboxProps) => {
+  const descriptionId = useId()
+  return (
+    <li className="border-b border-border">
+      <label className={ROW_CLASSES}>
+        <input
+          type="checkbox"
+          checked={isPicked}
+          aria-describedby={descriptionId}
+          className={`mt-0.5 ${CHECKBOX_CLASSES}`}
+          onChange={onToggle}
+        />
+        <span className="min-w-0 font-bold">{choice.label}</span>
+        <span id={descriptionId} className="col-start-2 text-muted-foreground">{choice.description}</span>
+      </label>
+    </li>
+  )
+}
+
+interface GroupProps<Classification extends string> {
+  readonly group: SpotlightGroup<Classification>
+  readonly picked: readonly Classification[]
+  readonly onToggle: (classification: Classification) => void
+}
+
+interface AllTopicsDialogProps<Classification extends string> {
+  readonly groups: readonly SpotlightGroup<Classification>[]
+  readonly picked: readonly Classification[]
+  readonly onToggle: (classification: Classification) => void
+}
+
+const FeaturedGroup = <Classification extends string>({
+  group,
+  picked,
+  onToggle,
+}: GroupProps<Classification>) => {
+  const labelId = useId()
+  return (
+    <li role="group" aria-labelledby={labelId} className="grid items-start gap-x-4 gap-y-2 border-b border-border py-3 sm:grid-cols-[7.5rem_minmax(0,1fr)]">
+      <span id={labelId} className="text-sm font-bold sm:pt-2">{group.label}</span>
+      <ul className="flex flex-wrap gap-2">
+        {group.choices.map((choice) => (
+          <SpotlightChip
+            key={choice.classification}
+            choice={choice}
+            isPicked={picked.includes(choice.classification)}
+            onToggle={() => { onToggle(choice.classification) }}
+          />
+        ))}
+      </ul>
+    </li>
+  )
+}
+
+const DialogGroup = <Classification extends string>({
+  group,
+  picked,
+  onToggle,
+}: GroupProps<Classification>) => {
+  const headingId = useId()
+  return (
+    <section aria-labelledby={headingId}>
+      <h4 id={headingId} className="border-b-2 border-foreground pb-2 font-bold">{group.label}</h4>
+      <ul className="grid gap-x-6 sm:grid-cols-2">
+        {group.choices.map((choice) => (
+          <SpotlightRow
+            key={choice.classification}
+            choice={choice}
+            isPicked={picked.includes(choice.classification)}
+            onToggle={() => { onToggle(choice.classification) }}
+          />
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+const AllTopicsDialog = <Classification extends string>({ groups, picked, onToggle }: AllTopicsDialogProps<Classification>) => (
+  <Dialog>
+    <DialogTrigger render={<Button type="button" variant="outline" />}>{SHOW_ALL_LABEL}</DialogTrigger>
+    <DialogContent className="gap-5 sm:max-w-3xl">
+      <DialogHeader>
+        <DialogTitle>{DIALOG_TITLE}</DialogTitle>
+        <DialogDescription>{DIALOG_DESCRIPTION}</DialogDescription>
+      </DialogHeader>
+      <div className="-mr-2 grid max-h-[62dvh] gap-6 overflow-y-auto pr-2">
+        {groups.map((group) => <DialogGroup key={group.label} group={group} picked={picked} onToggle={onToggle} />)}
+      </div>
+      <DialogFooter>
+        <DialogClose render={<Button type="button" />}>{DONE_LABEL}</DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+)
+
 const SpotlightField = <Classification extends string>({
   labelledBy,
-  choices,
+  groups,
   picked,
   onChange,
-}: SpotlightFieldProps<Classification>) => (
-  <div role="group" aria-labelledby={labelledBy}>
-    <ul className="flex flex-wrap gap-2">
-      {choices.map((choice) => (
-        <SpotlightToggle
-          key={choice.classification}
-          choice={choice}
-          isPicked={picked.includes(choice.classification)}
-          onToggle={() => { onChange(toggledIn(choices, picked, choice.classification)) }}
-        />
-      ))}
-    </ul>
-    {picked.length === 0 ? <p className="mt-3 max-w-[62ch] text-sm text-muted-foreground">{EMPTY_HINT}</p> : null}
-  </div>
-)
+}: SpotlightFieldProps<Classification>) => {
+  const toggle = (classification: Classification) => {
+    onChange(toggledIn(choicesOf(groups), picked, classification))
+  }
+  return (
+    <div role="group" aria-labelledby={labelledBy}>
+      <ul className="border-t border-border">
+        {shownGroupsOf(groups, picked).map((group) => (
+          <FeaturedGroup key={group.label} group={group} picked={picked} onToggle={toggle} />
+        ))}
+      </ul>
+      <div className="pt-3">
+        <AllTopicsDialog groups={groups} picked={picked} onToggle={toggle} />
+      </div>
+    </div>
+  )
+}
 
 export default SpotlightField

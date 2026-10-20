@@ -25,13 +25,19 @@ export const spotlightChoiceSchema = z.strictObject({
   classification: z.enum(CODE_BLOCK_CLASSIFICATIONS),
   label: z.string(),
   description: z.string(),
+  isFeatured: z.boolean(),
+})
+
+export const spotlightGroupSchema = z.strictObject({
+  label: z.string(),
+  choices: z.array(spotlightChoiceSchema),
 })
 
 export const reviewPreferencesPageSchema = z.strictObject({
   preferences: reviewPreferencesSchema,
   isSaved: z.boolean(),
   defaultConfiguration: z.string().nullable(),
-  spotlightChoices: z.array(spotlightChoiceSchema),
+  spotlightGroups: z.array(spotlightGroupSchema),
 })
 
 export type ReviewPreferencesData = z.infer<typeof reviewPreferencesSchema>
@@ -46,4 +52,4 @@ export const toPreferencesData = (preferences: ReviewPreferences): ReviewPrefere
 
 export type GetReviewPreferencesInput = z.infer<typeof getReviewPreferencesInputSchema>
 export type ReviewPreferencesPage = z.infer<typeof reviewPreferencesPageSchema>
-export type SpotlightChoice = z.infer<typeof spotlightChoiceSchema>
+export type SpotlightGroup = z.infer<typeof spotlightGroupSchema>

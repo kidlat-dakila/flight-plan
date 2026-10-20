@@ -3298,6 +3298,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -3495,6 +3496,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect",
           "event",
           "telemetry"
@@ -7231,6 +7233,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -7430,6 +7433,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect",
           "event",
           "telemetry"

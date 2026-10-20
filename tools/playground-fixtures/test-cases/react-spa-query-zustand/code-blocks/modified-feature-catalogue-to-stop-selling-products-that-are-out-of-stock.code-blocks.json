@@ -4959,6 +4959,7 @@
           "src/hooks/use-products.ts#component-effect@9:10"
         ],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [

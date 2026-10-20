@@ -4,12 +4,12 @@ import type { ConfigurationStep } from "./schemas"
 import { PRESET_NAMES, type Setup } from "./setup"
 
 export const buildConfigurationStep = (setup: Setup): ConfigurationStep => {
-  const { preferences, spotlightChoices } = buildReviewPreferencesPage(setup)
+  const { preferences, spotlightGroups } = buildReviewPreferencesPage(setup)
   return {
     step: "configuration",
     presets: PRESET_NAMES.map((name) => ({ configurationId: name, ...PRESET_OFFERS[name] })),
     selectedConfigurationId: setup.defaultConfiguration ?? DEFAULT_PRESET,
     preferences,
-    spotlightChoices,
+    spotlightGroups,
   }
 }

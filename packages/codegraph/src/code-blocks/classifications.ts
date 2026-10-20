@@ -59,6 +59,7 @@ const CLASSIFICATION_BY_TYPE: ReadonlyMap<CodeBlockType, CodeBlockClassification
   ["validation", "validation"],
   ["state", "ui-state"],
   ["derived", "ui-state"],
+  ["hook", "hook"],
   ["auth", "security"],
   ["publish", "messaging"],
   ["navigation", "navigation"],

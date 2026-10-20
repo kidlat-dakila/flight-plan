@@ -81,6 +81,7 @@ export const CODE_BLOCK_CLASSIFICATIONS = [
   "api-request",
   "validation",
   "ui-state",
+  "hook",
   "security",
   "file-io",
   "process-execution",

@@ -4254,6 +4254,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -4470,6 +4471,7 @@
         "diffSourceIds": [],
         "classifications": [
           "database-read-write",
+          "hook",
           "effect",
           "event"
         ],
@@ -9278,6 +9280,7 @@
         "diffs": [],
         "diffSourceIds": [],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -9496,6 +9499,7 @@
         "diffSourceIds": [],
         "classifications": [
           "database-read-write",
+          "hook",
           "effect",
           "event"
         ],

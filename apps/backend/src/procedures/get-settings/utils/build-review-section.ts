@@ -17,12 +17,12 @@ const toCustomOption = (configuration: Configuration): ConfigurationOption => ({
 })
 
 export const buildReviewSection = (setup: Setup, configurations: readonly Configuration[]): ReviewSection => {
-  const { presets, selectedConfigurationId, preferences, spotlightChoices } = buildConfigurationStep(setup)
+  const { presets, selectedConfigurationId, preferences, spotlightGroups } = buildConfigurationStep(setup)
   return {
     section: "review",
     presets: [...presets, ...configurations.filter((configuration) => !configuration.isPreset).map(toCustomOption)],
     selectedConfigurationId,
     preferences,
-    spotlightChoices,
+    spotlightGroups,
   }
 }

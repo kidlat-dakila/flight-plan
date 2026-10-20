@@ -15,9 +15,14 @@ const PREFERENCES = {
   ignoredPaths: ["**/*.spec.ts"],
 }
 
-const SPOTLIGHT_CHOICES = [
-  { classification: "migration" as const, label: "Migration", description: "A change to the shape of the database" },
-  { classification: "security" as const, label: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting" },
+const SPOTLIGHT_GROUPS = [
+  {
+    label: "Backend",
+    choices: [
+      { classification: "migration" as const, label: "Migration", description: "A change to the shape of the database", isFeatured: true },
+      { classification: "security" as const, label: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting", isFeatured: true },
+    ],
+  },
 ]
 
 const renderForm = (onSubmit = vi.fn(), problem: React.ComponentProps<typeof ReviewConfigurationForm>["problem"] = null) =>
@@ -26,7 +31,7 @@ const renderForm = (onSubmit = vi.fn(), problem: React.ComponentProps<typeof Rev
       presets={PRESETS}
       selectedConfigurationId="minimal"
       preferences={PREFERENCES}
-      spotlightChoices={SPOTLIGHT_CHOICES}
+      spotlightGroups={SPOTLIGHT_GROUPS}
       problem={problem}
       promptConfigurationNotes={["You can pick another prompt configuration each time you create a Flight Plan."]}
       onSubmit={onSubmit}
@@ -46,20 +51,20 @@ describe("ReviewConfigurationForm", () => {
     expect(within(promptConfiguration).getByText("Diagrams are off by default.")).toBeTruthy()
   })
 
-  it("puts the spotlight first, with the saved kinds of change pressed", () => {
+  it("puts the spotlight first, with the saved kinds of change ticked", () => {
     renderForm()
 
     const regions = screen.getAllByRole("region")
     expect(regions.map((region) => within(region).getByRole("heading").textContent)).toStrictEqual([
-      "Spotlight",
+      "Which topics do you care about most in a code review?",
       "Write-ups",
       "Prompt configuration",
       "Review organization",
       "Display arrangement",
       "Ignored files",
     ])
-    expect(within(regions[0]).getByRole("button", { name: "Security", pressed: true })).toBeTruthy()
-    expect(within(regions[0]).getByRole("button", { name: "Migration", pressed: false })).toBeTruthy()
+    expect(within(regions[0]).getByRole<HTMLInputElement>("checkbox", { name: "Security" }).checked).toBe(true)
+    expect(within(regions[0]).getByRole<HTMLInputElement>("checkbox", { name: "Migration" }).checked).toBe(false)
   })
 
   it("submits the chosen configuration and the preferences with every part through the actions it is given", () => {
@@ -67,7 +72,7 @@ describe("ReviewConfigurationForm", () => {
     renderForm(onSubmit)
 
     fireEvent.click(screen.getByRole("radio", { name: /Standard/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Migration" }))
+    fireEvent.click(screen.getByRole("checkbox", { name: "Migration" }))
     fireEvent.click(within(screen.getByRole("group", { name: "Blast Diagram" })).getByRole("radio", { name: "Always" }))
     fireEvent.click(screen.getByRole("checkbox", { name: /Split reviews into segments/ }))
     fireEvent.click(screen.getByRole("radio", { name: /Important changes first/ }))

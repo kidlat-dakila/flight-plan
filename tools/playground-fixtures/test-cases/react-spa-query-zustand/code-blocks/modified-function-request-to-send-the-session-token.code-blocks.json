@@ -3431,6 +3431,7 @@
           "src/api/client.ts#condition@29:11"
         ],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -3784,6 +3785,7 @@
           "src/api/client.ts#condition@29:11"
         ],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],
@@ -4032,6 +4034,7 @@
         ],
         "classifications": [
           "database-read-write",
+          "hook",
           "effect",
           "event"
         ],

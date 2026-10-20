@@ -2,7 +2,7 @@ import { useId, useState, type ReactNode } from "react"
 import IgnoredPathsField, { type RowProblem } from "@/components/IgnoredPathsField"
 import SectionOrderField, { type ArrangedSection } from "@/components/SectionOrderField"
 import SectionWriteUpsField, { type SectionWriteUps } from "@/components/SectionWriteUpsField"
-import SpotlightField, { type SpotlightChoice } from "@/components/SpotlightField"
+import SpotlightField, { type SpotlightGroup } from "@/components/SpotlightField"
 import WalkthroughOrderField, { type WalkthroughOrder } from "@/components/WalkthroughOrderField"
 import type { FormProblem } from "@/lib/form-problem"
 
@@ -32,7 +32,7 @@ interface ReviewConfigurationFormProps<Classification extends string> {
   readonly presets: readonly PresetOption[]
   readonly selectedConfigurationId: string
   readonly preferences: ReviewPreferences<Classification>
-  readonly spotlightChoices: readonly SpotlightChoice<Classification>[]
+  readonly spotlightGroups: readonly SpotlightGroup<Classification>[]
   readonly problem: FormProblem | null
   readonly promptConfigurationNotes: readonly string[]
   readonly children: ReactNode
@@ -41,8 +41,8 @@ interface ReviewConfigurationFormProps<Classification extends string> {
 
 const SECTION_HEADING_CLASSES = "text-lg leading-7 font-semibold text-signal-text"
 const SECTION_INTRO_CLASSES = "mt-1 max-w-[62ch] pb-4 text-muted-foreground"
-const SPOTLIGHT_TITLE = "Spotlight"
-const SPOTLIGHT_INTRO = "Flight Plan sorts each changed code block into a kind, such as a page, an API route or a database write. Pick the kinds of change that matter most to you. A review marks every change of those kinds as in the spotlight, and the Code Walkthrough's \"Important changes first\" order puts them near the top."
+const SPOTLIGHT_TITLE = "Which topics do you care about most in a code review?"
+const SPOTLIGHT_INTRO = "Flight Plan will mark changes on these topics in every review, so they stand out. It can also list them first in the Code Walkthrough."
 const WRITE_UPS_TITLE = "Write-ups"
 const WRITE_UPS_INTRO = "Which parts should the agent write up by default? Always means the agent writes that part each time it writes a review. On demand means it leaves the part out, and you ask for it in the review when you want it."
 const PROMPT_CONFIGURATION_TITLE = "Prompt configuration"
@@ -138,7 +138,7 @@ const ReviewConfigurationForm = <Classification extends string>({
   presets,
   selectedConfigurationId,
   preferences,
-  spotlightChoices,
+  spotlightGroups,
   problem,
   promptConfigurationNotes,
   children,
@@ -158,7 +158,7 @@ const ReviewConfigurationForm = <Classification extends string>({
     >
       <PartSection title={SPOTLIGHT_TITLE} intro={SPOTLIGHT_INTRO}>
         {(headingId) => (
-          <SpotlightField labelledBy={headingId} choices={spotlightChoices} picked={spotlight} onChange={setSpotlight} />
+          <SpotlightField labelledBy={headingId} groups={spotlightGroups} picked={spotlight} onChange={setSpotlight} />
         )}
       </PartSection>
       <PartSection title={WRITE_UPS_TITLE} intro={WRITE_UPS_INTRO}>

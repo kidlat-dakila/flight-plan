@@ -97,9 +97,14 @@ const reviewSection = {
   ],
   selectedConfigurationId: "custom-terse",
   preferences: reviewPreferences,
-  spotlightChoices: [
-    { classification: "migration", label: "Migration", description: "A change to the shape of the database" },
-    { classification: "security", label: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting" },
+  spotlightGroups: [
+    {
+      label: "Backend",
+      choices: [
+        { classification: "migration", label: "Migration", description: "A change to the shape of the database", isFeatured: true },
+        { classification: "security", label: "Security", description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting", isFeatured: true },
+      ],
+    },
   ],
 }
 
@@ -247,14 +252,14 @@ describe("the settings pages", () => {
 
       expect(await screen.findByRole("heading", { level: 2, name: "Review configuration" })).toBeTruthy()
       expect(screen.getAllByRole("region").map((region) => within(region).getByRole("heading").textContent)).toStrictEqual([
-        "Spotlight",
+        "Which topics do you care about most in a code review?",
         "Write-ups",
         "Prompt configuration",
         "Review organization",
         "Display arrangement",
         "Ignored files",
       ])
-      expect(screen.getByRole("button", { name: "Security", pressed: true })).toBeTruthy()
+      expect(screen.getByRole<HTMLInputElement>("checkbox", { name: "Security" }).checked).toBe(true)
       expect(screen.getByRole<HTMLInputElement>("radio", { name: /Terse/ }).checked).toBe(true)
       expect(screen.getByText("You can pick another prompt configuration each time you create a Flight Plan.")).toBeTruthy()
       expect(screen.queryByText("You can make your own later, in the settings.")).toBeNull()
@@ -264,7 +269,7 @@ describe("the settings pages", () => {
       const save = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(saved("Your review configuration is saved."))
       renderApp({ "settings.save": save }, "/settings/review")
 
-      fireEvent.click(await screen.findByRole("button", { name: "Migration" }))
+      fireEvent.click(await screen.findByRole("checkbox", { name: "Migration" }))
       fireEvent.click(screen.getByRole("radio", { name: /Standard/ }))
       fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
@@ -310,7 +315,7 @@ describe("the settings pages", () => {
       const readsBefore = reviewReads()
       fireEvent.click(within(sections).getByRole("link", { name: /Review configuration/ }))
 
-      await screen.findByRole("region", { name: "Spotlight" })
+      await screen.findByRole("region", { name: "Which topics do you care about most in a code review?" })
       expect(reviewReads()).toBeGreaterThan(readsBefore)
     })
 

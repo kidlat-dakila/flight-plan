@@ -27,7 +27,7 @@ const ReviewSettingsPage = () => {
         presets={page.presets}
         selectedConfigurationId={page.selectedConfigurationId}
         preferences={page.preferences}
-        spotlightChoices={page.spotlightChoices}
+        spotlightGroups={page.spotlightGroups}
         problem={saving.problem}
         promptConfigurationNotes={PROMPT_CONFIGURATION_NOTES}
         onSubmit={(choice) => { saving.save({ ...SECTION, ...choice }) }}

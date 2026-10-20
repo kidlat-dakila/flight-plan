@@ -1788,6 +1788,7 @@
           "src/api/products.ts#function@4:1"
         ],
         "classifications": [
+          "hook",
           "effect"
         ],
         "diffClassifications": [],

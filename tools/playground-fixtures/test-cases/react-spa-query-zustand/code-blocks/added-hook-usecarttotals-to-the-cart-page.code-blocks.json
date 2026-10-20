@@ -2850,10 +2850,12 @@
         ],
         "classifications": [
           "ui-state",
+          "hook",
           "effect"
         ],
         "diffClassifications": [
           "ui-state",
+          "hook",
           "effect"
         ],
         "outerSymbols": [],

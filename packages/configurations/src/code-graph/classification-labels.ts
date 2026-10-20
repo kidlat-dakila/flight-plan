@@ -39,6 +39,7 @@ export const CODE_BLOCK_CLASSIFICATION_LABELS: Readonly<Record<CodeBlockClassifi
   "api-request": { label: "API request", description: "A call to a server over the network" },
   "validation": { label: "Validation", description: "A schema, or a check of a value against one" },
   "ui-state": { label: "UI state", description: "State, a value derived from it, or a store shared across components" },
+  "hook": { label: "Hook", description: "A custom hook or composable, a function whose name starts with use" },
   "security": {
     label: "Security",
     description: "Checks of who the caller is and what they may do, and hashing, signing, encryption and rate limiting",

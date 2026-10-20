@@ -73,7 +73,7 @@ describe("the hints of the trace band", () => {
   it("gives a diagram with no description a hint naming what its cards are, once each", () => {
     const segment = createSegment({ traceDiagram: presentDiagramOf(FILES, PROMO_CHANGE) })
 
-    expect(buildTrace(segment, "", [], createViewContext()).diagram?.descriptionHint).toBe("Runs through a component, an effect and plain logic.")
+    expect(buildTrace(segment, "", [], createViewContext()).diagram?.descriptionHint).toBe("Runs through a component, a hook, plain logic and an effect.")
   })
 
   it("gives no hint to what is written", () => {
