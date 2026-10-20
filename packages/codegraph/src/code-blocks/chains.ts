@@ -1,4 +1,5 @@
 import { groupBy } from "@/shared/group-by"
+import { listCalledProcedureIds } from "./procedure-calls"
 import type { StoredCodeBlock, StoredCodeBlockSymbol } from "./stored-types"
 import type { CodeBlockType } from "./types"
 
@@ -13,6 +14,7 @@ interface ChainIndex {
   readonly returnedIds: ReadonlySet<string>
   readonly heldMarkupIds: ReadonlySet<string>
   readonly calledArgumentIds: ReadonlySet<string>
+  readonly calledProcedureIdsById: ReadonlyMap<string, readonly string[]>
 }
 
 type Types = ReadonlySet<CodeBlockType>
@@ -218,7 +220,7 @@ const isUntraced = (block: StoredCodeBlock, index: ChainIndex): boolean => {
 const listSteps = (block: StoredCodeBlock, index: ChainIndex): string[] => {
   if (isUntraced(block, index)) return []
   const handed = block.type === ARGUMENT ? listHandedSteps(block, index) : []
-  const stepped = [...listNestedSteps(block, index), ...listSymbolSteps(block, index), ...handed].map((next) => next.id)
+  const stepped = [...[...listNestedSteps(block, index), ...listSymbolSteps(block, index), ...handed].map((next) => next.id), ...(index.calledProcedureIdsById.get(block.id) ?? [])]
   return [...new Set(stepped)].filter((nextId) => nextId !== block.id)
 }
 
@@ -254,7 +256,12 @@ export interface ChainHints {
 
 export const traceChains = (codeBlocks: readonly StoredCodeBlock[], hints: ChainHints): TracedChains => {
   const blockById = new Map(codeBlocks.map((block) => [block.id, block] as const))
-  const index: ChainIndex = { blockById, ...hints, calledArgumentIds: listCalledArgumentIds(codeBlocks, { blockById }) }
+  const index: ChainIndex = {
+    blockById,
+    ...hints,
+    calledArgumentIds: listCalledArgumentIds(codeBlocks, { blockById }),
+    calledProcedureIdsById: listCalledProcedureIds(codeBlocks),
+  }
   const stepIdsById = new Map(codeBlocks.map((block) => [block.id, listSteps(block, index)] as const))
   const runs = codeBlocks.flatMap((block) => (stepIdsById.get(block.id) ?? []).map((nextId) => ({ runnerId: block.id, nextId })))
   const runnerIdsById = new Map([...groupBy(runs, (run) => run.nextId)].map(([nextId, running]) => [nextId, running.map((run) => run.runnerId)] as const))

@@ -115,6 +115,36 @@ export const trpcFixtures: readonly PatternFixture[] = [
   },
   {
     library: TRPC,
+    patternKey: "factory:createTRPCReact:*>call:useSuspenseQuery:*",
+    matches: [
+      "import { createTRPCReact } from \"@trpc/react-query\"\nconst trpc = createTRPCReact()\nconst [users] = trpc.user.list.useSuspenseQuery()",
+    ],
+    rejects: [
+      "const trpc = makeLocalRegistry()\nconst [users] = trpc.user.list.useSuspenseQuery()",
+    ],
+  },
+  {
+    library: TRPC,
+    patternKey: "factory:createTRPCReact:*>call:useInfiniteQuery:*",
+    matches: [
+      "import { createTRPCReact } from \"@trpc/react-query\"\nconst trpc = createTRPCReact()\nconst pages = trpc.user.list.useInfiniteQuery()",
+    ],
+    rejects: [
+      "const trpc = makeLocalRegistry()\nconst pages = trpc.user.list.useInfiniteQuery()",
+    ],
+  },
+  {
+    library: TRPC,
+    patternKey: "factory:createTRPCReact:*>call:useSuspenseInfiniteQuery:*",
+    matches: [
+      "import { createTRPCReact } from \"@trpc/react-query\"\nconst trpc = createTRPCReact()\nconst [pages] = trpc.user.list.useSuspenseInfiniteQuery()",
+    ],
+    rejects: [
+      "const trpc = makeLocalRegistry()\nconst [pages] = trpc.user.list.useSuspenseInfiniteQuery()",
+    ],
+  },
+  {
+    library: TRPC,
     patternKey: "factory:createTRPCReact:*>call:useMutation:*",
     matches: [
       "import { createTRPCReact } from \"@trpc/react-query\"\nconst trpc = createTRPCReact()\nconst createUser = trpc.user.create.useMutation()",

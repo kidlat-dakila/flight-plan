@@ -72,6 +72,9 @@ export const trpcLibrary: Library = {
       name: "createTRPCReact",
       methods: [
         { kind: "call", name: "useQuery", slots: [], makes: "data-fetch" },
+        { kind: "call", name: "useSuspenseQuery", slots: [], makes: "data-fetch" },
+        { kind: "call", name: "useInfiniteQuery", slots: [], makes: "data-fetch" },
+        { kind: "call", name: "useSuspenseInfiniteQuery", slots: [], makes: "data-fetch" },
         { kind: "call", name: "useMutation", slots: [], makes: "request" },
       ],
     },

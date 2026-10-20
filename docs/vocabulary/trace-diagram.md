@@ -153,12 +153,13 @@ The table below is for a block inside a component, or inside a statement at the 
 | The `effect-callback` of a route registration that runs its handler | Yes, drawn inside the route card. When it only names a function, as `listUsers` in `router.get("/api/users", listUsers)`, it is no node, and the function it names is the handler. |
 | The `effect-callback` of a route registration that runs a middleware | Yes when the middleware is written in place, a card of its own. When it only names a function, it is no node, and the node of that function is the middleware. |
 | `effect`, `component-effect` | Yes. What it is handed runs later. |
+| A call the [catalogue](codegraph/catalogue.md) types, such as a `request` or a `data-fetch`, that is handed a callback that does not run `in-place`, such as `api.todo.create.useMutation({ onSuccess })` of a tRPC client | Yes, as an effect is. What it is handed runs later, and a step that calls its result, `createTodo.mutate`, has a line to it. |
 | The call that makes a `state` or a `derived`, such as `useCartStore(selectTotal)` in `const total = useCartStore(selectTotal)`, and an `effect-callback` handed to it | No. It is part of the declaration, and runs with the render. An event handed to it, such as an `onChange`, is still a node. |
 | An `effect-callback` the [catalogue](codegraph/catalogue.md) says runs `in-place`, such as `select` of `useQuery` | No. It runs with the call, during the render. |
 | A `function` written in place of an event or of a callback, such as the arrow function of `onClick={() => save()}` | No. It is the body of that event or callback, so the two are one node. |
 | A `function` an event of the same root block is handed by name, such as `submit` in `onSubmit={submit}` | No. It is the body of that event too: the node of the event holds it and what is inside it, and it is no step of the node it is declared in. A call of it from elsewhere leads to the node of the event. |
 | `function`, `method`, and a `condition`, `switch`, `switch-case`, `loop`, `try-catch`, `throw`, `data`, `data-fetch`, `cache`, `auth`, `request`, `navigation`, `publish`, `storage`, `telemetry`, `transaction`, `validation`, `config` or `feature-flag` inside one of them, inside a node above or inside a root block that is no component and no hook | No. It is a [step](#on-the-page) of the node it is in: it is invoked or executed there, and it has a row. |
-| The same types, directly in the body of a component or of a hook, or inside the markup, a declaration or a component of that body | No. It runs on the way to the `return`. |
+| The same types, directly in the body of a component or of a hook, or inside the markup, a declaration or a component of that body | No. It runs on the way to the `return`. A call the catalogue types that is handed a callback is a node, as the row of `effect` says. |
 | `variable`, `property`, `root-argument-value`, `external-value`, `state`, `derived` | No. Declaring a value changes no behaviour: the block that updates it does. |
 | `component`, `render-root`, `render`, `render-condition`, `render-loop` | No. It is the render. |
 | `deleted` | No. It does not run. |
@@ -184,7 +185,7 @@ flowchart LR
   classDef changed stroke:#d97706,stroke-width:3px
 ```
 
-**A node around a node is kept.** A block that is a node has the node of the nearest such block around it, up to its root block, whether or not a chain passes through that one: in a component, `useMutation({ onSuccess })` is a node when a chain starts at its `onSuccess`.
+**A node around a node is kept.** A block that is a node has the node of the nearest such block around it, up to its root block, whether or not a chain passes through that one: in a component, `useMutation({ onSuccess })` is a node when a chain starts at its `onSuccess`, and so is `api.todo.create.useMutation({ onSuccess })` of a tRPC client.
 
 **A node has the type of its block.** One list says what a block is and what a node is, so a node of a component is a `component`, a node of a constant a `root-variable`, and a node of a handler a `render-event`.
 

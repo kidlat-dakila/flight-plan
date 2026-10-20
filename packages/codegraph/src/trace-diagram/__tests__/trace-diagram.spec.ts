@@ -350,6 +350,31 @@ describe("the nodes inside a root block", () => {
     expect(panelBlockIdsOf(PANEL_MUTATION)).toStrictEqual([PANEL_MUTATION, PANEL_MUTATION_FN, PANEL_ON_SUCCESS])
   })
 
+  it("makes a node of a call the catalogue types that is handed a callback, and draws a line to it from the step that calls its result", () => {
+    const files = {
+      "src/promo.ts": PROMO_FILES["src/promo.ts"],
+      "src/trpc.ts": codeOf("import { createTRPCReact } from \"@trpc/react-query\"", "export const api = createTRPCReact()"),
+      "src/promo-panel.tsx": codeOf(
+        "import { api } from \"./trpc\"",
+        "import { fetchPromo } from \"./promo\"",
+        "export const PromoPanel = () => {",
+        "  const applyPromo = api.promo.apply.useMutation({ onSuccess: () => { fetchPromo(\"x\") } })",
+        "  return <button onClick={() => applyPromo.mutate(\"a\")}>Apply</button>",
+        "}",
+      ),
+    }
+    const diagram = presentDiagramOf(files, { ...PROMO_FILES_CHANGE, "src/promo-panel.tsx": [rangeAt(4, 3, 5, 72)] })
+    const mutation = "src/promo-panel.tsx#request@4:22"
+    const onSuccess = "src/promo-panel.tsx#code-event@4:52"
+
+    expect(listTraceNodes(diagram.traceNodes).find((node) => node.id === mutation)?.codeBlocks.map((block) => block.id)).toStrictEqual([mutation, onSuccess])
+    expect(diagram.traceNodeEdges.map((edge) => edge.id)).toStrictEqual(expect.arrayContaining([
+      `${PANEL} -> ${mutation}`,
+      `${mutation} -> ${onSuccess}`,
+      `src/promo-panel.tsx#render-event@5:18 -> ${mutation}`,
+    ]))
+  })
+
   it("joins a node to each node written inside it, and leaves out the edge of a step that only goes further inside", () => {
     expect(promoEdgeIds()).toContain(`${FORM} -> ${SUBMIT_EVENT}`)
     expect(panelEdgeIds()).toStrictEqual(expect.arrayContaining([

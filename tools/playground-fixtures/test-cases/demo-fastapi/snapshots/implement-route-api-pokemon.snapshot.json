@@ -197,18 +197,7 @@
       {
         "title": "Groundwork for the new route handlers and service functions",
         "context": [
-          "This segment defines what a Pokemon request and a Pokemon response hold. A create request with an unknown type, the same type twice, an empty name or a level outside 1 to 100 gets a 422 before any code reads the database.",
-          "",
-          ":::accordion",
-          "::section What's added",
-          "- [`PokemonCreate`](code:src/pokedex/pokemon/schemas.py#PokemonCreate): added a new pydantic model that validates the body of a create request.",
-          "  - Requires a [`name` of 1 to 40 characters](code:src/pokedex/pokemon/schemas.py#L10) and a [`primary_type`](code:src/pokedex/pokemon/schemas.py#L12).",
-          "  - Takes a [`level` from 1 to 100, `5` by default](code:src/pokedex/pokemon/schemas.py#L11), and an optional [`secondary_type` and `trainer_id`](code:src/pokedex/pokemon/schemas.py#L13-14).",
-          "  - Raises [`ValueError` for a type that is not in `POKEMON_TYPES`](code:src/pokedex/pokemon/schemas.py#L19-20) in [`check_known_type()`](code:src/pokedex/pokemon/schemas.py#L18).",
-          "  - Raises [`ValueError` when `primary_type` equals `secondary_type`](code:src/pokedex/pokemon/schemas.py#L25-26) in [`check_types_differ()`](code:src/pokedex/pokemon/schemas.py#L24).",
-          "- [`PokemonUpdate`](code:src/pokedex/pokemon/schemas.py#PokemonUpdate): added a new pydantic model for the body of an update request, with [the five fields of a create request, each `None` by default](code:src/pokedex/pokemon/schemas.py#L31-35).",
-          "- [`PokemonRead`](code:src/pokedex/pokemon/schemas.py#PokemonRead): added a new pydantic model for the body of every response, which [reads its fields from the attributes of a row](code:src/pokedex/pokemon/schemas.py#L39).",
-          ":::"
+          "This segment defines what a client sends to create or update a Pokemon, and what it gets back. A create request with an unknown type, the same type twice, an empty name or a level outside 1 to 100 gets a 422, and two new tests send an unknown type and a level of 101."
         ],
         "kind": "shared",
         "importGraph": [
@@ -380,13 +369,13 @@
           }
         ],
         "traceDiagram": {
-          "description": "This diagram shows how `PokemonCreate` validates the body of a create request, and how its two validators check the types against `POKEMON_TYPES`.",
+          "description": "This diagram shows how `PokemonCreate` parses the body of `POST /api/pokemon`, and how its two validators check the types against `POKEMON_TYPES`.",
           "traceNodes": [
             {
               "id": "src/pokedex/pokemon/schemas.py#class@9:1",
               "type": "class",
-              "label": "Validates the body of a create request",
-              "description": "When a client sends `POST /api/pokemon`, FastAPI parses the body into this model, because [`add_pokemon()` types its `draft` parameter as `PokemonCreate`](code:src/pokedex/pokemon/routes.py#L21).",
+              "label": "Parses and checks the body of a create request",
+              "description": "When a client sends `POST /api/pokemon`, FastAPI parses the body into this model, because [`add_pokemon()` takes `draft: PokemonCreate`](code:src/pokedex/pokemon/routes.py#L21).",
               "codeBlockIds": [
                 "src/pokedex/pokemon/schemas.py#class@9:1",
                 "src/pokedex/pokemon/schemas.py#property@10:5",
@@ -411,8 +400,8 @@
                 {
                   "id": "src/pokedex/pokemon/schemas.py#method@16:5",
                   "type": "method",
-                  "label": "Raises an error for a type outside the list",
-                  "description": "When `PokemonCreate` parses a body, pydantic calls this method once for `primary_type` and once for `secondary_type`.",
+                  "label": "Raises ValueError for a type outside the list",
+                  "description": "When `PokemonCreate` parses a body, pydantic calls this method once for `primary_type` and once for `secondary_type`, because of `@field_validator(\"primary_type\", \"secondary_type\")`.",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/schemas.py#method@16:5",
                     "src/pokedex/pokemon/schemas.py#root-argument-value@18:31",
@@ -429,7 +418,7 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Checks the type against the list of types",
+                      "label": "Checks whether the type is set and not in the list",
                       "codeBlockId": "src/pokedex/pokemon/schemas.py#condition@19:9"
                     }
                   ]
@@ -437,8 +426,8 @@
                 {
                   "id": "src/pokedex/pokemon/schemas.py#method@23:5",
                   "type": "method",
-                  "label": "Raises an error when both types are the same",
-                  "description": "When pydantic has validated every field of `PokemonCreate`, it calls this method on the new model, because of `mode=\"after\"`.",
+                  "label": "Raises ValueError when both types are the same",
+                  "description": "When pydantic has parsed every field of `PokemonCreate`, it calls this method on the new model, because of `mode=\"after\"`.",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/schemas.py#method@23:5",
                     "src/pokedex/pokemon/schemas.py#condition@25:9",
@@ -462,23 +451,23 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The name, from 1 to 40 characters",
+                  "label": "Limits the name to 1 to 40 characters",
                   "codeBlockId": "src/pokedex/pokemon/schemas.py#property@10:5"
                 },
                 {
-                  "label": "The level, from 1 to 100, 5 by default",
+                  "label": "Limits the level to 1 to 100, and sets 5 when it is left out",
                   "codeBlockId": "src/pokedex/pokemon/schemas.py#property@11:5"
                 },
                 {
-                  "label": "The first type, required",
+                  "label": "Requires the first type",
                   "codeBlockId": "src/pokedex/pokemon/schemas.py#property@12:5"
                 },
                 {
-                  "label": "The second type, optional",
+                  "label": "Sets the second type to None when it is left out",
                   "codeBlockId": "src/pokedex/pokemon/schemas.py#property@13:5"
                 },
                 {
-                  "label": "The trainer of the Pokemon, optional",
+                  "label": "Sets the trainer to None when it is left out",
                   "codeBlockId": "src/pokedex/pokemon/schemas.py#property@14:5"
                 }
               ]
@@ -487,7 +476,7 @@
               "id": "src/pokedex/pokemon/schemas.py#root-variable@3:1",
               "type": "root-variable",
               "label": "Lists the 18 Pokemon types",
-              "description": "When `check_known_type()` validates a type, [it looks the type up in this set](code:src/pokedex/pokemon/schemas.py#L19).",
+              "description": "When `check_known_type()` checks a type, [it looks the type up in this set](code:src/pokedex/pokemon/schemas.py#L19).",
               "codeBlockIds": [
                 "src/pokedex/pokemon/schemas.py#root-variable@3:1"
               ],
@@ -571,7 +560,7 @@
                   "id": "w1",
                   "title": "Added the set of the 18 Pokemon types",
                   "declaration": "POKEMON_TYPES",
-                  "reading": "The author added a constant `POKEMON_TYPES` that holds the 18 type names in lower case. [`check_known_type()` looks each type of a create request up in it](code:src/pokedex/pokemon/schemas.py#L19), so a request with the type `\"thunder\"` gets a 422.",
+                  "reading": "The author added a constant `POKEMON_TYPES` that holds the 18 type names in lower case. [`check_known_type()` looks each type of a create request up in it](code:src/pokedex/pokemon/schemas.py#L19), so a create request with the type `\"thunder\"` gets a 422.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -587,10 +576,10 @@
                 },
                 {
                   "id": "w2",
-                  "title": "Added `PokemonCreate` to validate the body of a create request",
+                  "title": "Added `PokemonCreate` for the body of a create request",
                   "declaration": "PokemonCreate",
-                  "reading": "The author added a pydantic model `PokemonCreate` that:\n\n- requires a `name` of 1 to 40 characters and a `primary_type`\n- takes a `level` from 1 to 100, and sets it to `5` when the request leaves it out\n- takes an optional `secondary_type` and `trainer_id`, `None` by default\n- checks both types with `check_known_type()` and `check_types_differ()`\n\n[`add_pokemon()` types its `draft` parameter with it](code:src/pokedex/pokemon/routes.py#L21), so FastAPI returns a 422 for a body that breaks one of these rules before [`create_pokemon()`](code:src/pokedex/pokemon/service.py#L24-31) runs.",
-                  "coreChange": "This is the validation the pull request adds: every body of `POST /api/pokemon` passes these rules before [`create_pokemon()`](code:src/pokedex/pokemon/service.py#L24-31) writes a row.",
+                  "reading": "The author added a pydantic model `PokemonCreate` that:\n\n- requires a `name` of 1 to 40 characters and a `primary_type`\n- sets `level` to `5` when the body leaves it out, and requires 1 to 100 otherwise\n- sets `secondary_type` and `trainer_id` to `None` when the body leaves them out\n- raises `ValueError` from `check_known_type()` and `check_types_differ()` for a wrong type\n\n[`add_pokemon()` takes its body as a `PokemonCreate`](code:src/pokedex/pokemon/routes.py#L21), so FastAPI returns a 422 for a body that breaks one of these rules, before [`create_pokemon()`](code:src/pokedex/pokemon/service.py#create_pokemon) runs.",
+                  "coreChange": "This is the contract of `POST /api/pokemon`: every body passes these rules before [`create_pokemon()`](code:src/pokedex/pokemon/service.py#create_pokemon) writes a row, and the two new tests check two of them.",
                   "findings": [],
                   "range": {
                     "lineStart": 9,
@@ -629,7 +618,7 @@
                       "id": "w2.2",
                       "title": "Added the `level` field with a range of 1 to 100",
                       "declaration": "PokemonCreate › PokemonCreate.level",
-                      "reading": "The author added a field `level` that takes a whole number from 1 to 100, and `5` when the request leaves it out. [A test sends a level of 101 and expects a 422](code:tests/test_pokemon.py#L14-16).",
+                      "reading": "The author added a field `level` that takes a whole number from 1 to 100, and is `5` when the body leaves it out. [A new test sends a level of 101 and expects a 422](code:tests/test_pokemon.py#L14-16).",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -645,9 +634,9 @@
                     },
                     {
                       "id": "w2.3",
-                      "title": "Added the type fields and the `trainer_id` field",
+                      "title": "Added the two type fields and the `trainer_id` field",
                       "declaration": "PokemonCreate › PokemonCreate.primary_type, PokemonCreate.secondary_type +1",
-                      "reading": "The author added a required `primary_type`, and an optional `secondary_type` and `trainer_id` that are `None` by default. [`create_pokemon()` looks the trainer up when `trainer_id` is set](code:src/pokedex/pokemon/service.py#L25-26), so a new Pokemon never names a trainer that does not exist.",
+                      "reading": "The author added a required `primary_type`, and a `secondary_type` and a `trainer_id` that are `None` by default. [`create_pokemon()` loads the trainer when `trainer_id` is set](code:src/pokedex/pokemon/service.py#L25-26), so a new Pokemon never names a trainer that does not exist.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -667,9 +656,9 @@
                 },
                 {
                   "id": "w3",
-                  "title": "Added a validator that raises an error for an unknown type",
+                  "title": "Added a validator that raises `ValueError` for an unknown type",
                   "declaration": "PokemonCreate.check_known_type",
-                  "reading": "The author added a field validator `check_known_type()` that raises `ValueError` for a `primary_type` or a `secondary_type` that is not in [`POKEMON_TYPES`](code:src/pokedex/pokemon/schemas.py#L3-6). It skips `None`, so a create request with no `secondary_type` passes. Pydantic turns the error into a 422, so [a request with the type `\"thunder\"`](code:tests/test_pokemon.py#L9-11) gets a 422 and no row is written.",
+                  "reading": "The author added a field validator `check_known_type()` that raises `ValueError` for a `primary_type` or a `secondary_type` that is not in [`POKEMON_TYPES`](code:src/pokedex/pokemon/schemas.py#POKEMON_TYPES). It returns `None` unchanged, so a body with no `secondary_type` passes. Pydantic turns the error into a 422, so [a body with the type `\"thunder\"`](code:tests/test_pokemon.py#L9-11) gets a 422 and no row is written.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -688,9 +677,9 @@
                 },
                 {
                   "id": "w4",
-                  "title": "Added a validator that raises an error for the same type twice",
+                  "title": "Added a validator that raises `ValueError` for the same type twice",
                   "declaration": "PokemonCreate.check_types_differ",
-                  "reading": "The author added a model validator `check_types_differ()` that raises `ValueError` when `primary_type` and `secondary_type` are the same. It runs after the field validators, because of `mode=\"after\"`, so it compares two types that are already known. A request with `\"fire\"` as both types gets a 422.",
+                  "reading": "The author added a model validator `check_types_differ()` that raises `ValueError` when `primary_type` and `secondary_type` are the same. It runs after the field validators, because of `mode=\"after\"`, so it compares two known types. A body with `\"fire\"` as both types gets a 422.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -710,17 +699,17 @@
                   "id": "w5",
                   "title": "Added `PokemonUpdate` for the body of an update request",
                   "declaration": "PokemonUpdate",
-                  "reading": "The author added a pydantic model `PokemonUpdate` with [the five fields of `PokemonCreate`](code:src/pokedex/pokemon/schemas.py#L10-14), each optional and `None` by default. [`update_pokemon()` dumps it with `exclude_unset=True`](code:src/pokedex/pokemon/service.py#L36), so a PATCH changes only the fields its body names. It keeps the length check of `name` and the range check of `level`, and has no validator for the types.",
+                  "reading": "The author added a pydantic model `PokemonUpdate` with [the five fields of `PokemonCreate`](code:src/pokedex/pokemon/schemas.py#L10-14), each `None` by default. [`update_pokemon()` dumps it with `exclude_unset=True`](code:src/pokedex/pokemon/service.py#L36), so a PATCH changes only the fields its body names. It keeps the length of `name` and the range of `level`, and has no validator for the types.",
                   "coreChange": null,
                   "findings": [
                     {
                       "id": "finding-update-unknown-type",
                       "kind": "bug",
-                      "title": "`PokemonUpdate` saves a type that is not in `POKEMON_TYPES`",
-                      "reading": "[`PokemonUpdate` declares `primary_type` and `secondary_type` as `str | None`](code:src/pokedex/pokemon/schemas.py#L33-34), with no copy of [`check_known_type()`](code:src/pokedex/pokemon/schemas.py#L16-21). [`update_pokemon()` copies every set field onto the row](code:src/pokedex/pokemon/service.py#L39-40), so a PATCH stores a type that a POST with the same type gets a 422 for.",
+                      "title": "`PokemonUpdate` lets a PATCH store a type outside `POKEMON_TYPES`",
+                      "reading": "[`PokemonUpdate` declares `primary_type` and `secondary_type` as `str | None`](code:src/pokedex/pokemon/schemas.py#L33-34), with no copy of [`check_known_type()`](code:src/pokedex/pokemon/schemas.py#L16-21). [`update_pokemon()` copies every set field onto the row](code:src/pokedex/pokemon/service.py#L39-40), so a PATCH stores a type that a POST gets a 422 for.",
                       "trace": [
                         "A client sends `PATCH /api/pokemon/1` with `{\"primary_type\": \"thunder\"}`.",
-                        "[`edit_pokemon(1, changes)`](code:src/pokedex/pokemon/routes.py#L26) gets `PokemonUpdate(primary_type=\"thunder\")`, with no validation error.",
+                        "[`edit_pokemon(1, PokemonUpdate(primary_type=\"thunder\"))`](code:src/pokedex/pokemon/routes.py#L26-27) runs, because no validator of `PokemonUpdate` raises.",
                         "[`changes.model_dump(exclude_unset=True)`](code:src/pokedex/pokemon/service.py#L36) → `{\"primary_type\": \"thunder\"}`.",
                         "[`setattr(pokemon, \"primary_type\", \"thunder\")`](code:src/pokedex/pokemon/service.py#L40), then [`session.commit()`](code:src/pokedex/pokemon/service.py#L41) stores it, and the response is a 200 with `\"primary_type\": \"thunder\"`."
                       ],
@@ -729,8 +718,8 @@
                     {
                       "id": "finding-update-null-field",
                       "kind": "bug",
-                      "title": "`PokemonUpdate` passes `null` to columns that cannot be null",
-                      "reading": "[`name`, `level` and `primary_type` take `None`](code:src/pokedex/pokemon/schemas.py#L31-33), and a body that sets one of them to `null` keeps it in [`model_dump(exclude_unset=True)`](code:src/pokedex/pokemon/service.py#L36). [The matching columns of `Pokemon` are `Mapped[str]` and `Mapped[int]`](code:src/pokedex/pokemon/models.py#L11-13), which SQLAlchemy creates as `NOT NULL`, so [`session.commit()` raises `IntegrityError`](code:src/pokedex/pokemon/service.py#L41) and the client gets a 500 in place of a 422.",
+                      "title": "`PokemonUpdate` passes `null` to columns that are `NOT NULL`",
+                      "reading": "[`name`, `level` and `primary_type` take `None`](code:src/pokedex/pokemon/schemas.py#L31-33), and a body that sets one of them to `null` keeps it in [`model_dump(exclude_unset=True)`](code:src/pokedex/pokemon/service.py#L36). [The matching columns of `Pokemon` are `Mapped[str]` and `Mapped[int]`](code:src/pokedex/pokemon/models.py#L11-13), which SQLAlchemy creates as `NOT NULL`. So [`session.commit()` raises `IntegrityError`](code:src/pokedex/pokemon/service.py#L41), and the client gets a 500 in place of a 422.",
                       "trace": [
                         "A client sends `PATCH /api/pokemon/1` with `{\"name\": null}`.",
                         "[`changes.model_dump(exclude_unset=True)`](code:src/pokedex/pokemon/service.py#L36) → `{\"name\": None}`.",
@@ -795,7 +784,7 @@
                       "id": "w5.3",
                       "title": "Added the optional type fields and the `trainer_id` field",
                       "declaration": "PokemonUpdate › PokemonUpdate.primary_type, PokemonUpdate.secondary_type +1",
-                      "reading": "The author added `primary_type`, `secondary_type` and `trainer_id`, each `None` by default. [`update_pokemon()` looks the trainer up](code:src/pokedex/pokemon/service.py#L37-38) when `trainer_id` is set. The two type fields take any text.",
+                      "reading": "The author added `primary_type`, `secondary_type` and `trainer_id`, each `None` by default. [`update_pokemon()` loads the trainer](code:src/pokedex/pokemon/service.py#L37-38) when `trainer_id` is set to a number. The two type fields take any text.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -817,7 +806,7 @@
                   "id": "w6",
                   "title": "Added `PokemonRead` for the body of every response",
                   "declaration": "PokemonRead",
-                  "reading": "The author added a pydantic model `PokemonRead` with [the six columns of `Pokemon`](code:src/pokedex/pokemon/models.py#L10-15). Every handler of the router names it in `response_model`, as [`read_pokemon()` does](code:src/pokedex/pokemon/routes.py#L15), so FastAPI returns these six fields and no other attribute of the row.",
+                  "reading": "The author added a pydantic model `PokemonRead` with [the six columns of `Pokemon`](code:src/pokedex/pokemon/models.py#L10-15). Every handler of the router that returns a body names it in `response_model`, as [`read_pokemon()` does](code:src/pokedex/pokemon/routes.py#L15), so FastAPI returns these six fields and no other attribute of the row.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -887,9 +876,9 @@
               "waypoints": [
                 {
                   "id": "w7",
-                  "title": null,
+                  "title": "Added two tests that send a create request with a wrong field",
                   "declaration": "Lines 1–17",
-                  "reading": "",
+                  "reading": "The author added a test file that sends `POST /api/pokemon/` with the API key from `API_KEY`, and:\n\n- `test_add_pokemon_rejects_an_unknown_type()` sends the type `\"thunder\"`, which [`check_known_type()` raises `ValueError` for](code:src/pokedex/pokemon/schemas.py#L19-20), and expects a 422\n- `test_add_pokemon_rejects_a_level_above_100()` sends a level of 101, which [the range of `PokemonCreate.level`](code:src/pokedex/pokemon/schemas.py#L11) does not take, and expects a 422\n\nBoth stop at [`PokemonCreate`](code:src/pokedex/pokemon/schemas.py#PokemonCreate), so neither test reads or writes the database.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -1389,33 +1378,9 @@
         ]
       },
       {
-        "title": "New /api/pokemon routes, modified app",
+        "title": "New route handlers, service functions and Pokemon model, modified app",
         "context": [
-          "This segment adds an API that lists, reads, creates, updates and deletes Pokemon, behind the same API key as the trainer routes. A request for a Pokemon or a trainer that does not exist gets a 404, and two new tests check that a create request with an unknown type or a level above 100 gets a 422.",
-          "",
-          ":::accordion",
-          "::section What's added",
-          "- [`Pokemon`](code:src/pokedex/pokemon/models.py#Pokemon): added a new SQLAlchemy model for [the `pokemon` table](code:src/pokedex/pokemon/models.py#L8), with [a `name`, a `level` and two types](code:src/pokedex/pokemon/models.py#L11-14), and [a `trainer_id` that references `trainers.id`](code:src/pokedex/pokemon/models.py#L15).",
-          "- [`read_all_pokemon()`](code:src/pokedex/pokemon/routes.py#read_all_pokemon): added a new route handler for `GET /api/pokemon` that returns [`list_pokemon(session, trainer_id)`](code:src/pokedex/pokemon/routes.py#L12).",
-          "- [`read_pokemon()`](code:src/pokedex/pokemon/routes.py#read_pokemon): added a new route handler for `GET /api/pokemon/{pokemon_id}` that returns [`find_pokemon(session, pokemon_id)`](code:src/pokedex/pokemon/routes.py#L17).",
-          "- [`add_pokemon()`](code:src/pokedex/pokemon/routes.py#add_pokemon): added a new route handler for `POST /api/pokemon` that returns [`create_pokemon(session, draft)`](code:src/pokedex/pokemon/routes.py#L22) with [`status_code=201`](code:src/pokedex/pokemon/routes.py#L20).",
-          "- [`edit_pokemon()`](code:src/pokedex/pokemon/routes.py#edit_pokemon): added a new route handler for `PATCH /api/pokemon/{pokemon_id}` that returns [`update_pokemon(session, pokemon_id, changes)`](code:src/pokedex/pokemon/routes.py#L27).",
-          "- [`remove_pokemon()`](code:src/pokedex/pokemon/routes.py#remove_pokemon): added a new route handler for `DELETE /api/pokemon/{pokemon_id}` that calls [`delete_pokemon(session, pokemon_id)`](code:src/pokedex/pokemon/routes.py#L32) and returns [`status_code=204`](code:src/pokedex/pokemon/routes.py#L30).",
-          "- [`list_pokemon()`](code:src/pokedex/pokemon/service.py#list_pokemon): added a new function that [selects every `Pokemon` ordered by `name`](code:src/pokedex/pokemon/service.py#L11), and [only those of one trainer when `trainer_id` is set](code:src/pokedex/pokemon/service.py#L12-13).",
-          "- [`find_pokemon()`](code:src/pokedex/pokemon/service.py#find_pokemon): added a new function that [loads a row with `session.get()`](code:src/pokedex/pokemon/service.py#L18), and [raises `NotFoundError(\"pokemon\", pokemon_id)`](code:src/pokedex/pokemon/service.py#L20) when there is none.",
-          "- [`create_pokemon()`](code:src/pokedex/pokemon/service.py#create_pokemon): added a new function that inserts a Pokemon.",
-          "  - Calls [`find_trainer()`](code:src/pokedex/pokemon/service.py#L26) when [the body sets `trainer_id`](code:src/pokedex/pokemon/service.py#L25).",
-          "  - Builds [a `Pokemon` from `draft.model_dump()`](code:src/pokedex/pokemon/service.py#L27).",
-          "  - Calls [`session.add()`, `session.commit()` and `session.refresh()`](code:src/pokedex/pokemon/service.py#L28-30).",
-          "- [`update_pokemon()`](code:src/pokedex/pokemon/service.py#update_pokemon): added a new function that changes a stored Pokemon.",
-          "  - Loads the row with [`find_pokemon()`](code:src/pokedex/pokemon/service.py#L35).",
-          "  - Keeps the fields the body sets with [`model_dump(exclude_unset=True)`](code:src/pokedex/pokemon/service.py#L36).",
-          "  - Calls [`find_trainer()`](code:src/pokedex/pokemon/service.py#L38) when [the body sets `trainer_id` to a number](code:src/pokedex/pokemon/service.py#L37).",
-          "  - Copies [each kept field onto the row with `setattr()`](code:src/pokedex/pokemon/service.py#L39-40), then calls [`session.commit()` and `session.refresh()`](code:src/pokedex/pokemon/service.py#L41-42).",
-          "- [`delete_pokemon()`](code:src/pokedex/pokemon/service.py#delete_pokemon): added a new function that loads a row with [`find_pokemon()`](code:src/pokedex/pokemon/service.py#L47) and calls [`session.delete()` and `session.commit()`](code:src/pokedex/pokemon/service.py#L48-49).",
-          "::section What's modified",
-          "- [`src/pokedex/main.py`](code:src/pokedex/main.py#L16): modified the app to [include `pokemon_router` under `/api` with `Depends(verify_api_key)`](code:src/pokedex/main.py#L16), as it includes the trainer router.",
-          ":::"
+          "This segment adds an API that lists, reads, creates, updates and deletes Pokemon, and asks for the same API key as the trainer API. A request that names a Pokemon or a trainer that does not exist gets a 404."
         ],
         "kind": "entry",
         "importGraph": [
@@ -1647,13 +1612,13 @@
           }
         ],
         "traceDiagram": {
-          "description": "This diagram shows how `GET /api/pokemon` and `GET /api/pokemon/{pokemon_id}` load Pokemon through `list_pokemon()` and `find_pokemon()`. It also shows what happens when a request reaches `POST /api/pokemon`, `PATCH /api/pokemon/{pokemon_id}` or `DELETE /api/pokemon/{pokemon_id}`, and how the new, changed or deleted Pokemon reaches the database through the session.",
+          "description": "This diagram shows how the Pokemon router registers the routes of `/api/pokemon` and `/api/pokemon/{pokemon_id}`. It also shows what happens when a request reaches one of them, and how the Pokemon reaches the database through the session.",
           "traceNodes": [
             {
               "id": "src/pokedex/pokemon/routes.py#route@/api/pokemon",
               "type": "route",
               "label": "Lists and creates Pokemon",
-              "description": "When a client sends a request to `/api/pokemon`, FastAPI runs [`verify_api_key()`, the dependency of the include](code:src/pokedex/main.py#L16), then the handler of the method.",
+              "description": "When a client sends a request to `/api/pokemon`, FastAPI runs [`verify_api_key()`, the dependency of the include](code:src/pokedex/main.py#L16), then calls the handler of the method.",
               "codeBlockIds": [
                 "src/pokedex/pokemon/routes.py#function@10:1"
               ],
@@ -1663,7 +1628,7 @@
                   "id": "src/pokedex/pokemon/routes.py#function@10:1",
                   "type": "function",
                   "label": "Returns every Pokemon, or those of one trainer",
-                  "description": "When a client sends `GET /api/pokemon`, FastAPI calls this handler with a session from `SessionDep` and the `trainer_id` of the query string, if there is one.",
+                  "description": "When a client sends `GET /api/pokemon`, FastAPI calls this handler with a session from [`SessionDep`](code:src/pokedex/database.py#L22) and the `trainer_id` of the query string, or `None`.",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/routes.py#function@10:1",
                     "src/pokedex/pokemon/routes.py#root-argument-value@11:22",
@@ -1682,7 +1647,7 @@
                   "id": "src/pokedex/pokemon/routes.py#function@20:1",
                   "type": "function",
                   "label": "Creates a Pokemon and returns it with a 201",
-                  "description": "When a client sends `POST /api/pokemon`, FastAPI validates the body as [`PokemonCreate`](code:src/pokedex/pokemon/schemas.py#PokemonCreate) and calls this handler with it.",
+                  "description": "When a client sends `POST /api/pokemon`, FastAPI parses the body into [`PokemonCreate`](code:src/pokedex/pokemon/schemas.py#PokemonCreate) and calls this handler with it.",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/routes.py#function@20:1",
                     "src/pokedex/pokemon/routes.py#root-argument-value@21:17",
@@ -1705,7 +1670,7 @@
               "id": "src/pokedex/pokemon/routes.py#route@/api/pokemon/{pokemon_id}",
               "type": "route",
               "label": "Reads, updates and deletes one Pokemon",
-              "description": "When a client sends a request to `/api/pokemon/{pokemon_id}`, FastAPI runs [`verify_api_key()`, the dependency of the include](code:src/pokedex/main.py#L16), then the handler of the method with the id from the path.",
+              "description": "When a client sends a request to `/api/pokemon/{pokemon_id}`, FastAPI runs [`verify_api_key()`, the dependency of the include](code:src/pokedex/main.py#L16), then calls the handler of the method with the id from the path.",
               "codeBlockIds": [
                 "src/pokedex/pokemon/routes.py#function@15:1"
               ],
@@ -1714,7 +1679,7 @@
                 {
                   "id": "src/pokedex/pokemon/routes.py#function@15:1",
                   "type": "function",
-                  "label": "Returns one Pokemon",
+                  "label": "Returns one Pokemon by its id",
                   "description": "When a client sends `GET /api/pokemon/{pokemon_id}`, FastAPI calls this handler with the id from the path.",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/routes.py#function@15:1",
@@ -1734,7 +1699,7 @@
                   "id": "src/pokedex/pokemon/routes.py#function@25:1",
                   "type": "function",
                   "label": "Updates the fields the body sets",
-                  "description": "When a client sends `PATCH /api/pokemon/{pokemon_id}`, FastAPI parses the body as [`PokemonUpdate`](code:src/pokedex/pokemon/schemas.py#PokemonUpdate) and calls this handler with it and the id from the path.",
+                  "description": "When a client sends `PATCH /api/pokemon/{pokemon_id}`, FastAPI parses the body into [`PokemonUpdate`](code:src/pokedex/pokemon/schemas.py#PokemonUpdate) and calls this handler with it and the id from the path.",
                   "codeBlockIds": [
                     "src/pokedex/pokemon/routes.py#function@25:1",
                     "src/pokedex/pokemon/routes.py#root-argument-value@26:18",
@@ -1785,7 +1750,7 @@
               "id": "src/pokedex/pokemon/routes.py#root-variable@7:1",
               "type": "root-variable",
               "label": "Puts /pokemon before every route of the file",
-              "description": "When the app starts, [`main.py` includes this router under `/api`](code:src/pokedex/main.py#L16). Each handler of this file registers on it with a decorator such as `@router.get`, so `/api/pokemon` comes before the path of both route cards.",
+              "description": "When the app starts, [`main.py` includes this router under `/api`](code:src/pokedex/main.py#L16). Each handler of this file registers on it with a decorator such as `@router.get`, so both routes start with `/api/pokemon`.",
               "codeBlockIds": [
                 "src/pokedex/pokemon/routes.py#root-variable@7:1"
               ],
@@ -1800,7 +1765,7 @@
               "id": "src/pokedex/pokemon/service.py#function@10:1",
               "type": "function",
               "label": "Loads the Pokemon, sorted by name",
-              "description": "When a client sends `GET /api/pokemon`, [`read_all_pokemon()` calls this function](code:src/pokedex/pokemon/routes.py#L12) with the session and the `trainer_id` of the query string.",
+              "description": "When a client sends `GET /api/pokemon`, [`read_all_pokemon()` calls this function](code:src/pokedex/pokemon/routes.py#L12) with the `trainer_id` of the query string.",
               "codeBlockIds": [
                 "src/pokedex/pokemon/service.py#function@10:1",
                 "src/pokedex/pokemon/service.py#root-argument-value@10:18",
@@ -1830,7 +1795,7 @@
               ],
               "blockLabels": [
                 {
-                  "label": "The query of every Pokemon, sorted by name",
+                  "label": "Queries every Pokemon ordered by name",
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@11:5"
                 },
                 {
@@ -1838,7 +1803,7 @@
                   "codeBlockId": "src/pokedex/pokemon/service.py#condition@12:5"
                 },
                 {
-                  "label": "Keeps only the Pokemon of that trainer",
+                  "label": "Filters the query to the Pokemon of that trainer",
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@13:9"
                 }
               ]
@@ -1870,11 +1835,11 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The row of the id, or None",
+                  "label": "Loads the row of the id, or None",
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@18:5"
                 },
                 {
-                  "label": "Checks whether no row has the id",
+                  "label": "Checks whether the id has no row",
                   "codeBlockId": "src/pokedex/pokemon/service.py#condition@19:5"
                 }
               ]
@@ -1883,7 +1848,7 @@
               "id": "src/pokedex/pokemon/service.py#function@24:1",
               "type": "function",
               "label": "Checks the trainer and inserts the new Pokemon",
-              "description": "When a client sends `POST /api/pokemon`, [`add_pokemon()` calls this function](code:src/pokedex/pokemon/routes.py#L22) with the validated body.",
+              "description": "When a client sends `POST /api/pokemon`, [`add_pokemon()` calls this function](code:src/pokedex/pokemon/routes.py#L22) with the parsed body.",
               "codeBlockIds": [
                 "src/pokedex/pokemon/service.py#function@24:1",
                 "src/pokedex/pokemon/models.py#class@7:1",
@@ -1936,7 +1901,7 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The Pokemon row to insert",
+                  "label": "Maps a Pokemon to a row of the pokemon table",
                   "codeBlockId": "src/pokedex/pokemon/models.py#class@7:1"
                 },
                 {
@@ -1944,15 +1909,15 @@
                   "codeBlockId": "src/pokedex/pokemon/service.py#condition@25:5"
                 },
                 {
-                  "label": "Raises NotFoundError when the trainer does not exist",
+                  "label": "Loads the trainer, or raises NotFoundError",
                   "codeBlockId": "src/pokedex/pokemon/service.py#call@26:9"
                 },
                 {
-                  "label": "The new row, built from the body",
+                  "label": "Builds the new row from the body",
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@27:5"
                 },
                 {
-                  "label": "Saves the new row and reads back its id",
+                  "label": "Inserts the row, commits, and reloads it",
                   "codeBlockId": "src/pokedex/pokemon/service.py#call@28:5"
                 }
               ]
@@ -2002,11 +1967,11 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The stored Pokemon",
+                  "label": "Loads the stored Pokemon, or raises NotFoundError",
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@35:5"
                 },
                 {
-                  "label": "Only the fields the body sets",
+                  "label": "Keeps only the fields the body sets",
                   "codeBlockId": "src/pokedex/pokemon/service.py#variable@36:5"
                 },
                 {
@@ -2014,15 +1979,15 @@
                   "codeBlockId": "src/pokedex/pokemon/service.py#condition@37:5"
                 },
                 {
-                  "label": "Raises NotFoundError when the trainer does not exist",
+                  "label": "Loads the trainer, or raises NotFoundError",
                   "codeBlockId": "src/pokedex/pokemon/service.py#call@38:9"
                 },
                 {
-                  "label": "Copies each set field onto the row",
+                  "label": "Copies each kept field onto the row",
                   "codeBlockId": "src/pokedex/pokemon/service.py#loop@39:5"
                 },
                 {
-                  "label": "Saves the row and reads it back",
+                  "label": "Commits the row and reloads it",
                   "codeBlockId": "src/pokedex/pokemon/service.py#call@41:5"
                 }
               ]
@@ -2056,11 +2021,11 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "The stored Pokemon",
+                  "label": "Loads the stored Pokemon, or raises NotFoundError",
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@47:5"
                 },
                 {
-                  "label": "Deletes the row and saves the deletion",
+                  "label": "Deletes the row and commits",
                   "codeBlockId": "src/pokedex/pokemon/service.py#call@48:5"
                 }
               ]
@@ -2192,7 +2157,7 @@
                       "id": "w9.2",
                       "title": "Added the `id` primary key",
                       "declaration": "Pokemon › Pokemon.id",
-                      "reading": "The author added an `id` column as the primary key. The database sets it on insert, and [`find_pokemon()` looks a row up by it](code:src/pokedex/pokemon/service.py#L18).",
+                      "reading": "The author added an `id` column as the primary key. The database sets it on insert, and [`find_pokemon()` loads a row by it](code:src/pokedex/pokemon/service.py#L18).",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2210,7 +2175,7 @@
                       "id": "w9.3",
                       "title": "Added the `name` column of up to 40 characters",
                       "declaration": "Pokemon › Pokemon.name",
-                      "reading": "The author added a `name` column of type `String(40)` that cannot be `NULL`. Its length matches [the length check of `PokemonCreate.name`](code:src/pokedex/pokemon/schemas.py#L10).",
+                      "reading": "The author added a `name` column of type `String(40)` that is `NOT NULL`. Its length is the length that [`PokemonCreate.name`](code:src/pokedex/pokemon/schemas.py#L10) takes.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2228,7 +2193,7 @@
                       "id": "w9.4",
                       "title": "Added the `level` column",
                       "declaration": "Pokemon › Pokemon.level",
-                      "reading": "The author added a `level` column of whole numbers that cannot be `NULL`. The column has no range: [`PokemonCreate.level`](code:src/pokedex/pokemon/schemas.py#L11) keeps the value from 1 to 100.",
+                      "reading": "The author added a `level` column of whole numbers that is `NOT NULL`. The column has no range: [`PokemonCreate.level`](code:src/pokedex/pokemon/schemas.py#L11) keeps the value from 1 to 100.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2246,7 +2211,7 @@
                       "id": "w9.5",
                       "title": "Added the `primary_type` column of up to 10 characters",
                       "declaration": "Pokemon › Pokemon.primary_type",
-                      "reading": "The author added a `primary_type` column of type `String(10)` that cannot be `NULL`. The longest names in [`POKEMON_TYPES`](code:src/pokedex/pokemon/schemas.py#L3-6), `\"electric\"` and `\"fighting\"`, have eight characters, so every known type fits.",
+                      "reading": "The author added a `primary_type` column of type `String(10)` that is `NOT NULL`. The longest names in [`POKEMON_TYPES`](code:src/pokedex/pokemon/schemas.py#POKEMON_TYPES), `\"electric\"` and `\"fighting\"`, have eight characters, so every known type fits.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2325,7 +2290,7 @@
                   "id": "w11",
                   "title": "Added `read_all_pokemon()` for `GET /api/pokemon`",
                   "declaration": "read_all_pokemon",
-                  "reading": "The author added a route handler `read_all_pokemon()` that returns [`list_pokemon()`](code:src/pokedex/pokemon/service.py#L10-14) as a list of [`PokemonRead`](code:src/pokedex/pokemon/schemas.py#L38-46). FastAPI reads `trainer_id` from the query string, so `GET /api/pokemon?trainer_id=1` lists the Pokemon of trainer 1 and `GET /api/pokemon` lists all of them.",
+                  "reading": "The author added a route handler `read_all_pokemon()` that returns [`list_pokemon()`](code:src/pokedex/pokemon/service.py#list_pokemon) as a list of [`PokemonRead`](code:src/pokedex/pokemon/schemas.py#PokemonRead). FastAPI reads `trainer_id` from the query string, so `GET /api/pokemon?trainer_id=1` returns the Pokemon of trainer 1 and `GET /api/pokemon` returns all of them.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -2345,7 +2310,7 @@
                   "id": "w12",
                   "title": "Added `read_pokemon()` for `GET /api/pokemon/{pokemon_id}`",
                   "declaration": "read_pokemon",
-                  "reading": "The author added a route handler `read_pokemon()` that returns the Pokemon [`find_pokemon()`](code:src/pokedex/pokemon/service.py#L17-21) loads. For an id with no row, `find_pokemon()` raises `NotFoundError`, and [`not_found_handler()` returns a 404](code:src/pokedex/errors.py#L11-12) with `\"pokemon 7 not found\"`.",
+                  "reading": "The author added a route handler `read_pokemon()` that returns the Pokemon that [`find_pokemon()`](code:src/pokedex/pokemon/service.py#find_pokemon) loads. For an id with no row, `find_pokemon()` raises `NotFoundError`, and [`not_found_handler()` returns a 404](code:src/pokedex/errors.py#L11-12) with `\"pokemon 7 not found\"`.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -2365,7 +2330,7 @@
                   "id": "w13",
                   "title": "Added `add_pokemon()` for `POST /api/pokemon`",
                   "declaration": "add_pokemon",
-                  "reading": "The author added a route handler `add_pokemon()` that passes the validated [`PokemonCreate`](code:src/pokedex/pokemon/schemas.py#L9-27) body to [`create_pokemon()`](code:src/pokedex/pokemon/service.py#L24-31), and returns the new Pokemon with a 201. A body that breaks a rule of `PokemonCreate` gets a 422 before the handler runs, which is what [the two new tests](code:tests/test_pokemon.py#L9-16) check.",
+                  "reading": "The author added a route handler `add_pokemon()` that passes the parsed [`PokemonCreate`](code:src/pokedex/pokemon/schemas.py#PokemonCreate) body to [`create_pokemon()`](code:src/pokedex/pokemon/service.py#create_pokemon), and returns the new Pokemon with a 201. A body that breaks a rule of `PokemonCreate` gets a 422 before the handler runs, which [the two new tests](code:tests/test_pokemon.py#L9-16) check.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -2385,7 +2350,7 @@
                   "id": "w14",
                   "title": "Added `edit_pokemon()` for `PATCH /api/pokemon/{pokemon_id}`",
                   "declaration": "edit_pokemon",
-                  "reading": "The author added a route handler `edit_pokemon()` that passes the id and the [`PokemonUpdate`](code:src/pokedex/pokemon/schemas.py#L30-35) body to [`update_pokemon()`](code:src/pokedex/pokemon/service.py#L34-43), and returns the updated Pokemon. It answers `PATCH`, so a client sends only the fields it changes.",
+                  "reading": "The author added a route handler `edit_pokemon()` that passes the id and the [`PokemonUpdate`](code:src/pokedex/pokemon/schemas.py#PokemonUpdate) body to [`update_pokemon()`](code:src/pokedex/pokemon/service.py#update_pokemon), and returns the updated Pokemon. It answers `PATCH`, so a client sends only the fields it changes.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -2406,7 +2371,7 @@
                   "id": "w15",
                   "title": "Added `remove_pokemon()` for `DELETE /api/pokemon/{pokemon_id}`",
                   "declaration": "remove_pokemon",
-                  "reading": "The author added a route handler `remove_pokemon()` that calls [`delete_pokemon()`](code:src/pokedex/pokemon/service.py#L46-49) and returns a 204. It returns `None`, which matches `status_code=204`: a 204 has no body.",
+                  "reading": "The author added a route handler `remove_pokemon()` that calls [`delete_pokemon()`](code:src/pokedex/pokemon/service.py#delete_pokemon) and returns a 204 with no body. For an id with no row, `delete_pokemon()` raises `NotFoundError`, so the client gets a 404.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -2481,7 +2446,7 @@
                   "id": "w18",
                   "title": "Added `create_pokemon()` to insert a new Pokemon",
                   "declaration": "create_pokemon",
-                  "reading": "The author added a function `create_pokemon()` that:\n\n- raises `NotFoundError` through [`find_trainer()`](code:src/pokedex/trainers/service.py#L12-16) when the body names a trainer that does not exist\n- builds a `Pokemon` from every field of the body\n- inserts the row, commits, and reloads it, so `id` is set\n\n[`add_pokemon()` returns the reloaded row](code:src/pokedex/pokemon/routes.py#L22) as the body of the 201.",
+                  "reading": "The author added a function `create_pokemon()` that:\n\n- raises `NotFoundError` through [`find_trainer()`](code:src/pokedex/trainers/service.py#L13-17) when the body names a trainer that does not exist\n- builds a `Pokemon` from every field of the body\n- inserts the row, commits, and reloads it, so `id` is set\n\n[`add_pokemon()` returns the reloaded row](code:src/pokedex/pokemon/routes.py#L22) as the body of the 201.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -2511,7 +2476,7 @@
                       "id": "w18.1",
                       "title": "Added a trainer check before the insert",
                       "declaration": "create_pokemon › Condition :25",
-                      "reading": "The author added a condition that calls `find_trainer()` when `trainer_id` is set. [`find_trainer()` raises `NotFoundError(\"trainer\", trainer_id)`](code:src/pokedex/trainers/service.py#L14-15) for a trainer that does not exist, so the request gets a 404 and no row is inserted.",
+                      "reading": "The author added a condition that calls `find_trainer()` when `trainer_id` is set. [`find_trainer()` raises `NotFoundError(\"trainer\", trainer_id)`](code:src/pokedex/trainers/service.py#L15-16) for a trainer that does not exist, so the request gets a 404 and no row is inserted.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2530,7 +2495,7 @@
                       "id": "w18.2",
                       "title": "Added the new `Pokemon` row built from the body",
                       "declaration": "create_pokemon › pokemon",
-                      "reading": "The author added a `Pokemon` built from `draft.model_dump()`, so each field of [`PokemonCreate`](code:src/pokedex/pokemon/schemas.py#L10-14) sets the column of the same name.",
+                      "reading": "The author added a `Pokemon` built from `draft.model_dump()`, so each field of [`PokemonCreate`](code:src/pokedex/pokemon/schemas.py#L10-14) sets the column of the same name on [`Pokemon`](code:src/pokedex/pokemon/models.py#L10-15).",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2570,8 +2535,8 @@
                   "id": "w19",
                   "title": "Added `update_pokemon()` to write the changed fields onto a Pokemon",
                   "declaration": "update_pokemon",
-                  "reading": "The author added a function `update_pokemon()` that:\n\n- loads the Pokemon with [`find_pokemon()`](code:src/pokedex/pokemon/service.py#L17-21), which raises `NotFoundError` for an unknown id\n- keeps only the fields the body sets, through `model_dump(exclude_unset=True)`\n- raises `NotFoundError` through [`find_trainer()`](code:src/pokedex/trainers/service.py#L12-16) when the body sets a trainer that does not exist\n- copies each kept field onto the row, then commits and reloads it\n\n[`edit_pokemon()` returns the reloaded row](code:src/pokedex/pokemon/routes.py#L27), so a PATCH with `{\"level\": 12}` changes the level and nothing else.",
-                  "coreChange": "This is the only code that changes a stored Pokemon: every field a PATCH body sets is copied onto the row here, so the fields of [`PokemonUpdate`](code:src/pokedex/pokemon/schemas.py#L30-35) are what an update can change.",
+                  "reading": "The author added a function `update_pokemon()` that:\n\n- loads the Pokemon with `find_pokemon()`, which raises `NotFoundError` for an unknown id\n- keeps only the fields the body sets, with `model_dump(exclude_unset=True)`\n- raises `NotFoundError` through [`find_trainer()`](code:src/pokedex/trainers/service.py#L13-17) when the body sets a trainer that does not exist\n- copies each kept field onto the row, then commits and reloads it\n\n[`edit_pokemon()` returns the reloaded row](code:src/pokedex/pokemon/routes.py#L27), so a PATCH with `{\"level\": 12}` changes the level and nothing else.",
+                  "coreChange": "This is the only code that changes a stored Pokemon: every field a PATCH body sets is copied onto the row here, so the fields of [`PokemonUpdate`](code:src/pokedex/pokemon/schemas.py#PokemonUpdate) decide what an update can write.",
                   "findings": [],
                   "range": {
                     "lineStart": 34,
@@ -2602,7 +2567,7 @@
                       "id": "w19.1",
                       "title": "Added the lookup of the stored Pokemon",
                       "declaration": "update_pokemon › pokemon",
-                      "reading": "The author added a call to [`find_pokemon()`](code:src/pokedex/pokemon/service.py#L17-21) that loads the row of `pokemon_id`, so a PATCH of an unknown id gets a 404 before any field is read.",
+                      "reading": "The author added a call to [`find_pokemon()`](code:src/pokedex/pokemon/service.py#find_pokemon) that loads the row of `pokemon_id`, so a PATCH of an unknown id gets a 404 before any field is read.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2638,7 +2603,7 @@
                       "id": "w19.3",
                       "title": "Added a trainer check before the update",
                       "declaration": "update_pokemon › Condition :37",
-                      "reading": "The author added a condition that calls [`find_trainer()`](code:src/pokedex/trainers/service.py#L12-16) when the body sets `trainer_id` to a number. A `trainer_id` of `null` skips the check, so a PATCH can take a Pokemon away from its trainer.",
+                      "reading": "The author added a condition that calls [`find_trainer()`](code:src/pokedex/trainers/service.py#L13-17) when the body sets `trainer_id` to a number. A `trainer_id` of `null` skips the call, so a PATCH can set the trainer of a Pokemon to `None`.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2655,7 +2620,7 @@
                     },
                     {
                       "id": "w19.4",
-                      "title": "Added a loop that copies each set field onto the row",
+                      "title": "Added a loop that copies each kept field onto the row",
                       "declaration": "update_pokemon › Loop :39",
                       "reading": "The author added a loop that calls `setattr(pokemon, name, value)` for each entry of `fields`, so each field of [`PokemonUpdate`](code:src/pokedex/pokemon/schemas.py#L31-35) writes the column of the same name on [`Pokemon`](code:src/pokedex/pokemon/models.py#L10-15).",
                       "coreChange": null,
@@ -2698,7 +2663,7 @@
                   "id": "w20",
                   "title": "Added `delete_pokemon()` to delete a stored Pokemon",
                   "declaration": "delete_pokemon",
-                  "reading": "The author added a function `delete_pokemon()` that loads the row with [`find_pokemon()`](code:src/pokedex/pokemon/service.py#L17-21), deletes it and commits. [`remove_pokemon()` calls it](code:src/pokedex/pokemon/routes.py#L32), so a DELETE of an unknown id gets a 404 and a DELETE of a stored id gets a 204.",
+                  "reading": "The author added a function `delete_pokemon()` that loads the row with [`find_pokemon()`](code:src/pokedex/pokemon/service.py#find_pokemon), deletes it and commits. [`remove_pokemon()` calls it](code:src/pokedex/pokemon/routes.py#L32), so a DELETE of an unknown id gets a 404 and a DELETE of a stored id gets a 204.",
                   "coreChange": null,
                   "findings": [],
                   "range": {

@@ -272,6 +272,30 @@ flowchart LR
 
 A step across a pair is assumed, not proven: two blocks that write the same path are taken to be the two ends of one request, and nothing in the code says so.
 
+**A call on a tRPC client steps to the procedure it names.** A `request` or a `data-fetch` the catalogue reads on a client of `@trpc/react-query` or `@trpc/client`, such as `api.todo.create.useMutation(…)` or `client.todo.create.mutate(…)`, names its procedure by its path: the keys before the method, `todo.create`. The chain steps from the call to that procedure, from the router the client is made with, `createTRPCReact<AppRouter>()` through `type AppRouter = typeof appRouter`, or, when the client names no router, from every router no other router joins. Each key is a key of the router, or of a router it joins, as `todo: todoRouter` in `appRouter`. A path that names no procedure takes no step.
+
+```ts
+// server/api/routers/todo.ts
+export const todoRouter = createTRPCRouter({ create: publicProcedure.mutation(({ input }) => saveTodo(input)) })
+
+// server/api/root.ts
+export const appRouter = createTRPCRouter({ todo: todoRouter })
+export type AppRouter = typeof appRouter
+
+// trpc/react.tsx
+export const api = createTRPCReact<AppRouter>()
+
+// add-todo-form.tsx
+const createTodo = api.todo.create.useMutation({ onSuccess: () => setTitle("") })
+```
+
+```mermaid
+flowchart LR
+  submit["onSubmit<br/>createTodo.mutate"] --> mutation["request<br/>api.todo.create.useMutation"]
+  mutation --> procedure["resolver<br/>todoRouter.create"] --> saveTodo["saveTodo (changed)"]:::changed
+  classDef changed stroke:#d97706,stroke-width:3px
+```
+
 ## A chain the loading of a file starts
 
 A statement at the root of a file runs once, when the file is loaded. It is the top of its chain, an entry of the group's `diffChains`. This holds in every language and needs no pattern.

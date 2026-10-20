@@ -48,7 +48,7 @@ Some libraries hand back a value, and the hooks are its members: `trpc.users.lis
 | Pattern | Says | Matches |
 |---|---|---|
 | A factory | A call to `createTRPCReact` from `@trpc/react-query` makes a tRPC client | `createTRPCReact<AppRouter>()` |
-| A method of what the factory made | A method named `useQuery`, `useMutation` or `useInfiniteQuery`, at any depth below the client | `trpc.users.list.useQuery()` |
+| A method of what the factory made | A method named `useQuery`, `useSuspenseQuery`, `useInfiniteQuery`, `useSuspenseInfiniteQuery` or `useMutation`, at any depth below the client | `trpc.users.list.useQuery()` |
 | A factory | A call to `createApi` from `@reduxjs/toolkit/query/react` makes an API | `createApi({ … })` |
 | A method of what the factory made | A method whose name fits `use*Query`, `useLazy*Query` or `use*Mutation` | `api.useGetUsersQuery()` |
 

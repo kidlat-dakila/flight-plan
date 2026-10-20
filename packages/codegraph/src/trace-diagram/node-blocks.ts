@@ -47,6 +47,7 @@ const EVENT_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-
 const FUNCTION: CodeBlockType = "function"
 const COMPONENT: CodeBlockType = "component"
 const CALLBACK: CodeBlockType = "effect-callback"
+const CODE_EVENT: CodeBlockType = "code-event"
 const STATEMENT: CodeBlockType = "root-statement"
 const KEPT_STATE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["state", "derived"])
 const IN_PLACE = "in-place"
@@ -55,7 +56,14 @@ const CLASS: CodeBlockType = "class"
 const CALLING = "call"
 const RUNNING_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>([...TRIGGERED_TYPES, ...INVOKED_TYPES])
 
-const isStateCall = (block: CodeBlock): boolean => EFFECT_TYPES.has(block.type) && block.parentBlock !== null && KEPT_STATE_TYPES.has(block.parentBlock.type)
+const isLaterCallback = (block: CodeBlock): boolean => block.type === CODE_EVENT || (block.type === CALLBACK && block.catalogue?.runs !== IN_PLACE)
+
+const isCatalogueCallHandedCallback = (block: CodeBlock): boolean =>
+  !TRIGGERED_TYPES.has(block.type) && !PART_OF_RENDER_TYPES.has(block.type) && block.catalogue !== null && block.childrenBlocks.some(isLaterCallback)
+
+const isEffectCall = (block: CodeBlock): boolean => EFFECT_TYPES.has(block.type) || isCatalogueCallHandedCallback(block)
+
+const isStateCall = (block: CodeBlock): boolean => isEffectCall(block) && block.parentBlock !== null && KEPT_STATE_TYPES.has(block.parentBlock.type)
 
 const isInPlaceCallback = (block: CodeBlock): boolean =>
   block.type === CALLBACK && (block.catalogue?.runs === IN_PLACE || (block.parentBlock !== null && isStateCall(block.parentBlock)))
@@ -81,7 +89,7 @@ export const isHandlerBlock = (block: CodeBlock): boolean => isBodyBlock(block) 
 const isPartOfRender = (block: CodeBlock): boolean =>
   PART_OF_RENDER_TYPES.has(block.type) || isStateCall(block) || isInPlaceCallback(block) || isHandlerBlock(block)
 
-const isTriggered = (block: CodeBlock): boolean => TRIGGERED_TYPES.has(block.type) && !isPartOfRender(block)
+const isTriggered = (block: CodeBlock): boolean => (TRIGGERED_TYPES.has(block.type) || isCatalogueCallHandedCallback(block)) && !isPartOfRender(block)
 
 const isInvoked = (block: CodeBlock): boolean => INVOKED_TYPES.has(block.type) && !isPartOfRender(block)
 

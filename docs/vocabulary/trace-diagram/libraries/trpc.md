@@ -77,6 +77,19 @@ export const todoRouter = createTRPCRouter({
  └──────────────────────────────────────────────────────────────┘
 ```
 
+## Calls from a client
+
+**A call on a tRPC client has a line to the procedure it names.** `api.todo.create.useMutation(…)` in a component leads to the `create` procedure of `todoRouter`, as [A chain across a boundary](../../codegraph/chains.md#a-chain-across-a-boundary) says, so the line runs from the node of the call to the procedure card inside the router card. A `useMutation` handed a callback is a node of its own, and the line leaves it; a query handed none is a row of its component, and the line leaves that row.
+
+```mermaid
+flowchart LR
+  submit["form.onSubmit"] --> mutation["api.todo.create.useMutation"]
+  subgraph todo["todoRouter"]
+    create["MUTATION: create"]
+  end
+  mutation --> create
+```
+
 ## Middleware
 
 **The middleware of a procedure is a card of its own.** A procedure is built on another, as `update` is built on `protectedProcedure`, and the `use` of that one, such as `t.procedure.use(isAuthed)`, runs before it. The node that holds that `use` is a card beside the router card, and a line runs from it to the head of each procedure card built on it.
