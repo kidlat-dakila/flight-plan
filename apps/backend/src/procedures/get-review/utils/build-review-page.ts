@@ -1,7 +1,5 @@
 import { reviewPreferencesOf, type ArrangedSection } from "@/procedures/get-review-preferences/utils/review-preferences"
-import type { AgentModels } from "@/procedures/get-setup/utils/agent-models"
-import type { AgentName, Setup } from "@/procedures/get-setup/utils/setup"
-import type { Configuration } from "@/procedures/list-configurations/utils/configuration"
+import type { Setup } from "@/procedures/get-setup/utils/setup"
 import type { LineColor } from "@/procedures/list-repositories/utils/line-color"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import {
@@ -55,9 +53,9 @@ import type { ReviewTargetDetail } from "./review-target-detail"
 import type { GetReviewInput, ReviewPage, ReviewShell, SegmentOutline, SegmentView } from "./schemas"
 import { isShownInSegments } from "./segmentation"
 import { buildChangedFiles } from "./start/build-changed-files"
-import { buildStartForm } from "./start/build-start-form"
 import type { ReviewRequest } from "./start/review-request"
 import { buildUnassignedFiles } from "./unassigned-files"
+import { writeUpNoticesOf } from "./write-up-notices"
 
 export interface ReviewPageSource {
   readonly repository: Repository
@@ -78,9 +76,7 @@ export interface ReviewPageSource {
   readonly sources: readonly HighlightedSource[]
   readonly solutionTokens: ReadonlyMap<string, readonly TokenLine[]>
   readonly setup: Setup
-  readonly configurations: readonly Configuration[]
-  readonly startableAgents: readonly AgentName[]
-  readonly agentModels: AgentModels
+  readonly unavailableMessage: string | null
   readonly activity: WritingActivity
   readonly chatLinkIds: readonly string[]
   readonly request: ReviewRequest | null
@@ -185,6 +181,7 @@ const buildSegment = (
     blastDiagram: buildBlast(segment, scope, fileAnchorIdByPath, context),
     walkthrough: attachThreads(walkthrough, discussion),
     sectionOrder: [...settings.sectionOrder],
+    writeUpNotices: writeUpNoticesOf(segment, traceSegments, context.isWriting),
   }
 }
 
@@ -223,14 +220,16 @@ const reviewerRequestsOf = (source: ReviewPageSource): ReviewerRequestAbilities 
 const placedThreadIdsOf = (segments: readonly SegmentView[]): ReadonlySet<string> =>
   new Set(segments.flatMap((segment) => segment.walkthrough.files).flatMap((file) => file.threads).map((thread) => thread.id))
 
-const buildUnwrittenPage = (source: ReviewPageSource, shell: ReviewShell): ReviewPage => ({
+const UNBUILT_HEADING = "Flight Plan could not build this review"
+const UNBUILT_MESSAGE = "There is no review of this pull request or branch yet."
+
+const buildUnbuiltPage = (source: ReviewPageSource, shell: ReviewShell): ReviewPage => ({
   kind: "missing",
   shell,
   isOwn: source.isOwn,
   changedFiles: buildChangedFiles(source.detail),
-  heading: "No Flight Plan Review yet",
-  message: "Choose how the review is written, then start it.",
-  form: buildStartForm(source.setup, source.configurations, source.startableAgents, source.agentModels),
+  heading: UNBUILT_HEADING,
+  message: source.unavailableMessage ?? UNBUILT_MESSAGE,
 })
 
 export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput): ReviewPage => {
@@ -244,7 +243,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     isKeptPrivate(source) ? AUTHOR_LABEL : null,
     reviewerRequestsOf(source),
   )
-  if (source.artifact === null) return buildUnwrittenPage(source, shell)
+  if (source.artifact === null) return buildUnbuiltPage(source, shell)
   const { artifact } = source
   const resolvedTargets = new Map(
     [...new Set([...collectCodeLinkIds(artifact.segments, artifact.contextCodeBlocks), ...source.chatLinkIds])]

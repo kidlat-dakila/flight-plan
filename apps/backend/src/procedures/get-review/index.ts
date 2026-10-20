@@ -1,13 +1,11 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { messageBodiesOf } from "@/procedures/get-conversation/utils/conversation"
-import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { selfAuthorIdOf } from "@/procedures/get-setup/utils/git-identity"
-import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
-import { listConfigurationsOf, type Configuration } from "@/procedures/list-configurations/utils/configuration"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { listLinkablePullRequests } from "@/procedures/mark-complete/utils/linkable-pull-requests"
 import { isPublishingUnderway } from "@/procedures/publish-artifact/utils/publishing-progress"
 import { codeLinkIdsIn, highlightReview, type HighlightedReview } from "@flightplan/codegraph"
+import type { ReviewArtifact } from "@flightplan/configurations"
 import { NO_REVIEWED_MARKS } from "@flightplan/reviewed-marks"
 import { readBranchAuthorEmail } from "./utils/branch-author"
 import type { BranchLinking } from "./utils/build-complete-action"
@@ -16,6 +14,7 @@ import { buildReviewPage } from "./utils/build-review-page"
 import { branchNameOf } from "./utils/change-reader"
 import { findReviewTarget } from "./utils/find-review-target"
 import { readLiveTargetDetail, withForgeDetail } from "./utils/live-target-detail"
+import { buildOpeningArtifact, isOpenedWithoutArtifact } from "./utils/opening-scaffold"
 import { isOwnTarget } from "./utils/own-target"
 import { refreshArtifact } from "./utils/refresh-artifact"
 import { isPullRequestSubject, type PullRequestSubject } from "./utils/review-action"
@@ -23,9 +22,6 @@ import type { ReviewKey } from "./utils/review-store"
 import type { ReviewSubject } from "./utils/review-subject"
 import type { GetReviewInput, ReviewPage } from "./utils/schemas"
 import { buildReviewPrompt } from "./utils/start/review-prompt"
-import { startableAgentsOf } from "./utils/start/startable-agents"
-
-const NO_CONFIGURATIONS: readonly Configuration[] = []
 
 const NOTHING_HIGHLIGHTED: HighlightedReview = { sources: [], solutionTokens: new Map() }
 
@@ -96,11 +92,23 @@ const readBranchLinking = async (subject: ReviewSubject, context: ProcedureConte
   return { branch: target, pullRequests: await listLinkablePullRequests(subject.repository, target.name, context) }
 }
 
+interface OpenedArtifact {
+  readonly artifact: ReviewArtifact | null
+  readonly unavailableMessage: string | null
+}
+
+const openedArtifactOf = async (subject: ReviewSubject, key: ReviewKey, context: ProcedureContext): Promise<OpenedArtifact> => {
+  if (!isOpenedWithoutArtifact(subject)) return { artifact: await refreshArtifact(subject, key, context), unavailableMessage: null }
+  const opening = await buildOpeningArtifact(subject, key, context)
+  return opening.kind === "built" ? { artifact: opening.artifact, unavailableMessage: null } : { artifact: null, unavailableMessage: opening.message }
+}
+
 export const getReview = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewPage | null> => {
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
   const found = await findReviewSubject(key, context)
   if (found === null) return null
-  const subject = { ...found, artifact: await refreshArtifact(found, key, context) }
+  const opened = await openedArtifactOf(found, key, context)
+  const subject = { ...found, artifact: opened.artifact }
   const [marks, pendingComments, publications, publishingRequest, setup, activity, branchLinking, conversation, request] = await Promise.all([
     subject.isOwn ? NO_REVIEWED_MARKS : context.reviewStore.readReviewedMarks(key),
     context.reviewStore.readPendingComments(key),
@@ -113,8 +121,6 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
     context.reviewStore.findRequest(key),
   ])
   const { artifact } = subject
-  const agentModels = artifact === null ? await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment) : {}
-  const configurations = artifact === null ? listConfigurationsOf(await context.configurationStore.read()) : NO_CONFIGURATIONS
   const highlighted = artifact === null ? NOTHING_HIGHLIGHTED : await highlightReview(artifact, context.highlightCode)
   return buildReviewPage(
     {
@@ -126,9 +132,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
       isPublishing: isPublishingUnderway(publishingRequest, publications, context.conversationEnvironment.agents.find(key) !== null, context.now()),
       now: context.now(),
       setup,
-      configurations,
-      startableAgents: startableAgentsOf(context.conversationEnvironment.spawners),
-      agentModels,
+      unavailableMessage: opened.unavailableMessage,
       activity,
       request,
       chatLinkIds: codeLinkIdsIn(messageBodiesOf(conversation.journal)),

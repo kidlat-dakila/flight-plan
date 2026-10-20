@@ -18,6 +18,7 @@ export const writeUpSectionOptionSchema = z.strictObject({
 export const writeUpPlanSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("plan"),
+    isOffered: z.boolean(),
     agentLabel: z.string(),
     summary: z.array(z.strictObject({ label: z.string(), value: z.string() })),
     sections: z.array(writeUpSectionOptionSchema),

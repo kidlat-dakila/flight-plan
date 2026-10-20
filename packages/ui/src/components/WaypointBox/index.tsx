@@ -4,6 +4,7 @@ import FindingCard from "@/components/FindingCard"
 import { FindingChip } from "@/components/FindingMark"
 import Prose from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
+import { SpotlightChip, type Spotlight } from "@/components/SpotlightMark"
 import Unwritten from "@/components/Unwritten"
 import type { CodeLinkTargets, Finding, FindingKind, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
@@ -18,6 +19,9 @@ export interface WaypointContent {
   readonly coreChangeLabel: string | null
   readonly reading: ProseBlocks | null
   readonly unwrittenLabel: string
+  readonly hint: string | null
+  readonly isBeingWritten: boolean
+  readonly spotlight: Spotlight | null
   readonly coreChange: ProseBlocks | null
   readonly findings: readonly Finding[]
   readonly isReviewed: boolean
@@ -82,6 +86,7 @@ const WaypointBox = ({
         />
         {waypoint.chip === null ? null : <FindingChip kind={waypoint.chip.kind} label={waypoint.chip.label} />}
         {waypoint.coreChangeLabel === null ? null : <FindingChip kind="core-change" label={waypoint.coreChangeLabel} />}
+        {waypoint.spotlight === null ? null : <SpotlightChip spotlight={waypoint.spotlight} />}
         <Unwritten isPending={waypoint.isDraft} className="w-56 text-[0.9375rem]">
           <span
             className={cn(

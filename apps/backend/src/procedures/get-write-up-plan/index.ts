@@ -1,4 +1,5 @@
 import type { ProcedureContext } from "@/procedures/context"
+import { isWriteUpOffered } from "@/procedures/get-review/utils/start/review-request"
 import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
 import { reviewPreferencesOf, WRITE_UP_SECTIONS, type ReviewPreferences, type WriteUpSection } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { listConfigurationsOf } from "@/procedures/list-configurations/utils/configuration"
@@ -26,6 +27,7 @@ export const getWriteUpPlan = async (input: GetWriteUpPlanInput, context: Proced
   if (writer === null) return { kind: "no-agent", message: NO_AGENT_MESSAGE }
   const preferences = reviewPreferencesOf(setup.reviewPreferences)
   return buildWriteUpPlan({
+    isOffered: isWriteUpOffered(request),
     agentLabel: writer.label,
     counts: writeUpCountsOf(artifact),
     sections: input.sections ?? request?.writeUp?.sections ?? alwaysWrittenSectionsOf(preferences),

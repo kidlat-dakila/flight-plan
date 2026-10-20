@@ -26,13 +26,17 @@ describe("getReview", () => {
     await expect(getReview(requestFor("storefront", "pr-1"), createContext())).resolves.toBeNull()
   })
 
-  it("offers to create a review for a review target without an artifact", async () => {
-    await expect(getReview(requestFor("storefront", "pr-416"), createContext())).resolves.toMatchObject({
+  it("says why it could not build the review of a target without an artifact", async () => {
+    const page = await getReview(requestFor("storefront", "pr-416"), createContext())
+
+    expect(page).toMatchObject({
       kind: "missing",
       shell: { lineColor: "blue", notice: "Sample data. These repositories and pull requests are not real." },
+      heading: "Flight Plan could not build this review",
+      message: "This is a sample repository, so there is no code to read.",
       changedFiles: [{ text: "10 changed files" }, { text: "4 TypeScript" }, { text: "2 TSX" }, {}, {}, {}, {}],
-      form: { writer: { selectedKey: "none", agents: [] } },
     })
+    expect(page).not.toHaveProperty("form")
   })
 
   it("leaves the sample data notice out for a review target the review store holds no sample of", async () => {

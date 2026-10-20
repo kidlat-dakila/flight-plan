@@ -8,11 +8,13 @@ import CommentThread, {
   type ThreadComment,
   type ThreadResolution,
 } from "@/components/CommentThread"
+import { FindingChip } from "@/components/FindingMark"
 import { HoverProse } from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
+import { SpotlightChip, type Spotlight } from "@/components/SpotlightMark"
 import ThreadMark, { type MarkedThread } from "@/components/ThreadMark"
 import WaypointBox from "@/components/WaypointBox"
-import WaypointMark, { WaypointLane, type MarkedWaypoint } from "@/components/WaypointMark"
+import WaypointMark, { WaypointLane, type MarkedWaypoint, type WaypointWriteUp } from "@/components/WaypointMark"
 import type { CodeDefinitions, CodeLine, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 import { lineSequenceOf, placeWaypoints, stemsOf, type StemTone } from "./gutter"
@@ -28,8 +30,14 @@ export type FileRow
     | { readonly kind: "gap", readonly id: string, readonly label: string, readonly rootBlockId: string | null }
     | { readonly kind: "waypoint", readonly id: string, readonly waypoint: WalkthroughWaypoint, readonly rootBlockId: string | null }
 
+export type WriteUpTarget
+  = | { readonly kind: "waypoint", readonly waypointId: string }
+    | { readonly kind: "root-block", readonly rootBlockId: string }
+
 export interface FileRootBlock {
   readonly id: string
+  readonly coreChangeLabel: string | null
+  readonly spotlight: Spotlight | null
   readonly isReviewed: boolean
   readonly reviewLabel: string
   readonly reviewName: string
@@ -106,6 +114,7 @@ interface FileRowsProps {
   readonly onToggleWaypoint: (waypointId: string) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
   readonly onRootBlockReviewedChange: ((rootBlockId: string, isReviewed: boolean) => void) | null
+  readonly onWriteUp?: ((target: WriteUpTarget) => void) | null
 }
 
 const DECIMAL = 10
@@ -127,6 +136,17 @@ const focusedRowIdsOf = (rows: readonly FileRow[], waypointId: string | null): R
 
 const referenceTabStopRowIdOf = (rows: readonly FileRow[], definitions: CodeDefinitions): string | null =>
   rows.find((row) => row.kind === "lines" && hasKnownReference(row.lines, definitions))?.id ?? null
+
+const rootBlockIdOfWaypoint = (rows: readonly FileRow[], waypointId: string): string | null =>
+  rows.flatMap((row) => (row.kind === "waypoint" && row.waypoint.id === waypointId ? [row.rootBlockId] : [])).at(0) ?? null
+
+const waypointWriteUpOf = (rows: readonly FileRow[], waypointId: string, onWriteUp: (target: WriteUpTarget) => void): WaypointWriteUp => {
+  const rootBlockId = rootBlockIdOfWaypoint(rows, waypointId)
+  return {
+    onLine: () => { onWriteUp({ kind: "waypoint", waypointId }) },
+    onBlock: rootBlockId === null ? null : () => { onWriteUp({ kind: "root-block", rootBlockId }) },
+  }
+}
 
 const lineKeysOf = (range: CommentRange): string[] => {
   const start = Number.parseInt(range.startLineLabel, DECIMAL)
@@ -245,6 +265,7 @@ const FileRows = ({
   onToggleWaypoint,
   onWaypointReviewedChange,
   onRootBlockReviewedChange,
+  onWriteUp = null,
 }: FileRowsProps) => {
   const rowsRef = useRef<HTMLDivElement>(null)
   const [previewedWaypointId, setPreviewedWaypointId] = useState<string | null>(null)
@@ -293,6 +314,7 @@ const FileRows = ({
           isTabStop={line === tabStopLine && index === 0}
           previewRequest={previewVisit?.waypointId === waypoint.id ? previewVisit.count : null}
           codeLinks={codeLinks}
+          writeUp={onWriteUp === null ? null : waypointWriteUpOf(rows, waypoint.id, onWriteUp)}
           onOpenCodeLink={onOpenCodeLink}
           onToggle={() => {
             holdMark(waypoint.id)
@@ -331,6 +353,8 @@ const FileRows = ({
     const isOpen = openRootBlockIds.has(rootBlockId)
     return (
       <>
+        {rootBlock.coreChangeLabel === null ? null : <FindingChip kind="core-change" label={rootBlock.coreChangeLabel} />}
+        {rootBlock.spotlight === null ? null : <SpotlightChip spotlight={rootBlock.spotlight} />}
         {onRootBlockReviewedChange === null
           ? null
           : (

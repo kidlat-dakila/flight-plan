@@ -12,21 +12,15 @@ import { useColorTheme } from "@/color-theme"
 import type { RouterContext } from "@/router-context"
 import PlanePicture from "@/routes/-components/PlanePicture"
 import ServerError from "@/routes/-components/ServerError"
+import { SETTINGS_LINKS } from "@/settings-links"
 import BrandMark from "@flightplan/ui/BrandMark"
 import { cn } from "@flightplan/ui/lib/utils"
-import SettingsMenu, { type SettingsMenuLink } from "@flightplan/ui/SettingsMenu"
+import SettingsMenu from "@flightplan/ui/SettingsMenu"
 import SignBand from "@flightplan/ui/SignBand"
 
 const LOGO_SRC = "/logo.svg"
 const PRODUCT_NAME = "Flight Plan"
 const SETUP_ROUTE_ID = "/setup/"
-const SETTINGS_LINKS: readonly SettingsMenuLink[] = [
-  { label: "Agent integration", icon: "agents", link: <Link to="/settings/agents" /> },
-  { label: "Git integrations", icon: "forges", link: <Link to="/settings/forges" /> },
-  { label: "Prompt configurations", icon: "configurations", link: <Link to="/settings/profiles" /> },
-  { label: "Repositories", icon: "repositories", link: <Link to="/settings/repositories" /> },
-  { label: "Review configuration", icon: "review", link: <Link to="/settings/review" /> },
-]
 const COLUMN_CLASSES = "mx-auto max-w-5xl px-4 pt-8 pb-16 sm:px-6"
 const NOT_FOUND_PICTURE_SRC = "/not-found.svg"
 
@@ -34,6 +28,7 @@ const RootLayout = () => {
   const [bandSlot, setBandSlot] = useState<HTMLElement | null>(null)
   const isFullWidth = useMatches({ select: (matches) => matches.some((match) => match.staticData.isFullWidth === true) })
   const isSettingUp = useMatches({ select: (matches) => matches.some((match) => match.routeId === SETUP_ROUTE_ID) })
+  const hasPageSettingsMenu = useMatches({ select: (matches) => matches.some((match) => match.staticData.hasPageSettingsMenu === true) })
   return (
     <BandSlotContext value={bandSlot}>
       <div className="min-h-screen bg-background text-foreground">
@@ -46,7 +41,7 @@ const RootLayout = () => {
           )}
         >
           <div ref={setBandSlot} className="flex min-w-0 flex-1 items-center border-l border-sign-foreground/20 pl-6 empty:hidden" />
-          {isSettingUp ? null : <SettingsMenu links={SETTINGS_LINKS} useThemeToggle={useColorTheme} />}
+          {isSettingUp || hasPageSettingsMenu ? null : <SettingsMenu links={SETTINGS_LINKS} useThemeToggle={useColorTheme} />}
         </SignBand>
         <main className={cn("w-full", isFullWidth ? "" : COLUMN_CLASSES)}>
           <Outlet />

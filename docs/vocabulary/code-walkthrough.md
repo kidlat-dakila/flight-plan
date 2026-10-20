@@ -128,6 +128,8 @@ A hint is one short sentence Flight Plan writes on its own, with no model, for a
 
 What the block is comes from the `classifications` of the waypoint's code blocks, and what changed from their `diffClassifications`: in each case the classification the hierarchy ranks highest across every code block of the waypoint, or `logic` ("plain logic") when none has one. A nested waypoint with no code blocks of its own is read by the root code blocks of the waypoint it sits in. A waypoint with no code block at all, in a file the codegraph does not trace, has no hint.
 
+On the review page a waypoint with no write-up has a grey dotted ring for its mark, spinning while the agent writes it (`isBeingWritten`). Its card shows the hint, says the waypoint has no write-up yet, and offers "Write up this line" (G) and "Write up the whole code block" (Ctrl+G), which ask the agent for that waypoint or for every waypoint of its root code block ([write-up on demand](agent-conversation.md#write-up-on-demand)). See [the Review Navigator](review-navigator.md#writing-up-a-waypoint) for the keys.
+
 A waypoint with no write-up can be [written up on demand](agent-conversation.md#write-up-on-demand), alone or with every waypoint of its root code block. While the agent writes it, the page data marks it `isBeingWritten`.
 
 `hintOf(blocks, change)` in `packages/codegraph/src/code-blocks/hints.ts` writes it, and `HINT_SUBJECTS` holds the words for each classification. It takes any blocks, so a Trace Diagram card is given its hints the same way.
@@ -150,6 +152,8 @@ The page data carries them on each waypoint and each root code block of a File S
 | `coreChange` | `WaypointView` | The agent's reason, or `null` when it gave none |
 
 Spotlight reads what changed, not what the block is: a component in which only a database write changed is in the spotlight of a user who chose Database operation, and not of one who chose Component. `spotlightViewOf` and `isInSpotlight` in `packages/codegraph/src/code-blocks/spotlight.ts` compute it from any blocks, and the backend passes the spotlight to the codegraph in the `ReviewViewContext`.
+
+The page draws both side by side, Core change first: the Core change mark with its label, then the [Spotlight Mark](../DESIGN.md#spotlight-mark) with "Spotlight" and the matched classifications. A waypoint shows them in its box and its card, and a root code block on its first line. They replace the Needs Attention mark, which no view draws any more.
 
 ## Editing on the author's page
 

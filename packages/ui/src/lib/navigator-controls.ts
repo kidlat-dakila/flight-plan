@@ -195,6 +195,8 @@ export const jumpMenuOf = (rail: NavigatorRail, dominantAnchorId: string | null)
 
 export const BACK_KEY = "a"
 export const NEXT_KEY = "d"
+export const WRITE_UP_KEY = "g"
+export const WRITE_UP_BLOCK_KEY = "ctrl+g"
 const BACK_LABEL = "Back"
 const NEXT_LABEL = "Next"
 

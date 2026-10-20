@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ReactNode } from "react"
 import Button from "@flightplan/ui/blocks/button"
+import ChangeOverview, { type ChangeOverviewRow } from "@flightplan/ui/ChangeOverview"
 import ContextSection, { CONTEXT_PROSE_CLASSES } from "@flightplan/ui/ContextSection"
 import { AccordionOpeningContext, useAccordionNavigation } from "@flightplan/ui/lib/accordion-opening"
 import type { CodeLinkTargets, ProseBlocks } from "@flightplan/ui/lib/review-content"
@@ -25,6 +26,12 @@ interface ContextBandProps {
   readonly markdown: string
   readonly isDraft: boolean
   readonly unwrittenLabel: string
+  readonly writeUpNotice: string | null
+  readonly changeOverview: {
+    readonly heading: string
+    readonly emptyMessage: string | null
+    readonly rows: readonly ChangeOverviewRow[]
+  }
   readonly codeLinks: CodeLinkTargets
   readonly editing: ContextEditing | null
   readonly renderCodeLinkDialog: (request: CodeLinkRequest) => ReactNode
@@ -40,6 +47,8 @@ const ContextBand = ({
   markdown,
   isDraft,
   unwrittenLabel,
+  writeUpNotice,
+  changeOverview,
   codeLinks,
   editing,
   renderCodeLinkDialog,
@@ -51,6 +60,7 @@ const ContextBand = ({
     <ContextSection
       anchorId={anchorId}
       heading={heading}
+      writeUpNotice={writeUpNotice}
       action={editing === null || isWriting ? null : <Button variant="link" size="sm" onClick={editing.onEdit}>Edit</Button>}
     >
       {editing !== null && isWriting
@@ -82,6 +92,7 @@ const ContextBand = ({
             </AccordionOpeningContext>
           )
         : null}
+      <ChangeOverview {...changeOverview} onOpenWaypoint={onOpenCodeLink} />
     </ContextSection>
   )
 }

@@ -10,6 +10,9 @@ const node = (overrides: Partial<TraceNode> & Pick<TraceNode, "id" | "label">): 
   change: null,
   changedLabel: null,
   isDraft: false,
+  classification: { key: "logic", label: "Plain logic" },
+  hint: null,
+  isBeingWritten: false,
   name: "priceOf",
   shortPath: "src/price.ts",
   description: null,
@@ -304,6 +307,66 @@ describe("TraceDiagram", () => {
 
     expect(container.querySelectorAll("[data-row-heading]").length).toBe(0)
     expect(inPlace.map((row) => row.getAttribute("data-block-id"))).toStrictEqual(["on-submit-event", "on-submit-prevent", "on-submit-mutate"])
+  })
+
+  it("names a card's classification after its type, unless they are the same", () => {
+    const nodes = [
+      node({ id: "save", label: "Saves the order", classification: { key: "database-write", label: "Database write" } }),
+      node({ id: "price-of", label: "Prices the line", name: "linePrice", classification: { key: "function", label: "Function" } }),
+    ]
+    const { container } = render(<TraceDiagram title="Orders" nodes={nodes} edges={[]} codeLinks={{}} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />)
+
+    expect(within(boxOf(container, "save") ?? document.body).getByText("Database write")).toBeTruthy()
+    expect(within(boxOf(container, "price-of") ?? document.body).getAllByText("Function")).toHaveLength(1)
+  })
+
+  it("shows Flight Plan's hint in place of the label of a card that has none", () => {
+    const nodes = [node({ id: "cart-line", label: "CartLine", isDraft: true, hint: "Adds a component." })]
+    const { container } = render(<TraceDiagram title="Cart" nodes={nodes} edges={[]} codeLinks={{}} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />)
+
+    expect(within(boxOf(container, "cart-line") ?? document.body).getByText("Adds a component.")).toBeTruthy()
+  })
+
+  it("says in the side panel that a card has no write-up, and asks for one with the button and with G", async () => {
+    const onWriteUpNode = vi.fn()
+    const nodes = [node({ id: "cart-line", label: "CartLine", isDraft: true, hint: "Adds a component." })]
+    renderInNavigator(
+      <TraceDiagram
+        title="Cart"
+        nodes={nodes}
+        edges={[]}
+        codeLinks={{}}
+        codeDefinitions={{}}
+        isReviewPending={false}
+        navigatorAnchorId={SECTION_ANCHOR_ID}
+        onWriteUpNode={onWriteUpNode}
+        onOpenCodeLink={vi.fn()}
+        onWaypointReviewedChange={vi.fn()}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole("button", { name: /^priceOf/ }))
+    const panel = await screen.findByRole("region", { name: "CartLine" })
+
+    expect(within(panel).getByText("This card has no write-up yet.")).toBeTruthy()
+
+    fireEvent.click(within(panel).getByRole("button", { name: /Write up/ }))
+    await findNavigatorButton("Write up")
+    fireEvent.keyDown(document.body, { key: "g" })
+
+    expect(onWriteUpNode.mock.calls).toStrictEqual([["cart-line"], ["cart-line"]])
+  })
+
+  it("spins the side panel's ring while the agent writes the card, and offers no write-up then", async () => {
+    const nodes = [node({ id: "cart-line", label: "CartLine", isDraft: true, isBeingWritten: true })]
+    render(<TraceDiagram title="Cart" nodes={nodes} edges={[]} codeLinks={{}} codeDefinitions={{}} isReviewPending={false} onWriteUpNode={vi.fn()} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />)
+
+    fireEvent.click(screen.getByRole("button", { name: /^priceOf/ }))
+    const panel = await screen.findByRole("region", { name: "CartLine" })
+
+    expect(within(panel).getByText("The agent is writing this card up.")).toBeTruthy()
+    expect(panel.querySelector("[data-being-written=true]")).not.toBeNull()
+    expect(within(panel).queryByRole("button", { name: /Write up/ })).toBeNull()
   })
 
   it("opens the node of a pressed block row", async () => {

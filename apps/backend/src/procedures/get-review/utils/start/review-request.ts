@@ -12,7 +12,7 @@ export const WALKTHROUGH_ORDERS = [
 
 export type WalkthroughOrder = (typeof WALKTHROUGH_ORDERS)[number]
 
-export const CUSTOM_ORDER: WalkthroughOrder = "custom"
+export const DEFAULT_ORDER: WalkthroughOrder = "foundations-first"
 
 export const AUTHOR_STARTS = ["scaffold", "empty"] as const
 
@@ -25,6 +25,9 @@ export type ReviewWriter
     | { readonly kind: "author", readonly start: AuthorStart }
 
 export const isWrittenByAgent = (writer: ReviewWriter | null): boolean => writer?.kind === "agent" || writer?.kind === "external"
+
+export const isWriteUpOffered = (request: ReviewRequest | null): boolean =>
+  request !== null && (request.writeUp !== undefined || request.isWriteUpDeclined === true || isWrittenByAgent(request.writer))
 
 export interface WriteUpChoice {
   readonly sections: readonly WriteUpSection[]
@@ -39,4 +42,5 @@ export interface ReviewRequest {
   readonly writer: ReviewWriter
   readonly requestedAt: Date
   readonly writeUp?: WriteUpChoice | undefined
+  readonly isWriteUpDeclined?: boolean | undefined
 }

@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import type { WalkthroughNavigation } from "@flightplan/ui/CodeWalkthrough"
-import type { CommentRange } from "@flightplan/ui/FileRows"
-import type { WalkthroughControls } from "@flightplan/ui/lib/walkthrough-navigation"
+import type { CommentRange, WriteUpTarget } from "@flightplan/ui/FileRows"
+import type { WalkthroughControls, WriteUpScope } from "@flightplan/ui/lib/walkthrough-navigation"
 import type { SteppedWaypoint, WaypointStepping } from "./use-waypoint-stepping"
 
 type FilterKeys = Parameters<NonNullable<WalkthroughNavigation["onFilterChange"]>>[0]
@@ -9,9 +9,13 @@ type FilterKeys = Parameters<NonNullable<WalkthroughNavigation["onFilterChange"]
 interface NavigatedWaypoint extends SteppedWaypoint {
   readonly isReviewed: boolean
   readonly lines: { readonly lineStart: number, readonly lineEnd: number } | null
+  readonly reading: unknown
+  readonly isBeingWritten: boolean
 }
 
-type NavigatedRow = { readonly kind: "waypoint", readonly waypoint: NavigatedWaypoint } | { readonly kind: "lines" | "gap" }
+type NavigatedRow
+  = | { readonly kind: "waypoint", readonly waypoint: NavigatedWaypoint, readonly rootBlockId: string | null }
+    | { readonly kind: "lines" | "gap" }
 
 interface NavigatedFile {
   readonly anchorId: string
@@ -29,6 +33,7 @@ interface WalkthroughHandlers {
   readonly onFilterChange: ((segmentId: string, keys: FilterKeys) => void) | null
   readonly onShowReviewedChange: ((segmentId: string, isShown: boolean) => void) | null
   readonly onCommentOnWaypoint: ((path: string, range: CommentRange) => void) | null
+  readonly onWriteUp: ((target: WriteUpTarget) => void) | null
 }
 
 interface Collapse {
@@ -98,12 +103,13 @@ const fileHoldingWaypoint = (segments: readonly NavigatedSegment[], waypointId: 
 interface WaypointPlace {
   readonly path: string
   readonly waypoint: NavigatedWaypoint
+  readonly rootBlockId: string | null
 }
 
 const placeOfWaypoint = (segments: readonly NavigatedSegment[], waypointId: string | null): WaypointPlace | null =>
   segments
     .flatMap((segment) => segment.walkthrough.files)
-    .flatMap((file) => file.rows.flatMap((row) => (row.kind === "waypoint" && row.waypoint.id === waypointId ? [{ path: file.path, waypoint: row.waypoint }] : [])))
+    .flatMap((file) => file.rows.flatMap((row) => (row.kind === "waypoint" && row.waypoint.id === waypointId ? [{ path: file.path, waypoint: row.waypoint, rootBlockId: row.rootBlockId }] : [])))
     .at(0) ?? null
 
 const commentRangeOf = (lines: NonNullable<NavigatedWaypoint["lines"]>): CommentRange => ({
@@ -111,6 +117,13 @@ const commentRangeOf = (lines: NonNullable<NavigatedWaypoint["lines"]>): Comment
   startLineLabel: String(lines.lineStart),
   lineLabel: String(lines.lineEnd),
 })
+
+const isUnwritten = (waypoint: NavigatedWaypoint): boolean => waypoint.reading === null && !waypoint.isBeingWritten
+
+const writeUpTargetOf = (place: WaypointPlace, scope: WriteUpScope): WriteUpTarget | null => {
+  if (scope === "line") return { kind: "waypoint", waypointId: place.waypoint.id }
+  return place.rootBlockId === null ? null : { kind: "root-block", rootBlockId: place.rootBlockId }
+}
 
 const withCollapse = (anchorIds: ReadonlySet<string>, changedAnchorIds: readonly string[], isCollapsed: boolean): ReadonlySet<string> =>
   new Set(isCollapsed ? [...anchorIds, ...changedAnchorIds] : [...anchorIds].filter((anchorId) => !changedAnchorIds.includes(anchorId)))
@@ -140,7 +153,7 @@ export const useWalkthroughNavigation = (
   }
   const currentPlace = placeOfWaypoint(segments, stepping.currentWaypointId)
   const currentWaypoint = currentPlace?.waypoint ?? null
-  const { onReviewedChange, onFilterChange, onShowReviewedChange, onCommentOnWaypoint } = handlers
+  const { onReviewedChange, onFilterChange, onShowReviewedChange, onCommentOnWaypoint, onWriteUp } = handlers
 
   return {
     isFileCollapsed: (anchorId) => collapsedAnchorIds.has(anchorId),
@@ -157,7 +170,13 @@ export const useWalkthroughNavigation = (
         canStepForward: segmentStepping.canStepForward,
         currentWaypoint: currentWaypoint === null
           ? null
-          : { isReviewed: currentWaypoint.isReviewed, isOpen: stepping.openWaypointIds.has(currentWaypoint.id), canComment: currentWaypoint.lines !== null },
+          : {
+              isReviewed: currentWaypoint.isReviewed,
+              isOpen: stepping.openWaypointIds.has(currentWaypoint.id),
+              canComment: currentWaypoint.lines !== null,
+              canWriteUp: isUnwritten(currentWaypoint),
+              canWriteUpBlock: currentPlace?.rootBlockId != null,
+            },
         areFilesCollapsed: fileAnchorIds.length > 0 && fileAnchorIds.every((anchorId) => collapsedAnchorIds.has(anchorId)),
         isFileCollapsed: fileUnderBand === null ? null : collapsedAnchorIds.has(fileUnderBand),
         onPrevious: segmentStepping.onPrevious,
@@ -174,6 +193,12 @@ export const useWalkthroughNavigation = (
           : () => {
               if (currentPlace?.waypoint.lines == null) return
               onCommentOnWaypoint(currentPlace.path, commentRangeOf(currentPlace.waypoint.lines))
+            },
+        onWriteUpCurrent: onWriteUp === null
+          ? null
+          : (scope) => {
+              const target = currentPlace === null ? null : writeUpTargetOf(currentPlace, scope)
+              if (target !== null) onWriteUp(target)
             },
         onFilterChange: onFilterChange === null
           ? null

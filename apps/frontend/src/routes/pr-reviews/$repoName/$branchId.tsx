@@ -16,16 +16,11 @@ const ReviewRoutePage = () => {
 }
 
 export const Route = createFileRoute("/pr-reviews/$repoName/$branchId")({
-  staticData: { isFullWidth: true },
+  staticData: { isFullWidth: true, hasPageSettingsMenu: true },
   validateSearch: validateReviewSearch,
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { queryClient, trpc }, params, deps }) => {
-    const page = await queryClient.query({ ...trpc.review.get.queryOptions(reviewRequestOf(params, deps)), staleTime: "static" })
-    if (page.kind !== "missing" || !page.isOwn) return
-    await queryClient.query({
-      ...trpc.review.creationForm.queryOptions({ repositoryName: params.repoName, targetId: params.branchId }),
-      staleTime: "static",
-    })
+    await queryClient.query({ ...trpc.review.get.queryOptions(reviewRequestOf(params, deps)), staleTime: "static" })
   },
   component: ReviewRoutePage,
   pendingComponent: ReviewPageSkeleton,

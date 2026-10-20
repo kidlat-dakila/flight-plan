@@ -139,3 +139,5 @@ On the author's page, a file the change reaches and a file that has an impact ty
 Whether a segment has a Blast Diagram is decided by the codegraph. See "When a segment has one".
 
 A file with no impact can be [assessed on demand](agent-conversation.md#write-up-on-demand) from its side panel; while the agent assesses it, the file carries `isBeingWritten` in the page data. A file of the change has no impact to assess.
+
+On the page the side panel of a file nobody assessed shows what the page data says of it, then "This file has no write-up yet." and Write up (G), which asks the agent for that file (`{ kind: "blast-file", segmentId, path }`, the segment the page shows); G is also in the Review Navigator while the panel is open. While the agent assesses the file the panel says so with the ring spinning, and offers nothing. The panel of a file of the change offers no write-up.

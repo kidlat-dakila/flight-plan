@@ -72,6 +72,21 @@ describe("planNodeWriteUp", () => {
     })
   })
 
+  it("finds a file in the segment that holds it when a review without segments names the segment it shows", () => {
+    const [segment] = DRAFT_ARTIFACT.segments
+    const twoSegments: ReviewArtifact = {
+      ...DRAFT_ARTIFACT,
+      isSegmented: false,
+      segments: [{ ...segment, id: "first", blastDiagram: null }, { ...segment, id: "second" }],
+    }
+
+    const planned = planNodeWriteUp(twoSegments, { kind: "blast-file", segmentId: "first", path: "src/cart/CartTotal.tsx" })
+
+    expect(planned.kind === "planned" ? planned.ask : "").toContain("in the Blast Diagram of segment `second` alone")
+    expect(planned.kind === "planned" ? planned.artifact.segments[1].blastDiagram?.nodes.find((node) => node.path === "src/cart/CartTotal.tsx")?.isRequired : false).toBe(true)
+    expect(planNodeWriteUp({ ...twoSegments, isSegmented: true }, { kind: "blast-file", segmentId: "first", path: "src/cart/CartTotal.tsx" })).toMatchObject({ kind: "rejected" })
+  })
+
   it("refuses a card or a file the diagrams do not have", () => {
     expect(planNodeWriteUp(DRAFT_ARTIFACT, { kind: "trace-node", segmentId: "all", nodeId: "gone" })).toMatchObject({ kind: "rejected", message: "This card is not in the Trace Diagram." })
     expect(planNodeWriteUp(DRAFT_ARTIFACT, { kind: "blast-file", segmentId: "other", path: "src/cart/CartTotal.tsx" })).toMatchObject({ kind: "rejected", message: "This file is not in the Blast Diagram." })

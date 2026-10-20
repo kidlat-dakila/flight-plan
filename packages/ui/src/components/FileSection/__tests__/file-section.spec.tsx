@@ -35,6 +35,9 @@ const createFile = (overrides: Partial<WalkthroughFile> = {}): WalkthroughFile =
         chip: null,
         coreChangeLabel: null,
         reading: null,
+        hint: null,
+        isBeingWritten: false,
+        spotlight: null,
         unwrittenLabel: "Not written yet.",
         coreChange: null,
         findings: [],
@@ -269,6 +272,48 @@ describe("FileSection gutter", () => {
     expect(screen.getByRole("button", { name: "Waypoint 1 of 1: priceOf" }).querySelector("[data-reviewed-glyph]")).not.toBeNull()
   })
 
+  const unwrittenFile = (waypointChange: object, rootBlockId: string | null): WalkthroughFile => {
+    const file = placedFile()
+    return createFile({
+      rows: file.rows.map((row) => (row.kind === "waypoint" ? { ...row, rootBlockId, waypoint: { ...row.waypoint, ...waypointChange } } : row)),
+    })
+  }
+
+  it("draws the write-up ring for the mark of a waypoint with no write-up, spinning while it is written", () => {
+    const view = render(<FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function." }, null) })} />)
+    const ringOf = () => screen.getByRole("button", { name: "Waypoint 1 of 1: priceOf" }).querySelector("[data-being-written]")
+
+    expect(ringOf()?.getAttribute("data-being-written")).toBe("false")
+
+    view.rerender(<FileSection {...createProps({ file: unwrittenFile({ isBeingWritten: true }, null) })} />)
+
+    expect(ringOf()?.getAttribute("data-being-written")).toBe("true")
+  })
+
+  it("shows the hint in the card of a waypoint with no write-up, and asks for a write-up of the line or of its whole code block", async () => {
+    const onWriteUp = vi.fn()
+    render(<FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function." }, "root-1"), previewVisit: { waypointId: "w1", count: 1 }, onWriteUp })} />)
+
+    expect(await screen.findByText("Adds a function.")).toBeTruthy()
+    expect(screen.getByText("This waypoint has no write-up yet.")).toBeTruthy()
+
+    fireEvent.click(screen.getByRole("button", { name: /Write up this line/ }))
+    fireEvent.click(screen.getByRole("button", { name: /Write up the whole code block/ }))
+
+    expect(onWriteUp.mock.calls).toStrictEqual([[{ kind: "waypoint", waypointId: "w1" }], [{ kind: "root-block", rootBlockId: "root-1" }]])
+  })
+
+  it("offers no write-up where the page gives none, and none of a whole code block for a waypoint outside one", async () => {
+    const view = render(<FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function." }, null), previewVisit: { waypointId: "w1", count: 1 }, onWriteUp: vi.fn() })} />)
+
+    expect(await screen.findByRole("button", { name: /Write up this line/ })).toBeTruthy()
+    expect(screen.queryByRole("button", { name: /Write up the whole code block/ })).toBeNull()
+
+    view.rerender(<FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function." }, null), previewVisit: { waypointId: "w1", count: 1 } })} />)
+
+    expect(screen.queryByRole("button", { name: /Write up this line/ })).toBeNull()
+  })
+
   it("draws an open waypoint's box above its lines, moves the anchor to the box, and keeps the mark", () => {
     render(<FileSection {...createProps({ file: placedFile(), openWaypointIds: new Set(["w1"]) })} />)
     const box = screen.getByRole("region", { name: "priceOf" })
@@ -297,11 +342,14 @@ describe("FileSection gutter", () => {
 
 const ROOT_BLOCK_ID = "src/price.ts#function:priceOf"
 
-const rootBlockFile = (isReviewed: boolean): WalkthroughFile =>
+const NO_ROOT_BLOCK_MARKS = { coreChangeLabel: null, spotlight: null }
+
+const rootBlockFile = (isReviewed: boolean, marks: Pick<WalkthroughFile["rootBlocks"][number], "coreChangeLabel" | "spotlight"> = NO_ROOT_BLOCK_MARKS): WalkthroughFile =>
   createFile({
     rootBlocks: [
       {
         id: ROOT_BLOCK_ID,
+        ...marks,
         isReviewed,
         reviewLabel: "Reviewed",
         reviewName: "Reviewed: Function priceOf",
@@ -330,6 +378,19 @@ describe("FileSection root blocks", () => {
     fireEvent.click(screen.getByRole("button", { name: "Reviewed: Function priceOf", pressed: false }))
 
     expect(onRootBlockReviewedChange).toHaveBeenCalledWith(ROOT_BLOCK_ID, true)
+  })
+
+  it("marks a root block that is a core change and in the spotlight on its first line", () => {
+    const view = render(<FileSection {...createProps({ file: rootBlockFile(false) })} />)
+
+    expect(screen.queryByText("Core change")).toBeNull()
+    expect(screen.queryByText("Spotlight")).toBeNull()
+
+    view.rerender(<FileSection {...createProps({ file: rootBlockFile(false, { coreChangeLabel: "Core change", spotlight: { label: "Spotlight", classifications: [{ key: "logic", label: "Plain logic" }] } }) })} />)
+
+    expect(screen.getByText("Core change")).toBeTruthy()
+    expect(screen.getByText("Spotlight")).toBeTruthy()
+    expect(screen.getByText("Plain logic")).toBeTruthy()
   })
 
   it("collapses a reviewed root block to its first line, gaps included, and opens it by hand without taking the mark off", () => {

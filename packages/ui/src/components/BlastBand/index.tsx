@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react"
 import BlastDiagram, { type BlastAssessment, type BlastBoard, type BlastImpactChoice } from "@/components/BlastDiagram"
 import BlastFileMark, { type BlastFileMarkKind } from "@/components/BlastFileMark"
 import LabelSegments from "@/components/LabelSegments"
+import { NoWriteUpTag } from "@/components/WriteUpIcon"
 import { navigatorButtonOf } from "@/lib/navigator-controls"
 import type { CodeLinkTargets } from "@/lib/review-content"
 
@@ -38,6 +39,8 @@ interface BlastBandProps {
   readonly assessmentForm: BlastAssessmentForm
   readonly views: readonly BlastView[]
   readonly codeLinks: CodeLinkTargets
+  readonly writeUpNotice?: string | null
+  readonly onWriteUpFile?: ((path: string) => void) | null
   readonly renderImpactEditor: ((request: BlastImpactEditorRequest) => ReactNode) | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onOpenFile: (anchorId: string) => void
@@ -54,6 +57,8 @@ const BlastBand = ({
   assessmentForm,
   views,
   codeLinks,
+  writeUpNotice = null,
+  onWriteUpFile = null,
   renderImpactEditor,
   onOpenCodeLink,
   onOpenFile,
@@ -63,7 +68,10 @@ const BlastBand = ({
   if (view === undefined) return null
   return (
     <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
-      <h2 id={`${anchorId}-heading`} className="pb-4 text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">{heading}</h2>
+      <div className="flex items-center gap-3 pb-4">
+        <h2 id={`${anchorId}-heading`} className="text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">{heading}</h2>
+        {writeUpNotice === null ? null : <NoWriteUpTag label={writeUpNotice} />}
+      </div>
       <div className="flex flex-col gap-y-1 pb-2 text-sm">
         <LabelSegments segments={view.summary.map((text) => ({ text, kind: "plain" }))} className="tabular-nums" />
         <ul className="flex flex-wrap items-center gap-x-5 gap-y-1 text-muted-foreground">
@@ -86,6 +94,7 @@ const BlastBand = ({
         title={heading}
         board={view.board}
         codeLinks={codeLinks}
+        onWriteUpFile={onWriteUpFile}
         navigation={{
           anchorId,
           leadingGroup: views.length < FEWEST_VIEWS_TO_SWITCH

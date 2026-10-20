@@ -18,6 +18,7 @@ const fileNode = (path: string, label: string): BlastView["board"]["nodes"][numb
   impactReason: null,
   impactNote: null,
   isUnassessed: false,
+  isBeingWritten: false,
   assessment: null,
   importers: { heading: "Imported by 0 files", emptyLabel: "None.", files: [] },
   imports: { heading: "Imports 0 files", emptyLabel: "None.", files: [] },
@@ -72,6 +73,12 @@ describe("BlastBand", () => {
     expect(screen.getByText("Modified file")).toBeTruthy()
     expect(screen.getByText("File the change did not touch")).toBeTruthy()
     expect(screen.getByText("An arrow points at the file that is imported")).toBeTruthy()
+  })
+
+  it("says beside the heading when no file has a write-up yet", () => {
+    renderBand({ writeUpNotice: "No write-up yet" })
+
+    expect(screen.getByText("No write-up yet")).toBeTruthy()
   })
 
   it("opens on the default view, and switches the board, the counts and the key from the navigator", async () => {

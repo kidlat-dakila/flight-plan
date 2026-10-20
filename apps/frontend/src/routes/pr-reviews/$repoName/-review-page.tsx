@@ -3,8 +3,9 @@ import { Link, useNavigate, type ErrorComponentProps } from "@tanstack/react-rou
 import { lazy, Suspense, use, useState } from "react"
 import { createPortal } from "react-dom"
 import { BandSlotContext } from "@/band-slot"
-import { requestNotificationPermission } from "@/notification-permission"
+import { useColorTheme } from "@/color-theme"
 import ServerError from "@/routes/-components/ServerError"
+import { SETTINGS_LINKS } from "@/settings-links"
 import { useTRPC } from "@/trpc"
 import BandLine from "@flightplan/ui/BandLine"
 import BlastBand from "@flightplan/ui/BlastBand"
@@ -17,25 +18,26 @@ import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
 import OrderedSections from "@flightplan/ui/OrderedSections"
-import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, OptionsMenu, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
+import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
 import SectionRail from "@flightplan/ui/SectionRail"
+import SettingsMenu from "@flightplan/ui/SettingsMenu"
 import Toast from "@flightplan/ui/Toast"
 import TraceBand from "@flightplan/ui/TraceBand"
+import WriteUpDialog from "@flightplan/ui/WriteUpDialog"
 import AddCardDialog from "./-components/AddCardDialog"
 import ArrangeDialog from "./-components/ArrangeDialog"
 import CodeLinkDialog from "./-components/CodeLinkDialog"
 import CompletionDialog from "./-components/CompletionDialog"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
-import OwnFlightPlanStart from "./-components/OwnFlightPlanStart"
 import PermissionDialog from "./-components/PermissionDialog"
 import ReviewNotices from "./-components/ReviewNotices"
 import SegmentEditor from "./-components/SegmentEditor"
 import SegmentHeader from "./-components/SegmentHeader"
 import SelectionReference, { type CodeSelection } from "./-components/SelectionReference"
-import StartReview from "./-components/StartReview"
+import TerminusHeading from "./-components/TerminusHeading"
 import UnassignedFilesDialog from "./-components/UnassignedFilesDialog"
 import WalkthroughFile from "./-components/WalkthroughFile"
 import { useAgentChat } from "./-hooks/use-agent-chat"
@@ -50,6 +52,8 @@ import { useTraceEditing } from "./-hooks/use-trace-editing"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
 import { useWalkthroughNavigation } from "./-hooks/use-walkthrough-navigation"
 import { scrollToAnchor, useWaypointStepping } from "./-hooks/use-waypoint-stepping"
+import { useWriteUpDialog } from "./-hooks/use-write-up-dialog"
+import { useWriteUpRequest } from "./-hooks/use-write-up-request"
 
 const ModifyCardDialog = lazy(async () => await import("./-components/ModifyCardDialog"))
 const BlastImpactEditor = lazy(async () => await import("./-components/BlastImpactEditor"))
@@ -172,6 +176,9 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       },
     )
   }
+  const writeUpDialog = useWriteUpDialog(reviewKey, page.kind === "artifact", { onMessage: showToast, onCopy: copyText })
+  const requestWriteUp = useWriteUpRequest(reviewKey, { onMessage: showToast, onCopy: copyText })
+  const writeUp = writeUpDialog.canWriteUp ? requestWriteUp : null
 
   const setReviewed = useMutation(trpc.review.setReviewed.mutationOptions({ onSuccess: refreshReview, onError: reportError }))
   const publishArtifact = useMutation(
@@ -196,21 +203,11 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       onError: reportError,
     }),
   )
-  const requestReview = useMutation(
-    trpc.review.request.mutationOptions({
-      onSuccess: async (result) => {
-        if (result.kind !== "requested") return
-        if (result.prompt === null) showToast(result.message)
-        else copyText(result.prompt, result.message)
-        await refreshReview()
-      },
-    }),
-  )
   const deleteReview = useMutation(
     trpc.review.delete.mutationOptions({
-      onSuccess: async ({ message }) => {
-        showToast(message)
-        await Promise.all([refreshReview(), queryClient.invalidateQueries(trpc.review.creationForm.pathFilter())])
+      onSuccess: async () => {
+        queryClient.removeQueries(trpc.review.get.pathFilter())
+        await navigate({ to: "/" })
       },
       onError: reportError,
     }),
@@ -239,6 +236,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       ? null
       : (segmentId, isShown) => { onSearchChange({ reviewed: withSegmentReviewed(search.reviewed, segmentId, isShown) }) },
     onCommentOnWaypoint: isOwn || artifact?.composer == null ? null : discussion.onStartRangeComment,
+    onWriteUp: writeUp,
   })
 
   const handleEditRailGroup = (anchorId: string): void => {
@@ -289,7 +287,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                 reviewerRequesting={discussion.reviewerRequesting}
                 targetSwitching={targetSwitching}
                 actions={page.kind === "missing"
-                  ? null
+                  ? <SettingsMenu links={SETTINGS_LINKS} useThemeToggle={useColorTheme} />
                   : (
                       <>
                         <BandButton
@@ -338,9 +336,14 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 onDiscard={discussion.onDiscardComment}
                               />
                             )}
-                        <OptionsMenu
-                          forgeLink={page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null}
-                          onDelete={() => { deleteReview.mutate(reviewKey) }}
+                        <SettingsMenu
+                          links={SETTINGS_LINKS}
+                          useThemeToggle={useColorTheme}
+                          reviewActions={{
+                            forgeLink: page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null,
+                            onWriteUp: writeUpDialog.canWriteUp ? writeUpDialog.onOpen : null,
+                            onDelete: () => { deleteReview.mutate(reviewKey) },
+                          }}
                         />
                       </>
                     )}
@@ -349,29 +352,8 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
             </>,
             bandSlot,
           )}
-      {page.kind === "missing" && isOwn
-        ? (
-            <Suspense fallback={null}>
-              <OwnFlightPlanStart repositoryName={params.repoName} targetId={params.branchId} />
-            </Suspense>
-          )
-        : null}
-      {page.kind === "missing" && !isOwn
-        ? (
-            <StartReview
-              heading={page.heading}
-              message={page.message}
-              form={page.form}
-              problem={requestReview.data?.kind === "rejected" ? requestReview.data : null}
-              errorMessage={requestReview.data?.kind === "unavailable" ? requestReview.data.message : requestReview.error?.message ?? null}
-              isPending={requestReview.isPending}
-              dataNotice={page.shell.notice}
-              onSubmit={(choice) => {
-                requestNotificationPermission()
-                requestReview.mutate({ ...reviewKey, ...choice })
-              }}
-            />
-          )
+      {page.kind === "missing"
+        ? <div className="max-w-208"><TerminusHeading heading={page.heading} message={page.message} /></div>
         : null}
       {page.kind === "missing"
         ? null
@@ -410,7 +392,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           isTitleDraft={segment.isTitleDraft}
                           detailLabel={segment.detailLabel}
                           outline={segment.outline}
-                          authoring={isOwn ? segmentEditing.authoringOf(segment.id) : null}
+                          authoring={isOwn && segment.heading !== null ? segmentEditing.authoringOf(segment.id) : null}
                         />
                         <OrderedSections
                           order={segment.sectionOrder}
@@ -418,6 +400,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                             context: (
                               <ContextBand
                                 {...segment.context}
+                                writeUpNotice={segment.writeUpNotices.context}
                                 codeLinks={page.codeLinks}
                                 editing={isOwn ? contextEditingOf(segment.id) : null}
                                 renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
@@ -427,11 +410,18 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                             traceDiagram: (
                               <TraceBand
                                 {...segment.traceDiagram}
+                                writeUpNotice={segment.writeUpNotices.traceDiagram}
                                 codeLinks={page.codeLinks}
                                 codeDefinitions={page.codeDefinitions}
                                 isReviewPending={setReviewed.isPending}
                                 authoring={isOwn ? traceEditing.authoringOf(segment.id) : null}
                                 cardMoving={page.canMoveCards ? traceEditing.cardMovingOf(segment.id) : null}
+                                onWriteUpNode={writeUp === null ? null : (nodeId) => { writeUp({ kind: "trace-node", segmentId: segment.id, nodeId }) }}
+                                tabEditing={{
+                                  authoringOf: (tabId) => (isOwn ? traceEditing.authoringOf(tabId) : null),
+                                  cardMovingOf: (tabId) => (page.canMoveCards ? traceEditing.cardMovingOf(tabId) : null),
+                                  writeUpOf: (tabId) => (writeUp === null ? null : (nodeId) => { writeUp({ kind: "trace-node", segmentId: tabId, nodeId }) }),
+                                }}
                                 renderDescriptionEditor={isOwn
                                   ? (request) => (
                                       <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
@@ -454,6 +444,8 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                   : (
                                       <BlastBand
                                         {...segment.blastDiagram}
+                                        writeUpNotice={segment.writeUpNotices.blastDiagram}
+                                        onWriteUpFile={writeUp === null ? null : (path) => { writeUp({ kind: "blast-file", segmentId: segment.id, path }) }}
                                         codeLinks={page.codeLinks}
                                         renderImpactEditor={isOwn
                                           ? (request) => (
@@ -479,6 +471,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 heading={segment.walkthrough.heading}
                                 coverageLabel={segment.walkthrough.coverageLabel}
                                 emptyMessage={segment.walkthrough.emptyMessage}
+                                writeUpNotice={segment.writeUpNotices.walkthrough}
                                 navigation={walkthroughLayout.navigationOf(segment)}
                                 onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
                                   ? () => { setArrangedWalkthroughSegmentId(segment.id) }
@@ -538,6 +531,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                         onReply={discussion.onReply}
                                         onResolveThread={discussion.onResolveThread}
                                         onDiscardComment={discussion.onDiscardComment}
+                                        onWriteUp={writeUp}
                                       />
                                     ))}
                               </CodeWalkthrough>
@@ -565,7 +559,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           />
                         )
                       : null}
-                    {isOwn && !segmentEditing.addition.isWriting
+                    {isOwn && !segmentEditing.addition.isWriting && page.segments.every((segment) => segment.heading !== null)
                       ? <Button variant="outline" className="mt-6" onClick={segmentEditing.addition.onEdit}>{ADD_SEGMENT_LABEL}</Button>
                       : null}
                     {page.conversation === null || page.composer === null
@@ -622,6 +616,18 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
                         />
                       </Suspense>
+                    )}
+                {writeUpDialog.plan === null
+                  ? null
+                  : (
+                      <WriteUpDialog
+                        plan={writeUpDialog.plan}
+                        problem={writeUpDialog.problem}
+                        isPending={writeUpDialog.isPending}
+                        onSectionsChange={writeUpDialog.onSectionsChange}
+                        onSubmit={writeUpDialog.onSubmit}
+                        onClose={writeUpDialog.onClose}
+                      />
                     )}
                 {isChoosingPullRequest && page.completeAction?.pullRequestChoice != null
                   ? (

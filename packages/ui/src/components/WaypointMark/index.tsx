@@ -5,7 +5,9 @@ import FindingMark, { FindingChip, type FindingMarkKind } from "@/components/Fin
 import LabelSegments from "@/components/LabelSegments"
 import Prose from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
+import { SpotlightChip } from "@/components/SpotlightMark"
 import type { WaypointContent } from "@/components/WaypointBox"
+import WriteUpIcon, { NoWriteUpTag, WriteUpButton } from "@/components/WriteUpIcon"
 import {
   GUTTER_CARD_COLLISION_AVOIDANCE,
   GUTTER_CARD_GAP_PX,
@@ -19,6 +21,7 @@ import {
   whenScrollSettles,
   type GutterCardPlacement,
 } from "@/lib/gutter-card"
+import { WRITE_UP_KEY } from "@/lib/navigator-controls"
 import type { CodeLinkTargets } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 import { WAYPOINT_KEY } from "@/lib/walkthrough-navigation"
@@ -30,6 +33,11 @@ export interface MarkedWaypoint extends WaypointContent {
   readonly rangeLabel: string | null
   readonly mark: { readonly kind: WaypointMarkKind, readonly label: string }
   readonly lines: { readonly lineStart: number, readonly lineEnd: number } | null
+}
+
+export interface WaypointWriteUp {
+  readonly onLine: () => void
+  readonly onBlock: (() => void) | null
 }
 
 export type StemReach = "start" | "middle" | "end" | "single"
@@ -53,6 +61,7 @@ interface WaypointMarkProps {
   readonly isTabStop: boolean
   readonly previewRequest: number | null
   readonly codeLinks: CodeLinkTargets
+  readonly writeUp: WaypointWriteUp | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggle: () => void
   readonly onReviewedChange: ((isReviewed: boolean) => void) | null
@@ -76,6 +85,11 @@ const MARK_CLASSES = cn(
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
 )
 const CARD_CLASSES = cn("flex flex-col font-sans", GUTTER_CARD_WIDTH_CLASSES)
+const NO_WRITE_UP_LABEL = "This waypoint has no write-up yet."
+const BEING_WRITTEN_LABEL = "The agent is writing this waypoint up."
+const WRITE_UP_LINE_LABEL = "Write up this line"
+const WRITE_UP_BLOCK_LABEL = "Write up the whole code block"
+const CONTROL_KEY_LABEL = "Ctrl+G"
 
 export const WaypointLane = ({ stem, children }: WaypointLaneProps) => {
   const toneClasses = stem?.isSolid === true ? "opacity-100" : "opacity-40"
@@ -99,19 +113,41 @@ const ReviewedGlyph = () => (
   <CheckIcon data-reviewed-glyph="" aria-hidden="true" className="size-3.5 shrink-0 text-(--line)" strokeWidth={3} />
 )
 
-const MarkGlyph = ({ kind, isReviewed }: { readonly kind: WaypointMarkKind, readonly isReviewed: boolean }) => {
-  if (isReviewed) return <ReviewedGlyph />
-  return kind === "plain" ? <PointerGlyph /> : <FindingMark kind={kind} />
+const MarkGlyph = ({ waypoint }: { readonly waypoint: MarkedWaypoint }) => {
+  if (waypoint.isReviewed) return <ReviewedGlyph />
+  if (waypoint.mark.kind !== "plain") return <FindingMark kind={waypoint.mark.kind} />
+  return waypoint.reading === null ? <WriteUpIcon isBeingWritten={waypoint.isBeingWritten} /> : <PointerGlyph />
 }
+
+interface MissingWriteUpProps {
+  readonly waypoint: MarkedWaypoint
+  readonly writeUp: WaypointWriteUp | null
+}
+
+const MissingWriteUp = ({ waypoint, writeUp }: MissingWriteUpProps) => (
+  <div className="flex flex-col gap-2 border-t px-3 py-2">
+    {waypoint.hint === null ? null : <p className="text-sm text-foreground">{waypoint.hint}</p>}
+    <NoWriteUpTag label={waypoint.isBeingWritten ? BEING_WRITTEN_LABEL : NO_WRITE_UP_LABEL} isBeingWritten={waypoint.isBeingWritten} />
+    {writeUp === null || waypoint.isBeingWritten
+      ? null
+      : (
+          <div className="flex flex-wrap gap-1.5">
+            <WriteUpButton label={WRITE_UP_LINE_LABEL} keyLabel={WRITE_UP_KEY} onClick={writeUp.onLine} />
+            {writeUp.onBlock === null ? null : <WriteUpButton label={WRITE_UP_BLOCK_LABEL} keyLabel={CONTROL_KEY_LABEL} onClick={writeUp.onBlock} />}
+          </div>
+        )}
+  </div>
+)
 
 const WaypointCard = ({
   waypoint,
   isCurrent,
   isReviewPending,
   codeLinks,
+  writeUp,
   onOpenCodeLink,
   onReviewedChange,
-}: Pick<WaypointMarkProps, "waypoint" | "isCurrent" | "isReviewPending" | "codeLinks" | "onOpenCodeLink" | "onReviewedChange">) => {
+}: Pick<WaypointMarkProps, "waypoint" | "isCurrent" | "isReviewPending" | "codeLinks" | "writeUp" | "onOpenCodeLink" | "onReviewedChange">) => {
   const firstBlock = waypoint.reading?.slice(0, 1) ?? null
   const metaSegments = [waypoint.rangeLabel, waypoint.positionLabel]
     .filter((label) => label !== null)
@@ -119,22 +155,25 @@ const WaypointCard = ({
   return (
     <>
       <div className="flex flex-col gap-1 px-3 pt-2.5 pb-2">
-        {waypoint.chip === null && waypoint.coreChangeLabel === null
+        {waypoint.chip === null && waypoint.coreChangeLabel === null && waypoint.spotlight === null
           ? null
           : (
               <div className="flex flex-wrap gap-x-3 gap-y-1">
                 {waypoint.chip === null ? null : <FindingChip kind={waypoint.chip.kind} label={waypoint.chip.label} />}
                 {waypoint.coreChangeLabel === null ? null : <FindingChip kind="core-change" label={waypoint.coreChangeLabel} />}
+                {waypoint.spotlight === null ? null : <SpotlightChip spotlight={waypoint.spotlight} />}
               </div>
             )}
         <p className={cn("leading-5", waypoint.isDraft ? "font-mono text-muted-foreground" : "font-semibold")}>{waypoint.title}</p>
         <LabelSegments segments={metaSegments} className="text-xs text-muted-foreground tabular-nums" />
       </div>
-      <div className="line-clamp-3 border-t px-3 py-2">
-        {firstBlock === null
-          ? <p className="text-sm text-muted-foreground">{waypoint.unwrittenLabel}</p>
-          : <Prose blocks={firstBlock} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} className={GUTTER_CARD_PROSE_CLASSES} />}
-      </div>
+      {firstBlock === null
+        ? <MissingWriteUp waypoint={waypoint} writeUp={writeUp} />
+        : (
+            <div className="line-clamp-3 border-t px-3 py-2">
+              <Prose blocks={firstBlock} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} className={GUTTER_CARD_PROSE_CLASSES} />
+            </div>
+          )}
       <div className="flex min-h-9 items-center gap-2 border-t py-1 pr-1 pl-3 text-xs text-muted-foreground">
         <span>{isCurrent ? EXPAND_KEY_HINT : EXPAND_CLICK_HINT}</span>
         {onReviewedChange === null
@@ -161,6 +200,7 @@ const WaypointMark = ({
   isTabStop,
   previewRequest,
   codeLinks,
+  writeUp,
   onOpenCodeLink,
   onToggle,
   onReviewedChange,
@@ -207,7 +247,7 @@ const WaypointMark = ({
           onToggle()
         }}
       >
-        <MarkGlyph kind={waypoint.mark.kind} isReviewed={waypoint.isReviewed} />
+        <MarkGlyph waypoint={waypoint} />
       </HoverCardTrigger>
       {placement === null
         ? null
@@ -227,6 +267,7 @@ const WaypointMark = ({
                 isCurrent={isCurrent}
                 isReviewPending={isReviewPending}
                 codeLinks={codeLinks}
+                writeUp={writeUp}
                 onOpenCodeLink={onOpenCodeLink}
                 onReviewedChange={onReviewedChange}
               />

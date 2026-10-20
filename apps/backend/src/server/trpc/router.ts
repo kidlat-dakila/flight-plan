@@ -9,6 +9,7 @@ import { chooseModelRoute } from "./routes/choose-model"
 import { completeSetupRoute } from "./routes/complete-setup"
 import { configureRepositoryRoute } from "./routes/configure-repository"
 import { createConfigurationRoute } from "./routes/create-configuration"
+import { declineWriteUpRoute } from "./routes/decline-write-up"
 import { deleteConfigurationRoute } from "./routes/delete-configuration"
 import { deleteReviewRoute } from "./routes/delete-review"
 import { discardCommentRoute } from "./routes/discard-comment"
@@ -48,7 +49,6 @@ import { removeRepositoryRoute } from "./routes/remove-repository"
 import { removeReviewRequestRoute } from "./routes/remove-review-request"
 import { removeSetupRepositoryRoute } from "./routes/remove-setup-repository"
 import { replyToThreadRoute } from "./routes/reply-to-thread"
-import { requestReviewRoute } from "./routes/request-review"
 import { requestReviewerRoute } from "./routes/request-reviewer"
 import { requestWriteUpRoute } from "./routes/request-write-up"
 import { resolveThreadRoute } from "./routes/resolve-thread"
@@ -121,9 +121,9 @@ export const appRouter = createRouter({
     creationForm: getCreationFormRoute,
     searchTargets: searchCreationTargetsRoute,
     targetSwitcher: getTargetSwitcherRoute,
-    request: requestReviewRoute,
     writeUpPlan: getWriteUpPlanRoute,
     writeUp: writeUpReviewRoute,
+    declineWriteUp: declineWriteUpRoute,
     requestWriteUp: requestWriteUpRoute,
     delete: deleteReviewRoute,
     setReviewed: setReviewedRoute,

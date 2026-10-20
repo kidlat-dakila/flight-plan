@@ -5,8 +5,10 @@ import DiagramBoard, { type BoardNavigation } from "@/components/DiagramBoard"
 import DiagramNodePanel from "@/components/DiagramNodePanel"
 import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
+import { WriteUpOffer } from "@/components/WriteUpIcon"
 import { straightPath, type Point } from "@/lib/diagram-path"
 import { neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
+import { navigatorButtonOf, WRITE_UP_KEY, type NavigatorButton } from "@/lib/navigator-controls"
 import type { CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 
 interface BlastFileRow {
@@ -44,6 +46,7 @@ export interface BlastNode {
   readonly impactReason: ProseBlocks | null
   readonly impactNote: string | null
   readonly isUnassessed: boolean
+  readonly isBeingWritten: boolean
   readonly assessment: BlastAssessment | null
   readonly importers: BlastFileList
   readonly imports: BlastFileList
@@ -70,6 +73,7 @@ interface BlastDiagramProps {
   readonly codeLinks: CodeLinkTargets
   readonly authoring: BlastAuthoring | null
   readonly navigation?: BoardNavigation | null
+  readonly onWriteUpFile?: ((path: string) => void) | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onOpenFile: (anchorId: string) => void
 }
@@ -82,6 +86,9 @@ const ARROW_PATH = "M1 1.5 8 5 1 8.5z"
 const NODE_CLASSES = "group absolute flex -translate-x-1/2 flex-col items-center rounded-sm text-center transition-opacity duration-[180ms] ease-out data-[standing=far]:opacity-25"
 const LABEL_CLASSES = "mt-0.5 rounded-sm bg-background px-1 font-mono text-[0.6875rem] leading-4 whitespace-nowrap text-muted-foreground transition-colors duration-[180ms] ease-out group-hover:text-foreground group-data-[quiet=false]:text-foreground group-data-[standing=focal]:font-bold group-data-[standing=focal]:text-foreground group-data-[standing=near]:text-foreground"
 const EDGE_CLASSES = "fill-none stroke-current opacity-55 transition-[color,opacity] duration-[180ms] ease-out [stroke-width:1.25] data-[standing=far]:opacity-15 data-[standing=near]:text-foreground data-[standing=near]:opacity-100"
+const FILE_NO_WRITE_UP_LABEL = "This file has no write-up yet."
+const FILE_BEING_WRITTEN_LABEL = "The agent is assessing this file."
+const WRITE_UP_FILE_LABEL = "Write up"
 const FILE_ROW_CLASSES = "block w-full rounded-sm px-2 py-1 text-left font-mono text-[0.8125rem] leading-5 wrap-anywhere hover:bg-muted"
 
 const standingOf = (isFocal: boolean, isNear: boolean, hasFocus: boolean): Standing => {
@@ -112,7 +119,14 @@ const FileList = ({ list, onSelect }: FileListProps) => (
   </div>
 )
 
-const BlastDiagram = ({ title, board, codeLinks, authoring, navigation = null, onOpenCodeLink, onOpenFile }: BlastDiagramProps) => {
+const isOfferedWriteUp = (node: BlastNode): boolean => node.isUnassessed && node.assessment !== null
+
+const writeUpButtonsOf = (node: BlastNode | null, onWriteUpFile: ((path: string) => void) | null): NavigatorButton[] =>
+  node === null || onWriteUpFile === null || !isOfferedWriteUp(node) || node.isBeingWritten
+    ? []
+    : [navigatorButtonOf({ key: WRITE_UP_KEY, label: WRITE_UP_FILE_LABEL, onRun: () => { onWriteUpFile(node.path) } })]
+
+const BlastDiagram = ({ title, board, codeLinks, authoring, navigation = null, onWriteUpFile = null, onOpenCodeLink, onOpenFile }: BlastDiagramProps) => {
   const markerId = useId()
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
@@ -139,7 +153,7 @@ const BlastDiagram = ({ title, board, codeLinks, authoring, navigation = null, o
       height={board.height}
       isFullScreen={isFullScreen}
       isCentred
-      navigation={navigation}
+      navigation={navigation === null ? null : { ...navigation, leadingGroup: [...navigation.leadingGroup, ...writeUpButtonsOf(selectedNode, onWriteUpFile)] }}
       onFullScreenChange={(isOpening) => {
         setIsFullScreen(isOpening)
         if (!isOpening) closePanel()
@@ -150,7 +164,18 @@ const BlastDiagram = ({ title, board, codeLinks, authoring, navigation = null, o
         : (
             <DiagramNodePanel title={selectedNode.path} titleKind="code" kindLabel={selectedNode.markLabel} target={null} onClose={closePanel}>
               {isEditingImpact ? authoring.renderImpactEditor(selectedNode, stopEditingImpact) : null}
-              {isEditingImpact || selectedNode.impactNote === null
+              {isEditingImpact || !isOfferedWriteUp(selectedNode)
+                ? null
+                : (
+                    <WriteUpOffer
+                      hint={selectedNode.impactNote}
+                      label={selectedNode.isBeingWritten ? FILE_BEING_WRITTEN_LABEL : FILE_NO_WRITE_UP_LABEL}
+                      isBeingWritten={selectedNode.isBeingWritten}
+                      buttonLabel={WRITE_UP_FILE_LABEL}
+                      onWriteUp={onWriteUpFile === null ? null : () => { onWriteUpFile(selectedNode.path) }}
+                    />
+                  )}
+              {isEditingImpact || isOfferedWriteUp(selectedNode) || selectedNode.impactNote === null
                 ? null
                 : (
                     <Unwritten isPending={selectedNode.isUnassessed} lineCount={2}>

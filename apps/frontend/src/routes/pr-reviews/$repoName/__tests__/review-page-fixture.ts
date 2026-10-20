@@ -56,8 +56,9 @@ const fileOrderOf = (files: readonly OrderedFile[]) =>
 const ABSENT_TRACE = { anchorId: "", heading: "Trace Diagram", diagram: null, tabs: [] }
 
 export const SECTION_ORDER = ["context", "traceDiagram", "blastDiagram", "walkthrough"] as const
+export const NO_WRITE_UP_NOTICES = { context: null, traceDiagram: null, blastDiagram: null, walkthrough: null }
 
-const segment = (id: string, title: string | null, position: number, files: readonly OrderedFile[]) => ({
+const segment = <File extends OrderedFile>(id: string, title: string | null, position: number, files: readonly File[]) => ({
   id,
   anchorId: `segment-${id}`,
   title,
@@ -93,6 +94,7 @@ const segment = (id: string, title: string | null, position: number, files: read
     fileOrder: fileOrderOf(files),
   },
   sectionOrder: SECTION_ORDER,
+  writeUpNotices: NO_WRITE_UP_NOTICES,
 })
 
 const priceFile = {
@@ -329,25 +331,6 @@ const plain = (text: string) => ({ text, kind: "plain" })
 
 const changedFiles = [plain("10 changed files"), plain("4 TypeScript"), plain("2 TSX")]
 
-const configurationOption = (configurationId: string, label: string, tagLabel: string | null) => ({
-  configurationId,
-  label,
-  tagLabel,
-  bestFor: `Best for ${label}.`,
-  description: `The agent writes the ${label} review.`,
-  note: null,
-  rewriteNotice: null as string | null,
-})
-
-const orderOption = (order: string, label: string, tagLabel: string | null = null) => ({
-  order,
-  label,
-  tagLabel,
-  summary: `${label}, in short.`,
-  description: `${label}, described.`,
-  promptField: null,
-})
-
 const blastFile = (path: string, label: string, x: number) => ({
   id: path,
   x,
@@ -360,6 +343,7 @@ const blastFile = (path: string, label: string, x: number) => ({
   impactReason: null,
   impactNote: "Nobody has assessed what the change does to this file.",
   isUnassessed: true,
+  isBeingWritten: false,
   assessment: { impactType: "unassessed", impactReason: "" },
   importers: { heading: "Imported by 0 files", emptyLabel: "No file of this segment imports it.", files: [] },
   imports: { heading: "Imports 0 files", emptyLabel: "It imports no file of this segment.", files: [] },
@@ -424,110 +408,9 @@ export const missingPage = {
   kind: "missing",
   shell,
   isOwn: false,
-  heading: "No Flight Plan Review yet",
-  message: "Choose how the review is written, then start it.",
+  heading: "Flight Plan could not build this review",
+  message: "This change touches no files, so there is nothing to review.",
   changedFiles,
-  form: {
-    configuration: {
-      heading: "Configuration",
-      hint: "How the agent writes the review.",
-      dialogTitle: "Choose a configuration",
-      dialogDescription: "Only how the review is written changes.",
-      chooseLabel: "Choose",
-      cancelLabel: "Cancel",
-      selectedConfigurationId: "standard",
-      options: [configurationOption("standard", "Standard", "Default"), configurationOption("onboardee", "Onboardee", null)],
-    },
-    order: {
-      heading: "Order of the Code Walkthrough",
-      hint: "The order the agent puts the changed files in.",
-      dialogTitle: "Choose the order of the Code Walkthrough",
-      dialogDescription: "Only which file comes first changes.",
-      chooseLabel: "Choose",
-      cancelLabel: "Cancel",
-      selectedOrder: "foundations-first",
-      customOrder: "",
-      options: [
-        orderOption("foundations-first", "Foundations first", "Default"),
-        orderOption("risk-first", "Risk first"),
-        {
-          ...orderOption("custom", "Custom"),
-          promptField: { label: "Your instruction for the order", placeholder: "For example: the migration first." },
-        },
-      ],
-    },
-    writer: {
-      heading: "Agent",
-      hint: "Who writes the review.",
-      selectedKey: "claude",
-      agents: [
-        {
-          agent: "claude",
-          label: "Claude",
-          description: "Flight Plan starts Claude in this repository.",
-          modelLegend: "Model for Claude",
-          effortLegend: "Effort for Claude",
-          hasModelChoice: true,
-          modelOptions: [
-            {
-              model: "default",
-              label: "Default (recommended)",
-              hasEffortChoice: true,
-              effortOptions: [{ effort: "default", label: "Default" }, { effort: "high", label: "High" }],
-              selectedEffort: "default",
-            },
-            {
-              model: "opus",
-              label: "Opus 5.5",
-              hasEffortChoice: true,
-              effortOptions: [
-                { effort: "default", label: "Default" },
-                { effort: "high", label: "High" },
-                { effort: "xhigh", label: "Extra high" },
-              ],
-              selectedEffort: "default",
-            },
-            {
-              model: "haiku",
-              label: "Haiku 4.5",
-              hasEffortChoice: false,
-              effortOptions: [{ effort: "default", label: "Default" }],
-              selectedEffort: "default",
-            },
-          ],
-          selectedModel: "default",
-          selectedEffort: "default",
-          submitLabel: "Start the review",
-        },
-        {
-          agent: "codex",
-          label: "Codex",
-          description: "Flight Plan can't start Codex itself, so it gives you one line to run in Codex.",
-          modelLegend: "Model for Codex",
-          effortLegend: "Effort for Codex",
-          hasModelChoice: false,
-          modelOptions: [
-            {
-              model: "default",
-              label: "Your Codex default",
-              hasEffortChoice: false,
-              effortOptions: [{ effort: "default", label: "Default" }],
-              selectedEffort: "default",
-            },
-          ],
-          selectedModel: "default",
-          selectedEffort: "default",
-          submitLabel: "Get the line for Codex",
-        },
-      ],
-      none: {
-        label: "Without an agent",
-        description: "Flight Plan builds the review on its own, and you read it without a write-up.",
-        submitLabel: "Build the review",
-      },
-    },
-    pendingLabel: "Starting…",
-  },
 }
 
 export const conversationReply = {
@@ -603,4 +486,29 @@ export const showSectionInView = (anchorId: string | null): void => {
       return DOMRect.fromRect(this.id === anchorId ? SECTION_IN_VIEW : {})
     },
   })
+}
+
+export const writeUpPlan = {
+  kind: "plan",
+  isOffered: false,
+  agentLabel: "Claude",
+  summary: [
+    { label: "Write up", value: "Context and Findings" },
+    { label: "Prompt configuration", value: "Standard" },
+    { label: "Code Walkthrough order", value: "Bottom up" },
+    { label: "Segments", value: "On" },
+  ],
+  sections: [
+    { section: "context", label: "Context", count: 2, countLabel: "2 parts to write", isChosen: true },
+    { section: "traceDiagram", label: "Trace Diagram", count: 0, countLabel: "Nothing to write", isChosen: false },
+    { section: "blastDiagram", label: "Blast Diagram", count: 0, countLabel: "Nothing to write", isChosen: false },
+    { section: "walkthrough", label: "Code Walkthrough", count: 3, countLabel: "3 parts to write", isChosen: false },
+    { section: "findings", label: "Findings", count: 3, countLabel: "3 waypoints to check", isChosen: true },
+  ],
+  totalLabel: "2 parts to write and 3 waypoints to check",
+  configurations: [{ id: "standard", label: "Standard" }],
+  configurationId: "standard",
+  walkthroughOrders: [{ order: "imports-bottom-up", label: "Bottom up", description: "A file comes before the files that import it." }],
+  walkthroughOrder: "imports-bottom-up",
+  isSegmented: true,
 }

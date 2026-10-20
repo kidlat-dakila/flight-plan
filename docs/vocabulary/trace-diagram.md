@@ -307,6 +307,8 @@ A group cut into several [segments](codegraph/segments.md) has one diagram per s
 | An entry segment | The chains that lead to a change in its own files, and below a changed root block of its own, the steps that lead to a change of the shared segment |
 | The shared segment | The chains that lead to a change in the shared files and pass through no changed file of an entry segment. A shared file above the lines of change is drawn from its start down to itself, and no further. A shared file below them is drawn alone, with the unchanged code that leads to it: the paths through an entry segment are in the diagram of that segment. |
 
+With segments off a review has one segment, and when two or more of the segments it would have had each have a Trace Diagram, the band shows them as tabs: one tab per diagram, named after it, the first open. The open tab draws its diagram as a segment's diagram is drawn, with its description, its board and its controls in the Review Navigator. The page data carries them as `traceDiagram.tabs` with `diagram` `null` ([segments off](review-artifact.md#segments-off)); each tab's `id` is the segment the diagram was built for, which an author's edits and a write-up of one of its cards name.
+
 ## When there is no diagram
 
 A change that touches only types, interfaces or import lines changes nothing that runs, so it has no Trace Diagram. Neither has a change that touches only statements at the top level of a file, which are no nodes. Neither has a file no language reads.
@@ -460,6 +462,8 @@ Until the agent writes them, Flight Plan fills the missing parts of a diagram wi
 | The description of the diagram | `descriptionHint` on the diagram: what its cards are, each once, in their order (`traceHintOf`) | "Runs through a component, an effect and plain logic." |
 
 Every card also carries its classification as `classification`, the one its root code block shows in the Code Walkthrough. A card can be [written up on demand](agent-conversation.md#write-up-on-demand) from its side panel, and carries `isBeingWritten` while the agent writes it.
+
+On the page a card names its classification after its type ("Route • API route"), or its type alone when the two are the same. A card with no label shows its hint where the label goes, in secondary ink and regular weight, so it never reads as the agent's. A row with no label keeps the name of its code and shows its hint as a tooltip. A diagram with no description shows its `descriptionHint` where the description goes. In full screen the side panel of a card with no label shows its hint, says "This card has no write-up yet." and offers Write up (G), which asks the agent for that card (`review.requestWriteUp` with `{ kind: "trace-node", segmentId, nodeId }`, the segment being the tab's with segments off); G is also in the Review Navigator while the panel is open. While the agent writes the card the panel says so with the ring spinning, and offers nothing.
 
 ## What an author changes
 

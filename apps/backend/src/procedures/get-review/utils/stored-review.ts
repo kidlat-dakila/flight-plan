@@ -36,6 +36,7 @@ const requestSchema = z.strictObject({
     sections: z.array(z.enum(WRITE_UP_SECTIONS)),
     walkthroughOrder: z.enum(SORTED_WALKTHROUGH_ORDERS),
   }).optional(),
+  isWriteUpDeclined: z.boolean().optional(),
 }).transform((request) => ({ ...request, configurationId: request.configurationId ?? request.preset }))
 
 const RETIRED_ARTIFACT_KEYS: readonly string[] = ["sections"]

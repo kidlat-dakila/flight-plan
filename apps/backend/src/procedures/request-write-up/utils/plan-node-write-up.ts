@@ -3,7 +3,7 @@ import { joinedList } from "@/procedures/get-write-up-plan/utils/joined-list"
 import { waypointsOf } from "@/procedures/read-artifact/utils/artifact-walk"
 import { withRequiredBlastFile, withRequiredCard, withRequiredWaypoints } from "@/procedures/read-artifact/utils/required-nodes"
 import { listRootBlockWaypointIds, listTraceNodes } from "@flightplan/codegraph"
-import type { BlastNode, ReviewArtifact, TraceNode, Waypoint } from "@flightplan/configurations"
+import type { BlastNode, ReviewArtifact, Segment, TraceNode, Waypoint } from "@flightplan/configurations"
 import type { WriteUpRequestResult, WriteUpTarget } from "./schemas"
 
 export type PlannedNodeWriteUp
@@ -63,10 +63,21 @@ const planTraceNode = (artifact: ReviewArtifact, target: TargetOf<"trace-node">)
   )
 }
 
-const findBlastFile = (artifact: ReviewArtifact, { segmentId, path }: TargetOf<"blast-file">): BlastNode | undefined =>
-  artifact.segments.find((segment) => segment.id === segmentId)?.blastDiagram?.nodes.find((node) => node.path === path)
+const blastFileIn = (segment: Segment | undefined, path: string): BlastNode | undefined =>
+  segment?.blastDiagram?.nodes.find((node) => node.path === path)
 
-const planBlastFile = (artifact: ReviewArtifact, target: TargetOf<"blast-file">): PlannedNodeWriteUp => {
+const findBlastFile = (artifact: ReviewArtifact, { segmentId, path }: TargetOf<"blast-file">): BlastNode | undefined =>
+  blastFileIn(artifact.segments.find((segment) => segment.id === segmentId), path)
+
+const blastTargetOf = (artifact: ReviewArtifact, target: TargetOf<"blast-file">): TargetOf<"blast-file"> => {
+  const isNamedSegment = artifact.segments.some((segment) => segment.id === target.segmentId)
+  if (artifact.isSegmented || !isNamedSegment || findBlastFile(artifact, target) !== undefined) return target
+  const holder = artifact.segments.find((segment) => blastFileIn(segment, target.path) !== undefined)
+  return holder === undefined ? target : { ...target, segmentId: holder.id }
+}
+
+const planBlastFile = (artifact: ReviewArtifact, requested: TargetOf<"blast-file">): PlannedNodeWriteUp => {
+  const target = blastTargetOf(artifact, requested)
   const node = findBlastFile(artifact, target)
   if (node === undefined) return rejected("This file is not in the Blast Diagram.")
   if (node.diffType !== null) return rejected("This file is part of the change, so it has no impact to assess.")

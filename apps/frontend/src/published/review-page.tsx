@@ -8,6 +8,7 @@ import { useWaypointStepping } from "@/routes/pr-reviews/$repoName/-hooks/use-wa
 import BandLine from "@flightplan/ui/BandLine"
 import BlastBand from "@flightplan/ui/BlastBand"
 import BrandMark from "@flightplan/ui/BrandMark"
+import ChangeOverview, { type ChangeOverviewRow } from "@flightplan/ui/ChangeOverview"
 import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import ContextSection, { CONTEXT_PROSE_CLASSES } from "@flightplan/ui/ContextSection"
 import FileSection from "@flightplan/ui/FileSection"
@@ -46,11 +47,16 @@ interface PublishedContextProps {
   readonly context: ProseBlocks
   readonly isDraft: boolean
   readonly unwrittenLabel: string
+  readonly changeOverview: {
+    readonly heading: string
+    readonly emptyMessage: string | null
+    readonly rows: readonly ChangeOverviewRow[]
+  }
   readonly codeLinks: CodeLinkTargets
   readonly onOpenCodeLink: (anchorId: string) => void
 }
 
-const PublishedContext = ({ anchorId, heading, context, isDraft, unwrittenLabel, codeLinks, onOpenCodeLink }: PublishedContextProps) => {
+const PublishedContext = ({ anchorId, heading, context, isDraft, unwrittenLabel, changeOverview, codeLinks, onOpenCodeLink }: PublishedContextProps) => {
   const accordionOpening = useAccordionNavigation(anchorId, context)
   return (
     <ContextSection anchorId={anchorId} heading={heading}>
@@ -61,6 +67,7 @@ const PublishedContext = ({ anchorId, heading, context, isDraft, unwrittenLabel,
               <Prose blocks={context} codeLinks={codeLinks} className={CONTEXT_PROSE_CLASSES} onOpenCodeLink={onOpenCodeLink} />
             </AccordionOpeningContext>
           )}
+      <ChangeOverview {...changeOverview} onOpenWaypoint={onOpenCodeLink} />
     </ContextSection>
   )
 }
@@ -82,6 +89,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
     marking.onReviewedChange({ kind: "waypoint", id }, isReviewed)
   }
   const walkthroughLayout = useWalkthroughNavigation(marking.segments, stepping, currentAnchorId, {
+    onWriteUp: null,
     onReviewedChange: onWaypointReviewedChange,
     onFilterChange: showUnavailableFeature,
     onShowReviewedChange: marking.onShowReviewedChange,
@@ -149,6 +157,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                           context={segment.context.context}
                           isDraft={segment.context.isDraft}
                           unwrittenLabel={segment.context.unwrittenLabel}
+                          changeOverview={segment.context.changeOverview}
                           codeLinks={review.codeLinks}
                           onOpenCodeLink={stepping.onOpenCodeLink}
                         />

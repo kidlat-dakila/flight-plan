@@ -6,6 +6,7 @@ import { fakeBackendLinks, type ProcedureHandlers } from "@/routes/__tests__/fak
 import { createTrpcClient } from "@/trpc"
 import {
   artifactPage,
+  blastPage,
   conversationReply,
   missingPage,
   modelChoiceReply,
@@ -15,6 +16,7 @@ import {
   twoFilePage,
   typeInto,
   unassignedFiles,
+  writeUpPlan,
 } from "./review-page-fixture"
 
 const REVIEW_PATH = "/pr-reviews/storefront/pr-412"
@@ -104,6 +106,10 @@ describe("the review page", () => {
     scrollIntoView.mock.contexts.flatMap((element) => (element instanceof Element ? [element.id] : []))
 
   beforeEach(() => {
+    Reflect.defineProperty(window, "matchMedia", {
+      value: () => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
+      configurable: true,
+    })
     scrollIntoView.mockClear()
     Reflect.defineProperty(Element.prototype, "scrollIntoView", { value: scrollIntoView, configurable: true })
     Reflect.defineProperty(Element.prototype, "scrollTo", { value: vi.fn(), configurable: true })
@@ -123,9 +129,14 @@ describe("the review page", () => {
     expect(within(band).getByRole("button", { name: "Share" })).toBeTruthy()
     expect(within(band).getByRole("button", { name: "Submit review" })).toBeTruthy()
 
-    fireEvent.click(within(band).getByRole("button", { name: "More actions" }))
+    expect(screen.getAllByRole("button", { name: "Settings" })).toHaveLength(1)
+    expect(within(band).queryByRole("button", { name: "More actions" })).toBeNull()
+
+    fireEvent.click(within(band).getByRole("button", { name: "Settings" }))
 
     expect((await screen.findByRole("menuitem", { name: "View pull request" })).getAttribute("href")).toBe("https://forge.test/pull/412")
+    expect(screen.getByRole("menuitem", { name: "Switch to dark mode" })).toBeTruthy()
+    expect(screen.getByRole("menuitem", { name: "Review configuration" })).toBeTruthy()
     expect(screen.queryByRole("menuitem", { name: "Update the Flight Plan" })).toBeNull()
     expect(screen.queryByRole("menuitem", { name: "Regenerate from scratch" })).toBeNull()
     expect(screen.getByRole("menuitem", { name: "Delete" })).toBeTruthy()
@@ -151,17 +162,23 @@ describe("the review page", () => {
     })
   })
 
-  it("deletes the review artifact and shows the page without one", async () => {
+  it("deletes the review artifact and goes back to the repositories", async () => {
     const deleteReview = vi.fn(() => ({ data: { message: "Flight Plan deleted" } }))
-    renderReview({
-      "review.get": () => ({ data: deleteReview.mock.calls.length === 0 ? artifactPage : missingPage }),
-      "review.delete": deleteReview,
-    })
+    const history = createMemoryHistory({ initialEntries: [REVIEW_PATH] })
+    render(
+      createApp({
+        queryClient: new QueryClient({ defaultOptions: { queries: { retry: false } } }),
+        trpcClient: createTrpcClient(fakeBackendLinks({ "review.get": () => ({ data: artifactPage }), "review.delete": deleteReview })),
+        history,
+      }),
+    )
 
-    fireEvent.click(await screen.findByRole("button", { name: "More actions" }))
+    fireEvent.click(await screen.findByRole("button", { name: "Settings" }))
     fireEvent.click(await screen.findByRole("menuitem", { name: "Delete" }))
 
-    expect(await screen.findByRole("heading", { name: "No Flight Plan Review yet" })).toBeTruthy()
+    await waitFor(() => {
+      expect(history.location.pathname).toBe("/")
+    })
     expect(deleteReview).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412" })
   })
 
@@ -234,6 +251,262 @@ describe("the review page", () => {
 
     expect(await screen.findAllByText("Claude stopped before the review was finished")).toHaveLength(1)
     expect(screen.getByText("Not written yet.")).toBeTruthy()
+  })
+
+  it("marks each section the agent has not written up yet, beside its heading", async () => {
+    const notices = { context: "No write-up yet", traceDiagram: null, blastDiagram: null, walkthrough: "No write-up yet" }
+    renderReview({
+      "review.get": () => ({
+        data: { ...artifactPage, segments: artifactPage.segments.map((segment, position) => (position === 0 ? { ...segment, writeUpNotices: notices } : segment)) },
+      }),
+    })
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+
+    expect(within(within(stock).getByRole("region", { name: "Context" })).getByText("No write-up yet")).toBeTruthy()
+    expect(within(within(stock).getByRole("region", { name: "Code Walkthrough" })).getByText("No write-up yet")).toBeTruthy()
+    expect(within(stock).getAllByText("No write-up yet")).toHaveLength(2)
+    expect(within(screen.getByRole("region", { name: "Segment 2: Checkout" })).queryByText("No write-up yet")).toBeNull()
+  })
+
+  it("draws a review without segments as one segment with no heading, and its Trace Diagrams as tabs", async () => {
+    const [first] = artifactPage.segments
+    const diagramOf = (anchorId: string, title: string) => ({
+      anchorId,
+      title,
+      description: [{ kind: "paragraph", inlines: [{ kind: "text", text: `How ${title} runs.` }] }],
+      descriptionMarkdown: `How ${title} runs.`,
+      unwrittenLabel: "Not written yet.",
+      descriptionHint: null,
+      nodes: [],
+      edges: [],
+    })
+    const unsegmented = {
+      ...first,
+      title: null,
+      heading: null,
+      detailLabel: null,
+      traceDiagram: {
+        ...first.traceDiagram,
+        anchorId: "stock-trace-diagram",
+        diagram: null,
+        tabs: [
+          { id: "stock", label: "Stock check", diagram: diagramOf("trace-stock", "Stock check") },
+          { id: "checkout", label: "Checkout", diagram: diagramOf("trace-checkout", "Checkout") },
+        ],
+      },
+    }
+    renderReview({ "review.get": () => ({ data: { ...artifactPage, segments: [unsegmented] } }) })
+
+    expect(await screen.findByRole("tablist", { name: "Trace Diagram" })).toBeTruthy()
+    expect(screen.getByText("How Stock check runs.")).toBeTruthy()
+    expect(screen.queryByRole("heading", { name: /Segment 1/ })).toBeNull()
+
+    fireEvent.click(screen.getByRole("tab", { name: "Checkout" }))
+
+    expect(screen.getByText("How Checkout runs.")).toBeTruthy()
+  })
+
+  it("asks the agent to write up a Trace Diagram card from its side panel", async () => {
+    const [first, second] = artifactPage.segments
+    const draftCard = {
+      id: "cart-line",
+      type: "component",
+      typeLabel: "Component",
+      change: null,
+      changedLabel: null,
+      label: "CartLine",
+      isDraft: true,
+      classification: { key: "component", label: "Component" },
+      hint: "Adds a component.",
+      isBeingWritten: false,
+      name: "CartLine",
+      shortPath: "src/cart-line.tsx",
+      description: null,
+      codeLinkId: null,
+      codeViews: [],
+      parameters: [],
+      blockLists: [],
+      triggerLabels: [],
+      rowGroups: [],
+      position: null,
+      children: [],
+    }
+    const withCard = {
+      ...first,
+      traceDiagram: {
+        ...first.traceDiagram,
+        anchorId: "stock-trace-diagram",
+        diagram: { anchorId: "trace-stock", title: "Stock check", description: null, descriptionMarkdown: "", unwrittenLabel: "Not written yet.", descriptionHint: null, nodes: [draftCard], edges: [] },
+      },
+    }
+    const requestWriteUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Writing up the card" } }))
+    renderReview({
+      "review.get": () => ({ data: { ...artifactPage, segments: [withCard, second] } }),
+      "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }),
+      "review.requestWriteUp": requestWriteUp,
+    })
+
+    expect(await screen.findByText("Adds a component.")).toBeTruthy()
+
+    fireEvent.click(screen.getByRole("button", { name: /^CartLinesrc\/cart-line\.tsx/ }))
+    const panel = await screen.findByRole("region", { name: "CartLine" })
+    await waitFor(() => {
+      expect(within(panel).getByRole("button", { name: /Write up/ })).toBeTruthy()
+    })
+    fireEvent.click(within(panel).getByRole("button", { name: /Write up/ }))
+
+    expect(await screen.findByText("Writing up the card")).toBeTruthy()
+    expect(requestWriteUp).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", target: { kind: "trace-node", segmentId: "stock", nodeId: "cart-line" } })
+  })
+
+  it("asks the agent to assess a Blast Diagram file from its side panel", async () => {
+    const requestWriteUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Assessing the file" } }))
+    renderReview({
+      "review.get": () => ({ data: blastPage }),
+      "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }),
+      "review.requestWriteUp": requestWriteUp,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "report.ts" }))
+    const panel = await screen.findByRole("region", { name: "src/report.ts" })
+    await waitFor(() => {
+      expect(within(panel).getByRole("button", { name: /Write up/ })).toBeTruthy()
+    })
+    fireEvent.click(within(panel).getByRole("button", { name: /Write up/ }))
+
+    expect(await screen.findByText("Assessing the file")).toBeTruthy()
+    expect(requestWriteUp).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", target: { kind: "blast-file", segmentId: "stock", path: "src/report.ts" } })
+  })
+
+  it("lists the changed code blocks under the context by classification, and opens a card's waypoint", async () => {
+    const changeOverview = {
+      heading: "Change Overview",
+      emptyMessage: null,
+      rows: [{
+        classification: { key: "logic", label: "Logic" },
+        cards: [{ id: "price-of", label: "priceOf", typeLabel: "Function", path: "src/price.ts", change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-price-of" }],
+      }],
+    }
+    renderReview({
+      "review.get": () => ({
+        data: {
+          ...artifactPage,
+          segments: artifactPage.segments.map((segment, position) => (position === 0 ? { ...segment, context: { ...segment.context, changeOverview } } : segment)),
+        },
+      }),
+    })
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+    const overview = within(stock).getByRole("region", { name: "Change Overview" })
+
+    expect(within(overview).getByRole("listitem", { name: "Logic" })).toBeTruthy()
+    expect(screen.queryByText("Reading of Held units reduce the price.")).toBeNull()
+
+    fireEvent.click(within(overview).getByRole("button", { name: /priceOf/ }))
+
+    expect(await screen.findByText("Reading of Held units reduce the price.")).toBeTruthy()
+  })
+
+  it("asks about the agent's write-up the first time the review opens, and remembers that the reviewer declined", async () => {
+    const declineWriteUp = vi.fn(() => ({ data: { kind: "declined" } }))
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: declineWriteUp.mock.calls.length > 0 } }),
+      "review.declineWriteUp": declineWriteUp,
+    })
+
+    const dialog = await screen.findByRole("dialog", { name: "Ask Claude to write up this review?" })
+
+    expect(within(dialog).getByText("Context and Findings")).toBeTruthy()
+    expect(within(dialog).getByText("2 parts to write and 3 waypoints to check")).toBeTruthy()
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Not now" }))
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull()
+    })
+    expect(declineWriteUp).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412" })
+  })
+
+  it("opens the write-up dialog again from Generate write-up in the settings menu", async () => {
+    renderReview({ "review.get": () => ({ data: artifactPage }), "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }) })
+    await screen.findByText("Why stock matters.")
+
+    fireEvent.click(within(screen.getByRole("banner")).getByRole("button", { name: "Settings" }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Generate write-up" }))
+
+    expect(await screen.findByRole("dialog", { name: "Ask Claude to write up this review?" })).toBeTruthy()
+  })
+
+  it("leaves Generate write-up out of the settings menu when no agent is set up", async () => {
+    const getPlan = vi.fn(() => ({ data: { kind: "no-agent", message: "No agent is set up." } }))
+    renderReview({ "review.get": () => ({ data: artifactPage }), "review.writeUpPlan": getPlan })
+    await screen.findByText("Why stock matters.")
+    await waitFor(() => {
+      expect(getPlan).toHaveBeenCalled()
+    })
+
+    fireEvent.click(within(screen.getByRole("banner")).getByRole("button", { name: "Settings" }))
+
+    expect(await screen.findByRole("menuitem", { name: "Delete" })).toBeTruthy()
+    expect(screen.queryByRole("menuitem", { name: "Generate write-up" })).toBeNull()
+  })
+
+  it.each([
+    ["once the write-up was offered", { ...writeUpPlan, isOffered: true }],
+    ["when no agent is set up", { kind: "no-agent", message: "No agent is set up." }],
+  ])("asks nothing %s", async (_case, plan) => {
+    const getPlan = vi.fn(() => ({ data: plan }))
+    renderReview({ "review.get": () => ({ data: artifactPage }), "review.writeUpPlan": getPlan })
+
+    await screen.findByText("Why stock matters.")
+    await waitFor(() => {
+      expect(getPlan).toHaveBeenCalled()
+    })
+
+    expect(screen.queryByRole("dialog")).toBeNull()
+  })
+
+  it("asks the agent for the write-up, counts again what is ticked, and says the agent started", async () => {
+    const getPlan = vi.fn((input: unknown) => ({ data: { ...writeUpPlan, totalLabel: JSON.stringify(input).includes("walkthrough") ? "5 parts to write and 3 waypoints to check" : writeUpPlan.totalLabel } }))
+    const writeUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Writing up 5 parts" } }))
+    renderReview({ "review.get": () => ({ data: artifactPage }), "review.writeUpPlan": getPlan, "review.writeUp": writeUp })
+
+    const dialog = await screen.findByRole("dialog", { name: "Ask Claude to write up this review?" })
+    fireEvent.click(within(dialog).getByRole("button", { name: "Configure" }))
+    fireEvent.click(within(dialog).getByRole("checkbox", { name: /Code Walkthrough/ }))
+
+    expect(await within(dialog).findByText("5 parts to write and 3 waypoints to check")).toBeTruthy()
+    expect(getPlan).toHaveBeenCalledWith(expect.objectContaining({ sections: ["context", "findings", "walkthrough"] }))
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Write up" }))
+
+    expect(await screen.findByText("Writing up 5 parts")).toBeTruthy()
+    expect(writeUp).toHaveBeenCalledWith({
+      repositoryName: "storefront",
+      targetId: "pr-412",
+      sections: ["context", "findings"],
+      configurationId: "standard",
+      walkthroughOrder: "imports-bottom-up",
+      isSegmented: true,
+    })
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull()
+    })
+  })
+
+  it("keeps the dialog open and shows why the write-up was refused", async () => {
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "review.writeUpPlan": () => ({ data: writeUpPlan }),
+      "review.writeUp": () => ({ data: { kind: "rejected", field: "sections", message: "Choose at least one part for the agent to write up." } }),
+    })
+
+    fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Write up" }))
+
+    expect((await screen.findByRole("alert")).textContent).toBe("Choose at least one part for the agent to write up.")
+    expect(screen.getByRole("dialog")).toBeTruthy()
   })
 
   it("copies the prompt again while the reviewer's own agent is awaited", async () => {
@@ -348,6 +621,69 @@ describe("the review page", () => {
     await waitFor(() => {
       expect(markOf("Held units reduce the price").getAttribute("data-current")).toBe("true")
     })
+  })
+
+  it("asks the agent to write up the current waypoint with G when it has no write-up", async () => {
+    const unwrittenPage = {
+      ...twoFilePage,
+      segments: twoFilePage.segments.map((segment) => ({
+        ...segment,
+        walkthrough: {
+          ...segment.walkthrough,
+          files: segment.walkthrough.files.map((file) => ({
+            ...file,
+            rows: file.rows.map((row) => (row.kind === "waypoint" ? { ...row, rootBlockId: "root-price", waypoint: { ...row.waypoint, reading: null, hint: "Changes a function." } } : row)),
+          })),
+        },
+      })),
+    }
+    const requestWriteUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Writing up 1 waypoint" } }))
+    showSectionInView("stock-code-walkthrough")
+    renderReview({
+      "review.get": () => ({ data: unwrittenPage }),
+      "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }),
+      "review.requestWriteUp": requestWriteUp,
+    })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" })
+
+    fireEvent.keyDown(window, { key: "d" })
+    await within(screen.getByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: /Write up this line/ })
+    fireEvent.keyDown(window, { key: "g", ctrlKey: true })
+
+    expect(await screen.findByText("Writing up 1 waypoint")).toBeTruthy()
+    expect(requestWriteUp).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", target: { kind: "root-block", rootBlockId: "root-price" } })
+
+    fireEvent.keyDown(window, { key: "g" })
+
+    await waitFor(() => {
+      expect(requestWriteUp).toHaveBeenLastCalledWith({ repositoryName: "storefront", targetId: "pr-412", target: { kind: "waypoint", waypointId: "price-of" } })
+    })
+  })
+
+  it("says in the card of a waypoint that it is in the spotlight, after its core change", async () => {
+    const spotlitPage = {
+      ...twoFilePage,
+      segments: twoFilePage.segments.map((segment) => ({
+        ...segment,
+        walkthrough: {
+          ...segment.walkthrough,
+          files: segment.walkthrough.files.map((file) => ({
+            ...file,
+            rows: file.rows.map((row) => (row.kind === "waypoint"
+              ? { ...row, waypoint: { ...row.waypoint, coreChangeLabel: "Core change", spotlight: { label: "Spotlight", classifications: [{ key: "database-read", label: "Database read" }] } } }
+              : row)),
+          })),
+        },
+      })),
+    }
+    showSectionInView("stock-code-walkthrough")
+    renderReview({ "review.get": () => ({ data: spotlitPage }) })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" })
+
+    fireEvent.keyDown(window, { key: "d" })
+
+    expect(await screen.findByText("Database read")).toBeTruthy()
+    expect(screen.getByText("Spotlight")).toBeTruthy()
   })
 
   it("marks the current waypoint reviewed with S and moves on to the next one", async () => {
@@ -772,158 +1108,17 @@ describe("the review page", () => {
     expect((await screen.findByRole("alert")).textContent).toBe("Write a summary or a comment before you submit.")
   })
 
-  it("offers the start form for a review target that has no review, without the review actions", async () => {
+  it("says why Flight Plan could not build the review, without the review actions", async () => {
     renderReview({ "review.get": () => ({ data: missingPage }) })
 
-    expect(await screen.findByRole("heading", { name: "No Flight Plan Review yet" })).toBeTruthy()
+    expect(await screen.findByRole("heading", { name: "Flight Plan could not build this review" })).toBeTruthy()
+    expect(screen.getByText("This change touches no files, so there is nothing to review.")).toBeTruthy()
     expect(within(screen.getByRole("banner")).getByText("10 changed files")).toBeTruthy()
     expect(within(screen.getByRole("banner")).getByText("4 TypeScript")).toBeTruthy()
-    expect(screen.getByRole("button", { name: "Configuration: Standard" })).toBeTruthy()
-    expect(screen.getByRole("button", { name: "Order of the Code Walkthrough: Foundations first" })).toBeTruthy()
-    expect(screen.getByRole<HTMLInputElement>("radio", { name: /^Claude/ }).checked).toBe(true)
-    expect(screen.getByRole<HTMLSelectElement>("combobox", { name: "Model for Claude" }).value).toBe("default")
-    expect(screen.getByRole<HTMLInputElement>("radio", { name: "Default" }).checked).toBe(true)
-    expect(screen.getByRole<HTMLInputElement>("radio", { name: /^Codex/ }).disabled).toBe(false)
-    expect(screen.getByText(/Flight Plan can't start Codex itself/)).toBeTruthy()
     expect(screen.queryByRole("button", { name: "Chat" })).toBeNull()
+    expect(screen.queryByRole("menuitem", { name: "Delete" })).toBeNull()
+    expect(screen.getAllByRole("button", { name: "Settings" })).toHaveLength(1)
     expect(screen.queryByRole("navigation", { name: "Review sections" })).toBeNull()
-  })
-
-  it("requests the review from the chosen agent with the chosen configuration, order and model", async () => {
-    const request = vi.fn(() => ({ data: { kind: "requested", prompt: null, message: "Review requested" } }))
-    renderReview({ "review.get": () => ({ data: missingPage }), "review.request": request })
-
-    fireEvent.click(await screen.findByRole("button", { name: "Configuration: Standard" }))
-    fireEvent.click(await screen.findByRole("radio", { name: /Onboardee/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
-    await waitFor(() => {
-      expect(screen.queryByRole("dialog")).toBeNull()
-    })
-    fireEvent.click(screen.getByRole("button", { name: "Order of the Code Walkthrough: Foundations first" }))
-    fireEvent.click(await screen.findByRole("radio", { name: /Risk first/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
-    fireEvent.change(screen.getByRole("combobox", { name: "Model for Claude" }), { target: { value: "opus" } })
-    fireEvent.click(screen.getByRole("radio", { name: "High" }))
-    fireEvent.click(screen.getByRole("button", { name: "Start the review" }))
-
-    expect(await screen.findByText("Review requested")).toBeTruthy()
-    expect(request).toHaveBeenCalledWith({
-      repositoryName: "storefront",
-      targetId: "pr-412",
-      configurationId: "onboardee",
-      order: "risk-first",
-      customOrder: "",
-      writer: { kind: "agent", agent: "claude", model: "opus", effort: "high" },
-    })
-  })
-
-  it("offers the efforts of the chosen model and starts again from that model's effort", async () => {
-    const request = vi.fn(() => ({ data: { kind: "requested", prompt: null, message: "Review requested" } }))
-    renderReview({ "review.get": () => ({ data: missingPage }), "review.request": request })
-
-    const models = await screen.findByRole("combobox", { name: "Model for Claude" })
-
-    expect(screen.queryByRole("radio", { name: "Extra high" })).toBeNull()
-
-    fireEvent.change(models, { target: { value: "opus" } })
-    fireEvent.click(screen.getByRole("radio", { name: "Extra high" }))
-    fireEvent.change(models, { target: { value: "haiku" } })
-
-    expect(screen.queryByRole("group", { name: "Effort for Claude" })).toBeNull()
-
-    fireEvent.click(screen.getByRole("button", { name: "Start the review" }))
-
-    expect(await screen.findByText("Review requested")).toBeTruthy()
-    expect(request).toHaveBeenCalledWith(
-      expect.objectContaining({ writer: { kind: "agent", agent: "claude", model: "haiku", effort: "default" } }),
-    )
-  })
-
-  it("copies the line to run in an agent Flight Plan cannot start, with a custom order", async () => {
-    const writeText = vi.fn<(text: string) => Promise<void>>().mockResolvedValue(undefined)
-    Reflect.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true })
-    const request = vi.fn(() => ({
-      data: { kind: "requested", prompt: "Review it, the migration first.", message: "Run this line in Codex to start the write-up" },
-    }))
-    renderReview({ "review.get": () => ({ data: missingPage }), "review.request": request })
-
-    fireEvent.click(await screen.findByRole("button", { name: "Order of the Code Walkthrough: Foundations first" }))
-    fireEvent.click(await screen.findByRole("radio", { name: /Custom/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
-    fireEvent.change(screen.getByRole("textbox", { name: "Your instruction for the order" }), {
-      target: { value: "The migration first." },
-    })
-    fireEvent.click(screen.getByRole("radio", { name: /Codex/ }))
-
-    expect(screen.queryByRole("combobox", { name: "Model for Codex" })).toBeNull()
-
-    fireEvent.click(screen.getByRole("button", { name: "Get the line for Codex" }))
-
-    expect(await screen.findByText("Run this line in Codex to start the write-up")).toBeTruthy()
-    expect(writeText).toHaveBeenCalledWith("Review it, the migration first.")
-    expect(request).toHaveBeenCalledWith(
-      expect.objectContaining({
-        order: "custom",
-        customOrder: "The migration first.",
-        writer: { kind: "agent", agent: "codex", model: "default", effort: "default" },
-      }),
-    )
-  })
-
-  it("builds the review without an agent when the reviewer picks no agent", async () => {
-    const request = vi.fn(() => ({ data: { kind: "requested", prompt: null, message: "Flight Plan created" } }))
-    renderReview({ "review.get": () => ({ data: missingPage }), "review.request": request })
-
-    fireEvent.click(await screen.findByRole("radio", { name: /Without an agent/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Build the review" }))
-
-    await waitFor(() => {
-      expect(request).toHaveBeenCalledWith(expect.objectContaining({ writer: { kind: "none" } }))
-    })
-  })
-
-  it("shows a rejection under the field it is about", async () => {
-    renderReview({
-      "review.get": () => ({ data: missingPage }),
-      "review.request": () => ({
-        data: { kind: "rejected", field: "customOrder", message: "Write how the agent orders the Code Walkthrough." },
-      }),
-    })
-
-    fireEvent.click(await screen.findByRole("button", { name: "Order of the Code Walkthrough: Foundations first" }))
-    fireEvent.click(await screen.findByRole("radio", { name: /Custom/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
-    fireEvent.click(screen.getByRole("button", { name: "Start the review" }))
-
-    const alert = await screen.findByRole("alert")
-
-    expect(alert.textContent).toBe("Write how the agent orders the Code Walkthrough.")
-    expect(screen.getByRole("textbox", { name: "Your instruction for the order" }).getAttribute("aria-invalid")).toBe("true")
-  })
-
-  it("opens the review once the scaffold is built", async () => {
-    const request = vi.fn(() => ({ data: { kind: "requested", prompt: null, message: "Review started" } }))
-    renderReview({
-      "review.get": () => ({ data: request.mock.calls.length === 0 ? missingPage : artifactPage }),
-      "review.request": request,
-    })
-
-    fireEvent.click(await screen.findByRole("button", { name: "Start the review" }))
-
-    expect(await screen.findByRole("navigation", { name: "Review sections" })).toBeTruthy()
-    expect(screen.queryByRole("heading", { name: "No Flight Plan Review yet" })).toBeNull()
-  })
-
-  it("says why above the action when the change cannot be read", async () => {
-    renderReview({
-      "review.get": () => ({ data: missingPage }),
-      "review.request": () => ({ data: { kind: "unavailable", message: "This change touches no files, so there is nothing to review." } }),
-    })
-
-    fireEvent.click(await screen.findByRole("button", { name: "Start the review" }))
-
-    expect((await screen.findByRole("alert")).textContent).toBe("This change touches no files, so there is nothing to review.")
-    expect(screen.getByRole("heading", { name: "No Flight Plan Review yet" })).toBeTruthy()
   })
 
   it("shows the falling plane, the backend's message and a way back when the review cannot be opened", async () => {

@@ -35,6 +35,25 @@ describe("getWriteUpPlan", () => {
     await expect(getWriteUpPlan(INPUT, context)).resolves.toMatchObject({ walkthroughOrder: "important-first" })
   })
 
+  it("offers the write-up until the reviewer declines it or asks for one, or an agent already writes the review", async () => {
+    const context = await createArtifactContext(WALKTHROUGH_ONLY_ARTIFACT)
+    const scaffold = await context.reviewStore.readScaffold(KEY)
+    const withRequest = async (request: object): Promise<void> => {
+      if (scaffold !== null) await context.reviewStore.writeScaffold(KEY, { ...scaffold, request: { ...scaffold.request, ...request } })
+    }
+
+    await expect(getWriteUpPlan(INPUT, context)).resolves.toMatchObject({ isOffered: false })
+
+    await withRequest({ isWriteUpDeclined: true })
+    await expect(getWriteUpPlan(INPUT, context)).resolves.toMatchObject({ isOffered: true })
+
+    await withRequest({ isWriteUpDeclined: undefined, writeUp: { sections: ["context"], walkthroughOrder: "imports-bottom-up" } })
+    await expect(getWriteUpPlan(INPUT, context)).resolves.toMatchObject({ isOffered: true })
+
+    await withRequest({ writeUp: undefined, writer: { kind: "external", agent: "codex" } })
+    await expect(getWriteUpPlan(INPUT, context)).resolves.toMatchObject({ isOffered: true })
+  })
+
   it("says so when no agent is set up", async () => {
     const context = { ...(await createArtifactContext()), setupStore: new InMemorySetupStore(EMPTY_SETUP) }
 

@@ -51,13 +51,14 @@ const createNavigation = (overrides: Partial<WalkthroughNavigation> = {}): Walkt
   positionLabel: null,
   canStepBack: true,
   canStepForward: true,
-  currentWaypoint: { isReviewed: false, isOpen: false, canComment: true },
+  currentWaypoint: { isReviewed: false, isOpen: false, canComment: true, canWriteUp: false, canWriteUpBlock: false },
   areFilesCollapsed: false,
   isFileCollapsed: false,
   onPrevious: vi.fn(),
   onNext: vi.fn(),
   onCurrentReviewedChange: vi.fn(),
   onCommentOnCurrent: vi.fn(),
+  onWriteUpCurrent: null,
   onFilterChange: vi.fn(),
   onShowReviewedChange: vi.fn(),
   onFilesCollapsedChange: vi.fn(),
@@ -99,6 +100,16 @@ describe("CodeWalkthrough", () => {
     expect(screen.getByRole("heading", { level: 2, name: "Code Walkthrough" })).toBeTruthy()
     expect(screen.getByText("All 2 changed files")).toBeTruthy()
     expect(screen.getByText("The files")).toBeTruthy()
+  })
+
+  it("says beside the coverage when no waypoint has a write-up yet", () => {
+    const { rerender } = render(<CodeWalkthrough {...createProps({ writeUpNotice: "No write-up yet" })} />)
+
+    expect(screen.getByText("No write-up yet")).toBeTruthy()
+
+    rerender(<CodeWalkthrough {...createProps()} />)
+
+    expect(screen.queryByText("No write-up yet")).toBeNull()
   })
 
   it("counts the ticked filters in a badge on the Filter button", async () => {
@@ -181,7 +192,7 @@ describe("CodeWalkthrough", () => {
 
     expect(onCurrentReviewedChange).toHaveBeenCalledWith(true)
 
-    view.rerender(<CodeWalkthrough {...createProps({ navigation: createNavigation({ onCurrentReviewedChange, currentWaypoint: { isReviewed: true, isOpen: false, canComment: true } }) })} />)
+    view.rerender(<CodeWalkthrough {...createProps({ navigation: createNavigation({ onCurrentReviewedChange, currentWaypoint: { isReviewed: true, isOpen: false, canComment: true, canWriteUp: false, canWriteUpBlock: false } }) })} />)
     fireEvent.click(await findNavigatorButton("Reviewed"))
 
     expect(onCurrentReviewedChange).toHaveBeenLastCalledWith(false)
@@ -216,9 +227,44 @@ describe("CodeWalkthrough", () => {
     expect(onCommentOnCurrent).toHaveBeenCalledOnce()
   })
 
+  it("asks for a write-up of the current waypoint with G and of its whole code block with Ctrl+G, while it has none", async () => {
+    const onWriteUpCurrent = vi.fn()
+    renderWalkthrough({ currentWaypoint: { isReviewed: false, isOpen: false, canComment: true, canWriteUp: true, canWriteUpBlock: true }, onWriteUpCurrent })
+    const labels = await navigatorLabels("Write up this line")
+
+    expect(labels.indexOf("Write up the whole code block")).toBe(labels.indexOf("Write up this line") + 1)
+
+    fireEvent.keyDown(document.body, { key: "g" })
+    fireEvent.keyDown(document.body, { key: "g", ctrlKey: true })
+    fireEvent.keyDown(document.body, { key: "g", metaKey: true })
+
+    expect(onWriteUpCurrent.mock.calls).toStrictEqual([["line"], ["block"]])
+  })
+
+  it("leaves a key held with Control to the browser unless a control asks for that chord", async () => {
+    const onCurrentReviewedChange = vi.fn()
+    renderWalkthrough({ onCurrentReviewedChange })
+    await findNavigatorButton("Mark as reviewed")
+
+    fireEvent.keyDown(document.body, { key: "s", ctrlKey: true })
+
+    expect(onCurrentReviewedChange).not.toHaveBeenCalled()
+  })
+
+  it("offers no write-up for a waypoint that has one", async () => {
+    const onWriteUpCurrent = vi.fn()
+    renderWalkthrough({ onWriteUpCurrent })
+    await findNavigatorButton("Mark as reviewed")
+
+    fireEvent.keyDown(document.body, { key: "g" })
+
+    expect(screen.queryByRole("button", { name: /Write up this line/ })).toBeNull()
+    expect(onWriteUpCurrent).not.toHaveBeenCalled()
+  })
+
   it("cannot start a comment on a waypoint that has no lines on the page, and says why", async () => {
     const onCommentOnCurrent = vi.fn()
-    renderWalkthrough({ currentWaypoint: { isReviewed: false, isOpen: false, canComment: false }, onCommentOnCurrent })
+    renderWalkthrough({ currentWaypoint: { isReviewed: false, isOpen: false, canComment: false, canWriteUp: false, canWriteUpBlock: false }, onCommentOnCurrent })
     const button = await findNavigatorButton("Add comment")
 
     expect(button.getAttribute("aria-disabled")).toBe("true")
@@ -325,7 +371,7 @@ describe("CodeWalkthrough", () => {
     expect(onFileCollapsedChange).toHaveBeenCalledWith(true)
     expect(onCurrentOpenChange).toHaveBeenCalledWith(true)
 
-    const navigation = createNavigation({ areFilesCollapsed: true, isFileCollapsed: true, currentWaypoint: { isReviewed: false, isOpen: true, canComment: true }, onCurrentOpenChange })
+    const navigation = createNavigation({ areFilesCollapsed: true, isFileCollapsed: true, currentWaypoint: { isReviewed: false, isOpen: true, canComment: true, canWriteUp: false, canWriteUpBlock: false }, onCurrentOpenChange })
     view.rerender(<CodeWalkthrough {...createProps({ navigation })} />)
 
     expect(await navigatorLabels("Expand all")).toStrictEqual(["Jump to", "Previous waypoint", "Next waypoint", "Mark as reviewed", "Add comment", "Filter", "Expand all", "Expand file", "Collapse waypoint"])

@@ -18,5 +18,6 @@ declare module "@tanstack/react-router" {
 
   interface StaticDataRouteOption {
     isFullWidth?: boolean
+    hasPageSettingsMenu?: boolean
   }
 }

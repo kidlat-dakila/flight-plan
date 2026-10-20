@@ -1,7 +1,5 @@
 import { z } from "zod"
 import { ARRANGED_SECTIONS } from "@/procedures/get-review-preferences/utils/review-preferences"
-import { modelOptionSchema } from "@/procedures/get-setup/utils/schemas"
-import { AGENT_NAMES } from "@/procedures/get-setup/utils/setup"
 import { BRANCH_STATUSES } from "@/procedures/list-repositories/utils/branch-status"
 import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
 import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
@@ -18,8 +16,6 @@ import {
   proseSchema,
   walkthroughBandSchema,
 } from "@flightplan/configurations"
-import { NO_AGENT_WRITER } from "./start/agent-offers"
-import { WALKTHROUGH_ORDERS } from "./start/review-request"
 
 export const REVIEWER_STATES = ["pending", "commented", "approved", "changes-requested"] as const
 export const SECTION_KINDS = ["context", "traceDiagram", "blastDiagram", "walkthrough", "conversation"] as const
@@ -224,6 +220,12 @@ export const segmentViewSchema = z.strictObject({
   blastDiagram: blastBandSchema.nullable(),
   walkthrough: discussedWalkthroughBandSchema,
   sectionOrder: z.array(z.enum(ARRANGED_SECTIONS)),
+  writeUpNotices: z.strictObject({
+    context: z.string().nullable(),
+    traceDiagram: z.string().nullable(),
+    blastDiagram: z.string().nullable(),
+    walkthrough: z.string().nullable(),
+  }),
 })
 
 export const conversationBandSchema = z.strictObject({
@@ -292,70 +294,6 @@ export const completeActionSchema = z.strictObject({
   pullRequestChoice: pullRequestChoiceSchema.nullable(),
 })
 
-export const startFormSchema = z.strictObject({
-  configuration: z.strictObject({
-    heading: z.string(),
-    hint: z.string(),
-    dialogTitle: z.string(),
-    dialogDescription: z.string(),
-    chooseLabel: z.string(),
-    cancelLabel: z.string(),
-    selectedConfigurationId: z.string(),
-    options: z.array(
-      z.strictObject({
-        configurationId: z.string(),
-        label: z.string(),
-        tagLabel: z.string().nullable(),
-        bestFor: z.string(),
-        description: z.string(),
-        note: z.string().nullable(),
-        rewriteNotice: z.string().nullable(),
-      }),
-    ),
-  }),
-  order: z.strictObject({
-    heading: z.string(),
-    hint: z.string(),
-    dialogTitle: z.string(),
-    dialogDescription: z.string(),
-    chooseLabel: z.string(),
-    cancelLabel: z.string(),
-    selectedOrder: z.enum(WALKTHROUGH_ORDERS),
-    customOrder: z.string(),
-    options: z.array(
-      z.strictObject({
-        order: z.enum(WALKTHROUGH_ORDERS),
-        label: z.string(),
-        tagLabel: z.string().nullable(),
-        summary: z.string(),
-        description: z.string(),
-        promptField: z.strictObject({ label: z.string(), placeholder: z.string() }).nullable(),
-      }),
-    ),
-  }),
-  writer: z.strictObject({
-    heading: z.string(),
-    hint: z.string(),
-    selectedKey: z.enum([...AGENT_NAMES, NO_AGENT_WRITER]),
-    agents: z.array(
-      z.strictObject({
-        agent: z.enum(AGENT_NAMES),
-        label: z.string(),
-        description: z.string(),
-        modelLegend: z.string(),
-        effortLegend: z.string(),
-        hasModelChoice: z.boolean(),
-        modelOptions: z.array(modelOptionSchema),
-        selectedModel: z.string(),
-        selectedEffort: z.string(),
-        submitLabel: z.string(),
-      }),
-    ),
-    none: z.strictObject({ label: z.string(), description: z.string(), submitLabel: z.string() }),
-  }),
-  pendingLabel: z.string(),
-})
-
 export const reviewPageSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("missing"),
@@ -364,7 +302,6 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
     heading: z.string(),
     message: z.string(),
     changedFiles: z.array(labelSegmentSchema),
-    form: startFormSchema,
   }),
   z.strictObject({
     kind: z.literal("artifact"),
@@ -395,7 +332,6 @@ export const getReviewInputSchema = z.strictObject({
   reviewedSegmentIds: z.array(z.string()),
 })
 
-export type StartForm = z.infer<typeof startFormSchema>
 export type ArtifactFreshness = z.infer<typeof artifactFreshnessSchema>
 export type ReviewHeader = z.infer<typeof reviewHeaderSchema>
 export type ReviewShell = z.infer<typeof shellSchema>

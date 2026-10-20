@@ -61,6 +61,10 @@ When there is nothing to mark, the button is dimmed. Clicking it, pressing S or 
 
 Add comment (C), to the right of Mark as reviewed, opens the comment composer on the current waypoint's lines. The lines are marked as the comment's range, as when the reader picks them by hand, and the composer opens under the last of them with the keyboard in it. With no current waypoint it is dimmed and says to pick one first; on a waypoint whose lines are not on the page it says there is nothing to comment on.
 
+### Writing up a waypoint
+
+While the current waypoint has no write-up and an agent is set up, Write up this line (G) and Write up the whole code block (Ctrl+G) follow Add comment. G asks the agent for the waypoint (`review.requestWriteUp` with `{ kind: "waypoint" }`), and Ctrl+G for every waypoint of the root code block it sits in (`{ kind: "root-block" }`); a waypoint outside a root code block has only G. Ctrl+G is Control and G on every system, macOS included, where Cmd+G stays the browser's Find next. The waypoint's card offers the same two buttons, and its mark spins while the agent writes it. The Trace Diagram and the Blast Diagram use G for the node in their side panel, through the same keydown listener.
+
 The author's page has no Mark as reviewed and no Add comment, since the author does not review their own Flight Plan. On a published Flight Plan, Mark as reviewed, Add comment and the filter say that they are only available in Flight Plan.
 
 ### Filtering
@@ -104,4 +108,4 @@ When the space grows again, or the reader moves to another section, it goes back
 
 ## When the keys do nothing
 
-The keys belong to the reader's typing first. They do nothing while the reader types in a field, such as a comment or the chat, while a dialog is open, or while Ctrl, Cmd or Alt is held. A key of a control that is not on the section on screen does nothing either.
+The keys belong to the reader's typing first. They do nothing while the reader types in a field, such as a comment or the chat, while a dialog is open, or while Cmd or Alt is held. With Ctrl held, only a control that asks for that chord, such as Ctrl+G, runs; every other key is left to the browser. A key of a control that is not on the section on screen does nothing either.

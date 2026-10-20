@@ -22,26 +22,30 @@ Guided review has one standing objection: a curated tour can leave out the file 
 ## How a review happens
 
 1. The reviewer picks a pull request or branch in the web app, from the list the forge provides.
-2. The reviewer makes a [review request](#review-request) on the review target's page.
-3. Flight Plan builds the structure of the artifact from the change and saves it with the request. The page opens the artifact at once, marked as drafting, so the reviewer can read the diagrams and the code before any prose is written. At the same time Flight Plan starts the chosen coding agent with a prompt. An agent Flight Plan cannot start itself, Codex or Cursor, gets the prompt as one line the reviewer runs in it. A review built without an agent stays Flight Plan's own build, with no write-up. The agent works with the Flight Plan review skill.
+2. The reviewer [opens](#opening-a-review) the review target's page. Flight Plan builds the structure of the artifact from the change, saves it and shows it at once, so the reviewer can read the diagrams and the code before any prose is written. Until an agent writes it up, it stays Flight Plan's own build, with no write-up.
+3. The reviewer asks the agent for a [write-up](#write-up). Flight Plan starts the setup's coding agent with a prompt. An agent Flight Plan cannot start itself, Codex or Cursor, gets the prompt as one line the reviewer runs in it. The agent works with the Flight Plan review skill.
 4. The agent fills in the prose through the MCP tools: each segment's title and context, labels and explanations, findings. It can change the words, never the structure.
 5. The artifact opens in the web app while it is still being written, marked as drafting, and fills in as the agent works. The page shows the [progress](#progress-and-completion) at the top, and a skeleton in place of each part that is not written yet.
 6. The agent marks the artifact complete. Completing it runs the checks a finished artifact must pass.
 7. The reviewer reads it. Marking a waypoint or a file as reviewed hides it until its content changes, and a root code block marked as reviewed folds to its first line. When the pull request moves past the commit the artifact describes, the web app says the artifact is stale.
 
-## Review request
+## Opening a review
 
-A review request is what the reviewer makes to have Flight Plan build a review artifact and choose who writes its prose. A review target with no review artifact shows the request form in place of the review. It holds three choices:
+A review target has no start page. When its page opens and Flight Plan holds no review artifact for it, `review.get` builds one from the change (`procedures/get-review/utils/opening-scaffold.ts`), saves it and returns the review. The artifact is built as the [review preferences](review-preferences.md) say: without the ignored files, and with segments on or off. A request is saved with it:
 
-| Choice | Content |
+| Part of the request | Value |
 |---|---|
-| Configuration | The [prompt configuration](prompt-configurations.md) the agent writes with. The default configuration is listed first and selected. |
-| Order of the Code Walkthrough | Saved with the request, and read by nothing: Flight Plan sorts the walkthrough itself by the [review preferences](code-walkthrough.md#order). |
-| Agent | A coding agent set up in Flight Plan, the model it runs and the effort it works at, or no agent. An agent Flight Plan can start is started; for one it cannot start, the reviewer gets one line to run in it, and the model and effort are that agent's own. |
+| Configuration | The default [prompt configuration](prompt-configurations.md), or Standard when that one no longer exists. Its context code block kinds are required in the artifact. |
+| Writer | The author, for the viewer's [own](#the-reviewers-page-and-the-authors-page) review target. Nobody, for someone else's. |
+| Order of the Code Walkthrough | Foundations first, read by nothing: Flight Plan sorts the walkthrough itself by the [review preferences](code-walkthrough.md#order). |
 
-While a review target has no review artifact, the page's header also states how many files of each kind the change touches.
+The artifact of the viewer's own target starts as `authoring`, for the author to edit and mark complete. Someone else's starts as `complete`: nothing in it is required until a [write-up](#write-up) asks for it, and a complete review [catches up](#catching-up-and-deleting) with its target. No agent is started.
 
-The request is saved inside the review artifact, so the choices are never lost. The prompt names the review target and how to reach Flight Plan. It never names the configuration, which the agent reads from Flight Plan's MCP tools, nor an order for the Code Walkthrough, which Flight Plan sorts itself.
+When the artifact cannot be built (the branch is not in the checkout, the folder is not a git repository, the change touches no files) nothing is saved, and the page says why in place of the review. The page's header then states how many files of each kind the change touches.
+
+The New Flight Plan page (`/pr-reviews/<repository>/create`) searches the repository's pull requests and branches, and picking one opens its page, which builds the review.
+
+The request is saved inside the review artifact, and every [write-up](#write-up) updates it. The prompt names the review target and how to reach Flight Plan. It never names the configuration, which the agent reads from Flight Plan's MCP tools, nor an order for the Code Walkthrough, which Flight Plan sorts itself.
 
 ## Write-up
 
@@ -49,6 +53,7 @@ The reviewer asks the agent to write a review up from the review page, choosing 
 
 | `review.writeUpPlan` returns | What it is |
 |---|---|
+| `isOffered` | Whether the review page has asked already: true once the reviewer declined (`review.declineWriteUp`), asked for a write-up, or an agent was already the review's writer |
 | `agentLabel` | The agent that writes: the setup's default agent, with its saved model and effort. With no agent set up the result is `{ kind: "no-agent", message }` instead. |
 | `summary` | The choice in short, as label and value pairs: what is written up, the prompt configuration, the Code Walkthrough order and whether segments are on |
 | `sections` | Context, Trace Diagram, Blast Diagram, Code Walkthrough and Findings, each with `count`, `countLabel` ("4 parts to write", "12 waypoints to check") and `isChosen` |
@@ -58,6 +63,8 @@ The reviewer asks the agent to write a review up from the review page, choosing 
 | `isSegmented` | Whether the review is split into segments |
 
 A count is of the parts still unwritten that choosing the section would require: the context of each segment (the first alone with segments off), the labels and descriptions of the Trace Diagram, the files of the Blast Diagram to assess, the titles and readings of the waypoints. Findings count the waypoints the agent reads for them. The plan is asked for again with the sections the reviewer ticks, and its counts and labels follow. Unless the reviewer chose otherwise, the sections are those of the last write-up of this review, or else those the Write-ups of the [review preferences](review-preferences.md) mark Always; the configuration is the review's, or else the default; the order is the last write-up's, or else the preference's.
+
+The review page opens the [Write-up Dialog](../DESIGN.md#write-up-dialog) on its own while `isOffered` is false: the first time a review opens, right after Flight Plan built it. It shows the choice in short, and "Configure" shows the inputs. "Not now" calls `review.declineWriteUp` (`procedures/decline-write-up/`), which keeps `isWriteUpDeclined` with the request, so the page does not ask again. With no agent set up the dialog is not shown. "Generate write-up" in the Settings Menu of the review page opens it again at any time.
 
 `review.writeUp` takes the sections, the configuration, the order and whether segments are on. It refuses, as data with the field it is about, an empty choice, a configuration that no longer exists and a review with no agent set up. Otherwise it sets segments on or off, requires the context code blocks of the configuration and every node of the chosen sections (a node once required stays required), stores the choice with the request as `writeUp`, makes the artifact drafting and hands it to the agent: started, or the one line to run for an agent Flight Plan cannot start. The prompt names the chosen parts, and asks the agent to check every waypoint for findings or to write none. When everything chosen is already written, nothing is started and the answer says so. The page sorts the Code Walkthrough by the order in `writeUp` over the preference.
 
@@ -75,7 +82,9 @@ The page also says who is writing:
 
 A part that is not written is drawn as a skeleton while the state is `writing` or `waiting`, and as plain "not written" once it is `stopped`.
 
-When the agent completes the artifact, the page that watched it being written raises a browser notification with the title of the review target, and says the same in a toast. It fires whether or not the page has focus, and a click on it brings the page to the front. The browser's permission is asked for when the reviewer makes a review request. A page opened on a review that is already complete raises nothing.
+Outside those states, each section of a segment that has parts to write and none written up says "No write-up yet" beside its heading: the Context with no context, a Trace Diagram with no description and no label, a Blast Diagram with files to assess and none assessed, a Code Walkthrough with waypoints and no title or reading. The page data carries it per segment as `writeUpNotices` (`procedures/get-review/utils/write-up-notices.ts`), one label or `null` per section. A section with nothing to write, such as a segment with no Trace Diagram, says nothing.
+
+When the agent completes the artifact, the page that watched it being written raises a browser notification with the title of the review target, and says the same in a toast. It fires whether or not the page has focus, and a click on it brings the page to the front. The browser's permission is asked for when the reviewer asks the agent for a write-up. A page opened on a review that is already complete raises nothing.
 
 ## The reviewer's page and the author's page
 
@@ -85,10 +94,10 @@ A review target is the viewer's **own** when it is a branch with no pull request
 
 | | No review artifact | Not uploaded | Uploaded |
 |---|---|---|---|
-| The viewer's own | The form that creates a Flight Plan: an agent draft, the structure alone, or empty | The author's page | The author's page, with the review status, the reviewers, the conversation and Submit review |
-| Someone else's | The review request form | The reviewer's page | The reviewer's page |
+| The viewer's own | Built on open, then the author's page | The author's page | The author's page, with the review status, the reviewers, the conversation and Submit review |
+| Someone else's | Built on open, then the reviewer's page | The reviewer's page | The reviewer's page |
 
-The **author's page** is where a Flight Plan is edited: its segments, its contexts, its diagrams and its Code Walkthrough. Only the viewer's own Flight Plan can be edited. Until it is uploaded its header shows the review target, the label "Your Flight Plan", Chat and the Options Menu, and the page has no review status, no reviewers, no comments and no Submit review.
+The **author's page** is where a Flight Plan is edited: its segments, its contexts, its diagrams and its Code Walkthrough. Only the viewer's own Flight Plan can be edited. Until it is uploaded its header shows the review target, the label "Your Flight Plan", Chat and the Settings Menu, and the page has no review status, no reviewers, no comments and no Submit review.
 
 A Flight Plan is **uploaded** once it has been published, to the pull request description or as a Claude artifact. The author's page offers Share only when the artifact is `complete`. While it is not, the header holds "Mark as complete", which makes it `complete`.
 
@@ -172,7 +181,7 @@ What a refresh keeps is decided part by part, by comparing the code as the two a
 
 A part is not kept when a code link in it no longer resolves, or points at lines of a file that changed.
 
-The Options Menu of a review artifact holds Delete, which deletes the review artifact; the page shows the review without one.
+The Settings Menu of the review page holds the review's actions above the settings: View pull request, Generate write-up and Delete, which deletes the review artifact and goes back to the repositories. Opening the review target again builds a new one.
 
 ## Who writes what
 

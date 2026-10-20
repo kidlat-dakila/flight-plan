@@ -31,7 +31,7 @@ const returnsBranchOption = {
   isDisabled: false,
 }
 
-const creationFormOf = (selected: typeof giftCardOption | null): ProcedureReply => ({
+const creationForm: ProcedureReply = {
   data: {
     title: "Create a Flight Plan",
     description: "For a pull request or a branch of storefront.",
@@ -39,43 +39,14 @@ const creationFormOf = (selected: typeof giftCardOption | null): ProcedureReply 
       label: "Pull request or branch",
       hint: "Your open pull requests come first.",
       placeholder: "Search by title, number or branch",
-      selected,
     },
-    initialization: {
-      legend: "How it starts",
-      selectedKind: "draft",
-      options: [
-        { kind: "draft", label: "Let an agent draft it", description: "An agent writes every part.", authorWriting: null },
-        {
-          kind: "scaffold",
-          label: "Generate review Flight Plan artifact only",
-          description: "No agent writes it.",
-          authorWriting: { start: "scaffold", submitLabel: "Start" },
-        },
-        {
-          kind: "empty",
-          label: "Start empty",
-          description: "Nothing is generated.",
-          authorWriting: { start: "empty", submitLabel: "Start" },
-        },
-      ],
-    },
-    form: missingPage.form,
-    pendingLabel: "Starting…",
   },
-})
+}
 
 const someTargets = { data: { options: [giftCardOption, returnsBranchOption], message: null } }
 
-const TARGET_OPTIONS = [giftCardOption, returnsBranchOption]
-
-const creationFormFor = (input: unknown): ProcedureReply => {
-  const targetId = typeof input === "object" && input !== null && "targetId" in input ? input.targetId : null
-  return creationFormOf(TARGET_OPTIONS.find((option) => option.id === targetId) ?? null)
-}
-
 const creationHandlers = (): ProcedureHandlers => ({
-  "review.creationForm": creationFormFor,
+  "review.creationForm": () => creationForm,
   "review.searchTargets": () => someTargets,
   "review.get": () => ({ data: missingPage }),
 })
@@ -100,12 +71,12 @@ const twelveLines: ProcedureReply = {
   },
 }
 
-const renderCreation = (handlers: ProcedureHandlers, path = CREATE_PATH) =>
+const renderCreation = (handlers: ProcedureHandlers, path = CREATE_PATH, history = createMemoryHistory({ initialEntries: [path] })) =>
   render(
     createApp({
       queryClient: new QueryClient({ defaultOptions: { queries: { retry: false } } }),
       trpcClient: createTrpcClient(fakeBackendLinks(handlers)),
-      history: createMemoryHistory({ initialEntries: [path] }),
+      history,
     }),
   )
 
@@ -113,6 +84,10 @@ const EMPTY_RECT = { top: 0, bottom: 0, left: 0, right: 0, width: 0, height: 0 }
 
 describe("the create Flight Plan page", () => {
   beforeEach(() => {
+    Reflect.defineProperty(window, "matchMedia", {
+      value: () => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
+      configurable: true,
+    })
     Reflect.defineProperty(Element.prototype, "scrollIntoView", { value: vi.fn(), configurable: true })
     Reflect.defineProperty(Range.prototype, "getClientRects", { value: () => [], configurable: true })
     Reflect.defineProperty(Range.prototype, "getBoundingClientRect", { value: () => EMPTY_RECT, configurable: true })
@@ -122,16 +97,14 @@ describe("the create Flight Plan page", () => {
     vi.unstubAllGlobals()
   })
 
-  it("asks which pull request or branch and how the Flight Plan starts", async () => {
-    const getCreationForm = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(creationFormOf(null))
+  it("asks which pull request or branch the Flight Plan is for, and nothing else", async () => {
+    const getCreationForm = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(creationForm)
     renderCreation({ ...creationHandlers(), "review.creationForm": getCreationForm })
 
     expect(await screen.findByRole("heading", { name: "Create a Flight Plan", level: 1 })).toBeTruthy()
-    expect(getCreationForm).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: null })
-    expect(screen.getByRole("radio", { name: /Let an agent draft it/ })).toHaveProperty("checked", true)
-    expect(screen.getByRole("radio", { name: /Generate review Flight Plan artifact only/ })).toHaveProperty("checked", false)
-    expect(screen.getByRole("radio", { name: /Start empty/ })).toHaveProperty("checked", false)
-    expect(screen.getByRole("heading", { name: "Configuration" })).toBeTruthy()
+    expect(getCreationForm).toHaveBeenCalledWith({ repositoryName: "storefront" })
+    expect(screen.queryByRole("radio")).toBeNull()
+    expect(screen.queryByRole("button", { name: "Start" })).toBeNull()
 
     fireEvent.focus(screen.getByRole("combobox", { name: "Pull request or branch" }))
 
@@ -139,71 +112,23 @@ describe("the create Flight Plan page", () => {
     expect(screen.getByRole("option", { name: /spike\/returns/ })).toBeTruthy()
   })
 
-  it("opens with the review target named in the address already chosen", async () => {
-    const getCreationForm = vi.fn<(input: unknown) => ProcedureReply>(creationFormFor)
-    renderCreation({ ...creationHandlers(), "review.creationForm": getCreationForm }, "/pr-reviews/storefront/pr-416")
-
-    expect(await screen.findByRole("combobox", { name: "Pull request or branch" })).toHaveProperty(
-      "value",
-      "Show the gift card balance at checkout",
-    )
-    expect(getCreationForm).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-416" })
-    expect(within(screen.getByRole("banner")).getByText("Your Flight Plan")).toBeTruthy()
-    expect(screen.queryByRole("heading", { name: "Create a Flight Plan" })).toBeNull()
-  })
-
-  it("moves to the address of the review target that is chosen", async () => {
-    const getCreationForm = vi.fn<(input: unknown) => ProcedureReply>(creationFormFor)
-    renderCreation({ ...creationHandlers(), "review.creationForm": getCreationForm })
+  it("opens the Flight Plan of the review target that is chosen", async () => {
+    const getReview = vi.fn<(input: unknown) => ProcedureReply>(() => ({ data: artifactPage }))
+    renderCreation({ ...creationHandlers(), "review.get": getReview })
 
     fireEvent.focus(await screen.findByRole("combobox", { name: "Pull request or branch" }))
     fireEvent.click(await screen.findByRole("option", { name: /spike\/returns/ }))
 
-    await waitFor(() => {
-      expect(getCreationForm).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "branch-spike/returns" })
-    })
-    await waitFor(() => {
-      expect(screen.getByRole("combobox", { name: "Pull request or branch" })).toHaveProperty("value", "spike/returns")
-    })
-  })
-
-  it("stays on the page after Start and shows the Flight Plan that was made", async () => {
-    const requestReview = vi
-      .fn<(input: unknown) => ProcedureReply>()
-      .mockReturnValue({ data: { kind: "requested", prompt: null, message: "Flight Plan created" } })
-    const getReview = vi.fn<(input: unknown) => ProcedureReply>(() => ({
-      data: requestReview.mock.calls.length === 0 ? missingPage : artifactPage,
-    }))
-    renderCreation(
-      { ...creationHandlers(), "review.request": requestReview, "review.get": getReview },
-      "/pr-reviews/storefront/branch-spike%2Freturns",
-    )
-
-    fireEvent.click(await screen.findByRole("radio", { name: /Generate review Flight Plan artifact only/ }))
-
-    expect(screen.queryByRole("heading", { name: "Configuration" })).toBeNull()
-
-    fireEvent.click(screen.getByRole("button", { name: "Start" }))
-
-    await waitFor(() => {
-      expect(requestReview).toHaveBeenCalledWith({
-        repositoryName: "storefront",
-        targetId: "branch-spike/returns",
-        configurationId: "standard",
-        order: "foundations-first",
-        customOrder: "",
-        writer: { kind: "author", start: "scaffold" },
-      })
-    })
     expect(await screen.findByRole("navigation", { name: "Review sections" })).toBeTruthy()
+    expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ repositoryName: "storefront", targetId: "branch-spike/returns" }))
     expect(screen.queryByRole("heading", { name: "Create a Flight Plan" })).toBeNull()
-    expect(screen.queryByRole("heading", { name: "MAYDAY! MAYDAY! We couldn't open this review" })).toBeNull()
   })
 
-  it("shows the Flight Plan, not the form, for a review target that already has one", async () => {
+  it("opens the author's Flight Plan straight away, with no form", async () => {
     renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }) }, "/pr-reviews/storefront/pr-416")
 
     expect(await screen.findByRole("navigation", { name: "Review sections" })).toBeTruthy()
+    expect(within(screen.getByRole("banner")).getByText("Your Flight Plan")).toBeTruthy()
     expect(screen.queryByRole("combobox", { name: "Pull request or branch" })).toBeNull()
   })
 
@@ -215,7 +140,7 @@ describe("the create Flight Plan page", () => {
     expect(await within(band).findByRole("heading", { name: "Count held units in the stock check" })).toBeTruthy()
     expect(within(band).getByText("Your Flight Plan")).toBeTruthy()
     expect(within(band).getByRole("button", { name: "Chat" })).toBeTruthy()
-    expect(within(band).getByRole("button", { name: "More actions" })).toBeTruthy()
+    expect(within(band).getByRole("button", { name: "Settings" })).toBeTruthy()
     expect(within(band).getByRole("button", { name: "Share" })).toBeTruthy()
     expect(within(band).queryByRole("button", { name: "Mark as complete" })).toBeNull()
     expect(within(band).queryByRole("button", { name: "Submit review" })).toBeNull()
@@ -343,69 +268,28 @@ describe("the create Flight Plan page", () => {
     expect((await screen.findAllByRole("button", { name: "Edit segment" })).length).toBeGreaterThan(0)
   })
 
-  it("offers Delete in the author's Options Menu, without the rebuild actions", async () => {
+  it("offers Delete in the author's settings menu, without the rebuild actions", async () => {
     renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }) }, "/pr-reviews/storefront/pr-416")
 
-    fireEvent.click(within(await screen.findByRole("banner")).getByRole("button", { name: "More actions" }))
+    fireEvent.click(within(await screen.findByRole("banner")).getByRole("button", { name: "Settings" }))
 
     expect(await screen.findByRole("menuitem", { name: "Delete" })).toBeTruthy()
     expect(screen.queryByRole("menuitem", { name: "Update the Flight Plan" })).toBeNull()
     expect(screen.queryByRole("menuitem", { name: "Regenerate from scratch" })).toBeNull()
   })
 
-  it("stays on the author's page after Delete, with the review target still chosen", async () => {
+  it("goes back to the repositories after Delete", async () => {
     const deleteReview = vi.fn(() => ({ data: { message: "Flight Plan deleted" } }))
-    const hasFlightPlan = (): boolean => deleteReview.mock.calls.length === 0
-    renderCreation({
-      ...creationHandlers(),
-      "review.creationForm": (input) => (hasFlightPlan() ? creationFormOf(null) : creationFormFor(input)),
-      "review.get": () => ({ data: hasFlightPlan() ? artifactPage : missingPage }),
-      "review.delete": deleteReview,
-    }, "/pr-reviews/storefront/pr-416")
+    const history = createMemoryHistory({ initialEntries: ["/pr-reviews/storefront/pr-416"] })
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.delete": deleteReview }, undefined, history)
 
-    fireEvent.click(within(await screen.findByRole("banner")).getByRole("button", { name: "More actions" }))
+    fireEvent.click(within(await screen.findByRole("banner")).getByRole("button", { name: "Settings" }))
     fireEvent.click(await screen.findByRole("menuitem", { name: "Delete" }))
 
-    const target = await screen.findByRole("combobox", { name: "Pull request or branch" })
     await waitFor(() => {
-      expect(target).toHaveProperty("value", "Show the gift card balance at checkout")
+      expect(history.location.pathname).toBe("/")
     })
-    expect(screen.queryByRole("heading", { name: "No Flight Plan Review yet" })).toBeNull()
     expect(deleteReview).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-416" })
-  })
-
-  it("shows why a Flight Plan could not be created, under the field it concerns", async () => {
-    const rejection = { kind: "rejected", field: "target", message: "Choose a pull request or a branch." }
-    renderCreation({ ...creationHandlers(), "review.request": () => ({ data: rejection }) })
-
-    fireEvent.click(await screen.findByRole("radio", { name: /Start empty/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Start" }))
-
-    expect((await screen.findByRole("alert")).textContent).toBe("Choose a pull request or a branch.")
-    expect(screen.getByRole("combobox", { name: "Pull request or branch" }).getAttribute("aria-invalid")).toBe("true")
-  })
-
-  it("asks for notification permission when an agent drafts the Flight Plan, and not when the author writes it", async () => {
-    const requestPermission = vi.fn<() => Promise<NotificationPermission>>().mockResolvedValue("granted")
-    vi.stubGlobal("Notification", { permission: "default", requestPermission })
-    const rejection = { kind: "rejected", field: "target", message: "Choose a pull request or a branch." }
-    const requestReview = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: rejection })
-    renderCreation({ ...creationHandlers(), "review.request": requestReview })
-
-    fireEvent.click(await screen.findByRole("radio", { name: /Start empty/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Start" }))
-
-    await waitFor(() => {
-      expect(requestReview).toHaveBeenCalledTimes(1)
-    })
-    expect(requestPermission).not.toHaveBeenCalled()
-
-    fireEvent.click(screen.getByRole("radio", { name: /Let an agent draft it/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Start the review" }))
-
-    await waitFor(() => {
-      expect(requestPermission).toHaveBeenCalledTimes(1)
-    })
   })
 
   it("switches the context from reading to writing with Edit, and saves what was written as Markdown", async () => {

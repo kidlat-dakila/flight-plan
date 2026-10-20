@@ -6,7 +6,6 @@ import type { PullRequestReading } from "@/procedures/get-review/utils/pull-requ
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 import { DEFAULT_REVIEW_PREFERENCES } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
-import { listConfigurationsOf } from "@/procedures/list-configurations/utils/configuration"
 import type { PullRequestTarget, Repository } from "@/procedures/list-repositories/utils/repository"
 import { NO_REVIEWED_MARKS } from "@flightplan/reviewed-marks"
 import {
@@ -88,10 +87,8 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   sources: fixtureSources,
   solutionTokens: new Map(),
   setup: EMPTY_SETUP,
-  configurations: listConfigurationsOf([]),
-  startableAgents: [],
+  unavailableMessage: null,
   chatLinkIds: [],
-  agentModels: {},
   activity: NO_WRITING_ACTIVITY,
   request: null,
   ...overrides,
@@ -106,17 +103,21 @@ const createInput = (overrides: Partial<GetReviewInput> = {}): GetReviewInput =>
 })
 
 describe("buildReviewPage", () => {
-  it("offers the start form with the count of changed files when the review target has no artifact", () => {
-    expect(buildReviewPage(createSource({ artifact: null }), createInput())).toMatchObject({
+  it("says why Flight Plan could not build the review, with the count of changed files, when the review target has no artifact", () => {
+    const page = buildReviewPage(createSource({ artifact: null, unavailableMessage: "This folder is not a git repository." }), createInput())
+
+    expect(page).not.toHaveProperty("form")
+    expect(page).toMatchObject({
       kind: "missing",
-      heading: "No Flight Plan Review yet",
+      isOwn: false,
+      heading: "Flight Plan could not build this review",
+      message: "This folder is not a git repository.",
       changedFiles: [
         { text: "4 changed files", kind: "plain" },
         { text: "2 TypeScript", kind: "plain" },
         { text: "1 TSX", kind: "plain" },
         { text: "1 other", kind: "plain" },
       ],
-      form: { configuration: { selectedConfigurationId: "standard" }, order: { selectedOrder: "foundations-first" } },
     })
   })
 

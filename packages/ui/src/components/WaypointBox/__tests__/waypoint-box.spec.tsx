@@ -12,6 +12,9 @@ const createWaypoint = (overrides: Partial<WaypointContent> = {}): WaypointConte
   coreChangeLabel: "Core change",
   reading: paragraph("It subtracts the held units."),
   unwrittenLabel: "Not written yet.",
+  hint: null,
+  isBeingWritten: false,
+  spotlight: null,
   coreChange: paragraph("It can go below zero."),
   findings: [createFinding()],
   isReviewed: false,
@@ -43,6 +46,14 @@ describe("WaypointBox", () => {
     expect(within(box).getByText("Core change")).toBeTruthy()
     expect(within(box).getByText("2 of 7")).toBeTruthy()
     expect(within(box).queryByText("It subtracts the held units.")).toBeNull()
+  })
+
+  it("shows the spotlight after the core change in its head", () => {
+    renderBox(createWaypoint({ spotlight: { label: "Spotlight", classifications: [{ key: "component", label: "Component" }] } }), false)
+
+    const head = screen.getByRole("button", { expanded: false })
+
+    expect(head.textContent).toMatch(/Core change.*Spotlight.*Component/)
   })
 
   it("shows the reading, why it is a core change and its findings when open", () => {

@@ -43,7 +43,7 @@ import {
   type NavigatorSubmenu,
   type SectionSpan,
 } from "@/lib/navigator-controls"
-import { isNavigatorKeyEvent } from "@/lib/navigator-keys"
+import { isNavigatorKeyEvent, navigatorKeyOf } from "@/lib/navigator-keys"
 import { cn } from "@/lib/utils"
 
 interface ReviewNavigatorProps {
@@ -192,7 +192,7 @@ const ReviewNavigator = ({ rail, onSectionJump, children }: ReviewNavigatorProps
 
   const handleKeyDown = useEffectEvent((event: KeyboardEvent): void => {
     if (!isNavigatorKeyEvent(event)) return
-    const key = event.key.toLowerCase()
+    const key = navigatorKeyOf(event)
     if (openMenuKey !== null) {
       if (key !== openMenuKey) return
       event.preventDefault()

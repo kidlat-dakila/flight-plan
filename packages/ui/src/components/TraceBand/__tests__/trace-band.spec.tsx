@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, render, screen, within } from "@testing-library/react"
 import type { ComponentProps } from "react"
 import TraceBand, { type TraceBandAuthoring } from "@/components/TraceBand"
 
@@ -48,6 +48,24 @@ describe("TraceBand", () => {
     expect(screen.getByText("Not written yet.")).toBeTruthy()
   })
 
+  it("shows Flight Plan's hint in place of a description that is not written", () => {
+    const { diagram } = createProps()
+    render(<TraceBand {...createProps({ diagram: diagram === null ? null : { ...diagram, description: null, descriptionHint: "Runs through a page and a data model." } })} />)
+
+    expect(screen.getByText("Runs through a page and a data model.")).toBeTruthy()
+    expect(screen.queryByText("Not written yet.")).toBeNull()
+  })
+
+  it("says beside the heading when the diagram has no write-up yet", () => {
+    const { rerender } = render(<TraceBand {...createProps({ writeUpNotice: "No write-up yet" })} />)
+
+    expect(screen.getByText("No write-up yet")).toBeTruthy()
+
+    rerender(<TraceBand {...createProps()} />)
+
+    expect(screen.queryByText("No write-up yet")).toBeNull()
+  })
+
   it("offers an author to edit the description beside the heading, and a reviewer not", () => {
     const authoring = createAuthoring()
     const { rerender } = render(<TraceBand {...createProps({ authoring, renderDescriptionEditor: () => null })} />)
@@ -68,6 +86,56 @@ describe("TraceBand", () => {
     expect(screen.queryByRole("button", { name: "Edit" })).toBeNull()
     expect(screen.queryByText("A shopper opens a product, and the page asks for its price.")).toBeNull()
     expect(renderDescriptionEditor).toHaveBeenCalledWith(expect.objectContaining({ markdown: "A shopper opens a product, and the page asks for its price.", onSave: authoring.description.onSave }))
+  })
+
+  const tabDiagram = (anchorId: string, title: string, text: string) => ({
+    anchorId,
+    title,
+    description: [{ kind: "paragraph" as const, inlines: [{ kind: "text" as const, text }] }],
+    descriptionMarkdown: text,
+    unwrittenLabel: "Not written yet.",
+    nodes: [],
+    edges: [],
+  })
+
+  const diagramTabs = [
+    { id: "stock", label: "Stock check", diagram: tabDiagram("trace-stock", "Stock check", "A shopper adds a line, and the stock is read.") },
+    { id: "checkout", label: "Checkout", diagram: tabDiagram("trace-checkout", "Checkout", "A shopper pays, and the order is written.") },
+  ]
+
+  it("shows a review without segments as one tab per diagram, the first open", () => {
+    render(<TraceBand {...createProps({ diagram: null, tabs: diagramTabs })} />)
+
+    const tabList = screen.getByRole("tablist", { name: "Trace Diagram" })
+
+    expect(within(tabList).getAllByRole("tab").map((tab) => tab.textContent)).toStrictEqual(["Stock check", "Checkout"])
+    expect(screen.getByRole("tab", { name: "Stock check" }).getAttribute("aria-selected")).toBe("true")
+    expect(screen.getByRole("tabpanel", { name: "Stock check" }).id).toBe("trace-stock")
+    expect(screen.getByText("A shopper adds a line, and the stock is read.")).toBeTruthy()
+    expect(screen.queryByText("A shopper pays, and the order is written.")).toBeNull()
+  })
+
+  it("opens another tab by click and by the arrow keys", () => {
+    render(<TraceBand {...createProps({ diagram: null, tabs: diagramTabs })} />)
+
+    fireEvent.click(screen.getByRole("tab", { name: "Checkout" }))
+
+    expect(screen.getByText("A shopper pays, and the order is written.")).toBeTruthy()
+
+    fireEvent.keyDown(screen.getByRole("tab", { name: "Checkout" }), { key: "ArrowRight" })
+
+    expect(screen.getByRole("tab", { name: "Stock check" }).getAttribute("aria-selected")).toBe("true")
+    expect(document.activeElement).toBe(screen.getByRole("tab", { name: "Stock check" }))
+  })
+
+  it("gives the author the editing of the open tab's own diagram", () => {
+    const authoringOf = vi.fn(() => createAuthoring())
+    render(<TraceBand {...createProps({ diagram: null, tabs: diagramTabs, tabEditing: { authoringOf, cardMovingOf: () => null, writeUpOf: () => null }, renderDescriptionEditor: () => null })} />)
+
+    fireEvent.click(screen.getByRole("tab", { name: "Checkout" }))
+
+    expect(authoringOf).toHaveBeenLastCalledWith("checkout")
+    expect(screen.queryByRole("button", { name: "Add a diagram" })).toBeNull()
   })
 
   it("shows only its heading when the trace is absent", () => {

@@ -9,6 +9,7 @@ import FileRows, {
   type FileRow,
   type FileThread,
   type PreviewVisit,
+  type WriteUpTarget,
 } from "@/components/FileRows"
 import LabelSegments from "@/components/LabelSegments"
 import OutwardLink from "@/components/OutwardLink"
@@ -55,6 +56,7 @@ interface FileSectionProps {
   readonly onReply: (threadId: string, body: string) => void
   readonly onResolveThread: (threadId: string, isResolved: boolean) => void
   readonly onDiscardComment: (commentId: string) => void
+  readonly onWriteUp?: ((target: WriteUpTarget) => void) | null
 }
 
 const COLLAPSE_LABEL = "Collapse file"
@@ -86,6 +88,7 @@ const FileSection = ({
   onReply,
   onResolveThread,
   onDiscardComment,
+  onWriteUp = null,
 }: FileSectionProps) => {
   const commenting: FileCommenting | null = composer === null
     ? null
@@ -155,6 +158,7 @@ const FileSection = ({
           onToggleWaypoint={onToggleWaypoint}
           onWaypointReviewedChange={onWaypointReviewedChange}
           onRootBlockReviewedChange={onRootBlockReviewedChange}
+          onWriteUp={onWriteUp}
         />
       </div>
     </article>

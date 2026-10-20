@@ -3,7 +3,6 @@ import type { ReviewScaffold } from "@/procedures/get-review/utils/stored-review
 import type { Configuration } from "@/procedures/list-configurations/utils/configuration"
 import { withRequiredSections } from "@/procedures/read-artifact/utils/required-nodes"
 import { unwrittenWork } from "@/procedures/read-artifact/utils/unwritten-work"
-import { MISSING_CONFIGURATION_MESSAGE } from "@/procedures/request-review/utils/plan-review-request"
 import { withConfiguration } from "@/procedures/request-review/utils/starting-artifact"
 import type { WriteUpReviewInput, WriteUpResult } from "./schemas"
 
@@ -19,6 +18,7 @@ export interface WriteUpSource {
   readonly now: Date
 }
 
+const MISSING_CONFIGURATION_MESSAGE = "This configuration no longer exists. Pick another one."
 const NO_SECTION_MESSAGE = "Choose at least one part for the agent to write up."
 const DRAFTING_STATUS = "drafting"
 

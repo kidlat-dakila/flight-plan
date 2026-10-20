@@ -3,6 +3,8 @@ import {
   BACK_KEY,
   navigatorButtonOf,
   NEXT_KEY,
+  WRITE_UP_BLOCK_KEY,
+  WRITE_UP_KEY,
   type ChangeTone,
   type NavigatorBadge,
   type NavigatorButton,
@@ -52,12 +54,20 @@ export interface WalkthroughControls {
   readonly currentReview: { readonly markLabel: string, readonly reviewedLabel: string }
 }
 
+export type WriteUpScope = "line" | "block"
+
 export interface WalkthroughNavigationRequest {
   readonly controls: WalkthroughControls
   readonly positionLabel: string | null
   readonly canStepBack: boolean
   readonly canStepForward: boolean
-  readonly currentWaypoint: { readonly isReviewed: boolean, readonly isOpen: boolean, readonly canComment: boolean } | null
+  readonly currentWaypoint: {
+    readonly isReviewed: boolean
+    readonly isOpen: boolean
+    readonly canComment: boolean
+    readonly canWriteUp: boolean
+    readonly canWriteUpBlock: boolean
+  } | null
   readonly areFilesCollapsed: boolean
   readonly isFileCollapsed: boolean | null
   readonly markerOf: (key: FindingFilterKey | "reviewed") => ReactNode
@@ -66,6 +76,7 @@ export interface WalkthroughNavigationRequest {
   readonly onNext: () => void
   readonly onCurrentReviewedChange: ((isReviewed: boolean) => void) | null
   readonly onCommentOnCurrent: (() => void) | null
+  readonly onWriteUpCurrent: ((scope: WriteUpScope) => void) | null
   readonly onFilterChange: ((keys: readonly string[] | null) => void) | null
   readonly onShowReviewedChange: ((isShown: boolean) => void) | null
   readonly onFilesCollapsedChange: (isCollapsed: boolean) => void
@@ -80,6 +91,10 @@ const FILES_KEY = "q"
 const FILE_KEY = "e"
 export const WAYPOINT_KEY = "r"
 const ADD_COMMENT_LABEL = "Add comment"
+const WRITE_UP_LINE_LABEL = "Write up this line"
+const WRITE_UP_BLOCK_LABEL = "Write up the whole code block"
+const WRITE_UP_SHORT_LABEL = "Write up"
+const WRITE_UP_BLOCK_SHORT_LABEL = "Write up block"
 const COLLAPSE_ALL_LABEL = "Collapse all"
 const EXPAND_ALL_LABEL = "Expand all"
 const COLLAPSE_FILE_LABEL = "Collapse file"
@@ -143,7 +158,29 @@ const commentButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButto
   ]
 }
 
-const reviewGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup => [...reviewButtonsOf(request), ...commentButtonsOf(request)]
+const writeUpButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButton[] => {
+  const { onWriteUpCurrent, currentWaypoint } = request
+  if (onWriteUpCurrent === null || currentWaypoint?.canWriteUp !== true) return []
+  const lineButton = navigatorButtonOf({
+    key: WRITE_UP_KEY,
+    label: WRITE_UP_LINE_LABEL,
+    shortLabel: WRITE_UP_SHORT_LABEL,
+    onRun: () => { onWriteUpCurrent("line") },
+  })
+  const blockButton = navigatorButtonOf({
+    key: WRITE_UP_BLOCK_KEY,
+    label: WRITE_UP_BLOCK_LABEL,
+    shortLabel: WRITE_UP_BLOCK_SHORT_LABEL,
+    onRun: () => { onWriteUpCurrent("block") },
+  })
+  return currentWaypoint.canWriteUpBlock ? [lineButton, blockButton] : [lineButton]
+}
+
+const reviewGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup => [
+  ...reviewButtonsOf(request),
+  ...commentButtonsOf(request),
+  ...writeUpButtonsOf(request),
+]
 
 const reviewedChoicesOf = (request: WalkthroughNavigationRequest): NavigatorChoice[] => {
   const { onShowReviewedChange } = request

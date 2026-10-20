@@ -12,6 +12,7 @@ import { WALKTHROUGH_ORDER_OFFERS, WRITE_UP_SECTION_LABELS } from "./write-up-ca
 import type { WriteUpCounts } from "./write-up-counts"
 
 export interface WriteUpPlanSource {
+  readonly isOffered: boolean
   readonly agentLabel: string
   readonly counts: WriteUpCounts
   readonly sections: readonly WriteUpSection[]
@@ -54,6 +55,7 @@ const configurationNameOf = (configurations: readonly Configuration[], id: strin
 
 export const buildWriteUpPlan = (source: WriteUpPlanSource): FoundPlan => ({
   kind: "plan",
+  isOffered: source.isOffered,
   agentLabel: source.agentLabel,
   summary: [
     { label: "Write up", value: chosenLabelOf(source.sections) },

@@ -5,14 +5,14 @@ const createCaller = () => appRouter.createCaller(createMockProcedureContext(new
 
 describe("review.creationForm route", () => {
   it("delegates to the get-creation-form procedure", async () => {
-    await expect(createCaller().review.creationForm({ repositoryName: "storefront", targetId: "pr-416" })).resolves.toMatchObject({
+    await expect(createCaller().review.creationForm({ repositoryName: "storefront" })).resolves.toMatchObject({
       title: "Create a Flight Plan",
-      target: { selected: { id: "pr-416" } },
+      target: { label: "Pull request or branch" },
     })
   })
 
   it("maps an unknown repository to a NOT_FOUND error", async () => {
-    await expect(createCaller().review.creationForm({ repositoryName: "gone", targetId: null })).rejects.toMatchObject({
+    await expect(createCaller().review.creationForm({ repositoryName: "gone" })).rejects.toMatchObject({
       code: "NOT_FOUND",
     })
   })

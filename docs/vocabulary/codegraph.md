@@ -198,7 +198,7 @@ What reads a segment, and what it takes from the codegraph:
 
 `tools/playground-fixtures` runs `buildBranchCodegraph` against whole repositories and keeps the results as snapshots, which the app shows as fixture reviews in a development build.
 
-A review requested in the app is built by `buildBranchReviewArtifact`, which runs the same pipeline on the branch of the review target and stores each segment of the codegraph as a segment of the review artifact, with its Trace Diagram, its Blast Diagram and its Code Walkthrough, nothing written yet. The artifact is saved before the agent is started or the prompt is handed over, so the agent only writes.
+A review opened in the app is built by `buildBranchReviewArtifact`, which runs the same pipeline on the branch of the review target and stores each segment of the codegraph as a segment of the review artifact, with its Trace Diagram, its Blast Diagram and its Code Walkthrough, nothing written yet. The artifact is saved when the review first opens, before any agent is asked for a write-up, so the agent only writes.
 
 An agent's tools can fill in labels and explanations on existing nodes. They have no field for adding, moving or removing a node, and none for saying whether a segment has a diagram. The codegraph owns the structure, and the agent owns the prose.
 

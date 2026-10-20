@@ -41,9 +41,10 @@ import IconButton from "@/components/IconButton"
 import NodeCodeView, { type CodeView, type LineSpan } from "@/components/NodeCodeView"
 import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
+import { WriteUpOffer } from "@/components/WriteUpIcon"
 import { straightPath, type Point } from "@/lib/diagram-path"
 import { cutOffBy, lineageOf, neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
-import { navigatorButtonOf } from "@/lib/navigator-controls"
+import { navigatorButtonOf, WRITE_UP_KEY, type NavigatorButton } from "@/lib/navigator-controls"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { arrangeTrace, nearestSideOf, placeUnplacedCards, type CardSide, type PositionById } from "@/lib/trace-arrangement"
 import { toTraceFlow, type FlowFrame, type FlowHandleType } from "@/lib/trace-flow"
@@ -59,6 +60,7 @@ export interface TraceTriggerLabel {
   readonly name: string
   readonly label: string
   readonly isDraft: boolean
+  readonly hint?: string | null
   readonly change: NodeChange | null
   readonly lines: readonly LineSpan[]
 }
@@ -68,6 +70,7 @@ export interface TraceListedBlock {
   readonly name: string
   readonly label: string
   readonly isDraft: boolean
+  readonly hint?: string | null
   readonly change: NodeChange | null
   readonly lines: readonly LineSpan[]
 }
@@ -92,6 +95,9 @@ export interface TraceNode {
   readonly changedLabel: string | null
   readonly label: string
   readonly isDraft: boolean
+  readonly classification: { readonly key: string, readonly label: string }
+  readonly hint: string | null
+  readonly isBeingWritten: boolean
   readonly name: string
   readonly shortPath: string
   readonly description: ProseBlocks | null
@@ -169,6 +175,7 @@ interface TraceDiagramProps {
   readonly authoring?: TraceAuthoring | null
   readonly cardMoving?: CardMoving | null
   readonly navigatorAnchorId?: string | null
+  readonly onWriteUpNode?: ((nodeId: string) => void) | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
 }
@@ -177,6 +184,10 @@ interface Concealment {
   readonly collapsedNodeIds: readonly string[]
   readonly focusedNodeId: string | null
 }
+
+const CARD_NO_WRITE_UP_LABEL = "This card has no write-up yet."
+const CARD_BEING_WRITTEN_LABEL = "The agent is writing this card up."
+const WRITE_UP_CARD_LABEL = "Write up"
 
 const TYPE_ICONS: Readonly<Record<string, LucideIcon>> = {
   "root-argument-value": SlidersHorizontalIcon,
@@ -406,6 +417,14 @@ interface NodeBoxProps {
   readonly onCollapseToggle: () => void
 }
 
+const NodeHint = ({ hint }: { readonly hint: string | null }) =>
+  hint === null ? null : <span className="line-clamp-2 text-[0.75rem] leading-4 text-muted-foreground">{hint}</span>
+
+const writeUpButtonsOf = (node: TraceNode | null, onWriteUpNode: ((nodeId: string) => void) | null): NavigatorButton[] =>
+  node === null || onWriteUpNode === null || !node.isDraft || node.isBeingWritten
+    ? []
+    : [navigatorButtonOf({ key: WRITE_UP_KEY, label: WRITE_UP_CARD_LABEL, onRun: () => { onWriteUpNode(node.id) } })]
+
 const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle }: NodeBoxProps) => {
   const TypeIcon = Object.hasOwn(TYPE_ICONS, node.type) ? TYPE_ICONS[node.type] : WorkflowIcon
   const CollapseIcon = isCollapsed ? ChevronsUpDownIcon : ChevronsDownUpIcon
@@ -435,14 +454,19 @@ const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, 
           <span title={node.shortPath} className="ml-auto min-w-0 truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{node.shortPath}</span>
         </span>
         <span className={HEAD_BODY_CLASSES}>
-          <span className="flex items-center text-[0.6875rem] leading-4 text-muted-foreground">
-            <span>{node.typeLabel}</span>
+          <span className="flex min-w-0 items-center gap-1 text-[0.6875rem] leading-4 text-muted-foreground">
+            <span className="shrink-0">{node.typeLabel}</span>
+            {node.classification.label === node.typeLabel
+              ? null
+              : <span className="min-w-0 truncate before:mr-1 before:content-['•']">{node.classification.label}</span>}
             {node.change === null || node.changedLabel === null
               ? null
               : <span className={cn("ml-auto font-bold", CHANGE_TEXT_CLASSES[node.change])}>{node.changedLabel}</span>}
           </span>
           <Unwritten isPending={node.isDraft} lineCount={2} className="w-full gap-1 py-0 text-[0.8125rem] [&>[aria-hidden]]:my-[0.2em]">
-            {node.isDraft ? null : <span className="line-clamp-2 text-[0.8125rem] leading-4 font-bold">{node.label}</span>}
+            {node.isDraft
+              ? <NodeHint hint={node.hint} />
+              : <span className="line-clamp-2 text-[0.8125rem] leading-4 font-bold">{node.label}</span>}
           </Unwritten>
         </span>
       </button>
@@ -496,6 +520,7 @@ const TriggerRow = ({ trigger, placed, emphasis, onSelect, onHoverChange }: Trig
       data-trigger-id={trigger.id}
       data-change={trigger.change ?? undefined}
       aria-label={`${trigger.typeLabel}: ${trigger.label}`}
+      title={trigger.isDraft ? trigger.hint ?? undefined : undefined}
       className={cn(TRIGGER_CLASSES, trigger.change !== null && CHANGE_BORDER_CLASSES[trigger.change], emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis])}
       style={boxStyleOf(placed)}
       onMouseEnter={() => { onHoverChange(true) }}
@@ -532,6 +557,7 @@ const BlockRowButton = ({ row: { kind, kindLabel, block }, placed, emphasis, onS
       data-block-kind={kind}
       data-change={block.change ?? undefined}
       aria-label={`${kindLabel}: ${block.label}`}
+      title={block.isDraft ? block.hint ?? undefined : undefined}
       className={cn(TRIGGER_CLASSES, block.change !== null && CHANGE_BORDER_CLASSES[block.change], emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis])}
       style={boxStyleOf(placed)}
       onMouseEnter={() => { onHoverChange(true) }}
@@ -845,7 +871,7 @@ const lineOfConnection = ({ source, sourceHandle, target, targetHandle }: FlowCo
   return { from: source, fromRowId: sourceHandle.slice(ROW_HANDLE_PREFIX.length), to: target, toSide }
 }
 
-const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, cardMoving = null, navigatorAnchorId = null, onOpenCodeLink, onWaypointReviewedChange }: TraceDiagramProps) => {
+const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, cardMoving = null, navigatorAnchorId = null, onWriteUpNode = null, onOpenCodeLink, onWaypointReviewedChange }: TraceDiagramProps) => {
   const [draggedPositionById, setDraggedPositionById] = useState<PositionById>(NO_POSITIONS)
   const [selectedLineId, setSelectedLineId] = useState<string | null>(null)
   const [droppedLine, setDroppedLine] = useState<DroppedLine | null>(null)
@@ -1029,6 +1055,7 @@ const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isRevie
                   conceal(collapsedNodeIds.length === 0 ? { collapsedNodeIds: leadingIds, focusedNodeId: null } : NOTHING_CONCEALED)
                 },
               }),
+              ...writeUpButtonsOf(selectedNode, onWriteUpNode),
             ],
           }}
       actions={authoring === null
@@ -1075,6 +1102,17 @@ const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isRevie
               ))}
               onClose={() => { setSelectedNodeId(null) }}
             >
+              {selectedNode.isDraft
+                ? (
+                    <WriteUpOffer
+                      hint={selectedNode.hint}
+                      label={selectedNode.isBeingWritten ? CARD_BEING_WRITTEN_LABEL : CARD_NO_WRITE_UP_LABEL}
+                      isBeingWritten={selectedNode.isBeingWritten}
+                      buttonLabel={WRITE_UP_CARD_LABEL}
+                      onWriteUp={onWriteUpNode === null ? null : () => { onWriteUpNode(selectedNode.id) }}
+                    />
+                  )
+                : null}
               {selectedNode.description === null
                 ? null
                 : <Prose blocks={selectedNode.description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}

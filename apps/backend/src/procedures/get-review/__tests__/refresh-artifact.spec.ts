@@ -7,13 +7,13 @@ import { InMemoryReviewStore, type ReviewStore } from "@/procedures/get-review/u
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { waypointsOf } from "@/procedures/read-artifact/utils/artifact-walk"
-import { requestReview } from "@/procedures/request-review"
 import { createChangeRepositoryOpener } from "@/procedures/request-review/__tests__/change-repository"
 import { listTraceNodes } from "@flightplan/codegraph"
 import type { TraceNode, ReviewArtifact, Waypoint } from "@flightplan/configurations"
 
 const NOW = new Date("2026-10-12T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "pr-416" }
+const PAGE_INPUT = { ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }
 const PATH = "src/delivery/estimate.ts"
 const BASE_TEXTS = { [PATH]: "export const estimate = () => 2\nexport const label = () => \"slow\"\n" }
 const ESTIMATE_LINES = ["export const estimate = (zone: string) =>", "  zone === \"local\" ? 1 : 3"]
@@ -55,6 +55,7 @@ const createHarness = (): Harness => {
   })
   const setupStore = new InMemorySetupStore({
     ...EMPTY_SETUP,
+    defaultConfiguration: "onboardee",
     agents: {
       installs: [{ agent: "claude", installPath: "/home/.claude", model: "default", effort: "default" }],
       defaultAgent: "claude",
@@ -127,11 +128,9 @@ const traceLabelsOf = async (reviewStore: ReviewStore): Promise<(string | null)[
 }
 
 const startWrittenReview = async (harness: Harness): Promise<void> => {
-  await requestReview({ ...KEY, configurationId: "onboardee", order: "along-the-path", customOrder: "", writer: { kind: "none" } }, harness.contextAt(FIRST_CHANGE))
+  await getReview(PAGE_INPUT, harness.contextAt(FIRST_CHANGE))
   await harness.reviewStore.amendArtifact(KEY, (artifact) => ({ artifact: writeEverything(artifact), outcome: null }))
 }
-
-const PAGE_INPUT = { ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }
 
 describe("getReview on a target that moved", () => {
   it("pulls the branch and pins the stored review to the new commit, staying complete", async () => {

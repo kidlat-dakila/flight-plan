@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import BlastDiagram, { type BlastAuthoring, type BlastBoard, type BlastNode } from "@/components/BlastDiagram"
+import { findNavigatorButton, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
 import { paragraph } from "@/lib/__tests__/review-samples"
 
 const fileList = (heading: string, paths: readonly string[]): BlastNode["imports"] => ({
@@ -18,6 +19,7 @@ const node = (overrides: Partial<BlastNode> & Pick<BlastNode, "id" | "label">): 
   impactReason: null,
   impactNote: "Nobody has assessed what the change does to this file.",
   isUnassessed: true,
+  isBeingWritten: false,
   assessment: { impactType: "unassessed", impactReason: "" },
   importers: fileList("Imported by 0 files", []),
   imports: fileList("Imports 0 files", []),
@@ -131,6 +133,50 @@ describe("BlastDiagram", () => {
 
     expect(within(panel).getByText("Not assessed")).toBeTruthy()
     expect(within(panel).getByText("Nobody has assessed what the change does to this file.")).toBeTruthy()
+  })
+
+  it("asks for the write-up of a file nobody assessed, with the button and with G, and never for a file of the change", async () => {
+    const onWriteUpFile = vi.fn()
+    renderInNavigator(
+      <BlastDiagram
+        title="Blast Diagram"
+        board={BOARD}
+        codeLinks={{}}
+        authoring={null}
+        navigation={{ anchorId: SECTION_ANCHOR_ID, leadingGroup: [] }}
+        onWriteUpFile={onWriteUpFile}
+        onOpenCodeLink={vi.fn()}
+        onOpenFile={vi.fn()}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole("button", { name: "logger.ts" }))
+    const panel = await screen.findByRole("region", { name: "src/logger.ts" })
+
+    expect(within(panel).getByText("This file has no write-up yet.")).toBeTruthy()
+
+    fireEvent.click(within(panel).getByRole("button", { name: /Write up/ }))
+    await findNavigatorButton("Write up")
+    fireEvent.keyDown(document.body, { key: "g" })
+
+    expect(onWriteUpFile.mock.calls).toStrictEqual([["src/logger.ts"], ["src/logger.ts"]])
+
+    fireEvent.click(screen.getByRole("button", { name: /price\.ts/ }))
+    const changed = await screen.findByRole("region", { name: "src/price.ts" })
+
+    expect(within(changed).queryByRole("button", { name: /Write up/ })).toBeNull()
+  })
+
+  it("spins the ring while the agent assesses the file, and offers no write-up then", async () => {
+    const board = { ...BOARD, nodes: BOARD.nodes.map((candidate) => (candidate.id === "src/logger.ts" ? { ...candidate, isBeingWritten: true } : candidate)) }
+    render(<BlastDiagram title="Blast Diagram" board={board} codeLinks={{}} authoring={null} onWriteUpFile={vi.fn()} onOpenCodeLink={vi.fn()} onOpenFile={vi.fn()} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "logger.ts" }))
+    const panel = await screen.findByRole("region", { name: "src/logger.ts" })
+
+    expect(within(panel).getByText("The agent is assessing this file.")).toBeTruthy()
+    expect(panel.querySelector("[data-being-written=true]")).not.toBeNull()
+    expect(within(panel).queryByRole("button", { name: /Write up/ })).toBeNull()
   })
 
   it("moves the side panel to a file picked from a list", async () => {

@@ -2,6 +2,7 @@ import { CheckIcon } from "lucide-react"
 import type { ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import FindingMark from "@/components/FindingMark"
+import { NoWriteUpTag } from "@/components/WriteUpIcon"
 import { useNavigatorSection, useSectionSteps } from "@/lib/navigator"
 import { walkthroughNavigationOf, type WalkthroughNavigationRequest } from "@/lib/walkthrough-navigation"
 
@@ -12,6 +13,7 @@ interface CodeWalkthroughProps {
   readonly heading: string
   readonly coverageLabel: string
   readonly emptyMessage: string | null
+  readonly writeUpNotice?: string | null
   readonly navigation: WalkthroughNavigation
   readonly children: ReactNode
   readonly onArrangeFiles: (() => void) | null
@@ -27,7 +29,7 @@ const ReviewedMark = () => (
 
 const markerOf: WalkthroughNavigationRequest["markerOf"] = (key) => (key === "reviewed" ? <ReviewedMark /> : <FindingMark kind={key} />)
 
-const CodeWalkthrough = ({ anchorId, heading, coverageLabel, emptyMessage, navigation, children, onArrangeFiles }: CodeWalkthroughProps) => {
+const CodeWalkthrough = ({ anchorId, heading, coverageLabel, emptyMessage, writeUpNotice = null, navigation, children, onArrangeFiles }: CodeWalkthroughProps) => {
   const sectionSteps = useSectionSteps(anchorId)
   useNavigatorSection(anchorId, walkthroughNavigationOf({ ...navigation, markerOf, sectionSteps }))
   return (
@@ -35,6 +37,7 @@ const CodeWalkthrough = ({ anchorId, heading, coverageLabel, emptyMessage, navig
       <div className="flex items-center gap-3">
         <h2 id={`${anchorId}-heading`} className="shrink-0 text-2xl leading-9 font-semibold tracking-[-0.02em] whitespace-nowrap text-foreground">{heading}</h2>
         <p className="min-w-0 truncate text-sm text-muted-foreground tabular-nums">{coverageLabel}</p>
+        {writeUpNotice === null ? null : <NoWriteUpTag label={writeUpNotice} className="shrink-0" />}
         <span className="flex-1" />
         {onArrangeFiles === null ? null : <Button variant="link" size="sm" onClick={onArrangeFiles}>{ARRANGE_FILES_LABEL}</Button>}
       </div>

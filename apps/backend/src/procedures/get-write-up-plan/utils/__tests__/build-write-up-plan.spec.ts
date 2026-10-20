@@ -2,6 +2,7 @@ import { buildWriteUpPlan, type WriteUpPlanSource } from "@/procedures/get-write
 import { listConfigurationsOf } from "@/procedures/list-configurations/utils/configuration"
 
 const SOURCE: WriteUpPlanSource = {
+  isOffered: false,
   agentLabel: "Claude",
   counts: { context: 1, traceDiagram: 4, blastDiagram: 0, walkthrough: 6, findings: 12 },
   sections: ["context", "traceDiagram", "findings"],
