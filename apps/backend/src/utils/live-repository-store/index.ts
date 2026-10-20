@@ -121,7 +121,7 @@ export class LiveRepositoryStore implements RepositoryStore {
       path: registered.path,
       forges,
       trackedAuthorIds: registered.trackedAuthors.map((author) => author.id),
-      selfAuthorId: selfAuthorIdOf(await this.dependencies.readGitIdentity(registered.path), registered.selfAuthor),
+      selfAuthorId: selfAuthorIdOf(await this.dependencies.readGitIdentity(registered.path)),
       addedBranchNames: addedBranchNamesOf(memory),
       addedPullRequestAuthors: addedPullRequestAuthorsOf(memory),
     })

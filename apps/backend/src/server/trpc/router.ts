@@ -66,7 +66,6 @@ import { searchReviewersRoute } from "./routes/search-reviewers"
 import { sendReviewerMessageRoute } from "./routes/send-reviewer-message"
 import { setAuthorTrackingRoute } from "./routes/set-author-tracking"
 import { setReviewedRoute } from "./routes/set-reviewed"
-import { setSelfAuthorRoute } from "./routes/set-self-author"
 import { submitReviewRoute } from "./routes/submit-review"
 import { watchConversationRoute } from "./routes/watch-conversation"
 import { writeUpReviewRoute } from "./routes/write-up-review"
@@ -97,7 +96,6 @@ export const appRouter = createRouter({
     removeRepository: removeSetupRepositoryRoute,
     searchAuthors: searchRepositoryAuthorsRoute,
     setAuthorTracking: setAuthorTrackingRoute,
-    setSelfAuthor: setSelfAuthorRoute,
     complete: completeSetupRoute,
   }),
   settings: createRouter({

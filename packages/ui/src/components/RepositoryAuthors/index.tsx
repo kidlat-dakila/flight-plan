@@ -17,7 +17,6 @@ export interface GitSelfAuthor {
 }
 
 export interface AuthorForm {
-  readonly selfAuthorHint: string | null
   readonly gitSelfAuthor: GitSelfAuthor | null
   readonly searchHint: string
   readonly searchPlaceholder: string
@@ -25,7 +24,6 @@ export interface AuthorForm {
 
 export interface AuthorsChoice {
   readonly form: AuthorForm | null
-  readonly selfAuthor: ChosenAuthor | null
   readonly trackedAuthors: readonly ChosenAuthor[]
   readonly search: {
     readonly role: AuthorRole | null
@@ -51,18 +49,7 @@ interface RepositoryAuthorsProps {
   readonly authors: AuthorsChoice
   readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
   readonly onAuthorSelect: (role: AuthorRole, authorId: string) => void
-  readonly onSelfAuthorRemove: () => void
   readonly onTrackedAuthorRemove: (authorId: string) => void
-}
-
-interface SelfAuthorSlotProps {
-  readonly hint: string
-  readonly placeholder: string
-  readonly selfAuthor: ChosenAuthor | null
-  readonly search: AuthorsChoice["search"]
-  readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
-  readonly onAuthorSelect: (role: AuthorRole, authorId: string) => void
-  readonly onRemove: () => void
 }
 
 interface RoleFieldProps {
@@ -113,64 +100,21 @@ const RoleField = ({
   )
 }
 
-const SelfAuthorSlot = ({
-  hint,
-  placeholder,
-  selfAuthor,
-  search,
-  onAuthorQueryChange,
-  onAuthorSelect,
-  onRemove,
-}: SelfAuthorSlotProps) =>
-  selfAuthor === null
-    ? (
-        <RoleField
-          label="Which user are you?"
-          hint={hint}
-          placeholder={placeholder}
-          authorRole="self"
-          search={search}
-          onAuthorQueryChange={onAuthorQueryChange}
-          onAuthorSelect={onAuthorSelect}
-        />
-      )
-    : (
-        <ChosenAuthorRow
-          author={selfAuthor}
-          stateLabel="You"
-          removal={{ label: "Choose another user as you", onRemove }}
-        />
-      )
-
 const RepositoryAuthors = ({
   authors,
   onAuthorQueryChange,
   onAuthorSelect,
-  onSelfAuthorRemove,
   onTrackedAuthorRemove,
 }: RepositoryAuthorsProps) => {
-  const { form, selfAuthor, trackedAuthors, search } = authors
+  const { form, trackedAuthors, search } = authors
   if (form === null) return <p role="status" className="text-muted-foreground">Reading the author settings…</p>
   return (
     <div className="grid gap-4">
       {form.gitSelfAuthor === null
         ? null
         : <ChosenAuthorRow author={form.gitSelfAuthor.author} stateLabel={null} removal={null} />}
-      {form.selfAuthorHint === null
-        ? null
-        : (
-            <SelfAuthorSlot
-              hint={form.selfAuthorHint}
-              placeholder={form.searchPlaceholder}
-              selfAuthor={selfAuthor}
-              search={search}
-              onAuthorQueryChange={onAuthorQueryChange}
-              onAuthorSelect={onAuthorSelect}
-              onRemove={onSelfAuthorRemove}
-            />
-          )}
       <RoleField
-        label="Track specific team members"
+        label="Track branches from specific team members"
         hint={form.searchHint}
         placeholder={form.searchPlaceholder}
         authorRole="tracked"

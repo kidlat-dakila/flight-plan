@@ -1,4 +1,4 @@
-import { authorSelectionOf, withIdentityAsSelf } from "@/procedures/add-repository/utils/find-selected-authors"
+import { trackedSelectionOf, withIdentityAsSelf } from "@/procedures/add-repository/utils/find-selected-authors"
 import type { ProcedureContext } from "@/procedures/context"
 import { buildAuthorSuggestions } from "./utils/build-author-suggestions"
 import type { AuthorSuggestions, SearchRepositoryAuthorsInput } from "./utils/schemas"
@@ -18,7 +18,7 @@ export const searchRepositoryAuthors = async (
     { repositoryPath: repository.path, forge, forges: setup.forges },
     input.query,
   )
-  return buildAuthorSuggestions(found, withIdentityAsSelf(authorSelectionOf(repository), identity), {
+  return buildAuthorSuggestions(found, withIdentityAsSelf(trackedSelectionOf(repository), identity), {
     role: input.role,
     forge,
     query: input.query,

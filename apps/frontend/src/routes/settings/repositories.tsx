@@ -32,19 +32,13 @@ interface AuthorQuery {
 }
 
 interface AuthorSelection {
-  readonly selfAuthorId: string | null
   readonly trackedAuthorIds: string[]
 }
 
-const NO_SELECTION: AuthorSelection = { selfAuthorId: null, trackedAuthorIds: [] }
-
-const chosenSelfAuthorIdOf = (repository: FollowedRepository): string | null =>
-  repository.selfAuthor?.isChangeable === true ? (repository.selfAuthor.author?.id ?? null) : null
+const NO_SELECTION: AuthorSelection = { trackedAuthorIds: [] }
 
 const authorSelectionOf = (repository: FollowedRepository | undefined): AuthorSelection =>
-  repository === undefined
-    ? NO_SELECTION
-    : { selfAuthorId: chosenSelfAuthorIdOf(repository), trackedAuthorIds: repository.trackedAuthors.map((author) => author.id) }
+  repository === undefined ? NO_SELECTION : { trackedAuthorIds: repository.trackedAuthors.map((author) => author.id) }
 
 const withTracking = (selection: AuthorSelection, authorId: string, isTracked: boolean): AuthorSelection => ({
   ...selection,
@@ -158,9 +152,6 @@ const RepositoriesSettingsPage = () => {
           removeRepository.mutate({ name })
         }}
         onAuthorQueryChange={(repositoryName, role, query) => { setAuthorQuery({ repositoryName, role, query }) }}
-        onSelfAuthorChange={(repositoryName, authorId) => {
-          configure(repositoryName, { ...authorSelectionOf(findRepository(repositoryName)), selfAuthorId: authorId })
-        }}
         onAuthorTrackingChange={(repositoryName, authorId, isTracked) => {
           configure(repositoryName, withTracking(authorSelectionOf(findRepository(repositoryName)), authorId, isTracked))
         }}
@@ -179,7 +170,6 @@ const RepositoriesSettingsPage = () => {
         }}
         onAuthorQueryChange={additionAuthors.onAuthorQueryChange}
         onAuthorSelect={additionAuthors.onAuthorSelect}
-        onSelfAuthorRemove={additionAuthors.onSelfAuthorRemove}
         onTrackedAuthorRemove={additionAuthors.onTrackedAuthorRemove}
         onSubmit={() => { addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection }) }}
         onBrowse={() => {

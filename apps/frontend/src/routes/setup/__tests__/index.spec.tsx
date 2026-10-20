@@ -113,8 +113,6 @@ const configurationForm = {
 
 const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
 
-const SELF_HINT = "Git has no email for you in this repository. Search for the name or email you commit with and pick yourself."
-
 const lena = { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" }
 
 const checkoutWeb = {
@@ -124,24 +122,17 @@ const checkoutWeb = {
   lineLabel: "C",
   authorSearchHint: "You see your own branches. Add team members to see theirs too.",
   authorSearchPlaceholder: "Type a name or email",
-  selfAuthor: { hint: SELF_HINT, author: null, stateLabel: "Not chosen", isChangeable: true },
+  selfAuthor: null,
   trackedAuthors: [],
 }
 
-const checkoutWebWithSelf = { ...checkoutWeb, selfAuthor: { hint: SELF_HINT, author: dev, stateLabel: "You", isChangeable: true } }
+const checkoutWebWithSelf = { ...checkoutWeb, selfAuthor: dev }
 
 const emptyRepositoriesForm = {
   step: "repositories",
   repositories: [],
   isReadyToContinue: false,
   continueHint: "Add at least one repository.",
-}
-
-const untrackedRepositoriesForm = {
-  step: "repositories",
-  repositories: [checkoutWeb],
-  isReadyToContinue: false,
-  continueHint: "Pick which user you are in checkout-web.",
 }
 
 const selfChosenRepositoriesForm = {
@@ -203,7 +194,6 @@ const recentRepositoriesOf = (...repositories: ReturnType<typeof recentOf>[]): P
 
 const localGitAuthorForm: ProcedureReply = {
   data: {
-    selfAuthorHint: SELF_HINT,
     gitSelfAuthor: null,
     searchHint: "Search by name or email.",
     searchPlaceholder: "Type a name or email",
@@ -211,7 +201,7 @@ const localGitAuthorForm: ProcedureReply = {
 }
 
 const forgeAuthorForm: ProcedureReply = {
-  data: { selfAuthorHint: null, gitSelfAuthor: null, searchHint: "Search by name or username.", searchPlaceholder: "Type a name or username" },
+  data: { gitSelfAuthor: null, searchHint: "Search by name or username.", searchPlaceholder: "Type a name or username" },
 }
 
 const incompleteSetupGate = (input: unknown): ProcedureReply => ({
@@ -775,12 +765,12 @@ describe("the setup page", () => {
     expect(within(repositories).getAllByRole("checkbox")).toHaveLength(2)
     expect(checkoutWebRow.checked).toBe(false)
     expect(within(repositories).getByText("/Users/dev/projects/checkout-web")).toBeTruthy()
-    expect(screen.queryByRole("combobox", { name: "Track specific team members in checkout-web" })).toBeNull()
+    expect(screen.queryByRole("combobox", { name: "Track branches from specific team members" })).toBeNull()
 
     fireEvent.click(checkoutWebRow)
 
-    expect(await screen.findByRole("combobox", { name: "Track specific team members in checkout-web" })).toBeTruthy()
-    expect(addRepository).toHaveBeenCalledWith({ path: "/Users/dev/projects/checkout-web", selfAuthorId: null, trackedAuthorIds: [] })
+    expect(await screen.findByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
+    expect(addRepository).toHaveBeenCalledWith({ path: "/Users/dev/projects/checkout-web", trackedAuthorIds: [] })
     expect(within(repositories).getByRole<HTMLInputElement>("checkbox", { name: /^checkout-web/ }).checked).toBe(true)
   })
 
@@ -800,7 +790,7 @@ describe("the setup page", () => {
     const repositories = await screen.findByRole("list", { name: "Repositories" })
     fireEvent.click(within(repositories).getByRole("checkbox", { name: /^checkout-web/ }))
 
-    expect(await screen.findByRole("combobox", { name: "Track specific team members in checkout-web" })).toBeTruthy()
+    expect(await screen.findByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
     expect(screen.getByRole("heading", { level: 2, name: "Select your repositories" })).toBeTruthy()
     expect(screen.queryByRole("heading", { name: "Git integration" })).toBeNull()
   })
@@ -873,7 +863,7 @@ describe("the setup page", () => {
     fireEvent.change(field, { target: { value: "check" } })
     fireEvent.click(await screen.findByRole("option", { name: "/Users/dev/projects/checkout-web" }))
     expect(addRepository).not.toHaveBeenCalled()
-    fireEvent.focus(await screen.findByRole("combobox", { name: "Which user are you?" }))
+    fireEvent.focus(await screen.findByRole("combobox", { name: "Track branches from specific team members" }))
     fireEvent.click(await screen.findByRole("option", { name: /Dev Harper/ }))
     fireEvent.click(screen.getByRole("button", { name: "Add" }))
 
@@ -882,22 +872,20 @@ describe("the setup page", () => {
     expect(searchAuthors).toHaveBeenCalledWith({
       path: "/Users/dev/projects/checkout-web",
       repositoryName: null,
-      role: "self",
+      role: "tracked",
       query: "",
-      selfAuthorId: null,
       trackedAuthorIds: [],
     })
     expect(addRepository).toHaveBeenCalledWith({
       path: "/Users/dev/projects/checkout-web",
-      selfAuthorId: "dev@acme.example",
-      trackedAuthorIds: [],
+      trackedAuthorIds: ["dev@acme.example"],
     })
     await waitFor(() => {
       expect(screen.queryByRole("combobox", { name: "Repository folder" })).toBeNull()
     })
   })
 
-  it("only asks who to track in the dialog when a forge account tells who the user is", async () => {
+  it("asks only who to track in the dialog when a forge serves the folder", async () => {
     renderApp({
       "setup.get": () => pageOf(emptyRepositoriesForm),
       "setup.searchFolders": () => noFolders,
@@ -906,8 +894,8 @@ describe("the setup page", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
 
-    expect(await screen.findByRole("combobox", { name: "Track specific team members" })).toBeTruthy()
-    expect(screen.queryByRole("combobox", { name: "Which user are you?" })).toBeNull()
+    expect(await screen.findByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
+    expect(screen.getByText("Search by name or username.")).toBeTruthy()
   })
 
   it("browses folders, opens one and chooses a repository from it without adding it", async () => {
@@ -987,7 +975,7 @@ describe("the setup page", () => {
     fireEvent.click(screen.getByRole("button", { name: "Add" }))
 
     expect((await screen.findByRole("alert")).textContent).toBe("/work/notes is not a git repository.")
-    expect(addRepository).toHaveBeenCalledWith({ path: "/work/notes", selfAuthorId: null, trackedAuthorIds: [] })
+    expect(addRepository).toHaveBeenCalledWith({ path: "/work/notes", trackedAuthorIds: [] })
   })
 
   it("closes the dialog without adding when it is cancelled", async () => {
@@ -1006,55 +994,15 @@ describe("the setup page", () => {
     expect(addRepository).not.toHaveBeenCalled()
   })
 
-  it("asks a local git user which user they are, in a field of its own, and saves the choice", async () => {
-    const searchAuthors = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
-      data: { options: [{ ...dev, isTaken: false, stateLabel: null }], message: null },
-    })
-    const getSetup = vi
-      .fn<() => ProcedureReply>()
-      .mockReturnValueOnce(pageOf(untrackedRepositoriesForm))
-      .mockReturnValue(pageOf(selfChosenRepositoriesForm))
-    const setSelfAuthor = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { authorId: dev.id } })
-    renderApp({
-      "setup.get": getSetup,
-      "setup.searchFolders": () => noFolders,
-      "setup.searchAuthors": searchAuthors,
-      "setup.setSelfAuthor": setSelfAuthor,
-    })
-
-    const field = await screen.findByRole("combobox", { name: "Which user are you in checkout-web?" })
-    fireEvent.focus(field)
-    fireEvent.change(field, { target: { value: "dev" } })
-    fireEvent.click(await screen.findByRole("option", { name: /Dev Harper/ }))
-
-    const clear = await screen.findByRole("button", { name: "Choose another user as you in checkout-web" })
-
-    expect(searchAuthors).toHaveBeenCalledWith({ repositoryName: "checkout-web", role: "self", query: "dev" })
-    expect(setSelfAuthor).toHaveBeenCalledWith({ repositoryName: "checkout-web", authorId: "dev@acme.example" })
-    expect(screen.getByText("You")).toBeTruthy()
-    expect(screen.queryByRole("combobox", { name: "Which user are you in checkout-web?" })).toBeNull()
-    expect(screen.getByRole<HTMLButtonElement>("button", { name: "Save and continue" }).disabled).toBe(false)
-
-    fireEvent.click(clear)
-
-    await waitFor(() => {
-      expect(setSelfAuthor).toHaveBeenLastCalledWith({ repositoryName: "checkout-web", authorId: null })
-    })
-  })
-
   it("shows the user git config names in a local git repository, without asking or letting them change it", async () => {
-    const fromGitConfig = {
-      ...checkoutWeb,
-      selfAuthor: { hint: SELF_HINT, author: dev, stateLabel: null, isChangeable: false },
-    }
     renderApp({
-      "setup.get": () => pageOf({ ...selfChosenRepositoriesForm, repositories: [fromGitConfig] }),
+      "setup.get": () => pageOf(selfChosenRepositoriesForm),
       "setup.searchFolders": () => noFolders,
     })
 
     expect(await screen.findByText("Dev Harper")).toBeTruthy()
-    expect(screen.queryByRole("combobox", { name: "Which user are you in checkout-web?" })).toBeNull()
-    expect(screen.queryByRole("button", { name: "Choose another user as you in checkout-web" })).toBeNull()
+    expect(screen.getAllByRole("combobox")).toHaveLength(1)
+    expect(screen.queryByRole("button", { name: /as you/ })).toBeNull()
   })
 
   it("searches the users of a repository and tracks the chosen one", async () => {
@@ -1073,7 +1021,7 @@ describe("the setup page", () => {
       "setup.setAuthorTracking": setAuthorTracking,
     })
 
-    const field = await screen.findByRole("combobox", { name: "Track specific team members in checkout-web" })
+    const field = await screen.findByRole("combobox", { name: "Track branches from specific team members" })
     fireEvent.focus(field)
     fireEvent.change(field, { target: { value: "len" } })
     fireEvent.click(await screen.findByRole("option", { name: /Lena Okafor/ }))

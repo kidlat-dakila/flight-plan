@@ -4,12 +4,10 @@ import type { AuthorsChoice } from "@/components/RepositoryAuthors"
 
 const AUTHORS: AuthorsChoice = {
   form: {
-    selfAuthorHint: "Git cannot tell who you are here.",
-    gitSelfAuthor: null,
+    gitSelfAuthor: { author: { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" } },
     searchHint: "Search by name or email.",
     searchPlaceholder: "Type a name or email",
   },
-  selfAuthor: { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" },
   trackedAuthors: [{ id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" }],
   search: { role: null, query: "", options: [], message: null, errorMessage: null },
 }
@@ -26,7 +24,6 @@ const renderDialog = (overrides: DialogOverrides = {}) => {
   const handlers = {
     onAuthorQueryChange: vi.fn(),
     onAuthorSelect: vi.fn(),
-    onSelfAuthorRemove: vi.fn(),
     onTrackedAuthorRemove: vi.fn(),
     onSave: vi.fn(),
     onRemove: vi.fn(),
@@ -63,15 +60,13 @@ describe("ConfigureRepositoryDialog", () => {
     expect(screen.queryByRole("dialog")).toBeNull()
   })
 
-  it("shows the saved user and tracked users, and lets them be changed", () => {
-    const { onSelfAuthorRemove, onTrackedAuthorRemove } = renderDialog()
+  it("shows the git config user and the tracked users, and lets the tracked ones be changed", () => {
+    const { onTrackedAuthorRemove } = renderDialog()
 
     expect(screen.getByText("Dev Harper")).toBeTruthy()
     expect(screen.getByText("Lena Okafor")).toBeTruthy()
-    fireEvent.click(screen.getByRole("button", { name: "Choose another user as you" }))
     fireEvent.click(screen.getByRole("button", { name: "Stop tracking Lena Okafor" }))
 
-    expect(onSelfAuthorRemove).toHaveBeenCalledTimes(1)
     expect(onTrackedAuthorRemove).toHaveBeenCalledWith("lena@acme.example")
   })
 
@@ -147,7 +142,7 @@ describe("ConfigureRepositoryDialog", () => {
     const { onClose } = renderDialog({
       authors: { search: { role: "tracked", query: "te", options: [teo], message: null, errorMessage: null } },
     })
-    const field = screen.getByRole("combobox", { name: "Track specific team members" })
+    const field = screen.getByRole("combobox", { name: "Track branches from specific team members" })
 
     fireEvent.focus(field)
     fireEvent.keyDown(field, { key: "Escape" })

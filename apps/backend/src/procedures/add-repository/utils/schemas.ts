@@ -1,7 +1,6 @@
 import { z } from "zod"
 
 export const authorSelectionShape = {
-  selfAuthorId: z.string().nullable(),
   trackedAuthorIds: z.array(z.string()),
 }
 

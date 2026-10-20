@@ -8,7 +8,6 @@ export const repositoryConfigurationSchema = z.strictObject({
   name: z.string(),
   path: z.string(),
   form: authorFormSchema,
-  selfAuthor: trackedAuthorSchema.nullable(),
   trackedAuthors: z.array(trackedAuthorSchema),
 })
 

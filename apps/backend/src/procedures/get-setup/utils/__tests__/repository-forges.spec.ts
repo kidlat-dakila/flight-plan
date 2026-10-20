@@ -1,17 +1,9 @@
 import { CHECKOUT_WEB, READY_TO_FINISH } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
 import { findRepositoryForges } from "@/procedures/get-setup/utils/repository-forges"
-import { needsSelfAuthor, repositoryForgeOf, type SetupForge } from "@/procedures/get-setup/utils/setup"
+import { repositoryForgeOf, type SetupForge } from "@/procedures/get-setup/utils/setup"
 
 const STOREFRONT_PATH = "/Users/dev/projects/storefront"
-
-describe("needsSelfAuthor", () => {
-  it("is true only for local git, which cannot tell who the user is", () => {
-    expect(needsSelfAuthor("git")).toBe(true)
-    expect(needsSelfAuthor("gh")).toBe(false)
-    expect(needsSelfAuthor("gitlab")).toBe(false)
-  })
-})
 
 describe("repositoryForgeOf", () => {
   it("is the forge found for the repository", () => {

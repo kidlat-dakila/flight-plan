@@ -1,11 +1,9 @@
 import {
-  isSelfAuthorChoiceNeeded,
   parseGitIdentity,
   repositoryIdentityOf,
   selfAuthorIdOf,
-  selfAuthorOf,
+  toIdentityAuthor,
 } from "@/procedures/get-setup/utils/git-identity"
-import { DEV } from "./setup-fixture"
 
 const IDENTITY = { name: "Lena Okafor", email: "lena@acme.example" }
 
@@ -25,32 +23,25 @@ describe("parseGitIdentity", () => {
   })
 })
 
-describe("selfAuthorOf", () => {
-  it("names the user git config gives before the user picked by hand", () => {
-    expect(selfAuthorOf(IDENTITY, DEV)).toStrictEqual({
+describe("toIdentityAuthor", () => {
+  it("names the user git config gives", () => {
+    expect(toIdentityAuthor(IDENTITY)).toStrictEqual({
       id: "lena@acme.example",
       name: "Lena Okafor",
       detail: "lena@acme.example",
       avatarUrl: null,
     })
-    expect(selfAuthorIdOf(IDENTITY, DEV)).toBe("lena@acme.example")
   })
 
   it("names the user by their email when git config has no name", () => {
-    expect(selfAuthorOf({ name: null, email: "lena@acme.example" }, null)).toMatchObject({ name: "lena@acme.example" })
-  })
-
-  it("falls back to the user picked by hand when git config has no email", () => {
-    expect(selfAuthorOf(null, DEV)).toBe(DEV)
-    expect(selfAuthorIdOf(null, null)).toBeNull()
+    expect(toIdentityAuthor({ name: null, email: "lena@acme.example" })).toMatchObject({ name: "lena@acme.example" })
   })
 })
 
-describe("isSelfAuthorChoiceNeeded", () => {
-  it("asks the user to pick themselves only on local git without an email in git config", () => {
-    expect(isSelfAuthorChoiceNeeded("git", null)).toBe(true)
-    expect(isSelfAuthorChoiceNeeded("git", IDENTITY)).toBe(false)
-    expect(isSelfAuthorChoiceNeeded("gh", null)).toBe(false)
+describe("selfAuthorIdOf", () => {
+  it("is the email git config gives, and nobody without one", () => {
+    expect(selfAuthorIdOf(IDENTITY)).toBe("lena@acme.example")
+    expect(selfAuthorIdOf(null)).toBeNull()
   })
 })
 

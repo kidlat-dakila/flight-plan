@@ -6,12 +6,10 @@ const IDLE_SEARCH: FolderSearch = { query: "", options: [], message: null }
 const CLOSED_BROWSE: FolderBrowse = { isOpen: false, browser: null, errorMessage: null }
 const LOCAL_GIT_AUTHORS: AuthorsChoice = {
   form: {
-    selfAuthorHint: "Git cannot tell who you are here.",
     gitSelfAuthor: null,
     searchHint: "Search by name or email.",
     searchPlaceholder: "Type a name or email",
   },
-  selfAuthor: null,
   trackedAuthors: [],
   search: { role: null, query: "", options: [], message: null, errorMessage: null },
 }
@@ -31,7 +29,6 @@ const renderDialog = (overrides: DialogOverrides = {}) => {
     onChooseFolder: vi.fn(),
     onAuthorQueryChange: vi.fn(),
     onAuthorSelect: vi.fn(),
-    onSelfAuthorRemove: vi.fn(),
     onTrackedAuthorRemove: vi.fn(),
     onSubmit: vi.fn(),
     onBrowse: vi.fn(),
@@ -176,7 +173,6 @@ describe("AddRepositoryDialog", () => {
   it("asks about the authors under the folder, with the form of the backend", () => {
     renderDialog()
 
-    expect(screen.getByRole("combobox", { name: "Which user are you?" })).toBeTruthy()
-    expect(screen.getByRole("combobox", { name: "Track specific team members" })).toBeTruthy()
+    expect(screen.getByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
   })
 })

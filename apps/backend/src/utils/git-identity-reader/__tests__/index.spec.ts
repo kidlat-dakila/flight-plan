@@ -1,3 +1,5 @@
+import { writeFile } from "node:fs/promises"
+import { join } from "node:path"
 import { createGitIdentityReader } from "@/utils/git-identity-reader"
 import { runCommand } from "@/utils/run-command"
 import { withTemporaryFolder } from "@/utils/text-file/__tests__/temporary-folder"
@@ -32,6 +34,20 @@ describe("createGitIdentityReader", () => {
       await runGit(repositoryPath, ["config", "user.email", "dev@acme.example"])
 
       await expect(readIdentity(repositoryPath)).resolves.toStrictEqual({ name: null, email: "dev@acme.example" })
+    })
+  })
+
+  it("reads the global git config when the repository has no email", async () => {
+    await withTemporaryFolder(async (folderPath) => {
+      const globalConfigPath = join(folderPath, "global.gitconfig")
+      await writeFile(globalConfigPath, "[user]\n\tname = Dev Harper\n\temail = Dev@Acme.example\n")
+      await runGit(folderPath, ["init", "--quiet"])
+      const readWithGlobalConfig = createGitIdentityReader({
+        runCommand,
+        environment: { ...ISOLATED_GIT, GIT_CONFIG_GLOBAL: globalConfigPath },
+      })
+
+      await expect(readWithGlobalConfig(folderPath)).resolves.toStrictEqual({ name: "Dev Harper", email: "dev@acme.example" })
     })
   })
 

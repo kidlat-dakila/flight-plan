@@ -99,7 +99,7 @@ describe("LiveRepositoryStore", () => {
     ])
   })
 
-  it("inspects each repository with its path, its forges and its tracked and own authors", async () => {
+  it("inspects each repository with its path, its forges and its tracked authors, and no own author without a git config email", async () => {
     const { store, requests } = createStore(setupWith(registered("storefront")))
 
     await store.list()
@@ -109,14 +109,14 @@ describe("LiveRepositoryStore", () => {
         path: "/work/storefront",
         forges: null,
         trackedAuthorIds: ["mira@acme.test"],
-        selfAuthorId: "dev@acme.test",
+        selfAuthorId: null,
         addedBranchNames: [],
         addedPullRequestAuthors: [],
       },
     ])
   })
 
-  it("inspects with the email git commits with as the own author, before the author chosen as the user", async () => {
+  it("inspects with the email git commits with as the own author", async () => {
     const { store, requests } = createStore(setupWith(registered("storefront")), branchInspection, {
       name: "Dev Harper",
       email: "harper@acme.test",

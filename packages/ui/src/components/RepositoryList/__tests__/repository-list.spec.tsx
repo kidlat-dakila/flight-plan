@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
-import RepositoryList from "@/components/RepositoryList"
+import RepositoryList, { type FollowedRepository } from "@/components/RepositoryList"
 
-const FOLLOWED = {
+const FOLLOWED: FollowedRepository = {
   name: "storefront",
   path: "/work/storefront",
   authorSearchHint: "You see your own branches. Add team members to see theirs too.",
@@ -31,7 +31,6 @@ const renderList = (overrides: Partial<React.ComponentProps<typeof RepositoryLis
       onUnfollow={vi.fn()}
       onAuthorQueryChange={vi.fn()}
       onAuthorTrackingChange={vi.fn()}
-      onSelfAuthorChange={vi.fn()}
       {...overrides}
     />,
   )
@@ -67,6 +66,17 @@ describe("RepositoryList", () => {
 
     expect(onFollow).toHaveBeenCalledWith("/work/ledger")
     expect(onUnfollow).toHaveBeenCalledWith("storefront")
+  })
+
+  it("shows the user git config names under a followed row, with no way to change them, and asks only who to track", () => {
+    const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
+    const rows = [{ ...ROWS[0], followed: { ...FOLLOWED, selfAuthor: dev } }]
+    renderList({ rows })
+
+    expect(screen.getByText("Dev Harper")).toBeTruthy()
+    expect(screen.getAllByRole("combobox")).toHaveLength(1)
+    expect(screen.getByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
+    expect(screen.queryByRole("button", { name: /as you/ })).toBeNull()
   })
 
   it("draws what the page adds under each followed row only", () => {

@@ -16,10 +16,8 @@ const withAuthorChange = (setup: Setup, repositoryName: string, change: AuthorCh
 const withoutAuthor = (trackedAuthors: readonly RepositoryAuthor[], authorId: string): readonly RepositoryAuthor[] =>
   trackedAuthors.filter((tracked) => tracked.id !== authorId)
 
-const isSelfAuthor = (setup: Setup, repositoryName: string, author: RepositoryAuthor, identity: GitIdentity | null): boolean =>
-  setup.repositories.some(
-    (repository) => repository.name === repositoryName && selfAuthorIdOf(identity, repository.selfAuthor) === author.id,
-  )
+const isSelfAuthor = (author: RepositoryAuthor, identity: GitIdentity | null): boolean =>
+  selfAuthorIdOf(identity) === author.id
 
 export const withTrackedAuthor = (
   setup: Setup,
@@ -27,22 +25,9 @@ export const withTrackedAuthor = (
   author: RepositoryAuthor,
   identity: GitIdentity | null,
 ): Setup =>
-  isSelfAuthor(setup, repositoryName, author, identity)
+  isSelfAuthor(author, identity)
     ? setup
     : withAuthorChange(setup, repositoryName, (trackedAuthors) => [...withoutAuthor(trackedAuthors, author.id), author])
-
-export const withSelfAuthor = (setup: Setup, repositoryName: string, author: RepositoryAuthor | null): Setup => ({
-  ...setup,
-  repositories: setup.repositories.map((repository): SetupRepository =>
-    repository.name === repositoryName
-      ? {
-          ...repository,
-          selfAuthor: author,
-          trackedAuthors: author === null ? repository.trackedAuthors : withoutAuthor(repository.trackedAuthors, author.id),
-        }
-      : repository,
-  ),
-})
 
 export const withoutTrackedAuthor = (setup: Setup, repositoryName: string, authorId: string): Setup =>
   withAuthorChange(setup, repositoryName, (trackedAuthors) => withoutAuthor(trackedAuthors, authorId))

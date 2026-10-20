@@ -1,4 +1,4 @@
-import { AT_REPOSITORIES, createSetupContext, DEV, STOREFRONT } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { AT_REPOSITORIES, createSetupContext, STOREFRONT } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { appRouter } from "@/server/trpc/router"
 
 describe("repository.configure route", () => {
@@ -6,7 +6,7 @@ describe("repository.configure route", () => {
     const caller = appRouter.createCaller(createSetupContext(AT_REPOSITORIES, [STOREFRONT]))
 
     await expect(
-      caller.repository.configure({ repositoryName: "storefront", selfAuthorId: DEV.id, trackedAuthorIds: [] }),
+      caller.repository.configure({ repositoryName: "storefront", trackedAuthorIds: [] }),
     ).resolves.toStrictEqual({ name: "storefront" })
   })
 
@@ -14,7 +14,7 @@ describe("repository.configure route", () => {
     const caller = appRouter.createCaller(createSetupContext(AT_REPOSITORIES, [STOREFRONT]))
 
     await expect(
-      caller.repository.configure({ repositoryName: "storefront", selfAuthorId: null, trackedAuthorIds: [] }),
-    ).rejects.toMatchObject({ code: "BAD_REQUEST", message: "Pick which user you are in storefront." })
+      caller.repository.configure({ repositoryName: "storefront", trackedAuthorIds: ["ghost@acme.example"] }),
+    ).rejects.toMatchObject({ code: "BAD_REQUEST", message: "ghost@acme.example is not an author of this repository." })
   })
 })

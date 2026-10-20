@@ -10,7 +10,7 @@ import {
 } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { searchAdditionAuthors } from "@/procedures/search-addition-authors"
 
-const NO_SELECTION = { repositoryName: null, selfAuthorId: null, trackedAuthorIds: [] }
+const NO_SELECTION = { repositoryName: null, trackedAuthorIds: [] }
 const FOLDER = "/Users/dev/projects/ledger-api"
 
 describe("searchAdditionAuthors", () => {
@@ -26,10 +26,18 @@ describe("searchAdditionAuthors", () => {
     })
   })
 
-  it("marks the authors already chosen in the form and leaves the user out of the tracked ones", async () => {
+  it("marks the authors already chosen in the form and leaves the git config user out of the tracked ones", async () => {
+    const context = createSetupContext(AT_REPOSITORIES)
+    const withIdentity = {
+      ...context,
+      setupEnvironment: {
+        ...context.setupEnvironment,
+        readGitIdentity: async () => await Promise.resolve({ name: DEV.name, email: DEV.id }),
+      },
+    }
     const suggestions = await searchAdditionAuthors(
-      { path: FOLDER, repositoryName: null, role: "tracked", query: "", selfAuthorId: DEV.id, trackedAuthorIds: [LENA.id] },
-      createSetupContext(AT_REPOSITORIES),
+      { path: FOLDER, repositoryName: null, role: "tracked", query: "", trackedAuthorIds: [LENA.id] },
+      withIdentity,
     )
 
     expect(suggestions.options.map((option) => [option.id, option.stateLabel])).toStrictEqual([
@@ -88,7 +96,7 @@ describe("searchAdditionAuthors", () => {
 
   it("searches the saved folder of a repository being configured, which is already on the list", async () => {
     const suggestions = await searchAdditionAuthors(
-      { path: "", repositoryName: "checkout-web", role: "tracked", query: "lena", selfAuthorId: DEV.id, trackedAuthorIds: [] },
+      { path: "", repositoryName: "checkout-web", role: "tracked", query: "lena", trackedAuthorIds: [] },
       createSetupContext(READY_TO_FINISH),
     )
 

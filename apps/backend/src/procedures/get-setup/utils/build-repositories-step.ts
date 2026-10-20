@@ -4,6 +4,7 @@ import { findRepositoriesProblem } from "./completion-problem"
 import { repositoryIdentityOf, toIdentityAuthor, type GitIdentity, type RepositoryIdentities } from "./git-identity"
 import type { RepositoriesStep, TrackedAuthor } from "./schemas"
 import {
+  LOCAL_GIT_FORGE,
   repositoryForgeOf,
   type RepositoryAuthor,
   type RepositoryForges,
@@ -16,16 +17,13 @@ export type RepositoryEntry = RepositoriesStep["repositories"][number]
 
 const COMMIT_SEARCH_PLACEHOLDER = "Type a name or email"
 const FORGE_SEARCH_PLACEHOLDER = "Type a name or username"
-export const SELF_AUTHOR_HINT
-  = "Git has no email for you in this repository. Search for the name or email you commit with and pick yourself."
-const SELF_CHOSEN_LABEL = "You"
-const SELF_MISSING_LABEL = "Not chosen"
 
 const LOCAL_GIT_AUTHOR_SEARCH_HINT = "You see your own branches. Add team members to see theirs too."
-const FORGE_AUTHOR_SEARCH_HINT = "You see everyone's pull requests. Add team members to see only theirs."
+const forgeAuthorSearchHint = (repositoryName: string): string =>
+  `By default, Flight Plan shows every branch in ${repositoryName}. To see only your teammates' pull requests, add them here.`
 
-export const authorSearchHint = (forge: SetupForge): string =>
-  forge === "git" ? LOCAL_GIT_AUTHOR_SEARCH_HINT : FORGE_AUTHOR_SEARCH_HINT
+export const authorSearchHint = (forge: SetupForge, repositoryName: string): string =>
+  forge === "git" ? LOCAL_GIT_AUTHOR_SEARCH_HINT : forgeAuthorSearchHint(repositoryName)
 
 export const authorSearchPlaceholder = (forge: SetupForge): string =>
   forge === "git" ? COMMIT_SEARCH_PLACEHOLDER : FORGE_SEARCH_PLACEHOLDER
@@ -38,22 +36,8 @@ export const toTrackedAuthor = (author: RepositoryAuthor): TrackedAuthor => ({
   monogram: monogramOf(author.name),
 })
 
-const toChosenSelfAuthor = (repository: SetupRepository): NonNullable<RepositoryEntry["selfAuthor"]> => ({
-  hint: SELF_AUTHOR_HINT,
-  author: repository.selfAuthor === null ? null : toTrackedAuthor(repository.selfAuthor),
-  stateLabel: repository.selfAuthor === null ? SELF_MISSING_LABEL : SELF_CHOSEN_LABEL,
-  isChangeable: true,
-})
-
-const toIdentitySelfAuthor = (identity: GitIdentity): NonNullable<RepositoryEntry["selfAuthor"]> => ({
-  hint: SELF_AUTHOR_HINT,
-  author: toTrackedAuthor(toIdentityAuthor(identity)),
-  stateLabel: null,
-  isChangeable: false,
-})
-
-const toSelfAuthor = (repository: SetupRepository, identity: GitIdentity | null): NonNullable<RepositoryEntry["selfAuthor"]> =>
-  identity === null ? toChosenSelfAuthor(repository) : toIdentitySelfAuthor(identity)
+const selfAuthorOf = (forge: SetupForge, identity: GitIdentity | null): TrackedAuthor | null =>
+  forge === LOCAL_GIT_FORGE && identity !== null ? toTrackedAuthor(toIdentityAuthor(identity)) : null
 
 export const toRepositoryEntry = (
   repository: SetupRepository,
@@ -65,9 +49,9 @@ export const toRepositoryEntry = (
   path: repository.path,
   lineColor: lineColorAt(position),
   lineLabel: repository.name.charAt(0).toUpperCase(),
-  authorSearchHint: authorSearchHint(forge),
+  authorSearchHint: authorSearchHint(forge, repository.name),
   authorSearchPlaceholder: authorSearchPlaceholder(forge),
-  selfAuthor: forge === "git" ? toSelfAuthor(repository, identity) : null,
+  selfAuthor: selfAuthorOf(forge, identity),
   trackedAuthors: repository.trackedAuthors.map(toTrackedAuthor),
 })
 
@@ -76,7 +60,7 @@ export const buildRepositoriesStep = (
   repositoryForges: RepositoryForges,
   repositoryIdentities: RepositoryIdentities,
 ): RepositoriesStep => {
-  const continueHint = findRepositoriesProblem(setup, repositoryForges, repositoryIdentities)
+  const continueHint = findRepositoriesProblem(setup)
   return {
     step: "repositories",
     repositories: setup.repositories.map((repository, position) =>

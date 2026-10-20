@@ -8,7 +8,6 @@ export const gitSelfAuthorSchema = z.strictObject({
 })
 
 export const authorFormSchema = z.strictObject({
-  selfAuthorHint: z.string().nullable(),
   gitSelfAuthor: gitSelfAuthorSchema.nullable(),
   searchHint: z.string(),
   searchPlaceholder: z.string(),

@@ -1,9 +1,12 @@
 import type { GitIdentity } from "@/procedures/get-setup/utils/git-identity"
 import type { RepositoryAuthor, SetupRepository } from "@/procedures/get-setup/utils/setup"
 
-export interface AuthorSelection {
-  readonly selfAuthorId: string | null
+export interface TrackedSelection {
   readonly trackedAuthorIds: readonly string[]
+}
+
+export interface AuthorSelection extends TrackedSelection {
+  readonly selfAuthorId: string | null
 }
 
 export interface SelectedAuthors {
@@ -15,21 +18,19 @@ export type SelectedAuthorsFinding
   = | { readonly kind: "found", readonly authors: SelectedAuthors }
     | { readonly kind: "rejected", readonly message: string }
 
-export const authorSelectionOf = (repository: Pick<SetupRepository, "selfAuthor" | "trackedAuthors">): AuthorSelection => ({
-  selfAuthorId: repository.selfAuthor?.id ?? null,
+export const trackedSelectionOf = (repository: Pick<SetupRepository, "trackedAuthors">): TrackedSelection => ({
   trackedAuthorIds: repository.trackedAuthors.map((author) => author.id),
 })
 
-export const withoutIdentityAuthor = (selection: AuthorSelection, identity: GitIdentity | null): AuthorSelection =>
+export const withoutIdentityAuthor = (selection: TrackedSelection, identity: GitIdentity | null): TrackedSelection =>
   identity === null
     ? selection
-    : {
-        selfAuthorId: null,
-        trackedAuthorIds: selection.trackedAuthorIds.filter((authorId) => authorId.toLowerCase() !== identity.email),
-      }
+    : { trackedAuthorIds: selection.trackedAuthorIds.filter((authorId) => authorId.toLowerCase() !== identity.email) }
 
-export const withIdentityAsSelf = (selection: AuthorSelection, identity: GitIdentity | null): AuthorSelection =>
-  identity === null ? selection : { ...selection, selfAuthorId: identity.email }
+export const withIdentityAsSelf = (selection: TrackedSelection, identity: GitIdentity | null): AuthorSelection => ({
+  trackedAuthorIds: selection.trackedAuthorIds,
+  selfAuthorId: identity?.email ?? null,
+})
 
 type AuthorFinder = (authorId: string) => Promise<RepositoryAuthor | null>
 
@@ -39,20 +40,11 @@ const uniqueIds = (authorIds: readonly string[]): readonly string[] => [...new S
 
 export const findSelectedAuthors = async (
   findAuthor: AuthorFinder,
-  selection: AuthorSelection,
-  isSelfAuthorNeeded: boolean,
+  selection: TrackedSelection,
 ): Promise<SelectedAuthorsFinding> => {
-  const selfAuthorId = isSelfAuthorNeeded ? selection.selfAuthorId : null
-  const trackedAuthorIds = uniqueIds(selection.trackedAuthorIds).filter((authorId) => authorId !== selfAuthorId)
-  const selectedIds = selfAuthorId === null ? trackedAuthorIds : [selfAuthorId, ...trackedAuthorIds]
+  const selectedIds = uniqueIds(selection.trackedAuthorIds)
   const foundAuthors = await Promise.all(selectedIds.map(findAuthor))
   const missingPosition = foundAuthors.findIndex((author) => author === null)
   if (missingPosition >= 0) return { kind: "rejected", message: notAuthorMessage(selectedIds[missingPosition] ?? "") }
-  const authors = foundAuthors.filter((author) => author !== null)
-  return {
-    kind: "found",
-    authors: selfAuthorId === null
-      ? { selfAuthor: null, trackedAuthors: authors }
-      : { selfAuthor: authors[0] ?? null, trackedAuthors: authors.slice(1) },
-  }
+  return { kind: "found", authors: { selfAuthor: null, trackedAuthors: foundAuthors.filter((author) => author !== null) } }
 }

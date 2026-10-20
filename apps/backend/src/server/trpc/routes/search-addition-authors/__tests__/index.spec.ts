@@ -11,7 +11,6 @@ describe("repository.searchAuthors route", () => {
         role: "tracked",
         query: "lena",
         repositoryName: null,
-        selfAuthorId: null,
         trackedAuthorIds: [],
       }),
     ).resolves.toMatchObject({ options: [{ id: "lena@acme.example" }] })

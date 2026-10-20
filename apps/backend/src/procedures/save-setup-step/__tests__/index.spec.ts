@@ -40,13 +40,12 @@ describe("saveSetupStep", () => {
     })
   })
 
-  it("holds the repositories step on local git until the user says which user they are", async () => {
+  it("passes the repositories step on local git with nobody picked", async () => {
     const withoutSelf = { ...EMPTY_SETUP, repositories: [CHECKOUT_WEB] }
 
     await expect(saveSetupStep({ step: "repositories" }, createSetupContext(withoutSelf))).resolves.toStrictEqual({
-      kind: "rejected",
-      message: "Pick which user you are in checkout-web.",
-      field: null,
+      kind: "accepted",
+      nextStep: "forges",
     })
   })
 

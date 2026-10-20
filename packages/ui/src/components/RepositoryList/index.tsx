@@ -21,19 +21,12 @@ interface AuthorOption extends TrackedAuthor {
 
 export type AuthorRole = "self" | "tracked"
 
-interface SelfAuthor {
-  readonly hint: string
-  readonly author: TrackedAuthor | null
-  readonly stateLabel: string | null
-  readonly isChangeable: boolean
-}
-
 export interface FollowedRepository {
   readonly name: string
   readonly path: string
   readonly authorSearchHint: string
   readonly authorSearchPlaceholder: string
-  readonly selfAuthor: SelfAuthor | null
+  readonly selfAuthor: TrackedAuthor | null
   readonly trackedAuthors: readonly TrackedAuthor[]
 }
 
@@ -58,7 +51,6 @@ interface RepositoryListProps<Followed extends FollowedRepository> {
   readonly onUnfollow: (name: string) => void
   readonly onAuthorQueryChange: (repositoryName: string, role: AuthorRole, query: string) => void
   readonly onAuthorTrackingChange: (repositoryName: string, authorId: string, isTracked: boolean) => void
-  readonly onSelfAuthorChange: (repositoryName: string, authorId: string | null) => void
 }
 
 interface RepositoryAuthorFieldProps {
@@ -72,20 +64,11 @@ interface RepositoryAuthorFieldProps {
   readonly onSelect: (authorId: string) => void
 }
 
-interface SelfAuthorPickProps {
-  readonly repositoryName: string
-  readonly selfAuthor: SelfAuthor
-  readonly authorSearch: AuthorSearch
-  readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
-  readonly onSelfAuthorChange: (authorId: string | null) => void
-}
-
 interface FollowedFieldsProps {
   readonly repository: FollowedRepository
   readonly authorSearch: AuthorSearch
   readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
   readonly onAuthorTrackingChange: (authorId: string, isTracked: boolean) => void
-  readonly onSelfAuthorChange: (authorId: string | null) => void
 }
 
 interface RepositoryRowItemProps<Followed extends FollowedRepository> extends Omit<FollowedFieldsProps, "repository"> {
@@ -130,67 +113,24 @@ const RepositoryAuthorField = ({
   )
 }
 
-const SelfAuthorPick = ({
-  repositoryName,
-  selfAuthor,
-  authorSearch,
-  onAuthorQueryChange,
-  onSelfAuthorChange,
-}: SelfAuthorPickProps) => {
-  if (selfAuthor.author === null) {
-    return (
-      <RepositoryAuthorField
-        label={`Which user are you in ${repositoryName}?`}
-        hint={selfAuthor.hint}
-        placeholder="Type your name or email"
-        authorRole="self"
-        repositoryName={repositoryName}
-        authorSearch={authorSearch}
-        onQueryChange={onAuthorQueryChange}
-        onSelect={onSelfAuthorChange}
-      />
-    )
-  }
-  return (
-    <div className={AUTHOR_LINE_CLASSES}>
-      <Avatar imageUrl={selfAuthor.author.avatarUrl} monogram={selfAuthor.author.monogram} />
-      <span className="min-w-0 truncate">{selfAuthor.author.name}</span>
-      <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{selfAuthor.author.detail}</span>
-      {selfAuthor.stateLabel === null ? null : <span className="text-sm font-bold">{selfAuthor.stateLabel}</span>}
-      {selfAuthor.isChangeable
-        ? (
-            <IconButton
-              icon="close"
-              label={`Choose another user as you in ${repositoryName}`}
-              onClick={() => { onSelfAuthorChange(null) }}
-            />
-          )
-        : null}
-    </div>
-  )
-}
+const SelfAuthorLine = ({ author }: { readonly author: TrackedAuthor }) => (
+  <div className={AUTHOR_LINE_CLASSES}>
+    <Avatar imageUrl={author.avatarUrl} monogram={author.monogram} />
+    <span className="min-w-0 truncate">{author.name}</span>
+    <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{author.detail}</span>
+  </div>
+)
 
 const FollowedFields = ({
   repository,
   authorSearch,
   onAuthorQueryChange,
   onAuthorTrackingChange,
-  onSelfAuthorChange,
 }: FollowedFieldsProps) => (
   <div className="grid max-w-xl gap-3 pt-3 pl-7">
-    {repository.selfAuthor === null
-      ? null
-      : (
-          <SelfAuthorPick
-            repositoryName={repository.name}
-            selfAuthor={repository.selfAuthor}
-            authorSearch={authorSearch}
-            onAuthorQueryChange={onAuthorQueryChange}
-            onSelfAuthorChange={onSelfAuthorChange}
-          />
-        )}
+    {repository.selfAuthor === null ? null : <SelfAuthorLine author={repository.selfAuthor} />}
     <RepositoryAuthorField
-      label={`Track specific team members in ${repository.name}`}
+      label="Track branches from specific team members"
       hint={repository.authorSearchHint}
       placeholder={repository.authorSearchPlaceholder}
       authorRole="tracked"
@@ -229,7 +169,6 @@ const RepositoryRowItem = <Followed extends FollowedRepository>({
   onUnfollow,
   onAuthorQueryChange,
   onAuthorTrackingChange,
-  onSelfAuthorChange,
 }: RepositoryRowItemProps<Followed>) => {
   const { followed } = row
   const isLocked = followed === null && row.stateLabel !== null
@@ -262,7 +201,6 @@ const RepositoryRowItem = <Followed extends FollowedRepository>({
                 authorSearch={authorSearch}
                 onAuthorQueryChange={onAuthorQueryChange}
                 onAuthorTrackingChange={onAuthorTrackingChange}
-                onSelfAuthorChange={onSelfAuthorChange}
               />
               {followedFooter === undefined ? null : <div className="pt-3 pl-7">{followedFooter(followed)}</div>}
             </>
@@ -283,7 +221,6 @@ const RepositoryList = <Followed extends FollowedRepository>({
   onUnfollow,
   onAuthorQueryChange,
   onAuthorTrackingChange,
-  onSelfAuthorChange,
 }: RepositoryListProps<Followed>) => (
   <>
     <h3 className="pb-2 text-sm font-bold">{RECENT_HEADING}</h3>
@@ -305,7 +242,6 @@ const RepositoryList = <Followed extends FollowedRepository>({
                 onAuthorTrackingChange={(authorId, isTracked) => {
                   onAuthorTrackingChange(row.followed?.name ?? row.name, authorId, isTracked)
                 }}
-                onSelfAuthorChange={(authorId) => { onSelfAuthorChange(row.followed?.name ?? row.name, authorId) }}
               />
             ))}
           </ul>

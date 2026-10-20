@@ -1,4 +1,4 @@
-import { needsSelfAuthor, type RepositoryAuthor, type SetupForge } from "./setup"
+import type { RepositoryAuthor } from "./setup"
 
 export interface GitIdentity {
   readonly name: string | null
@@ -27,11 +27,5 @@ export const toIdentityAuthor = (identity: GitIdentity): RepositoryAuthor => ({
   avatarUrl: null,
 })
 
-export const selfAuthorOf = (identity: GitIdentity | null, chosenSelfAuthor: RepositoryAuthor | null): RepositoryAuthor | null =>
-  identity === null ? chosenSelfAuthor : toIdentityAuthor(identity)
-
-export const selfAuthorIdOf = (identity: GitIdentity | null, chosenSelfAuthor: RepositoryAuthor | null): string | null =>
-  selfAuthorOf(identity, chosenSelfAuthor)?.id ?? null
-
-export const isSelfAuthorChoiceNeeded = (forge: SetupForge, identity: GitIdentity | null): boolean =>
-  needsSelfAuthor(forge) && identity === null
+export const selfAuthorIdOf = (identity: GitIdentity | null): string | null =>
+  identity === null ? null : toIdentityAuthor(identity).id

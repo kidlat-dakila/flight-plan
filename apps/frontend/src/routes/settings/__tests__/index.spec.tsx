@@ -38,8 +38,6 @@ const forgesSection = {
 const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
 const lena = { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" }
 
-const LOCAL_SELF_HINT = "Git has no email set for you in this repository."
-
 const storefront = {
   name: "storefront",
   path: "/Users/dev/projects/storefront",
@@ -47,7 +45,7 @@ const storefront = {
   lineLabel: "S",
   authorSearchHint: "You see your own branches. Add team members to see theirs too.",
   authorSearchPlaceholder: "Type a name or email",
-  selfAuthor: { hint: LOCAL_SELF_HINT, author: dev, stateLabel: "You", isChangeable: true },
+  selfAuthor: dev,
   trackedAuthors: [lena],
   configurationHref: "/pr-reviews/storefront/configurations",
   emptyMessage: null,
@@ -57,7 +55,7 @@ const docsSite = {
   ...storefront,
   name: "docs-site",
   path: "/work/docs-site",
-  authorSearchHint: "You see everyone's pull requests. Add team members to see only theirs.",
+  authorSearchHint: "By default, Flight Plan shows every branch in docs-site. To see only your teammates' pull requests, add them here.",
   authorSearchPlaceholder: "Type a name or username",
   selfAuthor: null,
   trackedAuthors: [],
@@ -368,7 +366,7 @@ describe("the settings pages", () => {
       fireEvent.click(ledger)
 
       await waitFor(() => {
-        expect(add).toHaveBeenCalledWith({ path: "/Users/dev/projects/ledger", selfAuthorId: null, trackedAuthorIds: [] })
+        expect(add).toHaveBeenCalledWith({ path: "/Users/dev/projects/ledger", trackedAuthorIds: [] })
       })
       await waitFor(() => {
         expect(readSettings.mock.calls.length).toBeGreaterThan(readsBefore)
@@ -387,7 +385,7 @@ describe("the settings pages", () => {
       fireEvent.click(await screen.findByRole("button", { name: "Stop tracking Lena Okafor" }))
 
       await waitFor(() => {
-        expect(configure).toHaveBeenCalledWith({ repositoryName: "storefront", selfAuthorId: "dev@acme.example", trackedAuthorIds: [] })
+        expect(configure).toHaveBeenCalledWith({ repositoryName: "storefront", trackedAuthorIds: [] })
       })
     })
 
@@ -395,7 +393,8 @@ describe("the settings pages", () => {
       const search = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { options: [], message: "No one matches." } })
       renderApp({ "repository.searchAuthors": search }, "/settings/repositories")
 
-      fireEvent.change(await screen.findByRole("combobox", { name: "Track specific team members in docs-site" }), { target: { value: "sam" } })
+      const [, docsSiteField] = await screen.findAllByRole("combobox", { name: "Track branches from specific team members" })
+      fireEvent.change(docsSiteField, { target: { value: "sam" } })
 
       await waitFor(() => {
         expect(search).toHaveBeenLastCalledWith({
@@ -403,7 +402,6 @@ describe("the settings pages", () => {
           repositoryName: "docs-site",
           role: "tracked",
           query: "sam",
-          selfAuthorId: null,
           trackedAuthorIds: [],
         })
       })

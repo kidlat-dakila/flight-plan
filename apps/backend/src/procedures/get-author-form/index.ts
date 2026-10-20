@@ -1,3 +1,4 @@
+import { basename } from "node:path"
 import type { ProcedureContext } from "@/procedures/context"
 import { LOCAL_GIT_FORGE } from "@/procedures/get-setup/utils/setup"
 import { buildAuthorForm } from "./utils/build-author-form"
@@ -7,10 +8,10 @@ export const getAuthorForm = async (input: GetAuthorFormInput, context: Procedur
   const setup = await context.setupStore.read()
   const path = input.path.trim()
   const isRepository = path !== "" && (await context.setupEnvironment.isRepositoryFolder(path))
-  if (!isRepository) return buildAuthorForm(LOCAL_GIT_FORGE, null)
+  if (!isRepository) return buildAuthorForm(LOCAL_GIT_FORGE, null, "")
   const [forge, identity] = await Promise.all([
     context.setupEnvironment.findRepositoryForge(path, setup.forges),
     context.setupEnvironment.readGitIdentity(path),
   ])
-  return buildAuthorForm(forge, identity)
+  return buildAuthorForm(forge, identity, basename(path))
 }

@@ -20,9 +20,9 @@ What a repository lists depends on how Flight Plan reaches it:
 - **On GitHub, GitLab or Bitbucket** you see everyone's pull requests, unless you pick specific team members.
 - **With local git** you see only the branches you add, plus those of the team members you pick. See [Local git](/docs/git-connection/local-git/).
 
-**Track specific team members** picks those people. Search by name or username on a code hosting site, and by name or email with local git.
+**Track branches from specific team members** picks those people. Search by name or username on a code hosting site, and by name or email with local git. The account you're signed in with on the code hosting site doesn't show up in the search.
 
-A repository on local git also asks **Which user are you**, because git can't tell who you are there. Search for the name or email you commit with and pick yourself. A code hosting site already knows who you are.
+On local git, Flight Plan takes you to be the user in your git config. It reads the repository's config first, and your global config (`git config --global user.email`) when the repository sets no email. A code hosting site already knows who you are.
 
 **Finish setup** saves the repositories. At that moment Flight Plan matches each repository's remote to one of your connections. See [Git connection](/docs/git-connection/).
 

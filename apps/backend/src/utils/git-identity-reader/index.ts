@@ -3,6 +3,7 @@ import { parseGitIdentity, type GitIdentity } from "@/procedures/get-setup/utils
 import type { CommandRunner } from "@/utils/run-command"
 
 const SUCCESS_EXIT_CODE = 0
+const GLOBAL_CONFIG_ARGUMENTS: readonly string[] = ["config", "--global"]
 
 export interface GitIdentityReaderOptions {
   readonly runCommand: CommandRunner
@@ -11,16 +12,20 @@ export interface GitIdentityReaderOptions {
 
 export type GitIdentityReader = (repositoryPath: string) => Promise<GitIdentity | null>
 
+const repositoryConfigArguments = (repositoryPath: string): readonly string[] => ["-C", repositoryPath, "config"]
+
 export const createGitIdentityReader = (options: GitIdentityReaderOptions): GitIdentityReader => {
-  const readSetting = async (repositoryPath: string, key: string): Promise<string | null> => {
-    const outcome = await options.runCommand("git", ["-C", repositoryPath, "config", "--get", key], options.environment)
+  const readSetting = async (configArguments: readonly string[], key: string): Promise<string | null> => {
+    const outcome = await options.runCommand("git", [...configArguments, "--get", key], options.environment)
     return outcome.exitCode === SUCCESS_EXIT_CODE ? outcome.output : null
   }
-  return async (repositoryPath) => {
+  const readIdentity = async (configArguments: readonly string[]): Promise<GitIdentity | null> => {
     const [nameOutput, emailOutput] = await Promise.all([
-      readSetting(repositoryPath, "user.name"),
-      readSetting(repositoryPath, "user.email"),
+      readSetting(configArguments, "user.name"),
+      readSetting(configArguments, "user.email"),
     ])
     return parseGitIdentity(nameOutput, emailOutput)
   }
+  return async (repositoryPath) =>
+    await readIdentity(repositoryConfigArguments(repositoryPath)) ?? await readIdentity(GLOBAL_CONFIG_ARGUMENTS)
 }

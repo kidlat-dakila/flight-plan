@@ -77,8 +77,6 @@ export const EMPTY_SETUP: Setup = {
 
 export const LOCAL_GIT_FORGE: SetupForge = "git"
 
-export const needsSelfAuthor = (forge: SetupForge): boolean => forge === LOCAL_GIT_FORGE
-
 export type RepositoryForges = Readonly<Record<string, SetupForge>>
 
 export const repositoryForgeOf = (repositoryForges: RepositoryForges, path: string): SetupForge =>

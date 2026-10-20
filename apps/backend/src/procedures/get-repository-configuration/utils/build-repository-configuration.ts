@@ -14,7 +14,6 @@ export const buildRepositoryConfiguration = (
 ): RepositoryConfiguration => ({
   name: repository.name,
   path: repository.path,
-  form: buildAuthorForm(forge, identity),
-  selfAuthor: authors.selfAuthor === null ? null : toTrackedAuthor(authors.selfAuthor),
+  form: buildAuthorForm(forge, identity, repository.name),
   trackedAuthors: authors.trackedAuthors.map(toTrackedAuthor),
 })

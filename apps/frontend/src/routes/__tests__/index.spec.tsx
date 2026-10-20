@@ -79,7 +79,6 @@ const noFolders = { data: { options: [], message: null } }
 
 const localGitAuthorForm = {
   data: {
-    selfAuthorHint: "Git cannot tell who you are here.",
     gitSelfAuthor: null,
     searchHint: "Search by name or email.",
     searchPlaceholder: "Type a name or email",
@@ -87,7 +86,7 @@ const localGitAuthorForm = {
 }
 
 const forgeAuthorForm = {
-  data: { selfAuthorHint: null, gitSelfAuthor: null, searchHint: "Search by name or username.", searchPlaceholder: "Type a name or username" },
+  data: { gitSelfAuthor: null, searchHint: "Search by name or username.", searchPlaceholder: "Type a name or username" },
 }
 
 const devOption = {
@@ -107,12 +106,12 @@ const storefrontConfiguration = {
     name: "storefront",
     path: "/work/storefront",
     form: {
-      selfAuthorHint: "Git cannot tell who you are here.",
-      gitSelfAuthor: null,
+      gitSelfAuthor: {
+        author: { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" },
+      },
       searchHint: "Search by name or email.",
       searchPlaceholder: "Type a name or email",
     },
-    selfAuthor: { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" },
     trackedAuthors: [
       { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" },
     ],
@@ -447,10 +446,7 @@ describe("the index page", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
     fireEvent.change(screen.getByRole("combobox", { name: "Repository folder" }), { target: { value: "/work/docs-site" } })
-    const self = await screen.findByRole("combobox", { name: "Which user are you?" })
-    fireEvent.focus(self)
-    fireEvent.click(await screen.findByRole("option", { name: /Dev Harper/ }))
-    const tracked = screen.getByRole("combobox", { name: "Track specific team members" })
+    const tracked = await screen.findByRole("combobox", { name: "Track branches from specific team members" })
     fireEvent.focus(tracked)
     fireEvent.click(await screen.findByRole("option", { name: /Lena Okafor/ }))
     expect(within(screen.getByRole("list", { name: "Tracked team members" })).getByText("Lena Okafor")).toBeTruthy()
@@ -459,7 +455,6 @@ describe("the index page", () => {
     expect(await screen.findByRole("region", { name: "docs-site" })).toBeTruthy()
     expect(addRepository).toHaveBeenCalledWith({
       path: "/work/docs-site",
-      selfAuthorId: "dev@acme.example",
       trackedAuthorIds: ["lena@acme.example"],
     })
     expect(screen.queryByRole("combobox", { name: "Repository folder" })).toBeNull()
@@ -476,7 +471,7 @@ describe("the index page", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
     fireEvent.change(screen.getByRole("combobox", { name: "Repository folder" }), { target: { value: "/work/docs-site" } })
-    fireEvent.focus(await screen.findByRole("combobox", { name: "Track specific team members" }))
+    fireEvent.focus(await screen.findByRole("combobox", { name: "Track branches from specific team members" }))
 
     await waitFor(() => {
       expect(searchAuthors).toHaveBeenCalledWith({
@@ -484,13 +479,12 @@ describe("the index page", () => {
         repositoryName: null,
         role: "tracked",
         query: "",
-        selfAuthorId: null,
         trackedAuthorIds: [],
       })
     })
   })
 
-  it("only asks who to track when a forge account tells who the user is", async () => {
+  it("asks only who to track when a forge serves the folder", async () => {
     renderApp({
       "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
       "repository.authorForm": () => forgeAuthorForm,
@@ -499,14 +493,14 @@ describe("the index page", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
 
-    expect(await screen.findByRole("combobox", { name: "Track specific team members" })).toBeTruthy()
-    expect(screen.queryByRole("combobox", { name: "Which user are you?" })).toBeNull()
+    expect(await screen.findByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
+    expect(screen.getByText("Search by name or username.")).toBeTruthy()
   })
 
   it("keeps the form open and shows why a repository was not added", async () => {
     renderApp({
       "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
-      "repository.add": () => ({ errorMessage: "Pick which user you are in docs-site." }),
+      "repository.add": () => ({ errorMessage: "ghost@acme.example is not an author of this repository." }),
       "repository.authorForm": () => localGitAuthorForm,
       "setup.searchFolders": () => noFolders,
     })
@@ -517,7 +511,7 @@ describe("the index page", () => {
 
     const alert = await screen.findByRole("alert")
 
-    expect(alert.textContent).toBe("Pick which user you are in docs-site.")
+    expect(alert.textContent).toBe("ghost@acme.example is not an author of this repository.")
     expect(screen.getByRole("combobox", { name: "Repository folder" })).toBeTruthy()
   })
 
@@ -614,13 +608,11 @@ describe("the index page", () => {
       )
     })
 
-    it("saves the user changed, who then is no longer tracked, and closes the dialog", async () => {
+    it("saves the tracked users changed and closes the dialog", async () => {
       const configure = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "storefront" } })
       await openConfiguration({ "repository.configure": configure })
 
-      fireEvent.click(screen.getByRole("button", { name: "Choose another user as you" }))
-      fireEvent.focus(screen.getByRole("combobox", { name: "Which user are you?" }))
-      fireEvent.click(await screen.findByRole("option", { name: /Lena Okafor/ }))
+      fireEvent.click(screen.getByRole("button", { name: "Stop tracking Lena Okafor" }))
       fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
       await waitFor(() => {
@@ -628,7 +620,6 @@ describe("the index page", () => {
       })
       expect(configure).toHaveBeenCalledWith({
         repositoryName: "storefront",
-        selfAuthorId: "lena@acme.example",
         trackedAuthorIds: [],
       })
     })
@@ -637,7 +628,7 @@ describe("the index page", () => {
       const searchAuthors = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(someAuthors)
       await openConfiguration({ "repository.searchAuthors": searchAuthors })
 
-      fireEvent.focus(screen.getByRole("combobox", { name: "Track specific team members" }))
+      fireEvent.focus(screen.getByRole("combobox", { name: "Track branches from specific team members" }))
 
       await waitFor(() => {
         expect(searchAuthors).toHaveBeenCalledWith({
@@ -645,19 +636,17 @@ describe("the index page", () => {
           repositoryName: "storefront",
           role: "tracked",
           query: "",
-          selfAuthorId: "dev@acme.example",
           trackedAuthorIds: ["lena@acme.example"],
         })
       })
     })
 
     it("keeps the dialog open and shows why the changes were refused", async () => {
-      await openConfiguration({ "repository.configure": () => ({ errorMessage: "Pick which user you are in storefront." }) })
+      await openConfiguration({ "repository.configure": () => ({ errorMessage: "storefront is no longer on the list." }) })
 
-      fireEvent.click(screen.getByRole("button", { name: "Choose another user as you" }))
       fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
-      expect((await screen.findByRole("alert")).textContent).toBe("Pick which user you are in storefront.")
+      expect((await screen.findByRole("alert")).textContent).toBe("storefront is no longer on the list.")
       expect(screen.getByRole("heading", { name: "Configure storefront" })).toBeTruthy()
     })
 

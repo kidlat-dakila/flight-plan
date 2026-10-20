@@ -104,14 +104,7 @@ export const setupRepositorySchema = z.strictObject({
   lineLabel: z.string(),
   authorSearchHint: z.string(),
   authorSearchPlaceholder: z.string(),
-  selfAuthor: z
-    .strictObject({
-      hint: z.string(),
-      author: trackedAuthorSchema.nullable(),
-      stateLabel: z.string().nullable(),
-      isChangeable: z.boolean(),
-    })
-    .nullable(),
+  selfAuthor: trackedAuthorSchema.nullable(),
   trackedAuthors: z.array(trackedAuthorSchema),
 })
 

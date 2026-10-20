@@ -3,48 +3,46 @@ import {
   AT_REPOSITORIES,
   CHECKOUT_WEB,
   createSetupContext,
-  DEV,
   GITHUB_FORGES,
   LENA,
   servedByForge,
 } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 
-const SELF_AND_LENA = { selfAuthorId: DEV.id, trackedAuthorIds: [LENA.id] }
+const LENA_TRACKED = { trackedAuthorIds: [LENA.id] }
 
 describe("addSetupRepository", () => {
   it("adds a repository folder to the setup with the authors chosen for it", async () => {
     const context = createSetupContext(AT_REPOSITORIES)
-    const repository = { ...CHECKOUT_WEB, selfAuthor: DEV, trackedAuthors: [LENA] }
+    const repository = { ...CHECKOUT_WEB, trackedAuthors: [LENA] }
 
-    await expect(addSetupRepository({ path: CHECKOUT_WEB.path, ...SELF_AND_LENA }, context)).resolves.toStrictEqual({
+    await expect(addSetupRepository({ path: CHECKOUT_WEB.path, ...LENA_TRACKED }, context)).resolves.toStrictEqual({
       kind: "accepted",
       repository,
     })
     await expect(context.setupStore.read()).resolves.toMatchObject({ repositories: [repository] })
   })
 
-  it("rejects a local git repository without the user chosen", async () => {
+  it("accepts a local git repository with nobody picked", async () => {
     const context = createSetupContext(AT_REPOSITORIES)
 
     await expect(
-      addSetupRepository({ path: CHECKOUT_WEB.path, selfAuthorId: null, trackedAuthorIds: [LENA.id] }, context),
-    ).resolves.toStrictEqual({ kind: "rejected", message: "Pick which user you are in checkout-web." })
-    await expect(context.setupStore.read()).resolves.toStrictEqual(AT_REPOSITORIES)
+      addSetupRepository({ path: CHECKOUT_WEB.path, trackedAuthorIds: [] }, context),
+    ).resolves.toMatchObject({ kind: "accepted", repository: { selfAuthor: null, trackedAuthors: [] } })
   })
 
   it("accepts a forge repository with nobody tracked, so that Flight Plan follows everyone in it", async () => {
     const context = createSetupContext({ ...AT_REPOSITORIES, forges: GITHUB_FORGES })
 
     await expect(
-      addSetupRepository({ path: CHECKOUT_WEB.path, selfAuthorId: null, trackedAuthorIds: [] }, context),
+      addSetupRepository({ path: CHECKOUT_WEB.path, trackedAuthorIds: [] }, context),
     ).resolves.toMatchObject({ kind: "accepted", repository: { trackedAuthors: [] } })
   })
 
   it("asks for a tracked user when a forge serves the repository while the default forge is local git", async () => {
     const context = servedByForge(createSetupContext(AT_REPOSITORIES), "gh")
 
-    await expect(addSetupRepository({ path: CHECKOUT_WEB.path, selfAuthorId: null, trackedAuthorIds: ["@lena"] }, context),
+    await expect(addSetupRepository({ path: CHECKOUT_WEB.path, trackedAuthorIds: ["@lena"] }, context),
     ).resolves.toMatchObject({
       kind: "accepted",
       repository: { selfAuthor: null, trackedAuthors: [{ id: "@lena" }] },
@@ -55,7 +53,7 @@ describe("addSetupRepository", () => {
     const context = createSetupContext(AT_REPOSITORIES)
 
     await expect(
-      addSetupRepository({ path: CHECKOUT_WEB.path, selfAuthorId: "ghost@acme.example", trackedAuthorIds: [] }, context),
+      addSetupRepository({ path: CHECKOUT_WEB.path, trackedAuthorIds: ["ghost@acme.example"] }, context),
     ).resolves.toStrictEqual({ kind: "rejected", message: "ghost@acme.example is not an author of this repository." })
     await expect(context.setupStore.read()).resolves.toStrictEqual(AT_REPOSITORIES)
   })
@@ -64,7 +62,7 @@ describe("addSetupRepository", () => {
     const context = createSetupContext(AT_REPOSITORIES)
 
     await expect(
-      addSetupRepository({ path: "/Users/dev/projects/meeting-notes", ...SELF_AND_LENA }, context),
+      addSetupRepository({ path: "/Users/dev/projects/meeting-notes", ...LENA_TRACKED }, context),
     ).resolves.toStrictEqual({
       kind: "rejected",
       message: "/Users/dev/projects/meeting-notes is not a git repository.",
@@ -76,7 +74,7 @@ describe("addSetupRepository", () => {
     const context = createSetupContext(EMPTY_SETUP)
 
     await expect(
-      addSetupRepository({ path: CHECKOUT_WEB.path, ...SELF_AND_LENA }, context),
+      addSetupRepository({ path: CHECKOUT_WEB.path, ...LENA_TRACKED }, context),
     ).resolves.toMatchObject({ kind: "accepted" })
     await expect(context.setupStore.read()).resolves.toMatchObject({ repositories: [{ name: "checkout-web" }] })
   })

@@ -31,11 +31,10 @@ const findListedSubject = async (key: ReviewKey, context: ProcedureContext): Pro
   if (repository === undefined) return null
   const target = await findReviewTarget(repository, key.targetId, context)
   if (target === null) return null
-  const [artifact, sampleDetail, viewerLogin, authors, branchAuthorEmail, gitIdentity, forge] = await Promise.all([
+  const [artifact, sampleDetail, viewerLogin, branchAuthorEmail, gitIdentity, forge] = await Promise.all([
     context.reviewStore.findArtifact(key),
     context.reviewStore.findTargetDetail(key),
     context.repositoryStore.readViewerLogin(repository.name),
-    context.repositoryStore.readAuthors(repository.name),
     target.kind === "branch" ? readBranchAuthorEmail(repository, target.name, context) : null,
     target.kind === "branch" ? context.setupEnvironment.readGitIdentity(repository.path) : null,
     target.kind === "pull-request" ? context.pullRequestForge.read(repository, target.number) : null,
@@ -47,7 +46,7 @@ const findListedSubject = async (key: ReviewKey, context: ProcedureContext): Pro
     target,
     isOwn: isOwnTarget(target, {
       viewerLogin,
-      selfAuthorId: selfAuthorIdOf(gitIdentity, authors?.selfAuthor ?? null),
+      selfAuthorId: selfAuthorIdOf(gitIdentity),
       branchAuthorEmail,
     }),
     isStored: true,

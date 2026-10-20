@@ -16,7 +16,7 @@ With no team member tracked, Flight Plan lists no branch on its own, not even yo
 
 Flight Plan fetches in the background, at most once every five minutes, so new remote branches of the people you track show up on their own.
 
-Git can't tell who you are in a repository, so setup asks **Which user are you**. Search for the name or email you commit with and pick yourself.
+Flight Plan takes you to be the user in your git config: the repository's own config, or your global config when the repository sets no email.
 
 ## What it can't do
 

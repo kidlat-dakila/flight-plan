@@ -1,6 +1,5 @@
 import { buildRepositoriesSection } from "@/procedures/get-settings/utils/build-repositories-section"
 import { DEV, LENA } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
-import { SELF_AUTHOR_HINT } from "@/procedures/get-setup/utils/build-repositories-step"
 
 const STOREFRONT = { name: "storefront", path: "/Users/dev/projects/storefront" }
 const CHECKOUT_API = { name: "checkout api", path: "/Users/dev/projects/checkout-api" }
@@ -18,11 +17,7 @@ describe("buildRepositoriesSection", () => {
 
     expect(section.repositories).toMatchObject([
       {
-        selfAuthor: {
-          author: { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" },
-          stateLabel: null,
-          isChangeable: false,
-        },
+        selfAuthor: { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" },
       },
     ])
   })
@@ -42,7 +37,7 @@ describe("buildRepositoriesSection", () => {
           lineLabel: "S",
           authorSearchHint: "You see your own branches. Add team members to see theirs too.",
           authorSearchPlaceholder: "Type a name or email",
-          selfAuthor: { hint: SELF_AUTHOR_HINT, author: { ...DEV, monogram: "DH" }, stateLabel: "You", isChangeable: true },
+          selfAuthor: null,
           trackedAuthors: [{ ...LENA, monogram: "LO" }],
           configurationHref: "/pr-reviews/storefront/configurations",
           emptyMessage: null,

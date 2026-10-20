@@ -20,7 +20,6 @@ describe("getRepositoryConfiguration", () => {
       name: "storefront",
       path: STOREFRONT.path,
       form: { searchPlaceholder: "Type a name or email" },
-      selfAuthor: { id: DEV.id, monogram: "DH" },
       trackedAuthors: [{ id: LENA.id }],
     })
   })
@@ -29,7 +28,7 @@ describe("getRepositoryConfiguration", () => {
     const context = servedByForge(await withSavedAuthors(), "gh")
 
     await expect(getRepositoryConfiguration({ name: "storefront" }, context)).resolves.toMatchObject({
-      form: { selfAuthorHint: null },
+      form: { searchPlaceholder: "Type a name or username" },
     })
   })
 

@@ -47,14 +47,14 @@ const createContext = (repositories: readonly Repository[], setup: Setup = EMPTY
   appUrl: "http://localhost:4200",
 })
 
-const SELF_ONLY = { selfAuthorId: DEV.id, trackedAuthorIds: [] }
+const NOBODY_TRACKED = { trackedAuthorIds: [] }
 
 describe("addRepository", () => {
   it("accepts a new path and adds it to the store with its authors followed", async () => {
     const context = createContext([storefront])
 
     await expect(
-      addRepository({ path: "/work/ledger-api", selfAuthorId: DEV.id, trackedAuthorIds: [LENA.id] }, context),
+      addRepository({ path: "/work/ledger-api", trackedAuthorIds: [LENA.id] }, context),
     ).resolves.toStrictEqual({
       kind: "accepted",
       repository: { name: "ledger-api", path: "/work/ledger-api", forge: "git", forgeSlug: null, problem: null, targets: [] },
@@ -65,16 +65,13 @@ describe("addRepository", () => {
     ])
   })
 
-  it("rejects a local git repository without the user chosen, and leaves the store alone", async () => {
+  it("accepts a local git repository with nobody tracked", async () => {
     const context = createContext([storefront])
 
-    await expect(
-      addRepository({ path: "/work/ledger-api", selfAuthorId: null, trackedAuthorIds: [LENA.id] }, context),
-    ).resolves.toStrictEqual({ kind: "rejected", message: "Pick which user you are in ledger-api." })
-    await expect(context.repositoryStore.list()).resolves.toStrictEqual([storefront])
+    await expect(addRepository({ path: "/work/ledger-api", ...NOBODY_TRACKED }, context)).resolves.toMatchObject({ kind: "accepted" })
   })
 
-  it("accepts a local git repository without the user chosen when git config has the user's email", async () => {
+  it("leaves the git config user out of the tracked authors", async () => {
     const base = createContext([storefront])
     const identity = { name: "Lena Okafor", email: LENA.id }
     const context = {
@@ -83,7 +80,7 @@ describe("addRepository", () => {
     }
 
     await expect(
-      addRepository({ path: "/work/ledger-api", selfAuthorId: null, trackedAuthorIds: [LENA.id, DEV.id] }, context),
+      addRepository({ path: "/work/ledger-api", trackedAuthorIds: [LENA.id, DEV.id] }, context),
     ).resolves.toMatchObject({ kind: "accepted" })
     await expect(context.repositoryStore.readAuthors("ledger-api")).resolves.toStrictEqual({
       selfAuthor: null,
@@ -94,29 +91,21 @@ describe("addRepository", () => {
   it("accepts a forge repository with nobody tracked, so that Flight Plan follows everyone in it", async () => {
     const context = createContext([storefront], { ...EMPTY_SETUP, forges: GITHUB_FORGES })
 
-    await expect(addRepository({ path: "/work/ledger-api", ...SELF_ONLY }, context)).resolves.toMatchObject({ kind: "accepted" })
+    await expect(addRepository({ path: "/work/ledger-api", ...NOBODY_TRACKED }, context)).resolves.toMatchObject({ kind: "accepted" })
     await expect(context.repositoryStore.readAuthors("ledger-api")).resolves.toStrictEqual({ selfAuthor: null, trackedAuthors: [] })
   })
 
-  it("asks for no user when a forge serves the repository while the default forge is local git", async () => {
-    const context = servedByForge(createContext([storefront]), "gh")
-
-    await expect(addRepository({ path: "/work/ledger-api", ...SELF_ONLY }, context)).resolves.toMatchObject({ kind: "accepted" })
-  })
-
-  it("asks for the user when local git serves the repository while the default forge is a forge", async () => {
+  it("accepts a repository local git serves while the default forge is a forge, with nobody picked", async () => {
     const context = servedByForge(createContext([storefront], { ...EMPTY_SETUP, forges: GITHUB_FORGES }), "git")
 
-    await expect(
-      addRepository({ path: "/work/ledger-api", selfAuthorId: null, trackedAuthorIds: [LENA.id] }, context),
-    ).resolves.toStrictEqual({ kind: "rejected", message: "Pick which user you are in ledger-api." })
+    await expect(addRepository({ path: "/work/ledger-api", ...NOBODY_TRACKED }, context)).resolves.toMatchObject({ kind: "accepted" })
   })
 
   it("accepts a forge repository with a tracked author", async () => {
     const context = createContext([storefront], { ...EMPTY_SETUP, forges: GITHUB_FORGES })
 
     await expect(
-      addRepository({ path: "/work/ledger-api", selfAuthorId: null, trackedAuthorIds: ["@teo"] }, context),
+      addRepository({ path: "/work/ledger-api", trackedAuthorIds: ["@teo"] }, context),
     ).resolves.toMatchObject({ kind: "accepted" })
   })
 
@@ -124,7 +113,7 @@ describe("addRepository", () => {
     const context = createContext([storefront])
 
     await expect(
-      addRepository({ path: "/work/ledger-api", selfAuthorId: DEV.id, trackedAuthorIds: ["ghost@acme.example"] }, context),
+      addRepository({ path: "/work/ledger-api", trackedAuthorIds: ["ghost@acme.example"] }, context),
     ).resolves.toStrictEqual({ kind: "rejected", message: "ghost@acme.example is not an author of this repository." })
     await expect(context.repositoryStore.list()).resolves.toStrictEqual([storefront])
   })
@@ -135,7 +124,7 @@ describe("addRepository", () => {
       setupEnvironment: { ...createMockSetupEnvironment(), isRepositoryFolder: async () => await Promise.resolve(false) },
     }
 
-    await expect(addRepository({ path: "/work/notes", ...SELF_ONLY }, context)).resolves.toStrictEqual({
+    await expect(addRepository({ path: "/work/notes", ...NOBODY_TRACKED }, context)).resolves.toStrictEqual({
       kind: "rejected",
       message: "/work/notes is not a git repository.",
     })
@@ -145,7 +134,7 @@ describe("addRepository", () => {
   it("rejects a path already on the list without changing the store", async () => {
     const context = createContext([storefront])
 
-    await expect(addRepository({ path: "/work/storefront", ...SELF_ONLY }, context)).resolves.toStrictEqual({
+    await expect(addRepository({ path: "/work/storefront", ...NOBODY_TRACKED }, context)).resolves.toStrictEqual({
       kind: "rejected",
       message: "/work/storefront is already on the list.",
     })

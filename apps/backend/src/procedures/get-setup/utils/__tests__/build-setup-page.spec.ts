@@ -350,13 +350,13 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("holds the repositories step on local git until the user says which user they are", () => {
+  it("lets a local git user continue with nobody picked, and shows no user when git config has no email", () => {
     const setup = { ...AT_REPOSITORIES, repositories: [CHECKOUT_WEB] }
 
     expect(buildSetupPage(sourceOf({ setup, step: "repositories" })).form).toMatchObject({
-      isReadyToContinue: false,
-      continueHint: "Pick which user you are in checkout-web.",
-      repositories: [{ selfAuthor: { author: null, stateLabel: "Not chosen" } }],
+      isReadyToContinue: true,
+      continueHint: null,
+      repositories: [{ selfAuthor: null }],
     })
   })
 
@@ -390,7 +390,7 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("asks a local git user which user they are, and no forge user", () => {
+  it("shows a local git user only the user git config names, and a forge user nobody", () => {
     const localGit = buildSetupPage(sourceOf({ setup: READY_TO_FINISH, step: "repositories" })).form
     const github = buildSetupPage(
       sourceOf({
@@ -405,19 +405,14 @@ describe("buildSetupPage", () => {
         {
           authorSearchHint: "You see your own branches. Add team members to see theirs too.",
           authorSearchPlaceholder: "Type a name or email",
-          selfAuthor: {
-            hint: "Git has no email for you in this repository. Search for the name or email you commit with and pick yourself.",
-            author: { name: "Dev Harper", monogram: "DH" },
-            stateLabel: "You",
-            isChangeable: true,
-          },
+          selfAuthor: null,
         },
       ],
     })
     expect(github).toMatchObject({
       repositories: [
         {
-          authorSearchHint: "You see everyone's pull requests. Add team members to see only theirs.",
+          authorSearchHint: "By default, Flight Plan shows every branch in checkout-web. To see only your teammates' pull requests, add them here.",
           authorSearchPlaceholder: "Type a name or username",
           selfAuthor: null,
         },
@@ -425,18 +420,14 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("shows the user git config names in a local git repository, and does not let them change it", () => {
+  it("shows the user git config names in a local git repository", () => {
     const setup = { ...AT_REPOSITORIES, repositories: [CHECKOUT_WEB] }
     const repositoryIdentities = { [CHECKOUT_WEB.path]: { name: "Lena Okafor", email: "lena@acme.example" } }
 
     expect(buildSetupPage(sourceOf({ setup, step: "repositories", repositoryIdentities })).form).toMatchObject({
       repositories: [
         {
-          selfAuthor: {
-            author: { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" },
-            stateLabel: null,
-            isChangeable: false,
-          },
+          selfAuthor: { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" },
         },
       ],
       isReadyToContinue: true,
@@ -448,10 +439,12 @@ describe("buildSetupPage", () => {
     const forgeRepository = { ...CHECKOUT_WEB, name: "storefront", path: "/Users/dev/projects/storefront" }
     const setup = { ...READY_TO_FINISH, repositories: [...READY_TO_FINISH.repositories, forgeRepository] }
     const repositoryForges = { [CHECKOUT_WEB.path]: "git", [forgeRepository.path]: "gh" } as const
+    const identity = { name: "Dev Harper", email: "dev@acme.example" }
+    const repositoryIdentities = { [CHECKOUT_WEB.path]: identity, [forgeRepository.path]: identity }
 
-    expect(buildSetupPage(sourceOf({ setup, step: "repositories", repositoryForges })).form).toMatchObject({
+    expect(buildSetupPage(sourceOf({ setup, step: "repositories", repositoryForges, repositoryIdentities })).form).toMatchObject({
       repositories: [
-        { name: "checkout-web", selfAuthor: { author: { name: "Dev Harper" } }, authorSearchPlaceholder: "Type a name or email" },
+        { name: "checkout-web", selfAuthor: { name: "Dev Harper" }, authorSearchPlaceholder: "Type a name or email" },
         { name: "storefront", selfAuthor: null, authorSearchPlaceholder: "Type a name or username" },
       ],
       isReadyToContinue: true,

@@ -21,7 +21,6 @@ interface ConfigureRepositoryDialogProps {
   readonly errorMessage: string | null
   readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
   readonly onAuthorSelect: (role: AuthorRole, authorId: string) => void
-  readonly onSelfAuthorRemove: () => void
   readonly onTrackedAuthorRemove: (authorId: string) => void
   readonly onSave: () => void
   readonly onRemove: () => void
@@ -77,7 +76,6 @@ const ConfigureRepositoryDialog = ({
   errorMessage,
   onAuthorQueryChange,
   onAuthorSelect,
-  onSelfAuthorRemove,
   onTrackedAuthorRemove,
   onSave,
   onRemove,
@@ -98,7 +96,6 @@ const ConfigureRepositoryDialog = ({
           authors={authors}
           onAuthorQueryChange={onAuthorQueryChange}
           onAuthorSelect={onAuthorSelect}
-          onSelfAuthorRemove={onSelfAuthorRemove}
           onTrackedAuthorRemove={onTrackedAuthorRemove}
         />
         <a href={configurationHref} className="w-fit text-sm underline">Prompt configurations</a>

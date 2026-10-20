@@ -94,7 +94,6 @@ const RepositoriesSection = ({
   const followRepository = useMutation(trpc.setup.addRepository.mutationOptions({ onSuccess: onChanged }))
   const removeRepository = useMutation(trpc.setup.removeRepository.mutationOptions({ onSuccess: onChanged }))
   const setAuthorTracking = useMutation(trpc.setup.setAuthorTracking.mutationOptions({ onSuccess: onChanged }))
-  const setSelfAuthor = useMutation(trpc.setup.setSelfAuthor.mutationOptions({ onSuccess: onChanged }))
 
   const handleAddClose = () => {
     addRepository.reset()
@@ -120,8 +119,7 @@ const RepositoriesSection = ({
           query: authorQuery?.query ?? "",
           options: authorSuggestions.data?.options ?? [],
           message: authorSuggestions.data?.message ?? (authorSuggestions.isPending ? SEARCHING_MESSAGE : null),
-          errorMessage:
-            authorSuggestions.error?.message ?? setAuthorTracking.error?.message ?? setSelfAuthor.error?.message ?? null,
+          errorMessage: authorSuggestions.error?.message ?? setAuthorTracking.error?.message ?? null,
         }}
         isReadyToContinue={isReadyToContinue}
         continueHint={continueHint}
@@ -131,17 +129,13 @@ const RepositoriesSection = ({
         onOpenAddRepository={() => { setIsAddOpen(true) }}
         onFollow={(path) => {
           removeRepository.reset()
-          followRepository.mutate({ path, selfAuthorId: null, trackedAuthorIds: [] })
+          followRepository.mutate({ path, trackedAuthorIds: [] })
         }}
         onUnfollow={(name) => {
           followRepository.reset()
           removeRepository.mutate({ name })
         }}
         onAuthorQueryChange={(repositoryName, role, query) => { setAuthorQuery({ repositoryName, role, query }) }}
-        onSelfAuthorChange={(repositoryName, authorId) => {
-          setAuthorQuery(null)
-          setSelfAuthor.mutate({ repositoryName, authorId })
-        }}
         onAuthorTrackingChange={(repositoryName, authorId, isTracked) => {
           setAuthorQuery(null)
           setAuthorTracking.mutate({ repositoryName, authorId, isTracked })
@@ -162,7 +156,6 @@ const RepositoriesSection = ({
         }}
         onAuthorQueryChange={additionAuthors.onAuthorQueryChange}
         onAuthorSelect={additionAuthors.onAuthorSelect}
-        onSelfAuthorRemove={additionAuthors.onSelfAuthorRemove}
         onTrackedAuthorRemove={additionAuthors.onTrackedAuthorRemove}
         onSubmit={() => { addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection }) }}
         onBrowse={() => {

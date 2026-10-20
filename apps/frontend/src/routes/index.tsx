@@ -209,7 +209,6 @@ const RepositoriesPage = () => {
         }}
         onAuthorQueryChange={additionAuthors.onAuthorQueryChange}
         onAuthorSelect={additionAuthors.onAuthorSelect}
-        onSelfAuthorRemove={additionAuthors.onSelfAuthorRemove}
         onTrackedAuthorRemove={additionAuthors.onTrackedAuthorRemove}
         onSubmit={() => { addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection }) }}
         onBrowse={() => {
@@ -236,7 +235,6 @@ const RepositoriesPage = () => {
         }
         onAuthorQueryChange={configureAuthors.onAuthorQueryChange}
         onAuthorSelect={configureAuthors.onAuthorSelect}
-        onSelfAuthorRemove={configureAuthors.onSelfAuthorRemove}
         onTrackedAuthorRemove={configureAuthors.onTrackedAuthorRemove}
         onSave={() => {
           if (configuring !== null) {

@@ -49,6 +49,26 @@ describe("createAuthorLookup", () => {
     })
   })
 
+  it("leaves the signed-in account out of the people the forge finds, in any letter case", async () => {
+    const lookup = createLookup({
+      ...peopleFound,
+      resolved: {
+        ok: true,
+        repo: "acme/checkout-web",
+        gitAdapter: adapterWith("gh", {
+          searchPeople: async () => await Promise.resolve([OCTO, NAMELESS]),
+          viewer: async () => await Promise.resolve({ login: "octo", avatarUrl: "" }),
+        }),
+      },
+    })
+
+    await expect(lookup.searchAuthors(sourceOn("gh"), "o")).resolves.toStrictEqual({
+      authors: [{ id: "@bot", name: "bot", detail: "@bot", avatarUrl: null }],
+      problem: null,
+    })
+    await expect(lookup.findAuthor(sourceOn("gh"), "@Octo")).resolves.toMatchObject({ id: "@Octo" })
+  })
+
   it("reports the problem when the forge cannot be opened", async () => {
     const lookup = createLookup({
       forge: "github",

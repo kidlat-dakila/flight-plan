@@ -39,7 +39,6 @@ interface AddRepositoryDialogProps {
   readonly onChooseFolder: (path: string) => void
   readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
   readonly onAuthorSelect: (role: AuthorRole, authorId: string) => void
-  readonly onSelfAuthorRemove: () => void
   readonly onTrackedAuthorRemove: (authorId: string) => void
   readonly onSubmit: () => void
   readonly onBrowse: () => void
@@ -61,7 +60,6 @@ const AddRepositoryDialog = ({
   onChooseFolder,
   onAuthorQueryChange,
   onAuthorSelect,
-  onSelfAuthorRemove,
   onTrackedAuthorRemove,
   onSubmit,
   onBrowse,
@@ -105,7 +103,6 @@ const AddRepositoryDialog = ({
           authors={authors}
           onAuthorQueryChange={onAuthorQueryChange}
           onAuthorSelect={onAuthorSelect}
-          onSelfAuthorRemove={onSelfAuthorRemove}
           onTrackedAuthorRemove={onTrackedAuthorRemove}
         />
         {errorMessage === null ? null : <p role="alert" className="text-sm text-destructive">{errorMessage}</p>}

@@ -18,7 +18,7 @@ describe("getAuthorForm", () => {
   it("builds the form from the forge that serves the folder typed", async () => {
     const forgeServed = servedByForge(createSetupContext(AT_REPOSITORIES), "gh")
 
-    await expect(getAuthorForm({ path: FOLDER }, forgeServed)).resolves.toMatchObject({ selfAuthorHint: null })
+    await expect(getAuthorForm({ path: FOLDER }, forgeServed)).resolves.toMatchObject({ searchPlaceholder: "Type a name or username" })
   })
 
   it("builds the local git form for a folder that is not a repository", async () => {
