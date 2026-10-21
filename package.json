@@ -1,7 +1,7 @@
 {
   "name": "flight-plan",
   "description": "Read a pull request as an ordered walkthrough beside its code, written by your assistant through MCP tools.",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kidlat-dakila/flight-plan.git"
@@ -15,6 +15,7 @@
     "lint:fix": "nx run-many -t eslint:lint --args=--fix",
     "hard-reset": "jiti tools/hard-reset/index.ts",
     "build:prod": "nx run backend:package",
+    "prod:release": "git tag -a v$npm_package_version -m \"chore: release $npm_package_version\" && git push origin v$npm_package_version",
     "start": "node dist/package/backend/main.js",
     "prepare": "husky"
   },
