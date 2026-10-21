@@ -15,6 +15,7 @@ type CodeBlockType =
   | "root-statement"
   | "type-declaration"
   | "import"
+  | "directive"
   | "file"
   | "condition"
   | "switch"
@@ -68,6 +69,7 @@ type CodeBlockType =
 | `root-statement` | A statement at the root of a file that is not a declaration | `app.use(rateLimit({ perMinute: 60 }))` |
 | `type-declaration` | An `interface` or a `type`, and in Python a `type` alias or a class of `TypedDict` or `Protocol`. Nothing that runs is different when it changes, so the Trace Diagram does not trace it. | `interface User { … }`, `type Status = "open" \| "paid"`, `class Order(TypedDict): …` |
 | `import` | An import statement. The Trace Diagram does not trace it. | `import { rateLimit } from "./rate-limit"` |
+| `directive` | A text at the top of a file, before any other statement, that tells the tools how to read the file. The Trace Diagram does not trace it. | `"use client"`, `"use server"`, `"use strict"` |
 | `file` | The whole of a file no language reads. It is one block, with no blocks inside it and no symbols. | `migrations/0042_add_status.sql`, `schema.prisma`, `orders.module.css` |
 | `condition` | A condition block, including a ternary | `if (isPending) { … }`, `a ? b : c` |
 | `switch` | A `switch` statement | `switch (status) { … }` |
@@ -332,7 +334,7 @@ A type is decided by the code where the syntax says it, and by the [catalogue](c
 
 | Decided by | Types |
 |---|---|
-| The syntax | `function`, `method`, `component`, `class`, `root-variable`, `root-statement`, `type-declaration`, `import`, `file`, `condition`, `switch`, `switch-case`, `loop`, `try-catch`, `throw`, the five `render` types, `external-value`, `root-argument-value`, `variable`, `property` |
+| The syntax | `function`, `method`, `component`, `class`, `root-variable`, `root-statement`, `type-declaration`, `import`, `directive`, `file`, `condition`, `switch`, `switch-case`, `loop`, `try-catch`, `throw`, the five `render` types, `external-value`, `root-argument-value`, `variable`, `property` |
 | The lines a change took out | `deleted` |
 | A name, by convention | `hook`, and a `code-event` from a key that starts with `on` |
 | The shape of a call | `effect`, `component-effect`, `effect-callback` |

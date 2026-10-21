@@ -1,7 +1,7 @@
 import { moduleExportsHolding } from "@/ast-graph/languages/typescript/exports"
 import { isRequireDeclarator } from "@/ast-graph/languages/typescript/imports"
 import { bindingNamesIn } from "@/ast-graph/languages/typescript/patterns"
-import { isClassValue, isFieldOf, isFunctionValue, textOfName } from "@/ast-graph/languages/typescript/syntax"
+import { isClassValue, isDirective, isFieldOf, isFunctionValue, textOfName } from "@/ast-graph/languages/typescript/syntax"
 import type { SyntaxCursor, SyntaxNode } from "@/ast-graph/parser"
 import type { ReadBlock } from "@/code-blocks/reading"
 import { rangeOfNode } from "@/code-blocks/source-range"
@@ -477,9 +477,11 @@ const READERS: ReadonlyMap<string, ReadSeeds> = new Map<string, ReadSeeds>([
   [CONSTRUCTION_TYPE, readExpression],
 ])
 
+const rootStatementTypeOf = (node: SyntaxNode): CodeBlockType => (isDirective(node) ? "directive" : "root-statement")
+
 const readRootStatement: ReadSeeds = (node, context) => {
   const isLoose = isAtRoot(context) && node.parent?.type === PROGRAM_TYPE && !BLOCKLESS_ROOT_TYPES.has(node.type)
-  return isLoose ? [seedAt(node, "root-statement")] : []
+  return isLoose ? [seedAt(node, rootStatementTypeOf(node))] : []
 }
 
 const readPassedCallback: ReadSeeds = (node, _context, reader) => {

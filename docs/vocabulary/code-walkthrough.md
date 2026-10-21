@@ -88,6 +88,8 @@ A type, a statement at the top level of a file and a file no language reads are 
 
 **An import has no waypoint.** A changed import is shown in the code, marked as added, removed or changed, but nothing stops at it: the waypoint of the code that uses what it imports says why it is there. A file whose only change is to its imports has no File Section.
 
+**A directive has no waypoint either.** A `"use client"` or a `"use server"` at the top of a file is shown in the code like an import, and nothing stops at it: it says how the rest of the file runs, so the waypoints of that code say what it changes. A file whose only change is to its imports and its directives has no File Section.
+
 A waypoint holds its code blocks in three forms, as a [Trace Diagram node](trace-diagram.md#three-forms) does:
 
 | Form | What it is for | Code blocks |

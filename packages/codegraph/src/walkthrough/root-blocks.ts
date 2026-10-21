@@ -25,7 +25,7 @@ const KEY_SEPARATOR = ":"
 const LABEL_SEPARATOR = " – "
 const DELETED_TYPE: CodeBlockType = "deleted"
 const UNKNOWN_DELETED_LABEL = "Code"
-const UNFILTERED_TYPES: readonly CodeBlockType[] = ["import"]
+const UNFILTERED_TYPES: readonly CodeBlockType[] = ["import", "directive"]
 
 const ROOT_BLOCK_CHANGE_LABELS: Readonly<Record<RootBlockChange, string>> = {
   added: "Added",

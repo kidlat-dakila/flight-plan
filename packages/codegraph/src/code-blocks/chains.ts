@@ -57,7 +57,7 @@ const HANDLING_TYPES = typesOf("render-event", "effect-callback", "code-event")
 const STATE_TYPES = typesOf("state", "derived")
 const RUNNING_IN_PLACE_TYPES = typesOf("render-event", "effect-callback", "code-event", "render-loop")
 const RUNNING_IN_PLACE = "in-place"
-const UNTRACED_TYPES = typesOf("type-declaration", "import", "file", "deleted")
+const UNTRACED_TYPES = typesOf("type-declaration", "import", "directive", "file", "deleted")
 const STARTING_LATER_TYPES = typesOf(
   "function",
   "hook",
@@ -67,6 +67,7 @@ const STARTING_LATER_TYPES = typesOf(
   "root-argument-value",
   "type-declaration",
   "import",
+  "directive",
   "component-effect",
   "code-event",
   "render-event",

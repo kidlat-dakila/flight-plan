@@ -13,6 +13,9 @@ const WRAPPER_FIELD = "declaration"
 const EXPORT_TYPE = "export_statement"
 const AMBIENT_TYPE = "ambient_declaration"
 const COMMENT_TYPE = "comment"
+const UNWRITTEN_TYPES: ReadonlySet<string> = new Set([COMMENT_TYPE, "hash_bang_line"])
+const STATEMENT_TYPE = "expression_statement"
+const TEXT_TYPE = "string"
 
 export const isSameNode = (one: SyntaxNode | null, two: SyntaxNode | null): boolean =>
   one !== null && two !== null && one.id === two.id
@@ -53,3 +56,11 @@ export const nextStatementOf = (statement: SyntaxNode): SyntaxNode | null => {
   const next = statement.nextNamedSibling
   return next?.type === COMMENT_TYPE ? nextStatementOf(next) : next
 }
+
+const isTextStatement = (statement: SyntaxNode): boolean =>
+  statement.type === STATEMENT_TYPE && statement.namedChildCount === 1 && statement.firstNamedChild?.type === TEXT_TYPE
+
+const isPrologueOpen = (previous: SyntaxNode | null): boolean =>
+  previous === null || ((UNWRITTEN_TYPES.has(previous.type) || isTextStatement(previous)) && isPrologueOpen(previous.previousNamedSibling))
+
+export const isDirective = (statement: SyntaxNode): boolean => isTextStatement(statement) && isPrologueOpen(statement.previousNamedSibling)

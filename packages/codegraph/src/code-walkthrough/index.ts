@@ -1,7 +1,7 @@
 import type { EncapsulationKind } from "@/ast-graph"
 import type { CodeWalkthrough, FileSection, LineRange, Waypoint } from "@flightplan/configurations"
 
-export type WaypointCategory = EncapsulationKind | "import" | "type" | "statement" | "file"
+export type WaypointCategory = EncapsulationKind | "import" | "directive" | "type" | "statement" | "file"
 
 export interface LinkedWaypoint extends Waypoint {
   readonly range: LineRange

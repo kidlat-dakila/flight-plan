@@ -50,6 +50,15 @@ describe("the blocks at the root of a TypeScript file", () => {
     ])
   })
 
+  it("makes a directive of a text at the top of the file, and a root-statement of a text that comes after a statement", () => {
+    expect(outlineOfCode("// @ts-check", "\"use client\";", "'use strict'", "start()", "\"use server\"")).toStrictEqual([
+      "directive 2:1-2:14",
+      "directive 3:1-3:13",
+      "root-statement 4:1-4:8",
+      "root-statement 5:1-5:13",
+    ])
+  })
+
   it("makes a type-declaration of an interface and of a type", () => {
     expect(outlineOfCode("interface User { id: string }", "export type Status = \"open\"", "declare const VERSION: string")).toStrictEqual([
       "type-declaration User 1:1-1:30",

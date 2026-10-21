@@ -30,12 +30,13 @@ const CATEGORY_BY_TYPE: ReadonlyMap<CodeBlockType, WaypointCategory> = new Map<C
   ["state", "variable"],
   ["derived", "variable"],
   ["import", "import"],
+  ["directive", "directive"],
   ["type-declaration", "type"],
   ["root-statement", "statement"],
   ["file", "file"],
 ])
 const LOOSE_CATEGORIES: ReadonlySet<WaypointCategory> = new Set<WaypointCategory>(["type", "statement"])
-const UNMARKED_CATEGORIES: ReadonlySet<WaypointCategory> = new Set<WaypointCategory>(["import"])
+const UNMARKED_CATEGORIES: ReadonlySet<WaypointCategory> = new Set<WaypointCategory>(["import", "directive"])
 const READ_IN_PARTS_CATEGORIES: ReadonlySet<WaypointCategory> = new Set<WaypointCategory>(["function", "class", "method", "variable"])
 const DEFAULT_CATEGORY: WaypointCategory = "statement"
 const STEP_CATEGORY: WaypointCategory = "statement"

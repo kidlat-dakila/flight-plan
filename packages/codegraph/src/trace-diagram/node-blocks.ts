@@ -26,6 +26,7 @@ const PART_OF_RENDER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(
   "deleted",
   "type-declaration",
   "import",
+  "directive",
   "file",
 ])
 const TRIGGERED_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>([

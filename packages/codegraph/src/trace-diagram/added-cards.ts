@@ -27,7 +27,7 @@ export interface CardOptions {
 }
 
 const COMPONENT: CodeBlockType = "component"
-const IMPORT: CodeBlockType = "import"
+const UNCARDED_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["import", "directive"])
 const WHOLE_FILE: CodeBlockType = "file"
 const RENDER = "render"
 const TRIGGER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event", "data-fetch"])
@@ -134,7 +134,7 @@ export const nameOfCardRow = (node: TraceNode, row: TraceRow): string => {
 
 export const listCardBlocks = (astGraph: ASTGraph): CardBlock[] =>
   astGraph.rootBlocks
-    .filter((block) => block.type !== IMPORT)
+    .filter((block) => !UNCARDED_TYPES.has(block.type))
     .map((block) => ({
       id: block.id,
       name: nameOfBlock(block),

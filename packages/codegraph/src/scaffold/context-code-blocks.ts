@@ -21,7 +21,7 @@ export interface ViewedSegment {
 type LibraryName = NonNullable<CodeReference["library"]>
 
 const IMPORT_TYPE: CodeBlockType = "import"
-const UNDESCRIBED_TYPES: readonly CodeBlockType[] = [IMPORT_TYPE, "root-statement", "file", "deleted"]
+const UNDESCRIBED_TYPES: readonly CodeBlockType[] = [IMPORT_TYPE, "directive", "root-statement", "file", "deleted"]
 const USED_BLOCK_SYMBOL = "external-block"
 const LIBRARY_ID_PREFIX = "library:"
 const LANGUAGE_ID_PREFIX = "language:"

@@ -1,7 +1,7 @@
 import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
 import { moduleExportsHolding } from "@/ast-graph/languages/typescript/exports"
 import { readImportVariables, specifierRequiredBy } from "@/ast-graph/languages/typescript/imports"
-import { isFieldOf, isQuoted, textOfName, unquoted } from "@/ast-graph/languages/typescript/syntax"
+import { isDirective, isFieldOf, isQuoted, textOfName, unquoted } from "@/ast-graph/languages/typescript/syntax"
 import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
 import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
 import { isSameRange, rangeOf } from "@/ast-graph/source-range"
@@ -51,7 +51,6 @@ const LIST_TYPE = "array"
 const COMMENT_TYPE = "comment"
 const TEMPLATE_TYPE = "template_string"
 const STATEMENT_TYPE = "expression_statement"
-const TEXT_TYPE = "string"
 const CALL_PATTERN = patternOfTypes([CALL_TYPE])
 const GENERIC_TYPE = "generic_type"
 const ASSIGNMENT_TYPE = "assignment_expression"
@@ -351,15 +350,9 @@ const propertyOf = (member: SyntaxNode): PassedValue[] => {
   return isProperty && key !== null && value !== null ? [{ position: null, name: textOfName(key), node: value }] : []
 }
 
-const isPrologue = (statement: SyntaxNode): boolean => {
-  const previous = statement.previousNamedSibling
-  const isText = statement.namedChildCount === 1 && statement.firstNamedChild?.type === TEXT_TYPE
-  return isText && (previous === null || previous.type === COMMENT_TYPE || (previous.type === STATEMENT_TYPE && isPrologue(previous)))
-}
-
 const listDirectives = (grammar: GrammarId, tree: SyntaxTree): Directive[] =>
   nodesMatching(grammar, tree, STATEMENT_PATTERN)
-    .filter(isPrologue)
+    .filter(isDirective)
     .map((statement) => ({ text: unquoted(statement.firstNamedChild?.text ?? ""), node: statement }))
 
 export interface JavascriptSyntax {

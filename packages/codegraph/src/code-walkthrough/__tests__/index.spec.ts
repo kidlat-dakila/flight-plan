@@ -106,6 +106,13 @@ describe("generateWalkthroughFromBlocks", () => {
     expect(stopsOf(walkthroughOf([changedAt([1, 1], [10, 10])]))).toStrictEqual(["w1 src/checkout.ts subtotal function 9-12"])
   })
 
+  it("gives a changed \"use client\" or \"use server\" directive no waypoint", () => {
+    const form: GroupFile = { filePath: "src/form.tsx", lines: ["\"use client\";", "", "export const Form = () => <form />"], diffLines: [[1, 3]] }
+    const actions: GroupFile = { filePath: "src/actions.ts", lines: ["\"use server\"", "", "export async function save() {", "  return 1", "}"], diffLines: [[1, 1]] }
+
+    expect(stopsOf(walkthroughOf([form, actions]))).toStrictEqual(["w1 src/form.tsx Form function 3-3"])
+  })
+
   it("stops at the function a changed line is in, not at a function nested in it", () => {
     expect(stopsOf(walkthroughOf([changedAt([10, 10])]))).toStrictEqual(["w1 src/checkout.ts subtotal function 9-12"])
   })

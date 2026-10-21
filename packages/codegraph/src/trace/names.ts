@@ -10,6 +10,7 @@ export const BLOCK_TYPE_LABELS: Readonly<Record<CodeBlockType, string>> = {
   "root-statement": "Statement",
   "type-declaration": "Type",
   "import": "Import",
+  "directive": "Directive",
   "file": "File",
   "condition": "Condition",
   "switch": "Switch",

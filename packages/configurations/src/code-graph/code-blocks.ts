@@ -18,6 +18,7 @@ export const CODE_BLOCK_TYPES = [
   "root-statement",
   "type-declaration",
   "import",
+  "directive",
   "file",
   "condition",
   "switch",
