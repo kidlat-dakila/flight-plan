@@ -16,6 +16,7 @@ const ReviewToggle = ({ label, accessibleLabel, isReviewed, isDisabled = false, 
     aria-label={accessibleLabel}
     aria-pressed={isReviewed}
     disabled={isDisabled}
+    data-user-action-id="review-toggle-action"
     className={cn(
       "group/review inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2 text-[0.8rem] hover:bg-muted disabled:opacity-50",
       className,

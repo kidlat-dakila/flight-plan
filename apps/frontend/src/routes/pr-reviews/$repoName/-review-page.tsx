@@ -20,6 +20,7 @@ import { WriteUpAgentContext, type WriteUpAgent } from "@flightplan/ui/lib/write
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
 import OrderedSections from "@flightplan/ui/OrderedSections"
 import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
+import ReviewGuideTooltips from "@flightplan/ui/ReviewGuideTooltips"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
 import SectionRail from "@flightplan/ui/SectionRail"
@@ -702,6 +703,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                     )
                   : null}
                 <ReviewNavigatorBar />
+                <ReviewGuideTooltips reviewMode={isOwn ? "user" : "teammate"} />
               </WritingProviders>
             </ReviewNavigator>
           )}

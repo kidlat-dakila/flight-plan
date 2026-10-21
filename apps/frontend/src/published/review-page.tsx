@@ -19,6 +19,7 @@ import { cn } from "@flightplan/ui/lib/utils"
 import OrderedSections from "@flightplan/ui/OrderedSections"
 import Prose from "@flightplan/ui/Prose"
 import { BandLink, BandMenuButton, OptionsMenu } from "@flightplan/ui/ReviewActions"
+import ReviewGuideTooltips from "@flightplan/ui/ReviewGuideTooltips"
 import { TitleHeader } from "@flightplan/ui/ReviewHeader"
 import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
 import SectionRail from "@flightplan/ui/SectionRail"
@@ -111,8 +112,8 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
             actions={(
               <>
                 {review.importLink === null ? null : <BandLink href={review.importLink.href} label={review.importLink.label} />}
-                <BandMenuButton label={review.actions.shareLabel} onClick={showUnavailableFeature} />
-                <BandMenuButton label={review.actions.submitLabel} isPrimary onClick={showUnavailableFeature} />
+                <BandMenuButton label={review.actions.shareLabel} actionId="share-action" onClick={showUnavailableFeature} />
+                <BandMenuButton label={review.actions.submitLabel} actionId="submit-review-action" isPrimary onClick={showUnavailableFeature} />
                 <OptionsMenu
                   forgeLink={null}
                   onDelete={showUnavailableFeature}
@@ -252,6 +253,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
             : null}
           <SelectionReference selection={codeSelection} onComment={showUnavailableFeature} onAsk={null} />
           <ReviewNavigatorBar />
+          <ReviewGuideTooltips reviewMode="teammate" />
         </ReviewNavigator>
       </main>
     </div>

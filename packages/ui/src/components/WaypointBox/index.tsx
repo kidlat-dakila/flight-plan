@@ -68,6 +68,7 @@ const WaypointBox = ({
     aria-label={waypoint.title}
     data-current={isCurrent}
     data-reviewed={waypoint.isReviewed}
+    data-view-section-id="waypoint-box-section"
     className={cn(
       "my-1.5 mr-4 scroll-mt-(--waypoint-scroll-margin) rounded-md border border-input bg-background font-sans whitespace-normal transition-[border-color,outline-color,opacity] duration-[180ms] ease-out data-[current=true]:border-(--line) data-[current=true]:outline-1 data-[current=true]:outline-(--line) data-[reviewed=true]:opacity-60",
       depthClassOf(waypoint.depth, isGuttered),

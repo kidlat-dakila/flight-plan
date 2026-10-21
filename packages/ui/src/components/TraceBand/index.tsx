@@ -76,6 +76,7 @@ interface TraceBandProps {
 }
 
 const ADD_DIAGRAM_LABEL = "Add a diagram"
+const VIEW_SECTION_ID = "trace-diagram-section"
 const EDIT_DESCRIPTION_LABEL = "Edit"
 const NO_DIAGRAM_MESSAGE = "This segment has no Trace Diagram."
 const DESCRIPTION_SKELETON_LINE_COUNT = 3
@@ -206,7 +207,7 @@ const DiagramTabs = ({ tabs, tabEditing, ...panel }: DiagramTabsProps) => {
           </button>
         ))}
       </div>
-      <section id={openTab.diagram.anchorId} role="tabpanel" aria-label={openTab.label} className="scroll-mt-(--section-scroll-margin)">
+      <section id={openTab.diagram.anchorId} role="tabpanel" aria-label={openTab.label} data-view-section-id={VIEW_SECTION_ID} className="scroll-mt-(--section-scroll-margin)">
         <DiagramPanel
           key={openTab.id}
           {...panel}
@@ -240,7 +241,7 @@ const TraceBand = ({
   const canEditDescription = authoring !== null && diagram !== null && renderDescriptionEditor !== null && !authoring.description.isWriting
   const panel = { anchorId, heading, codeLinks, codeDefinitions, isReviewPending, renderDescriptionEditor, onOpenCodeLink, onWaypointReviewedChange }
   return (
-    <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
+    <section id={anchorId} aria-labelledby={`${anchorId}-heading`} data-view-section-id={VIEW_SECTION_ID} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
       <div className="flex items-center gap-3 pb-4">
         <h2 id={`${anchorId}-heading`} className="text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">{heading}</h2>
         {writeUpNotice === null ? null : <NoWriteUpTag label={writeUpNotice} />}
@@ -254,7 +255,7 @@ const TraceBand = ({
       {diagram === null || tabs.length > 0
         ? null
         : (
-            <section id={diagram.anchorId} aria-label={diagram.title} className="scroll-mt-(--section-scroll-margin)">
+            <section id={diagram.anchorId} aria-label={diagram.title} data-view-section-id={VIEW_SECTION_ID} className="scroll-mt-(--section-scroll-margin)">
               <DiagramPanel {...panel} diagram={diagram} authoring={authoring} cardMoving={cardMoving} onWriteUpNode={onWriteUpNode} />
             </section>
           )}

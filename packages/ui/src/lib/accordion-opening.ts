@@ -35,6 +35,7 @@ export const useAccordionNavigation = (anchorId: string, blocks: ProseBlocks): A
     : [[
         navigatorButtonOf({
           key: EXPAND_ALL_KEY,
+          actionId: "expand-context-action",
           label: areAllOpen ? COLLAPSE_ALL_LABEL : EXPAND_ALL_LABEL,
           onRun: () => { setOpenLabels(areAllOpen ? NOTHING_OPEN : new Set(labels)) },
         }),

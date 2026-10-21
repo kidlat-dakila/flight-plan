@@ -86,6 +86,8 @@ export interface WalkthroughNavigationRequest {
   readonly onCurrentOpenChange: (isOpen: boolean) => void
 }
 
+export const EXPLAIN_WAYPOINT_ACTION_ID = "explain-waypoint-action"
+export const EXPLAIN_CODE_BLOCK_ACTION_ID = "explain-code-block-action"
 const REVIEW_KEY = "s"
 export const COMMENT_KEY = "c"
 const FILTER_KEY = "f"
@@ -118,13 +120,13 @@ const steppingGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup 
     stepButtonOf(
       request.canStepBack,
       request.sectionSteps.back,
-      navigatorButtonOf({ key: BACK_KEY, label: stepping.previousLabel, isDisabled: !request.canStepBack, onRun: request.onPrevious }),
+      navigatorButtonOf({ key: BACK_KEY, actionId: "previous-waypoint-action", label: stepping.previousLabel, isDisabled: !request.canStepBack, onRun: request.onPrevious }),
     ),
     ...position,
     stepButtonOf(
       request.canStepForward,
       request.sectionSteps.next,
-      navigatorButtonOf({ key: NEXT_KEY, label: stepping.nextLabel, isDisabled: !request.canStepForward, onRun: request.onNext }),
+      navigatorButtonOf({ key: NEXT_KEY, actionId: "next-waypoint-action", label: stepping.nextLabel, isDisabled: !request.canStepForward, onRun: request.onNext }),
     ),
   ]
 }
@@ -137,6 +139,7 @@ const reviewButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButton
   return [
     navigatorButtonOf({
       key: REVIEW_KEY,
+      actionId: "mark-reviewed-action",
       label: isReviewed ? currentReview.reviewedLabel : currentReview.markLabel,
       isPressed: isReviewed,
       isPrimary: !isReviewed,
@@ -150,6 +153,7 @@ const reviewButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButton
 const describeButtonsOf = (onDescribeCurrent: () => void, hasCurrentWaypoint: boolean): NavigatorButton[] => [
   navigatorButtonOf({
     key: COMMENT_KEY,
+    actionId: "write-description-action",
     label: WRITE_DESCRIPTION_LABEL,
     isDisabled: !hasCurrentWaypoint,
     disabledHint: PICK_WAYPOINT_HINT,
@@ -164,6 +168,7 @@ const commentButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButto
   return [
     navigatorButtonOf({
       key: COMMENT_KEY,
+      actionId: "add-comment-action",
       label: ADD_COMMENT_LABEL,
       isDisabled: currentWaypoint?.canComment !== true,
       disabledHint: currentWaypoint === null ? PICK_WAYPOINT_HINT : NO_LINES_HINT,
@@ -177,12 +182,14 @@ const writeUpButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButto
   if (onWriteUpCurrent === null || currentWaypoint?.canWriteUp !== true) return []
   const lineButton = navigatorButtonOf({
     key: WRITE_UP_KEY,
+    actionId: EXPLAIN_WAYPOINT_ACTION_ID,
     label: request.agentLabel === null ? WRITE_UP_LINE_LABEL : `Let ${request.agentLabel} explain`,
     shortLabel: WRITE_UP_SHORT_LABEL,
     onRun: () => { onWriteUpCurrent("line") },
   })
   const blockButton = navigatorButtonOf({
     key: WRITE_UP_BLOCK_KEY,
+    actionId: EXPLAIN_CODE_BLOCK_ACTION_ID,
     label: WRITE_UP_BLOCK_LABEL,
     shortLabel: WRITE_UP_BLOCK_SHORT_LABEL,
     onRun: () => { onWriteUpCurrent("block") },
@@ -249,6 +256,7 @@ const filterGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup =>
   return [{
     kind: "menu",
     key: FILTER_KEY,
+    actionId: "filter-action",
     label: filter.buttonLabel,
     badge: filter.badge,
     heading: filter.heading,
@@ -263,18 +271,21 @@ const layoutGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup =>
     ? []
     : [navigatorButtonOf({
         key: FILE_KEY,
+        actionId: "collapse-file-action",
         label: isFileCollapsed ? EXPAND_FILE_LABEL : COLLAPSE_FILE_LABEL,
         onRun: () => { request.onFileCollapsedChange(!isFileCollapsed) },
       })]
   return [
     navigatorButtonOf({
       key: FILES_KEY,
+      actionId: "collapse-files-action",
       label: request.areFilesCollapsed ? EXPAND_ALL_LABEL : COLLAPSE_ALL_LABEL,
       onRun: () => { request.onFilesCollapsedChange(!request.areFilesCollapsed) },
     }),
     ...fileButton,
     navigatorButtonOf({
       key: WAYPOINT_KEY,
+      actionId: "expand-waypoint-action",
       label: isCurrentOpen ? COLLAPSE_WAYPOINT_LABEL : EXPAND_WAYPOINT_LABEL,
       isDisabled: currentWaypoint === null,
       disabledHint: PICK_WAYPOINT_HINT,

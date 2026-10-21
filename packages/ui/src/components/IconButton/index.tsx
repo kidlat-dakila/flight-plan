@@ -43,6 +43,7 @@ interface IconButtonProps {
   readonly isDisabled?: boolean
   readonly variant?: "ghost" | "outline"
   readonly className?: string
+  readonly actionId?: string
   readonly onClick: () => void
 }
 
@@ -65,12 +66,17 @@ const ICONS: Record<IconButtonIcon, LucideIcon> = {
   leaveFullScreen: Minimize2Icon,
 }
 
-const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", className, onClick }: IconButtonProps) => {
+const UPPER_CASE_LETTER = /[A-Z]/g
+
+const defaultActionIdOf = (icon: IconButtonIcon): string =>
+  `${icon.replace(UPPER_CASE_LETTER, (letter) => `-${letter.toLowerCase()}`)}-icon-action`
+
+const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", className, actionId, onClick }: IconButtonProps) => {
   const Icon = ICONS[icon]
   return (
     <Tooltip>
       <TooltipTrigger
-        render={<Button variant={variant} size="icon-sm" aria-label={label} disabled={isDisabled} className={className} onClick={onClick} />}
+        render={<Button variant={variant} size="icon-sm" aria-label={label} disabled={isDisabled} data-user-action-id={actionId ?? defaultActionIdOf(icon)} className={className} onClick={onClick} />}
       >
         <Icon aria-hidden="true" />
       </TooltipTrigger>

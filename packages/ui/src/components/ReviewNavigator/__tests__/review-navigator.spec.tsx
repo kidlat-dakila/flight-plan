@@ -1,6 +1,7 @@
-import { fireEvent, render, screen, within } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import ReviewNavigator, { navigatorLeftOf, ReviewNavigatorBar } from "@/components/ReviewNavigator"
 import { findNavigator, findNavigatorButton, showSectionInView } from "@/lib/__tests__/navigator-harness"
+import { guideTooltipStore, resetGuideTooltipStore } from "@/lib/guide-tooltips/store"
 import { useNavigatorSection } from "@/lib/navigator"
 import { navigatorButtonOf, type NavigatorRail } from "@/lib/navigator-controls"
 
@@ -120,6 +121,32 @@ describe("ReviewNavigator", () => {
     fireEvent.keyDown(document.body, { key: "q" })
 
     expect(onRun).not.toHaveBeenCalled()
+  })
+
+  it("marks each control with its action and logs the action of a pressed key", async () => {
+    resetGuideTooltipStore()
+    const TrackedSection = () => {
+      useNavigatorSection("one-context", [[navigatorButtonOf({ key: "q", actionId: "collapse-context-action", label: "Collapse", onRun: vi.fn() })]])
+      return <section id="one-context" data-view-section-id="context-section">one-context</section>
+    }
+    showSectionInView("one-context")
+    render(
+      <ReviewNavigator rail={RAIL}>
+        <TrackedSection />
+        <ReviewNavigatorBar />
+      </ReviewNavigator>,
+    )
+    const button = await findNavigatorButton("Collapse")
+
+    fireEvent.keyDown(document.body, { key: "q" })
+    fireEvent.keyDown(document.body, { key: "w" })
+
+    expect(button.dataset.userActionId).toBe("collapse-context-action")
+    expect(guideTooltipStore.getState().actions["collapse-context-action"]?.clickCount).toBe(1)
+    expect(guideTooltipStore.getState().actions["jump-to-action"]?.clickCount).toBe(1)
+    await waitFor(() => {
+      expect(guideTooltipStore.getState().visibleViewIds).toStrictEqual(["context-section"])
+    })
   })
 
   it("draws nothing outside a navigator", () => {

@@ -137,6 +137,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
   const fullScreenGroup: NavigatorGroup = [
     navigatorButtonOf({
       key: FULL_SCREEN_KEY,
+      actionId: "full-screen-action",
       label: isFullScreen ? LEAVE_FULL_SCREEN_LABEL : FULL_SCREEN_LABEL,
       isPressed: isFullScreen,
       onRun: () => { onFullScreenChange(!isFullScreen) },

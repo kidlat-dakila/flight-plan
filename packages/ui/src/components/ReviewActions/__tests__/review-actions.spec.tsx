@@ -234,7 +234,7 @@ describe("CompleteButton", () => {
 describe("BandMenuButton", () => {
   it("reports a press without opening anything itself", () => {
     const onClick = vi.fn()
-    render(<BandMenuButton label="Share" onClick={onClick} />)
+    render(<BandMenuButton label="Share" actionId="share-action" onClick={onClick} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Share" }))
 

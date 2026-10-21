@@ -124,7 +124,7 @@ const isOfferedWriteUp = (node: BlastNode): boolean => node.isUnassessed && node
 const writeUpButtonsOf = (node: BlastNode | null, onWriteUpFile: ((path: string) => void) | null): NavigatorButton[] =>
   node === null || onWriteUpFile === null || !isOfferedWriteUp(node) || node.isBeingWritten
     ? []
-    : [navigatorButtonOf({ key: WRITE_UP_KEY, label: WRITE_UP_FILE_LABEL, onRun: () => { onWriteUpFile(node.path) } })]
+    : [navigatorButtonOf({ key: WRITE_UP_KEY, actionId: "explain-blast-file-action", label: WRITE_UP_FILE_LABEL, onRun: () => { onWriteUpFile(node.path) } })]
 
 const withButtonsInLastGroup = (groups: readonly NavigatorGroup[], buttons: readonly NavigatorButton[]): NavigatorGroup[] =>
   groups.length === 0 ? [buttons] : [...groups.slice(0, -1), [...groups[groups.length - 1], ...buttons]]
@@ -240,6 +240,7 @@ const BlastDiagram = ({ title, board, codeLinks, authoring, navigation = null, o
           type="button"
           title={node.path}
           aria-pressed={node.id === selectedNodeId}
+          data-user-action-id="blast-diagram-card-action"
           data-mark={node.mark}
           data-quiet={isQuietBlastFileMark(node.mark)}
           data-standing={standingOf(node.id === focalNodeId, nearby.nodeIds.has(node.id), hasFocus)}

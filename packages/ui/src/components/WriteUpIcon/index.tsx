@@ -19,6 +19,7 @@ interface KeycapButtonProps {
   readonly keyLabel: string | null
   readonly icon?: ReactNode
   readonly variant?: "outline" | "ghost"
+  readonly actionId: string
   readonly onClick: () => void
 }
 
@@ -43,8 +44,8 @@ export const NoWriteUpTag = ({ label, className }: NoWriteUpTagProps) => (
   </span>
 )
 
-export const KeycapButton = ({ label, keyLabel, icon = null, variant = "outline", onClick }: KeycapButtonProps) => (
-  <Button type="button" variant={variant} size="xs" onClick={onClick}>
+export const KeycapButton = ({ label, keyLabel, icon = null, variant = "outline", actionId, onClick }: KeycapButtonProps) => (
+  <Button type="button" variant={variant} size="xs" data-user-action-id={actionId} onClick={onClick}>
     {icon}
     {label}
     {keyLabel === null
@@ -69,7 +70,7 @@ export const WriteUpOffer = ({ hint, label, isBeingWritten, buttonLabel, onWrite
       : (
           <>
             <NoWriteUpTag label={label} />
-            {onWriteUp === null ? null : <div><KeycapButton label={buttonLabel} keyLabel={WRITE_UP_KEY} onClick={onWriteUp} /></div>}
+            {onWriteUp === null ? null : <div><KeycapButton label={buttonLabel} keyLabel={WRITE_UP_KEY} actionId="explain-part-action" onClick={onWriteUp} /></div>}
           </>
         )}
   </div>

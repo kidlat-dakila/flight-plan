@@ -15,6 +15,8 @@ import Menubar, {
   MenubarTrigger,
 } from "@/components/blocks/menubar"
 import Tooltip, { TooltipContent, TooltipTrigger } from "@/components/blocks/tooltip"
+import { recordKeyedAction } from "@/lib/guide-tooltips/hooks"
+import { useGuideViewTracking } from "@/lib/guide-tooltips/view-tracking"
 import {
   NavigatorContext,
   NavigatorSectionsContext,
@@ -63,6 +65,7 @@ type ReadersByAnchorId = ReadonlyMap<string, GroupsReader>
 
 const JUMP_KEY = "w"
 const JUMP_LABEL = "Jump to"
+const JUMP_ACTION_ID = "jump-to-action"
 const NAVIGATOR_LABEL = "Review navigator"
 const HERE_LABEL = "Here"
 const OTHER_SEGMENTS_LABEL = "Other segments"
@@ -152,8 +155,10 @@ const ReviewNavigator = ({ rail, onSectionJump, children }: ReviewNavigatorProps
     },
     onFullScreenOwnerChange: setFullScreenOwner,
   }))
-  const scrolledAnchorId = useDominantAnchorId(railAnchorIdsOf(rail))
+  const railAnchorIds = railAnchorIdsOf(rail)
+  const scrolledAnchorId = useDominantAnchorId(railAnchorIds)
   const dominantAnchorId = fullScreenOwner?.anchorId ?? scrolledAnchorId
+  useGuideViewTracking(dominantAnchorId, railAnchorIds)
   const readGroups = dominantAnchorId === null ? undefined : readersByAnchorId.get(dominantAnchorId)
 
   const sectionGroups = readGroups?.() ?? NO_GROUPS
@@ -203,15 +208,20 @@ const ReviewNavigator = ({ rail, onSectionJump, children }: ReviewNavigatorProps
       event.preventDefault()
       flash(key)
       setOpenMenuKey(JUMP_KEY)
+      recordKeyedAction(JUMP_ACTION_ID)
       return
     }
     const control = controlOfKey(groups, key)
     if (control === null) return
     event.preventDefault()
     flash(key)
-    if (control.kind === "menu") setOpenMenuKey(control.key)
-    else if (!control.isDisabled) control.onRun()
-    else if (control.disabledHint !== null) showHint(control.key)
+    if (control.kind === "menu") {
+      setOpenMenuKey(control.key)
+      recordKeyedAction(control.actionId ?? null)
+    } else if (!control.isDisabled) {
+      control.onRun()
+      recordKeyedAction(control.actionId)
+    } else if (control.disabledHint !== null) showHint(control.key)
   })
 
   useEffect(() => {
@@ -306,6 +316,7 @@ const JumpMenu = ({ navigator, density }: { readonly navigator: NavigatorState, 
       <MenubarMenu open={isOpen} onOpenChange={(isOpening) => { navigator.onOpenMenuKeyChange(isOpening ? JUMP_KEY : null) }}>
         <MenubarTrigger
           data-flash={navigator.flashedKey === JUMP_KEY}
+          data-user-action-id={JUMP_ACTION_ID}
           title={titleOf(JUMP_LABEL, density)}
           className={cn(BUTTON_CLASSES, "pl-2.5 data-popup-open:bg-sign-foreground/15")}
         >
@@ -372,6 +383,7 @@ const ButtonControl = ({ control, isFlashed, density }: ButtonControlProps) => (
     disabled={control.isDisabled}
     title={control.description ?? titleOf(control.label, density)}
     data-flash={isFlashed}
+    data-user-action-id={control.actionId ?? undefined}
     className={cn(BUTTON_CLASSES, control.isPrimary && PRIMARY_BUTTON_CLASSES)}
     onClick={control.onRun}
   >
@@ -403,6 +415,7 @@ const HintedButtonControl = ({ control, isFlashed, density, hint, navigator }: H
               aria-disabled="true"
               aria-describedby={hintId}
               data-flash={isFlashed}
+              data-user-action-id={control.actionId ?? undefined}
               className={cn(BUTTON_CLASSES, control.isPrimary && PRIMARY_BUTTON_CLASSES, "aria-disabled:cursor-default aria-disabled:opacity-45")}
               onClick={() => { navigator.onHint(control.key) }}
             />
@@ -465,6 +478,7 @@ const MenuControl = ({ control, navigator, density }: MenuControlProps) => (
     >
       <MenubarTrigger
         data-flash={navigator.flashedKey === control.key}
+        data-user-action-id={control.actionId}
         title={titleOf(control.label, density)}
         className={cn(BUTTON_CLASSES, "group data-popup-open:bg-sign-foreground data-popup-open:font-bold data-popup-open:text-sign")}
       >

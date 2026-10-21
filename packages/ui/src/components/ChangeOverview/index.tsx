@@ -36,6 +36,7 @@ interface PlateProps {
 }
 
 const MARK_RADIUS = 4
+const CARD_ACTION_ID = "change-overview-card-action"
 const CHANGE_INK_CLASSES: Readonly<Record<CardChange, string>> = {
   added: "[--change:var(--diff-added)]",
   modified: "[--change:var(--line-blue)]",
@@ -74,12 +75,12 @@ const Plate = ({ card, onOpenWaypoint }: PlateProps) => {
   const face = <PlateFace card={card} />
   if (preview === null) {
     return isPressable
-      ? <button type="button" className={className} onClick={openWaypoint}>{face}</button>
-      : <div className={className}>{face}</div>
+      ? <button type="button" data-user-action-id={CARD_ACTION_ID} className={className} onClick={openWaypoint}>{face}</button>
+      : <div data-user-action-id={CARD_ACTION_ID} className={className}>{face}</div>
   }
   return (
     <HoverCard>
-      <HoverCardTrigger delay={HOVER_DELAY_MS} render={isPressable ? <button type="button" /> : <div />} className={className} onClick={openWaypoint}>
+      <HoverCardTrigger delay={HOVER_DELAY_MS} render={isPressable ? <button type="button" /> : <div />} data-user-action-id={CARD_ACTION_ID} className={className} onClick={openWaypoint}>
         {face}
       </HoverCardTrigger>
       <CodeLinkPreview target={preview} />
@@ -90,7 +91,7 @@ const Plate = ({ card, onOpenWaypoint }: PlateProps) => {
 const ChangeOverview = ({ heading, emptyMessage, rows, onOpenWaypoint }: ChangeOverviewProps) => {
   const headingId = useId()
   return (
-    <section aria-labelledby={headingId} className="pt-6">
+    <section aria-labelledby={headingId} data-view-section-id="change-overview-section" className="pt-6">
       <h3 id={headingId} className="pb-3 text-base leading-6 font-bold text-foreground">{heading}</h3>
       {emptyMessage === null ? null : <p className="text-muted-foreground">{emptyMessage}</p>}
       {rows.length === 0

@@ -33,7 +33,7 @@ const CodeWalkthrough = ({ anchorId, heading, coverageLabel, emptyMessage, write
   const sectionSteps = useSectionSteps(anchorId)
   useNavigatorSection(anchorId, walkthroughNavigationOf({ ...navigation, markerOf, sectionSteps }))
   return (
-    <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-10">
+    <section id={anchorId} aria-labelledby={`${anchorId}-heading`} data-view-section-id="code-walkthrough-section" className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-10">
       <div className="flex items-center gap-3">
         <h2 id={`${anchorId}-heading`} className="shrink-0 text-2xl leading-9 font-semibold tracking-[-0.02em] whitespace-nowrap text-foreground">{heading}</h2>
         <p className="min-w-0 truncate text-sm text-muted-foreground tabular-nums">{coverageLabel}</p>

@@ -28,7 +28,7 @@ const ConversationBand = ({
   renderEditor,
   onComment,
 }: ConversationBandProps) => (
-  <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
+  <section id={anchorId} aria-labelledby={`${anchorId}-heading`} data-view-section-id="conversation-section" className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
     <h2 id={`${anchorId}-heading`} className="pb-4 text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">{heading}</h2>
     <div className="flex max-w-[52rem] flex-col">
       {emptyMessage === null ? null : <p className="pb-4 text-muted-foreground">{emptyMessage}</p>}

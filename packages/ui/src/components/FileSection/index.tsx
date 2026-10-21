@@ -116,6 +116,7 @@ const FileSection = ({
             type="button"
             aria-expanded={!isCollapsed}
             aria-label={`${isCollapsed ? EXPAND_LABEL : COLLAPSE_LABEL}: ${file.path}`}
+            data-user-action-id="collapse-file-action"
             className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-background hover:text-foreground"
             onClick={() => { onCollapsedChange(!isCollapsed) }}
           >

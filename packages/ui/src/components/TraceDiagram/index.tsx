@@ -448,21 +448,22 @@ const NodeHint = ({ hint }: { readonly hint: string | null }) =>
 const writeUpButtonsOf = (node: TraceNode | null, onWriteUpNode: ((nodeId: string) => void) | null): NavigatorButton[] =>
   node === null || onWriteUpNode === null || !node.isDraft || node.isBeingWritten
     ? []
-    : [navigatorButtonOf({ key: WRITE_UP_KEY, label: WRITE_UP_CARD_LABEL, onRun: () => { onWriteUpNode(node.id) } })]
+    : [navigatorButtonOf({ key: WRITE_UP_KEY, actionId: "explain-trace-card-action", label: WRITE_UP_CARD_LABEL, onRun: () => { onWriteUpNode(node.id) } })]
 
 const authoringButtonsOf = (authoring: TraceAuthoring | null, cardCount: number, onAskDiscard: (discard: DiagramDiscard) => void): NavigatorButton[] =>
   authoring === null
     ? []
     : [
-        navigatorButtonOf({ key: ADD_CARD_KEY, label: ADD_CARD_LABEL, onRun: authoring.onAddCard }),
+        navigatorButtonOf({ key: ADD_CARD_KEY, actionId: "add-card-action", label: ADD_CARD_LABEL, onRun: authoring.onAddCard }),
         navigatorButtonOf({
           key: CLEAR_DIAGRAM_KEY,
+          actionId: "clear-diagram-action",
           label: CLEAR_DIAGRAM_LABEL,
           isDisabled: authoring.isPending || cardCount === 0,
           disabledHint: cardCount === 0 ? NO_CARD_HINT : null,
           onRun: () => { onAskDiscard("clear") },
         }),
-        navigatorButtonOf({ key: REMOVE_DIAGRAM_KEY, label: REMOVE_DIAGRAM_LABEL, isDisabled: authoring.isPending, onRun: () => { onAskDiscard("remove") } }),
+        navigatorButtonOf({ key: REMOVE_DIAGRAM_KEY, actionId: "remove-diagram-action", label: REMOVE_DIAGRAM_LABEL, isDisabled: authoring.isPending, onRun: () => { onAskDiscard("remove") } }),
       ]
 
 const discardOf = (authoring: TraceAuthoring, discard: DiagramDiscard): (() => void) =>
@@ -483,6 +484,8 @@ const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, 
       <button
         type="button"
         aria-pressed={isSelected}
+        data-user-action-id="trace-diagram-card-action"
+        data-change={node.change ?? undefined}
         className={HEAD_CLASSES}
         style={{ height: NODE_HEAD_HEIGHT }}
         onMouseEnter={() => { onHoverChange(true) }}
@@ -1096,6 +1099,7 @@ const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isRevie
                 [
                   navigatorButtonOf({
                     key: COLLAPSE_KEY,
+                    actionId: "collapse-trace-cards-action",
                     label: collapsedNodeIds.length === 0 ? COLLAPSE_ALL_LABEL : EXPAND_ALL_LABEL,
                     onRun: () => {
                       conceal(collapsedNodeIds.length === 0 ? { collapsedNodeIds: leadingIds, focusedNodeId: null } : NOTHING_CONCEALED)

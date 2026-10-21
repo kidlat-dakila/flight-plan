@@ -24,7 +24,7 @@ import {
 import { WRITE_UP_KEY } from "@/lib/navigator-controls"
 import type { CodeLinkTargets } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
-import { COMMENT_KEY, WAYPOINT_KEY, WRITE_DESCRIPTION_LABEL } from "@/lib/walkthrough-navigation"
+import { COMMENT_KEY, EXPLAIN_CODE_BLOCK_ACTION_ID, EXPLAIN_WAYPOINT_ACTION_ID, WAYPOINT_KEY, WRITE_DESCRIPTION_LABEL } from "@/lib/walkthrough-navigation"
 import { WriteUpAgentContext, type WriteUpAgent } from "@/lib/write-up-agent"
 
 export type WaypointMarkKind = FindingMarkKind | "plain"
@@ -201,9 +201,10 @@ const ExplainButtons = ({ writeUp }: { readonly writeUp: WaypointWriteUp }) => {
         label={explainLabelOf(agent)}
         keyLabel={WRITE_UP_KEY}
         icon={agent === null ? null : <AgentMark agent={agent.name} />}
+        actionId={EXPLAIN_WAYPOINT_ACTION_ID}
         onClick={writeUp.onLine}
       />
-      {writeUp.onBlock === null ? null : <KeycapButton label={EXPLAIN_BLOCK_LABEL} keyLabel={CONTROL_KEY_LABEL} onClick={writeUp.onBlock} />}
+      {writeUp.onBlock === null ? null : <KeycapButton label={EXPLAIN_BLOCK_LABEL} keyLabel={CONTROL_KEY_LABEL} actionId={EXPLAIN_CODE_BLOCK_ACTION_ID} onClick={writeUp.onBlock} />}
     </>
   )
 }
@@ -254,8 +255,8 @@ const WaypointCard = ({
         {canExplain ? <ExplainButtons writeUp={writeUp} /> : null}
         {onWriteDescription === null || firstBlock !== null || waypoint.isBeingWritten
           ? null
-          : <KeycapButton label={WRITE_DESCRIPTION_LABEL} keyLabel={COMMENT_KEY} onClick={onWriteDescription} />}
-        <KeycapButton label={EXPAND_LABEL} keyLabel={WAYPOINT_KEY} variant="ghost" onClick={onExpand} />
+          : <KeycapButton label={WRITE_DESCRIPTION_LABEL} keyLabel={COMMENT_KEY} actionId="write-description-action" onClick={onWriteDescription} />}
+        <KeycapButton label={EXPAND_LABEL} keyLabel={WAYPOINT_KEY} variant="ghost" actionId="expand-waypoint-action" onClick={onExpand} />
         {onReviewedChange === null
           ? null
           : (
@@ -323,6 +324,7 @@ const WaypointMark = ({
         tabIndex={isTabStop ? 0 : -1}
         data-gutter-mark=""
         data-waypoint-mark={waypoint.id}
+        data-user-action-id="waypoint-mark-action"
         data-current={isCurrent}
         data-reviewed={waypoint.isReviewed}
         className={MARK_CLASSES}
@@ -341,6 +343,7 @@ const WaypointMark = ({
               anchor={placement.anchor}
               collisionPadding={placement.collisionPadding}
               collisionAvoidance={GUTTER_CARD_COLLISION_AVOIDANCE}
+              data-view-section-id="waypoint-card-section"
               className={CARD_CLASSES}
             >
               <HoverCardArrow />

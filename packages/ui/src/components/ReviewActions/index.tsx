@@ -56,6 +56,7 @@ interface BandButtonProps {
 
 interface BandMenuButtonProps {
   readonly label: string
+  readonly actionId: string
   readonly isPrimary?: boolean
   readonly onClick: () => void
 }
@@ -127,35 +128,35 @@ export const BandPopover = ({ trigger, children, className, onOpen }: BandPopove
 )
 
 export const BandButton = ({ label, isPressed, onClick }: BandButtonProps) => (
-  <button type="button" aria-pressed={isPressed} className={BAND_BUTTON_CLASSES} onClick={onClick}>
+  <button type="button" aria-pressed={isPressed} data-user-action-id="chat-action" className={BAND_BUTTON_CLASSES} onClick={onClick}>
     <MessagesSquareIcon aria-hidden="true" className="size-3.5" />
     <span className="text-box-cap">{label}</span>
   </button>
 )
 
-export const BandMenuButton = ({ label, isPrimary = false, onClick }: BandMenuButtonProps) => (
-  <button type="button" className={cn(BAND_BUTTON_CLASSES, isPrimary ? PRIMARY_BAND_BUTTON_CLASSES : "")} onClick={onClick}>
+export const BandMenuButton = ({ label, actionId, isPrimary = false, onClick }: BandMenuButtonProps) => (
+  <button type="button" data-user-action-id={actionId} className={cn(BAND_BUTTON_CLASSES, isPrimary ? PRIMARY_BAND_BUTTON_CLASSES : "")} onClick={onClick}>
     <span className="text-box-cap">{label}</span>
     <ChevronDownIcon aria-hidden="true" className="size-3.5" />
   </button>
 )
 
 export const BandLink = ({ href, label }: BandLinkProps) => (
-  <a href={href} target="_blank" rel="noreferrer" className={BAND_BUTTON_CLASSES}>
+  <a href={href} target="_blank" rel="noreferrer" data-user-action-id="download-flight-plan-action" className={BAND_BUTTON_CLASSES}>
     <DownloadIcon aria-hidden="true" className="size-3.5" />
     <span className="text-box-cap">{label}</span>
   </a>
 )
 
 export const CompleteButton = ({ label, isPending, onClick }: CompleteButtonProps) => (
-  <button type="button" disabled={isPending} className={BAND_BUTTON_CLASSES} onClick={onClick}>
+  <button type="button" disabled={isPending} data-user-action-id="complete-review-action" className={BAND_BUTTON_CLASSES} onClick={onClick}>
     <CircleCheckIcon aria-hidden="true" className="size-3.5" />
     <span className="text-box-cap">{label}</span>
   </button>
 )
 
 export const BandHint = ({ label, onClick }: BandHintProps) => (
-  <button type="button" className={cn(BAND_BUTTON_CLASSES, "font-bold text-signal")} onClick={onClick}>
+  <button type="button" data-user-action-id="unassigned-files-action" className={cn(BAND_BUTTON_CLASSES, "font-bold text-signal")} onClick={onClick}>
     <TriangleAlertIcon aria-hidden="true" className="size-3.5" />
     <span className="text-box-cap">{label}</span>
   </button>
@@ -163,7 +164,7 @@ export const BandHint = ({ label, onClick }: BandHintProps) => (
 
 export const OptionsMenu = ({ forgeLink, onDelete }: OptionsMenuProps) => (
   <DropdownMenu>
-    <DropdownMenuTrigger aria-label="More actions" className={cn(BAND_BUTTON_CLASSES, "px-1.5")}>
+    <DropdownMenuTrigger aria-label="More actions" data-user-action-id="options-menu-action" className={cn(BAND_BUTTON_CLASSES, "px-1.5")}>
       <EllipsisVerticalIcon aria-hidden="true" className="size-3.5" />
     </DropdownMenuTrigger>
     <DropdownMenuContent align="start">
@@ -210,7 +211,7 @@ export const SubmitReviewMenu = ({
     <BandPopover
       className={WIDE_PANEL_CLASSES}
       trigger={(
-        <PopoverPrimitive.Trigger className={cn(BAND_BUTTON_CLASSES, PRIMARY_BAND_BUTTON_CLASSES)}>
+        <PopoverPrimitive.Trigger data-user-action-id="submit-review-action" className={cn(BAND_BUTTON_CLASSES, PRIMARY_BAND_BUTTON_CLASSES)}>
           <span className="text-box-cap">{draft.buttonLabel}</span>
           <ChevronDownIcon aria-hidden="true" className="size-3.5" />
         </PopoverPrimitive.Trigger>
@@ -280,7 +281,7 @@ export const ShareMenu = ({ sharing, publishingKey, onPublish }: ShareMenuProps)
   return (
     <BandPopover
       trigger={(
-        <PopoverPrimitive.Trigger aria-busy={isAnyUnderway} className={BAND_BUTTON_CLASSES}>
+        <PopoverPrimitive.Trigger aria-busy={isAnyUnderway} data-user-action-id="share-action" className={BAND_BUTTON_CLASSES}>
           <span className="text-box-cap">{sharing.buttonLabel}</span>
           {isAnyUnderway
             ? <LoaderCircleIcon aria-hidden="true" className={SPINNER_CLASSES} />

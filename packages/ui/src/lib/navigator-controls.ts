@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 export interface NavigatorButton {
   readonly kind: "button"
   readonly key: string
+  readonly actionId: string | null
   readonly label: string
   readonly shortLabel: string | null
   readonly description: string | null
@@ -46,6 +47,7 @@ export interface NavigatorBadge {
 export interface NavigatorMenu {
   readonly kind: "menu"
   readonly key: string
+  readonly actionId?: string
   readonly label: string
   readonly badge: NavigatorBadge | null
   readonly heading: string
@@ -63,6 +65,7 @@ export type NavigatorGroup = readonly NavigatorControl[]
 
 interface ButtonRequest {
   readonly key: string
+  readonly actionId?: string | null
   readonly label: string
   readonly shortLabel?: string | null
   readonly description?: string | null
@@ -73,9 +76,10 @@ interface ButtonRequest {
   readonly onRun: () => void
 }
 
-export const navigatorButtonOf = ({ key, label, shortLabel = null, description = null, isPressed = false, isPrimary = false, isDisabled = false, disabledHint = null, onRun }: ButtonRequest): NavigatorButton => ({
+export const navigatorButtonOf = ({ key, actionId = null, label, shortLabel = null, description = null, isPressed = false, isPrimary = false, isDisabled = false, disabledHint = null, onRun }: ButtonRequest): NavigatorButton => ({
   kind: "button",
   key,
+  actionId,
   label,
   shortLabel,
   description,
@@ -226,10 +230,19 @@ const railStopsOf = (rail: NavigatorRail): RailStop[] => [
 const stopLabelOf = (stop: RailStop, here: RailStop): string =>
   stop.segmentLabel !== here.segmentLabel && stop.segmentLabel !== null ? stop.segmentLabel : stop.section.label
 
-const stepButtonOf = (key: string, prefix: string, here: RailStop, stop: RailStop | undefined, onJump: (anchorId: string) => void): NavigatorButton | null =>
+interface StepKind {
+  readonly key: string
+  readonly prefix: string
+  readonly actionId: string
+}
+
+const BACK_STEP: StepKind = { key: BACK_KEY, prefix: BACK_LABEL, actionId: "back-section-action" }
+const NEXT_STEP: StepKind = { key: NEXT_KEY, prefix: NEXT_LABEL, actionId: "next-section-action" }
+
+const stepButtonOf = ({ key, prefix, actionId }: StepKind, here: RailStop, stop: RailStop | undefined, onJump: (anchorId: string) => void): NavigatorButton | null =>
   stop === undefined
     ? null
-    : navigatorButtonOf({ key, label: `${prefix}: ${stopLabelOf(stop, here)}`, shortLabel: prefix, onRun: () => { onJump(stop.section.anchorId) } })
+    : navigatorButtonOf({ key, actionId, label: `${prefix}: ${stopLabelOf(stop, here)}`, shortLabel: prefix, onRun: () => { onJump(stop.section.anchorId) } })
 
 export const sectionStepsOf = (rail: NavigatorRail, anchorId: string | null, onJump: (anchorId: string) => void): SectionSteps => {
   const stops = railStopsOf(rail)
@@ -237,8 +250,8 @@ export const sectionStepsOf = (rail: NavigatorRail, anchorId: string | null, onJ
   if (position === -1) return NO_SECTION_STEPS
   const here = stops[position]
   return {
-    back: stepButtonOf(BACK_KEY, BACK_LABEL, here, stops[position - 1], onJump),
-    next: stepButtonOf(NEXT_KEY, NEXT_LABEL, here, stops[position + 1], onJump),
+    back: stepButtonOf(BACK_STEP, here, stops[position - 1], onJump),
+    next: stepButtonOf(NEXT_STEP, here, stops[position + 1], onJump),
   }
 }
 
