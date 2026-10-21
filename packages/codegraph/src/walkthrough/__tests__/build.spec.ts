@@ -246,7 +246,7 @@ describe("buildWalkthrough", () => {
     expect(waypoint.hint).toBeNull()
   })
 
-  it("shows the files in the order it is asked for, and lists them for arranging in their stored order", () => {
+  it("shows the files in the order it is asked for, and lists them for arranging in that order", () => {
     const cartUsingPrice = { ...cartSource, references: [{ line: 2, startColumn: 1, endColumn: 8, path: PRICE_PATH, lines: [11, 13] as [number, number], isLibrary: false }] }
     const context = { ...createViewContext(), sources: [highlightPlainly(priceSource), highlightPlainly(cartUsingPrice)], walkthroughOrder: "imports-top-down" as const }
     const prepared = prepareWalkthrough(createSegment(), NO_REVIEWED_MARKS, EVERYTHING, context)
@@ -254,6 +254,18 @@ describe("buildWalkthrough", () => {
 
     expect(band.files.map((file) => file.path)).toStrictEqual([CART_PATH, PRICE_PATH])
     expect(waypointIds(band)).toStrictEqual(["subtotal", "price-of", "format"])
+    expect(band.fileOrder.map((file) => file.path)).toStrictEqual([CART_PATH, PRICE_PATH])
+  })
+
+  it("keeps the order an author arranged, whatever order it is asked for", () => {
+    const cartUsingPrice = { ...cartSource, references: [{ line: 2, startColumn: 1, endColumn: 8, path: PRICE_PATH, lines: [11, 13] as [number, number], isLibrary: false }] }
+    const context = { ...createViewContext(), sources: [highlightPlainly(priceSource), highlightPlainly(cartUsingPrice)], walkthroughOrder: "imports-top-down" as const }
+    const segment = createSegment()
+    const arranged = { ...segment, walkthrough: { ...segment.walkthrough, isArranged: true } }
+    const prepared = prepareWalkthrough(arranged, NO_REVIEWED_MARKS, EVERYTHING, context)
+    const band = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context)
+
+    expect(band.files.map((file) => file.path)).toStrictEqual([PRICE_PATH, CART_PATH])
     expect(band.fileOrder.map((file) => file.path)).toStrictEqual([PRICE_PATH, CART_PATH])
   })
 

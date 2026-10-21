@@ -611,7 +611,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                         description={ARRANGE_FILES_DESCRIPTION}
                         entries={arrangedWalkthroughSegment.walkthrough.fileOrder.map((file) => ({ id: file.path, ...file }))}
                         isPending={walkthroughEditing.isPending}
-                        onMove={(path, direction) => { walkthroughEditing.onMoveFile(arrangedWalkthroughSegment.id, path, direction) }}
+                        onMove={(path, direction) => { walkthroughEditing.onMoveFile(arrangedWalkthroughSegment.id, path, direction, arrangedWalkthroughSegment.walkthrough.fileOrder.map((file) => file.path)) }}
                         onClose={() => { setArrangedWalkthroughSegmentId(null) }}
                       />
                     )}

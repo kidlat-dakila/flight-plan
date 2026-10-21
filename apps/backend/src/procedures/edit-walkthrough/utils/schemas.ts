@@ -2,7 +2,7 @@ import { z } from "zod"
 import { MOVE_DIRECTIONS } from "@/procedures/edit-segments/utils/schemas"
 
 export const walkthroughEditSchema = z.discriminatedUnion("kind", [
-  z.strictObject({ kind: z.literal("move-file"), path: z.string(), direction: z.enum(MOVE_DIRECTIONS) }),
+  z.strictObject({ kind: z.literal("move-file"), path: z.string(), direction: z.enum(MOVE_DIRECTIONS), shownPaths: z.array(z.string()) }),
   z.strictObject({ kind: z.literal("remove-file"), path: z.string() }),
   z.strictObject({
     kind: z.literal("change-waypoint"),

@@ -10,7 +10,7 @@ describe("buildRepositoryConfiguration", () => {
       path: "/Users/dev/projects/checkout-web",
       form: {
         gitSelfAuthor: null,
-        searchHint: "Flight Plan will show all pull requests by default. However, you can choose to show only pull requests from your teammates (and from you).",
+        searchHint: "By default, Flight Plan lists only the branches you add. Add your teammates here to see their branches and yours too.",
         searchPlaceholder: "Type a name or email",
       },
       trackedAuthors: [{ ...LENA, monogram: "LO" }],
@@ -19,7 +19,7 @@ describe("buildRepositoryConfiguration", () => {
 
   it("searches the forge in a repository a forge serves", () => {
     expect(buildRepositoryConfiguration(LISTED, { selfAuthor: null, trackedAuthors: [LENA] }, "gh", null)).toMatchObject({
-      form: { searchHint: "By default, Flight Plan shows every branch in checkout-web. To see only your teammates' pull requests, add them here.", searchPlaceholder: "Type a name or username" },
+      form: { searchHint: "By default, Flight Plan shows everyone's pull requests in checkout-web. To see only your teammates' pull requests and yours, add them here.", searchPlaceholder: "Type a name or username" },
     })
   })
 })

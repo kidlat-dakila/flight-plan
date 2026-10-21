@@ -48,10 +48,10 @@ export default defineConfig({
           label: "Setup",
           items: [
             "docs/setup",
-            "docs/setup/agent-integration",
-            "docs/setup/git-integration",
-            "docs/setup/prompt-configuration",
             "docs/setup/repositories",
+            "docs/setup/git-integration",
+            "docs/setup/agent-integration",
+            "docs/setup/review-configuration",
           ],
         },
         { slug: "docs/supported-languages" },
@@ -65,6 +65,7 @@ export default defineConfig({
               items: [
                 "docs/review-artifacts/parts/segments",
                 "docs/review-artifacts/parts/context",
+                "docs/review-artifacts/parts/change-overview",
                 "docs/review-artifacts/parts/trace-diagram",
                 "docs/review-artifacts/parts/blast-diagram",
                 "docs/review-artifacts/parts/code-walkthrough",
@@ -75,6 +76,8 @@ export default defineConfig({
             {
               label: "Around the artifact",
               items: [
+                "docs/review-artifacts/features/explaining",
+                "docs/review-artifacts/features/review-navigator",
                 "docs/review-artifacts/features/comments-and-threads",
                 "docs/review-artifacts/features/reviewed-marks",
                 "docs/review-artifacts/features/submitting-a-review",

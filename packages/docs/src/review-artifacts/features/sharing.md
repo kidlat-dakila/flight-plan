@@ -5,8 +5,6 @@ description: Attach a review to the pull request description or publish it as a 
 
 **Share** gives a review to people who don't run Flight Plan.
 
-![The Share menu with its two options](../../../media/share-light.webp)
-
 ## Attach to the pull request description
 
 **Attach** uploads the review artifact as a file to the pull request and links it from the description. **Open the description** shows where it went. This needs a forge.

@@ -35,7 +35,7 @@ describe("buildRepositoriesSection", () => {
           path: "/Users/dev/projects/storefront",
           lineColor: "blue",
           lineLabel: "S",
-          authorSearchHint: "Flight Plan will show all pull requests by default. However, you can choose to show only pull requests from your teammates (and from you).",
+          authorSearchHint: "By default, Flight Plan lists only the branches you add. Add your teammates here to see their branches and yours too.",
           authorSearchPlaceholder: "Type a name or email",
           selfAuthor: null,
           trackedAuthors: [{ ...LENA, monogram: "LO" }],

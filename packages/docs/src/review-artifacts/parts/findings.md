@@ -16,7 +16,7 @@ From most to least severe:
 | **Nit** | An optional improvement. |
 | **Question** | Something the agent genuinely wants to ask. |
 
-A waypoint's chip shows its most severe finding, so you can spot them while you scroll. The walkthrough's **Filter** shows only the waypoints with a kind you pick.
+A waypoint's chip shows its most severe finding, so you can spot them while you scroll. The walkthrough's **Filter** (F) shows only the waypoints with a kind you pick.
 
 ## What a finding holds
 
@@ -26,4 +26,4 @@ A waypoint's chip shows its most severe finding, so you can spot them while you 
 
 A question has no trace and no fix.
 
-Findings are written by the agent. Under the Minimal configuration they are off, and a **Generate** button lets you ask for them.
+Your agent writes the findings when Findings is among the parts you ask it to explain, as it is to start with in your [review configuration](/docs/setup/review-configuration/#what-your-agent-writes-by-default).

@@ -8,7 +8,7 @@ It opens with one line saying what the tour follows, and states how many of the 
 
 ## Order
 
-Flight Plan sorts the File Sections of each segment itself, each time the page is built, by the `walkthroughOrder` of the [review preferences](review-preferences.md). The agent is not told an order and cannot write one: `update-nodes` takes no order, and the instructions tell the agent not to ask the reviewer for one.
+Flight Plan sorts the File Sections of each segment itself, each time the page is built, by the `walkthroughOrder` of the [review preferences](review-preferences.md), until the author arranges them. The agent is not told an order and cannot write one: `update-nodes` takes no order, and the instructions tell the agent not to ask the reviewer for one.
 
 | Order | What comes first |
 |---|---|
@@ -16,9 +16,11 @@ Flight Plan sorts the File Sections of each segment itself, each time the page i
 | **Entry points first** (`imports-top-down`) | A file before every file it uses: `c.ts`, `b.ts`, `a.ts`. |
 | **Most important first** (`important-first`) | The files with a core change and a [spotlight](#spotlight-and-core-change) change, then those with a core change, then those in the spotlight, then the rest, each group from the bottom of the imports up. |
 
-A file uses another when a code reference in it, other than one into a library, is defined in the other, read from the `references` of the stored source files and followed through every file the review holds, so two walkthrough files are ordered through a file between them that has no section. Files the imports do not order keep their stored order, which the author can change with "Arrange files"; the files of an import cycle keep their stored order too, below the files that use them. The important-first order is sorted again when the agent marks a core change.
+A file uses another when a code reference in it, other than one into a library, is defined in the other, read from the `references` of the stored source files and followed through every file the review holds, so two walkthrough files are ordered through a file between them that has no section. Files the imports do not order keep their stored order; the files of an import cycle keep their stored order too, below the files that use them. The important-first order is sorted again when the agent marks a core change.
 
-`orderFiles` in `packages/codegraph/src/walkthrough/file-order.ts` sorts, and the backend passes the order to the codegraph in `ReviewViewContext.walkthroughOrder`. "Arrange files" lists the files in their stored order.
+`orderFiles` in `packages/codegraph/src/walkthrough/file-order.ts` sorts, and the backend passes the order to the codegraph in `ReviewViewContext.walkthroughOrder`. "Arrange files" lists the files in the order the page shows them.
+
+Once the author moves a file with "Arrange files", the walkthrough is arranged (`isArranged`): its stored order is the order it shows, to the author and to every reviewer, whatever the walkthrough order. The first move starts from the order the page showed, which the page sends with it. A refresh to a new commit keeps the arranged order of a segment whose files did not change, and with segments off the joined walkthrough keeps its stored order only when every segment was arranged.
 
 ## File Section
 
@@ -159,7 +161,7 @@ The page draws both side by side, Core change first: the Core change mark with i
 
 On the author's page the Code Walkthrough is edited, not reviewed. It has no Review Toggle on a file, a waypoint or a root code block, no Mark as reviewed and no Reviewed tick in the filter, and nothing is dimmed or hidden as reviewed.
 
-- **The files are arranged.** "Arrange files" in the heading row opens a dialog that lists every File Section of the segment with Move up and Move down, one place per click, saved at once. It shows when the walkthrough has more than one file.
+- **The files are arranged.** "Arrange files" in the heading row opens a dialog that lists every File Section of the segment in the order shown, with Move up and Move down, one place per click, saved at once. From then on the walkthrough keeps that order. It shows when the walkthrough has more than one file.
 - **A file is removed from the walkthrough.** The file stays among the files of its segment, and the diagrams stay as they were.
 - **A file is shown as the reviewer sees it.** Each File Section shows the changed lines with the unchanged ones folded, and each waypoint as a mark in the gutter with its card and its box, as on a teammate's pull request. The open box carries the edit and remove buttons, and the file header carries the button that removes the file.
 - **A waypoint with no description says so.** Its card says "This waypoint does not have any description or explanation." and offers "Write description", which opens the waypoint's form in place of its box. Write description (C) in the Review Navigator does the same for the current waypoint. The card on the author's page also offers "Let Claude explain" and "Explain the whole code block", as on a teammate's pull request.

@@ -79,6 +79,13 @@ describe("required nodes", () => {
     )
   })
 
+  it("keeps the files of a walkthrough the author arranged in their order", () => {
+    const segment = segmentOf(GENERATED)
+    const arranged = { ...GENERATED, segments: [{ ...segment, walkthrough: { ...segment.walkthrough, isArranged: true } }] }
+
+    expect(segmentOf(withRequiredWaypoints(arranged, ["w2"])).walkthrough.isArranged).toBe(true)
+  })
+
   it("requires one card of a segment's Trace Diagram, and one file of its Blast Diagram", () => {
     const card = segmentOf(withRequiredCard(GENERATED, "all", "j-subtotal"))
     const file = segmentOf(withRequiredBlastFile(GENERATED, "all", "src/cart/CartTotal.tsx"))

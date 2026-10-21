@@ -403,7 +403,7 @@ describe("buildSetupPage", () => {
     expect(localGit).toMatchObject({
       repositories: [
         {
-          authorSearchHint: "Flight Plan will show all pull requests by default. However, you can choose to show only pull requests from your teammates (and from you).",
+          authorSearchHint: "By default, Flight Plan lists only the branches you add. Add your teammates here to see their branches and yours too.",
           authorSearchPlaceholder: "Type a name or email",
           selfAuthor: null,
         },
@@ -412,7 +412,7 @@ describe("buildSetupPage", () => {
     expect(github).toMatchObject({
       repositories: [
         {
-          authorSearchHint: "By default, Flight Plan shows every branch in checkout-web. To see only your teammates' pull requests, add them here.",
+          authorSearchHint: "By default, Flight Plan shows everyone's pull requests in checkout-web. To see only your teammates' pull requests and yours, add them here.",
           authorSearchPlaceholder: "Type a name or username",
           selfAuthor: null,
         },

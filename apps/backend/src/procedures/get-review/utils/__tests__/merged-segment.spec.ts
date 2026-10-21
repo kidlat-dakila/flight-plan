@@ -51,6 +51,13 @@ describe("mergeSegments", () => {
     ])
   })
 
+  it("keeps the joined files in their stored order only when every segment was arranged", () => {
+    const arrangedOf = (segment: typeof first) => ({ ...segment, walkthrough: { ...segment.walkthrough, isArranged: true } })
+
+    expect(mergeSegments([arrangedOf(first), arrangedOf(second)]).walkthrough.isArranged).toBe(true)
+    expect(mergeSegments([arrangedOf(first), second]).walkthrough.isArranged).toBe(false)
+  })
+
   it("joins the Blast Diagrams, each file and each import once, the first assessment of a file winning", () => {
     const merged = mergeSegments([first, second]).blastDiagram
 

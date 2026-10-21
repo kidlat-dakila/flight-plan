@@ -54,19 +54,21 @@ describe("editWalkthrough", () => {
     })
   })
 
-  it("moves a file, and the page lists the files in their new order", async () => {
+  it("moves a file, and the page shows and lists the files in their new order", async () => {
     const context = createContext()
-    const [firstPath, secondPath] = (await readWalkthrough(context)).fileOrder.map((file) => file.path)
+    const shownPaths = (await readWalkthrough(context)).fileOrder.map((file) => file.path)
+    const [firstPath, secondPath] = shownPaths
 
     await expect(
-      editWalkthrough({ ...KEY, segmentId: SEGMENT_ID, edit: { kind: "move-file", path: secondPath, direction: "up" } }, context),
+      editWalkthrough({ ...KEY, segmentId: SEGMENT_ID, edit: { kind: "move-file", path: secondPath, direction: "up", shownPaths } }, context),
     ).resolves.toStrictEqual({ kind: "saved" })
 
-    const { fileOrder } = await readWalkthrough(context)
+    const { fileOrder, files } = await readWalkthrough(context)
     expect(fileOrder.slice(0, 2)).toMatchObject([
       { path: secondPath, canMoveUp: false, canMoveDown: true },
       { path: firstPath, canMoveUp: true },
     ])
+    expect(files.map((file) => file.path)).toStrictEqual(fileOrder.map((file) => file.path))
   })
 
   it("removes a file from the walkthrough of the page", async () => {

@@ -6,9 +6,9 @@ import { errorResult, jsonResult } from "@/server/mcp/tool-result"
 
 const DESCRIPTION = [
   "How to write a review artifact, for the configuration the reviewer chose when they started the review.",
-  "With no `fields` it returns which sections are on and an index: every field you can ask about, each saying what it is.",
+  "With no `fields` it returns an index: every field you can ask about, each saying what it is, and whether the configuration asks for context code blocks.",
   "It returns no prose until you ask: call it again with `fields` when you reach the work a field is about.",
-  "A section that is off is optional. Do not write it unless the reviewer asks.",
+  "Write only what Flight Plan marked as required. The rest waits until the reviewer asks for it.",
 ].join(" ")
 
 export const registerGetInstructionsTool = (mcpServer: McpServer, context: ProcedureContext): void => {

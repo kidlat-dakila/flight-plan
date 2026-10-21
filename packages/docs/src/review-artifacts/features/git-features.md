@@ -5,8 +5,6 @@ description: Branch status, switching to another pull request, and keeping a rev
 
 The review page keeps track of where the pull request stands, and lets you move between pull requests and bring a review up to date.
 
-![Switching to another pull request from the review title](../../../media/git-features-light.webm)
-
 ## Status
 
 Each pull request and branch has a status, shown beside its title and used to filter the list on the home page:
@@ -31,14 +29,14 @@ The review title is a menu. It lists the other pull requests and branches of the
 
 ## Keeping a review up to date
 
-A review describes one commit. When the pull request moves past it, the header says **Out of date**, and a notice names both commits. The options menu (**More actions**) has:
+A review describes one commit. When you open a review whose pull request or branch has moved since, Flight Plan pulls the branch and builds the review again at the latest commit. It keeps what your agent wrote for code that hasn't changed. What's new shows Flight Plan's hints until you ask your agent to explain it.
 
-- **Update the Flight Plan.** Flight Plan pulls the branch and builds the review again from its latest commit. What the agent wrote for code that hasn't changed is kept, and the agent writes the rest.
-- **Regenerate from scratch.** The same, but everything the agent wrote is erased and written again.
-- **Delete.** Removes the Flight Plan from your machine.
+If Flight Plan can't pull the branch or build the review, or your agent is still writing it, the header says **Out of date**, and a notice names both commits. **Copy the update prompt** on the notice copies a prompt that asks your agent to bring the review up to date.
 
-When you prompt your agent yourself, **Copy the update prompt** on the notice copies the prompt to paste.
+## The ⚙ menu
+
+The ⚙ menu at the right of the header holds the review's actions above the settings: **View pull request** to open it on your forge, **Explain this review**, and **Delete**, which removes the Flight Plan from your machine at once.
 
 ## New pull requests
 
-The home page tells you about new pull requests and branches from the people you follow, with **Create Flight Plan** to start a review of one.
+The home page tells you about new pull requests and branches from the people you follow, with **Create Flight Plan** to open the review of one, and **Dismiss**. **Create Flight Plan** on a repository's line lets you search for any of its open pull requests and branches.

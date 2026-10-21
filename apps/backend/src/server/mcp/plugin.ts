@@ -6,7 +6,6 @@ import { MCP_INSTRUCTIONS } from "@/procedures/get-conversation/utils/agent-text
 import { registerAskQuestionsTool } from "./tools/ask-questions"
 import { registerCompleteTool } from "./tools/complete"
 import { registerGetInstructionsTool } from "./tools/get-instructions"
-import { registerGreetTool } from "./tools/greet"
 import { registerNodesTool } from "./tools/nodes"
 import { registerReadTool } from "./tools/read"
 import { registerRecordImportTool } from "./tools/record-import"
@@ -27,7 +26,6 @@ const methodNotAllowedBody = {
 
 const createMcpServer = (context: ProcedureContext): McpServer => {
   const mcpServer = new McpServer({ name: "flight-plan", version: "0.1.0" }, { instructions: MCP_INSTRUCTIONS })
-  registerGreetTool(mcpServer)
   registerSendMessageTool(mcpServer, context)
   registerAskQuestionsTool(mcpServer, context)
   registerGetInstructionsTool(mcpServer, context)

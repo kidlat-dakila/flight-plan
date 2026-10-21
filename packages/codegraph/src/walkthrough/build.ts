@@ -254,11 +254,8 @@ const toFileView = (
   }
 }
 
-const inStoredOrder = (files: readonly VisibleFile[]): VisibleFile[] =>
-  [...files].sort((one, two) => one.entry.position - two.entry.position)
-
 const toFileOrder = (files: readonly VisibleFile[]): WalkthroughBand["fileOrder"] =>
-  inStoredOrder(files).map(({ entry }, position) => ({
+  files.map(({ entry }, position) => ({
     path: entry.file.path,
     heading: fileTitleOf(entry.file.path),
     detailLabel: countLabel(entry.waypoints.length, "waypoint", "waypoints"),
@@ -315,7 +312,8 @@ export const prepareWalkthrough = (
   context: ReviewViewContext,
 ): PreparedWalkthrough => {
   const entries = segment.walkthrough.files.map((file, position) => toFileEntry(file, position, marks, context))
-  const files = orderEntries(entries, context).map((entry) => withFocus(entry, toWaypointEntries(entry, request), request))
+  const orderedEntries = segment.walkthrough.isArranged === true ? entries : orderEntries(entries, context)
+  const files = orderedEntries.map((entry) => withFocus(entry, toWaypointEntries(entry, request), request))
   return { segment, files, shownFiles: files.filter((file) => isFileShown(file, request)) }
 }
 

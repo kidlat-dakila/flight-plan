@@ -9,7 +9,7 @@ interface ReviewKey {
 
 export interface WalkthroughEditing {
   readonly isPending: boolean
-  readonly onMoveFile: (segmentId: string, path: string, direction: MoveDirection) => void
+  readonly onMoveFile: (segmentId: string, path: string, direction: MoveDirection, shownPaths: readonly string[]) => void
   readonly onRemoveFile: (segmentId: string, path: string) => void
   readonly onRemoveWaypoint: (segmentId: string, waypointId: string) => void
 }
@@ -29,8 +29,8 @@ export const useWalkthroughEditing = (reviewKey: ReviewKey, onProblem: (message:
 
   return {
     isPending: editWalkthrough.isPending,
-    onMoveFile: (segmentId, path, direction) => {
-      editWalkthrough.mutate({ ...reviewKey, segmentId, edit: { kind: "move-file", path, direction } })
+    onMoveFile: (segmentId, path, direction, shownPaths) => {
+      editWalkthrough.mutate({ ...reviewKey, segmentId, edit: { kind: "move-file", path, direction, shownPaths: [...shownPaths] } })
     },
     onRemoveFile: (segmentId, path) => {
       editWalkthrough.mutate({ ...reviewKey, segmentId, edit: { kind: "remove-file", path } })

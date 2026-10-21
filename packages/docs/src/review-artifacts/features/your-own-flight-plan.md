@@ -1,17 +1,13 @@
 ---
 title: Your own Flight Plan
-description: Write a Flight Plan for your own pull request or branch, and hand it to your reviewers.
+description: Shape the Flight Plan of your own pull request or branch, and hand it to your reviewers.
 ---
 
-A pull request you wrote, or a branch of yours with no pull request, opens on the author's page. There you write the Flight Plan for your reviewers, yourself or with an agent's draft.
+A pull request you opened, or a branch with your last commit on it, opens on the author's page. There you shape the Flight Plan for your reviewers, yourself or with your agent's explanations.
 
-## Create a Flight Plan
+## Open it
 
-**Create Flight Plan** on the home page opens the form. Pick the pull request or branch, then **How it starts**:
-
-- **Let an agent draft it.** Flight Plan builds the structure and an agent writes every part.
-- **Generate review Flight Plan artifact only.** Flight Plan builds the segments, the diagrams and the Code Walkthrough. No agent writes them.
-- **Start empty.** A Flight Plan with no segments, for you to build.
+Open it from the home page, or use **Create Flight Plan** on the repository's line and pick the pull request or branch. Flight Plan builds the review from the code, as it does for any review, and the header says **Your Flight Plan**. The dialog that asks your agent to [explain the review](/docs/review-artifacts/features/explaining/) opens here too.
 
 ## Edit it
 
@@ -21,9 +17,9 @@ On the author's page every part can be edited:
 - [Context](/docs/review-artifacts/parts/context/): the text, with links to code.
 - [Trace Diagram](/docs/review-artifacts/parts/trace-diagram/): its cards, lines and description.
 - [Blast Diagram](/docs/review-artifacts/parts/blast-diagram/): the impact of each file.
-- [Code Walkthrough](/docs/review-artifacts/parts/code-walkthrough/): the waypoints, the files and their order.
+- [Code Walkthrough](/docs/review-artifacts/parts/code-walkthrough/): the waypoints, the files and their order. **Write description** (C) opens a waypoint's form, with its title, its explanation, the **Core change** mark and additional context for your reviewers.
 
-Findings come from the agent and aren't edited here.
+Findings come from your agent and aren't edited here.
 
 ## Mark it as complete
 

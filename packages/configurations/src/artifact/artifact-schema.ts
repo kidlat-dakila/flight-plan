@@ -422,6 +422,7 @@ const segmentSchema = z.strictObject({
           summary: "File sections: what order, and why tests get none.",
           fieldDescription: "walkthrough.files.md",
         }),
+      isArranged: z.boolean().optional(),
     })
     .register(configurations, {
       version: 0.1,

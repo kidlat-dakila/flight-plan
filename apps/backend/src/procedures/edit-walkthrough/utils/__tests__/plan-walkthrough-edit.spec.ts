@@ -22,23 +22,58 @@ const filesOf = (planned: ReturnType<typeof planWalkthroughEdit>, segmentId: str
 const pathsOf = (planned: ReturnType<typeof planWalkthroughEdit>, segmentId: string): unknown =>
   filesOf(planned, segmentId)?.map((file) => file.path) ?? null
 
+const STORED_ORDER = [PRICE_PATH, CART_PATH]
+const SORTED_ORDER = [CART_PATH, PRICE_PATH]
+
+const isArrangedIn = (planned: ReturnType<typeof planWalkthroughEdit>, segmentId: string): unknown =>
+  planned.kind === "planned" ? planned.artifact.segments.find((segment) => segment.id === segmentId)?.walkthrough.isArranged : null
+
+const arranged = createArtifact({
+  segments: [createSegment({ id: "flat", walkthrough: { ...createSegment().walkthrough, isArranged: true } })],
+})
+
 describe("planWalkthroughEdit", () => {
-  it("moves a file one place in the walkthrough of its segment and leaves the other segments as they were", () => {
-    const planned = planWalkthroughEdit(artifact, "flat", { kind: "move-file", path: CART_PATH, direction: "up" })
+  it("moves a file one place in the walkthrough of its segment, marks it arranged, and leaves the other segments as they were", () => {
+    const planned = planWalkthroughEdit(artifact, "flat", { kind: "move-file", path: CART_PATH, direction: "up", shownPaths: STORED_ORDER })
 
     expect(pathsOf(planned, "flat")).toStrictEqual([CART_PATH, PRICE_PATH])
+    expect(isArrangedIn(planned, "flat")).toBe(true)
     expect(pathsOf(planned, "nested")).toStrictEqual([PRICE_PATH, CART_PATH])
+    expect(isArrangedIn(planned, "nested")).toBeUndefined()
+  })
+
+  it("starts the first move from the order the page shows, not the stored one", () => {
+    const planned = planWalkthroughEdit(artifact, "flat", { kind: "move-file", path: PRICE_PATH, direction: "up", shownPaths: SORTED_ORDER })
+
+    expect(pathsOf(planned, "flat")).toStrictEqual([PRICE_PATH, CART_PATH])
+  })
+
+  it("moves an arranged walkthrough from its stored order", () => {
+    const planned = planWalkthroughEdit(arranged, "flat", { kind: "move-file", path: CART_PATH, direction: "up", shownPaths: SORTED_ORDER })
+
+    expect(pathsOf(planned, "flat")).toStrictEqual([CART_PATH, PRICE_PATH])
+  })
+
+  it("rejects a first move whose shown files are not the files of the walkthrough", () => {
+    expect(planWalkthroughEdit(artifact, "flat", { kind: "move-file", path: CART_PATH, direction: "up", shownPaths: [CART_PATH] })).toStrictEqual({
+      kind: "rejected",
+      message: "The files of this Code Walkthrough have changed since. Try again.",
+    })
   })
 
   it("rejects a move past the first or the last file", () => {
-    expect(planWalkthroughEdit(artifact, "flat", { kind: "move-file", path: PRICE_PATH, direction: "up" })).toStrictEqual({
+    expect(planWalkthroughEdit(artifact, "flat", { kind: "move-file", path: PRICE_PATH, direction: "up", shownPaths: STORED_ORDER })).toStrictEqual({
       kind: "rejected",
       message: "This file is already the first.",
     })
-    expect(planWalkthroughEdit(artifact, "flat", { kind: "move-file", path: CART_PATH, direction: "down" })).toStrictEqual({
+    expect(planWalkthroughEdit(artifact, "flat", { kind: "move-file", path: CART_PATH, direction: "down", shownPaths: STORED_ORDER })).toStrictEqual({
       kind: "rejected",
       message: "This file is already the last.",
     })
+  })
+
+  it("keeps a walkthrough arranged when a file is removed from it", () => {
+    expect(isArrangedIn(planWalkthroughEdit(arranged, "flat", { kind: "remove-file", path: PRICE_PATH }), "flat")).toBe(true)
   })
 
   it("removes a file from the walkthrough and keeps it among the files of the segment", () => {

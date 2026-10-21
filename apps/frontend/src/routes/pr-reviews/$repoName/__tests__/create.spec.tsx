@@ -715,7 +715,7 @@ describe("the create Flight Plan page", () => {
 
     await waitFor(() => {
       expect(editWalkthrough).toHaveBeenCalledWith(
-        expect.objectContaining({ segmentId: "stock", edit: { kind: "move-file", path: "src/cart.ts", direction: "up" } }),
+        expect.objectContaining({ segmentId: "stock", edit: { kind: "move-file", path: "src/cart.ts", direction: "up", shownPaths: ["src/price.ts", "src/cart.ts"] } }),
       )
     })
   })

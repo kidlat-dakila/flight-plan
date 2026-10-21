@@ -63,7 +63,7 @@ are reaching for one of those to write a title, a reading, a label or the
 context, the answer is already in a call below.
 
 ```
-0 get-instructions                   which sections are on, and an index of what you can ask for
+0 get-instructions                   an index of what you can ask for
   get-instructions { fields: ["writingStyle", "codeLinks", "artifactFormat"] }
                                      the voice, how a code link is written, the
                                      artifact's shape and what a write is refused for

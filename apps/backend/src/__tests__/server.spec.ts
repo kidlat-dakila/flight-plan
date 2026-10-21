@@ -10,19 +10,6 @@ describe("buildServer", () => {
     await server.close()
   })
 
-  it("lists the greet tool over MCP", async () => {
-    const server = await buildServer()
-    const response = await server.inject({
-      method: "POST",
-      url: "/mcp",
-      headers: { "accept": MCP_ACCEPT_HEADER, "content-type": "application/json" },
-      payload: { jsonrpc: "2.0", id: 1, method: "tools/list", params: {} },
-    })
-    expect(response.statusCode).toBe(200)
-    expect(response.body).toContain("\"greet\"")
-    await server.close()
-  })
-
   it("lists the tools agents use to reach the reviewer, with instructions for the agent", async () => {
     const server = await buildServer()
     const initialize = await server.inject({
@@ -50,6 +37,7 @@ describe("buildServer", () => {
     expect(tools.body).toContain("\"read\"")
     expect(tools.body).toContain("\"nodes\"")
     expect(tools.body).not.toContain("\"update-document\"")
+    expect(tools.body).not.toContain("\"greet\"")
     expect(tools.body).toContain("\"update-nodes\"")
     expect(tools.body).toContain("\"complete\"")
     await server.close()

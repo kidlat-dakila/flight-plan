@@ -53,7 +53,7 @@ export const withRequiredWaypoints = (artifact: ReviewArtifact, waypointIds: rea
     ...artifact,
     segments: artifact.segments.map((segment) => ({
       ...segment,
-      walkthrough: { files: segment.walkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map((waypoint) => withRequiredWaypointIn(waypoint, required)) })) },
+      walkthrough: { ...segment.walkthrough, files: segment.walkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map((waypoint) => withRequiredWaypointIn(waypoint, required)) })) },
     })),
   }
 }

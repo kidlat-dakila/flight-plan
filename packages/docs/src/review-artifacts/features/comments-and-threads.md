@@ -5,8 +5,6 @@ description: Comment on lines of the change, reply to threads and resolve them, 
 
 You can comment on the pull request from the review page. Comments go to your forge, so the author sees them where they always do.
 
-![Commenting on a line and adding the comment to the review](../../../media/comments-light.webm)
-
 ## Comment on a line
 
 Hover a line of the change and click the **+** beside it. Shift-click the **+** of another line to comment on a range. You can also select code and choose **Add comment**.

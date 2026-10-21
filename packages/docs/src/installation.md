@@ -17,13 +17,16 @@ The command starts one server on your machine. It serves the web app, its API an
 
 - Node.js 22 or later.
 - `git` on your `PATH`. Flight Plan reads diffs, branches and remotes with it.
-- At least one coding agent: Claude Code (`claude`), Codex (`codex`) or Cursor (`cursor-agent`). Setup only offers an agent whose command it finds on your `PATH` or in `~/.local/bin`.
-- A way to reach your pull requests. Local git needs nothing. The GitHub and GitLab command line tools need to be signed in (`gh auth login`, `glab auth login`). A token connection needs your system keychain: Keychain on macOS, Credential Manager on Windows, or Secret Service on Linux.
+- A way to reach your pull requests. Local git needs nothing, and it's the default. The GitHub and GitLab command line tools need to be signed in (`gh auth login`, `glab auth login`). A token connection needs your system keychain: Keychain on macOS, Credential Manager on Windows, or Secret Service on Linux.
+- A coding agent to explain your reviews: Claude Code (`claude`), Codex (`codex`) or Cursor (`cursor-agent`). Setup asks you to pick one, and offers only an agent whose command it finds on your `PATH` or in `~/.local/bin`.
 
 ## Options
 
 ```text
 Usage: flightplan [options]
+
+Starts Flight Plan on this machine and opens it in the browser.
+If Flight Plan is already running, it only opens the browser.
 
 Options:
   --port <number>  Listen on this port instead of 24747
@@ -33,13 +36,13 @@ Options:
 ```
 
 - If Flight Plan is already running, the command only opens the browser.
-- If another program is using port 24747, Flight Plan picks a free port, uses it again on later runs, and points your agents at it.
-- If you name a port with `--port` and it is taken, Flight Plan stops and tells you.
-- The `PORT` and `HOST` environment variables set the port and the host as well. `--port` takes precedence over `PORT`.
+- If another program is using port 24747, Flight Plan picks a free port, uses it again on later runs, and installs itself into your agents again so they reach it.
+- If you name a port with `--port` or `PORT` and it is taken, Flight Plan stops and tells you.
+- The `PORT` and `HOST` environment variables set the port and the host. `--port` takes precedence over `PORT`.
 
 ## Where your data lives
 
-Flight Plan keeps everything in `~/.flightplan/`: your settings, your reviews and the plugin it installs for Claude. Set `FLIGHT_PLAN_DATA_DIR` to use another folder. Nothing is written into the repositories you review.
+Flight Plan keeps everything in `~/.flightplan/`: your settings, your reviews, your chats with the agent and the plugin it installs for Claude. Set `FLIGHT_PLAN_DATA_DIR` to use another folder. Nothing is written into the repositories you review.
 
 Forge tokens are not stored in that folder. They go into your system keychain, and Flight Plan never shows them again.
 

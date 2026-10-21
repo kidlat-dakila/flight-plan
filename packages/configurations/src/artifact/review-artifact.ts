@@ -176,6 +176,7 @@ export interface Blast {
 
 export interface CodeWalkthrough {
   readonly files: readonly FileSection[]
+  readonly isArranged?: boolean
 }
 
 export interface Segment {

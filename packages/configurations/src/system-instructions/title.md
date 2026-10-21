@@ -2,7 +2,7 @@ The segment's title: a few words that say what the segment changes. One string,
 with no code link and no full stop. It names what changed and leaves why to the
 `context`.
 
-A segment arrives with no title. Write it with `update-document { segmentId, title }`,
+A segment arrives with no title. Write it with `update-nodes { segmentId, title }`,
 after the context, and a finished artifact has one on every segment. When the
 reviewer turned segments off, no segment is shown, and none needs a title.
 

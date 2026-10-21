@@ -195,11 +195,12 @@ const carrySegmentWriting = (segment: Segment, written: Segment, fileOrder: File
   context: written.context,
   traceDiagram: carryDescription(segment.traceDiagram, written.traceDiagram),
   blastDiagram: carryBlast(segment.blastDiagram, written.blastDiagram),
-  walkthrough: {
-    files: fileOrder === WRITTEN_ORDER
-      ? inWrittenOrder(segment.walkthrough.files, written.walkthrough.files.map((file) => file.path), (file) => file.path)
-      : segment.walkthrough.files,
-  },
+  walkthrough: fileOrder === WRITTEN_ORDER
+    ? {
+        files: inWrittenOrder(segment.walkthrough.files, written.walkthrough.files.map((file) => file.path), (file) => file.path),
+        isArranged: written.walkthrough.isArranged,
+      }
+    : segment.walkthrough,
 })
 
 const carrySegment = (segment: Segment, carry: Carry): Segment => {

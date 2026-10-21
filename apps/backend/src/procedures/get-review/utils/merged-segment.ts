@@ -40,7 +40,10 @@ export const mergeSegments = ([first, ...others]: readonly [Segment, ...Segment[
     context: first.context,
     traceDiagram: null,
     blastDiagram: joinBlasts(segments.flatMap((segment) => (segment.blastDiagram === null ? [] : [segment.blastDiagram]))),
-    walkthrough: { files: joinFiles(segments.flatMap((segment) => segment.walkthrough.files)) },
+    walkthrough: {
+      files: joinFiles(segments.flatMap((segment) => segment.walkthrough.files)),
+      isArranged: segments.every((segment) => segment.walkthrough.isArranged === true),
+    },
     isContextRequired: first.isContextRequired,
   }
 }
