@@ -17,7 +17,7 @@ import waypointsPosterLight from "@/assets/screenshots/walkthrough-waypoints-pos
 export const HERO_POSTER = {
   light: heroPosterLight,
   dark: heroPosterDark,
-  alt: "Flight Plan's review page for a pull request of demo-react: the section rail at the left, and the Code Walkthrough of src/api/orders.ts with a waypoint opened that explains updateOrder() and carries a Needs Attention note.",
+  alt: "Flight Plan's review page for a pull request of demo-react: the section rail at the left, and the Code Walkthrough of src/hooks/use-pokemon.ts with a waypoint opened that explains usePokemon() and carries a Needs Attention note.",
 } as const
 
 export const HERO_VIDEOS = {
@@ -34,7 +34,7 @@ export const CHANGE_OVERVIEW_SHOT = {
 export const TRACE_POSTER = {
   light: tracePosterLight,
   dark: tracePosterDark,
-  alt: "A Trace Diagram in full screen: the hook useOrders is open in the side panel, with its code and the waypoint that explains useOrders(), next to the ViewOrdersPage card that calls it.",
+  alt: "A Trace Diagram in full screen: the hook usePokemon is open in the side panel, with its code and the waypoint that explains usePokemon(), next to the PokemonPage card that calls it.",
 } as const
 
 export const TRACE_VIDEOS = {
@@ -45,7 +45,7 @@ export const TRACE_VIDEOS = {
 export const BLAST_POSTER = {
   light: blastPosterLight,
   dark: blastPosterDark,
-  alt: "A Blast Diagram in full screen, in its Import bound view: the changed files of the segment among the files they import that the change did not touch, such as SessionProvider.tsx, button.tsx and use-customers.ts.",
+  alt: "A Blast Diagram in full screen, in its Import bound view: the changed files of the segment among the files they import that the change did not touch, such as SessionProvider.tsx and button.tsx.",
 } as const
 
 export const BLAST_VIDEOS = {
@@ -56,7 +56,7 @@ export const BLAST_VIDEOS = {
 export const WAYPOINTS_POSTER = {
   light: waypointsPosterLight,
   dark: waypointsPosterDark,
-  alt: "A waypoint of the Code Walkthrough marked Risk: updateOrder() sends back the status the form loaded, with the trace of how it happens and the suggested fix as a diff.",
+  alt: "A waypoint of the Code Walkthrough marked Risk: PokemonFilters hides a failed load of the trainers, with the trace of how it happens and the suggested fix as a diff.",
 } as const
 
 export const WAYPOINTS_VIDEOS = {
@@ -67,7 +67,7 @@ export const WAYPOINTS_VIDEOS = {
 export const FILTERS_POSTER = {
   light: filtersPosterLight,
   dark: filtersPosterDark,
-  alt: "The Code Walkthrough filtered to component and hook waypoints: 19 waypoints left, starting with useOrders() in src/hooks/use-orders.ts.",
+  alt: "The Code Walkthrough filtered to component and hook waypoints.",
 } as const
 
 export const FILTERS_VIDEOS = {

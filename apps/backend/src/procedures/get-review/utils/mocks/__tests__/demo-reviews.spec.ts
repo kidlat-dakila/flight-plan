@@ -4,10 +4,12 @@ import {
   toDemoChat,
   toDemoPullRequest,
   toDemoRepository,
+  toDemoScaffold,
   type DemoReview,
   type DemoStory,
 } from "@/procedures/get-review/utils/mocks/demo-reviews"
 import { HELD_STOCK_ARTIFACT } from "@/procedures/get-review/utils/mocks/held-stock"
+import { isWriteUpOffered } from "@/procedures/get-review/utils/start/review-request"
 
 const NOW = new Date("2026-10-14T12:00:00.000Z")
 const MINUTE_MS = 60_000
@@ -83,5 +85,14 @@ describe("demo reviews", () => {
 
     expect(replies[writtenAgentMessages % replies.length]).toBe("first scripted reply")
     expect(replies[(writtenAgentMessages + 1) % replies.length]).toBe("second scripted reply")
+  })
+
+  it("stores each demo review as explained by Claude, so the first-open dialog does not open", () => {
+    const { key, scaffold } = toDemoScaffold(DEMO, NOW)
+
+    expect(key).toStrictEqual({ repositoryName: "orders-web", targetId: "pr-128" })
+    expect(scaffold.artifact).toBe(HELD_STOCK_ARTIFACT)
+    expect(scaffold.request.writer).toStrictEqual(expect.objectContaining({ kind: "agent", agent: "claude" }))
+    expect(isWriteUpOffered(scaffold.request)).toBe(true)
   })
 })

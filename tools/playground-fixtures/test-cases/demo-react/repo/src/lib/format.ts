@@ -1,7 +1,7 @@
-const CENTS_PER_UNIT = 100
+const POKE_DOLLAR = "₽"
 
-const priceFormatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" })
+const priceFormatter = new Intl.NumberFormat("en-US")
 
-export function formatPrice(priceCents: number): string {
-  return priceFormatter.format(priceCents / CENTS_PER_UNIT)
+export function formatPrice(price: number): string {
+  return `${POKE_DOLLAR}${priceFormatter.format(price)}`
 }

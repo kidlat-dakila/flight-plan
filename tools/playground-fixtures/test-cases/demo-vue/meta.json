@@ -1,6 +1,6 @@
 {
-  "title": "Vue demo with Vue Router and TanStack Query",
-  "packages": ["vue", "vue-router", "@tanstack/vue-query"],
+  "title": "Vue demo with Vue Router, TanStack Query and Pinia",
+  "packages": ["vue", "vue-router", "@tanstack/vue-query", "pinia"],
   "language": "typescript",
   "mainFramework": "vue"
 }

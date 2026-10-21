@@ -4,7 +4,9 @@ import type { Comment, CommentThread, Discussion } from "@/procedures/get-review
 import type { SamplePullRequest } from "@/procedures/get-review/utils/pull-request-forge"
 import type { ReviewKey, StoredReview } from "@/procedures/get-review/utils/review-store"
 import type { Reviewer } from "@/procedures/get-review/utils/review-target-detail"
-import { DEFAULT_EFFORT, DEFAULT_MODEL, type Setup } from "@/procedures/get-setup/utils/setup"
+import { DEFAULT_ORDER, type ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
+import type { ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
+import { DEFAULT_EFFORT, DEFAULT_MODEL, type AgentName, type PresetName, type Setup } from "@/procedures/get-setup/utils/setup"
 import type { PullRequestTarget, Repository } from "@/procedures/list-repositories/utils/repository"
 import { reviewArtifactSchema, type ReviewArtifact } from "@flightplan/configurations"
 
@@ -13,6 +15,10 @@ const GITHUB_URL = "https://github.com"
 const DEMO_PATH_PREFIX = "/Users/you/projects/"
 const DEMO_VIEWER = "you"
 const DEMO_AGENT_PATH = "/Users/you/.claude"
+const DEMO_AGENT: AgentName = "claude"
+const DEMO_CONFIGURATION: PresetName = "standard"
+const COMMIT_LENGTH = 40
+const DEMO_BASE_COMMIT = "1".repeat(COMMIT_LENGTH)
 
 const timedSchema = z.strictObject({ minutesAgo: z.number().int().nonnegative() })
 
@@ -117,6 +123,25 @@ export const toDemoStoredReview = (demo: DemoReview): StoredReview => ({
   },
 })
 
+export interface DemoScaffold {
+  readonly key: ReviewKey
+  readonly scaffold: ReviewScaffold
+}
+
+const toExplainedRequest = (demo: DemoReview, now: Date): ReviewRequest => ({
+  configurationId: DEMO_CONFIGURATION,
+  preset: DEMO_CONFIGURATION,
+  order: DEFAULT_ORDER,
+  customOrder: null,
+  writer: { kind: "agent", agent: DEMO_AGENT, model: DEFAULT_MODEL, effort: DEFAULT_EFFORT },
+  requestedAt: minutesBefore(now, demo.story.pullRequest.updatedMinutesAgo),
+})
+
+export const toDemoScaffold = (demo: DemoReview, now: Date): DemoScaffold => ({
+  key: demoReviewKeyOf(demo),
+  scaffold: { artifact: artifactOf(demo), request: toExplainedRequest(demo, now), baseCommit: DEMO_BASE_COMMIT },
+})
+
 const toComment = (story: DemoStory, id: string, comment: z.infer<typeof commentSchema>, now: Date): Comment => ({
   id,
   author: { name: comment.author, avatarUrl: avatarOf(story, comment.author) },
@@ -179,13 +204,13 @@ export const toDemoAgentReplies = (demo: DemoReview): readonly string[] => {
 
 export const toDemoSetup = (demos: readonly DemoReview[]): Setup => ({
   agents: {
-    installs: [{ agent: "claude", installPath: DEMO_AGENT_PATH, model: DEFAULT_MODEL, effort: DEFAULT_EFFORT }],
-    defaultAgent: "claude",
+    installs: [{ agent: DEMO_AGENT, installPath: DEMO_AGENT_PATH, model: DEFAULT_MODEL, effort: DEFAULT_EFFORT }],
+    defaultAgent: DEMO_AGENT,
   },
   forges: {
     connections: [{ forge: "gh", username: DEMO_VIEWER, baseUrl: GITHUB_URL, hasCredential: true }],
   },
-  defaultConfiguration: "standard",
+  defaultConfiguration: DEMO_CONFIGURATION,
   repositories: demos.map((demo) => ({
     name: demo.story.repository.name,
     path: `${DEMO_PATH_PREFIX}${demo.story.repository.name}`,

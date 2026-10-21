@@ -1,4 +1,5 @@
 import { closeAgent } from "@/procedures/close-agent"
+import { completeArtifact } from "@/procedures/complete-artifact"
 import type { ProcedureContext } from "@/procedures/context"
 import { endAgentTurn } from "@/procedures/end-agent-turn"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
@@ -30,6 +31,7 @@ const replyOnce = async (sessionId: string, script: DemoAgentScript): Promise<vo
   const { journal } = await context.conversationEnvironment.store.read(agent.key)
   const body = nextReplyOf(journal, script.repliesFor(agent.key))
   await sendAgentMessage({ ...agent.key, body }, context)
+  await completeArtifact(agent.key, context)
   const ending = await endAgentTurn({ sessionId, lastAssistantMessage: body }, context)
   if (ending.kind === "close") {
     setTimeout(() => {

@@ -8,7 +8,7 @@ WORK_DIR="$(mktemp -d)"
 trap 'agent-browser --session "$SESSION" record stop >/dev/null 2>&1; rm -rf "$WORK_DIR"' EXIT
 
 DEMO_URL="${DEMO_URL:-http://localhost:4400/demo/demo-react/}"
-REVIEW_PATH="#/pr-reviews/orders-web/pr-128"
+REVIEW_PATH="#/pr-reviews/pokedex-web/pr-57"
 SESSION="flight-plan-docs"
 WIDTH=1280
 HEIGHT=800
@@ -150,7 +150,7 @@ arrange_configuration_list() {
 }
 
 arrange_repositories() {
-  click_marked "document.querySelector('button[aria-label=\"Configure orders-web\"]')"
+  click_marked "document.querySelector('button[aria-label=\"Configure pokedex-web\"]')"
 }
 
 arrange_review_top() {
@@ -177,7 +177,7 @@ arrange_context() {
 
 trace_scenario() {
   scroll_to "#fixture-segment-1-trace-diagram-heading" 80
-  click_marked "[...document.querySelectorAll('#fixture-segment-1-trace-fixture-segment-1 button')].find(element=>(element.getAttribute('aria-label')||'').startsWith('Effects:'))"
+  click_marked "[...document.querySelectorAll('#fixture-segment-1-trace-fixture-segment-1 button')].find(element=>(element.getAttribute('aria-label')||'').startsWith('Actions:'))"
 }
 
 blast_scenario() {
@@ -185,7 +185,7 @@ blast_scenario() {
   click_marked "$(control_named "Import bound")"
   browse wait "$STEP_MS"
   click_marked "$(control_named "Export bound")"
-  click_marked "[...document.querySelectorAll('#fixture-segment-1-blast-diagram button')].find(element=>element.textContent.startsWith('use-orders.ts'))"
+  click_marked "[...document.querySelectorAll('#fixture-segment-1-blast-diagram button')].find(element=>element.textContent.startsWith('use-pokemon.ts'))"
 }
 
 VISIBLE="(element)=>element.getBoundingClientRect().top>0&&element.getBoundingClientRect().bottom<innerHeight"
@@ -210,7 +210,7 @@ arrange_context_code_block() {
 comments_scenario() {
   click_marked "document.querySelector('[aria-label=\"Add a comment on this line added 2\"]')"
   click_marked "document.querySelector('[aria-label=\"Add a comment on this line added 3\"]')"
-  browse keyboard type "Should fetchOrders() take an AbortSignal, so the page can cancel it?"
+  browse keyboard type "Should fetchPokemon() take an AbortSignal, so the page can cancel it?"
   browse wait "$STEP_MS"
   click_marked "$(control_named "Add to review")"
 }
@@ -224,7 +224,7 @@ reviewed_scenario() {
 submit_scenario() {
   click_marked "$(control_named "Submit review")"
   click_marked "$(text_box_named "Leave a summary for the author")"
-  browse keyboard type "Reads well. The order form handles both create and edit cleanly."
+  browse keyboard type "Reads well. The filters and the list stay in step."
   click_marked "$(control_named "Approve")"
   browse wait "$STEP_MS"
 }
@@ -232,7 +232,7 @@ submit_scenario() {
 chat_scenario() {
   click_marked "$(control_named "Chat")"
   click_marked "$(text_box_named "Ask about this review")"
-  browse keyboard type "Why does updateOrder() send every field of the order?"
+  browse keyboard type "Why does usePokemon() read the filters from the store?"
   browse press Enter
   browse wait 4000
 }

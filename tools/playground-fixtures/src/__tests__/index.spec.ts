@@ -123,7 +123,7 @@ describe("getReviewArtifactFixture", () => {
   })
 
   it("marks an artifact complete when every segment of its snapshot is titled", async () => {
-    const artifact = await getReviewArtifactFixture(TEST_CASES_PATH, "demo-react/implement-three-pages-vieworderspage-createorderpage-and-editorderpage")
+    const artifact = await getReviewArtifactFixture(TEST_CASES_PATH, "demo-react/implement-page-pokemonpage")
 
     expect(artifact.status).toBe("complete")
     expect(artifact.segments.every((segment) => segment.title !== "")).toBe(true)

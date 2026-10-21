@@ -205,7 +205,7 @@ The title is written into the snapshot as its `title`, and it names the snapshot
 
 4. Follow steps 3 to 7 of [Add a case](#add-a-case-to-a-kind-that-exists).
 
-`test-cases/demo-react/` is a small React app with one pull request that adds three pages, `test-cases/demo-vue/` the same app and pull request in Vue, and `test-cases/demo-fastapi/` a FastAPI service with SQLAlchemy and pydantic, with one pull request that adds a Pokemon API under `/api/pokemon`. A kind whose name starts with `demo-` is also a demo on the Flight Plan site, and holds a `demo.json` that describes the pull request around its review; `apps/site/docs/demo.md` describes it.
+`test-cases/demo-fastapi/` is a FastAPI service with SQLAlchemy and pydantic, with one pull request that adds a Pokemon API under `/api/pokemon`. `test-cases/demo-react/` is a small React app with TanStack Query and Zustand, with one pull request that adds a Pokemon page that reads that API and keeps its filters in a store, and `test-cases/demo-vue/` the same app and pull request in Vue, with Vue Query and Pinia. A kind whose name starts with `demo-` is also a demo on the Flight Plan site, and holds a `demo.json` that describes the pull request around its review; `apps/site/docs/demo.md` describes it.
 
 ## Describing a kind
 
@@ -213,8 +213,8 @@ Every kind has a `meta.json` beside its test file. It says what the case reposit
 
 ```json
 {
-  "title": "React demo with React Router and TanStack Query",
-  "packages": ["react", "react-dom", "react-router", "@tanstack/react-query"],
+  "title": "React demo with React Router, TanStack Query and Zustand",
+  "packages": ["react", "react-dom", "react-router", "@tanstack/react-query", "zustand"],
   "language": "typescript",
   "mainFramework": "react"
 }

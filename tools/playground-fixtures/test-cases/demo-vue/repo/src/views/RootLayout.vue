@@ -10,10 +10,10 @@ const session = inject(sessionKey)
 <template>
   <div>
     <header>
-      <RouterLink to="/">Customers</RouterLink>
-      <RouterLink to="/products">Products</RouterLink>
+      <RouterLink to="/">Trainers</RouterLink>
+      <RouterLink to="/items">Items</RouterLink>
       <RouterLink to="/help">Help</RouterLink>
-      <span>{{ session?.staffName.value }}</span>
+      <span>{{ session?.professorName.value }}</span>
       <BaseButton variant="ghost" @click="session?.signOut()">Sign out</BaseButton>
     </header>
     <main>

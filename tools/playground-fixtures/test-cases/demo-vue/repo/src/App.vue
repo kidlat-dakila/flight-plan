@@ -5,12 +5,12 @@ import { sessionKey } from "@/components/session"
 
 const GUEST_NAME = "Guest"
 
-const staffName = ref("Dana")
+const professorName = ref("Professor Oak")
 const signOut = () => {
-  staffName.value = GUEST_NAME
+  professorName.value = GUEST_NAME
 }
 
-provide(sessionKey, { staffName, signOut })
+provide(sessionKey, { professorName, signOut })
 </script>
 
 <template>

@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router"
-import CustomersPage from "@/views/customers/CustomersPage.vue"
 import HelpPage from "@/views/help/HelpPage.vue"
-import ProductsPage from "@/views/products/ProductsPage.vue"
+import ItemsPage from "@/views/items/ItemsPage.vue"
 import RootLayout from "@/views/RootLayout.vue"
+import TrainersPage from "@/views/trainers/TrainersPage.vue"
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -11,8 +11,8 @@ export const router = createRouter({
       path: "/",
       component: RootLayout,
       children: [
-        { path: "", component: CustomersPage },
-        { path: "products", component: ProductsPage },
+        { path: "", component: TrainersPage },
+        { path: "items", component: ItemsPage },
         { path: "help", component: HelpPage },
       ],
     },

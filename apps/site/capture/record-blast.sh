@@ -22,8 +22,8 @@ blast_scenario() {
   bring_into_view "src/main.tsx"
   click_marked "$(node_named "src/main.tsx")"
   browse wait "$READ_MS"
-  bring_into_view "use-orders.ts"
-  click_marked "$(node_named "use-orders.ts")"
+  bring_into_view "use-pokemon.ts"
+  click_marked "$(node_named "use-pokemon.ts")"
   browse wait "$READ_MS"
   browse press Escape
   browse wait "$STEP_MS"

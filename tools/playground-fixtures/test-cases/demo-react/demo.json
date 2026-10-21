@@ -1,10 +1,10 @@
 {
   "repository": {
-    "name": "orders-web",
-    "forgeSlug": "acme/orders-web"
+    "name": "pokedex-web",
+    "forgeSlug": "acme/pokedex-web"
   },
   "pullRequest": {
-    "number": 128,
+    "number": 57,
     "author": "richard",
     "updatedMinutesAgo": 25
   },
@@ -21,54 +21,54 @@
   "comments": [
     {
       "author": "dinesh",
-      "body": "I'll test the three pages on staging after lunch.",
+      "body": "I'll try the filters on staging once the Pokemon API is merged.",
       "minutesAgo": 60
     }
   ],
   "threads": [
     {
-      "path": "src/api/orders.ts",
-      "line": 17,
+      "path": "src/hooks/use-pokemon.ts",
+      "line": 16,
       "isResolved": false,
       "comments": [
         {
           "author": "gilfoyle",
-          "body": "This sends the whole order back with `PUT`, `status` included. If the warehouse ships the order while someone has the form open, saving puts it back to pending.",
+          "body": "The trainer is part of the key, so every trainer switch throws the list away and shows the loading text until the next one arrives. Can we keep the old list on screen in the meantime?",
           "minutesAgo": 140
         },
         {
           "author": "richard",
-          "body": "Good catch. The server owns `status`, so I'll send only the customer, the product and the quantity.",
+          "body": "Fair. I'll add `placeholderData: keepPreviousData`.",
           "minutesAgo": 95
         }
       ]
     },
     {
-      "path": "src/routes/orders/components/OrderForm.tsx",
-      "line": 53,
-      "isResolved": false,
-      "comments": [
-        {
-          "author": "dinesh",
-          "body": "Clearing this field puts a 0 back in it, and `min={1}` then makes the browser block the submit with its own tooltip. Should the form show a message of its own instead?",
-          "minutesAgo": 120
-        }
-      ]
-    },
-    {
-      "path": "src/routes/orders/edit.tsx",
-      "line": 15,
+      "path": "src/routes/pokemon/components/PokemonFilters.tsx",
+      "line": 21,
       "isResolved": true,
       "comments": [
         {
           "author": "dinesh",
-          "body": "Nothing happens when the save fails. Can we show the error?",
+          "body": "Why does the trainer filter go to the API when the type filter doesn't?",
           "minutesAgo": 200
         },
         {
           "author": "richard",
-          "body": "I'll handle save errors in a follow-up, together with the create page.",
+          "body": "`GET /api/pokemon` takes a `trainer_id` and has no type parameter, so the type is filtered on the list we already loaded.",
           "minutesAgo": 180
+        }
+      ]
+    },
+    {
+      "path": "src/stores/pokemon-filters.ts",
+      "line": 22,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "Should the filters reset when I leave the page? They're still set when I come back to it.",
+          "minutesAgo": 120
         }
       ]
     }
@@ -77,25 +77,25 @@
     {
       "author": "gilfoyle",
       "verdict": "request-changes",
-      "body": "The edit page can overwrite the status. Details inline.",
+      "body": "Switching trainers blanks the list. Details inline.",
       "minutesAgo": 138
     },
     {
       "author": "dinesh",
       "verdict": "comment",
-      "body": "Reads well. One question on the quantity input.",
+      "body": "Works for me locally. One question on the filters.",
       "minutesAgo": 118
     }
   ],
   "chat": [
     {
       "from": "reviewer",
-      "body": "Why does EditOrderPage take the id from the URL instead of from the order it loaded?",
+      "body": "Why does usePokemon read the store itself instead of taking the filters as arguments?",
       "minutesAgo": 40
     },
     {
       "from": "agent",
-      "body": "`handleSubmit` in `EditOrderPage` spreads the draft and then sets `id: orderId` from the URL, so the request path and the body always name the same order. The loaded order has the same id, so the two only differ if the URL changes while the page is open.",
+      "body": "`usePokemon()` calls `usePokemonFilters()` with one selector per filter, so `<PokemonPage />` passes it nothing and the hook renders again only when `type` or `trainerId` changes. `<PokemonFilters />` writes the same store, so the list follows the filters with no props between the two components.",
       "minutesAgo": 39
     }
   ],

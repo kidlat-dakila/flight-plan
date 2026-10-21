@@ -1,0 +1,3819 @@
+{
+  "title": "Implement page PokemonPage",
+  "diff": [
+    "diff --git a/src/types/pokemon.ts b/src/types/pokemon.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/types/pokemon.ts",
+    "@@ -0,0 +1,15 @@",
+    "+export const POKEMON_TYPES = [",
+    "+  \"normal\", \"fire\", \"water\", \"grass\", \"electric\", \"ice\", \"fighting\", \"poison\", \"ground\",",
+    "+  \"flying\", \"psychic\", \"bug\", \"rock\", \"ghost\", \"dragon\", \"dark\", \"steel\", \"fairy\",",
+    "+] as const",
+    "+",
+    "+export type PokemonType = (typeof POKEMON_TYPES)[number]",
+    "+",
+    "+export interface Pokemon {",
+    "+  id: number",
+    "+  name: string",
+    "+  level: number",
+    "+  primary_type: PokemonType",
+    "+  secondary_type: PokemonType | null",
+    "+  trainer_id: number | null",
+    "+}",
+    "diff --git a/src/api/pokemon.ts b/src/api/pokemon.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/api/pokemon.ts",
+    "@@ -0,0 +1,7 @@",
+    "+import { request } from \"@/api/client\"",
+    "+import type { Pokemon } from \"@/types/pokemon\"",
+    "+",
+    "+export const fetchPokemon = (trainerId: number | null): Promise<Pokemon[]> => {",
+    "+  const query = trainerId === null ? \"\" : `?trainer_id=${trainerId}`",
+    "+  return request<Pokemon[]>(`/pokemon${query}`)",
+    "+}",
+    "diff --git a/src/stores/pokemon-filters.ts b/src/stores/pokemon-filters.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/stores/pokemon-filters.ts",
+    "@@ -0,0 +1,15 @@",
+    "+import { defineStore } from \"pinia\"",
+    "+import { ref } from \"vue\"",
+    "+import type { PokemonType } from \"@/types/pokemon\"",
+    "+",
+    "+export const usePokemonFiltersStore = defineStore(\"pokemonFilters\", () => {",
+    "+  const type = ref<PokemonType | null>(null)",
+    "+  const trainerId = ref<number | null>(null)",
+    "+",
+    "+  const clear = () => {",
+    "+    type.value = null",
+    "+    trainerId.value = null",
+    "+  }",
+    "+",
+    "+  return { type, trainerId, clear }",
+    "+})",
+    "diff --git a/src/composables/use-pokemon.ts b/src/composables/use-pokemon.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/composables/use-pokemon.ts",
+    "@@ -0,0 +1,21 @@",
+    "+import { useQuery } from \"@tanstack/vue-query\"",
+    "+import { storeToRefs } from \"pinia\"",
+    "+import { computed } from \"vue\"",
+    "+import { fetchPokemon } from \"@/api/pokemon\"",
+    "+import { usePokemonFiltersStore } from \"@/stores/pokemon-filters\"",
+    "+import type { Pokemon, PokemonType } from \"@/types/pokemon\"",
+    "+",
+    "+const POKEMON_QUERY_KEY = \"pokemon\"",
+    "+",
+    "+const hasType = (pokemon: Pokemon, type: PokemonType | null): boolean =>",
+    "+  type === null || pokemon.primary_type === type || pokemon.secondary_type === type",
+    "+",
+    "+export const usePokemon = () => {",
+    "+  const { type, trainerId } = storeToRefs(usePokemonFiltersStore())",
+    "+  const query = useQuery({",
+    "+    queryKey: [POKEMON_QUERY_KEY, trainerId],",
+    "+    queryFn: () => fetchPokemon(trainerId.value),",
+    "+  })",
+    "+  const pokemon = computed(() => (query.data.value ?? []).filter((entry) => hasType(entry, type.value)))",
+    "+  return { ...query, pokemon }",
+    "+}",
+    "diff --git a/src/lib/format.ts b/src/lib/format.ts",
+    "--- a/src/lib/format.ts",
+    "+++ b/src/lib/format.ts",
+    "@@ -0,0 +1,2 @@",
+    "+import type { Pokemon } from \"@/types/pokemon\"",
+    "+",
+    "@@ -5,0 +8,3 @@ export const formatPrice = (price: number): string => `${POKE_DOLLAR}${priceForm",
+    "+",
+    "+export const formatTypes = (pokemon: Pokemon): string =>",
+    "+  pokemon.secondary_type === null ? pokemon.primary_type : `${pokemon.primary_type} / ${pokemon.secondary_type}`",
+    "diff --git a/src/views/pokemon/components/PokemonFilters.vue b/src/views/pokemon/components/PokemonFilters.vue",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/views/pokemon/components/PokemonFilters.vue",
+    "@@ -0,0 +1,25 @@",
+    "+<script setup lang=\"ts\">",
+    "+import { storeToRefs } from \"pinia\"",
+    "+import { BaseButton } from \"@/components/ui\"",
+    "+import { useTrainers } from \"@/composables/use-trainers\"",
+    "+import { usePokemonFiltersStore } from \"@/stores/pokemon-filters\"",
+    "+import { POKEMON_TYPES } from \"@/types/pokemon\"",
+    "+",
+    "+const filters = usePokemonFiltersStore()",
+    "+const { type, trainerId } = storeToRefs(filters)",
+    "+const { data: trainers } = useTrainers()",
+    "+</script>",
+    "+",
+    "+<template>",
+    "+  <div>",
+    "+    <select v-model=\"type\">",
+    "+      <option :value=\"null\">Every type</option>",
+    "+      <option v-for=\"pokemonType in POKEMON_TYPES\" :key=\"pokemonType\" :value=\"pokemonType\">{{ pokemonType }}</option>",
+    "+    </select>",
+    "+    <select v-model=\"trainerId\">",
+    "+      <option :value=\"null\">Every trainer</option>",
+    "+      <option v-for=\"trainer in trainers\" :key=\"trainer.id\" :value=\"trainer.id\">{{ trainer.name }}</option>",
+    "+    </select>",
+    "+    <BaseButton variant=\"ghost\" @click=\"filters.clear()\">Clear filters</BaseButton>",
+    "+  </div>",
+    "+</template>",
+    "diff --git a/src/views/pokemon/PokemonPage.vue b/src/views/pokemon/PokemonPage.vue",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/views/pokemon/PokemonPage.vue",
+    "@@ -0,0 +1,19 @@",
+    "+<script setup lang=\"ts\">",
+    "+import { usePokemon } from \"@/composables/use-pokemon\"",
+    "+import { formatTypes } from \"@/lib/format\"",
+    "+import PokemonFilters from \"@/views/pokemon/components/PokemonFilters.vue\"",
+    "+",
+    "+const { pokemon, isPending, isError } = usePokemon()",
+    "+</script>",
+    "+",
+    "+<template>",
+    "+  <section>",
+    "+    <h1>Pokemon</h1>",
+    "+    <PokemonFilters />",
+    "+    <p v-if=\"isPending\">Loading the Pokemon…</p>",
+    "+    <p v-else-if=\"isError\">The Pokemon could not be loaded.</p>",
+    "+    <ul v-else>",
+    "+      <li v-for=\"entry in pokemon\" :key=\"entry.id\">{{ entry.name }} Lv. {{ entry.level }} {{ formatTypes(entry) }}</li>",
+    "+    </ul>",
+    "+  </section>",
+    "+</template>",
+    "diff --git a/src/router.ts b/src/router.ts",
+    "--- a/src/router.ts",
+    "+++ b/src/router.ts",
+    "@@ -3,0 +4 @@ import ItemsPage from \"@/views/items/ItemsPage.vue\"",
+    "+import PokemonPage from \"@/views/pokemon/PokemonPage.vue\"",
+    "@@ -14,0 +16 @@ export const router = createRouter({",
+    "+        { path: \"pokemon\", component: PokemonPage },",
+    "diff --git a/src/views/RootLayout.vue b/src/views/RootLayout.vue",
+    "--- a/src/views/RootLayout.vue",
+    "+++ b/src/views/RootLayout.vue",
+    "@@ -13,0 +14 @@ const session = inject(sessionKey)",
+    "+      <RouterLink to=\"/pokemon\">Pokemon</RouterLink>",
+    "diff --git a/src/main.ts b/src/main.ts",
+    "--- a/src/main.ts",
+    "+++ b/src/main.ts",
+    "@@ -1,0 +2 @@ import { VueQueryPlugin } from \"@tanstack/vue-query\"",
+    "+import { createPinia } from \"pinia\"",
+    "@@ -9,0 +11 @@ app.use(router)",
+    "+app.use(createPinia())"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Groundwork for the new components and composables",
+        "context": [
+          "This segment adds the Pokemon type, the Pinia store that keeps the chosen filters and a formatter for the types of a Pokemon, which the new Pokemon page uses. It also adds a Pokemon link to the header of every page."
+        ],
+        "kind": "shared",
+        "importGraph": [
+          {
+            "filePath": "src/App.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/components/session.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/session": "src/components/session.ts"
+            }
+          },
+          {
+            "filePath": "src/api/client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/items.ts",
+              "src/api/pokemon.ts",
+              "src/api/trainers.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/api/items.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/composables/use-items.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/api/trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/composables/use-trainers.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/components/session.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.vue",
+              "src/views/RootLayout.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/components/ui/BaseButton.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/components/ui/BaseInput.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/components/ui/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/RootLayout.vue",
+              "src/views/pokemon/components/PokemonFilters.vue"
+            ],
+            "importsTo": [
+              "src/components/ui/BaseButton.vue",
+              "src/components/ui/BaseInput.vue"
+            ],
+            "importedFilePaths": {
+              "./BaseButton.vue": "src/components/ui/BaseButton.vue",
+              "./BaseInput.vue": "src/components/ui/BaseInput.vue"
+            }
+          },
+          {
+            "filePath": "src/composables/use-items.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importsTo": [
+              "src/api/items.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/items": "src/api/items.ts"
+            }
+          },
+          {
+            "filePath": "src/composables/use-trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/pokemon/components/PokemonFilters.vue",
+              "src/views/trainers/TrainersPage.vue"
+            ],
+            "importsTo": [
+              "src/api/trainers.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/trainers": "src/api/trainers.ts"
+            }
+          },
+          {
+            "filePath": "src/lib/format.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/views/items/ItemsPage.vue",
+              "src/views/pokemon/PokemonPage.vue"
+            ],
+            "importsTo": [
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/lib/query-client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/stores/pokemon-filters.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/composables/use-pokemon.ts",
+              "src/views/pokemon/components/PokemonFilters.vue"
+            ],
+            "importsTo": [
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/types/item.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/items.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/types/pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/api/pokemon.ts",
+              "src/composables/use-pokemon.ts",
+              "src/lib/format.ts",
+              "src/stores/pokemon-filters.ts",
+              "src/views/pokemon/components/PokemonFilters.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/types/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/trainers.ts",
+              "src/views/trainers/components/TrainerRow.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/views/RootLayout.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [
+              "src/components/session.ts",
+              "src/components/ui/index.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/session": "src/components/session.ts",
+              "@/components/ui": "src/components/ui/index.ts"
+            }
+          },
+          {
+            "filePath": "src/views/help/HelpPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/views/items/ItemsPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [
+              "src/composables/use-items.ts",
+              "src/lib/format.ts"
+            ],
+            "importedFilePaths": {
+              "@/composables/use-items": "src/composables/use-items.ts",
+              "@/lib/format": "src/lib/format.ts"
+            }
+          },
+          {
+            "filePath": "src/views/trainers/TrainersPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [
+              "src/composables/use-trainers.ts",
+              "src/views/trainers/components/TrainerRow.vue"
+            ],
+            "importedFilePaths": {
+              "@/composables/use-trainers": "src/composables/use-trainers.ts",
+              "@/views/trainers/components/TrainerRow.vue": "src/views/trainers/components/TrainerRow.vue"
+            }
+          },
+          {
+            "filePath": "src/views/trainers/components/TrainerRow.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/trainers/TrainersPage.vue"
+            ],
+            "importsTo": [
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "description": "This diagram shows how the filter store keeps the chosen type and trainer, how [`formatTypes()`](code:src/lib/format.ts#formatTypes) writes the types of a Pokemon, and how the header links to the Pokemon page.",
+          "traceNodes": [
+            {
+              "id": "src/views/RootLayout.vue#component@1:1",
+              "type": "component",
+              "label": "Renders the header and the page under it",
+              "description": "When a professor opens any page, the router renders this layout through [`component: RootLayout`](code:src/router.ts#L13).",
+              "codeBlockIds": [
+                "src/views/RootLayout.vue#component@1:1",
+                "src/views/RootLayout.vue#render-root@10:1",
+                "src/views/RootLayout.vue#render@11:3",
+                "src/views/RootLayout.vue#render@12:5",
+                "src/views/RootLayout.vue#render@14:7"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/RootLayout.vue#render@14:7"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/stores/pokemon-filters.ts#state@5:1",
+              "type": "state",
+              "label": "Keeps the chosen type and trainer",
+              "description": "When a professor opens /pokemon, [`PokemonFilters` binds its selects to the filters of this store](code:src/views/pokemon/components/PokemonFilters.vue#L8-9), and [`usePokemon()` reads them](code:src/composables/use-pokemon.ts#L14).",
+              "codeBlockIds": [
+                "src/stores/pokemon-filters.ts#state@5:1",
+                "src/stores/pokemon-filters.ts#effect@5:39",
+                "src/stores/pokemon-filters.ts#effect-callback@5:69",
+                "src/stores/pokemon-filters.ts#function@5:69",
+                "src/stores/pokemon-filters.ts#state@6:3",
+                "src/stores/pokemon-filters.ts#state@7:3",
+                "src/stores/pokemon-filters.ts#function@9:3",
+                "src/stores/pokemon-filters.ts#property@14:12",
+                "src/stores/pokemon-filters.ts#property@14:18",
+                "src/stores/pokemon-filters.ts#property@14:29"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/pokemon-filters.ts#state@5:1",
+                "src/stores/pokemon-filters.ts#effect@5:39",
+                "src/stores/pokemon-filters.ts#function@5:69",
+                "src/stores/pokemon-filters.ts#state@6:3",
+                "src/stores/pokemon-filters.ts#state@7:3",
+                "src/stores/pokemon-filters.ts#function@9:3",
+                "src/stores/pokemon-filters.ts#property@14:12",
+                "src/stores/pokemon-filters.ts#property@14:18",
+                "src/stores/pokemon-filters.ts#property@14:29"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps the chosen type, null at first",
+                  "codeBlockId": "src/stores/pokemon-filters.ts#state@6:3"
+                },
+                {
+                  "label": "Keeps the chosen trainer, null at first",
+                  "codeBlockId": "src/stores/pokemon-filters.ts#state@7:3"
+                },
+                {
+                  "label": "Sets both filters back to null",
+                  "codeBlockId": "src/stores/pokemon-filters.ts#function@9:3"
+                },
+                {
+                  "label": "Returns the two filters and the clear action",
+                  "codeBlockId": "src/stores/pokemon-filters.ts#property@14:12"
+                }
+              ]
+            },
+            {
+              "id": "src/lib/format.ts#function@9:1",
+              "type": "function",
+              "label": "Writes the types of a Pokemon as text",
+              "description": "When a professor opens /pokemon, [`PokemonPage` calls this function for each Pokemon of the list](code:src/views/pokemon/PokemonPage.vue#L16).",
+              "codeBlockIds": [
+                "src/lib/format.ts#function@9:1",
+                "src/lib/format.ts#root-argument-value@9:29",
+                "src/lib/format.ts#condition@10:3",
+                "src/lib/format.ts#root-argument-value@10:3",
+                "src/lib/format.ts#root-argument-value@10:37"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/format.ts#function@9:1",
+                "src/lib/format.ts#root-argument-value@9:29",
+                "src/lib/format.ts#condition@10:3",
+                "src/lib/format.ts#root-argument-value@10:3",
+                "src/lib/format.ts#root-argument-value@10:37"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Checks whether the Pokemon has a second type",
+                  "codeBlockId": "src/lib/format.ts#condition@10:3"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": []
+        },
+        "blastDiagram": {
+          "nodes": [
+            {
+              "path": "src/lib/format.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/stores/pokemon-filters.ts",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/types/pokemon.ts",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/views/RootLayout.vue",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/api/pokemon.ts",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/composables/use-pokemon.ts",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/router.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/views/pokemon/PokemonPage.vue",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/views/pokemon/components/PokemonFilters.vue",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            }
+          ],
+          "edges": [
+            {
+              "importer": "src/api/pokemon.ts",
+              "imported": "src/types/pokemon.ts"
+            },
+            {
+              "importer": "src/composables/use-pokemon.ts",
+              "imported": "src/types/pokemon.ts"
+            },
+            {
+              "importer": "src/composables/use-pokemon.ts",
+              "imported": "src/stores/pokemon-filters.ts"
+            },
+            {
+              "importer": "src/composables/use-pokemon.ts",
+              "imported": "src/api/pokemon.ts"
+            },
+            {
+              "importer": "src/lib/format.ts",
+              "imported": "src/types/pokemon.ts"
+            },
+            {
+              "importer": "src/main.ts",
+              "imported": "src/router.ts"
+            },
+            {
+              "importer": "src/router.ts",
+              "imported": "src/views/RootLayout.vue"
+            },
+            {
+              "importer": "src/router.ts",
+              "imported": "src/views/pokemon/PokemonPage.vue"
+            },
+            {
+              "importer": "src/stores/pokemon-filters.ts",
+              "imported": "src/types/pokemon.ts"
+            },
+            {
+              "importer": "src/views/pokemon/PokemonPage.vue",
+              "imported": "src/composables/use-pokemon.ts"
+            },
+            {
+              "importer": "src/views/pokemon/PokemonPage.vue",
+              "imported": "src/views/pokemon/components/PokemonFilters.vue"
+            },
+            {
+              "importer": "src/views/pokemon/PokemonPage.vue",
+              "imported": "src/lib/format.ts"
+            },
+            {
+              "importer": "src/views/pokemon/components/PokemonFilters.vue",
+              "imported": "src/stores/pokemon-filters.ts"
+            },
+            {
+              "importer": "src/views/pokemon/components/PokemonFilters.vue",
+              "imported": "src/types/pokemon.ts"
+            }
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/lib/format.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/stores/pokemon-filters.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/types/pokemon.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/views/RootLayout.vue",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/components/session.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/BaseButton.vue",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/lib/format.ts",
+                "imported": "src/types/pokemon.ts"
+              },
+              {
+                "importer": "src/stores/pokemon-filters.ts",
+                "imported": "src/types/pokemon.ts"
+              },
+              {
+                "importer": "src/views/RootLayout.vue",
+                "imported": "src/components/session.ts"
+              },
+              {
+                "importer": "src/views/RootLayout.vue",
+                "imported": "src/components/ui/BaseButton.vue"
+              }
+            ]
+          }
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/lib/format.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": "Added `formatTypes()` to write the types of a Pokemon",
+                  "declaration": "formatTypes",
+                  "reading": "The author added a function `formatTypes()` that returns the primary type of a Pokemon, or both types joined by ` / ` when it has a second type, such as `water / flying`. [`PokemonPage` calls it for each Pokemon of the list](code:src/views/pokemon/PokemonPage.vue#L16), so that each line shows the types after the name and the level.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 10
+                  },
+                  "category": "function",
+                  "traceNodeId": "src/lib/format.ts#function@9:1",
+                  "codeBlockIds": [
+                    "src/lib/format.ts#function@9:1",
+                    "src/lib/format.ts#root-argument-value@9:29",
+                    "src/lib/format.ts#condition@10:3",
+                    "src/lib/format.ts#root-argument-value@10:3",
+                    "src/lib/format.ts#root-argument-value@10:37"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/stores/pokemon-filters.ts",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "title": "Added the Pinia store of the Pokemon filters",
+                  "declaration": "usePokemonFiltersStore",
+                  "reading": "The author added a Pinia setup store `usePokemonFiltersStore` that:\n\n- keeps the chosen type in `type` and the chosen trainer in `trainerId`, both `null` at first\n- sets both back to `null` with `clear()`\n\n[`PokemonFilters` binds its selects to the two refs](code:src/views/pokemon/components/PokemonFilters.vue#L8-9) and [`usePokemon()` reads them](code:src/composables/use-pokemon.ts#L14), with no import between the two, so that a pick in the filters changes the list the page shows.",
+                  "coreChange": "This store is where the filters live. The selects of the filter component write it and [`usePokemon()`](code:src/composables/use-pokemon.ts#usePokemon) reads it, so what each filter starts at and what `clear()` sets decide what the page lists.",
+                  "findings": [
+                    {
+                      "id": "finding-filters-outlive-page",
+                      "kind": "question",
+                      "title": "`usePokemonFiltersStore` keeps the filters after the page closes",
+                      "reading": "[`defineStore()` makes one store for the whole app](code:src/stores/pokemon-filters.ts#L5), and [`createPinia()` installs it on the app](code:src/main.ts#L11), outside every page. So the chosen type and trainer stay set when a professor opens another page and comes back to /pokemon. Should the page open with the filters the professor chose last, or with no filter?",
+                      "trace": null,
+                      "solution": null
+                    }
+                  ],
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 15
+                  },
+                  "category": "variable",
+                  "traceNodeId": "src/stores/pokemon-filters.ts#state@5:1",
+                  "codeBlockIds": [
+                    "src/stores/pokemon-filters.ts#state@5:1",
+                    "src/stores/pokemon-filters.ts#effect@5:39",
+                    "src/stores/pokemon-filters.ts#function@5:69",
+                    "src/stores/pokemon-filters.ts#state@6:3",
+                    "src/stores/pokemon-filters.ts#state@7:3",
+                    "src/stores/pokemon-filters.ts#function@9:3",
+                    "src/stores/pokemon-filters.ts#property@14:12",
+                    "src/stores/pokemon-filters.ts#property@14:18",
+                    "src/stores/pokemon-filters.ts#property@14:29"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/types/pokemon.ts",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "title": "Added the list of Pokemon types",
+                  "declaration": "POKEMON_TYPES",
+                  "reading": "The author added a constant `POKEMON_TYPES` that lists the 18 Pokemon types, from `\"normal\"` to `\"fairy\"`. [`PokemonFilters` renders one option per type](code:src/views/pokemon/components/PokemonFilters.vue#L17), so that the type filter offers every type.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 4
+                  },
+                  "category": "variable",
+                  "traceNodeId": null,
+                  "codeBlockIds": [
+                    "src/types/pokemon.ts#root-variable@1:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "title": "Added the type of one Pokemon type",
+                  "declaration": "PokemonType",
+                  "reading": "The author added a type `PokemonType` that is the union of the names in `POKEMON_TYPES`. [The filter store keeps the chosen type as one](code:src/stores/pokemon-filters.ts#L6), so that the store holds only a type the list has.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 6
+                  },
+                  "category": "type",
+                  "traceNodeId": null,
+                  "codeBlockIds": [
+                    "src/types/pokemon.ts#type-declaration@6:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w5",
+                  "title": "Added the `Pokemon` interface",
+                  "declaration": "Pokemon",
+                  "reading": "The author added an interface `Pokemon` with an `id`, a `name`, a `level`, a `primary_type`, a `secondary_type` that is `null` for a Pokemon with one type, and a `trainer_id` that is `null` for a Pokemon with no trainer. The fields keep the snake_case names of the JSON the API returns, so that [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon) returns the response as it is.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 15
+                  },
+                  "category": "type",
+                  "traceNodeId": null,
+                  "codeBlockIds": [
+                    "src/types/pokemon.ts#type-declaration@8:1"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/views/RootLayout.vue",
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "title": "Modified `RootLayout` to link to the Pokemon page",
+                  "declaration": "RootLayout",
+                  "reading": "The author modified the component `RootLayout` to render a `<RouterLink to=\"/pokemon\">` with the text `Pokemon` in the header, between `Trainers` and `Items`. [The router renders `PokemonPage` at that path](code:src/router.ts#L16), so that a professor can open the new page from every page.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 24
+                  },
+                  "category": "function",
+                  "traceNodeId": "src/views/RootLayout.vue#component@1:1",
+                  "codeBlockIds": [
+                    "src/views/RootLayout.vue#component@1:1",
+                    "src/views/RootLayout.vue#render@14:7"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/lib/format.ts",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 57,
+                "endColumn": 68,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 71,
+                "endColumn": 85,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 37,
+                "endColumn": 44,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  8,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 2,
+                "endColumn": 9,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 36,
+                "endColumn": 43,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 62,
+                "endColumn": 69,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 88,
+                "endColumn": 95,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 27,
+                "endColumn": 31,
+                "name": "Intl"
+              }
+            ],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  7,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 64,
+                    "endColumn": 75,
+                    "path": "src/views/items/ItemsPage.vue",
+                    "text": "    <li v-for=\"item in items\" :key=\"item.id\">{{ item.name }} {{ formatPrice(item.price) }}</li>"
+                  }
+                ]
+              },
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  9,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 93,
+                    "endColumn": 104,
+                    "path": "src/views/pokemon/PokemonPage.vue",
+                    "text": "      <li v-for=\"entry in pokemon\" :key=\"entry.id\">{{ entry.name }} Lv. {{ entry.level }} {{ formatTypes(entry) }}</li>"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/stores/pokemon-filters.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 38,
+                "endColumn": 49,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pinia",
+                  "name": "defineStore"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 15,
+                "endColumn": 18,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 19,
+                "endColumn": 30,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 20,
+                "endColumn": 23,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 4,
+                "endColumn": 8,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 4,
+                "endColumn": 13,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 11,
+                "endColumn": 15,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 17,
+                "endColumn": 26,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 28,
+                "endColumn": 33,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  9,
+                  12
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 35,
+                "lines": [
+                  5,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 14,
+                    "startColumn": 42,
+                    "endColumn": 64,
+                    "path": "src/composables/use-pokemon.ts",
+                    "text": "  const { type, trainerId } = storeToRefs(usePokemonFiltersStore())"
+                  },
+                  {
+                    "line": 8,
+                    "startColumn": 16,
+                    "endColumn": 38,
+                    "path": "src/views/pokemon/components/PokemonFilters.vue",
+                    "text": "const filters = usePokemonFiltersStore()"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/types/pokemon.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 34,
+                "endColumn": 47,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 16,
+                "endColumn": 27,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 18,
+                "endColumn": 29,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 13,
+                "endColumn": 26,
+                "lines": [
+                  1,
+                  4
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 36,
+                    "endColumn": 49,
+                    "path": "src/views/pokemon/components/PokemonFilters.vue",
+                    "text": "      <option v-for=\"pokemonType in POKEMON_TYPES\" :key=\"pokemonType\" :value=\"pokemonType\">{{ pokemonType }}</option>"
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "startColumn": 12,
+                "endColumn": 23,
+                "lines": [
+                  6,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 41,
+                    "endColumn": 52,
+                    "path": "src/composables/use-pokemon.ts",
+                    "text": "const hasType = (pokemon: Pokemon, type: PokemonType | null): boolean =>"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 19,
+                    "endColumn": 30,
+                    "path": "src/stores/pokemon-filters.ts",
+                    "text": "  const type = ref<PokemonType | null>(null)"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 17,
+                "endColumn": 24,
+                "lines": [
+                  8,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 64,
+                    "endColumn": 71,
+                    "path": "src/api/pokemon.ts",
+                    "text": "export const fetchPokemon = (trainerId: number | null): Promise<Pokemon[]> => {"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 17,
+                    "endColumn": 24,
+                    "path": "src/api/pokemon.ts",
+                    "text": "  return request<Pokemon[]>(`/pokemon${query}`)"
+                  },
+                  {
+                    "line": 10,
+                    "startColumn": 26,
+                    "endColumn": 33,
+                    "path": "src/composables/use-pokemon.ts",
+                    "text": "const hasType = (pokemon: Pokemon, type: PokemonType | null): boolean =>"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 37,
+                    "endColumn": 44,
+                    "path": "src/lib/format.ts",
+                    "text": "export const formatTypes = (pokemon: Pokemon): string =>"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/views/RootLayout.vue",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 22,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "inject"
+                }
+              },
+              {
+                "line": 7,
+                "startColumn": 23,
+                "endColumn": 33,
+                "path": "src/components/session.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "RouterLink"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "RouterLink"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "RouterLink"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "RouterLink"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 42,
+                "endColumn": 49,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "RouterView"
+                }
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  24
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 17,
+                    "endColumn": 27,
+                    "path": "src/router.ts",
+                    "text": "      component: RootLayout,"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "New PokemonPage and usePokemon, modified router",
+        "context": [
+          "This segment adds the Pokemon page at /pokemon and installs Pinia in the app. The page lists the Pokemon from the API with their level and types, and a professor can narrow the list to one type or to the Pokemon of one trainer."
+        ],
+        "kind": "entry",
+        "importGraph": [
+          {
+            "filePath": "src/App.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/components/session.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/session": "src/components/session.ts"
+            }
+          },
+          {
+            "filePath": "src/api/client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/items.ts",
+              "src/api/pokemon.ts",
+              "src/api/trainers.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/api/items.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/composables/use-items.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/api/pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/composables/use-pokemon.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/api/trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/composables/use-trainers.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/components/session.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.vue",
+              "src/views/RootLayout.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/components/ui/BaseButton.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/components/ui/BaseInput.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/components/ui/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/RootLayout.vue",
+              "src/views/pokemon/components/PokemonFilters.vue"
+            ],
+            "importsTo": [
+              "src/components/ui/BaseButton.vue",
+              "src/components/ui/BaseInput.vue"
+            ],
+            "importedFilePaths": {
+              "./BaseButton.vue": "src/components/ui/BaseButton.vue",
+              "./BaseInput.vue": "src/components/ui/BaseInput.vue"
+            }
+          },
+          {
+            "filePath": "src/composables/use-items.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importsTo": [
+              "src/api/items.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/items": "src/api/items.ts"
+            }
+          },
+          {
+            "filePath": "src/composables/use-pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/pokemon/PokemonPage.vue"
+            ],
+            "importsTo": [
+              "src/api/pokemon.ts",
+              "src/stores/pokemon-filters.ts",
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/pokemon": "src/api/pokemon.ts",
+              "@/stores/pokemon-filters": "src/stores/pokemon-filters.ts",
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/composables/use-trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/pokemon/components/PokemonFilters.vue",
+              "src/views/trainers/TrainersPage.vue"
+            ],
+            "importsTo": [
+              "src/api/trainers.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/trainers": "src/api/trainers.ts"
+            }
+          },
+          {
+            "filePath": "src/lib/query-client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/App.vue",
+              "src/lib/query-client.ts",
+              "src/router.ts"
+            ],
+            "importedFilePaths": {
+              "@/App.vue": "src/App.vue",
+              "@/lib/query-client": "src/lib/query-client.ts",
+              "@/router": "src/router.ts"
+            }
+          },
+          {
+            "filePath": "src/router.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/views/RootLayout.vue",
+              "src/views/help/HelpPage.vue",
+              "src/views/items/ItemsPage.vue",
+              "src/views/pokemon/PokemonPage.vue",
+              "src/views/trainers/TrainersPage.vue"
+            ],
+            "importedFilePaths": {
+              "@/views/help/HelpPage.vue": "src/views/help/HelpPage.vue",
+              "@/views/items/ItemsPage.vue": "src/views/items/ItemsPage.vue",
+              "@/views/pokemon/PokemonPage.vue": "src/views/pokemon/PokemonPage.vue",
+              "@/views/RootLayout.vue": "src/views/RootLayout.vue",
+              "@/views/trainers/TrainersPage.vue": "src/views/trainers/TrainersPage.vue"
+            }
+          },
+          {
+            "filePath": "src/types/item.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/items.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/types/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/trainers.ts",
+              "src/views/trainers/components/TrainerRow.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/views/help/HelpPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/views/items/ItemsPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [
+              "src/composables/use-items.ts",
+              "src/lib/format.ts"
+            ],
+            "importedFilePaths": {
+              "@/composables/use-items": "src/composables/use-items.ts",
+              "@/lib/format": "src/lib/format.ts"
+            }
+          },
+          {
+            "filePath": "src/views/pokemon/PokemonPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [
+              "src/composables/use-pokemon.ts",
+              "src/lib/format.ts",
+              "src/views/pokemon/components/PokemonFilters.vue"
+            ],
+            "importedFilePaths": {
+              "@/composables/use-pokemon": "src/composables/use-pokemon.ts",
+              "@/lib/format": "src/lib/format.ts",
+              "@/views/pokemon/components/PokemonFilters.vue": "src/views/pokemon/components/PokemonFilters.vue"
+            }
+          },
+          {
+            "filePath": "src/views/pokemon/components/PokemonFilters.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/pokemon/PokemonPage.vue"
+            ],
+            "importsTo": [
+              "src/components/ui/index.ts",
+              "src/composables/use-trainers.ts",
+              "src/stores/pokemon-filters.ts",
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/composables/use-trainers": "src/composables/use-trainers.ts",
+              "@/stores/pokemon-filters": "src/stores/pokemon-filters.ts",
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/views/trainers/TrainersPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [
+              "src/composables/use-trainers.ts",
+              "src/views/trainers/components/TrainerRow.vue"
+            ],
+            "importedFilePaths": {
+              "@/composables/use-trainers": "src/composables/use-trainers.ts",
+              "@/views/trainers/components/TrainerRow.vue": "src/views/trainers/components/TrainerRow.vue"
+            }
+          },
+          {
+            "filePath": "src/views/trainers/components/TrainerRow.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/trainers/TrainersPage.vue"
+            ],
+            "importsTo": [
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "description": "This diagram shows how the router opens the Pokemon page, and how [`usePokemon()`](code:src/composables/use-pokemon.ts#usePokemon) loads the Pokemon through [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon) with the filters of the store. It also shows what happens when the user clears the filters, and how the click reaches the filter store.",
+          "traceNodes": [
+            {
+              "id": "src/router.ts#root-variable@8:1",
+              "type": "root-variable",
+              "label": "Renders the page that matches the URL",
+              "description": "When the app starts, [`src/main.ts` installs this router with `app.use(router)`](code:src/main.ts#L10). When a professor opens a page, `<RouterView />` renders the route that matches its path.",
+              "codeBlockIds": [
+                "src/router.ts#root-variable@8:1",
+                "src/router.ts#property@14:7",
+                "src/router.ts#property@16:11",
+                "src/router.ts#effect-callback@16:28"
+              ],
+              "diffCodeBlockIds": [
+                "src/router.ts#property@14:7",
+                "src/router.ts#property@16:11",
+                "src/router.ts#effect-callback@16:28"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Renders the pages inside the layout",
+                  "codeBlockId": "src/router.ts#property@10:3"
+                },
+                {
+                  "label": "Renders the Pokemon page at /pokemon",
+                  "codeBlockId": "src/router.ts#effect-callback@16:28"
+                }
+              ]
+            },
+            {
+              "id": "src/views/pokemon/PokemonPage.vue#component@1:1",
+              "type": "component",
+              "label": "Lists the Pokemon that match the filters",
+              "description": "When a professor opens /pokemon, the router renders this page through [`component: PokemonPage`](code:src/router.ts#L16).",
+              "codeBlockIds": [
+                "src/views/pokemon/PokemonPage.vue#component@1:1",
+                "src/views/pokemon/PokemonPage.vue#external-value@6:1",
+                "src/views/pokemon/PokemonPage.vue#render-root@9:1",
+                "src/views/pokemon/PokemonPage.vue#render@10:3",
+                "src/views/pokemon/PokemonPage.vue#render@11:5",
+                "src/views/pokemon/PokemonPage.vue#render@12:5",
+                "src/views/pokemon/PokemonPage.vue#render-condition@13:5",
+                "src/views/pokemon/PokemonPage.vue#render@13:5",
+                "src/views/pokemon/PokemonPage.vue#render-condition@14:5",
+                "src/views/pokemon/PokemonPage.vue#render@14:5",
+                "src/views/pokemon/PokemonPage.vue#render-condition@15:5",
+                "src/views/pokemon/PokemonPage.vue#render@15:5",
+                "src/views/pokemon/PokemonPage.vue#render-loop@16:7",
+                "src/views/pokemon/PokemonPage.vue#render@16:7"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/pokemon/PokemonPage.vue#component@1:1",
+                "src/views/pokemon/PokemonPage.vue#external-value@6:1",
+                "src/views/pokemon/PokemonPage.vue#render-root@9:1",
+                "src/views/pokemon/PokemonPage.vue#render@10:3",
+                "src/views/pokemon/PokemonPage.vue#render@11:5",
+                "src/views/pokemon/PokemonPage.vue#render@12:5",
+                "src/views/pokemon/PokemonPage.vue#render@13:5",
+                "src/views/pokemon/PokemonPage.vue#render@14:5",
+                "src/views/pokemon/PokemonPage.vue#render@15:5",
+                "src/views/pokemon/PokemonPage.vue#render@16:7"
+              ],
+              "children": [
+                {
+                  "id": "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                  "type": "component",
+                  "label": "Renders the type and trainer filters",
+                  "description": "When a professor opens /pokemon, the page renders this component above the list. Its selects write the filters of the store through `v-model`, and it reads [the trainers from `useTrainers()`](code:src/composables/use-trainers.ts#L6-8).",
+                  "codeBlockIds": [
+                    "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                    "src/types/pokemon.ts#root-variable@1:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#external-value@8:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#external-value@9:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#external-value@10:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#render-root@13:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@14:3",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@15:5",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@16:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render-loop@17:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@17:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@19:5",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@20:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render-loop@21:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@21:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@23:5",
+                    "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                    "src/types/pokemon.ts#root-variable@1:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#external-value@8:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#external-value@9:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#external-value@10:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#render-root@13:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@14:3",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@15:5",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@16:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@17:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@19:5",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@20:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@21:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@23:5",
+                    "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33"
+                  ],
+                  "children": [],
+                  "triggerLabels": [
+                    {
+                      "label": "A professor clicks Clear filters",
+                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33"
+                    }
+                  ],
+                  "blockLabels": [
+                    {
+                      "label": "Lists every Pokemon type as an option",
+                      "codeBlockId": "src/types/pokemon.ts#root-variable@1:1"
+                    },
+                    {
+                      "label": "Gets the filter store",
+                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#external-value@8:1"
+                    },
+                    {
+                      "label": "Reads the type and the trainer as refs the selects write",
+                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#external-value@9:1"
+                    },
+                    {
+                      "label": "Gets the trainers for the trainer select",
+                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#external-value@10:1"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Gets the Pokemon that match the filters",
+                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#external-value@6:1"
+                }
+              ]
+            },
+            {
+              "id": "src/stores/pokemon-filters.ts#state@5:1",
+              "type": "state",
+              "label": "Keeps the chosen type and trainer",
+              "description": "When a professor picks a type or a trainer, [a select of `PokemonFilters` writes this store through `v-model`](code:src/views/pokemon/components/PokemonFilters.vue#L15). When the professor clicks Clear filters, [the button calls `filters.clear()`](code:src/views/pokemon/components/PokemonFilters.vue#L23). [`usePokemon()` reads the type and the trainer from it](code:src/composables/use-pokemon.ts#L14).",
+              "codeBlockIds": [
+                "src/stores/pokemon-filters.ts#state@5:1",
+                "src/stores/pokemon-filters.ts#effect@5:39",
+                "src/stores/pokemon-filters.ts#effect-callback@5:69",
+                "src/stores/pokemon-filters.ts#function@5:69",
+                "src/stores/pokemon-filters.ts#state@6:3",
+                "src/stores/pokemon-filters.ts#state@7:3",
+                "src/stores/pokemon-filters.ts#function@9:3",
+                "src/stores/pokemon-filters.ts#property@14:12",
+                "src/stores/pokemon-filters.ts#property@14:18",
+                "src/stores/pokemon-filters.ts#property@14:29"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/pokemon-filters.ts#state@5:1",
+                "src/stores/pokemon-filters.ts#effect@5:39",
+                "src/stores/pokemon-filters.ts#function@5:69",
+                "src/stores/pokemon-filters.ts#state@6:3",
+                "src/stores/pokemon-filters.ts#state@7:3",
+                "src/stores/pokemon-filters.ts#function@9:3",
+                "src/stores/pokemon-filters.ts#property@14:12",
+                "src/stores/pokemon-filters.ts#property@14:18",
+                "src/stores/pokemon-filters.ts#property@14:29"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps the chosen type, null at first",
+                  "codeBlockId": "src/stores/pokemon-filters.ts#state@6:3"
+                },
+                {
+                  "label": "Keeps the chosen trainer, null at first",
+                  "codeBlockId": "src/stores/pokemon-filters.ts#state@7:3"
+                },
+                {
+                  "label": "Sets both filters back to null",
+                  "codeBlockId": "src/stores/pokemon-filters.ts#function@9:3"
+                },
+                {
+                  "label": "Returns the two filters and the clear action",
+                  "codeBlockId": "src/stores/pokemon-filters.ts#property@14:12"
+                }
+              ]
+            },
+            {
+              "id": "src/composables/use-pokemon.ts#hook@13:1",
+              "type": "hook",
+              "label": "Loads the Pokemon that match the filters",
+              "description": "When a professor opens /pokemon, [`PokemonPage` calls this composable](code:src/views/pokemon/PokemonPage.vue#L6).",
+              "codeBlockIds": [
+                "src/composables/use-pokemon.ts#hook@13:1",
+                "src/composables/use-pokemon.ts#root-variable@8:1",
+                "src/composables/use-pokemon.ts#external-value@14:3",
+                "src/composables/use-pokemon.ts#external-value@15:3",
+                "src/composables/use-pokemon.ts#component-effect@15:17",
+                "src/composables/use-pokemon.ts#property@16:5",
+                "src/composables/use-pokemon.ts#effect-callback@17:5",
+                "src/composables/use-pokemon.ts#function@17:14",
+                "src/composables/use-pokemon.ts#derived@19:3",
+                "src/composables/use-pokemon.ts#component-effect@19:19",
+                "src/composables/use-pokemon.ts#effect-callback@19:28",
+                "src/composables/use-pokemon.ts#function@19:28",
+                "src/composables/use-pokemon.ts#function@19:66",
+                "src/composables/use-pokemon.ts#variable@19:67",
+                "src/composables/use-pokemon.ts#property@20:22"
+              ],
+              "diffCodeBlockIds": [
+                "src/composables/use-pokemon.ts#hook@13:1",
+                "src/composables/use-pokemon.ts#root-variable@8:1",
+                "src/composables/use-pokemon.ts#external-value@14:3",
+                "src/composables/use-pokemon.ts#external-value@15:3",
+                "src/composables/use-pokemon.ts#component-effect@15:17",
+                "src/composables/use-pokemon.ts#property@16:5",
+                "src/composables/use-pokemon.ts#effect-callback@17:5",
+                "src/composables/use-pokemon.ts#function@17:14",
+                "src/composables/use-pokemon.ts#derived@19:3",
+                "src/composables/use-pokemon.ts#component-effect@19:19",
+                "src/composables/use-pokemon.ts#function@19:28",
+                "src/composables/use-pokemon.ts#function@19:66",
+                "src/composables/use-pokemon.ts#variable@19:67",
+                "src/composables/use-pokemon.ts#property@20:22"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Starts the key of every Pokemon query",
+                  "codeBlockId": "src/composables/use-pokemon.ts#root-variable@8:1"
+                },
+                {
+                  "label": "Reads the type and the trainer from the store as refs",
+                  "codeBlockId": "src/composables/use-pokemon.ts#external-value@14:3"
+                },
+                {
+                  "label": "Gets the query of the Pokemon",
+                  "codeBlockId": "src/composables/use-pokemon.ts#external-value@15:3"
+                },
+                {
+                  "label": "Loads the Pokemon again when the trainer changes",
+                  "codeBlockId": "src/composables/use-pokemon.ts#component-effect@15:17"
+                },
+                {
+                  "label": "Requests the Pokemon of the chosen trainer",
+                  "codeBlockId": "src/composables/use-pokemon.ts#effect-callback@17:5"
+                },
+                {
+                  "label": "Keeps only the Pokemon of the chosen type",
+                  "codeBlockId": "src/composables/use-pokemon.ts#derived@19:3"
+                },
+                {
+                  "label": "Returns the query with the filtered Pokemon",
+                  "codeBlockId": "src/composables/use-pokemon.ts#property@20:22"
+                }
+              ]
+            },
+            {
+              "id": "src/api/pokemon.ts#function@4:1",
+              "type": "function",
+              "label": "Requests the Pokemon from the API",
+              "description": "`useQuery` runs this function as [the query function of `usePokemon()`](code:src/composables/use-pokemon.ts#L17), with the trainer of the store.",
+              "codeBlockIds": [
+                "src/api/pokemon.ts#function@4:1",
+                "src/api/pokemon.ts#root-argument-value@4:30",
+                "src/api/pokemon.ts#variable@5:3",
+                "src/api/pokemon.ts#condition@5:17"
+              ],
+              "diffCodeBlockIds": [
+                "src/api/pokemon.ts#function@4:1",
+                "src/api/pokemon.ts#root-argument-value@4:30",
+                "src/api/pokemon.ts#variable@5:3",
+                "src/api/pokemon.ts#condition@5:17"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Adds the trainer to the query string when one is chosen",
+                  "codeBlockId": "src/api/pokemon.ts#variable@5:3"
+                }
+              ]
+            },
+            {
+              "id": "src/lib/format.ts#function@9:1",
+              "type": "function",
+              "label": "Writes the types of a Pokemon as text",
+              "description": "When a professor opens /pokemon, [`PokemonPage` calls this function for each Pokemon of the list](code:src/views/pokemon/PokemonPage.vue#L16).",
+              "codeBlockIds": [
+                "src/lib/format.ts#function@9:1",
+                "src/lib/format.ts#root-argument-value@9:29",
+                "src/lib/format.ts#condition@10:3",
+                "src/lib/format.ts#root-argument-value@10:3",
+                "src/lib/format.ts#root-argument-value@10:37"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/format.ts#function@9:1",
+                "src/lib/format.ts#root-argument-value@9:29",
+                "src/lib/format.ts#condition@10:3",
+                "src/lib/format.ts#root-argument-value@10:3",
+                "src/lib/format.ts#root-argument-value@10:37"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Checks whether the Pokemon has a second type",
+                  "codeBlockId": "src/lib/format.ts#condition@10:3"
+                }
+              ]
+            },
+            {
+              "id": "src/composables/use-pokemon.ts#function@10:1",
+              "type": "function",
+              "label": "Checks whether a Pokemon has the chosen type",
+              "description": "[The computed list of `usePokemon()` calls it](code:src/composables/use-pokemon.ts#L19) for each loaded Pokemon.",
+              "codeBlockIds": [
+                "src/composables/use-pokemon.ts#function@10:1",
+                "src/composables/use-pokemon.ts#root-argument-value@10:18",
+                "src/composables/use-pokemon.ts#root-argument-value@10:36",
+                "src/composables/use-pokemon.ts#root-argument-value@11:20",
+                "src/composables/use-pokemon.ts#root-argument-value@11:53"
+              ],
+              "diffCodeBlockIds": [
+                "src/composables/use-pokemon.ts#function@10:1",
+                "src/composables/use-pokemon.ts#root-argument-value@10:18",
+                "src/composables/use-pokemon.ts#root-argument-value@10:36",
+                "src/composables/use-pokemon.ts#root-argument-value@11:20",
+                "src/composables/use-pokemon.ts#root-argument-value@11:53"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33",
+              "type": "render-event",
+              "label": "Clears both filters in the store",
+              "description": "When a professor clicks Clear filters, the button calls [`clear()`](code:src/stores/pokemon-filters.ts#L9-12) on the filter store.",
+              "codeBlockIds": [
+                "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/router.ts#root-variable@8:1 -> src/views/pokemon/PokemonPage.vue#component@1:1",
+              "from": "src/router.ts#root-variable@8:1",
+              "to": "src/views/pokemon/PokemonPage.vue#component@1:1"
+            },
+            {
+              "id": "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33 -> src/stores/pokemon-filters.ts#state@5:1",
+              "from": "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33",
+              "to": "src/stores/pokemon-filters.ts#state@5:1"
+            },
+            {
+              "id": "src/views/pokemon/PokemonPage.vue#component@1:1 -> src/composables/use-pokemon.ts#hook@13:1",
+              "from": "src/views/pokemon/PokemonPage.vue#component@1:1",
+              "to": "src/composables/use-pokemon.ts#hook@13:1"
+            },
+            {
+              "id": "src/composables/use-pokemon.ts#hook@13:1 -> src/stores/pokemon-filters.ts#state@5:1",
+              "from": "src/composables/use-pokemon.ts#hook@13:1",
+              "to": "src/stores/pokemon-filters.ts#state@5:1"
+            },
+            {
+              "id": "src/views/pokemon/PokemonPage.vue#component@1:1 -> src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+              "from": "src/views/pokemon/PokemonPage.vue#component@1:1",
+              "to": "src/views/pokemon/components/PokemonFilters.vue#component@1:1"
+            },
+            {
+              "id": "src/composables/use-pokemon.ts#hook@13:1 -> src/api/pokemon.ts#function@4:1",
+              "from": "src/composables/use-pokemon.ts#hook@13:1",
+              "to": "src/api/pokemon.ts#function@4:1"
+            },
+            {
+              "id": "src/views/pokemon/components/PokemonFilters.vue#component@1:1 -> src/stores/pokemon-filters.ts#state@5:1",
+              "from": "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+              "to": "src/stores/pokemon-filters.ts#state@5:1"
+            },
+            {
+              "id": "src/views/pokemon/PokemonPage.vue#component@1:1 -> src/lib/format.ts#function@9:1",
+              "from": "src/views/pokemon/PokemonPage.vue#component@1:1",
+              "to": "src/lib/format.ts#function@9:1"
+            },
+            {
+              "id": "src/composables/use-pokemon.ts#hook@13:1 -> src/composables/use-pokemon.ts#function@10:1",
+              "from": "src/composables/use-pokemon.ts#hook@13:1",
+              "to": "src/composables/use-pokemon.ts#function@10:1"
+            },
+            {
+              "id": "src/views/pokemon/components/PokemonFilters.vue#component@1:1 -> src/views/pokemon/components/PokemonFilters.vue#render-event@23:33",
+              "from": "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+              "to": "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33"
+            }
+          ]
+        },
+        "blastDiagram": null,
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/api/pokemon.ts",
+              "waypoints": [
+                {
+                  "id": "w7",
+                  "title": "Added `fetchPokemon()` to request the Pokemon",
+                  "declaration": "fetchPokemon",
+                  "reading": "The author added a function `fetchPokemon()` that sends a `GET` request to `/pokemon`, with `?trainer_id=` and the id when a trainer is chosen, and returns the Pokemon of the response. [`request()` puts `/api` in front of the path](code:src/api/client.ts#L10). [`usePokemon()` runs `fetchPokemon()` as its query function](code:src/composables/use-pokemon.ts#L17), so that the page loads only the Pokemon of the chosen trainer.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 7
+                  },
+                  "category": "function",
+                  "traceNodeId": "src/api/pokemon.ts#function@4:1",
+                  "codeBlockIds": [
+                    "src/api/pokemon.ts#function@4:1",
+                    "src/api/pokemon.ts#root-argument-value@4:30",
+                    "src/api/pokemon.ts#variable@5:3",
+                    "src/api/pokemon.ts#condition@5:17"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/composables/use-pokemon.ts",
+              "waypoints": [
+                {
+                  "id": "w8",
+                  "title": "Added the query key of the Pokemon",
+                  "declaration": "POKEMON_QUERY_KEY",
+                  "reading": "The author added a constant `POKEMON_QUERY_KEY` that holds `\"pokemon\"`. [`usePokemon()` puts it in a key with the ref of the chosen trainer](code:src/composables/use-pokemon.ts#L16), so that each trainer has its own cached list and a new trainer loads the list again.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 8
+                  },
+                  "category": "variable",
+                  "traceNodeId": null,
+                  "codeBlockIds": [
+                    "src/composables/use-pokemon.ts#root-variable@8:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w9",
+                  "title": "Added `hasType()` to match a Pokemon against the type filter",
+                  "declaration": "hasType",
+                  "reading": "The author added a function `hasType()` that returns `true` when no type is chosen, or when the primary or the secondary type of the Pokemon is the chosen type. [The computed list of `usePokemon()` calls it](code:src/composables/use-pokemon.ts#L19), so that a Pokemon with two types shows under both of them.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 11
+                  },
+                  "category": "function",
+                  "traceNodeId": "src/composables/use-pokemon.ts#function@10:1",
+                  "codeBlockIds": [
+                    "src/composables/use-pokemon.ts#function@10:1",
+                    "src/composables/use-pokemon.ts#root-argument-value@10:18",
+                    "src/composables/use-pokemon.ts#root-argument-value@10:36",
+                    "src/composables/use-pokemon.ts#root-argument-value@11:20",
+                    "src/composables/use-pokemon.ts#root-argument-value@11:53"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w10",
+                  "title": "Added `usePokemon()` to load the Pokemon that match the filters",
+                  "declaration": "usePokemon",
+                  "reading": "The author added a composable `usePokemon()` that:\n\n- reads the chosen type and trainer from [the filter store](code:src/stores/pokemon-filters.ts#usePokemonFiltersStore) as refs\n- loads the Pokemon of the trainer with [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon), under a key that holds the trainer\n- keeps the Pokemon of the chosen type in a computed `pokemon`, with [`hasType()`](code:src/composables/use-pokemon.ts#hasType)\n- returns the query with `pokemon` added\n\n[`PokemonPage` calls it](code:src/views/pokemon/PokemonPage.vue#L6), so that the list follows both filters. The trainer filter goes to the API, and the type filter runs in the browser on the loaded list.",
+                  "coreChange": "This is where the two filters reach the data: the trainer goes into the query key and the request, and the type filters the loaded list in a computed. The page, the filter component and the store all exist for it.",
+                  "findings": [],
+                  "range": {
+                    "lineStart": 13,
+                    "lineEnd": 21
+                  },
+                  "category": "function",
+                  "traceNodeId": "src/composables/use-pokemon.ts#hook@13:1",
+                  "codeBlockIds": [
+                    "src/composables/use-pokemon.ts#hook@13:1",
+                    "src/composables/use-pokemon.ts#external-value@14:3",
+                    "src/composables/use-pokemon.ts#external-value@15:3",
+                    "src/composables/use-pokemon.ts#component-effect@15:17",
+                    "src/composables/use-pokemon.ts#property@16:5",
+                    "src/composables/use-pokemon.ts#effect-callback@17:5",
+                    "src/composables/use-pokemon.ts#function@17:14",
+                    "src/composables/use-pokemon.ts#derived@19:3",
+                    "src/composables/use-pokemon.ts#component-effect@19:19",
+                    "src/composables/use-pokemon.ts#function@19:28",
+                    "src/composables/use-pokemon.ts#function@19:66",
+                    "src/composables/use-pokemon.ts#variable@19:67",
+                    "src/composables/use-pokemon.ts#property@20:22"
+                  ],
+                  "children": [
+                    {
+                      "id": "w10.1",
+                      "title": "Added the refs of the two filters",
+                      "declaration": "usePokemon › type",
+                      "reading": "The author added a call to `storeToRefs()` on [the filter store](code:src/stores/pokemon-filters.ts#usePokemonFiltersStore), which returns `type` and `trainerId` as refs. [The query key holds `trainerId`](code:src/composables/use-pokemon.ts#L16), and [the computed list reads `type`](code:src/composables/use-pokemon.ts#L19), so that both follow the selects.",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 14,
+                        "lineEnd": 14
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/composables/use-pokemon.ts#hook@13:1",
+                      "codeBlockIds": [
+                        "src/composables/use-pokemon.ts#external-value@14:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w10.2",
+                      "title": "Added the query of the Pokemon",
+                      "declaration": "usePokemon › query",
+                      "reading": "The author added a call to `useQuery` with the key `[\"pokemon\", trainerId]` and a query function that calls [`fetchPokemon(trainerId.value)`](code:src/api/pokemon.ts#fetchPokemon). Vue Query watches the ref in the key, so a new trainer requests the list again.",
+                      "coreChange": null,
+                      "findings": [
+                        {
+                          "id": "finding-list-blanks-on-trainer-change",
+                          "kind": "nit",
+                          "title": "`usePokemon()` empties the list each time the trainer changes",
+                          "reading": "[The query key holds `trainerId`](code:src/composables/use-pokemon.ts#L16), so a new trainer starts a new query with no data. While it loads, `isPending` is `true`, so [the page shows `Loading the Pokemon…` in place of the list](code:src/views/pokemon/PokemonPage.vue#L13). `placeholderData: keepPreviousData` from `@tanstack/vue-query` keeps the last list on screen until the new one arrives, for one more option. The fix also imports `keepPreviousData` on [the first line of the file](code:src/composables/use-pokemon.ts#L1).",
+                          "trace": null,
+                          "solution": "  const query = useQuery({\n    queryKey: [POKEMON_QUERY_KEY, trainerId],\n    queryFn: () => fetchPokemon(trainerId.value),\n    placeholderData: keepPreviousData,\n  })"
+                        }
+                      ],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 18
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/composables/use-pokemon.ts#hook@13:1",
+                      "codeBlockIds": [
+                        "src/composables/use-pokemon.ts#external-value@15:3",
+                        "src/composables/use-pokemon.ts#component-effect@15:17",
+                        "src/composables/use-pokemon.ts#property@16:5",
+                        "src/composables/use-pokemon.ts#effect-callback@17:5",
+                        "src/composables/use-pokemon.ts#function@17:14"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w10.3",
+                      "title": "Added the computed list of the chosen type",
+                      "declaration": "usePokemon › pokemon",
+                      "reading": "The author added a `computed` that takes the loaded Pokemon, or `[]` before they load, and keeps those for which [`hasType()`](code:src/composables/use-pokemon.ts#hasType) returns `true` with the chosen type. A new type only runs the computed again on the cached list, with no request.",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 19,
+                        "lineEnd": 19
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/composables/use-pokemon.ts#hook@13:1",
+                      "codeBlockIds": [
+                        "src/composables/use-pokemon.ts#derived@19:3",
+                        "src/composables/use-pokemon.ts#component-effect@19:19",
+                        "src/composables/use-pokemon.ts#function@19:28",
+                        "src/composables/use-pokemon.ts#function@19:66",
+                        "src/composables/use-pokemon.ts#variable@19:67"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w10.4",
+                      "title": "Added the return of the query and the list",
+                      "declaration": "usePokemon › pokemon (2)",
+                      "reading": "The author added a return of every field of the query with `pokemon` beside them. [`PokemonPage` reads `pokemon`, `isPending` and `isError` from it](code:src/views/pokemon/PokemonPage.vue#L6).",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 20,
+                        "lineEnd": 20
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/composables/use-pokemon.ts#hook@13:1",
+                      "codeBlockIds": [
+                        "src/composables/use-pokemon.ts#property@20:22"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/main.ts",
+              "waypoints": [
+                {
+                  "id": "w11",
+                  "title": "Added Pinia to the app",
+                  "declaration": "Lines 11–11",
+                  "reading": "The author added a call to `app.use(createPinia())` that installs Pinia on the app before Vue Query. [`usePokemonFiltersStore()`](code:src/stores/pokemon-filters.ts#usePokemonFiltersStore) needs an installed Pinia, so that [`PokemonFilters`](code:src/views/pokemon/components/PokemonFilters.vue#L8) and [`usePokemon()`](code:src/composables/use-pokemon.ts#L14) get the same store.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 11,
+                    "lineEnd": 11
+                  },
+                  "category": "statement",
+                  "traceNodeId": null,
+                  "codeBlockIds": [
+                    "src/main.ts#root-statement@11:1"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/router.ts",
+              "waypoints": [
+                {
+                  "id": "w12",
+                  "title": "Modified the router to add the Pokemon page",
+                  "declaration": "router",
+                  "reading": "The author modified the router `router` to add a child route `pokemon` of the layout that renders [`PokemonPage`](code:src/views/pokemon/PokemonPage.vue#PokemonPage). [`src/main.ts` installs the router](code:src/main.ts#L10), so that the page opens at `/pokemon` inside [`RootLayout`](code:src/views/RootLayout.vue#RootLayout), where [the header links to it](code:src/views/RootLayout.vue#L14).",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 22
+                  },
+                  "category": "variable",
+                  "traceNodeId": "src/router.ts#root-variable@8:1",
+                  "codeBlockIds": [
+                    "src/router.ts#root-variable@8:1",
+                    "src/router.ts#property@14:7",
+                    "src/router.ts#property@16:11",
+                    "src/router.ts#effect-callback@16:28"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/views/pokemon/PokemonPage.vue",
+              "waypoints": [
+                {
+                  "id": "w13",
+                  "title": "Added `PokemonPage` to list the Pokemon",
+                  "declaration": "PokemonPage",
+                  "reading": "The author added a page component `PokemonPage` that:\n\n- renders the heading `Pokemon` and [`PokemonFilters`](code:src/views/pokemon/components/PokemonFilters.vue#PokemonFilters)\n- loads the Pokemon that match the filters with [`usePokemon()`](code:src/composables/use-pokemon.ts#usePokemon)\n- shows `Loading the Pokemon…` while they load, and `The Pokemon could not be loaded.` when the request fails\n- renders one line per Pokemon with its name, its level and [its types](code:src/lib/format.ts#formatTypes)\n\n[The router renders it at `/pokemon`](code:src/router.ts#L16), and [the header links to it](code:src/views/RootLayout.vue#L14), so that a professor can browse the Pokemon.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 19
+                  },
+                  "category": "function",
+                  "traceNodeId": "src/views/pokemon/PokemonPage.vue#component@1:1",
+                  "codeBlockIds": [
+                    "src/views/pokemon/PokemonPage.vue#component@1:1",
+                    "src/views/pokemon/PokemonPage.vue#external-value@6:1",
+                    "src/views/pokemon/PokemonPage.vue#render-root@9:1",
+                    "src/views/pokemon/PokemonPage.vue#render@10:3",
+                    "src/views/pokemon/PokemonPage.vue#render@11:5",
+                    "src/views/pokemon/PokemonPage.vue#render@12:5",
+                    "src/views/pokemon/PokemonPage.vue#render@13:5",
+                    "src/views/pokemon/PokemonPage.vue#render@14:5",
+                    "src/views/pokemon/PokemonPage.vue#render@15:5",
+                    "src/views/pokemon/PokemonPage.vue#render@16:7"
+                  ],
+                  "children": [
+                    {
+                      "id": "w13.1",
+                      "title": "Added the query of the Pokemon",
+                      "declaration": "PokemonPage › pokemon",
+                      "reading": "The author added a call to [`usePokemon()`](code:src/composables/use-pokemon.ts#usePokemon) that gives the filtered `pokemon` and the flags `isPending` and `isError`. [The three conditions of the template read them](code:src/views/pokemon/PokemonPage.vue#L13-15).",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/views/pokemon/PokemonPage.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#external-value@6:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w13.2",
+                      "title": "Added the loading message of the Pokemon list",
+                      "declaration": "PokemonPage › Markup condition :13",
+                      "reading": "The author added a `v-if` that renders `<p>Loading the Pokemon…</p>` while the query is pending. [The filters stay above it](code:src/views/pokemon/PokemonPage.vue#L12), so a professor can change them while the list loads.",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 13,
+                        "lineEnd": 13
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/views/pokemon/PokemonPage.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#render-condition@13:5",
+                        "src/views/pokemon/PokemonPage.vue#render@13:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w13.3",
+                      "title": "Added the error message of the Pokemon list",
+                      "declaration": "PokemonPage › Markup condition :14",
+                      "reading": "The author added a `v-else-if` that renders `<p>The Pokemon could not be loaded.</p>` when the query fails, as it does when [`request()` throws an `ApiError`](code:src/api/client.ts#L14).",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 14,
+                        "lineEnd": 14
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/views/pokemon/PokemonPage.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#render-condition@14:5",
+                        "src/views/pokemon/PokemonPage.vue#render@14:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w13.4",
+                      "title": "Added the list of the Pokemon",
+                      "declaration": "PokemonPage › Markup condition :15",
+                      "reading": "The author added a `v-else` that renders a `<ul>` with one `<li>` per Pokemon that shows its name, `Lv.` and its level, and the text of [`formatTypes()`](code:src/lib/format.ts#formatTypes).",
+                      "coreChange": null,
+                      "findings": [
+                        {
+                          "id": "finding-empty-list-no-message",
+                          "kind": "nit",
+                          "title": "`PokemonPage` renders an empty list when no Pokemon matches",
+                          "reading": "When the trainer has no Pokemon, or none of them has the chosen type, [the computed `pokemon` is `[]`](code:src/composables/use-pokemon.ts#L19). The `v-else` then renders an empty `<ul>`, and the professor sees the filters with nothing under them. A message for an empty list says that the filters match nothing, for one more condition.",
+                          "trace": null,
+                          "solution": "    <p v-else-if=\"pokemon.length === 0\">No Pokemon match these filters.</p>\n    <ul v-else>\n      <li v-for=\"entry in pokemon\" :key=\"entry.id\">{{ entry.name }} Lv. {{ entry.level }} {{ formatTypes(entry) }}</li>\n    </ul>"
+                        }
+                      ],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 17
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/views/pokemon/PokemonPage.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#render-condition@15:5",
+                        "src/views/pokemon/PokemonPage.vue#render@15:5",
+                        "src/views/pokemon/PokemonPage.vue#render@16:7"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/views/pokemon/components/PokemonFilters.vue",
+              "waypoints": [
+                {
+                  "id": "w14",
+                  "title": "Added `PokemonFilters` to choose the filters",
+                  "declaration": "PokemonFilters",
+                  "reading": "The author added a component `PokemonFilters` that:\n\n- renders a select with `Every type` and one option per type of [`POKEMON_TYPES`](code:src/types/pokemon.ts#POKEMON_TYPES)\n- renders a select with `Every trainer` and one option per trainer from [`useTrainers()`](code:src/composables/use-trainers.ts#L6-8)\n- binds each select to its filter of the store with `v-model`\n- renders a `Clear filters` button that clears both filters\n\n[`PokemonPage` renders it above the list](code:src/views/pokemon/PokemonPage.vue#L12), so that a professor can narrow the list.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 25
+                  },
+                  "category": "function",
+                  "traceNodeId": "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                  "codeBlockIds": [
+                    "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#external-value@8:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#external-value@9:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#external-value@10:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#render-root@13:1",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@14:3",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@15:5",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@16:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@17:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@19:5",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@20:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@21:7",
+                    "src/views/pokemon/components/PokemonFilters.vue#render@23:5",
+                    "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33"
+                  ],
+                  "children": [
+                    {
+                      "id": "w14.1",
+                      "title": "Added the read of the filter store",
+                      "declaration": "PokemonFilters › filters",
+                      "reading": "The author added a call to [`usePokemonFiltersStore()`](code:src/stores/pokemon-filters.ts#usePokemonFiltersStore) that returns the store. [The Clear filters button calls `clear()` on it](code:src/views/pokemon/components/PokemonFilters.vue#L23).",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/PokemonFilters.vue#external-value@8:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.2",
+                      "title": "Added the refs of the two filters",
+                      "declaration": "PokemonFilters › type",
+                      "reading": "The author added a call to `storeToRefs()` that returns `type` and `trainerId` as refs of the store. [The type select binds `type` with `v-model`](code:src/views/pokemon/components/PokemonFilters.vue#L15) and [the trainer select binds `trainerId`](code:src/views/pokemon/components/PokemonFilters.vue#L19), so a pick writes the store with no handler.",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 9
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/PokemonFilters.vue#external-value@9:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.3",
+                      "title": "Added the query of the trainers",
+                      "declaration": "PokemonFilters › trainers",
+                      "reading": "The author added a call to [`useTrainers()`](code:src/composables/use-trainers.ts#L6-8) that gives the loaded trainers, `undefined` until they arrive. [The trainer select renders one option per trainer](code:src/views/pokemon/components/PokemonFilters.vue#L21), so the select offers only `Every trainer` while the trainers load.",
+                      "coreChange": null,
+                      "findings": [
+                        {
+                          "id": "finding-trainer-error-hidden",
+                          "kind": "risk",
+                          "title": "`PokemonFilters` hides a failed load of the trainers",
+                          "reading": "[`useTrainers()` reports a failed request in `isError`](code:src/composables/use-trainers.ts#L7), and `PokemonFilters` reads only `data`. So when the trainers do not load, [the trainer select offers `Every trainer` alone](code:src/views/pokemon/components/PokemonFilters.vue#L19-22), and nothing tells the professor why. The fix reads `isError` here, and the trainer select then needs a message for it.",
+                          "trace": [
+                            "A professor opens /pokemon while `GET /api/trainers` answers `500`.",
+                            "[`request()` throws `ApiError(500)`](code:src/api/client.ts#L14).",
+                            "[`useTrainers()` returns `data: undefined` and `isError: true`](code:src/composables/use-trainers.ts#L7).",
+                            "[The `v-for` over `trainers` renders no option](code:src/views/pokemon/components/PokemonFilters.vue#L21).",
+                            "[The trainer select renders `Every trainer` and no other option](code:src/views/pokemon/components/PokemonFilters.vue#L19-22)."
+                          ],
+                          "solution": "const { data: trainers, isError: hasTrainerError } = useTrainers()"
+                        }
+                      ],
+                      "range": {
+                        "lineStart": 10,
+                        "lineEnd": 10
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/PokemonFilters.vue#external-value@10:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.4",
+                      "title": "Added one option per Pokemon type",
+                      "declaration": "PokemonFilters › Markup loop :17",
+                      "reading": "The author added a `v-for` that renders one `<option>` per name of [`POKEMON_TYPES`](code:src/types/pokemon.ts#POKEMON_TYPES), with the name as its value and as its text.",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 17
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/PokemonFilters.vue#render-loop@17:7",
+                        "src/views/pokemon/components/PokemonFilters.vue#render@17:7"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.5",
+                      "title": "Added one option per trainer",
+                      "declaration": "PokemonFilters › Markup loop :21",
+                      "reading": "The author added a `v-for` that renders one `<option>` per trainer, with the `id` as its value and the `name` as its text. [`v-model` writes the number to `trainerId`](code:src/views/pokemon/components/PokemonFilters.vue#L19), and [`usePokemon()` puts it in its query key](code:src/composables/use-pokemon.ts#L16).",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 21,
+                        "lineEnd": 21
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/PokemonFilters.vue#render-loop@21:7",
+                        "src/views/pokemon/components/PokemonFilters.vue#render@21:7"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.6",
+                      "title": "Added the button that clears the filters",
+                      "declaration": "PokemonFilters › BaseButton.onClick",
+                      "reading": "The author added a `<BaseButton variant=\"ghost\">` with the text `Clear filters` that calls [`clear()`](code:src/stores/pokemon-filters.ts#L9-12) on the store when clicked. Both selects show their `Every` option again, and the page lists every Pokemon.",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 23,
+                        "lineEnd": 23
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/views/pokemon/components/PokemonFilters.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/api/pokemon.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 64,
+                "endColumn": 71,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  8,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 25,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 57,
+                "endColumn": 66,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/api/client.ts",
+                "lines": [
+                  9,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  8,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 39,
+                "endColumn": 44,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 4,
+                "startColumn": 56,
+                "endColumn": 63,
+                "name": "Promise"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  4,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 19,
+                    "endColumn": 31,
+                    "path": "src/composables/use-pokemon.ts",
+                    "text": "    queryFn: () => fetchPokemon(trainerId.value),"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/composables/use-pokemon.ts",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 26,
+                "endColumn": 33,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  8,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 41,
+                "endColumn": 52,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 2,
+                "endColumn": 6,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 44,
+                "endColumn": 48,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 52,
+                "endColumn": 59,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 79,
+                "endColumn": 83,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 30,
+                "endColumn": 41,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pinia",
+                  "name": "storeToRefs"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 42,
+                "endColumn": 64,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  5,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 16,
+                "endColumn": 24,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/vue-query",
+                  "name": "useQuery"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 15,
+                "endColumn": 32,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 34,
+                "endColumn": 43,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 19,
+                "endColumn": 31,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 32,
+                "endColumn": 41,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 18,
+                "endColumn": 26,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "computed"
+                }
+              },
+              {
+                "line": 19,
+                "startColumn": 34,
+                "endColumn": 39,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  15,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 76,
+                "endColumn": 83,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  10,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 91,
+                "endColumn": 95,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 14,
+                "endColumn": 19,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  15,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 21,
+                "endColumn": 28,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 13,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  13,
+                  21
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 40,
+                    "endColumn": 50,
+                    "path": "src/views/pokemon/PokemonPage.vue",
+                    "text": "const { pokemon, isPending, isError } = usePokemon()"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/lib/format.ts",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 57,
+                "endColumn": 68,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 71,
+                "endColumn": 85,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 37,
+                "endColumn": 44,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  8,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 2,
+                "endColumn": 9,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 36,
+                "endColumn": 43,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 62,
+                "endColumn": 69,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 88,
+                "endColumn": 95,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 27,
+                "endColumn": 31,
+                "name": "Intl"
+              }
+            ],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  7,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 64,
+                    "endColumn": 75,
+                    "path": "src/views/items/ItemsPage.vue",
+                    "text": "    <li v-for=\"item in items\" :key=\"item.id\">{{ item.name }} {{ formatPrice(item.price) }}</li>"
+                  }
+                ]
+              },
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  9,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 93,
+                    "endColumn": 104,
+                    "path": "src/views/pokemon/PokemonPage.vue",
+                    "text": "      <li v-for=\"entry in pokemon\" :key=\"entry.id\">{{ entry.name }} Lv. {{ entry.level }} {{ formatTypes(entry) }}</li>"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/main.ts",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 12,
+                "endColumn": 21,
+                "path": "src/main.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "createApp"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 22,
+                "endColumn": 25,
+                "path": "src/App.vue",
+                "lines": [
+                  1,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 8,
+                "endColumn": 14,
+                "path": "src/router.ts",
+                "lines": [
+                  8,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 8,
+                "endColumn": 19,
+                "path": "src/main.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pinia",
+                  "name": "createPinia"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 8,
+                "endColumn": 22,
+                "path": "src/main.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/vue-query",
+                  "name": "VueQueryPlugin"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 26,
+                "endColumn": 37,
+                "path": "src/lib/query-client.ts",
+                "lines": [
+                  5,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": []
+          },
+          {
+            "path": "src/router.ts",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 22,
+                "endColumn": 34,
+                "path": "src/router.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "createRouter"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 11,
+                "endColumn": 27,
+                "path": "src/router.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "createWebHistory"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 17,
+                "endColumn": 27,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  1,
+                  24
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 31,
+                "endColumn": 43,
+                "path": "src/views/trainers/TrainersPage.vue",
+                "lines": [
+                  1,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 38,
+                "endColumn": 49,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  1,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 36,
+                "endColumn": 45,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  1,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 35,
+                "endColumn": 43,
+                "path": "src/views/help/HelpPage.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  8,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 8,
+                    "endColumn": 14,
+                    "path": "src/main.ts",
+                    "text": "app.use(router)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/stores/pokemon-filters.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 38,
+                "endColumn": 49,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pinia",
+                  "name": "defineStore"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 15,
+                "endColumn": 18,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 19,
+                "endColumn": 30,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 20,
+                "endColumn": 23,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 4,
+                "endColumn": 8,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 4,
+                "endColumn": 13,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 11,
+                "endColumn": 15,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 17,
+                "endColumn": 26,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 28,
+                "endColumn": 33,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  9,
+                  12
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 35,
+                "lines": [
+                  5,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 14,
+                    "startColumn": 42,
+                    "endColumn": 64,
+                    "path": "src/composables/use-pokemon.ts",
+                    "text": "  const { type, trainerId } = storeToRefs(usePokemonFiltersStore())"
+                  },
+                  {
+                    "line": 8,
+                    "startColumn": 16,
+                    "endColumn": 38,
+                    "path": "src/views/pokemon/components/PokemonFilters.vue",
+                    "text": "const filters = usePokemonFiltersStore()"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/views/pokemon/components/PokemonFilters.vue",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 38,
+                "path": "src/stores/pokemon-filters.ts",
+                "lines": [
+                  5,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 28,
+                "endColumn": 39,
+                "path": "src/views/pokemon/components/PokemonFilters.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pinia",
+                  "name": "storeToRefs"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 40,
+                "endColumn": 47,
+                "path": "src/views/pokemon/components/PokemonFilters.vue",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 27,
+                "endColumn": 38,
+                "path": "src/composables/use-trainers.ts",
+                "lines": [
+                  6,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 21,
+                "endColumn": 25,
+                "path": "src/views/pokemon/components/PokemonFilters.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 36,
+                "endColumn": 49,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 21,
+                "endColumn": 30,
+                "path": "src/views/pokemon/components/PokemonFilters.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/views/pokemon/components/PokemonFilters.vue",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 40,
+                "endColumn": 47,
+                "path": "src/views/pokemon/components/PokemonFilters.vue",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  25
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 5,
+                    "endColumn": 19,
+                    "path": "src/views/pokemon/PokemonPage.vue",
+                    "text": "    <PokemonFilters />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/views/pokemon/PokemonPage.vue",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 40,
+                "endColumn": 50,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  13,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 5,
+                "endColumn": 19,
+                "path": "src/views/pokemon/components/PokemonFilters.vue",
+                "lines": [
+                  1,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 13,
+                "endColumn": 22,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 18,
+                "endColumn": 25,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 26,
+                "endColumn": 33,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 93,
+                "endColumn": 104,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  9,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  19
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 38,
+                    "endColumn": 49,
+                    "path": "src/router.ts",
+                    "text": "        { path: \"pokemon\", component: PokemonPage },"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -14,6 +14,7 @@ import {
   toDemoChat,
   toDemoPullRequest,
   toDemoRepository,
+  toDemoScaffold,
   toDemoSetup,
   toDemoStoredReview,
   type DemoReview,
@@ -139,6 +140,13 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   dataNotice: SAMPLE_DATA_NOTICE,
 })
 
+const seedDemoScaffolds = async (store: InMemoryReviewStore, demos: readonly DemoReview[], now: Date): Promise<void> => {
+  const scaffolds = demos.map((demo) => toDemoScaffold(demo, now))
+  await Promise.all(scaffolds.map(async ({ key, scaffold }) => {
+    await store.writeScaffold(key, scaffold)
+  }))
+}
+
 const seedDemoChats = async (store: InMemoryConversationStore, demos: readonly DemoReview[], now: Date): Promise<void> => {
   await Promise.all(demos.map(async (demo) => await store.append(demoReviewKeyOf(demo), toDemoChat(demo, now))))
 }
@@ -149,11 +157,12 @@ export const createDemoProcedureContext = async (
   newId: () => string,
 ): Promise<ProcedureContext> => {
   const conversationStore = new InMemoryConversationStore()
-  await seedDemoChats(conversationStore, demos, startedAt)
+  const reviewStore = new InMemoryReviewStore(demos.map(toDemoStoredReview))
+  await Promise.all([seedDemoChats(conversationStore, demos, startedAt), seedDemoScaffolds(reviewStore, demos, startedAt)])
   const repliesByRepository = new Map(demos.map((demo) => [demo.story.repository.name, toDemoAgentReplies(demo)]))
   const context: ProcedureContext = {
     repositoryStore: new InMemoryRepositoryStore(demos.map((demo) => toDemoRepository(demo, startedAt)), null, DEMO_VIEWER_LOGIN),
-    reviewStore: new InMemoryReviewStore(demos.map(toDemoStoredReview)),
+    reviewStore,
     pullRequestForge: new InMemoryPullRequestForge(demos.map((demo) => toDemoPullRequest(demo, startedAt)), () => new Date()),
     changeReader: new InMemoryChangeReader([]),
     pullBranch: skipBranchPull,

@@ -19,9 +19,9 @@ Every video is an H.264 MP4 and a VP9 WebM, and every file but the Change Overvi
 
 ## Where the pictures come from
 
-Every video comes from the review of the `demo-react` pull request, "Implement three pages ViewOrdersPage, CreateOrderPage and EditOrderPage". It is a playground fixture in `tools/playground-fixtures/test-cases/demo-react/`, and the review's prose is part of the fixture, so every machine shows the same review.
+Every video comes from the review of the `demo-react` pull request, "Implement page PokemonPage". It is a playground fixture in `tools/playground-fixtures/test-cases/demo-react/`, and the review's prose is part of the fixture, so every machine shows the same review.
 
-The trace video records segment 4 of it, "New ViewOrdersPage", in the app, where the development build of the backend lists the fixtures on the index page as repositories. The other videos record segment 1 in the site's demo, at `http://localhost:4400/demo/demo-react/#/pr-reviews/orders-web/pr-128`, so they read no data of yours and start with no reviewed marks.
+The trace video records segment 2 of it, "New PokemonPage and usePokemon, modified router", in the app, where the development build of the backend lists the fixtures on the index page as repositories. The other videos record segment 1 in the site's demo, at `http://localhost:4400/demo/demo-react/#/pr-reviews/pokedex-web/pr-57`, so they read no data of yours and start with no reviewed marks.
 
 The configurations screenshot is the settings page of the Standard preset, at `/settings/profiles/standard`, with the "Waypoint reading" field open.
 
@@ -79,11 +79,11 @@ The two diagrams are recorded in full screen. Before clicking a node that the si
 
 | Clip | Starts at | Steps | Poster |
 |---|---|---|---|
-| Trace | The diagram of segment 4, in full screen | Clicks the `ViewOrdersPage` card, then its rows "The orders loaded from the API" and "Renders one table row per order", each of which marks its lines in the side panel. Clicks the `useOrders` card and its row "The query that loads the orders", and opens the waypoint of `useOrders()` in the panel. Closes the panel with Escape and resets the view with T. | The `useOrders()` waypoint open |
-| Blast | The Blast Diagram of segment 1, in full screen | Clicks `router.tsx`, then `src/main.tsx`, the file the change reaches without changing what it does, then `use-orders.ts`. Closes the panel, presses Import bound to add the files the change did not touch, then presses Export bound and resets the view with T. | The Import bound view |
-| Waypoints | The waypoint for `updateOrder()`, marked Risk | Opens it, scrolls through its finding and trace, presses Preview the fix, then Hide the fix, scrolls back and closes it. | The fix open |
+| Trace | The diagram of segment 2, in full screen | Clicks the `PokemonPage` card, then its rows "Gets the Pokemon that match the filters" and "Renders one line per Pokemon with its level and types", each of which marks its lines in the side panel. Clicks the `usePokemon` card and its row "Loads the Pokemon again when the trainer changes", and opens the waypoint of `usePokemon()` in the panel. Closes the panel with Escape and resets the view with T. | The `usePokemon()` waypoint open |
+| Blast | The Blast Diagram of segment 1, in full screen | Clicks `router.tsx`, then `src/main.tsx`, the file the change reaches without changing what it does, then `use-pokemon.ts`. Closes the panel, presses Import bound to add the files the change did not touch, then presses Export bound and resets the view with T. | The Import bound view |
+| Waypoints | The waypoint for the trainers query in `PokemonFilters.tsx`, marked Risk | Opens it, scrolls through its finding and trace, presses Preview the fix, then Hide the fix, scrolls back and closes it. | The fix open |
 | Filters | The heading of segment 1's Code Walkthrough | Opens the first waypoint, ticks Component and Hook in the Filter menu, then unticks them and closes the first waypoint. | The filtered walkthrough |
-| Tooltips | Line 14 of `OrderForm.tsx` | Hovers `OrderForm`, an exported function whose card lists the 2 files that use it, then `draft`, a variable whose card shows the line that defines it. | The card of `OrderForm` |
+| Tooltips | Line 12 of `pokemon-filters.ts` | Hovers `usePokemonFilters`, the exported store, whose card lists the files that use it, then `set`, whose card shows the line that defines it. | The card of `usePokemonFilters` |
 
 ### Configurations screenshot
 

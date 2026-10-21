@@ -9,14 +9,14 @@ trap 'agent-browser record stop >/dev/null 2>&1; rm -rf "$WORK_DIR"' EXIT
 source "$SCRIPT_DIR/browser.sh"
 source "$SCRIPT_DIR/review-clip.sh"
 
-TRACE_HEADING="#fixture-segment-4-trace-diagram-heading"
+TRACE_HEADING="#fixture-segment-2-trace-diagram-heading"
 
 row_named() {
   echo "[...$BOARD.querySelectorAll('button')].find(element=>(element.getAttribute('aria-label')||'').startsWith('$1'))"
 }
 
 waypoint_named() {
-  echo "[...$PANEL.querySelectorAll('button[aria-expanded]')].find(element=>element.textContent.includes('$1'))"
+  echo "[...$PANEL.querySelectorAll('[data-waypoint-mark]')].find(element=>element.getAttribute('aria-label').includes('$1'))"
 }
 
 open_trace() {
@@ -25,19 +25,19 @@ open_trace() {
 
 trace_scenario() {
   local poster="$1"
-  click_marked "$(node_named "ViewOrdersPage")"
-  bring_into_view "ViewOrdersPage"
+  click_marked "$(node_named "PokemonPage")"
+  bring_into_view "PokemonPage"
   browse wait "$READ_MS"
-  click_marked "$(row_named "Hooks: The orders loaded from the API")"
+  click_marked "$(row_named "Hooks: Gets the Pokemon that match the filters")"
   browse wait "$READ_MS"
-  click_marked "$(row_named "Steps: Renders one table row per order")"
+  click_marked "$(row_named "Steps: Renders one line per Pokemon with its level and types")"
   browse wait "$READ_MS"
-  bring_into_view "useOrders"
-  click_marked "$(node_named "useOrders")"
+  bring_into_view "usePokemon"
+  click_marked "$(node_named "usePokemon")"
   browse wait "$READ_MS"
-  click_marked "$(row_named "Effects: The query that loads the orders")"
+  click_marked "$(row_named "Effects: Loads the Pokemon again when the trainer changes")"
   browse wait "$STEP_MS"
-  click_marked "$(waypoint_named "to load every order")"
+  click_marked "$(waypoint_named "to load the Pokemon that match the filters")"
   browse wait "$READ_MS"
   agent-browser screenshot "$poster" >/dev/null 2>&1
   browse wait "$READ_MS"

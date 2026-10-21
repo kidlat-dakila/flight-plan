@@ -1,10 +1,10 @@
 APP_URL="${APP_URL:-http://localhost:4200}"
-REVIEW_URL="$APP_URL/pr-reviews/demo-react/implement-three-pages-vieworderspage-createorderpage-and-editorderpage"
+REVIEW_URL="$APP_URL/pr-reviews/demo-react/implement-page-pokemonpage"
 CONFIGURATION_URL="$APP_URL/settings/profiles/standard"
 PAGE_SETTLE_MS=3500
 SCROLL_SETTLE_MS=1200
 SIGN_BAND_HEIGHT=56
-OPEN_CORE_CHANGE_WAYPOINT="(()=>{const waypoint=[...document.querySelectorAll('section[aria-label]')].find(section=>section.getAttribute('aria-label').includes('updateOrder()'));const toggle=waypoint.querySelector('button[aria-expanded]');if(toggle.getAttribute('aria-expanded')==='false'){toggle.click()};waypoint.id='capture-waypoint';return 1})()"
+OPEN_CORE_CHANGE_WAYPOINT="(async()=>{const mark=[...document.querySelectorAll('[data-waypoint-mark]')].find(element=>element.getAttribute('aria-label').includes('usePokemon()'));if(mark.getAttribute('aria-expanded')==='false'){mark.click();await new Promise(done=>setTimeout(done,400))};const title=mark.getAttribute('aria-label').split(': ').slice(1).join(': ');const waypoint=[...document.querySelectorAll('section[aria-label]')].find(section=>section.getAttribute('aria-label')===title);waypoint.id='capture-waypoint';return 1})()"
 
 browse() {
   agent-browser "$@" >/dev/null 2>&1

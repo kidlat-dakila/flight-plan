@@ -3,15 +3,15 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from "re
 const GUEST_NAME = "Guest"
 
 interface SessionContextValue {
-  staffName: string
+  professorName: string
   signOut: () => void
 }
 
 const SessionContext = createContext<SessionContextValue | null>(null)
 
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [staffName, setStaffName] = useState("Dana")
-  const value = useMemo(() => ({ staffName, signOut: () => setStaffName(GUEST_NAME) }), [staffName])
+  const [professorName, setProfessorName] = useState("Professor Oak")
+  const value = useMemo(() => ({ professorName, signOut: () => setProfessorName(GUEST_NAME) }), [professorName])
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
 }
 

@@ -15,7 +15,7 @@ TARGET_ID="capture-target"
 BOARD="document.querySelector('[role=dialog]')"
 PANEL="$BOARD.querySelector('aside')"
 DEMO_URL="${DEMO_URL:-http://localhost:4400/demo/demo-react/}"
-DEMO_REVIEW_URL="${DEMO_URL}#/pr-reviews/orders-web/pr-128"
+DEMO_REVIEW_URL="${DEMO_URL}#/pr-reviews/pokedex-web/pr-57"
 
 mark() {
   local found

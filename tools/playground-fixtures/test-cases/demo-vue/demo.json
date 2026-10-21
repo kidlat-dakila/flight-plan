@@ -1,10 +1,10 @@
 {
   "repository": {
-    "name": "orders-vue",
-    "forgeSlug": "acme/orders-vue"
+    "name": "pokedex-vue",
+    "forgeSlug": "acme/pokedex-vue"
   },
   "pullRequest": {
-    "number": 64,
+    "number": 31,
     "author": "richard",
     "updatedMinutesAgo": 25
   },
@@ -21,54 +21,54 @@
   "comments": [
     {
       "author": "dinesh",
-      "body": "I'll test the three pages on staging after lunch.",
+      "body": "I'll try the filters on staging once the Pokemon API is merged.",
       "minutesAgo": 60
     }
   ],
   "threads": [
     {
-      "path": "src/api/orders.ts",
-      "line": 12,
+      "path": "src/composables/use-pokemon.ts",
+      "line": 16,
       "isResolved": false,
       "comments": [
         {
           "author": "gilfoyle",
-          "body": "This sends the whole order back with `PUT`, `status` included. If the warehouse ships the order while someone has the form open, saving puts it back to pending.",
+          "body": "The trainer ref is part of the key, so every trainer switch throws the list away and shows the loading text until the next one arrives. Can we keep the old list on screen in the meantime?",
           "minutesAgo": 140
         },
         {
           "author": "richard",
-          "body": "Good catch. The server owns `status`, so I'll send only the customer, the product and the quantity.",
+          "body": "Fair. I'll add `placeholderData: keepPreviousData`.",
           "minutesAgo": 95
         }
       ]
     },
     {
-      "path": "src/views/orders/components/OrderForm.vue",
-      "line": 28,
-      "isResolved": false,
-      "comments": [
-        {
-          "author": "dinesh",
-          "body": "`v-model.number` gives an empty string when the field is cleared, and `min=\"1\"` doesn't stop a submit. Should `handleSubmit` check the quantity?",
-          "minutesAgo": 120
-        }
-      ]
-    },
-    {
-      "path": "src/views/orders/EditOrderPage.vue",
-      "line": 14,
+      "path": "src/views/pokemon/components/PokemonFilters.vue",
+      "line": 19,
       "isResolved": true,
       "comments": [
         {
           "author": "dinesh",
-          "body": "Nothing happens when the save fails. Can we show the error?",
+          "body": "Does `v-model` put a number in `trainerId` here, or the string from the option?",
           "minutesAgo": 200
         },
         {
           "author": "richard",
-          "body": "I'll handle save errors in a follow-up, together with the create page.",
+          "body": "A number. `:value` binds `trainer.id` itself, so the store gets `3` and not `\"3\"`.",
           "minutesAgo": 180
+        }
+      ]
+    },
+    {
+      "path": "src/stores/pokemon-filters.ts",
+      "line": 9,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "Should the filters reset when I leave the page? They're still set when I come back to it.",
+          "minutesAgo": 120
         }
       ]
     }
@@ -77,25 +77,25 @@
     {
       "author": "gilfoyle",
       "verdict": "request-changes",
-      "body": "The edit page can overwrite the status. Details inline.",
+      "body": "Switching trainers blanks the list. Details inline.",
       "minutesAgo": 138
     },
     {
       "author": "dinesh",
       "verdict": "comment",
-      "body": "Reads well. One question on the quantity input.",
+      "body": "Works for me locally. One question on the filters.",
       "minutesAgo": 118
     }
   ],
   "chat": [
     {
       "from": "reviewer",
-      "body": "Why does EditOrderPage take the id from the route instead of from the order it loaded?",
+      "body": "Why does PokemonFilters call storeToRefs instead of reading filters.type?",
       "minutesAgo": 40
     },
     {
       "from": "agent",
-      "body": "`handleSubmit` in `EditOrderPage.vue` spreads the draft and then sets `id: orderId`, which comes from `route.params.orderId`, so the request path and the body always name the same order. The loaded order has the same id, so the two only differ if the route changes while the page is open.",
+      "body": "`storeToRefs(filters)` returns `type` and `trainerId` as refs that stay linked to the store, so the `v-model` of each select writes straight into it. Destructuring `filters` without it copies the values once, and the selects would stop updating the store.",
       "minutesAgo": 39
     }
   ],

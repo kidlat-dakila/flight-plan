@@ -1,6 +1,6 @@
 {
-  "title": "React demo with React Router and TanStack Query",
-  "packages": ["react", "react-dom", "react-router", "@tanstack/react-query"],
+  "title": "React demo with React Router, TanStack Query and Zustand",
+  "packages": ["react", "react-dom", "react-router", "@tanstack/react-query", "zustand"],
   "language": "typescript",
   "mainFramework": "react"
 }

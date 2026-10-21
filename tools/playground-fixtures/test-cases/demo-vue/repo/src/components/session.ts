@@ -1,7 +1,7 @@
 import type { InjectionKey, Ref } from "vue"
 
 export interface SessionContext {
-  staffName: Ref<string>
+  professorName: Ref<string>
   signOut: () => void
 }
 

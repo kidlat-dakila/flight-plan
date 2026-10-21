@@ -3,14 +3,14 @@ import { useSession } from "@/components/SessionProvider"
 import { Button } from "@/components/ui"
 
 export function RootLayout() {
-  const { staffName, signOut } = useSession()
+  const { professorName, signOut } = useSession()
   return (
     <div>
       <header>
-        <Link to="/">Customers</Link>
-        <Link to="/products">Products</Link>
+        <Link to="/">Trainers</Link>
+        <Link to="/items">Items</Link>
         <Link to="/help">Help</Link>
-        <span>{staffName}</span>
+        <span>{professorName}</span>
         <Button variant="ghost" onClick={signOut}>
           Sign out
         </Button>

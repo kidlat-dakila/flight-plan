@@ -11,9 +11,10 @@ source "$SCRIPT_DIR/browser.sh"
 source "$SCRIPT_DIR/review-clip.sh"
 
 WALKTHROUGH_HEADING="document.getElementById('fixture-segment-1-code-walkthrough-heading')"
-FORM_FILE="#fixture-segment-1-file-4"
-RISK_WAYPOINT="[...document.querySelectorAll('section[aria-label]')].find(section=>section.getAttribute('aria-label').includes('updateOrder()'))"
-FIRST_WAYPOINT="document.querySelector('#fixture-segment-1-code-walkthrough section[aria-label]')"
+FORM_FILE="#fixture-segment-1-file-3"
+RISK_WAYPOINT="[...document.querySelectorAll('[data-waypoint-mark]')].find(element=>element.getAttribute('aria-label').startsWith('Risk waypoint'))"
+RISK_BOX="[...document.querySelectorAll('section[aria-label]')].find(section=>section.getAttribute('aria-label')==='Added the query of the trainers')"
+FIRST_WAYPOINT="document.querySelector('#fixture-segment-1-code-walkthrough [data-waypoint-mark]')"
 
 toggle_of() {
   echo "($1).querySelector('button[aria-expanded]')"
@@ -41,18 +42,18 @@ settle_on_risk_waypoint() {
 
 waypoints_scenario() {
   local poster="$1"
-  click_marked "$(toggle_of "$RISK_WAYPOINT")"
+  click_marked "$RISK_WAYPOINT"
   browse wait "$READ_MS"
-  scroll_smoothly_to "$(button_in "$RISK_WAYPOINT" "Preview the fix")" 420
+  scroll_smoothly_to "$(button_in "$RISK_BOX" "Preview the fix")" 420
   browse wait "$READ_MS"
-  click_marked "$(button_in "$RISK_WAYPOINT" "Preview the fix")"
-  scroll_smoothly_to "$(button_in "$RISK_WAYPOINT" "Hide the fix")" 200
+  click_marked "$(button_in "$RISK_BOX" "Preview the fix")"
+  scroll_smoothly_to "$(button_in "$RISK_BOX" "Hide the fix")" 200
   browse wait "$READ_MS"
   agent-browser screenshot "$poster" >/dev/null 2>&1
   browse wait "$READ_MS"
-  click_marked "$(button_in "$RISK_WAYPOINT" "Hide the fix")"
-  scroll_smoothly_to "$RISK_WAYPOINT" 240
-  click_marked "$(toggle_of "$RISK_WAYPOINT")"
+  click_marked "$(button_in "$RISK_BOX" "Hide the fix")"
+  scroll_smoothly_to "$RISK_BOX" 240
+  click_marked "$(toggle_of "$RISK_BOX")"
   park_pointer
 }
 
@@ -70,7 +71,7 @@ set_component_and_hook_filter() {
 
 filters_scenario() {
   local poster="$1"
-  click_marked "$(toggle_of "$FIRST_WAYPOINT")"
+  click_marked "$FIRST_WAYPOINT"
   browse wait "$READ_MS"
   set_component_and_hook_filter
   browse wait "$READ_MS"
@@ -83,18 +84,18 @@ filters_scenario() {
 }
 
 settle_on_form() {
-  settle_on "$(form_line 14)" 200
+  settle_on "$(form_line 12)" 200
 }
 
 tooltips_scenario() {
   local poster="$1"
-  hover_marked "$(name_in_form 14 "OrderForm")"
+  hover_marked "$(name_in_form 12 "usePokemonFilters")"
   browse wait "$READ_MS"
   agent-browser screenshot "$poster" >/dev/null 2>&1
   browse wait "$READ_MS"
   glide_pointer_to 120 "$((HEIGHT - 260))"
   browse wait "$STEP_MS"
-  hover_marked "$(name_in_form 21 "draft")"
+  hover_marked "$(name_in_form 16 "set")"
   browse wait "$READ_MS"
   browse wait "$READ_MS"
   glide_pointer_to "$((WIDTH / 2))" "$((HEIGHT - 160))"

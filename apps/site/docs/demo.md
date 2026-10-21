@@ -39,10 +39,10 @@ Every comment, review and chat message carries `minutesAgo`, so the demo always 
 
 The demo app mounts the frontend's `createApp` with a hash history, so a demo's address keeps the app's path after `#`. Its tRPC client calls the backend's `appRouter` through tRPC's local link, with the context from `createDemoProcedureContext` in `apps/backend/src/procedures/context.ts`. That context holds:
 
-- the demo repositories as GitHub repositories, and their reviews;
+- the demo repositories as GitHub repositories, and their reviews, each stored as explained by Claude, so a review opens without asking whether Claude should explain it;
 - an in-memory GitHub forge with the reviewers, threads and reviews of each story, so comments, replies, resolving threads, review requests and submitted reviews all work;
 - a completed setup with Claude as the agent;
-- a demo agent that answers each chat message with the next scripted reply, through the same procedures a real agent's tools call.
+- a demo agent that answers each chat message with the next scripted reply, through the same procedures a real agent's tools call. Explain in the ⚙ menu starts it too: it sends its reply and marks the review complete again, since every part is already written.
 
 A link between the client and the router copies every input and result through JSON, so the app receives exactly what it would over HTTP.
 

@@ -9,7 +9,7 @@ trap 'rm -rf "$WORK_DIR"' EXIT
 source "$SCRIPT_DIR/browser.sh"
 
 DEMO_URL="${DEMO_URL:-http://localhost:4400/demo/demo-react/}"
-REVIEW_PATH="#/pr-reviews/orders-web/pr-128"
+REVIEW_PATH="#/pr-reviews/pokedex-web/pr-57"
 SCALE=1.5
 FRAME_SETTLE_MS=90
 MOVE_FRAMES=36
