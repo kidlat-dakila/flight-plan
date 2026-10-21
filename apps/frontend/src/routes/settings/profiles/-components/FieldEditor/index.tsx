@@ -1,6 +1,7 @@
 import { useBlocker } from "@tanstack/react-router"
 import { useState, type ReactNode } from "react"
 import Button from "@flightplan/ui/blocks/button"
+import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
 import TextEditor from "@flightplan/ui/TextEditor"
 
 interface InstructionText {
@@ -52,7 +53,7 @@ const FieldEditor = ({ title, summary, path, offMessage, texts, renderActions, o
       )
     : null
   return (
-    <form action={() => { onSubmit(texts.map((text) => ({ key: text.key, text: drafts[text.key] ?? text.value }))) }}>
+    <form onSubmit={submitHandlerOf(() => { onSubmit(texts.map((text) => ({ key: text.key, text: drafts[text.key] ?? text.value }))) })}>
       <h3 className="text-xl leading-7 font-bold">{title}</h3>
       <p className="mt-1 max-w-[62ch] text-muted-foreground">{summary}</p>
       <p className="mt-1 font-mono text-[0.8125rem] wrap-anywhere text-muted-foreground">{path}</p>

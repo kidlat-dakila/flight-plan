@@ -58,8 +58,8 @@ The reviewer asks the agent to write a review up from the review page, choosing 
 | `summary` | The choice in short, as label and value pairs: what is written up, the prompt configuration, the Code Walkthrough order and whether segments are on |
 | `sections` | Context, Trace Diagram, Blast Diagram, Code Walkthrough and Findings, each with `count`, `countLabel` ("4 parts to write", "12 waypoints to check") and `isChosen` |
 | `totalLabel` | What the chosen sections add up to: "5 parts to write and 12 waypoints to check", or "Nothing to write" |
-| `configurations`, `configurationId` | Every prompt configuration, and the chosen one |
-| `walkthroughOrders`, `walkthroughOrder` | The three [walkthrough orders](code-walkthrough.md#order) with their labels and descriptions, and the chosen one |
+| `configurations`, `configurationId` | Every prompt configuration with its label, what it is best for, its description and its note, as the setup offers them, and the chosen one |
+| `walkthroughOrder` | The chosen [walkthrough order](code-walkthrough.md#order) |
 | `isSegmented` | Whether the review is split into segments |
 
 A count is of the parts still unwritten that choosing the section would require: the context of each segment (the first alone with segments off), the labels and descriptions of the Trace Diagram, the files of the Blast Diagram to assess, the titles and readings of the waypoints. Findings count the waypoints the agent reads for them. The plan is asked for again with the sections the reviewer ticks, and its counts and labels follow. Unless the reviewer chose otherwise, the sections are those of the last write-up of this review, or else those the Write-ups of the [review preferences](review-preferences.md) mark Always; the configuration is the review's, or else the default; the order is the last write-up's, or else the preference's.

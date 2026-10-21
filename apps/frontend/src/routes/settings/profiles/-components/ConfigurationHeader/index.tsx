@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router"
 import { useState } from "react"
 import Button from "@flightplan/ui/blocks/button"
 import Input from "@flightplan/ui/blocks/input"
+import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
 
 interface ConfigurationHeaderProps {
   readonly name: string
@@ -44,10 +45,10 @@ const ConfigurationHeader = (props: ConfigurationHeaderProps) => {
           ? (
               <form
                 className="flex min-w-0 flex-1 flex-wrap items-center gap-2"
-                action={() => {
+                onSubmit={submitHandlerOf(() => {
                   props.onRename(draftName)
                   setTask("none")
-                }}
+                })}
               >
                 <Input
                   value={draftName}

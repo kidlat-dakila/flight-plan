@@ -1,4 +1,5 @@
 import { useId, useState, type ReactNode } from "react"
+import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
 
 interface ContextKindSwitch<Kind extends string> {
   readonly kind: Kind
@@ -51,7 +52,7 @@ const SwitchRow = ({ label, description, isChecked, onToggle }: SwitchRowProps) 
 const SwitchesForm = <Kind extends string>(props: SwitchesFormProps<Kind>) => {
   const [requiredKinds, setRequiredKinds] = useState(() => props.contextKinds.filter((option) => option.isRequired).map((option) => option.kind))
   return (
-    <form action={() => { props.onSubmit(requiredKinds) }}>
+    <form onSubmit={submitHandlerOf(() => { props.onSubmit(requiredKinds) })}>
       <h3 className="text-xl leading-7 font-bold">{props.title}</h3>
       <p className="mt-1 max-w-[62ch] text-muted-foreground">{props.summary}</p>
       <fieldset className="mt-6">

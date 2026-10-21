@@ -1,4 +1,4 @@
-import { useId, useState } from "react"
+import { useState } from "react"
 import Button from "@/components/blocks/button"
 import Dialog, {
   DialogContent,
@@ -7,11 +7,13 @@ import Dialog, {
   DialogHeader,
   DialogTitle,
 } from "@/components/blocks/dialog"
-import SelectField from "@/components/SelectField"
+import PromptConfigurationField, { type PromptConfigurationOption } from "@/components/PromptConfigurationField"
+import WalkthroughOrderField, { type WalkthroughOrder } from "@/components/WalkthroughOrderField"
+import { submitHandlerOf } from "@/lib/form-submit"
 
 export type WriteUpSection = "context" | "traceDiagram" | "blastDiagram" | "walkthrough" | "findings"
 
-export type WriteUpWalkthroughOrder = "imports-bottom-up" | "imports-top-down" | "important-first"
+export type WriteUpWalkthroughOrder = WalkthroughOrder
 
 export interface WriteUpPlan {
   readonly agentLabel: string
@@ -23,9 +25,8 @@ export interface WriteUpPlan {
     readonly isChosen: boolean
   }[]
   readonly totalLabel: string
-  readonly configurations: readonly { readonly id: string, readonly label: string }[]
+  readonly configurations: readonly PromptConfigurationOption[]
   readonly configurationId: string
-  readonly walkthroughOrders: readonly { readonly order: WriteUpWalkthroughOrder, readonly label: string, readonly description: string }[]
   readonly walkthroughOrder: WriteUpWalkthroughOrder
   readonly isSegmented: boolean
 }
@@ -68,11 +69,13 @@ const DECLINE_LABEL = "Not now"
 const SUBMIT_LABEL = "Write up"
 const PENDING_LABEL = "Starting…"
 const SECTIONS_LEGEND = "Parts to write up"
-const CONFIGURATION_LABEL = "Prompt configuration"
-const ORDER_LEGEND = "Code Walkthrough order"
+const CONFIGURATION_HEADING = "Prompt configuration"
+const ORDER_HEADING = "Code Walkthrough order"
+const TOTAL_LABEL = "Total"
 const SEGMENTS_LABEL = "Split this review into segments"
 const LEGEND_CLASSES = "pb-2 font-bold"
 const ROW_CLASSES = "border-b border-border py-2.5"
+const ALERT_CLASSES = "pt-2 text-destructive"
 
 const titleOf = (agentLabel: string): string => `Ask ${agentLabel} to write up this review?`
 
@@ -96,7 +99,16 @@ const Summary = ({ plan }: { readonly plan: WriteUpPlan }) => (
         <dd className="font-bold">{entry.value}</dd>
       </div>
     ))}
+    <dt className="text-muted-foreground">{TOTAL_LABEL}</dt>
+    <dd className="font-bold tabular-nums">{plan.totalLabel}</dd>
   </dl>
+)
+
+const Total = ({ plan }: { readonly plan: WriteUpPlan }) => (
+  <p className="flex items-baseline justify-between gap-6 pr-1">
+    <span className="text-muted-foreground">{TOTAL_LABEL}</span>
+    <span className="font-bold tabular-nums">{plan.totalLabel}</span>
+  </p>
 )
 
 const ChoiceFields = ({
@@ -110,8 +122,8 @@ const ChoiceFields = ({
   onWalkthroughOrderChange,
   onSegmentedChange,
 }: ChoiceFieldsProps) => {
-  const orderGroupId = useId()
   const sectionsProblem = problemAt(problem, "sections")
+  const configurationProblem = problemAt(problem, "configuration")
   const chosenSections = chosenSectionsOf(plan)
   return (
     <div className="grid max-h-[60dvh] gap-5 overflow-y-auto pr-1">
@@ -133,35 +145,17 @@ const ChoiceFields = ({
             </li>
           ))}
         </ul>
-        {sectionsProblem === null ? null : <p role="alert" className="pt-2 text-destructive">{sectionsProblem}</p>}
+        {sectionsProblem === null ? null : <p role="alert" className={ALERT_CLASSES}>{sectionsProblem}</p>}
       </fieldset>
-      <SelectField
-        label={CONFIGURATION_LABEL}
-        options={plan.configurations.map((configuration) => ({ value: configuration.id, label: configuration.label }))}
-        value={configurationId}
-        errorMessage={problemAt(problem, "configuration")}
-        onChange={onConfigurationChange}
-      />
-      <fieldset>
-        <legend className={LEGEND_CLASSES}>{ORDER_LEGEND}</legend>
-        <ul className="border-t border-border">
-          {plan.walkthroughOrders.map((option) => (
-            <li key={option.order} className={ROW_CLASSES}>
-              <label className="grid cursor-pointer grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3">
-                <input
-                  type="radio"
-                  name={orderGroupId}
-                  checked={walkthroughOrder === option.order}
-                  className="mt-1 size-4 shrink-0 accent-(--primary)"
-                  onChange={() => { onWalkthroughOrderChange(option.order) }}
-                />
-                <span className="font-bold">{option.label}</span>
-                <span className="col-start-2 text-muted-foreground">{option.description}</span>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </fieldset>
+      <div>
+        <p className={LEGEND_CLASSES}>{CONFIGURATION_HEADING}</p>
+        <PromptConfigurationField options={plan.configurations} value={configurationId} onChange={onConfigurationChange} />
+        {configurationProblem === null ? null : <p role="alert" className={ALERT_CLASSES}>{configurationProblem}</p>}
+      </div>
+      <div>
+        <p className={LEGEND_CLASSES}>{ORDER_HEADING}</p>
+        <WalkthroughOrderField value={walkthroughOrder} onChange={onWalkthroughOrderChange} />
+      </div>
       <label className="flex cursor-pointer items-center gap-3">
         <input
           type="checkbox"
@@ -190,25 +184,27 @@ const WriteUpDialog = ({ plan, problem, isPending, onSectionsChange, onSubmit, o
           <DialogDescription>{descriptionOf(plan.agentLabel)}</DialogDescription>
         </DialogHeader>
         <form
-          action={() => { onSubmit({ sections: chosenSectionsOf(plan), configurationId, walkthroughOrder, isSegmented }) }}
           className="grid gap-4"
+          onSubmit={submitHandlerOf(() => { onSubmit({ sections: chosenSectionsOf(plan), configurationId, walkthroughOrder, isSegmented }) })}
         >
           {isShowingFields
             ? (
-                <ChoiceFields
-                  plan={plan}
-                  problem={problem}
-                  configurationId={configurationId}
-                  walkthroughOrder={walkthroughOrder}
-                  isSegmented={isSegmented}
-                  onSectionsChange={onSectionsChange}
-                  onConfigurationChange={setConfigurationId}
-                  onWalkthroughOrderChange={setWalkthroughOrder}
-                  onSegmentedChange={setIsSegmented}
-                />
+                <>
+                  <ChoiceFields
+                    plan={plan}
+                    problem={problem}
+                    configurationId={configurationId}
+                    walkthroughOrder={walkthroughOrder}
+                    isSegmented={isSegmented}
+                    onSectionsChange={onSectionsChange}
+                    onConfigurationChange={setConfigurationId}
+                    onWalkthroughOrderChange={setWalkthroughOrder}
+                    onSegmentedChange={setIsSegmented}
+                  />
+                  <Total plan={plan} />
+                </>
               )
             : <Summary plan={plan} />}
-          <p className="font-bold tabular-nums">{plan.totalLabel}</p>
           {agentProblem === null ? null : <p role="alert" className="text-destructive">{agentProblem}</p>}
           <DialogFooter className="items-center">
             {isShowingFields

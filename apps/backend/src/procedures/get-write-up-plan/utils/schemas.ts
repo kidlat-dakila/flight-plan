@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { WALKTHROUGH_ORDERS, WRITE_UP_SECTIONS } from "@/procedures/get-review-preferences/utils/review-preferences"
+import { presetOptionSchema } from "@/procedures/get-setup/utils/schemas"
 
 export const getWriteUpPlanInputSchema = z.strictObject({
   repositoryName: z.string(),
@@ -23,9 +24,8 @@ export const writeUpPlanSchema = z.discriminatedUnion("kind", [
     summary: z.array(z.strictObject({ label: z.string(), value: z.string() })),
     sections: z.array(writeUpSectionOptionSchema),
     totalLabel: z.string(),
-    configurations: z.array(z.strictObject({ id: z.string(), label: z.string() })),
+    configurations: z.array(presetOptionSchema),
     configurationId: z.string(),
-    walkthroughOrders: z.array(z.strictObject({ order: z.enum(WALKTHROUGH_ORDERS), label: z.string(), description: z.string() })),
     walkthroughOrder: z.enum(WALKTHROUGH_ORDERS),
     isSegmented: z.boolean(),
   }),

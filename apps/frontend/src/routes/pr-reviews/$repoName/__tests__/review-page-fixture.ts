@@ -493,9 +493,9 @@ export const writeUpPlan = {
   isOffered: false,
   agentLabel: "Claude",
   summary: [
-    { label: "Write up", value: "Context and Findings" },
+    { label: "Parts to write up", value: "Context and Findings" },
     { label: "Prompt configuration", value: "Standard" },
-    { label: "Code Walkthrough order", value: "Bottom up" },
+    { label: "Code Walkthrough order", value: "Building blocks first" },
     { label: "Segments", value: "On" },
   ],
   sections: [
@@ -506,9 +506,8 @@ export const writeUpPlan = {
     { section: "findings", label: "Findings", count: 3, countLabel: "3 waypoints to check", isChosen: true },
   ],
   totalLabel: "2 parts to write and 3 waypoints to check",
-  configurations: [{ id: "standard", label: "Standard" }],
+  configurations: [{ configurationId: "standard", label: "Standard", bestFor: "Best for general pull requests.", description: "The agent writes the full review.", note: null }],
   configurationId: "standard",
-  walkthroughOrders: [{ order: "imports-bottom-up", label: "Bottom up", description: "A file comes before the files that import it." }],
   walkthroughOrder: "imports-bottom-up",
   isSegmented: true,
 }

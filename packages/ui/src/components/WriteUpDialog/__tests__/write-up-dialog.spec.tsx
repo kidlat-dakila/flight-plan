@@ -1,12 +1,12 @@
-import { fireEvent, render, screen, within } from "@testing-library/react"
+import { act, fireEvent, render, screen, within } from "@testing-library/react"
 import WriteUpDialog, { type WriteUpPlan } from "@/components/WriteUpDialog"
 
 const PLAN: WriteUpPlan = {
   agentLabel: "Claude",
   summary: [
-    { label: "Write up", value: "Context, Trace Diagram and Findings" },
+    { label: "Parts to write up", value: "Context, Trace Diagram and Findings" },
     { label: "Prompt configuration", value: "Standard" },
-    { label: "Code Walkthrough order", value: "Bottom up" },
+    { label: "Code Walkthrough order", value: "Building blocks first" },
     { label: "Segments", value: "On" },
   ],
   sections: [
@@ -17,12 +17,11 @@ const PLAN: WriteUpPlan = {
     { section: "findings", label: "Findings", countLabel: "12 waypoints to check", isChosen: true },
   ],
   totalLabel: "5 parts to write and 12 waypoints to check",
-  configurations: [{ id: "standard", label: "Standard" }, { id: "minimal", label: "Minimal" }],
-  configurationId: "standard",
-  walkthroughOrders: [
-    { order: "imports-bottom-up", label: "Bottom up", description: "A file comes before the files that import it." },
-    { order: "important-first", label: "Important changes first", description: "Core and spotlight changes come first." },
+  configurations: [
+    { configurationId: "standard", label: "Standard", bestFor: "Best for general pull requests.", description: "The agent writes the full review.", note: null },
+    { configurationId: "minimal", label: "Minimal", bestFor: "Best for saving tokens.", description: "The agent writes in fragments.", note: null },
   ],
+  configurationId: "standard",
   walkthroughOrder: "imports-bottom-up",
   isSegmented: true,
 }
@@ -37,8 +36,8 @@ const renderDialog = (overrides: Partial<Parameters<typeof WriteUpDialog>[0]> = 
     onClose: vi.fn(),
     ...overrides,
   }
-  render(<WriteUpDialog {...props} />)
-  return props
+  const { rerender } = render(<WriteUpDialog {...props} />)
+  return { ...props, rerender }
 }
 
 describe("WriteUpDialog", () => {
@@ -48,8 +47,8 @@ describe("WriteUpDialog", () => {
     const dialog = screen.getByRole("dialog", { name: "Ask Claude to write up this review?" })
 
     expect(within(dialog).getByText("Context, Trace Diagram and Findings")).toBeTruthy()
-    expect(within(dialog).getByText("Bottom up")).toBeTruthy()
-    expect(within(dialog).getByText("5 parts to write and 12 waypoints to check")).toBeTruthy()
+    expect(within(dialog).getByText("Building blocks first")).toBeTruthy()
+    expect(within(dialog).getByText("Total").nextElementSibling?.textContent).toBe("5 parts to write and 12 waypoints to check")
     expect(within(dialog).queryByRole("checkbox")).toBeNull()
   })
 
@@ -66,7 +65,7 @@ describe("WriteUpDialog", () => {
     })
   })
 
-  it("shows the inputs with Configure, reports a ticked section and writes up with what was chosen", () => {
+  it("shows the inputs with Configure, reports a ticked section and writes up with what was chosen", async () => {
     const { onSectionsChange, onSubmit } = renderDialog()
 
     fireEvent.click(screen.getByRole("button", { name: "Configure" }))
@@ -75,8 +74,12 @@ describe("WriteUpDialog", () => {
     expect(onSectionsChange).toHaveBeenCalledWith(["context", "traceDiagram", "findings", "walkthrough"])
     expect(screen.getByText("12 waypoints to check")).toBeTruthy()
 
-    fireEvent.change(screen.getByRole("combobox", { name: "Prompt configuration" }), { target: { value: "minimal" } })
-    fireEvent.click(screen.getByRole("radio", { name: /Important changes first/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Prompt configuration, Standard" }))
+    fireEvent.click(await screen.findByRole("radio", { name: /Minimal/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
+    fireEvent.click(screen.getByRole("button", { name: "Code Walkthrough order, Building blocks first" }))
+    fireEvent.click(await screen.findByRole("radio", { name: /Most important first/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
     fireEvent.click(screen.getByRole("checkbox", { name: "Split this review into segments" }))
     fireEvent.click(screen.getByRole("button", { name: "Write up" }))
 
@@ -86,6 +89,20 @@ describe("WriteUpDialog", () => {
       walkthroughOrder: "important-first",
       isSegmented: false,
     })
+  })
+
+  it("keeps the sections ticked since the inputs showed after Write up", async () => {
+    const { rerender, ...props } = renderDialog()
+    fireEvent.click(screen.getByRole("button", { name: "Configure" }))
+    const withWalkthrough = { ...PLAN, sections: PLAN.sections.map((option) => ({ ...option, isChosen: option.isChosen || option.section === "walkthrough" })) }
+    rerender(<WriteUpDialog {...props} plan={withWalkthrough} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Write up" }))
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(screen.getByRole<HTMLInputElement>("checkbox", { name: /Code Walkthrough/ }).checked).toBe(true)
   })
 
   it("closes with Not now", () => {
@@ -102,6 +119,14 @@ describe("WriteUpDialog", () => {
 
     expect(screen.getByRole("alert").textContent).toBe("Choose at least one part for the agent to write up.")
     expect(screen.getByRole("checkbox", { name: /Context/ })).toBeTruthy()
+  })
+
+  it("shows a refused prompt configuration under its field", () => {
+    renderDialog({ problem: { field: "configuration", message: "This prompt configuration no longer exists." } })
+
+    const alert = screen.getByRole("alert")
+    expect(alert.textContent).toBe("This prompt configuration no longer exists.")
+    expect(alert.previousElementSibling).toBe(screen.getByRole("button", { name: "Prompt configuration, Standard" }))
   })
 
   it("says it is starting while the write-up is asked for", () => {

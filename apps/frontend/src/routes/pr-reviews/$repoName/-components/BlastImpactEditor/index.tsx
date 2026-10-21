@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react"
 import { useBlastEditing } from "@/routes/pr-reviews/$repoName/-hooks/use-blast-editing"
 import type { BlastImpactEditorRequest } from "@flightplan/ui/BlastBand"
 import Button from "@flightplan/ui/blocks/button"
+import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
 import SelectField from "@flightplan/ui/SelectField"
 import TextEditor, { type CodeLinkRequest } from "@flightplan/ui/TextEditor"
 
@@ -21,7 +22,7 @@ const BlastImpactEditor = ({ reviewKey, path, assessment, form, renderCodeLinkDi
   const editing = useBlastEditing(reviewKey, path, onClose)
   const hasReason = form.choices.some((choice) => choice.value === impactType && choice.hasReason)
   return (
-    <form action={() => { editing.onSave({ impactType, impactReason }) }} className="grid gap-3">
+    <form onSubmit={submitHandlerOf(() => { editing.onSave({ impactType, impactReason }) })} className="grid gap-3">
       <SelectField
         label={form.impactTypeLabel}
         options={form.choices}

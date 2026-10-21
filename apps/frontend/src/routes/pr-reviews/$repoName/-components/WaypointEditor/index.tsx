@@ -2,6 +2,7 @@ import { useId, useState, type ReactNode } from "react"
 import { useWaypointEditing, type WaypointText } from "@/routes/pr-reviews/$repoName/-hooks/use-waypoint-editing"
 import Button from "@flightplan/ui/blocks/button"
 import Input from "@flightplan/ui/blocks/input"
+import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
 import TextEditor, { type CodeLinkRequest } from "@flightplan/ui/TextEditor"
 
 interface ReviewKey {
@@ -38,7 +39,7 @@ const WaypointEditor = ({ reviewKey, segmentId, waypointId, legend, text, render
   return (
     <form
       aria-label={legend}
-      action={() => { editing.onSave({ title, reading, coreChange: isCoreChange ? coreChangeReason : null }) }}
+      onSubmit={submitHandlerOf(() => { editing.onSave({ title, reading, coreChange: isCoreChange ? coreChangeReason : null }) })}
       className="grid gap-3"
     >
       <div className="grid gap-1.5">

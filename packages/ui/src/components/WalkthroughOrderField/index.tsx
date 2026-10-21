@@ -27,7 +27,7 @@ const ORDERS: readonly { readonly value: WalkthroughOrder, readonly label: strin
   {
     value: "important-first",
     label: "Most important first",
-    description: "Start with the heart of the change and the topics you picked above, then read the rest.",
+    description: "Start with the heart of the change and the topics you care about most, then read the rest.",
   },
 ]
 

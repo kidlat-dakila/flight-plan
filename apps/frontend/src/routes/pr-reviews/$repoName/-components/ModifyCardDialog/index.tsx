@@ -7,6 +7,7 @@ import Dialog, { DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import Input from "@flightplan/ui/blocks/input"
 import CodeViewEditor from "@flightplan/ui/CodeViewEditor"
 import IconButton from "@flightplan/ui/IconButton"
+import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
 import { rangeLabelOf, type LineRange } from "@flightplan/ui/lib/line-selection"
 import SelectField from "@flightplan/ui/SelectField"
 import TextEditor, { type CodeLinkRequest } from "@flightplan/ui/TextEditor"
@@ -86,7 +87,7 @@ const CardFields = ({ reviewKey, form, isSaving, errorMessage, renderCodeLinkDia
   }
 
   return (
-    <form action={handleSave} className="contents">
+    <form onSubmit={submitHandlerOf(handleSave)} className="contents">
       <div className="grid min-h-0 grid-cols-[minmax(0,26rem)_minmax(0,1fr)] gap-4 overflow-hidden">
         <div className="flex min-h-0 flex-col gap-4 overflow-y-auto pr-1">
           <div className="grid gap-1.5">

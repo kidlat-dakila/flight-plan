@@ -15,9 +15,9 @@ const SOURCE: WriteUpPlanSource = {
 describe("buildWriteUpPlan", () => {
   it("sums up the chosen defaults in short", () => {
     expect(buildWriteUpPlan(SOURCE).summary).toStrictEqual([
-      { label: "Write up", value: "Context, Trace Diagram and Findings" },
+      { label: "Parts to write up", value: "Context, Trace Diagram and Findings" },
       { label: "Prompt configuration", value: "Minimal" },
-      { label: "Code Walkthrough order", value: "Bottom up" },
+      { label: "Code Walkthrough order", value: "Building blocks first" },
       { label: "Segments", value: "On" },
     ])
   })
@@ -39,16 +39,19 @@ describe("buildWriteUpPlan", () => {
     expect(buildWriteUpPlan({ ...SOURCE, sections: ["blastDiagram"] }).totalLabel).toBe("Nothing to write")
   })
 
-  it("offers every configuration and every walkthrough order, with the chosen ones", () => {
+  it("offers every configuration with what it is best for, and the chosen order and segments", () => {
     const plan = buildWriteUpPlan({ ...SOURCE, walkthroughOrder: "important-first", isSegmented: false })
 
-    expect(plan.configurations.map((configuration) => configuration.id)).toStrictEqual(["standard", "minimal", "onboardee", "unfamiliar-territory"])
-    expect(plan.walkthroughOrders.map((order) => [order.order, order.label])).toStrictEqual([
-      ["imports-bottom-up", "Bottom up"],
-      ["imports-top-down", "Top down"],
-      ["important-first", "Important changes first"],
-    ])
+    expect(plan.configurations.map((configuration) => configuration.configurationId)).toStrictEqual(["standard", "minimal", "onboardee", "unfamiliar-territory"])
+    expect(plan.configurations[1]).toStrictEqual({
+      configurationId: "minimal",
+      label: "Minimal",
+      bestFor: "Best for saving tokens.",
+      description: "The agent writes in fragments: few words and no filler.",
+      note: null,
+    })
     expect(plan).toMatchObject({ configurationId: "minimal", walkthroughOrder: "important-first", isSegmented: false })
+    expect(plan.summary[2]).toStrictEqual({ label: "Code Walkthrough order", value: "Most important first" })
     expect(plan.summary[3]).toStrictEqual({ label: "Segments", value: "Off" })
   })
 })

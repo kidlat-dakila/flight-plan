@@ -9,6 +9,7 @@ import Dialog, {
 } from "@/components/blocks/dialog"
 import RepositoryAuthors, { type AuthorRole, type AuthorsChoice } from "@/components/RepositoryAuthors"
 import { closeUnlessSuggestionsOpen } from "@/lib/dialog-close"
+import { submitHandlerOf } from "@/lib/form-submit"
 
 interface ConfigureRepositoryDialogProps {
   readonly isOpen: boolean
@@ -87,7 +88,7 @@ const ConfigureRepositoryDialog = ({
         <DialogTitle>{`Configure ${name}`}</DialogTitle>
         <DialogDescription>Pick the team members whose work Flight Plan lists in this repository.</DialogDescription>
       </DialogHeader>
-      <form action={onSave} className="grid gap-4">
+      <form onSubmit={submitHandlerOf(onSave)} className="grid gap-4">
         <div className="grid gap-1.5">
           <p className="text-sm font-bold">Repository folder</p>
           <p className="font-mono text-[0.82rem] wrap-anywhere text-muted-foreground">{path}</p>

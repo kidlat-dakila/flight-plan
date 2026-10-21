@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react"
 import Button from "@flightplan/ui/blocks/button"
+import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
 import TextEditor, { type CodeLinkRequest } from "@flightplan/ui/TextEditor"
 
 interface ContextEditorProps {
@@ -15,7 +16,7 @@ interface ContextEditorProps {
 const ContextEditor = ({ label, markdown, isSaving, errorMessage, renderCodeLinkDialog, onSave, onCancel }: ContextEditorProps) => {
   const [draft, setDraft] = useState(markdown)
   return (
-    <form action={() => { onSave(draft) }} className="grid gap-3">
+    <form onSubmit={submitHandlerOf(() => { onSave(draft) })} className="grid gap-3">
       <TextEditor
         label={label}
         value={markdown}

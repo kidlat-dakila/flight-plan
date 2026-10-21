@@ -1,14 +1,10 @@
 import { countLabel } from "@/procedures/get-review/utils/count-label"
-import {
-  WALKTHROUGH_ORDERS,
-  WRITE_UP_SECTIONS,
-  type WalkthroughOrder,
-  type WriteUpSection,
-} from "@/procedures/get-review-preferences/utils/review-preferences"
+import { WRITE_UP_SECTIONS, type WalkthroughOrder, type WriteUpSection } from "@/procedures/get-review-preferences/utils/review-preferences"
 import type { Configuration } from "@/procedures/list-configurations/utils/configuration"
+import { configurationOptionOf } from "@/procedures/list-configurations/utils/configuration-option"
 import { joinedList } from "./joined-list"
 import type { WriteUpPlan } from "./schemas"
-import { WALKTHROUGH_ORDER_OFFERS, WRITE_UP_SECTION_LABELS } from "./write-up-catalog"
+import { WALKTHROUGH_ORDER_LABELS, WRITE_UP_SECTION_LABELS } from "./write-up-catalog"
 import type { WriteUpCounts } from "./write-up-counts"
 
 export interface WriteUpPlanSource {
@@ -58,9 +54,9 @@ export const buildWriteUpPlan = (source: WriteUpPlanSource): FoundPlan => ({
   isOffered: source.isOffered,
   agentLabel: source.agentLabel,
   summary: [
-    { label: "Write up", value: chosenLabelOf(source.sections) },
+    { label: "Parts to write up", value: chosenLabelOf(source.sections) },
     { label: "Prompt configuration", value: configurationNameOf(source.configurations, source.configurationId) },
-    { label: "Code Walkthrough order", value: WALKTHROUGH_ORDER_OFFERS[source.walkthroughOrder].label },
+    { label: "Code Walkthrough order", value: WALKTHROUGH_ORDER_LABELS[source.walkthroughOrder] },
     { label: "Segments", value: source.isSegmented ? SEGMENTS_ON : SEGMENTS_OFF },
   ],
   sections: WRITE_UP_SECTIONS.map((section) => ({
@@ -71,9 +67,8 @@ export const buildWriteUpPlan = (source: WriteUpPlanSource): FoundPlan => ({
     isChosen: source.sections.includes(section),
   })),
   totalLabel: totalLabelOf(source.counts, source.sections),
-  configurations: source.configurations.map((configuration) => ({ id: configuration.id, label: configuration.name })),
+  configurations: source.configurations.map(configurationOptionOf),
   configurationId: source.configurationId,
-  walkthroughOrders: WALKTHROUGH_ORDERS.map((order) => ({ order, ...WALKTHROUGH_ORDER_OFFERS[order] })),
   walkthroughOrder: source.walkthroughOrder,
   isSegmented: source.isSegmented,
 })

@@ -4,6 +4,7 @@ import Button from "@flightplan/ui/blocks/button"
 import Input from "@flightplan/ui/blocks/input"
 import FilePicker from "@flightplan/ui/FilePicker"
 import IconButton from "@flightplan/ui/IconButton"
+import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -51,7 +52,7 @@ const SegmentEditor = ({ reviewKey, legend, label, paths, isSaving, isDeleting, 
   return (
     <form
       aria-label={legend}
-      action={() => { onSave({ title: draftLabel, paths: draftPaths }) }}
+      onSubmit={submitHandlerOf(() => { onSave({ title: draftLabel, paths: draftPaths }) })}
       className="relative mt-6 grid max-w-[44rem] gap-4 rounded-lg border border-foreground p-4"
     >
       <IconButton icon="close" label={CLOSE_LABEL} className="absolute top-2 right-2" onClick={onClose} />

@@ -10,6 +10,7 @@ import FolderBrowserDialog, { type FolderBrowser } from "@/components/FolderBrow
 import RepositoryAuthors, { type AuthorRole, type AuthorsChoice } from "@/components/RepositoryAuthors"
 import SuggestionField from "@/components/SuggestionField"
 import { closeUnlessSuggestionsOpen } from "@/lib/dialog-close"
+import { submitHandlerOf } from "@/lib/form-submit"
 
 export interface FolderSearch {
   readonly query: string
@@ -79,7 +80,7 @@ const AddRepositoryDialog = ({
           Flight Plan follows in it.
         </DialogDescription>
       </DialogHeader>
-      <form action={onSubmit} className="grid gap-4">
+      <form onSubmit={submitHandlerOf(onSubmit)} className="grid gap-4">
         <SuggestionField
           label="Repository folder"
           hint={null}

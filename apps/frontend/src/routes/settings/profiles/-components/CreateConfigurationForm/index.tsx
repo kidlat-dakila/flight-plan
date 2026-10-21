@@ -1,6 +1,7 @@
 import { useId, useState, type ReactNode } from "react"
 import Input from "@flightplan/ui/blocks/input"
 import LabelSegments, { type LabelSegment } from "@flightplan/ui/LabelSegments"
+import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
 
 interface ConfigurationSource {
   readonly id: string
@@ -30,7 +31,7 @@ const CreateConfigurationForm = ({ sources, selectedSourceId, nameError, sourceE
   const [name, setName] = useState("")
   const [sourceId, setSourceId] = useState(selectedSourceId)
   return (
-    <form action={() => { onSubmit(name, sourceId) }}>
+    <form onSubmit={submitHandlerOf(() => { onSubmit(name, sourceId) })}>
       <div className="max-w-md">
         <label htmlFor={nameId} className="block text-sm font-bold">{NAME_LABEL}</label>
         <p className="pb-2 text-sm text-muted-foreground">{NAME_HINT}</p>
