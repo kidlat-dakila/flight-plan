@@ -1,5 +1,6 @@
 import { countLabel } from "@/procedures/get-review/utils/count-label"
 import { WRITE_UP_SECTIONS, type WalkthroughOrder, type WriteUpSection } from "@/procedures/get-review-preferences/utils/review-preferences"
+import type { AgentName } from "@/procedures/get-setup/utils/setup"
 import type { Configuration } from "@/procedures/list-configurations/utils/configuration"
 import { configurationOptionOf } from "@/procedures/list-configurations/utils/configuration-option"
 import { joinedList } from "./joined-list"
@@ -9,6 +10,7 @@ import type { WriteUpCounts } from "./write-up-counts"
 
 export interface WriteUpPlanSource {
   readonly isOffered: boolean
+  readonly agent: AgentName
   readonly agentLabel: string
   readonly counts: WriteUpCounts
   readonly sections: readonly WriteUpSection[]
@@ -52,9 +54,10 @@ const configurationNameOf = (configurations: readonly Configuration[], id: strin
 export const buildWriteUpPlan = (source: WriteUpPlanSource): FoundPlan => ({
   kind: "plan",
   isOffered: source.isOffered,
+  agent: source.agent,
   agentLabel: source.agentLabel,
   summary: [
-    { label: "Parts to write up", value: chosenLabelOf(source.sections) },
+    { label: "Parts to explain", value: chosenLabelOf(source.sections) },
     { label: "Prompt configuration", value: configurationNameOf(source.configurations, source.configurationId) },
     { label: "Code Walkthrough order", value: WALKTHROUGH_ORDER_LABELS[source.walkthroughOrder] },
     { label: "Segments", value: source.isSegmented ? SEGMENTS_ON : SEGMENTS_OFF },

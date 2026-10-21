@@ -9,7 +9,7 @@ export const writeUpReviewRoute = publicProcedure
   .mutation(async ({ ctx, input }) => {
     const result = await writeUpReview(input, ctx)
     if (result === null) {
-      throw new TRPCError({ code: "NOT_FOUND", message: "This review target has no review artifact to write up." })
+      throw new TRPCError({ code: "NOT_FOUND", message: "This review target has no review artifact to explain." })
     }
     return result
   })

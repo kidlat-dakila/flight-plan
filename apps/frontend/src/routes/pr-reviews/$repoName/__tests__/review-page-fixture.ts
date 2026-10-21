@@ -491,9 +491,10 @@ export const showSectionInView = (anchorId: string | null): void => {
 export const writeUpPlan = {
   kind: "plan",
   isOffered: false,
+  agent: "claude",
   agentLabel: "Claude",
   summary: [
-    { label: "Parts to write up", value: "Context and Findings" },
+    { label: "Parts to explain", value: "Context and Findings" },
     { label: "Prompt configuration", value: "Standard" },
     { label: "Code Walkthrough order", value: "Building blocks first" },
     { label: "Segments", value: "On" },

@@ -54,7 +54,7 @@ The reviewer asks the agent to write a review up from the review page, choosing 
 | `review.writeUpPlan` returns | What it is |
 |---|---|
 | `isOffered` | Whether the review page has asked already: true once the reviewer declined (`review.declineWriteUp`), asked for a write-up, or an agent was already the review's writer |
-| `agentLabel` | The agent that writes: the setup's default agent, with its saved model and effort. With no agent set up the result is `{ kind: "no-agent", message }` instead. |
+| `agent`, `agentLabel` | The agent that writes (`claude`, `codex` or `cursor`) and its name: the setup's default agent, with its saved model and effort. The review page also uses them on a waypoint's card. With no agent set up the result is `{ kind: "no-agent", message }` instead. |
 | `summary` | The choice in short, as label and value pairs: what is written up, the prompt configuration, the Code Walkthrough order and whether segments are on |
 | `sections` | Context, Trace Diagram, Blast Diagram, Code Walkthrough and Findings, each with `count`, `countLabel` ("4 parts to write", "12 waypoints to check") and `isChosen` |
 | `totalLabel` | What the chosen sections add up to: "5 parts to write and 12 waypoints to check", or "Nothing to write" |
@@ -64,7 +64,7 @@ The reviewer asks the agent to write a review up from the review page, choosing 
 
 A count is of the parts still unwritten that choosing the section would require: the context of each segment (the first alone with segments off), the labels and descriptions of the Trace Diagram, the files of the Blast Diagram to assess, the titles and readings of the waypoints. Findings count the waypoints the agent reads for them. The plan is asked for again with the sections the reviewer ticks, and its counts and labels follow. Unless the reviewer chose otherwise, the sections are those of the last write-up of this review, or else those the Write-ups of the [review preferences](review-preferences.md) mark Always; the configuration is the review's, or else the default; the order is the last write-up's, or else the preference's.
 
-The review page opens the [Write-up Dialog](../DESIGN.md#write-up-dialog) on its own while `isOffered` is false: the first time a review opens, right after Flight Plan built it. It shows the choice in short, and "Configure" shows the inputs. "Not now" calls `review.declineWriteUp` (`procedures/decline-write-up/`), which keeps `isWriteUpDeclined` with the request, so the page does not ask again. With no agent set up the dialog is not shown. "Generate write-up" in the Settings Menu of the review page opens it again at any time.
+The review page opens the [Write-up Dialog](../DESIGN.md#write-up-dialog) on its own while `isOffered` is false: the first time a review opens, right after Flight Plan built it. It shows the choice in short, and "Configure" shows the inputs. "Not now" calls `review.declineWriteUp` (`procedures/decline-write-up/`), which keeps `isWriteUpDeclined` with the request, so the page does not ask again. With no agent set up the dialog is not shown. "Explain this review" in the Settings Menu of the review page opens it again at any time.
 
 `review.writeUp` takes the sections, the configuration, the order and whether segments are on. It refuses, as data with the field it is about, an empty choice, a configuration that no longer exists and a review with no agent set up. Otherwise it sets segments on or off, requires the context code blocks of the configuration and every node of the chosen sections (a node once required stays required), stores the choice with the request as `writeUp`, makes the artifact drafting and hands it to the agent: started, or the one line to run for an agent Flight Plan cannot start. The prompt names the chosen parts, and asks the agent to check every waypoint for findings or to write none. When everything chosen is already written, nothing is started and the answer says so. The page sorts the Code Walkthrough by the order in `writeUp` over the preference.
 
@@ -82,7 +82,7 @@ The page also says who is writing:
 
 A part that is not written is drawn as a skeleton while the state is `writing` or `waiting`, and as plain "not written" once it is `stopped`.
 
-Outside those states, each section of a segment that has parts to write and none written up says "No write-up yet" beside its heading: the Context with no context, a Trace Diagram with no description and no label, a Blast Diagram with files to assess and none assessed, a Code Walkthrough with waypoints and no title or reading. The page data carries it per segment as `writeUpNotices` (`procedures/get-review/utils/write-up-notices.ts`), one label or `null` per section. A section with nothing to write, such as a segment with no Trace Diagram, says nothing.
+Outside those states, each section of a segment that has parts to write and none written up says "Not explained yet" beside its heading: the Context with no context, a Trace Diagram with no description and no label, a Blast Diagram with files to assess and none assessed, a Code Walkthrough with waypoints and no title or reading. The page data carries it per segment as `writeUpNotices` (`procedures/get-review/utils/write-up-notices.ts`), one label or `null` per section. A section with nothing to write, such as a segment with no Trace Diagram, says nothing.
 
 When the agent completes the artifact, the page that watched it being written raises a browser notification with the title of the review target, and says the same in a toast. It fires whether or not the page has focus, and a click on it brings the page to the front. The browser's permission is asked for when the reviewer asks the agent for a write-up. A page opened on a review that is already complete raises nothing.
 
@@ -181,7 +181,7 @@ What a refresh keeps is decided part by part, by comparing the code as the two a
 
 A part is not kept when a code link in it no longer resolves, or points at lines of a file that changed.
 
-The Settings Menu of the review page holds the review's actions above the settings: View pull request, Generate write-up and Delete, which deletes the review artifact and goes back to the repositories. Opening the review target again builds a new one.
+The Settings Menu of the review page holds the review's actions above the settings: View pull request, Explain this review and Delete, which deletes the review artifact and goes back to the repositories. Opening the review target again builds a new one.
 
 ## Who writes what
 

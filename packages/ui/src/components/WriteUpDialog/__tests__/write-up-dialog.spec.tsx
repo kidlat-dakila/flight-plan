@@ -4,7 +4,7 @@ import WriteUpDialog, { type WriteUpPlan } from "@/components/WriteUpDialog"
 const PLAN: WriteUpPlan = {
   agentLabel: "Claude",
   summary: [
-    { label: "Parts to write up", value: "Context, Trace Diagram and Findings" },
+    { label: "Parts to explain", value: "Context, Trace Diagram and Findings" },
     { label: "Prompt configuration", value: "Standard" },
     { label: "Code Walkthrough order", value: "Building blocks first" },
     { label: "Segments", value: "On" },
@@ -44,7 +44,7 @@ describe("WriteUpDialog", () => {
   it("asks whether the agent writes the review up, with the defaults in short and what they add up to", () => {
     renderDialog()
 
-    const dialog = screen.getByRole("dialog", { name: "Ask Claude to write up this review?" })
+    const dialog = screen.getByRole("dialog", { name: "Ask Claude to explain this review?" })
 
     expect(within(dialog).getByText("Context, Trace Diagram and Findings")).toBeTruthy()
     expect(within(dialog).getByText("Building blocks first")).toBeTruthy()
@@ -55,7 +55,7 @@ describe("WriteUpDialog", () => {
   it("writes up with the defaults", () => {
     const { onSubmit } = renderDialog()
 
-    fireEvent.click(screen.getByRole("button", { name: "Write up" }))
+    fireEvent.click(screen.getByRole("button", { name: "Explain" }))
 
     expect(onSubmit).toHaveBeenCalledWith({
       sections: ["context", "traceDiagram", "findings"],
@@ -81,7 +81,7 @@ describe("WriteUpDialog", () => {
     fireEvent.click(await screen.findByRole("radio", { name: /Most important first/ }))
     fireEvent.click(screen.getByRole("button", { name: "Choose" }))
     fireEvent.click(screen.getByRole("checkbox", { name: "Split this review into segments" }))
-    fireEvent.click(screen.getByRole("button", { name: "Write up" }))
+    fireEvent.click(screen.getByRole("button", { name: "Explain" }))
 
     expect(onSubmit).toHaveBeenCalledWith({
       sections: ["context", "traceDiagram", "findings"],
@@ -91,13 +91,13 @@ describe("WriteUpDialog", () => {
     })
   })
 
-  it("keeps the sections ticked since the inputs showed after Write up", async () => {
+  it("keeps the sections ticked since the inputs showed after Explain", async () => {
     const { rerender, ...props } = renderDialog()
     fireEvent.click(screen.getByRole("button", { name: "Configure" }))
     const withWalkthrough = { ...PLAN, sections: PLAN.sections.map((option) => ({ ...option, isChosen: option.isChosen || option.section === "walkthrough" })) }
     rerender(<WriteUpDialog {...props} plan={withWalkthrough} />)
 
-    fireEvent.click(screen.getByRole("button", { name: "Write up" }))
+    fireEvent.click(screen.getByRole("button", { name: "Explain" }))
     await act(async () => {
       await Promise.resolve()
     })
@@ -115,9 +115,9 @@ describe("WriteUpDialog", () => {
   })
 
   it("shows a rejection under the input it is about", () => {
-    renderDialog({ problem: { field: "sections", message: "Choose at least one part for the agent to write up." } })
+    renderDialog({ problem: { field: "sections", message: "Choose at least one part for the agent to explain." } })
 
-    expect(screen.getByRole("alert").textContent).toBe("Choose at least one part for the agent to write up.")
+    expect(screen.getByRole("alert").textContent).toBe("Choose at least one part for the agent to explain.")
     expect(screen.getByRole("checkbox", { name: /Context/ })).toBeTruthy()
   })
 

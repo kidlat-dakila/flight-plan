@@ -2,6 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { useState } from "react"
 import { requestNotificationPermission } from "@/notification-permission"
 import { useTRPC } from "@/trpc"
+import type { WriteUpAgent } from "@flightplan/ui/lib/write-up-agent"
 import type { WriteUpChoice, WriteUpPlan, WriteUpProblem, WriteUpSection } from "@flightplan/ui/WriteUpDialog"
 
 interface ReviewKey {
@@ -19,6 +20,7 @@ type Opening = "unasked" | "open" | "closed"
 export interface WriteUpDialogState {
   readonly plan: WriteUpPlan | null
   readonly canWriteUp: boolean
+  readonly agent: WriteUpAgent | null
   readonly problem: WriteUpProblem | null
   readonly isPending: boolean
   readonly onOpen: () => void
@@ -69,6 +71,7 @@ export const useWriteUpDialog = (reviewKey: ReviewKey, hasArtifact: boolean, ann
   return {
     plan: found !== null && isShown(opening, found.isOffered) ? found : null,
     canWriteUp: found !== null,
+    agent: found === null ? null : { name: found.agent, label: found.agentLabel },
     problem: writeUp.data?.kind === "rejected" ? writeUp.data : null,
     isPending: writeUp.isPending,
     onOpen: () => {

@@ -76,9 +76,9 @@ describe("BlastBand", () => {
   })
 
   it("says beside the heading when no file has a write-up yet", () => {
-    renderBand({ writeUpNotice: "No write-up yet" })
+    renderBand({ writeUpNotice: "Not explained yet" })
 
-    expect(screen.getByText("No write-up yet")).toBeTruthy()
+    expect(screen.getByText("Not explained yet")).toBeTruthy()
   })
 
   it("opens on the default view, and switches the board, the counts and the key from the navigator", async () => {

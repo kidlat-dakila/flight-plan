@@ -2,24 +2,26 @@ import { use, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import { WritingContext } from "@/lib/writing-context"
 
-interface UnwrittenProps {
-  readonly isPending: boolean
+interface SkeletonLinesProps {
+  readonly label: string
   readonly lineCount?: number
   readonly className?: string
   readonly caption?: ReactNode
+}
+
+interface UnwrittenProps extends Omit<SkeletonLinesProps, "label"> {
+  readonly isPending: boolean
   readonly children: ReactNode
 }
 
 const BAR_CLASSES = "block h-[0.7em] rounded-[0.225rem] bg-foreground/10 motion-safe:animate-pulse"
 const LAST_LINE_CLASSES = "w-3/5"
 
-const Unwritten = ({ isPending, lineCount = 1, className, caption = null, children }: UnwrittenProps) => {
-  const writingLabel = use(WritingContext)
-  if (!isPending || writingLabel === null) return <>{children}</>
+export const SkeletonLines = ({ label, lineCount = 1, className, caption = null }: SkeletonLinesProps) => {
   const lines = Array.from({ length: lineCount }, (_unused, position) => position)
   return (
     <span data-unwritten="true" className={cn("flex min-w-0 flex-col justify-center gap-[0.6em] py-[0.3em]", className)}>
-      <span className="sr-only">{writingLabel}</span>
+      <span className="sr-only">{label}</span>
       {lines.map((position) => (
         <span
           key={position}
@@ -30,6 +32,12 @@ const Unwritten = ({ isPending, lineCount = 1, className, caption = null, childr
       {caption}
     </span>
   )
+}
+
+const Unwritten = ({ isPending, lineCount, className, caption, children }: UnwrittenProps) => {
+  const writingLabel = use(WritingContext)
+  if (!isPending || writingLabel === null) return <>{children}</>
+  return <SkeletonLines label={writingLabel} lineCount={lineCount} className={className} caption={caption} />
 }
 
 export default Unwritten

@@ -23,7 +23,7 @@ describe("planNodeWriteUp", () => {
     expect(planned).toMatchObject({
       kind: "planned",
       ask: "The reviewer asks for the write-up of the waypoint `w2` alone: write its title and its reading, and nothing else.",
-      message: "Writing up 1 waypoint",
+      message: "Explaining 1 waypoint",
       artifact: { status: "drafting" },
     })
     expect(planned.kind === "planned" ? requiredIdsOf(planned.artifact) : []).toStrictEqual(["w2"])
@@ -47,13 +47,13 @@ describe("planNodeWriteUp", () => {
       })),
     }
 
-    expect(planNodeWriteUp(written, { kind: "waypoint", waypointId: "w2" })).toStrictEqual({ kind: "written", message: "This is already written up." })
+    expect(planNodeWriteUp(written, { kind: "waypoint", waypointId: "w2" })).toStrictEqual({ kind: "written", message: "This is already explained." })
   })
 
   it("requires one Trace Diagram card and asks for its labels", () => {
     const planned = planNodeWriteUp(DRAFT_ARTIFACT, { kind: "trace-node", segmentId: "all", nodeId: "j-subtotal" })
 
-    expect(planned).toMatchObject({ kind: "planned", message: "Writing up the card" })
+    expect(planned).toMatchObject({ kind: "planned", message: "Explaining the card" })
     expect(planned.kind === "planned" ? planned.ask : "").toBe(
       "The reviewer asks for the write-up of the Trace Diagram node `j-subtotal` of segment `all` alone: write its label and the labels of its trigger labels and listed blocks, and nothing else.",
     )

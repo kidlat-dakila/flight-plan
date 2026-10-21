@@ -7,7 +7,7 @@ export type WriteUpNotices = Readonly<Record<ArrangedSection, string | null>>
 
 type SectionState = "empty" | "unwritten" | "written"
 
-export const NO_WRITE_UP_LABEL = "No write-up yet"
+export const NO_WRITE_UP_LABEL = "Not explained yet"
 
 export const NO_WRITE_UP_NOTICES: WriteUpNotices = { context: null, traceDiagram: null, blastDiagram: null, walkthrough: null }
 

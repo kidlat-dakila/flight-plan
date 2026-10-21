@@ -12,7 +12,7 @@ const STARTED_MESSAGE = "Review started"
 const CREATED_MESSAGE = "Flight Plan created"
 
 export const externalStartMessage = (agent: AgentName): string =>
-  `Run this line in ${AGENT_LABELS[agent]} to start the write-up`
+  `Run this line in ${AGENT_LABELS[agent]} to start explaining the review`
 
 const unstartedMessage = (reason: string): string =>
   `The review is ready to read, but the agent did not start: ${reason}`

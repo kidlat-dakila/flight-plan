@@ -96,7 +96,7 @@ const Canvas = ({ label, width, height, zoom, offset, isDragging, isCentred, chi
 )
 
 const TOOLBAR_PLACE_CLASSES = "pointer-events-none z-10 flex justify-end px-2"
-const STICKY_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} sticky top-[calc(var(--band-height,0px)+0.5rem)] mt-2`
+const STICKY_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} sticky top-[calc(var(--pinned-height,var(--band-height,0px))+0.5rem)] mt-2`
 const FULL_SCREEN_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} absolute inset-x-0 top-2`
 
 const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, panel, actions = null, navigation = null, renderCanvas = null, children = null, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {

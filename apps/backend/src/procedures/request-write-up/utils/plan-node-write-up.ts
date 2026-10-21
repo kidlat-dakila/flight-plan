@@ -13,7 +13,7 @@ export type PlannedNodeWriteUp
 type TargetOf<Kind extends WriteUpTarget["kind"]> = Extract<WriteUpTarget, { kind: Kind }>
 
 const DRAFTING_STATUS = "drafting"
-const ALREADY_WRITTEN: PlannedNodeWriteUp = { kind: "written", message: "This is already written up." }
+const ALREADY_WRITTEN: PlannedNodeWriteUp = { kind: "written", message: "This is already explained." }
 
 const rejected = (message: string): PlannedNodeWriteUp => ({ kind: "rejected", field: "target", message })
 
@@ -43,7 +43,7 @@ const planWaypoints = (artifact: ReviewArtifact, target: TargetOf<"waypoint" | "
   }
   const unwrittenIds = listWaypoints(artifact).filter((waypoint) => waypointIds.includes(waypoint.id) && isWaypointUnwritten(waypoint)).map((waypoint) => waypoint.id)
   if (unwrittenIds.length === 0) return ALREADY_WRITTEN
-  return planned(withRequiredWaypoints(artifact, unwrittenIds), waypointAskOf(unwrittenIds), `Writing up ${countLabel(unwrittenIds.length, "waypoint", "waypoints")}`)
+  return planned(withRequiredWaypoints(artifact, unwrittenIds), waypointAskOf(unwrittenIds), `Explaining ${countLabel(unwrittenIds.length, "waypoint", "waypoints")}`)
 }
 
 const isTraceNodeUnwritten = (node: TraceNode): boolean =>
@@ -59,7 +59,7 @@ const planTraceNode = (artifact: ReviewArtifact, target: TargetOf<"trace-node">)
   return planned(
     withRequiredCard(artifact, target.segmentId, target.nodeId),
     `The reviewer asks for the write-up of the Trace Diagram node ${quoted(target.nodeId)} of segment ${quoted(target.segmentId)} alone: write its label and the labels of its trigger labels and listed blocks, and nothing else.`,
-    "Writing up the card",
+    "Explaining the card",
   )
 }
 

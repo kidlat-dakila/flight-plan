@@ -10,6 +10,7 @@ import {
   ownBlastPage as blastPage,
   ownMissingPage as missingPage,
   ownTwoFilePage as twoFilePage,
+  showSectionInView,
   unassignedFiles,
 } from "./review-page-fixture"
 
@@ -62,14 +63,7 @@ const toFileLine = (text: string, index: number) => ({
 })
 
 const AUTHOR_PATH = "/pr-reviews/storefront/pr-416"
-const TWELVE_LINE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-
-const twelveLines: ProcedureReply = {
-  data: {
-    path: "src/price.ts",
-    lines: TWELVE_LINE_NUMBERS.map((lineNumber) => `const line${String(lineNumber)} = ${String(lineNumber)}`).map(toFileLine),
-  },
-}
+const WAYPOINT_MARK_NAME = "Waypoint 1 of 2: Held units reduce the price"
 
 const renderCreation = (handlers: ProcedureHandlers, path = CREATE_PATH, history = createMemoryHistory({ initialEntries: [path] })) =>
   render(
@@ -590,9 +584,10 @@ describe("the create Flight Plan page", () => {
   })
 
   it("reads the author's Flight Plan without reviewed marks", async () => {
-    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.fileCode": () => twelveLines }, AUTHOR_PATH)
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }) }, AUTHOR_PATH)
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+    fireEvent.click(await within(stock).findByRole("button", { name: WAYPOINT_MARK_NAME }))
 
     expect(await within(stock).findByRole("region", { name: "Held units reduce the price" })).toBeTruthy()
     expect(screen.queryByRole("button", { name: /Show reviewed/ })).toBeNull()
@@ -600,20 +595,18 @@ describe("the create Flight Plan page", () => {
     expect(screen.queryByRole("button", { name: "File reviewed" })).toBeNull()
   })
 
-  it("edits a waypoint under its lines in the whole file, and shows why it was not saved", async () => {
+  it("edits a waypoint from its open box, and shows why it was not saved", async () => {
     const editWalkthrough = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
       data: { kind: "rejected", message: "Write the title. A waypoint cannot be without one." },
     })
     renderCreation(
-      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.fileCode": () => twelveLines, "review.editWalkthrough": editWalkthrough },
+      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editWalkthrough": editWalkthrough },
       AUTHOR_PATH,
     )
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
-
-    expect(await within(stock).findByText("const line12 = 12")).toBeTruthy()
-
-    fireEvent.click(within(stock).getByRole("button", { name: "Edit the waypoint: Held units reduce the price" }))
+    fireEvent.click(await within(stock).findByRole("button", { name: WAYPOINT_MARK_NAME }))
+    fireEvent.click(await within(stock).findByRole("button", { name: "Edit the waypoint: Held units reduce the price" }))
     const form = await within(stock).findByRole("form", { name: "Edit the waypoint: Held units reduce the price" })
     fireEvent.change(within(form).getByRole("textbox", { name: "Title" }), { target: { value: "Subtracts the held units" } })
     fireEvent.click(within(form).getByRole("checkbox", { name: "Core change" }))
@@ -646,14 +639,45 @@ describe("the create Flight Plan page", () => {
     expect(await within(stock).findByRole("region", { name: "Held units reduce the price" })).toBeTruthy()
   })
 
+  it("writes the description of a waypoint that has none, from its card or with C in place of a comment", async () => {
+    const undescribedPage = {
+      ...artifactPage,
+      segments: artifactPage.segments.map((segment) => ({
+        ...segment,
+        walkthrough: {
+          ...segment.walkthrough,
+          files: segment.walkthrough.files.map((file) => ({
+            ...file,
+            rows: file.rows.map((row) => (row.kind === "waypoint" ? { ...row, waypoint: { ...row.waypoint, reading: null } } : row)),
+          })),
+        },
+      })),
+    }
+    showSectionInView("stock-code-walkthrough")
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: undescribedPage }) }, AUTHOR_PATH)
+    const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
+    await within(navigator).findByRole("button", { name: "Next waypoint" })
+
+    fireEvent.keyDown(window, { key: "d" })
+
+    expect(await screen.findByText("This waypoint does not have any description or explanation.")).toBeTruthy()
+    expect(await within(navigator).findByRole("button", { name: /Write description/ })).toBeTruthy()
+    expect(within(navigator).queryByRole("button", { name: /Add comment/ })).toBeNull()
+
+    fireEvent.keyDown(window, { key: "c" })
+
+    expect(await screen.findByRole("form", { name: "Edit the waypoint: Held units reduce the price" })).toBeTruthy()
+  })
+
   it("removes a waypoint and a file from the Code Walkthrough", async () => {
     const editWalkthrough = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
     renderCreation(
-      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.fileCode": () => twelveLines, "review.editWalkthrough": editWalkthrough },
+      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editWalkthrough": editWalkthrough },
       AUTHOR_PATH,
     )
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+    fireEvent.click(await within(stock).findByRole("button", { name: WAYPOINT_MARK_NAME }))
     fireEvent.click(await within(stock).findByRole("button", { name: "Remove the waypoint: Held units reduce the price" }))
 
     await waitFor(() => {

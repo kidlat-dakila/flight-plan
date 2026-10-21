@@ -3,6 +3,7 @@ import { listConfigurationsOf } from "@/procedures/list-configurations/utils/con
 
 const SOURCE: WriteUpPlanSource = {
   isOffered: false,
+  agent: "claude",
   agentLabel: "Claude",
   counts: { context: 1, traceDiagram: 4, blastDiagram: 0, walkthrough: 6, findings: 12 },
   sections: ["context", "traceDiagram", "findings"],
@@ -15,7 +16,7 @@ const SOURCE: WriteUpPlanSource = {
 describe("buildWriteUpPlan", () => {
   it("sums up the chosen defaults in short", () => {
     expect(buildWriteUpPlan(SOURCE).summary).toStrictEqual([
-      { label: "Parts to write up", value: "Context, Trace Diagram and Findings" },
+      { label: "Parts to explain", value: "Context, Trace Diagram and Findings" },
       { label: "Prompt configuration", value: "Minimal" },
       { label: "Code Walkthrough order", value: "Building blocks first" },
       { label: "Segments", value: "On" },

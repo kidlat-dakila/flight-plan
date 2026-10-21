@@ -2,7 +2,7 @@ import { NO_WRITE_UP_NOTICES, writeUpNoticesOf } from "@/procedures/get-review/u
 import { DRAFT_SEGMENT, WALKTHROUGH_ONLY_SEGMENT } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 import type { Segment } from "@flightplan/configurations"
 
-const UNWRITTEN = "No write-up yet"
+const UNWRITTEN = "Not explained yet"
 
 const withTraceLabel = (segment: Segment): Segment => ({
   ...segment,

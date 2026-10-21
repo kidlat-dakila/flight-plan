@@ -94,7 +94,7 @@ describe("writeUpReview", () => {
     const written = { ...UNREQUIRED_ARTIFACT, segments: UNREQUIRED_ARTIFACT.segments.map((segment) => ({ ...segment, context: "This segment rounds once.", title: "Rounding" })) }
     const context = await createWritingContext(spawner, written)
 
-    await expect(writeUpReview({ ...INPUT, sections: ["context"] }, context)).resolves.toStrictEqual({ kind: "written", message: "Everything you chose is already written up." })
+    await expect(writeUpReview({ ...INPUT, sections: ["context"] }, context)).resolves.toStrictEqual({ kind: "written", message: "Everything you chose is already explained." })
     expect(spawner.launches).toStrictEqual([])
   })
 })

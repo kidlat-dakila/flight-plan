@@ -39,9 +39,9 @@ The Code Walkthrough is where the navigator does the most.
 
 ### Stepping through waypoints
 
-Previous waypoint and Next waypoint take the place of Back and Next. They step through the waypoints of the segment on screen, across its files, in reading order. Stepping to a waypoint makes it the **current waypoint**, shows its preview card and dims the rest of its file's code, so the lines it is about stand out. Only one card shows at a time: stepping on, or hovering another mark, closes it. On the author's page stepping opens the waypoint's box instead. The dimming ends when the reader scrolls away; the waypoint stays current.
+Previous waypoint and Next waypoint take the place of Back and Next. They step through the waypoints of the segment on screen, across its files, in reading order. Stepping to a waypoint makes it the **current waypoint**, shows its preview card and dims the rest of its file's code, so the lines it is about stand out. Only one card shows at a time: stepping on, or hovering another mark, closes it. The dimming ends when the reader scrolls away; the waypoint stays current.
 
-**Expand waypoint** (R) opens the current waypoint's box above its lines and scrolls to it, and **Collapse waypoint** (R) closes it again and brings back its card. The card of the current waypoint says "Click or press R to expand"; the card of any other waypoint, shown on hover, says "Click to expand". With no current waypoint the button is dimmed and says to pick one first.
+**Expand waypoint** (R) opens the current waypoint's box above its lines and scrolls to it, and **Collapse waypoint** (R) closes it again and brings back its card. The card of every waypoint has an "Expand" button with the R keycap that does the same. With no current waypoint the button is dimmed and says to pick one first.
 
 The position between the two buttons counts the waypoints of the segment: "4 of 8". Each segment counts on its own.
 
@@ -63,9 +63,9 @@ Add comment (C), to the right of Mark as reviewed, opens the comment composer on
 
 ### Writing up a waypoint
 
-While the current waypoint has no write-up and an agent is set up, Write up this line (G) and Write up the whole code block (Ctrl+G) follow Add comment. G asks the agent for the waypoint (`review.requestWriteUp` with `{ kind: "waypoint" }`), and Ctrl+G for every waypoint of the root code block it sits in (`{ kind: "root-block" }`); a waypoint outside a root code block has only G. Ctrl+G is Control and G on every system, macOS included, where Cmd+G stays the browser's Find next. The waypoint's card offers the same two buttons, and its mark spins while the agent writes it. The Trace Diagram and the Blast Diagram use G for the node in their side panel, through the same keydown listener.
+While the current waypoint has no write-up and an agent is set up, Let Claude explain (G), named after the setup's agent, and Explain the whole code block (Ctrl+G) follow Add comment. G asks the agent for the waypoint (`review.requestWriteUp` with `{ kind: "waypoint" }`), and Ctrl+G for every waypoint of the root code block it sits in (`{ kind: "root-block" }`); a waypoint outside a root code block has only G. Ctrl+G is Control and G on every system, macOS included, where Cmd+G stays the browser's Find next. The waypoint's card offers the same two buttons, and its mark spins while the agent writes it. The Trace Diagram and the Blast Diagram use G for the node in their side panel, through the same keydown listener.
 
-The author's page has no Mark as reviewed and no Add comment, since the author does not review their own Flight Plan. On a published Flight Plan, Mark as reviewed, Add comment and the filter say that they are only available in Flight Plan.
+The author's page has no Mark as reviewed, since the author does not review their own Flight Plan. In place of Add comment it has Write description (C), which opens the current waypoint's form in place of its box, with or without a description written. On a published Flight Plan, Mark as reviewed, Add comment and the filter say that they are only available in Flight Plan.
 
 ### Filtering
 

@@ -44,6 +44,7 @@ import {
   type SectionSpan,
 } from "@/lib/navigator-controls"
 import { isNavigatorKeyEvent, navigatorKeyOf } from "@/lib/navigator-keys"
+import { coveredTopOf } from "@/lib/pinned-rows"
 import { cn } from "@/lib/utils"
 
 interface ReviewNavigatorProps {
@@ -67,7 +68,6 @@ const HERE_LABEL = "Here"
 const OTHER_SEGMENTS_LABEL = "Other segments"
 const FLASH_MS = 180
 const HINT_MS = 3000
-const BAND_HEIGHT_PX = 56
 const NO_FRAME = 0
 const ANCHOR_SEPARATOR = "\n"
 const JUMP_HINTS: readonly KeyHint[] = [[["↑", "↓"], "move"], [["→"], "sections"], [["↵"], "jump"], [["esc"], "close"]]
@@ -108,7 +108,7 @@ const useDominantAnchorId = (anchorIds: readonly string[]): string | null => {
     const keyedAnchorIds = anchorKey === "" ? [] : anchorKey.split(ANCHOR_SEPARATOR)
     const measure = (): void => {
       frameRef.current = NO_FRAME
-      setDominantAnchorId(dominantAnchorIdOf(spansOf(keyedAnchorIds), { top: BAND_HEIGHT_PX, bottom: window.innerHeight }))
+      setDominantAnchorId(dominantAnchorIdOf(spansOf(keyedAnchorIds), { top: coveredTopOf(), bottom: window.innerHeight }))
     }
     const scheduleMeasure = (): void => {
       if (frameRef.current === NO_FRAME) frameRef.current = requestAnimationFrame(measure)

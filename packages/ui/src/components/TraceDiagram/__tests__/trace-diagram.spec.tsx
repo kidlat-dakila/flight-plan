@@ -348,25 +348,25 @@ describe("TraceDiagram", () => {
     fireEvent.click(screen.getByRole("button", { name: /^priceOf/ }))
     const panel = await screen.findByRole("region", { name: "CartLine" })
 
-    expect(within(panel).getByText("This card has no write-up yet.")).toBeTruthy()
+    expect(within(panel).getByText("Not explained yet.")).toBeTruthy()
 
-    fireEvent.click(within(panel).getByRole("button", { name: /Write up/ }))
-    await findNavigatorButton("Write up")
+    fireEvent.click(within(panel).getByRole("button", { name: /Explain this card/ }))
+    await findNavigatorButton("Explain this card")
     fireEvent.keyDown(document.body, { key: "g" })
 
     expect(onWriteUpNode.mock.calls).toStrictEqual([["cart-line"], ["cart-line"]])
   })
 
-  it("spins the side panel's ring while the agent writes the card, and offers no write-up then", async () => {
+  it("draws skeleton lines in the side panel while the agent writes the card, and offers no write-up then", async () => {
     const nodes = [node({ id: "cart-line", label: "CartLine", isDraft: true, isBeingWritten: true })]
     render(<TraceDiagram title="Cart" nodes={nodes} edges={[]} codeLinks={{}} codeDefinitions={{}} isReviewPending={false} onWriteUpNode={vi.fn()} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />)
 
     fireEvent.click(screen.getByRole("button", { name: /^priceOf/ }))
     const panel = await screen.findByRole("region", { name: "CartLine" })
 
-    expect(within(panel).getByText("The agent is writing this card up.")).toBeTruthy()
-    expect(panel.querySelector("[data-being-written=true]")).not.toBeNull()
-    expect(within(panel).queryByRole("button", { name: /Write up/ })).toBeNull()
+    expect(within(panel).getByText("The agent is explaining this card.")).toBeTruthy()
+    expect(panel.querySelector("[data-unwritten]")).not.toBeNull()
+    expect(within(panel).queryByRole("button", { name: /Explain this card/ })).toBeNull()
   })
 
   it("opens the node of a pressed block row", async () => {

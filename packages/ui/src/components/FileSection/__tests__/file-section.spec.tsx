@@ -3,6 +3,9 @@ import type { ComponentProps } from "react"
 import FileSection, { type WalkthroughFile } from "@/components/FileSection"
 import { renderPlainEditor } from "@/lib/__tests__/plain-editor"
 import { codeLine, paragraph } from "@/lib/__tests__/review-samples"
+import { WriteUpAgentContext } from "@/lib/write-up-agent"
+
+const CLAUDE = { name: "claude", label: "Claude" } as const
 
 type FileSectionProps = ComponentProps<typeof FileSection>
 
@@ -295,23 +298,93 @@ describe("FileSection gutter", () => {
     render(<FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function." }, "root-1"), previewVisit: { waypointId: "w1", count: 1 }, onWriteUp })} />)
 
     expect(await screen.findByText("Adds a function.")).toBeTruthy()
-    expect(screen.getByText("This waypoint has no write-up yet.")).toBeTruthy()
+    expect(screen.getByText("This line of code is not explained or checked for issues yet.")).toBeTruthy()
 
-    fireEvent.click(screen.getByRole("button", { name: /Write up this line/ }))
-    fireEvent.click(screen.getByRole("button", { name: /Write up the whole code block/ }))
+    fireEvent.click(screen.getByRole("button", { name: /Explain this line/ }))
+    fireEvent.click(screen.getByRole("button", { name: /Explain the whole code block/ }))
 
     expect(onWriteUp.mock.calls).toStrictEqual([[{ kind: "waypoint", waypointId: "w1" }], [{ kind: "root-block", rootBlockId: "root-1" }]])
+  })
+
+  it("names the agent that would explain the waypoint with its mark, and that it is explaining it", async () => {
+    const view = render(
+      <WriteUpAgentContext value={CLAUDE}>
+        <FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function." }, null), previewVisit: { waypointId: "w1", count: 1 }, onWriteUp: vi.fn() })} />
+      </WriteUpAgentContext>,
+    )
+
+    expect(await screen.findByText("Claude has not explained this line of code or checked it for issues yet.")).toBeTruthy()
+    const explainButton = screen.getByRole("button", { name: "Let Claude explain" })
+
+    expect(explainButton.querySelector("[data-agent-mark=claude] path")?.getAttribute("fill")).toBe("#D97757")
+    expect(explainButton.querySelector("kbd")?.textContent).toBe("g")
+
+    view.rerender(
+      <WriteUpAgentContext value={CLAUDE}>
+        <FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function.", isBeingWritten: true }, null), previewVisit: { waypointId: "w1", count: 1 }, onWriteUp: vi.fn() })} />
+      </WriteUpAgentContext>,
+    )
+
+    expect(await screen.findByText("Claude is explaining this line.")).toBeTruthy()
+  })
+
+  it("draws skeleton lines in the card while the agent writes the waypoint, and offers no write-up then", async () => {
+    render(<FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function.", isBeingWritten: true }, "root-1"), previewVisit: { waypointId: "w1", count: 1 }, onWriteUp: vi.fn() })} />)
+    const card = (await screen.findByText("Adds a function.")).parentElement
+
+    expect(card?.querySelector("[data-unwritten]")).not.toBeNull()
+    expect(screen.getByText("The agent is explaining this line.")).toBeTruthy()
+    expect(screen.queryByText("This line of code is not explained or checked for issues yet.")).toBeNull()
+    expect(screen.queryByRole("button", { name: /Explain this line/ })).toBeNull()
   })
 
   it("offers no write-up where the page gives none, and none of a whole code block for a waypoint outside one", async () => {
     const view = render(<FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function." }, null), previewVisit: { waypointId: "w1", count: 1 }, onWriteUp: vi.fn() })} />)
 
-    expect(await screen.findByRole("button", { name: /Write up this line/ })).toBeTruthy()
-    expect(screen.queryByRole("button", { name: /Write up the whole code block/ })).toBeNull()
+    expect(await screen.findByRole("button", { name: /Explain this line/ })).toBeTruthy()
+    expect(screen.queryByRole("button", { name: /Explain the whole code block/ })).toBeNull()
 
     view.rerender(<FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function." }, null), previewVisit: { waypointId: "w1", count: 1 } })} />)
 
-    expect(screen.queryByRole("button", { name: /Write up this line/ })).toBeNull()
+    expect(screen.queryByRole("button", { name: /Explain this line/ })).toBeNull()
+  })
+
+  it("asks the author to write the description of a waypoint with none or to let the agent explain it, and draws the editor and the box actions the page gives", async () => {
+    const onWriteDescription = vi.fn()
+    const authoring = {
+      editedWaypointId: null,
+      renderEditor: (waypointId: string) => <form aria-label={`Editor of ${waypointId}`} />,
+      renderActions: (waypointId: string) => <button type="button">{`Remove ${waypointId}`}</button>,
+      onWriteDescription,
+    }
+    const file = unwrittenFile({ hint: "Adds a function." }, null)
+    const view = render(<FileSection {...createProps({ file, previewVisit: { waypointId: "w1", count: 1 }, authoring, onWriteUp: vi.fn(), headerActions: <button type="button">Remove the file</button> })} />)
+
+    expect(await screen.findByText("This waypoint does not have any description or explanation.")).toBeTruthy()
+    expect(screen.getByRole("button", { name: /Explain this line/ })).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Write description" }).querySelector("kbd")?.textContent).toBe("c")
+    expect(screen.getByRole("button", { name: "Remove the file" })).toBeTruthy()
+
+    fireEvent.click(screen.getByRole("button", { name: /Write description/ }))
+
+    expect(onWriteDescription).toHaveBeenCalledWith("w1")
+
+    view.rerender(<FileSection {...createProps({ file, openWaypointIds: new Set(["w1"]), authoring })} />)
+
+    expect(screen.getByRole("button", { name: "Remove w1" })).toBeTruthy()
+
+    view.rerender(<FileSection {...createProps({ file, authoring: { ...authoring, editedWaypointId: "w1" } })} />)
+
+    expect(screen.getByRole("form", { name: "Editor of w1" })).toBeTruthy()
+  })
+
+  it("expands the waypoint from the button in its card", async () => {
+    const onToggleWaypoint = vi.fn()
+    render(<FileSection {...createProps({ file: unwrittenFile({ hint: "Adds a function." }, null), previewVisit: { waypointId: "w1", count: 1 }, onToggleWaypoint })} />)
+
+    fireEvent.click(await screen.findByRole("button", { name: "Expand" }))
+
+    expect(onToggleWaypoint).toHaveBeenCalledWith("w1")
   })
 
   it("draws an open waypoint's box above its lines, moves the anchor to the box, and keeps the mark", () => {

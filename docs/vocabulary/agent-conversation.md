@@ -55,21 +55,21 @@ The agent Flight Plan starts for a review target is the session that writes its 
 
 ## Write-up on demand
 
-The reviewer can ask the agent for the write-up of one part of the review from the page: one waypoint ("Write up this line"), every waypoint of a root code block ("Write up the whole code block"), one card of a Trace Diagram, or one file of a Blast Diagram, from its side panel. `review.requestWriteUp` (`procedures/request-write-up/`) takes the review and a target:
+The reviewer can ask the agent for the write-up of one part of the review from the page: one waypoint ("Let Claude explain", named after the agent), every waypoint of a root code block ("Explain the whole code block"), one card of a Trace Diagram, or one file of a Blast Diagram, from its side panel. `review.requestWriteUp` (`procedures/request-write-up/`) takes the review and a target:
 
 | Target | Required, and asked of the agent |
 |---|---|
 | `{ kind: "waypoint", waypointId }` | The waypoint: its title and reading |
 | `{ kind: "root-block", rootBlockId }` (the id the page gives the root code block, `src/price.ts#function:priceOf`) | Every unwritten waypoint in it, steps included |
-| `{ kind: "trace-node", segmentId, nodeId }` | The card: its label and the labels of its trigger labels and listed blocks ("Writing up the card") |
+| `{ kind: "trace-node", segmentId, nodeId }` | The card: its label and the labels of its trigger labels and listed blocks ("Explaining the card") |
 | `{ kind: "blast-file", segmentId, path }` | The file's impact type and reason ("Assessing the file"). A file of the change has none and is refused. With segments off the page shows one Blast Diagram joined from every segment under the first segment's id, so when that segment has no such file the file is looked for in the segment that holds it. |
 
 | What happens | When |
 |---|---|
-| The part is marked required, the review becomes drafting, the setup's default agent becomes its writer, and the agent is sent a message, as a chat message is: "The reviewer asks for the write-up of the waypoint `w2` alone: write its title and its reading, and nothing else." The answer is `started` with "Writing up 1 waypoint". | The target has something unwritten |
+| The part is marked required, the review becomes drafting, the setup's default agent becomes its writer, and the agent is sent a message, as a chat message is: "The reviewer asks for the write-up of the waypoint `w2` alone: write its title and its reading, and nothing else." The answer is `started` with "Explaining 1 waypoint". | The target has something unwritten |
 | The answer carries the line to run, to paste into that agent | The default agent is one Flight Plan cannot start |
 | `started` with "The agent did not start: …" and the reason, the waypoints staying required for the next time the agent runs | The agent could not be started or reached |
-| `written`, "This is already written up." | Everything of the target is written |
+| `written`, "This is already explained." | Everything of the target is written |
 | `rejected` with `field: "target"` | The review has no such waypoint, card or file, the code block has no waypoint, or the file is part of the change |
 | `rejected` with `field: "agent"` | No agent is set up |
 

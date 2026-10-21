@@ -1,4 +1,4 @@
-import { placeWaypoints, stemsOf, type GutterRow, type StemTone } from "@/components/FileRows/gutter"
+import { lineSequenceOf, placeWaypoints, stemsOf, type GutterRow, type StemTone } from "@/components/FileRows/gutter"
 import { codeLine } from "@/lib/__tests__/review-samples"
 
 interface SampleWaypoint {
@@ -44,9 +44,9 @@ describe("stemsOf", () => {
     const stems = stemsOf(rows, placeWaypoints(rows), toneOf({ open: "solid" }))
 
     expect(lines.lines.map((line) => stems.get(line) ?? null)).toStrictEqual([
-      { reach: "start", isSolid: true, isJoinedAbove: true },
-      { reach: "middle", isSolid: true, isJoinedAbove: false },
-      { reach: "end", isSolid: true, isJoinedAbove: false },
+      { reach: "start", tone: "solid", isJoinedAbove: true },
+      { reach: "middle", tone: "solid", isJoinedAbove: false },
+      { reach: "end", tone: "solid", isJoinedAbove: false },
       null,
     ])
   })
@@ -66,8 +66,17 @@ describe("stemsOf", () => {
     const nestedStems = stemsOf(nested, placeWaypoints(nested), toneOf({ outer: "faint", inner: "solid" }))
 
     expect(first.lines.map((line) => stems.get(line)?.reach)).toStrictEqual(["start", "end"])
-    expect(stems.get(first.lines[0])?.isSolid).toBe(false)
+    expect(stems.get(first.lines[0])?.tone).toBe("faint")
     expect(second.lines.map((line) => stems.get(line))).toStrictEqual([undefined])
-    expect([...nestedStems.values()].map((piece) => [piece.reach, piece.isSolid])).toStrictEqual([["single", true], ["end", false]])
+    expect([...nestedStems.values()].map((piece) => [piece.reach, piece.tone])).toStrictEqual([["single", "solid"], ["end", "faint"]])
+  })
+
+  it("draws a quiet rail down the lines of every other waypoint, under the stem of the current one", () => {
+    const rows = [waypointRow("outer", { lineStart: 1, lineEnd: 4 }), linesRow("1"), waypointRow("current", { lineStart: 2, lineEnd: 3 }), linesRow("2", "3", "4")]
+
+    const stems = stemsOf(rows, placeWaypoints(rows), toneOf({ outer: "quiet", current: "faint" }))
+    const pieces = lineSequenceOf(rows).flatMap((line) => (line === null ? [] : [stems.get(line)]))
+
+    expect(pieces.map((piece) => [piece?.reach, piece?.tone])).toStrictEqual([["start", "quiet"], ["start", "faint"], ["end", "faint"], ["end", "quiet"]])
   })
 })

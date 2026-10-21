@@ -50,6 +50,9 @@
     --color-line-blue: var(--line-blue);
     --color-line-foreground: var(--line-foreground);
     --color-nit: var(--nit);
+    --color-risk: var(--risk);
+    --color-risk-text: var(--risk-text);
+    --color-waypoint: var(--waypoint);
     --color-signal-text: var(--signal-text);
     --color-signal-foreground: var(--signal-foreground);
     --color-signal: var(--signal);
@@ -112,6 +115,8 @@
     --signal-foreground: light-dark(oklch(0.22 0 0), oklch(0.218 0 0));
     --signal-text: light-dark(oklch(0.47 0.115 65), oklch(0.82 0.15 76));
     --nit: light-dark(oklch(0.55 0.14 235), oklch(0.77 0.12 235));
+    --risk: light-dark(oklch(0.6 0.135 92), oklch(0.87 0.15 96));
+    --risk-text: light-dark(oklch(0.5 0.115 90), oklch(0.87 0.15 96));
     --line-blue: light-dark(oklch(0.51 0.2 262), oklch(0.72 0.15 262));
     --line-green: light-dark(oklch(0.51 0.13 160), oklch(0.74 0.15 160));
     --line-magenta: light-dark(oklch(0.52 0.2 0), oklch(0.73 0.17 0));
@@ -119,6 +124,7 @@
     --line-teal: light-dark(oklch(0.51 0.1 215), oklch(0.76 0.11 215));
     --line-lime: light-dark(oklch(0.53 0.14 125), oklch(0.8 0.16 125));
     --line-foreground: light-dark(oklch(1 0 0), oklch(0.218 0 0));
+    --waypoint: var(--line-blue);
     --code: light-dark(#f6f8fa, #24292e);
     --diff-added: light-dark(oklch(0.5 0.13 160), oklch(0.74 0.15 160));
     --diff-removed: light-dark(oklch(0.51 0.2 27), oklch(0.72 0.17 25));

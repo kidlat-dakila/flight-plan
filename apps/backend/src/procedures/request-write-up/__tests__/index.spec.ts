@@ -39,7 +39,7 @@ describe("requestWriteUp", () => {
     await expect(requestWriteUp({ ...KEY, target: { kind: "waypoint", waypointId: "w2" } }, context)).resolves.toStrictEqual({
       kind: "started",
       prompt: null,
-      message: "Writing up 1 waypoint",
+      message: "Explaining 1 waypoint",
     })
     const artifact = await context.reviewStore.findArtifact(KEY)
     expect(artifact?.status).toBe("drafting")

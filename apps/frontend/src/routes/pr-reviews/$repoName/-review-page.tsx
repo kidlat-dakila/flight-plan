@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { Link, useNavigate, type ErrorComponentProps } from "@tanstack/react-router"
-import { lazy, Suspense, use, useState } from "react"
+import { lazy, Suspense, use, useState, type ReactNode } from "react"
 import { createPortal } from "react-dom"
 import { BandSlotContext } from "@/band-slot"
 import { useColorTheme } from "@/color-theme"
@@ -16,6 +16,7 @@ import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
 import FileSection from "@flightplan/ui/FileSection"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { cn } from "@flightplan/ui/lib/utils"
+import { WriteUpAgentContext, type WriteUpAgent } from "@flightplan/ui/lib/write-up-agent"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
 import OrderedSections from "@flightplan/ui/OrderedSections"
 import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
@@ -39,7 +40,6 @@ import SegmentHeader from "./-components/SegmentHeader"
 import SelectionReference, { type CodeSelection } from "./-components/SelectionReference"
 import TerminusHeading from "./-components/TerminusHeading"
 import UnassignedFilesDialog from "./-components/UnassignedFilesDialog"
-import WalkthroughFile from "./-components/WalkthroughFile"
 import { useAgentChat } from "./-hooks/use-agent-chat"
 import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
@@ -51,6 +51,7 @@ import { useToast } from "./-hooks/use-toast"
 import { useTraceEditing } from "./-hooks/use-trace-editing"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
 import { useWalkthroughNavigation } from "./-hooks/use-walkthrough-navigation"
+import { useWaypointAuthoring } from "./-hooks/use-waypoint-authoring"
 import { scrollToAnchor, useWaypointStepping } from "./-hooks/use-waypoint-stepping"
 import { useWriteUpDialog } from "./-hooks/use-write-up-dialog"
 import { useWriteUpRequest } from "./-hooks/use-write-up-request"
@@ -75,7 +76,8 @@ const ARRANGE_FILES_DESCRIPTION = "Move a file up or down in the Code Walkthroug
 const NO_PATHS: readonly string[] = []
 const NO_SEGMENTS: readonly never[] = []
 const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
-const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--section-scroll-margin:4.5rem] [--file-header-top:3.5rem] [--waypoint-scroll-margin:7rem] [--chat-width:26rem] [--navigator-inset-left:calc(1.5rem+13rem+2rem)]"
+const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--pinned-height:calc(var(--band-height)+var(--strip-height,0px))] [--section-scroll-margin:calc(var(--pinned-height)+1rem)] [--file-header-top:var(--pinned-height)] [--waypoint-scroll-margin:calc(var(--pinned-height)+3.5rem)] [--chat-width:26rem] [--navigator-inset-left:calc(1.5rem+13rem+2rem)]"
+const DRAFTING_STRIP_HEIGHT = "[--strip-height:2.75rem]"
 const NAVIGATOR_INSET_RIGHT = "[--navigator-inset-right:1.5rem]"
 const NAVIGATOR_INSET_RIGHT_BESIDE_CHAT = "[--navigator-inset-right:calc(var(--chat-width)+1.5rem)] [--navigator-band-right:var(--chat-width)]"
 
@@ -100,6 +102,18 @@ interface ReviewPageProps {
   readonly search: ReviewSearch
   readonly onSearchChange: (change: ReviewSearch) => void
 }
+
+interface WritingProvidersProps {
+  readonly writingLabel: string | null
+  readonly agent: WriteUpAgent | null
+  readonly children: ReactNode
+}
+
+const WritingProviders = ({ writingLabel, agent, children }: WritingProvidersProps) => (
+  <WritingContext value={writingLabel}>
+    <WriteUpAgentContext value={agent}>{children}</WriteUpAgentContext>
+  </WritingContext>
+)
 
 const renderCommentEditor = (request: CommentEditorRequest) => (
   <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
@@ -156,6 +170,12 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const segmentEditing = useSegmentEditing(reviewKey, showToast)
   const traceEditing = useTraceEditing(reviewKey, showToast)
   const walkthroughEditing = useWalkthroughEditing(reviewKey, showToast)
+  const waypointAuthoring = useWaypointAuthoring(reviewKey, {
+    isPending: walkthroughEditing.isPending,
+    renderCodeLinkDialog: (request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />,
+    onRemoveFile: walkthroughEditing.onRemoveFile,
+    onRemoveWaypoint: walkthroughEditing.onRemoveWaypoint,
+  })
   const discussion = useReviewDiscussion(reviewKey, showToast)
   const chat = useAgentChat(reviewKey, showToast)
   const targetSwitching = useTargetSwitching(reviewKey)
@@ -215,7 +235,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
 
   const artifact = page.kind === "artifact" ? page : null
   const arrangedWalkthroughSegment = artifact?.segments.find((segment) => segment.id === arrangedWalkthroughSegmentId) ?? null
-  const stepping = useWaypointStepping(artifact?.segments ?? NO_SEGMENTS, { opensSteppedWaypoint: isOwn })
+  const stepping = useWaypointStepping(artifact?.segments ?? NO_SEGMENTS)
   const { openWaypointIds, currentWaypointId } = stepping
   const handleOpenCodeLink = stepping.onOpenCodeLink
   const handleToggleWaypoint = stepping.onToggleWaypoint
@@ -236,7 +256,9 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       ? null
       : (segmentId, isShown) => { onSearchChange({ reviewed: withSegmentReviewed(search.reviewed, segmentId, isShown) }) },
     onCommentOnWaypoint: isOwn || artifact?.composer == null ? null : discussion.onStartRangeComment,
+    onWriteDescription: isOwn ? waypointAuthoring.onWriteDescription : null,
     onWriteUp: writeUp,
+    agentLabel: writeUpDialog.agent?.label ?? null,
   })
 
   const handleEditRailGroup = (anchorId: string): void => {
@@ -272,6 +294,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
         chat.isOpen ? ["mr-(--chat-width)", NAVIGATOR_INSET_RIGHT_BESIDE_CHAT] : NAVIGATOR_INSET_RIGHT,
         ACCENT_LINE_CLASS,
         LAYOUT_VARIABLES,
+        progress === null ? null : DRAFTING_STRIP_HEIGHT,
       )}
     >
       <title>{page.shell.documentTitle}</title>
@@ -359,7 +382,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
         ? null
         : (
             <ReviewNavigator rail={page.rail} onSectionJump={stepping.onSectionEntered}>
-              <WritingContext value={page.progress?.isWriting === true ? page.progress.label : null}>
+              <WritingProviders writingLabel={page.progress?.isWriting === true ? page.progress.label : null} agent={writeUpDialog.agent}>
                 <ReviewNotices
                   staleNotice={page.staleNotice}
                   unassignedFiles={isOwn ? null : page.unassignedFiles}
@@ -368,7 +391,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                   onCopyPrompt={copyText}
                 />
                 <div className="grid grid-cols-[13rem_minmax(0,1fr)] gap-x-8">
-                  <aside className="sticky top-[calc(var(--band-height)+0.5rem)] max-h-[calc(100dvh-var(--band-height)-1rem)] self-start overflow-y-auto pt-5 pb-4">
+                  <aside className="sticky top-[calc(var(--pinned-height)+0.5rem)] max-h-[calc(100dvh-var(--pinned-height)-1rem)] self-start overflow-y-auto pt-5 pb-4">
                     <SectionRail
                       label="Review sections"
                       groups={page.rail.groups}
@@ -477,63 +500,51 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                   ? () => { setArrangedWalkthroughSegmentId(segment.id) }
                                   : null}
                               >
-                                {isOwn
-                                  ? segment.walkthrough.files.map((file) => (
-                                      <WalkthroughFile
-                                        key={file.anchorId}
-                                        reviewKey={reviewKey}
-                                        segmentId={segment.id}
-                                        file={file}
-                                        openWaypointIds={openWaypointIds}
-                                        currentWaypointId={currentWaypointId}
-                                        isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
-                                        isPending={walkthroughEditing.isPending}
-                                        codeLinks={page.codeLinks}
-                                        renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
-                                        onOpenCodeLink={handleOpenCodeLink}
-                                        onToggleWaypoint={handleToggleWaypoint}
-                                        onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
-                                        onRemove={() => { walkthroughEditing.onRemoveFile(segment.id, file.path) }}
-                                        onRemoveWaypoint={(waypointId) => { walkthroughEditing.onRemoveWaypoint(segment.id, waypointId) }}
-                                      />
-                                    ))
-                                  : segment.walkthrough.files.map((file) => (
-                                      <FileSection
-                                        key={file.anchorId}
-                                        file={file}
-                                        openWaypointIds={openWaypointIds}
-                                        currentWaypointId={currentWaypointId}
-                                        focusedWaypointId={stepping.focusedWaypointId}
-                                        previewVisit={stepping.previewVisit}
-                                        isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
-                                        isReviewPending={setReviewed.isPending}
-                                        composer={page.composer}
-                                        composingRange={discussion.composingRangeOf(file.path)}
-                                        isCommentPending={discussion.isCommentPending}
-                                        renderCommentEditor={renderCommentEditor}
-                                        codeLinks={page.codeLinks}
-                                        codeDefinitions={page.codeDefinitions}
-                                        onOpenCodeLink={handleOpenCodeLink}
-                                        onToggleWaypoint={handleToggleWaypoint}
-                                        onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
-                                        onWaypointReviewedChange={(id, isReviewed) => {
+                                {segment.walkthrough.files.map((file) => (
+                                  <FileSection
+                                    key={file.anchorId}
+                                    file={file}
+                                    openWaypointIds={openWaypointIds}
+                                    currentWaypointId={currentWaypointId}
+                                    focusedWaypointId={stepping.focusedWaypointId}
+                                    previewVisit={stepping.previewVisit}
+                                    isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
+                                    isReviewPending={setReviewed.isPending}
+                                    composer={isOwn ? null : page.composer}
+                                    composingRange={discussion.composingRangeOf(file.path)}
+                                    isCommentPending={discussion.isCommentPending}
+                                    renderCommentEditor={renderCommentEditor}
+                                    codeLinks={page.codeLinks}
+                                    codeDefinitions={page.codeDefinitions}
+                                    onOpenCodeLink={handleOpenCodeLink}
+                                    onToggleWaypoint={handleToggleWaypoint}
+                                    onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
+                                    onWaypointReviewedChange={isOwn
+                                      ? null
+                                      : (id, isReviewed) => {
                                           setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
                                         }}
-                                        onFileReviewedChange={(path, isReviewed) => {
+                                    onFileReviewedChange={isOwn
+                                      ? null
+                                      : (path, isReviewed) => {
                                           setReviewed.mutate({ ...reviewKey, subject: { kind: "file", path }, isReviewed })
                                         }}
-                                        onRootBlockReviewedChange={(id, isReviewed) => {
+                                    onRootBlockReviewedChange={isOwn
+                                      ? null
+                                      : (id, isReviewed) => {
                                           setReviewed.mutate({ ...reviewKey, subject: { kind: "root-block", id }, isReviewed })
                                         }}
-                                        onStartComment={discussion.onStartComment}
-                                        onAddComment={discussion.onAddComment}
-                                        onPostComment={discussion.onPostComment}
-                                        onReply={discussion.onReply}
-                                        onResolveThread={discussion.onResolveThread}
-                                        onDiscardComment={discussion.onDiscardComment}
-                                        onWriteUp={writeUp}
-                                      />
-                                    ))}
+                                    onStartComment={discussion.onStartComment}
+                                    onAddComment={discussion.onAddComment}
+                                    onPostComment={discussion.onPostComment}
+                                    onReply={discussion.onReply}
+                                    onResolveThread={discussion.onResolveThread}
+                                    onDiscardComment={discussion.onDiscardComment}
+                                    onWriteUp={writeUp}
+                                    authoring={isOwn ? waypointAuthoring.authoringOf(segment.id, file) : null}
+                                    headerActions={isOwn ? waypointAuthoring.headerActionsOf(segment.id, file) : null}
+                                  />
+                                ))}
                               </CodeWalkthrough>
                             ),
                           }}
@@ -691,7 +702,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                     )
                   : null}
                 <ReviewNavigatorBar />
-              </WritingContext>
+              </WritingProviders>
             </ReviewNavigator>
           )}
       {permission === null

@@ -1,4 +1,4 @@
-import type { StemPiece, StemReach } from "@/components/WaypointMark"
+import type { StemPiece, StemReach, StemTone } from "@/components/WaypointMark"
 import type { CodeLine } from "@/lib/review-content"
 
 interface SpannedWaypoint {
@@ -11,7 +11,7 @@ export type GutterRow<Waypoint extends SpannedWaypoint>
     | { readonly kind: "gap" }
     | { readonly kind: "waypoint", readonly waypoint: Waypoint }
 
-export type StemTone = "solid" | "faint"
+export type { StemTone }
 
 type LineSlot = CodeLine | null
 
@@ -21,6 +21,7 @@ interface Placement<Waypoint> {
 }
 
 const REACH_RANK: Readonly<Record<StemReach, number>> = { middle: 3, start: 2, end: 1, single: 0 }
+const TONE_RANK: Readonly<Record<StemTone, number>> = { solid: 2, faint: 1, quiet: 0 }
 
 const withPlacedRow = <Waypoint extends SpannedWaypoint>(
   { placed, pending }: Placement<Waypoint>,
@@ -60,13 +61,13 @@ const reachOf = (index: number, start: number, end: number): StemReach => {
 
 const pieceOf = (reach: StemReach, tone: StemTone): StemPiece => ({
   reach,
-  isSolid: tone === "solid",
+  tone,
   isJoinedAbove: tone === "solid" && (reach === "start" || reach === "single"),
 })
 
 const isStronger = (candidate: StemPiece, current: StemPiece | undefined): boolean => {
   if (current === undefined) return true
-  if (candidate.isSolid !== current.isSolid) return candidate.isSolid
+  if (candidate.tone !== current.tone) return TONE_RANK[candidate.tone] > TONE_RANK[current.tone]
   return REACH_RANK[candidate.reach] > REACH_RANK[current.reach]
 }
 

@@ -1,13 +1,13 @@
-import { CheckIcon } from "lucide-react"
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
+import { use, useCallback, useEffect, useRef, useState, type ReactNode } from "react"
+import AgentMark from "@/components/AgentMark"
 import HoverCard, { HoverCardArrow, HoverCardContent, HoverCardTrigger } from "@/components/blocks/hover-card"
-import FindingMark, { FindingChip, type FindingMarkKind } from "@/components/FindingMark"
+import { FindingChip, FindingShapes, type FindingMarkKind } from "@/components/FindingMark"
 import LabelSegments from "@/components/LabelSegments"
 import Prose from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
-import { SpotlightChip } from "@/components/SpotlightMark"
+import { SpotlightChip, SpotlightRays } from "@/components/SpotlightMark"
 import type { WaypointContent } from "@/components/WaypointBox"
-import WriteUpIcon, { NoWriteUpTag, WriteUpButton } from "@/components/WriteUpIcon"
+import { BeingWrittenLines, KeycapButton, NoWriteUpTag } from "@/components/WriteUpIcon"
 import {
   GUTTER_CARD_COLLISION_AVOIDANCE,
   GUTTER_CARD_GAP_PX,
@@ -24,7 +24,8 @@ import {
 import { WRITE_UP_KEY } from "@/lib/navigator-controls"
 import type { CodeLinkTargets } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
-import { WAYPOINT_KEY } from "@/lib/walkthrough-navigation"
+import { COMMENT_KEY, WAYPOINT_KEY, WRITE_DESCRIPTION_LABEL } from "@/lib/walkthrough-navigation"
+import { WriteUpAgentContext, type WriteUpAgent } from "@/lib/write-up-agent"
 
 export type WaypointMarkKind = FindingMarkKind | "plain"
 
@@ -42,14 +43,17 @@ export interface WaypointWriteUp {
 
 export type StemReach = "start" | "middle" | "end" | "single"
 
+export type StemTone = "solid" | "faint" | "quiet"
+
 export interface StemPiece {
   readonly reach: StemReach
-  readonly isSolid: boolean
+  readonly tone: StemTone
   readonly isJoinedAbove: boolean
 }
 
 interface WaypointLaneProps {
   readonly stem: StemPiece | null
+  readonly hasMark: boolean
   readonly children?: ReactNode
 }
 
@@ -62,6 +66,7 @@ interface WaypointMarkProps {
   readonly previewRequest: number | null
   readonly codeLinks: CodeLinkTargets
   readonly writeUp: WaypointWriteUp | null
+  readonly onWriteDescription?: (() => void) | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggle: () => void
   readonly onReviewedChange: ((isReviewed: boolean) => void) | null
@@ -69,86 +74,157 @@ interface WaypointMarkProps {
 }
 
 const HOVER_DELAY_MS = 150
-const EXPAND_KEY_HINT = `Click or press ${WAYPOINT_KEY.toUpperCase()} to expand`
-const EXPAND_CLICK_HINT = "Click to expand"
-const STEM_CLASSES = "pointer-events-none absolute left-1/2 -ml-px w-0.5 bg-(--line) transition-opacity duration-[180ms] ease-out"
-const STEM_BELOW_CLASSES: Record<StemReach, string | null> = {
-  start: "top-[1.3125rem] bottom-0",
-  middle: "inset-y-0",
-  end: "top-0 h-3",
-  single: null,
+const EXPAND_LABEL = "Expand"
+const STEM_CLASSES = "pointer-events-none absolute left-1/2 -ml-px w-0.5 transition-[opacity,background-color] duration-[180ms] ease-out"
+const STEM_TONE_CLASSES: Record<StemTone, string> = {
+  solid: "bg-waypoint",
+  faint: "bg-waypoint opacity-50",
+  quiet: "bg-muted-foreground opacity-35",
 }
+const ABOVE_MARK_CLASSES = "top-0 h-[0.1875rem]"
+const BELOW_MARK_CLASSES = "top-[1.3125rem] bottom-0"
+const THROUGH_ROW_CLASSES = "inset-y-0"
+const INTO_ROW_CLASSES = "top-0 h-3"
 const MARK_CLASSES = cn(
-  "relative z-1 grid size-[1.125rem] shrink-0 scroll-mt-[calc(var(--waypoint-scroll-margin)+14rem)] place-items-center rounded-sm",
-  "transition-[background-color,opacity,outline-color] duration-[180ms] ease-out hover:bg-muted aria-expanded:bg-muted",
-  "data-[current=true]:outline-1 data-[current=true]:outline-(--line) data-[reviewed=true]:opacity-70",
+  "relative z-1 grid size-[1.125rem] shrink-0 scroll-mt-[calc(var(--waypoint-scroll-margin)+14rem)] place-items-center rounded-full",
+  "transition-[background-color,opacity] duration-[180ms] ease-out hover:bg-muted aria-expanded:bg-muted data-[reviewed=true]:opacity-45",
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
 )
+const STOP_RADIUS = 5.75
+const STOP_DISC_RADIUS = 7
+const CURRENT_DOT_RADIUS = 2.25
+const CURRENT_HALO_RADIUS = 8
+const STOP_RAY_INNER_RADIUS = 9.5
+const STOP_RAY_OUTER_RADIUS = 11.75
+const REVIEWED_CHECK_PATH = "M5 8.25 7.1 10.25 11 5.9"
+const WRITE_UP_DASHES = "[stroke-dasharray:2.4_2.1]"
 const CARD_CLASSES = cn("flex flex-col font-sans", GUTTER_CARD_WIDTH_CLASSES)
-const NO_WRITE_UP_LABEL = "This waypoint has no write-up yet."
-const BEING_WRITTEN_LABEL = "The agent is writing this waypoint up."
-const WRITE_UP_LINE_LABEL = "Write up this line"
-const WRITE_UP_BLOCK_LABEL = "Write up the whole code block"
+const UNEXPLAINED_LABEL = "This line of code is not explained or checked for issues yet."
+const UNDESCRIBED_LABEL = "This waypoint does not have any description or explanation."
+const EXPLAIN_LINE_LABEL = "Explain this line"
+const EXPLAIN_BLOCK_LABEL = "Explain the whole code block"
 const CONTROL_KEY_LABEL = "Ctrl+G"
 
-export const WaypointLane = ({ stem, children }: WaypointLaneProps) => {
-  const toneClasses = stem?.isSolid === true ? "opacity-100" : "opacity-40"
-  const belowClasses = stem === null ? null : STEM_BELOW_CLASSES[stem.reach]
+const unexplainedLabelOf = (agent: WriteUpAgent | null): string =>
+  agent === null ? UNEXPLAINED_LABEL : `${agent.label} has not explained this line of code or checked it for issues yet.`
+
+const explainingLabelOf = (agent: WriteUpAgent | null): string => `${agent?.label ?? "The agent"} is explaining this line.`
+
+const segmentClassesOf = ({ reach, isJoinedAbove }: StemPiece, hasMark: boolean): string[] => {
+  const above = isJoinedAbove ? [ABOVE_MARK_CLASSES] : []
+  if (reach === "start") return [...above, BELOW_MARK_CLASSES]
+  if (reach === "single") return above
+  if (reach === "middle") return hasMark ? [ABOVE_MARK_CLASSES, BELOW_MARK_CLASSES] : [THROUGH_ROW_CLASSES]
+  return [hasMark ? ABOVE_MARK_CLASSES : INTO_ROW_CLASSES]
+}
+
+export const WaypointLane = ({ stem, hasMark, children }: WaypointLaneProps) => {
+  const segments = stem === null ? [] : segmentClassesOf(stem, hasMark)
   return (
     <span className="relative flex flex-col items-center gap-0.5 self-stretch pt-[0.1875rem]">
-      {stem?.isJoinedAbove === true ? <span aria-hidden="true" className={cn(STEM_CLASSES, toneClasses, "top-0 h-[0.1875rem]")} /> : null}
-      {belowClasses === null ? null : <span aria-hidden="true" className={cn(STEM_CLASSES, toneClasses, belowClasses)} />}
+      {segments.map((segmentClasses) => (
+        <span key={segmentClasses} aria-hidden="true" className={cn(STEM_CLASSES, stem === null ? null : STEM_TONE_CLASSES[stem.tone], segmentClasses)} />
+      ))}
       {children}
     </span>
   )
 }
 
-const PointerGlyph = () => (
-  <svg aria-hidden="true" viewBox="0 0 14 14" className="size-3.5 shrink-0 text-(--line)">
-    <path d="M2 3h6.6L12.6 7 8.6 11H2z" className="fill-current" />
+const PlainStop = ({ isCurrent }: { readonly isCurrent: boolean }) => (isCurrent
+  ? (
+      <>
+        <circle cx="8" cy="8" r={STOP_RADIUS} className="fill-none stroke-waypoint [stroke-width:2.5]" />
+        <circle cx="8" cy="8" r={CURRENT_DOT_RADIUS} className="fill-waypoint" />
+      </>
+    )
+  : <circle cx="8" cy="8" r={STOP_RADIUS} className="fill-none stroke-muted-foreground [stroke-width:2.5]" />)
+
+const ReviewedStop = () => (
+  <>
+    <circle cx="8" cy="8" r={STOP_DISC_RADIUS} className="fill-waypoint" />
+    <path data-reviewed-glyph="" d={REVIEWED_CHECK_PATH} className="fill-none stroke-code [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:2]" />
+  </>
+)
+
+const WriteUpStop = ({ isBeingWritten }: { readonly isBeingWritten: boolean }) => (
+  <circle
+    data-being-written={isBeingWritten}
+    cx="8"
+    cy="8"
+    r={STOP_RADIUS}
+    className={cn("origin-center fill-none stroke-muted-foreground [stroke-width:2] [transform-box:fill-box]", WRITE_UP_DASHES, isBeingWritten ? "motion-safe:animate-spin" : "")}
+  />
+)
+
+const StopShapes = ({ waypoint, isCurrent }: { readonly waypoint: MarkedWaypoint, readonly isCurrent: boolean }) => {
+  if (waypoint.isReviewed) return <ReviewedStop />
+  if (waypoint.mark.kind !== "plain") return <FindingShapes kind={waypoint.mark.kind} />
+  return waypoint.reading === null ? <WriteUpStop isBeingWritten={waypoint.isBeingWritten} /> : <PlainStop isCurrent={isCurrent} />
+}
+
+const isPlainStop = (waypoint: MarkedWaypoint): boolean => !waypoint.isReviewed && waypoint.mark.kind === "plain" && waypoint.reading !== null
+
+const MarkGlyph = ({ waypoint, isCurrent }: { readonly waypoint: MarkedWaypoint, readonly isCurrent: boolean }) => (
+  <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4 shrink-0 overflow-visible">
+    <StopShapes waypoint={waypoint} isCurrent={isCurrent} />
+    {isCurrent && !isPlainStop(waypoint)
+      ? <circle cx="8" cy="8" r={CURRENT_HALO_RADIUS} className="fill-none stroke-waypoint [stroke-width:1.25]" />
+      : null}
+    {waypoint.spotlight === null ? null : <SpotlightRays innerRadius={STOP_RAY_INNER_RADIUS} outerRadius={STOP_RAY_OUTER_RADIUS} />}
   </svg>
 )
 
-const ReviewedGlyph = () => (
-  <CheckIcon data-reviewed-glyph="" aria-hidden="true" className="size-3.5 shrink-0 text-(--line)" strokeWidth={3} />
-)
-
-const MarkGlyph = ({ waypoint }: { readonly waypoint: MarkedWaypoint }) => {
-  if (waypoint.isReviewed) return <ReviewedGlyph />
-  if (waypoint.mark.kind !== "plain") return <FindingMark kind={waypoint.mark.kind} />
-  return waypoint.reading === null ? <WriteUpIcon isBeingWritten={waypoint.isBeingWritten} /> : <PointerGlyph />
-}
-
 interface MissingWriteUpProps {
   readonly waypoint: MarkedWaypoint
-  readonly writeUp: WaypointWriteUp | null
+  readonly isAuthored: boolean
 }
 
-const MissingWriteUp = ({ waypoint, writeUp }: MissingWriteUpProps) => (
-  <div className="flex flex-col gap-2 border-t px-3 py-2">
-    {waypoint.hint === null ? null : <p className="text-sm text-foreground">{waypoint.hint}</p>}
-    <NoWriteUpTag label={waypoint.isBeingWritten ? BEING_WRITTEN_LABEL : NO_WRITE_UP_LABEL} isBeingWritten={waypoint.isBeingWritten} />
-    {writeUp === null || waypoint.isBeingWritten
-      ? null
-      : (
-          <div className="flex flex-wrap gap-1.5">
-            <WriteUpButton label={WRITE_UP_LINE_LABEL} keyLabel={WRITE_UP_KEY} onClick={writeUp.onLine} />
-            {writeUp.onBlock === null ? null : <WriteUpButton label={WRITE_UP_BLOCK_LABEL} keyLabel={CONTROL_KEY_LABEL} onClick={writeUp.onBlock} />}
-          </div>
-        )}
-  </div>
-)
+const MissingWriteUp = ({ waypoint, isAuthored }: MissingWriteUpProps) => {
+  const agent = use(WriteUpAgentContext)
+  return (
+    <div className="flex flex-col gap-2 border-t px-3 py-2">
+      {waypoint.hint === null ? null : <p className="text-sm text-foreground">{waypoint.hint}</p>}
+      {waypoint.isBeingWritten
+        ? <BeingWrittenLines label={explainingLabelOf(agent)} />
+        : <NoWriteUpTag label={isAuthored ? UNDESCRIBED_LABEL : unexplainedLabelOf(agent)} />}
+    </div>
+  )
+}
+
+const explainLabelOf = (agent: WriteUpAgent | null): string => (agent === null ? EXPLAIN_LINE_LABEL : `Let ${agent.label} explain`)
+
+const ExplainButtons = ({ writeUp }: { readonly writeUp: WaypointWriteUp }) => {
+  const agent = use(WriteUpAgentContext)
+  return (
+    <>
+      <KeycapButton
+        label={explainLabelOf(agent)}
+        keyLabel={WRITE_UP_KEY}
+        icon={agent === null ? null : <AgentMark agent={agent.name} />}
+        onClick={writeUp.onLine}
+      />
+      {writeUp.onBlock === null ? null : <KeycapButton label={EXPLAIN_BLOCK_LABEL} keyLabel={CONTROL_KEY_LABEL} onClick={writeUp.onBlock} />}
+    </>
+  )
+}
+
+interface WaypointCardProps extends Pick<WaypointMarkProps, "waypoint" | "isReviewPending" | "codeLinks" | "writeUp" | "onOpenCodeLink" | "onReviewedChange"> {
+  readonly onWriteDescription: (() => void) | null
+  readonly onExpand: () => void
+}
 
 const WaypointCard = ({
   waypoint,
-  isCurrent,
   isReviewPending,
   codeLinks,
   writeUp,
   onOpenCodeLink,
   onReviewedChange,
-}: Pick<WaypointMarkProps, "waypoint" | "isCurrent" | "isReviewPending" | "codeLinks" | "writeUp" | "onOpenCodeLink" | "onReviewedChange">) => {
+  onWriteDescription,
+  onExpand,
+}: WaypointCardProps) => {
   const firstBlock = waypoint.reading?.slice(0, 1) ?? null
+  const canExplain = writeUp !== null && firstBlock === null && !waypoint.isBeingWritten
   const metaSegments = [waypoint.rangeLabel, waypoint.positionLabel]
     .filter((label) => label !== null)
     .map((text) => ({ text, kind: "plain" as const }))
@@ -168,14 +244,18 @@ const WaypointCard = ({
         <LabelSegments segments={metaSegments} className="text-xs text-muted-foreground tabular-nums" />
       </div>
       {firstBlock === null
-        ? <MissingWriteUp waypoint={waypoint} writeUp={writeUp} />
+        ? <MissingWriteUp waypoint={waypoint} isAuthored={onWriteDescription !== null} />
         : (
             <div className="line-clamp-3 border-t px-3 py-2">
               <Prose blocks={firstBlock} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} className={GUTTER_CARD_PROSE_CLASSES} />
             </div>
           )}
-      <div className="flex min-h-9 items-center gap-2 border-t py-1 pr-1 pl-3 text-xs text-muted-foreground">
-        <span>{isCurrent ? EXPAND_KEY_HINT : EXPAND_CLICK_HINT}</span>
+      <div className="flex min-h-9 flex-wrap items-center gap-1.5 border-t p-1 text-xs">
+        {canExplain ? <ExplainButtons writeUp={writeUp} /> : null}
+        {onWriteDescription === null || firstBlock !== null || waypoint.isBeingWritten
+          ? null
+          : <KeycapButton label={WRITE_DESCRIPTION_LABEL} keyLabel={COMMENT_KEY} onClick={onWriteDescription} />}
+        <KeycapButton label={EXPAND_LABEL} keyLabel={WAYPOINT_KEY} variant="ghost" onClick={onExpand} />
         {onReviewedChange === null
           ? null
           : (
@@ -201,6 +281,7 @@ const WaypointMark = ({
   previewRequest,
   codeLinks,
   writeUp,
+  onWriteDescription = null,
   onOpenCodeLink,
   onToggle,
   onReviewedChange,
@@ -218,6 +299,10 @@ const WaypointMark = ({
     setPlacement(null)
     release()
   }, [release])
+  const expand = (): void => {
+    closeCard()
+    onToggle()
+  }
   useClosedOnScroll(isCardOpen, closeCard)
   useReportedOpening(isCardOpen, onPreviewChange)
   useEffect(() => (previewRequest === null ? undefined : whenScrollSettles(openCard)), [previewRequest, openCard])
@@ -242,12 +327,9 @@ const WaypointMark = ({
         data-reviewed={waypoint.isReviewed}
         className={MARK_CLASSES}
         onKeyDown={stepGutterFocus}
-        onClick={() => {
-          closeCard()
-          onToggle()
-        }}
+        onClick={expand}
       >
-        <MarkGlyph waypoint={waypoint} />
+        <MarkGlyph waypoint={waypoint} isCurrent={isCurrent} />
       </HoverCardTrigger>
       {placement === null
         ? null
@@ -264,12 +346,18 @@ const WaypointMark = ({
               <HoverCardArrow />
               <WaypointCard
                 waypoint={waypoint}
-                isCurrent={isCurrent}
                 isReviewPending={isReviewPending}
                 codeLinks={codeLinks}
                 writeUp={writeUp}
+                onWriteDescription={onWriteDescription === null
+                  ? null
+                  : () => {
+                      closeCard()
+                      onWriteDescription()
+                    }}
                 onOpenCodeLink={onOpenCodeLink}
                 onReviewedChange={onReviewedChange}
+                onExpand={expand}
               />
             </HoverCardContent>
           )}

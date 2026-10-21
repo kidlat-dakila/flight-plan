@@ -254,7 +254,7 @@ describe("the review page", () => {
   })
 
   it("marks each section the agent has not written up yet, beside its heading", async () => {
-    const notices = { context: "No write-up yet", traceDiagram: null, blastDiagram: null, walkthrough: "No write-up yet" }
+    const notices = { context: "Not explained yet", traceDiagram: null, blastDiagram: null, walkthrough: "Not explained yet" }
     renderReview({
       "review.get": () => ({
         data: { ...artifactPage, segments: artifactPage.segments.map((segment, position) => (position === 0 ? { ...segment, writeUpNotices: notices } : segment)) },
@@ -263,10 +263,10 @@ describe("the review page", () => {
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
 
-    expect(within(within(stock).getByRole("region", { name: "Context" })).getByText("No write-up yet")).toBeTruthy()
-    expect(within(within(stock).getByRole("region", { name: "Code Walkthrough" })).getByText("No write-up yet")).toBeTruthy()
-    expect(within(stock).getAllByText("No write-up yet")).toHaveLength(2)
-    expect(within(screen.getByRole("region", { name: "Segment 2: Checkout" })).queryByText("No write-up yet")).toBeNull()
+    expect(within(within(stock).getByRole("region", { name: "Context" })).getByText("Not explained yet")).toBeTruthy()
+    expect(within(within(stock).getByRole("region", { name: "Code Walkthrough" })).getByText("Not explained yet")).toBeTruthy()
+    expect(within(stock).getAllByText("Not explained yet")).toHaveLength(2)
+    expect(within(screen.getByRole("region", { name: "Segment 2: Checkout" })).queryByText("Not explained yet")).toBeNull()
   })
 
   it("draws a review without segments as one segment with no heading, and its Trace Diagrams as tabs", async () => {
@@ -340,7 +340,7 @@ describe("the review page", () => {
         diagram: { anchorId: "trace-stock", title: "Stock check", description: null, descriptionMarkdown: "", unwrittenLabel: "Not written yet.", descriptionHint: null, nodes: [draftCard], edges: [] },
       },
     }
-    const requestWriteUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Writing up the card" } }))
+    const requestWriteUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Explaining the card" } }))
     renderReview({
       "review.get": () => ({ data: { ...artifactPage, segments: [withCard, second] } }),
       "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }),
@@ -352,11 +352,11 @@ describe("the review page", () => {
     fireEvent.click(screen.getByRole("button", { name: /^CartLinesrc\/cart-line\.tsx/ }))
     const panel = await screen.findByRole("region", { name: "CartLine" })
     await waitFor(() => {
-      expect(within(panel).getByRole("button", { name: /Write up/ })).toBeTruthy()
+      expect(within(panel).getByRole("button", { name: /Explain this card/ })).toBeTruthy()
     })
-    fireEvent.click(within(panel).getByRole("button", { name: /Write up/ }))
+    fireEvent.click(within(panel).getByRole("button", { name: /Explain this card/ }))
 
-    expect(await screen.findByText("Writing up the card")).toBeTruthy()
+    expect(await screen.findByText("Explaining the card")).toBeTruthy()
     expect(requestWriteUp).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", target: { kind: "trace-node", segmentId: "stock", nodeId: "cart-line" } })
   })
 
@@ -371,9 +371,9 @@ describe("the review page", () => {
     fireEvent.click(await screen.findByRole("button", { name: "report.ts" }))
     const panel = await screen.findByRole("region", { name: "src/report.ts" })
     await waitFor(() => {
-      expect(within(panel).getByRole("button", { name: /Write up/ })).toBeTruthy()
+      expect(within(panel).getByRole("button", { name: /Assess this file/ })).toBeTruthy()
     })
-    fireEvent.click(within(panel).getByRole("button", { name: /Write up/ }))
+    fireEvent.click(within(panel).getByRole("button", { name: /Assess this file/ }))
 
     expect(await screen.findByText("Assessing the file")).toBeTruthy()
     expect(requestWriteUp).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", target: { kind: "blast-file", segmentId: "stock", path: "src/report.ts" } })
@@ -416,7 +416,7 @@ describe("the review page", () => {
       "review.declineWriteUp": declineWriteUp,
     })
 
-    const dialog = await screen.findByRole("dialog", { name: "Ask Claude to write up this review?" })
+    const dialog = await screen.findByRole("dialog", { name: "Ask Claude to explain this review?" })
 
     expect(within(dialog).getByText("Context and Findings")).toBeTruthy()
     expect(within(dialog).getByText("2 parts to write and 3 waypoints to check")).toBeTruthy()
@@ -429,17 +429,17 @@ describe("the review page", () => {
     expect(declineWriteUp).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412" })
   })
 
-  it("opens the write-up dialog again from Generate write-up in the settings menu", async () => {
+  it("opens the write-up dialog again from Explain this review in the settings menu", async () => {
     renderReview({ "review.get": () => ({ data: artifactPage }), "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }) })
     await screen.findByText("Why stock matters.")
 
     fireEvent.click(within(screen.getByRole("banner")).getByRole("button", { name: "Settings" }))
-    fireEvent.click(await screen.findByRole("menuitem", { name: "Generate write-up" }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Explain this review" }))
 
-    expect(await screen.findByRole("dialog", { name: "Ask Claude to write up this review?" })).toBeTruthy()
+    expect(await screen.findByRole("dialog", { name: "Ask Claude to explain this review?" })).toBeTruthy()
   })
 
-  it("leaves Generate write-up out of the settings menu when no agent is set up", async () => {
+  it("leaves Explain this review out of the settings menu when no agent is set up", async () => {
     const getPlan = vi.fn(() => ({ data: { kind: "no-agent", message: "No agent is set up." } }))
     renderReview({ "review.get": () => ({ data: artifactPage }), "review.writeUpPlan": getPlan })
     await screen.findByText("Why stock matters.")
@@ -450,7 +450,7 @@ describe("the review page", () => {
     fireEvent.click(within(screen.getByRole("banner")).getByRole("button", { name: "Settings" }))
 
     expect(await screen.findByRole("menuitem", { name: "Delete" })).toBeTruthy()
-    expect(screen.queryByRole("menuitem", { name: "Generate write-up" })).toBeNull()
+    expect(screen.queryByRole("menuitem", { name: "Explain this review" })).toBeNull()
   })
 
   it.each([
@@ -470,19 +470,19 @@ describe("the review page", () => {
 
   it("asks the agent for the write-up, counts again what is ticked, and says the agent started", async () => {
     const getPlan = vi.fn((input: unknown) => ({ data: { ...writeUpPlan, totalLabel: JSON.stringify(input).includes("walkthrough") ? "5 parts to write and 3 waypoints to check" : writeUpPlan.totalLabel } }))
-    const writeUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Writing up 5 parts" } }))
+    const writeUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Explaining 5 parts" } }))
     renderReview({ "review.get": () => ({ data: artifactPage }), "review.writeUpPlan": getPlan, "review.writeUp": writeUp })
 
-    const dialog = await screen.findByRole("dialog", { name: "Ask Claude to write up this review?" })
+    const dialog = await screen.findByRole("dialog", { name: "Ask Claude to explain this review?" })
     fireEvent.click(within(dialog).getByRole("button", { name: "Configure" }))
     fireEvent.click(within(dialog).getByRole("checkbox", { name: /Code Walkthrough/ }))
 
     expect(await within(dialog).findByText("5 parts to write and 3 waypoints to check")).toBeTruthy()
     expect(getPlan).toHaveBeenCalledWith(expect.objectContaining({ sections: ["context", "findings", "walkthrough"] }))
 
-    fireEvent.click(within(dialog).getByRole("button", { name: "Write up" }))
+    fireEvent.click(within(dialog).getByRole("button", { name: "Explain" }))
 
-    expect(await screen.findByText("Writing up 5 parts")).toBeTruthy()
+    expect(await screen.findByText("Explaining 5 parts")).toBeTruthy()
     expect(writeUp).toHaveBeenCalledWith({
       repositoryName: "storefront",
       targetId: "pr-412",
@@ -500,12 +500,12 @@ describe("the review page", () => {
     renderReview({
       "review.get": () => ({ data: artifactPage }),
       "review.writeUpPlan": () => ({ data: writeUpPlan }),
-      "review.writeUp": () => ({ data: { kind: "rejected", field: "sections", message: "Choose at least one part for the agent to write up." } }),
+      "review.writeUp": () => ({ data: { kind: "rejected", field: "sections", message: "Choose at least one part for the agent to explain." } }),
     })
 
-    fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Write up" }))
+    fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Explain" }))
 
-    expect((await screen.findByRole("alert")).textContent).toBe("Choose at least one part for the agent to write up.")
+    expect((await screen.findByRole("alert")).textContent).toBe("Choose at least one part for the agent to explain.")
     expect(screen.getByRole("dialog")).toBeTruthy()
   })
 
@@ -637,7 +637,7 @@ describe("the review page", () => {
         },
       })),
     }
-    const requestWriteUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Writing up 1 waypoint" } }))
+    const requestWriteUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Explaining 1 waypoint" } }))
     showSectionInView("stock-code-walkthrough")
     renderReview({
       "review.get": () => ({ data: unwrittenPage }),
@@ -647,10 +647,10 @@ describe("the review page", () => {
     await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" })
 
     fireEvent.keyDown(window, { key: "d" })
-    await within(screen.getByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: /Write up this line/ })
+    await within(screen.getByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: /Let Claude explain/ })
     fireEvent.keyDown(window, { key: "g", ctrlKey: true })
 
-    expect(await screen.findByText("Writing up 1 waypoint")).toBeTruthy()
+    expect(await screen.findByText("Explaining 1 waypoint")).toBeTruthy()
     expect(requestWriteUp).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", target: { kind: "root-block", rootBlockId: "root-price" } })
 
     fireEvent.keyDown(window, { key: "g" })
@@ -712,7 +712,7 @@ describe("the review page", () => {
 
     fireEvent.keyDown(window, { key: "d" })
 
-    expect(await screen.findByText("Click or press R to expand")).toBeTruthy()
+    expect((await screen.findByRole("button", { name: "Expand" })).querySelector("kbd")?.textContent).toBe("r")
 
     fireEvent.keyDown(window, { key: "r" })
 

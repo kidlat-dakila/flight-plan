@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import type { WalkthroughNavigation } from "@flightplan/ui/CodeWalkthrough"
 import type { CommentRange, WriteUpTarget } from "@flightplan/ui/FileRows"
+import { coveredTopOf } from "@flightplan/ui/lib/pinned-rows"
 import type { WalkthroughControls, WriteUpScope } from "@flightplan/ui/lib/walkthrough-navigation"
 import type { SteppedWaypoint, WaypointStepping } from "./use-waypoint-stepping"
 
@@ -33,7 +34,9 @@ interface WalkthroughHandlers {
   readonly onFilterChange: ((segmentId: string, keys: FilterKeys) => void) | null
   readonly onShowReviewedChange: ((segmentId: string, isShown: boolean) => void) | null
   readonly onCommentOnWaypoint: ((path: string, range: CommentRange) => void) | null
+  readonly onWriteDescription: ((waypointId: string) => void) | null
   readonly onWriteUp: ((target: WriteUpTarget) => void) | null
+  readonly agentLabel: string | null
 }
 
 interface Collapse {
@@ -53,11 +56,10 @@ interface HeldPlace {
 }
 
 const NOTHING_COLLAPSED: ReadonlySet<string> = new Set()
-const FILE_HEADER_TOP_PX = 56
 
 const isReadInto = (anchorId: string): boolean => {
   const rect = document.getElementById(anchorId)?.getBoundingClientRect()
-  return rect !== undefined && rect.height > 0 && rect.top < FILE_HEADER_TOP_PX
+  return rect !== undefined && rect.height > 0 && rect.top < coveredTopOf()
 }
 
 interface PlaceKeeping {
@@ -153,7 +155,7 @@ export const useWalkthroughNavigation = (
   }
   const currentPlace = placeOfWaypoint(segments, stepping.currentWaypointId)
   const currentWaypoint = currentPlace?.waypoint ?? null
-  const { onReviewedChange, onFilterChange, onShowReviewedChange, onCommentOnWaypoint, onWriteUp } = handlers
+  const { onReviewedChange, onFilterChange, onShowReviewedChange, onCommentOnWaypoint, onWriteDescription, onWriteUp, agentLabel } = handlers
 
   return {
     isFileCollapsed: (anchorId) => collapsedAnchorIds.has(anchorId),
@@ -194,6 +196,12 @@ export const useWalkthroughNavigation = (
               if (currentPlace?.waypoint.lines == null) return
               onCommentOnWaypoint(currentPlace.path, commentRangeOf(currentPlace.waypoint.lines))
             },
+        onDescribeCurrent: onWriteDescription === null
+          ? null
+          : () => {
+              if (currentWaypoint !== null) onWriteDescription(currentWaypoint.id)
+            },
+        agentLabel,
         onWriteUpCurrent: onWriteUp === null
           ? null
           : (scope) => {

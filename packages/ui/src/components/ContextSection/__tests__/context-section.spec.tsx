@@ -17,12 +17,12 @@ describe("ContextSection", () => {
   })
 
   it("says beside the heading when the context has no write-up yet", () => {
-    const { rerender } = render(<ContextSection anchorId="context" heading="Context" writeUpNotice="No write-up yet">{null}</ContextSection>)
+    const { rerender } = render(<ContextSection anchorId="context" heading="Context" writeUpNotice="Not explained yet">{null}</ContextSection>)
 
-    expect(screen.getByText("No write-up yet")).toBeTruthy()
+    expect(screen.getByText("Not explained yet")).toBeTruthy()
 
     rerender(<ContextSection anchorId="context" heading="Context">{null}</ContextSection>)
 
-    expect(screen.queryByText("No write-up yet")).toBeNull()
+    expect(screen.queryByText("Not explained yet")).toBeNull()
   })
 })

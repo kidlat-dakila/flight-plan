@@ -86,9 +86,9 @@ const ARROW_PATH = "M1 1.5 8 5 1 8.5z"
 const NODE_CLASSES = "group absolute flex -translate-x-1/2 flex-col items-center rounded-sm text-center transition-opacity duration-[180ms] ease-out data-[standing=far]:opacity-25"
 const LABEL_CLASSES = "mt-0.5 rounded-sm bg-background px-1 font-mono text-[0.6875rem] leading-4 whitespace-nowrap text-muted-foreground transition-colors duration-[180ms] ease-out group-hover:text-foreground group-data-[quiet=false]:text-foreground group-data-[standing=focal]:font-bold group-data-[standing=focal]:text-foreground group-data-[standing=near]:text-foreground"
 const EDGE_CLASSES = "fill-none stroke-current opacity-55 transition-[color,opacity] duration-[180ms] ease-out [stroke-width:1.25] data-[standing=far]:opacity-15 data-[standing=near]:text-foreground data-[standing=near]:opacity-100"
-const FILE_NO_WRITE_UP_LABEL = "This file has no write-up yet."
+const FILE_NO_WRITE_UP_LABEL = "Not assessed yet."
 const FILE_BEING_WRITTEN_LABEL = "The agent is assessing this file."
-const WRITE_UP_FILE_LABEL = "Write up"
+const WRITE_UP_FILE_LABEL = "Assess this file"
 const FILE_ROW_CLASSES = "block w-full rounded-sm px-2 py-1 text-left font-mono text-[0.8125rem] leading-5 wrap-anywhere hover:bg-muted"
 
 const standingOf = (isFocal: boolean, isNear: boolean, hasFocus: boolean): Standing => {

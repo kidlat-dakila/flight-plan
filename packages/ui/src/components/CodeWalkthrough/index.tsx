@@ -22,7 +22,7 @@ interface CodeWalkthroughProps {
 const ARRANGE_FILES_LABEL = "Arrange files"
 
 const ReviewedMark = () => (
-  <span aria-hidden="true" className="inline-flex size-3.5 shrink-0 items-center justify-center rounded-full bg-(--line,var(--primary-text)) text-line-foreground">
+  <span aria-hidden="true" className="inline-flex size-3.5 shrink-0 items-center justify-center rounded-full bg-waypoint text-line-foreground">
     <CheckIcon className="size-2.5" strokeWidth={3.5} />
   </span>
 )

@@ -66,9 +66,9 @@ interface ChoiceFieldsProps {
 
 const CONFIGURE_LABEL = "Configure"
 const DECLINE_LABEL = "Not now"
-const SUBMIT_LABEL = "Write up"
+const SUBMIT_LABEL = "Explain"
 const PENDING_LABEL = "Starting…"
-const SECTIONS_LEGEND = "Parts to write up"
+const SECTIONS_LEGEND = "Parts to explain"
 const CONFIGURATION_HEADING = "Prompt configuration"
 const ORDER_HEADING = "Code Walkthrough order"
 const TOTAL_LABEL = "Total"
@@ -77,7 +77,7 @@ const LEGEND_CLASSES = "pb-2 font-bold"
 const ROW_CLASSES = "border-b border-border py-2.5"
 const ALERT_CLASSES = "pt-2 text-destructive"
 
-const titleOf = (agentLabel: string): string => `Ask ${agentLabel} to write up this review?`
+const titleOf = (agentLabel: string): string => `Ask ${agentLabel} to explain this review?`
 
 const descriptionOf = (agentLabel: string): string =>
   `Flight Plan built this review from the code. ${agentLabel} can write the context, the labels, the explanations and the findings.`

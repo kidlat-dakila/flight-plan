@@ -46,7 +46,7 @@ interface SettingsMenuProps {
 }
 
 const MENU_LABEL = "Settings"
-const WRITE_UP_LABEL = "Generate write-up"
+const WRITE_UP_LABEL = "Explain this review"
 const DELETE_LABEL = "Delete"
 const DARK_MODE_LABEL = "Switch to dark mode"
 const LIGHT_MODE_LABEL = "Switch to light mode"

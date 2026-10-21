@@ -1,4 +1,5 @@
 import { ChevronRightIcon } from "lucide-react"
+import type { ReactNode } from "react"
 import type { LineAddress } from "@/components/CodeBlock"
 import type { CommentEditorRenderer } from "@/components/CommentThread"
 import FileRows, {
@@ -9,6 +10,7 @@ import FileRows, {
   type FileRow,
   type FileThread,
   type PreviewVisit,
+  type WaypointAuthoring,
   type WriteUpTarget,
 } from "@/components/FileRows"
 import LabelSegments from "@/components/LabelSegments"
@@ -57,6 +59,8 @@ interface FileSectionProps {
   readonly onResolveThread: (threadId: string, isResolved: boolean) => void
   readonly onDiscardComment: (commentId: string) => void
   readonly onWriteUp?: ((target: WriteUpTarget) => void) | null
+  readonly authoring?: WaypointAuthoring | null
+  readonly headerActions?: ReactNode
 }
 
 const COLLAPSE_LABEL = "Collapse file"
@@ -89,6 +93,8 @@ const FileSection = ({
   onResolveThread,
   onDiscardComment,
   onWriteUp = null,
+  authoring = null,
+  headerActions = null,
 }: FileSectionProps) => {
   const commenting: FileCommenting | null = composer === null
     ? null
@@ -138,6 +144,7 @@ const FileSection = ({
                   onChange={(isReviewed) => { onFileReviewedChange(file.path, isReviewed) }}
                 />
               )}
+          {headerActions}
         </div>
         <FileRows
           path={file.path}
@@ -159,6 +166,7 @@ const FileSection = ({
           onWaypointReviewedChange={onWaypointReviewedChange}
           onRootBlockReviewedChange={onRootBlockReviewedChange}
           onWriteUp={onWriteUp}
+          authoring={authoring}
         />
       </div>
     </article>

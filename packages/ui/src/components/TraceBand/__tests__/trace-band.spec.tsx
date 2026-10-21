@@ -58,13 +58,13 @@ describe("TraceBand", () => {
   })
 
   it("says beside the heading when the diagram has no write-up yet", () => {
-    const { rerender } = render(<TraceBand {...createProps({ writeUpNotice: "No write-up yet" })} />)
+    const { rerender } = render(<TraceBand {...createProps({ writeUpNotice: "Not explained yet" })} />)
 
-    expect(screen.getByText("No write-up yet")).toBeTruthy()
+    expect(screen.getByText("Not explained yet")).toBeTruthy()
 
     rerender(<TraceBand {...createProps()} />)
 
-    expect(screen.queryByText("No write-up yet")).toBeNull()
+    expect(screen.queryByText("Not explained yet")).toBeNull()
   })
 
   it("offers an author to edit the description beside the heading, and a reviewer not", () => {

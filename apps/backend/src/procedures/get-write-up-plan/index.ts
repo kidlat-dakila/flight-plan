@@ -9,7 +9,7 @@ import { defaultWriterOf } from "./utils/default-writer"
 import type { GetWriteUpPlanInput, WriteUpPlan } from "./utils/schemas"
 import { writeUpCountsOf } from "./utils/write-up-counts"
 
-export const NO_AGENT_MESSAGE = "No agent is set up, so no agent can write this review up. Set one up in the settings."
+export const NO_AGENT_MESSAGE = "No agent is set up, so no agent can explain this review. Set one up in the settings."
 
 export const alwaysWrittenSectionsOf = (preferences: ReviewPreferences): WriteUpSection[] =>
   WRITE_UP_SECTIONS.filter((section) => preferences.sectionWriteUps[section] === "always")
@@ -28,6 +28,7 @@ export const getWriteUpPlan = async (input: GetWriteUpPlanInput, context: Proced
   const preferences = reviewPreferencesOf(setup.reviewPreferences)
   return buildWriteUpPlan({
     isOffered: isWriteUpOffered(request),
+    agent: writer.agent,
     agentLabel: writer.label,
     counts: writeUpCountsOf(artifact),
     sections: input.sections ?? request?.writeUp?.sections ?? alwaysWrittenSectionsOf(preferences),

@@ -19,7 +19,7 @@ export interface WriteUpSource {
 }
 
 const MISSING_CONFIGURATION_MESSAGE = "This configuration no longer exists. Pick another one."
-const NO_SECTION_MESSAGE = "Choose at least one part for the agent to write up."
+const NO_SECTION_MESSAGE = "Choose at least one part for the agent to explain."
 const DRAFTING_STATUS = "drafting"
 
 const rejected = (field: Extract<WriteUpResult, { kind: "rejected" }>["field"], message: string): PlannedWriteUp => ({ kind: "rejected", field, message })

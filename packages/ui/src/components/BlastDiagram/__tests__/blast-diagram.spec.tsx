@@ -154,10 +154,10 @@ describe("BlastDiagram", () => {
     fireEvent.click(screen.getByRole("button", { name: "logger.ts" }))
     const panel = await screen.findByRole("region", { name: "src/logger.ts" })
 
-    expect(within(panel).getByText("This file has no write-up yet.")).toBeTruthy()
+    expect(within(panel).getByText("Not assessed yet.")).toBeTruthy()
 
-    fireEvent.click(within(panel).getByRole("button", { name: /Write up/ }))
-    await findNavigatorButton("Write up")
+    fireEvent.click(within(panel).getByRole("button", { name: /Assess this file/ }))
+    await findNavigatorButton("Assess this file")
     fireEvent.keyDown(document.body, { key: "g" })
 
     expect(onWriteUpFile.mock.calls).toStrictEqual([["src/logger.ts"], ["src/logger.ts"]])
@@ -165,7 +165,7 @@ describe("BlastDiagram", () => {
     fireEvent.click(screen.getByRole("button", { name: /price\.ts/ }))
     const changed = await screen.findByRole("region", { name: "src/price.ts" })
 
-    expect(within(changed).queryByRole("button", { name: /Write up/ })).toBeNull()
+    expect(within(changed).queryByRole("button", { name: /Assess this file/ })).toBeNull()
   })
 
   it("puts the write-up of a file in the group of the views the navigator is handed", async () => {
@@ -183,12 +183,12 @@ describe("BlastDiagram", () => {
     )
 
     fireEvent.click(screen.getByRole("button", { name: "logger.ts" }))
-    const writeUp = await findNavigatorButton("Write up")
+    const writeUp = await findNavigatorButton("Assess this file")
 
     expect((await findNavigatorButton("Export bound")).closest("div")).toBe(writeUp.closest("div"))
   })
 
-  it("spins the ring while the agent assesses the file, and offers no write-up then", async () => {
+  it("draws skeleton lines while the agent assesses the file, and offers no write-up then", async () => {
     const board = { ...BOARD, nodes: BOARD.nodes.map((candidate) => (candidate.id === "src/logger.ts" ? { ...candidate, isBeingWritten: true } : candidate)) }
     render(<BlastDiagram title="Blast Diagram" board={board} codeLinks={{}} authoring={null} onWriteUpFile={vi.fn()} onOpenCodeLink={vi.fn()} onOpenFile={vi.fn()} />)
 
@@ -196,8 +196,8 @@ describe("BlastDiagram", () => {
     const panel = await screen.findByRole("region", { name: "src/logger.ts" })
 
     expect(within(panel).getByText("The agent is assessing this file.")).toBeTruthy()
-    expect(panel.querySelector("[data-being-written=true]")).not.toBeNull()
-    expect(within(panel).queryByRole("button", { name: /Write up/ })).toBeNull()
+    expect(panel.querySelector("[data-unwritten]")).not.toBeNull()
+    expect(within(panel).queryByRole("button", { name: /Assess this file/ })).toBeNull()
   })
 
   it("moves the side panel to a file picked from a list", async () => {

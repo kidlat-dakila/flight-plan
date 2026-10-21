@@ -1,5 +1,5 @@
 import { ChevronDownIcon } from "lucide-react"
-import { useLayoutEffect, useRef, useState, type RefObject } from "react"
+import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react"
 import { CollapsibleTrigger } from "@/components/blocks/collapsible"
 import CodeBlock, { hasKnownReference, lineAddressOf, lineKeyOf, type LineAddress, type LineCollapse } from "@/components/CodeBlock"
 import CommentThread, {
@@ -81,6 +81,13 @@ export interface PreviewVisit {
   readonly count: number
 }
 
+export interface WaypointAuthoring {
+  readonly editedWaypointId: string | null
+  readonly renderEditor: (waypointId: string) => ReactNode
+  readonly renderActions: (waypointId: string) => ReactNode
+  readonly onWriteDescription: (waypointId: string) => void
+}
+
 export interface FileCommenting {
   readonly composer: ComposerLabels
   readonly composingRange: CommentRange | null
@@ -115,6 +122,7 @@ interface FileRowsProps {
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
   readonly onRootBlockReviewedChange: ((rootBlockId: string, isReviewed: boolean) => void) | null
   readonly onWriteUp?: ((target: WriteUpTarget) => void) | null
+  readonly authoring?: WaypointAuthoring | null
 }
 
 const DECIMAL = 10
@@ -266,6 +274,7 @@ const FileRows = ({
   onWaypointReviewedChange,
   onRootBlockReviewedChange,
   onWriteUp = null,
+  authoring = null,
 }: FileRowsProps) => {
   const rowsRef = useRef<HTMLDivElement>(null)
   const [previewedWaypointId, setPreviewedWaypointId] = useState<string | null>(null)
@@ -286,9 +295,9 @@ const FileRows = ({
   const composingRange = commenting?.composingRange ?? null
   const commentedLineKeys = new Set([...threads, ...(composingRange === null ? [] : [composingRange])].flatMap(lineKeysOf))
   const placedWaypointIds = new Set([...placedWaypoints.values()].flat().map((waypoint) => waypoint.id))
-  const toneOf = (waypointId: string): StemTone | null => {
+  const toneOf = (waypointId: string): StemTone => {
     if (openWaypointIds.has(waypointId)) return "solid"
-    return waypointId === currentWaypointId ? "faint" : null
+    return waypointId === currentWaypointId ? "faint" : "quiet"
   }
   const stems = stemsOf(rows, placedWaypoints, toneOf)
   const markedLines = linesOfWaypoint(previewedWaypointId)
@@ -302,37 +311,41 @@ const FileRows = ({
   const renderDefinitionDescription = (description: ProseBlocks) => (
     <HoverProse blocks={description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
   )
-  const renderWaypointLane = (line: CodeLine) => (
-    <WaypointLane stem={stems.get(line) ?? null}>
-      {(placedWaypoints.get(line) ?? []).map((waypoint, index) => (
-        <WaypointMark
-          key={waypoint.id}
-          waypoint={waypoint}
-          isOpen={openWaypointIds.has(waypoint.id)}
-          isCurrent={waypoint.id === currentWaypointId}
-          isReviewPending={isReviewPending}
-          isTabStop={line === tabStopLine && index === 0}
-          previewRequest={previewVisit?.waypointId === waypoint.id ? previewVisit.count : null}
-          codeLinks={codeLinks}
-          writeUp={onWriteUp === null ? null : waypointWriteUpOf(rows, waypoint.id, onWriteUp)}
-          onOpenCodeLink={onOpenCodeLink}
-          onToggle={() => {
-            holdMark(waypoint.id)
-            onToggleWaypoint(waypoint.id)
-          }}
-          onReviewedChange={onWaypointReviewedChange === null
-            ? null
-            : (isReviewed) => { onWaypointReviewedChange(waypoint.id, isReviewed) }}
-          onPreviewChange={(isPreviewed) => {
-            setPreviewedWaypointId((previewedId) => {
-              if (isPreviewed) return waypoint.id
-              return previewedId === waypoint.id ? null : previewedId
-            })
-          }}
-        />
-      ))}
-    </WaypointLane>
-  )
+  const renderWaypointLane = (line: CodeLine) => {
+    const lineWaypoints = placedWaypoints.get(line) ?? []
+    return (
+      <WaypointLane stem={stems.get(line) ?? null} hasMark={lineWaypoints.length > 0}>
+        {lineWaypoints.map((waypoint, index) => (
+          <WaypointMark
+            key={waypoint.id}
+            waypoint={waypoint}
+            isOpen={openWaypointIds.has(waypoint.id)}
+            isCurrent={waypoint.id === currentWaypointId}
+            isReviewPending={isReviewPending}
+            isTabStop={line === tabStopLine && index === 0}
+            previewRequest={previewVisit?.waypointId === waypoint.id ? previewVisit.count : null}
+            codeLinks={codeLinks}
+            writeUp={onWriteUp === null ? null : waypointWriteUpOf(rows, waypoint.id, onWriteUp)}
+            onWriteDescription={authoring === null ? null : () => { authoring.onWriteDescription(waypoint.id) }}
+            onOpenCodeLink={onOpenCodeLink}
+            onToggle={() => {
+              holdMark(waypoint.id)
+              onToggleWaypoint(waypoint.id)
+            }}
+            onReviewedChange={onWaypointReviewedChange === null
+              ? null
+              : (isReviewed) => { onWaypointReviewedChange(waypoint.id, isReviewed) }}
+            onPreviewChange={(isPreviewed) => {
+              setPreviewedWaypointId((previewedId) => {
+                if (isPreviewed) return waypoint.id
+                return previewedId === waypoint.id ? null : previewedId
+              })
+            }}
+          />
+        ))}
+      </WaypointLane>
+    )
+  }
   const renderThreadMark = (address: LineAddress) => {
     const markedThreads = commenting === null ? [] : threadsAt(address)
     if (markedThreads.length === 0) return null
@@ -484,7 +497,8 @@ const FileRows = ({
         }
         const isPlaced = placedWaypointIds.has(row.waypoint.id)
         const isOpen = openWaypointIds.has(row.waypoint.id)
-        if (isPlaced && !isOpen) return null
+        const isEdited = authoring?.editedWaypointId === row.waypoint.id
+        if (isPlaced && !isOpen && !isEdited) return null
         return (
           <div
             key={row.id}
@@ -494,19 +508,24 @@ const FileRows = ({
             {isPlaced
               ? <span aria-hidden="true" className="pointer-events-none absolute top-5 bottom-0 left-[calc(0.625rem-1px)] w-0.5 bg-(--line)" />
               : null}
-            <WaypointBox
-              waypoint={row.waypoint}
-              isOpen={isOpen}
-              isCurrent={row.waypoint.id === currentWaypointId}
-              isReviewPending={isReviewPending}
-              isGuttered
-              codeLinks={codeLinks}
-              onOpenCodeLink={onOpenCodeLink}
-              onToggle={() => { onToggleWaypoint(row.waypoint.id) }}
-              onReviewedChange={onWaypointReviewedChange === null
-                ? null
-                : (isReviewed) => { onWaypointReviewedChange(row.waypoint.id, isReviewed) }}
-            />
+            {isEdited
+              ? authoring.renderEditor(row.waypoint.id)
+              : (
+                  <WaypointBox
+                    waypoint={row.waypoint}
+                    isOpen={isOpen}
+                    isCurrent={row.waypoint.id === currentWaypointId}
+                    isReviewPending={isReviewPending}
+                    isGuttered
+                    codeLinks={codeLinks}
+                    actions={authoring?.renderActions(row.waypoint.id)}
+                    onOpenCodeLink={onOpenCodeLink}
+                    onToggle={() => { onToggleWaypoint(row.waypoint.id) }}
+                    onReviewedChange={onWaypointReviewedChange === null
+                      ? null
+                      : (isReviewed) => { onWaypointReviewedChange(row.waypoint.id, isReviewed) }}
+                  />
+                )}
           </div>
         )
       })}

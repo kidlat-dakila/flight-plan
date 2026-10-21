@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { WALKTHROUGH_ORDERS, WRITE_UP_SECTIONS } from "@/procedures/get-review-preferences/utils/review-preferences"
 import { presetOptionSchema } from "@/procedures/get-setup/utils/schemas"
+import { AGENT_NAMES } from "@/procedures/get-setup/utils/setup"
 
 export const getWriteUpPlanInputSchema = z.strictObject({
   repositoryName: z.string(),
@@ -20,6 +21,7 @@ export const writeUpPlanSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("plan"),
     isOffered: z.boolean(),
+    agent: z.enum(AGENT_NAMES),
     agentLabel: z.string(),
     summary: z.array(z.strictObject({ label: z.string(), value: z.string() })),
     sections: z.array(writeUpSectionOptionSchema),

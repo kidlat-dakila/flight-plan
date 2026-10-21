@@ -58,7 +58,9 @@ const createNavigation = (overrides: Partial<WalkthroughNavigation> = {}): Walkt
   onNext: vi.fn(),
   onCurrentReviewedChange: vi.fn(),
   onCommentOnCurrent: vi.fn(),
+  onDescribeCurrent: null,
   onWriteUpCurrent: null,
+  agentLabel: null,
   onFilterChange: vi.fn(),
   onShowReviewedChange: vi.fn(),
   onFilesCollapsedChange: vi.fn(),
@@ -103,13 +105,13 @@ describe("CodeWalkthrough", () => {
   })
 
   it("says beside the coverage when no waypoint has a write-up yet", () => {
-    const { rerender } = render(<CodeWalkthrough {...createProps({ writeUpNotice: "No write-up yet" })} />)
+    const { rerender } = render(<CodeWalkthrough {...createProps({ writeUpNotice: "Not explained yet" })} />)
 
-    expect(screen.getByText("No write-up yet")).toBeTruthy()
+    expect(screen.getByText("Not explained yet")).toBeTruthy()
 
     rerender(<CodeWalkthrough {...createProps()} />)
 
-    expect(screen.queryByText("No write-up yet")).toBeNull()
+    expect(screen.queryByText("Not explained yet")).toBeNull()
   })
 
   it("counts the ticked filters in a badge on the Filter button", async () => {
@@ -227,12 +229,26 @@ describe("CodeWalkthrough", () => {
     expect(onCommentOnCurrent).toHaveBeenCalledOnce()
   })
 
+  it("offers Write description with C in place of Add comment on the author's page", async () => {
+    const onDescribeCurrent = vi.fn()
+    const onCommentOnCurrent = vi.fn()
+    renderWalkthrough({ onCommentOnCurrent, onDescribeCurrent })
+    const labels = await navigatorLabels("Write description")
+
+    expect(labels).not.toContain("Add comment")
+
+    fireEvent.keyDown(document.body, { key: "c" })
+
+    expect(onDescribeCurrent).toHaveBeenCalledOnce()
+    expect(onCommentOnCurrent).not.toHaveBeenCalled()
+  })
+
   it("asks for a write-up of the current waypoint with G and of its whole code block with Ctrl+G, while it has none", async () => {
     const onWriteUpCurrent = vi.fn()
     renderWalkthrough({ currentWaypoint: { isReviewed: false, isOpen: false, canComment: true, canWriteUp: true, canWriteUpBlock: true }, onWriteUpCurrent })
-    const labels = await navigatorLabels("Write up this line")
+    const labels = await navigatorLabels("Explain this line")
 
-    expect(labels.indexOf("Write up the whole code block")).toBe(labels.indexOf("Write up this line") + 1)
+    expect(labels.indexOf("Explain the whole code block")).toBe(labels.indexOf("Explain this line") + 1)
 
     fireEvent.keyDown(document.body, { key: "g" })
     fireEvent.keyDown(document.body, { key: "g", ctrlKey: true })
@@ -258,7 +274,7 @@ describe("CodeWalkthrough", () => {
 
     fireEvent.keyDown(document.body, { key: "g" })
 
-    expect(screen.queryByRole("button", { name: /Write up this line/ })).toBeNull()
+    expect(screen.queryByRole("button", { name: /Explain this line/ })).toBeNull()
     expect(onWriteUpCurrent).not.toHaveBeenCalled()
   })
 

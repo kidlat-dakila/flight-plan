@@ -76,7 +76,9 @@ export interface WalkthroughNavigationRequest {
   readonly onNext: () => void
   readonly onCurrentReviewedChange: ((isReviewed: boolean) => void) | null
   readonly onCommentOnCurrent: (() => void) | null
+  readonly onDescribeCurrent: (() => void) | null
   readonly onWriteUpCurrent: ((scope: WriteUpScope) => void) | null
+  readonly agentLabel: string | null
   readonly onFilterChange: ((keys: readonly string[] | null) => void) | null
   readonly onShowReviewedChange: ((isShown: boolean) => void) | null
   readonly onFilesCollapsedChange: (isCollapsed: boolean) => void
@@ -85,16 +87,17 @@ export interface WalkthroughNavigationRequest {
 }
 
 const REVIEW_KEY = "s"
-const COMMENT_KEY = "c"
+export const COMMENT_KEY = "c"
 const FILTER_KEY = "f"
 const FILES_KEY = "q"
 const FILE_KEY = "e"
 export const WAYPOINT_KEY = "r"
 const ADD_COMMENT_LABEL = "Add comment"
-const WRITE_UP_LINE_LABEL = "Write up this line"
-const WRITE_UP_BLOCK_LABEL = "Write up the whole code block"
-const WRITE_UP_SHORT_LABEL = "Write up"
-const WRITE_UP_BLOCK_SHORT_LABEL = "Write up block"
+export const WRITE_DESCRIPTION_LABEL = "Write description"
+const WRITE_UP_LINE_LABEL = "Explain this line"
+const WRITE_UP_BLOCK_LABEL = "Explain the whole code block"
+const WRITE_UP_SHORT_LABEL = "Explain"
+const WRITE_UP_BLOCK_SHORT_LABEL = "Explain block"
 const COLLAPSE_ALL_LABEL = "Collapse all"
 const EXPAND_ALL_LABEL = "Expand all"
 const COLLAPSE_FILE_LABEL = "Collapse file"
@@ -144,8 +147,19 @@ const reviewButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButton
   ]
 }
 
+const describeButtonsOf = (onDescribeCurrent: () => void, hasCurrentWaypoint: boolean): NavigatorButton[] => [
+  navigatorButtonOf({
+    key: COMMENT_KEY,
+    label: WRITE_DESCRIPTION_LABEL,
+    isDisabled: !hasCurrentWaypoint,
+    disabledHint: PICK_WAYPOINT_HINT,
+    onRun: onDescribeCurrent,
+  }),
+]
+
 const commentButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButton[] => {
-  const { onCommentOnCurrent, currentWaypoint } = request
+  const { onCommentOnCurrent, onDescribeCurrent, currentWaypoint } = request
+  if (onDescribeCurrent !== null) return describeButtonsOf(onDescribeCurrent, currentWaypoint !== null)
   if (onCommentOnCurrent === null) return []
   return [
     navigatorButtonOf({
@@ -163,7 +177,7 @@ const writeUpButtonsOf = (request: WalkthroughNavigationRequest): NavigatorButto
   if (onWriteUpCurrent === null || currentWaypoint?.canWriteUp !== true) return []
   const lineButton = navigatorButtonOf({
     key: WRITE_UP_KEY,
-    label: WRITE_UP_LINE_LABEL,
+    label: request.agentLabel === null ? WRITE_UP_LINE_LABEL : `Let ${request.agentLabel} explain`,
     shortLabel: WRITE_UP_SHORT_LABEL,
     onRun: () => { onWriteUpCurrent("line") },
   })

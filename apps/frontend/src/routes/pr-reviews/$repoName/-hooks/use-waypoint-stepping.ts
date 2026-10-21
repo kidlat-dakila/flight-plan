@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import { coveredTopOf } from "@flightplan/ui/lib/pinned-rows"
 
 export interface SteppedWaypoint {
   readonly id: string
@@ -24,10 +25,6 @@ interface Visit {
 export interface PreviewVisit {
   readonly waypointId: string
   readonly count: number
-}
-
-export interface SteppingOptions {
-  readonly opensSteppedWaypoint: boolean
 }
 
 interface StepTargets {
@@ -57,7 +54,6 @@ export interface WaypointStepping {
 
 const FOCUS_RELEASE_SCROLL_PX = 160
 const FOCUS_KEPT_VISIBLE_SHARE = 0.33
-const BAND_HEIGHT_PX = 56
 const SCROLL_SETTLE_MS = 900
 const READING_LINE_PX = 120
 const NO_FRAME = 0
@@ -72,7 +68,7 @@ const visibleShareOf = (waypointId: string): number => {
   if (rects.length === 0) return 0
   const top = Math.min(...rects.map((rect) => rect.top))
   const bottom = Math.max(...rects.map((rect) => rect.bottom))
-  const visible = Math.max(0, Math.min(bottom, window.innerHeight) - Math.max(top, BAND_HEIGHT_PX))
+  const visible = Math.max(0, Math.min(bottom, window.innerHeight) - Math.max(top, coveredTopOf()))
   return visible / Math.max(1, bottom - top)
 }
 
@@ -153,10 +149,7 @@ const releaseFocus = (setFocusedWaypointId: (waypointId: string | null) => void)
 const previewVisitOf = (visit: Visit | null): PreviewVisit | null =>
   visit === null || visit.isOpening ? null : { waypointId: visit.waypointId, count: visit.count }
 
-export const useWaypointStepping = (
-  segments: readonly SteppedSegment[],
-  { opensSteppedWaypoint }: SteppingOptions,
-): WaypointStepping => {
+export const useWaypointStepping = (segments: readonly SteppedSegment[]): WaypointStepping => {
   const [openWaypointIds, setOpenWaypointIds] = useState<ReadonlySet<string>>(() => new Set())
   const [currentWaypointId, setCurrentWaypointId] = useState<string | null>(null)
   const [focusedWaypointId, setFocusedWaypointId] = useState<string | null>(null)
@@ -193,8 +186,8 @@ export const useWaypointStepping = (
         positionLabel: current?.positionLabel ?? null,
         canStepBack: targets.previousId !== null,
         canStepForward: targets.nextId !== null,
-        onPrevious: () => { visitWaypoint(targets.previousId, opensSteppedWaypoint) },
-        onNext: () => { visitWaypoint(targets.nextId, opensSteppedWaypoint) },
+        onPrevious: () => { visitWaypoint(targets.previousId, false) },
+        onNext: () => { visitWaypoint(targets.nextId, false) },
       }
     },
     onSectionEntered: (anchorId) => {
@@ -203,7 +196,6 @@ export const useWaypointStepping = (
       if (first === undefined) return
       setCurrentWaypointId(first.id)
       setFocusedWaypointId(null)
-      if (opensSteppedWaypoint) setOpenWaypointIds((openIds) => new Set([...openIds, first.id]))
     },
     onToggleWaypoint: (waypointId) => {
       setCurrentWaypointId(waypointId)

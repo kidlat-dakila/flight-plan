@@ -1,4 +1,5 @@
 import Button from "@flightplan/ui/blocks/button"
+import { PINNED_ROW_PROPS } from "@flightplan/ui/lib/pinned-rows"
 import type { Inline } from "@flightplan/ui/lib/review-content"
 import { Inlines } from "@flightplan/ui/Prose"
 import StopRing from "@flightplan/ui/StopRing"
@@ -38,9 +39,10 @@ const NO_CODE_LINKS = {}
 const ignoreCodeLink = (): void => undefined
 
 const NOTICE_ROW_CLASSES = "flex flex-wrap items-center gap-x-3 gap-y-1 border-b py-2.5 text-sm"
+const DRAFTING_STRIP_CLASSES = "sticky top-(--band-height) z-20 flex h-(--strip-height) items-center gap-3 border-b bg-background text-sm whitespace-nowrap"
 
 const ReviewNotices = ({ staleNotice, unassignedFiles, progress, onShowUnassignedFiles, onCopyPrompt }: ReviewNoticesProps) => (
-  <div>
+  <>
     {staleNotice === null
       ? null
       : (
@@ -70,7 +72,7 @@ const ReviewNotices = ({ staleNotice, unassignedFiles, progress, onShowUnassigne
     {progress === null
       ? null
       : (
-          <div role="status" className={NOTICE_ROW_CLASSES}>
+          <div role="status" {...PINNED_ROW_PROPS} className={DRAFTING_STRIP_CLASSES}>
             <StopRing
               status={progress.isWriting ? "awaiting-review" : "stale"}
               tone={progress.isWriting ? "status" : "signal"}
@@ -81,10 +83,10 @@ const ReviewNotices = ({ staleNotice, unassignedFiles, progress, onShowUnassigne
               aria-label={progress.countLabel}
               value={progress.writtenCount}
               max={progress.totalCount}
-              className="h-1.5 w-40 appearance-none overflow-hidden rounded-[0.225rem] bg-muted [&::-moz-progress-bar]:bg-signal [&::-webkit-progress-bar]:bg-muted [&::-webkit-progress-value]:bg-signal [&::-webkit-progress-value]:transition-[width] [&::-webkit-progress-value]:duration-300"
+              className="h-1.5 w-40 shrink-0 appearance-none overflow-hidden rounded-[0.225rem] bg-muted [&::-moz-progress-bar]:bg-signal [&::-webkit-progress-bar]:bg-muted [&::-webkit-progress-value]:bg-signal [&::-webkit-progress-value]:transition-[width] [&::-webkit-progress-value]:duration-300"
             />
             <p className="text-foreground tabular-nums">{progress.countLabel}</p>
-            <p className="text-muted-foreground">{progress.message}</p>
+            <p className="min-w-0 truncate text-muted-foreground">{progress.message}</p>
             {progress.prompt === null
               ? null
               : (
@@ -100,7 +102,7 @@ const ReviewNotices = ({ staleNotice, unassignedFiles, progress, onShowUnassigne
                 )}
           </div>
         )}
-  </div>
+  </>
 )
 
 export default ReviewNotices

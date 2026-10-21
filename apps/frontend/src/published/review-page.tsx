@@ -76,7 +76,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
   const [isFeatureUnavailable, setIsFeatureUnavailable] = useState(false)
   const [isListingUnassignedFiles, setIsListingUnassignedFiles] = useState(false)
   const marking = useReviewedMarks(review)
-  const stepping = useWaypointStepping(marking.segments, { opensSteppedWaypoint: false })
+  const stepping = useWaypointStepping(marking.segments)
   const codeSelection = useCodeSelection()
   const railSections = [...marking.rail.groups.flatMap((group) => group.sections), ...marking.rail.sections]
   const currentAnchorId = useCurrentAnchor(
@@ -94,6 +94,8 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
     onFilterChange: showUnavailableFeature,
     onShowReviewedChange: marking.onShowReviewedChange,
     onCommentOnWaypoint: showUnavailableFeature,
+    onWriteDescription: null,
+    agentLabel: null,
   })
 
   return (

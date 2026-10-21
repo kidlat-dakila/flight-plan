@@ -8,7 +8,7 @@ import { handToWriter } from "@/procedures/request-review"
 import { planWriteUp } from "./utils/plan-write-up"
 import type { WriteUpResult, WriteUpReviewInput } from "./utils/schemas"
 
-const NOTHING_LEFT_MESSAGE = "Everything you chose is already written up."
+const NOTHING_LEFT_MESSAGE = "Everything you chose is already explained."
 
 export const writeUpReview = async (input: WriteUpReviewInput, context: ProcedureContext): Promise<WriteUpResult | null> => {
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }

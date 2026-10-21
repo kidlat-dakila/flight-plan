@@ -3,6 +3,7 @@ import { AGENT_LABELS } from "@/procedures/get-setup/utils/agent-catalog"
 import type { AgentName, AgentsChoice } from "@/procedures/get-setup/utils/setup"
 
 export interface DefaultWriter {
+  readonly agent: AgentName
   readonly label: string
   readonly writer: ReviewWriter
 }
@@ -11,6 +12,7 @@ export const defaultWriterOf = (agents: AgentsChoice | null, startableAgents: re
   const install = agents?.installs.find((candidate) => candidate.agent === agents.defaultAgent) ?? agents?.installs.at(0)
   if (install === undefined) return null
   return {
+    agent: install.agent,
     label: AGENT_LABELS[install.agent],
     writer: startableAgents.includes(install.agent)
       ? { kind: "agent", agent: install.agent, model: install.model, effort: install.effort }

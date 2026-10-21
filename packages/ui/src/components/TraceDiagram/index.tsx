@@ -194,9 +194,9 @@ interface Concealment {
   readonly focusedNodeId: string | null
 }
 
-const CARD_NO_WRITE_UP_LABEL = "This card has no write-up yet."
-const CARD_BEING_WRITTEN_LABEL = "The agent is writing this card up."
-const WRITE_UP_CARD_LABEL = "Write up"
+const CARD_NO_WRITE_UP_LABEL = "Not explained yet."
+const CARD_BEING_WRITTEN_LABEL = "The agent is explaining this card."
+const WRITE_UP_CARD_LABEL = "Explain this card"
 
 const TYPE_ICONS: Readonly<Record<string, LucideIcon>> = {
   "root-argument-value": SlidersHorizontalIcon,

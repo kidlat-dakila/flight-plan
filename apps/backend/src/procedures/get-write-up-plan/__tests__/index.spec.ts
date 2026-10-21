@@ -14,6 +14,7 @@ describe("getWriteUpPlan", () => {
 
     expect(plan).toMatchObject({
       kind: "plan",
+      agent: "claude",
       agentLabel: "Claude",
       configurationId: "standard",
       walkthroughOrder: "imports-bottom-up",
@@ -59,7 +60,7 @@ describe("getWriteUpPlan", () => {
 
     await expect(getWriteUpPlan(INPUT, context)).resolves.toStrictEqual({
       kind: "no-agent",
-      message: "No agent is set up, so no agent can write this review up. Set one up in the settings.",
+      message: "No agent is set up, so no agent can explain this review. Set one up in the settings.",
     })
   })
 
