@@ -1,5 +1,10 @@
 # Flight Plan
 
+[![CI](https://github.com/kidlat-dakila/flight-plan/actions/workflows/ci.yml/badge.svg)](https://github.com/kidlat-dakila/flight-plan/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/kidlat-dakila/flight-plan/actions/workflows/codeql.yml/badge.svg)](https://github.com/kidlat-dakila/flight-plan/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/kidlat-dakila/flight-plan/badge)](https://scorecard.dev/viewer/?uri=github.com/kidlat-dakila/flight-plan)
+[![Socket](https://socket.dev/api/badge/npm/package/@kidlat-dakila/flightplan)](https://socket.dev/npm/package/@kidlat-dakila/flightplan)
+
 An offline-first code review tool that helps you understand and navigate the changes in a pull request.
 
 Flight Plan reads the code of a pull request, or of a branch with no pull request, and lays the change out as a guided

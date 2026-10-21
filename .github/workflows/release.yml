@@ -69,4 +69,4 @@ jobs:
 
       - name: Stage the package on npm
         working-directory: dist/package
-        run: npm stage publish
+        run: npm stage publish --provenance
