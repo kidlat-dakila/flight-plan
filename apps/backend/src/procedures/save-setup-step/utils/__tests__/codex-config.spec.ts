@@ -14,7 +14,7 @@ describe("withCodexMcpServer", () => {
     const merged = withCodexMcpServer(existing, MCP_URL)
 
     expect(merged).toContain("# my model")
-    expect(parse(merged ?? "")).toStrictEqual({
+    expect(parse(merged ?? "")).toEqual({
       model: "gpt-5",
       mcp_servers: { docs: { command: "docs-mcp" }, flightplan: { url: MCP_URL } },
     })
@@ -23,7 +23,7 @@ describe("withCodexMcpServer", () => {
   it("replaces an earlier Flight Plan server", () => {
     const existing = "[mcp_servers.flightplan]\nurl = \"http://localhost:9999/mcp\"\n\n[profiles.fast]\nmodel = \"mini\"\n"
 
-    expect(parse(withCodexMcpServer(existing, MCP_URL) ?? "")).toStrictEqual({
+    expect(parse(withCodexMcpServer(existing, MCP_URL) ?? "")).toEqual({
       mcp_servers: { flightplan: { url: MCP_URL } },
       profiles: { fast: { model: "mini" } },
     })

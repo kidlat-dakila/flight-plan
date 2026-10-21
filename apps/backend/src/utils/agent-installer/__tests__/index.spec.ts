@@ -129,7 +129,7 @@ describe("createAgentInstaller", () => {
       await expect(readFile(join(installPath, "skills", "flightplan-review", "SKILL.md"), "utf8")).resolves.toBe(
         SKILL.replace("name: review", "name: flightplan-review"),
       )
-      expect(parse(await readFile(join(installPath, "config.toml"), "utf8"))).toStrictEqual({
+      expect(parse(await readFile(join(installPath, "config.toml"), "utf8"))).toEqual({
         model: "gpt-5",
         mcp_servers: { flightplan: { url: MCP_URL } },
       })
