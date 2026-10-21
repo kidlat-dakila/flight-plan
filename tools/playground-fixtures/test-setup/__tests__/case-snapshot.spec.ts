@@ -11,23 +11,19 @@ import {
 } from "@test-setup/case-snapshot"
 import { NOTHING_WRITTEN } from "@test-setup/written-parts"
 
-const STOCK_SNAPSHOT_PATH = fileURLToPath(
-  new URL("../../test-cases/typescript/snapshots/modified-function-stockof-to-subtract-held-stock.snapshot.json", import.meta.url),
+const POKEMON_SNAPSHOT_PATH = fileURLToPath(
+  new URL("../../test-cases/demo-fastapi/snapshots/implement-route-api-pokemon.snapshot.json", import.meta.url),
 )
 
 describe("caseTitleOf", () => {
   it("is the name of the test, without its suites", () => {
-    expect(caseTitleOf("typescript > Modified function stockOf to subtract held stock")).toBe(
-      "Modified function stockOf to subtract held stock",
-    )
+    expect(caseTitleOf("demo-fastapi > Implement route /api/pokemon")).toBe("Implement route /api/pokemon")
   })
 })
 
 describe("snapshotNameOf", () => {
   it("names a snapshot after the test, without its suites", () => {
-    expect(snapshotNameOf("typescript > Modified function stockOf to subtract held stock")).toBe(
-      "modified-function-stockof-to-subtract-held-stock",
-    )
+    expect(snapshotNameOf("demo-fastapi > Implement route /api/pokemon")).toBe("implement-route-api-pokemon")
   })
 
   it("replaces what a file name cannot hold", () => {
@@ -37,8 +33,8 @@ describe("snapshotNameOf", () => {
 
 describe("snapshotPathOf", () => {
   it("puts the snapshot in the snapshots folder beside the test", () => {
-    expect(snapshotPathOf("/test-cases/typescript/typescript.integration.test.ts", "typescript > traces a call")).toBe(
-      "/test-cases/typescript/snapshots/traces-a-call.snapshot.json",
+    expect(snapshotPathOf("/test-cases/demo-fastapi/demo-fastapi.integration.test.ts", "demo-fastapi > traces a call")).toBe(
+      "/test-cases/demo-fastapi/snapshots/traces-a-call.snapshot.json",
     )
   })
 })
@@ -104,10 +100,10 @@ describe("readStoredWrittenParts", () => {
   })
 
   it("reads the segments of a committed snapshot with the context of each", async () => {
-    const written = await readStoredWrittenParts(STOCK_SNAPSHOT_PATH)
+    const written = await readStoredWrittenParts(POKEMON_SNAPSHOT_PATH)
 
-    expect(written.codegraph.segments).toHaveLength(1)
-    expect(written.codegraph.segments[0].context).toContain("## Overview")
+    expect(written.codegraph.segments).toHaveLength(2)
+    expect(written.codegraph.segments[1].context[0]).toMatch(/^This segment adds an API that lists, reads, creates, updates and deletes Pokemon/)
   })
 })
 

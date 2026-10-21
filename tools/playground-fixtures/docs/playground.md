@@ -13,7 +13,7 @@ The test cases live in `tools/playground-fixtures/test-cases/`. The codegraph it
 
 | Term | Meaning |
 |---|---|
-| **Kind** | One folder of `test-cases/`: a language (`typescript`) or a repository setup with its stack (`react-spa-query-zustand`). |
+| **Kind** | One folder of `test-cases/`: a language or a repository setup with its stack (`demo-react`). |
 | **Case** | One test: a repository, a change to it, and the snapshot of what the codegraph builds from them. |
 | **Case repository** | The files in a kind's `repo/` folder. It is the repository *before* the change. |
 | **Context** | A Markdown text that says what the diffs of one segment of a case change. Each segment of the snapshot holds its own, under the segment's title. |
@@ -205,7 +205,7 @@ The title is written into the snapshot as its `title`, and it names the snapshot
 
 4. Follow steps 3 to 7 of [Add a case](#add-a-case-to-a-kind-that-exists).
 
-`test-cases/react-spa-query-zustand/` is the example to copy from: a full case repository and twenty cases, one per kind of changeset. `test-cases/typescript/` is the smallest kind there can be. `test-cases/vue-spa-query-pinia/` is a Vue case repository with five cases, `test-cases/python-flask/` a Flask service with one, `test-cases/demo-react/` a small React app with one pull request that adds three pages, `test-cases/demo-vue/` the same app and pull request in Vue, and `test-cases/demo-fastapi/` a FastAPI service with SQLAlchemy and pydantic, with one pull request that adds a Pokemon API under `/api/pokemon`. A kind whose name starts with `demo-` is also a demo on the Flight Plan site, and holds a `demo.json` that describes the pull request around its review; `apps/site/docs/demo.md` describes it.
+`test-cases/demo-react/` is a small React app with one pull request that adds three pages, `test-cases/demo-vue/` the same app and pull request in Vue, and `test-cases/demo-fastapi/` a FastAPI service with SQLAlchemy and pydantic, with one pull request that adds a Pokemon API under `/api/pokemon`. A kind whose name starts with `demo-` is also a demo on the Flight Plan site, and holds a `demo.json` that describes the pull request around its review; `apps/site/docs/demo.md` describes it.
 
 ## Describing a kind
 
@@ -213,8 +213,8 @@ Every kind has a `meta.json` beside its test file. It says what the case reposit
 
 ```json
 {
-  "title": "React SPA with react-router",
-  "packages": ["react", "react-dom", "react-router", "zustand", "@tanstack/react-query"],
+  "title": "React demo with React Router and TanStack Query",
+  "packages": ["react", "react-dom", "react-router", "@tanstack/react-query"],
   "language": "typescript",
   "mainFramework": "react"
 }
@@ -345,8 +345,6 @@ The cases of a kind cover the kinds of changeset a reviewer meets, not one chang
 | A function handed over as a value | A query function, a selector, a submit handler: never called by name |
 | A dynamic import | A route or a component loaded lazily |
 
-`test-cases/react-spa-query-zustand/` has one case of each.
-
 ## Writing the written parts
 
 A snapshot is a complete review of its change, so it holds what an agent writes as well as what the codegraph generates. The written parts are written in the snapshot file, by hand or by an agent, and nowhere else.
@@ -431,7 +429,7 @@ Read the context first, then the two diagrams and the walkthrough against it. Wh
 
 | Function | Returns |
 |---|---|
-| `getAllFixtureCases(testCasesPath)` | The names of the folders under `test-cases/`, in order: `["demo-fastapi", "demo-react", "demo-vue", "python-flask", "react-spa-query-zustand", "typescript", "vue-spa-query-pinia"]` |
+| `getAllFixtureCases(testCasesPath)` | The names of the folders under `test-cases/`, in order: `["demo-fastapi", "demo-react", "demo-vue"]` |
 | `getFixtureRepository(testCasesPath, caseName)` | That folder as a repository the index page can list: a local git repository named after the folder, with one pull request review target per snapshot, in order. The title of a target is the title of its snapshot, its branch is the snapshot's file name, its number is its place in the list, and its author and date are mocked constants. It refuses a name that cannot be a folder name with `UnknownFixtureCaseError` |
 | `getAllReviewArtifactFixturesByCase(testCasesPath, caseName)` | The names of the snapshots of that folder, in order, each as `<folder>/<snapshot file name without .snapshot.json>`. An empty list for a folder that does not exist or has no snapshot |
 | `getReviewArtifactFixture(testCasesPath, fixtureName)` | That snapshot as a `ReviewArtifact`, the shape a stored review has. It takes a name as the function above returns it, and refuses any other with `UnknownFixtureError` |

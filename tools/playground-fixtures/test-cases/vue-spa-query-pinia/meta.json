@@ -1,6 +1,0 @@
-{
-  "title": "Vue SPA with Vue Router, TanStack Query and Pinia",
-  "packages": ["vue", "vue-router", "pinia", "@tanstack/vue-query", "zod"],
-  "language": "typescript",
-  "mainFramework": "vue"
-}

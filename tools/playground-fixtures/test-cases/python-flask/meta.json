@@ -1,6 +1,0 @@
-{
-  "title": "Python service with Flask",
-  "packages": ["flask"],
-  "language": "python",
-  "mainFramework": "flask"
-}
