@@ -151,16 +151,13 @@ touches.
 `pnpm build:prod` builds the production bundle and puts together the npm package in `dist/package`. `pnpm start` runs
 that build the way the `flightplan` command does, without building it first.
 
-To release, bump `version` in `package.json`, commit it and push it to `main`, then tag and push the version:
+To release, bump `version` in `package.json`, then build the package and publish it to npm from your machine:
 
 ```bash
 pnpm prod:release
 ```
 
-It tags the commit you are on as `v<version>` and pushes that tag. The tag starts the [Release workflow](.github/workflows/release.yml). It checks that the tag is on `main` and matches
-`package.json`, runs lint, type-checking and tests, builds the package and stages it on npm through trusted publishing.
-The version goes live once a maintainer approves it with two-factor authentication, under Staged Packages on npmjs.com
-or with `npm stage approve <stage-id>`.
+It publishes the version that `package.json` holds, so log in with `npm login` first.
 
 Run checks through Nx:
 

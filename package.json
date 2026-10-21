@@ -15,7 +15,7 @@
     "lint:fix": "nx run-many -t eslint:lint --args=--fix",
     "hard-reset": "jiti tools/hard-reset/index.ts",
     "build:prod": "nx run backend:package",
-    "prod:release": "git tag -a v$npm_package_version -m \"chore: release $npm_package_version\" && git push origin v$npm_package_version",
+    "prod:release": "nx run backend:package && npm publish ./dist/package",
     "start": "node dist/package/backend/main.js",
     "prepare": "husky"
   },
