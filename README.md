@@ -137,8 +137,8 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm dev` runs the backend on `http://localhost:3000` (tRPC at `/api/trpc`, MCP at `POST /mcp`) and the frontend on
-`http://localhost:4200`, which proxies `/api` to the backend.
+`pnpm dev` runs the backend on `http://localhost:3000` (tRPC at `/api/trpc`, MCP at `POST /mcp`), the frontend on
+`http://localhost:4200`, which proxies `/api` to the backend, and the site on `http://localhost:4400`.
 
 `pnpm install` also installs a pre-commit hook (husky) that runs ESLint and type-checking for the projects a commit
 touches.

@@ -16,7 +16,7 @@
         "command": "astro dev"
       },
       "dependsOn": [
-        "build-demo",
+        "watch-demo",
         "copy-docs-media"
       ]
     },
@@ -207,6 +207,21 @@
         "commands": [
           "vite build --config demo/vite.config.mts --logLevel warn",
           "cp ../frontend/public/logo.svg public/logo.svg"
+        ]
+      }
+    },
+    "watch-demo": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "dependsOn": [
+        "build-demo-data"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "parallel": false,
+        "commands": [
+          "cp ../frontend/public/logo.svg public/logo.svg",
+          "vite build --config demo/vite.config.mts --watch --logLevel warn"
         ]
       }
     },

@@ -53,7 +53,7 @@ Always run tasks through Nx, and call `nx` directly, never through `pnpm nx` or 
 
 | Command | Purpose |
 |---|---|
-| `pnpm dev` | Run the backend (:3000) and the frontend (:4200) side by side |
+| `pnpm dev` | Run the backend (:3000), the frontend (:4200) and the site (:4400) side by side |
 | `pnpm lint` | Run ESLint on every project |
 | `pnpm lint:fix` | Run ESLint on every project and apply its automatic fixes |
 | `nx run-many -t eslint:lint typecheck test -p <projects>` | Verify specific projects |

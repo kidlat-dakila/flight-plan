@@ -35,6 +35,8 @@ Every comment, review and chat message carries `minutesAgo`, so the demo always 
 - `site:build-demo-data` compiles `apps/site/demo/data/write-demo-data.ts` with esbuild and runs it. It turns every demo fixture into a review artifact with the playground's `getReviewArtifactFixture`, and writes it with its story to `apps/site/public/demo-data/<name>.json`, plus an `index.json` for the selection page.
 - `site:build-demo` builds `apps/site/demo/app/` with Vite into `apps/site/public/demo-app/`.
 
+`nx dev site`, which `pnpm dev` also runs, builds the demo data once and then runs `site:watch-demo` beside `astro dev`. It is the same Vite build in watch mode, so a change to the frontend, the backend or a package rebuilds `apps/site/public/demo-app/`, and reloading the demo shows it. A change to a demo fixture needs `nx dev site` started again.
+
 The demo app mounts the frontend's `createApp` with a hash history, so a demo's address keeps the app's path after `#`. Its tRPC client calls the backend's `appRouter` through tRPC's local link, with the context from `createDemoProcedureContext` in `apps/backend/src/procedures/context.ts`. That context holds:
 
 - the demo repositories as GitHub repositories, and their reviews;
