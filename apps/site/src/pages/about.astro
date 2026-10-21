@@ -1,0 +1,288 @@
+---
+import { Icon } from "@astrojs/starlight/components"
+import { Image } from "astro:assets"
+import portrait from "@/assets/darwin.png"
+import SiteLayout from "../layouts/SiteLayout.astro"
+import { REPOSITORY_URL } from "../site-links"
+
+const PAGE_TITLE = "About Flight Plan and its author"
+const PAGE_DESCRIPTION = "Darwin, a software engineer in Munich, on why he made Flight Plan, an offline-first code review tool, and who it is built for."
+const PORTRAIT_ALT = "Darwin in glasses and a dark hoodie, speaking into a microphone"
+const PORTRAIT_WIDTHS = [320, 400]
+const PORTRAIT_SIZES = "20rem"
+const LANDING_VIDEO_URL = "https://www.youtube.com/watch?v=ePDl1JNqjpM"
+const ISSUES_URL = `${REPOSITORY_URL}/issues`
+const LINKEDIN_URL = "https://www.linkedin.com/in/darwin-talay/"
+const GITHUB_PROFILE_URL = "https://github.com/kidlat-dakila"
+
+const PROFILE_LINKS = [
+  { label: "LinkedIn", href: LINKEDIN_URL, icon: "linkedin" },
+  { label: "GitHub", href: GITHUB_PROFILE_URL, icon: "github" },
+] as const
+
+const REVIEW_PARTS = [
+  {
+    term: "Change Overview",
+    detail: "Every changed code block, sorted by the kind of code it is. See the new page, the components it renders and the state behind them before you open a file.",
+  },
+  { term: "Trace Diagram", detail: "How the change runs, from what starts the code through each function it passes to the line you changed." },
+  { term: "Blast Diagram", detail: "Every file the change reaches through its imports, including files the diff never shows." },
+  {
+    term: "Code Walkthrough",
+    detail: "Each changed block of code marked as a waypoint, with a count of the changed files it covers, so you can see what the review left out.",
+  },
+] as const
+---
+
+<SiteLayout title={PAGE_TITLE} description={PAGE_DESCRIPTION}>
+  <div class="page-column about">
+    <header class="about-intro">
+      <figure class="author">
+        <Image class="portrait" src={portrait} alt={PORTRAIT_ALT} widths={PORTRAIT_WIDTHS} sizes={PORTRAIT_SIZES} loading="eager" />
+        <figcaption>
+          <ul class="profile-links">
+            {
+              PROFILE_LINKS.map((link) => (
+                <li>
+                  <a href={link.href}>
+                    <Icon name={link.icon} />
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </figcaption>
+      </figure>
+      <div class="prose">
+        <h1>About the author</h1>
+        <p class="lede">
+          Hey! I'm Darwin (kidlat-dakila), and I'm glad you stumbled upon this tool! I'm a software engineer based in Munich, Germany, and I'm on a mission to make software
+          engineering fun and enjoyable again in this new AI era.
+        </p>
+        <p>
+          Just like you, I've struggled to keep up with this agentic coding era, where we push code faster than ever, and I know how hard it is to keep up the pace when we review
+          pull requests. And just like you, I want to keep the coding standard high without sacrificing product velocity. That's why I made Flight Plan.
+        </p>
+      </div>
+    </header>
+
+    <section class="about-section" aria-labelledby="why-flight-plan">
+      <h2 id="why-flight-plan">Why Flight Plan?</h2>
+      <div class="prose">
+        <p>
+          My inspiration comes from how pilots fly commercial planes. Did you know that, given proper instructions, it's theoretically possible for anyone to land a commercial
+          plane? Yes, you heard that right! Mentour Pilot has a good YouTube video that shows how: <a href={LANDING_VIDEO_URL}>How YOU can land a passenger aircraft! 12 steps</a>.
+        </p>
+        <p>
+          So if that's the case, why do we need pilots at all? Why do aspiring pilots go through rigorous training, and why is a pilot's license so hard to get? I know you know the
+          answer already. Pilots don't just need to know how to fly the plane. They need to understand the exact parameters that get the plane to its destination safely and
+          efficiently.
+        </p>
+        <p>
+          Sounds familiar? It's unsettlingly similar to software engineering today. Anyone can vibe-code an app and make it fly. But software engineering is not just about writing
+          code. We deal with trade-offs, scaling issues, maintenance and security.
+        </p>
+      </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="built-for-you">
+      <h2 id="built-for-you">Built for awesome software engineers just like you!</h2>
+      <div class="prose">
+        <p>
+          A commercial pilot doesn't take off without a flight plan, which sets the route, the waypoints and what to expect along the way. Flight Plan gives you that for a pull
+          request. It's an offline-first code review tool that helps you understand and navigate the changes before you read the diff.
+        </p>
+        <dl class="review-parts">
+          {
+            REVIEW_PARTS.map((part) => (
+              <div>
+                <dt>{part.term}</dt>
+                <dd>{part.detail}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p>
+          Flight Plan builds all of this on your machine, straight from the code, with no model. Your coding agent adds the why. Setup asks you to pick Claude Code, Codex or Cursor,
+          and when you ask about a line, a code block or the whole review, your agent explains each part right above its code and flags potential bugs. Your code and your reviews
+          stay on your machine.
+        </p>
+        <p>You're still the pilot. Flight Plan shows you the parameters, so you can keep the bar high and still keep up the pace.</p>
+      </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="contact">
+      <h2 id="contact">Contact</h2>
+      <div class="prose">
+        <p>
+          You can post feature requests in the <a href={ISSUES_URL}>GitHub repo</a>. I'd like to hear your feedback so I can make Flight Plan better for you! Or contact me on
+          LinkedIn at <a href={LINKEDIN_URL}>linkedin.com/in/darwin-talay</a>, and let's keep in touch.
+        </p>
+      </div>
+    </section>
+  </div>
+</SiteLayout>
+
+<style>
+  .about {
+    padding-block: 5rem 6rem;
+  }
+
+  .about-intro,
+  .about-section {
+    display: grid;
+    grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
+    gap: 2rem 4.5rem;
+    align-items: start;
+  }
+
+  .about-intro {
+    padding-bottom: 5rem;
+  }
+
+  .about-section {
+    padding-block: 3.5rem 5rem;
+    border-top: 2px solid var(--frame);
+  }
+
+  .author {
+    width: min(100%, 20rem);
+  }
+
+  .portrait {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+  }
+
+  .profile-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1rem;
+    list-style: none;
+  }
+
+  .profile-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted-ink);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 180ms ease-out;
+  }
+
+  .profile-links a:hover {
+    color: var(--ink);
+  }
+
+  .profile-links :global(svg) {
+    font-size: 1.125rem;
+  }
+
+  h1 {
+    font-size: clamp(2.75rem, 1.5rem + 3.4vw, 4.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+
+  h2 {
+    font-size: 2.25rem;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .prose {
+    max-width: 40rem;
+  }
+
+  .prose p {
+    font-size: 1.0625rem;
+    line-height: 1.7rem;
+  }
+
+  .prose p + p {
+    margin-top: 1.25rem;
+  }
+
+  .review-parts + p {
+    margin-top: 2rem;
+  }
+
+  h1 + .lede {
+    margin-top: 1.5rem;
+  }
+
+  .lede {
+    font-size: 1.1875rem;
+    line-height: 1.75rem;
+  }
+
+  .prose a {
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--input);
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color 180ms ease-out;
+  }
+
+  .prose a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .review-parts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 2.5rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .review-parts dt {
+    margin-bottom: 0.35rem;
+    color: var(--line);
+    font-weight: 700;
+  }
+
+  .review-parts dd {
+    color: var(--muted-ink);
+    font-size: 0.9375rem;
+    line-height: 1.45rem;
+  }
+
+  @media (max-width: 63.99rem) {
+    .about-intro,
+    .about-section {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    h2 {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .about {
+      padding-block: 3rem 4.5rem;
+    }
+
+    .about-intro {
+      padding-bottom: 3.5rem;
+    }
+
+    .about-section {
+      padding-block: 2.5rem 3.5rem;
+    }
+
+    .review-parts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

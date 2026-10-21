@@ -1,7 +1,10 @@
 ---
 import { Image } from "astro:assets"
 import logo from "@/assets/logo.svg"
-import { INSTALL_ANCHOR, NAVIGATION_LINKS } from "../site-links"
+import InstallCommand from "./InstallCommand.astro"
+import { NAVIGATION_LINKS } from "../site-links"
+
+const INSTALL_POPOVER_ID = "install-popover"
 ---
 
 <header class="sign-band">
@@ -18,8 +21,18 @@ import { INSTALL_ANCHOR, NAVIGATION_LINKS } from "../site-links"
           </a>
         ))
       }
-      <a class="band-install" href={INSTALL_ANCHOR}>Install</a>
+      <button type="button" class="band-install" popovertarget={INSTALL_POPOVER_ID}>Install</button>
     </nav>
+  </div>
+  <div class="install-popover" id={INSTALL_POPOVER_ID} popover aria-labelledby="install-popover-title">
+    <div class="popover-heading">
+      <p class="popover-title" id="install-popover-title">Install Flight Plan</p>
+      <button type="button" class="popover-close" popovertarget={INSTALL_POPOVER_ID} popovertargetaction="hide" aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <p class="popover-hint">Run it in your terminal. It needs Node.js 22 or later.</p>
+    <InstallCommand />
   </div>
 </header>
 
@@ -78,16 +91,95 @@ import { INSTALL_ANCHOR, NAVIGATION_LINKS } from "../site-links"
     align-items: center;
     height: 1.75rem;
     padding: 0 0.625rem;
+    border: 0;
     border-radius: 0.3rem;
     background: var(--amber);
     color: var(--amber-ink);
+    font: 700 0.8rem var(--sans);
+    cursor: pointer;
+  }
+
+  .install-popover {
+    position: fixed;
+    inset: calc(3.5rem + 0.5rem) var(--gutter) auto auto;
+    max-width: calc(100vw - 2 * var(--gutter));
+    margin: 0;
+    padding: 1.25rem;
+    border: 1px solid var(--frame);
+    border-radius: 0.375rem;
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .install-popover:popover-open {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 180ms var(--ease-out),
+      transform 180ms var(--ease-out);
+  }
+
+  @starting-style {
+    .install-popover:popover-open {
+      opacity: 0;
+      transform: translateY(-0.375rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .install-popover:popover-open {
+      transition: none;
+    }
+  }
+
+  .popover-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .popover-title {
     font-weight: 700;
-    font-size: 0.8rem;
-    text-decoration: none;
+    font-size: 1.0625rem;
+  }
+
+  .popover-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    margin: -0.375rem -0.375rem -0.375rem 0;
+    border: 0;
+    border-radius: 0.3rem;
+    background: transparent;
+    color: var(--muted-ink);
+    cursor: pointer;
+    transition: color 180ms ease-out;
+  }
+
+  .popover-close:hover {
+    color: var(--ink);
+  }
+
+  .popover-close svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .popover-hint {
+    margin-block: 0.35rem 1rem;
+    color: var(--muted-ink);
+    font-size: 0.9375rem;
   }
 
   .sign-band :focus-visible {
     outline-color: var(--amber);
+  }
+
+  .install-popover :focus-visible {
+    outline-color: var(--ring);
   }
 
   @media (max-width: 34.99rem) {
