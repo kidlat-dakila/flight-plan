@@ -36,6 +36,7 @@ import { getSettingsRoute } from "./routes/get-settings"
 import { getSetupRoute } from "./routes/get-setup"
 import { getSetupGateRoute } from "./routes/get-setup-gate"
 import { getTargetSwitcherRoute } from "./routes/get-target-switcher"
+import { getUpdateNoticeRoute } from "./routes/get-update-notice"
 import { getWriteUpPlanRoute } from "./routes/get-write-up-plan"
 import { healthRoute } from "./routes/health"
 import { importReviewRoute } from "./routes/import-review"
@@ -73,6 +74,7 @@ import { createRouter } from "./trpc"
 
 export const appRouter = createRouter({
   health: healthRoute,
+  updateNotice: getUpdateNoticeRoute,
   repository: createRouter({
     list: listRepositoriesRoute,
     dismissNewTarget: dismissNewTargetRoute,

@@ -54,8 +54,8 @@ describe("getPublishedReview", () => {
         title: "Only available in Flight Plan",
         install: {
           commands: [
-            { label: "Run it without installing", command: "npx @kidlat-dakila/flightplan" },
-            { label: "Or install it once, then start it with flightplan", command: "npm install -g @kidlat-dakila/flightplan" },
+            { label: "Run it without installing", command: "npx @kidlat-dakila/flightplan@latest" },
+            { label: "Or install it once, then start it with flightplan", command: "npm install -g @kidlat-dakila/flightplan@latest" },
           ],
           copyLabel: "Copy command",
           copiedLabel: "Copied",

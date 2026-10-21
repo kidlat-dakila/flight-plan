@@ -6,10 +6,10 @@ description: Run Flight Plan from the command line and open it in the browser.
 Run Flight Plan with `npx`:
 
 ```bash
-npx @kidlat-dakila/flightplan
+npx @kidlat-dakila/flightplan@latest
 ```
 
-To install it once, run `npm install -g @kidlat-dakila/flightplan`. After that, start it with `flightplan`.
+To install it once, run `npm install -g @kidlat-dakila/flightplan@latest`. After that, start it with `flightplan`.
 
 The command starts one server on your machine. It serves the web app, its API and the MCP endpoint your agent writes through, and opens the app at `http://localhost:24747`. The first time, the app takes you through [setup](/docs/setup/).
 

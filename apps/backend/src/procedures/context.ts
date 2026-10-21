@@ -5,6 +5,7 @@ import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/c
 import { createDemoAgent } from "@/procedures/get-conversation/utils/demo-agent"
 import { createInMemoryConversationHub } from "@/procedures/get-conversation/utils/in-memory-conversation-hub"
 import { readSampleInstructionTexts, type InstructionReader } from "@/procedures/get-instructions/utils/instruction-texts"
+import { PACKAGE_NAME } from "@/procedures/get-published-review/utils/install-guide"
 import { skipBranchPull, type BranchPuller } from "@/procedures/get-review/utils/branch-puller"
 import { InMemoryChangeReader, type ChangeReader } from "@/procedures/get-review/utils/change-reader"
 import {
@@ -27,6 +28,7 @@ import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-se
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 import { InMemorySetupStore, type SetupStore } from "@/procedures/get-setup/utils/setup-store"
+import type { UpdateChecker } from "@/procedures/get-update-notice/utils/update-checker"
 import { InMemoryImportFileStore, type ImportFileStore } from "@/procedures/import-review/utils/import-file-store"
 import { InMemoryConfigurationStore, type ConfigurationStore } from "@/procedures/list-configurations/utils/configuration-store"
 import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-catalog"
@@ -56,6 +58,7 @@ import { createGitIdentityReader } from "@/utils/git-identity-reader"
 import { createImportFileStore } from "@/utils/import-file-store"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
+import { createLatestVersionReader, latestManifestUrlOf } from "@/utils/npm-registry-reader"
 import { createPublishedPageWriter } from "@/utils/published-page-writer"
 import { createPullRequestForge } from "@/utils/pull-request-forge"
 import { createRepositoryActivityReader } from "@/utils/repository-activity-reader"
@@ -67,6 +70,7 @@ import { FileReviewStore } from "@/utils/review-file-store"
 import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
 import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
+import { createUpdateCheckFile } from "@/utils/update-check-file"
 import type { CodeHighlighter } from "@flightplan/codegraph"
 import { readRemote, assembleGitAdapter, GitAdapterError } from "@flightplan/git-forge"
 
@@ -89,6 +93,7 @@ export interface ProcedureContext {
   readonly now: () => Date
   readonly dataNotice: string | null
   readonly fixtureCatalog?: FixtureCatalog
+  readonly updateChecker?: UpdateChecker
 }
 
 const MOCK_SERVER_URL = "http://localhost:3000"
@@ -206,6 +211,19 @@ export interface LocalMachine {
 }
 
 const COMMIT_LIMIT = 1000
+
+export interface InstalledPackage {
+  readonly dataPath: string
+  readonly runningVersion: string
+  readonly installPath: string
+}
+
+export const createLocalUpdateChecker = ({ dataPath, runningVersion, installPath }: InstalledPackage): UpdateChecker => ({
+  runningVersion,
+  installPath,
+  checkFile: createUpdateCheckFile(dataPath),
+  readLatestVersion: createLatestVersionReader({ manifestUrl: latestManifestUrlOf(PACKAGE_NAME) }),
+})
 
 export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachine): ProcedureContext => {
   const mockContext = createMockProcedureContext(startedAt)

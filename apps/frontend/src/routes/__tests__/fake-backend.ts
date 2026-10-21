@@ -15,8 +15,9 @@ const urlOf = (request: RequestInfo | URL): URL => new URL(request instanceof Re
 
 const procedurePathOf = (url: URL): string => url.pathname.split("/").at(-1) ?? ""
 
-const SETUP_COMPLETE_HANDLERS: ProcedureHandlers = {
+const DEFAULT_HANDLERS: ProcedureHandlers = {
   "setup.gate": () => ({ data: { redirectTo: null } }),
+  "updateNotice": () => ({ data: null }),
 }
 
 const queryInputOf = (url: URL): unknown => {
@@ -61,7 +62,7 @@ export const fakeBackendLinks = (handlers: ProcedureHandlers): TRPCLink<AppRoute
     false: httpLink({
       url: FAKE_BACKEND_URL,
       fetch: async (input, init) =>
-        await Promise.resolve(answer({ ...SETUP_COMPLETE_HANDLERS, ...handlers }, urlOf(input), init?.body)),
+        await Promise.resolve(answer({ ...DEFAULT_HANDLERS, ...handlers }, urlOf(input), init?.body)),
     }),
   }),
 ]

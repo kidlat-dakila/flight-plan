@@ -18,8 +18,8 @@ const publishedReview = {
     install: {
       intro: "Start it from a terminal:",
       commands: [
-        { label: "Run it without installing", command: "npx @kidlat-dakila/flightplan" },
-        { label: "Or install it once", command: "npm install -g @kidlat-dakila/flightplan" },
+        { label: "Run it without installing", command: "npx @kidlat-dakila/flightplan@latest" },
+        { label: "Or install it once", command: "npm install -g @kidlat-dakila/flightplan@latest" },
       ],
       copyLabel: "Copy command",
       copiedLabel: "Copied",
@@ -122,9 +122,9 @@ describe("the published review page", () => {
 
     expect(within(dialog).getByText("Start it from a terminal:")).toBeTruthy()
     expect(within(dialog).getByText("Run it without installing")).toBeTruthy()
-    expect(within(dialog).getByText("npx @kidlat-dakila/flightplan")).toBeTruthy()
+    expect(within(dialog).getByText("npx @kidlat-dakila/flightplan@latest")).toBeTruthy()
     expect(within(dialog).getByText("Or install it once")).toBeTruthy()
-    expect(within(dialog).getByText("npm install -g @kidlat-dakila/flightplan")).toBeTruthy()
+    expect(within(dialog).getByText("npm install -g @kidlat-dakila/flightplan@latest")).toBeTruthy()
   })
 
   it("copies a command to the clipboard and says it was copied", async () => {
@@ -138,7 +138,7 @@ describe("the published review page", () => {
     const dialog = await screen.findByRole("dialog", { name: UNAVAILABLE_TITLE })
     fireEvent.click(within(dialog).getAllByRole("button", { name: "Copy command" })[0] ?? document.body)
 
-    expect(writeText).toHaveBeenCalledWith("npx @kidlat-dakila/flightplan")
+    expect(writeText).toHaveBeenCalledWith("npx @kidlat-dakila/flightplan@latest")
     expect(await within(dialog).findByRole("button", { name: "Copied" })).toBeTruthy()
     expect(within(dialog).getAllByRole("button", { name: "Copy command" })).toHaveLength(1)
   })

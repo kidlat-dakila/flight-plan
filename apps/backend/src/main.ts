@@ -15,7 +15,11 @@ import {
   type PortChoice,
   type ServerConfig,
 } from "./config"
-import { createLocalProcedureContext, type ProcedureContext } from "./procedures/context"
+import { createLocalProcedureContext, createLocalUpdateChecker, type ProcedureContext } from "./procedures/context"
+import { getUpdateNotice } from "./procedures/get-update-notice"
+import type { UpdateNotice } from "./procedures/get-update-notice/utils/schemas"
+import type { UpdateChecker } from "./procedures/get-update-notice/utils/update-checker"
+import { toTerminalLine } from "./procedures/get-update-notice/utils/update-notice"
 import { refreshAgentInstalls } from "./procedures/refresh-agent-installs"
 import { buildServer } from "./server"
 import { openBrowser } from "./utils/browser-opener"
@@ -86,6 +90,28 @@ const choosePort = async (host: string, choice: PortChoice): Promise<number | nu
   return null
 }
 
+const readPackageVersion = async (): Promise<string> => {
+  const manifest: unknown = JSON.parse(await readFile(join(__dirname, PACKAGE_MANIFEST_PATH_FROM_BUILD), "utf8"))
+  return packageManifestSchema.parse(manifest).version
+}
+
+const readNoVersion = (): null => null
+
+const openUpdateChecker = async (dataPath: string): Promise<UpdateChecker | undefined> => {
+  const runningVersion = await readPackageVersion().catch(readNoVersion)
+  return runningVersion === null ? undefined : createLocalUpdateChecker({ dataPath, runningVersion, installPath: __dirname })
+}
+
+const findNoNotice = (): null => null
+
+const checkForUpdate = async (pendingChecker: Promise<UpdateChecker | undefined>): Promise<UpdateNotice | null> =>
+  await getUpdateNotice({}, { updateChecker: await pendingChecker, now: () => new Date() }).catch(findNoNotice)
+
+const printUpdateNotice = async (pendingNotice: Promise<UpdateNotice | null>): Promise<void> => {
+  const notice = await pendingNotice
+  if (notice !== null) console.log(toTerminalLine(notice))
+}
+
 const refreshAgents = async (context: ProcedureContext): Promise<boolean> => {
   const failures = await refreshAgentInstalls(context)
   failures.forEach(({ agent, reason }) => {
@@ -96,13 +122,17 @@ const refreshAgents = async (context: ProcedureContext): Promise<boolean> => {
 
 const launch = async (command: LaunchCommand): Promise<void> => {
   const host = readHost(process.env)
-  const savedPortFile = createSavedPortFile(readDataPath(process.env, homedir()))
+  const dataPath = readDataPath(process.env, homedir())
+  const pendingChecker = openUpdateChecker(dataPath)
+  const pendingNotice = checkForUpdate(pendingChecker)
+  const savedPortFile = createSavedPortFile(dataPath)
   const savedPort = await savedPortFile.read()
   const choice = { requestedPort: command.port ?? readRequestedPort(process.env), savedPort }
   const runningUrl = serverUrlOf({ host, port: preferredPortOf(choice) })
   if (await isFlightPlanRunning(runningUrl)) {
     console.log(`Flight Plan is already running at ${runningUrl}`)
     await showInBrowser(runningUrl, command)
+    await printUpdateNotice(pendingNotice)
     return
   }
   const port = await choosePort(host, choice)
@@ -112,17 +142,18 @@ const launch = async (command: LaunchCommand): Promise<void> => {
   }
   const serverConfig = { host, port }
   const serverUrl = serverUrlOf(serverConfig)
-  const context = openLocalContext(serverConfig, serverUrl)
+  const context = { ...openLocalContext(serverConfig, serverUrl), updateChecker: await pendingChecker }
   const server = await buildServer({ logger: { level: PUBLISHED_LOG_LEVEL } }, context, join(__dirname, WEB_PATH_FROM_BUILD))
   await server.listen(serverConfig)
   console.log(`Flight Plan is running at ${serverUrl}`)
+  const printedNotice = printUpdateNotice(pendingNotice)
   await showInBrowser(serverUrl, command)
   if (port !== savedPort && (await refreshAgents(context))) await savedPortFile.write(port)
+  await printedNotice
 }
 
 const printVersion = async (): Promise<void> => {
-  const manifest: unknown = JSON.parse(await readFile(join(__dirname, PACKAGE_MANIFEST_PATH_FROM_BUILD), "utf8"))
-  console.log(packageManifestSchema.parse(manifest).version)
+  console.log(await readPackageVersion())
 }
 
 const runCommand = async (command: Command): Promise<void> => {

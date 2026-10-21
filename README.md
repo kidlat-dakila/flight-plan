@@ -15,10 +15,10 @@ prose, so it cannot leave a caller out or invent one.
 ## Running it
 
 ```bash
-npx @kidlat-dakila/flightplan
+npx @kidlat-dakila/flightplan@latest
 ```
 
-You can also install it once with `npm install -g @kidlat-dakila/flightplan` and then run `flightplan`. The command
+You can also install it once with `npm install -g @kidlat-dakila/flightplan@latest` and then run `flightplan`. The command
 starts one local server for the web app, the API and the MCP endpoint, and opens it in the browser at
 `http://localhost:24747`.
 

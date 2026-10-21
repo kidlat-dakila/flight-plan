@@ -12,11 +12,13 @@ import { useColorTheme } from "@/color-theme"
 import type { RouterContext } from "@/router-context"
 import PlanePicture from "@/routes/-components/PlanePicture"
 import ServerError from "@/routes/-components/ServerError"
+import { useUpdateNotice } from "@/routes/-hooks/use-update-notice"
 import { SETTINGS_LINKS } from "@/settings-links"
 import BrandMark from "@flightplan/ui/BrandMark"
 import { cn } from "@flightplan/ui/lib/utils"
 import SettingsMenu from "@flightplan/ui/SettingsMenu"
 import SignBand from "@flightplan/ui/SignBand"
+import UpdateToast from "@flightplan/ui/UpdateToast"
 
 const LOGO_SRC = "/logo.svg"
 const PRODUCT_NAME = "Flight Plan"
@@ -29,6 +31,7 @@ const RootLayout = () => {
   const isFullWidth = useMatches({ select: (matches) => matches.some((match) => match.staticData.isFullWidth === true) })
   const isSettingUp = useMatches({ select: (matches) => matches.some((match) => match.routeId === SETUP_ROUTE_ID) })
   const hasPageSettingsMenu = useMatches({ select: (matches) => matches.some((match) => match.staticData.hasPageSettingsMenu === true) })
+  const update = useUpdateNotice()
   return (
     <BandSlotContext value={bandSlot}>
       <div className="min-h-screen bg-background text-foreground">
@@ -46,6 +49,7 @@ const RootLayout = () => {
         <main className={cn("w-full", isFullWidth ? "" : COLUMN_CLASSES)}>
           <Outlet />
         </main>
+        {update.notice === null ? null : <UpdateToast notice={update.notice} isCopied={update.isCopied} onCopy={update.copy} onClose={update.close} />}
       </div>
     </BandSlotContext>
   )
