@@ -8,7 +8,7 @@ const BRANCH_KEY = { repositoryName: "flight-plan", targetId: "branch-refactor-t
 const createContext = () => createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z"))
 
 const readReviewers = async (context: ReturnType<typeof createContext>) => {
-  const page = await getReview({ ...DISCUSSED_KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
+  const page = await getReview({ ...DISCUSSED_KEY, filterKeys: [], isShowingReviewed: false }, context)
   return page?.shell.header.kind === "pull-request" ? page.shell.header.reviewers : []
 }
 

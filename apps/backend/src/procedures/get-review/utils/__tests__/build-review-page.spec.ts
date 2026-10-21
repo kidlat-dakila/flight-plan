@@ -97,8 +97,8 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
 const createInput = (overrides: Partial<GetReviewInput> = {}): GetReviewInput => ({
   repositoryName: "storefront",
   targetId: "pr-412",
-  filterKeysBySegment: {},
-  reviewedSegmentIds: [],
+  filterKeys: [],
+  isShowingReviewed: false,
   ...overrides,
 })
 
@@ -556,17 +556,17 @@ describe("buildReviewPage", () => {
     expect(page.kind === "artifact" ? page.rail.groups[0].sections.map((section) => section.kind) : []).toStrictEqual(["walkthrough", "context", "traceDiagram"])
   })
 
-  it("applies the waypoint filter it is asked for to its own segment only", () => {
+  it("applies the waypoint filter it is asked for to every segment, and counts the waypoints of the whole review", () => {
     const walkthrough = { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("w", "priceOf", { coreChange: "Slow." })] }] }
     const otherWalkthrough = { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("v", "priceOf", { coreChange: "Slow." })] }] }
     const artifact = createArtifact({ isSegmented: true, segments: [createSegment({ id: "one", walkthrough }), createSegment({ id: "two", walkthrough: otherWalkthrough })] })
-    const page = buildReviewPage(createSource({ artifact }), createInput({ filterKeysBySegment: { one: ["bug"] } }))
+    const page = buildReviewPage(createSource({ artifact }), createInput({ filterKeys: ["bug"] }))
+    const filtered = { walkthrough: { files: [], emptyMessage: "No waypoint matches the filter.", controls: { filter: { badge: { count: 1 } } } } }
 
-    expect(page).toMatchObject({
-      segments: [
-        { walkthrough: { files: [], emptyMessage: "No waypoint matches the filter.", controls: { filter: { badge: { count: 1 } } } } },
-        { walkthrough: { files: [{ path: PRICE_PATH }], controls: { filter: { badge: null } } } },
-      ],
+    expect(page).toMatchObject({ segments: [filtered, filtered] })
+    expect(page.kind === "artifact" ? page.segments[1].walkthrough.controls.filter.groups[0].options[0] : null).toMatchObject({
+      key: "core-change",
+      detailLabel: "2 waypoints",
     })
   })
 
@@ -870,8 +870,8 @@ describe("buildReviewPage", () => {
   })
 
   it("shows every reviewed part on the viewer's own Flight Plan", () => {
-    const own = buildReviewPage(createSource({ isOwn: true }), createInput({ reviewedSegmentIds: [] }))
-    const reviewers = buildReviewPage(createSource(), createInput({ reviewedSegmentIds: [] }))
+    const own = buildReviewPage(createSource({ isOwn: true }), createInput({ isShowingReviewed: false }))
+    const reviewers = buildReviewPage(createSource(), createInput({ isShowingReviewed: false }))
 
     expect(own.kind === "artifact" ? own.segments[0].walkthrough.controls : null).toMatchObject({ reviewedToggle: { isShown: true } })
     expect(reviewers.kind === "artifact" ? reviewers.segments[0].walkthrough.controls : null).toMatchObject({ reviewedToggle: { isShown: false } })

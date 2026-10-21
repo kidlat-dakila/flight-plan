@@ -328,8 +328,8 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
 export const getReviewInputSchema = z.strictObject({
   repositoryName: z.string(),
   targetId: z.string(),
-  filterKeysBySegment: z.record(z.string(), z.array(z.string())),
-  reviewedSegmentIds: z.array(z.string()),
+  filterKeys: z.array(z.string()),
+  isShowingReviewed: z.boolean(),
 })
 
 export type ArtifactFreshness = z.infer<typeof artifactFreshnessSchema>

@@ -7,7 +7,7 @@ const DISCUSSED_KEY = { repositoryName: "storefront", targetId: "pr-412" }
 const createContext = () => createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z"))
 
 const readThreads = async (context: ReturnType<typeof createContext>) => {
-  const page = await getReview({ ...DISCUSSED_KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
+  const page = await getReview({ ...DISCUSSED_KEY, filterKeys: [], isShowingReviewed: false }, context)
   if (page?.kind !== "artifact") throw new Error("The sample review is not written.")
   return page.segments.flatMap((segment) => segment.walkthrough.files).flatMap((file) => file.threads)
 }

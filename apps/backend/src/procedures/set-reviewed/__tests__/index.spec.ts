@@ -6,8 +6,8 @@ import { setReviewed } from "@/procedures/set-reviewed"
 const REVIEW_REQUEST: GetReviewInput = {
   repositoryName: "storefront",
   targetId: "pr-405",
-  filterKeysBySegment: {},
-  reviewedSegmentIds: [],
+  filterKeys: [],
+  isShowingReviewed: false,
 }
 
 const KEY = { repositoryName: "storefront", targetId: "pr-405" }

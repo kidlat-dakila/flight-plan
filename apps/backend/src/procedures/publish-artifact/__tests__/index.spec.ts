@@ -46,7 +46,7 @@ describe("publishArtifact", () => {
     const spawner = new FakeSpawner()
     const context = createContextWithClaude(spawner)
     const isPending = async (): Promise<boolean | null> => {
-      const page = await getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
+      const page = await getReview({ ...KEY, filterKeys: [], isShowingReviewed: false }, context)
       return page?.kind === "artifact" ? page.sharing?.options.find((option) => option.key === "claude")?.isPending ?? null : null
     }
 

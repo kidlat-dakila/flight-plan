@@ -168,6 +168,21 @@ describe("the published review page", () => {
     expect(screen.getByRole("heading", { level: 3, name: "Cart file" })).toBeTruthy()
   })
 
+  it("brings back the reviewed files of every segment with the Reviewed tick of any segment", async () => {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ files: { "src/price.ts": "price-file" }, waypoints: {}, rootBlocks: {} }))
+    showSectionInView("checkout-code-walkthrough")
+    renderPublished()
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" })
+
+    expect(screen.queryByRole("heading", { level: 3, name: "Price file" })).toBeNull()
+
+    fireEvent.keyDown(window, { key: "f" })
+    fireEvent.click(await screen.findByRole("menuitemcheckbox", { name: /Reviewed/ }))
+
+    expect(await screen.findByRole("heading", { level: 3, name: "Price file" })).toBeTruthy()
+    showSectionInView(null)
+  })
+
   it("reads no marks when the browser's storage cannot be read", () => {
     window.localStorage.setItem(STORAGE_KEY, "not json")
     renderPublished()

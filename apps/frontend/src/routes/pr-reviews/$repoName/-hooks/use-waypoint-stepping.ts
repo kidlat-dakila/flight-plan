@@ -47,6 +47,7 @@ export interface WaypointStepping {
   readonly focusedWaypointId: string | null
   readonly steppingOf: (segment: SteppedSegment) => SegmentStepping
   readonly onSectionEntered: (anchorId: string) => void
+  readonly onVisitWaypoint: (waypointId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
   readonly onCurrentOpenChange: (isOpen: boolean) => void
   readonly onOpenCodeLink: (anchorId: string) => void
@@ -197,6 +198,7 @@ export const useWaypointStepping = (segments: readonly SteppedSegment[]): Waypoi
       setCurrentWaypointId(first.id)
       setFocusedWaypointId(null)
     },
+    onVisitWaypoint: (waypointId) => { visitWaypoint(waypointId, false) },
     onToggleWaypoint: (waypointId) => {
       setCurrentWaypointId(waypointId)
       setOpenWaypointIds((openIds) =>

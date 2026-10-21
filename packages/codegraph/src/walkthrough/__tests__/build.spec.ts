@@ -16,6 +16,7 @@ import {
   prepareWalkthrough,
   steppingOf,
   type PinnedLineFinder,
+  type PreparedWalkthrough,
   type WalkthroughRequest,
 } from "@/walkthrough/build"
 import { reviewableSegmentFilesOf } from "@/walkthrough/reviewable-file"
@@ -29,14 +30,17 @@ const findNoPinnedLines: PinnedLineFinder = () => []
 const pinLines = (pinnedPath: string, lines: readonly number[]): PinnedLineFinder =>
   (path) => (path === pinnedPath ? lines : [])
 
+const controlsOf = (prepared: PreparedWalkthrough, request: WalkthroughRequest): WalkthroughControls =>
+  buildWalkthroughControls([prepared], request, [])
+
 const build = (segment: Segment, marks: ReviewedMarks = NO_REVIEWED_MARKS, request = EVERYTHING): WalkthroughBand => {
   const prepared = prepareWalkthrough(segment, marks, request, createViewContext())
-  return buildWalkthrough(prepared, "", request, steppingOf([prepared]), findNoPinnedLines, createViewContext())
+  return buildWalkthrough(prepared, "", controlsOf(prepared, request), steppingOf([prepared]), findNoPinnedLines, createViewContext())
 }
 
 const buildControls = (segment: Segment, marks: ReviewedMarks = NO_REVIEWED_MARKS, request = EVERYTHING): WalkthroughControls => {
   const prepared = prepareWalkthrough(segment, marks, request, createViewContext())
-  return buildWalkthroughControls(prepared, request, [])
+  return controlsOf(prepared, request)
 }
 
 const rowKinds = (rows: readonly FileRow[]): string[] => rows.map((row) => row.kind)
@@ -67,7 +71,7 @@ describe("buildWalkthrough", () => {
       EVERYTHING,
       context,
     )
-    const band = buildWalkthrough(second, "two-", EVERYTHING, steppingOf([first, second]), findNoPinnedLines, context)
+    const band = buildWalkthrough(second, "two-", controlsOf(second, EVERYTHING), steppingOf([first, second]), findNoPinnedLines, context)
 
     expect(band).toMatchObject({ anchorId: "two-code-walkthrough", files: [{ anchorId: "two-file-1" }] })
     expect(waypointIds(band)).toStrictEqual(["late"])
@@ -78,7 +82,7 @@ describe("buildWalkthrough", () => {
 
   it("keeps a pinned line out of a gap", () => {
     const prepared = prepareWalkthrough(createSegment(), NO_REVIEWED_MARKS, EVERYTHING, createViewContext())
-    const [priceFile] = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), pinLines(PRICE_PATH, [2]), createViewContext()).files
+    const [priceFile] = buildWalkthrough(prepared, "", controlsOf(prepared, EVERYTHING), steppingOf([prepared]), pinLines(PRICE_PATH, [2]), createViewContext()).files
 
     expect(rowKinds(priceFile.rows).slice(0, 3)).toStrictEqual(["lines", "gap", "lines"])
   })
@@ -95,7 +99,7 @@ describe("buildWalkthrough", () => {
       walkthrough: { files: [{ path: PRICE_PATH, waypoints: [createWaypoint("format", "format")] }] },
     })
     const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, createViewContext())
-    const [priceFile] = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), pinLines(PRICE_PATH, [4]), createViewContext()).files
+    const [priceFile] = buildWalkthrough(prepared, "", controlsOf(prepared, EVERYTHING), steppingOf([prepared]), pinLines(PRICE_PATH, [4]), createViewContext()).files
 
     expect(rowKinds(priceFile.rows)).toStrictEqual(["lines", "waypoint", "lines"])
   })
@@ -141,8 +145,8 @@ describe("buildWalkthrough", () => {
     const stepping = steppingOf([first, second])
     const coreChangeCountOf = (band: WalkthroughBand) => band.controls.filter.groups[0].options.find((option) => option.key === "core-change")?.detailLabel
 
-    expect(coreChangeCountOf(buildWalkthrough(first, "one-", EVERYTHING, stepping, findNoPinnedLines, context))).toBe("0 waypoints")
-    expect(coreChangeCountOf(buildWalkthrough(second, "two-", EVERYTHING, stepping, findNoPinnedLines, context))).toBe("1 waypoint")
+    expect(coreChangeCountOf(buildWalkthrough(first, "one-", controlsOf(first, EVERYTHING), stepping, findNoPinnedLines, context))).toBe("0 waypoints")
+    expect(coreChangeCountOf(buildWalkthrough(second, "two-", controlsOf(second, EVERYTHING), stepping, findNoPinnedLines, context))).toBe("1 waypoint")
   })
 
   it("places a nested waypoint one level deeper, after its parent", () => {
@@ -229,7 +233,7 @@ describe("buildWalkthrough", () => {
     const writingOf = (isWriting: boolean): [string, boolean][] => {
       const context = { ...createViewContext(), isWriting }
       const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, context)
-      return buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context).files
+      return buildWalkthrough(prepared, "", controlsOf(prepared, EVERYTHING), steppingOf([prepared]), findNoPinnedLines, context).files
         .flatMap((file) => file.rows.flatMap((row): [string, boolean][] => (row.kind === "waypoint" ? [[row.waypoint.id, row.waypoint.isBeingWritten]] : [])))
     }
 
@@ -250,7 +254,7 @@ describe("buildWalkthrough", () => {
     const cartUsingPrice = { ...cartSource, references: [{ line: 2, startColumn: 1, endColumn: 8, path: PRICE_PATH, lines: [11, 13] as [number, number], isLibrary: false }] }
     const context = { ...createViewContext(), sources: [highlightPlainly(priceSource), highlightPlainly(cartUsingPrice)], walkthroughOrder: "imports-top-down" as const }
     const prepared = prepareWalkthrough(createSegment(), NO_REVIEWED_MARKS, EVERYTHING, context)
-    const band = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context)
+    const band = buildWalkthrough(prepared, "", controlsOf(prepared, EVERYTHING), steppingOf([prepared]), findNoPinnedLines, context)
 
     expect(band.files.map((file) => file.path)).toStrictEqual([CART_PATH, PRICE_PATH])
     expect(waypointIds(band)).toStrictEqual(["subtotal", "price-of", "format"])
@@ -263,7 +267,7 @@ describe("buildWalkthrough", () => {
     const segment = createSegment()
     const arranged = { ...segment, walkthrough: { ...segment.walkthrough, isArranged: true } }
     const prepared = prepareWalkthrough(arranged, NO_REVIEWED_MARKS, EVERYTHING, context)
-    const band = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context)
+    const band = buildWalkthrough(prepared, "", controlsOf(prepared, EVERYTHING), steppingOf([prepared]), findNoPinnedLines, context)
 
     expect(band.files.map((file) => file.path)).toStrictEqual([PRICE_PATH, CART_PATH])
     expect(band.fileOrder.map((file) => file.path)).toStrictEqual([PRICE_PATH, CART_PATH])
@@ -371,11 +375,32 @@ describe("buildWalkthrough", () => {
     const request: WalkthroughRequest = { filterKeys: ["bug"], isShowingReviewed: false }
     const context = createViewContext()
     const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, request, context)
-    const [priceFile] = buildWalkthrough(prepared, "", request, steppingOf([prepared]), pinLines(PRICE_PATH, [1]), context).files
+    const [priceFile] = buildWalkthrough(prepared, "", controlsOf(prepared, request), steppingOf([prepared]), pinLines(PRICE_PATH, [1]), context).files
 
     expect(shownTexts(priceFile.rows)).toContain("export const format = (price: number) => String(price / CENTS)")
     expect(shownTexts(priceFile.rows)).toContain("import { rates } from \"./rates\"")
     expect(shownTexts(priceFile.rows)).not.toContain("const CENTS = 100")
+  })
+
+  it("builds one filter for every walkthrough of the review, counting the waypoints of each", () => {
+    const context = createViewContext()
+    const request: WalkthroughRequest = { filterKeys: ["bug"], isShowingReviewed: false }
+    const first = prepareWalkthrough(createSegment({ id: "one" }), NO_REVIEWED_MARKS, request, context)
+    const second = prepareWalkthrough(
+      createSegment({
+        id: "two",
+        walkthrough: { files: [{ path: CART_PATH, waypoints: [createWaypoint("late", "subtotal", { findings: [createFinding("bug", "bug")] })] }] },
+      }),
+      NO_REVIEWED_MARKS,
+      request,
+      context,
+    )
+    const controls = buildWalkthroughControls([first, second], request, [])
+    const bug = controls.filter.groups[0].options.find((option) => option.key === "bug")
+
+    expect(bug).toMatchObject({ detailLabel: "1 waypoint", isSelected: true })
+    expect(buildWalkthroughControls([first], request, []).filter.groups[0].options.find((option) => option.key === "bug")).toMatchObject({ detailLabel: "0 waypoints" })
+    expect(buildWalkthrough(first, "one-", controls, steppingOf([first, second]), findNoPinnedLines, context).controls).toBe(controls)
   })
 
   it("says so when no waypoint matches the filter", () => {
@@ -437,7 +462,7 @@ describe("buildWalkthrough", () => {
       solutionTokens: new Map([["fix", [[{ text: "const fixed = 1", kind: "plain" as const }]]]]),
     }
     const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, context)
-    const band = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context)
+    const band = buildWalkthrough(prepared, "", controlsOf(prepared, EVERYTHING), steppingOf([prepared]), findNoPinnedLines, context)
     const waypointRow = band.files[0].rows.find((row) => row.kind === "waypoint")
     const solution = waypointRow?.kind === "waypoint" ? waypointRow.waypoint.findings[0].solution : null
 
@@ -495,6 +520,7 @@ describe("root blocks of a walkthrough file", () => {
         spotlight: null,
         coreChangeLabel: null,
         isReviewed: false,
+        isFoldedByFilter: false,
         reviewLabel: "Reviewed",
         reviewName: "Reviewed: Function priceOf",
         expandLabel: "Expand Function priceOf",
@@ -506,6 +532,7 @@ describe("root blocks of a walkthrough file", () => {
         spotlight: null,
         coreChangeLabel: null,
         isReviewed: false,
+        isFoldedByFilter: false,
         reviewLabel: "Reviewed",
         reviewName: "Reviewed: Function format",
         expandLabel: "Expand Function format",
@@ -525,7 +552,7 @@ describe("root blocks of a walkthrough file", () => {
     })
     const context = { ...createViewContext(), spotlight: ["validation", "security"] as const }
     const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, context)
-    const [priceFile] = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context).files
+    const [priceFile] = buildWalkthrough(prepared, "", controlsOf(prepared, EVERYTHING), steppingOf([prepared]), findNoPinnedLines, context).files
     const spotlight = { label: "Spotlight", classifications: [{ key: "validation", label: "Validation" }] }
 
     expect(priceFile.rootBlocks.map((rootBlock) => rootBlock.spotlight)).toStrictEqual([spotlight])
@@ -562,6 +589,27 @@ describe("root blocks of a walkthrough file", () => {
 
     expect(priceFile.rootBlocks.map((rootBlock) => [rootBlock.id, rootBlock.isReviewed])).toStrictEqual([[PRICE_OF_ID, true], [FORMAT_ID, false]])
     expect(waypointIds(build(segment, rootBlockMarks(segment, PRICE_OF_ID)))).toStrictEqual(["format"])
+  })
+
+  it("keeps a root block with no waypoint the filter keeps in its file, folded from its first line", () => {
+    const segment = rootBlockSegment()
+    const [priceOf, format] = segment.walkthrough.files[0].waypoints
+    const flagged = createSegment({
+      walkthrough: { files: [{ path: PRICE_PATH, waypoints: [{ ...priceOf, findings: [createFinding("bug", "bug")] }, format] }] },
+    })
+    const band = build(flagged, NO_REVIEWED_MARKS, { filterKeys: ["bug"], isShowingReviewed: false })
+    const [priceFile] = band.files
+
+    expect(waypointIds(band)).toStrictEqual(["price-of"])
+    expect(priceFile.rootBlocks.map((rootBlock) => [rootBlock.id, rootBlock.isFoldedByFilter])).toStrictEqual([[PRICE_OF_ID, false], [FORMAT_ID, true]])
+    expect(shownTexts(priceFile.rows)).toContain("export const format = (price: number) => String(price / CENTS)")
+    expect(priceFile.rows.flatMap((row) => (row.kind === "lines" ? row.collapses : []))).toContainEqual(expect.objectContaining({ rootBlockId: FORMAT_ID, hasTrigger: true }))
+  })
+
+  it("folds no root block while nothing is ticked", () => {
+    const [priceFile] = build(rootBlockSegment()).files
+
+    expect(priceFile.rootBlocks.every((rootBlock) => !rootBlock.isFoldedByFilter)).toBe(true)
   })
 
   it("reviews a root block once every waypoint inside it is reviewed", () => {

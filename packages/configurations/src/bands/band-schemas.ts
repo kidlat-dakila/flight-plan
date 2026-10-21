@@ -380,6 +380,7 @@ export const rootBlockViewSchema = z.strictObject({
   spotlight: spotlightViewSchema.nullable(),
   coreChangeLabel: z.string().nullable(),
   isReviewed: z.boolean(),
+  isFoldedByFilter: z.boolean(),
   reviewLabel: z.string(),
   reviewName: z.string(),
   expandLabel: z.string(),

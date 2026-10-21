@@ -208,12 +208,17 @@ const toWaypointView = (
 const holdsCoreChange = (rootBlock: FileRootBlock, waypoints: readonly FlatWaypoint[]): boolean =>
   waypoints.some((flat) => flat.waypoint.coreChange !== null && flat.rootBlocks.includes(rootBlock.block))
 
-const toRootBlockView = (rootBlock: FileRootBlock, entry: FileEntry, context: ReviewViewContext): RootBlockView => ({
+const isFoldedByFilter = (rootBlock: FileRootBlock, { waypointEntries }: VisibleFile, request: WalkthroughRequest): boolean =>
+  request.filterKeys.length > 0
+  && !waypointEntries.some((waypointEntry) => waypointEntry.isVisible && waypointEntry.flat.rootBlocks.includes(rootBlock.block))
+
+const toRootBlockView = (rootBlock: FileRootBlock, file: VisibleFile, request: WalkthroughRequest, context: ReviewViewContext): RootBlockView => ({
   id: rootBlock.id,
   classification: classificationViewOf(rootBlock.block),
   spotlight: spotlightViewOf([rootBlock.block], context.spotlight),
-  coreChangeLabel: holdsCoreChange(rootBlock, entry.waypoints) ? CORE_CHANGE_LABEL : null,
-  isReviewed: entry.state.rootBlockIds.has(rootBlock.id),
+  coreChangeLabel: holdsCoreChange(rootBlock, file.entry.waypoints) ? CORE_CHANGE_LABEL : null,
+  isReviewed: file.entry.state.rootBlockIds.has(rootBlock.id),
+  isFoldedByFilter: isFoldedByFilter(rootBlock, file, request),
   reviewLabel: "Reviewed",
   reviewName: `Reviewed: ${rootBlock.label}`,
   expandLabel: `Expand ${rootBlock.label}`,
@@ -223,13 +228,19 @@ const toRootBlockView = (rootBlock: FileRootBlock, entry: FileEntry, context: Re
 const rootBlockSpansOfFile = (rootBlocks: readonly FileRootBlock[]): RootBlockSpan[] =>
   rootBlocks.flatMap(({ id, span }) => (span === null ? [] : [{ id, span }]))
 
+interface FileViewSettings {
+  readonly scope: string
+  readonly request: WalkthroughRequest
+  readonly stepping: Stepping
+  readonly pinnedLinesOf: PinnedLineFinder
+}
+
 const toFileView = (
-  { entry, waypointEntries, focusSpans }: VisibleFile,
-  scope: string,
-  stepping: Stepping,
-  pinnedLinesOf: PinnedLineFinder,
+  file: VisibleFile,
+  { scope, request, stepping, pinnedLinesOf }: FileViewSettings,
   context: ReviewViewContext,
 ): FileSectionView => {
+  const { entry, waypointEntries, focusSpans } = file
   const placed: PlacedWaypoint[] = waypointEntries.map((waypointEntry) => ({
     view: toWaypointView(entry, waypointEntry, stepping, context),
     span: waypointEntry.span,
@@ -243,7 +254,7 @@ const toFileView = (
     reviewLabel: "File reviewed",
     countLabels: countLabelsOf(entry.waypoints),
     forgeLink: context.blobLinkOf(entry.file.path, null),
-    rootBlocks: entry.rootBlocks.map((rootBlock) => toRootBlockView(rootBlock, entry, context)),
+    rootBlocks: entry.rootBlocks.map((rootBlock) => toRootBlockView(rootBlock, file, request, context)),
     rows: buildFileRows(
       entry.highlighted,
       placed,
@@ -271,16 +282,22 @@ export interface VisibleFile {
 
 export interface PreparedWalkthrough {
   readonly segment: Segment
+  readonly request: WalkthroughRequest
   readonly files: readonly VisibleFile[]
   readonly shownFiles: readonly VisibleFile[]
 }
+
+const rootBlockSpansIn = (entry: FileEntry): RowSpan[] => entry.rootBlocks.flatMap(({ span }) => (span === null ? [] : [span]))
 
 const withFocus = (entry: FileEntry, waypointEntries: readonly WaypointEntry[], request: WalkthroughRequest): VisibleFile => ({
   entry,
   waypointEntries,
   focusSpans: request.filterKeys.length === 0
     ? null
-    : waypointEntries.filter((waypointEntry) => waypointEntry.isVisible).flatMap((waypointEntry) => waypointEntry.rootBlockSpans),
+    : [
+        ...rootBlockSpansIn(entry),
+        ...waypointEntries.filter((waypointEntry) => waypointEntry.isVisible).flatMap((waypointEntry) => waypointEntry.rootBlockSpans),
+      ],
 })
 
 const isFileShown = ({ entry, waypointEntries }: VisibleFile, request: WalkthroughRequest): boolean =>
@@ -314,7 +331,7 @@ export const prepareWalkthrough = (
   const entries = segment.walkthrough.files.map((file, position) => toFileEntry(file, position, marks, context))
   const orderedEntries = segment.walkthrough.isArranged === true ? entries : orderEntries(entries, context)
   const files = orderedEntries.map((entry) => withFocus(entry, toWaypointEntries(entry, request), request))
-  return { segment, files, shownFiles: files.filter((file) => isFileShown(file, request)) }
+  return { segment, request, files, shownFiles: files.filter((file) => isFileShown(file, request)) }
 }
 
 export interface WaypointPlace {
@@ -340,10 +357,10 @@ export const steppingOf = (walkthroughs: readonly PreparedWalkthrough[]): Steppi
   segmentWaypointIds: walkthroughs.map(visibleWaypointIds),
 })
 
-const emptyMessageOf = (prepared: PreparedWalkthrough, request: WalkthroughRequest): string | null => {
+const emptyMessageOf = (prepared: PreparedWalkthrough): string | null => {
   if (prepared.shownFiles.length > 0) return null
   if (prepared.files.length === 0) return "The walkthrough has no files yet."
-  if (request.filterKeys.length > 0) return "No waypoint matches the filter."
+  if (prepared.request.filterKeys.length > 0) return "No waypoint matches the filter."
   return EVERY_FILE_REVIEWED_MESSAGE
 }
 
@@ -352,8 +369,12 @@ export const coverageLabelOf = (coveredCount: number, changedCount: number): str
     ? `All ${countLabel(changedCount, "changed file", "changed files")}`
     : `${String(coveredCount)} of ${countLabel(changedCount, "changed file", "changed files")}`
 
-export const buildWalkthroughControls = (prepared: PreparedWalkthrough, request: WalkthroughRequest, spotlight: readonly CodeBlockClassification[]): WalkthroughControls => {
-  const waypointEntries = prepared.files.flatMap((file) => file.waypointEntries)
+export const buildWalkthroughControls = (
+  walkthroughs: readonly PreparedWalkthrough[],
+  request: WalkthroughRequest,
+  spotlight: readonly CodeBlockClassification[],
+): WalkthroughControls => {
+  const waypointEntries = walkthroughs.flatMap((prepared) => prepared.files).flatMap((file) => file.waypointEntries)
   const reviewedCount = waypointEntries.filter((waypointEntry) => waypointEntry.isReviewed).length
   return {
     filter: buildWaypointFilter(waypointEntries.map((waypointEntry) => waypointEntry.flat), request.filterKeys, spotlight),
@@ -369,7 +390,7 @@ export const buildWalkthroughControls = (prepared: PreparedWalkthrough, request:
 export const buildWalkthrough = (
   prepared: PreparedWalkthrough,
   scope: string,
-  request: WalkthroughRequest,
+  controls: WalkthroughControls,
   stepping: Stepping,
   pinnedLinesOf: PinnedLineFinder,
   context: ReviewViewContext,
@@ -377,9 +398,9 @@ export const buildWalkthrough = (
   anchorId: `${scope}${WALKTHROUGH_ANCHOR_NAME}`,
   heading: "Code Walkthrough",
   coverageLabel: coverageLabelOf(prepared.files.length, prepared.segment.changedPaths.length),
-  emptyMessage: emptyMessageOf(prepared, request),
-  controls: buildWalkthroughControls(prepared, request, context.spotlight),
+  emptyMessage: emptyMessageOf(prepared),
+  controls,
   files: prepared.shownFiles.map((file) =>
-    toFileView(file, scope, stepping, pinnedLinesOf, context)),
+    toFileView(file, { scope, request: prepared.request, stepping, pinnedLinesOf }, context)),
   fileOrder: toFileOrder(prepared.files),
 })

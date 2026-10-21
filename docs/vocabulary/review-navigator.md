@@ -69,16 +69,18 @@ The author's page has no Mark as reviewed, since the author does not review thei
 
 ### Filtering
 
-Filter (F) opens a menu of ticks that narrows the walkthrough to the waypoints worth stopping at. It holds:
+Filter (F) opens a menu of ticks that narrows the walkthroughs to the waypoints worth stopping at. It holds:
 
 - the finding kinds: Core change, Bug, Risk, Nit and Question;
-- the code blocks of the segment, each the classification of a root block with what the change did to it, such as "Database read/write" with "Added" or "Component" with "Modified". The classifications of the user's spotlight come first and are always listed, then the four others with the most waypoints, and the rest are under **More**. Imports are left out;
+- the code blocks of the review, each the classification of a root block with what the change did to it, such as "Database read/write" with "Added" or "Component" with "Modified". The classifications of the user's spotlight come first and are always listed, then the four others with the most waypoints, and the rest are under **More**. Imports are left out;
 - **Change type**, a submenu of Added, Modified and Removed;
 - **Reviewed**, which brings back the waypoints already marked reviewed.
 
-Within one group a waypoint shows when it matches any tick, and with ticks in several groups it has to match each of them. While anything is ticked, each file shows only the code around the waypoints the filter keeps, and the rest folds away. The Filter button carries a badge with how many filters are ticked.
+Within one group a waypoint shows when it matches any tick, and with ticks in several groups it has to match each of them. While anything is ticked, a root code block that holds none of the waypoints the filter keeps folds to its first line, and the rest of the file outside the root code blocks folds away. The Filter button carries a badge with how many filters are ticked.
 
-Each segment has its own filter: ticking something in one segment leaves the others as they are, and the counts in the menu are the waypoints of that segment. [Code Walkthrough](code-walkthrough.md#filters) describes each filter in full.
+The filter covers the whole review: the menu is the same in every segment's walkthrough, a tick narrows every segment at once, and the counts in the menu are the waypoints of the whole review. The Reviewed tick is one for the whole review too.
+
+Ticking or unticking a finding kind, a code block or a change type goes to the first waypoint the filter keeps that is not reviewed yet, in page order, in whichever segment it is. It becomes the current waypoint with its card shown, as Next waypoint does, so S marks it straight away. Clearing the last tick goes to the first waypoint of the review not reviewed yet. When every waypoint the filter keeps is reviewed, the reader's place is kept. [Code Walkthrough](code-walkthrough.md#filters) describes each filter in full.
 
 ### Arranging the files
 
@@ -89,7 +91,7 @@ A file folded by hand opens again when stepping reaches a waypoint inside it.
 
 ### Keeping the reader's place
 
-Collapsing files and filtering can take away the code the reader was reading. When that happens the walkthrough stays on screen instead of the page sliding on to the next segment: collapsing or expanding every file, and changing the filter, bring the head of the walkthrough back to the top of the page. Folding one file keeps that file where it was.
+Collapsing files and filtering can take away the code the reader was reading. When that happens the walkthrough stays on screen instead of the page sliding on to the next segment: collapsing or expanding every file, the Reviewed tick, and a filter tick that leaves no waypoint to go to, bring the head of the walkthrough back to the top of the page. Folding one file keeps that file where it was.
 
 ## Full screen
 

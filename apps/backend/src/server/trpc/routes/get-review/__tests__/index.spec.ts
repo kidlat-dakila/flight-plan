@@ -4,8 +4,8 @@ import { appRouter } from "@/server/trpc/router"
 const REQUEST = {
   repositoryName: "storefront",
   targetId: "pr-405",
-  filterKeysBySegment: {},
-  reviewedSegmentIds: [],
+  filterKeys: [],
+  isShowingReviewed: false,
 }
 
 const createCaller = () => appRouter.createCaller(createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z")))

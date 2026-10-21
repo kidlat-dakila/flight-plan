@@ -7,8 +7,8 @@ import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 const requestFor = (repositoryName: string, targetId: string): GetReviewInput => ({
   repositoryName,
   targetId,
-  filterKeysBySegment: {},
-  reviewedSegmentIds: [],
+  filterKeys: [],
+  isShowingReviewed: false,
 })
 
 const createContext = () => createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z"))

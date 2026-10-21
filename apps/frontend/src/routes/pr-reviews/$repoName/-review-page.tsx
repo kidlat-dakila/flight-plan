@@ -82,11 +82,9 @@ const DRAFTING_STRIP_HEIGHT = "[--strip-height:2.75rem]"
 const NAVIGATOR_INSET_RIGHT = "[--navigator-inset-right:1.5rem]"
 const NAVIGATOR_INSET_RIGHT_BESIDE_CHAT = "[--navigator-inset-right:calc(var(--chat-width)+1.5rem)] [--navigator-band-right:var(--chat-width)]"
 
-type FilterKeysBySegment = Readonly<Record<string, readonly string[]>>
-
 export interface ReviewSearch {
-  readonly filter?: FilterKeysBySegment | undefined
-  readonly reviewed?: readonly string[] | undefined
+  readonly filter?: readonly string[] | undefined
+  readonly reviewed?: boolean | undefined
 }
 
 export interface ReviewParams {
@@ -125,21 +123,9 @@ const renderCommentEditor = (request: CommentEditorRequest) => (
 export const reviewRequestOf = (params: ReviewParams, search: ReviewSearch) => ({
   repositoryName: params.repoName,
   targetId: params.branchId,
-  filterKeysBySegment: Object.fromEntries(Object.entries(search.filter ?? {}).map(([segmentId, keys]) => [segmentId, [...keys]])),
-  reviewedSegmentIds: [...(search.reviewed ?? [])],
+  filterKeys: [...(search.filter ?? [])],
+  isShowingReviewed: search.reviewed === true,
 })
-
-const withSegmentFilter = (filter: FilterKeysBySegment | undefined, segmentId: string, keys: readonly string[] | null): FilterKeysBySegment | undefined => {
-  const others = Object.entries(filter ?? {}).filter(([otherId]) => otherId !== segmentId)
-  const entries = keys === null ? others : [...others, [segmentId, [...keys]] as const]
-  return entries.length === 0 ? undefined : Object.fromEntries(entries)
-}
-
-const withSegmentReviewed = (segmentIds: readonly string[] | undefined, segmentId: string, isShown: boolean): readonly string[] | undefined => {
-  const others = (segmentIds ?? []).filter((otherId) => otherId !== segmentId)
-  const shown = isShown ? [...others, segmentId] : others
-  return shown.length === 0 ? undefined : shown
-}
 
 export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) => {
   const trpc = useTRPC()
@@ -250,12 +236,12 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       : (id, isReviewed) => {
           setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
         },
-    onFilterChange: (segmentId, keys) => {
-      onSearchChange({ filter: withSegmentFilter(search.filter, segmentId, keys) })
+    onFilterChange: (keys) => {
+      onSearchChange({ filter: keys === null ? undefined : [...keys] })
     },
     onShowReviewedChange: isOwn
       ? null
-      : (segmentId, isShown) => { onSearchChange({ reviewed: withSegmentReviewed(search.reviewed, segmentId, isShown) }) },
+      : (isShown) => { onSearchChange({ reviewed: isShown ? true : undefined }) },
     onCommentOnWaypoint: isOwn || artifact?.composer == null ? null : discussion.onStartRangeComment,
     onWriteDescription: isOwn ? waypointAuthoring.onWriteDescription : null,
     onWriteUp: writeUp,
@@ -734,16 +720,7 @@ export const ReviewError = ({ error }: ErrorComponentProps) => (
 const stringListOf = (value: unknown): string[] | undefined =>
   Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : undefined
 
-const filterKeysBySegmentOf = (value: unknown): FilterKeysBySegment | undefined => {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) return undefined
-  const entries = Object.entries(value).flatMap(([segmentId, keys]) => {
-    const listed = stringListOf(keys)
-    return listed === undefined ? [] : [[segmentId, listed] as const]
-  })
-  return entries.length === 0 ? undefined : Object.fromEntries(entries)
-}
-
 export const validateReviewSearch = (search: Record<string, unknown>): ReviewSearch => ({
-  filter: filterKeysBySegmentOf(search.filter),
-  reviewed: stringListOf(search.reviewed),
+  filter: stringListOf(search.filter),
+  reviewed: search.reviewed === true ? true : undefined,
 })

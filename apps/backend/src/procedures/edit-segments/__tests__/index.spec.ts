@@ -24,7 +24,7 @@ describe("editSegments", () => {
     ).resolves.toStrictEqual({ kind: "saved" })
 
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ status: before.status })
-    const page = await getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
+    const page = await getReview({ ...KEY, filterKeys: [], isShowingReviewed: false }, context)
 
     expect(page?.kind === "artifact" ? page.segments[0]?.outline : null).toMatchObject({
       label: "Held units",

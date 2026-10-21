@@ -19,10 +19,8 @@ export interface ReviewedMarking {
   readonly rail: PublishedReview["rail"]
   readonly segments: readonly PublishedSegment[]
   readonly onReviewedChange: (subject: ReviewedSubject, isReviewed: boolean) => void
-  readonly onShowReviewedChange: (segmentId: string, isShown: boolean) => void
+  readonly onShowReviewedChange: (isShown: boolean) => void
 }
-
-const NO_SEGMENT_IDS: ReadonlySet<string> = new Set()
 
 const readStoredMarks = (storageKey: string): ReviewedMarks => {
   try {
@@ -42,25 +40,21 @@ const writeStoredMarks = (storageKey: string, marks: ReviewedMarks): boolean => 
   }
 }
 
-const withSegmentShown = (segmentIds: ReadonlySet<string>, segmentId: string, isShown: boolean): ReadonlySet<string> =>
-  new Set(isShown ? [...segmentIds, segmentId] : [...segmentIds].filter((shownId) => shownId !== segmentId))
-
 export const useReviewedMarks = (review: PublishedReview): ReviewedMarking => {
   const { storageKey, segments: outlines } = review.reviewed
   const [marks, setMarks] = useState(() => readStoredMarks(storageKey))
-  const [shownSegmentIds, setShownSegmentIds] = useState(NO_SEGMENT_IDS)
+  const [isShowingReviewed, setIsShowingReviewed] = useState(false)
   const filesOf = (segmentId: string) => outlines.find((outline) => outline.segmentId === segmentId)?.files ?? []
-  const reviewedSegments = review.segments.map((segment) => {
-    const segmentReview = reviewSegment(filesOf(segment.id), marks, shownSegmentIds.has(segment.id))
-    return {
-      segment: {
-        ...segment,
-        walkthrough: withReviewedWalkthrough(segment.walkthrough, segmentReview),
-        traceDiagram: withReviewedTrace(segment.traceDiagram, segmentReview),
-      },
-      hiddenFileAnchorIds: hiddenFileAnchorIdsOf(segment.walkthrough.files, segmentReview),
-    }
-  })
+  const segmentReviews = review.segments.map((segment) => ({ segment, segmentReview: reviewSegment(filesOf(segment.id), marks, isShowingReviewed) }))
+  const reviewedCount = segmentReviews.reduce((count, { segmentReview }) => count + segmentReview.reviewedCount, 0)
+  const reviewedSegments = segmentReviews.map(({ segment, segmentReview }) => ({
+    segment: {
+      ...segment,
+      walkthrough: withReviewedWalkthrough(segment.walkthrough, { ...segmentReview, reviewedCount }),
+      traceDiagram: withReviewedTrace(segment.traceDiagram, segmentReview),
+    },
+    hiddenFileAnchorIds: hiddenFileAnchorIdsOf(segment.walkthrough.files, segmentReview),
+  }))
   return {
     rail: withReviewedRail(review.rail, new Set(reviewedSegments.flatMap((reviewed) => reviewed.hiddenFileAnchorIds))),
     segments: reviewedSegments.map((reviewed) => reviewed.segment),
@@ -70,8 +64,6 @@ export const useReviewedMarks = (review: PublishedReview): ReviewedMarking => {
       writeStoredMarks(storageKey, changed)
       setMarks(changed)
     },
-    onShowReviewedChange: (segmentId, isShown) => {
-      setShownSegmentIds((segmentIds) => withSegmentShown(segmentIds, segmentId, isShown))
-    },
+    onShowReviewedChange: setIsShowingReviewed,
   }
 }

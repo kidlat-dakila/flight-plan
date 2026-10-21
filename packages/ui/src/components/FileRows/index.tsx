@@ -39,6 +39,7 @@ export interface FileRootBlock {
   readonly coreChangeLabel: string | null
   readonly spotlight: Spotlight | null
   readonly isReviewed: boolean
+  readonly isFoldedByFilter: boolean
   readonly reviewLabel: string
   readonly reviewName: string
   readonly expandLabel: string
@@ -179,19 +180,22 @@ const isThreadOpen = (thread: FileThread, toggledThreadIds: ReadonlySet<string>)
   thread.startsOpen !== toggledThreadIds.has(thread.id)
 
 interface RootBlockOpening {
-  readonly reviewedIds: ReadonlySet<string>
+  readonly foldedIds: ReadonlySet<string>
   readonly toggledIds: ReadonlySet<string>
 }
 
-const reviewedRootBlockIdsOf = (rootBlocks: readonly FileRootBlock[]): ReadonlySet<string> =>
-  new Set(rootBlocks.filter((rootBlock) => rootBlock.isReviewed).map((rootBlock) => rootBlock.id))
+const startsFolded = (rootBlock: FileRootBlock): boolean => rootBlock.isReviewed || rootBlock.isFoldedByFilter
+
+const foldedRootBlockIdsOf = (rootBlocks: readonly FileRootBlock[]): ReadonlySet<string> =>
+  new Set(rootBlocks.filter(startsFolded).map((rootBlock) => rootBlock.id))
 
 const isRootBlockOpen = (rootBlock: FileRootBlock, toggledIds: ReadonlySet<string>): boolean =>
-  rootBlock.isReviewed === toggledIds.has(rootBlock.id)
+  startsFolded(rootBlock) ? toggledIds.has(rootBlock.id) : !toggledIds.has(rootBlock.id)
 
 const withRootBlockOpen = (toggledIds: ReadonlySet<string>, rootBlock: FileRootBlock, isOpen: boolean): ReadonlySet<string> => {
   const otherIds = [...toggledIds].filter((toggledId) => toggledId !== rootBlock.id)
-  return new Set(isOpen === rootBlock.isReviewed ? [...otherIds, rootBlock.id] : otherIds)
+  const isToggled = startsFolded(rootBlock) ? isOpen : !isOpen
+  return new Set(isToggled ? [...otherIds, rootBlock.id] : otherIds)
 }
 
 const openRootBlockIdsOf = (rootBlocks: readonly FileRootBlock[], toggledIds: ReadonlySet<string>): ReadonlySet<string> =>
@@ -201,11 +205,11 @@ const changedIdsOf = (before: ReadonlySet<string>, after: ReadonlySet<string>): 
   [...[...before].filter((id) => !after.has(id)), ...[...after].filter((id) => !before.has(id))]
 
 const useRootBlockOpening = (rootBlocks: readonly FileRootBlock[]) => {
-  const reviewedIds = reviewedRootBlockIdsOf(rootBlocks)
-  const [opening, setOpening] = useState<RootBlockOpening>({ reviewedIds, toggledIds: NO_IDS })
-  const changedIds = changedIdsOf(opening.reviewedIds, reviewedIds)
+  const foldedIds = foldedRootBlockIdsOf(rootBlocks)
+  const [opening, setOpening] = useState<RootBlockOpening>({ foldedIds, toggledIds: NO_IDS })
+  const changedIds = changedIdsOf(opening.foldedIds, foldedIds)
   if (changedIds.length > 0) {
-    setOpening({ reviewedIds, toggledIds: new Set([...opening.toggledIds].filter((id) => !changedIds.includes(id))) })
+    setOpening({ foldedIds, toggledIds: new Set([...opening.toggledIds].filter((id) => !changedIds.includes(id))) })
   }
   return {
     openRootBlockIds: openRootBlockIdsOf(rootBlocks, opening.toggledIds),

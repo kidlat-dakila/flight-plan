@@ -3,6 +3,7 @@ import type { WalkthroughNavigation } from "@flightplan/ui/CodeWalkthrough"
 import type { CommentRange, WriteUpTarget } from "@flightplan/ui/FileRows"
 import { coveredTopOf } from "@flightplan/ui/lib/pinned-rows"
 import type { WalkthroughControls, WriteUpScope } from "@flightplan/ui/lib/walkthrough-navigation"
+import { firstUnreviewedWaypointIdOf, isFilterApplied } from "./filtered-waypoints"
 import type { SteppedWaypoint, WaypointStepping } from "./use-waypoint-stepping"
 
 type FilterKeys = Parameters<NonNullable<WalkthroughNavigation["onFilterChange"]>>[0]
@@ -31,8 +32,8 @@ interface NavigatedSegment {
 
 interface WalkthroughHandlers {
   readonly onReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
-  readonly onFilterChange: ((segmentId: string, keys: FilterKeys) => void) | null
-  readonly onShowReviewedChange: ((segmentId: string, isShown: boolean) => void) | null
+  readonly onFilterChange: ((keys: FilterKeys) => void) | null
+  readonly onShowReviewedChange: ((isShown: boolean) => void) | null
   readonly onCommentOnWaypoint: ((path: string, range: CommentRange) => void) | null
   readonly onWriteDescription: ((waypointId: string) => void) | null
   readonly onWriteUp: ((target: WriteUpTarget) => void) | null
@@ -56,6 +57,7 @@ interface HeldPlace {
 }
 
 const NOTHING_COLLAPSED: ReadonlySet<string> = new Set()
+const NO_FILTER_KEYS: readonly string[] = []
 
 const isReadInto = (anchorId: string): boolean => {
   const rect = document.getElementById(anchorId)?.getBoundingClientRect()
@@ -93,6 +95,28 @@ const usePlaceKeeping = (segments: readonly NavigatedSegment[]): PlaceKeeping =>
     holdPlaceThroughRefresh: (anchorId) => {
       awaitedAnchorIdRef.current = isReadInto(anchorId) ? anchorId : null
     },
+  }
+}
+
+interface AwaitedFilter {
+  readonly keys: readonly string[]
+  readonly heldAnchorId: string | null
+}
+
+const useFilterLanding = (segments: readonly NavigatedSegment[], onVisitWaypoint: (waypointId: string) => void) => {
+  const awaitedFilterRef = useRef<AwaitedFilter | null>(null)
+
+  useLayoutEffect(() => {
+    const awaited = awaitedFilterRef.current
+    if (awaited === null || !isFilterApplied(segments, awaited.keys)) return
+    awaitedFilterRef.current = null
+    const firstId = firstUnreviewedWaypointIdOf(segments)
+    if (firstId !== null) onVisitWaypoint(firstId)
+    else if (awaited.heldAnchorId !== null) scrollInstantlyTo(awaited.heldAnchorId)
+  }, [segments, onVisitWaypoint])
+
+  return (keys: readonly string[], anchorId: string): void => {
+    awaitedFilterRef.current = { keys, heldAnchorId: isReadInto(anchorId) ? anchorId : null }
   }
 }
 
@@ -149,6 +173,7 @@ export const useWalkthroughNavigation = (
   }
   const { collapsedAnchorIds } = collapse
   const { holdPlace, holdPlaceThroughRefresh } = usePlaceKeeping(segments)
+  const awaitFilter = useFilterLanding(segments, stepping.onVisitWaypoint)
   const changeCollapse = (anchorIds: readonly string[], isCollapsed: boolean, readAnchorId: string | null): void => {
     holdPlace(readAnchorId)
     setCollapse((current) => ({ ...current, collapsedAnchorIds: withCollapse(current.collapsedAnchorIds, anchorIds, isCollapsed) }))
@@ -211,14 +236,14 @@ export const useWalkthroughNavigation = (
         onFilterChange: onFilterChange === null
           ? null
           : (keys) => {
-              holdPlaceThroughRefresh(segment.walkthrough.anchorId)
-              onFilterChange(segment.id, keys)
+              awaitFilter(keys ?? NO_FILTER_KEYS, segment.walkthrough.anchorId)
+              onFilterChange(keys)
             },
         onShowReviewedChange: onShowReviewedChange === null
           ? null
           : (isShown) => {
               holdPlaceThroughRefresh(segment.walkthrough.anchorId)
-              onShowReviewedChange(segment.id, isShown)
+              onShowReviewedChange(isShown)
             },
         onFilesCollapsedChange: (isCollapsed) => { changeCollapse(fileAnchorIds, isCollapsed, segment.walkthrough.anchorId) },
         onFileCollapsedChange: (isCollapsed) => {

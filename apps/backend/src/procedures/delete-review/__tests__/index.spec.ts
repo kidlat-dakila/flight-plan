@@ -19,7 +19,7 @@ describe("deleteReview", () => {
 
     await expect(deleteReview(KEY, context)).resolves.toStrictEqual({ message: "Flight Plan deleted" })
 
-    await expect(getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)).resolves.toMatchObject({ kind: "missing" })
+    await expect(getReview({ ...KEY, filterKeys: [], isShowingReviewed: false }, context)).resolves.toMatchObject({ kind: "missing" })
     await expect(deleteReview(KEY, context)).resolves.toBeNull()
   })
 })

@@ -25,7 +25,7 @@ const readTrace = async (context: ProcedureContext) => {
 }
 
 const readDiagram = async (context: ProcedureContext) => {
-  const page = await getReview({ ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }, context)
+  const page = await getReview({ ...KEY, filterKeys: [], isShowingReviewed: false }, context)
   const segment = page?.kind === "artifact" ? page.segments.find((candidate) => candidate.id === SEGMENT_ID) : undefined
   return segment?.traceDiagram.diagram ?? null
 }

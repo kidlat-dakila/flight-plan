@@ -415,13 +415,16 @@ describe("FileSection gutter", () => {
 
 const ROOT_BLOCK_ID = "src/price.ts#function:priceOf"
 
-const NO_ROOT_BLOCK_MARKS = { coreChangeLabel: null, spotlight: null }
+type RootBlockMarks = Pick<WalkthroughFile["rootBlocks"][number], "coreChangeLabel" | "spotlight" | "isFoldedByFilter">
 
-const rootBlockFile = (isReviewed: boolean, marks: Pick<WalkthroughFile["rootBlocks"][number], "coreChangeLabel" | "spotlight"> = NO_ROOT_BLOCK_MARKS): WalkthroughFile =>
+const NO_ROOT_BLOCK_MARKS: RootBlockMarks = { coreChangeLabel: null, spotlight: null, isFoldedByFilter: false }
+
+const rootBlockFile = (isReviewed: boolean, marks: Partial<RootBlockMarks> = {}): WalkthroughFile =>
   createFile({
     rootBlocks: [
       {
         id: ROOT_BLOCK_ID,
+        ...NO_ROOT_BLOCK_MARKS,
         ...marks,
         isReviewed,
         reviewLabel: "Reviewed",
@@ -496,6 +499,22 @@ describe("FileSection root blocks", () => {
     view.rerender(<FileSection {...createProps({ file: rootBlockFile(true) })} />)
 
     expect(screen.queryByText("return held", { exact: false })).toBeNull()
+  })
+
+  it("folds a root block the filter folds to its first line, opens it by hand, and unfolds it once the filter lets it through", () => {
+    const view = render(<FileSection {...createProps({ file: rootBlockFile(false, { isFoldedByFilter: true }) })} />)
+
+    expect(screen.getByText("export const priceOf = () => {")).toBeTruthy()
+    expect(screen.queryByText("return held", { exact: false })).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Expand Function priceOf" }))
+
+    expect(screen.getByText("return held", { exact: false })).toBeTruthy()
+
+    view.rerender(<FileSection {...createProps({ file: rootBlockFile(false, { isFoldedByFilter: false }) })} />)
+
+    expect(screen.getByText("return held", { exact: false })).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Collapse Function priceOf" })).toBeTruthy()
   })
 
   it("folds a root block by hand, and has no review toggle where the page does not track reviews", () => {

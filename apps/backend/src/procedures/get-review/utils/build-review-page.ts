@@ -9,6 +9,7 @@ import {
   buildTrace,
   buildTraceTabs,
   buildWalkthrough,
+  buildWalkthroughControls,
   collectCodeLinkIds,
   isSteppedWaypoint,
   listWaypointPlaces,
@@ -26,7 +27,7 @@ import {
   type WalkthroughRequest,
   type WaypointPlace,
 } from "@flightplan/codegraph"
-import type { CodeLink, ReviewArtifact, Segment, TokenLine } from "@flightplan/configurations"
+import type { CodeLink, ReviewArtifact, Segment, TokenLine, WalkthroughControls } from "@flightplan/configurations"
 import type { ReviewedMarks } from "@flightplan/reviewed-marks"
 import { buildCompleteAction, type BranchLinking } from "./build-complete-action"
 import { buildStaleNotice } from "./build-notices"
@@ -102,7 +103,7 @@ const buildCodeLinks = (
 }
 
 interface SegmentSettings {
-  readonly walkthroughOf: (segmentId: string) => WalkthroughRequest
+  readonly walkthroughControls: WalkthroughControls
   readonly sectionOrder: readonly ArrangedSection[]
 }
 
@@ -159,7 +160,7 @@ const buildSegment = (
   const walkthrough = buildWalkthrough(
     prepared,
     scope,
-    settings.walkthroughOf(segment.id),
+    settings.walkthroughControls,
     stepping,
     (path) => threadLinesOfFile(discussion, path),
     context,
@@ -269,17 +270,17 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     walkthroughOrder: source.request?.writeUp?.walkthroughOrder ?? preferences.walkthroughOrder,
     isWriting: isWritingNow(artifact, source.activity),
   }
-  const settings: SegmentSettings = {
-    walkthroughOf: (segmentId) => ({
-      filterKeys: selectFilterKeys(input.filterKeysBySegment[segmentId] ?? null),
-      isShowingReviewed: source.isOwn || input.reviewedSegmentIds.includes(segmentId),
-    }),
-    sectionOrder: preferences.sectionOrder,
+  const walkthroughRequest: WalkthroughRequest = {
+    filterKeys: selectFilterKeys(input.filterKeys),
+    isShowingReviewed: source.isOwn || input.isShowingReviewed,
   }
   const isSegmented = isShownInSegments(artifact)
   const shownSegments = shownSegmentsOf(artifact, isSegmented)
-  const walkthroughs = shownSegments.map(({ segment }) =>
-    prepareWalkthrough(segment, source.marks, settings.walkthroughOf(segment.id), context))
+  const walkthroughs = shownSegments.map(({ segment }) => prepareWalkthrough(segment, source.marks, walkthroughRequest, context))
+  const settings: SegmentSettings = {
+    walkthroughControls: buildWalkthroughControls(walkthroughs, walkthroughRequest, context.spotlight),
+    sectionOrder: preferences.sectionOrder,
+  }
   const stepping = steppingOf(walkthroughs)
   const places = walkthroughs.flatMap((prepared) => listWaypointPlaces(prepared, stepping, context))
   const discussion = discussionSourceOf(source, artifact)

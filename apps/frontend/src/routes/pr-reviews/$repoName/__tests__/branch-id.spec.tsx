@@ -73,6 +73,39 @@ const TARGET_SWITCHER = {
   ],
 }
 
+type ReviewPage = typeof artifactPage
+type ReviewSegment = ReviewPage["segments"][number]
+type FilterControls = ReviewSegment["walkthrough"]["controls"]["filter"]
+
+const asksForBug = (input: unknown): boolean => JSON.stringify(input).includes("\"filterKeys\":[\"bug\"]")
+
+const withBugTickedIn = (filter: FilterControls) => ({
+  ...filter,
+  groups: filter.groups.map((group) => ({ ...group, options: group.options.map((option) => (option.key === "bug" ? { ...option, isSelected: true } : option)) })),
+})
+
+const withBugTicked = (page: ReviewPage) => ({
+  ...page,
+  segments: page.segments.map((segment) => ({
+    ...segment,
+    walkthrough: { ...segment.walkthrough, controls: { ...segment.walkthrough.controls, filter: withBugTickedIn(segment.walkthrough.controls.filter) } },
+  })),
+})
+
+const withReviewed = (page: ReviewPage, waypointIds: readonly string[]): ReviewPage => ({
+  ...page,
+  segments: page.segments.map((segment) => ({
+    ...segment,
+    walkthrough: {
+      ...segment.walkthrough,
+      files: segment.walkthrough.files.map((file) => ({
+        ...file,
+        rows: file.rows.map((row) => (row.waypoint !== undefined && waypointIds.includes(row.waypoint.id) ? { ...row, waypoint: { ...row.waypoint, isReviewed: true } } : row)),
+      })),
+    },
+  })),
+})
+
 const EMPTY_RECT = { x: 0, y: 0, width: 0, height: 0, top: 0, right: 0, bottom: 0, left: 0 }
 
 const renderReview = (handlers: ProcedureHandlers, path = REVIEW_PATH) =>
@@ -189,7 +222,7 @@ describe("the review page", () => {
     await screen.findByText("Why stock matters.")
 
     expect(getReview).toHaveBeenCalledWith(
-      expect.objectContaining({ repositoryName: "storefront", targetId: "pr-412", filterKeysBySegment: {}, reviewedSegmentIds: [] }),
+      expect.objectContaining({ repositoryName: "storefront", targetId: "pr-412", filterKeys: [], isShowingReviewed: false }),
     )
   })
 
@@ -782,7 +815,7 @@ describe("the review page", () => {
     expect(scrolledAnchorIds()).toStrictEqual([])
   })
 
-  it("sends the chosen filter to the backend for the segment on screen only", async () => {
+  it("sends the chosen filter to the backend for the whole review", async () => {
     const getReview = vi.fn(() => ({ data: artifactPage }))
     showSectionInView("stock-code-walkthrough")
     renderReview({ "review.get": getReview })
@@ -792,13 +825,14 @@ describe("the review page", () => {
     fireEvent.click(await screen.findByRole("menuitemcheckbox", { name: /Bug/ }))
 
     await waitFor(() => {
-      expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ filterKeysBySegment: { stock: ["bug"] } }))
+      expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ filterKeys: ["bug"], isShowingReviewed: false }))
     })
   })
 
-  it("brings the head of the walkthrough back once a filter changed while it was read into", async () => {
-    const getReview = vi.fn(() => ({ data: artifactPage }))
-    placeOnScreen({ "stock-code-walkthrough": { y: -2000, height: 6000 }, "stock-file-1": { y: -1500, height: 4000 } })
+  it("goes to the first waypoint not reviewed yet once the filtered review arrives, in whichever segment it is", async () => {
+    const filtered = withBugTicked(withReviewed(artifactPage, ["price-of"]))
+    const getReview = vi.fn((input: unknown) => ({ data: asksForBug(input) ? filtered : artifactPage }))
+    showSectionInView("stock-code-walkthrough")
     renderReview({ "review.get": getReview })
     await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" })
 
@@ -806,8 +840,21 @@ describe("the review page", () => {
     fireEvent.click(await screen.findByRole("menuitemcheckbox", { name: /Bug/ }))
 
     await waitFor(() => {
-      expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ filterKeysBySegment: { stock: ["bug"] } }))
+      expect(scrolledAnchorIds()).toContain("waypoint-subtotal")
     })
+    expect(scrolledAnchorIds()).not.toContain("waypoint-price-of")
+  })
+
+  it("keeps the head of the walkthrough in place when every waypoint the filter keeps is reviewed", async () => {
+    const filtered = withBugTicked(withReviewed(artifactPage, ["price-of", "subtotal"]))
+    const getReview = vi.fn((input: unknown) => ({ data: asksForBug(input) ? filtered : artifactPage }))
+    placeOnScreen({ "stock-code-walkthrough": { y: -2000, height: 6000 }, "stock-file-1": { y: -1500, height: 4000 } })
+    renderReview({ "review.get": getReview })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" })
+
+    fireEvent.keyDown(window, { key: "f" })
+    fireEvent.click(await screen.findByRole("menuitemcheckbox", { name: /Bug/ }))
+
     await waitFor(() => {
       expect(scrolledAnchorIds()).toStrictEqual(["stock-code-walkthrough"])
     })

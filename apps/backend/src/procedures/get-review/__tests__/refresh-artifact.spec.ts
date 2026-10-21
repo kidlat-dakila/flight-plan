@@ -13,7 +13,7 @@ import type { TraceNode, ReviewArtifact, Waypoint } from "@flightplan/configurat
 
 const NOW = new Date("2026-10-12T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "pr-416" }
-const PAGE_INPUT = { ...KEY, filterKeysBySegment: {}, reviewedSegmentIds: [] }
+const PAGE_INPUT = { ...KEY, filterKeys: [], isShowingReviewed: false }
 const PATH = "src/delivery/estimate.ts"
 const BASE_TEXTS = { [PATH]: "export const estimate = () => 2\nexport const label = () => \"slow\"\n" }
 const ESTIMATE_LINES = ["export const estimate = (zone: string) =>", "  zone === \"local\" ? 1 : 3"]
