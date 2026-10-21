@@ -5,6 +5,8 @@ description: The toolbar at the foot of the review page, and the keys that take 
 
 The Review Navigator is the toolbar at the foot of the review page. It holds the controls of the section on your screen, and every control has a key, so you can read a whole review without leaving the keyboard.
 
+![Jumping to the Blast Diagram from the Review Navigator, then on to the Code Walkthrough and its next waypoints. The toolbar changes its controls with each section](../../../media/review-navigator-light.webm)
+
 ## On every section
 
 | Control | Key | What it does |

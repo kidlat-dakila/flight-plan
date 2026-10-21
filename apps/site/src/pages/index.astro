@@ -8,7 +8,8 @@ import Screenshot from "../components/Screenshot.astro"
 import {
   BLAST_POSTER,
   BLAST_VIDEOS,
-  CHANGE_OVERVIEW_SHOT,
+  CHANGE_OVERVIEW_POSTER,
+  CHANGE_OVERVIEW_VIDEOS,
   CUSTOMIZE_SHOT,
   EXPLAIN_SHOT,
   SPOTLIGHT_SHOT,
@@ -62,7 +63,7 @@ const LOCAL_FACTS = [
       summary="Spot the new page, the components it renders and the state behind them before you open a file. The Change Overview puts each changed code block in a row with others of its kind and marks it added, modified or deleted. Flight Plan builds it from the code with no agent, and a card with a waypoint takes you straight to its code."
       isFlipped={false}
     >
-      <Screenshot light={CHANGE_OVERVIEW_SHOT.light} dark={CHANGE_OVERVIEW_SHOT.dark} alt={CHANGE_OVERVIEW_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
+      <FeatureVideo poster={CHANGE_OVERVIEW_POSTER} videos={CHANGE_OVERVIEW_VIDEOS} sizes={FEATURE_IMAGE_SIZES} />
     </FeatureSection>
 
     <FeatureSection

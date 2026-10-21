@@ -119,6 +119,13 @@
         "command": "bash capture/record-hero.sh"
       }
     },
+    "record-change-overview": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash capture/record-change-overview.sh"
+      }
+    },
     "record-trace": {
       "executor": "nx:run-commands",
       "options": {

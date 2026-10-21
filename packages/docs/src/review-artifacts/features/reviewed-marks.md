@@ -5,6 +5,8 @@ description: Mark waypoints and files as reviewed, so you only see what's left t
 
 Reviewed marks keep track of what you've read. Mark a waypoint or a file as reviewed and it fades and then hides, so the walkthrough shows only what's left.
 
+![Marking a waypoint as reviewed, then its whole file, which hides](../../../media/reviewed-marks-light.webm)
+
 - **Reviewed** on a waypoint marks that waypoint, and so does **Mark as reviewed** (S) in the Review Navigator.
 - **File reviewed** on a file marks the whole file. A file whose waypoints are all reviewed counts as reviewed too.
 - Tick **Reviewed** in the walkthrough's **Filter** to bring the hidden ones back.

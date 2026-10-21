@@ -5,6 +5,8 @@ description: Every changed block of code in a segment, sorted by the kind of cod
 
 The Change Overview sits at the end of the Context. It shows every block of code the segment adds, modifies or deletes, so you can spot the new server action, the schema change or the validation rule before you open a file. Flight Plan builds it from the code, with no agent.
 
+![Hovering three cards of a Change Overview. Each one previews its code](../../../media/change-overview-light.webm)
+
 ## What it shows
 
 Each row is one classification, such as Page, Component, Server action, Schema / data model or Validation, in the same order as the topics of the [spotlight](/docs/setup/review-configuration/#spotlight). Each card in a row is one changed block of code, with its name, its type and its path. It's tinted by what the change did to it and marked **Added**, **Modified** or **Deleted**.

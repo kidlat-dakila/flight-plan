@@ -5,6 +5,8 @@ description: Connect Flight Plan to the code hosting sites you use, or review wi
 
 By default, Flight Plan uses the `git` command to read and fetch your local and remote branches and their commits. That's local git. It needs no account and is always on, so you can skip this step.
 
+![Checking GitHub token in Settings → Git integration and typing a token](../../media/setup-git-forge-light.webm)
+
 Connecting a code hosting site, such as GitHub, GitLab or Bitbucket, lets Flight Plan do more:
 
 - fetch the open pull requests of you and your team members,

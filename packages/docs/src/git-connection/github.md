@@ -5,6 +5,8 @@ description: Connect GitHub or GitHub Enterprise through the GitHub CLI or a tok
 
 Flight Plan reaches GitHub in two ways. Both have every feature: listing pull requests, filters, reviewers, comments, threads and submitted reviews.
 
+![Checking GitHub token and typing a token](../../media/setup-git-forge-light.webm)
+
 ## GitHub CLI
 
 The **GitHub CLI** option uses `gh` and its own sign-in. Flight Plan calls the GitHub API through `gh api`, so it never sees a token.

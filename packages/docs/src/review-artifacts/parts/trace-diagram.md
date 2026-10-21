@@ -5,6 +5,8 @@ description: How execution reaches the changed code, from what starts it.
 
 The Trace Diagram shows how execution reaches the change. It reads left to right like a debugging trace: from the code that starts a path, such as a route, a page or an event handler, to the changed code. Each path stops at its last change.
 
+![Opening a Trace Diagram full screen, clicking a row to read the node's code in the side panel, then opening another node](../../../media/trace-diagram-light.webm)
+
 ## What it shows
 
 Each node is a card for a function, a component, a hook or another block of code. A card shows:

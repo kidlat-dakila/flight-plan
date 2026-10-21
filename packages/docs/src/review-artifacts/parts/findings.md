@@ -5,6 +5,8 @@ description: The bugs, risks, nits and questions the agent reports on the code i
 
 A finding is something the agent thinks you should know about a piece of code. It sits on the waypoint it is about, inside the Code Walkthrough.
 
+![A waypoint with a Risk finding, its trace in five steps and the fix shown as a diff](../../../media/findings-light.webp)
+
 ## Kinds
 
 From most to least severe:

@@ -29,7 +29,11 @@ Minimal rewrites every instruction in a fragment style. Onboardee and Unfamiliar
 
 **Settings → Prompt configurations** lists the **Presets** and **Your configurations**. Each one says whether it ships with Flight Plan or which preset it's based on, and how many of its instructions you changed. Open one to read its instructions.
 
+![Settings → Prompt configurations, with the four presets, Standard as the default, and a copy of Standard under Your configurations](../media/prompt-configurations-light.webp)
+
 To make your own, use **Duplicate** on any configuration, or **New configuration** to name it and choose what it starts from. A new configuration is a copy, with the same instructions as its source.
+
+![A copy of Standard in the editor, open on the Waypoint reading field and its instruction](../media/configuration-editor-light.webp)
 
 A configuration holds two kinds of setting:
 

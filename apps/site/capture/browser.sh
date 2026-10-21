@@ -1,5 +1,8 @@
 DEMO_URL="${DEMO_URL:-http://localhost:4400/demo/demo-react/}"
 DEMO_REVIEW_URL="${DEMO_URL}#/pr-reviews/pokedex-web/pr-57"
+SITE_URL="${DEMO_URL%%/demo/*}"
+FASTAPI_REVIEW_URL="$SITE_URL/demo/demo-fastapi/#/pr-reviews/pokedex-api/pr-42"
+GUIDE_STORAGE_KEY="flightplan-guide-tooltips"
 CONFIGURATION_URL="${DEMO_URL}#/settings/profiles/standard"
 PAGE_SETTLE_MS=3500
 SCROLL_SETTLE_MS=1200
@@ -14,10 +17,16 @@ evaluate() {
   agent-browser eval "$1" 2>/dev/null | tail -1 | tr -d '"[]'
 }
 
+turn_guide_tips_off() {
+  browse open "$SITE_URL/"
+  browse eval "localStorage.setItem('$GUIDE_STORAGE_KEY',JSON.stringify({state:{firstSeenAt:Date.now(),isOff:true,tooltips:{},deferredAt:{},actions:{}},version:1}))"
+}
+
 open_page() {
   local width="$1" height="$2" scale="$3" scheme="$4" url="$5"
   browse set viewport "$width" "$height" "$scale"
   browse set media "$scheme"
+  turn_guide_tips_off
   browse open "$url"
   browse wait "$PAGE_SETTLE_MS"
 }

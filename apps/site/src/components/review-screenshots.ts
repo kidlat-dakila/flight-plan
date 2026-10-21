@@ -1,7 +1,7 @@
 import blastPosterDark from "@/assets/screenshots/blast-poster-dark.png"
 import blastPosterLight from "@/assets/screenshots/blast-poster-light.png"
-import changeOverviewDark from "@/assets/screenshots/change-overview-dark.png"
-import changeOverviewLight from "@/assets/screenshots/change-overview-light.png"
+import changeOverviewPosterDark from "@/assets/screenshots/change-overview-poster-dark.png"
+import changeOverviewPosterLight from "@/assets/screenshots/change-overview-poster-light.png"
 import customizeDark from "@/assets/screenshots/customize-dark.png"
 import customizeLight from "@/assets/screenshots/customize-light.png"
 import explainDark from "@/assets/screenshots/explain-dark.png"
@@ -30,16 +30,21 @@ export const HERO_VIDEOS = {
   dark: { webm: "/media/hero-dark.webm", mp4: "/media/hero-dark.mp4" },
 } as const
 
-export const CHANGE_OVERVIEW_SHOT = {
-  light: changeOverviewLight,
-  dark: changeOverviewDark,
-  alt: "The Change Overview of a segment. Its changed code blocks sit in rows by classification, Page, Component, UI state and Logic, and each card is marked Added or Modified.",
+export const CHANGE_OVERVIEW_POSTER = {
+  light: changeOverviewPosterLight,
+  dark: changeOverviewPosterDark,
+  alt: "The Change Overview of a segment, with its changed code blocks in rows by classification, Page, Component, UI state and Logic. The pointer rests on the card of usePokemon, which shows the hook's code.",
+} as const
+
+export const CHANGE_OVERVIEW_VIDEOS = {
+  light: { webm: "/media/change-overview-light.webm", mp4: "/media/change-overview-light.mp4" },
+  dark: { webm: "/media/change-overview-dark.webm", mp4: "/media/change-overview-dark.mp4" },
 } as const
 
 export const TRACE_POSTER = {
   light: tracePosterLight,
   dark: tracePosterDark,
-  alt: "A Trace Diagram in full screen: the hook usePokemon is open in the side panel, with its code and the waypoint that explains usePokemon(), next to the PokemonPage card that calls it.",
+  alt: "A Trace Diagram in full screen, from a FastAPI review. The side panel shows the code of create_pokemon() with the waypoint for its session.commit() open, beside the route handler add_pokemon that calls it.",
 } as const
 
 export const TRACE_VIDEOS = {
@@ -78,7 +83,7 @@ export const SPOTLIGHT_SHOT = {
 export const FILTERS_POSTER = {
   light: filtersPosterLight,
   dark: filtersPosterDark,
-  alt: "The Code Walkthrough filtered to Component and UI state, which leaves the waypoints of RootLayout and usePokemonFilters.",
+  alt: "The Code Walkthrough filtered to Component and UI state. The filter has gone to the first waypoint it keeps, the Zustand store usePokemonFilters, and shows its card above the code.",
 } as const
 
 export const FILTERS_VIDEOS = {

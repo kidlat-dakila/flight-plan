@@ -5,6 +5,8 @@ description: Talk to your agent about the review, answer its questions and appro
 
 **Chat** opens a panel beside the review where you talk to your agent. Ask why it flagged something, or what a piece of code you selected does.
 
+![Opening Chat on an earlier answer from the agent and typing a new question](../../../media/agent-chat-light.webm)
+
 ## Talking to the agent
 
 Type in **Ask about this review** and press Enter. Shift+Enter starts a new line. The agent starts with your first message if it isn't running.

@@ -5,6 +5,8 @@ description: The short summary of why the change exists, to read before any code
 
 The Context comes first in each segment, unless you moved it in your display arrangement. It holds your agent's summary of the change, then the [Change Overview](/docs/review-artifacts/parts/change-overview/) Flight Plan builds under it.
 
+![The Context of a segment, with the agent's summary above the Change Overview](../../../media/context-light.webp)
+
 ## What your agent writes
 
 With the Standard configuration, the summary is one or two sentences that say what the segment's change does, with no code names, paths or links in them. With segments off, it covers the whole change. The Change Overview under it already lists every piece of code the change adds, modifies and deletes.

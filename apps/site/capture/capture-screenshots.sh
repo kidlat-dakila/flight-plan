@@ -17,7 +17,6 @@ BOX_TOP_MARGIN=10
 DIALOG_MARGIN=40
 CODE_LINES_BELOW=104
 TARGET_ID="capture-target"
-CHANGE_OVERVIEW="[...document.querySelectorAll('#fixture-segment-2-context section[aria-labelledby]')].find(section=>section.querySelector('h3')?.textContent==='Change Overview')"
 EXPLAIN_DIALOG="[...document.querySelectorAll('[role=dialog]')].find(dialog=>dialog.textContent.includes('explain this review'))"
 EXPLAIN_REVIEW_ITEM="[...document.querySelectorAll('[role=menuitem]')].find(item=>item.textContent.includes('Explain this review'))"
 
@@ -62,14 +61,6 @@ open_demo_review() {
   open_demo_page "$REVIEW_WIDTH" "$REVIEW_HEIGHT" "$1" "$DEMO_REVIEW_URL"
 }
 
-capture_change_overview() {
-  local scheme="$1"
-  open_demo_review "$scheme"
-  mark_target "$CHANGE_OVERVIEW"
-  scroll_element_to "#$TARGET_ID" "$SETTLED_TOP"
-  screenshot_rect "change-overview-$scheme" "$(padded_rect "$CROP_MARGIN" 0 "$CROP_MARGIN" "$CROP_MARGIN")"
-}
-
 capture_spotlight() {
   local scheme="$1"
   open_demo_review "$scheme"
@@ -95,7 +86,6 @@ capture_explain_dialog() {
 mkdir -p "$OUT_DIR"
 for scheme in light dark; do
   capture_configuration "$scheme"
-  capture_change_overview "$scheme"
   capture_spotlight "$scheme"
   capture_explain_dialog "$scheme"
 done

@@ -5,6 +5,8 @@ description: The files connected to the change through imports, and what the cha
 
 The Blast Diagram shows the files the change is connected to through imports. Use it to check whether the author missed a file the change affects.
 
+![Switching the Blast Diagram to Import bound and back to Export bound, then opening a file the change leaves unaffected](../../../media/blast-diagram-light.webm)
+
 ## Two views
 
 - **Export bound** shows the files that use what the change changed. This is where something can break.

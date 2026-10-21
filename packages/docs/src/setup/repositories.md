@@ -5,6 +5,8 @@ description: Pick the repositories you review, and choose whose work Flight Plan
 
 Pick the repositories you want to review. Flight Plan lists the pull requests and branches of each one on your home page.
 
+![Settings → Repositories, with three repositories checked and a field under each to track team members](../../media/setup-repositories-light.webp)
+
 ## Recent repositories
 
 Flight Plan looks through your home folder for the repositories where you made the last commit on `main` or `master`, and lists the ten most recent. Check a repository to follow it. It's saved at once, and unchecking it stops following it.

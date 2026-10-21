@@ -5,6 +5,8 @@ description: What a review artifact holds, who makes each part, and how the revi
 
 A review artifact is the review Flight Plan builds for one pull request or branch, with the prose your agent adds when you ask. Flight Plan shows it on the review page next to the code it describes. It answers four questions a diff leaves open: why the change exists, how it runs, what it can affect, and where to look.
 
+![The top of a review page. The rail at the left lists the segments and their sections, beside the Context of segment 1 and its Change Overview](../../media/review-page-light.webp)
+
 ## Parts of the artifact
 
 | Part | What it answers | Who makes it |

@@ -5,6 +5,8 @@ description: Pick the coding agent that explains your reviews, and where Flight 
 
 Flight Plan builds each review from the code on its own. What it can't do alone is explain each part of the change and find potential bugs. That's what your agent adds: it writes the summaries, the labels, the explanations and the findings, and answers your questions in Chat. In this step you pick your agent, and Flight Plan installs its review skill and its MCP server into it.
 
+![Checking Codex in Settings → Agent integration, then picking Opus and the High effort for Claude](../../media/setup-agents-light.webm)
+
 ## Pick your agent
 
 Flight Plan works with three agents:

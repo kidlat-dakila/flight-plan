@@ -9,6 +9,8 @@ Flight Plan builds a review without an agent. Your agent explains it: it writes 
 
 The first time a review opens, a dialog asks **Ask Claude to explain this review?**, with the name of your agent. It sums up what your agent would do: the **Parts to explain**, the **Prompt configuration**, the **Code Walkthrough order**, whether **Segments** are on, and a **Total**, such as **5 parts to write and 12 waypoints to check**. The parts come from your [review configuration](/docs/setup/review-configuration/).
 
+![The dialog that asks Claude to explain a review. It lists the parts to explain, the prompt configuration, the order, the segments and the total](../../../media/explain-dialog-light.webp)
+
 - **Explain** starts your agent.
 - **Not now** closes the dialog, and the review doesn't ask again.
 - **Configure** lets you change it for this review: tick the parts to explain, each with how much there is to write, and pick the prompt configuration, the Code Walkthrough order and whether to split the review into segments.

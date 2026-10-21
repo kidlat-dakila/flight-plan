@@ -5,6 +5,8 @@ description: Choose what matters to you in a review, what your agent writes by d
 
 The last step of setup decides how Flight Plan puts your reviews together. Nothing on it is saved until **Finish setup**. Later, **Settings → Review configuration** holds the same form.
 
+![Settings → Review configuration, with the spotlight topics in groups and the parts the agent writes by default](../../media/review-configuration-light.webp)
+
 ## Spotlight
 
 **Which topics do you care about most in a code review?** Flight Plan classifies every changed block of code, such as a page, a component, an API route or a database read or write. The topics you pick get a spotlight. Their waypoints are marked **Spotlight**, they come first in the Code Walkthrough's filter, and they lead the **Most important first** order.

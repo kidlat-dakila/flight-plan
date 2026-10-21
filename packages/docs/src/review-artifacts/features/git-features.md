@@ -5,6 +5,8 @@ description: Branch status, switching to another pull request, and keeping a rev
 
 The review page keeps track of where the pull request stands, and lets you move between pull requests and bring a review up to date.
 
+![The pull request switcher under the review title, with its search box](../../../media/git-features-light.webp)
+
 ## Status
 
 Each pull request and branch has a status, shown beside its title and used to filter the list on the home page:

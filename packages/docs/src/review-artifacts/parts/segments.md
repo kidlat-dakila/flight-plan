@@ -5,6 +5,8 @@ description: How Flight Plan splits a change into parts you can read one at a ti
 
 A large change is easier to read one path at a time. Flight Plan splits the change into segments, and each segment gets its own Context, Change Overview, Trace Diagram, Blast Diagram and Code Walkthrough.
 
+![The end of segment 1 and the heading of segment 2, with both segments listed in the rail](../../../media/segments-light.webp)
+
 ## How the change is split
 
 Flight Plan works out the split from the code:

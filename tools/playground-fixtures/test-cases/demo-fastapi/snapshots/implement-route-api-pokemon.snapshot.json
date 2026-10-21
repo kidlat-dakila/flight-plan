@@ -1795,7 +1795,7 @@
                   "codeBlockId": "src/pokedex/pokemon/service.py#data-fetch@11:13"
                 },
                 {
-                  "label": null,
+                  "label": "The Pokemon that match the query are loaded",
                   "codeBlockId": "src/pokedex/pokemon/service.py#data-fetch@14:17"
                 }
               ],
@@ -1842,7 +1842,7 @@
               "children": [],
               "triggerLabels": [
                 {
-                  "label": null,
+                  "label": "The Pokemon with the given id is loaded",
                   "codeBlockId": "src/pokedex/pokemon/service.py#data-fetch@18:15"
                 }
               ],
@@ -1930,15 +1930,15 @@
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@27:5"
                 },
                 {
-                  "label": null,
+                  "label": "Adds the new row to the session",
                   "codeBlockId": "src/pokedex/pokemon/service.py#data@28:5"
                 },
                 {
-                  "label": null,
+                  "label": "Commits the insert to the database",
                   "codeBlockId": "src/pokedex/pokemon/service.py#data@29:5"
                 },
                 {
-                  "label": null,
+                  "label": "Reloads the row, so its id is set",
                   "codeBlockId": "src/pokedex/pokemon/service.py#data@30:5"
                 }
               ]
@@ -2008,11 +2008,11 @@
                   "codeBlockId": "src/pokedex/pokemon/service.py#loop@39:5"
                 },
                 {
-                  "label": null,
+                  "label": "Commits the changed fields to the database",
                   "codeBlockId": "src/pokedex/pokemon/service.py#data@41:5"
                 },
                 {
-                  "label": null,
+                  "label": "Reloads the row with the stored values",
                   "codeBlockId": "src/pokedex/pokemon/service.py#data@42:5"
                 }
               ]
@@ -2050,11 +2050,11 @@
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@47:5"
                 },
                 {
-                  "label": null,
+                  "label": "Marks the row for deletion in the session",
                   "codeBlockId": "src/pokedex/pokemon/service.py#data@48:5"
                 },
                 {
-                  "label": null,
+                  "label": "Commits the deletion to the database",
                   "codeBlockId": "src/pokedex/pokemon/service.py#data@49:5"
                 }
               ]
@@ -2542,9 +2542,9 @@
                     },
                     {
                       "id": "w18.3",
-                      "title": null,
+                      "title": "Added the new row to the session",
                       "declaration": "create_pokemon › add",
-                      "reading": "",
+                      "reading": "The author added `session.add(pokemon)`, which puts the new row in the session. Nothing is written to the database yet, so [the commit](code:src/pokedex/pokemon/service.py#L29) on the next line inserts it.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2560,9 +2560,9 @@
                     },
                     {
                       "id": "w18.4",
-                      "title": null,
+                      "title": "Added the commit of the insert",
                       "declaration": "create_pokemon › commit",
-                      "reading": "",
+                      "reading": "The author added `session.commit()`, which writes the new row to the `pokemon` table, so the row is in the database before [`add_pokemon()`](code:src/pokedex/pokemon/routes.py#L22) returns the 201.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2578,9 +2578,9 @@
                     },
                     {
                       "id": "w18.5",
-                      "title": null,
+                      "title": "Added a refresh that reloads the new row",
                       "declaration": "create_pokemon › refresh",
-                      "reading": "",
+                      "reading": "The author added `session.refresh(pokemon)`, which reads the row back from the database after the commit. The row then has the `id` the database gave it, so [`add_pokemon()`](code:src/pokedex/pokemon/routes.py#L22) returns that `id` in the body of the 201.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2705,9 +2705,9 @@
                     },
                     {
                       "id": "w19.5",
-                      "title": null,
+                      "title": "Added the commit of the changed fields",
                       "declaration": "update_pokemon › commit",
-                      "reading": "",
+                      "reading": "The author added `session.commit()`, which writes the fields that [the loop](code:src/pokedex/pokemon/service.py#L39-40) copied onto the row, so a PATCH with `{\"level\": 12}` stores the new level.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -2723,9 +2723,9 @@
                     },
                     {
                       "id": "w19.6",
-                      "title": null,
+                      "title": "Added a refresh that reloads the updated row",
                       "declaration": "update_pokemon › refresh",
-                      "reading": "",
+                      "reading": "The author added `session.refresh(pokemon)`, which reads the row back from the database after the commit, so [`edit_pokemon()`](code:src/pokedex/pokemon/routes.py#L27) returns the stored value of every field.",
                       "coreChange": null,
                       "findings": [],
                       "range": {

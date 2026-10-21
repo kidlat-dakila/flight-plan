@@ -5,6 +5,8 @@ description: The changed code, one file at a time, with an explanation on the li
 
 The Code Walkthrough is where you read the change itself. It shows the changed code one file at a time, and puts each explanation on the lines it is about.
 
+![Stepping through waypoints with Next waypoint, then filtering the walkthrough to the core changes](../../../media/code-walkthrough-light.webm)
+
 ## Files and waypoints
 
 The walkthrough's header states its coverage, such as **All 14 changed files** or **12 of 14 changed files**, so you can see when it leaves files out.
@@ -37,11 +39,11 @@ Flight Plan sorts the files in the order of your [review configuration](/docs/se
 - In the [Review Navigator](/docs/review-artifacts/features/review-navigator/), **Next waypoint** (D) and **Previous waypoint** (A) step through the waypoints of a segment, across its files. **Mark as reviewed** (S) marks the waypoint you're on.
 - **Filter** (F) shows only the waypoints with what you tick:
   - **Core change**, **Bug**, **Risk**, **Nit** or **Question**,
-  - the kinds of code the segment changes, each with what the change did to it, such as **Component** with **Added**. The topics of your spotlight come first,
+  - the kinds of code the review changes, each with what the change did to it, such as **Component** with **Added**. The topics of your spotlight come first,
   - **Change type**: **Added**, **Modified** or **Removed**,
   - **Reviewed**, which brings back what you've marked [reviewed](/docs/review-artifacts/features/reviewed-marks/).
 
-  Each segment has its own filter, and it stays in the page's address, so you can share it.
+  One filter covers the whole review, so a tick narrows the walkthrough of every segment. Changing a tick takes you to the first waypoint it keeps that you haven't reviewed yet. While anything is ticked, a code block with none of the waypoints you asked for folds to its first line, and its chevron opens it again. The filter stays in the page's address, so you can share it.
 
 ## On your own Flight Plan
 

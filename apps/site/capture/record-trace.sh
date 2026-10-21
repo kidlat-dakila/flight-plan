@@ -10,6 +10,10 @@ source "$SCRIPT_DIR/browser.sh"
 source "$SCRIPT_DIR/review-clip.sh"
 
 TRACE_HEADING="#fixture-segment-2-trace-diagram-heading"
+REST_X=110
+REST_Y=140
+REST_STEPS=12
+REST_DURATION_MS=300
 
 row_named() {
   echo "[...$BOARD.querySelectorAll('button')].find(element=>(element.getAttribute('aria-label')||'').startsWith('$1'))"
@@ -23,29 +27,34 @@ open_trace() {
   open_board_full_screen "$TRACE_HEADING"
 }
 
+rest_pointer() {
+  browse mouse move "$REST_X" "$REST_Y" --steps "$REST_STEPS" --duration "$REST_DURATION_MS"
+  POINTER_X="$REST_X"
+  POINTER_Y="$REST_Y"
+}
+
+click_then_rest() {
+  mark "$1"
+  browse click "#$TARGET_ID" --human
+  rest_pointer
+  browse wait "$READ_MS"
+}
+
 trace_scenario() {
   local poster="$1"
-  click_marked "$(node_named "PokemonPage")"
-  bring_into_view "PokemonPage"
-  browse wait "$READ_MS"
-  click_marked "$(row_named "Hooks: Gets the Pokemon that match the filters")"
-  browse wait "$READ_MS"
-  click_marked "$(row_named "Steps: Renders one line per Pokemon with its level and types")"
-  browse wait "$READ_MS"
-  bring_into_view "usePokemon"
-  click_marked "$(node_named "usePokemon")"
-  browse wait "$READ_MS"
-  click_marked "$(row_named "Effects: Loads the Pokemon again when the trainer changes")"
+  click_then_rest "$(node_named "add_pokemon")"
+  browse press Escape
   browse wait "$STEP_MS"
-  click_marked "$(waypoint_named "to load the Pokemon that match the filters")"
+  click_then_rest "$(row_named "Data: Commits the insert to the database")"
+  click_marked "$(waypoint_named "Added the commit of the insert")"
+  rest_pointer
   browse wait "$READ_MS"
   agent-browser screenshot "$poster" >/dev/null 2>&1
   browse wait "$READ_MS"
   browse press Escape
   browse wait "$STEP_MS"
-  return_board_to_start
   park_pointer
   browse wait "$READ_MS"
 }
 
-record_review_clip trace "$DEMO_REVIEW_URL" open_trace trace_scenario
+record_review_clip trace "$FASTAPI_REVIEW_URL" open_trace trace_scenario

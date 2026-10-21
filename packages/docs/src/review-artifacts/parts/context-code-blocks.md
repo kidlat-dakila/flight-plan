@@ -5,6 +5,8 @@ description: Hover a name in the code to see where it comes from, and read what 
 
 Hover a name in the code you read, and a card shows where it comes from. Flight Plan builds the card from the code, with no agent. For a function or a variable, it shows the lines that define it. For an exported name, it lists the files and lines that use it. For a library name, it shows the import, and doesn't follow it.
 
+![The hover card of an exported store. It lists the three lines in two files that use it](../../../media/context-code-blocks-light.webp)
+
 ## Descriptions
 
 A prompt configuration can also have your agent describe the names, under **Hover descriptions**:

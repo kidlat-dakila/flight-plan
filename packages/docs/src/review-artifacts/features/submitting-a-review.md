@@ -5,6 +5,8 @@ description: Send your pending comments to the forge with a summary and a verdic
 
 When you're done reading, **Submit review** sends your review to the forge. The button shows how many pending comments you have, such as **Submit review (3)**.
 
+![Writing a summary and picking Approve in the Submit review panel](../../../media/submit-review-light.webm)
+
 ## Submit your review
 
 The panel asks for:
