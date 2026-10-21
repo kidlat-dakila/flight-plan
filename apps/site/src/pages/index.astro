@@ -10,6 +10,8 @@ import {
   BLAST_VIDEOS,
   CHANGE_OVERVIEW_SHOT,
   CUSTOMIZE_SHOT,
+  EXPLAIN_SHOT,
+  SPOTLIGHT_SHOT,
   TRACE_POSTER,
   TRACE_VIDEOS,
   FILTERS_POSTER,
@@ -57,7 +59,7 @@ const LOCAL_FACTS = [
       id="change-overview"
       title="Take in the whole change first."
       subtitle="Every changed code block, sorted by the kind of code it is."
-      summary="Spot the new server action, the schema change or the validation rule before you open a file. The Change Overview puts each changed code block in a row with others of its kind and marks it added, modified or deleted. Flight Plan builds it from the code with no agent, and a card with a waypoint takes you straight to its code."
+      summary="Spot the new page, the components it renders and the state behind them before you open a file. The Change Overview puts each changed code block in a row with others of its kind and marks it added, modified or deleted. Flight Plan builds it from the code with no agent, and a card with a waypoint takes you straight to its code."
       isFlipped={false}
     >
       <Screenshot light={CHANGE_OVERVIEW_SHOT.light} dark={CHANGE_OVERVIEW_SHOT.dark} alt={CHANGE_OVERVIEW_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
@@ -94,11 +96,21 @@ const LOCAL_FACTS = [
     </FeatureSection>
 
     <FeatureSection
+      id="spotlight"
+      title="Start with the code you care about."
+      subtitle="Your topics and the core of the change, marked on the waypoints."
+      summary="See at a glance which parts of a change touch what matters to you. Pick your topics in setup, such as API requests or security, and Flight Plan marks every waypoint and code block that touches one with Spotlight. Your agent marks the core changes, the parts the branch is built around, and says why. Pick the Most important first order and the walkthrough starts with them."
+      isFlipped={false}
+    >
+      <Screenshot light={SPOTLIGHT_SHOT.light} dark={SPOTLIGHT_SHOT.dark} alt={SPOTLIGHT_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
+    </FeatureSection>
+
+    <FeatureSection
       id="filters"
       title="Read only the parts you came for."
       subtitle="The walkthrough, narrowed to the waypoints you want to check."
-      summary="Go straight to the components and hooks, or to the code your agent flagged. Flight Plan sorts every waypoint by the kind of code it changes and by whether that code was added, modified or removed. Pick what you want and the walkthrough hides the rest."
-      isFlipped={false}
+      summary="Go straight to the components and the UI state, or to the code your agent flagged. Flight Plan sorts every waypoint by the kind of code it changes and by whether that code was added, modified or removed. Pick what you want and the walkthrough hides the rest."
+      isFlipped={true}
     >
       <FeatureVideo poster={FILTERS_POSTER} videos={FILTERS_VIDEOS} sizes={FEATURE_IMAGE_SIZES} />
     </FeatureSection>
@@ -108,9 +120,19 @@ const LOCAL_FACTS = [
       title="Look up any name without leaving the diff."
       subtitle="Where each name in the code is defined, and where it is used."
       summary="Follow the code without opening another tab. Hover a name and Flight Plan shows where it comes from. An exported function lists the files that use it, and a variable shows the line that defines it."
-      isFlipped={true}
+      isFlipped={false}
     >
       <FeatureVideo poster={TOOLTIPS_POSTER} videos={TOOLTIPS_VIDEOS} sizes={FEATURE_IMAGE_SIZES} />
+    </FeatureSection>
+
+    <FeatureSection
+      id="explain"
+      title="Ask for the why when you need it."
+      subtitle="Your agent explains the parts you pick, when you pick them."
+      summary={`Spend your agent's time on the code you want explained. Every review opens already built, with short hints from Flight Plan on the parts nobody has explained yet, such as "Adds a component." Press G and your agent explains that line and checks it for issues, or press Ctrl+G for its whole code block. To have it explain the whole review, pick Explain this review in the ⚙ menu and choose the parts it writes.`}
+      isFlipped={true}
+    >
+      <Screenshot light={EXPLAIN_SHOT.light} dark={EXPLAIN_SHOT.dark} alt={EXPLAIN_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
     </FeatureSection>
 
     <FeatureSection

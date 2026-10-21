@@ -8,14 +8,15 @@ DRAG_STEPS=4
 GLIDE_STEPS=8
 POINTER_X=0
 POINTER_Y=0
-DRAG_START_X=260
-DRAG_START_Y=$((HEIGHT - 120))
+DRAG_BOTTOM_GAP=60
+DRAG_SCAN_STEP=20
 VIEW_MARGIN=48
+PARK_X=12
+PARK_Y=$((HEIGHT - 22))
+BOARD_DRIFT=0
 TARGET_ID="capture-target"
 BOARD="document.querySelector('[role=dialog]')"
 PANEL="$BOARD.querySelector('aside')"
-DEMO_URL="${DEMO_URL:-http://localhost:4400/demo/demo-react/}"
-DEMO_REVIEW_URL="${DEMO_URL}#/pr-reviews/pokedex-web/pr-57"
 
 mark() {
   local found
@@ -51,27 +52,51 @@ hover_marked() {
 }
 
 park_pointer() {
-  POINTER_X=$((WIDTH / 2))
-  POINTER_Y=$((HEIGHT - 160))
+  POINTER_X="$PARK_X"
+  POINTER_Y="$PARK_Y"
   browse mouse move "$POINTER_X" "$POINTER_Y"
   browse wait "$STEP_MS"
 }
 
 node_named() {
-  echo "[...$BOARD.querySelectorAll('button')].find(element=>element.textContent.startsWith('$1'))"
+  local nodes="[...$BOARD.querySelectorAll('button')]"
+  echo "($nodes.find(element=>element.querySelector('[data-node-header] > span:not([title])')?.textContent==='$1')??$nodes.find(element=>element.textContent.startsWith('$1')))"
+}
+
+control_named() {
+  echo "[...document.querySelectorAll('button')].find(element=>element.textContent.trim().startsWith('$1'))"
+}
+
+empty_board_point() {
+  local distance="$1"
+  evaluate "(()=>{const canvas=$BOARD.querySelector('[role=group]');for(let y=$HEIGHT-$DRAG_BOTTOM_GAP;y>$HEIGHT/2;y-=$DRAG_SCAN_STEP){for(let x=$VIEW_MARGIN;x<$WIDTH-$VIEW_MARGIN;x+=$DRAG_SCAN_STEP){const end=x-($distance);if(end<$VIEW_MARGIN||end>$WIDTH-$VIEW_MARGIN)continue;const element=document.elementFromPoint(x,y);if(element&&canvas.contains(element)&&!element.closest('button'))return x+','+y}}return 0})()"
 }
 
 drag_board_by() {
   local distance="$1"
-  browse mouse move "$DRAG_START_X" "$DRAG_START_Y"
+  local start
+  start="$(empty_board_point "$distance")"
+  if [[ "$start" == "0" ]]; then
+    echo "no empty spot on the board to drag $distance from" >&2
+    return 1
+  fi
+  local start_x="${start%,*}" start_y="${start#*,}"
+  browse mouse move "$start_x" "$start_y"
   browse wait 300
   browse mouse down
   local step
   for step in $(seq 1 "$DRAG_STEPS"); do
-    browse mouse move "$((DRAG_START_X - distance * step / DRAG_STEPS))" "$DRAG_START_Y"
+    browse mouse move "$((start_x - distance * step / DRAG_STEPS))" "$start_y"
   done
   browse mouse up
   browse wait "$STEP_MS"
+  BOARD_DRIFT=$((BOARD_DRIFT + distance))
+}
+
+return_board_to_start() {
+  if [[ "$BOARD_DRIFT" != "0" ]]; then
+    drag_board_by "$((-BOARD_DRIFT))"
+  fi
 }
 
 offset_out_of_view() {

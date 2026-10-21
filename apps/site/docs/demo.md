@@ -42,6 +42,7 @@ The demo app mounts the frontend's `createApp` with a hash history, so a demo's 
 - the demo repositories as GitHub repositories, and their reviews, each stored as explained by Claude, so a review opens without asking whether Claude should explain it;
 - an in-memory GitHub forge with the reviewers, threads and reviews of each story, so comments, replies, resolving threads, review requests and submitted reviews all work;
 - a completed setup with Claude as the agent;
+- the instructions that ship with Flight Plan, so the Prompt configurations pages show each preset's real text. `apps/site/demo/app/instruction-texts.ts` bundles the Markdown files of `packages/configurations/src/system-instructions/` and `default-configurations/` into the demo app;
 - a demo agent that answers each chat message with the next scripted reply, through the same procedures a real agent's tools call. Explain in the ⚙ menu starts it too: it sends its reply and marks the review complete again, since every part is already written.
 
 A link between the client and the router copies every input and result through JSON, so the app receives exactly what it would over HTTP.

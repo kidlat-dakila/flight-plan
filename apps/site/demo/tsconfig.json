@@ -42,6 +42,9 @@
       "@flightplan/backend/demo-reviews": [
         "../../backend/src/procedures/get-review/utils/mocks/demo-reviews.ts"
       ],
+      "@flightplan/backend/instruction-texts": [
+        "../../backend/src/procedures/get-instructions/utils/instruction-texts.ts"
+      ],
       "@/*": [
         "../../frontend/src/*",
         "../../../packages/ui/src/*",

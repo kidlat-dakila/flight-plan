@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MEDIA_DIR="${1:-$SCRIPT_DIR/../public/media}"
 POSTER_DIR="${2:-$SCRIPT_DIR/../src/assets/screenshots}"
 WORK_DIR="$(mktemp -d)"
-trap 'agent-browser record stop >/dev/null 2>&1; rm -rf "$WORK_DIR"' EXIT
+trap 'agent-browser record stop >/dev/null 2>&1 || true; rm -rf "$WORK_DIR"' EXIT
 source "$SCRIPT_DIR/browser.sh"
 source "$SCRIPT_DIR/review-clip.sh"
 
@@ -43,8 +43,9 @@ trace_scenario() {
   browse wait "$READ_MS"
   browse press Escape
   browse wait "$STEP_MS"
-  browse press t
+  return_board_to_start
+  park_pointer
   browse wait "$READ_MS"
 }
 
-record_review_clip trace "$REVIEW_URL" open_trace trace_scenario
+record_review_clip trace "$DEMO_REVIEW_URL" open_trace trace_scenario

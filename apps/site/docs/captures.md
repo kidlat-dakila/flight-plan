@@ -1,6 +1,6 @@
 # Screenshots, videos and the docs recordings
 
-The landing page shows the real Flight Plan app: a looping video behind the hero, a looping video in each feature panel of the review, and a screenshot in the Change Overview and configurations panels. Five scripts in `apps/site/capture/` capture all of them but the Change Overview from the running app or the site's demo, so they can be made again the same way after the app changes.
+The landing page shows the real Flight Plan app: a looping video behind the hero, a looping video in each feature panel of the review, and a screenshot in the Change Overview, Spotlight, explain on demand and configurations panels. Five scripts in `apps/site/capture/` capture all of them from the site's demo, so they can be made again the same way after the app changes.
 
 ## What is captured
 
@@ -12,26 +12,23 @@ The landing page shows the real Flight Plan app: a looping video behind the hero
 | `public/media/walkthrough-waypoints-*`, `src/assets/screenshots/walkthrough-waypoints-poster-*.png` | The waypoints panel | `record-walkthrough` |
 | `public/media/walkthrough-filters-*`, `src/assets/screenshots/walkthrough-filters-poster-*.png` | The filters panel | `record-walkthrough` |
 | `public/media/walkthrough-tooltips-*`, `src/assets/screenshots/walkthrough-tooltips-poster-*.png` | The hover cards panel | `record-walkthrough` |
+| `src/assets/screenshots/change-overview-*.png` | The Change Overview panel | `capture-screenshots` |
+| `src/assets/screenshots/spotlight-*.png` | The Spotlight panel | `capture-screenshots` |
+| `src/assets/screenshots/explain-*.png` | The explain on demand panel | `capture-screenshots` |
 | `src/assets/screenshots/customize-*.png` | The configurations panel | `capture-screenshots` |
-| `src/assets/screenshots/change-overview.png` | The Change Overview panel | A screenshot taken by hand in dark mode, shown in both colour schemes |
 
-Every video is an H.264 MP4 and a VP9 WebM, and every file but the Change Overview exists in a light and a dark version; the page picks the one that matches the visitor's colour scheme. The poster is the still frame shown before a video plays, on phones for the hero, and to visitors who prefer reduced motion. `src/components/review-screenshots.ts` imports the files and holds the alt text of each poster. `src/components/FeatureVideo.astro` shows a panel's video over its poster and starts it once the panel is in view.
+Every video is an H.264 MP4 and a VP9 WebM, and every file exists in a light and a dark version; the page picks the one that matches the visitor's colour scheme. The poster is the still frame shown before a video plays, on phones for the hero, and to visitors who prefer reduced motion. `src/components/review-screenshots.ts` imports the files and holds the alt text of each poster and screenshot. `src/components/FeatureVideo.astro` shows a panel's video over its poster and starts it once the panel is in view.
 
 ## Where the pictures come from
 
-Every video comes from the review of the `demo-react` pull request, "Implement page PokemonPage". It is a playground fixture in `tools/playground-fixtures/test-cases/demo-react/`, and the review's prose is part of the fixture, so every machine shows the same review.
+Every picture comes from the site's demo of the `demo-react` review, at `http://localhost:4400/demo/demo-react/#/pr-reviews/pokedex-web/pr-57`, the pull request "Implement page PokemonPage". It is a playground fixture in `tools/playground-fixtures/test-cases/demo-react/`, and the review's prose is part of the fixture, so every machine shows the same review.
 
-The trace video records segment 2 of it, "New PokemonPage and usePokemon, modified router", in the app, where the development build of the backend lists the fixtures on the index page as repositories. The other videos record segment 1 in the site's demo, at `http://localhost:4400/demo/demo-react/#/pr-reviews/pokedex-web/pr-57`, so they read no data of yours and start with no reviewed marks.
-
-The configurations screenshot is the settings page of the Standard preset, at `/settings/profiles/standard`, with the "Waypoint reading" field open.
+The demo keeps everything in memory, so the captures read no data of yours, start with no reviewed marks and show the presets as they ship. The trace video records segment 2, "New PokemonPage and usePokemon, modified router", and the other videos record segment 1. The Change Overview screenshot is the Change Overview of segment 2. The Spotlight screenshot is the waypoint for `usePokemon()`, marked Core change and Spotlight. The explain on demand screenshot is the dialog that "Explain this review" in the ⚙ menu opens. The configurations screenshot is the demo's settings page of the Standard preset, at `#/settings/profiles/standard`, with the "Waypoint reading" field open.
 
 ## Before you capture
 
 - Install [agent-browser](https://github.com/vercel-labs/agent-browser), `ffmpeg` with the `libx264` and `libvpx-vp9` encoders, and `python3`.
-- For the hero, blast and walkthrough videos, start the site with `nx dev site`. They read the demo at `http://localhost:4400/demo/demo-react/`; set `DEMO_URL` to read it elsewhere.
-- For the trace video and the configurations screenshot, start the app with `pnpm dev`. `record-trace` and `capture-screenshots` read it at `http://localhost:4200`; set `APP_URL` to read it elsewhere.
-- Clear every reviewed mark in the `demo-react` review of the app. A reviewed waypoint is drawn faded, and the trace video shows it that way.
-- Leave the Standard preset as it ships. The settings page shows your own changes to it, and the screenshot would show them too.
+- Start the site with `nx dev site`. The scripts read the demo at `http://localhost:4400/demo/demo-react/`; set `DEMO_URL` to read it elsewhere.
 
 ## Capturing
 
@@ -43,7 +40,7 @@ Each target writes over the files the site uses:
 | `nx run site:record-trace` | 2 minutes |
 | `nx run site:record-blast` | 2 minutes |
 | `nx run site:record-walkthrough` | 4 minutes |
-| `nx run site:capture-screenshots` | 30 seconds |
+| `nx run site:capture-screenshots` | 1 minute |
 
 To look at the result before it replaces anything, run a script with output folders of your own, the media folder first and the poster folder second:
 
@@ -79,15 +76,20 @@ The two diagrams are recorded in full screen. Before clicking a node that the si
 
 | Clip | Starts at | Steps | Poster |
 |---|---|---|---|
-| Trace | The diagram of segment 2, in full screen | Clicks the `PokemonPage` card, then its rows "Gets the Pokemon that match the filters" and "Renders one line per Pokemon with its level and types", each of which marks its lines in the side panel. Clicks the `usePokemon` card and its row "Loads the Pokemon again when the trainer changes", and opens the waypoint of `usePokemon()` in the panel. Closes the panel with Escape and resets the view with T. | The `usePokemon()` waypoint open |
-| Blast | The Blast Diagram of segment 1, in full screen | Clicks `router.tsx`, then `src/main.tsx`, the file the change reaches without changing what it does, then `use-pokemon.ts`. Closes the panel, presses Import bound to add the files the change did not touch, then presses Export bound and resets the view with T. | The Import bound view |
+| Trace | The diagram of segment 2, in full screen | Clicks the `PokemonPage` card, then its rows "Gets the Pokemon that match the filters" and "Renders one line per Pokemon with its level and types", each of which marks its lines in the side panel. Clicks the `usePokemon` card and its row "Loads the Pokemon again when the trainer changes", and opens the waypoint of `usePokemon()` in the panel. Closes the panel with Escape and drags the board back to where it started. | The `usePokemon()` waypoint open |
+| Blast | The Blast Diagram of segment 1, in full screen | Clicks `router.tsx`, then `src/main.tsx`, the file the change reaches without changing what it does, then `use-pokemon.ts`. Closes the panel, presses Import bound to add the files the change did not touch, then presses Export bound and drags the board back to where it started. | The Import bound view |
 | Waypoints | The waypoint for the trainers query in `PokemonFilters.tsx`, marked Risk | Opens it, scrolls through its finding and trace, presses Preview the fix, then Hide the fix, scrolls back and closes it. | The fix open |
-| Filters | The heading of segment 1's Code Walkthrough | Opens the first waypoint, ticks Component and Hook in the Filter menu, then unticks them and closes the first waypoint. | The filtered walkthrough |
+| Filters | The heading of segment 1's Code Walkthrough | Opens the first waypoint, ticks Component and UI state in the Filter menu, then unticks them, closes the first waypoint and scrolls back to the heading. | The filtered walkthrough |
 | Tooltips | Line 12 of `pokemon-filters.ts` | Hovers `usePokemonFilters`, the exported store, whose card lists the files that use it, then `set`, whose card shows the line that defines it. | The card of `usePokemonFilters` |
 
-### Configurations screenshot
+### Screenshots
 
-`capture-screenshots.sh` opens the settings page of the Standard preset in a 1440 × 900 window at twice the pixel density, opens the "Waypoint reading" field, and crops the field index and the field panel at 220, 330, 1000 × 560 with `ffmpeg`.
+`capture-screenshots.sh` loads the page again for each screenshot and crops it with `ffmpeg`.
+
+- The Change Overview: the demo's review in a 1200 × 1000 window at twice the pixel density, with the Change Overview of segment 2 scrolled to 160 pixels below the top, cropped with a 24-pixel margin on its sides and below it.
+- Spotlight: the same window with the waypoint for `usePokemon()` open and scrolled to 160 pixels below the top, cropped from 10 pixels above the waypoint to 104 pixels below it, which shows the first lines of its code.
+- Explain on demand: the same window after "Explain this review" in the ⚙ menu, cropped to the dialog with a 40-pixel margin.
+- Configurations: the settings page of the Standard preset in a 1440 × 900 window at twice the pixel density, opens the "Waypoint reading" field, and crops the field index and the field panel at 220, 330, 1000 × 560.
 
 ## When the app changes
 

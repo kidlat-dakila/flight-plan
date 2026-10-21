@@ -1,6 +1,6 @@
-APP_URL="${APP_URL:-http://localhost:4200}"
-REVIEW_URL="$APP_URL/pr-reviews/demo-react/implement-page-pokemonpage"
-CONFIGURATION_URL="$APP_URL/settings/profiles/standard"
+DEMO_URL="${DEMO_URL:-http://localhost:4400/demo/demo-react/}"
+DEMO_REVIEW_URL="${DEMO_URL}#/pr-reviews/pokedex-web/pr-57"
+CONFIGURATION_URL="${DEMO_URL}#/settings/profiles/standard"
 PAGE_SETTLE_MS=3500
 SCROLL_SETTLE_MS=1200
 SIGN_BAND_HEIGHT=56

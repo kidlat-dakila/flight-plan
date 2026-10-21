@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MEDIA_DIR="${1:-$SCRIPT_DIR/../public/media}"
 POSTER_DIR="${2:-$SCRIPT_DIR/../src/assets/screenshots}"
 WORK_DIR="$(mktemp -d)"
-trap 'agent-browser record stop >/dev/null 2>&1; rm -rf "$WORK_DIR"' EXIT
+trap 'agent-browser record stop >/dev/null 2>&1 || true; rm -rf "$WORK_DIR"' EXIT
 source "$SCRIPT_DIR/browser.sh"
 source "$SCRIPT_DIR/review-clip.sh"
 
@@ -32,7 +32,8 @@ blast_scenario() {
   agent-browser screenshot "$poster" >/dev/null 2>&1
   browse wait "$READ_MS"
   click_marked "$(control_named "Export bound")"
-  browse press t
+  return_board_to_start
+  park_pointer
   browse wait "$READ_MS"
 }
 

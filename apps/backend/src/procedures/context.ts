@@ -155,6 +155,7 @@ export const createDemoProcedureContext = async (
   demos: readonly DemoReview[],
   startedAt: Date,
   newId: () => string,
+  readInstructionTexts: InstructionReader = readSampleInstructionTexts,
 ): Promise<ProcedureContext> => {
   const conversationStore = new InMemoryConversationStore()
   const reviewStore = new InMemoryReviewStore(demos.map(toDemoStoredReview))
@@ -182,7 +183,7 @@ export const createDemoProcedureContext = async (
       newId,
     },
     highlightCode: createCodeHighlighter(),
-    readInstructionTexts: readSampleInstructionTexts,
+    readInstructionTexts,
     writePublishedPage: writeSamplePublishedPage,
     importFiles: new InMemoryImportFileStore(),
     appUrl: MOCK_APP_URL,
