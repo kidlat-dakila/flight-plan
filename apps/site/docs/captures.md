@@ -1,6 +1,6 @@
 # Screenshots, videos and the docs recordings
 
-The landing page shows the real Flight Plan app: a looping video behind the hero, a looping video in each feature panel of the review, and a screenshot in the configurations panel. Five scripts in `apps/site/capture/` capture all of them from the running app or the site's demo, so they can be made again the same way after the app changes.
+The landing page shows the real Flight Plan app: a looping video behind the hero, a looping video in each feature panel of the review, and a screenshot in the Change Overview and configurations panels. Five scripts in `apps/site/capture/` capture all of them but the Change Overview from the running app or the site's demo, so they can be made again the same way after the app changes.
 
 ## What is captured
 
@@ -13,8 +13,9 @@ The landing page shows the real Flight Plan app: a looping video behind the hero
 | `public/media/walkthrough-filters-*`, `src/assets/screenshots/walkthrough-filters-poster-*.png` | The filters panel | `record-walkthrough` |
 | `public/media/walkthrough-tooltips-*`, `src/assets/screenshots/walkthrough-tooltips-poster-*.png` | The hover cards panel | `record-walkthrough` |
 | `src/assets/screenshots/customize-*.png` | The configurations panel | `capture-screenshots` |
+| `src/assets/screenshots/change-overview.png` | The Change Overview panel | A screenshot taken by hand in dark mode, shown in both colour schemes |
 
-Every video is an H.264 MP4 and a VP9 WebM, and every file exists in a light and a dark version; the page picks the one that matches the visitor's colour scheme. The poster is the still frame shown before a video plays, on phones for the hero, and to visitors who prefer reduced motion. `src/components/review-screenshots.ts` imports the files and holds the alt text of each poster. `src/components/FeatureVideo.astro` shows a panel's video over its poster and starts it once the panel is in view.
+Every video is an H.264 MP4 and a VP9 WebM, and every file but the Change Overview exists in a light and a dark version; the page picks the one that matches the visitor's colour scheme. The poster is the still frame shown before a video plays, on phones for the hero, and to visitors who prefer reduced motion. `src/components/review-screenshots.ts` imports the files and holds the alt text of each poster. `src/components/FeatureVideo.astro` shows a panel's video over its poster and starts it once the panel is in view.
 
 ## Where the pictures come from
 

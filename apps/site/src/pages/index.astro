@@ -8,6 +8,7 @@ import Screenshot from "../components/Screenshot.astro"
 import {
   BLAST_POSTER,
   BLAST_VIDEOS,
+  CHANGE_OVERVIEW_SHOT,
   CUSTOMIZE_SHOT,
   TRACE_POSTER,
   TRACE_VIDEOS,
@@ -21,7 +22,7 @@ import {
 import SiteLayout from "../layouts/SiteLayout.astro"
 
 const PAGE_TITLE = "Flight Plan: review pull requests with ease"
-const PAGE_DESCRIPTION = "Your coding agent explains each pull request as a guided walkthrough beside its code, on your own machine."
+const PAGE_DESCRIPTION = "An offline-first code review tool that helps you understand and navigate the changes in a pull request. See what changed, how it runs and what it can break before you read the diff, then let your coding agent explain each part."
 const DEMO_HREF = "/demo/"
 const FEATURE_IMAGE_SIZES = "(min-width: 64rem) 52rem, 100vw"
 
@@ -38,12 +39,13 @@ const LOCAL_FACTS = [
       <div class="hero-copy">
         <h1 id="hero-title">Review pull&nbsp;requests with&nbsp;ease using <span class="brand-name">Flight&nbsp;Plan</span>.</h1>
         <p class="hero-lede">
-          An <strong class="lede-emphasis">offline-first</strong> tool for reading pull requests. Each one comes with a short summary of why it changed, diagrams of how it runs and
-          what it can affect, and a walkthrough of the code, one file at a time.
+          An <strong class="lede-emphasis">offline-first</strong> code review tool that helps you understand and navigate the changes in a pull request. See what changed, how it
+          runs and what it can break before you read the diff, built on your machine with no model. When you want the why, your coding agent explains each part and flags
+          potential bugs.
         </p>
         <div class="hero-actions">
           <InstallCommand />
-          <p class="demo-line">or <a class="quiet-link" href={DEMO_HREF}>see it in action</a></p>
+          <p class="demo-line">or <a class="quiet-link" href={DEMO_HREF}>try our demo to see it firsthand</a>!</p>
         </div>
       </div>
     </div>
@@ -52,11 +54,21 @@ const LOCAL_FACTS = [
 
   <div class="page-column">
     <FeatureSection
+      id="change-overview"
+      title="Take in the whole change first."
+      subtitle="Every changed code block, sorted by the kind of code it is."
+      summary="Spot the new server action, the schema change or the validation rule before you open a file. The Change Overview puts each changed code block in a row with others of its kind and marks it added, modified or deleted. Flight Plan builds it from the code with no agent, and a card with a waypoint takes you straight to its code."
+      isFlipped={false}
+    >
+      <Screenshot light={CHANGE_OVERVIEW_SHOT.light} dark={CHANGE_OVERVIEW_SHOT.dark} alt={CHANGE_OVERVIEW_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
+    </FeatureSection>
+
+    <FeatureSection
       id="trace-flow"
       title="See how the change runs."
       subtitle="From the first trigger to the changed line, on one board."
-      summary="Flight Plan draws a Trace Diagram from the syntax trees: what starts the code, which functions it passes through, and where it reaches your change. Your agent labels each step in plain words, so you can follow the behaviour without jumping between files."
-      isFlipped={false}
+      summary="Follow the behaviour without jumping between files. Flight Plan draws the path from the syntax trees, from what starts the code through each function it passes to the line you changed, and tags each card with the kind of code it is. Your agent can label each step in plain words."
+      isFlipped={true}
     >
       <FeatureVideo poster={TRACE_POSTER} videos={TRACE_VIDEOS} sizes={FEATURE_IMAGE_SIZES} />
     </FeatureSection>
@@ -65,8 +77,8 @@ const LOCAL_FACTS = [
       id="blast"
       title="Find what breaks before you merge."
       subtitle="The blast radius, including files the diff never shows."
-      summary="Flight Plan maps every file the change reaches through its imports and marks the ones that break or behave differently. You catch trouble in code the pull request never touched while you are still reviewing it."
-      isFlipped={true}
+      summary="Catch trouble in code the pull request never touched while you are still reviewing it. Flight Plan maps every file the change reaches through its imports, and your agent can check each one for what breaks or behaves differently."
+      isFlipped={false}
     >
       <FeatureVideo poster={BLAST_POSTER} videos={BLAST_VIDEOS} sizes={FEATURE_IMAGE_SIZES} />
     </FeatureSection>
@@ -75,8 +87,8 @@ const LOCAL_FACTS = [
       id="waypoints"
       title="See the risk on the line that causes it."
       subtitle="Each part of the change explained, risks included."
-      summary="Your agent splits each file into waypoints and explains what each one adds or changes, right above its lines. When a waypoint carries a risk, it says what could happen, traces how it gets there and shows you the fix. You know where to slow down before you start reading."
-      isFlipped={false}
+      summary="Know where to slow down before you start reading. Flight Plan marks each changed block of code as a waypoint, and your agent explains what it adds or changes, right above its lines. When it finds a risk, it says what could happen, traces how it gets there and shows you the fix."
+      isFlipped={true}
     >
       <FeatureVideo poster={WAYPOINTS_POSTER} videos={WAYPOINTS_VIDEOS} sizes={FEATURE_IMAGE_SIZES} />
     </FeatureSection>
@@ -85,8 +97,8 @@ const LOCAL_FACTS = [
       id="filters"
       title="Read only the parts you came for."
       subtitle="The walkthrough, narrowed to the waypoints you want to check."
-      summary="Flight Plan sorts every waypoint by what it declares, such as a component or a hook, and by what your agent found in it. Pick the ones you want and the walkthrough hides the rest, so you can go straight to the components and hooks."
-      isFlipped={true}
+      summary="Go straight to the components and hooks, or to the code your agent flagged. Flight Plan sorts every waypoint by the kind of code it changes and by whether that code was added, modified or removed. Pick what you want and the walkthrough hides the rest."
+      isFlipped={false}
     >
       <FeatureVideo poster={FILTERS_POSTER} videos={FILTERS_VIDEOS} sizes={FEATURE_IMAGE_SIZES} />
     </FeatureSection>
@@ -95,18 +107,18 @@ const LOCAL_FACTS = [
       id="tooltips"
       title="Look up any name without leaving the diff."
       subtitle="Where each name in the code is defined, and where it is used."
-      summary="Hover a name and Flight Plan shows where it comes from. For an exported function, it lists the files that use it; for a variable, it shows the line that defines it. You follow the code without opening another tab."
-      isFlipped={false}
+      summary="Follow the code without opening another tab. Hover a name and Flight Plan shows where it comes from. An exported function lists the files that use it, and a variable shows the line that defines it."
+      isFlipped={true}
     >
       <FeatureVideo poster={TOOLTIPS_POSTER} videos={TOOLTIPS_VIDEOS} sizes={FEATURE_IMAGE_SIZES} />
     </FeatureSection>
 
     <FeatureSection
       id="customize"
-      title="Reviews written your way."
+      title="Explanations written your way."
       subtitle="Pick a preset, or tune every prompt yourself."
-      summary="Don't like how your agent writes a review? No problem. Every part of a review has its own prompt, from the overall writing style down to how a single waypoint is worded, and you can rewrite any of them. Start from one of the four presets that ship with Flight Plan, duplicate it to make it yours, and turn the diagrams and findings on or off."
-      isFlipped={true}
+      summary="Don't like how your agent writes? No problem. Get short notes, or explanations for someone new to the code. Every part your agent writes has its own prompt, from the overall writing style down to how a single waypoint is worded, and you can rewrite any of them. Start from one of the four presets that ship with Flight Plan and duplicate it to make it yours."
+      isFlipped={false}
     >
       <Screenshot light={CUSTOMIZE_SHOT.light} dark={CUSTOMIZE_SHOT.dark} alt={CUSTOMIZE_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
     </FeatureSection>
@@ -115,7 +127,10 @@ const LOCAL_FACTS = [
     <section class="closing" aria-labelledby="closing-title">
       <div class="closing-copy">
         <h2 id="closing-title">Your next review, on your machine.</h2>
-        <p>Flight Plan works with Claude Code, Codex and Cursor, on GitHub, GitLab, Bitbucket or plain git. It reads TypeScript, JavaScript, Python and Vue, and needs Node.js 22 or later.</p>
+        <p>
+          Flight Plan reads TypeScript, JavaScript, Python and Vue, from local git or from GitHub, GitLab and Bitbucket. Add Claude Code, Codex or Cursor when you want each change
+          explained and checked for bugs. It needs Node.js 22 or later.
+        </p>
       </div>
       <dl class="local-facts">
         {

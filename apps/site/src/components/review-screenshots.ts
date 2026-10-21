@@ -1,5 +1,6 @@
 import blastPosterDark from "@/assets/screenshots/blast-poster-dark.png"
 import blastPosterLight from "@/assets/screenshots/blast-poster-light.png"
+import changeOverview from "@/assets/screenshots/change-overview.png"
 import customizeDark from "@/assets/screenshots/customize-dark.png"
 import customizeLight from "@/assets/screenshots/customize-light.png"
 import heroPosterDark from "@/assets/screenshots/hero-poster-dark.png"
@@ -22,6 +23,12 @@ export const HERO_POSTER = {
 export const HERO_VIDEOS = {
   light: { webm: "/media/hero-light.webm", mp4: "/media/hero-light.mp4" },
   dark: { webm: "/media/hero-dark.webm", mp4: "/media/hero-dark.mp4" },
+} as const
+
+export const CHANGE_OVERVIEW_SHOT = {
+  light: changeOverview,
+  dark: changeOverview,
+  alt: "The Change Overview of a review. The changed code blocks sit in rows by classification, Server action, Schema / data model, Validation, File and Logic, and each card is marked Added or Modified.",
 } as const
 
 export const TRACE_POSTER = {
