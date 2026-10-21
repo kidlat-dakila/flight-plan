@@ -59,13 +59,17 @@ const SCROLL_SETTLE_MS = 900
 const READING_LINE_PX = 120
 const NO_FRAME = 0
 const ANCHOR_SEPARATOR = "\n"
+const WAYPOINT_FOCUS_ATTRIBUTE = "data-waypoint-focus"
 
 export const scrollToAnchor = (anchorId: string): void => {
   document.getElementById(anchorId)?.scrollIntoView({ block: "start" })
 }
 
+const focusElementsOf = (waypointId: string): Element[] =>
+  [...document.querySelectorAll(`[${WAYPOINT_FOCUS_ATTRIBUTE}]`)].filter((element) => element.getAttribute(WAYPOINT_FOCUS_ATTRIBUTE) === waypointId)
+
 const visibleShareOf = (waypointId: string): number => {
-  const rects = [...document.querySelectorAll(`[data-waypoint-focus="${CSS.escape(waypointId)}"]`)].map((element) => element.getBoundingClientRect())
+  const rects = focusElementsOf(waypointId).map((element) => element.getBoundingClientRect())
   if (rects.length === 0) return 0
   const top = Math.min(...rects.map((rect) => rect.top))
   const bottom = Math.max(...rects.map((rect) => rect.bottom))

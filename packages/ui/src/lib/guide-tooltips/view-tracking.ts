@@ -7,8 +7,11 @@ const VIEW_ATTRIBUTE = "data-view-section-id"
 
 const ANCHOR_SEPARATOR = "\n"
 
+const holdsAnchor = (element: Element, anchorId: string): boolean =>
+  anchorId !== "" && element.contains(document.getElementById(anchorId))
+
 const isRailSection = (element: Element, railAnchorIds: ReadonlySet<string>): boolean =>
-  railAnchorIds.has(element.id) || [...railAnchorIds].some((anchorId) => anchorId !== "" && element.querySelector(`[id="${CSS.escape(anchorId)}"]`) !== null)
+  railAnchorIds.has(element.id) || [...railAnchorIds].some((anchorId) => holdsAnchor(element, anchorId))
 
 const placementOf = (element: Element, dominantView: Element | null, railAnchorIds: ReadonlySet<string>): ViewPlacement => {
   if (element === dominantView) return "dominant"
