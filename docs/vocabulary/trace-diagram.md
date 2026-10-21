@@ -470,6 +470,8 @@ On the page a card names its classification after its type ("Route • API route
 
 The author of a Flight Plan changes the diagram on their own page. Every change is saved at once, and none of them changes the status of the artifact.
 
+Clearing the diagram and removing it are asked first: the page saves them only once the author confirms.
+
 **No change to the cards or the lines rewrites the description.** It stays as it was written, also after the cards and the lines it tells of changed, until the author edits it.
 
 **A generated diagram is only changed by its author.** Nothing an author does elsewhere generates it again or adds, removes or moves a card: not arranging the segments, not changing the label or the files of a segment, not editing a context. Only the changes of this table change it.

@@ -51,9 +51,5 @@ export const useDragPan = () => {
     event.preventDefault()
   }
 
-  const resetPan = () => {
-    setOffset(ORIGIN)
-  }
-
-  return { offset, isDragging, startDrag, swallowClickAfterDrag, panTo: setOffset, resetPan }
+  return { offset, isDragging, startDrag, swallowClickAfterDrag, panTo: setOffset }
 }

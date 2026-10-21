@@ -97,15 +97,15 @@ const BlastBand = ({
         onWriteUpFile={onWriteUpFile}
         navigation={{
           anchorId,
-          leadingGroup: views.length < FEWEST_VIEWS_TO_SWITCH
+          groups: views.length < FEWEST_VIEWS_TO_SWITCH
             ? []
-            : views.map((candidate) => navigatorButtonOf({
+            : [views.map((candidate) => navigatorButtonOf({
                 key: VIEW_KEYS[candidate.id],
                 label: candidate.label,
                 description: candidate.description,
                 isPressed: candidate.id === view.id,
                 onRun: () => { setChosenViewId(candidate.id) },
-              })),
+              }))],
         }}
         authoring={renderImpactEditor === null
           ? null

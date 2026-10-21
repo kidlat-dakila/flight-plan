@@ -8,7 +8,7 @@ import Unwritten from "@/components/Unwritten"
 import { WriteUpOffer } from "@/components/WriteUpIcon"
 import { straightPath, type Point } from "@/lib/diagram-path"
 import { neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
-import { navigatorButtonOf, WRITE_UP_KEY, type NavigatorButton } from "@/lib/navigator-controls"
+import { navigatorButtonOf, WRITE_UP_KEY, type NavigatorButton, type NavigatorGroup } from "@/lib/navigator-controls"
 import type { CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 
 interface BlastFileRow {
@@ -126,6 +126,9 @@ const writeUpButtonsOf = (node: BlastNode | null, onWriteUpFile: ((path: string)
     ? []
     : [navigatorButtonOf({ key: WRITE_UP_KEY, label: WRITE_UP_FILE_LABEL, onRun: () => { onWriteUpFile(node.path) } })]
 
+const withButtonsInLastGroup = (groups: readonly NavigatorGroup[], buttons: readonly NavigatorButton[]): NavigatorGroup[] =>
+  groups.length === 0 ? [buttons] : [...groups.slice(0, -1), [...groups[groups.length - 1], ...buttons]]
+
 const BlastDiagram = ({ title, board, codeLinks, authoring, navigation = null, onWriteUpFile = null, onOpenCodeLink, onOpenFile }: BlastDiagramProps) => {
   const markerId = useId()
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
@@ -153,7 +156,7 @@ const BlastDiagram = ({ title, board, codeLinks, authoring, navigation = null, o
       height={board.height}
       isFullScreen={isFullScreen}
       isCentred
-      navigation={navigation === null ? null : { ...navigation, leadingGroup: [...navigation.leadingGroup, ...writeUpButtonsOf(selectedNode, onWriteUpFile)] }}
+      navigation={navigation === null ? null : { ...navigation, groups: withButtonsInLastGroup(navigation.groups, writeUpButtonsOf(selectedNode, onWriteUpFile)) }}
       onFullScreenChange={(isOpening) => {
         setIsFullScreen(isOpening)
         if (!isOpening) closePanel()

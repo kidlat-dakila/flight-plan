@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import type { ComponentProps } from "react"
 import TraceBand, { type TraceBandAuthoring } from "@/components/TraceBand"
+import { findNavigator, findNavigatorButton, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
 
 type TraceBandProps = ComponentProps<typeof TraceBand>
 
@@ -153,19 +154,39 @@ describe("TraceBand", () => {
 
     expect(authoring.onAddDiagram).toHaveBeenCalledTimes(1)
     expect(screen.getByText("This segment has no Trace Diagram.")).toBeTruthy()
-    expect(screen.queryByRole("button", { name: "Add a card" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Add card" })).toBeNull()
   })
 
-  it("offers an author to add a card and to remove the diagram in the toolbar of the board, and nothing to clear in a diagram with no card", () => {
+  it("offers an author to add a card and to remove the diagram in the review navigator, and nothing to clear in a diagram with no card", async () => {
     const authoring = createAuthoring()
-    render(<TraceBand {...createProps({ authoring })} />)
+    renderInNavigator(<TraceBand {...createProps({ anchorId: SECTION_ANCHOR_ID, authoring })} />)
 
-    fireEvent.click(screen.getByRole("button", { name: "Add a card" }))
-    fireEvent.click(screen.getByRole("button", { name: "Remove the diagram" }))
+    fireEvent.click(await findNavigatorButton("Add card"))
+    fireEvent.click(await findNavigatorButton("Clear diagram"))
+    fireEvent.click(await findNavigatorButton("Remove diagram"))
+    fireEvent.click(within(await screen.findByRole("dialog", { name: "Remove this diagram?" })).getByRole("button", { name: "Remove diagram" }))
 
     expect(authoring.board.onAddCard).toHaveBeenCalledTimes(1)
     expect(authoring.board.onRemoveDiagram).toHaveBeenCalledTimes(1)
-    expect(screen.getByRole("button", { name: "Clear the diagram" })).toHaveProperty("disabled", true)
+    expect(authoring.board.onClearDiagram).not.toHaveBeenCalled()
+    expect((await findNavigatorButton("Clear diagram")).getAttribute("aria-disabled")).toBe("true")
+  })
+
+  it("leaves the keys of the diagram alone while the author types", async () => {
+    const authoring = createAuthoring()
+    renderInNavigator(
+      <>
+        <input aria-label="A note" />
+        <TraceBand {...createProps({ anchorId: SECTION_ANCHOR_ID, authoring })} />
+      </>,
+    )
+    await findNavigatorButton("Add card")
+
+    fireEvent.keyDown(screen.getByRole("textbox", { name: "A note" }), { key: "c" })
+    fireEvent.keyDown(screen.getByRole("textbox", { name: "A note" }), { key: "l" })
+
+    expect(authoring.board.onAddCard).not.toHaveBeenCalled()
+    expect(authoring.board.onRemoveDiagram).not.toHaveBeenCalled()
   })
 
   it("gives an author no instructions above the board", () => {
@@ -174,11 +195,14 @@ describe("TraceBand", () => {
     expect(screen.queryByText(/Drag a card to move it/)).toBeNull()
   })
 
-  it("offers a reviewer none of it", () => {
-    render(<TraceBand {...createProps()} />)
+  it("offers a reviewer none of it", async () => {
+    renderInNavigator(<TraceBand {...createProps({ anchorId: SECTION_ANCHOR_ID })} />)
+    const navigator = within(await findNavigator())
 
-    expect(screen.queryByRole("button", { name: "Add a card" })).toBeNull()
-    expect(screen.queryByRole("button", { name: "Remove the diagram" })).toBeNull()
-    expect(screen.queryByRole("button", { name: "Clear the diagram" })).toBeNull()
+    await findNavigatorButton("Collapse all")
+
+    expect(navigator.queryByRole("button", { name: "Add card" })).toBeNull()
+    expect(navigator.queryByRole("button", { name: "Remove diagram" })).toBeNull()
+    expect(navigator.queryByRole("button", { name: "Clear diagram" })).toBeNull()
   })
 })

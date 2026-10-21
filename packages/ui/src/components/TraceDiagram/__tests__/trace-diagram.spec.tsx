@@ -484,13 +484,36 @@ const renderAuthoredDiagram = (authoring: TraceAuthoring, nodes: readonly TraceN
 const handleSelectorOf = (handleIdStart: string): string => `[data-handleid^="${handleIdStart}"]`
 
 describe("TraceDiagram for an author", () => {
-  it("asks to clear the diagram when the eraser of the toolbar is pressed", () => {
+  it("adds a card with C, and asks before it clears the diagram with K or removes it with L, from the review navigator", async () => {
     const authoring = createAuthoring()
-    renderAuthoredDiagram(authoring)
+    renderInNavigator(
+      <TraceDiagram title="A checkout" nodes={NODES} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} authoring={authoring} navigatorAnchorId={SECTION_ANCHOR_ID} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+    )
+    await findNavigatorButton("Clear diagram")
 
-    fireEvent.click(screen.getByRole("button", { name: "Clear the diagram" }))
+    fireEvent.keyDown(document.body, { key: "c" })
+    fireEvent.keyDown(document.body, { key: "k" })
+    const clearing = await screen.findByRole("dialog", { name: "Clear this diagram?" })
+
+    expect(authoring.onAddCard).toHaveBeenCalledTimes(1)
+    expect(authoring.onClearDiagram).not.toHaveBeenCalled()
+
+    fireEvent.click(within(clearing).getByRole("button", { name: "Clear diagram" }))
+    expect(screen.queryByRole("dialog", { name: "Clear this diagram?" })).toBeNull()
+
+    fireEvent.keyDown(document.body, { key: "l" })
+    fireEvent.click(within(await screen.findByRole("dialog", { name: "Remove this diagram?" })).getByRole("button", { name: "Cancel" }))
 
     expect(authoring.onClearDiagram).toHaveBeenCalledTimes(1)
+    expect(authoring.onRemoveDiagram).not.toHaveBeenCalled()
+  })
+
+  it("keeps the author's actions off the board", () => {
+    renderAuthoredDiagram(createAuthoring())
+
+    expect(screen.queryByRole("button", { name: "Add card" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Clear diagram" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Remove diagram" })).toBeNull()
   })
 
   it("offers nothing to modify or delete a card to a reviewer", () => {

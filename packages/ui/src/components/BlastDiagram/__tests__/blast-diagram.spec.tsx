@@ -2,6 +2,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react"
 import BlastDiagram, { type BlastAuthoring, type BlastBoard, type BlastNode } from "@/components/BlastDiagram"
 import { findNavigatorButton, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
 import { paragraph } from "@/lib/__tests__/review-samples"
+import { navigatorButtonOf } from "@/lib/navigator-controls"
 
 const fileList = (heading: string, paths: readonly string[]): BlastNode["imports"] => ({
   heading,
@@ -143,7 +144,7 @@ describe("BlastDiagram", () => {
         board={BOARD}
         codeLinks={{}}
         authoring={null}
-        navigation={{ anchorId: SECTION_ANCHOR_ID, leadingGroup: [] }}
+        navigation={{ anchorId: SECTION_ANCHOR_ID, groups: [] }}
         onWriteUpFile={onWriteUpFile}
         onOpenCodeLink={vi.fn()}
         onOpenFile={vi.fn()}
@@ -165,6 +166,26 @@ describe("BlastDiagram", () => {
     const changed = await screen.findByRole("region", { name: "src/price.ts" })
 
     expect(within(changed).queryByRole("button", { name: /Write up/ })).toBeNull()
+  })
+
+  it("puts the write-up of a file in the group of the views the navigator is handed", async () => {
+    renderInNavigator(
+      <BlastDiagram
+        title="Blast Diagram"
+        board={BOARD}
+        codeLinks={{}}
+        authoring={null}
+        navigation={{ anchorId: SECTION_ANCHOR_ID, groups: [[navigatorButtonOf({ key: "e", label: "Export bound", onRun: vi.fn() })]] }}
+        onWriteUpFile={vi.fn()}
+        onOpenCodeLink={vi.fn()}
+        onOpenFile={vi.fn()}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole("button", { name: "logger.ts" }))
+    const writeUp = await findNavigatorButton("Write up")
+
+    expect((await findNavigatorButton("Export bound")).closest("div")).toBe(writeUp.closest("div"))
   })
 
   it("spins the ring while the agent assesses the file, and offers no write-up then", async () => {

@@ -118,7 +118,7 @@ describe("BlastBand", () => {
   it("offers no switch when the diagram has one view", async () => {
     renderBand({ views: [EXPORT_BOUND] })
 
-    expect(await navigatorLabels("Zoom in")).toStrictEqual(["Jump to", "Zoom in", "Zoom out", "Full screen", "Reset view"])
+    expect(await navigatorLabels("Full screen")).toStrictEqual(["Jump to", "Full screen"])
     expect(screen.getByRole("button", { name: "cart.ts" })).toBeTruthy()
   })
 })

@@ -61,10 +61,6 @@ node_named() {
   echo "[...$BOARD.querySelectorAll('button')].find(element=>element.textContent.startsWith('$1'))"
 }
 
-control_named() {
-  echo "[...document.querySelectorAll('button')].find(element=>element.textContent.trim().startsWith('$1'))"
-}
-
 drag_board_by() {
   local distance="$1"
   browse mouse move "$DRAG_START_X" "$DRAG_START_Y"
@@ -121,7 +117,7 @@ open_review() {
 open_board_full_screen() {
   local heading="$1"
   scroll_element_to "$heading" 80
-  mark "$(control_named "Full screen")"
+  mark "[...document.querySelectorAll('button[aria-label=\"Full screen\"]')].find(element=>element.getBoundingClientRect().top>0)"
   browse click "#$TARGET_ID"
   browse wait "$STEP_MS"
 }

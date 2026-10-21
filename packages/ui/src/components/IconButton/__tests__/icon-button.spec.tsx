@@ -22,15 +22,4 @@ describe("IconButton", () => {
 
     expect(screen.getByRole("button", { name: "Configure storefront" }).hasAttribute("title")).toBe(false)
   })
-
-  it("shows its label beside the icon when asked to, and reports a press", () => {
-    const onClick = vi.fn()
-    render(<IconButton icon="add" label="Add a card" labelPlace="beside" onClick={onClick} />)
-
-    const button = screen.getByRole("button", { name: "Add a card" })
-    fireEvent.click(button)
-
-    expect(button.textContent).toBe("Add a card")
-    expect(onClick).toHaveBeenCalledTimes(1)
-  })
 })

@@ -27,8 +27,8 @@ Back and Next follow the order of the section rail and carry on from the end of 
 | Section | Controls |
 |---|---|
 | Context | **Expand all** or **Collapse all** (Q), for the accordion sections of the context |
-| Trace Diagram | **Collapse all** or **Expand all** nodes (Q), **Zoom in** (Z), **Zoom out** (X), **Full screen** (F), **Reset view** (T) |
-| Blast Diagram | **Export bound** (E) and **Import bound** (Q) when it has both views, **Zoom in** (Z), **Zoom out** (X), **Full screen** (F), **Reset view** (T) |
+| Trace Diagram | **Collapse all** or **Expand all** nodes (Q), then for the author of the Flight Plan **Add card** (C), **Clear diagram** (K) and **Remove diagram** (L), then **Full screen** (F) |
+| Blast Diagram | **Export bound** (E) and **Import bound** (Q) when it has both views, **Full screen** (F) |
 | Code Walkthrough | **Previous waypoint** (A), the position, **Next waypoint** (D), **Mark as reviewed** (S), **Add comment** (C), **Filter** (F), **Collapse all** or **Expand all** files (Q), **Collapse file** or **Expand file** (E), **Expand waypoint** or **Collapse waypoint** (R) |
 
 A control that is on, such as Full screen or Reviewed, is drawn pressed. Pressing a key flashes its control, so the reader sees what the key did.
@@ -94,6 +94,8 @@ Collapsing files and filtering can take away the code the reader was reading. Wh
 ## Full screen
 
 A diagram in full screen keeps the navigator, inside the full-screen view, with the diagram's own controls. Jump to, Back and Next still work from there: they leave full screen and go to the section.
+
+Zooming is not a control of the navigator. Zoom in and Zoom out are buttons at the top right of the diagram's board, beside a Full screen button that does what F does and reads Leave full screen while the diagram fills the window.
 
 ## Fitting the screen
 

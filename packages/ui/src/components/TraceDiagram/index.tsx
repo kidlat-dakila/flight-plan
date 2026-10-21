@@ -34,6 +34,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { useState } from "react"
+import ConfirmDialog from "@/components/ConfirmDialog"
 import DiagramBoard, { type BoardView } from "@/components/DiagramBoard"
 import { DiagramEdge, EdgeMarkerDefs, useEdgeMarkers, type EdgeKind, type EdgeMarkers, type Emphasis } from "@/components/DiagramEdges"
 import DiagramNodePanel from "@/components/DiagramNodePanel"
@@ -161,6 +162,14 @@ export interface TraceAuthoring {
   readonly onRemoveCard: (nodeId: string) => void
 }
 
+type DiagramDiscard = "clear" | "remove"
+
+interface DiscardConfirmation {
+  readonly title: string
+  readonly description: string
+  readonly confirmLabel: string
+}
+
 export interface CardMoving {
   readonly onMoveCards: (places: readonly CardPlace[]) => void
 }
@@ -281,9 +290,25 @@ const EXPAND_LABEL = "Show the nodes this node leads to again"
 const EDIT_CARD_LABEL = "Modify this card"
 const REMOVE_CARD_LABEL = "Delete this card and the cards it points to"
 const REMOVE_LINE_LABEL = "Remove the selected line"
-const ADD_CARD_LABEL = "Add a card"
-const CLEAR_DIAGRAM_LABEL = "Clear the diagram"
-const REMOVE_DIAGRAM_LABEL = "Remove the diagram"
+const ADD_CARD_LABEL = "Add card"
+const CLEAR_DIAGRAM_LABEL = "Clear diagram"
+const REMOVE_DIAGRAM_LABEL = "Remove diagram"
+const NO_CARD_HINT = "This diagram has no card yet."
+const ADD_CARD_KEY = "c"
+const CLEAR_DIAGRAM_KEY = "k"
+const REMOVE_DIAGRAM_KEY = "l"
+const DISCARD_CONFIRMATIONS: Readonly<Record<DiagramDiscard, DiscardConfirmation>> = {
+  clear: {
+    title: "Clear this diagram?",
+    description: "Every card, every line and the description go. The diagram stays, empty.",
+    confirmLabel: CLEAR_DIAGRAM_LABEL,
+  },
+  remove: {
+    title: "Remove this diagram?",
+    description: "The diagram goes from this segment with its cards, its lines and its description.",
+    confirmLabel: REMOVE_DIAGRAM_LABEL,
+  },
+}
 const DRAW_LINE_LABEL = "Draw a line from this row"
 const CARD_SIDES: readonly CardSide[] = ["left", "top", "bottom"]
 const SIDE_POSITIONS: Readonly<Record<CardSide, Position>> = { left: Position.Left, top: Position.Top, bottom: Position.Bottom }
@@ -424,6 +449,24 @@ const writeUpButtonsOf = (node: TraceNode | null, onWriteUpNode: ((nodeId: strin
   node === null || onWriteUpNode === null || !node.isDraft || node.isBeingWritten
     ? []
     : [navigatorButtonOf({ key: WRITE_UP_KEY, label: WRITE_UP_CARD_LABEL, onRun: () => { onWriteUpNode(node.id) } })]
+
+const authoringButtonsOf = (authoring: TraceAuthoring | null, cardCount: number, onAskDiscard: (discard: DiagramDiscard) => void): NavigatorButton[] =>
+  authoring === null
+    ? []
+    : [
+        navigatorButtonOf({ key: ADD_CARD_KEY, label: ADD_CARD_LABEL, onRun: authoring.onAddCard }),
+        navigatorButtonOf({
+          key: CLEAR_DIAGRAM_KEY,
+          label: CLEAR_DIAGRAM_LABEL,
+          isDisabled: authoring.isPending || cardCount === 0,
+          disabledHint: cardCount === 0 ? NO_CARD_HINT : null,
+          onRun: () => { onAskDiscard("clear") },
+        }),
+        navigatorButtonOf({ key: REMOVE_DIAGRAM_KEY, label: REMOVE_DIAGRAM_LABEL, isDisabled: authoring.isPending, onRun: () => { onAskDiscard("remove") } }),
+      ]
+
+const discardOf = (authoring: TraceAuthoring, discard: DiagramDiscard): (() => void) =>
+  discard === "clear" ? authoring.onClearDiagram : authoring.onRemoveDiagram
 
 const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle }: NodeBoxProps) => {
   const TypeIcon = Object.hasOwn(TYPE_ICONS, node.type) ? TYPE_ICONS[node.type] : WorkflowIcon
@@ -880,6 +923,7 @@ const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isRevie
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const [concealment, setConcealment] = useState<Concealment>(NOTHING_CONCEALED)
   const [isFullScreen, setIsFullScreen] = useState(false)
+  const [askedDiscard, setAskedDiscard] = useState<DiagramDiscard | null>(null)
   const markers = useEdgeMarkers()
   const { collapsedNodeIds, focusedNodeId } = concealment
   const topIdById = topIdsOf(nodes)
@@ -1033,97 +1077,104 @@ const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isRevie
         data: { edgeId: NEW_CARD_LINE_ID, isSelectable: false, bends: [], emphasis: null, hasArrow: true, markers },
       }]
   return (
-    <DiagramBoard
-      label={title}
-      width={layout.width}
-      height={layout.height}
-      isFullScreen={isFullScreen}
-      onFullScreenChange={(isOpening) => {
-        setIsFullScreen(isOpening)
-        if (!isOpening) setSelectedNodeId(null)
-      }}
-      onPanelClose={() => { setSelectedNodeId(null) }}
-      navigation={navigatorAnchorId === null
-        ? null
-        : {
-            anchorId: navigatorAnchorId,
-            leadingGroup: [
-              navigatorButtonOf({
-                key: COLLAPSE_KEY,
-                label: collapsedNodeIds.length === 0 ? COLLAPSE_ALL_LABEL : EXPAND_ALL_LABEL,
-                onRun: () => {
-                  conceal(collapsedNodeIds.length === 0 ? { collapsedNodeIds: leadingIds, focusedNodeId: null } : NOTHING_CONCEALED)
-                },
-              }),
-              ...writeUpButtonsOf(selectedNode, onWriteUpNode),
-            ],
-          }}
-      actions={authoring === null
+    <>
+      <DiagramBoard
+        label={title}
+        width={layout.width}
+        height={layout.height}
+        isFullScreen={isFullScreen}
+        onFullScreenChange={(isOpening) => {
+          setIsFullScreen(isOpening)
+          if (!isOpening) setSelectedNodeId(null)
+        }}
+        onPanelClose={() => { setSelectedNodeId(null) }}
+        navigation={navigatorAnchorId === null
+          ? null
+          : {
+              anchorId: navigatorAnchorId,
+              groups: [
+                [
+                  navigatorButtonOf({
+                    key: COLLAPSE_KEY,
+                    label: collapsedNodeIds.length === 0 ? COLLAPSE_ALL_LABEL : EXPAND_ALL_LABEL,
+                    onRun: () => {
+                      conceal(collapsedNodeIds.length === 0 ? { collapsedNodeIds: leadingIds, focusedNodeId: null } : NOTHING_CONCEALED)
+                    },
+                  }),
+                  ...writeUpButtonsOf(selectedNode, onWriteUpNode),
+                ],
+                authoringButtonsOf(authoring, nodes.length, setAskedDiscard),
+              ],
+            }}
+        actions={authoring === null || selectedLine === null
+          ? null
+          : (
+              <IconButton
+                icon="delete"
+                label={REMOVE_LINE_LABEL}
+                isDisabled={authoring.isPending}
+                onClick={() => {
+                  authoring.onRemoveLine({ edgeId: selectedLine.id, from: selectedLine.from, to: selectedLine.to })
+                  setSelectedLineId(null)
+                }}
+              />
+            )}
+        panel={selectedNode === null
+          ? null
+          : (
+              <DiagramNodePanel
+                title={selectedNode.label}
+                kindLabel={selectedNode.typeLabel}
+                target={selectedNode.codeViews.length === 0 ? selectedTarget : null}
+                codeViews={selectedNode.codeViews.map((view) => (
+                  <NodeCodeView
+                    key={view.id}
+                    view={view}
+                    focusedLines={selectedRowLines}
+                    isReviewPending={isReviewPending}
+                    codeLinks={codeLinks}
+                    codeDefinitions={codeDefinitions}
+                    onOpenCodeLink={onOpenCodeLink}
+                    onWaypointReviewedChange={onWaypointReviewedChange}
+                  />
+                ))}
+                onClose={() => { setSelectedNodeId(null) }}
+              >
+                {selectedNode.isDraft
+                  ? (
+                      <WriteUpOffer
+                        hint={selectedNode.hint}
+                        label={selectedNode.isBeingWritten ? CARD_BEING_WRITTEN_LABEL : CARD_NO_WRITE_UP_LABEL}
+                        isBeingWritten={selectedNode.isBeingWritten}
+                        buttonLabel={WRITE_UP_CARD_LABEL}
+                        onWriteUp={onWriteUpNode === null ? null : () => { onWriteUpNode(selectedNode.id) }}
+                      />
+                    )
+                  : null}
+                {selectedNode.description === null
+                  ? null
+                  : <Prose blocks={selectedNode.description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
+              </DiagramNodePanel>
+            )}
+        renderCanvas={(view) => (
+          <ReactFlowProvider>
+            <FlowCanvas label={title} authoring={canvasAuthoring} moving={canvasMoving} width={layout.width} view={view} nodes={[...flowNodes, ...newCardNodes]} edges={[...flowEdges, ...newCardEdges]} markers={markers} />
+          </ReactFlowProvider>
+        )}
+      />
+      {authoring === null || askedDiscard === null
         ? null
         : (
-            <>
-              {selectedLine === null
-                ? null
-                : (
-                    <IconButton
-                      icon="delete"
-                      label={REMOVE_LINE_LABEL}
-                      labelPlace="beside"
-                      isDisabled={authoring.isPending}
-                      onClick={() => {
-                        authoring.onRemoveLine({ edgeId: selectedLine.id, from: selectedLine.from, to: selectedLine.to })
-                        setSelectedLineId(null)
-                      }}
-                    />
-                  )}
-              <IconButton icon="add" label={ADD_CARD_LABEL} labelPlace="beside" onClick={authoring.onAddCard} />
-              <IconButton icon="clear" label={CLEAR_DIAGRAM_LABEL} labelPlace="beside" isDisabled={authoring.isPending || nodes.length === 0} onClick={authoring.onClearDiagram} />
-              <IconButton icon="remove" label={REMOVE_DIAGRAM_LABEL} labelPlace="beside" isDisabled={authoring.isPending} onClick={authoring.onRemoveDiagram} />
-            </>
+            <ConfirmDialog
+              {...DISCARD_CONFIRMATIONS[askedDiscard]}
+              onConfirm={() => {
+                discardOf(authoring, askedDiscard)()
+                setAskedDiscard(null)
+              }}
+              onCancel={() => { setAskedDiscard(null) }}
+            />
           )}
-      panel={selectedNode === null
-        ? null
-        : (
-            <DiagramNodePanel
-              title={selectedNode.label}
-              kindLabel={selectedNode.typeLabel}
-              target={selectedNode.codeViews.length === 0 ? selectedTarget : null}
-              codeViews={selectedNode.codeViews.map((view) => (
-                <NodeCodeView
-                  key={view.id}
-                  view={view}
-                  focusedLines={selectedRowLines}
-                  isReviewPending={isReviewPending}
-                  codeLinks={codeLinks}
-                  codeDefinitions={codeDefinitions}
-                  onOpenCodeLink={onOpenCodeLink}
-                  onWaypointReviewedChange={onWaypointReviewedChange}
-                />
-              ))}
-              onClose={() => { setSelectedNodeId(null) }}
-            >
-              {selectedNode.isDraft
-                ? (
-                    <WriteUpOffer
-                      hint={selectedNode.hint}
-                      label={selectedNode.isBeingWritten ? CARD_BEING_WRITTEN_LABEL : CARD_NO_WRITE_UP_LABEL}
-                      isBeingWritten={selectedNode.isBeingWritten}
-                      buttonLabel={WRITE_UP_CARD_LABEL}
-                      onWriteUp={onWriteUpNode === null ? null : () => { onWriteUpNode(selectedNode.id) }}
-                    />
-                  )
-                : null}
-              {selectedNode.description === null
-                ? null
-                : <Prose blocks={selectedNode.description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
-            </DiagramNodePanel>
-          )}
-      renderCanvas={(view) => (
-        <ReactFlowProvider>
-          <FlowCanvas label={title} authoring={canvasAuthoring} moving={canvasMoving} width={layout.width} view={view} nodes={[...flowNodes, ...newCardNodes]} edges={[...flowEdges, ...newCardEdges]} markers={markers} />
-        </ReactFlowProvider>
-      )}
-    />
+    </>
   )
 }
 
