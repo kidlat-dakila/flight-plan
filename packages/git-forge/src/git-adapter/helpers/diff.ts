@@ -9,7 +9,9 @@ const RENAME_TO_PREFIX = "rename to "
 const NEW_SIDE_PREFIX = "+++ "
 const OLD_SIDE_PREFIX = "--- "
 const BINARY_PREFIX = "Binary files "
-const BINARY_PATTERN = /^Binary files a\/(.+?) and b\/(.+?) differ$/
+const BINARY_PATHS_PREFIX = "Binary files a/"
+const BINARY_PATHS_SEPARATOR = " and b/"
+const BINARY_PATHS_SUFFIX = " differ"
 const HEADER_PATH_OFFSET = 4
 
 interface DiffState {
@@ -28,9 +30,17 @@ function headerPath(line: string): string | null {
   return target.startsWith(prefix) ? target.slice(prefix.length) : target
 }
 
+const isBinaryPathsLine = (line: string): boolean =>
+  line.length >= BINARY_PATHS_PREFIX.length + BINARY_PATHS_SUFFIX.length
+  && line.startsWith(BINARY_PATHS_PREFIX)
+  && line.endsWith(BINARY_PATHS_SUFFIX)
+
 function binaryPath(line: string): string {
-  const match = BINARY_PATTERN.exec(line.trim())
-  return match?.[2] ?? match?.[1] ?? ""
+  const trimmed = line.trim()
+  if (!isBinaryPathsLine(trimmed)) return ""
+  const paths = trimmed.slice(BINARY_PATHS_PREFIX.length, trimmed.length - BINARY_PATHS_SUFFIX.length)
+  const separatorAt = paths.indexOf(BINARY_PATHS_SEPARATOR, 1)
+  return separatorAt === -1 ? "" : paths.slice(separatorAt + BINARY_PATHS_SEPARATOR.length)
 }
 
 function flush(state: DiffState): DiffState {

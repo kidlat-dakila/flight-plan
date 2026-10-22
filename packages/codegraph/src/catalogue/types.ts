@@ -146,6 +146,7 @@ export interface FileExport {
 export interface FilePattern {
   readonly kind: "file"
   readonly glob: string
+  readonly excludes?: readonly string[]
   readonly exports: readonly FileExport[]
   readonly versions?: string
 }

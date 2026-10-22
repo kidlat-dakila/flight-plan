@@ -1,4 +1,5 @@
 import * as crypto from "node:crypto"
+import { withoutTrailingSlashes } from "@/git-adapter/helpers/trailing-slashes"
 import {
   GitAdapterError,
   mergeReviewers,
@@ -76,7 +77,7 @@ const REVIEW_FILTERS: readonly ReviewFilterOption[] = [
 type Query = Record<string, string | number>
 
 export function gitlabApiRoot(baseUrl: string): string {
-  const trimmed = baseUrl.trim().replace(/\/+$/, "")
+  const trimmed = withoutTrailingSlashes(baseUrl.trim())
   const host = trimmed === "" ? CLOUD_URL : trimmed
   return host.endsWith(API_SUFFIX) ? host : `${host}${API_SUFFIX}`
 }
@@ -86,7 +87,7 @@ export function gitlabDiffAnchor(path: string): string {
 }
 
 function gitlabWebRoot(baseUrl: string): string {
-  const trimmed = baseUrl.trim().replace(/\/+$/, "")
+  const trimmed = withoutTrailingSlashes(baseUrl.trim())
   return (trimmed === "" ? CLOUD_URL : trimmed).replace(/\/api\/v4$/, "")
 }
 

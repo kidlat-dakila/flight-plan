@@ -1,11 +1,28 @@
 import { fixtureSources, linkToFixtureForge } from "@/__tests__/review-fixture"
 import { buildCodeLink, codeLinkIdsIn, resolveCodeTarget } from "@/code/links"
 
+const UNCLOSED_LINK_COUNT = 30_000
+
 describe("codeLinkIdsIn", () => {
   it("lists each code link once", () => {
     expect(
       codeLinkIdsIn(["[a](code:src/a.ts#one) and [b](code:src/a.ts#L3-4)", "[again](code:src/a.ts#one) [web](https://x.dev)"]),
     ).toStrictEqual(["src/a.ts#one", "src/a.ts#L3-4"])
+  })
+
+  it("keeps the brackets of a dynamic route segment in the path", () => {
+    expect(codeLinkIdsIn(["[page](code:app/[id]/page.tsx#L1-3)"])).toStrictEqual(["app/[id]/page.tsx#L1-3"])
+  })
+
+  it("keeps the parentheses of a route group or an intercepting route in the path", () => {
+    expect(codeLinkIdsIn(["[shop](code:app/(shop)/page.tsx#L1-3) and [photo](code:app/@modal/(.)photo/[id]/page.tsx#Photo)"])).toStrictEqual([
+      "app/(shop)/page.tsx#L1-3",
+      "app/@modal/(.)photo/[id]/page.tsx#Photo",
+    ])
+  })
+
+  it("stays quick on prose full of code links that never close", () => {
+    expect(codeLinkIdsIn([`](code:${"](code:!".repeat(UNCLOSED_LINK_COUNT)}`])).toStrictEqual([])
   })
 })
 

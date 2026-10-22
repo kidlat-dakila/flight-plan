@@ -38,6 +38,22 @@ describe("parseProse", () => {
     ])
   })
 
+  it("resolves a code link to a Next.js path with a route group, a dynamic segment and an intercepting route", () => {
+    const linkId = "app/(shop)/@modal/(.)photo/[id]/page.tsx#L1-3"
+
+    expect(parseInlines(`[the photo](code:${linkId})`, new Set([linkId]))).toStrictEqual([
+      { kind: "code-link", text: "the photo", isCode: false, linkId },
+    ])
+  })
+
+  it("resolves a code link to a path exactly as written, with an escaped underscore or a letter outside ASCII", () => {
+    const linkIds = ["app/%5Fsettings/page.tsx#L1-3", "app/über/page.tsx#L2"]
+
+    expect(linkIds.map((linkId) => parseInlines(`[x](code:${linkId})`, new Set(linkIds)))).toStrictEqual(
+      linkIds.map((linkId) => [{ kind: "code-link", text: "x", isCode: false, linkId }]),
+    )
+  })
+
   it("reads a heading apart from the paragraphs and the list under it", () => {
     expect(parseProse("Why it matters.\n\n## Overview\n\n- First", KNOWN)).toStrictEqual([
       { kind: "paragraph", inlines: [{ kind: "text", text: "Why it matters." }] },

@@ -3,6 +3,7 @@ import { parse as parseToml } from "smol-toml"
 import { Memo, once } from "@/shared/memo"
 import { recordOf } from "@/shared/record"
 import { mapInSequence } from "@/shared/sequence"
+import { withoutTrailingSlashes } from "@/shared/trailing-slashes"
 
 type Read = (path: string) => Promise<string | null>
 
@@ -23,7 +24,7 @@ const MODULE_EXTENSION = ".py"
 
 const isMarker = (name: string): name is Marker => MARKERS.some((marker) => marker === name)
 
-const isSrc = (value: unknown): boolean => typeof value === "string" && value.replace(/\/+$/, "") === "src"
+const isSrc = (value: unknown): boolean => typeof value === "string" && withoutTrailingSlashes(value) === "src"
 
 function join(dir: string, sub: string): string {
   const joined = dir === "" ? sub : path.posix.normalize(path.posix.join(dir, sub))

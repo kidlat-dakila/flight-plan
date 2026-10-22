@@ -1,3 +1,4 @@
+import { withoutTrailingSlashes } from "@/git-adapter/helpers/trailing-slashes"
 import { GitAdapterError, type Fetcher, type GitAdapterProblem } from "@/git-adapter/types"
 
 export interface RestConfig {
@@ -67,7 +68,7 @@ export interface Rest {
 export function createRest(config: RestConfig): Rest {
   const fetcher: Fetcher = config.fetcher ?? (async (input, init) => fetch(input, init))
   const sleep = config.sleep ?? pause
-  const base = config.baseUrl.replace(/\/+$/, "")
+  const base = withoutTrailingSlashes(config.baseUrl)
 
   const url = (path: string): string =>
     /^https?:\/\//i.test(path) ? path : `${base}/${path.replace(/^\/+/, "")}`

@@ -1,3 +1,4 @@
+import { withoutTrailingSlashes } from "@/git-adapter/helpers/trailing-slashes"
 import {
   GitAdapterError,
   mergeReviewers,
@@ -62,7 +63,7 @@ export function bitbucketAnchor(path: string, line?: number): string {
 }
 
 export function isCloudUrl(baseUrl: string): boolean {
-  const configured = baseUrl.trim().replace(/\/+$/, "")
+  const configured = withoutTrailingSlashes(baseUrl.trim())
   return configured === "" || CLOUD_HOST.test(configured)
 }
 

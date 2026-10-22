@@ -1,4 +1,4 @@
-import { fitsGlob } from "@/catalogue/matching/file-patterns"
+import { fitsFilePattern } from "@/catalogue/matching/file-patterns"
 import { METHOD_SEPARATOR } from "@/catalogue/matching/match-sites"
 import type { CatalogueLibrary, FilePattern, LibraryLanguage, SlotRuns } from "@/catalogue/types"
 import type { BlockNaming } from "@/code-blocks/libraries/types"
@@ -25,6 +25,13 @@ const WILDCARD_PATTERN = /[*?[]/
 const EXTENSION_MARK = "."
 const INDEX_NAME = "index"
 const ROUTE_GROUP_PATTERN = /^\(.*\)$/
+const SLOT_MARK = "@"
+const INTERCEPTION_PATTERN = /^(?<marks>(?:\(\.\.\))+|\(\.\.\.\)|\(\.\))(?<name>.+)$/
+const SAME_LEVEL_MARK = "(.)"
+const ROOT_MARK = "(...)"
+const LEVEL_UP_MARK = "(..)"
+const ESCAPED_UNDERSCORE_PATTERN = /%5F/gi
+const UNDERSCORE = "_"
 const PATHED_RUNS: ReadonlySet<SlotRuns> = new Set<SlotRuns>(["page", "route"])
 const WORD_BREAK_PATTERN = /[-.]/g
 
@@ -61,6 +68,23 @@ const nameWithoutExtension = (fileName: string): string => (fileName.includes(EX
 
 const namesItsFile = (glob: string): boolean => !WILDCARD_PATTERN.test(nameWithoutExtension(glob.slice(glob.lastIndexOf(FOLDER_SEPARATOR) + 1)))
 
+const urlSegmentOf = (folder: string): string => folder.replace(ESCAPED_UNDERSCORE_PATTERN, UNDERSCORE)
+
+const segmentsInterceptedFrom = (segments: readonly string[], marks: string): readonly string[] => {
+  if (marks === SAME_LEVEL_MARK) return segments
+  if (marks === ROOT_MARK) return []
+  const levelsUp = marks.length / LEVEL_UP_MARK.length
+  return segments.slice(0, Math.max(0, segments.length - levelsUp))
+}
+
+const withFolder = (segments: readonly string[], folder: string): readonly string[] => {
+  if (ROUTE_GROUP_PATTERN.test(folder) || folder.startsWith(SLOT_MARK)) return segments
+  const interception = INTERCEPTION_PATTERN.exec(folder)?.groups
+  return interception === undefined
+    ? [...segments, urlSegmentOf(folder)]
+    : [...segmentsInterceptedFrom(segments, interception.marks), urlSegmentOf(interception.name)]
+}
+
 export const routePathOf = (glob: string, packagePath: string): string | null => {
   if (!glob.includes(ANY_FOLDERS)) return null
   const root = rootsOf(glob).find((candidate) => packagePath.startsWith(`${candidate}${FOLDER_SEPARATOR}`))
@@ -68,7 +92,7 @@ export const routePathOf = (glob: string, packagePath: string): string | null =>
   const parts = packagePath.slice(root.length + FOLDER_SEPARATOR.length).split(FOLDER_SEPARATOR)
   const fileName = nameWithoutExtension(parts[parts.length - 1])
   const named = namesItsFile(glob) || fileName === INDEX_NAME ? [] : [fileName]
-  const segments = [...parts.slice(0, -1), ...named].filter((segment) => !ROUTE_GROUP_PATTERN.test(segment))
+  const segments = [...parts.slice(0, -1), ...named].reduce(withFolder, [])
   return `${FOLDER_SEPARATOR}${segments.join(FOLDER_SEPARATOR)}`
 }
 
@@ -95,7 +119,7 @@ export const listExportNamings = (manifest: FileManifest | undefined, language: 
     .flatMap((library) =>
       library.patterns
         .filter(isFilePattern)
-        .filter((pattern) => fitsGlob(pattern.glob, manifest.packagePath))
+        .filter((pattern) => fitsFilePattern(pattern, manifest.packagePath))
         .flatMap((pattern) => namingsOfPattern(library, pattern, manifest)))
 }
 

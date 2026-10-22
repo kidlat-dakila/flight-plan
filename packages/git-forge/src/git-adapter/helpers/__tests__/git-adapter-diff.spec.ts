@@ -2,6 +2,9 @@ import * as assert from "node:assert"
 import { splitDiff } from "@/git-adapter/helpers/diff"
 import { sameCommit } from "@/git-adapter/types"
 
+const BINARY_HEADER = "diff --git a/x b/x\nindex 1111111..2222222 100644\n"
+const LONG_REPEAT = 50_000
+
 const DIFF = `diff --git a/src/checkout/placeOrder.ts b/src/checkout/placeOrder.ts
 index 1111111..2222222 100644
 --- a/src/checkout/placeOrder.ts
@@ -121,5 +124,17 @@ suite("comparing commit identifiers of different lengths", () => {
     assert.ok(!sameCommit("b1b2c3d4e5f6", full))
     assert.ok(!sameCommit("", full))
     assert.ok(!sameCommit(full, ""))
+  })
+})
+
+suite("reading the path of a binary file", () => {
+  it("keeps a name that holds the word and", () => {
+    const files = splitDiff(`${BINARY_HEADER}Binary files a/cats and dogs.png and b/cats and dogs.png differ\n`)
+    assert.deepStrictEqual(files.map((file) => file.path), ["cats and dogs.png"])
+  })
+
+  it("drops a binary line it cannot read, and stays quick on a long one", () => {
+    const files = splitDiff(`${BINARY_HEADER}Binary files a/a and b/${"a and b/a".repeat(LONG_REPEAT)}\n`)
+    assert.deepStrictEqual(files, [])
   })
 })

@@ -71,3 +71,6 @@ const translate = (glob: string, closers: readonly string[] = [], translated = "
 const expressions = new Memo<string, RegExp>()
 
 export const fitsGlob = (glob: string, filePath: string): boolean => expressions.remember(glob, () => new RegExp(`^${translate(glob)}$`)).test(filePath)
+
+export const fitsFilePattern = ({ glob, excludes = [] }: { readonly glob: string, readonly excludes?: readonly string[] }, filePath: string): boolean =>
+  fitsGlob(glob, filePath) && !excludes.some((excluded) => fitsGlob(excluded, filePath))
