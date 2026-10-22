@@ -9,12 +9,13 @@ import CommentThread, {
   type ThreadResolution,
 } from "@/components/CommentThread"
 import { FindingChip } from "@/components/FindingMark"
+import type { WaypointWriteUp } from "@/components/MissingWriteUp"
 import { HoverProse } from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
 import { SpotlightChip, type Spotlight } from "@/components/SpotlightMark"
 import ThreadMark, { type MarkedThread } from "@/components/ThreadMark"
 import WaypointBox from "@/components/WaypointBox"
-import WaypointMark, { WaypointLane, type MarkedWaypoint, type WaypointWriteUp } from "@/components/WaypointMark"
+import WaypointMark, { WaypointLane, type MarkedWaypoint } from "@/components/WaypointMark"
 import type { CodeDefinitions, CodeLine, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 import { lineSequenceOf, placeWaypoints, stemsOf, type StemTone } from "./gutter"
@@ -120,6 +121,7 @@ interface FileRowsProps {
   readonly codeDefinitions: CodeDefinitions
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
+  readonly onPreviewWaypoint?: ((waypointId: string) => void) | null
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
   readonly onRootBlockReviewedChange: ((rootBlockId: string, isReviewed: boolean) => void) | null
   readonly onWriteUp?: ((target: WriteUpTarget) => void) | null
@@ -275,6 +277,7 @@ const FileRows = ({
   codeDefinitions,
   onOpenCodeLink,
   onToggleWaypoint,
+  onPreviewWaypoint = null,
   onWaypointReviewedChange,
   onRootBlockReviewedChange,
   onWriteUp = null,
@@ -340,6 +343,7 @@ const FileRows = ({
               ? null
               : (isReviewed) => { onWaypointReviewedChange(waypoint.id, isReviewed) }}
             onPreviewChange={(isPreviewed) => {
+              if (isPreviewed && onPreviewWaypoint !== null) onPreviewWaypoint(waypoint.id)
               setPreviewedWaypointId((previewedId) => {
                 if (isPreviewed) return waypoint.id
                 return previewedId === waypoint.id ? null : previewedId
@@ -523,6 +527,8 @@ const FileRows = ({
                     isGuttered
                     codeLinks={codeLinks}
                     actions={authoring?.renderActions(row.waypoint.id)}
+                    writeUp={onWriteUp === null ? null : waypointWriteUpOf(rows, row.waypoint.id, onWriteUp)}
+                    onWriteDescription={authoring === null ? null : () => { authoring.onWriteDescription(row.waypoint.id) }}
                     onOpenCodeLink={onOpenCodeLink}
                     onToggle={() => { onToggleWaypoint(row.waypoint.id) }}
                     onReviewedChange={onWaypointReviewedChange === null

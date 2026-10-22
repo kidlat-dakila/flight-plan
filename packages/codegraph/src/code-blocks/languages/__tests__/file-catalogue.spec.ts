@@ -21,6 +21,13 @@ describe("what the path of a file says of its exports", () => {
     expect(namedIn("middleware.ts")).toStrictEqual(["middleware middleware"])
   })
 
+  it("names nothing in a private folder of the App Router, at any depth", () => {
+    expect(namedIn("app/_components/page.tsx")).toStrictEqual([])
+    expect(namedIn("src/app/dashboard/_lib/api/route.ts")).toStrictEqual([])
+    expect(namedIn("app/dashboard/_lib/layout.tsx")).toStrictEqual([])
+    expect(namedIn("app/%5Fsettings/page.tsx")).toStrictEqual(["default page /_settings"])
+  })
+
   it("names nothing in a repository that does not use the library, and nothing without a manifest", () => {
     expect(namedIn("app/users/page.tsx", ["react"])).toStrictEqual([])
     expect(listExportNamings(undefined, "javascript", LIBRARIES)).toStrictEqual([])
@@ -33,6 +40,20 @@ describe("what the path of a file says of its exports", () => {
     expect(namedBy(["django_allauth"])).toStrictEqual(["urlpatterns allauth"])
     expect(namedBy(["allauth"])).toStrictEqual(["urlpatterns allauth"])
     expect(namedBy(["django"])).toStrictEqual([])
+  })
+
+  it("reads the URL of a Next.js route as Next.js does, without parallel route slots and through intercepting routes", () => {
+    const pages = "{app,src/app}/**/page.{js,jsx,ts,tsx}"
+
+    expect(routePathOf(pages, "app/@modal/login/page.tsx")).toBe("/login")
+    expect(routePathOf(pages, "app/feed/@modal/(.)photo/[id]/page.tsx")).toBe("/feed/photo/[id]")
+    expect(routePathOf(pages, "app/feed/(..)photo/[id]/page.tsx")).toBe("/photo/[id]")
+    expect(routePathOf(pages, "app/a/b/(..)(..)photo/page.tsx")).toBe("/photo")
+    expect(routePathOf(pages, "app/(shop)/a/@slot/(..)photo/page.tsx")).toBe("/photo")
+    expect(routePathOf(pages, "app/shop/cart/(...)login/page.tsx")).toBe("/login")
+    expect(routePathOf(pages, "app/%5Fsettings/page.tsx")).toBe("/_settings")
+    expect(routePathOf(pages, "app/blog/[...slug]/page.tsx")).toBe("/blog/[...slug]")
+    expect(routePathOf(pages, "app/shop/[[...slug]]/page.tsx")).toBe("/shop/[[...slug]]")
   })
 
   it("reads the path of a route from the folders under the root its pattern names, without a group in brackets", () => {

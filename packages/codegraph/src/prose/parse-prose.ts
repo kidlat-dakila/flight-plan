@@ -11,8 +11,16 @@ const TRAILING_LINE_BREAK_PATTERN = /\n$/
 
 const MARKDOWN_OPTIONS = { html: false, linkify: false } as const
 
-const markdown = new MarkdownIt(MARKDOWN_OPTIONS)
-const contextMarkdown = new MarkdownIt(MARKDOWN_OPTIONS)
+const isCodeLink = (href: string): boolean => href.startsWith(CODE_LINK_SCHEME)
+
+const linkEncoding = new MarkdownIt(MARKDOWN_OPTIONS)
+
+const normalizeLinkKeepingCodeLinks = (url: string): string => (isCodeLink(url) ? url : linkEncoding.normalizeLink(url))
+
+const createMarkdown = (): MarkdownIt => Object.assign(new MarkdownIt(MARKDOWN_OPTIONS), { normalizeLink: normalizeLinkKeepingCodeLinks })
+
+const markdown = createMarkdown()
+const contextMarkdown = createMarkdown()
   .use(containerPluginOf(TABS_CONTAINER))
   .use(containerPluginOf(ACCORDION_CONTAINER))
 
@@ -31,8 +39,6 @@ interface InlineState {
 }
 
 const EMPTY_INLINE_STATE: InlineState = { inlines: [], isStrong: false, isEmphasized: false, link: null }
-
-const isCodeLink = (href: string): boolean => href.startsWith(CODE_LINK_SCHEME)
 
 const openLinkOf = (token: MarkdownToken, knownLinkIds: ReadonlySet<string>): OpenLink => {
   const href = token.attrGet("href") ?? ""

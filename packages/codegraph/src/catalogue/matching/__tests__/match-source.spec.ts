@@ -225,6 +225,16 @@ describe("the other shapes of a pattern", () => {
     expect(matchFilePath("lib/app/users/page.tsx", [SERVER])).toStrictEqual([])
   })
 
+  it("does not match a file that one of the pattern's exclusions holds", () => {
+    const pages = library("pages", ["next"], "javascript", [
+      { kind: "file", glob: "{app,src/app}/**/page.{ts,tsx}", excludes: ["{app,src/app}/**/_*/**"], exports: [{ name: "default", runs: "page" }] },
+    ])
+
+    expect(matchFilePath("app/users/page.tsx", [pages])).toHaveLength(1)
+    expect(matchFilePath("app/_components/page.tsx", [pages])).toStrictEqual([])
+    expect(matchFilePath("app/users/_lib/page.tsx", [pages])).toStrictEqual([])
+  })
+
   it("reads a glob with folders, choices and a set of characters", () => {
     expect(fitsGlob("**/commands/[!_]*.py", "polls/commands/close.py")).toBe(true)
     expect(fitsGlob("**/commands/[!_]*.py", "polls/commands/_private.py")).toBe(false)

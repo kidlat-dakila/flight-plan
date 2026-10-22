@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import GuideTooltip from "@/components/GuideTooltip"
-import { useGuideTracking } from "@/lib/guide-tooltips/hooks"
+import { DEFAULT_GUIDE_DELAY_MS, useGuideTracking } from "@/lib/guide-tooltips/hooks"
 import { guideTooltipStore, resetGuideTooltipStore } from "@/lib/guide-tooltips/store"
 import type { GuideTriggers } from "@/lib/guide-tooltips/triggers"
 
@@ -13,7 +13,7 @@ const Tracking = () => {
   return null
 }
 
-const renderTip = (triggers: GuideTriggers = { preFeatureUse: [ANCHOR_ACTION_ID] }) =>
+const renderTip = (triggers: GuideTriggers = { preFeatureUse: [ANCHOR_ACTION_ID] }, delay: number | null = 0) =>
   render(
     <>
       <Tracking />
@@ -23,7 +23,7 @@ const renderTip = (triggers: GuideTriggers = { preFeatureUse: [ANCHOR_ACTION_ID]
         title="Share this review"
         content="Send it to a teammate."
         anchorSelector={`[data-user-action-id="${ANCHOR_ACTION_ID}"]`}
-        delay={0}
+        delay={delay ?? undefined}
         triggers={triggers}
       />
     </>,
@@ -32,6 +32,9 @@ const renderTip = (triggers: GuideTriggers = { preFeatureUse: [ANCHOR_ACTION_ID]
 const tooltipStateOf = () => guideTooltipStore.getState().tooltips[TOOLTIP_ID]
 
 const SETTLE_MS = 20
+const FRAME_MS = 50
+const SHORT_OF_THE_DELAY_MS = 1000
+const REST_OF_THE_DELAY_MS = DEFAULT_GUIDE_DELAY_MS - SHORT_OF_THE_DELAY_MS + FRAME_MS
 
 const settle = async (): Promise<void> => {
   await act(async () => {
@@ -142,5 +145,86 @@ describe("GuideTooltip", () => {
     await settle()
 
     expect(screen.queryByText("Share this review")).toBeNull()
+  })
+
+  describe("waiting for a quiet moment", () => {
+    const advance = async (ms: number): Promise<void> => {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(ms)
+      })
+    }
+
+    const waitPastTheDelay = async (): Promise<void> => {
+      await advance(FRAME_MS)
+      await advance(DEFAULT_GUIDE_DELAY_MS)
+      await advance(FRAME_MS)
+    }
+
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ["setTimeout", "setInterval", "Date", "requestAnimationFrame", "cancelAnimationFrame"] })
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it("shows a second and a half after its triggers are met", async () => {
+      renderTip(undefined, null)
+      await advance(FRAME_MS)
+      await advance(SHORT_OF_THE_DELAY_MS)
+
+      expect(screen.queryByText("Share this review")).toBeNull()
+
+      await advance(REST_OF_THE_DELAY_MS)
+      await advance(FRAME_MS)
+
+      expect(screen.getByText("Share this review")).toBeTruthy()
+    })
+
+    it("starts waiting again when the reader scrolls before it shows", async () => {
+      renderTip(undefined, null)
+      await advance(FRAME_MS)
+      await advance(SHORT_OF_THE_DELAY_MS)
+      fireEvent.scroll(window)
+      await advance(REST_OF_THE_DELAY_MS)
+
+      expect(screen.queryByText("Share this review")).toBeNull()
+
+      await advance(SHORT_OF_THE_DELAY_MS)
+
+      expect(screen.getByText("Share this review")).toBeTruthy()
+    })
+
+    it("steps aside while the reader scrolls or presses a key, and comes back once they stop", async () => {
+      renderTip(undefined, null)
+      await waitPastTheDelay()
+      expect(screen.getByText("Share this review")).toBeTruthy()
+
+      fireEvent.scroll(window)
+      await advance(FRAME_MS)
+
+      expect(screen.queryByText("Share this review")).toBeNull()
+
+      await waitPastTheDelay()
+      expect(screen.getByText("Share this review")).toBeTruthy()
+
+      fireEvent.keyDown(document.body, { key: "d" })
+      await advance(FRAME_MS)
+
+      expect(screen.queryByText("Share this review")).toBeNull()
+
+      await waitPastTheDelay()
+      expect(screen.getByText("Share this review")).toBeTruthy()
+    })
+
+    it("stays while the reader presses its own buttons", async () => {
+      renderTip(undefined, null)
+      await waitPastTheDelay()
+
+      fireEvent.pointerDown(screen.getByRole("button", { name: /Okay, got it!/ }))
+      await advance(FRAME_MS)
+
+      expect(screen.getByText("Share this review")).toBeTruthy()
+    })
   })
 })

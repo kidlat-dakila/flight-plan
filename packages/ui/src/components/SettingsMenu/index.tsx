@@ -41,7 +41,7 @@ export interface ReviewMenuActions {
 
 interface SettingsMenuProps {
   readonly links: readonly SettingsMenuLink[]
-  readonly useThemeToggle: () => ThemeToggle
+  readonly themeToggle: ThemeToggle
   readonly reviewActions?: ReviewMenuActions | null
 }
 
@@ -60,8 +60,7 @@ const SECTION_ICONS: Record<SettingsSectionIcon, LucideIcon> = {
   review: SlidersHorizontalIcon,
 }
 
-const ThemeToggleItem = ({ useThemeToggle }: { readonly useThemeToggle: () => ThemeToggle }) => {
-  const { theme, onToggle } = useThemeToggle()
+const ThemeToggleItem = ({ theme, onToggle }: ThemeToggle) => {
   const ThemeIcon = theme === "dark" ? SunIcon : MoonIcon
   return (
     <DropdownMenuItem onClick={onToggle}>
@@ -97,14 +96,14 @@ const ReviewMenuItems = ({ actions }: { readonly actions: ReviewMenuActions }) =
   </>
 )
 
-const SettingsMenu = ({ links, useThemeToggle, reviewActions = null }: SettingsMenuProps) => (
+const SettingsMenu = ({ links, themeToggle, reviewActions = null }: SettingsMenuProps) => (
   <DropdownMenu>
     <DropdownMenuTrigger aria-label={MENU_LABEL} title={MENU_LABEL} className={TRIGGER_CLASSES}>
       <SettingsIcon aria-hidden="true" className="size-4" />
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
       {reviewActions === null ? null : <ReviewMenuItems actions={reviewActions} />}
-      <ThemeToggleItem useThemeToggle={useThemeToggle} />
+      <ThemeToggleItem {...themeToggle} />
       <DropdownMenuSeparator />
       {links.map(({ label, icon, link }) => {
         const SectionIcon = SECTION_ICONS[icon]

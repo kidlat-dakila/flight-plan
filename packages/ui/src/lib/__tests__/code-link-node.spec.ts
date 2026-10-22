@@ -11,6 +11,15 @@ describe("parseCodeLink", () => {
     expect(parseCodeLink("[the cart total](code:src/cart.ts#L3-L5)")).toMatchObject({ label: "the cart total", isCode: false })
   })
 
+  it("reads a path with the parentheses of a Next.js route group", () => {
+    expect(parseCodeLink("[the shop page](code:app/(shop)/[id]/page.tsx#L1-3) and more")).toStrictEqual({
+      raw: "[the shop page](code:app/(shop)/[id]/page.tsx#L1-3)",
+      label: "the shop page",
+      linkId: "app/(shop)/[id]/page.tsx#L1-3",
+      isCode: false,
+    })
+  })
+
   it("reads nothing from a link to a web address or from text that only contains a code link later", () => {
     expect(parseCodeLink("[docs](https://example.com)")).toBeNull()
     expect(parseCodeLink("See [`priceOf`](code:src/price.ts#priceOf)")).toBeNull()

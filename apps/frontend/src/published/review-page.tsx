@@ -4,6 +4,8 @@ import ReadingWalkthrough from "@/routes/pr-reviews/$repoName/-components/Readin
 import ReviewNotices from "@/routes/pr-reviews/$repoName/-components/ReviewNotices"
 import SelectionReference from "@/routes/pr-reviews/$repoName/-components/SelectionReference"
 import UnassignedFilesDialog from "@/routes/pr-reviews/$repoName/-components/UnassignedFilesDialog"
+import WalkthroughFileSection from "@/routes/pr-reviews/$repoName/-components/WalkthroughFileSection"
+import WalkthroughScrolling from "@/routes/pr-reviews/$repoName/-components/WalkthroughScrolling"
 import { useCodeSelection } from "@/routes/pr-reviews/$repoName/-hooks/use-code-selection"
 import { useReadingPositionStore } from "@/routes/pr-reviews/$repoName/-hooks/use-reading-position"
 import { useWalkthroughNavigation } from "@/routes/pr-reviews/$repoName/-hooks/use-walkthrough-navigation"
@@ -13,7 +15,6 @@ import BlastBand from "@flightplan/ui/BlastBand"
 import BrandMark from "@flightplan/ui/BrandMark"
 import ChangeOverview, { type ChangeOverviewRow } from "@flightplan/ui/ChangeOverview"
 import ContextSection, { CONTEXT_PROSE_CLASSES } from "@flightplan/ui/ContextSection"
-import FileSection from "@flightplan/ui/FileSection"
 import { AccordionOpeningContext, useAccordionNavigation } from "@flightplan/ui/lib/accordion-opening"
 import type { CodeLinkTargets, ProseBlocks } from "@flightplan/ui/lib/review-content"
 import { cn } from "@flightplan/ui/lib/utils"
@@ -198,18 +199,15 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                           coverageLabel={segment.walkthrough.coverageLabel}
                           emptyMessage={segment.walkthrough.emptyMessage}
                           readingPosition={readingPosition}
-                          navigationOf={(position) => walkthroughLayout.navigationOf(segment, position)}
+                          walkthroughStore={stepping.store}
+                          navigationOf={(position, state) => walkthroughLayout.navigationOf(segment, position, state)}
                           onArrangeFiles={null}
                         >
                           {segment.walkthrough.files.map((file) => (
-                            <FileSection
+                            <WalkthroughFileSection
                               key={file.anchorId}
+                              walkthroughStore={stepping.store}
                               file={file}
-                              openWaypointIds={stepping.openWaypointIds}
-                              currentWaypointId={stepping.currentWaypointId}
-                              focusedWaypointId={stepping.focusedWaypointId}
-                              previewVisit={stepping.previewVisit}
-                              isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
                               isReviewPending={false}
                               composer={review.composer}
                               composingRange={null}
@@ -219,6 +217,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                               codeDefinitions={review.codeDefinitions}
                               onOpenCodeLink={stepping.onOpenCodeLink}
                               onToggleWaypoint={stepping.onToggleWaypoint}
+                              onPreviewWaypoint={stepping.onPreviewWaypoint}
                               onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
                               onWaypointReviewedChange={onWaypointReviewedChange}
                               onFileReviewedChange={(path, isReviewed) => { marking.onReviewedChange({ kind: "file", path }, isReviewed) }}
@@ -254,6 +253,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
             ? <UnavailableFeatureDialog {...review.unavailableFeature} onClose={() => { setIsFeatureUnavailable(false) }} />
             : null}
           <SelectionReference selection={codeSelection} onComment={showUnavailableFeature} onAsk={null} />
+          <WalkthroughScrolling walkthroughStore={stepping.store} />
           <ReviewNavigatorBar />
           <ReviewGuideTooltips reviewMode="teammate" />
         </ReviewNavigator>

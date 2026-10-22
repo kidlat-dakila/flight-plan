@@ -26,6 +26,8 @@ const CONFIG_EXPORT = "config"
 
 const APP_PAGE_GLOB = "{app,src/app}/**/page.{js,jsx,ts,tsx}"
 
+const APP_PRIVATE_FOLDERS: readonly string[] = ["{app,src/app}/**/_*/**"]
+
 const PAGES_GLOB = "{pages,src/pages}/**/[!_]*.{js,jsx,ts,tsx}"
 
 const PAGE_GLOBS: ReadonlySet<string> = new Set([APP_PAGE_GLOB, PAGES_GLOB])
@@ -101,20 +103,23 @@ export const nextLibrary: Library = {
   readCards: readServerActionCards,
   readExportCards: readNextExportCards,
   patterns: [
-    { kind: "file", glob: APP_PAGE_GLOB, exports: [{ name: DEFAULT_EXPORT, runs: PAGE_RUNS }] },
+    { kind: "file", glob: APP_PAGE_GLOB, excludes: APP_PRIVATE_FOLDERS, exports: [{ name: DEFAULT_EXPORT, runs: PAGE_RUNS }] },
     {
       kind: "file",
       glob: "{app,src/app}/**/{layout,template,loading,not-found}.{js,jsx,ts,tsx}",
+      excludes: APP_PRIVATE_FOLDERS,
       exports: [{ name: "default", runs: "page" }],
     },
     {
       kind: "file",
       glob: "{app,src/app}/**/{error,global-error}.{js,jsx,ts,tsx}",
+      excludes: APP_PRIVATE_FOLDERS,
       exports: [{ name: "default", runs: "page", classifies: "error-handling" }],
     },
     {
       kind: "file",
       glob: "{app,src/app}/**/route.{js,ts}",
+      excludes: APP_PRIVATE_FOLDERS,
       exports: [
         { name: "GET", runs: "route", method: "GET" },
         { name: "POST", runs: "route", method: "POST" },

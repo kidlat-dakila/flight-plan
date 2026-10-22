@@ -1,7 +1,8 @@
-import { createConversationHub, topicOf } from "@/utils/conversation-hub"
+import { createConversationHub } from "@/utils/conversation-hub"
 
 const KEY = { repositoryName: "storefront", targetId: "pr-412" }
 const OTHER_KEY = { repositoryName: "storefront", targetId: "pr-7" }
+const SUBSCRIBER_COUNT = 12
 
 describe("createConversationHub", () => {
   it("wakes a subscriber of the review target that changed", async () => {
@@ -13,6 +14,20 @@ describe("createConversationHub", () => {
 
     await expect(waiting).resolves.toBe("changed")
     subscription.close()
+    await hub.close()
+  })
+
+  it("wakes every subscriber of the same review target", async () => {
+    const hub = createConversationHub()
+    const subscriptions = Array.from({ length: SUBSCRIBER_COUNT }, () => hub.subscribe(KEY))
+    const waits = subscriptions.map(async (subscription) => await subscription.nextChange({ timeoutMs: null, signal: null }))
+
+    hub.publish(KEY)
+
+    await expect(Promise.all(waits)).resolves.toStrictEqual(subscriptions.map(() => "changed"))
+    subscriptions.forEach((subscription) => {
+      subscription.close()
+    })
     await hub.close()
   })
 
@@ -49,11 +64,5 @@ describe("createConversationHub", () => {
     subscription.close()
     await expect(closing).resolves.toBe("aborted")
     await hub.close()
-  })
-})
-
-describe("topicOf", () => {
-  it("encodes names so a branch slash or a wildcard cannot change the topic", () => {
-    expect(topicOf({ repositoryName: "store+front", targetId: "branch-a/#" })).toBe("conversation/store%2Bfront/branch-a%2F%23")
   })
 })

@@ -87,8 +87,10 @@ suite("choosing which adapter answers for a checkout", () => {
     assert.strictEqual(selection.ok, false)
     assert.ok(selection.error instanceof GitAdapterError)
     assert.strictEqual(selection.error.problem, "host-mismatch")
-    assert.ok(selection.error.message.includes("github.com"))
-    assert.ok(selection.error.message.includes("gitlab.com"))
+    assert.strictEqual(
+      selection.error.message,
+      "This repository is on github.com, and Flight Plan is set up to use GitLab on gitlab.com. Change it in Flight Plan's setup, or open a repository on gitlab.com.",
+    )
   })
 
   it("a self-hosted instance is accepted once its base URL is set", () => {

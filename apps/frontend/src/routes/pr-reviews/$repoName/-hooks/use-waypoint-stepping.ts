@@ -1,5 +1,19 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useStore } from "zustand"
 import { coveredTopOf } from "@flightplan/ui/lib/pinned-rows"
+import {
+  createWalkthroughStore,
+  updateWalkthrough,
+  withHoldingFile,
+  withoutCurrentOpen,
+  withoutFocus,
+  withPreviewedWaypoint,
+  withSectionEntered,
+  withToggledWaypoint,
+  withVisit,
+  type WalkthroughStore,
+  type WaypointVisit,
+} from "./walkthrough-store"
 
 export interface SteppedWaypoint {
   readonly id: string
@@ -11,20 +25,13 @@ export interface SteppedWaypoint {
 
 type SteppedRow = { readonly kind: "waypoint", readonly waypoint: SteppedWaypoint } | { readonly kind: "lines" | "gap" }
 
-export interface SteppedSegment {
-  readonly walkthrough: { readonly anchorId: string, readonly files: readonly { readonly rows: readonly SteppedRow[] }[] }
-}
-
-interface Visit {
+interface SteppedFile {
   readonly anchorId: string
-  readonly waypointId: string
-  readonly isOpening: boolean
-  readonly count: number
+  readonly rows: readonly SteppedRow[]
 }
 
-export interface PreviewVisit {
-  readonly waypointId: string
-  readonly count: number
+export interface SteppedSegment {
+  readonly walkthrough: { readonly anchorId: string, readonly files: readonly SteppedFile[] }
 }
 
 interface StepTargets {
@@ -41,14 +48,12 @@ export interface SegmentStepping {
 }
 
 export interface WaypointStepping {
-  readonly openWaypointIds: ReadonlySet<string>
-  readonly previewVisit: PreviewVisit | null
-  readonly currentWaypointId: string | null
-  readonly focusedWaypointId: string | null
-  readonly steppingOf: (segment: SteppedSegment, aboveAnchorIds: ReadonlySet<string>) => SegmentStepping
+  readonly store: WalkthroughStore
+  readonly steppingOf: (segment: SteppedSegment, currentWaypointId: string | null, aboveAnchorIds: ReadonlySet<string>) => SegmentStepping
   readonly onSectionEntered: (anchorId: string) => void
   readonly onVisitWaypoint: (waypointId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
+  readonly onPreviewWaypoint: (waypointId: string) => void
   readonly onCurrentOpenChange: (isOpen: boolean) => void
   readonly onOpenCodeLink: (anchorId: string) => void
 }
@@ -80,6 +85,12 @@ const waypointsOf = (segment: SteppedSegment): SteppedWaypoint[] =>
 export const waypointAnchorIdsOf = (segments: readonly SteppedSegment[]): string[] =>
   segments.flatMap(waypointsOf).map((waypoint) => waypoint.anchorId)
 
+const holdsWaypoint = (file: SteppedFile, waypointId: string | null): boolean =>
+  file.rows.some((row) => row.kind === "waypoint" && row.waypoint.id === waypointId)
+
+const fileHoldingWaypoint = (segments: readonly SteppedSegment[], waypointId: string | null): string | null =>
+  segments.flatMap((segment) => segment.walkthrough.files).find((file) => holdsWaypoint(file, waypointId))?.anchorId ?? null
+
 const stepTargetsOf = (waypoints: readonly SteppedWaypoint[], current: SteppedWaypoint | null, aboveAnchorIds: ReadonlySet<string>): StepTargets =>
   current === null
     ? {
@@ -88,14 +99,15 @@ const stepTargetsOf = (waypoints: readonly SteppedWaypoint[], current: SteppedWa
       }
     : { previousId: current.previousId, nextId: current.nextId }
 
-const useFocusRelease = (focusedWaypointId: string | null, visit: Visit | null, onRelease: () => void): void => {
+const useFocusRelease = (focusedWaypointId: string | null, visit: WaypointVisit | null, onRelease: () => void): void => {
   const settledScrollYRef = useRef<number | null>(null)
 
   useEffect(() => {
     settledScrollYRef.current = null
     if (focusedWaypointId === null) return undefined
     const settle = (): void => {
-      settledScrollYRef.current ??= window.scrollY
+      if (settledScrollYRef.current !== null) return
+      settledScrollYRef.current = window.scrollY
     }
     const releaseWhenAway = (): void => {
       const settledScrollY = settledScrollYRef.current
@@ -114,42 +126,39 @@ const useFocusRelease = (focusedWaypointId: string | null, visit: Visit | null, 
   }, [focusedWaypointId, visit, onRelease])
 }
 
-const releaseFocus = (setFocusedWaypointId: (waypointId: string | null) => void) => (): void => {
-  setFocusedWaypointId(null)
+const releaseFocus = (store: WalkthroughStore) => (): void => {
+  updateWalkthrough(store, withoutFocus)
 }
 
-const previewVisitOf = (visit: Visit | null): PreviewVisit | null =>
-  visit === null || visit.isOpening ? null : { waypointId: visit.waypointId, count: visit.count }
-
-export const useWaypointStepping = (segments: readonly SteppedSegment[]): WaypointStepping => {
-  const [openWaypointIds, setOpenWaypointIds] = useState<ReadonlySet<string>>(() => new Set())
-  const [currentWaypointId, setCurrentWaypointId] = useState<string | null>(null)
-  const [focusedWaypointId, setFocusedWaypointId] = useState<string | null>(null)
-  const [visit, setVisit] = useState<Visit | null>(null)
-  const [onRelease] = useState(() => releaseFocus(setFocusedWaypointId))
-  const waypoints = segments.flatMap(waypointsOf)
+export const useVisitScrolling = (store: WalkthroughStore): void => {
+  const visit = useStore(store, (state) => state.visit)
+  const focusedWaypointId = useStore(store, (state) => state.focusedWaypointId)
+  const [onRelease] = useState(() => releaseFocus(store))
 
   useEffect(() => {
     if (visit !== null) scrollToAnchor(visit.anchorId)
   }, [visit])
 
   useFocusRelease(focusedWaypointId, visit, onRelease)
+}
+
+export const useWaypointStepping = (segments: readonly SteppedSegment[]): WaypointStepping => {
+  const [store] = useState(createWalkthroughStore)
+  const waypoints = segments.flatMap(waypointsOf)
+
+  useLayoutEffect(() => {
+    updateWalkthrough(store, (state) => withHoldingFile(state, fileHoldingWaypoint(segments, state.currentWaypointId)))
+  }, [store, segments])
 
   const visitWaypoint = (waypointId: string | null, isOpening: boolean): void => {
     const waypoint = waypoints.find((candidate) => candidate.id === waypointId)
     if (waypoint === undefined) return
-    setCurrentWaypointId(waypoint.id)
-    setFocusedWaypointId(waypoint.id)
-    if (isOpening) setOpenWaypointIds((openIds) => new Set([...openIds, waypoint.id]))
-    setVisit((previous) => ({ anchorId: waypoint.anchorId, waypointId: waypoint.id, isOpening, count: (previous?.count ?? 0) + 1 }))
+    updateWalkthrough(store, (state) => withVisit(state, waypoint, isOpening, fileHoldingWaypoint(segments, waypoint.id)))
   }
 
   return {
-    openWaypointIds,
-    previewVisit: previewVisitOf(visit),
-    currentWaypointId,
-    focusedWaypointId,
-    steppingOf: (segment, aboveAnchorIds) => {
+    store,
+    steppingOf: (segment, currentWaypointId, aboveAnchorIds) => {
       const segmentWaypoints = waypointsOf(segment)
       const current = segmentWaypoints.find((waypoint) => waypoint.id === currentWaypointId) ?? null
       const targets = stepTargetsOf(segmentWaypoints, current, aboveAnchorIds)
@@ -165,17 +174,18 @@ export const useWaypointStepping = (segments: readonly SteppedSegment[]): Waypoi
       const entered = segments.find((segment) => segment.walkthrough.anchorId === anchorId)
       const first = entered === undefined ? undefined : waypointsOf(entered).at(0)
       if (first === undefined) return
-      setCurrentWaypointId(first.id)
-      setFocusedWaypointId(null)
+      updateWalkthrough(store, (state) => withSectionEntered(state, first.id, fileHoldingWaypoint(segments, first.id)))
     },
     onVisitWaypoint: (waypointId) => { visitWaypoint(waypointId, false) },
     onToggleWaypoint: (waypointId) => {
-      setCurrentWaypointId(waypointId)
-      setOpenWaypointIds((openIds) =>
-        new Set(openIds.has(waypointId) ? [...openIds].filter((openId) => openId !== waypointId) : [...openIds, waypointId]))
+      updateWalkthrough(store, (state) => withToggledWaypoint(state, waypointId, fileHoldingWaypoint(segments, waypointId)))
+    },
+    onPreviewWaypoint: (waypointId) => {
+      updateWalkthrough(store, (state) => withPreviewedWaypoint(state, waypointId, fileHoldingWaypoint(segments, waypointId)))
     },
     onCurrentOpenChange: (isOpen) => {
-      if (!isOpen) setOpenWaypointIds((openIds) => new Set([...openIds].filter((openId) => openId !== currentWaypointId)))
+      const { currentWaypointId } = store.getState()
+      if (!isOpen) updateWalkthrough(store, withoutCurrentOpen)
       visitWaypoint(currentWaypointId, isOpen)
     },
     onOpenCodeLink: (anchorId) => {

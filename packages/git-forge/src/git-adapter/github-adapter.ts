@@ -1,3 +1,4 @@
+import { withoutTrailingSlashes } from "@/git-adapter/helpers/trailing-slashes"
 import {
   GitAdapterError,
   mergeReviewers,
@@ -70,7 +71,7 @@ const HISTORY_STATES: Record<GithubHistoryPullRequest["state"], PullRequestHisto
 }
 
 export function githubApiRoot(baseUrl: string): string {
-  const trimmed = baseUrl.trim().replace(/\/+$/, "")
+  const trimmed = withoutTrailingSlashes(baseUrl.trim())
   if (trimmed === "") return "https://api.github.com"
   if (trimmed.endsWith("/api/v3")) return trimmed
   return `${trimmed}/api/v3`

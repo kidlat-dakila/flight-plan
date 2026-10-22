@@ -1,3 +1,4 @@
+import { withoutTrailingSlashes } from "@/git-adapter/helpers/trailing-slashes"
 import {
   GitAdapterError,
   mergeReviewers,
@@ -67,7 +68,7 @@ const REVIEWER_STATES: Readonly<Record<string, Reviewer["state"]>> = {
 }
 
 export function dataCenterWebRoot(baseUrl: string): string {
-  const trimmed = baseUrl.trim().replace(/\/+$/, "")
+  const trimmed = withoutTrailingSlashes(baseUrl.trim())
   return trimmed.endsWith(API_SUFFIX) ? trimmed.slice(0, trimmed.length - API_SUFFIX.length) : trimmed
 }
 

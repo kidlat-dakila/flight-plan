@@ -1,5 +1,7 @@
 import { planSetupGate } from "@/procedures/get-setup-gate/utils/plan-setup-gate"
 
+const LONG_RUN = 100_000
+
 describe("planSetupGate", () => {
   it("sends every page to the setup until the setup is complete", () => {
     expect(planSetupGate(false, "/")).toStrictEqual({ redirectTo: "/setup" })
@@ -14,5 +16,9 @@ describe("planSetupGate", () => {
   it("lets every page through once the setup is complete, the setup page included", () => {
     expect(planSetupGate(true, "/setup")).toStrictEqual({ redirectTo: null })
     expect(planSetupGate(true, "/")).toStrictEqual({ redirectTo: null })
+  })
+
+  it("stays quick on a path with a long run of slashes", () => {
+    expect(planSetupGate(false, `${"/".repeat(LONG_RUN)}x`)).toStrictEqual({ redirectTo: "/setup" })
   })
 })

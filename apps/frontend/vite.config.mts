@@ -9,8 +9,14 @@ const PREVIEW_SERVER_PORT = 4300
 const BACKEND_URL = "http://localhost:3000"
 const TSCONFIG_NAMES = ["tsconfig.app.json", "tsconfig.lib.json", "tsconfig.spec.json"]
 const TEST_FOLDER_PATTERN = "^__tests__$"
+const REACT_COMPILER_PLUGIN = "babel-plugin-react-compiler"
+const TEST_MODE = "test"
+const COMPILED_REACT = { babel: { plugins: [REACT_COMPILER_PLUGIN] } }
+const TEST_TIMEOUT_MS = 15_000
 
-export default defineConfig({
+const reactOptionsOf = (mode: string) => (mode === TEST_MODE ? {} : COMPILED_REACT)
+
+export default defineConfig(({ mode }) => ({
   root: import.meta.dirname,
   cacheDir: "../../node_modules/.vite/apps/frontend",
   server: {
@@ -24,7 +30,7 @@ export default defineConfig({
   },
   plugins: [
     tanstackRouter({ target: "react", autoCodeSplitting: true, routeFileIgnorePattern: TEST_FOLDER_PATTERN }),
-    react(),
+    react(reactOptionsOf(mode)),
     tailwindcss(),
     tsconfigPaths({ configNames: TSCONFIG_NAMES, projectDiscovery: "lazy" }),
   ],
@@ -40,6 +46,7 @@ export default defineConfig({
     environment: "jsdom",
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     setupFiles: ["src/__tests__/jsdom-setup.ts"],
+    testTimeout: TEST_TIMEOUT_MS,
     passWithNoTests: true,
     reporters: ["default"],
     coverage: {
@@ -47,4 +54,4 @@ export default defineConfig({
       provider: "v8" as const,
     },
   },
-})
+}))

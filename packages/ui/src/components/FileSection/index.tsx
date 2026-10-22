@@ -48,6 +48,7 @@ interface FileSectionProps {
   readonly codeDefinitions: CodeDefinitions
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
+  readonly onPreviewWaypoint?: ((waypointId: string) => void) | null
   readonly onCollapsedChange: (isCollapsed: boolean) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
   readonly onFileReviewedChange: ((path: string, isReviewed: boolean) => void) | null
@@ -82,6 +83,7 @@ const FileSection = ({
   codeDefinitions,
   onOpenCodeLink,
   onToggleWaypoint,
+  onPreviewWaypoint = null,
   onCollapsedChange,
   onWaypointReviewedChange,
   onFileReviewedChange,
@@ -164,6 +166,7 @@ const FileSection = ({
           codeDefinitions={codeDefinitions}
           onOpenCodeLink={onOpenCodeLink}
           onToggleWaypoint={onToggleWaypoint}
+          onPreviewWaypoint={onPreviewWaypoint}
           onWaypointReviewedChange={onWaypointReviewedChange}
           onRootBlockReviewedChange={onRootBlockReviewedChange}
           onWriteUp={onWriteUp}

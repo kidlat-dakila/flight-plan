@@ -32,6 +32,7 @@ const RootLayout = () => {
   const isSettingUp = useMatches({ select: (matches) => matches.some((match) => match.routeId === SETUP_ROUTE_ID) })
   const hasPageSettingsMenu = useMatches({ select: (matches) => matches.some((match) => match.staticData.hasPageSettingsMenu === true) })
   const update = useUpdateNotice()
+  const colorTheme = useColorTheme()
   return (
     <BandSlotContext value={bandSlot}>
       <div className="min-h-screen bg-background text-foreground">
@@ -44,7 +45,7 @@ const RootLayout = () => {
           )}
         >
           <div ref={setBandSlot} className="flex min-w-0 flex-1 items-center border-l border-sign-foreground/20 pl-6 empty:hidden" />
-          {isSettingUp || hasPageSettingsMenu ? null : <SettingsMenu links={SETTINGS_LINKS} useThemeToggle={useColorTheme} />}
+          {isSettingUp || hasPageSettingsMenu ? null : <SettingsMenu links={SETTINGS_LINKS} themeToggle={colorTheme} />}
         </SignBand>
         <main className={cn("w-full", isFullWidth ? "" : COLUMN_CLASSES)}>
           <Outlet />

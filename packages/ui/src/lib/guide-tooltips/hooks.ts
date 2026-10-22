@@ -3,13 +3,19 @@ import { useStore } from "zustand"
 import { guideTooltipStore, type GuideEventKind } from "@/lib/guide-tooltips/store"
 import { isTooltipReady, type GuideTriggers, type ReviewMode, type TriggerStates } from "@/lib/guide-tooltips/triggers"
 
-export const DEFAULT_GUIDE_DELAY_MS = 5000
+export const DEFAULT_GUIDE_DELAY_MS = 1500
 
 const CLOCK_TICK_MS = 60_000
 
 const ACTION_SELECTOR = "[data-user-action-id]"
 
 const ACTION_ATTRIBUTE = "data-user-action-id"
+
+const ACTIVITY_EVENTS = ["scroll", "wheel", "keydown", "pointerdown"] as const
+
+const GUIDE_TOOLTIP_SELECTOR = "[data-guide-tooltip]"
+
+const GUIDE_ANSWER_KEYS: readonly string[] = ["Enter", "Escape"]
 
 interface GuideTooltipOptions {
   readonly delay?: number
@@ -41,19 +47,45 @@ const useNow = (): number => {
   return now
 }
 
-const useDueAfter = (isReady: boolean, delayMs: number): boolean => {
+const isInGuideTooltip = (target: EventTarget | null): boolean =>
+  target instanceof Element && target.closest(GUIDE_TOOLTIP_SELECTOR) !== null
+
+const isGuideAnswer = (event: Event): boolean =>
+  event instanceof KeyboardEvent && GUIDE_ANSWER_KEYS.includes(event.key) && guideTooltipStore.getState().shownTooltipIds.length > 0
+
+const isReaderActivity = (event: Event): boolean => !isInGuideTooltip(event.target) && !isGuideAnswer(event)
+
+const useDueAfterQuiet = (isReady: boolean, quietMs: number): boolean => {
   const [isDue, setIsDue] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (!isReady) return undefined
-    const timer = setTimeout(() => {
+    const becomeDue = (): void => {
       setIsDue(true)
-    }, delayMs)
+    }
+    const waitForQuiet = (): void => {
+      if (timerRef.current !== null) clearTimeout(timerRef.current)
+      timerRef.current = setTimeout(becomeDue, quietMs)
+    }
+    const stepAside = (event: Event): void => {
+      if (!isReaderActivity(event)) return
+      setIsDue(false)
+      waitForQuiet()
+    }
+    waitForQuiet()
+    ACTIVITY_EVENTS.forEach((eventName) => {
+      window.addEventListener(eventName, stepAside, { capture: true, passive: true })
+    })
     return () => {
-      clearTimeout(timer)
+      ACTIVITY_EVENTS.forEach((eventName) => {
+        window.removeEventListener(eventName, stepAside, { capture: true })
+      })
+      if (timerRef.current !== null) clearTimeout(timerRef.current)
+      timerRef.current = null
       setIsDue(false)
     }
-  }, [isReady, delayMs])
+  }, [isReady, quietMs])
 
   return isReady && isDue
 }
@@ -83,7 +115,7 @@ export const useGuideTooltip = (tooltipId: string, { delay = DEFAULT_GUIDE_DELAY
     }))
 
   return {
-    showTooltip: useDueAfter(isReady, delay),
+    showTooltip: useDueAfterQuiet(isReady, delay),
     updateTooltipState: (change) => {
       guideTooltipStore.getState().updateTooltipState(tooltipId, change)
     },

@@ -1,9 +1,9 @@
 import { isQuoted, textOfName, unquoted } from "@/ast-graph/languages/typescript/syntax"
 import type { SyntaxNode } from "@/ast-graph/parser"
 import type { RoutePattern } from "@/code-blocks/types"
+import { withoutTrailingSlashes } from "@/shared/trailing-slashes"
 
 const LEADING_SLASHES = /^\/+/
-const TRAILING_SLASHES = /\/+$/
 const PATH_TOKENS = /\{|\}|\(\.\*\)|\*\w*|:\w+\??|[^{}()*:]+|./g
 const REGEX_SPECIALS = /[.*+?^${}()|[\]\\/]/g
 const SEGMENT = "[^/]+"
@@ -47,7 +47,7 @@ const isValidPattern = (pattern: string): boolean => {
 }
 
 export const nestPathPatternOf = (path: string): string | null => {
-  const written = path.replace(LEADING_SLASHES, "").replace(TRAILING_SLASHES, "")
+  const written = withoutTrailingSlashes(path.replace(LEADING_SLASHES, ""))
   const body = (written.match(PATH_TOKENS) ?? []).map(sourceOfToken).join("")
   const pattern = `^/${body}${TRAILING_SLASH}$`
   return isValidPattern(pattern) ? pattern : null

@@ -20,6 +20,8 @@ const actionSelectorOf = (actionId: string): string => `[data-user-action-id="${
 
 const navigatorActionSelectorOf = (actionId: string): string => `${NAVIGATOR_TOOLBAR} ${actionSelectorOf(actionId)}`
 
+const sentenceStartOf = (label: string): string => `${label.charAt(0).toUpperCase()}${label.slice(1)}`
+
 const ReviewGuideTooltips = ({ reviewMode }: ReviewGuideTooltipsProps) => {
   useGuideTracking(reviewMode)
   const navigator = use(NavigatorContext)
@@ -30,15 +32,15 @@ const ReviewGuideTooltips = ({ reviewMode }: ReviewGuideTooltipsProps) => {
     <>
       <GuideTooltip
         id="jump-to-action-tooltip"
-        title="Jump to any section"
-        content={<KeyedText parts={["Press ", { keycap: "W" }, " to see every section of this review and go straight to one."]} />}
+        title="Go straight to what matters"
+        content={<KeyedText parts={["Press ", { keycap: "W" }, " to jump to any section of this review."]} />}
         anchorSelector={actionSelectorOf("jump-to-action")}
         triggers={{ viewVisible: ["context-section"], preFeatureUse: ["jump-to-action"] }}
       />
       <GuideTooltip
         id="change-overview-card-tooltip"
-        title="Each card is a changed code block"
-        content="Hover a card to see its code. Press it to read that code in the Code Walkthrough."
+        title="Peek at the code behind each card"
+        content="Hover a card for a quick look. Press it to read the code in the Code Walkthrough."
         anchorSelector={actionSelectorOf("change-overview-card-action")}
         triggers={{
           viewVisible: ["change-overview-section"],
@@ -48,14 +50,14 @@ const ReviewGuideTooltips = ({ reviewMode }: ReviewGuideTooltipsProps) => {
       />
       <GuideTooltip
         id="trace-diagram-card-tooltip"
-        title="Open a card to read its code"
-        content="Press a card to see its code beside the diagram, with what it does in this change."
+        title="Curious how this runs?"
+        content="Press a card to read its code and what it does in this change."
         anchorSelector={`${actionSelectorOf("trace-diagram-card-action")}[data-change]`}
         triggers={{ viewVisible: ["trace-diagram-section"], preFeatureUse: ["trace-diagram-card-action"] }}
       />
       <GuideTooltip
         id="blast-diagram-card-tooltip"
-        title="See how a file is affected"
+        title="Check what this change can affect"
         content="Press a file to see what the change does to it and why."
         anchorSelector={`${actionSelectorOf("blast-diagram-card-action")}[data-mark="added"], ${actionSelectorOf("blast-diagram-card-action")}[data-mark="modified"]`}
         triggers={{
@@ -66,8 +68,8 @@ const ReviewGuideTooltips = ({ reviewMode }: ReviewGuideTooltipsProps) => {
       />
       <GuideTooltip
         id="code-view-rail-tooltip"
-        title="Marks show the lines to read"
-        content="Hover a mark beside the code to preview its waypoint. Press the mark to open it."
+        title="Curious what this line does?"
+        content="Hover a mark to see what these lines do and any issues found in them."
         anchorSelector={actionSelectorOf("waypoint-mark-action")}
         side="right"
         triggers={{
@@ -77,8 +79,8 @@ const ReviewGuideTooltips = ({ reviewMode }: ReviewGuideTooltipsProps) => {
       />
       <GuideTooltip
         id="generate-agent-writing"
-        title={`Let ${agentLabel} explain this line`}
-        content={<KeyedText parts={["This waypoint has no explanation yet. Press ", { keycap: "G" }, ` and ${agentLabel} writes one for you.`]} />}
+        title={`${sentenceStartOf(agentLabel)} hasn't written anything here yet`}
+        content={<KeyedText parts={["Press ", { keycap: "G" }, ` to ask ${agentLabel} to explain this waypoint and check it for potential issues.`]} />}
         anchorSelector={navigatorActionSelectorOf(EXPLAIN_WAYPOINT_ACTION_ID)}
         triggers={{
           viewVisible: ["waypoint-card-section", "waypoint-box-section"],
@@ -88,8 +90,8 @@ const ReviewGuideTooltips = ({ reviewMode }: ReviewGuideTooltipsProps) => {
       />
       <GuideTooltip
         id="next-waypoint-tooltip"
-        title="Step through the waypoints"
-        content={<KeyedText parts={["Press ", { keycap: "D" }, " for the next waypoint and ", { keycap: "A" }, " for the one before."]} />}
+        title="Navigate the changes step by step"
+        content={<KeyedText parts={["Move through the change one waypoint at a time. Press ", { keycap: "D" }, " for the next and ", { keycap: "A" }, " to go back."]} />}
         anchorSelector={navigatorActionSelectorOf("next-waypoint-action")}
         triggers={{
           viewVisible: ["code-walkthrough-section"],
@@ -99,8 +101,8 @@ const ReviewGuideTooltips = ({ reviewMode }: ReviewGuideTooltipsProps) => {
       />
       <GuideTooltip
         id="filter-waypoint-tooltip"
-        title="Filter the waypoints"
-        content={<KeyedText parts={["Press ", { keycap: "F" }, " to show only the waypoints with a finding, a Core change or your Spotlight."]} />}
+        title="Find the part of the change you're looking for"
+        content={<KeyedText parts={["Press ", { keycap: "F" }, " to keep only what matters to you and skip the trivial parts."]} />}
         anchorSelector={navigatorActionSelectorOf("filter-action")}
         triggers={{
           viewVisible: ["code-walkthrough-section"],

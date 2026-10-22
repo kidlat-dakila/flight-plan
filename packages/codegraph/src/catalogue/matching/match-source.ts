@@ -3,7 +3,7 @@ import type { CatalogueLibrary, DirectivePattern, FilePattern, LibraryLanguage }
 import { FIRST_COLUMN, FIRST_LINE, rangeOfNode } from "@/code-blocks/source-range"
 import type { SourceRange } from "@/code-blocks/types"
 import { hasExtension } from "@/import-graph/languages/language"
-import { fitsGlob } from "./file-patterns"
+import { fitsFilePattern } from "./file-patterns"
 import { readJavascript } from "./javascript-reader"
 import { matchSites, type PatternMatch } from "./match-sites"
 import { readPython } from "./python-reader"
@@ -41,7 +41,7 @@ export const matchFilePath = (filePath: string, libraries: readonly CatalogueLib
   libraries.flatMap((library) =>
     library.patterns
       .filter(isFilePattern)
-      .filter((pattern) => fitsGlob(pattern.glob, filePath))
+      .filter((pattern) => fitsFilePattern(pattern, filePath))
       .map((pattern) => ({
         ...saysNothingMore,
         library: library.name,

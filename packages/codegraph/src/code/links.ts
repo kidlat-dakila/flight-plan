@@ -5,7 +5,7 @@ import { listTraceNodes } from "@/trace-diagram"
 import type { CodeLink, ContextCodeBlock, Finding, TraceNode, LineRange, Segment, Waypoint } from "@flightplan/configurations"
 import { codeLinesIn, findSource, rowSpanOf, type HighlightedSource, type RowSpan } from "./lines"
 
-const CODE_LINK_PATTERN = /\]\(code:([^)\s]+)\)/g
+const CODE_LINK_PATTERN = /\]\(code:((?:[^()\s]|\([^()\s]*\))+)\)/g
 const LINES_TARGET_PATTERN = /^L\d+(?:-\d+)?$/
 const LINES_PREFIX = "L"
 const LINES_SEPARATOR = "-"

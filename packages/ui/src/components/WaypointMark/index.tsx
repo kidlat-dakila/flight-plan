@@ -1,13 +1,13 @@
-import { use, useCallback, useEffect, useRef, useState, type ReactNode } from "react"
-import AgentMark from "@/components/AgentMark"
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import HoverCard, { HoverCardArrow, HoverCardContent, HoverCardTrigger } from "@/components/blocks/hover-card"
 import { FindingChip, FindingShapes, type FindingMarkKind } from "@/components/FindingMark"
 import LabelSegments from "@/components/LabelSegments"
+import MissingWriteUp, { WriteUpButtons, type WaypointWriteUp } from "@/components/MissingWriteUp"
 import Prose from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
 import { SpotlightChip, SpotlightRays } from "@/components/SpotlightMark"
 import type { WaypointContent } from "@/components/WaypointBox"
-import { BeingWrittenLines, KeycapButton, NoWriteUpTag } from "@/components/WriteUpIcon"
+import { KeycapButton } from "@/components/WriteUpIcon"
 import {
   GUTTER_CARD_COLLISION_AVOIDANCE,
   GUTTER_CARD_GAP_PX,
@@ -21,11 +21,9 @@ import {
   whenScrollSettles,
   type GutterCardPlacement,
 } from "@/lib/gutter-card"
-import { WRITE_UP_KEY } from "@/lib/navigator-controls"
 import type { CodeLinkTargets } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
-import { COMMENT_KEY, EXPLAIN_CODE_BLOCK_ACTION_ID, EXPLAIN_WAYPOINT_ACTION_ID, WAYPOINT_KEY, WRITE_DESCRIPTION_LABEL } from "@/lib/walkthrough-navigation"
-import { WriteUpAgentContext, type WriteUpAgent } from "@/lib/write-up-agent"
+import { WAYPOINT_KEY } from "@/lib/walkthrough-navigation"
 
 export type WaypointMarkKind = FindingMarkKind | "plain"
 
@@ -34,11 +32,6 @@ export interface MarkedWaypoint extends WaypointContent {
   readonly rangeLabel: string | null
   readonly mark: { readonly kind: WaypointMarkKind, readonly label: string }
   readonly lines: { readonly lineStart: number, readonly lineEnd: number } | null
-}
-
-export interface WaypointWriteUp {
-  readonly onLine: () => void
-  readonly onBlock: (() => void) | null
 }
 
 export type StemReach = "start" | "middle" | "end" | "single"
@@ -99,17 +92,6 @@ const STOP_RAY_OUTER_RADIUS = 11.75
 const REVIEWED_CHECK_PATH = "M5 8.25 7.1 10.25 11 5.9"
 const WRITE_UP_DASHES = "[stroke-dasharray:2.4_2.1]"
 const CARD_CLASSES = cn("flex flex-col font-sans", GUTTER_CARD_WIDTH_CLASSES)
-const UNEXPLAINED_LABEL = "This line of code is not explained or checked for issues yet."
-const UNDESCRIBED_LABEL = "This waypoint does not have any description or explanation."
-const EXPLAIN_LINE_LABEL = "Explain this line"
-const EXPLAIN_BLOCK_LABEL = "Explain the whole code block"
-const CONTROL_KEY_LABEL = "Ctrl+G"
-
-const unexplainedLabelOf = (agent: WriteUpAgent | null): string =>
-  agent === null ? UNEXPLAINED_LABEL : `${agent.label} has not explained this line of code or checked it for issues yet.`
-
-const explainingLabelOf = (agent: WriteUpAgent | null): string => `${agent?.label ?? "The agent"} is explaining this line.`
-
 const segmentClassesOf = ({ reach, isJoinedAbove }: StemPiece, hasMark: boolean): string[] => {
   const above = isJoinedAbove ? [ABOVE_MARK_CLASSES] : []
   if (reach === "start") return [...above, BELOW_MARK_CLASSES]
@@ -174,41 +156,6 @@ const MarkGlyph = ({ waypoint, isCurrent }: { readonly waypoint: MarkedWaypoint,
   </svg>
 )
 
-interface MissingWriteUpProps {
-  readonly waypoint: MarkedWaypoint
-  readonly isAuthored: boolean
-}
-
-const MissingWriteUp = ({ waypoint, isAuthored }: MissingWriteUpProps) => {
-  const agent = use(WriteUpAgentContext)
-  return (
-    <div className="flex flex-col gap-2 border-t px-3 py-2">
-      {waypoint.hint === null ? null : <p className="text-sm text-foreground">{waypoint.hint}</p>}
-      {waypoint.isBeingWritten
-        ? <BeingWrittenLines label={explainingLabelOf(agent)} />
-        : <NoWriteUpTag label={isAuthored ? UNDESCRIBED_LABEL : unexplainedLabelOf(agent)} />}
-    </div>
-  )
-}
-
-const explainLabelOf = (agent: WriteUpAgent | null): string => (agent === null ? EXPLAIN_LINE_LABEL : `Let ${agent.label} explain`)
-
-const ExplainButtons = ({ writeUp }: { readonly writeUp: WaypointWriteUp }) => {
-  const agent = use(WriteUpAgentContext)
-  return (
-    <>
-      <KeycapButton
-        label={explainLabelOf(agent)}
-        keyLabel={WRITE_UP_KEY}
-        icon={agent === null ? null : <AgentMark agent={agent.name} />}
-        actionId={EXPLAIN_WAYPOINT_ACTION_ID}
-        onClick={writeUp.onLine}
-      />
-      {writeUp.onBlock === null ? null : <KeycapButton label={EXPLAIN_BLOCK_LABEL} keyLabel={CONTROL_KEY_LABEL} actionId={EXPLAIN_CODE_BLOCK_ACTION_ID} onClick={writeUp.onBlock} />}
-    </>
-  )
-}
-
 interface WaypointCardProps extends Pick<WaypointMarkProps, "waypoint" | "isReviewPending" | "codeLinks" | "writeUp" | "onOpenCodeLink" | "onReviewedChange"> {
   readonly onWriteDescription: (() => void) | null
   readonly onExpand: () => void
@@ -225,7 +172,6 @@ const WaypointCard = ({
   onExpand,
 }: WaypointCardProps) => {
   const firstBlock = waypoint.reading?.slice(0, 1) ?? null
-  const canExplain = writeUp !== null && firstBlock === null && !waypoint.isBeingWritten
   const metaSegments = [waypoint.rangeLabel, waypoint.positionLabel]
     .filter((label) => label !== null)
     .map((text) => ({ text, kind: "plain" as const }))
@@ -245,17 +191,14 @@ const WaypointCard = ({
         <LabelSegments segments={metaSegments} className="text-xs text-muted-foreground tabular-nums" />
       </div>
       {firstBlock === null
-        ? <MissingWriteUp waypoint={waypoint} isAuthored={onWriteDescription !== null} />
+        ? <MissingWriteUp hint={waypoint.hint} isBeingWritten={waypoint.isBeingWritten} isAuthored={onWriteDescription !== null} className="border-t px-3 py-2" />
         : (
             <div className="line-clamp-3 border-t px-3 py-2">
               <Prose blocks={firstBlock} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} className={GUTTER_CARD_PROSE_CLASSES} />
             </div>
           )}
       <div className="flex min-h-9 flex-wrap items-center gap-1.5 border-t p-1 text-xs">
-        {canExplain ? <ExplainButtons writeUp={writeUp} /> : null}
-        {onWriteDescription === null || firstBlock !== null || waypoint.isBeingWritten
-          ? null
-          : <KeycapButton label={WRITE_DESCRIPTION_LABEL} keyLabel={COMMENT_KEY} actionId="write-description-action" onClick={onWriteDescription} />}
+        {firstBlock === null ? <WriteUpButtons isBeingWritten={waypoint.isBeingWritten} writeUp={writeUp} onWriteDescription={onWriteDescription} /> : null}
         <KeycapButton label={EXPAND_LABEL} keyLabel={WAYPOINT_KEY} variant="ghost" actionId="expand-waypoint-action" onClick={onExpand} />
         {onReviewedChange === null
           ? null

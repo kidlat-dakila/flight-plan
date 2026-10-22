@@ -10,7 +10,7 @@ export interface CodeLinkAttributes {
 export const CODE_LINK_NODE_NAME = "codeLink"
 const LINK_ID_ATTRIBUTE = "data-code-link"
 const CODE_ATTRIBUTE = "data-code"
-const CODE_LINK_PATTERN = /^\[(`?)([^\]`\n]+)\1\]\(code:([^)\s]+)\)/
+const CODE_LINK_PATTERN = /^\[(`?)([^\]`\n]+)\1\]\(code:((?:[^()\s]|\([^()\s]*\))+)\)/
 const CODE_LINK_START_PATTERN = /\[[^\]\n]*\]\(code:/
 const CODE_LINK_CLASSES = "rounded-sm border border-border bg-muted px-1.5 py-0.5 text-[0.875em] data-code:font-mono"
 

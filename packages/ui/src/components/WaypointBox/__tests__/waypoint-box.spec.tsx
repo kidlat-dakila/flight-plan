@@ -22,6 +22,17 @@ const createWaypoint = (overrides: Partial<WaypointContent> = {}): WaypointConte
   ...overrides,
 })
 
+const unwrittenWaypoint = createWaypoint({
+  reading: null,
+  isDraft: true,
+  title: "todoRouter",
+  hint: "Adds a server action.",
+  chip: null,
+  coreChangeLabel: null,
+  coreChange: null,
+  findings: [],
+})
+
 const renderBox = (waypoint: WaypointContent, isOpen: boolean, handlers: { onToggle?: () => void, onReviewedChange?: (isReviewed: boolean) => void } = {}) =>
   render(
     <WaypointBox
@@ -64,10 +75,74 @@ describe("WaypointBox", () => {
     expect(screen.getByText("The total can be negative")).toBeTruthy()
   })
 
-  it("says so when the agent has not written it yet", () => {
-    renderBox(createWaypoint({ reading: null, isDraft: true, title: "priceOf", chip: null, coreChangeLabel: null, coreChange: null, findings: [] }), true)
+  it("shows what its card shows when the agent has not written it yet, with the hint and the buttons that ask for a write-up", () => {
+    const onLine = vi.fn()
+    const onBlock = vi.fn()
+    render(
+      <WaypointBox
+        waypoint={unwrittenWaypoint}
+        isOpen
+        isCurrent={false}
+        isReviewPending={false}
+        codeLinks={{}}
+        writeUp={{ onLine, onBlock }}
+        onOpenCodeLink={vi.fn()}
+        onToggle={vi.fn()}
+        onReviewedChange={vi.fn()}
+      />,
+    )
 
-    expect(screen.getByText("Not written yet.")).toBeTruthy()
+    expect(screen.getByText("Adds a server action.")).toBeTruthy()
+    expect(screen.getByText("This line of code is not explained or checked for issues yet.")).toBeTruthy()
+    expect(screen.queryByText("Not written yet.")).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: /Explain this line/ }))
+    fireEvent.click(screen.getByRole("button", { name: /Explain the whole code block/ }))
+
+    expect(onLine).toHaveBeenCalledTimes(1)
+    expect(onBlock).toHaveBeenCalledTimes(1)
+  })
+
+  it("says the agent is explaining it, with no buttons, while its write-up is being written", () => {
+    render(
+      <WaypointBox
+        waypoint={{ ...unwrittenWaypoint, isBeingWritten: true }}
+        isOpen
+        isCurrent={false}
+        isReviewPending={false}
+        codeLinks={{}}
+        writeUp={{ onLine: vi.fn(), onBlock: null }}
+        onOpenCodeLink={vi.fn()}
+        onToggle={vi.fn()}
+        onReviewedChange={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText("The agent is explaining this line.")).toBeTruthy()
+    expect(screen.queryByRole("button", { name: /Explain this line/ })).toBeNull()
+  })
+
+  it("offers its author a description instead when the waypoint has none", () => {
+    const onWriteDescription = vi.fn()
+    render(
+      <WaypointBox
+        waypoint={unwrittenWaypoint}
+        isOpen
+        isCurrent={false}
+        isReviewPending={false}
+        codeLinks={{}}
+        onWriteDescription={onWriteDescription}
+        onOpenCodeLink={vi.fn()}
+        onToggle={vi.fn()}
+        onReviewedChange={null}
+      />,
+    )
+
+    expect(screen.getByText("This waypoint does not have any description or explanation.")).toBeTruthy()
+
+    fireEvent.click(screen.getByRole("button", { name: /Write description/ }))
+
+    expect(onWriteDescription).toHaveBeenCalledTimes(1)
   })
 
   it("reports a toggle and a reviewed mark separately", () => {
