@@ -58,11 +58,11 @@ describe("ReviewGuideTooltips", () => {
     if (originalRect !== undefined) Reflect.defineProperty(HTMLElement.prototype, "getBoundingClientRect", originalRect)
   })
 
-  it("points a teammate at Jump to five seconds into the Context section", async () => {
+  it("points a teammate at Jump to a second and a half into the Context section", async () => {
     renderReview("teammate")
     await waitPastTheDelay()
 
-    expect(screen.getByText("Jump to any section")).toBeTruthy()
+    expect(screen.getByText("Go straight to what matters")).toBeTruthy()
     expect(guideTooltipStore.getState().firstSeenAt).not.toBeNull()
   })
 
@@ -70,6 +70,6 @@ describe("ReviewGuideTooltips", () => {
     renderReview("user")
     await waitPastTheDelay()
 
-    expect(screen.queryByText("Jump to any section")).toBeNull()
+    expect(screen.queryByText("Go straight to what matters")).toBeNull()
   })
 })

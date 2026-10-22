@@ -2,6 +2,7 @@ import { ChevronRightIcon } from "lucide-react"
 import type { ReactNode } from "react"
 import FindingCard from "@/components/FindingCard"
 import { FindingChip } from "@/components/FindingMark"
+import MissingWriteUp, { WriteUpButtons, type WaypointWriteUp } from "@/components/MissingWriteUp"
 import Prose from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
 import { SpotlightChip, type Spotlight } from "@/components/SpotlightMark"
@@ -36,6 +37,8 @@ interface WaypointBoxProps {
   readonly isGuttered?: boolean
   readonly codeLinks: CodeLinkTargets
   readonly actions?: ReactNode
+  readonly writeUp?: WaypointWriteUp | null
+  readonly onWriteDescription?: (() => void) | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggle: () => void
   readonly onReviewedChange: ((isReviewed: boolean) => void) | null
@@ -59,6 +62,8 @@ const WaypointBox = ({
   isGuttered = false,
   codeLinks,
   actions,
+  writeUp = null,
+  onWriteDescription = null,
   onOpenCodeLink,
   onToggle,
   onReviewedChange,
@@ -117,9 +122,12 @@ const WaypointBox = ({
           <div className="flex flex-col gap-3 border-t px-4 pt-3.5 pb-4 text-base leading-[1.7]">
             {waypoint.reading === null
               ? (
-                  <Unwritten isPending lineCount={3}>
-                    <p className="text-muted-foreground">{waypoint.unwrittenLabel}</p>
-                  </Unwritten>
+                  <>
+                    <MissingWriteUp hint={waypoint.hint} isBeingWritten={waypoint.isBeingWritten} isAuthored={onWriteDescription !== null} />
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs empty:hidden">
+                      <WriteUpButtons isBeingWritten={waypoint.isBeingWritten} writeUp={writeUp} onWriteDescription={onWriteDescription} />
+                    </div>
+                  </>
                 )
               : <Prose blocks={waypoint.reading} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
             {waypoint.coreChange === null || waypoint.coreChangeLabel === null
