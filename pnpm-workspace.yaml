@@ -12,3 +12,7 @@ allowBuilds:
   tree-sitter-python: true
   tree-sitter-typescript: true
   unrs-resolver: false
+overrides:
+  "@modelcontextprotocol/sdk@<1.32.0": ^1.32.0
+  follow-redirects@<1.16.1: ^1.16.1
+  undici@>=7.0.0 <7.29.1: ^7.29.1
