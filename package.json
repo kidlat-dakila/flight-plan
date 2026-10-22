@@ -1,7 +1,7 @@
 {
   "name": "flight-plan",
   "description": "Read a pull request as an ordered walkthrough beside its code, written by your assistant through MCP tools.",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kidlat-dakila/flight-plan.git"
