@@ -21,14 +21,15 @@ describe("AgentInteraction", () => {
     expect(screen.getByText(/draws the Trace Diagram and the Blast Diagram/)).toBeTruthy()
   })
 
-  it("notes that the agent runs as a background terminal session on the user's subscription", () => {
+  it("notes that Flight Plan opens the terminal app for the agent, or the user prompts it", () => {
     render(<AgentInteraction />)
 
     fireEvent.click(screen.getByRole("button", { name: TRIGGER_NAME }))
 
     const note = screen.getByRole("note")
-    expect(note.textContent).toContain("Your agent runs on your subscription")
-    expect(note.textContent).toContain("claude -p")
+    expect(note.textContent).toContain("How your agent starts")
+    expect(note.textContent).toContain("open your terminal app")
+    expect(note.textContent).toContain("/flightplan:live <repository>/<target>")
     expect(screen.queryByRole("alert")).toBeNull()
   })
 })
