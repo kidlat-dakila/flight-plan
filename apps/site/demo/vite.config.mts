@@ -7,7 +7,7 @@ const OUTPUT_FOLDER = "../public/demo-app"
 const PUBLIC_BASE = "/demo-app/"
 const ENTRY_PATH = "app/main.tsx"
 const TSCONFIG_NAMES = ["tsconfig.app.json", "tsconfig.lib.json", "tsconfig.json"]
-const NODE_ONLY_MODULES = /^(node:(?!crypto$)|tree-sitter|node-pty|fastify|@fastify\/|@agntn\/forges|@napi-rs\/keyring|enhanced-resolve|@modelcontextprotocol\/sdk\/server|mqemitter)/
+const NODE_ONLY_MODULES = /^(node:(?!crypto$)|tree-sitter|fastify|@fastify\/|@agntn\/forges|@napi-rs\/keyring|enhanced-resolve|@modelcontextprotocol\/sdk\/server|mqemitter)/
 const UNAVAILABLE_PREFIX = "\0demo-unavailable:"
 const STYLESHEET_SUFFIX = ".css"
 

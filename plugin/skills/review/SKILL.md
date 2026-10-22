@@ -50,11 +50,14 @@ A fourth, `record-import`, is the other direction. When Flight Plan asks you to
 fetch a Flight Plan from a Claude artifact, read the file it names with your
 Artifact tool, copy it unchanged to the path it gives, and call `record-import`.
 
-How the answer comes back depends on who started you. If Flight Plan started
-your session, its system prompt says so: end your turn after asking, and you are
-resumed with the answers. Otherwise the result of `ask-questions` gives a `curl`
-command. Run it in the background; it exits when the reviewer replies, and its
-output holds the reply and the command for the next one.
+The answers come back on the review's listening stream. If you serve the
+review with `/flightplan:live`, that skill already listens: go back to it after
+asking. Otherwise the result of `ask-questions` gives a `curl` command. Run it in
+the foreground; it exits when the reviewer replies, and its output holds the
+reply and the command for the next one.
+
+While you work without calling Flight Plan's tools, call `ping` at least every
+5 seconds, so the reviewer sees that an agent is online for the review.
 
 ## The order of work
 

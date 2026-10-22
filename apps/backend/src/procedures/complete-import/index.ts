@@ -1,4 +1,5 @@
 import type { ProcedureContext } from "@/procedures/context"
+import { markAgentSeen } from "@/procedures/get-conversation/utils/conversation-actions"
 import { parseStoredReview } from "@/procedures/get-review/utils/stored-review"
 import type { CompleteImportInput, ImportCompletion } from "./utils/schemas"
 
@@ -12,6 +13,7 @@ export const completeImport = async (input: CompleteImportInput, context: Proced
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
   const request = await context.reviewStore.readImportRequest(key)
   if (request?.importedAt !== null) return rejected(NOT_REQUESTED_MESSAGE)
+  markAgentSeen(key, context)
   const path = context.importFiles.pathOf(key)
   const text = await context.importFiles.read(key)
   if (text === null) return rejected(`There is no file at ${path} yet. Copy the Flight Plan there, then call record-import again.`)

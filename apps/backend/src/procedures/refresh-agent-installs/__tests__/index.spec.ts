@@ -5,17 +5,25 @@ import { refreshAgentInstalls } from "@/procedures/refresh-agent-installs"
 
 const INSTALLED: AgentInstallation = { kind: "installed" }
 
-const createInstallingContext = (setup: Setup, failures: Partial<Record<AgentName, string>> = {}) => {
+const createInstallingContext = (setup: Setup, failures: Partial<Record<AgentName, string>> = {}, currentAgents: readonly AgentName[] = []) => {
   const context = createSetupContext(setup)
   const installAgent = vi.fn(async ({ agent }: AgentInstall): Promise<AgentInstallation> => {
     const reason = failures[agent]
     return await Promise.resolve(reason === undefined ? INSTALLED : { kind: "failed", reason })
   })
-  return { installAgent, context: { ...context, setupEnvironment: { ...context.setupEnvironment, installAgent } } }
+  const isAgentInstallCurrent = async ({ agent }: AgentInstall): Promise<boolean> => await Promise.resolve(currentAgents.includes(agent))
+  return { installAgent, context: { ...context, setupEnvironment: { ...context.setupEnvironment, installAgent, isAgentInstallCurrent } } }
 }
 
 describe("refreshAgentInstalls", () => {
-  it("installs every saved agent again", async () => {
+  it("installs again only the saved agents whose install is out of date", async () => {
+    const { context, installAgent } = createInstallingContext(AT_CONFIGURATION, {}, ["codex"])
+
+    await expect(refreshAgentInstalls(context)).resolves.toStrictEqual([])
+    expect(installAgent.mock.calls.map(([{ agent }]) => agent)).toStrictEqual(["claude"])
+  })
+
+  it("installs every saved agent again when none is up to date", async () => {
     const { context, installAgent } = createInstallingContext(AT_CONFIGURATION)
 
     await expect(refreshAgentInstalls(context)).resolves.toStrictEqual([])

@@ -1,5 +1,5 @@
-import { createConversationEnvironment, createMockProcedureContext, type ProcedureContext } from "@/procedures/context"
-import { FakeSpawner, flushPromises, WITH_CLAUDE } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
+import { createMockProcedureContext, type ProcedureContext } from "@/procedures/context"
+import { WITH_CLAUDE } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
 import { getReview } from "@/procedures/get-review"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { InMemoryConfigurationStore } from "@/procedures/list-configurations/utils/configuration-store"
@@ -12,12 +12,17 @@ const REQUESTED_MESSAGE = "Asked your agent to publish it. The link shows under 
 
 const createContext = () => createMockProcedureContext(NOW)
 
-const createContextWithClaude = (spawner: FakeSpawner): ProcedureContext => ({
+const createContextWithClaude = (): ProcedureContext => ({
   ...createContext(),
   setupStore: new InMemorySetupStore(WITH_CLAUDE),
   configurationStore: new InMemoryConfigurationStore([]),
-  conversationEnvironment: createConversationEnvironment({ spawners: { claude: spawner.spawn } }),
 })
+
+const lastRequestOf = async (context: ProcedureContext): Promise<string> => {
+  const { journal } = await context.conversationEnvironment.store.read(KEY)
+  const event = journal.at(-1)?.event
+  return event?.kind === "reviewer-message" ? event.body : ""
+}
 
 describe("publishArtifact", () => {
   it("records where the artifact was attached to the description", async () => {
@@ -29,22 +34,20 @@ describe("publishArtifact", () => {
     await expect(context.reviewStore.readPublications(KEY)).resolves.toMatchObject([{ kind: "description" }])
   })
 
-  it("starts Claude with the request to publish the page it built, and records nothing yet", async () => {
-    const spawner = new FakeSpawner()
-    const context = createContextWithClaude(spawner)
+  it("leaves the live agent the request to publish the page it built, and records nothing yet", async () => {
+    const context = createContextWithClaude()
 
     await expect(publishArtifact({ ...KEY, destination: "claude" }, context)).resolves.toStrictEqual({ message: REQUESTED_MESSAGE })
 
-    expect(spawner.launches).toHaveLength(1)
-    expect(spawner.launches[0]?.prompt).toContain("Publish this review target's Flight Plan as a Claude artifact.")
-    expect(spawner.launches[0]?.prompt).toContain("`/sample-publications/storefront/pr-405`")
-    expect(spawner.launches[0]?.prompt).toContain("pass no `url`")
+    const request = await lastRequestOf(context)
+    expect(request).toContain("Publish this review target's Flight Plan as a Claude artifact.")
+    expect(request).toContain("`/sample-publications/storefront/pr-405`")
+    expect(request).toContain("pass no `url`")
     await expect(context.reviewStore.readPublications(KEY)).resolves.toStrictEqual([])
   })
 
-  it("shows the Claude artifact as being published until the agent records its address or stops", async () => {
-    const spawner = new FakeSpawner()
-    const context = createContextWithClaude(spawner)
+  it("shows the Claude artifact as being published while the agent is online and has not recorded its address", async () => {
+    const context = createContextWithClaude()
     const isPending = async (): Promise<boolean | null> => {
       const page = await getReview({ ...KEY, filterKeys: [], isShowingReviewed: false }, context)
       return page?.kind === "artifact" ? page.sharing?.options.find((option) => option.key === "claude")?.isPending ?? null : null
@@ -52,36 +55,19 @@ describe("publishArtifact", () => {
 
     await expect(isPending()).resolves.toBe(false)
     await publishArtifact({ ...KEY, destination: "claude" }, context)
-    await expect(isPending()).resolves.toBe(true)
-
-    spawner.processes[0]?.exit(0)
-    await flushPromises()
-
     await expect(isPending()).resolves.toBe(false)
-  })
 
-  it("shows nothing as being published when no agent could be asked", async () => {
-    const context = createContext()
-
-    await publishArtifact({ ...KEY, destination: "claude" }, context)
-
-    await expect(context.reviewStore.readPublishingRequest(KEY)).resolves.toBeNull()
+    context.conversationEnvironment.presence.openStream(KEY)
+    await expect(isPending()).resolves.toBe(true)
   })
 
   it("asks to update the artifact it was published to before", async () => {
-    const spawner = new FakeSpawner()
-    const context = createContextWithClaude(spawner)
+    const context = createContextWithClaude()
     await context.reviewStore.writePublications(KEY, [{ kind: "claude", url: "https://claude.ai/artifact/abc", publishedAt: NOW }])
 
     await publishArtifact({ ...KEY, destination: "claude" }, context)
 
-    expect(spawner.launches[0]?.prompt).toContain("pass `url` \"https://claude.ai/artifact/abc\"")
-  })
-
-  it("says why no agent could be asked", async () => {
-    await expect(publishArtifact({ ...KEY, destination: "claude" }, createContext())).resolves.toStrictEqual({
-      message: "No agent could be asked to publish it. Finish the Agents step of the setup so Flight Plan can start an agent.",
-    })
+    await expect(lastRequestOf(context)).resolves.toContain("pass `url` \"https://claude.ai/artifact/abc\"")
   })
 
   it("says so when this build has no page to publish", async () => {

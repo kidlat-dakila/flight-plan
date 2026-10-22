@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { Marked, marked } from "marked"
 import type { ReactNode } from "react"
 import TextEditor, { type CodeLinkRequest } from "@/components/TextEditor"
 
@@ -47,7 +48,27 @@ const renderEditor = (
   return { onChange, box: screen.getByRole("textbox", { name: "Context" }) }
 }
 
+const markedInstancesUsedBy = (renderEditors: () => void): ReadonlySet<unknown> => {
+  const use = vi.spyOn(Marked.prototype, "use")
+  renderEditors()
+  const instances = new Set(use.mock.contexts)
+  use.mockRestore()
+  return instances
+}
+
 describe("TextEditor", () => {
+  it("gives every editor a Marked of its own, so the tokenizers of a closed editor are not kept", () => {
+    const instances = markedInstancesUsedBy(() => {
+      render(<TextEditor label="First" value="" errorMessage={null} onChange={vi.fn()} />)
+      render(<TextEditor label="Second" value="" errorMessage={null} onChange={vi.fn()} />)
+      render(<TextEditor label="Third" value="" errorMessage={null} canUseSections onChange={vi.fn()} />)
+      render(<TextEditor label="Fourth" value="" errorMessage={null} canUseSections onChange={vi.fn()} />)
+    })
+
+    expect(instances.size).toBe(4)
+    expect(marked.defaults.extensions).toBeNull()
+  })
+
   it("shows Markdown as formatted text: a heading, bold, code and both kinds of list", () => {
     const { box } = renderEditor(CONTEXT)
 

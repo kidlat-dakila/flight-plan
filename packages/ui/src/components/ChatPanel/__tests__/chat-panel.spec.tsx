@@ -11,9 +11,8 @@ const createConversation = (overrides: Partial<Conversation> = {}): Conversation
   emptyMessage: null,
   placeholder: "Ask about this review",
   sendLabel: "Send",
-  agentState: "working",
-  agentStateLabel: "Agent working",
-  problem: null,
+  agentState: "online",
+  agentStateLabel: "Agent online",
   entries: [
     { kind: "message", id: "m1", author: "reviewer", authorLabel: "You", reference: "storefront@abc:src/a.ts#L3", body: paragraph("Why here?"), timeLabel: "just now" },
     { kind: "message", id: "a1", author: "agent", authorLabel: "Agent", reference: null, body: paragraph("It guards the call."), timeLabel: "just now" },
@@ -65,23 +64,17 @@ describe("ChatPanel", () => {
 
     const panel = screen.getByRole("complementary", { name: "Chat with the agent" })
 
-    expect(within(panel).getByRole("status").textContent).toBe("Agent working")
+    expect(within(panel).getByRole("status").textContent).toBe("Agent online")
     expect(within(panel).getByText("Why here?")).toBeTruthy()
     expect(within(panel).getByText("It guards the call.")).toBeTruthy()
     expect(within(panel).getByText("storefront@abc:src/a.ts#L3")).toBeTruthy()
   })
 
   it("invites a first message when the conversation is empty", () => {
-    renderPanel(createConversation({ agentState: "not-running", agentStateLabel: "Agent not running", emptyMessage: "Ask about this review.", entries: [] }))
+    renderPanel(createConversation({ agentState: "offline", agentStateLabel: "Agent offline", emptyMessage: "Ask about this review.", entries: [] }))
 
     expect(screen.getByText("Ask about this review.")).toBeTruthy()
-    expect(screen.getByText("Agent not running")).toBeTruthy()
-  })
-
-  it("says why the agent could not start", () => {
-    renderPanel(createConversation({ agentState: "failed", agentStateLabel: "Agent could not start", problem: "The claude command was not found." }))
-
-    expect(screen.getByRole("alert").textContent).toBe("The claude command was not found.")
+    expect(screen.getByText("Agent offline")).toBeTruthy()
   })
 
   it("sends what is typed and clears the box, and cannot send nothing", () => {

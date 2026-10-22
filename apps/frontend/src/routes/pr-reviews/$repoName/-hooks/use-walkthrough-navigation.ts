@@ -4,6 +4,7 @@ import type { CommentRange, WriteUpTarget } from "@flightplan/ui/FileRows"
 import { coveredTopOf } from "@flightplan/ui/lib/pinned-rows"
 import type { WalkthroughControls, WriteUpScope } from "@flightplan/ui/lib/walkthrough-navigation"
 import { firstUnreviewedWaypointIdOf, isFilterApplied } from "./filtered-waypoints"
+import type { ReadingPosition } from "./use-reading-position"
 import type { SteppedWaypoint, WaypointStepping } from "./use-waypoint-stepping"
 
 type FilterKeys = Parameters<NonNullable<WalkthroughNavigation["onFilterChange"]>>[0]
@@ -48,7 +49,7 @@ interface Collapse {
 export interface WalkthroughLayout {
   readonly isFileCollapsed: (anchorId: string) => boolean
   readonly onFileCollapsedChange: (anchorId: string, isCollapsed: boolean) => void
-  readonly navigationOf: (segment: NavigatedSegment) => WalkthroughNavigation
+  readonly navigationOf: (segment: NavigatedSegment, position: ReadingPosition) => WalkthroughNavigation
 }
 
 interface HeldPlace {
@@ -160,7 +161,6 @@ const fileUnderBandOf = (files: readonly NavigatedFile[], currentAnchorId: strin
 export const useWalkthroughNavigation = (
   segments: readonly NavigatedSegment[],
   stepping: WaypointStepping,
-  currentAnchorId: string | null,
   handlers: WalkthroughHandlers,
 ): WalkthroughLayout => {
   const holdingAnchorId = fileHoldingWaypoint(segments, stepping.currentWaypointId)
@@ -185,11 +185,11 @@ export const useWalkthroughNavigation = (
   return {
     isFileCollapsed: (anchorId) => collapsedAnchorIds.has(anchorId),
     onFileCollapsedChange: (anchorId, isCollapsed) => { changeCollapse([anchorId], isCollapsed, anchorId) },
-    navigationOf: (segment) => {
+    navigationOf: (segment, position) => {
       const { controls } = segment.walkthrough
       const fileAnchorIds = segment.walkthrough.files.map((file) => file.anchorId)
-      const fileUnderBand = fileUnderBandOf(segment.walkthrough.files, currentAnchorId)
-      const segmentStepping = stepping.steppingOf(segment)
+      const fileUnderBand = fileUnderBandOf(segment.walkthrough.files, position.currentAnchorId)
+      const segmentStepping = stepping.steppingOf(segment, position.aboveAnchorIds)
       return {
         controls,
         positionLabel: segmentStepping.positionLabel,

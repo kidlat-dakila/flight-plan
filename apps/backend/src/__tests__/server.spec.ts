@@ -40,6 +40,7 @@ describe("buildServer", () => {
     expect(tools.body).not.toContain("\"greet\"")
     expect(tools.body).toContain("\"update-nodes\"")
     expect(tools.body).toContain("\"complete\"")
+    expect(tools.body).toContain("\"ping\"")
     await server.close()
   })
 

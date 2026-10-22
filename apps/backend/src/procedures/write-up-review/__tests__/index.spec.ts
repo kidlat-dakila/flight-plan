@@ -1,5 +1,5 @@
 import { createConversationEnvironment, createMockProcedureContext, type ProcedureContext } from "@/procedures/context"
-import { FakeSpawner, SequentialIds } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
+import { SequentialIds } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
@@ -34,7 +34,7 @@ const INPUT: WriteUpReviewInput = {
   isSegmented: false,
 }
 
-const createWritingContext = async (spawner = new FakeSpawner(), artifact: ReviewArtifact = UNREQUIRED_ARTIFACT): Promise<ProcedureContext> => {
+const createWritingContext = async (artifact: ReviewArtifact = UNREQUIRED_ARTIFACT): Promise<ProcedureContext> => {
   const reviewStore = new InMemoryReviewStore([])
   await reviewStore.writeScaffold(KEY, {
     artifact,
@@ -45,17 +45,22 @@ const createWritingContext = async (spawner = new FakeSpawner(), artifact: Revie
     ...createMockProcedureContext(NOW),
     reviewStore,
     setupStore: new InMemorySetupStore(CLAUDE_SETUP),
-    conversationEnvironment: createConversationEnvironment({ spawners: { claude: spawner.spawn }, newId: new SequentialIds().next }),
+    conversationEnvironment: createConversationEnvironment({ newId: new SequentialIds().next }),
     now: () => NOW,
   }
 }
 
-describe("writeUpReview", () => {
-  it("requires the chosen sections, keeps the choice with the review and starts the setup's agent", async () => {
-    const spawner = new FakeSpawner()
-    const context = await createWritingContext(spawner)
+const lastRequestOf = async (context: ProcedureContext): Promise<string> => {
+  const { journal } = await context.conversationEnvironment.store.read(KEY)
+  const event = journal.at(-1)?.event
+  return event?.kind === "reviewer-message" ? event.body : ""
+}
 
-    await expect(writeUpReview(INPUT, context)).resolves.toStrictEqual({ kind: "started", prompt: null, message: "Review started" })
+describe("writeUpReview", () => {
+  it("requires the chosen sections, keeps the choice with the review and leaves the request for the setup's agent", async () => {
+    const context = await createWritingContext()
+
+    await expect(writeUpReview(INPUT, context)).resolves.toStrictEqual({ kind: "started", prompt: null, message: "Sent to Claude" })
 
     const artifact = await context.reviewStore.findArtifact(KEY)
     expect(artifact).toMatchObject({ status: "drafting", isSegmented: false })
@@ -67,17 +72,16 @@ describe("writeUpReview", () => {
       writer: { kind: "agent", agent: "claude", model: "opus", effort: "max" },
       writeUp: { sections: ["walkthrough", "findings"], walkthroughOrder: "important-first" },
     })
-    expect(spawner.launches[0]?.prompt).toContain("Write up the parts of the Code Walkthrough that Flight Plan marked as required, and nothing else.")
-    expect(spawner.launches[0]?.prompt).toContain("Check the code of every waypoint for findings.")
+    await expect(lastRequestOf(context)).resolves.toContain("Write up the parts of the Code Walkthrough that Flight Plan marked as required, and nothing else.")
+    await expect(lastRequestOf(context)).resolves.toContain("Check the code of every waypoint for findings.")
   })
 
   it("tells the agent to write no findings when the reviewer did not choose them", async () => {
-    const spawner = new FakeSpawner()
-    const context = await createWritingContext(spawner)
+    const context = await createWritingContext()
 
     await writeUpReview({ ...INPUT, sections: ["context"] }, context)
 
-    expect(spawner.launches[0]?.prompt).toContain("Write no findings: the reviewer did not ask for them.")
+    await expect(lastRequestOf(context)).resolves.toContain("Write no findings: the reviewer did not ask for them.")
   })
 
   it("refuses an empty choice, a configuration that does not exist and a review with no agent set up", async () => {
@@ -89,12 +93,11 @@ describe("writeUpReview", () => {
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ status: "complete" })
   })
 
-  it("starts no agent when everything chosen is already written", async () => {
-    const spawner = new FakeSpawner()
+  it("asks the agent for nothing when everything chosen is already written", async () => {
     const written = { ...UNREQUIRED_ARTIFACT, segments: UNREQUIRED_ARTIFACT.segments.map((segment) => ({ ...segment, context: "This segment rounds once.", title: "Rounding" })) }
-    const context = await createWritingContext(spawner, written)
+    const context = await createWritingContext(written)
 
     await expect(writeUpReview({ ...INPUT, sections: ["context"] }, context)).resolves.toStrictEqual({ kind: "written", message: "Everything you chose is already explained." })
-    expect(spawner.launches).toStrictEqual([])
+    await expect(context.conversationEnvironment.store.read(KEY)).resolves.toMatchObject({ journal: [] })
   })
 })

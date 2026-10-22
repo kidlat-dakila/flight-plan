@@ -10,7 +10,9 @@ if [ -z "$changed_files" ]; then
   exit 0
 fi
 
-nx affected -t eslint:lint typecheck --files="$(printf '%s\n' "$changed_files" | paste -sd, -)"
+env -u GIT_INDEX_FILE -u GIT_AUTHOR_DATE -u GIT_AUTHOR_NAME -u GIT_AUTHOR_EMAIL -u GIT_PREFIX \
+  GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=commit.gpgsign GIT_CONFIG_VALUE_0=false \
+  nx affected -t eslint:lint typecheck test --parallel=6 --files="$(printf '%s\n' "$changed_files" | paste -sd, -)"
 
 if printf '%s\n' "$changed_files" | grep -qE '^eslint(\.base)?\.config\.ts$'; then
   eslint eslint.base.config.ts eslint.config.ts

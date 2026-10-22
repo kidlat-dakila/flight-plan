@@ -1,5 +1,4 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { deliverToAgent } from "@/procedures/deliver-to-agent"
 import { appendAndPublish, findReviewTarget } from "@/procedures/get-conversation/utils/conversation-actions"
 import type { ReviewerMessageSending, SendReviewerMessageInput } from "./utils/schemas"
 
@@ -16,6 +15,5 @@ export const sendReviewerMessage = async (
     [{ kind: "reviewer-message", id: messageId, body: input.body, reference: input.reference, sentAt: context.now() }],
     context,
   )
-  await deliverToAgent(key, context)
   return { kind: "sent", messageId }
 }

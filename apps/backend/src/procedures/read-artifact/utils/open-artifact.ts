@@ -1,5 +1,5 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { findReviewTarget, markAgentActivity } from "@/procedures/get-conversation/utils/conversation-actions"
+import { findReviewTarget, markAgentSeen } from "@/procedures/get-conversation/utils/conversation-actions"
 import type { InstructionSource } from "@/procedures/get-instructions/utils/resolve-instructions"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { findConfiguration, shippedConfigurationOf } from "@/procedures/list-configurations/utils/configuration"
@@ -26,7 +26,7 @@ export const missingArtifactRejection = (key: ReviewKey): ArtifactRejection => (
 export const openArtifact = async (key: ReviewKey, context: ProcedureContext): Promise<ArtifactRejection | OpenedArtifact> => {
   const target = await findReviewTarget(key, context)
   if (target.kind === "rejected") return target
-  markAgentActivity(key, context)
+  markAgentSeen(key, context)
   const [artifact, request, savedConfigurations] = await Promise.all([
     context.reviewStore.findArtifact(key),
     context.reviewStore.findRequest(key),

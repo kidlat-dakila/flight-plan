@@ -30,11 +30,12 @@ One data directory serves every repository the user reviews. Each repository has
 │   │   ├── configuration.json
 │   │   └── <instruction>.md
 │   └── settings.json
+├── agent-installs/
+│   └── <agent>.json
 ├── agent-plugin/
 │   ├── .claude-plugin/
 │   │   └── marketplace.json
-│   ├── flightplan/
-│   └── flightplan-spawn/
+│   └── flightplan/
 └── server.json
 ```
 
@@ -46,12 +47,13 @@ One data directory serves every repository the user reviews. Each repository has
 | Publications | `reviews/<repository>/` | One `.publications.json` file per review target that was published: where it was published (`description` or `claude`), the address, and when. It is removed with the review artifact |
 | Published copies | `publications/<repository>/<name>/` | The page Flight Plan built the last time the review target was published as a Claude artifact: `index.html`, `app.js`, `app.css`, `review-data.js`, which holds the review as the page draws it, and `flight-plan.json`, the `.flightplan` document under a name a Claude artifact can carry. An agent uploads this folder (see [Flight Plan Review](flight-plan-review.md#publishing-as-a-claude-artifact)) |
 | Downloads underway | `imports/<repository>/` | The `flight-plan.json` an agent fetched from a Claude artifact, for as long as it takes Flight Plan to read it and store it as a `.flightplan` file (see [Flight Plan Review](flight-plan-review.md#downloading-a-published-flight-plan)) |
-| Agent conversations | `conversations/<repository>/` | One JSON file per review target (`pr-412.json`, `branch-feature%2Fweb.json`): the [agent conversation](agent-conversation.md)'s journal and the id of the Claude session Flight Plan resumes for it |
+| Agent conversations | `conversations/<repository>/` | One JSON file per review target (`pr-412.json`, `branch-feature%2Fweb.json`): the [agent conversation](agent-conversation.md)'s journal, and the id of a Claude session in conversations from the time Flight Plan started agents itself |
 | Review target memory | `<repository>/targets.json` | When Flight Plan first listed the repository (`baselineAt`), the ids of the new review targets the user dismissed (`dismissedTargetIds`), and the review targets the user added to the repository's line by hand (`addedTargets`: a branch by its name, a pull request by its number and its author's login). It is created the first time the repository is listed |
 | Saved configurations | `configurations/<configuration>/` | One folder per configuration the user saved, named by its id: each custom configuration (`custom-terse`), and each preset the user changed (`standard`). `configuration.json` holds its name, the preset it is based on and the kinds of context code block it requires; one written with section switches still reads, and they are dropped. Each instruction it overrides is a Markdown file named by its instruction key, as in a preset's folder (`context.md`, `walkthrough.files.waypoints.findings.kind.bug.md`). An instruction it does not override has no file and comes from its preset. Deleting the configuration removes its folder, and resetting a field removes its files |
 | Settings | `configurations/settings.json` | The user's settings. Its `defaultConfiguration` field holds the id of the configuration that applies to new reviews (a preset's name, such as `standard`, or a custom configuration's name), or `null` before one is chosen. Its `reviewPreferences` field holds the [review preferences](review-preferences.md), or `null` before the user saves them. Its `setup` field holds what the setup page saved: the agents with their install folders, models and efforts, the forges, and the repositories with their tracked authors and, for a repository whose git config has no email, the author the user chose as themselves |
-| Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review skill and an `.mcp.json` that points at the running server. Beside it, outside the marketplace's plugin list, `flightplan-spawn` holds the hooks that only sessions Flight Plan starts load (see [agent conversation](agent-conversation.md#spawned-sessions)). Flight Plan writes both again each time the agents are saved, and Claude loads `flightplan` from this folder |
-| Saved port | `server.json` | The port the `flightplan` command last listened on with every saved agent pointing at it. The next run tries this port first, so the address in the agents' files stays true. When the server has to move to another port, it installs the saved agents again and writes the new port here. A development server neither reads nor writes it |
+| Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review and live skills and an `.mcp.json` that points at the running server. Flight Plan writes it again each time the agents are saved and when the published `flightplan` command starts with skills newer than the ones installed, and Claude loads `flightplan` from this folder |
+| Install stamps | `agent-installs/<agent>.json` | For each agent Flight Plan installed, the folder it installed into and a fingerprint of the plugin's files and the server's address at the time. The published `flightplan` command installs an agent again when it starts and the folder or the fingerprint differs, so the agent's skills and address stay current. A development server neither reads nor writes it |
+| Saved port | `server.json` | The port the `flightplan` command last listened on with every saved agent pointing at it. The next run tries this port first, so the address in the agents' files stays true. When the server has to move to another port, the new address makes every install out of date, so it installs the saved agents again and writes the new port here. A development server neither reads nor writes it |
 
 Forge credentials are never stored in this directory. They go in the operating system keychain (see [forge](forge.md#credentials)).
 

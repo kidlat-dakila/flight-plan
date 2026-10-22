@@ -1,32 +1,39 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { formatInbound, formatListenPacket, listenCommandOf } from "@/procedures/get-conversation/utils/agent-text"
-import { lastSequenceOf, pendingInboundOf } from "@/procedures/get-conversation/utils/conversation"
+import { formatIdlePacket, formatInbound, formatListenPacket, listenCommandOf } from "@/procedures/get-conversation/utils/agent-text"
+import { inboundAfter, lastDeliveredSequenceOf, lastSequenceOf } from "@/procedures/get-conversation/utils/conversation"
 import { appendAndPublish, findReviewTarget } from "@/procedures/get-conversation/utils/conversation-actions"
 import { readsOnChange, type ConversationSubscription } from "@/procedures/get-conversation/utils/conversation-hub"
 import type { ConversationKey } from "@/procedures/get-conversation/utils/schemas"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 
-export interface ListenPacket {
-  readonly throughSequence: number
-  readonly text: string
-}
+export const LISTEN_WINDOW_MS = 540_000
+
+export type ListenPacket
+  = | { readonly kind: "work", readonly throughSequence: number, readonly text: string }
+    | { readonly kind: "idle", readonly text: string }
 
 export type Listening
   = | { readonly kind: "listening", readonly packets: AsyncIterable<ListenPacket> }
     | { readonly kind: "rejected", readonly message: string }
 
-const readPacket = async (key: ReviewKey, context: ProcedureContext): Promise<ListenPacket | null> => {
-  const { store, serverUrl } = context.conversationEnvironment
+type WorkPacket = Extract<ListenPacket, { kind: "work" }>
+
+const claimPacket = async (key: ReviewKey, context: ProcedureContext): Promise<WorkPacket | null> => {
+  const { store, presence, serverUrl } = context.conversationEnvironment
   const { journal } = await store.read(key)
-  const pending = pendingInboundOf(journal)
+  const claimed = Math.max(lastDeliveredSequenceOf(journal), presence.presenceOf(key).claimedThroughSequence)
+  const pending = inboundAfter(journal, claimed)
   if (pending.length === 0) return null
+  const throughSequence = lastSequenceOf(pending)
+  if (!presence.claimThrough(key, throughSequence)) return null
   return {
-    throughSequence: lastSequenceOf(pending),
+    kind: "work",
+    throughSequence,
     text: formatListenPacket(formatInbound(pending, journal), listenCommandOf(serverUrl, key)),
   }
 }
 
-const recordDelivery = async (key: ReviewKey, packet: ListenPacket, context: ProcedureContext): Promise<void> => {
+const recordDelivery = async (key: ReviewKey, packet: WorkPacket, context: ProcedureContext): Promise<void> => {
   await appendAndPublish(
     key,
     [
@@ -47,33 +54,43 @@ const waitForPacket = async (
   subscription: ConversationSubscription,
   context: ProcedureContext,
   signal: AbortSignal | null,
-): Promise<ListenPacket | null> => {
-  const waiting = await readPacket(key, context)
+): Promise<WorkPacket | null> => {
+  const waiting = await claimPacket(key, context)
   if (waiting !== null) return waiting
-  const packets = readsOnChange(subscription, { signal, remainingMs: null }, async () => await readPacket(key, context))
+  const deadlineMs = context.now().getTime() + LISTEN_WINDOW_MS
+  const remainingMs = () => deadlineMs - context.now().getTime()
+  const packets = readsOnChange(subscription, { signal, remainingMs }, async () => await claimPacket(key, context))
   for await (const packet of packets) {
     if (packet !== null) return packet
   }
   return null
 }
 
+const idlePacketOf = (key: ReviewKey, context: ProcedureContext): ListenPacket => ({
+  kind: "idle",
+  text: formatIdlePacket(listenCommandOf(context.conversationEnvironment.serverUrl, key)),
+})
+
 const packetsOf = async function* (
   key: ReviewKey,
   context: ProcedureContext,
   signal: AbortSignal | null,
 ): AsyncGenerator<ListenPacket> {
-  const { agents, hub } = context.conversationEnvironment
+  const { presence, hub } = context.conversationEnvironment
   const subscription = hub.subscribe(key)
-  agents.openListener(key)
+  presence.openStream(key)
   hub.publish(key)
   try {
     const packet = await waitForPacket(key, subscription, context, signal)
-    if (packet === null) return
-    yield packet
-    await recordDelivery(key, packet, context)
+    if (packet !== null) {
+      yield packet
+      await recordDelivery(key, packet, context)
+    } else if (signal?.aborted !== true) {
+      yield idlePacketOf(key, context)
+    }
   } finally {
     subscription.close()
-    agents.closeListener(key, context.now())
+    presence.closeStream(key, context.now())
     hub.publish(key)
   }
 }

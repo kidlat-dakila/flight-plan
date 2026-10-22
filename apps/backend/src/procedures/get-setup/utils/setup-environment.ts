@@ -63,6 +63,7 @@ export interface SetupEnvironment {
   readonly hasAgentCli: (agent: AgentName) => Promise<boolean>
   readonly listAgentModels: (agent: AgentName) => Promise<readonly ListedModel[]>
   readonly installAgent: (install: AgentInstall) => Promise<AgentInstallation>
+  readonly isAgentInstallCurrent: (install: AgentInstall) => Promise<boolean>
   readonly probeForgeClis: () => Promise<readonly CliProbe[]>
   readonly findRepositoryFolders: () => Promise<RepositoryFolderIndex>
   readonly listFolders: (path: string | null) => Promise<FolderListing | null>

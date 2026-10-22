@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { coveredTopOf } from "@flightplan/ui/lib/pinned-rows"
 
 export interface SteppedWaypoint {
@@ -45,7 +45,7 @@ export interface WaypointStepping {
   readonly previewVisit: PreviewVisit | null
   readonly currentWaypointId: string | null
   readonly focusedWaypointId: string | null
-  readonly steppingOf: (segment: SteppedSegment) => SegmentStepping
+  readonly steppingOf: (segment: SteppedSegment, aboveAnchorIds: ReadonlySet<string>) => SegmentStepping
   readonly onSectionEntered: (anchorId: string) => void
   readonly onVisitWaypoint: (waypointId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
@@ -56,9 +56,6 @@ export interface WaypointStepping {
 const FOCUS_RELEASE_SCROLL_PX = 160
 const FOCUS_KEPT_VISIBLE_SHARE = 0.33
 const SCROLL_SETTLE_MS = 900
-const READING_LINE_PX = 120
-const NO_FRAME = 0
-const ANCHOR_SEPARATOR = "\n"
 const WAYPOINT_FOCUS_ATTRIBUTE = "data-waypoint-focus"
 
 export const scrollToAnchor = (anchorId: string): void => {
@@ -77,41 +74,11 @@ const visibleShareOf = (waypointId: string): number => {
   return visible / Math.max(1, bottom - top)
 }
 
-const isAboveReadingLine = (anchorId: string): boolean => {
-  const rect = document.getElementById(anchorId)?.getBoundingClientRect()
-  return rect !== undefined && rect.height > 0 && rect.top < READING_LINE_PX
-}
-
-const useAnchorIdsAboveReadingLine = (anchorIds: readonly string[]): ReadonlySet<string> => {
-  const [aboveKey, setAboveKey] = useState("")
-  const frameRef = useRef(NO_FRAME)
-  const anchorKey = anchorIds.join(ANCHOR_SEPARATOR)
-
-  useEffect(() => {
-    const keyedAnchorIds = anchorKey === "" ? [] : anchorKey.split(ANCHOR_SEPARATOR)
-    const measure = (): void => {
-      frameRef.current = NO_FRAME
-      setAboveKey(keyedAnchorIds.filter(isAboveReadingLine).join(ANCHOR_SEPARATOR))
-    }
-    const scheduleMeasure = (): void => {
-      if (frameRef.current === NO_FRAME) frameRef.current = requestAnimationFrame(measure)
-    }
-    scheduleMeasure()
-    window.addEventListener("scroll", scheduleMeasure, { passive: true })
-    window.addEventListener("resize", scheduleMeasure)
-    return () => {
-      cancelAnimationFrame(frameRef.current)
-      frameRef.current = NO_FRAME
-      window.removeEventListener("scroll", scheduleMeasure)
-      window.removeEventListener("resize", scheduleMeasure)
-    }
-  }, [anchorKey])
-
-  return useMemo(() => new Set(aboveKey === "" ? [] : aboveKey.split(ANCHOR_SEPARATOR)), [aboveKey])
-}
-
 const waypointsOf = (segment: SteppedSegment): SteppedWaypoint[] =>
   segment.walkthrough.files.flatMap((file) => file.rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint] : [])))
+
+export const waypointAnchorIdsOf = (segments: readonly SteppedSegment[]): string[] =>
+  segments.flatMap(waypointsOf).map((waypoint) => waypoint.anchorId)
 
 const stepTargetsOf = (waypoints: readonly SteppedWaypoint[], current: SteppedWaypoint | null, aboveAnchorIds: ReadonlySet<string>): StepTargets =>
   current === null
@@ -161,7 +128,6 @@ export const useWaypointStepping = (segments: readonly SteppedSegment[]): Waypoi
   const [visit, setVisit] = useState<Visit | null>(null)
   const [onRelease] = useState(() => releaseFocus(setFocusedWaypointId))
   const waypoints = segments.flatMap(waypointsOf)
-  const aboveAnchorIds = useAnchorIdsAboveReadingLine(waypoints.map((waypoint) => waypoint.anchorId))
 
   useEffect(() => {
     if (visit !== null) scrollToAnchor(visit.anchorId)
@@ -183,7 +149,7 @@ export const useWaypointStepping = (segments: readonly SteppedSegment[]): Waypoi
     previewVisit: previewVisitOf(visit),
     currentWaypointId,
     focusedWaypointId,
-    steppingOf: (segment) => {
+    steppingOf: (segment, aboveAnchorIds) => {
       const segmentWaypoints = waypointsOf(segment)
       const current = segmentWaypoints.find((waypoint) => waypoint.id === currentWaypointId) ?? null
       const targets = stepTargetsOf(segmentWaypoints, current, aboveAnchorIds)

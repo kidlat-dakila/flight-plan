@@ -20,9 +20,9 @@ This runs on your machine, with tree-sitter. The review is ready to read. A part
 
 ## 2. Your agent explains it
 
-The first time a review opens, a dialog asks **Ask Claude to explain this review?**, with the name of your agent. It lists the parts your agent will write, from your [review configuration](/docs/setup/review-configuration/), and how many there are. **Explain** starts your agent, and **Not now** leaves the review as it is. **Explain this review** in the ⚙ menu opens the dialog again. You can also ask for one waypoint, one card or one file at a time. See [Explaining a review](/docs/review-artifacts/features/explaining/).
+The first time a review opens, a dialog asks **Ask Claude to explain this review?**, with the name of your agent. It lists the parts your agent will write, from your [review configuration](/docs/setup/review-configuration/), and how many there are. **Explain** asks your agent, and **Not now** leaves the review as it is. **Explain this review** in the ⚙ menu opens the dialog again. You can also ask for one waypoint, one card or one file at a time. See [Explaining a review](/docs/review-artifacts/features/explaining/).
 
-Flight Plan starts Claude in the repository's folder and asks it to explain the parts you picked with the Flight Plan review skill. With Codex or Cursor, Flight Plan copies a one-line prompt for you to run in your own session. Either way, the agent works through the same MCP tools:
+Claude works in a terminal you can see, started with `/flightplan:live <repository>/<target>`. When it isn't online, Flight Plan asks you to start it, and can open the terminal for you on macOS. It explains the parts you picked with the Flight Plan review skill. With Codex or Cursor, Flight Plan copies a one-line prompt for you to run in your own session. Either way, the agent works through the same MCP tools:
 
 | Tool | What the agent does with it |
 |---|---|
@@ -32,6 +32,7 @@ Flight Plan starts Claude in the repository's folder and asks it to explain the 
 | `update-nodes` | Writes the prose of a segment: its title and context, the diagram labels, the impact of each file, the explanation of each waypoint and the findings. It writes only the parts you asked for, and can't add, remove or move anything. |
 | `complete` | Says the review is finished. Flight Plan checks it, and lists what is still missing if anything is. |
 | `send-message`, `ask-questions` | Talks to you in the review's [chat](/docs/review-artifacts/features/agent-chat/). |
+| `ping` | Tells Flight Plan the agent is still online while it works. |
 | `record-publication`, `record-import` | Records a review it [published or downloaded](/docs/review-artifacts/features/sharing/) as a Claude artifact. |
 
 While it writes, a strip under the header shows who is writing and how many parts are done, such as **12 of 40 parts written**. Each part appears as soon as it's written, so you can read while the agent works.

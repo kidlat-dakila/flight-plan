@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { proseSchema } from "@flightplan/configurations"
 
-export const AGENT_STATES = ["not-running", "starting", "working", "waiting-for-reviewer", "listening", "failed"] as const
+export const AGENT_STATES = ["online", "offline"] as const
 
 export const QUESTIONS_STATUSES = ["open", "answered", "withdrawn"] as const
 
@@ -52,7 +52,6 @@ export const conversationViewSchema = z.strictObject({
   sendLabel: z.string(),
   agentState: z.enum(AGENT_STATES),
   agentStateLabel: z.string(),
-  problem: z.string().nullable(),
   entries: z.array(z.discriminatedUnion("kind", [messageEntrySchema, questionsEntrySchema])),
 })
 

@@ -10,6 +10,7 @@ interface ReviewKey {
 interface WriteUpAnnouncer {
   readonly onMessage: (message: string) => void
   readonly onCopy: (text: string, copiedMessage: string) => void
+  readonly onAgentAsked: () => void
 }
 
 export type WriteUpTarget
@@ -25,6 +26,7 @@ export const useWriteUpRequest = (reviewKey: ReviewKey, announcer: WriteUpAnnoun
       onSuccess: async (result) => {
         if (result.kind === "started" && result.prompt !== null) announcer.onCopy(result.prompt, result.message)
         else announcer.onMessage(result.message)
+        if (result.kind === "started" && result.prompt === null) announcer.onAgentAsked()
         await queryClient.invalidateQueries(trpc.review.get.pathFilter())
       },
       onError: (error) => { announcer.onMessage(error.message) },

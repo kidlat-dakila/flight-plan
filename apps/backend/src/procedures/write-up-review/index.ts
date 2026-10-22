@@ -1,6 +1,6 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { findReviewTarget } from "@/procedures/get-review/utils/find-review-target"
-import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
+import { LIVE_AGENTS } from "@/procedures/get-review/utils/start/live-agents"
 import { NO_AGENT_MESSAGE } from "@/procedures/get-write-up-plan"
 import { defaultWriterOf } from "@/procedures/get-write-up-plan/utils/default-writer"
 import { findConfiguration } from "@/procedures/list-configurations/utils/configuration"
@@ -25,7 +25,7 @@ export const writeUpReview = async (input: WriteUpReviewInput, context: Procedur
   const planned = planWriteUp(input, {
     scaffold,
     configuration: findConfiguration(savedConfigurations, input.configurationId),
-    writer: defaultWriterOf(setup.agents, startableAgentsOf(context.conversationEnvironment.spawners))?.writer ?? null,
+    writer: defaultWriterOf(setup.agents, LIVE_AGENTS)?.writer ?? null,
     noAgentMessage: NO_AGENT_MESSAGE,
     now: context.now(),
   })

@@ -62,6 +62,7 @@ const openLocalContext = (serverConfig: ServerConfig, appUrl: string): Procedure
     serverUrl: serverUrlOf(serverConfig),
     appUrl,
     homePath,
+    platform: process.platform,
     environment,
   })
 }
@@ -115,7 +116,7 @@ const printUpdateNotice = async (pendingNotice: Promise<UpdateNotice | null>): P
 const refreshAgents = async (context: ProcedureContext): Promise<boolean> => {
   const failures = await refreshAgentInstalls(context)
   failures.forEach(({ agent, reason }) => {
-    console.error(`${agent} still points at the previous address. ${reason} Save the agents again in Settings.`)
+    console.error(`${agent} could not be brought up to date with this Flight Plan. ${reason} Save the agents again in Settings.`)
   })
   return failures.length === 0
 }
@@ -148,7 +149,8 @@ const launch = async (command: LaunchCommand): Promise<void> => {
   console.log(`Flight Plan is running at ${serverUrl}`)
   const printedNotice = printUpdateNotice(pendingNotice)
   await showInBrowser(serverUrl, command)
-  if (port !== savedPort && (await refreshAgents(context))) await savedPortFile.write(port)
+  const isRefreshed = await refreshAgents(context)
+  if (port !== savedPort && isRefreshed) await savedPortFile.write(port)
   await printedNotice
 }
 

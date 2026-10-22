@@ -1,5 +1,6 @@
 import { createConversationEnvironment, createMockProcedureContext, type ProcedureContext } from "@/procedures/context"
-import { FakeSpawner, SequentialIds } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
+import { SequentialIds } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
+import type { ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
 import { getReview } from "@/procedures/get-review"
 import type { BranchPull, BranchPuller } from "@/procedures/get-review/utils/branch-puller"
 import { InMemoryChangeReader, type RecordedChange } from "@/procedures/get-review/utils/change-reader"
@@ -40,17 +41,15 @@ const SECOND_CHANGE = changeWith("2222222aaaaaaa", "export const label = () => \
 
 interface Harness {
   readonly reviewStore: ReviewStore
-  readonly spawner: FakeSpawner
+  readonly conversationEnvironment: ConversationEnvironment
   readonly pullBranch: ReturnType<typeof vi.fn<BranchPuller>>
   readonly contextAt: (change: RecordedChange, pull?: BranchPull) => ProcedureContext
 }
 
 const createHarness = (): Harness => {
   const reviewStore = new InMemoryReviewStore([])
-  const spawner = new FakeSpawner()
   const pullBranch = vi.fn<BranchPuller>()
   const conversationEnvironment = createConversationEnvironment({
-    spawners: { claude: spawner.spawn },
     newId: new SequentialIds().next,
   })
   const setupStore = new InMemorySetupStore({
@@ -63,7 +62,7 @@ const createHarness = (): Harness => {
   })
   return {
     reviewStore,
-    spawner,
+    conversationEnvironment,
     pullBranch,
     contextAt: (change, pull = { kind: "pulled" }) => ({
       ...createMockProcedureContext(NOW),
@@ -141,7 +140,7 @@ describe("getReview on a target that moved", () => {
 
     expect(harness.pullBranch).toHaveBeenCalledWith("/Users/dev/projects/storefront", "feature/gift-card-balance")
     await expect(harness.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ commit: "2222222aaaaaaa", status: "complete" })
-    expect(harness.spawner.launches).toStrictEqual([])
+    await expect(harness.conversationEnvironment.store.read(KEY)).resolves.toMatchObject({ journal: [] })
   })
 
   it("keeps what was written for code that did not change, and leaves the new code unwritten", async () => {

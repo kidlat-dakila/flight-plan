@@ -196,6 +196,39 @@ describe("ReviewHeader", () => {
   })
 })
 
+describe("ReviewHeader agent status", () => {
+  it("shows an online agent as plain text before the actions", () => {
+    render(
+      <ReviewHeader
+        header={PULL_REQUEST}
+        agentStatus={{ isOnline: true, label: "Agent online", onClick: null }}
+        actions={<button type="button">Chat</button>}
+      />,
+    )
+
+    const status = screen.getByText("Agent online")
+    expect(status.tagName).toBe("SPAN")
+    expect(screen.queryByRole("button", { name: "Agent online" })).toBeNull()
+    expect(status.compareDocumentPosition(screen.getByRole("button", { name: "Chat" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it("offers an offline agent as a button that asks to launch it", () => {
+    const onClick = vi.fn()
+    render(<ReviewHeader header={PULL_REQUEST} authorLabel="Your Flight Plan" agentStatus={{ isOnline: false, label: "Agent offline", onClick }} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Agent offline" }))
+
+    expect(onClick).toHaveBeenCalledTimes(1)
+  })
+
+  it("shows no agent status where the page gives none", () => {
+    render(<ReviewHeader header={PULL_REQUEST} agentStatus={null} />)
+
+    expect(screen.queryByText("Agent online")).toBeNull()
+    expect(screen.queryByText("Agent offline")).toBeNull()
+  })
+})
+
 describe("TitleHeader", () => {
   it("heads a page with a title, a label and its actions, and nothing else", () => {
     render(<TitleHeader title="Count held units" isBranch={false} label="Published Flight Plan" actions={<button type="button">Chat</button>} />)

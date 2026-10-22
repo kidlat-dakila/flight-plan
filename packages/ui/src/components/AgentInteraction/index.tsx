@@ -4,11 +4,11 @@ import InfoCallout from "@/components/InfoCallout"
 
 const TITLE = "How does Flight Plan interact with the agent?"
 const SUMMARY = "What Flight Plan builds and what your agent writes"
-const INTRO = "Flight Plan builds the review artifact from the code. Your agent reads the same change and writes the explanations into it, through the Flight Plan plugin and its MCP server."
+const INTRO = "Flight Plan builds the review artifact from the code. Your agent reads the same change and writes the explanations into it, through the Flight Plan plugin and its MCP server. Each time Flight Plan starts, it updates the plugin if its skills changed."
 const FLIGHT_PLAN_HEADING = "What Flight Plan does"
 const FLIGHT_PLAN_PART = "Flight Plan draws the Trace Diagram and the Blast Diagram, and arranges the Code Walkthrough based on your preferences. You can read a review before your agent writes anything."
 const AGENT_HEADING = "What the agent does"
-const LAUNCH_TITLE = "Your agent runs on your subscription"
+const LAUNCH_TITLE = "How your agent starts"
 const INLINE_CODE_CLASSES = "rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[0.875em]"
 const AGENT_PART = "Your agent explains why the change exists and how the code works, and points out potential issues as findings. It writes into the review Flight Plan built and cannot change its structure. While you read, you can ask it about the change and it can ask you questions back."
 
@@ -26,11 +26,11 @@ const InteractionPart = ({ heading, text }: InteractionPartProps) => (
 
 const LaunchNote = () => (
   <InfoCallout title={LAUNCH_TITLE}>
-    Flight Plan launches your agent as an interactive session in a terminal that runs in the background. It avoids
-    headless commands such as
+    Flight Plan can open your terminal app and start your agent there. Or you can start it yourself by prompting your
+    agent with
     {" "}
-    <code className={INLINE_CODE_CLASSES}>claude -p</code>
-    , which can be billed separately from your subscription.
+    <code className={INLINE_CODE_CLASSES}>/flightplan:live &lt;repository&gt;/&lt;target&gt;</code>
+    .
   </InfoCallout>
 )
 

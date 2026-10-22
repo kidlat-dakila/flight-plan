@@ -7,6 +7,7 @@ import { registerAskQuestionsTool } from "./tools/ask-questions"
 import { registerCompleteTool } from "./tools/complete"
 import { registerGetInstructionsTool } from "./tools/get-instructions"
 import { registerNodesTool } from "./tools/nodes"
+import { registerPingTool } from "./tools/ping"
 import { registerReadTool } from "./tools/read"
 import { registerRecordImportTool } from "./tools/record-import"
 import { registerRecordPublicationTool } from "./tools/record-publication"
@@ -35,6 +36,7 @@ const createMcpServer = (context: ProcedureContext): McpServer => {
   registerCompleteTool(mcpServer, context)
   registerRecordPublicationTool(mcpServer, context)
   registerRecordImportTool(mcpServer, context)
+  registerPingTool(mcpServer, context)
   return mcpServer
 }
 

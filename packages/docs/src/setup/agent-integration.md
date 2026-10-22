@@ -28,16 +28,20 @@ For each agent you check:
 
 ## How Flight Plan works with your agent
 
-Flight Plan can start Claude for you. It runs Claude as an interactive session in a terminal in the background, in the repository's folder, so it runs on your subscription. It avoids headless commands such as `claude -p`, which can be billed separately from a subscription.
+Your agent runs in a terminal you can see, never in the background. In Claude, `/flightplan:live <repository>/<target>` keeps the session working on one review, for example `/flightplan:live storefront/pr-412`. It waits for the parts you ask it to explain and for your messages in Chat, and does each one. Leave the terminal open while you review. Closing it takes the agent offline.
 
-Flight Plan can't start Codex or Cursor. When you ask one of them to explain a review, Flight Plan copies a one-line prompt for you to run in your own session.
+When the agent is offline and a review needs it, Flight Plan asks you to start it. On macOS, **Open a terminal for me** opens Terminal in the repository's folder and starts Claude there with the command. You can also copy the command and run it in a Claude session you started yourself. Claude runs as an interactive session, so it runs on your subscription.
+
+The top bar of a review shows whether your agent is online, such as **Claude online**.
+
+The live command works only in Claude for now. With Codex or Cursor, Flight Plan copies a one-line prompt for you to run in your own session.
 
 **How does Flight Plan interact with the agent?**, under the list of agents, says the same in short.
 
 ## What gets installed
 
-- **Claude:** a plugin named `flightplan`, from a plugin marketplace Flight Plan writes to `~/.flightplan/agent-plugin/`. The plugin holds the review skill and the MCP server.
+- **Claude:** a plugin named `flightplan`, from a plugin marketplace Flight Plan writes to `~/.flightplan/agent-plugin/`. The plugin holds the review skill, the live skill and the MCP server.
 - **Codex:** the skill in `skills/flightplan-review/`, and a `flightplan` entry under `mcp_servers` in `config.toml`.
 - **Cursor:** the skill in `skills/flightplan-review/`, and a `flightplan` entry under `mcpServers` in `mcp.json`.
 
-Every MCP entry points at `http://localhost:<port>/mcp`. Flight Plan installs again each time you save **Settings → Agent integration**, and each time it starts on a new port, so your agents always reach the running server.
+Every MCP entry points at `http://localhost:<port>/mcp`. Flight Plan installs again each time you save **Settings → Agent integration**. Each time it starts, it also checks your agents and installs again any that has older skills or points at another port, so your agents always have the latest skills and reach the running server. A new Claude session picks up the update.

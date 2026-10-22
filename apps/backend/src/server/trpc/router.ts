@@ -27,6 +27,7 @@ import { getConversationRoute } from "./routes/get-conversation"
 import { getCreationFormRoute } from "./routes/get-creation-form"
 import { getFileCodeRoute } from "./routes/get-file-code"
 import { getImportFormRoute } from "./routes/get-import-form"
+import { getLiveAgentRoute } from "./routes/get-live-agent"
 import { getModelChoiceRoute } from "./routes/get-model-choice"
 import { getPublishedReviewRoute } from "./routes/get-published-review"
 import { getRepositoryConfigurationRoute } from "./routes/get-repository-configuration"
@@ -45,6 +46,7 @@ import { listConfigurationsRoute } from "./routes/list-configurations"
 import { listRecentRepositoriesRoute } from "./routes/list-recent-repositories"
 import { listRepositoriesRoute } from "./routes/list-repositories"
 import { markCompleteRoute } from "./routes/mark-complete"
+import { openAgentTerminalRoute } from "./routes/open-agent-terminal"
 import { publishArtifactRoute } from "./routes/publish-artifact"
 import { removeRepositoryRoute } from "./routes/remove-repository"
 import { removeReviewRequestRoute } from "./routes/remove-review-request"
@@ -124,6 +126,8 @@ export const appRouter = createRouter({
     writeUpPlan: getWriteUpPlanRoute,
     writeUp: writeUpReviewRoute,
     declineWriteUp: declineWriteUpRoute,
+    liveAgent: getLiveAgentRoute,
+    openAgentTerminal: openAgentTerminalRoute,
     requestWriteUp: requestWriteUpRoute,
     delete: deleteReviewRoute,
     setReviewed: setReviewedRoute,

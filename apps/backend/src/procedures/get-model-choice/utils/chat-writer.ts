@@ -1,11 +1,10 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { chooseWriter, type ChosenWriter } from "@/procedures/deliver-to-agent/utils/choose-writer"
-import { chooseInstall } from "@/procedures/deliver-to-agent/utils/plan-delivery"
 import { latestModelChoiceOf } from "@/procedures/get-conversation/utils/conversation"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
-import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
+import { LIVE_AGENTS } from "@/procedures/get-review/utils/start/live-agents"
 import { offerModels, type ModelOffer } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
+import { chooseInstall, chooseWriter, type ChosenWriter } from "./choose-writer"
 
 export interface ChatWriter {
   readonly writer: ChosenWriter
@@ -18,8 +17,7 @@ export const readChatWriter = async (key: ReviewKey, context: ProcedureContext):
     context.conversationEnvironment.store.read(key),
     context.reviewStore.findRequest(key),
   ])
-  const startableAgents = startableAgentsOf(context.conversationEnvironment.spawners)
-  const install = setup.agents === null ? null : chooseInstall(setup.agents, startableAgents)
+  const install = setup.agents === null ? null : chooseInstall(setup.agents, LIVE_AGENTS)
   if (install === null) return null
   const writer = chooseWriter(install, request, latestModelChoiceOf(conversation.journal, install.agent))
   const agentModels = await listModelsOf([install.agent], context.setupEnvironment)

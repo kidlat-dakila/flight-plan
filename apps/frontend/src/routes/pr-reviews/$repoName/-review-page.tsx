@@ -11,10 +11,9 @@ import BandLine from "@flightplan/ui/BandLine"
 import BlastBand from "@flightplan/ui/BlastBand"
 import Button from "@flightplan/ui/blocks/button"
 import ChatPanel from "@flightplan/ui/ChatPanel"
-import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
 import FileSection from "@flightplan/ui/FileSection"
-import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
+import LaunchAgentDialog from "@flightplan/ui/LaunchAgentDialog"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WriteUpAgentContext, type WriteUpAgent } from "@flightplan/ui/lib/write-up-agent"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
@@ -23,7 +22,6 @@ import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, ShareMenu, type
 import ReviewGuideTooltips from "@flightplan/ui/ReviewGuideTooltips"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
-import SectionRail from "@flightplan/ui/SectionRail"
 import SettingsMenu from "@flightplan/ui/SettingsMenu"
 import Toast from "@flightplan/ui/Toast"
 import TraceBand from "@flightplan/ui/TraceBand"
@@ -34,7 +32,8 @@ import CodeLinkDialog from "./-components/CodeLinkDialog"
 import CompletionDialog from "./-components/CompletionDialog"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
-import PermissionDialog from "./-components/PermissionDialog"
+import ReadingSectionRail from "./-components/ReadingSectionRail"
+import ReadingWalkthrough from "./-components/ReadingWalkthrough"
 import ReviewNotices from "./-components/ReviewNotices"
 import SegmentEditor from "./-components/SegmentEditor"
 import SegmentHeader from "./-components/SegmentHeader"
@@ -45,6 +44,8 @@ import { useAgentChat } from "./-hooks/use-agent-chat"
 import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
+import { useLiveAgent } from "./-hooks/use-live-agent"
+import { useReadingPositionStore } from "./-hooks/use-reading-position"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useTargetSwitching } from "./-hooks/use-target-switching"
@@ -53,7 +54,7 @@ import { useTraceEditing } from "./-hooks/use-trace-editing"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
 import { useWalkthroughNavigation } from "./-hooks/use-walkthrough-navigation"
 import { useWaypointAuthoring } from "./-hooks/use-waypoint-authoring"
-import { scrollToAnchor, useWaypointStepping } from "./-hooks/use-waypoint-stepping"
+import { scrollToAnchor, useWaypointStepping, waypointAnchorIdsOf } from "./-hooks/use-waypoint-stepping"
 import { useWriteUpDialog } from "./-hooks/use-write-up-dialog"
 import { useWriteUpRequest } from "./-hooks/use-write-up-request"
 
@@ -145,7 +146,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const [toastMessage, showToast] = useToast()
   const { isOwn } = page
   const progress = page.kind === "artifact" ? page.progress : null
-  const permission = progress?.permission ?? null
   useCompletionNotification(
     `${params.repoName}/${params.branchId}`,
     progress !== null,
@@ -183,8 +183,10 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       },
     )
   }
-  const writeUpDialog = useWriteUpDialog(reviewKey, page.kind === "artifact", { onMessage: showToast, onCopy: copyText })
-  const requestWriteUp = useWriteUpRequest(reviewKey, { onMessage: showToast, onCopy: copyText })
+  const liveAgent = useLiveAgent(reviewKey, page.kind === "artifact", { onMessage: showToast })
+  const agentAnnouncer = { onMessage: showToast, onCopy: copyText, onAgentAsked: liveAgent.onAgentAction }
+  const writeUpDialog = useWriteUpDialog(reviewKey, page.kind === "artifact", agentAnnouncer)
+  const requestWriteUp = useWriteUpRequest(reviewKey, agentAnnouncer)
   const writeUp = writeUpDialog.canWriteUp ? requestWriteUp : null
 
   const setReviewed = useMutation(trpc.review.setReviewed.mutationOptions({ onSuccess: refreshReview, onError: reportError }))
@@ -197,6 +199,10 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       onError: reportError,
     }),
   )
+  const publish = (destination: PublicationKind): void => {
+    if (destination === "claude") liveAgent.onAgentAction()
+    publishArtifact.mutate({ ...reviewKey, destination })
+  }
   const markComplete = useMutation(
     trpc.review.markComplete.mutationOptions({
       onSuccess: async ({ message, targetId }) => {
@@ -227,10 +233,11 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const handleOpenCodeLink = stepping.onOpenCodeLink
   const handleToggleWaypoint = stepping.onToggleWaypoint
   const railSections = [...(artifact?.rail.groups.flatMap((group) => group.sections) ?? []), ...(artifact?.rail.sections ?? [])]
-  const currentAnchorId = useCurrentAnchor(
+  const readingPosition = useReadingPositionStore(
     railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId)]),
+    waypointAnchorIdsOf(artifact?.segments ?? NO_SEGMENTS),
   )
-  const walkthroughLayout = useWalkthroughNavigation(artifact?.segments ?? NO_SEGMENTS, stepping, currentAnchorId, {
+  const walkthroughLayout = useWalkthroughNavigation(artifact?.segments ?? NO_SEGMENTS, stepping, {
     onReviewedChange: isOwn
       ? null
       : (id, isReviewed) => {
@@ -296,6 +303,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                 authorLabel={page.shell.authorLabel}
                 reviewerRequesting={discussion.reviewerRequesting}
                 targetSwitching={targetSwitching}
+                agentStatus={liveAgent.status}
                 actions={page.kind === "missing"
                   ? <SettingsMenu links={SETTINGS_LINKS} useThemeToggle={useColorTheme} />
                   : (
@@ -327,7 +335,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 sharing={page.sharing}
                                 publishingKey={publishArtifact.isPending ? publishArtifact.variables.destination : null}
                                 onPublish={(destination) => {
-                                  if (page.unassignedFiles === null) publishArtifact.mutate({ ...reviewKey, destination })
+                                  if (page.unassignedFiles === null) publish(destination)
                                   else setUnassignedFilesPrompt({ kind: "publish", destination })
                                 }}
                               />
@@ -379,11 +387,11 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                 />
                 <div className="grid grid-cols-[13rem_minmax(0,1fr)] gap-x-8">
                   <aside className="sticky top-[calc(var(--pinned-height)+0.5rem)] max-h-[calc(100dvh-var(--pinned-height)-1rem)] self-start overflow-y-auto pt-5 pb-4">
-                    <SectionRail
+                    <ReadingSectionRail
                       label="Review sections"
                       groups={page.rail.groups}
                       sections={page.rail.sections}
-                      currentAnchorId={currentAnchorId}
+                      readingPosition={readingPosition}
                       onEditGroup={isOwn ? handleEditRailGroup : null}
                       onArrangeGroups={isOwn && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
                     />
@@ -476,13 +484,14 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                               </>
                             ),
                             walkthrough: (
-                              <CodeWalkthrough
+                              <ReadingWalkthrough
                                 anchorId={segment.walkthrough.anchorId}
                                 heading={segment.walkthrough.heading}
                                 coverageLabel={segment.walkthrough.coverageLabel}
                                 emptyMessage={segment.walkthrough.emptyMessage}
                                 writeUpNotice={segment.writeUpNotices.walkthrough}
-                                navigation={walkthroughLayout.navigationOf(segment)}
+                                readingPosition={readingPosition}
+                                navigationOf={(position) => walkthroughLayout.navigationOf(segment, position)}
                                 onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
                                   ? () => { setArrangedWalkthroughSegmentId(segment.id) }
                                   : null}
@@ -532,7 +541,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                     headerActions={isOwn ? waypointAuthoring.headerActionsOf(segment.id, file) : null}
                                   />
                                 ))}
-                              </CodeWalkthrough>
+                              </ReadingWalkthrough>
                             ),
                           }}
                         />
@@ -650,7 +659,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                               warning: page.unassignedFiles.publishWarning,
                               confirmLabel: PUBLISH_ANYWAY_LABEL,
                               onConfirm: () => {
-                                publishArtifact.mutate({ ...reviewKey, destination: unassignedFilesPrompt.destination })
+                                publish(unassignedFilesPrompt.destination)
                                 setUnassignedFilesPrompt(null)
                               },
                             }}
@@ -666,6 +675,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                   onAsk={(selection) => {
                     withCodeReference(selection, ({ reference }) => {
                       chat.onAsk(reference)
+                      liveAgent.onAgentAction()
                     })
                   }}
                 />
@@ -679,8 +689,14 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                         isSending={chat.isSending}
                         sendProblem={chat.sendProblem}
                         answering={chat.answering}
-                        onSend={chat.onSend}
-                        onAnswer={chat.onAnswer}
+                        onSend={(body) => {
+                          chat.onSend(body)
+                          liveAgent.onAgentAction()
+                        }}
+                        onAnswer={(batchId, answers) => {
+                          chat.onAnswer(batchId, answers)
+                          liveAgent.onAgentAction()
+                        }}
                         onChooseModel={chat.onChooseModel}
                         onClearReference={chat.onClearReference}
                         onOpenCodeLink={handleOpenCodeLink}
@@ -693,17 +709,16 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
               </WritingProviders>
             </ReviewNavigator>
           )}
-      {permission === null
+      {liveAgent.dialog === null
         ? null
         : (
-            <PermissionDialog
-              key={permission.batchId}
-              request={permission}
-              isAnswering={chat.answering.pendingBatchId === permission.batchId}
-              problem={chat.answering.rejection?.batchId === permission.batchId ? chat.answering.rejection.message : null}
-              onAnswer={(pickedLabel, reason) => {
-                chat.onAnswer(permission.batchId, [{ questionId: permission.questionId, pickedLabels: [pickedLabel], text: reason }])
-              }}
+            <LaunchAgentDialog
+              content={liveAgent.dialog}
+              isOpening={liveAgent.isOpening}
+              problem={liveAgent.problem}
+              onOpenTerminal={liveAgent.onOpenTerminal}
+              onCopy={copyText}
+              onClose={liveAgent.onClose}
             />
           )}
       <Toast message={toastMessage} />

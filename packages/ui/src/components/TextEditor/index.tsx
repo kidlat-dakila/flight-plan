@@ -88,13 +88,16 @@ const STARTER_KIT = StarterKit.configure({
   link: { openOnClick: false, autolink: false },
 })
 
-const EXTENSIONS = [STARTER_KIT, codeLinkNode, Markdown]
-
 const markedOfItsOwn = (): typeof marked =>
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Tiptap reads only the instance methods that a Marked shares with marked
   new Marked() as unknown as typeof marked
 
-const EXTENSIONS_WITH_SECTIONS = [STARTER_KIT, codeLinkNode, ...containerExtensions, Markdown.configure({ marked: markedOfItsOwn() })]
+const extensionsOf = (canUseSections: boolean) => [
+  STARTER_KIT,
+  codeLinkNode,
+  ...(canUseSections ? containerExtensions : []),
+  Markdown.configure({ marked: markedOfItsOwn() }),
+]
 
 const CONTENT_CLASSES = cn(
   "flex min-h-32 flex-col gap-4 px-3 py-2.5 text-base leading-[1.7] text-pretty outline-none",
@@ -274,8 +277,9 @@ const TextEditor = ({
   const [isLinking, setIsLinking] = useState(false)
   const [isLinkingCode, setIsLinkingCode] = useState(false)
   const hasError = errorMessage !== null
+  const [extensions] = useState(() => extensionsOf(canUseSections))
   const editor = useEditor({
-    extensions: canUseSections ? EXTENSIONS_WITH_SECTIONS : EXTENSIONS,
+    extensions,
     content: value,
     contentType: "markdown",
     autofocus: shouldFocus,

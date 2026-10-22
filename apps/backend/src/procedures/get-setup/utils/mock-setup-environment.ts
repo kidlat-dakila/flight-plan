@@ -140,6 +140,7 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
   hasAgentCli: async (agent) => await Promise.resolve(agent !== AGENT_WITHOUT_CLI),
   listAgentModels: async (agent) => await Promise.resolve(MOCK_AGENT_MODELS[agent] ?? []),
   installAgent: async () => await Promise.resolve({ kind: "installed" }),
+  isAgentInstallCurrent: async () => await Promise.resolve(true),
   probeForgeClis: async () =>
     await Promise.resolve([
       { cli: "gh", state: { kind: "signed-in", account: "dev-harper" } },

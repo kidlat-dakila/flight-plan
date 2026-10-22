@@ -1,7 +1,6 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { deliverToAgent, type DeliveryOutcome } from "@/procedures/deliver-to-agent"
 import { appendAndPublish } from "@/procedures/get-conversation/utils/conversation-actions"
-import type { Publication, PublishingRequest } from "@/procedures/get-review/utils/discussion"
+import type { Publication } from "@/procedures/get-review/utils/discussion"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { writePublishedCopy } from "@/procedures/write-published-copy"
 import { ATTACHED_MESSAGE, descriptionUrlOf, withPublication } from "./utils/plan-publication"
@@ -14,22 +13,6 @@ interface PublishingReport {
 
 const REQUESTED_MESSAGE = "Asked your agent to publish it. The link shows under Share when it is done."
 const PAGE_NOT_BUILT_MESSAGE = "This build of Flight Plan has no page to publish."
-const NO_AGENT_PREFIX = "No agent could be asked to publish it."
-
-const reportOf = (outcome: DeliveryOutcome): PublishingReport =>
-  outcome.kind === "unavailable" || outcome.kind === "failed"
-    ? { message: `${NO_AGENT_PREFIX} ${outcome.reason}` }
-    : { message: REQUESTED_MESSAGE }
-
-const channelOf = (outcome: DeliveryOutcome): PublishingRequest["channel"] | null => {
-  if (outcome.kind === "spawned" || outcome.kind === "agent-running") return "agent"
-  return outcome.kind === "listener-waiting" ? "listener" : null
-}
-
-const requestOf = (outcome: DeliveryOutcome, requestedAt: Date): PublishingRequest | null => {
-  const channel = channelOf(outcome)
-  return channel === null ? null : { requestedAt, channel }
-}
 
 const attachToDescription = async (key: ReviewKey, context: ProcedureContext): Promise<PublishingReport | null> => {
   const [artifact, detail, publications] = await Promise.all([
@@ -64,9 +47,8 @@ const requestClaudeArtifact = async (key: ReviewKey, context: ProcedureContext):
     }],
     context,
   )
-  const outcome = await deliverToAgent(key, context)
-  await context.reviewStore.writePublishingRequest(key, requestOf(outcome, requestedAt))
-  return reportOf(outcome)
+  await context.reviewStore.writePublishingRequest(key, { requestedAt, channel: "agent" })
+  return { message: REQUESTED_MESSAGE }
 }
 
 export const publishArtifact = async (input: PublishArtifactInput, context: ProcedureContext): Promise<PublishingReport | null> => {

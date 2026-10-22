@@ -1,9 +1,9 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { isSpawnedFor, listenCommandFor, listenInstructionOf } from "@/procedures/get-conversation/utils/agent-next-step"
+import { listenCommandOf, listenInstructionOf } from "@/procedures/get-conversation/utils/agent-text"
 import {
   appendAndPublish,
   findReviewTarget,
-  markAgentActivity,
+  markAgentSeen,
 } from "@/procedures/get-conversation/utils/conversation-actions"
 import type { AgentMessageSending, SendAgentMessageInput } from "./utils/schemas"
 
@@ -13,13 +13,12 @@ export const sendAgentMessage = async (input: SendAgentMessageInput, context: Pr
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
   const target = await findReviewTarget(key, context)
   if (target.kind === "rejected") return target
-  markAgentActivity(key, context)
+  markAgentSeen(key, context)
   await appendAndPublish(
     key,
     [{ kind: "agent-message", id: context.conversationEnvironment.newId(), body: input.body, sentAt: context.now() }],
     context,
   )
-  if (isSpawnedFor(key, context)) return { kind: "sent", note: SENT_NOTE }
-  const command = listenCommandFor(key, context)
-  return { kind: "sent", note: `${SENT_NOTE} If you want the reviewer's reply: ${listenInstructionOf(command)}` }
+  const command = listenCommandOf(context.conversationEnvironment.serverUrl, key)
+  return { kind: "sent", note: `${SENT_NOTE} ${listenInstructionOf(command)}` }
 }

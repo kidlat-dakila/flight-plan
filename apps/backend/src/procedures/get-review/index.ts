@@ -1,5 +1,6 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { messageBodiesOf } from "@/procedures/get-conversation/utils/conversation"
+import { isAgentOnlineFor } from "@/procedures/get-conversation/utils/conversation-actions"
 import { selfAuthorIdOf } from "@/procedures/get-setup/utils/git-identity"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { listLinkablePullRequests } from "@/procedures/mark-complete/utils/linkable-pull-requests"
@@ -75,12 +76,10 @@ export const findPullRequestSubject = async (key: ReviewKey, context: ProcedureC
 
 const readWritingActivity = async (subject: ReviewSubject, key: ReviewKey, context: ProcedureContext): Promise<WritingActivity> => {
   if (subject.artifact?.status !== "drafting") return NO_WRITING_ACTIVITY
-  const { store, agents } = context.conversationEnvironment
-  const [request, conversation] = await Promise.all([context.reviewStore.findRequest(key), store.read(key)])
+  const request = await context.reviewStore.findRequest(key)
   return {
     request,
-    isAgentRunning: agents.find(key) !== null,
-    journal: conversation.journal,
+    isAgentOnline: isAgentOnlineFor(key, context),
     prompt: request === null ? null : buildReviewPrompt(subject.repository, subject.target, key, request.writeUp),
   }
 }
@@ -128,7 +127,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
       branchLinking,
       pendingComments,
       publications,
-      isPublishing: isPublishingUnderway(publishingRequest, publications, context.conversationEnvironment.agents.find(key) !== null, context.now()),
+      isPublishing: isPublishingUnderway(publishingRequest, publications, isAgentOnlineFor(key, context), context.now()),
       now: context.now(),
       setup,
       unavailableMessage: opened.unavailableMessage,

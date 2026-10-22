@@ -52,6 +52,12 @@ export interface ReviewerRequesting {
   readonly onRemove: (login: string) => void
 }
 
+export interface AgentStatus {
+  readonly isOnline: boolean
+  readonly label: string
+  readonly onClick: (() => void) | null
+}
+
 export type ReviewHeaderContent
   = | {
     readonly kind: "pull-request"
@@ -82,6 +88,7 @@ interface ReviewHeaderProps {
   readonly authorLabel?: string | null
   readonly reviewerRequesting?: ReviewerRequesting | null
   readonly targetSwitching?: TargetSwitching | null
+  readonly agentStatus?: AgentStatus | null
   readonly actions?: ReactNode
 }
 
@@ -120,6 +127,35 @@ const ArtifactFreshnessLabel = ({ freshness }: { readonly freshness: ArtifactFre
     {freshness.label}
   </span>
 )
+
+const AGENT_STATUS_CLASSES = "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2 text-sm text-sign-muted"
+const AGENT_STATUS_BUTTON_CLASSES = "cursor-pointer hover:bg-sign-foreground/10 hover:text-sign-foreground focus-visible:outline-2 focus-visible:outline-sign-foreground"
+const AGENT_STATUS_DOT_CLASSES = "size-2 shrink-0 rounded-full"
+const ONLINE_DOT_CLASSES = "bg-diff-added"
+const OFFLINE_DOT_CLASSES = "bg-sign-muted"
+
+const AgentStatusContent = ({ status }: { readonly status: AgentStatus }) => (
+  <>
+    <span
+      aria-hidden="true"
+      data-online={status.isOnline}
+      className={cn(AGENT_STATUS_DOT_CLASSES, status.isOnline ? ONLINE_DOT_CLASSES : OFFLINE_DOT_CLASSES)}
+    />
+    {status.label}
+  </>
+)
+
+const AgentStatusIndicator = ({ status }: { readonly status: AgentStatus | null }) => {
+  if (status === null) return null
+  const { onClick } = status
+  return onClick === null
+    ? <span className={AGENT_STATUS_CLASSES}><AgentStatusContent status={status} /></span>
+    : (
+        <button type="button" className={cn(AGENT_STATUS_CLASSES, AGENT_STATUS_BUTTON_CLASSES)} onClick={onClick}>
+          <AgentStatusContent status={status} />
+        </button>
+      )
+}
 
 type ReviewerContent = Extract<ReviewHeaderContent, { kind: "pull-request" }>["reviewers"][number]
 
@@ -300,16 +336,23 @@ const ReviewHeader = ({
   authorLabel = null,
   reviewerRequesting = null,
   targetSwitching = null,
+  agentStatus = null,
   actions,
-}: ReviewHeaderProps) =>
-  (authorLabel === null
+}: ReviewHeaderProps) => {
+  const trailing = (
+    <>
+      <AgentStatusIndicator status={agentStatus} />
+      {actions}
+    </>
+  )
+  return authorLabel === null
     ? (
         <ReviewerHeader
           header={header}
           changedFiles={changedFiles}
           requesting={reviewerRequesting}
           switching={targetSwitching}
-          actions={actions}
+          actions={trailing}
         />
       )
     : (
@@ -319,8 +362,9 @@ const ReviewHeader = ({
           label={authorLabel}
           changedFiles={changedFiles}
           switching={targetSwitching}
-          actions={actions}
+          actions={trailing}
         />
-      ))
+      )
+}
 
 export default ReviewHeader

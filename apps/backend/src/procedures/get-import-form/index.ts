@@ -1,5 +1,5 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { findReviewTarget } from "@/procedures/get-conversation/utils/conversation-actions"
+import { findReviewTarget, isAgentOnlineFor } from "@/procedures/get-conversation/utils/conversation-actions"
 import { isImportUnderway } from "@/procedures/import-review/utils/import-request"
 import { isClaudeArtifactUrl } from "@/procedures/record-publication/utils/claude-artifact-url"
 import { buildImportForm } from "./utils/build-import-form"
@@ -19,6 +19,6 @@ export const getImportForm = async (input: GetImportFormInput, context: Procedur
     target,
     hasFlightPlan: artifact !== null,
     request,
-    isImporting: isImportUnderway(request, context.conversationEnvironment.agents.find(key) !== null, context.now()),
+    isImporting: isImportUnderway(request, isAgentOnlineFor(key, context), context.now()),
   })
 }

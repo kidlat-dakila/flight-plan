@@ -18,6 +18,8 @@ export const listenPathOf = (key: ReviewKey): string =>
 
 export const listenCommandOf = (serverUrl: string, key: ReviewKey): string => `curl -sN "${serverUrl}${listenPathOf(key)}"`
 
+export const listenPermissionRuleOf = (serverUrl: string): string => `Bash(curl -sN "${serverUrl}/api/*)`
+
 const formatReviewerMessage = (message: ReviewerMessage): string =>
   message.reference === null
     ? `The reviewer wrote:\n${message.body}`
@@ -49,39 +51,32 @@ export const formatInbound = (entries: readonly JournalEntry[], journal: readonl
     .filter((text) => text !== null)
     .join(PARAGRAPH_BREAK)
 
+export const LIVE_SKILL_COMMAND = "/flightplan:live"
+
+export const liveCommandOf = (key: ReviewKey): string => `${LIVE_SKILL_COMMAND} ${key.repositoryName}/${key.targetId}`
+
+const listenAgainOf = (nextListenCommand: string): string =>
+  `When you have done everything above, listen again with this command, in the foreground:\n${nextListenCommand}`
+
 export const formatListenPacket = (text: string, nextListenCommand: string): string =>
-  [text, `When you are ready for the reviewer's next reply, run this in the background:\n${nextListenCommand}`].join(
-    PARAGRAPH_BREAK,
-  )
+  [text, listenAgainOf(nextListenCommand)].join(PARAGRAPH_BREAK)
 
-const describeTarget = (key: ReviewKey): string =>
-  `repositoryName "${key.repositoryName}" and targetId "${key.targetId}"`
-
-export const spawnInstructionsOf = (key: ReviewKey): string =>
+export const formatIdlePacket = (nextListenCommand: string): string =>
   [
-    `Flight Plan started this session for the reviewer of the review target with ${describeTarget(key)}.`,
-    "Nobody reads this terminal. The reviewer reads you only in Flight Plan's web app.",
-    `Reach the reviewer only through Flight Plan's MCP tools, always with ${describeTarget(key)}:`,
-    "- send-message sends the reviewer a message. Send every answer, summary or result this way.",
-    "- ask-questions asks the reviewer one question or a batch. After asking, end your turn without waiting: Flight Plan closes this session and resumes it with the answers.",
-    "When the reviewer asks you to change the review artifact, change it through read, nodes and update-nodes, then tell them what you changed with send-message.",
-    "Flight Plan's tools can take a few seconds to connect after this session starts or resumes, and may look unavailable or removed at first. If they do, end your turn: Flight Plan tells you when to use them.",
-    "Never run the curl listen command that the tool descriptions mention. It is for sessions the reviewer started themselves.",
-  ].join("\n")
+    "Nothing new from the reviewer yet.",
+    `Listen again with this command, in the foreground:\n${nextListenCommand}`,
+  ].join(PARAGRAPH_BREAK)
+
+export const listenInstructionOf = (command: string): string =>
+  `The reviewer's reply comes on your listening stream. If you are not listening yet, run this in the foreground. It exits when the reviewer replies, and its output holds the reply:\n${command}`
 
 export const MCP_INSTRUCTIONS = [
   "Flight Plan connects you with the reviewer of a pull request, who reads you in Flight Plan's web app.",
   "A review target is named by repositoryName (the repository's name in Flight Plan) and targetId (pr-<number> for a pull request, branch-<name> for a branch).",
-  "A review artifact is filled in through get-instructions, read, nodes, update-nodes and complete. Flight Plan builds its structure when the reviewer starts the review, and these tools write the prose onto it. get-instructions says how to write each field, for the configuration the reviewer chose.",
+  "A review artifact is filled in through get-instructions, read, nodes, update-nodes and complete. Flight Plan builds its structure when the reviewer opens the review, and these tools write the prose onto it. get-instructions says how to write each field, for the configuration the reviewer chose.",
   "send-message sends the reviewer a message. ask-questions asks one question or a batch; each question either offers options (one or several picks, and the reviewer can always write their own answer) or asks for free text.",
   "record-publication records the address of the Claude artifact a Flight Plan was published to. Call it only after Flight Plan asked you to publish one and your Artifact tool did.",
   "record-import stores a Flight Plan you fetched from a Claude artifact. Call it only after Flight Plan asked you to fetch one and you copied the file where it said.",
-  "If Flight Plan started your session, its system prompt says so: end your turn after asking, and Flight Plan resumes you with the answers.",
-  "If the reviewer started your session, the ask-questions result gives a curl command. Run it in the background. It exits when the reviewer replies, and its output holds the reply and the command to run for the next one.",
+  "Flight Plan shows the reviewer whether an agent is online for their review. Every call to these tools counts, and ping counts when you have nothing else to call. While you work on a review without calling Flight Plan, call ping at least every 5 seconds.",
+  "Requests from the reviewer arrive on the review's listening stream: a curl command the tool results give you. It waits until there is something to do, prints it with the command to listen again, and exits.",
 ].join("\n")
-
-export const REPLY_REMINDER = [
-  "You have not written to the reviewer this turn, and the reviewer reads only what you send through Flight Plan.",
-  "If send-message or ask-questions looked unavailable, they were still connecting and are available now.",
-  "Send your reply with send-message, or ask with ask-questions.",
-].join(" ")

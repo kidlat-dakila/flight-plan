@@ -15,5 +15,5 @@ The shared language of Flight Plan. When code, docs, issues or conversations use
 | [Branch status](branch-status.md) | Where a review target stands in its review: no review, awaiting review, awaiting reply, stale, draft, closed or merged |
 | [Review preferences](review-preferences.md) | How the user wants a review laid out: the spotlight, which sections the agent writes up, segments, the walkthrough order, the section order and the ignored paths. Also what a write-up and a hint are |
 | [Prompt configurations](prompt-configurations.md) | How the agent writes: system instructions, preset configurations and custom configurations |
-| [Agent conversation](agent-conversation.md) | How an agent and the reviewer talk about a review target: messages, question batches, and the agent sessions Flight Plan starts |
+| [Agent conversation](agent-conversation.md) | How an agent and the reviewer talk about a review target: messages, question batches, and the live agent that serves a review |
 | [Data storage](data-storage.md) | Where Flight Plan keeps its data, and the file format of a stored document |

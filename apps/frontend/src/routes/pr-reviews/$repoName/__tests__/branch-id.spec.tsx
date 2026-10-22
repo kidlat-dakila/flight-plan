@@ -17,6 +17,7 @@ import {
   typeInto,
   unassignedFiles,
   writeUpPlan,
+  liveAgentReply,
 } from "./review-page-fixture"
 
 const REVIEW_PATH = "/pr-reviews/storefront/pr-412"
@@ -32,21 +33,7 @@ const WRITING_PROGRESS = {
   writtenCount: 3,
   totalCount: 12,
   prompt: null,
-  permission: null,
 }
-
-const PERMISSION_REQUEST = {
-  batchId: "p1",
-  questionId: "p1-1",
-  title: "Allow the agent to use Bash?",
-  description: "The agent is waiting for your answer before it goes on writing the review.",
-  detail: "pnpm test",
-  allowLabel: "Allow",
-  denyLabel: "Deny",
-  reasonLabel: "Tell the agent why, if you deny it",
-}
-
-const ASKING_PROGRESS = { ...WRITING_PROGRESS, permission: PERMISSION_REQUEST }
 
 const withUnwrittenContext = {
   ...artifactPage,
@@ -278,11 +265,11 @@ describe("the review page", () => {
     expect(screen.queryByText("Not written yet.")).toBeNull()
   })
 
-  it("says a part is not written, with no skeleton, once the agent stopped", async () => {
-    const stopped = { ...WRITING_PROGRESS, state: "stopped", label: "Claude stopped before the review was finished", isWriting: false }
-    renderReview({ "review.get": () => ({ data: { ...withUnwrittenContext, progress: stopped } }) })
+  it("says a part is not written, with no skeleton, while the agent is offline", async () => {
+    const waiting = { ...WRITING_PROGRESS, state: "waiting", label: "Waiting for Claude", isWriting: false }
+    renderReview({ "review.get": () => ({ data: { ...withUnwrittenContext, progress: waiting } }) })
 
-    expect(await screen.findAllByText("Claude stopped before the review was finished")).toHaveLength(1)
+    expect(await screen.findAllByText("Waiting for Claude")).toHaveLength(1)
     expect(screen.getByText("Not written yet.")).toBeTruthy()
   })
 
@@ -1014,7 +1001,7 @@ describe("the review page", () => {
 
     const panel = await screen.findByRole("complementary", { name: "Chat with the agent" })
 
-    expect(within(panel).getByText("Agent not running")).toBeTruthy()
+    expect(within(panel).getByText("Agent offline")).toBeTruthy()
     expect(within(panel).getByText("Ask about this review.")).toBeTruthy()
 
     fireEvent.click(within(panel).getByRole("button", { name: "Close the chat" }))
@@ -1066,52 +1053,67 @@ describe("the review page", () => {
     })
   })
 
-  it("asks in a modal whether to let the writing agent use a tool, and closes it once allowed", async () => {
-    const answerQuestions = vi.fn(() => ({ data: { kind: "accepted" } }))
-    const reviewGet = vi.fn()
-      .mockReturnValueOnce({ data: { ...artifactPage, progress: ASKING_PROGRESS } })
-      .mockReturnValue({ data: { ...artifactPage, progress: WRITING_PROGRESS } })
-    renderReview({ "review.get": reviewGet, "conversation.answerQuestions": answerQuestions })
-
-    const dialog = await screen.findByRole("dialog", { name: "Allow the agent to use Bash?" })
-    expect(within(dialog).getByText("pnpm test")).toBeTruthy()
-    fireEvent.click(within(dialog).getByRole("button", { name: "Allow" }))
-
-    await waitFor(() => {
-      expect(answerQuestions).toHaveBeenCalledWith({
-        repositoryName: "storefront",
-        targetId: "pr-412",
-        batchId: "p1",
-        answers: [{ questionId: "p1-1", pickedLabels: ["Allow"], text: null }],
-      })
+  it("asks to start the agent when a review that was offered opens while it is offline, and opens a terminal for it", async () => {
+    const openAgentTerminal = vi.fn(() => ({ data: { kind: "opened", message: "Claude is starting in Terminal." } }))
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }),
+      "review.liveAgent": () => ({ data: liveAgentReply(false) }),
+      "review.openAgentTerminal": openAgentTerminal,
     })
+
+    const dialog = await screen.findByRole("dialog", { name: "Claude is offline" })
+    expect(within(dialog).getByText("/flightplan:live storefront/pr-412")).toBeTruthy()
+    fireEvent.click(within(dialog).getByRole("button", { name: "Open a terminal for me" }))
+
+    expect(await screen.findByText("Claude is starting in Terminal.")).toBeTruthy()
+    expect(openAgentTerminal).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412" })
     await waitFor(() => {
-      expect(screen.queryByRole("dialog", { name: "Allow the agent to use Bash?" })).toBeNull()
+      expect(screen.queryByRole("dialog", { name: "Claude is offline" })).toBeNull()
     })
   })
 
-  it("denies the writing agent a tool from the modal, with the reason the reviewer gives", async () => {
-    const answerQuestions = vi.fn(() => ({ data: { kind: "accepted" } }))
-    renderReview({ "review.get": () => ({ data: { ...artifactPage, progress: ASKING_PROGRESS } }), "conversation.answerQuestions": answerQuestions })
-
-    const dialog = await screen.findByRole("dialog", { name: "Allow the agent to use Bash?" })
-    fireEvent.change(within(dialog).getByRole("textbox", { name: "Tell the agent why, if you deny it" }), { target: { value: "Not on main." } })
-    fireEvent.click(within(dialog).getByRole("button", { name: "Deny" }))
-
-    await waitFor(() => {
-      expect(answerQuestions).toHaveBeenCalledWith({
-        repositoryName: "storefront",
-        targetId: "pr-412",
-        batchId: "p1",
-        answers: [{ questionId: "p1-1", pickedLabels: ["Deny"], text: "Not on main." }],
-      })
+  it("keeps the Launch Agent dialog closed after Not now, and opens it again from the offline status in the top bar", async () => {
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }),
+      "review.liveAgent": () => ({ data: liveAgentReply(false) }),
     })
+
+    const dialog = await screen.findByRole("dialog", { name: "Claude is offline" })
+    fireEvent.click(within(dialog).getByRole("button", { name: "Not now" }))
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog", { name: "Claude is offline" })).toBeNull()
+    })
+
+    fireEvent.click(screen.getByRole("button", { name: "Claude offline" }))
+
+    expect(await screen.findByRole("dialog", { name: "Claude is offline" })).toBeTruthy()
   })
 
-  it("shows no permission modal while the agent writes without asking", async () => {
-    renderReview({ "review.get": () => ({ data: { ...artifactPage, progress: WRITING_PROGRESS } }) })
+  it("asks to start the agent once the reviewer asks it for the write-up", async () => {
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "review.writeUpPlan": () => ({ data: writeUpPlan }),
+      "review.writeUp": () => ({ data: { kind: "started", prompt: null, message: "Sent to Claude" } }),
+      "review.liveAgent": () => ({ data: liveAgentReply(false) }),
+    })
 
-    expect(await screen.findByText("Claude is writing the review")).toBeTruthy()
+    const writeUpDialog = await screen.findByRole("dialog", { name: "Ask Claude to explain this review?" })
+    expect(screen.queryByRole("dialog", { name: "Claude is offline" })).toBeNull()
+    fireEvent.click(within(writeUpDialog).getByRole("button", { name: "Explain" }))
+
+    expect(await screen.findByRole("dialog", { name: "Claude is offline" })).toBeTruthy()
+  })
+
+  it("asks nothing while the agent is online, and says so in the top bar", async () => {
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }),
+      "review.liveAgent": () => ({ data: liveAgentReply(true) }),
+    })
+
+    expect(await screen.findByText("Claude online")).toBeTruthy()
     expect(screen.queryByRole("dialog")).toBeNull()
   })
 

@@ -1,20 +1,21 @@
 import { useState } from "react"
+import ReadingSectionRail from "@/routes/pr-reviews/$repoName/-components/ReadingSectionRail"
+import ReadingWalkthrough from "@/routes/pr-reviews/$repoName/-components/ReadingWalkthrough"
 import ReviewNotices from "@/routes/pr-reviews/$repoName/-components/ReviewNotices"
 import SelectionReference from "@/routes/pr-reviews/$repoName/-components/SelectionReference"
 import UnassignedFilesDialog from "@/routes/pr-reviews/$repoName/-components/UnassignedFilesDialog"
 import { useCodeSelection } from "@/routes/pr-reviews/$repoName/-hooks/use-code-selection"
+import { useReadingPositionStore } from "@/routes/pr-reviews/$repoName/-hooks/use-reading-position"
 import { useWalkthroughNavigation } from "@/routes/pr-reviews/$repoName/-hooks/use-walkthrough-navigation"
-import { useWaypointStepping } from "@/routes/pr-reviews/$repoName/-hooks/use-waypoint-stepping"
+import { useWaypointStepping, waypointAnchorIdsOf } from "@/routes/pr-reviews/$repoName/-hooks/use-waypoint-stepping"
 import BandLine from "@flightplan/ui/BandLine"
 import BlastBand from "@flightplan/ui/BlastBand"
 import BrandMark from "@flightplan/ui/BrandMark"
 import ChangeOverview, { type ChangeOverviewRow } from "@flightplan/ui/ChangeOverview"
-import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import ContextSection, { CONTEXT_PROSE_CLASSES } from "@flightplan/ui/ContextSection"
 import FileSection from "@flightplan/ui/FileSection"
 import { AccordionOpeningContext, useAccordionNavigation } from "@flightplan/ui/lib/accordion-opening"
 import type { CodeLinkTargets, ProseBlocks } from "@flightplan/ui/lib/review-content"
-import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { cn } from "@flightplan/ui/lib/utils"
 import OrderedSections from "@flightplan/ui/OrderedSections"
 import Prose from "@flightplan/ui/Prose"
@@ -22,7 +23,6 @@ import { BandLink, BandMenuButton, OptionsMenu } from "@flightplan/ui/ReviewActi
 import ReviewGuideTooltips from "@flightplan/ui/ReviewGuideTooltips"
 import { TitleHeader } from "@flightplan/ui/ReviewHeader"
 import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
-import SectionRail from "@flightplan/ui/SectionRail"
 import SegmentHeading from "@flightplan/ui/SegmentHeading"
 import SignBand from "@flightplan/ui/SignBand"
 import TraceBand from "@flightplan/ui/TraceBand"
@@ -80,8 +80,9 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
   const stepping = useWaypointStepping(marking.segments)
   const codeSelection = useCodeSelection()
   const railSections = [...marking.rail.groups.flatMap((group) => group.sections), ...marking.rail.sections]
-  const currentAnchorId = useCurrentAnchor(
+  const readingPosition = useReadingPositionStore(
     railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId)]),
+    waypointAnchorIdsOf(marking.segments),
   )
   const showUnavailableFeature = (): void => {
     setIsFeatureUnavailable(true)
@@ -89,7 +90,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
   const onWaypointReviewedChange = (id: string, isReviewed: boolean): void => {
     marking.onReviewedChange({ kind: "waypoint", id }, isReviewed)
   }
-  const walkthroughLayout = useWalkthroughNavigation(marking.segments, stepping, currentAnchorId, {
+  const walkthroughLayout = useWalkthroughNavigation(marking.segments, stepping, {
     onWriteUp: null,
     onReviewedChange: onWaypointReviewedChange,
     onFilterChange: showUnavailableFeature,
@@ -134,11 +135,11 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
           />
           <div className="grid grid-cols-[13rem_minmax(0,1fr)] gap-x-8">
             <aside className="sticky top-[calc(var(--band-height)+0.5rem)] max-h-[calc(100dvh-var(--band-height)-1rem)] self-start overflow-y-auto pt-5 pb-4">
-              <SectionRail
+              <ReadingSectionRail
                 label="Review sections"
                 groups={marking.rail.groups}
                 sections={marking.rail.sections}
-                currentAnchorId={currentAnchorId}
+                readingPosition={readingPosition}
               />
             </aside>
             <div className="min-w-0">
@@ -191,12 +192,13 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                         </>
                       ),
                       walkthrough: (
-                        <CodeWalkthrough
+                        <ReadingWalkthrough
                           anchorId={segment.walkthrough.anchorId}
                           heading={segment.walkthrough.heading}
                           coverageLabel={segment.walkthrough.coverageLabel}
                           emptyMessage={segment.walkthrough.emptyMessage}
-                          navigation={walkthroughLayout.navigationOf(segment)}
+                          readingPosition={readingPosition}
+                          navigationOf={(position) => walkthroughLayout.navigationOf(segment, position)}
                           onArrangeFiles={null}
                         >
                           {segment.walkthrough.files.map((file) => (
@@ -229,7 +231,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                               onDiscardComment={showUnavailableFeature}
                             />
                           ))}
-                        </CodeWalkthrough>
+                        </ReadingWalkthrough>
                       ),
                     }}
                   />

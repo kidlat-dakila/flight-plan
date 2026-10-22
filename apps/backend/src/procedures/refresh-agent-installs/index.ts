@@ -8,7 +8,9 @@ export interface InstallFailure {
 
 export const refreshAgentInstalls = async (context: ProcedureContext): Promise<readonly InstallFailure[]> => {
   const setup = await context.setupStore.read()
-  const installs = setup.agents?.installs ?? []
+  const saved = setup.agents?.installs ?? []
+  const currents = await Promise.all(saved.map(async (install) => await context.setupEnvironment.isAgentInstallCurrent(install)))
+  const installs = saved.filter((_install, position) => !currents[position])
   const attempts = await Promise.all(
     installs.map(async (install) => ({ install, installation: await context.setupEnvironment.installAgent(install) })),
   )

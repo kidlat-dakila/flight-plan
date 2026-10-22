@@ -1,4 +1,5 @@
 import type { ProcedureContext } from "@/procedures/context"
+import { markAgentSeen } from "@/procedures/get-conversation/utils/conversation-actions"
 import { withPublication } from "@/procedures/publish-artifact/utils/plan-publication"
 import { republishingNoteOf } from "@/procedures/publish-artifact/utils/publishing-request"
 import { writePublishedCopy } from "@/procedures/write-published-copy"
@@ -14,6 +15,7 @@ export const recordPublication = async (input: RecordPublicationInput, context: 
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
   const [artifact, publications] = await Promise.all([context.reviewStore.findArtifact(key), context.reviewStore.readPublications(key)])
   if (artifact === null) return { kind: "rejected", message: NO_FLIGHT_PLAN_MESSAGE }
+  markAgentSeen(key, context)
   await context.reviewStore.writePublications(key, withPublication(publications, { kind: "claude", url: input.url, publishedAt: context.now() }))
   const isSameAddress = publications.some((publication) => publication.kind === "claude" && publication.url === input.url)
   if (isSameAddress) return { kind: "recorded", note: RECORDED_NOTE }

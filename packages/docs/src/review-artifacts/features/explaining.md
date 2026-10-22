@@ -11,7 +11,7 @@ The first time a review opens, a dialog asks **Ask Claude to explain this review
 
 ![The dialog that asks Claude to explain a review. It lists the parts to explain, the prompt configuration, the order, the segments and the total](../../../media/explain-dialog-light.webp)
 
-- **Explain** starts your agent.
+- **Explain** asks your agent. If it isn't online, Flight Plan asks you to start it.
 - **Not now** closes the dialog, and the review doesn't ask again.
 - **Configure** lets you change it for this review: tick the parts to explain, each with how much there is to write, and pick the prompt configuration, the Code Walkthrough order and whether to split the review into segments.
 
@@ -28,14 +28,14 @@ You can also ask for one part when you get to it:
 | A card of the Trace Diagram | **Explain this card** | G | That card |
 | A file of the Blast Diagram | **Assess this file** | G | What the change does to that file |
 
-The buttons carry the name of your agent, and the keys work from the [Review Navigator](/docs/review-artifacts/features/review-navigator/). Ctrl+G is Control and G on every system, macOS included. When your agent is already writing, Flight Plan asks for the part next, once your agent finishes, if it's still missing then.
+The buttons carry the name of your agent, and the keys work from the [Review Navigator](/docs/review-artifacts/features/review-navigator/). Ctrl+G is Control and G on every system, macOS included. When your agent is already writing, it explains the part once it's done with what it was doing.
 
 ## While your agent writes
 
 A strip under the header shows who is writing and how many parts are done, such as **Claude is writing the review** and **12 of 40 parts written**. A part on its way shows grey lines, and appears as soon as it's written. A waypoint's mark spins while your agent explains it.
 
-If Claude stops before it's done, the strip says so. Send it a message in [Chat](/docs/review-artifacts/features/agent-chat/) to start it again.
+If Claude goes offline before it's done, the strip says **Waiting for Claude**, and the parts it hasn't written say **Not written yet.** Start it again from **Claude offline** in the top bar.
 
 ## With Codex or Cursor
 
-Flight Plan can start only Claude. With Codex or Cursor, **Explain** copies a one-line prompt. Run it in your agent's session. Until the first part arrives, the strip says **Waiting for your agent**, with **Copy the line** to copy it again. Asking for one part copies a prompt for that part.
+Only Claude runs live for now. With Codex or Cursor, **Explain** copies a one-line prompt. Run it in your agent's session. Until the first part arrives, the strip says **Waiting for your agent**, with **Copy the line** to copy it again. Asking for one part copies a prompt for that part.

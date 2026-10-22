@@ -7,7 +7,7 @@ import SelectField from "@/components/SelectField"
 import type { CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
-type AgentState = "not-running" | "starting" | "working" | "waiting-for-reviewer" | "listening" | "failed"
+type AgentState = "online" | "offline"
 
 interface Message {
   readonly kind: "message"
@@ -27,7 +27,6 @@ export interface Conversation {
   readonly sendLabel: string
   readonly agentState: AgentState
   readonly agentStateLabel: string
-  readonly problem: string | null
   readonly entries: readonly (Message | Questions)[]
 }
 
@@ -64,12 +63,8 @@ const TEXTAREA_CLASSES = "min-h-16 w-full resize-none rounded-lg border border-i
 const REFERENCE_CLASSES = "self-start rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[0.6875rem] leading-4 wrap-anywhere"
 
 const STATE_RING_CLASSES: Record<AgentState, string> = {
-  "not-running": "fill-background stroke-muted-foreground [stroke-width:2]",
-  "starting": "fill-background stroke-(--line) [stroke-dasharray:3_2.5] [stroke-width:2] motion-safe:animate-pulse",
-  "working": "fill-(--line) stroke-(--line) [stroke-width:2]",
-  "waiting-for-reviewer": "fill-signal stroke-signal [stroke-width:2]",
-  "listening": "fill-background stroke-(--line) [stroke-width:2]",
-  "failed": "fill-background stroke-destructive [stroke-width:2]",
+  online: "fill-(--line) stroke-(--line) [stroke-width:2]",
+  offline: "fill-background stroke-muted-foreground [stroke-width:2]",
 }
 
 interface MessageEntryProps {
@@ -133,9 +128,6 @@ const ChatPanel = ({
         </div>
         <IconButton icon="close" label={conversation.closeLabel} onClick={onClose} />
       </div>
-      {conversation.problem === null
-        ? null
-        : <p role="alert" className="max-h-24 overflow-y-auto border-b px-4 py-2 text-xs text-destructive">{conversation.problem}</p>}
       {modelChoice === null
         ? null
         : (

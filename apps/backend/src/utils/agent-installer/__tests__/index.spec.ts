@@ -2,12 +2,11 @@ import { chmod, mkdir, readFile, writeFile } from "node:fs/promises"
 import { join } from "node:path"
 import { parse } from "smol-toml"
 import type { AgentInstallation } from "@/procedures/get-setup/utils/setup-environment"
-import { createAgentInstaller, type AgentInstallerOptions } from "@/utils/agent-installer"
+import { createAgentInstaller, createInstallChecker, type AgentInstallerOptions } from "@/utils/agent-installer"
 import type { CommandOutcome, CommandRunner } from "@/utils/run-command"
 import { withTemporaryFolder } from "@/utils/text-file/__tests__/temporary-folder"
 
 const MCP_URL = "http://localhost:3000/mcp"
-const SERVER_URL = "http://localhost:3000"
 const EXECUTABLE_MODE = 0o755
 const SKILL = "---\nname: review\ndescription: Use when reviewing\n---\n\n# Review\n"
 const SUCCEEDED: CommandOutcome = { exitCode: 0, output: "", errorOutput: "" }
@@ -36,7 +35,7 @@ const createMachine = async (folder: string, outcome: CommandOutcome = SUCCEEDED
   await writeFile(join(pluginPath, ".claude-plugin", "plugin.json"), "{\"name\":\"flightplan\"}")
   await writeFile(claudeExecutable, "")
   await chmod(claudeExecutable, EXECUTABLE_MODE)
-  const options = { pluginPath, dataPath, mcpUrl: MCP_URL, serverUrl: SERVER_URL, homePath, environment: { PATH: binPath }, runCommand }
+  const options = { pluginPath, dataPath, mcpUrl: MCP_URL, homePath, environment: { PATH: binPath }, runCommand }
   return { options, runCommand, homePath, dataPath, claudeExecutable }
 }
 
@@ -63,17 +62,12 @@ describe("createAgentInstaller", () => {
     })
   })
 
-  it("writes the plugin that only sessions Flight Plan starts load, outside the marketplace's plugin list", async () => {
+  it("lists only the Flight Plan plugin in the marketplace", async () => {
     await withTemporaryFolder(async (folder) => {
       const machine = await createMachine(folder)
-      const spawnPluginPath = join(machine.dataPath, "agent-plugin", "flightplan-spawn")
 
       await createAgentInstaller(machine.options)({ agent: "claude", installPath: join(machine.homePath, ".claude"), model: "default", effort: "default" })
 
-      await expect(readJson(join(spawnPluginPath, ".claude-plugin", "plugin.json"))).resolves.toMatchObject({ name: "flightplan-spawn" })
-      await expect(readJson(join(spawnPluginPath, "hooks", "hooks.json"))).resolves.toMatchObject({
-        hooks: { Stop: [{ hooks: [{ type: "http", url: "http://localhost:3000/api/agent-hooks/stop" }] }] },
-      })
       await expect(readJson(join(machine.dataPath, "agent-plugin", ".claude-plugin", "marketplace.json"))).resolves.toMatchObject({
         plugins: [{ name: "flightplan" }],
       })
@@ -175,6 +169,40 @@ describe("createAgentInstaller", () => {
         kind: "failed",
         reason: "Its files could not be written.",
       })
+    })
+  })
+})
+
+describe("createInstallChecker", () => {
+  const claudeIn = (homePath: string) => ({ agent: "claude" as const, installPath: join(homePath, ".claude"), model: "default", effort: "default" })
+
+  it("finds an install up to date until the skills or the server's address change", async () => {
+    await withTemporaryFolder(async (folder) => {
+      const machine = await createMachine(folder)
+      const install = claudeIn(machine.homePath)
+      const isCurrent = createInstallChecker(machine.options)
+
+      await expect(isCurrent(install)).resolves.toBe(false)
+      await createAgentInstaller(machine.options)(install)
+      await expect(isCurrent(install)).resolves.toBe(true)
+
+      await writeFile(join(machine.options.pluginPath, "skills", "review", "SKILL.md"), `${SKILL}\nA new rule.\n`)
+      await expect(isCurrent(install)).resolves.toBe(false)
+      await createAgentInstaller(machine.options)(install)
+      await expect(isCurrent(install)).resolves.toBe(true)
+
+      await expect(createInstallChecker({ ...machine.options, mcpUrl: "http://localhost:24747/mcp" })(install)).resolves.toBe(false)
+    })
+  })
+
+  it("finds an install that failed out of date", async () => {
+    await withTemporaryFolder(async (folder) => {
+      const machine = await createMachine(folder, { exitCode: 1, output: "", errorOutput: "Plugin not found" })
+      const install = claudeIn(machine.homePath)
+
+      await createAgentInstaller(machine.options)(install)
+
+      await expect(createInstallChecker(machine.options)(install)).resolves.toBe(false)
     })
   })
 })

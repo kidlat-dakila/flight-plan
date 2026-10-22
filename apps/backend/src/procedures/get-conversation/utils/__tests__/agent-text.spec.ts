@@ -1,4 +1,4 @@
-import { formatInbound, listenCommandOf, spawnInstructionsOf } from "@/procedures/get-conversation/utils/agent-text"
+import { formatInbound, listenCommandOf, listenPermissionRuleOf, liveCommandOf } from "@/procedures/get-conversation/utils/agent-text"
 import { appendEvents, EMPTY_CONVERSATION } from "@/procedures/get-conversation/utils/conversation"
 import { agentQuestion, KEY, STARTED_AT } from "./conversation-fixture"
 
@@ -35,11 +35,14 @@ describe("listenCommandOf", () => {
   })
 })
 
-describe("spawnInstructionsOf", () => {
-  it("names the review target and tells the agent to end its turn after asking", () => {
-    const instructions = spawnInstructionsOf(KEY)
+describe("listenPermissionRuleOf", () => {
+  it("allows the listen command for every review on this server", () => {
+    expect(listenPermissionRuleOf("http://localhost:3000")).toBe("Bash(curl -sN \"http://localhost:3000/api/*)")
+  })
+})
 
-    expect(instructions).toContain("repositoryName \"storefront\" and targetId \"pr-412\"")
-    expect(instructions).toContain("end your turn without waiting")
+describe("liveCommandOf", () => {
+  it("names the review the live skill serves", () => {
+    expect(liveCommandOf(KEY)).toBe("/flightplan:live storefront/pr-412")
   })
 })
