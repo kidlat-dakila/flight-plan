@@ -14,5 +14,6 @@ allowBuilds:
   unrs-resolver: false
 overrides:
   "@modelcontextprotocol/sdk@<1.32.0": ^1.32.0
+  deepmerge-ts@<8.0.0: ^8.0.2
   follow-redirects@<1.16.1: ^1.16.1
   undici@>=7.0.0 <7.29.1: ^7.29.1

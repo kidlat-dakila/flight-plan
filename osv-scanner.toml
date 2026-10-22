@@ -1,0 +1,9 @@
+[[IgnoredVulns]]
+id = "GHSA-vfj7-8cjw-p6xm"
+ignoreUntil = 2027-04-22
+reason = "braces 3.0.3 is the latest release and has no fix. It comes in through micromatch and fast-glob in the ESLint plugins, the shadcn CLI and the Nx build tools, which only expand the repository's own glob patterns. It is not in the published npm package."
+
+[[IgnoredVulns]]
+id = "GHSA-hp3w-g68c-fv3c"
+ignoreUntil = 2027-04-22
+reason = "sprintf-js 1.1.3 is the latest release and has no fix. It comes in through argparse and js-yaml 3 in babel-plugin-istanbul, which only reads the test coverage settings during tests. It is not in the published npm package."
