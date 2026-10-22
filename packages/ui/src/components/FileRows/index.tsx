@@ -120,6 +120,7 @@ interface FileRowsProps {
   readonly codeDefinitions: CodeDefinitions
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
+  readonly onPreviewWaypoint?: ((waypointId: string) => void) | null
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
   readonly onRootBlockReviewedChange: ((rootBlockId: string, isReviewed: boolean) => void) | null
   readonly onWriteUp?: ((target: WriteUpTarget) => void) | null
@@ -275,6 +276,7 @@ const FileRows = ({
   codeDefinitions,
   onOpenCodeLink,
   onToggleWaypoint,
+  onPreviewWaypoint = null,
   onWaypointReviewedChange,
   onRootBlockReviewedChange,
   onWriteUp = null,
@@ -340,6 +342,7 @@ const FileRows = ({
               ? null
               : (isReviewed) => { onWaypointReviewedChange(waypoint.id, isReviewed) }}
             onPreviewChange={(isPreviewed) => {
+              if (isPreviewed && onPreviewWaypoint !== null) onPreviewWaypoint(waypoint.id)
               setPreviewedWaypointId((previewedId) => {
                 if (isPreviewed) return waypoint.id
                 return previewedId === waypoint.id ? null : previewedId

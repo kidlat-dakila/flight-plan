@@ -3,7 +3,6 @@ import { InMemoryAgentPresenceRegistry } from "@/procedures/get-conversation/uti
 import type { ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
 import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/conversation-store"
 import { startDemoAgent } from "@/procedures/get-conversation/utils/demo-agent"
-import { createInMemoryConversationHub } from "@/procedures/get-conversation/utils/in-memory-conversation-hub"
 import { readSampleInstructionTexts, type InstructionReader } from "@/procedures/get-instructions/utils/instruction-texts"
 import { PACKAGE_NAME } from "@/procedures/get-published-review/utils/install-guide"
 import { skipBranchPull, type BranchPuller } from "@/procedures/get-review/utils/branch-puller"
@@ -175,7 +174,7 @@ export const createDemoProcedureContext = async (
     setupEnvironment: createMockSetupEnvironment(),
     conversationEnvironment: {
       store: conversationStore,
-      hub: createInMemoryConversationHub(),
+      hub: createConversationHub(),
       presence: new InMemoryAgentPresenceRegistry(),
       serverUrl: MOCK_SERVER_URL,
       newId,

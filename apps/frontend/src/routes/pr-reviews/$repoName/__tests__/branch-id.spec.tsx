@@ -680,6 +680,44 @@ describe("the review page", () => {
     })
   })
 
+  it("makes a waypoint current when its card opens on hover, so G asks for the write-up of the card on screen", async () => {
+    const unwrittenPage = {
+      ...twoFilePage,
+      segments: twoFilePage.segments.map((segment) => ({
+        ...segment,
+        walkthrough: {
+          ...segment.walkthrough,
+          files: segment.walkthrough.files.map((file) => ({
+            ...file,
+            rows: file.rows.map((row) => (row.kind === "waypoint" ? { ...row, waypoint: { ...row.waypoint, reading: null, hint: "Changes a function." } } : row)),
+          })),
+        },
+      })),
+    }
+    const requestWriteUp = vi.fn(() => ({ data: { kind: "started", prompt: null, message: "Explaining 1 waypoint" } }))
+    showSectionInView("stock-code-walkthrough")
+    renderReview({
+      "review.get": () => ({ data: unwrittenPage }),
+      "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }),
+      "review.requestWriteUp": requestWriteUp,
+    })
+    const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
+    await within(navigator).findByRole("button", { name: "Next waypoint" })
+
+    fireEvent.pointerEnter(markOf("The sum is rounded once"))
+    fireEvent.mouseEnter(markOf("The sum is rounded once"))
+
+    expect(await screen.findByText("Changes a function.")).toBeTruthy()
+    expect(within(navigator).getByText("2 of 2")).toBeTruthy()
+    expect(markOf("The sum is rounded once").getAttribute("data-current")).toBe("true")
+
+    fireEvent.keyDown(window, { key: "g" })
+
+    await waitFor(() => {
+      expect(requestWriteUp).toHaveBeenLastCalledWith({ repositoryName: "storefront", targetId: "pr-412", target: { kind: "waypoint", waypointId: "subtotal" } })
+    })
+  })
+
   it("says in the card of a waypoint that it is in the spotlight, after its core change", async () => {
     const spotlitPage = {
       ...twoFilePage,

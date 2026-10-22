@@ -9,6 +9,7 @@ const PREVIEW_SERVER_PORT = 4300
 const BACKEND_URL = "http://localhost:3000"
 const TSCONFIG_NAMES = ["tsconfig.app.json", "tsconfig.lib.json", "tsconfig.spec.json"]
 const TEST_FOLDER_PATTERN = "^__tests__$"
+const REACT_COMPILER_PLUGIN = "babel-plugin-react-compiler"
 
 export default defineConfig({
   root: import.meta.dirname,
@@ -24,7 +25,7 @@ export default defineConfig({
   },
   plugins: [
     tanstackRouter({ target: "react", autoCodeSplitting: true, routeFileIgnorePattern: TEST_FOLDER_PATTERN }),
-    react(),
+    react({ babel: { plugins: [REACT_COMPILER_PLUGIN] } }),
     tailwindcss(),
     tsconfigPaths({ configNames: TSCONFIG_NAMES, projectDiscovery: "lazy" }),
   ],

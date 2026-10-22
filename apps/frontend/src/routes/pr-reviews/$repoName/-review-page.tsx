@@ -12,7 +12,6 @@ import BlastBand from "@flightplan/ui/BlastBand"
 import Button from "@flightplan/ui/blocks/button"
 import ChatPanel from "@flightplan/ui/ChatPanel"
 import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
-import FileSection from "@flightplan/ui/FileSection"
 import LaunchAgentDialog from "@flightplan/ui/LaunchAgentDialog"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WriteUpAgentContext, type WriteUpAgent } from "@flightplan/ui/lib/write-up-agent"
@@ -40,6 +39,8 @@ import SegmentHeader from "./-components/SegmentHeader"
 import SelectionReference, { type CodeSelection } from "./-components/SelectionReference"
 import TerminusHeading from "./-components/TerminusHeading"
 import UnassignedFilesDialog from "./-components/UnassignedFilesDialog"
+import WalkthroughFileSection from "./-components/WalkthroughFileSection"
+import WalkthroughScrolling from "./-components/WalkthroughScrolling"
 import { useAgentChat } from "./-hooks/use-agent-chat"
 import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
@@ -166,6 +167,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const discussion = useReviewDiscussion(reviewKey, showToast)
   const chat = useAgentChat(reviewKey, showToast)
   const targetSwitching = useTargetSwitching(reviewKey)
+  const colorTheme = useColorTheme()
 
   const refreshReview = async (): Promise<void> => {
     await queryClient.invalidateQueries(trpc.review.get.pathFilter())
@@ -229,7 +231,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const artifact = page.kind === "artifact" ? page : null
   const arrangedWalkthroughSegment = artifact?.segments.find((segment) => segment.id === arrangedWalkthroughSegmentId) ?? null
   const stepping = useWaypointStepping(artifact?.segments ?? NO_SEGMENTS)
-  const { openWaypointIds, currentWaypointId } = stepping
   const handleOpenCodeLink = stepping.onOpenCodeLink
   const handleToggleWaypoint = stepping.onToggleWaypoint
   const railSections = [...(artifact?.rail.groups.flatMap((group) => group.sections) ?? []), ...(artifact?.rail.sections ?? [])]
@@ -305,7 +306,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                 targetSwitching={targetSwitching}
                 agentStatus={liveAgent.status}
                 actions={page.kind === "missing"
-                  ? <SettingsMenu links={SETTINGS_LINKS} useThemeToggle={useColorTheme} />
+                  ? <SettingsMenu links={SETTINGS_LINKS} themeToggle={colorTheme} />
                   : (
                       <>
                         <BandButton
@@ -356,7 +357,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                             )}
                         <SettingsMenu
                           links={SETTINGS_LINKS}
-                          useThemeToggle={useColorTheme}
+                          themeToggle={colorTheme}
                           reviewActions={{
                             forgeLink: page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null,
                             onWriteUp: writeUpDialog.canWriteUp ? writeUpDialog.onOpen : null,
@@ -491,20 +492,17 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 emptyMessage={segment.walkthrough.emptyMessage}
                                 writeUpNotice={segment.writeUpNotices.walkthrough}
                                 readingPosition={readingPosition}
-                                navigationOf={(position) => walkthroughLayout.navigationOf(segment, position)}
+                                walkthroughStore={stepping.store}
+                                navigationOf={(position, state) => walkthroughLayout.navigationOf(segment, position, state)}
                                 onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
                                   ? () => { setArrangedWalkthroughSegmentId(segment.id) }
                                   : null}
                               >
                                 {segment.walkthrough.files.map((file) => (
-                                  <FileSection
+                                  <WalkthroughFileSection
                                     key={file.anchorId}
+                                    walkthroughStore={stepping.store}
                                     file={file}
-                                    openWaypointIds={openWaypointIds}
-                                    currentWaypointId={currentWaypointId}
-                                    focusedWaypointId={stepping.focusedWaypointId}
-                                    previewVisit={stepping.previewVisit}
-                                    isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
                                     isReviewPending={setReviewed.isPending}
                                     composer={isOwn ? null : page.composer}
                                     composingRange={discussion.composingRangeOf(file.path)}
@@ -514,6 +512,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                     codeDefinitions={page.codeDefinitions}
                                     onOpenCodeLink={handleOpenCodeLink}
                                     onToggleWaypoint={handleToggleWaypoint}
+                                    onPreviewWaypoint={stepping.onPreviewWaypoint}
                                     onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
                                     onWaypointReviewedChange={isOwn
                                       ? null
@@ -704,6 +703,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                       />
                     )
                   : null}
+                <WalkthroughScrolling walkthroughStore={stepping.store} />
                 <ReviewNavigatorBar />
                 <ReviewGuideTooltips reviewMode={isOwn ? "user" : "teammate"} />
               </WritingProviders>

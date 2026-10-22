@@ -1,32 +1,22 @@
-import mqemitter from "mqemitter"
+import { reviewKeyId } from "@/procedures/get-conversation/utils/conversation"
 import type {
   ChangeWait,
   ChangeWaitOptions,
   ConversationHub,
   ConversationSubscription,
 } from "@/procedures/get-conversation/utils/conversation-hub"
-import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
-
-type Emitter = mqemitter.MQEmitter
-
-type Listener = (message: mqemitter.Message, done: () => void) => void
-
-const TOPIC_ROOT = "conversation"
-
-export const topicOf = (key: ReviewKey): string =>
-  [TOPIC_ROOT, encodeURIComponent(key.repositoryName), encodeURIComponent(key.targetId)].join("/")
 
 class HubSubscription implements ConversationSubscription {
-  private readonly emitter: Emitter
+  private readonly events: EventTarget
   private readonly topic: string
   private hasChange = false
   private isClosed = false
   private finishWait: ((wait: ChangeWait) => void) | null = null
 
-  public constructor(emitter: Emitter, topic: string) {
-    this.emitter = emitter
+  public constructor(events: EventTarget, topic: string) {
+    this.events = events
     this.topic = topic
-    emitter.on(topic, this.notify)
+    events.addEventListener(topic, this.notify)
   }
 
   public readonly nextChange = async ({ timeoutMs, signal }: ChangeWaitOptions): Promise<ChangeWait> => {
@@ -58,28 +48,25 @@ class HubSubscription implements ConversationSubscription {
   public readonly close = (): void => {
     if (this.isClosed) return
     this.isClosed = true
-    this.emitter.removeListener(this.topic, this.notify)
+    this.events.removeEventListener(this.topic, this.notify)
     this.finishWait?.("aborted")
   }
 
-  private readonly notify: Listener = (_message, done) => {
+  private readonly notify = (): void => {
     if (this.finishWait === null) this.hasChange = true
     else this.finishWait("changed")
-    done()
   }
 }
 
 export const createConversationHub = (): ConversationHub => {
-  const emitter = mqemitter()
+  const events = new EventTarget()
   return {
     publish: (key) => {
-      emitter.emit({ topic: topicOf(key) })
+      events.dispatchEvent(new Event(reviewKeyId(key)))
     },
-    subscribe: (key) => new HubSubscription(emitter, topicOf(key)),
+    subscribe: (key) => new HubSubscription(events, reviewKeyId(key)),
     close: async () => {
-      await new Promise<void>((resolve) => {
-        emitter.close(resolve)
-      })
+      await Promise.resolve()
     },
   }
 }

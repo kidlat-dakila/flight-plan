@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react"
-import SettingsMenu, { type SettingsMenuLink, type ThemeToggle } from "@/components/SettingsMenu"
+import SettingsMenu, { type SettingsMenuLink } from "@/components/SettingsMenu"
 
 const LINKS: readonly SettingsMenuLink[] = [
   { label: "Agent integration", icon: "agents", link: <a href="/settings/agents" aria-label="Agent integration" /> },
@@ -9,7 +9,7 @@ const LINKS: readonly SettingsMenuLink[] = [
 describe("SettingsMenu", () => {
   it("offers the opposite colour theme and links to each settings section", async () => {
     const onToggle = vi.fn()
-    render(<SettingsMenu links={LINKS} useThemeToggle={(): ThemeToggle => ({ theme: "dark", onToggle })} />)
+    render(<SettingsMenu links={LINKS} themeToggle={{ theme: "dark", onToggle }} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Settings" }))
     fireEvent.click(await screen.findByRole("menuitem", { name: "Switch to light mode" }))
@@ -18,7 +18,7 @@ describe("SettingsMenu", () => {
   })
 
   it("lists the settings sections as links", async () => {
-    render(<SettingsMenu links={LINKS} useThemeToggle={() => ({ theme: "light", onToggle: vi.fn() })} />)
+    render(<SettingsMenu links={LINKS} themeToggle={{ theme: "light", onToggle: vi.fn() }} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Settings" }))
 
@@ -32,7 +32,7 @@ describe("SettingsMenu", () => {
     render(
       <SettingsMenu
         links={LINKS}
-        useThemeToggle={() => ({ theme: "light", onToggle: vi.fn() })}
+        themeToggle={{ theme: "light", onToggle: vi.fn() }}
         reviewActions={{ forgeLink: { href: "https://forge.test/pull/412", label: "View pull request" }, onWriteUp, onDelete }}
       />,
     )
@@ -55,7 +55,7 @@ describe("SettingsMenu", () => {
 
   it("leaves out Explain this review when no agent can write, and View pull request for a branch", async () => {
     const onDelete = vi.fn()
-    render(<SettingsMenu links={LINKS} useThemeToggle={() => ({ theme: "light", onToggle: vi.fn() })} reviewActions={{ forgeLink: null, onWriteUp: null, onDelete }} />)
+    render(<SettingsMenu links={LINKS} themeToggle={{ theme: "light", onToggle: vi.fn() }} reviewActions={{ forgeLink: null, onWriteUp: null, onDelete }} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Settings" }))
     fireEvent.click(await screen.findByRole("menuitem", { name: "Delete" }))

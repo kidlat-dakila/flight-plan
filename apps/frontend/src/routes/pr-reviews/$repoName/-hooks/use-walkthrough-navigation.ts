@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef, useState } from "react"
+import { useLayoutEffect, useRef } from "react"
+import { useStore } from "zustand"
 import type { WalkthroughNavigation } from "@flightplan/ui/CodeWalkthrough"
 import type { CommentRange, WriteUpTarget } from "@flightplan/ui/FileRows"
 import { coveredTopOf } from "@flightplan/ui/lib/pinned-rows"
@@ -6,6 +7,7 @@ import type { WalkthroughControls, WriteUpScope } from "@flightplan/ui/lib/walkt
 import { firstUnreviewedWaypointIdOf, isFilterApplied } from "./filtered-waypoints"
 import type { ReadingPosition } from "./use-reading-position"
 import type { SteppedWaypoint, WaypointStepping } from "./use-waypoint-stepping"
+import { updateWalkthrough, withFilesCollapsed, type WalkthroughState, type WalkthroughStore } from "./walkthrough-store"
 
 type FilterKeys = Parameters<NonNullable<WalkthroughNavigation["onFilterChange"]>>[0]
 
@@ -41,23 +43,11 @@ interface WalkthroughHandlers {
   readonly agentLabel: string | null
 }
 
-interface Collapse {
-  readonly collapsedAnchorIds: ReadonlySet<string>
-  readonly holdingAnchorId: string | null
-}
-
 export interface WalkthroughLayout {
-  readonly isFileCollapsed: (anchorId: string) => boolean
   readonly onFileCollapsedChange: (anchorId: string, isCollapsed: boolean) => void
-  readonly navigationOf: (segment: NavigatedSegment, position: ReadingPosition) => WalkthroughNavigation
+  readonly navigationOf: (segment: NavigatedSegment, position: ReadingPosition, state: WalkthroughState) => WalkthroughNavigation
 }
 
-interface HeldPlace {
-  readonly anchorId: string
-  readonly count: number
-}
-
-const NOTHING_COLLAPSED: ReadonlySet<string> = new Set()
 const NO_FILTER_KEYS: readonly string[] = []
 
 const isReadInto = (anchorId: string): boolean => {
@@ -65,22 +55,20 @@ const isReadInto = (anchorId: string): boolean => {
   return rect !== undefined && rect.height > 0 && rect.top < coveredTopOf()
 }
 
-interface PlaceKeeping {
-  readonly holdPlace: (anchorId: string | null) => void
-  readonly holdPlaceThroughRefresh: (anchorId: string) => void
-}
-
 const scrollInstantlyTo = (anchorId: string): void => {
   document.getElementById(anchorId)?.scrollIntoView({ block: "start", behavior: "instant" })
 }
 
-const usePlaceKeeping = (segments: readonly NavigatedSegment[]): PlaceKeeping => {
-  const [heldPlace, setHeldPlace] = useState<HeldPlace | null>(null)
-  const awaitedAnchorIdRef = useRef<string | null>(null)
+export const useHeldPlaceScrolling = (store: WalkthroughStore): void => {
+  const heldPlace = useStore(store, (state) => state.heldPlace)
 
   useLayoutEffect(() => {
     if (heldPlace !== null) scrollInstantlyTo(heldPlace.anchorId)
   }, [heldPlace])
+}
+
+const useRefreshPlaceKeeping = (segments: readonly NavigatedSegment[]): ((anchorId: string) => void) => {
+  const awaitedAnchorIdRef = useRef<string | null>(null)
 
   useLayoutEffect(() => {
     const awaitedAnchorId = awaitedAnchorIdRef.current
@@ -89,13 +77,8 @@ const usePlaceKeeping = (segments: readonly NavigatedSegment[]): PlaceKeeping =>
     scrollInstantlyTo(awaitedAnchorId)
   }, [segments])
 
-  return {
-    holdPlace: (anchorId) => {
-      if (anchorId !== null && isReadInto(anchorId)) setHeldPlace((previous) => ({ anchorId, count: (previous?.count ?? 0) + 1 }))
-    },
-    holdPlaceThroughRefresh: (anchorId) => {
-      awaitedAnchorIdRef.current = isReadInto(anchorId) ? anchorId : null
-    },
+  return (anchorId) => {
+    awaitedAnchorIdRef.current = isReadInto(anchorId) ? anchorId : null
   }
 }
 
@@ -120,12 +103,6 @@ const useFilterLanding = (segments: readonly NavigatedSegment[], onVisitWaypoint
     awaitedFilterRef.current = { keys, heldAnchorId: isReadInto(anchorId) ? anchorId : null }
   }
 }
-
-const holdsWaypoint = (file: NavigatedFile, waypointId: string | null): boolean =>
-  file.rows.some((row) => row.kind === "waypoint" && row.waypoint.id === waypointId)
-
-const fileHoldingWaypoint = (segments: readonly NavigatedSegment[], waypointId: string | null): string | null =>
-  segments.flatMap((segment) => segment.walkthrough.files).find((file) => holdsWaypoint(file, waypointId))?.anchorId ?? null
 
 interface WaypointPlace {
   readonly path: string
@@ -152,9 +129,6 @@ const writeUpTargetOf = (place: WaypointPlace, scope: WriteUpScope): WriteUpTarg
   return place.rootBlockId === null ? null : { kind: "root-block", rootBlockId: place.rootBlockId }
 }
 
-const withCollapse = (anchorIds: ReadonlySet<string>, changedAnchorIds: readonly string[], isCollapsed: boolean): ReadonlySet<string> =>
-  new Set(isCollapsed ? [...anchorIds, ...changedAnchorIds] : [...anchorIds].filter((anchorId) => !changedAnchorIds.includes(anchorId)))
-
 const fileUnderBandOf = (files: readonly NavigatedFile[], currentAnchorId: string | null): string | null =>
   files.find((file) => file.anchorId === currentAnchorId)?.anchorId ?? files.at(0)?.anchorId ?? null
 
@@ -163,33 +137,24 @@ export const useWalkthroughNavigation = (
   stepping: WaypointStepping,
   handlers: WalkthroughHandlers,
 ): WalkthroughLayout => {
-  const holdingAnchorId = fileHoldingWaypoint(segments, stepping.currentWaypointId)
-  const [collapse, setCollapse] = useState<Collapse>({ collapsedAnchorIds: NOTHING_COLLAPSED, holdingAnchorId })
-  if (collapse.holdingAnchorId !== holdingAnchorId) {
-    setCollapse({
-      collapsedAnchorIds: holdingAnchorId === null ? collapse.collapsedAnchorIds : withCollapse(collapse.collapsedAnchorIds, [holdingAnchorId], false),
-      holdingAnchorId,
-    })
-  }
-  const { collapsedAnchorIds } = collapse
-  const { holdPlace, holdPlaceThroughRefresh } = usePlaceKeeping(segments)
+  const holdPlaceThroughRefresh = useRefreshPlaceKeeping(segments)
   const awaitFilter = useFilterLanding(segments, stepping.onVisitWaypoint)
   const changeCollapse = (anchorIds: readonly string[], isCollapsed: boolean, readAnchorId: string | null): void => {
-    holdPlace(readAnchorId)
-    setCollapse((current) => ({ ...current, collapsedAnchorIds: withCollapse(current.collapsedAnchorIds, anchorIds, isCollapsed) }))
+    const heldAnchorId = readAnchorId !== null && isReadInto(readAnchorId) ? readAnchorId : null
+    updateWalkthrough(stepping.store, (state) => withFilesCollapsed(state, anchorIds, isCollapsed, heldAnchorId))
   }
-  const currentPlace = placeOfWaypoint(segments, stepping.currentWaypointId)
-  const currentWaypoint = currentPlace?.waypoint ?? null
   const { onReviewedChange, onFilterChange, onShowReviewedChange, onCommentOnWaypoint, onWriteDescription, onWriteUp, agentLabel } = handlers
 
   return {
-    isFileCollapsed: (anchorId) => collapsedAnchorIds.has(anchorId),
     onFileCollapsedChange: (anchorId, isCollapsed) => { changeCollapse([anchorId], isCollapsed, anchorId) },
-    navigationOf: (segment, position) => {
+    navigationOf: (segment, position, state) => {
       const { controls } = segment.walkthrough
+      const { collapsedAnchorIds } = state
+      const currentPlace = placeOfWaypoint(segments, state.currentWaypointId)
+      const currentWaypoint = currentPlace?.waypoint ?? null
       const fileAnchorIds = segment.walkthrough.files.map((file) => file.anchorId)
       const fileUnderBand = fileUnderBandOf(segment.walkthrough.files, position.currentAnchorId)
-      const segmentStepping = stepping.steppingOf(segment, position.aboveAnchorIds)
+      const segmentStepping = stepping.steppingOf(segment, state.currentWaypointId, position.aboveAnchorIds)
       return {
         controls,
         positionLabel: segmentStepping.positionLabel,
@@ -199,7 +164,7 @@ export const useWalkthroughNavigation = (
           ? null
           : {
               isReviewed: currentWaypoint.isReviewed,
-              isOpen: stepping.openWaypointIds.has(currentWaypoint.id),
+              isOpen: state.openWaypointIds.has(currentWaypoint.id),
               canComment: currentWaypoint.lines !== null,
               canWriteUp: isUnwritten(currentWaypoint),
               canWriteUpBlock: currentPlace?.rootBlockId != null,
