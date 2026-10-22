@@ -9,13 +9,13 @@ description: Talk to your agent about the review, answer its questions and appro
 
 ## Talking to the agent
 
-Type in **Ask about this review** and press Enter. Shift+Enter starts a new line. The agent starts with your first message if it isn't running.
+Type in **Ask about this review** and press Enter. Shift+Enter starts a new line. If your agent isn't online, Flight Plan asks you to start it, and the agent answers once it is.
 
 To ask about specific code, select it and choose **Ask the agent**. The reference to those lines is attached above the message box. Code links in the agent's answers open the code they point at.
 
-The panel's header shows what the agent is doing, such as **Agent working** or **Agent listening**. When the agent offers more than one model, you can switch from the panel. The new model takes over from the agent's next turn.
+The panel's header shows whether the agent is online: **Agent online** or **Agent offline**. When the agent offers more than one model, you can switch from the panel. The next terminal Flight Plan opens starts the agent with it.
 
-Flight Plan can start only Claude. With Codex or Cursor, start your agent yourself in your own session. The panel shows **Agent listening** while it waits for your messages.
+With Codex or Cursor, start your agent yourself in your own session. The panel shows **Agent online** while it waits for your messages.
 
 ## Questions from the agent
 
@@ -23,4 +23,4 @@ The agent can ask you one question or several at once. They appear in the chat w
 
 ## Permissions
 
-When Flight Plan started the agent and it wants a tool your Claude settings don't allow, Flight Plan asks you: **Allow the agent to use** the tool, with the command, path or address it wants. Choose **Allow** or **Deny**, and tell the agent why if you deny it. The agent waits for your answer before it goes on. While it's explaining the review, the request opens as a dialog. A request nobody answers is withdrawn after about ten minutes.
+Your agent asks for permission in its own terminal, the way it always does. Flight Plan's own tools and the command it listens with are already allowed when Flight Plan opens the terminal.

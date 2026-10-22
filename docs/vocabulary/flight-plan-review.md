@@ -23,7 +23,7 @@ Guided review has one standing objection: a curated tour can leave out the file 
 
 1. The reviewer picks a pull request or branch in the web app, from the list the forge provides.
 2. The reviewer [opens](#opening-a-review) the review target's page. Flight Plan builds the structure of the artifact from the change, saves it and shows it at once, so the reviewer can read the diagrams and the code before any prose is written. Until an agent writes it up, it stays Flight Plan's own build, with no write-up.
-3. The reviewer asks the agent for a [write-up](#write-up). Flight Plan starts the setup's coding agent with a prompt. An agent Flight Plan cannot start itself, Codex or Cursor, gets the prompt as one line the reviewer runs in it. The agent works with the Flight Plan review skill.
+3. The reviewer asks the agent for a [write-up](#write-up). Flight Plan leaves the request for the review's [live agent](agent-conversation.md#live-agents), a Claude session the reviewer runs with `/flightplan:live <repository>/<target>` in a terminal they can see, and asks them to start one when none is online (the [Launch Agent dialog](#launching-the-agent)). Codex and Cursor get the prompt as one line the reviewer runs in them. The agent works with the Flight Plan review skill.
 4. The agent fills in the prose through the MCP tools: each segment's title and context, labels and explanations, findings. It can change the words, never the structure.
 5. The artifact opens in the web app while it is still being written, marked as drafting, and fills in as the agent works. The page shows the [progress](#progress-and-completion) at the top, and a skeleton in place of each part that is not written yet.
 6. The agent marks the artifact complete. Completing it runs the checks a finished artifact must pass.
@@ -66,7 +66,7 @@ A count is of the parts still unwritten that choosing the section would require:
 
 The review page opens the [Write-up Dialog](../DESIGN.md#write-up-dialog) on its own while `isOffered` is false: the first time a review opens, right after Flight Plan built it. It shows the choice in short, and "Configure" shows the inputs. "Not now" calls `review.declineWriteUp` (`procedures/decline-write-up/`), which keeps `isWriteUpDeclined` with the request, so the page does not ask again. With no agent set up the dialog is not shown. "Explain this review" in the Settings Menu of the review page opens it again at any time.
 
-`review.writeUp` takes the sections, the configuration, the order and whether segments are on. It refuses, as data with the field it is about, an empty choice, a configuration that no longer exists and a review with no agent set up. Otherwise it sets segments on or off, requires the context code blocks of the configuration and every node of the chosen sections (a node once required stays required), stores the choice with the request as `writeUp`, makes the artifact drafting and hands it to the agent: started, or the one line to run for an agent Flight Plan cannot start. The prompt names the chosen parts, and asks the agent to check every waypoint for findings or to write none. When everything chosen is already written, nothing is started and the answer says so. The page sorts the Code Walkthrough by the order in `writeUp` over the preference.
+`review.writeUp` takes the sections, the configuration, the order and whether segments are on. It refuses, as data with the field it is about, an empty choice, a configuration that no longer exists and a review with no agent set up. Otherwise it sets segments on or off, requires the context code blocks of the configuration and every node of the chosen sections (a node once required stays required), stores the choice with the request as `writeUp`, makes the artifact drafting and leaves it for the live agent: started, or the one line to run in Codex or Cursor. The prompt names the chosen parts, and asks the agent to check every waypoint for findings or to write none. When everything chosen is already written, the agent is asked for nothing and the answer says so. The page sorts the Code Walkthrough by the order in `writeUp` over the preference.
 
 ## Progress and completion
 
@@ -76,15 +76,23 @@ The page also says who is writing:
 
 | State | When | What the page says |
 |---|---|---|
-| `writing` | The agent Flight Plan started is running, or the agent the reviewer started has written a part | Who is writing, and that the code can be read meanwhile |
-| `waiting` | The reviewer starts an agent Flight Plan cannot start, and nothing is written yet | That the line is to be run in that agent, with a button that copies it again |
-| `stopped` | The agent Flight Plan started is not running and the artifact is not complete | That it stopped, the reason when it could not start, and that a message in Chat starts it again |
+| `writing` | The review's live agent is online, or the agent the reviewer started for Codex or Cursor has written a part | Who is writing, and that the code can be read meanwhile |
+| `waiting` | The live agent is offline, or Codex or Cursor has written nothing yet | That the agent writes once it is online, or that the line is to be run in Codex or Cursor, with a button that copies it again |
 
-A part that is not written is drawn as a skeleton while the state is `writing` or `waiting`, and as plain "not written" once it is `stopped`.
+A part that is not written is drawn as a skeleton while an agent writes it, and as plain "not written" while the live agent is offline.
 
 Outside those states, each section of a segment that has parts to write and none written up says "Not explained yet" beside its heading: the Context with no context, a Trace Diagram with no description and no label, a Blast Diagram with files to assess and none assessed, a Code Walkthrough with waypoints and no title or reading. The page data carries it per segment as `writeUpNotices` (`procedures/get-review/utils/write-up-notices.ts`), one label or `null` per section. A section with nothing to write, such as a segment with no Trace Diagram, says nothing.
 
 When the agent completes the artifact, the page that watched it being written raises a browser notification with the title of the review target, and says the same in a toast. It fires whether or not the page has focus, and a click on it brings the page to the front. The browser's permission is asked for when the reviewer asks the agent for a write-up. A page opened on a review that is already complete raises nothing.
+
+## Launching the agent
+
+The review page asks the reviewer to start the review's [live agent](agent-conversation.md#live-agents) with the [Launch Agent Dialog](../DESIGN.md#launch-agent-dialog), only while no agent is online for the review (`review.liveAgent`, asked every 5 seconds):
+
+- when a review opens whose write-up was offered already (`isOffered`). On the first open the Write-up Dialog comes first, and the Launch Agent dialog follows once the reviewer presses Explain; after Not now it does not;
+- when the reviewer asks the agent for anything: a write-up from the Write-up Dialog or a part's "Write up" action, a chat message, an answer, Ask about a selection, or publishing to Claude.
+
+Closing it keeps it closed until the next of these, or the next time the review opens. The agent's state in the top bar of the review page, "Claude offline", opens it again. The dialog offers "Open a terminal for me" where Flight Plan can open one (`review.openAgentTerminal`, macOS only), and always the command to copy, `/flightplan:live <repository>/<target>`, for an agent the reviewer starts themselves.
 
 ## The reviewer's page and the author's page
 

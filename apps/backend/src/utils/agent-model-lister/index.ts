@@ -1,5 +1,4 @@
 import { execFile } from "node:child_process"
-import { withoutParentSession } from "@/procedures/deliver-to-agent/utils/claude-launch"
 import { AGENT_CLI_NAMES } from "@/procedures/get-setup/utils/agent-catalog"
 import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
 import type { ListedModel } from "@/procedures/get-setup/utils/agent-models"
@@ -11,6 +10,7 @@ import {
 import type { AgentName } from "@/procedures/get-setup/utils/setup"
 import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 import { createExecutableFinder, type ExecutableFinder } from "@/utils/executable-finder"
+import { withoutParentSession } from "./parent-session"
 
 export interface AgentModelListerOptions {
   readonly homePath: string

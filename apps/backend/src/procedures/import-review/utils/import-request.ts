@@ -9,7 +9,7 @@ export const importIdOf = (request: ImportRequest): string => request.requestedA
 
 export const LISTENER_IMPORT_WAIT_MS = 600_000
 
-export const isImportUnderway = (request: ImportRequest | null, isAgentRunning: boolean, now: Date): boolean => {
+export const isImportUnderway = (request: ImportRequest | null, isAgentOnline: boolean, now: Date): boolean => {
   if (request?.importedAt !== null) return false
-  return request.channel === "agent" ? isAgentRunning : now.getTime() - request.requestedAt.getTime() < LISTENER_IMPORT_WAIT_MS
+  return request.channel === "agent" ? isAgentOnline : now.getTime() - request.requestedAt.getTime() < LISTENER_IMPORT_WAIT_MS
 }

@@ -13,6 +13,7 @@ interface ReviewKey {
 interface WriteUpAnnouncer {
   readonly onMessage: (message: string) => void
   readonly onCopy: (text: string, copiedMessage: string) => void
+  readonly onAgentAsked: () => void
 }
 
 type Opening = "unasked" | "open" | "closed"
@@ -62,6 +63,7 @@ export const useWriteUpDialog = (reviewKey: ReviewKey, hasArtifact: boolean, ann
         close()
         if (result.kind === "started" && result.prompt !== null) announcer.onCopy(result.prompt, result.message)
         else announcer.onMessage(result.message)
+        if (result.kind === "started" && result.prompt === null) announcer.onAgentAsked()
         await refresh()
       },
       onError: (error) => { announcer.onMessage(error.message) },

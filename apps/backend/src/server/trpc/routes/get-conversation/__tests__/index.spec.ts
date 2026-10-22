@@ -5,7 +5,7 @@ describe("conversation.get route", () => {
   it("delegates to the get-conversation procedure", async () => {
     const caller = appRouter.createCaller(createConversationContext().context)
 
-    await expect(caller.conversation.get(KEY)).resolves.toMatchObject({ agentState: "not-running", entries: [] })
+    await expect(caller.conversation.get(KEY)).resolves.toMatchObject({ agentState: "offline", entries: [] })
   })
 
   it("rejects an empty review target", async () => {

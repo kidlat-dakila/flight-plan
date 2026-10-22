@@ -1,31 +1,14 @@
-import type { RunningAgent } from "@/procedures/get-conversation/utils/agent-registry"
 import { buildConversation } from "@/procedures/get-conversation/utils/build-conversation"
 import { appendEvents, EMPTY_CONVERSATION, type ConversationEvent } from "@/procedures/get-conversation/utils/conversation"
-import { agentQuestion, KEY, reviewerMessage, STARTED_AT } from "./conversation-fixture"
+import { agentQuestion, reviewerMessage, STARTED_AT } from "./conversation-fixture"
 
-const NO_LISTENER = { openCount: 0, lastClosedAt: null }
 const LATER = new Date(STARTED_AT.getTime() + 120_000)
 
 const conversationOf = (events: readonly ConversationEvent[]) => appendEvents(EMPTY_CONVERSATION, events).conversation
 
-const runningAgent = (overrides: Partial<RunningAgent>): RunningAgent => ({
-  key: KEY,
-  agent: "claude",
-  sessionId: "s1",
-  process: null,
-  phase: "running",
-  startedAt: STARTED_AT,
-  lastActivityAt: STARTED_AT,
-  closing: null,
-  isAwaitingPermission: false,
-  wasReminded: false,
-  ...overrides,
-})
-
 const snapshotOf = (events: readonly ConversationEvent[], overrides = {}) => ({
   conversation: conversationOf(events),
-  runningAgent: null,
-  listenerPresence: NO_LISTENER,
+  isAgentOnline: false,
   ...overrides,
 })
 
@@ -40,8 +23,8 @@ describe("buildConversation", () => {
       { kind: "message", id: "m1", author: "reviewer", authorLabel: "You", timeLabel: "2 minutes ago" },
       { kind: "message", id: "a1", author: "agent", authorLabel: "Agent" },
     ])
-    expect(view.agentState).toBe("not-running")
-    expect(view.agentStateLabel).toBe("Agent not running")
+    expect(view.agentState).toBe("offline")
+    expect(view.agentStateLabel).toBe("Agent offline")
   })
 
   it("shows an open batch as waiting for the reviewer, and an answered one with its answer", () => {
@@ -54,7 +37,6 @@ describe("buildConversation", () => {
       LATER,
     )
 
-    expect(answered.agentState).toBe("waiting-for-reviewer")
     expect(answered.entries).toMatchObject([
       { kind: "questions", id: "q1", status: "answered", statusLabel: "Answered", heading: "The agent asks a question", questions: [{ answerLabel: "By layer; API first" }] },
       { kind: "questions", id: "q2", status: "open", statusLabel: "Waiting for your answer", questions: [{ answerLabel: null }] },
@@ -75,24 +57,9 @@ describe("buildConversation", () => {
     ])
   })
 
-  it("reports the agent as starting, working, waiting on a permission, or listening", () => {
-    expect(buildConversation(snapshotOf([], { runningAgent: runningAgent({ phase: "starting" }) }), LATER).agentState).toBe("starting")
-    expect(buildConversation(snapshotOf([], { runningAgent: runningAgent({}) }), LATER).agentState).toBe("working")
-    expect(buildConversation(snapshotOf([], { runningAgent: runningAgent({ isAwaitingPermission: true }) }), LATER).agentState).toBe("waiting-for-reviewer")
-    expect(buildConversation(snapshotOf([], { listenerPresence: { openCount: 1, lastClosedAt: null } }), LATER).agentState).toBe("listening")
-  })
-
-  it("treats an agent that is closing as no longer running", () => {
-    expect(buildConversation(snapshotOf([], { runningAgent: runningAgent({ closing: "turn-ended" }) }), LATER).agentState).toBe("not-running")
-  })
-
-  it("shows the last failure as the problem until a delivery succeeds", () => {
-    const view = buildConversation(
-      snapshotOf([reviewerMessage("m1", "Hi"), { kind: "agent-failure", id: "f1", reason: "The claude command was not found on this machine.", failedAt: STARTED_AT }]),
-      LATER,
-    )
-
-    expect(view).toMatchObject({ agentState: "failed", agentStateLabel: "Agent could not start", problem: "The claude command was not found on this machine." })
+  it("reports the agent as online or offline", () => {
+    expect(buildConversation(snapshotOf([], { isAgentOnline: true }), LATER)).toMatchObject({ agentState: "online", agentStateLabel: "Agent online" })
+    expect(buildConversation(snapshotOf([], { isAgentOnline: false }), LATER)).toMatchObject({ agentState: "offline", agentStateLabel: "Agent offline" })
   })
 
   it("invites a first message while the conversation is empty, and words the panel", () => {
@@ -101,7 +68,7 @@ describe("buildConversation", () => {
       closeLabel: "Close the chat",
       placeholder: "Ask about this review",
       sendLabel: "Send",
-      emptyMessage: "Ask about this review. The agent starts with your first message.",
+      emptyMessage: "Ask about this review. Your agent answers here once it is online.",
     })
     expect(buildConversation(snapshotOf([reviewerMessage("m1", "Hi")]), LATER).emptyMessage).toBeNull()
   })

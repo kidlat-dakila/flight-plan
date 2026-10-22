@@ -31,7 +31,7 @@ Flight Plan is a code review tool with agent integration, not a tool for agents.
 ## Operating Context
 
 - Started with `npx` or `pnpm dlx`. A local Fastify backend serves the web app, a tRPC API and an MCP endpoint.
-- The reviewer picks a review target in the web app and reads the artifact Flight Plan builds for it. Flight Plan starts their coding agent, or gives them a prompt for it, and the agent writes the prose with the Flight Plan review skill while the reviewer reads.
+- The reviewer picks a review target in the web app and reads the artifact Flight Plan builds for it. The reviewer runs their coding agent in a terminal they can see, with `/flightplan:live <repository>/<target>` or a terminal Flight Plan opens for them, and the agent writes the prose with the Flight Plan review skill while the reviewer reads.
 - A review target is a pull request on a forge (GitHub, GitLab, Bitbucket) or a branch of a local repository.
 - All data stays on the user's machine in `~/.flightplan/`. Nothing is stored in the reviewed repository and nothing is sent elsewhere.
 - One data directory serves every repository the user reviews.

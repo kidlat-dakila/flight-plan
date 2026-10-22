@@ -1,5 +1,4 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { deliverToAgent } from "@/procedures/deliver-to-agent"
 import { findQuestionBatch, isBatchSettled } from "@/procedures/get-conversation/utils/conversation"
 import { appendAndPublish } from "@/procedures/get-conversation/utils/conversation-actions"
 import { planAnswers } from "./utils/plan-answers"
@@ -26,6 +25,5 @@ export const answerQuestions = async (input: AnswerQuestionsInput, context: Proc
     ],
     context,
   )
-  if (batch.origin === "agent") await deliverToAgent(key, context)
   return { kind: "accepted" }
 }

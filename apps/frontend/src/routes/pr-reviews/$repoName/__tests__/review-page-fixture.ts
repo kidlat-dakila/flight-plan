@@ -419,17 +419,16 @@ export const conversationReply = {
   emptyMessage: "Ask about this review.",
   placeholder: "Ask about this review",
   sendLabel: "Send",
-  agentState: "not-running",
-  agentStateLabel: "Agent not running",
-  problem: null,
+  agentState: "offline",
+  agentStateLabel: "Agent offline",
   entries: [],
 }
 
 export const permissionReply = {
   ...conversationReply,
   emptyMessage: null,
-  agentState: "waiting-for-reviewer",
-  agentStateLabel: "Agent waiting for your answers",
+  agentState: "online",
+  agentStateLabel: "Agent online",
   entries: [
     {
       kind: "questions",
@@ -512,3 +511,22 @@ export const writeUpPlan = {
   walkthroughOrder: "imports-bottom-up",
   isSegmented: true,
 }
+
+export const liveAgentReply = (isOnline: boolean) => ({
+  kind: "live",
+  isOnline,
+  statusLabel: isOnline ? "Claude online" : "Claude offline",
+  dialog: {
+    title: "Claude is offline",
+    description: "Claude writes up this review and answers you in Chat.",
+    terminal: { label: "Open a terminal for me", description: "Flight Plan opens Terminal in the repository's folder." },
+    manual: {
+      label: "I'll start it myself",
+      description: "Run this in Claude.",
+      prompt: "/flightplan:live storefront/pr-412",
+      copyLabel: "Copy the command",
+      copiedMessage: "Command copied",
+    },
+    closeLabel: "Not now",
+  },
+})

@@ -1,14 +1,9 @@
 import type { ProcedureContext } from "@/procedures/context"
-import {
-  isSpawnedFor,
-  listenCommandFor,
-  listenInstructionOf,
-  SPAWNED_AFTER_ASKING,
-} from "@/procedures/get-conversation/utils/agent-next-step"
+import { listenCommandOf, listenInstructionOf } from "@/procedures/get-conversation/utils/agent-text"
 import {
   appendAndPublish,
   findReviewTarget,
-  markAgentActivity,
+  markAgentSeen,
 } from "@/procedures/get-conversation/utils/conversation-actions"
 import { planQuestionBatch } from "./utils/plan-question-batch"
 import type { AskReviewerInput, ReviewerAsking } from "./utils/schemas"
@@ -23,13 +18,12 @@ export const askReviewer = async (input: AskReviewerInput, context: ProcedureCon
   const batchId = context.conversationEnvironment.newId()
   const plan = planQuestionBatch(batchId, input.questions)
   if (plan.kind === "rejected") return plan
-  markAgentActivity(key, context)
+  markAgentSeen(key, context)
   await appendAndPublish(
     key,
     [{ kind: "question-batch", id: batchId, origin: "agent", questions: plan.questions, askedAt: context.now() }],
     context,
   )
-  if (isSpawnedFor(key, context)) return { kind: "asked", batchId, note: askedNote(batchId, SPAWNED_AFTER_ASKING) }
-  const command = listenCommandFor(key, context)
+  const command = listenCommandOf(context.conversationEnvironment.serverUrl, key)
   return { kind: "asked", batchId, note: askedNote(batchId, listenInstructionOf(command)) }
 }

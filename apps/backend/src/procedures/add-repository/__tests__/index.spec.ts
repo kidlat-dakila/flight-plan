@@ -42,6 +42,7 @@ const createContext = (repositories: readonly Repository[], setup: Setup = EMPTY
   readInstructionTexts: readSampleInstructionTexts,
   writePublishedPage: writeSamplePublishedPage,
   importFiles: new InMemoryImportFileStore(),
+  openTerminal: null,
   now: () => NOW,
   dataNotice: null,
   appUrl: "http://localhost:4200",

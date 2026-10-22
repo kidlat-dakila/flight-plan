@@ -8,7 +8,7 @@ describe("conversation.watch route", () => {
     const views = await caller.conversation.watch(KEY)
     const iterator = views[Symbol.asyncIterator]()
 
-    await expect(iterator.next()).resolves.toMatchObject({ value: { agentState: "not-running" } })
+    await expect(iterator.next()).resolves.toMatchObject({ value: { agentState: "offline" } })
     await iterator.return?.()
   })
 })

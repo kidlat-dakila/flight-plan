@@ -85,18 +85,7 @@ export const staleNoticeSchema = z.strictObject({
   copiedMessage: z.string(),
 })
 
-export const PROGRESS_STATES = ["writing", "waiting", "stopped"] as const
-
-export const permissionRequestSchema = z.strictObject({
-  batchId: z.string(),
-  questionId: z.string(),
-  title: z.string(),
-  description: z.string(),
-  detail: z.string().nullable(),
-  allowLabel: z.string(),
-  denyLabel: z.string(),
-  reasonLabel: z.string(),
-})
+export const PROGRESS_STATES = ["writing", "waiting"] as const
 
 export const reviewProgressSchema = z.strictObject({
   state: z.enum(PROGRESS_STATES),
@@ -107,7 +96,6 @@ export const reviewProgressSchema = z.strictObject({
   writtenCount: z.number().int(),
   totalCount: z.number().int(),
   prompt: z.strictObject({ label: z.string(), text: z.string(), copiedMessage: z.string() }).nullable(),
-  permission: permissionRequestSchema.nullable(),
 })
 
 export const completionNoticeSchema = z.strictObject({ title: z.string(), body: z.string() })
@@ -336,7 +324,6 @@ export type ArtifactFreshness = z.infer<typeof artifactFreshnessSchema>
 export type ReviewHeader = z.infer<typeof reviewHeaderSchema>
 export type ReviewShell = z.infer<typeof shellSchema>
 export type StaleNotice = z.infer<typeof staleNoticeSchema>
-export type PermissionRequest = z.infer<typeof permissionRequestSchema>
 export type ReviewProgress = z.infer<typeof reviewProgressSchema>
 export type CompletionNotice = z.infer<typeof completionNoticeSchema>
 export type Rail = z.infer<typeof railSchema>

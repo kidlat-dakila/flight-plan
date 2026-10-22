@@ -8,11 +8,11 @@ const wasRecordedSince = (request: PublishingRequest, publications: readonly Pub
 export const isPublishingUnderway = (
   request: PublishingRequest | null,
   publications: readonly Publication[],
-  isAgentRunning: boolean,
+  isAgentOnline: boolean,
   now: Date,
 ): boolean => {
   if (request === null || wasRecordedSince(request, publications)) return false
   return request.channel === "agent"
-    ? isAgentRunning
+    ? isAgentOnline
     : now.getTime() - request.requestedAt.getTime() < LISTENER_PUBLISHING_WAIT_MS
 }

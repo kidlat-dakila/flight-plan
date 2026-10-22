@@ -1,12 +1,9 @@
 import { formatRelativeTime } from "@/procedures/list-repositories/utils/format-relative-time"
 import { codeLinkIdsIn, parseProse } from "@flightplan/codegraph"
 import type { Prose } from "@flightplan/configurations"
-import type { ListenerPresence, RunningAgent } from "./agent-registry"
 import {
   findAnswerSet,
   findWithdrawal,
-  latestFailureOf,
-  openQuestionBatchesOf,
   type Answer,
   type Conversation,
   type JournalEntry,
@@ -19,19 +16,14 @@ type QuestionsEntry = Extract<ConversationEntry, { kind: "questions" }>
 
 export interface ConversationSnapshot {
   readonly conversation: Conversation
-  readonly runningAgent: RunningAgent | null
-  readonly listenerPresence: ListenerPresence
+  readonly isAgentOnline: boolean
 }
 
 const parseMessage = (body: string): Prose => parseProse(body, new Set(codeLinkIdsIn([body])))
 
-const STATE_LABELS: Readonly<Record<AgentState, string>> = {
-  "not-running": "Agent not running",
-  "starting": "Agent starting",
-  "working": "Agent working",
-  "waiting-for-reviewer": "Agent waiting for your answers",
-  "listening": "Agent listening",
-  "failed": "Agent could not start",
+export const AGENT_STATE_LABELS: Readonly<Record<AgentState, string>> = {
+  online: "Agent online",
+  offline: "Agent offline",
 }
 
 const REVIEWER_LABEL = "You"
@@ -52,19 +44,7 @@ const PANEL_LABELS = {
   sendLabel: "Send",
 } as const
 
-const EMPTY_MESSAGE = "Ask about this review. The agent starts with your first message."
-
-const runningStateOf = (agent: RunningAgent): AgentState => {
-  if (agent.phase === "starting") return "starting"
-  return agent.isAwaitingPermission ? "waiting-for-reviewer" : "working"
-}
-
-const agentStateOf = ({ conversation, runningAgent, listenerPresence }: ConversationSnapshot): AgentState => {
-  if (runningAgent !== null && runningAgent.closing === null) return runningStateOf(runningAgent)
-  if (listenerPresence.openCount > 0) return "listening"
-  if (openQuestionBatchesOf(conversation.journal).length > 0) return "waiting-for-reviewer"
-  return latestFailureOf(conversation.journal) === null ? "not-running" : "failed"
-}
+const EMPTY_MESSAGE = "Ask about this review. Your agent answers here once it is online."
 
 const headingOf = (batch: QuestionBatch): string => {
   if (batch.origin === "permission") return PERMISSION_HEADING
@@ -148,14 +128,13 @@ const toEntry = ({ event }: JournalEntry, journal: readonly JournalEntry[], now:
 
 export const buildConversation = (snapshot: ConversationSnapshot, now: Date): ConversationView => {
   const { journal } = snapshot.conversation
-  const agentState = agentStateOf(snapshot)
+  const agentState: AgentState = snapshot.isAgentOnline ? "online" : "offline"
   const entries = journal.map((entry) => toEntry(entry, journal, now)).filter((entry) => entry !== null)
   return {
     ...PANEL_LABELS,
     emptyMessage: entries.length === 0 ? EMPTY_MESSAGE : null,
     agentState,
-    agentStateLabel: STATE_LABELS[agentState],
-    problem: agentState === "failed" ? (latestFailureOf(journal)?.reason ?? null) : null,
+    agentStateLabel: AGENT_STATE_LABELS[agentState],
     entries,
   }
 }

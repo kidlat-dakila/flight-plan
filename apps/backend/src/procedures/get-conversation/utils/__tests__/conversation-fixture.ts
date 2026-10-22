@@ -1,14 +1,6 @@
 import { createConversationEnvironment, type ProcedureContext } from "@/procedures/context"
-import type { AgentProcess, AgentRegistry } from "@/procedures/get-conversation/utils/agent-registry"
 import type { QuestionBatch, ReviewerMessage } from "@/procedures/get-conversation/utils/conversation"
-import type {
-  AgentExit,
-  AgentLaunch,
-  AgentSpawner,
-  AgentSpawners,
-  AgentStart,
-  ConversationEnvironment,
-} from "@/procedures/get-conversation/utils/conversation-environment"
+import type { ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
 import { createSetupContext, STOREFRONT } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP, type AgentsChoice, type Setup } from "@/procedures/get-setup/utils/setup"
 
@@ -48,78 +40,26 @@ export class SequentialIds {
   }
 }
 
-export class FakeProcess implements AgentProcess {
-  public stopCount = 0
-  private readonly onExit: (exit: AgentExit) => void
-  private readonly output: string
-
-  public constructor(onExit: (exit: AgentExit) => void, output: string) {
-    this.onExit = onExit
-    this.output = output
-  }
-
-  public readonly stop = (): void => {
-    this.stopCount += 1
-    this.onExit({ exitCode: 0 })
-  }
-
-  public readonly exit = (exitCode: number): void => {
-    this.onExit({ exitCode })
-  }
-
-  public readonly readOutput = (): string => this.output
-}
-
-export class FakeSpawner {
-  public launches: readonly AgentLaunch[] = []
-  public processes: readonly FakeProcess[] = []
-  private readonly start: AgentStart | null
-  private readonly output: string
-
-  public constructor(options: { readonly failure?: string, readonly output?: string } = {}) {
-    this.start = options.failure === undefined ? null : { kind: "failed", reason: options.failure }
-    this.output = options.output ?? ""
-  }
-
-  public readonly spawn: AgentSpawner = async (launch, onExit) => {
-    this.launches = [...this.launches, launch]
-    if (this.start !== null) return await Promise.resolve(this.start)
-    const process = new FakeProcess(onExit, this.output)
-    this.processes = [...this.processes, process]
-    return await Promise.resolve({ kind: "started", process })
-  }
-}
-
 export interface ConversationTestContext {
   readonly context: ProcedureContext
   readonly clock: Clock
-  readonly spawner: FakeSpawner
   readonly environment: ConversationEnvironment
 }
 
 export interface ConversationContextOptions {
   readonly setup?: Setup
-  readonly spawner?: FakeSpawner
-  readonly spawners?: AgentSpawners
-  readonly agents?: AgentRegistry
 }
 
 export const createConversationContext = (options: ConversationContextOptions = {}): ConversationTestContext => {
   const clock = new Clock(STARTED_AT)
   const ids = new SequentialIds()
-  const spawner = options.spawner ?? new FakeSpawner()
-  const environment = createConversationEnvironment({
-    spawners: options.spawners ?? { claude: spawner.spawn },
-    serverUrl: SERVER_URL,
-    newId: ids.next,
-    ...(options.agents === undefined ? {} : { agents: options.agents }),
-  })
+  const environment = createConversationEnvironment({ serverUrl: SERVER_URL, newId: ids.next })
   const context: ProcedureContext = {
     ...createSetupContext(options.setup ?? WITH_CLAUDE, [STOREFRONT]),
     conversationEnvironment: environment,
     now: clock.now,
   }
-  return { context, clock, spawner, environment }
+  return { context, clock, environment }
 }
 
 export const reviewerMessage = (id: string, body: string): ReviewerMessage => ({

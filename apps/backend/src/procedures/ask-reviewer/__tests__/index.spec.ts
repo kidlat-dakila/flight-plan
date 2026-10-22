@@ -1,6 +1,5 @@
 import { askReviewer } from "@/procedures/ask-reviewer"
-import { deliverToAgent } from "@/procedures/deliver-to-agent"
-import { createConversationContext, KEY, reviewerMessage } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
+import { createConversationContext, KEY } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
 
 const QUESTIONS = [
   { prompt: "How should I organise it?", options: [{ label: "By feature", description: "" }, { label: "By layer", description: "" }], allowsMultiple: false },
@@ -8,7 +7,7 @@ const QUESTIONS = [
 ]
 
 describe("askReviewer", () => {
-  it("shows the batch to the reviewer and gives a session the reviewer started the command that waits for the answers", async () => {
+  it("shows the batch to the reviewer and gives the agent the command that waits for the answers", async () => {
     const { context, environment } = createConversationContext()
 
     const asking = await askReviewer({ ...KEY, questions: QUESTIONS }, context)
@@ -19,14 +18,12 @@ describe("askReviewer", () => {
     expect(journal[0]?.event).toMatchObject({ kind: "question-batch", origin: "agent", questions: [{ id: "id-1-1" }, { id: "id-1-2" }] })
   })
 
-  it("tells a session Flight Plan started to end its turn", async () => {
-    const { context, environment } = createConversationContext()
-    await environment.store.append(KEY, [reviewerMessage("m1", "Hi")])
-    await deliverToAgent(KEY, context)
+  it("counts the call as a sign that the agent is online", async () => {
+    const { context, environment, clock } = createConversationContext()
 
-    const asking = await askReviewer({ ...KEY, questions: QUESTIONS }, context)
+    await askReviewer({ ...KEY, questions: QUESTIONS }, context)
 
-    expect(asking.kind === "asked" ? asking.note : "").toContain("End your turn now.")
+    expect(environment.presence.presenceOf(KEY).lastSeenAt).toStrictEqual(clock.now())
   })
 
   it("rejects options that share a label and keeps nothing", async () => {

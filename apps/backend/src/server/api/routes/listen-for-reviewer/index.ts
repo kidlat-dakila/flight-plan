@@ -12,13 +12,14 @@ import { toRouteSchema } from "@/server/api/route-schema"
 export const LISTEN_ROUTE = `/api/:repositoryName/:targetId/${LISTEN_PATH_SUFFIX}`
 
 const HTTP_NOT_FOUND = 404
-const REPLY_EVENT = "reply"
 
 const passText = (data: unknown): string => String(data)
 
 const toMessages = async function* (packets: AsyncIterable<ListenPacket>) {
   for await (const packet of packets) {
-    yield { id: String(packet.throughSequence), event: REPLY_EVENT, data: packet.text }
+    yield packet.kind === "work"
+      ? { id: String(packet.throughSequence), event: packet.kind, data: packet.text }
+      : { event: packet.kind, data: packet.text }
   }
 }
 

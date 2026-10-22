@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto"
-import { InMemoryAgentRegistry } from "@/procedures/get-conversation/utils/agent-registry"
-import type { AgentSpawners, ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
+import { InMemoryAgentPresenceRegistry } from "@/procedures/get-conversation/utils/agent-presence"
+import type { ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
 import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/conversation-store"
-import { createDemoAgent } from "@/procedures/get-conversation/utils/demo-agent"
+import { startDemoAgent } from "@/procedures/get-conversation/utils/demo-agent"
 import { createInMemoryConversationHub } from "@/procedures/get-conversation/utils/in-memory-conversation-hub"
 import { readSampleInstructionTexts, type InstructionReader } from "@/procedures/get-instructions/utils/instruction-texts"
 import { PACKAGE_NAME } from "@/procedures/get-published-review/utils/install-guide"
@@ -34,15 +34,13 @@ import { InMemoryConfigurationStore, type ConfigurationStore } from "@/procedure
 import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-catalog"
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import type { TerminalOpener } from "@/procedures/open-agent-terminal/utils/terminal-opener"
 import { writeSamplePublishedPage, type PublishedPageWriter } from "@/procedures/publish-artifact/utils/published-page-writer"
-import { InMemoryWriteUpQueue } from "@/procedures/request-write-up/utils/write-up-queue"
-import { spawnPluginPathOf } from "@/procedures/save-setup-step/utils/claude-plugin"
 import { createAgentDetector } from "@/utils/agent-detector"
-import { createAgentInstaller } from "@/utils/agent-installer"
+import { createAgentInstaller, createInstallChecker } from "@/utils/agent-installer"
 import { createAgentModelLister } from "@/utils/agent-model-lister"
 import { createAuthorLookup } from "@/utils/author-lookup"
 import { createBranchPuller } from "@/utils/branch-puller"
-import { createClaudeSpawner } from "@/utils/claude-spawner"
 import { createCodeHighlighter } from "@/utils/code-highlighter"
 import { createCommitAuthorReader } from "@/utils/commit-author-reader"
 import { FileConfigurationStore } from "@/utils/configuration-file-store"
@@ -70,6 +68,7 @@ import { FileReviewStore } from "@/utils/review-file-store"
 import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
 import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
+import { createTerminalOpener } from "@/utils/terminal-opener"
 import { createUpdateCheckFile } from "@/utils/update-check-file"
 import type { CodeHighlighter } from "@flightplan/codegraph"
 import { readRemote, assembleGitAdapter, GitAdapterError } from "@flightplan/git-forge"
@@ -89,6 +88,7 @@ export interface ProcedureContext {
   readonly readInstructionTexts: InstructionReader
   readonly writePublishedPage: PublishedPageWriter
   readonly importFiles: ImportFileStore
+  readonly openTerminal: TerminalOpener | null
   readonly appUrl: string
   readonly now: () => Date
   readonly dataNotice: string | null
@@ -98,16 +98,13 @@ export interface ProcedureContext {
 
 const MOCK_SERVER_URL = "http://localhost:3000"
 const MOCK_APP_URL = "http://localhost:4200"
-const NO_SPAWNERS: AgentSpawners = {}
 
 export const createConversationEnvironment = (
   overrides: Partial<ConversationEnvironment> = {},
 ): ConversationEnvironment => ({
   store: new InMemoryConversationStore(),
   hub: createConversationHub(),
-  agents: new InMemoryAgentRegistry(),
-  writeUpQueue: new InMemoryWriteUpQueue(),
-  spawners: NO_SPAWNERS,
+  presence: new InMemoryAgentPresenceRegistry(),
   serverUrl: MOCK_SERVER_URL,
   newId: randomUUID,
   ...overrides,
@@ -140,6 +137,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   readInstructionTexts: readSampleInstructionTexts,
   writePublishedPage: writeSamplePublishedPage,
   importFiles: new InMemoryImportFileStore(),
+  openTerminal: null,
   appUrl: MOCK_APP_URL,
   now: () => new Date(),
   dataNotice: SAMPLE_DATA_NOTICE,
@@ -165,7 +163,6 @@ export const createDemoProcedureContext = async (
   const conversationStore = new InMemoryConversationStore()
   const reviewStore = new InMemoryReviewStore(demos.map(toDemoStoredReview))
   await Promise.all([seedDemoChats(conversationStore, demos, startedAt), seedDemoScaffolds(reviewStore, demos, startedAt)])
-  const repliesByRepository = new Map(demos.map((demo) => [demo.story.repository.name, toDemoAgentReplies(demo)]))
   const context: ProcedureContext = {
     repositoryStore: new InMemoryRepositoryStore(demos.map((demo) => toDemoRepository(demo, startedAt)), null, DEMO_VIEWER_LOGIN),
     reviewStore,
@@ -179,11 +176,7 @@ export const createDemoProcedureContext = async (
     conversationEnvironment: {
       store: conversationStore,
       hub: createInMemoryConversationHub(),
-      agents: new InMemoryAgentRegistry(),
-      writeUpQueue: new InMemoryWriteUpQueue(),
-      spawners: {
-        claude: createDemoAgent({ repliesFor: (key) => repliesByRepository.get(key.repositoryName) ?? [], readContext: () => context }),
-      },
+      presence: new InMemoryAgentPresenceRegistry(),
       serverUrl: MOCK_SERVER_URL,
       newId,
     },
@@ -191,10 +184,14 @@ export const createDemoProcedureContext = async (
     readInstructionTexts,
     writePublishedPage: writeSamplePublishedPage,
     importFiles: new InMemoryImportFileStore(),
+    openTerminal: null,
     appUrl: MOCK_APP_URL,
     now: () => new Date(),
     dataNotice: null,
   }
+  demos.forEach((demo) => {
+    startDemoAgent({ key: demoReviewKeyOf(demo), replies: toDemoAgentReplies(demo), readContext: () => context })
+  })
   return context
 }
 
@@ -207,6 +204,7 @@ export interface LocalMachine {
   readonly serverUrl: string
   readonly appUrl: string
   readonly homePath: string
+  readonly platform: string
   readonly environment: Environment
 }
 
@@ -250,13 +248,13 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     readInstructionTexts: new InstructionFileReader(machine.configurationsPath).read,
     writePublishedPage: createPublishedPageWriter({ bundlePath: machine.publishedBundlePath, dataPath: machine.dataPath }),
     importFiles: createImportFileStore(machine.dataPath),
+    openTerminal: createTerminalOpener({ platform: machine.platform, runCommand, environment: machine.environment }),
     appUrl: machine.appUrl,
     changeReader: createGitChangeReader({ runCommand, environment: machine.environment }),
     pullBranch: createBranchPuller({ runCommand, environment: machine.environment }),
     openRepository,
     conversationEnvironment: createConversationEnvironment({
       store: new FileConversationStore(machine.dataPath),
-      spawners: { claude: createClaudeSpawner({ ...machine, spawnPluginPath: spawnPluginPathOf(machine.dataPath) }) },
       serverUrl: machine.serverUrl,
     }),
     repositoryStore: new LiveRepositoryStore({
@@ -272,6 +270,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
       hasAgentCli: createAgentCliProbe(machine),
       listAgentModels: createAgentModelLister(machine),
       installAgent: createAgentInstaller({ ...machine, runCommand }),
+      isAgentInstallCurrent: createInstallChecker({ ...machine, runCommand }),
       probeForgeClis: createForgeCliProbe({ ...machine, runCommand }),
       saveForgeCredential: createForgeCredentialSaver(saveInKeychain),
       ...createAuthorLookup({

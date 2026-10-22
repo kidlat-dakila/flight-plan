@@ -78,7 +78,6 @@
           "thirdParty": true,
           "metafile": true,
           "external": [
-            "node-pty",
             "tree-sitter",
             "tree-sitter-html",
             "tree-sitter-python",

@@ -1,4 +1,3 @@
-import type { JournalEntry } from "@/procedures/get-conversation/utils/conversation"
 import { buildCompletionNotice, buildProgress, isWritingNow, NO_WRITING_ACTIVITY, type WritingActivity } from "@/procedures/get-review/utils/build-progress"
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import { createArtifact, createSegment, createWaypoint } from "./review-fixture"
@@ -18,25 +17,6 @@ const CLAUDE_REQUEST = createRequest({ kind: "agent", agent: "claude", model: "s
 const EXTERNAL_REQUEST = createRequest({ kind: "external", agent: "codex" })
 const NO_AGENT_REQUEST = createRequest({ kind: "none" })
 
-const FAILURE: JournalEntry = { sequence: 2, event: { kind: "agent-failure", id: "failure-1", reason: "The claude command was not found.", failedAt: NOW } }
-const DELIVERY: JournalEntry = { sequence: 3, event: { kind: "delivery", id: "delivery-1", throughSequence: 1, channel: "spawn", deliveredAt: NOW } }
-
-const permissionAsked = (sequence: number, batchId: string, command: string): JournalEntry => ({
-  sequence,
-  event: {
-    kind: "question-batch",
-    id: batchId,
-    origin: "permission",
-    questions: [{ id: `${batchId}-1`, prompt: "Allow the agent to use Bash?", detail: command, options: [], allowsMultiple: false }],
-    askedAt: NOW,
-  },
-})
-
-const permissionAnswered = (sequence: number, batchId: string): JournalEntry => ({
-  sequence,
-  event: { kind: "answers", id: `${batchId}-answers`, batchId, origin: "permission", answers: [], answeredAt: NOW },
-})
-
 const drafting = createArtifact({ status: "drafting" })
 const unwritten = createArtifact({
   status: "drafting",
@@ -53,7 +33,7 @@ describe("buildProgress", () => {
   })
 
   it("has nothing to show for an artifact that is complete", () => {
-    expect(buildProgress(createArtifact(), activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true }))).toBeNull()
+    expect(buildProgress(createArtifact(), activityOf({ request: CLAUDE_REQUEST, isAgentOnline: true }))).toBeNull()
   })
 
   it("counts the parts that need nothing more out of every part the agent writes", () => {
@@ -65,8 +45,8 @@ describe("buildProgress", () => {
     expect(empty?.totalCount).toBeGreaterThan(0)
   })
 
-  it("names the agent while it runs, and shows what is unwritten as being written", () => {
-    expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true }))).toMatchObject({
+  it("names the agent while it is online, and shows what is unwritten as being written", () => {
+    expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, isAgentOnline: true }))).toMatchObject({
       state: "writing",
       label: "Claude is writing the review",
       isWriting: true,
@@ -74,47 +54,13 @@ describe("buildProgress", () => {
     })
   })
 
-  it("says the agent stopped when it is not running and the review is not finished, and how to start it again", () => {
+  it("waits for the agent while it is offline, and draws nothing as being written", () => {
     expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST }))).toMatchObject({
-      state: "stopped",
-      label: "Claude stopped before the review was finished",
-      message: "Send it a message in Chat to start it again.",
+      state: "waiting",
+      label: "Waiting for Claude",
+      message: "Claude writes the review once it is online. You can read the code meanwhile.",
       isWriting: false,
     })
-  })
-
-  it("gives the reason when the last start of the agent failed, and none once a later start worked", () => {
-    expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, journal: [FAILURE] }))).toMatchObject({
-      state: "stopped",
-      label: "Claude could not write the review",
-      message: "The claude command was not found. Send it a message in Chat to start it again.",
-    })
-    expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, journal: [FAILURE, DELIVERY] }))).toMatchObject({
-      label: "Claude stopped before the review was finished",
-    })
-  })
-
-  it("asks the reviewer about the agent's latest permission request that is still open while it runs", () => {
-    const journal = [permissionAsked(4, "batch-1", "rg priceOf"), permissionAnswered(5, "batch-1"), permissionAsked(6, "batch-2", "git log -1")]
-
-    expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true, journal }))?.permission).toStrictEqual({
-      batchId: "batch-2",
-      questionId: "batch-2-1",
-      title: "Allow the agent to use Bash?",
-      description: "The agent is waiting for your answer before it goes on writing the review.",
-      detail: "git log -1",
-      allowLabel: "Allow",
-      denyLabel: "Deny",
-      reasonLabel: "Tell the agent why, if you deny it",
-    })
-  })
-
-  it("asks nothing once the request is answered, or when the agent no longer runs", () => {
-    const answered = [permissionAsked(4, "batch-1", "rg priceOf"), permissionAnswered(5, "batch-1")]
-    const open = [permissionAsked(4, "batch-1", "rg priceOf")]
-
-    expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true, journal: answered }))?.permission).toBeNull()
-    expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, journal: open }))?.permission).toBeNull()
   })
 
   it("waits for the agent the reviewer starts, with the line to copy again, until a part is written", () => {
@@ -149,14 +95,14 @@ describe("buildCompletionNotice", () => {
 describe("isWritingNow", () => {
   const draftingArtifact = createArtifact({ status: "drafting" })
 
-  it("is writing while a drafting review's agent runs, or while the reviewer's own agent writes it", () => {
-    expect(isWritingNow(draftingArtifact, activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true }))).toBe(true)
-    expect(isWritingNow(draftingArtifact, activityOf({ request: EXTERNAL_REQUEST, isAgentRunning: false }))).toBe(true)
+  it("is writing while a drafting review's agent is online, or while the reviewer's own agent writes it", () => {
+    expect(isWritingNow(draftingArtifact, activityOf({ request: CLAUDE_REQUEST, isAgentOnline: true }))).toBe(true)
+    expect(isWritingNow(draftingArtifact, activityOf({ request: EXTERNAL_REQUEST, isAgentOnline: false }))).toBe(true)
   })
 
-  it("is not writing once the agent stopped, with no agent, or once the review is complete", () => {
-    expect(isWritingNow(draftingArtifact, activityOf({ request: CLAUDE_REQUEST, isAgentRunning: false }))).toBe(false)
-    expect(isWritingNow(draftingArtifact, activityOf({ request: NO_AGENT_REQUEST, isAgentRunning: false }))).toBe(false)
-    expect(isWritingNow(createArtifact({ status: "complete" }), activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true }))).toBe(false)
+  it("is not writing while the agent is offline, with no agent, or once the review is complete", () => {
+    expect(isWritingNow(draftingArtifact, activityOf({ request: CLAUDE_REQUEST, isAgentOnline: false }))).toBe(false)
+    expect(isWritingNow(draftingArtifact, activityOf({ request: NO_AGENT_REQUEST, isAgentOnline: false }))).toBe(false)
+    expect(isWritingNow(createArtifact({ status: "complete" }), activityOf({ request: CLAUDE_REQUEST, isAgentOnline: true }))).toBe(false)
   })
 })

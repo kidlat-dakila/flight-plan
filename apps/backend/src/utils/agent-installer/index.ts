@@ -1,29 +1,26 @@
 import { copyFile, mkdir, readdir, readFile, rm } from "node:fs/promises"
-import { join } from "node:path"
+import { join, relative } from "node:path"
 import { lastOf } from "@/procedures/get-review/utils/last-of"
 import { AGENT_CLI_NAMES } from "@/procedures/get-setup/utils/agent-catalog"
 import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
 import type { AgentInstall, AgentName } from "@/procedures/get-setup/utils/setup"
 import type { AgentInstallation, SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
+import { installFingerprintOf, isInstallCurrent, type PluginFile } from "@/procedures/refresh-agent-installs/utils/install-fingerprint"
 import {
   buildMarketplaceManifest,
   buildMcpManifest,
-  buildSpawnHooksManifest,
-  buildSpawnPluginManifest,
   claudeCommandEnvironment,
   claudeInstallCommands,
-  HOOKS_MANIFEST_PATH,
   MARKETPLACE_FOLDER_NAME,
   MARKETPLACE_MANIFEST_PATH,
   MCP_MANIFEST_NAME,
-  PLUGIN_MANIFEST_PATH,
   PLUGIN_NAME,
-  spawnPluginPathOf,
 } from "@/procedures/save-setup-step/utils/claude-plugin"
 import { withCodexMcpServer } from "@/procedures/save-setup-step/utils/codex-config"
 import { withCursorMcpServer } from "@/procedures/save-setup-step/utils/cursor-config"
 import { renameSkill } from "@/procedures/save-setup-step/utils/skill-file"
 import { createExecutableFinder } from "@/utils/executable-finder"
+import { createInstallStampFile } from "@/utils/install-stamp-file"
 import type { CommandRunner } from "@/utils/run-command"
 import { readTextOrNull, writeText } from "@/utils/text-file"
 
@@ -31,7 +28,6 @@ export interface AgentInstallerOptions {
   readonly pluginPath: string
   readonly dataPath: string
   readonly mcpUrl: string
-  readonly serverUrl: string
   readonly homePath: string
   readonly environment: Environment
   readonly runCommand: CommandRunner
@@ -96,13 +92,6 @@ const writeMarketplace = async (marketplacePath: string, options: AgentInstaller
   await writeText(join(marketplacePath, ...MARKETPLACE_MANIFEST_PATH), formatJson(buildMarketplaceManifest()))
 }
 
-const writeSpawnPlugin = async (options: AgentInstallerOptions): Promise<void> => {
-  const spawnPluginPath = spawnPluginPathOf(options.dataPath)
-  await rm(spawnPluginPath, { recursive: true, force: true })
-  await writeText(join(spawnPluginPath, ...PLUGIN_MANIFEST_PATH), formatJson(buildSpawnPluginManifest()))
-  await writeText(join(spawnPluginPath, ...HOOKS_MANIFEST_PATH), formatJson(buildSpawnHooksManifest(options.serverUrl)))
-}
-
 const runUntilFailure = async (
   run: (commandArguments: readonly string[]) => Promise<AgentInstallation>,
   commands: readonly (readonly string[])[],
@@ -118,7 +107,6 @@ const installClaudePlugin: AgentInstaller = async (install, options) => {
   const executable = await createExecutableFinder(options)(AGENT_CLI_NAMES.claude)
   if (executable === null) return failed(CLAUDE_MISSING_REASON)
   await writeMarketplace(marketplacePath, options)
-  await writeSpawnPlugin(options)
   const environment = claudeCommandEnvironment(install.installPath, options.homePath, options.environment)
   const run = async (commandArguments: readonly string[]): Promise<AgentInstallation> => {
     const outcome = await options.runCommand(executable, commandArguments, environment)
@@ -150,11 +138,51 @@ const INSTALLERS: Record<AgentName, AgentInstaller> = {
   cursor: installFiles(CURSOR_CONFIG),
 }
 
+const listFilePaths = async (folderPath: string): Promise<readonly string[]> => {
+  const entries = await readdir(folderPath, { withFileTypes: true })
+  const nested = await Promise.all(
+    entries.map(async (entry) => {
+      const entryPath = join(folderPath, entry.name)
+      return entry.isDirectory() ? await listFilePaths(entryPath) : [entryPath]
+    }),
+  )
+  return nested.flat()
+}
+
+const readPluginFiles = async (pluginPath: string): Promise<readonly PluginFile[]> => {
+  const paths = await listFilePaths(pluginPath)
+  return await Promise.all(paths.map(async (path) => ({ path: relative(pluginPath, path), content: await readFile(path, "utf8") })))
+}
+
+const fingerprintOf = async (options: AgentInstallerOptions): Promise<string> =>
+  installFingerprintOf(await readPluginFiles(options.pluginPath), options.mcpUrl)
+
+const installAndStamp = async (agentInstall: AgentInstall, options: AgentInstallerOptions): Promise<AgentInstallation> => {
+  const installation = await INSTALLERS[agentInstall.agent](agentInstall, options)
+  if (installation.kind === "installed") {
+    await createInstallStampFile(options.dataPath).write(agentInstall.agent, {
+      installPath: agentInstall.installPath,
+      fingerprint: await fingerprintOf(options),
+    })
+  }
+  return installation
+}
+
 export const createAgentInstaller = (options: AgentInstallerOptions): SetupEnvironment["installAgent"] =>
-  async (install) => {
+  async (agentInstall) => {
     try {
-      return await INSTALLERS[install.agent](install, options)
+      return await installAndStamp(agentInstall, options)
     } catch {
       return failed(UNWRITABLE_REASON)
+    }
+  }
+
+export const createInstallChecker = (options: AgentInstallerOptions): SetupEnvironment["isAgentInstallCurrent"] =>
+  async (agentInstall) => {
+    try {
+      const [stamp, fingerprint] = await Promise.all([createInstallStampFile(options.dataPath).read(agentInstall.agent), fingerprintOf(options)])
+      return isInstallCurrent(agentInstall, stamp, fingerprint)
+    } catch {
+      return false
     }
   }

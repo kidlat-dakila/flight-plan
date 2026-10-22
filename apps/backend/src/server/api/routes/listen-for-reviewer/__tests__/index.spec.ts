@@ -11,7 +11,7 @@ describe("GET /api/:repositoryName/:targetId/live/agent", () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.headers["content-type"]).toContain("text/event-stream")
-    expect(response.body).toContain("id: 1\nevent: reply\ndata: The reviewer wrote:\ndata: Why?\ndata: And how?\n")
+    expect(response.body).toContain("id: 1\nevent: work\ndata: The reviewer wrote:\ndata: Why?\ndata: And how?\n")
     await server.close()
   })
 

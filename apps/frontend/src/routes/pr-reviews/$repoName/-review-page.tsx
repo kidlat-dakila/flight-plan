@@ -14,6 +14,7 @@ import ChatPanel from "@flightplan/ui/ChatPanel"
 import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
 import FileSection from "@flightplan/ui/FileSection"
+import LaunchAgentDialog from "@flightplan/ui/LaunchAgentDialog"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WriteUpAgentContext, type WriteUpAgent } from "@flightplan/ui/lib/write-up-agent"
@@ -34,7 +35,6 @@ import CodeLinkDialog from "./-components/CodeLinkDialog"
 import CompletionDialog from "./-components/CompletionDialog"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
-import PermissionDialog from "./-components/PermissionDialog"
 import ReviewNotices from "./-components/ReviewNotices"
 import SegmentEditor from "./-components/SegmentEditor"
 import SegmentHeader from "./-components/SegmentHeader"
@@ -45,6 +45,7 @@ import { useAgentChat } from "./-hooks/use-agent-chat"
 import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
+import { useLiveAgent } from "./-hooks/use-live-agent"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useTargetSwitching } from "./-hooks/use-target-switching"
@@ -145,7 +146,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const [toastMessage, showToast] = useToast()
   const { isOwn } = page
   const progress = page.kind === "artifact" ? page.progress : null
-  const permission = progress?.permission ?? null
   useCompletionNotification(
     `${params.repoName}/${params.branchId}`,
     progress !== null,
@@ -183,8 +183,10 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       },
     )
   }
-  const writeUpDialog = useWriteUpDialog(reviewKey, page.kind === "artifact", { onMessage: showToast, onCopy: copyText })
-  const requestWriteUp = useWriteUpRequest(reviewKey, { onMessage: showToast, onCopy: copyText })
+  const liveAgent = useLiveAgent(reviewKey, page.kind === "artifact", { onMessage: showToast })
+  const agentAnnouncer = { onMessage: showToast, onCopy: copyText, onAgentAsked: liveAgent.onAgentAction }
+  const writeUpDialog = useWriteUpDialog(reviewKey, page.kind === "artifact", agentAnnouncer)
+  const requestWriteUp = useWriteUpRequest(reviewKey, agentAnnouncer)
   const writeUp = writeUpDialog.canWriteUp ? requestWriteUp : null
 
   const setReviewed = useMutation(trpc.review.setReviewed.mutationOptions({ onSuccess: refreshReview, onError: reportError }))
@@ -197,6 +199,10 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       onError: reportError,
     }),
   )
+  const publish = (destination: PublicationKind): void => {
+    if (destination === "claude") liveAgent.onAgentAction()
+    publishArtifact.mutate({ ...reviewKey, destination })
+  }
   const markComplete = useMutation(
     trpc.review.markComplete.mutationOptions({
       onSuccess: async ({ message, targetId }) => {
@@ -296,6 +302,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                 authorLabel={page.shell.authorLabel}
                 reviewerRequesting={discussion.reviewerRequesting}
                 targetSwitching={targetSwitching}
+                agentStatus={liveAgent.status}
                 actions={page.kind === "missing"
                   ? <SettingsMenu links={SETTINGS_LINKS} useThemeToggle={useColorTheme} />
                   : (
@@ -327,7 +334,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 sharing={page.sharing}
                                 publishingKey={publishArtifact.isPending ? publishArtifact.variables.destination : null}
                                 onPublish={(destination) => {
-                                  if (page.unassignedFiles === null) publishArtifact.mutate({ ...reviewKey, destination })
+                                  if (page.unassignedFiles === null) publish(destination)
                                   else setUnassignedFilesPrompt({ kind: "publish", destination })
                                 }}
                               />
@@ -650,7 +657,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                               warning: page.unassignedFiles.publishWarning,
                               confirmLabel: PUBLISH_ANYWAY_LABEL,
                               onConfirm: () => {
-                                publishArtifact.mutate({ ...reviewKey, destination: unassignedFilesPrompt.destination })
+                                publish(unassignedFilesPrompt.destination)
                                 setUnassignedFilesPrompt(null)
                               },
                             }}
@@ -666,6 +673,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                   onAsk={(selection) => {
                     withCodeReference(selection, ({ reference }) => {
                       chat.onAsk(reference)
+                      liveAgent.onAgentAction()
                     })
                   }}
                 />
@@ -679,8 +687,14 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                         isSending={chat.isSending}
                         sendProblem={chat.sendProblem}
                         answering={chat.answering}
-                        onSend={chat.onSend}
-                        onAnswer={chat.onAnswer}
+                        onSend={(body) => {
+                          chat.onSend(body)
+                          liveAgent.onAgentAction()
+                        }}
+                        onAnswer={(batchId, answers) => {
+                          chat.onAnswer(batchId, answers)
+                          liveAgent.onAgentAction()
+                        }}
                         onChooseModel={chat.onChooseModel}
                         onClearReference={chat.onClearReference}
                         onOpenCodeLink={handleOpenCodeLink}
@@ -693,17 +707,16 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
               </WritingProviders>
             </ReviewNavigator>
           )}
-      {permission === null
+      {liveAgent.dialog === null
         ? null
         : (
-            <PermissionDialog
-              key={permission.batchId}
-              request={permission}
-              isAnswering={chat.answering.pendingBatchId === permission.batchId}
-              problem={chat.answering.rejection?.batchId === permission.batchId ? chat.answering.rejection.message : null}
-              onAnswer={(pickedLabel, reason) => {
-                chat.onAnswer(permission.batchId, [{ questionId: permission.questionId, pickedLabels: [pickedLabel], text: reason }])
-              }}
+            <LaunchAgentDialog
+              content={liveAgent.dialog}
+              isOpening={liveAgent.isOpening}
+              problem={liveAgent.problem}
+              onOpenTerminal={liveAgent.onOpenTerminal}
+              onCopy={copyText}
+              onClose={liveAgent.onClose}
             />
           )}
       <Toast message={toastMessage} />

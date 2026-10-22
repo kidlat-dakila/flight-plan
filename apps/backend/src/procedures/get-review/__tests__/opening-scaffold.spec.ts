@@ -1,5 +1,5 @@
 import { createConversationEnvironment, createMockProcedureContext, type ProcedureContext } from "@/procedures/context"
-import { FakeSpawner, SequentialIds } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
+import { SequentialIds } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
 import { getReview } from "@/procedures/get-review"
 import { InMemoryChangeReader, type RecordedChange } from "@/procedures/get-review/utils/change-reader"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
@@ -59,21 +59,20 @@ const AGENT_SETUP: Setup = {
   },
 }
 
-const createContext = (spawner: FakeSpawner, changes: readonly RecordedChange[] = [DELIVERY_CHANGE], setup: Setup = AGENT_SETUP): ProcedureContext => ({
+const createContext = (changes: readonly RecordedChange[] = [DELIVERY_CHANGE], setup: Setup = AGENT_SETUP): ProcedureContext => ({
   ...createMockProcedureContext(NOW),
   reviewStore: new InMemoryReviewStore([]),
   changeReader: new InMemoryChangeReader(changes),
   openRepository: createChangeRepositoryOpener(changes.map((change) => ({ change, baseTexts: BASE_TEXTS }))),
   setupStore: new InMemorySetupStore(setup),
   configurationStore: new InMemoryConfigurationStore([]),
-  conversationEnvironment: createConversationEnvironment({ spawners: { claude: spawner.spawn }, newId: new SequentialIds().next }),
+  conversationEnvironment: createConversationEnvironment({ newId: new SequentialIds().next }),
   now: () => NOW,
 })
 
 describe("getReview of a target with no review artifact", () => {
   it("builds the review from the change on open, asks no agent to write it, and shows it", async () => {
-    const spawner = new FakeSpawner()
-    const context = createContext(spawner)
+    const context = createContext()
 
     await expect(getReview(PAGE_INPUT, context)).resolves.toMatchObject({
       kind: "artifact",
@@ -87,7 +86,7 @@ describe("getReview of a target with no review artifact", () => {
         },
       ],
     })
-    expect(spawner.launches).toStrictEqual([])
+    await expect(context.conversationEnvironment.store.read(KEY)).resolves.toMatchObject({ journal: [] })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       status: "complete",
       segments: [{ isContextRequired: false, walkthrough: { files: [{ waypoints: [{ isRequired: false }] }] } }],
@@ -96,7 +95,7 @@ describe("getReview of a target with no review artifact", () => {
 
   it("keeps the default prompt configuration with the stored review", async () => {
     const context = {
-      ...createContext(new FakeSpawner(), [DELIVERY_CHANGE], { ...AGENT_SETUP, defaultConfiguration: "terse" }),
+      ...createContext([DELIVERY_CHANGE], { ...AGENT_SETUP, defaultConfiguration: "terse" }),
       configurationStore: new InMemoryConfigurationStore([{ ...shippedConfigurationOf("onboardee"), id: "terse", name: "Terse" }]),
     }
 
@@ -113,7 +112,7 @@ describe("getReview of a target with no review artifact", () => {
   })
 
   it("falls back to the shipped default configuration when the chosen one is gone", async () => {
-    const context = createContext(new FakeSpawner(), [DELIVERY_CHANGE], { ...AGENT_SETUP, defaultConfiguration: "gone" })
+    const context = createContext([DELIVERY_CHANGE], { ...AGENT_SETUP, defaultConfiguration: "gone" })
 
     await getReview(PAGE_INPUT, context)
 
@@ -121,7 +120,7 @@ describe("getReview of a target with no review artifact", () => {
   })
 
   it("leaves out the changed files the ignored paths of the review preferences match", async () => {
-    const context = createContext(new FakeSpawner(), [TESTED_CHANGE])
+    const context = createContext([TESTED_CHANGE])
 
     await getReview(PAGE_INPUT, context)
 
@@ -132,7 +131,7 @@ describe("getReview of a target with no review artifact", () => {
   })
 
   it("builds the author's own branch for the author to write, even a branch the checkout has but Flight Plan does not list", async () => {
-    const context = createContext(new FakeSpawner(), [{ ...DELIVERY_CHANGE, branchName: "spike/unlisted" }])
+    const context = createContext([{ ...DELIVERY_CHANGE, branchName: "spike/unlisted" }])
 
     await expect(getReview({ ...PAGE_INPUT, ...BRANCH_KEY }, context)).resolves.toMatchObject({
       kind: "artifact",
@@ -145,7 +144,7 @@ describe("getReview of a target with no review artifact", () => {
   })
 
   it("builds the review once and reads the stored one after", async () => {
-    const context = createContext(new FakeSpawner())
+    const context = createContext()
     await getReview(PAGE_INPUT, context)
     const first = await context.reviewStore.findArtifact(KEY)
 
@@ -155,7 +154,7 @@ describe("getReview of a target with no review artifact", () => {
   })
 
   it("says why and stores nothing when the branch is not in the repository folder", async () => {
-    const context = createContext(new FakeSpawner(), [{ ...DELIVERY_CHANGE, branchName: "feature/other" }])
+    const context = createContext([{ ...DELIVERY_CHANGE, branchName: "feature/other" }])
 
     await expect(getReview(PAGE_INPUT, context)).resolves.toMatchObject({
       kind: "missing",
@@ -166,7 +165,7 @@ describe("getReview of a target with no review artifact", () => {
   })
 
   it("says so when the repository cannot be opened", async () => {
-    await expect(getReview(PAGE_INPUT, createContext(new FakeSpawner(), []))).resolves.toMatchObject({
+    await expect(getReview(PAGE_INPUT, createContext([]))).resolves.toMatchObject({
       kind: "missing",
       message: "This folder is not a git repository.",
     })
@@ -175,7 +174,7 @@ describe("getReview of a target with no review artifact", () => {
   it("says so when the change touches no files", async () => {
     const emptyChange = { ...DELIVERY_CHANGE, diff: "", texts: BASE_TEXTS }
 
-    await expect(getReview(PAGE_INPUT, createContext(new FakeSpawner(), [emptyChange]))).resolves.toMatchObject({
+    await expect(getReview(PAGE_INPUT, createContext([emptyChange]))).resolves.toMatchObject({
       kind: "missing",
       message: "This change touches no files, so there is nothing to review.",
     })

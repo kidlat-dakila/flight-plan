@@ -1,7 +1,6 @@
 import sensible from "@fastify/sensible"
 import Fastify, { type FastifyInstance, type FastifyServerOptions } from "fastify"
 import { createMockProcedureContext, type ProcedureContext } from "./procedures/context"
-import { registerAgentLifecycle } from "./server/agent-lifecycle"
 import { registerApi } from "./server/api/plugin"
 import { registerMcp } from "./server/mcp/plugin"
 import { registerTrpc } from "./server/trpc/plugin"
@@ -19,7 +18,9 @@ export const buildServer = async (
   await registerTrpc(server, context)
   registerMcp(server, context)
   await registerApi(server, context)
-  registerAgentLifecycle(server, context)
+  server.addHook("onClose", async () => {
+    await context.conversationEnvironment.hub.close()
+  })
   if (webPath !== null) await registerWeb(server, webPath)
   return server
 }

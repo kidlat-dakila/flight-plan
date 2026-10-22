@@ -8,7 +8,7 @@ const ROOT: RootManifest = {
   repository: { type: "git", url: "git+https://github.com/kidlat-dakila/flight-plan.git" },
   license: "UNLICENSED",
   engines: { node: ">=22" },
-  dependencies: { "node-pty": "1.2.0-beta.15", "@napi-rs/keyring": "^2.1.0", "fastify": "~5.2.1" },
+  dependencies: { "tree-sitter": "0.25.1", "@napi-rs/keyring": "^2.1.0", "fastify": "~5.2.1" },
 }
 
 const metadataOf = (imports: readonly { readonly path: string, readonly external?: boolean }[]) => ({
@@ -18,12 +18,12 @@ const metadataOf = (imports: readonly { readonly path: string, readonly external
 describe("externalPackagesOf", () => {
   it("lists each package the bundle leaves outside, once and in order", () => {
     const metadata = metadataOf([
-      { path: "node-pty", external: true },
+      { path: "tree-sitter", external: true },
       { path: "@napi-rs/keyring", external: true },
-      { path: "node-pty", external: true },
+      { path: "tree-sitter", external: true },
     ])
 
-    expect(externalPackagesOf(metadata, BUILTIN_MODULES)).toStrictEqual(["@napi-rs/keyring", "node-pty"])
+    expect(externalPackagesOf(metadata, BUILTIN_MODULES)).toStrictEqual(["@napi-rs/keyring", "tree-sitter"])
   })
 
   it("names the package of an import that reaches inside it", () => {
@@ -50,7 +50,7 @@ describe("externalPackagesOf", () => {
 
 describe("planPackageManifest", () => {
   it("builds the manifest of the published package, with only the packages the bundle loads", () => {
-    expect(planPackageManifest(ROOT, ["@napi-rs/keyring", "node-pty"])).toStrictEqual({
+    expect(planPackageManifest(ROOT, ["@napi-rs/keyring", "tree-sitter"])).toStrictEqual({
       kind: "built",
       manifest: {
         name: "@kidlat-dakila/flightplan",
@@ -62,15 +62,15 @@ describe("planPackageManifest", () => {
         bin: { flightplan: "backend/main.js" },
         files: ["backend", "frontend", "published-review"],
         publishConfig: { access: "public" },
-        dependencies: { "@napi-rs/keyring": "^2.1.0", "node-pty": "1.2.0-beta.15" },
+        dependencies: { "@napi-rs/keyring": "^2.1.0", "tree-sitter": "0.25.1" },
       },
     })
   })
 
   it("rejects a package the root manifest does not list, because its version is unknown", () => {
-    expect(planPackageManifest(ROOT, ["node-pty", "tree-sitter"])).toStrictEqual({
+    expect(planPackageManifest(ROOT, ["tree-sitter", "tree-sitter-python"])).toStrictEqual({
       kind: "rejected",
-      message: "The bundle loads tree-sitter at run time, but the root package.json does not list it under dependencies.",
+      message: "The bundle loads tree-sitter-python at run time, but the root package.json does not list it under dependencies.",
     })
   })
 })
