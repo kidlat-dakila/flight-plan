@@ -1,5 +1,5 @@
 import { ChevronUpIcon } from "lucide-react"
-import { use, useCallback, useEffect, useEffectEvent, useId, useMemo, useRef, useState, type ComponentProps, type ReactNode } from "react"
+import { use, useEffect, useEffectEvent, useId, useLayoutEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from "react"
 import Menubar, {
   MenubarCheckboxItem,
   MenubarContent,
@@ -137,6 +137,24 @@ const scrollToSection = (anchorId: string): void => {
   document.getElementById(anchorId)?.scrollIntoView({ block: "start" })
 }
 
+interface JumpTarget {
+  readonly fullScreenOwner: FullScreenOwner | null
+  readonly onSectionJump: ((anchorId: string) => void) | undefined
+}
+
+const jumpTo = (anchorId: string, { fullScreenOwner, onSectionJump }: JumpTarget, setOpenMenuKey: (key: string | null) => void): void => {
+  setOpenMenuKey(null)
+  onSectionJump?.(anchorId)
+  if (fullScreenOwner === null) {
+    scrollToSection(anchorId)
+    return
+  }
+  fullScreenOwner.onLeave()
+  requestAnimationFrame(() => {
+    scrollToSection(anchorId)
+  })
+}
+
 const ReviewNavigator = ({ rail, onSectionJump, children }: ReviewNavigatorProps) => {
   const [hintedKey, setHintedKey] = useState<string | null>(null)
   const [readersByAnchorId, setReadersByAnchorId] = useState<ReadersByAnchorId>(NO_READERS)
@@ -162,19 +180,14 @@ const ReviewNavigator = ({ rail, onSectionJump, children }: ReviewNavigatorProps
   const readGroups = dominantAnchorId === null ? undefined : readersByAnchorId.get(dominantAnchorId)
 
   const sectionGroups = readGroups?.() ?? NO_GROUPS
+  const jumpTargetRef = useRef<JumpTarget>({ fullScreenOwner, onSectionJump })
+  const [jump] = useState(() => (anchorId: string): void => {
+    jumpTo(anchorId, jumpTargetRef.current, setOpenMenuKey)
+  })
 
-  const jump = useCallback((anchorId: string): void => {
-    setOpenMenuKey(null)
-    onSectionJump?.(anchorId)
-    if (fullScreenOwner === null) {
-      scrollToSection(anchorId)
-      return
-    }
-    fullScreenOwner.onLeave()
-    requestAnimationFrame(() => {
-      scrollToSection(anchorId)
-    })
-  }, [fullScreenOwner, onSectionJump])
+  useLayoutEffect(() => {
+    jumpTargetRef.current = { fullScreenOwner, onSectionJump }
+  })
 
   const groups = useMemo(
     () => withSectionSteps(sectionGroups, sectionStepsOf(rail, dominantAnchorId, jump)),

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { CollapsibleTrigger } from "@/components/blocks/collapsible"
 import CodeBlock, { type LineCollapse } from "@/components/CodeBlock"
 import { codeLine } from "@/lib/__tests__/review-samples"
@@ -186,6 +186,37 @@ describe("CodeBlock", () => {
     expect(await screen.findByText("export const taxOf = () => 2")).toBeTruthy()
     expect(screen.getByText("Library. The import is shown and not followed.")).toBeTruthy()
     expect(screen.getByRole("group", { name: "src/tax.ts, Line 1" }).querySelector(".whitespace-pre-wrap")).toBeNull()
+  })
+
+  it("shows the definition of the reference that opened the card, one reference after another", async () => {
+    const definitions = {
+      "src/tax.ts:1:1:code": { kind: "declaration" as const, pathLabel: "src/tax.ts", rangeLabel: "Line 1", description: null, lines: [codeLine("1", "export const taxOf = () => 2")], note: null, forgeLink: null },
+      "src/held.ts:3:1:code": { kind: "declaration" as const, pathLabel: "src/held.ts", rangeLabel: "Line 3", description: null, lines: [codeLine("3", "export const held = 4")], note: null, forgeLink: null },
+    }
+    render(
+      <CodeBlock
+        label="src/price.ts"
+        definitions={definitions}
+        lines={[{
+          ...codeLine("8", "return taxOf(held)"),
+          references: [
+            { fromColumn: 8, toColumn: 12, definitionId: "src/tax.ts:1:1:code" },
+            { fromColumn: 14, toColumn: 17, definitionId: "src/held.ts:3:1:code" },
+          ],
+        }]}
+      />,
+    )
+
+    fireEvent.focus(referenceNamed("taxOf"))
+    expect(await screen.findByText("export const taxOf = () => 2")).toBeTruthy()
+
+    fireEvent.blur(referenceNamed("taxOf"))
+    fireEvent.focus(referenceNamed("held"))
+
+    expect(await screen.findByText("export const held = 4")).toBeTruthy()
+    await waitFor(() => {
+      expect(screen.queryByText("export const taxOf = () => 2")).toBeNull()
+    })
   })
 
   it("shows the description written for a definition above its code", async () => {

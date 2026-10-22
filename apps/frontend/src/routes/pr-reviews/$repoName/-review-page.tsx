@@ -11,11 +11,9 @@ import BandLine from "@flightplan/ui/BandLine"
 import BlastBand from "@flightplan/ui/BlastBand"
 import Button from "@flightplan/ui/blocks/button"
 import ChatPanel from "@flightplan/ui/ChatPanel"
-import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
 import FileSection from "@flightplan/ui/FileSection"
 import LaunchAgentDialog from "@flightplan/ui/LaunchAgentDialog"
-import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WriteUpAgentContext, type WriteUpAgent } from "@flightplan/ui/lib/write-up-agent"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
@@ -24,7 +22,6 @@ import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, ShareMenu, type
 import ReviewGuideTooltips from "@flightplan/ui/ReviewGuideTooltips"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
-import SectionRail from "@flightplan/ui/SectionRail"
 import SettingsMenu from "@flightplan/ui/SettingsMenu"
 import Toast from "@flightplan/ui/Toast"
 import TraceBand from "@flightplan/ui/TraceBand"
@@ -35,6 +32,8 @@ import CodeLinkDialog from "./-components/CodeLinkDialog"
 import CompletionDialog from "./-components/CompletionDialog"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
+import ReadingSectionRail from "./-components/ReadingSectionRail"
+import ReadingWalkthrough from "./-components/ReadingWalkthrough"
 import ReviewNotices from "./-components/ReviewNotices"
 import SegmentEditor from "./-components/SegmentEditor"
 import SegmentHeader from "./-components/SegmentHeader"
@@ -46,6 +45,7 @@ import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
 import { useLiveAgent } from "./-hooks/use-live-agent"
+import { useReadingPositionStore } from "./-hooks/use-reading-position"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useTargetSwitching } from "./-hooks/use-target-switching"
@@ -54,7 +54,7 @@ import { useTraceEditing } from "./-hooks/use-trace-editing"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
 import { useWalkthroughNavigation } from "./-hooks/use-walkthrough-navigation"
 import { useWaypointAuthoring } from "./-hooks/use-waypoint-authoring"
-import { scrollToAnchor, useWaypointStepping } from "./-hooks/use-waypoint-stepping"
+import { scrollToAnchor, useWaypointStepping, waypointAnchorIdsOf } from "./-hooks/use-waypoint-stepping"
 import { useWriteUpDialog } from "./-hooks/use-write-up-dialog"
 import { useWriteUpRequest } from "./-hooks/use-write-up-request"
 
@@ -233,10 +233,11 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const handleOpenCodeLink = stepping.onOpenCodeLink
   const handleToggleWaypoint = stepping.onToggleWaypoint
   const railSections = [...(artifact?.rail.groups.flatMap((group) => group.sections) ?? []), ...(artifact?.rail.sections ?? [])]
-  const currentAnchorId = useCurrentAnchor(
+  const readingPosition = useReadingPositionStore(
     railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId)]),
+    waypointAnchorIdsOf(artifact?.segments ?? NO_SEGMENTS),
   )
-  const walkthroughLayout = useWalkthroughNavigation(artifact?.segments ?? NO_SEGMENTS, stepping, currentAnchorId, {
+  const walkthroughLayout = useWalkthroughNavigation(artifact?.segments ?? NO_SEGMENTS, stepping, {
     onReviewedChange: isOwn
       ? null
       : (id, isReviewed) => {
@@ -386,11 +387,11 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                 />
                 <div className="grid grid-cols-[13rem_minmax(0,1fr)] gap-x-8">
                   <aside className="sticky top-[calc(var(--pinned-height)+0.5rem)] max-h-[calc(100dvh-var(--pinned-height)-1rem)] self-start overflow-y-auto pt-5 pb-4">
-                    <SectionRail
+                    <ReadingSectionRail
                       label="Review sections"
                       groups={page.rail.groups}
                       sections={page.rail.sections}
-                      currentAnchorId={currentAnchorId}
+                      readingPosition={readingPosition}
                       onEditGroup={isOwn ? handleEditRailGroup : null}
                       onArrangeGroups={isOwn && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
                     />
@@ -483,13 +484,14 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                               </>
                             ),
                             walkthrough: (
-                              <CodeWalkthrough
+                              <ReadingWalkthrough
                                 anchorId={segment.walkthrough.anchorId}
                                 heading={segment.walkthrough.heading}
                                 coverageLabel={segment.walkthrough.coverageLabel}
                                 emptyMessage={segment.walkthrough.emptyMessage}
                                 writeUpNotice={segment.writeUpNotices.walkthrough}
-                                navigation={walkthroughLayout.navigationOf(segment)}
+                                readingPosition={readingPosition}
+                                navigationOf={(position) => walkthroughLayout.navigationOf(segment, position)}
                                 onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
                                   ? () => { setArrangedWalkthroughSegmentId(segment.id) }
                                   : null}
@@ -539,7 +541,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                     headerActions={isOwn ? waypointAuthoring.headerActionsOf(segment.id, file) : null}
                                   />
                                 ))}
-                              </CodeWalkthrough>
+                              </ReadingWalkthrough>
                             ),
                           }}
                         />

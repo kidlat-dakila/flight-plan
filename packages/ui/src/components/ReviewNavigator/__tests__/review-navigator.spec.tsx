@@ -1,8 +1,9 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { use } from "react"
 import ReviewNavigator, { navigatorLeftOf, ReviewNavigatorBar } from "@/components/ReviewNavigator"
 import { findNavigator, findNavigatorButton, showSectionInView } from "@/lib/__tests__/navigator-harness"
 import { guideTooltipStore, resetGuideTooltipStore } from "@/lib/guide-tooltips/store"
-import { useNavigatorSection } from "@/lib/navigator"
+import { NavigatorContext, useNavigatorSection } from "@/lib/navigator"
 import { navigatorButtonOf, type NavigatorRail } from "@/lib/navigator-controls"
 
 const RAIL: NavigatorRail = {
@@ -66,6 +67,34 @@ describe("ReviewNavigator", () => {
     fireEvent.keyDown(document.body, { key: "d" })
 
     expect(scrollIntoView.mock.contexts.flatMap((element) => (element instanceof Element ? [element.id] : []))).toStrictEqual(["one-context", "two-context"])
+  })
+
+  it("keeps one jump for its whole life, so section steps never hold an earlier navigator, and jumps through the newest handler", async () => {
+    const readJump = vi.fn()
+    const JumpReader = () => {
+      readJump(use(NavigatorContext)?.onJump)
+      return null
+    }
+    const pageWith = (onSectionJump: (anchorId: string) => void) => (
+      <ReviewNavigator rail={RAIL} onSectionJump={onSectionJump}>
+        <JumpReader />
+        <Section anchorId="one-context" onRun={vi.fn()} />
+        <Section anchorId="one-walkthrough" onRun={vi.fn()} />
+        <ReviewNavigatorBar />
+      </ReviewNavigator>
+    )
+    const firstHandler = vi.fn()
+    const newestHandler = vi.fn()
+    showSectionInView("one-walkthrough")
+    const { rerender } = render(pageWith(firstHandler))
+    await findNavigatorButton("Back: Context")
+
+    rerender(pageWith(newestHandler))
+    fireEvent.keyDown(document.body, { key: "a" })
+
+    expect(new Set(readJump.mock.calls.map(([jump]: readonly unknown[]) => jump)).size).toBe(1)
+    expect(newestHandler).toHaveBeenCalledWith("one-context")
+    expect(firstHandler).not.toHaveBeenCalled()
   })
 
   it("has no Back on the first section", async () => {

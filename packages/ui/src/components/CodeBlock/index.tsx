@@ -8,9 +8,9 @@ import {
   type Token,
 } from "codehike/code"
 import { PlusIcon } from "lucide-react"
-import { createContext, use, useMemo, type KeyboardEvent, type ReactNode } from "react"
+import { createContext, use, useMemo, useState, type KeyboardEvent, type ReactNode } from "react"
 import Collapsible, { CollapsibleContent } from "@/components/blocks/collapsible"
-import HoverCard, { HoverCardContent, HoverCardTrigger } from "@/components/blocks/hover-card"
+import HoverCard, { createHoverCardHandle, HoverCardContent, HoverCardTrigger, type HoverCardHandle } from "@/components/blocks/hover-card"
 import OutwardLink from "@/components/OutwardLink"
 import type { CodeDeclaration, CodeDefinition, CodeDefinitions, CodeLine, CodeUsages, ProseBlocks, TokenKind } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
@@ -73,6 +73,7 @@ type LineSetting = Pick<
   readonly commentedLineKeys: ReadonlySet<string>
   readonly markedLines: ReadonlySet<CodeLine>
   readonly definitions: CodeDefinitions
+  readonly definitionCard: HoverCardHandle<CodeDefinition>
   readonly isWrapped: boolean
   readonly tabStopReferenceKey: string | null
 }
@@ -167,6 +168,7 @@ const NO_OPEN_ROOT_BLOCKS: ReadonlySet<string> = new Set()
 const NO_LINES: LineSetting = {
   lines: [],
   definitions: NO_DEFINITIONS,
+  definitionCard: createHoverCardHandle<CodeDefinition>(),
   isWrapped: false,
   selectedLineLabels: NO_SELECTED_LINES,
   commentedLineKeys: NO_SELECTED_LINES,
@@ -467,30 +469,39 @@ const UsagesCard = ({ usages }: { readonly usages: CodeUsages }) => (
 const definitionHandler: AnnotationHandler = {
   name: DEFINITION_HANDLER_NAME,
   Inline: ({ annotation, children }) => {
-    const { definitions, tabStopReferenceKey } = use(LineSettingContext)
+    const { definitions, definitionCard, tabStopReferenceKey } = use(LineSettingContext)
     if (!Object.hasOwn(definitions, annotation.query)) return <>{children}</>
     const definition = definitions[annotation.query]
     const isTabStop = referenceKeyOf(annotation.lineNumber, annotation.fromColumn) === tabStopReferenceKey
     return (
-      <HoverCard>
-        <HoverCardTrigger
-          delay={HOVER_DELAY_MS}
-          render={<span />}
-          tabIndex={isTabStop ? 0 : -1}
-          data-reference=""
-          aria-description={descriptionOf(definition)}
-          onKeyDown={stepReferenceFocus}
-          className={REFERENCE_CLASSES}
-        >
-          {children}
-        </HoverCardTrigger>
-        <HoverCardContent className={CARD_CLASSES}>
-          {definition.kind === "usages" ? <UsagesCard usages={definition} /> : <DeclarationCard declaration={definition} />}
-        </HoverCardContent>
-      </HoverCard>
+      <HoverCardTrigger
+        handle={definitionCard}
+        payload={definition}
+        delay={HOVER_DELAY_MS}
+        render={<span />}
+        tabIndex={isTabStop ? 0 : -1}
+        data-reference=""
+        aria-description={descriptionOf(definition)}
+        onKeyDown={stepReferenceFocus}
+        className={REFERENCE_CLASSES}
+      >
+        {children}
+      </HoverCardTrigger>
     )
   },
 }
+
+const DefinitionCard = ({ handle }: { readonly handle: HoverCardHandle<CodeDefinition> }) => (
+  <HoverCard handle={handle}>
+    {({ payload }) => (payload === undefined
+      ? null
+      : (
+          <HoverCardContent className={CARD_CLASSES}>
+            {payload.kind === "usages" ? <UsagesCard usages={payload} /> : <DeclarationCard declaration={payload} />}
+          </HoverCardContent>
+        ))}
+  </HoverCard>
+)
 
 const HANDLERS: AnnotationHandler[] = [
   collapseHandler,
@@ -526,14 +537,14 @@ function CodeBlock({
   onAddComment,
   onSelectLine,
 }: CodeBlockProps) {
-  const tabStopReferenceKey = useMemo(
-    () => (hasReferenceTabStop ? (listKnownReferenceKeys(lines, definitions).at(0) ?? null) : null),
-    [hasReferenceTabStop, lines, definitions],
-  )
+  const knownReferenceKeys = useMemo(() => listKnownReferenceKeys(lines, definitions), [lines, definitions])
+  const tabStopReferenceKey = hasReferenceTabStop ? (knownReferenceKeys.at(0) ?? null) : null
+  const [definitionCard] = useState(() => createHoverCardHandle<CodeDefinition>())
   const lineSetting = useMemo(
     () => ({
       lines,
       definitions,
+      definitionCard,
       tabStopReferenceKey,
       isWrapped,
       addCommentLabel,
@@ -555,6 +566,7 @@ function CodeBlock({
     [
       lines,
       definitions,
+      definitionCard,
       tabStopReferenceKey,
       isWrapped,
       addCommentLabel,
@@ -585,6 +597,7 @@ function CodeBlock({
     >
       <LineSettingContext value={lineSetting}>
         <Pre code={code} handlers={HANDLERS} className={cn("m-0 grid", isWrapped ? "" : "min-w-max")} />
+        {knownReferenceKeys.length === 0 ? null : <DefinitionCard handle={definitionCard} />}
       </LineSettingContext>
     </div>
   )
