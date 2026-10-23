@@ -21,7 +21,7 @@ interface ReviewPreferences {
 | `sectionWriteUps` | For each section, whether the agent always writes its write-up when it writes a review, or only when the reviewer asks | Context, Trace Diagram and Findings always; Blast Diagram and Code Walkthrough on demand |
 | `isSegmented` | Whether a review is split into [segments](review-artifact.md#segments) | No |
 | `walkthroughOrder` | How the files of a [Code Walkthrough](code-walkthrough.md) are ordered: by the [import graph](codegraph/import-graph.md) from the file others import up to the files that import it, the other way round, or the spotlight and the core changes first | From the bottom of the import graph up |
-| `sectionOrder` | The order of the four sections of a segment, each once | Context, Trace Diagram, Blast Diagram, Code Walkthrough |
+| `sectionOrder` | The order of the four sections of a segment, each once | Context, Trace Diagram, Code Walkthrough, Blast Diagram |
 | `ignoredPaths` | Path patterns, in the `.gitignore` style and from the root of the repository, of the files a review leaves out | The tests of TypeScript and Python, e2e tests included |
 
 The default `ignoredPaths` are `**/*.test.ts`, `**/*.test.tsx`, `**/*.spec.ts`, `**/*.spec.tsx`, `**/__tests__/**`, `**/e2e/**`, `**/*.e2e.ts`, `**/*.e2e-spec.ts`, `**/test_*.py`, `**/*_test.py`, `**/tests/**` and `**/conftest.py`.

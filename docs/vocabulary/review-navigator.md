@@ -20,7 +20,7 @@ Three controls are on every section.
 | **Back** | A | Goes to the section before the one on screen. |
 | **Next** | D | Goes to the section after the one on screen. |
 
-Back and Next follow the order of the section rail and carry on from the end of one segment into the next. The sections of every segment come in the `sectionOrder` of the [review preferences](review-preferences.md), by default Context, Trace Diagram, Blast Diagram, Code Walkthrough: the page data carries it as `sectionOrder` on each segment, the backend builds the rail in that order, and the page and the navigator draw what they receive, with no order of their own. Each names where it goes: "Back: Context", "Next: Blast Diagram". When it goes into another segment it names that segment by its place: "Next: Segment (2/3)". The first section has no Back and the last has no Next.
+Back and Next follow the order of the section rail and carry on from the end of one segment into the next. The sections of every segment come in the `sectionOrder` of the [review preferences](review-preferences.md), by default Context, Trace Diagram, Code Walkthrough, Blast Diagram: the page data carries it as `sectionOrder` on each segment, the backend builds the rail in that order, and the page and the navigator draw what they receive, with no order of their own. Each names where it goes: "Back: Context", "Next: Blast Diagram". When it goes into another segment it names that segment by its place: "Next: Segment (2/3)". The first section has no Back and the last has no Next.
 
 ## The controls of each section
 

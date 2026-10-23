@@ -12,7 +12,7 @@ export type WriteUpSection = (typeof WRITE_UP_SECTIONS)[number]
 
 export type SectionWriteUps = Readonly<Record<WriteUpSection, WriteUpTiming>>
 
-export const ARRANGED_SECTIONS = ["context", "traceDiagram", "blastDiagram", "walkthrough"] as const
+export const ARRANGED_SECTIONS = ["context", "traceDiagram", "walkthrough", "blastDiagram"] as const
 
 export type ArrangedSection = (typeof ARRANGED_SECTIONS)[number]
 

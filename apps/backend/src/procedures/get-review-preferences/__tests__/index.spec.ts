@@ -17,7 +17,7 @@ describe("getReviewPreferences", () => {
         },
         isSegmented: false,
         walkthroughOrder: "imports-bottom-up",
-        sectionOrder: ["context", "traceDiagram", "blastDiagram", "walkthrough"],
+        sectionOrder: ["context", "traceDiagram", "walkthrough", "blastDiagram"],
       },
       isSaved: false,
       defaultConfiguration: AT_REPOSITORIES.defaultConfiguration,

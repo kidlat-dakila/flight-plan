@@ -286,7 +286,7 @@ describe("buildReviewPage", () => {
     })
     expect(page.kind === "artifact" ? page.rail.groups.map((group) => group.sections.map((section) => section.kind)) : []).toStrictEqual([
       ["context", "traceDiagram", "walkthrough"],
-      ["context", "traceDiagram", "blastDiagram", "walkthrough"],
+      ["context", "traceDiagram", "walkthrough", "blastDiagram"],
     ])
   })
 
