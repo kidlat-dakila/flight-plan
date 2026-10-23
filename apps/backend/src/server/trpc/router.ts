@@ -48,6 +48,7 @@ import { listRepositoriesRoute } from "./routes/list-repositories"
 import { markCompleteRoute } from "./routes/mark-complete"
 import { openAgentTerminalRoute } from "./routes/open-agent-terminal"
 import { publishArtifactRoute } from "./routes/publish-artifact"
+import { recordReviewerActivityRoute } from "./routes/record-reviewer-activity"
 import { removeRepositoryRoute } from "./routes/remove-repository"
 import { removeReviewRequestRoute } from "./routes/remove-review-request"
 import { removeSetupRepositoryRoute } from "./routes/remove-setup-repository"
@@ -128,6 +129,7 @@ export const appRouter = createRouter({
     declineWriteUp: declineWriteUpRoute,
     liveAgent: getLiveAgentRoute,
     openAgentTerminal: openAgentTerminalRoute,
+    recordActivity: recordReviewerActivityRoute,
     requestWriteUp: requestWriteUpRoute,
     delete: deleteReviewRoute,
     setReviewed: setReviewedRoute,

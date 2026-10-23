@@ -90,6 +90,7 @@ When the agent completes the artifact, the page that watched it being written ra
 The review page asks the reviewer to start the review's [live agent](agent-conversation.md#live-agents) with the [Launch Agent Dialog](../DESIGN.md#launch-agent-dialog), only while no agent is online for the review (`review.liveAgent`, asked every 5 seconds):
 
 - when a review opens whose write-up was offered already (`isOffered`). On the first open the Write-up Dialog comes first, and the Launch Agent dialog follows once the reviewer presses Explain; after Not now it does not;
+- when the agent was stopped because the review sat idle, so the reviewer finds the dialog when they come back to the page;
 - when the reviewer asks the agent for anything: a write-up from the Write-up Dialog or a part's "Write up" action, a chat message, an answer, Ask about a selection, or publishing to Claude.
 
 Closing it keeps it closed until the next of these, or the next time the review opens. The agent's state in the top bar of the review page, "Claude offline", opens it again. The dialog offers "Open a terminal for me" where Flight Plan can open one (`review.openAgentTerminal`, macOS only), and always the command to copy, `/flightplan:live <repository>/<target>`, for an agent the reviewer starts themselves.

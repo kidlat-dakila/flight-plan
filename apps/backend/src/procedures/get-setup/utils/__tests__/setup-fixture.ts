@@ -101,6 +101,7 @@ export const createSetupContext = (setup: Setup, repositories: readonly Reposito
   writePublishedPage: writeSamplePublishedPage,
   importFiles: new InMemoryImportFileStore(),
   openTerminal: null,
+  closeTerminal: null,
   now: () => NOW,
   dataNotice: null,
   appUrl: "http://localhost:4200",

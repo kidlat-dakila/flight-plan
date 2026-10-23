@@ -23,6 +23,20 @@ describe("recordPing", () => {
     subscription.close()
   })
 
+  it("restarts the review's idle clock when a new agent session starts, and not when the same agent comes back", async () => {
+    const { context, environment, clock } = createConversationContext()
+
+    await recordPing(KEY, context)
+    const sessionStartedAt = clock.now()
+    clock.advance(20_000)
+    await recordPing(KEY, context)
+    expect(environment.reviewerActivity.activityOf(KEY).lastActiveAt).toStrictEqual(sessionStartedAt)
+
+    clock.advance(61_000)
+    await recordPing(KEY, context)
+    expect(environment.reviewerActivity.activityOf(KEY).lastActiveAt).toStrictEqual(clock.now())
+  })
+
   it("rejects a repository Flight Plan does not follow", async () => {
     const { context } = createConversationContext()
 

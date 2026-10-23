@@ -28,7 +28,7 @@ For each agent you check:
 
 ## How Flight Plan works with your agent
 
-Your agent runs in a terminal you can see, never in the background. In Claude, `/flightplan:live <repository>/<target>` keeps the session working on one review, for example `/flightplan:live storefront/pr-412`. It waits for the parts you ask it to explain and for your messages in Chat, and does each one. Leave the terminal open while you review. Closing it takes the agent offline.
+Your agent runs in a terminal you can see, never in the background. In Claude, `/flightplan:live <repository>/<target>` keeps the session working on one review, for example `/flightplan:live storefront/pr-412`. It waits for the parts you ask it to explain and for your messages in Chat, and does each one. Leave the terminal open while you review. Closing it takes the agent offline. When you leave the review's tab for 10 minutes, Flight Plan ends the session and closes the terminal it opened. When you come back, it asks you to start the agent again.
 
 When the agent is offline and a review needs it, Flight Plan asks you to start it. On macOS, **Open a terminal for me** opens Terminal in the repository's folder and starts Claude there with the command. You can also copy the command and run it in a Claude session you started yourself. Claude runs as an interactive session, so it runs on your subscription.
 

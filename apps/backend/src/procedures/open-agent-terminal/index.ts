@@ -36,7 +36,7 @@ export const openAgentTerminal = async (input: OpenAgentTerminalInput, context: 
     effort: writer.effort,
     serverUrl: context.conversationEnvironment.serverUrl,
   }))
-  return opening.kind === "opened"
-    ? { kind: "opened", message: `${AGENT_LABELS[install.agent]} is starting in Terminal.` }
-    : rejected(failedMessageOf(opening.reason))
+  if (opening.kind === "failed") return rejected(failedMessageOf(opening.reason))
+  if (opening.window !== null) context.conversationEnvironment.agentTerminals.remember(key, opening.window)
+  return { kind: "opened", message: `${AGENT_LABELS[install.agent]} is starting in Terminal.` }
 }

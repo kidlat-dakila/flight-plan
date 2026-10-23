@@ -48,6 +48,7 @@ import { useContextEditing } from "./-hooks/use-context-editing"
 import { useLiveAgent } from "./-hooks/use-live-agent"
 import { useReadingPositionStore } from "./-hooks/use-reading-position"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
+import { useReviewerActivity } from "./-hooks/use-reviewer-activity"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useTargetSwitching } from "./-hooks/use-target-switching"
 import { useToast } from "./-hooks/use-toast"
@@ -185,6 +186,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       },
     )
   }
+  useReviewerActivity(reviewKey)
   const liveAgent = useLiveAgent(reviewKey, page.kind === "artifact", { onMessage: showToast })
   const agentAnnouncer = { onMessage: showToast, onCopy: copyText, onAgentAsked: liveAgent.onAgentAction }
   const writeUpDialog = useWriteUpDialog(reviewKey, page.kind === "artifact", agentAnnouncer)

@@ -512,9 +512,10 @@ export const writeUpPlan = {
   isSegmented: true,
 }
 
-export const liveAgentReply = (isOnline: boolean) => ({
+export const liveAgentReply = (isOnline: boolean, idleStoppedAt: string | null = null) => ({
   kind: "live",
   isOnline,
+  idleStoppedAt,
   statusLabel: isOnline ? "Claude online" : "Claude offline",
   dialog: {
     title: "Claude is offline",

@@ -3,6 +3,8 @@ import { reviewKeyId } from "./conversation"
 
 export const ONLINE_WINDOW_MS = 15_000
 
+export const NEW_SESSION_GAP_MS = 60_000
+
 export interface AgentPresence {
   readonly openStreamCount: number
   readonly lastSeenAt: Date | null
@@ -22,6 +24,10 @@ export const NO_PRESENCE: AgentPresence = { openStreamCount: 0, lastSeenAt: null
 export const isAgentOnline = (presence: AgentPresence, now: Date): boolean =>
   presence.openStreamCount > 0
   || (presence.lastSeenAt !== null && now.getTime() - presence.lastSeenAt.getTime() <= ONLINE_WINDOW_MS)
+
+export const isNewAgentSession = (presence: AgentPresence, now: Date): boolean =>
+  presence.openStreamCount === 0
+  && (presence.lastSeenAt === null || now.getTime() - presence.lastSeenAt.getTime() > NEW_SESSION_GAP_MS)
 
 export class InMemoryAgentPresenceRegistry implements AgentPresenceRegistry {
   private presences: ReadonlyMap<string, AgentPresence> = new Map()

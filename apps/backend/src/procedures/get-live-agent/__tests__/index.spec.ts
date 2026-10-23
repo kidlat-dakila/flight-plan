@@ -13,7 +13,7 @@ describe("getLiveAgent", () => {
 
   it("offers to open a terminal where Flight Plan can", async () => {
     const { context } = createConversationContext()
-    const withTerminal = { ...context, openTerminal: async () => await Promise.resolve({ kind: "opened" as const }) }
+    const withTerminal = { ...context, openTerminal: async () => await Promise.resolve({ kind: "opened" as const, window: null }) }
 
     await expect(getLiveAgent(KEY, withTerminal)).resolves.toMatchObject({ dialog: { terminal: { label: "Open a terminal for me" } } })
   })

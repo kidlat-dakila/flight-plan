@@ -40,6 +40,7 @@ const createContext = (repositories: readonly Repository[]): ProcedureContext =>
   writePublishedPage: writeSamplePublishedPage,
   importFiles: new InMemoryImportFileStore(),
   openTerminal: null,
+  closeTerminal: null,
   now: () => new Date("2026-10-01T12:00:00.000Z"),
   dataNotice: null,
   appUrl: "http://localhost:4200",

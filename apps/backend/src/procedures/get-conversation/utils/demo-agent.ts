@@ -41,6 +41,7 @@ const listenOnce = async (script: DemoAgentScript): Promise<void> => {
   const listening = await listenForReviewer(script.key, script.readContext(), null)
   if (listening.kind === "rejected") return
   const packet = (await drain(listening.packets[Symbol.asyncIterator](), [])).at(0)
+  if (packet?.kind === "stop") return
   if (packet?.kind !== "work") {
     startDemoAgent(script)
     return

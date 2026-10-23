@@ -19,6 +19,7 @@ export const liveAgentSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("live"),
     isOnline: z.boolean(),
+    idleStoppedAt: z.iso.datetime().nullable(),
     statusLabel: z.string(),
     dialog: launchAgentDialogSchema,
   }),
