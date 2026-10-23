@@ -42,8 +42,8 @@ const formatHtml = (title: string): string =>
 const formatReviewScript = (review: PublishedReview): string =>
   `globalThis.${REVIEW_GLOBAL_NAME} = ${JSON.stringify(review)}\n`
 
-export const formatPublishedPage = (review: PublishedReview, scaffold: ReviewScaffold | null): PublishedPageTexts => ({
+export const formatPublishedPage = (review: PublishedReview, scaffold: ReviewScaffold | null, version: string | null): PublishedPageTexts => ({
   html: formatHtml(review.documentTitle),
   reviewScript: formatReviewScript(review),
-  flightPlanFile: scaffold === null ? null : formatStoredReview(scaffold),
+  flightPlanFile: scaffold === null ? null : formatStoredReview(scaffold, version),
 })

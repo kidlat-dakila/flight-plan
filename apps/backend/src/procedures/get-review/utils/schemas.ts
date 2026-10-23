@@ -332,6 +332,17 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
     changedFiles: z.array(labelSegmentSchema),
   }),
   z.strictObject({
+    kind: z.literal("needs-migration"),
+    shell: shellSchema,
+    isOwn: z.boolean(),
+    heading: z.string(),
+    message: z.string(),
+    actionLabel: z.string(),
+    updateCommand: z.string().nullable(),
+    copyLabel: z.string(),
+    changedFiles: z.array(labelSegmentSchema),
+  }),
+  z.strictObject({
     kind: z.literal("artifact"),
     shell: shellSchema,
     isOwn: z.boolean(),

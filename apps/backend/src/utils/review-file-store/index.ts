@@ -24,11 +24,13 @@ const UNREADABLE_MESSAGE = "A saved review artifact cannot be read."
 export class FileReviewStore implements ReviewStore {
   private readonly rootPath: string
   private readonly sampleStore: ReviewStore
+  private readonly writtenVersion: string | null
   private amendTurns: ReadonlyMap<string, Promise<unknown>> = new Map()
 
-  public constructor(dataPath: string, sampleStore: ReviewStore) {
+  public constructor(dataPath: string, sampleStore: ReviewStore, writtenVersion: string | null) {
     this.rootPath = join(dataPath, REVIEWS_FOLDER_NAME)
     this.sampleStore = sampleStore
+    this.writtenVersion = writtenVersion
   }
 
   public readonly findArtifact = async (key: ReviewKey): Promise<ReviewArtifact | null> =>
@@ -49,7 +51,14 @@ export class FileReviewStore implements ReviewStore {
     (await this.readStored(key))?.request ?? await this.sampleStore.findRequest(key)
 
   public readonly writeScaffold = async (key: ReviewKey, scaffold: ReviewScaffold): Promise<void> => {
-    await writeText(this.pathOf(key), formatStoredReview(scaffold))
+    await writeText(this.pathOf(key), formatStoredReview(scaffold, this.writtenVersion))
+  }
+
+  public readonly readStoredText = async (key: ReviewKey): Promise<string | null> =>
+    (await readTextOrNull(this.pathOf(key))) ?? await this.sampleStore.readStoredText(key)
+
+  public readonly writeStoredText = async (key: ReviewKey, text: string): Promise<void> => {
+    await writeText(this.pathOf(key), text)
   }
 
   public readonly deleteScaffold = async (key: ReviewKey): Promise<void> => {

@@ -18,7 +18,7 @@ const STORED = formatStoredReview({
   artifact: WEBHOOK_RETRY_ARTIFACT,
   baseCommit: "0000000",
   request: { configurationId: "standard", preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "none" }, requestedAt: new Date("2026-10-01T12:00:00.000Z") },
-})
+}, null)
 
 describe("record-import tool", () => {
   it("stores the fetched Flight Plan and says the reviewer can open it", async () => {

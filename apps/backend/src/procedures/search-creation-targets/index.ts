@@ -1,6 +1,7 @@
 import type { ProcedureContext } from "@/procedures/context"
 import type { ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
+import { hasStoredReview } from "@/procedures/migrate-review/utils/stored-version-state"
 import { buildTargetSuggestions, type OfferedTarget } from "./utils/build-target-suggestions"
 import { readBranchTips } from "./utils/read-branch-tips"
 import type { SearchCreationTargetsInput, TargetSuggestions } from "./utils/schemas"
@@ -10,10 +11,7 @@ export const offerTarget = async (
   repositoryName: string,
   target: ReviewTarget,
   context: Pick<ProcedureContext, "reviewStore">,
-): Promise<OfferedTarget> => {
-  const artifact = await context.reviewStore.findArtifact({ repositoryName, targetId: targetIdOf(target) })
-  return { target, hasFlightPlan: artifact !== null }
-}
+): Promise<OfferedTarget> => ({ target, hasFlightPlan: await hasStoredReview({ repositoryName, targetId: targetIdOf(target) }, context) })
 
 export const searchCreationTargets = async (
   input: SearchCreationTargetsInput,

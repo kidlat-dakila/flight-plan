@@ -76,7 +76,7 @@ const openErrorLog = (runningVersion: string | null): ErrorLog =>
     identity: { homePath: homedir(), userName: readUserName() },
   })
 
-const openLocalContext = (serverConfig: ServerConfig, appUrl: string, errorLog: ErrorLog): ProcedureContext => {
+const openLocalContext = (serverConfig: ServerConfig, appUrl: string, errorLog: ErrorLog, runningVersion: string | null): ProcedureContext => {
   const environment = process.env
   const homePath = homedir()
   return createLocalProcedureContext(new Date(), {
@@ -90,6 +90,7 @@ const openLocalContext = (serverConfig: ServerConfig, appUrl: string, errorLog: 
     homePath,
     platform: process.platform,
     environment,
+    runningVersion,
   }, errorLog)
 }
 
@@ -108,7 +109,7 @@ const migrateData = async (context: ProcedureContext, dataPath: string): Promise
 const startDevelopmentServer = async (errorLog: ErrorLog): Promise<void> => {
   const serverConfig = { host: readHost(process.env), port: readRequestedPort(process.env) ?? DEVELOPMENT_PORT }
   const context = {
-    ...openLocalContext(serverConfig, DEVELOPMENT_APP_URL, errorLog),
+    ...openLocalContext(serverConfig, DEVELOPMENT_APP_URL, errorLog, null),
     ...(await openDevelopmentContext(join(__dirname, FIXTURE_CASES_PATH_FROM_BUILD))),
   }
   await cleanUpLogs(context)
@@ -193,7 +194,7 @@ const launch = async (command: LaunchCommand, runningVersion: string | null, err
   }
   const serverConfig = { host, port }
   const serverUrl = serverUrlOf(serverConfig)
-  const context = { ...openLocalContext(serverConfig, serverUrl, errorLog), updateChecker }
+  const context = { ...openLocalContext(serverConfig, serverUrl, errorLog, runningVersion), updateChecker }
   await cleanUpLogs(context)
   await migrateData(context, dataPath)
   const server = await buildServer({ logger: { level: PUBLISHED_LOG_LEVEL } }, context, join(__dirname, WEB_PATH_FROM_BUILD))

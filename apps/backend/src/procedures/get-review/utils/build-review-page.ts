@@ -2,6 +2,7 @@ import { reviewPreferencesOf, type ArrangedSection } from "@/procedures/get-revi
 import type { Setup } from "@/procedures/get-setup/utils/setup"
 import type { LineColor } from "@/procedures/list-repositories/utils/line-color"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
+import type { MigrationNotice } from "@/procedures/migrate-review/utils/migration-notice"
 import {
   buildBlast,
   buildCodeDefinitions,
@@ -197,9 +198,9 @@ const PANELS: ReviewPanels = {
 const AUTHOR_LABEL = "Your Flight Plan"
 const COMPLETE_STATUS = "complete"
 
-const isUploaded = (source: ReviewPageSource): boolean => source.publications.length > 0
+const isUploaded = (source: Pick<ReviewPageSource, "publications">): boolean => source.publications.length > 0
 
-const isKeptPrivate = (source: ReviewPageSource): boolean => source.isOwn && !isUploaded(source)
+const isKeptPrivate = (source: Pick<ReviewPageSource, "isOwn" | "publications">): boolean => source.isOwn && !isUploaded(source)
 
 const isLeftToComplete = (source: ReviewPageSource, artifact: ReviewArtifact): boolean =>
   source.isOwn && artifact.status !== COMPLETE_STATUS
@@ -223,7 +224,7 @@ const unavailableReasonOf = (source: ReviewPageSource): string | null => {
   return source.forge.kind === "unavailable" ? source.forge.reason : null
 }
 
-const reviewerRequestsOf = (source: ReviewPageSource): ReviewerRequestAbilities =>
+const reviewerRequestsOf = (source: Pick<ReviewPageSource, "forge" | "isOwn" | "publications">): ReviewerRequestAbilities =>
   source.forge?.kind === "read" && !isKeptPrivate(source) ? source.forge.pullRequest.abilities : NO_REVIEWER_REQUESTS
 
 const placedThreadIdsOf = (segments: readonly SegmentView[]): ReadonlySet<string> =>
@@ -241,8 +242,10 @@ const buildUnbuiltPage = (source: ReviewPageSource, shell: ReviewShell): ReviewP
   message: source.unavailableMessage ?? UNBUILT_MESSAGE,
 })
 
-export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput): ReviewPage => {
-  const shell = buildShell(
+type ShellSource = Pick<ReviewPageSource, "repository" | "lineColor" | "target" | "detail" | "artifact" | "notice" | "isOwn" | "forge" | "publications">
+
+const shellOf = (source: ShellSource): ReviewShell =>
+  buildShell(
     source.repository,
     source.lineColor,
     source.target,
@@ -252,6 +255,17 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     isKeptPrivate(source) ? AUTHOR_LABEL : null,
     reviewerRequestsOf(source),
   )
+
+export const buildMigrationPage = (source: ShellSource, notice: MigrationNotice): ReviewPage => ({
+  kind: "needs-migration",
+  shell: shellOf(source),
+  isOwn: source.isOwn,
+  changedFiles: buildChangedFiles(source.detail),
+  ...notice,
+})
+
+export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput): ReviewPage => {
+  const shell = shellOf(source)
   if (source.artifact === null) return buildUnbuiltPage(source, shell)
   const { artifact } = source
   const resolvedTargets = new Map(

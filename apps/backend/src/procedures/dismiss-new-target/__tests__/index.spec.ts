@@ -45,6 +45,7 @@ const createContext = (repositories: readonly Repository[]): ProcedureContext =>
   closeTerminal: null,
   now: () => NOW,
   dataNotice: null,
+  runningVersion: null,
   appUrl: "http://localhost:4200",
   errorLog: createMockErrorLog(),
 })

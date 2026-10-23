@@ -43,6 +43,8 @@ The artifact of the viewer's own target starts as `authoring`, for the author to
 
 When the artifact cannot be built (the branch is not in the checkout, the folder is not a git repository, the change touches no files) nothing is saved, and the page says why in place of the review. The page's header then states how many files of each kind the change touches.
 
+A review saved by another version of Flight Plan opens as a page that offers to update it, in place of the review (see [review artifact migrations](migrations.md#review-artifact-migrations)).
+
 The New Flight Plan page (`/pr-reviews/<repository>/create`) searches the repository's pull requests and branches, and picking one opens its page, which builds the review.
 
 The request is saved inside the review artifact, and every [write-up](#write-up) updates it. The prompt names the review target and how to reach Flight Plan. It never names the configuration, which the agent reads from Flight Plan's MCP tools, nor an order for the Code Walkthrough, which Flight Plan sorts itself.
@@ -175,7 +177,7 @@ Its header shows the review target's title and the label "Published Flight Plan"
 The published copy has a link in its header, "Download to Flight Plan", which opens the download page of the reader's own Flight Plan: `/artifact/claude/download`, with the artifact's address, the repository and the review target in its query.
 
 1. The page asks the review target's agent conversation to fetch `flight-plan.json` from the artifact and to copy it to a path in Flight Plan's data directory. It starts by itself when the review target has no Flight Plan here. When it has one, the page says that downloading replaces it and waits for "Replace and download".
-2. The agent fetches the file with its Artifact tool, copies it, and calls the `record-import` tool. Flight Plan reads the file from that path, checks that it is a Flight Plan, and stores it as the review target's Flight Plan.
+2. The agent fetches the file with its Artifact tool, copies it, and calls the `record-import` tool. Flight Plan reads the file from that path, checks that it is a Flight Plan, and stores it as the review target's Flight Plan. A file saved by another version of Flight Plan is stored as it came, and its page offers to update it.
 3. The page waits, and opens the review page once the Flight Plan is stored.
 
 The repository must be one the reader's Flight Plan follows, under the same name. When no agent can be asked, or the agent stops before the Flight Plan is stored, the page says so and offers to try again.

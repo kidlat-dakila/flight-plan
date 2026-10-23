@@ -1,4 +1,5 @@
 import type { ProcedureContext } from "@/procedures/context"
+import { findCurrentArtifact } from "@/procedures/migrate-review/utils/stored-version-state"
 import { buildRepositoryIndex } from "./utils/build-repository-index"
 import { isFinishedFlightPlan, newTargetIdsOf, withoutFinishedPrompts } from "./utils/finished-targets"
 import type { Repository } from "./utils/repository"
@@ -36,7 +37,7 @@ export const addReviewedBranches = async (repository: Repository, context: Proce
 
 const isFinishedTarget = async (repositoryName: string, targetId: string, context: ProcedureContext): Promise<boolean> => {
   const key = { repositoryName, targetId }
-  const [artifact, publications] = await Promise.all([context.reviewStore.findArtifact(key), context.reviewStore.readPublications(key)])
+  const [artifact, publications] = await Promise.all([findCurrentArtifact(key, context), context.reviewStore.readPublications(key)])
   return isFinishedFlightPlan(artifact, publications)
 }
 

@@ -6,7 +6,7 @@ import { BandSlotContext } from "@/band-slot"
 import { useColorTheme } from "@/color-theme"
 import ServerError from "@/routes/-components/ServerError"
 import { SETTINGS_LINKS } from "@/settings-links"
-import type { Failure } from "@/troubleshooting"
+import { useFailureTroubleshooting, type Failure } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import ActivityBar, { ChatIcon, SectionsIcon } from "@flightplan/ui/ActivityBar"
 import BandLine from "@flightplan/ui/BandLine"
@@ -37,6 +37,7 @@ import CompletionDialog from "./-components/CompletionDialog"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
 import DockResizeHandle from "./-components/DockResizeHandle"
+import MigrationNotice from "./-components/MigrationNotice"
 import ReadingFileExplorer from "./-components/ReadingFileExplorer"
 import ReadingSectionRail from "./-components/ReadingSectionRail"
 import ReadingWalkthrough from "./-components/ReadingWalkthrough"
@@ -77,6 +78,7 @@ const CommentEditor = lazy(async () => await import("./-components/CommentEditor
 const REFRESH_INTERVAL_MS = 5000
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const COPY_FAILED_MESSAGE = "Could not copy to the clipboard"
+const COMMAND_COPIED_MESSAGE = "Command copied"
 const EDITOR_LOADING_LABEL = "Loading the editor…"
 const ADD_SEGMENT_LABEL = "Add a segment"
 const NEW_SEGMENT_LEGEND = "New segment"
@@ -238,6 +240,8 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       onError: reportError,
     }),
   )
+  const troubleshootFailure = useFailureTroubleshooting()
+  const migrateReview = useMutation(trpc.review.migrate.mutationOptions({ onSuccess: refreshReview }))
   const deleteReview = useMutation(
     trpc.review.delete.mutationOptions({
       onSuccess: async () => {
@@ -303,16 +307,30 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       })
   }
 
+  const settingsMenu = page.kind === "missing"
+    ? <SettingsMenu links={SETTINGS_LINKS} themeToggle={colorTheme} />
+    : (
+        <SettingsMenu
+          links={SETTINGS_LINKS}
+          themeToggle={colorTheme}
+          reviewActions={{
+            forgeLink: page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null,
+            onWriteUp: writeUpDialog.canWriteUp ? writeUpDialog.onOpen : null,
+            onDelete: () => { deleteReview.mutate(reviewKey) },
+          }}
+        />
+      )
+
   return (
     <div
       className={cn(
         "pb-24",
-        page.kind === "missing" ? "px-6" : [PANEL_LAYOUT, !panelWidths.isResizing && ["transition-[padding]", PANEL_TRANSITION]],
+        page.kind === "artifact" ? [PANEL_LAYOUT, !panelWidths.isResizing && ["transition-[padding]", PANEL_TRANSITION]] : "px-6",
         ACCENT_LINE_CLASS,
         LAYOUT_VARIABLES,
         progress === null ? null : DRAFTING_STRIP_HEIGHT,
       )}
-      style={page.kind === "missing"
+      style={page.kind !== "artifact"
         ? undefined
         : {
             paddingLeft: `calc(${String(panelWidths.explorer.widthPx)}px + ${PAGE_GUTTER})`,
@@ -327,13 +345,13 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
               <BandLine lineColor="primary" />
               <ReviewHeader
                 header={page.shell.header}
-                changedFiles={page.kind === "missing" ? page.changedFiles : null}
+                changedFiles={page.kind === "artifact" ? null : page.changedFiles}
                 authorLabel={page.shell.authorLabel}
                 reviewerRequesting={discussion.reviewerRequesting}
                 targetSwitching={targetSwitching}
                 agentStatus={liveAgent.status}
-                actions={page.kind === "missing"
-                  ? <SettingsMenu links={SETTINGS_LINKS} themeToggle={colorTheme} />
+                actions={page.kind !== "artifact"
+                  ? settingsMenu
                   : (
                       <>
                         {!isOwn || page.unassignedFiles === null
@@ -378,15 +396,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 onDiscard={discussion.onDiscardComment}
                               />
                             )}
-                        <SettingsMenu
-                          links={SETTINGS_LINKS}
-                          themeToggle={colorTheme}
-                          reviewActions={{
-                            forgeLink: page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null,
-                            onWriteUp: writeUpDialog.canWriteUp ? writeUpDialog.onOpen : null,
-                            onDelete: () => { deleteReview.mutate(reviewKey) },
-                          }}
-                        />
+                        {settingsMenu}
                       </>
                     )}
 
@@ -397,7 +407,21 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       {page.kind === "missing"
         ? <div className="max-w-208"><TerminusHeading heading={page.heading} message={page.message} /></div>
         : null}
-      {page.kind === "missing"
+      {page.kind === "needs-migration"
+        ? (
+            <div className="max-w-208">
+              <MigrationNotice
+                notice={page}
+                isMigrating={migrateReview.isPending}
+                errorMessage={migrateReview.error?.message ?? null}
+                onTroubleshoot={troubleshootFailure(migrateReview.error)}
+                onMigrate={() => { migrateReview.mutate(reviewKey) }}
+                onCopyCommand={(command) => { copyText(command, COMMAND_COPIED_MESSAGE) }}
+              />
+            </div>
+          )
+        : null}
+      {page.kind !== "artifact"
         ? null
         : (
             <ReviewNavigator rail={page.rail} onSectionJump={stepping.onSectionEntered}>

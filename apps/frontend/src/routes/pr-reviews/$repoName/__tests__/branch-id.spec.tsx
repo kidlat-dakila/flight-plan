@@ -10,6 +10,7 @@ import {
   conversationReply,
   missingPage,
   modelChoiceReply,
+  needsMigrationPage,
   permissionReply,
   pendingComment,
   showSectionInView,
@@ -1377,6 +1378,23 @@ describe("the review page", () => {
     expect(screen.queryByRole("menuitem", { name: "Delete" })).toBeNull()
     expect(screen.getAllByRole("button", { name: "Settings" })).toHaveLength(1)
     expect(screen.queryByRole("navigation", { name: "Review sections" })).toBeNull()
+  })
+
+  it("shows a Flight Plan of another version as a page to convert, and the review once it is converted", async () => {
+    const migrateReview = vi.fn(() => ({ data: { message: "Flight Plan updated" } }))
+    renderReview({
+      "review.get": () => ({ data: migrateReview.mock.calls.length === 0 ? needsMigrationPage : artifactPage }),
+      "review.migrate": migrateReview,
+    })
+
+    expect(await screen.findByRole("heading", { name: "This Flight Plan comes from a newer version" })).toBeTruthy()
+    expect(screen.getByText("npm install -g @kidlat-dakila/flightplan@latest")).toBeTruthy()
+    expect(screen.queryByRole("navigation", { name: "Review sections" })).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Convert and open" }))
+
+    expect(await screen.findByRole("navigation", { name: "Review sections" })).toBeTruthy()
+    expect(migrateReview).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412" })
   })
 
   it("shows the falling plane, the backend's message and a way back when the review cannot be opened", async () => {

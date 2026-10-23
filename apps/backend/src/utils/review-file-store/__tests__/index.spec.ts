@@ -3,7 +3,7 @@ import { join } from "node:path"
 import { createMockReviews } from "@/procedures/get-review/utils/mocks/review-artifacts"
 import { WEBHOOK_RETRY_ARTIFACT } from "@/procedures/get-review/utils/mocks/webhook-retry-artifact"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
-import type { ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
+import { savedVersionOf, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
 import { FileReviewStore } from "@/utils/review-file-store"
 import { writeText } from "@/utils/text-file"
 import { withTemporaryFolder } from "@/utils/text-file/__tests__/temporary-folder"
@@ -25,7 +25,7 @@ const MARKS = {
 }
 
 const createStore = (dataPath: string): FileReviewStore =>
-  new FileReviewStore(dataPath, new InMemoryReviewStore(createMockReviews()))
+  new FileReviewStore(dataPath, new InMemoryReviewStore(createMockReviews()), "0.1.11")
 
 describe("FileReviewStore", () => {
   it("saves a scaffold as one .flightplan file per review target, with the name encoded", async () => {
@@ -37,6 +37,17 @@ describe("FileReviewStore", () => {
       await expect(readdir(join(dataPath, "reviews", "storefront"))).resolves.toStrictEqual(["branch-feature%2Fweb.flightplan"])
       await expect(store.findArtifact(KEY)).resolves.toStrictEqual(WEBHOOK_RETRY_ARTIFACT)
       await expect(store.findRequest(KEY)).resolves.toStrictEqual(SCAFFOLD.request)
+    })
+  })
+
+  it("saves the version that wrote the file, and reads the file as it is", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const store = createStore(dataPath)
+
+      await store.writeScaffold(KEY, SCAFFOLD)
+      const text = await store.readStoredText(KEY)
+
+      expect(text === null ? null : savedVersionOf(text)).toBe("0.1.11")
     })
   })
 
@@ -210,7 +221,7 @@ describe("FileReviewStore", () => {
     await withTemporaryFolder(async (dataPath) => {
       const sampleStore = new InMemoryReviewStore(createMockReviews())
       await sampleStore.writeReviewedMarks(KEY, MARKS)
-      const store = new FileReviewStore(dataPath, sampleStore)
+      const store = new FileReviewStore(dataPath, sampleStore, "0.1.11")
 
       await expect(store.readReviewedMarks(KEY)).resolves.toStrictEqual(MARKS)
       await writeText(join(dataPath, "reviews", "storefront", "branch-feature%2Fweb.reviewed.json"), "{")

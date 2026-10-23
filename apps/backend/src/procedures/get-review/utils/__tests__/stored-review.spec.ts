@@ -47,12 +47,12 @@ describe("stored review", () => {
   it("reads back the artifact, the base commit and the reviewer's choices it wrote", () => {
     const writtenUp = { ...SCAFFOLD, request: { ...SCAFFOLD.request, writeUp: { sections: ["context", "findings"], walkthroughOrder: "important-first" } as const } }
 
-    expect(parseStoredReview(formatStoredReview(SCAFFOLD))).toStrictEqual(SCAFFOLD)
-    expect(parseStoredReview(formatStoredReview(writtenUp))).toStrictEqual(writtenUp)
+    expect(parseStoredReview(formatStoredReview(SCAFFOLD, null))).toStrictEqual(SCAFFOLD)
+    expect(parseStoredReview(formatStoredReview(writtenUp, null))).toStrictEqual(writtenUp)
   })
 
   it("writes the format version, the kind and the choices in the meta block", () => {
-    expect(parse(formatStoredReview(SCAFFOLD))).toMatchObject({
+    expect(parse(formatStoredReview(SCAFFOLD, null))).toMatchObject({
       schema: 4,
       meta: {
         kind: "review",
@@ -64,7 +64,7 @@ describe("stored review", () => {
   })
 
   it("keeps a block that two nodes hold as one block, and the code group of two segments as one group", () => {
-    const read = parseStoredReview(formatStoredReview(SCAFFOLD))
+    const read = parseStoredReview(formatStoredReview(SCAFFOLD, null))
     const [traceDiagram] = (read?.artifact.segments ?? []).flatMap((segment) => (segment.traceDiagram === null ? [] : [segment.traceDiagram]))
     const [node] = traceDiagram.traceNodes
 
@@ -73,7 +73,7 @@ describe("stored review", () => {
   })
 
   it("reads a review saved before a node had block labels, with none on each node", () => {
-    const older = formatStoredReview(SCAFFOLD).replaceAll(BLOCK_LABELS_AFTER_A_FIELD, "").replaceAll(BLOCK_LABELS_BEFORE_A_FIELD, "")
+    const older = formatStoredReview(SCAFFOLD, null).replaceAll(BLOCK_LABELS_AFTER_A_FIELD, "").replaceAll(BLOCK_LABELS_BEFORE_A_FIELD, "")
 
     expect(older).not.toContain("blockLabels")
     expect(parseStoredReview(older)).toStrictEqual(SCAFFOLD)
@@ -87,7 +87,7 @@ describe("stored review", () => {
         walkthrough: { intro: "The stock check first.", files: segment.walkthrough.files.map((file) => ({ ...file, title: "Held units", summary: ["Subtracts held units."] })) },
       })),
     }
-    const older = formatStoredReview({ ...SCAFFOLD, artifact: olderArtifact })
+    const older = formatStoredReview({ ...SCAFFOLD, artifact: olderArtifact }, null)
 
     expect(older).toContain("Subtracts held units.")
     expect(parseStoredReview(older)).toStrictEqual(SCAFFOLD)
@@ -103,14 +103,14 @@ describe("stored review", () => {
         blast: blastDiagram,
       })),
     }
-    const older = stringify({ ...parse(formatStoredReview(SCAFFOLD)), schema: 2, artifact: olderArtifact })
+    const older = stringify({ ...parse(formatStoredReview(SCAFFOLD, null)), schema: 2, artifact: olderArtifact })
 
     expect(parseStoredReview(older)).toStrictEqual(SCAFFOLD)
   })
 
   it("reads a review saved before nodes were required, with every node of its sections required when an agent writes it", () => {
     const nothingRequired = withEveryRequirement(HELD_STOCK_ARTIFACT, false)
-    const older = stringify({ ...parse(formatStoredReview({ ...SCAFFOLD, artifact: nothingRequired })), schema: 3 })
+    const older = stringify({ ...parse(formatStoredReview({ ...SCAFFOLD, artifact: nothingRequired }, null)), schema: 3 })
 
     expect(parseStoredReview(older)?.artifact).toStrictEqual(withEveryRequirement(HELD_STOCK_ARTIFACT, true))
   })
@@ -118,20 +118,20 @@ describe("stored review", () => {
   it("reads a review saved before nodes were required, with nothing required when no agent writes it", () => {
     const nothingRequired = withEveryRequirement(HELD_STOCK_ARTIFACT, false)
     const authored = { ...SCAFFOLD, artifact: nothingRequired, request: { ...SCAFFOLD.request, writer: { kind: "none" as const } } }
-    const older = stringify({ ...parse(formatStoredReview(authored)), schema: 3 })
+    const older = stringify({ ...parse(formatStoredReview(authored, null)), schema: 3 })
 
     expect(parseStoredReview(older)?.artifact).toStrictEqual(nothingRequired)
   })
 
   it("reads the needs-attention note of a review saved before it was named the core change as its core change", () => {
-    const older = formatStoredReview(SCAFFOLD).replaceAll("\"coreChange\"", "\"needsAttention\"").replace("\"schema\":4", "\"schema\":3")
+    const older = formatStoredReview(SCAFFOLD, null).replaceAll("\"coreChange\"", "\"needsAttention\"").replace("\"schema\":4", "\"schema\":3")
 
     expect(older).toContain("\"needsAttention\"")
     expect(parseStoredReview(older)?.artifact).toStrictEqual(HELD_STOCK_ARTIFACT)
   })
 
   it("reads the classifications of a review saved before they were renamed and merged under their current names", () => {
-    const older: unknown = parse(formatStoredReview(SCAFFOLD))
+    const older: unknown = parse(formatStoredReview(SCAFFOLD, null))
     const olderBlock = isStored(older) ? firstTraceBlockOf(reviewArtifactSchema.parse(older.artifact)) : undefined
     Object.assign(olderBlock ?? {}, { classifications: ["state", "store", "auth", "logic"], diffClassifications: ["form"] })
     const read = parseStoredReview(stringify(older))
@@ -142,6 +142,6 @@ describe("stored review", () => {
   it("has no answer for text that is not a stored review", () => {
     expect(parseStoredReview("not json")).toBeNull()
     expect(parseStoredReview("[{\"schema\":1},3]")).toBeNull()
-    expect(parseStoredReview(formatStoredReview(SCAFFOLD).replace("\"onboardee\"", "\"unknown\""))).toBeNull()
+    expect(parseStoredReview(formatStoredReview(SCAFFOLD, null).replace("\"onboardee\"", "\"unknown\""))).toBeNull()
   })
 })

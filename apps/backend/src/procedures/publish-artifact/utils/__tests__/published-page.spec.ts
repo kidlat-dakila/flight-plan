@@ -22,7 +22,7 @@ const readReview = async (): Promise<PublishedReview> => {
 
 describe("formatPublishedPage", () => {
   it("writes a page that loads its style, the review and then the app from files beside it", async () => {
-    const { html } = formatPublishedPage(await readReview(), null)
+    const { html } = formatPublishedPage(await readReview(), null, null)
 
     expect(html).toContain("<script src=\"review-data.js\"></script>")
     expect(html.indexOf("<script src=\"app.js\"></script>")).toBeGreaterThan(html.indexOf("<script src=\"review-data.js\"></script>"))
@@ -30,7 +30,7 @@ describe("formatPublishedPage", () => {
   })
 
   it("escapes the title", async () => {
-    const { html } = formatPublishedPage({ ...(await readReview()), documentTitle: "Fix <b> & \"quotes\"" }, null)
+    const { html } = formatPublishedPage({ ...(await readReview()), documentTitle: "Fix <b> & \"quotes\"" }, null, null)
 
     expect(html).toContain("<title>Fix &lt;b&gt; &amp; &quot;quotes&quot;</title>")
   })
@@ -38,20 +38,20 @@ describe("formatPublishedPage", () => {
   it("writes the review as a script that holds all of it", async () => {
     const review = await readReview()
 
-    const { reviewScript } = formatPublishedPage(review, null)
+    const { reviewScript } = formatPublishedPage(review, null, null)
 
     expect(reviewScript.startsWith(ASSIGNMENT)).toBe(true)
     expect(JSON.parse(reviewScript.slice(ASSIGNMENT.length))).toStrictEqual(review)
   })
 
   it("writes the stored Flight Plan as a file that reads back as the same Flight Plan", async () => {
-    const { flightPlanFile } = formatPublishedPage(await readReview(), SCAFFOLD)
+    const { flightPlanFile } = formatPublishedPage(await readReview(), SCAFFOLD, null)
 
     expect(parseStoredReview(flightPlanFile ?? "")).toStrictEqual(SCAFFOLD)
     expect(JSON.parse(flightPlanFile ?? "null")).not.toBeNull()
   })
 
   it("has no Flight Plan file without a stored Flight Plan", async () => {
-    expect(formatPublishedPage(await readReview(), null).flightPlanFile).toBeNull()
+    expect(formatPublishedPage(await readReview(), null, null).flightPlanFile).toBeNull()
   })
 })

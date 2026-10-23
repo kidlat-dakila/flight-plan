@@ -467,6 +467,18 @@ export const missingPage = {
   changedFiles,
 }
 
+export const needsMigrationPage = {
+  kind: "needs-migration",
+  shell,
+  isOwn: false,
+  heading: "This Flight Plan comes from a newer version",
+  message: "It was saved by Flight Plan 0.9.0, and you are running 0.1.11. Flight Plan can convert it to the shape of this version, but some parts written in the newer version may not show. Updating Flight Plan keeps everything.",
+  actionLabel: "Convert and open",
+  updateCommand: "npm install -g @kidlat-dakila/flightplan@latest",
+  copyLabel: "Copy command",
+  changedFiles,
+}
+
 export const conversationReply = {
   heading: "Chat with the agent",
   closeLabel: "Hide chat",

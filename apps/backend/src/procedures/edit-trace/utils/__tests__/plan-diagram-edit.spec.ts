@@ -123,7 +123,7 @@ describe("planDiagramEdit", () => {
     const withLines = artifactOf(planDiagramEdit(withPage, SEGMENT_ID, { kind: "add-card", path: PATH, source: { kind: "lines", lineStart: 4, lineEnd: 6 }, isPrefilled: true, hasChildComponents: false }, TEXT))
     const moved = artifactOf(planDiagramEdit(withLines, SEGMENT_ID, { kind: "move-cards", places: [{ nodeId: PAGE_BLOCK_ID, x: 40, y: 60 }] }, null))
 
-    const cards = cardsOf(parseStoredReview(formatStoredReview(scaffoldOf(moved)))?.artifact)
+    const cards = cardsOf(parseStoredReview(formatStoredReview(scaffoldOf(moved), null))?.artifact)
 
     expect(cards.find((card) => card.id === PAGE_BLOCK_ID)).toMatchObject({ position: { x: 40, y: 60 }, children: [{ type: "component" }] })
     expect(lastOf(cards).codeBlocks[0]).toMatchObject({ name: "Lines 4 to 6" })
