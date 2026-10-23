@@ -18,7 +18,7 @@ A development build reads the same data directory unless `FLIGHT_PLAN_DATA_DIR` 
 
 | Version | What it does |
 |---|---|
-| 0.1.10 | When the [review preferences](review-preferences.md) are saved, it turns segments off and sets the section order to Context, Trace Diagram, Code Walkthrough, Blast Diagram, the defaults of 0.1.10. The other preferences stay as they are |
+| 0.1.11 | When the [review preferences](review-preferences.md) are saved, it turns segments off and sets the section order to Context, Trace Diagram, Code Walkthrough, Blast Diagram, the defaults of 0.1.11. The other preferences stay as they are |
 
 ## In the code
 

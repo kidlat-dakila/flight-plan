@@ -58,11 +58,11 @@ describe("runMigrations", () => {
     expect(initFile.write.mock.calls).toStrictEqual([[{ migratedVersion: "0.1.10" }]])
   })
 
-  it("turns segments off and puts the Blast Diagram last in the saved preferences at 0.1.10", async () => {
+  it("turns segments off and puts the Blast Diagram last in the saved preferences at 0.1.11", async () => {
     const reviewPreferences = { ...DEFAULT_REVIEW_PREFERENCES, isSegmented: true, sectionOrder: ["context", "traceDiagram", "blastDiagram", "walkthrough"] as const }
     const setupStore = new InMemorySetupStore({ ...EMPTY_SETUP, reviewPreferences })
 
-    await runMigrations({ ...CONTEXT, setupStore }, createRecordingInitFile({ migratedVersion: "0.1.9" }))
+    await runMigrations({ ...CONTEXT, setupStore }, createRecordingInitFile({ migratedVersion: "0.1.10" }))
 
     await expect(setupStore.read()).resolves.toMatchObject({
       reviewPreferences: { isSegmented: false, sectionOrder: ["context", "traceDiagram", "walkthrough", "blastDiagram"] },

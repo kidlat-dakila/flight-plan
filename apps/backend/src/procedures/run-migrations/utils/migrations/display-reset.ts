@@ -15,4 +15,4 @@ const resetDisplay = async (context: ProcedureContext): Promise<void> => {
   if (setup !== null) await context.setupStore.write(setup)
 }
 
-export const DISPLAY_RESET_MIGRATION: Migration = { version: "0.1.10", migrate: resetDisplay }
+export const DISPLAY_RESET_MIGRATION: Migration = { version: "0.1.11", migrate: resetDisplay }
