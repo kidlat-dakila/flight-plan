@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises"
-import { homedir } from "node:os"
+import { homedir, userInfo } from "node:os"
 import { join } from "node:path"
+import type { FastifyInstance } from "fastify"
 import { z } from "zod"
 import { HELP_TEXT, parseCommand, type Command } from "./command-line"
 import {
@@ -15,11 +16,13 @@ import {
   type PortChoice,
   type ServerConfig,
 } from "./config"
-import { createLocalProcedureContext, createLocalUpdateChecker, type ProcedureContext } from "./procedures/context"
+import { createLocalErrorLog, createLocalProcedureContext, createLocalUpdateChecker, type ProcedureContext } from "./procedures/context"
 import { getUpdateNotice } from "./procedures/get-update-notice"
 import type { UpdateNotice } from "./procedures/get-update-notice/utils/schemas"
 import type { UpdateChecker } from "./procedures/get-update-notice/utils/update-checker"
 import { toTerminalLine } from "./procedures/get-update-notice/utils/update-notice"
+import { pruneErrorLogs } from "./procedures/prune-error-logs"
+import type { ErrorLog } from "./procedures/record-error/utils/error-log"
 import { refreshAgentInstalls } from "./procedures/refresh-agent-installs"
 import { buildServer } from "./server"
 import { openBrowser } from "./utils/browser-opener"
@@ -37,6 +40,11 @@ const DEVELOPMENT_APP_URL = "http://localhost:4200"
 const PUBLISHED_LOG_LEVEL = "warn"
 const ARGUMENTS_START = 2
 const FAILURE_EXIT_CODE = 1
+const START_SOURCE = "Flight Plan start"
+const CRASH_SOURCE = "Flight Plan process"
+const LOG_CLEANUP_SOURCE = "Log cleanup"
+const AGENT_REFRESH_SOURCE = "Agent install"
+const UNKNOWN_USER_NAME = ""
 
 type LaunchCommand = Extract<Command, { kind: "launch" }>
 
@@ -50,7 +58,22 @@ const openDevelopmentContext = async (fixturesPath: string): Promise<Partial<Pro
   return {}
 }
 
-const openLocalContext = (serverConfig: ServerConfig, appUrl: string): ProcedureContext => {
+const readUserName = (): string => {
+  try {
+    return userInfo().username
+  } catch {
+    return UNKNOWN_USER_NAME
+  }
+}
+
+const openErrorLog = (runningVersion: string | null): ErrorLog =>
+  createLocalErrorLog(readDataPath(process.env, homedir()), {
+    version: runningVersion,
+    platform: process.platform,
+    identity: { homePath: homedir(), userName: readUserName() },
+  })
+
+const openLocalContext = (serverConfig: ServerConfig, appUrl: string, errorLog: ErrorLog): ProcedureContext => {
   const environment = process.env
   const homePath = homedir()
   return createLocalProcedureContext(new Date(), {
@@ -64,16 +87,24 @@ const openLocalContext = (serverConfig: ServerConfig, appUrl: string): Procedure
     homePath,
     platform: process.platform,
     environment,
+  }, errorLog)
+}
+
+const cleanUpLogs = async (context: ProcedureContext): Promise<void> => {
+  await pruneErrorLogs(context).catch(async (failure: unknown) => {
+    await context.errorLog.recordFailure(LOG_CLEANUP_SOURCE, failure).saving
   })
 }
 
-const startDevelopmentServer = async (): Promise<void> => {
+const startDevelopmentServer = async (errorLog: ErrorLog): Promise<void> => {
   const serverConfig = { host: readHost(process.env), port: readRequestedPort(process.env) ?? DEVELOPMENT_PORT }
   const context = {
-    ...openLocalContext(serverConfig, DEVELOPMENT_APP_URL),
+    ...openLocalContext(serverConfig, DEVELOPMENT_APP_URL, errorLog),
     ...(await openDevelopmentContext(join(__dirname, FIXTURE_CASES_PATH_FROM_BUILD))),
   }
+  await cleanUpLogs(context)
   const server = await buildServer({ logger: true }, context)
+  watchForCrashes(errorLog, server)
   await server.listen(serverConfig)
 }
 
@@ -83,11 +114,12 @@ const showInBrowser = async (url: string, command: LaunchCommand): Promise<void>
   if (!isOpened) console.log(`Open ${url} in your browser.`)
 }
 
-const choosePort = async (host: string, choice: PortChoice): Promise<number | null> => {
+const choosePort = async (host: string, choice: PortChoice, errorLog: ErrorLog): Promise<number | null> => {
   const plan = planPort(choice, await isPortFree(host, preferredPortOf(choice)))
   if (plan.kind === "listen") return plan.port
   if (plan.kind === "find-free-port") return await findFreePort(host)
   console.error(plan.message)
+  await errorLog.record({ source: START_SOURCE, message: plan.message, stack: null }).saving
   return null
 }
 
@@ -98,34 +130,42 @@ const readPackageVersion = async (): Promise<string> => {
 
 const readNoVersion = (): null => null
 
-const openUpdateChecker = async (dataPath: string): Promise<UpdateChecker | undefined> => {
-  const runningVersion = await readPackageVersion().catch(readNoVersion)
-  return runningVersion === null ? undefined : createLocalUpdateChecker({ dataPath, runningVersion, installPath: __dirname })
-}
+const readRunningVersion = async (): Promise<string | null> =>
+  IS_DEVELOPMENT_BUILD ? null : await readPackageVersion().catch(readNoVersion)
+
+const openUpdateChecker = (dataPath: string, runningVersion: string | null): UpdateChecker | undefined =>
+  runningVersion === null ? undefined : createLocalUpdateChecker({ dataPath, runningVersion, installPath: __dirname })
 
 const findNoNotice = (): null => null
 
-const checkForUpdate = async (pendingChecker: Promise<UpdateChecker | undefined>): Promise<UpdateNotice | null> =>
-  await getUpdateNotice({}, { updateChecker: await pendingChecker, now: () => new Date() }).catch(findNoNotice)
+const checkForUpdate = async (updateChecker: UpdateChecker | undefined): Promise<UpdateNotice | null> =>
+  await getUpdateNotice({}, { updateChecker, now: () => new Date() }).catch(findNoNotice)
 
 const printUpdateNotice = async (pendingNotice: Promise<UpdateNotice | null>): Promise<void> => {
   const notice = await pendingNotice
   if (notice !== null) console.log(toTerminalLine(notice))
 }
 
+const refreshFailureMessageOf = (agent: string, reason: string): string =>
+  `${agent} could not be brought up to date with this Flight Plan. ${reason} Save the agents again in Settings.`
+
 const refreshAgents = async (context: ProcedureContext): Promise<boolean> => {
   const failures = await refreshAgentInstalls(context)
-  failures.forEach(({ agent, reason }) => {
-    console.error(`${agent} could not be brought up to date with this Flight Plan. ${reason} Save the agents again in Settings.`)
+  const messages = failures.map(({ agent, reason }) => refreshFailureMessageOf(agent, reason))
+  messages.forEach((message) => {
+    console.error(message)
   })
+  await Promise.all(messages.map(async (message) => {
+    await context.errorLog.record({ source: AGENT_REFRESH_SOURCE, message, stack: null }).saving
+  }))
   return failures.length === 0
 }
 
-const launch = async (command: LaunchCommand): Promise<void> => {
+const launch = async (command: LaunchCommand, runningVersion: string | null, errorLog: ErrorLog): Promise<void> => {
   const host = readHost(process.env)
   const dataPath = readDataPath(process.env, homedir())
-  const pendingChecker = openUpdateChecker(dataPath)
-  const pendingNotice = checkForUpdate(pendingChecker)
+  const updateChecker = openUpdateChecker(dataPath, runningVersion)
+  const pendingNotice = checkForUpdate(updateChecker)
   const savedPortFile = createSavedPortFile(dataPath)
   const savedPort = await savedPortFile.read()
   const choice = { requestedPort: command.port ?? readRequestedPort(process.env), savedPort }
@@ -136,15 +176,17 @@ const launch = async (command: LaunchCommand): Promise<void> => {
     await printUpdateNotice(pendingNotice)
     return
   }
-  const port = await choosePort(host, choice)
+  const port = await choosePort(host, choice, errorLog)
   if (port === null) {
     process.exitCode = FAILURE_EXIT_CODE
     return
   }
   const serverConfig = { host, port }
   const serverUrl = serverUrlOf(serverConfig)
-  const context = { ...openLocalContext(serverConfig, serverUrl), updateChecker: await pendingChecker }
+  const context = { ...openLocalContext(serverConfig, serverUrl, errorLog), updateChecker }
+  await cleanUpLogs(context)
   const server = await buildServer({ logger: { level: PUBLISHED_LOG_LEVEL } }, context, join(__dirname, WEB_PATH_FROM_BUILD))
+  watchForCrashes(errorLog, server)
   await server.listen(serverConfig)
   console.log(`Flight Plan is running at ${serverUrl}`)
   const printedNotice = printUpdateNotice(pendingNotice)
@@ -158,9 +200,9 @@ const printVersion = async (): Promise<void> => {
   console.log(await readPackageVersion())
 }
 
-const runCommand = async (command: Command): Promise<void> => {
+const runCommand = async (command: Command, runningVersion: string | null, errorLog: ErrorLog): Promise<void> => {
   if (command.kind === "launch") {
-    await launch(command)
+    await launch(command, runningVersion, errorLog)
     return
   }
   if (command.kind === "version") {
@@ -175,12 +217,34 @@ const runCommand = async (command: Command): Promise<void> => {
   process.exitCode = FAILURE_EXIT_CODE
 }
 
-const start = async (): Promise<void> => {
-  if (IS_DEVELOPMENT_BUILD) await startDevelopmentServer()
-  else await runCommand(parseCommand(process.argv.slice(ARGUMENTS_START)))
+const stopAfterCrash = async (errorLog: ErrorLog, server: FastifyInstance, failure: unknown): Promise<void> => {
+  console.error(failure)
+  process.exitCode = FAILURE_EXIT_CODE
+  await errorLog.recordFailure(CRASH_SOURCE, failure).saving
+  await server.close()
 }
 
-start().catch((error: unknown) => {
-  console.error(error)
-  process.exitCode = FAILURE_EXIT_CODE
-})
+const watchForCrashes = (errorLog: ErrorLog, server: FastifyInstance): void => {
+  const onCrash = (failure: unknown): void => {
+    void stopAfterCrash(errorLog, server, failure)
+  }
+  process.on("uncaughtException", onCrash)
+  process.on("unhandledRejection", onCrash)
+}
+
+const runFlightPlan = async (runningVersion: string | null, errorLog: ErrorLog): Promise<void> => {
+  if (IS_DEVELOPMENT_BUILD) await startDevelopmentServer(errorLog)
+  else await runCommand(parseCommand(process.argv.slice(ARGUMENTS_START)), runningVersion, errorLog)
+}
+
+const start = async (): Promise<void> => {
+  const runningVersion = await readRunningVersion()
+  const errorLog = openErrorLog(runningVersion)
+  await runFlightPlan(runningVersion, errorLog).catch(async (failure: unknown) => {
+    console.error(failure)
+    await errorLog.recordFailure(START_SOURCE, failure).saving
+    process.exitCode = FAILURE_EXIT_CODE
+  })
+}
+
+void start()

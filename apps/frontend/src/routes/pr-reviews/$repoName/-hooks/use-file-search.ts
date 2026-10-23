@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useDeferredValue, useState } from "react"
+import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import type { FileOption } from "@flightplan/ui/FilePicker"
 
@@ -15,6 +16,7 @@ export interface FileSearch {
   readonly files: readonly FileOption[]
   readonly message: string | null
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onQueryChange: (query: string) => void
 }
 
@@ -22,6 +24,7 @@ const NO_FILES: readonly FileOption[] = []
 
 export const useFileSearch = (reviewKey: ReviewKey, scope: FileSearchScope): FileSearch => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const [query, setQuery] = useState("")
   const deferredQuery = useDeferredValue(query)
   const search = useQuery({
@@ -34,6 +37,7 @@ export const useFileSearch = (reviewKey: ReviewKey, scope: FileSearchScope): Fil
     files: search.data?.options ?? NO_FILES,
     message: search.data?.message ?? null,
     errorMessage: search.error?.message ?? null,
+    onTroubleshoot: troubleshootFailure(search.error),
     onQueryChange: setQuery,
   }
 }

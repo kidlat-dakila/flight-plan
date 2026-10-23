@@ -1230,7 +1230,9 @@ describe("the review page", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Submit review" }))
     fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Submit review" }))
 
-    expect((await screen.findByRole("alert")).textContent).toBe("Write a summary or a comment before you submit.")
+    const alert = await screen.findByRole("alert")
+    expect(within(alert).getByText("Write a summary or a comment before you submit.")).toBeTruthy()
+    expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
   })
 
   it("says why Flight Plan could not build the review, without the review actions", async () => {

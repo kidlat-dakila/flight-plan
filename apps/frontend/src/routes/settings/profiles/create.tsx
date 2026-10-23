@@ -3,8 +3,10 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import SectionIntro from "@/routes/settings/-components/SectionIntro"
 import SettingsError from "@/routes/settings/-components/SettingsError"
 import SettingsSkeleton from "@/routes/settings/-components/SettingsSkeleton"
+import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import Button, { buttonVariants } from "@flightplan/ui/blocks/button"
+import ProblemAlert from "@flightplan/ui/ProblemAlert"
 import CreateConfigurationForm from "./-components/CreateConfigurationForm"
 
 const DOCUMENT_TITLE = "New configuration • Settings • Flight Plan"
@@ -15,6 +17,7 @@ const CANCEL_LABEL = "Cancel"
 
 const CreateConfigurationPage = () => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const { data: form } = useSuspenseQuery(trpc.configuration.creationForm.queryOptions())
@@ -43,7 +46,7 @@ const CreateConfigurationPage = () => {
         onSubmit={(name, sourceId) => { create.mutate({ name, sourceId }) }}
       >
         <footer className="mt-6 border-t border-border pt-4">
-          {create.error === null ? null : <p role="alert" className="pb-3 text-sm text-destructive">{create.error.message}</p>}
+          {create.error === null ? null : <ProblemAlert message={create.error.message} onTroubleshoot={troubleshootFailure(create.error)} className="pb-3 text-sm text-destructive" />}
           <div className="flex flex-wrap items-center justify-end gap-2">
             <Link to="/settings/profiles" className={buttonVariants({ variant: "ghost" })}>{CANCEL_LABEL}</Link>
             <Button type="submit" disabled={create.isPending}>{create.isPending ? PENDING_LABEL : SUBMIT_LABEL}</Button>

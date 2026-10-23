@@ -34,6 +34,7 @@ Claude works in a terminal you can see, started with `/flightplan:live <reposito
 | `send-message`, `ask-questions` | Talks to you in the review's [chat](/docs/review-artifacts/features/agent-chat/). |
 | `ping` | Tells Flight Plan the agent is still online while it works. |
 | `record-publication`, `record-import` | Records a review it [published or downloaded](/docs/review-artifacts/features/sharing/) as a Claude artifact. |
+| `troubleshoot` | Reads an error Flight Plan logged, or what you asked it to [troubleshoot](/docs/troubleshooting/). |
 
 While it writes, a strip under the header shows who is writing and how many parts are done, such as **12 of 40 parts written**. Each part appears as soon as it's written, so you can read while the agent works.
 

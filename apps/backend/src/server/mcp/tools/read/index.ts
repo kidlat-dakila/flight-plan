@@ -2,6 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import type { ProcedureContext } from "@/procedures/context"
 import { readArtifact } from "@/procedures/read-artifact"
 import { readArtifactInputShape } from "@/procedures/read-artifact/utils/schemas"
+import { recordingFailures } from "@/server/mcp/tool-failures"
 import { errorResult, jsonResult } from "@/server/mcp/tool-result"
 
 const DESCRIPTION = [
@@ -15,9 +16,9 @@ export const registerReadTool = (mcpServer: McpServer, context: ProcedureContext
   mcpServer.registerTool(
     "read",
     { description: DESCRIPTION, inputSchema: readArtifactInputShape },
-    async (input) => {
+    recordingFailures(context.errorLog, "read", async (input) => {
       const reading = await readArtifact(input, context)
       return reading.kind === "read" ? jsonResult(reading.content) : errorResult(reading.message)
-    },
+    }),
   )
 }

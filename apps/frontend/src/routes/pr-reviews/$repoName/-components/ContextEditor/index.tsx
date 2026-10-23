@@ -8,12 +8,13 @@ interface ContextEditorProps {
   readonly markdown: string
   readonly isSaving: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly renderCodeLinkDialog: (request: CodeLinkRequest) => ReactNode
   readonly onSave: (markdown: string) => void
   readonly onCancel: () => void
 }
 
-const ContextEditor = ({ label, markdown, isSaving, errorMessage, renderCodeLinkDialog, onSave, onCancel }: ContextEditorProps) => {
+const ContextEditor = ({ label, markdown, isSaving, errorMessage, onTroubleshoot, renderCodeLinkDialog, onSave, onCancel }: ContextEditorProps) => {
   const [draft, setDraft] = useState(markdown)
   return (
     <form onSubmit={submitHandlerOf(() => { onSave(draft) })} className="grid gap-3">
@@ -21,6 +22,7 @@ const ContextEditor = ({ label, markdown, isSaving, errorMessage, renderCodeLink
         label={label}
         value={markdown}
         errorMessage={errorMessage}
+        onTroubleshoot={onTroubleshoot}
         canUseSections
         renderCodeLinkDialog={renderCodeLinkDialog}
         onChange={setDraft}

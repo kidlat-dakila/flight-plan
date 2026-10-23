@@ -14,6 +14,7 @@ export interface SegmentWriting {
   readonly isWriting: boolean
   readonly isSaving: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onEdit: () => void
   readonly onSave: (content: SegmentContent) => void
   readonly onCancel: () => void
@@ -67,6 +68,7 @@ const SegmentHeader = ({ reviewKey, heading, isTitleDraft, detailLabel, outline,
         isSaving={authoring.writing.isSaving}
         isDeleting={authoring.isPending}
         errorMessage={authoring.writing.errorMessage}
+        onTroubleshoot={authoring.writing.onTroubleshoot}
         onSave={authoring.writing.onSave}
         onDelete={authoring.onRemove}
         onClose={authoring.writing.onCancel}

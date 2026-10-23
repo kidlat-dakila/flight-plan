@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router"
 import { useState } from "react"
+import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import Button from "@flightplan/ui/blocks/button"
 import BusyLabel from "@flightplan/ui/BusyLabel"
+import ProblemAlert from "@flightplan/ui/ProblemAlert"
 
 export interface DownloadSearch {
   readonly artifact: string
@@ -23,6 +25,7 @@ const importRequestOf = (search: DownloadSearch) => ({
 
 const DownloadPage = () => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const queryClient = useQueryClient()
   const search = Route.useSearch()
   const started = Route.useLoaderData()
@@ -63,7 +66,9 @@ const DownloadPage = () => {
           )}
       {form.warning === null ? null : <p className="mt-6 font-bold text-signal-text">{form.warning}</p>}
       {form.isImporting || startImport.isPending ? <BusyLabel label={form.pendingLabel} className="mt-6" /> : null}
-      {refusal === null || form.isImporting ? null : <p role="alert" className="mt-6 text-destructive">{refusal}</p>}
+      {refusal === null || form.isImporting
+        ? null
+        : <ProblemAlert message={refusal} onTroubleshoot={troubleshootFailure(startImport.error)} className="mt-6 text-destructive" />}
       <div className="mt-6 flex items-center gap-4">
         {form.submitLabel === null || form.isImporting
           ? null

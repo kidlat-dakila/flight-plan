@@ -11,6 +11,7 @@ interface RepositoriesStepProps extends Omit<RepositoryListProps, "followedFoote
   readonly continueHint: string | null
   readonly backStep: string | null
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly isPending: boolean
   readonly onContinue: () => void
 }
@@ -22,6 +23,7 @@ const RepositoriesStep = ({
   continueHint,
   backStep,
   errorMessage,
+  onTroubleshoot,
   isPending,
   onContinue,
   ...list
@@ -44,6 +46,7 @@ const RepositoriesStep = ({
       isReady={isReadyToContinue}
       hint={continueHint}
       errorMessage={errorMessage}
+      onTroubleshoot={onTroubleshoot}
     />
   </form>
 )

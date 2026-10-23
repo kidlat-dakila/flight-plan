@@ -1,5 +1,6 @@
 import { ChevronDownIcon } from "lucide-react"
 import { useId } from "react"
+import ProblemAlert from "@/components/ProblemAlert"
 import { cn } from "@/lib/utils"
 
 interface SelectFieldProps {
@@ -8,6 +9,7 @@ interface SelectFieldProps {
   readonly value: string
   readonly className?: string
   readonly errorMessage?: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly isLabelHidden?: boolean
   readonly onChange: (value: string) => void
 }
@@ -18,6 +20,7 @@ const SelectField = ({
   value,
   className,
   errorMessage = null,
+  onTroubleshoot = null,
   isLabelHidden = false,
   onChange,
 }: SelectFieldProps) => {
@@ -42,7 +45,7 @@ const SelectField = ({
           className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground"
         />
       </div>
-      {errorMessage === null ? null : <p id={errorId} role="alert" className="text-sm text-destructive">{errorMessage}</p>}
+      {errorMessage === null ? null : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} messageId={errorId} className="text-sm text-destructive" />}
     </div>
   )
 }

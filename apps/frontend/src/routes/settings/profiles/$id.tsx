@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 import SettingsError from "@/routes/settings/-components/SettingsError"
 import SettingsSkeleton from "@/routes/settings/-components/SettingsSkeleton"
+import { shownProblemOf, useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import Button from "@flightplan/ui/blocks/button"
 import ConfigurationHeader from "./-components/ConfigurationHeader"
@@ -19,6 +20,7 @@ const DOCUMENT_TITLE_SUFFIX = "Prompt configurations • Settings • Flight Pla
 
 const ConfigurationPage = () => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const { id } = Route.useParams()
@@ -58,15 +60,16 @@ const ConfigurationPage = () => {
   )
 
   const isRename = save.variables?.change === "rename"
-  const savingRejection = save.data?.kind === "rejected" ? save.data.message : save.error?.message ?? null
-  const headerError
-    = (isRename ? savingRejection : null)
-      ?? (duplicate.data?.kind === "rejected" ? duplicate.data.message : duplicate.error?.message)
-      ?? (remove.data?.kind === "rejected" ? remove.data.message : remove.error?.message)
-      ?? null
+  const savingProblem = shownProblemOf(save.data?.kind === "rejected" ? save.data.message : null, save.error)
+  const headerProblem
+    = (isRename ? savingProblem : null)
+      ?? shownProblemOf(duplicate.data?.kind === "rejected" ? duplicate.data.message : null, duplicate.error)
+      ?? shownProblemOf(remove.data?.kind === "rejected" ? remove.data.message : null, remove.error)
+  const panelProblem = isRename ? null : savingProblem
   const panelActions = {
     isPending: save.isPending,
-    errorMessage: isRename ? null : savingRejection,
+    errorMessage: panelProblem?.message ?? null,
+    onTroubleshoot: troubleshootFailure(panelProblem?.failure ?? null),
     savedMessage: save.data?.kind === "saved" && !isRename ? save.data.message : null,
   }
   const { panel } = page
@@ -82,7 +85,8 @@ const ConfigurationPage = () => {
         canDelete={page.canDelete}
         duplicateLabel={page.duplicateLabel}
         isBusy={duplicate.isPending || remove.isPending}
-        errorMessage={headerError}
+        errorMessage={headerProblem?.message ?? null}
+        onTroubleshoot={troubleshootFailure(headerProblem?.failure ?? null)}
         onDuplicate={() => { duplicate.mutate({ name: null, sourceId: id }) }}
         onRename={(name) => { save.mutate({ change: "rename", id, name }) }}
         onDelete={() => { remove.mutate({ id }) }}

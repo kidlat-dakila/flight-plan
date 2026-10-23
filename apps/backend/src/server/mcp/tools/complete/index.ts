@@ -2,6 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { completeArtifact } from "@/procedures/complete-artifact"
 import { completeArtifactInputShape } from "@/procedures/complete-artifact/utils/schemas"
 import type { ProcedureContext } from "@/procedures/context"
+import { recordingFailures } from "@/server/mcp/tool-failures"
 import { errorResult, jsonResult } from "@/server/mcp/tool-result"
 
 const DESCRIPTION = [
@@ -16,7 +17,7 @@ export const registerCompleteTool = (mcpServer: McpServer, context: ProcedureCon
   mcpServer.registerTool(
     "complete",
     { description: DESCRIPTION, inputSchema: completeArtifactInputShape },
-    async (input) => {
+    recordingFailures(context.errorLog, "complete", async (input) => {
       const completion = await completeArtifact(input, context)
       if (completion.kind === "rejected") return errorResult(completion.message)
       return completion.kind === "finished"
@@ -28,6 +29,6 @@ export const registerCompleteTool = (mcpServer: McpServer, context: ProcedureCon
             remaining: completion.remaining,
             next: NEXT_STEP,
           })
-    },
+    }),
   )
 }

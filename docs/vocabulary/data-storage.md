@@ -2,7 +2,7 @@
 
 ## Where data is saved
 
-Flight Plan keeps its data in one directory on the user's machine: `~/.flightplan/` by default, or the directory named by the `FLIGHT_PLAN_DATA_DIR` environment variable. Nothing is stored inside the reviewed repository, and nothing is sent anywhere else unless the user publishes a Flight Plan.
+Flight Plan keeps its data in one directory on the user's machine: `~/.flightplan/` by default, or the directory named by the `FLIGHT_PLAN_DATA_DIR` environment variable. Nothing is stored inside the reviewed repository, and nothing is sent anywhere else unless the user publishes a Flight Plan or posts an issue an agent drafted while troubleshooting.
 
 One data directory serves every repository the user reviews. Each repository has its own folder, and the configurations are shared by all of them.
 
@@ -36,6 +36,8 @@ One data directory serves every repository the user reviews. Each repository has
 │   ├── .claude-plugin/
 │   │   └── marketplace.json
 │   └── flightplan/
+├── logs/
+│   └── <log id>.json
 └── server.json
 ```
 
@@ -51,8 +53,9 @@ One data directory serves every repository the user reviews. Each repository has
 | Review target memory | `<repository>/targets.json` | When Flight Plan first listed the repository (`baselineAt`), the ids of the new review targets the user dismissed (`dismissedTargetIds`), and the review targets the user added to the repository's line by hand (`addedTargets`: a branch by its name, a pull request by its number and its author's login). It is created the first time the repository is listed |
 | Saved configurations | `configurations/<configuration>/` | One folder per configuration the user saved, named by its id: each custom configuration (`custom-terse`), and each preset the user changed (`standard`). `configuration.json` holds its name, the preset it is based on and the kinds of context code block it requires; one written with section switches still reads, and they are dropped. Each instruction it overrides is a Markdown file named by its instruction key, as in a preset's folder (`context.md`, `walkthrough.files.waypoints.findings.kind.bug.md`). An instruction it does not override has no file and comes from its preset. Deleting the configuration removes its folder, and resetting a field removes its files |
 | Settings | `configurations/settings.json` | The user's settings. Its `defaultConfiguration` field holds the id of the configuration that applies to new reviews (a preset's name, such as `standard`, or a custom configuration's name), or `null` before one is chosen. Its `reviewPreferences` field holds the [review preferences](review-preferences.md), or `null` before the user saves them. Its `setup` field holds what the setup page saved: the agents with their install folders, models and efforts, the forges, and the repositories with their tracked authors and, for a repository whose git config has no email, the author the user chose as themselves |
-| Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review and live skills and an `.mcp.json` that points at the running server. Flight Plan writes it again each time the agents are saved and when the published `flightplan` command starts with skills newer than the ones installed, and Claude loads `flightplan` from this folder |
+| Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review, live and troubleshoot skills and an `.mcp.json` that points at the running server. Flight Plan writes it again each time the agents are saved and when the published `flightplan` command starts with skills newer than the ones installed, and Claude loads `flightplan` from this folder |
 | Install stamps | `agent-installs/<agent>.json` | For each agent Flight Plan installed, the folder it installed into and a fingerprint of the plugin's files and the server's address at the time. The published `flightplan` command installs an agent again when it starts and the folder or the fingerprint differs, so the agent's skills and address stay current. A development server neither reads nor writes it |
+| Error logs | `logs/` | One JSON file per error Flight Plan logged and per troubleshoot request the user made, named by its log id, `<UTC date>-<UTC time>-<6 hex characters>` (`20261023-142530-a1b2c3`). An error holds where it happened (`source`), its message, its stack, the Flight Plan version and the operating system; a request holds what the user wrote, the page they asked from, the error that page showed, the log id of that error and of the latest errors, and the agent. Tokens, keys, passwords, credentials in addresses, emails, the user name and the home folder are taken out before a file is written. The same error from the same source is written once in 10 minutes. When Flight Plan starts it removes the files older than 30 days and all but the newest 500 (see [troubleshooting](troubleshooting.md)) |
 | Saved port | `server.json` | The port the `flightplan` command last listened on with every saved agent pointing at it. The next run tries this port first, so the address in the agents' files stays true. When the server has to move to another port, the new address makes every install out of date, so it installs the saved agents again and writes the new port here. A development server neither reads nor writes it |
 
 Forge credentials are never stored in this directory. They go in the operating system keychain (see [forge](forge.md#credentials)).

@@ -6,6 +6,7 @@ import { createPortal } from "react-dom"
 import { useAuthorsChoice } from "@/authors-choice"
 import { BandSlotContext } from "@/band-slot"
 import { useRepositoryFinder } from "@/repository-finder"
+import { useFailureTroubleshooting, usePageErrorTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import type { AppRouter } from "@flightplan/backend/router"
 import AddRepositoryDialog from "@flightplan/ui/AddRepositoryDialog"
@@ -13,6 +14,7 @@ import BandLine from "@flightplan/ui/BandLine"
 import Button from "@flightplan/ui/blocks/button"
 import { toRepositoryRows } from "@flightplan/ui/lib/repository-rows"
 import { cn } from "@flightplan/ui/lib/utils"
+import { TROUBLESHOOT_LABEL } from "@flightplan/ui/ProblemAlert"
 import type { ReviewConfigurationChoice } from "@flightplan/ui/ReviewConfigurationForm"
 import AgentsStep from "./-components/AgentsStep"
 import ConfigurationStep from "./-components/ConfigurationStep"
@@ -20,6 +22,7 @@ import ForgesStep from "./-components/ForgesStep"
 import RepositoriesStep, { type AuthorRole, type SetupRepository } from "./-components/RepositoriesStep"
 import SetupRoute from "./-components/SetupRoute"
 import SetupSkeleton from "./-components/SetupSkeleton"
+import type { StepProblem } from "./-components/StepActions"
 
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const SETUP_LINE_CLASSES = "[--line:var(--primary)]"
@@ -44,6 +47,7 @@ interface RepositoriesSectionProps {
   readonly continueHint: string | null
   readonly backStep: string | null
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly isPending: boolean
   readonly onChanged: () => Promise<void>
   readonly onContinue: () => void
@@ -55,11 +59,13 @@ const RepositoriesSection = ({
   continueHint,
   backStep,
   errorMessage,
+  onTroubleshoot,
   isPending,
   onChanged,
   onContinue,
 }: RepositoriesSectionProps) => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const [isAddOpen, setIsAddOpen] = useState(false)
   const [authorQuery, setAuthorQuery] = useState<AuthorQuery | null>(null)
   const finder = useRepositoryFinder(isAddOpen)
@@ -102,6 +108,8 @@ const RepositoriesSection = ({
     setIsAddOpen(false)
   }
 
+  const repositoryFailure = followRepository.error ?? removeRepository.error
+  const authorFailure = authorSuggestions.error ?? setAuthorTracking.error
   const listMessage = recentRepositories.isPending
     ? LOOKING_FOR_REPOSITORIES_MESSAGE
     : (recentRepositories.error?.message ?? recentRepositories.data?.message ?? null)
@@ -111,7 +119,8 @@ const RepositoriesSection = ({
       <RepositoriesStep
         rows={toRepositoryRows(recentRepositories.data?.repositories ?? [], repositories)}
         listMessage={listMessage}
-        repositoryErrorMessage={followRepository.error?.message ?? removeRepository.error?.message ?? null}
+        repositoryErrorMessage={repositoryFailure?.message ?? null}
+        onRepositoryTroubleshoot={troubleshootFailure(repositoryFailure)}
         isChangingRepositories={followRepository.isPending || removeRepository.isPending}
         authorSearch={{
           repositoryName: authorQuery?.repositoryName ?? null,
@@ -119,12 +128,14 @@ const RepositoriesSection = ({
           query: authorQuery?.query ?? "",
           options: authorSuggestions.data?.options ?? [],
           message: authorSuggestions.data?.message ?? (authorSuggestions.isPending ? SEARCHING_MESSAGE : null),
-          errorMessage: authorSuggestions.error?.message ?? setAuthorTracking.error?.message ?? null,
+          errorMessage: authorFailure?.message ?? null,
+          onTroubleshoot: troubleshootFailure(authorFailure),
         }}
         isReadyToContinue={isReadyToContinue}
         continueHint={continueHint}
         backStep={backStep}
         errorMessage={errorMessage}
+        onTroubleshoot={onTroubleshoot}
         isPending={isPending}
         onOpenAddRepository={() => { setIsAddOpen(true) }}
         onFollow={(path) => {
@@ -149,6 +160,7 @@ const RepositoriesSection = ({
         authors={additionAuthors.authors}
         isAdding={addRepository.isPending}
         errorMessage={addRepository.error?.message ?? null}
+        onTroubleshoot={troubleshootFailure(addRepository.error)}
         onQueryChange={finder.onQueryChange}
         onChooseFolder={(path) => {
           addRepository.reset()
@@ -176,12 +188,13 @@ const RepositoriesSection = ({
 interface AgentsSectionProps {
   readonly form: Omit<
     React.ComponentProps<typeof AgentsStep>,
-    "folderBrowser" | "folderBrowserErrorMessage" | "onBrowseFolder" | "onBrowseEnd"
+    "folderBrowser" | "folderBrowserErrorMessage" | "onFolderBrowserTroubleshoot" | "onBrowseFolder" | "onBrowseEnd"
   >
 }
 
 const AgentsSection = ({ form }: AgentsSectionProps) => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const [browsedPath, setBrowsedPath] = useState<string | null>(null)
   const folderBrowser = useQuery({
     ...trpc.setup.browseFolders.queryOptions({ path: browsedPath ?? "", purpose: "install-folder" }),
@@ -193,6 +206,7 @@ const AgentsSection = ({ form }: AgentsSectionProps) => {
       {...form}
       folderBrowser={browsedPath === null ? null : (folderBrowser.data ?? null)}
       folderBrowserErrorMessage={folderBrowser.error?.message ?? null}
+      onFolderBrowserTroubleshoot={troubleshootFailure(folderBrowser.error)}
       onBrowseFolder={setBrowsedPath}
       onBrowseEnd={() => { setBrowsedPath(null) }}
     />
@@ -201,6 +215,7 @@ const AgentsSection = ({ form }: AgentsSectionProps) => {
 
 const SetupPage = () => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const queryClient = useQueryClient()
   const navigate = Route.useNavigate()
   const bandSlot = use(BandSlotContext)
@@ -245,11 +260,15 @@ const SetupPage = () => {
   const preferencesRejection = savePreferences.data?.kind === "rejected" ? savePreferences.data : null
   const preferencesProblem = savePreferences.error === null
     ? preferencesRejection
-    : { message: savePreferences.error.message, field: null }
+    : { message: savePreferences.error.message, field: null, onTroubleshoot: troubleshootFailure(savePreferences.error) }
   const rejection = saveStep.data?.kind === "rejected" ? saveStep.data : null
-  const stepProblem = saveStep.error === null ? rejection : { message: saveStep.error.message, field: null }
+  const stepProblem = saveStep.error === null
+    ? rejection
+    : { message: saveStep.error.message, field: null, onTroubleshoot: troubleshootFailure(saveStep.error) }
   const saveProblem = preferencesProblem ?? stepProblem
-  const problem = completeSetup.error === null ? saveProblem : { message: completeSetup.error.message, field: null }
+  const problem: StepProblem | null = completeSetup.error === null
+    ? saveProblem
+    : { message: completeSetup.error.message, field: null, onTroubleshoot: troubleshootFailure(completeSetup.error) }
   const { form } = page
 
   return (
@@ -331,6 +350,7 @@ const SetupPage = () => {
                   continueHint={form.continueHint}
                   backStep={page.backStep}
                   errorMessage={problem?.message ?? null}
+                  onTroubleshoot={problem?.onTroubleshoot ?? null}
                   isPending={saveStep.isPending}
                   onChanged={refreshSetup}
                   onContinue={() => { saveStep.mutate({ step: "repositories" }) }}
@@ -345,11 +365,15 @@ const SetupPage = () => {
 
 const SetupError = ({ error }: ErrorComponentProps) => {
   const router = useRouter()
+  const troubleshoot = usePageErrorTroubleshooting(error)
   return (
     <section role="alert" className="max-w-prose">
       <h1 className={PAGE_HEADING_CLASSES}>Could not load the setup</h1>
       <p className="mt-2 text-muted-foreground">{error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE}</p>
-      <Button className="mt-4" onClick={() => { void router.invalidate() }}>Try again</Button>
+      <div className="mt-4 flex items-center gap-4">
+        <Button onClick={() => { void router.invalidate() }}>Try again</Button>
+        <Button variant="outline" onClick={troubleshoot}>{TROUBLESHOOT_LABEL}</Button>
+      </div>
     </section>
   )
 }

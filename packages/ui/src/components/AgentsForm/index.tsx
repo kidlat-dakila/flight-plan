@@ -47,6 +47,7 @@ interface AgentsFormProps {
   readonly children: ReactNode
   readonly folderBrowser: FolderBrowser | null
   readonly folderBrowserErrorMessage: string | null
+  readonly onFolderBrowserTroubleshoot?: (() => void) | null
   readonly onBrowseFolder: (path: string) => void
   readonly onBrowseEnd: () => void
   readonly onSubmit: (choice: AgentsChoice) => void
@@ -238,6 +239,7 @@ const AgentsForm = ({
   children,
   folderBrowser,
   folderBrowserErrorMessage,
+  onFolderBrowserTroubleshoot = null,
   onBrowseFolder,
   onBrowseEnd,
   onSubmit,
@@ -336,6 +338,7 @@ const AgentsForm = ({
         description={BROWSER_DESCRIPTION}
         browser={folderBrowser}
         errorMessage={folderBrowserErrorMessage}
+        onTroubleshoot={onFolderBrowserTroubleshoot}
         onOpenFolder={onBrowseFolder}
         onChooseRepository={ignoreRepository}
         onChooseFolder={handleFolderChosen}

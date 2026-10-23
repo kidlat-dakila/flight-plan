@@ -2,6 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import type { ProcedureContext } from "@/procedures/context"
 import { recordPublication } from "@/procedures/record-publication"
 import { recordPublicationInputShape } from "@/procedures/record-publication/utils/schemas"
+import { recordingFailures } from "@/server/mcp/tool-failures"
 import { errorResult, textResult } from "@/server/mcp/tool-result"
 
 const DESCRIPTION = [
@@ -14,9 +15,9 @@ export const registerRecordPublicationTool = (mcpServer: McpServer, context: Pro
   mcpServer.registerTool(
     "record-publication",
     { description: DESCRIPTION, inputSchema: recordPublicationInputShape },
-    async (input) => {
+    recordingFailures(context.errorLog, "record-publication", async (input) => {
       const recording = await recordPublication(input, context)
       return recording.kind === "recorded" ? textResult(recording.note) : errorResult(recording.message)
-    },
+    }),
   )
 }

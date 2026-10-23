@@ -3,6 +3,7 @@ import { useState } from "react"
 import Button from "@flightplan/ui/blocks/button"
 import Input from "@flightplan/ui/blocks/input"
 import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
+import ProblemAlert from "@flightplan/ui/ProblemAlert"
 
 interface ConfigurationHeaderProps {
   readonly name: string
@@ -13,6 +14,7 @@ interface ConfigurationHeaderProps {
   readonly duplicateLabel: string
   readonly isBusy: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onDuplicate: () => void
   readonly onRename: (name: string) => void
   readonly onDelete: () => void
@@ -98,7 +100,7 @@ const ConfigurationHeader = (props: ConfigurationHeaderProps) => {
               </div>
             )}
       </div>
-      {props.errorMessage === null ? null : <p role="alert" className="pt-3 text-sm text-destructive">{props.errorMessage}</p>}
+      {props.errorMessage === null ? null : <ProblemAlert message={props.errorMessage} onTroubleshoot={props.onTroubleshoot} className="pt-3 text-sm text-destructive" />}
       {props.notice === null
         ? null
         : (

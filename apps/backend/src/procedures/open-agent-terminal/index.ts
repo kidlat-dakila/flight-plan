@@ -11,6 +11,8 @@ import type { AgentTerminalOpening, OpenAgentTerminalInput } from "./utils/schem
 const NO_TERMINAL_MESSAGE = "Flight Plan can open a terminal on macOS only. Copy the command and run it yourself."
 const NO_LIVE_AGENT_MESSAGE = "Flight Plan can start only Claude in a terminal. Copy the command and run it yourself."
 
+const TERMINAL_SOURCE = "Agent terminal"
+
 const rejected = (message: string): AgentTerminalOpening => ({ kind: "rejected", message })
 
 const failedMessageOf = (reason: string): string => `Flight Plan could not open Terminal. ${reason}`
@@ -36,7 +38,10 @@ export const openAgentTerminal = async (input: OpenAgentTerminalInput, context: 
     effort: writer.effort,
     serverUrl: context.conversationEnvironment.serverUrl,
   }))
-  if (opening.kind === "failed") return rejected(failedMessageOf(opening.reason))
+  if (opening.kind === "failed") {
+    await context.errorLog.record({ source: TERMINAL_SOURCE, message: opening.reason, stack: null }).saving
+    return rejected(failedMessageOf(opening.reason))
+  }
   if (opening.window !== null) context.conversationEnvironment.agentTerminals.remember(key, opening.window)
   return { kind: "opened", message: `${AGENT_LABELS[install.agent]} is starting in Terminal.` }
 }

@@ -234,7 +234,9 @@ describe("the settings pages", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Save" }))
 
-    expect(await screen.findByRole("alert")).toHaveProperty("textContent", "The saved settings cannot be read.")
+    const alert = await screen.findByRole("alert")
+    expect(within(alert).getByText("The saved settings cannot be read.")).toBeTruthy()
+    expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
   })
 
   it("says what could not be loaded", async () => {

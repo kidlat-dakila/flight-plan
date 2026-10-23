@@ -2,6 +2,7 @@ import { createConversationContext, KEY } from "@/procedures/get-conversation/ut
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { openAgentTerminal } from "@/procedures/open-agent-terminal"
 import type { TerminalOpener, TerminalOpening } from "@/procedures/open-agent-terminal/utils/terminal-opener"
+import { createTestErrorLog } from "@/procedures/record-error/utils/__tests__/error-log-fixture"
 
 const TERMINAL_WINDOW = { windowId: 4120, tty: "/dev/ttys007" }
 
@@ -23,13 +24,15 @@ describe("openAgentTerminal", () => {
     expect(environment.agentTerminals.windowOf(KEY)).toStrictEqual(TERMINAL_WINDOW)
   })
 
-  it("says why Terminal could not be opened", async () => {
+  it("says why Terminal could not be opened, and logs it", async () => {
     const { context } = createConversationContext()
+    const { errorLog, storage } = createTestErrorLog()
 
-    await expect(openAgentTerminal(KEY, { ...context, openTerminal: openerOf({ kind: "failed", reason: "Not allowed." }) })).resolves.toStrictEqual({
+    await expect(openAgentTerminal(KEY, { ...context, errorLog, openTerminal: openerOf({ kind: "failed", reason: "Not allowed." }) })).resolves.toStrictEqual({
       kind: "rejected",
       message: "Flight Plan could not open Terminal. Not allowed.",
     })
+    await expect(storage.read("20261023-142530-000001")).resolves.toMatchObject({ source: "Agent terminal", message: "Not allowed." })
   })
 
   it("refuses where no terminal can be opened, with no live agent, or for a repository Flight Plan does not follow", async () => {

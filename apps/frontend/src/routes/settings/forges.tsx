@@ -37,6 +37,7 @@ const ForgesSettingsPage = () => {
         <SettingsActions
           isPending={saving.isPending}
           errorMessage={saving.errorMessage}
+          onTroubleshoot={saving.onTroubleshoot}
           savedMessage={saving.savedMessage}
         />
       </ForgesForm>

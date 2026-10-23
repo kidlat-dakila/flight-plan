@@ -3,6 +3,7 @@ import { useWaypointEditing, type WaypointText } from "@/routes/pr-reviews/$repo
 import Button from "@flightplan/ui/blocks/button"
 import Input from "@flightplan/ui/blocks/input"
 import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
+import ProblemAlert from "@flightplan/ui/ProblemAlert"
 import TextEditor, { type CodeLinkRequest } from "@flightplan/ui/TextEditor"
 
 interface ReviewKey {
@@ -73,7 +74,7 @@ const WaypointEditor = ({ reviewKey, segmentId, waypointId, legend, text, render
           onChange={setCoreChangeReason}
         />
       </div>
-      {editing.errorMessage === null ? null : <p role="alert" className="text-sm text-destructive">{editing.errorMessage}</p>}
+      {editing.errorMessage === null ? null : <ProblemAlert message={editing.errorMessage} onTroubleshoot={editing.onTroubleshoot} className="text-sm text-destructive" />}
       <div className="flex justify-end gap-2">
         <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
         <Button type="submit" disabled={editing.isSaving}>{editing.isSaving ? "Saving…" : "Save"}</Button>

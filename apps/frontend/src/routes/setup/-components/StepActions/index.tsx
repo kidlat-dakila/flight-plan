@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router"
 import Button, { buttonVariants } from "@flightplan/ui/blocks/button"
+import ProblemAlert from "@flightplan/ui/ProblemAlert"
 
 export interface StepProblem {
   readonly message: string
   readonly field: { readonly owner: string, readonly name: string } | null
+  readonly onTroubleshoot?: (() => void) | null
 }
 
 interface StepActionsProps {
@@ -14,6 +16,7 @@ interface StepActionsProps {
   readonly isReady?: boolean
   readonly hint?: string | null
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly onSkip?: (() => void) | null
 }
 
@@ -28,10 +31,11 @@ const StepActions = ({
   isReady = true,
   hint = null,
   errorMessage,
+  onTroubleshoot = null,
   onSkip = null,
 }: StepActionsProps) => (
   <footer className="mt-6 border-t border-border pt-4">
-    {errorMessage === null ? null : <p role="alert" className="pb-3 text-sm text-destructive">{errorMessage}</p>}
+    {errorMessage === null ? null : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} className="pb-3 text-sm text-destructive" />}
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
       {backStep === null
         ? null

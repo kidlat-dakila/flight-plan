@@ -28,6 +28,7 @@ const BlastImpactEditor = ({ reviewKey, path, assessment, form, renderCodeLinkDi
         options={form.choices}
         value={impactType}
         errorMessage={hasReason ? null : editing.errorMessage}
+        onTroubleshoot={hasReason ? null : editing.onTroubleshoot}
         onChange={(value) => {
           const chosen = form.choices.find((choice) => choice.value === value)
           if (chosen !== undefined) setImpactType(chosen.value)
@@ -38,6 +39,7 @@ const BlastImpactEditor = ({ reviewKey, path, assessment, form, renderCodeLinkDi
           label={form.impactReasonLabel}
           value={assessment.impactReason}
           errorMessage={hasReason ? editing.errorMessage : null}
+          onTroubleshoot={hasReason ? editing.onTroubleshoot : null}
           renderCodeLinkDialog={renderCodeLinkDialog}
           onChange={setImpactReason}
         />

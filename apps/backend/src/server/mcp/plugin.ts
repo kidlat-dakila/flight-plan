@@ -12,6 +12,7 @@ import { registerReadTool } from "./tools/read"
 import { registerRecordImportTool } from "./tools/record-import"
 import { registerRecordPublicationTool } from "./tools/record-publication"
 import { registerSendMessageTool } from "./tools/send-message"
+import { registerTroubleshootTool } from "./tools/troubleshoot"
 import { registerUpdateNodesTool } from "./tools/update-nodes"
 
 export const MCP_PATH = "/mcp"
@@ -37,6 +38,7 @@ const createMcpServer = (context: ProcedureContext): McpServer => {
   registerRecordPublicationTool(mcpServer, context)
   registerRecordImportTool(mcpServer, context)
   registerPingTool(mcpServer, context)
+  registerTroubleshootTool(mcpServer, context)
   return mcpServer
 }
 

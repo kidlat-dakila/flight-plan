@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useDeferredValue, useState } from "react"
 import { useAuthorsChoice } from "@/authors-choice"
 import { useRepositoryFinder } from "@/repository-finder"
+import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import AddRepositoryDialog from "@flightplan/ui/AddRepositoryDialog"
 import { toRepositoryRows } from "@flightplan/ui/lib/repository-rows"
@@ -56,6 +57,7 @@ const FollowedFooter = ({ repository }: { readonly repository: SettingsRepositor
 
 const RepositoriesSettingsPage = () => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const queryClient = useQueryClient()
   const { data: page } = useSuspenseQuery(trpc.settings.get.queryOptions(SECTION))
   const [isAddOpen, setIsAddOpen] = useState(false)
@@ -114,6 +116,7 @@ const RepositoriesSettingsPage = () => {
   }
   if (page.section !== SECTION.section) return null
 
+  const repositoryFailure = followRepository.error ?? removeRepository.error ?? configureRepository.error
   const listMessage = recentRepositories.isPending
     ? LOOKING_FOR_REPOSITORIES_MESSAGE
     : (recentRepositories.error?.message ?? recentRepositories.data?.message ?? null)
@@ -127,9 +130,8 @@ const RepositoriesSettingsPage = () => {
       <RepositoryList
         rows={toRepositoryRows(recentRepositories.data?.repositories ?? [], repositories)}
         listMessage={listMessage}
-        repositoryErrorMessage={
-          followRepository.error?.message ?? removeRepository.error?.message ?? configureRepository.error?.message ?? null
-        }
+        repositoryErrorMessage={repositoryFailure?.message ?? null}
+        onRepositoryTroubleshoot={troubleshootFailure(repositoryFailure)}
         isChangingRepositories={followRepository.isPending || removeRepository.isPending}
         authorSearch={{
           repositoryName: authorQuery?.repositoryName ?? null,
@@ -138,6 +140,7 @@ const RepositoriesSettingsPage = () => {
           options: authorSuggestions.data?.options ?? [],
           message: authorSuggestions.data?.message ?? (authorSuggestions.isPending ? SEARCHING_MESSAGE : null),
           errorMessage: authorSuggestions.error?.message ?? null,
+          onTroubleshoot: troubleshootFailure(authorSuggestions.error),
         }}
         followedFooter={(repository) => <FollowedFooter repository={repository} />}
         onOpenAddRepository={() => { setIsAddOpen(true) }}
@@ -163,6 +166,7 @@ const RepositoriesSettingsPage = () => {
         authors={additionAuthors.authors}
         isAdding={addRepository.isPending}
         errorMessage={addRepository.error?.message ?? null}
+        onTroubleshoot={troubleshootFailure(addRepository.error)}
         onQueryChange={finder.onQueryChange}
         onChooseFolder={(path) => {
           addRepository.reset()

@@ -40,7 +40,7 @@ The live command works only in Claude for now. With Codex or Cursor, Flight Plan
 
 ## What gets installed
 
-- **Claude:** a plugin named `flightplan`, from a plugin marketplace Flight Plan writes to `~/.flightplan/agent-plugin/`. The plugin holds the review skill, the live skill and the MCP server.
+- **Claude:** a plugin named `flightplan`, from a plugin marketplace Flight Plan writes to `~/.flightplan/agent-plugin/`. The plugin holds the review skill, the live skill, the [troubleshoot](/docs/troubleshooting/) skill and the MCP server.
 - **Codex:** the skill in `skills/flightplan-review/`, and a `flightplan` entry under `mcp_servers` in `config.toml`.
 - **Cursor:** the skill in `skills/flightplan-review/`, and a `flightplan` entry under `mcpServers` in `mcp.json`.
 

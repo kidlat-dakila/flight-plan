@@ -5,6 +5,7 @@ import Input from "@flightplan/ui/blocks/input"
 import FilePicker from "@flightplan/ui/FilePicker"
 import IconButton from "@flightplan/ui/IconButton"
 import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
+import ProblemAlert from "@flightplan/ui/ProblemAlert"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -24,6 +25,7 @@ interface SegmentEditorProps {
   readonly isSaving: boolean
   readonly isDeleting: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onSave: (content: SegmentContent) => void
   readonly onDelete: (() => void) | null
   readonly onClose: () => void
@@ -37,7 +39,19 @@ const ADD_FILE_PLACEHOLDER = "Search the changed files"
 const CLOSE_LABEL = "Close"
 const DELETE_LABEL = "Delete"
 
-const SegmentEditor = ({ reviewKey, legend, label, paths, isSaving, isDeleting, errorMessage, onSave, onDelete, onClose }: SegmentEditorProps) => {
+const SegmentEditor = ({
+  reviewKey,
+  legend,
+  label,
+  paths,
+  isSaving,
+  isDeleting,
+  errorMessage,
+  onTroubleshoot,
+  onSave,
+  onDelete,
+  onClose,
+}: SegmentEditorProps) => {
   const labelId = useId()
   const filesId = useId()
   const fileSearch = useFileSearch(reviewKey, "changed")
@@ -87,10 +101,11 @@ const SegmentEditor = ({ reviewKey, legend, label, paths, isSaving, isDeleting, 
         files={fileSearch.files}
         message={fileSearch.message}
         errorMessage={fileSearch.errorMessage}
+        onTroubleshoot={fileSearch.onTroubleshoot}
         onQueryChange={fileSearch.onQueryChange}
         onSelect={handleAddFile}
       />
-      {errorMessage === null ? null : <p role="alert" className="text-sm text-destructive">{errorMessage}</p>}
+      {errorMessage === null ? null : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} className="text-sm text-destructive" />}
       <div className="flex justify-end gap-2">
         {onDelete === null
           ? null

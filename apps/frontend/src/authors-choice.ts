@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useDeferredValue, useState } from "react"
+import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import type { AuthorRole, AuthorsChoice, ChosenAuthor } from "@flightplan/ui/RepositoryAuthors"
 
@@ -47,6 +48,7 @@ const toChosenAuthor = ({ id, name, detail, avatarUrl, monogram }: ChosenAuthor)
 
 export const useAuthorsChoice = ({ isEnabled, folderPath, repositoryName, saved }: AuthorsChoiceOptions): AuthorsChoiceState => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const [trackedChange, setTrackedChange] = useState<readonly ChosenAuthor[] | null>(null)
   const [authorQuery, setAuthorQuery] = useState<AuthorQuery | null>(null)
   const deferredAuthorQuery = useDeferredValue(authorQuery)
@@ -89,6 +91,7 @@ export const useAuthorsChoice = ({ isEnabled, folderPath, repositoryName, saved 
         options: suggestions.data?.options ?? [],
         message: suggestions.data?.message ?? (suggestions.isPending ? SEARCHING_MESSAGE : null),
         errorMessage: suggestions.error?.message ?? null,
+        onTroubleshoot: troubleshootFailure(suggestions.error),
       },
     },
     selection: { trackedAuthorIds },

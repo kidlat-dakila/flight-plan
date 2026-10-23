@@ -9,6 +9,7 @@ import CodeViewEditor from "@flightplan/ui/CodeViewEditor"
 import IconButton from "@flightplan/ui/IconButton"
 import { submitHandlerOf } from "@flightplan/ui/lib/form-submit"
 import { rangeLabelOf, type LineRange } from "@flightplan/ui/lib/line-selection"
+import ProblemAlert from "@flightplan/ui/ProblemAlert"
 import SelectField from "@flightplan/ui/SelectField"
 import TextEditor, { type CodeLinkRequest } from "@flightplan/ui/TextEditor"
 
@@ -38,6 +39,7 @@ interface CardFieldsProps {
   readonly form: CardForm
   readonly isSaving: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly renderCodeLinkDialog: (request: CodeLinkRequest) => ReactNode
   readonly onSave: (content: CardContent) => void
   readonly onClose: () => void
@@ -59,7 +61,7 @@ const toDraft = (row: CardForm["rows"][number]): RowDraft => ({ ...row, key: row
 
 const isRowKind = (form: CardForm, value: string): value is RowKind => form.kindOptions.some((option) => option.value === value)
 
-const CardFields = ({ reviewKey, form, isSaving, errorMessage, renderCodeLinkDialog, onSave, onClose }: CardFieldsProps) => {
+const CardFields = ({ reviewKey, form, isSaving, errorMessage, onTroubleshoot, renderCodeLinkDialog, onSave, onClose }: CardFieldsProps) => {
   const labelId = useId()
   const rowsId = useId()
   const [label, setLabel] = useState(form.label)
@@ -152,7 +154,7 @@ const CardFields = ({ reviewKey, form, isSaving, errorMessage, renderCodeLinkDia
           onHighlightCode={handleAddRow}
         />
       </div>
-      {errorMessage === null ? <span /> : <p role="alert" className="text-sm text-destructive">{errorMessage}</p>}
+      {errorMessage === null ? <span /> : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} className="text-sm text-destructive" />}
       <DialogFooter>
         <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
         <Button type="submit" disabled={isSaving}>{isSaving ? "Saving…" : "Save"}</Button>
@@ -161,7 +163,11 @@ const CardFields = ({ reviewKey, form, isSaving, errorMessage, renderCodeLinkDia
   )
 }
 
-const ModifyCardDialog = ({ reviewKey, change: { segmentId, nodeId, isSaving, errorMessage, onSave, onClose }, renderCodeLinkDialog }: ModifyCardDialogProps) => {
+const ModifyCardDialog = ({
+  reviewKey,
+  change: { segmentId, nodeId, isSaving, errorMessage, onTroubleshoot, onSave, onClose },
+  renderCodeLinkDialog,
+}: ModifyCardDialogProps) => {
   const { form, statusMessage } = useCardForm({ ...reviewKey, segmentId, nodeId })
 
   return (
@@ -180,6 +186,7 @@ const ModifyCardDialog = ({ reviewKey, change: { segmentId, nodeId, isSaving, er
                 form={form}
                 isSaving={isSaving}
                 errorMessage={errorMessage}
+                onTroubleshoot={onTroubleshoot}
                 renderCodeLinkDialog={renderCodeLinkDialog}
                 onSave={onSave}
                 onClose={onClose}

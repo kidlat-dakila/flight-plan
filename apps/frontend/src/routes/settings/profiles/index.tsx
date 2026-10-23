@@ -4,8 +4,10 @@ import { useId } from "react"
 import SectionIntro from "@/routes/settings/-components/SectionIntro"
 import SettingsError from "@/routes/settings/-components/SettingsError"
 import SettingsSkeleton from "@/routes/settings/-components/SettingsSkeleton"
+import { shownProblemOf, useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import { buttonVariants } from "@flightplan/ui/blocks/button"
+import ProblemAlert from "@flightplan/ui/ProblemAlert"
 import ConfigurationGroup from "./-components/ConfigurationGroup"
 
 const DOCUMENT_TITLE = "Prompt configurations • Settings • Flight Plan"
@@ -14,6 +16,7 @@ const CREATE_LABEL = "New configuration"
 
 const ConfigurationsPage = () => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const { data: list } = useSuspenseQuery(trpc.configuration.list.queryOptions())
@@ -35,8 +38,8 @@ const ConfigurationsPage = () => {
     }),
   )
   const defaultGroupId = useId()
-  const duplicationError = duplicate.data?.kind === "rejected" ? duplicate.data.message : duplicate.error?.message ?? null
-  const defaultError = setDefault.data?.kind === "rejected" ? setDefault.data.message : setDefault.error?.message ?? null
+  const duplicationProblem = shownProblemOf(duplicate.data?.kind === "rejected" ? duplicate.data.message : null, duplicate.error)
+  const defaultProblem = shownProblemOf(setDefault.data?.kind === "rejected" ? setDefault.data.message : null, setDefault.error)
   const savedDefaultId = list.groups.flatMap((group) => group.rows).find((row) => row.isDefault)?.id ?? ""
   const pendingDefaultId = setDefault.isPending && setDefault.variables.section === "configuration"
     ? setDefault.variables.configurationId
@@ -53,8 +56,12 @@ const ConfigurationsPage = () => {
       <div className="pb-6">
         <Link to="/settings/profiles/create" className={buttonVariants()}>{CREATE_LABEL}</Link>
       </div>
-      {duplicationError === null ? null : <p role="alert" className="pb-4 text-sm text-destructive">{duplicationError}</p>}
-      {defaultError === null ? null : <p role="alert" className="pb-4 text-sm text-destructive">{defaultError}</p>}
+      {duplicationProblem === null
+        ? null
+        : <ProblemAlert message={duplicationProblem.message} onTroubleshoot={troubleshootFailure(duplicationProblem.failure)} className="pb-4 text-sm text-destructive" />}
+      {defaultProblem === null
+        ? null
+        : <ProblemAlert message={defaultProblem.message} onTroubleshoot={troubleshootFailure(defaultProblem.failure)} className="pb-4 text-sm text-destructive" />}
       {list.groups.map((group) => (
         <ConfigurationGroup
           key={group.title}

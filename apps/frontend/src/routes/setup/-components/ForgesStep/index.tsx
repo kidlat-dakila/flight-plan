@@ -29,6 +29,7 @@ const ForgesStep = ({ backStep, problem, isPending, onSkip, ...form }: ForgesSte
         pendingLabel="Saving…"
         isPending={isPending}
         errorMessage={problem !== null && problem.field === null ? problem.message : null}
+        onTroubleshoot={problem?.onTroubleshoot ?? null}
         onSkip={onSkip}
       />
     </ForgesForm>

@@ -37,6 +37,8 @@ import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list
 import { InMemoryAgentTerminalRegistry } from "@/procedures/open-agent-terminal/utils/agent-terminals"
 import type { TerminalCloser, TerminalOpener } from "@/procedures/open-agent-terminal/utils/terminal-opener"
 import { writeSamplePublishedPage, type PublishedPageWriter } from "@/procedures/publish-artifact/utils/published-page-writer"
+import { createErrorLog, createLogStamper, InMemoryLogStorage, type ErrorLog, type LogStorage, type MachineFacts } from "@/procedures/record-error/utils/error-log"
+import { recordingAdapterOpener } from "@/utils/adapter-failure-recorder"
 import { createAgentDetector } from "@/utils/agent-detector"
 import { createAgentInstaller, createInstallChecker } from "@/utils/agent-installer"
 import { createAgentModelLister } from "@/utils/agent-model-lister"
@@ -57,6 +59,7 @@ import { createGitIdentityReader } from "@/utils/git-identity-reader"
 import { createImportFileStore } from "@/utils/import-file-store"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
+import { createLogFileStorage } from "@/utils/log-file-storage"
 import { createLatestVersionReader, latestManifestUrlOf } from "@/utils/npm-registry-reader"
 import { createPublishedPageWriter } from "@/utils/published-page-writer"
 import { createPullRequestForge } from "@/utils/pull-request-forge"
@@ -93,6 +96,7 @@ export interface ProcedureContext {
   readonly closeTerminal: TerminalCloser | null
   readonly appUrl: string
   readonly now: () => Date
+  readonly errorLog: ErrorLog
   readonly dataNotice: string | null
   readonly fixtureCatalog?: FixtureCatalog
   readonly updateChecker?: UpdateChecker
@@ -100,6 +104,20 @@ export interface ProcedureContext {
 
 const MOCK_SERVER_URL = "http://localhost:3000"
 const MOCK_APP_URL = "http://localhost:4200"
+const MOCK_LOGS_PATH = "~/.flightplan/logs"
+const LOG_SUFFIX_LENGTH = 6
+
+const MOCK_MACHINE_FACTS: MachineFacts = { version: null, platform: "mock", identity: { homePath: "", userName: "" } }
+
+const newLogSuffix = (): string => randomUUID().slice(0, LOG_SUFFIX_LENGTH)
+
+const createStampedErrorLog = (storage: LogStorage, facts: MachineFacts): ErrorLog =>
+  createErrorLog({ storage, facts, stamp: createLogStamper(() => new Date(), newLogSuffix) })
+
+export const createMockErrorLog = (): ErrorLog => createStampedErrorLog(new InMemoryLogStorage(MOCK_LOGS_PATH), MOCK_MACHINE_FACTS)
+
+export const createLocalErrorLog = (dataPath: string, facts: MachineFacts): ErrorLog =>
+  createStampedErrorLog(createLogFileStorage(dataPath), facts)
 
 export const createConversationEnvironment = (
   overrides: Partial<ConversationEnvironment> = {},
@@ -146,6 +164,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   closeTerminal: null,
   appUrl: MOCK_APP_URL,
   now: () => new Date(),
+  errorLog: createMockErrorLog(),
   dataNotice: SAMPLE_DATA_NOTICE,
 })
 
@@ -188,6 +207,7 @@ export const createDemoProcedureContext = async (
     closeTerminal: null,
     appUrl: MOCK_APP_URL,
     now: () => new Date(),
+    errorLog: createMockErrorLog(),
     dataNotice: null,
   }
   demos.forEach((demo) => {
@@ -224,12 +244,12 @@ export const createLocalUpdateChecker = ({ dataPath, runningVersion, installPath
   readLatestVersion: createLatestVersionReader({ manifestUrl: latestManifestUrlOf(PACKAGE_NAME) }),
 })
 
-export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachine): ProcedureContext => {
+export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachine, errorLog: ErrorLog): ProcedureContext => {
   const mockContext = createMockProcedureContext(startedAt)
   const setupStore = new FileSetupStore(machine.dataPath)
   const repositoryAdapterDependencies = {
     readRemote,
-    openAdapter: assembleGitAdapter,
+    openAdapter: recordingAdapterOpener(assembleGitAdapter, errorLog),
     readCredential: createForgeCredentialReader(readFromKeychain),
     environment: machine.environment,
   }
@@ -238,6 +258,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
   const readGitIdentity = createGitIdentityReader({ runCommand, environment: machine.environment })
   return {
     ...mockContext,
+    errorLog,
     setupStore,
     configurationStore: new FileConfigurationStore(machine.dataPath),
     reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),

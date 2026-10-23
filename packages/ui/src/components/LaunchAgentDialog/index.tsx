@@ -9,6 +9,7 @@ import Dialog, {
   DialogTitle,
 } from "@/components/blocks/dialog"
 import IconButton from "@/components/IconButton"
+import ProblemAlert from "@/components/ProblemAlert"
 
 export interface LaunchAgentTerminalOption {
   readonly label: string
@@ -35,6 +36,7 @@ export interface LaunchAgentDialogProps {
   readonly content: LaunchAgentDialogContent
   readonly isOpening: boolean
   readonly problem: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly onOpenTerminal: () => void
   readonly onCopy: (text: string, copiedMessage: string) => void
   readonly onClose: () => void
@@ -44,6 +46,7 @@ interface TerminalOptionProps {
   readonly option: LaunchAgentTerminalOption
   readonly isOpening: boolean
   readonly problem: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onOpenTerminal: () => void
 }
 
@@ -56,14 +59,14 @@ const OPTION_CLASSES = "grid gap-2 border-t border-border pt-4"
 const OPTION_DESCRIPTION_CLASSES = "text-muted-foreground"
 const COPY_ACTION_ID = "copy-launch-agent-prompt"
 
-const TerminalOption = ({ option, isOpening, problem, onOpenTerminal }: TerminalOptionProps) => (
+const TerminalOption = ({ option, isOpening, problem, onTroubleshoot, onOpenTerminal }: TerminalOptionProps) => (
   <section aria-label={option.label} className={OPTION_CLASSES}>
     <Button type="button" className="justify-self-start" disabled={isOpening} aria-busy={isOpening} onClick={onOpenTerminal}>
       {isOpening ? <LoaderCircleIcon aria-hidden="true" className="motion-safe:animate-spin" /> : null}
       {option.label}
     </Button>
     <p className={OPTION_DESCRIPTION_CLASSES}>{option.description}</p>
-    {problem === null ? null : <p role="alert" className="text-destructive">{problem}</p>}
+    {problem === null ? null : <ProblemAlert message={problem} onTroubleshoot={onTroubleshoot} className="text-destructive" />}
   </section>
 )
 
@@ -88,7 +91,7 @@ const ManualOption = ({ option, onCopy }: ManualOptionProps) => {
   )
 }
 
-const LaunchAgentDialog = ({ content, isOpening, problem, onOpenTerminal, onCopy, onClose }: LaunchAgentDialogProps) => (
+const LaunchAgentDialog = ({ content, isOpening, problem, onTroubleshoot = null, onOpenTerminal, onCopy, onClose }: LaunchAgentDialogProps) => (
   <Dialog open onOpenChange={(isOpen) => { if (!isOpen) onClose() }}>
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
@@ -97,7 +100,15 @@ const LaunchAgentDialog = ({ content, isOpening, problem, onOpenTerminal, onCopy
       </DialogHeader>
       {content.terminal === null
         ? null
-        : <TerminalOption option={content.terminal} isOpening={isOpening} problem={problem} onOpenTerminal={onOpenTerminal} />}
+        : (
+            <TerminalOption
+              option={content.terminal}
+              isOpening={isOpening}
+              problem={problem}
+              onTroubleshoot={onTroubleshoot}
+              onOpenTerminal={onOpenTerminal}
+            />
+          )}
       <ManualOption option={content.manual} onCopy={onCopy} />
       <DialogFooter>
         <Button type="button" variant="ghost" onClick={onClose}>{content.closeLabel}</Button>

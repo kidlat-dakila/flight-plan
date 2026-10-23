@@ -1,4 +1,4 @@
-import { createConversationEnvironment, openSampleRepository, type ProcedureContext } from "@/procedures/context"
+import { createConversationEnvironment, createMockErrorLog, openSampleRepository, type ProcedureContext } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { skipBranchPull } from "@/procedures/get-review/utils/branch-puller"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
@@ -105,6 +105,7 @@ export const createSetupContext = (setup: Setup, repositories: readonly Reposito
   now: () => NOW,
   dataNotice: null,
   appUrl: "http://localhost:4200",
+  errorLog: createMockErrorLog(),
 })
 
 export const servedByForge = (context: ProcedureContext, forge: SetupForge): ProcedureContext => ({

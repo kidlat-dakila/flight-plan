@@ -4,6 +4,7 @@ import { requestNotificationPermission } from "@/notification-permission"
 import { useTRPC } from "@/trpc"
 import type { WriteUpAgent } from "@flightplan/ui/lib/write-up-agent"
 import type { WriteUpChoice, WriteUpPlan, WriteUpProblem, WriteUpSection } from "@flightplan/ui/WriteUpDialog"
+import type { ToastContent } from "./use-toast"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -11,7 +12,7 @@ interface ReviewKey {
 }
 
 interface WriteUpAnnouncer {
-  readonly onMessage: (message: string) => void
+  readonly onMessage: (content: ToastContent) => void
   readonly onCopy: (text: string, copiedMessage: string) => void
   readonly onAgentAsked: () => void
 }
@@ -66,7 +67,7 @@ export const useWriteUpDialog = (reviewKey: ReviewKey, hasArtifact: boolean, ann
         if (result.kind === "started" && result.prompt === null) announcer.onAgentAsked()
         await refresh()
       },
-      onError: (error) => { announcer.onMessage(error.message) },
+      onError: (error) => { announcer.onMessage(error) },
     }),
   )
 

@@ -2,6 +2,7 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 import { useSettingsSaving } from "@/settings-saving"
+import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import AgentInteraction from "@flightplan/ui/AgentInteraction"
 import AgentsForm from "@flightplan/ui/AgentsForm"
@@ -18,6 +19,7 @@ const AgentsSettingsPage = () => {
   const trpc = useTRPC()
   const { data: page } = useSuspenseQuery(trpc.settings.get.queryOptions(SECTION))
   const saving = useSettingsSaving()
+  const troubleshootFailure = useFailureTroubleshooting()
   const [browsedPath, setBrowsedPath] = useState<string | null>(null)
   const folderBrowser = useQuery({
     ...trpc.setup.browseFolders.queryOptions({ path: browsedPath ?? "", purpose: "install-folder" }),
@@ -37,6 +39,7 @@ const AgentsSettingsPage = () => {
         problem={saving.problem}
         folderBrowser={browsedPath === null ? null : (folderBrowser.data ?? null)}
         folderBrowserErrorMessage={folderBrowser.error?.message ?? null}
+        onFolderBrowserTroubleshoot={troubleshootFailure(folderBrowser.error)}
         onBrowseFolder={setBrowsedPath}
         onBrowseEnd={() => { setBrowsedPath(null) }}
         onSubmit={(choice) => { saving.save({ ...SECTION, ...choice }) }}
@@ -45,6 +48,7 @@ const AgentsSettingsPage = () => {
         <SettingsActions
           isPending={saving.isPending}
           errorMessage={saving.errorMessage}
+          onTroubleshoot={saving.onTroubleshoot}
           savedMessage={saving.savedMessage}
         />
       </AgentsForm>

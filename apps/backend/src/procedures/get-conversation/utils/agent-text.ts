@@ -83,6 +83,7 @@ export const MCP_INSTRUCTIONS = [
   "send-message sends the reviewer a message. ask-questions asks one question or a batch; each question either offers options (one or several picks, and the reviewer can always write their own answer) or asks for free text.",
   "record-publication records the address of the Claude artifact a Flight Plan was published to. Call it only after Flight Plan asked you to publish one and your Artifact tool did.",
   "record-import stores a Flight Plan you fetched from a Claude artifact. Call it only after Flight Plan asked you to fetch one and you copied the file where it said.",
+  "troubleshoot returns an error Flight Plan logged, or what the user asked it to troubleshoot, by the log id after /flightplan:troubleshoot. It takes no review target.",
   "Flight Plan shows the reviewer whether an agent is online for their review. Every call to these tools counts, and ping counts when you have nothing else to call. While you work on a review without calling Flight Plan, call ping at least every 5 seconds.",
   "Requests from the reviewer arrive on the review's listening stream: a curl command the tool results give you. It waits until there is something to do, prints it with the command to listen again, and exits.",
   "When the reviewer has been away from the review for a while, the listening stream sends a stop event instead. Then do not listen again: stop serving the review.",

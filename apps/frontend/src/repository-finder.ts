@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useDeferredValue, useState } from "react"
+import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import type { FolderBrowse, FolderSearch } from "@flightplan/ui/AddRepositoryDialog"
 
@@ -18,6 +19,7 @@ export interface RepositoryFinder {
 
 export const useRepositoryFinder = (isEnabled: boolean): RepositoryFinder => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const [query, setQuery] = useState("")
   const [isBrowsing, setIsBrowsing] = useState(false)
   const [browsedPath, setBrowsedPath] = useState<string | null>(null)
@@ -40,7 +42,12 @@ export const useRepositoryFinder = (isEnabled: boolean): RepositoryFinder => {
       options: suggestions.data?.options ?? [],
       message: suggestions.data?.message ?? (suggestions.isPending ? SEARCHING_MESSAGE : null),
     },
-    browse: { isOpen: isBrowsing, browser: folderBrowser.data ?? null, errorMessage: folderBrowser.error?.message ?? null },
+    browse: {
+      isOpen: isBrowsing,
+      browser: folderBrowser.data ?? null,
+      errorMessage: folderBrowser.error?.message ?? null,
+      onTroubleshoot: troubleshootFailure(folderBrowser.error),
+    },
     onQueryChange: setQuery,
     onChooseFolder: (path) => {
       setQuery(path)

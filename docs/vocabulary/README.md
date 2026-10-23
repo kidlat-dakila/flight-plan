@@ -17,3 +17,4 @@ The shared language of Flight Plan. When code, docs, issues or conversations use
 | [Prompt configurations](prompt-configurations.md) | How the agent writes: system instructions, preset configurations and custom configurations |
 | [Agent conversation](agent-conversation.md) | How an agent and the reviewer talk about a review target: messages, question batches, and the live agent that serves a review |
 | [Data storage](data-storage.md) | Where Flight Plan keeps its data, and the file format of a stored document |
+| [Troubleshooting](troubleshooting.md) | The error log, the troubleshoot request the user makes from the Troubleshoot dialog, and the troubleshoot skill that suggests a fix and drafts an issue with no user data |
