@@ -101,7 +101,7 @@ Zooming is not a control of the navigator. Zoom in and Zoom out are buttons at t
 
 ## Fitting the screen
 
-The navigator sits centred under the main column, between the section rail and the chat panel when the chat is open. It never leaves the window or slides under the chat panel. When centring would push it past an edge, it moves in from that edge, over the section rail if it has to.
+The navigator runs across the whole window, under the panels at both edges of the review page, which end above it. Its controls sit centred on the window. When centring would push them past an edge, they move in from that edge.
 
 When it is still too wide for the space, it gets more compact until it fits:
 

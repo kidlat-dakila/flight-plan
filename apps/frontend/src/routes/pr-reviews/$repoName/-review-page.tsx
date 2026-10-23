@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { Link, useNavigate, type ErrorComponentProps } from "@tanstack/react-router"
-import { lazy, Suspense, use, useState, type ReactNode } from "react"
+import { lazy, Suspense, use, useRef, useState, type ReactNode } from "react"
 import { createPortal } from "react-dom"
 import { BandSlotContext } from "@/band-slot"
 import { useColorTheme } from "@/color-theme"
@@ -8,17 +8,21 @@ import ServerError from "@/routes/-components/ServerError"
 import { SETTINGS_LINKS } from "@/settings-links"
 import type { Failure } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
+import ActivityBar, { ChatIcon, SectionsIcon } from "@flightplan/ui/ActivityBar"
 import BandLine from "@flightplan/ui/BandLine"
 import BlastBand from "@flightplan/ui/BlastBand"
 import Button from "@flightplan/ui/blocks/button"
 import ChatPanel from "@flightplan/ui/ChatPanel"
 import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
+import DockedPanel from "@flightplan/ui/DockedPanel"
+import { FileExplorerStrip } from "@flightplan/ui/FileExplorer"
 import LaunchAgentDialog from "@flightplan/ui/LaunchAgentDialog"
+import { PANEL_SHORTCUT_LABELS } from "@flightplan/ui/lib/review-panels"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WriteUpAgentContext, type WriteUpAgent } from "@flightplan/ui/lib/write-up-agent"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
 import OrderedSections from "@flightplan/ui/OrderedSections"
-import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
+import SubmitReviewMenu, { BandHint, CompleteButton, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
 import ReviewGuideTooltips from "@flightplan/ui/ReviewGuideTooltips"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
@@ -32,6 +36,8 @@ import CodeLinkDialog from "./-components/CodeLinkDialog"
 import CompletionDialog from "./-components/CompletionDialog"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
+import DockResizeHandle from "./-components/DockResizeHandle"
+import ReadingFileExplorer from "./-components/ReadingFileExplorer"
 import ReadingSectionRail from "./-components/ReadingSectionRail"
 import ReadingWalkthrough from "./-components/ReadingWalkthrough"
 import ReviewNotices from "./-components/ReviewNotices"
@@ -47,8 +53,10 @@ import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
 import { useLiveAgent } from "./-hooks/use-live-agent"
+import { usePanelWidths } from "./-hooks/use-panel-widths"
 import { useReadingPositionStore } from "./-hooks/use-reading-position"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
+import { useReviewPanels } from "./-hooks/use-review-panels"
 import { useReviewerActivity } from "./-hooks/use-reviewer-activity"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useTargetSwitching } from "./-hooks/use-target-switching"
@@ -57,7 +65,7 @@ import { useTraceEditing } from "./-hooks/use-trace-editing"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
 import { useWalkthroughNavigation } from "./-hooks/use-walkthrough-navigation"
 import { useWaypointAuthoring } from "./-hooks/use-waypoint-authoring"
-import { scrollToAnchor, useWaypointStepping, waypointAnchorIdsOf } from "./-hooks/use-waypoint-stepping"
+import { scrollToAnchor, scrollToSettledAnchor, useWaypointStepping, waypointAnchorIdsOf } from "./-hooks/use-waypoint-stepping"
 import { useWriteUpDialog } from "./-hooks/use-write-up-dialog"
 import { useWriteUpRequest } from "./-hooks/use-write-up-request"
 
@@ -81,10 +89,15 @@ const ARRANGE_FILES_DESCRIPTION = "Move a file up or down in the Code Walkthroug
 const NO_PATHS: readonly string[] = []
 const NO_SEGMENTS: readonly never[] = []
 const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
-const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--pinned-height:calc(var(--band-height)+var(--strip-height,0px))] [--section-scroll-margin:calc(var(--pinned-height)+1rem)] [--file-header-top:var(--pinned-height)] [--waypoint-scroll-margin:calc(var(--pinned-height)+3.5rem)] [--chat-width:26rem] [--navigator-inset-left:calc(1.5rem+13rem+2rem)]"
+const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--pinned-height:calc(var(--band-height)+var(--strip-height,0px))] [--section-scroll-margin:calc(var(--pinned-height)+1rem)] [--file-header-top:var(--pinned-height)] [--waypoint-scroll-margin:calc(var(--pinned-height)+3.5rem)] [--chat-width:26rem]"
 const DRAFTING_STRIP_HEIGHT = "[--strip-height:2.75rem]"
-const NAVIGATOR_INSET_RIGHT = "[--navigator-inset-right:1.5rem]"
-const NAVIGATOR_INSET_RIGHT_BESIDE_CHAT = "[--navigator-inset-right:calc(var(--chat-width)+1.5rem)] [--navigator-band-right:var(--chat-width)]"
+const PANEL_LAYOUT = "[--activity-width:3rem] [--navigator-inset-left:1.5rem] [--navigator-inset-right:1.5rem]"
+const PANEL_TRANSITION = "duration-200 ease-out"
+const PAGE_GUTTER = "1.5rem"
+const EXPLORER_RESIZE_LABEL = "Changed files width"
+const SIDE_RESIZE_LABEL = "Side panel width"
+const DOCKED_CLASSES = "fixed top-(--band-height) bottom-11 z-30 bg-background"
+const PANELS_LABEL = "Panels"
 
 export interface ReviewSearch {
   readonly filter?: readonly string[] | undefined
@@ -168,6 +181,10 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   })
   const discussion = useReviewDiscussion(reviewKey, showToast)
   const chat = useAgentChat(reviewKey, showToast)
+  const panels = useReviewPanels(chat)
+  const explorerDockRef = useRef<HTMLDivElement>(null)
+  const sideDockRef = useRef<HTMLDivElement>(null)
+  const panelWidths = usePanelWidths({ explorer: explorerDockRef, side: sideDockRef }, panels.isExplorerShown, panels.sidePanel)
   const targetSwitching = useTargetSwitching(reviewKey)
   const colorTheme = useColorTheme()
 
@@ -237,8 +254,9 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const handleOpenCodeLink = stepping.onOpenCodeLink
   const handleToggleWaypoint = stepping.onToggleWaypoint
   const railSections = [...(artifact?.rail.groups.flatMap((group) => group.sections) ?? []), ...(artifact?.rail.sections ?? [])]
+  const fileAnchorIdsBySection = new Map(artifact?.segments.map((segment) => [segment.walkthrough.anchorId, segment.walkthrough.files.map((file) => file.anchorId)] as const))
   const readingPosition = useReadingPositionStore(
-    railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId)]),
+    railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId), ...(fileAnchorIdsBySection.get(section.anchorId) ?? [])]),
     waypointAnchorIdsOf(artifact?.segments ?? NO_SEGMENTS),
   )
   const walkthroughLayout = useWalkthroughNavigation(artifact?.segments ?? NO_SEGMENTS, stepping, {
@@ -288,12 +306,18 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   return (
     <div
       className={cn(
-        "px-6 pb-24 transition-[margin] duration-200 ease-out",
-        chat.isOpen ? ["mr-(--chat-width)", NAVIGATOR_INSET_RIGHT_BESIDE_CHAT] : NAVIGATOR_INSET_RIGHT,
+        "pb-24",
+        page.kind === "missing" ? "px-6" : [PANEL_LAYOUT, !panelWidths.isResizing && ["transition-[padding]", PANEL_TRANSITION]],
         ACCENT_LINE_CLASS,
         LAYOUT_VARIABLES,
         progress === null ? null : DRAFTING_STRIP_HEIGHT,
       )}
+      style={page.kind === "missing"
+        ? undefined
+        : {
+            paddingLeft: `calc(${String(panelWidths.explorer.widthPx)}px + ${PAGE_GUTTER})`,
+            paddingRight: `calc(${String(panelWidths.side.widthPx)}px + var(--activity-width) + ${PAGE_GUTTER})`,
+          }}
     >
       <title>{page.shell.documentTitle}</title>
       {bandSlot === null
@@ -312,11 +336,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                   ? <SettingsMenu links={SETTINGS_LINKS} themeToggle={colorTheme} />
                   : (
                       <>
-                        <BandButton
-                          label={page.chatLabel}
-                          isPressed={chat.isOpen}
-                          onClick={chat.onToggle}
-                        />
                         {!isOwn || page.unassignedFiles === null
                           ? null
                           : <BandHint label={page.unassignedFiles.label} onClick={() => { setUnassignedFilesPrompt({ kind: "list" }) }} />}
@@ -390,205 +409,193 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                   onShowUnassignedFiles={() => { setUnassignedFilesPrompt({ kind: "list" }) }}
                   onCopyPrompt={copyText}
                 />
-                <div className="grid grid-cols-[13rem_minmax(0,1fr)] gap-x-8">
-                  <aside className="sticky top-[calc(var(--pinned-height)+0.5rem)] max-h-[calc(100dvh-var(--pinned-height)-1rem)] self-start overflow-y-auto pt-5 pb-4">
-                    <ReadingSectionRail
-                      label="Review sections"
-                      groups={page.rail.groups}
-                      sections={page.rail.sections}
-                      readingPosition={readingPosition}
-                      onEditGroup={isOwn ? handleEditRailGroup : null}
-                      onArrangeGroups={isOwn && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
-                    />
-                  </aside>
-                  <div className="min-w-0">
-                    {page.segments.map((segment) => (
-                      <section
-                        key={segment.id}
-                        id={segment.anchorId}
-                        aria-label={(isOwn ? segment.outline.heading : segment.heading) ?? undefined}
-                        className="scroll-mt-(--section-scroll-margin) not-first:border-t-4 not-first:border-foreground"
-                      >
-                        <SegmentHeader
+                <div className="min-w-0">
+                  {page.segments.map((segment) => (
+                    <section
+                      key={segment.id}
+                      id={segment.anchorId}
+                      aria-label={(isOwn ? segment.outline.heading : segment.heading) ?? undefined}
+                      className="scroll-mt-(--section-scroll-margin) not-first:border-t-4 not-first:border-foreground"
+                    >
+                      <SegmentHeader
+                        reviewKey={reviewKey}
+                        heading={segment.heading}
+                        isTitleDraft={segment.isTitleDraft}
+                        detailLabel={segment.detailLabel}
+                        outline={segment.outline}
+                        authoring={isOwn && segment.heading !== null ? segmentEditing.authoringOf(segment.id) : null}
+                      />
+                      <OrderedSections
+                        order={segment.sectionOrder}
+                        sections={{
+                          context: (
+                            <ContextBand
+                              {...segment.context}
+                              writeUpNotice={segment.writeUpNotices.context}
+                              codeLinks={page.codeLinks}
+                              editing={isOwn ? contextEditingOf(segment.id) : null}
+                              renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
+                              onOpenCodeLink={handleOpenCodeLink}
+                            />
+                          ),
+                          traceDiagram: (
+                            <TraceBand
+                              {...segment.traceDiagram}
+                              writeUpNotice={segment.writeUpNotices.traceDiagram}
+                              codeLinks={page.codeLinks}
+                              codeDefinitions={page.codeDefinitions}
+                              isReviewPending={setReviewed.isPending}
+                              authoring={isOwn ? traceEditing.authoringOf(segment.id) : null}
+                              cardMoving={page.canMoveCards ? traceEditing.cardMovingOf(segment.id) : null}
+                              onWriteUpNode={writeUp === null ? null : (nodeId) => { writeUp({ kind: "trace-node", segmentId: segment.id, nodeId }) }}
+                              tabEditing={{
+                                authoringOf: (tabId) => (isOwn ? traceEditing.authoringOf(tabId) : null),
+                                cardMovingOf: (tabId) => (page.canMoveCards ? traceEditing.cardMovingOf(tabId) : null),
+                                writeUpOf: (tabId) => (writeUp === null ? null : (nodeId) => { writeUp({ kind: "trace-node", segmentId: tabId, nodeId }) }),
+                              }}
+                              renderDescriptionEditor={isOwn
+                                ? (request) => (
+                                    <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
+                                      <ContextEditor {...request} onTroubleshoot={request.onTroubleshoot ?? null} renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />} />
+                                    </Suspense>
+                                  )
+                                : null}
+                              onOpenCodeLink={handleOpenCodeLink}
+                              onWaypointReviewedChange={isOwn
+                                ? null
+                                : (id, isReviewed) => {
+                                    setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
+                                  }}
+                            />
+                          ),
+                          blastDiagram: (
+                            <>
+                              {segment.blastDiagram === null
+                                ? null
+                                : (
+                                    <BlastBand
+                                      {...segment.blastDiagram}
+                                      writeUpNotice={segment.writeUpNotices.blastDiagram}
+                                      onWriteUpFile={writeUp === null ? null : (path) => { writeUp({ kind: "blast-file", segmentId: segment.id, path }) }}
+                                      codeLinks={page.codeLinks}
+                                      renderImpactEditor={isOwn
+                                        ? (request) => (
+                                            <Suspense fallback={<p className="text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
+                                              <BlastImpactEditor
+                                                key={request.path}
+                                                {...request}
+                                                reviewKey={reviewKey}
+                                                renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />}
+                                              />
+                                            </Suspense>
+                                          )
+                                        : null}
+                                      onOpenCodeLink={handleOpenCodeLink}
+                                      onOpenFile={handleOpenCodeLink}
+                                    />
+                                  )}
+                            </>
+                          ),
+                          walkthrough: (
+                            <ReadingWalkthrough
+                              anchorId={segment.walkthrough.anchorId}
+                              heading={segment.walkthrough.heading}
+                              coverageLabel={segment.walkthrough.coverageLabel}
+                              emptyMessage={segment.walkthrough.emptyMessage}
+                              writeUpNotice={segment.writeUpNotices.walkthrough}
+                              readingPosition={readingPosition}
+                              walkthroughStore={stepping.store}
+                              navigationOf={(position, state) => walkthroughLayout.navigationOf(segment, position, state)}
+                              onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
+                                ? () => { setArrangedWalkthroughSegmentId(segment.id) }
+                                : null}
+                            >
+                              {segment.walkthrough.files.map((file) => (
+                                <WalkthroughFileSection
+                                  key={file.anchorId}
+                                  walkthroughStore={stepping.store}
+                                  file={file}
+                                  isReviewPending={setReviewed.isPending}
+                                  composer={isOwn ? null : page.composer}
+                                  composingRange={discussion.composingRangeOf(file.path)}
+                                  isCommentPending={discussion.isCommentPending}
+                                  renderCommentEditor={renderCommentEditor}
+                                  codeLinks={page.codeLinks}
+                                  codeDefinitions={page.codeDefinitions}
+                                  onOpenCodeLink={handleOpenCodeLink}
+                                  onToggleWaypoint={handleToggleWaypoint}
+                                  onPreviewWaypoint={stepping.onPreviewWaypoint}
+                                  onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
+                                  onWaypointReviewedChange={isOwn
+                                    ? null
+                                    : (id, isReviewed) => {
+                                        setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
+                                      }}
+                                  onFileReviewedChange={isOwn
+                                    ? null
+                                    : (path, isReviewed) => {
+                                        setReviewed.mutate({ ...reviewKey, subject: { kind: "file", path }, isReviewed })
+                                      }}
+                                  onRootBlockReviewedChange={isOwn
+                                    ? null
+                                    : (id, isReviewed) => {
+                                        setReviewed.mutate({ ...reviewKey, subject: { kind: "root-block", id }, isReviewed })
+                                      }}
+                                  onStartComment={discussion.onStartComment}
+                                  onAddComment={discussion.onAddComment}
+                                  onPostComment={discussion.onPostComment}
+                                  onReply={discussion.onReply}
+                                  onResolveThread={discussion.onResolveThread}
+                                  onDiscardComment={discussion.onDiscardComment}
+                                  onWriteUp={writeUp}
+                                  authoring={isOwn ? waypointAuthoring.authoringOf(segment.id, file) : null}
+                                  headerActions={isOwn ? waypointAuthoring.headerActionsOf(segment.id, file) : null}
+                                />
+                              ))}
+                            </ReadingWalkthrough>
+                          ),
+                        }}
+                      />
+                    </section>
+                  ))}
+                  {isOwn && page.segments.length === 0 && !segmentEditing.addition.isWriting
+                    ? <p className="pt-6 text-muted-foreground">{NO_SEGMENTS_MESSAGE}</p>
+                    : null}
+                  {isOwn && segmentEditing.addition.isWriting
+                    ? (
+                        <SegmentEditor
                           reviewKey={reviewKey}
-                          heading={segment.heading}
-                          isTitleDraft={segment.isTitleDraft}
-                          detailLabel={segment.detailLabel}
-                          outline={segment.outline}
-                          authoring={isOwn && segment.heading !== null ? segmentEditing.authoringOf(segment.id) : null}
+                          legend={NEW_SEGMENT_LEGEND}
+                          label=""
+                          paths={NO_PATHS}
+                          isSaving={segmentEditing.addition.isSaving}
+                          isDeleting={false}
+                          errorMessage={segmentEditing.addition.errorMessage}
+                          onTroubleshoot={segmentEditing.addition.onTroubleshoot}
+                          onSave={segmentEditing.addition.onSave}
+                          onDelete={null}
+                          onClose={segmentEditing.addition.onCancel}
                         />
-                        <OrderedSections
-                          order={segment.sectionOrder}
-                          sections={{
-                            context: (
-                              <ContextBand
-                                {...segment.context}
-                                writeUpNotice={segment.writeUpNotices.context}
-                                codeLinks={page.codeLinks}
-                                editing={isOwn ? contextEditingOf(segment.id) : null}
-                                renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
-                                onOpenCodeLink={handleOpenCodeLink}
-                              />
-                            ),
-                            traceDiagram: (
-                              <TraceBand
-                                {...segment.traceDiagram}
-                                writeUpNotice={segment.writeUpNotices.traceDiagram}
-                                codeLinks={page.codeLinks}
-                                codeDefinitions={page.codeDefinitions}
-                                isReviewPending={setReviewed.isPending}
-                                authoring={isOwn ? traceEditing.authoringOf(segment.id) : null}
-                                cardMoving={page.canMoveCards ? traceEditing.cardMovingOf(segment.id) : null}
-                                onWriteUpNode={writeUp === null ? null : (nodeId) => { writeUp({ kind: "trace-node", segmentId: segment.id, nodeId }) }}
-                                tabEditing={{
-                                  authoringOf: (tabId) => (isOwn ? traceEditing.authoringOf(tabId) : null),
-                                  cardMovingOf: (tabId) => (page.canMoveCards ? traceEditing.cardMovingOf(tabId) : null),
-                                  writeUpOf: (tabId) => (writeUp === null ? null : (nodeId) => { writeUp({ kind: "trace-node", segmentId: tabId, nodeId }) }),
-                                }}
-                                renderDescriptionEditor={isOwn
-                                  ? (request) => (
-                                      <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
-                                        <ContextEditor {...request} onTroubleshoot={request.onTroubleshoot ?? null} renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />} />
-                                      </Suspense>
-                                    )
-                                  : null}
-                                onOpenCodeLink={handleOpenCodeLink}
-                                onWaypointReviewedChange={isOwn
-                                  ? null
-                                  : (id, isReviewed) => {
-                                      setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
-                                    }}
-                              />
-                            ),
-                            blastDiagram: (
-                              <>
-                                {segment.blastDiagram === null
-                                  ? null
-                                  : (
-                                      <BlastBand
-                                        {...segment.blastDiagram}
-                                        writeUpNotice={segment.writeUpNotices.blastDiagram}
-                                        onWriteUpFile={writeUp === null ? null : (path) => { writeUp({ kind: "blast-file", segmentId: segment.id, path }) }}
-                                        codeLinks={page.codeLinks}
-                                        renderImpactEditor={isOwn
-                                          ? (request) => (
-                                              <Suspense fallback={<p className="text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
-                                                <BlastImpactEditor
-                                                  key={request.path}
-                                                  {...request}
-                                                  reviewKey={reviewKey}
-                                                  renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />}
-                                                />
-                                              </Suspense>
-                                            )
-                                          : null}
-                                        onOpenCodeLink={handleOpenCodeLink}
-                                        onOpenFile={handleOpenCodeLink}
-                                      />
-                                    )}
-                              </>
-                            ),
-                            walkthrough: (
-                              <ReadingWalkthrough
-                                anchorId={segment.walkthrough.anchorId}
-                                heading={segment.walkthrough.heading}
-                                coverageLabel={segment.walkthrough.coverageLabel}
-                                emptyMessage={segment.walkthrough.emptyMessage}
-                                writeUpNotice={segment.writeUpNotices.walkthrough}
-                                readingPosition={readingPosition}
-                                walkthroughStore={stepping.store}
-                                navigationOf={(position, state) => walkthroughLayout.navigationOf(segment, position, state)}
-                                onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
-                                  ? () => { setArrangedWalkthroughSegmentId(segment.id) }
-                                  : null}
-                              >
-                                {segment.walkthrough.files.map((file) => (
-                                  <WalkthroughFileSection
-                                    key={file.anchorId}
-                                    walkthroughStore={stepping.store}
-                                    file={file}
-                                    isReviewPending={setReviewed.isPending}
-                                    composer={isOwn ? null : page.composer}
-                                    composingRange={discussion.composingRangeOf(file.path)}
-                                    isCommentPending={discussion.isCommentPending}
-                                    renderCommentEditor={renderCommentEditor}
-                                    codeLinks={page.codeLinks}
-                                    codeDefinitions={page.codeDefinitions}
-                                    onOpenCodeLink={handleOpenCodeLink}
-                                    onToggleWaypoint={handleToggleWaypoint}
-                                    onPreviewWaypoint={stepping.onPreviewWaypoint}
-                                    onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
-                                    onWaypointReviewedChange={isOwn
-                                      ? null
-                                      : (id, isReviewed) => {
-                                          setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
-                                        }}
-                                    onFileReviewedChange={isOwn
-                                      ? null
-                                      : (path, isReviewed) => {
-                                          setReviewed.mutate({ ...reviewKey, subject: { kind: "file", path }, isReviewed })
-                                        }}
-                                    onRootBlockReviewedChange={isOwn
-                                      ? null
-                                      : (id, isReviewed) => {
-                                          setReviewed.mutate({ ...reviewKey, subject: { kind: "root-block", id }, isReviewed })
-                                        }}
-                                    onStartComment={discussion.onStartComment}
-                                    onAddComment={discussion.onAddComment}
-                                    onPostComment={discussion.onPostComment}
-                                    onReply={discussion.onReply}
-                                    onResolveThread={discussion.onResolveThread}
-                                    onDiscardComment={discussion.onDiscardComment}
-                                    onWriteUp={writeUp}
-                                    authoring={isOwn ? waypointAuthoring.authoringOf(segment.id, file) : null}
-                                    headerActions={isOwn ? waypointAuthoring.headerActionsOf(segment.id, file) : null}
-                                  />
-                                ))}
-                              </ReadingWalkthrough>
-                            ),
-                          }}
+                      )
+                    : null}
+                  {isOwn && !segmentEditing.addition.isWriting && page.segments.every((segment) => segment.heading !== null)
+                    ? <Button variant="outline" className="mt-6" onClick={segmentEditing.addition.onEdit}>{ADD_SEGMENT_LABEL}</Button>
+                    : null}
+                  {page.conversation === null || page.composer === null
+                    ? null
+                    : (
+                        <ConversationBand
+                          anchorId={page.conversation.anchorId}
+                          heading={page.conversation.heading}
+                          emptyMessage={page.conversation.emptyMessage}
+                          entries={page.conversation.entries}
+                          placeholder={page.composer.placeholder}
+                          submitLabel={page.composer.commentLabel}
+                          isSubmitting={discussion.isCommentPending}
+                          renderEditor={renderCommentEditor}
+                          onComment={discussion.onComment}
                         />
-                      </section>
-                    ))}
-                    {isOwn && page.segments.length === 0 && !segmentEditing.addition.isWriting
-                      ? <p className="pt-6 text-muted-foreground">{NO_SEGMENTS_MESSAGE}</p>
-                      : null}
-                    {isOwn && segmentEditing.addition.isWriting
-                      ? (
-                          <SegmentEditor
-                            reviewKey={reviewKey}
-                            legend={NEW_SEGMENT_LEGEND}
-                            label=""
-                            paths={NO_PATHS}
-                            isSaving={segmentEditing.addition.isSaving}
-                            isDeleting={false}
-                            errorMessage={segmentEditing.addition.errorMessage}
-                            onTroubleshoot={segmentEditing.addition.onTroubleshoot}
-                            onSave={segmentEditing.addition.onSave}
-                            onDelete={null}
-                            onClose={segmentEditing.addition.onCancel}
-                          />
-                        )
-                      : null}
-                    {isOwn && !segmentEditing.addition.isWriting && page.segments.every((segment) => segment.heading !== null)
-                      ? <Button variant="outline" className="mt-6" onClick={segmentEditing.addition.onEdit}>{ADD_SEGMENT_LABEL}</Button>
-                      : null}
-                    {page.conversation === null || page.composer === null
-                      ? null
-                      : (
-                          <ConversationBand
-                            anchorId={page.conversation.anchorId}
-                            heading={page.conversation.heading}
-                            emptyMessage={page.conversation.emptyMessage}
-                            entries={page.conversation.entries}
-                            placeholder={page.composer.placeholder}
-                            submitLabel={page.composer.commentLabel}
-                            isSubmitting={discussion.isCommentPending}
-                            renderEditor={renderCommentEditor}
-                            onComment={discussion.onComment}
-                          />
-                        )}
-                  </div>
+                      )}
                 </div>
                 {isArranging && isOwn
                   ? (
@@ -683,31 +690,108 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                     })
                   }}
                 />
-                {chat.isOpen && chat.conversation !== undefined
-                  ? (
-                      <ChatPanel
-                        conversation={chat.conversation}
-                        modelChoice={chat.modelChoice}
-                        codeLinks={page.codeLinks}
-                        reference={chat.reference}
-                        isSending={chat.isSending}
-                        sendProblem={chat.sendProblem}
-                        answering={chat.answering}
-                        onSend={(body) => {
-                          chat.onSend(body)
-                          liveAgent.onAgentAction()
-                        }}
-                        onAnswer={(batchId, answers) => {
-                          chat.onAnswer(batchId, answers)
-                          liveAgent.onAgentAction()
-                        }}
-                        onChooseModel={chat.onChooseModel}
-                        onClearReference={chat.onClearReference}
-                        onOpenCodeLink={handleOpenCodeLink}
-                        onClose={chat.onClose}
-                      />
-                    )
-                  : null}
+                <div
+                  ref={explorerDockRef}
+                  className={cn(DOCKED_CLASSES, "left-0 border-r", !panelWidths.isResizing && ["transition-[width]", PANEL_TRANSITION])}
+                  style={{ width: panelWidths.explorer.widthPx }}
+                >
+                  {panels.isExplorerShown
+                    ? (
+                        <ReadingFileExplorer
+                          labels={page.panels.explorer}
+                          shortcutLabel={PANEL_SHORTCUT_LABELS.explorer}
+                          explorer={page.fileExplorer}
+                          readingPosition={readingPosition}
+                          filterNavigation={walkthroughLayout.reviewFilter}
+                          onOpenFile={scrollToSettledAnchor}
+                          onHide={() => { panels.onToggle("explorer") }}
+                          onClearFilter={() => { onSearchChange({ filter: undefined }) }}
+                        />
+                      )
+                    : <FileExplorerStrip labels={page.panels.explorer} shortcutLabel={PANEL_SHORTCUT_LABELS.explorer} onShow={() => { panels.onToggle("explorer") }} />}
+                  {panels.isExplorerShown ? <DockResizeHandle dock={panelWidths.explorer} label={EXPLORER_RESIZE_LABEL} edge="right" /> : null}
+                </div>
+                {panels.sidePanel === null
+                  ? null
+                  : (
+                      <div
+                        ref={sideDockRef}
+                        className={cn(DOCKED_CLASSES, "right-(--activity-width) border-l")}
+                        style={{ width: panelWidths.side.widthPx }}
+                      >
+                        <DockResizeHandle dock={panelWidths.side} label={SIDE_RESIZE_LABEL} edge="left" />
+                        {panels.sidePanel === "sections"
+                          ? (
+                              <DockedPanel
+                                heading={page.panels.sections.label}
+                                side="right"
+                                hideLabel={page.panels.sections.hideLabel}
+                                shortcutLabel={PANEL_SHORTCUT_LABELS.sections}
+                                onHide={panels.onHideSidePanel}
+                              >
+                                <div className="px-2 pt-3 pb-4">
+                                  <ReadingSectionRail
+                                    label="Review sections"
+                                    groups={page.rail.groups}
+                                    sections={page.rail.sections}
+                                    readingPosition={readingPosition}
+                                    onEditGroup={isOwn ? handleEditRailGroup : null}
+                                    onArrangeGroups={isOwn && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
+                                  />
+                                </div>
+                              </DockedPanel>
+                            )
+                          : null}
+                        {panels.sidePanel === "chat" && chat.conversation !== undefined
+                          ? (
+                              <ChatPanel
+                                conversation={chat.conversation}
+                                modelChoice={chat.modelChoice}
+                                codeLinks={page.codeLinks}
+                                reference={chat.reference}
+                                isSending={chat.isSending}
+                                sendProblem={chat.sendProblem}
+                                answering={chat.answering}
+                                onSend={(body) => {
+                                  chat.onSend(body)
+                                  liveAgent.onAgentAction()
+                                }}
+                                onAnswer={(batchId, answers) => {
+                                  chat.onAnswer(batchId, answers)
+                                  liveAgent.onAgentAction()
+                                }}
+                                onChooseModel={chat.onChooseModel}
+                                onClearReference={chat.onClearReference}
+                                onOpenCodeLink={handleOpenCodeLink}
+                                hideShortcutLabel={PANEL_SHORTCUT_LABELS.chat}
+                                onClose={panels.onHideSidePanel}
+                              />
+                            )
+                          : null}
+                      </div>
+                    )}
+                <div className={cn(DOCKED_CLASSES, "right-0 w-(--activity-width) border-l")}>
+                  <ActivityBar
+                    label={PANELS_LABEL}
+                    activities={[
+                      {
+                        id: "sections",
+                        label: page.panels.sections.label,
+                        shortcutLabel: PANEL_SHORTCUT_LABELS.sections,
+                        icon: <SectionsIcon />,
+                        isPressed: panels.sidePanel === "sections",
+                      },
+                      {
+                        id: "chat",
+                        label: page.panels.chat.label,
+                        shortcutLabel: PANEL_SHORTCUT_LABELS.chat,
+                        icon: <ChatIcon agent={writeUpDialog.agent?.name ?? null} />,
+                        isPressed: panels.sidePanel === "chat",
+                      },
+                    ]}
+                    onToggle={(id) => { panels.onToggle(id === "chat" ? "chat" : "sections") }}
+                  />
+                </div>
                 <WalkthroughScrolling walkthroughStore={stepping.store} />
                 <ReviewNavigatorBar />
                 <ReviewGuideTooltips reviewMode={isOwn ? "user" : "teammate"} />

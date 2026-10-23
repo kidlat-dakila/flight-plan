@@ -7,6 +7,8 @@ import {
   CopyIcon,
   Maximize2Icon,
   Minimize2Icon,
+  PanelLeftCloseIcon,
+  PanelRightCloseIcon,
   PencilIcon,
   PlusIcon,
   SettingsIcon,
@@ -36,6 +38,8 @@ export type IconButtonIcon
     | "zoomOut"
     | "fullScreen"
     | "leaveFullScreen"
+    | "hideLeftPanel"
+    | "hideRightPanel"
 
 interface IconButtonProps {
   readonly icon: IconButtonIcon
@@ -44,6 +48,7 @@ interface IconButtonProps {
   readonly variant?: "ghost" | "outline"
   readonly className?: string
   readonly actionId?: string
+  readonly shortcutLabel?: string | null
   readonly onClick: () => void
 }
 
@@ -64,6 +69,8 @@ const ICONS: Record<IconButtonIcon, LucideIcon> = {
   zoomOut: ZoomOutIcon,
   fullScreen: Maximize2Icon,
   leaveFullScreen: Minimize2Icon,
+  hideLeftPanel: PanelLeftCloseIcon,
+  hideRightPanel: PanelRightCloseIcon,
 }
 
 const UPPER_CASE_LETTER = /[A-Z]/g
@@ -71,7 +78,11 @@ const UPPER_CASE_LETTER = /[A-Z]/g
 const defaultActionIdOf = (icon: IconButtonIcon): string =>
   `${icon.replace(UPPER_CASE_LETTER, (letter) => `-${letter.toLowerCase()}`)}-icon-action`
 
-const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", className, actionId, onClick }: IconButtonProps) => {
+export const TooltipKeycap = ({ label }: { readonly label: string }) => (
+  <kbd data-slot="kbd" className="rounded-sm bg-background/15 px-1 font-mono text-[0.6875rem] leading-4">{label}</kbd>
+)
+
+const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", className, actionId, shortcutLabel = null, onClick }: IconButtonProps) => {
   const Icon = ICONS[icon]
   return (
     <Tooltip>
@@ -80,7 +91,10 @@ const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", classN
       >
         <Icon aria-hidden="true" />
       </TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
+      <TooltipContent>
+        {label}
+        {shortcutLabel === null ? null : <TooltipKeycap label={shortcutLabel} />}
+      </TooltipContent>
     </Tooltip>
   )
 }

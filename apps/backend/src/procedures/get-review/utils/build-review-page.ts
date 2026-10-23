@@ -17,6 +17,7 @@ import {
   resolveCodeTarget,
   selectFilterKeys,
   steppingOf,
+  summarizeWalkthroughFiles,
   waypointAnchorId,
   waypointIdByLinkId,
   type HighlightedSource,
@@ -30,6 +31,7 @@ import {
 import type { CodeLink, ReviewArtifact, Segment, TokenLine, WalkthroughControls } from "@flightplan/configurations"
 import type { ReviewedMarks } from "@flightplan/reviewed-marks"
 import { buildCompleteAction, type BranchLinking } from "./build-complete-action"
+import { buildFileExplorer, diffTypesOf, selectedFilterLabelsOf } from "./build-file-explorer"
 import { buildStaleNotice } from "./build-notices"
 import { buildCompletionNotice, buildProgress, isWritingNow, type WritingActivity } from "./build-progress"
 import { buildRail } from "./build-rail"
@@ -51,7 +53,7 @@ import { blobLinkOf, type ForgeLocation } from "./forge-links"
 import { mergeSegments } from "./merged-segment"
 import type { PullRequestReading } from "./pull-request-forge"
 import type { ReviewTargetDetail } from "./review-target-detail"
-import type { GetReviewInput, ReviewPage, ReviewShell, SegmentOutline, SegmentView } from "./schemas"
+import type { GetReviewInput, ReviewPage, ReviewPanels, ReviewShell, SegmentOutline, SegmentView } from "./schemas"
 import { isShownInSegments } from "./segmentation"
 import { buildChangedFiles } from "./start/build-changed-files"
 import type { ReviewRequest } from "./start/review-request"
@@ -186,6 +188,12 @@ const buildSegment = (
   }
 }
 
+const PANELS: ReviewPanels = {
+  explorer: { label: "Changed files", hideLabel: "Hide changed files", showLabel: "Show changed files" },
+  sections: { label: "Sections", hideLabel: "Hide sections", showLabel: "Show sections" },
+  chat: { label: "Chat", hideLabel: "Hide chat", showLabel: "Show chat" },
+}
+
 const AUTHOR_LABEL = "Your Flight Plan"
 const COMPLETE_STATUS = "complete"
 
@@ -299,13 +307,20 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     progress: buildProgress(artifact, source.activity),
     completion: buildCompletionNotice(artifact),
     unassignedFiles: buildUnassignedFiles(artifact),
-    rail: buildRail(segments, conversation),
+    rail: buildRail(segments, conversation, false),
     segments,
     conversation,
     composer: discussion === null ? null : COMPOSER_LABELS,
     reviewDraft: isReviewable ? buildReviewDraft(discussion, unavailableReasonOf(source)) : null,
     sharing: isLeftToComplete(source, artifact) ? null : buildSharing(source.publications, hasForge, source.now, source.isPublishing),
-    chatLabel: "Chat",
+    panels: PANELS,
+    fileExplorer: buildFileExplorer({
+      changedPaths: artifact.changedPaths,
+      diffTypes: diffTypesOf(artifact),
+      summaries: walkthroughs.flatMap(summarizeWalkthroughFiles),
+      anchorIdByPath: new Map(segments.flatMap((segment) => segment.walkthrough.files).map((file) => [file.path, file.anchorId] as const)),
+      filterValues: selectedFilterLabelsOf(settings.walkthroughControls.filter),
+    }),
     codeLinks: buildCodeLinks(resolvedTargets, artifact, stepping, context),
     codeDefinitions,
   }

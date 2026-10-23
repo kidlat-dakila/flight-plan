@@ -104,7 +104,7 @@ export const WAYPOINT_MARK_LABELS: Readonly<Record<WaypointMarkKind, string>> = 
   "plain": "",
 }
 
-const markKindsOf = (waypoint: Waypoint): ReadonlySet<WaypointMarkKind> =>
+export const markKindsOf = (waypoint: Waypoint): ReadonlySet<WaypointMarkKind> =>
   new Set([...waypoint.findings.map((finding) => finding.kind), ...(waypoint.coreChange === null ? [] : ["core-change" as const])])
 
 export const markKindOf = (waypoint: Waypoint): WaypointMarkKind => {

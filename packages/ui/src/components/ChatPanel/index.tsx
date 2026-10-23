@@ -55,6 +55,7 @@ interface ChatPanelProps {
   readonly onChooseModel: (model: string) => void
   readonly onClearReference: () => void
   readonly onOpenCodeLink: (anchorId: string) => void
+  readonly hideShortcutLabel: string
   readonly onClose: () => void
 }
 
@@ -97,6 +98,7 @@ const ChatPanel = ({
   onChooseModel,
   onClearReference,
   onOpenCodeLink,
+  hideShortcutLabel,
   onClose,
 }: ChatPanelProps) => {
   const [body, setBody] = useState("")
@@ -114,7 +116,7 @@ const ChatPanel = ({
   return (
     <aside
       aria-label={conversation.heading}
-      className="fixed top-14 right-0 bottom-0 z-30 flex w-(--chat-width) flex-col border-l bg-background duration-200 ease-out animate-in slide-in-from-right-8"
+      className="flex h-full min-h-0 flex-col bg-background duration-200 ease-out animate-in fade-in-0"
     >
       <div className="flex items-start gap-3 border-b px-4 py-3">
         <div className="min-w-0 flex-1">
@@ -126,7 +128,7 @@ const ChatPanel = ({
             <span role="status">{conversation.agentStateLabel}</span>
           </p>
         </div>
-        <IconButton icon="close" label={conversation.closeLabel} onClick={onClose} />
+        <IconButton icon="hideRightPanel" label={conversation.closeLabel} shortcutLabel={hideShortcutLabel} className="text-muted-foreground" onClick={onClose} />
       </div>
       {modelChoice === null
         ? null

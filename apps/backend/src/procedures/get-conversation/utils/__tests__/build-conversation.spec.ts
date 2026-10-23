@@ -65,7 +65,7 @@ describe("buildConversation", () => {
   it("invites a first message while the conversation is empty, and words the panel", () => {
     expect(buildConversation(snapshotOf([]), LATER)).toMatchObject({
       heading: "Chat with the agent",
-      closeLabel: "Close the chat",
+      closeLabel: "Hide chat",
       placeholder: "Ask about this review",
       sendLabel: "Send",
       emptyMessage: "Ask about this review. Your agent answers here once it is online.",

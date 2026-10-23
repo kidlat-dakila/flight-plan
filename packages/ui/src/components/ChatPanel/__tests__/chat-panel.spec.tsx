@@ -7,7 +7,7 @@ const NOT_ANSWERING: QuestionAnswering = { pendingBatchId: null, rejection: null
 
 const createConversation = (overrides: Partial<Conversation> = {}): Conversation => ({
   heading: "Chat with the agent",
-  closeLabel: "Close the chat",
+  closeLabel: "Hide chat",
   emptyMessage: null,
   placeholder: "Ask about this review",
   sendLabel: "Send",
@@ -54,6 +54,7 @@ const renderPanel = (conversation: Conversation, options: PanelOptions = {}) =>
       onChooseModel={options.onChooseModel ?? vi.fn()}
       onClearReference={options.onClearReference ?? vi.fn()}
       onOpenCodeLink={options.onOpenCodeLink ?? vi.fn()}
+      hideShortcutLabel="Ctrl+C"
       onClose={options.onClose ?? vi.fn()}
     />,
   )
@@ -164,11 +165,11 @@ describe("ChatPanel", () => {
     expect(onOpenCodeLink).toHaveBeenCalledWith("waypoint-price-of")
   })
 
-  it("reports a close", () => {
+  it("reports that the chat is hidden", () => {
     const onClose = vi.fn()
     renderPanel(createConversation(), { onClose })
 
-    fireEvent.click(screen.getByRole("button", { name: "Close the chat" }))
+    fireEvent.click(screen.getByRole("button", { name: "Hide chat" }))
 
     expect(onClose).toHaveBeenCalledTimes(1)
   })

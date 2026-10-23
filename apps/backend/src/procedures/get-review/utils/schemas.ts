@@ -5,6 +5,7 @@ import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
 import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
 import { targetOptionSchema } from "@/procedures/search-creation-targets/utils/schemas"
 import {
+  DIFF_TYPES,
   changeOverviewSchema,
   blastBandSchema,
   codeDefinitionSchema,
@@ -16,6 +17,7 @@ import {
   proseSchema,
   walkthroughBandSchema,
 } from "@flightplan/configurations"
+import { FILE_ICONS } from "./file-icon"
 
 export const REVIEWER_STATES = ["pending", "commented", "approved", "changes-requested"] as const
 export const SECTION_KINDS = ["context", "traceDiagram", "blastDiagram", "walkthrough", "conversation"] as const
@@ -117,6 +119,44 @@ export const railSchema = z.strictObject({
     }),
   ),
   sections: z.array(railSectionSchema),
+})
+
+export const FILE_MARK_KINDS = ["bug", "risk", "core-change", "question", "nit"] as const
+
+const explorerPlaceSchema = z.strictObject({
+  id: z.string(),
+  name: z.string(),
+  depth: z.number().int(),
+  ancestorIds: z.array(z.string()),
+})
+
+export const fileExplorerRowSchema = z.discriminatedUnion("kind", [
+  explorerPlaceSchema.extend({ kind: z.literal("folder") }),
+  explorerPlaceSchema.extend({
+    kind: z.literal("file"),
+    icon: z.strictObject({ kind: z.enum(FILE_ICONS), label: z.string() }),
+    change: z.strictObject({ kind: z.enum(DIFF_TYPES), label: z.string() }).nullable(),
+    anchorId: z.string().nullable(),
+    noteLabel: z.string().nullable(),
+    marks: z.array(z.strictObject({ kind: z.enum(FILE_MARK_KINDS), label: z.string() })),
+    reviewed: z.strictObject({ count: z.number().int(), total: z.number().int(), label: z.string() }).nullable(),
+    match: z.strictObject({ count: z.number().int(), label: z.string() }).nullable(),
+  }),
+])
+
+export const fileExplorerSchema = z.strictObject({
+  summary: z.array(z.string()),
+  filter: z.strictObject({ label: z.string(), values: z.array(z.string()), clearLabel: z.string() }).nullable(),
+  hiddenLabel: z.string().nullable(),
+  rows: z.array(fileExplorerRowSchema),
+})
+
+const panelLabelsSchema = z.strictObject({ label: z.string(), hideLabel: z.string(), showLabel: z.string() })
+
+export const reviewPanelsSchema = z.strictObject({
+  explorer: panelLabelsSchema,
+  sections: panelLabelsSchema,
+  chat: panelLabelsSchema,
 })
 
 export const contextBandSchema = z.strictObject({
@@ -307,7 +347,8 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
     composer: composerLabelsSchema.nullable(),
     reviewDraft: reviewDraftSchema.nullable(),
     sharing: sharingSchema.nullable(),
-    chatLabel: z.string(),
+    panels: reviewPanelsSchema,
+    fileExplorer: fileExplorerSchema,
     codeLinks: z.record(z.string(), codeLinkSchema),
     codeDefinitions: z.record(z.string(), codeDefinitionSchema),
   }),
@@ -327,6 +368,9 @@ export type StaleNotice = z.infer<typeof staleNoticeSchema>
 export type ReviewProgress = z.infer<typeof reviewProgressSchema>
 export type CompletionNotice = z.infer<typeof completionNoticeSchema>
 export type Rail = z.infer<typeof railSchema>
+export type FileExplorer = z.infer<typeof fileExplorerSchema>
+export type FileExplorerRow = z.infer<typeof fileExplorerRowSchema>
+export type ReviewPanels = z.infer<typeof reviewPanelsSchema>
 export type ContextBand = z.infer<typeof contextBandSchema>
 export type SegmentOutline = z.infer<typeof segmentOutlineSchema>
 export type UnassignedFiles = z.infer<typeof unassignedFilesSchema>

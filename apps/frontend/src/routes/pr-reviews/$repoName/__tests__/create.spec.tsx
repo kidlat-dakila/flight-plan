@@ -133,7 +133,8 @@ describe("the create Flight Plan page", () => {
 
     expect(await within(band).findByRole("heading", { name: "Count held units in the stock check" })).toBeTruthy()
     expect(within(band).getByText("Your Flight Plan")).toBeTruthy()
-    expect(within(band).getByRole("button", { name: "Chat" })).toBeTruthy()
+    expect(within(band).queryByRole("button", { name: "Chat" })).toBeNull()
+    expect(within(screen.getByRole("navigation", { name: "Panels" })).getByRole("button", { name: "Chat" })).toBeTruthy()
     expect(within(band).getByRole("button", { name: "Settings" })).toBeTruthy()
     expect(within(band).getByRole("button", { name: "Share" })).toBeTruthy()
     expect(within(band).queryByRole("button", { name: "Mark as complete" })).toBeNull()

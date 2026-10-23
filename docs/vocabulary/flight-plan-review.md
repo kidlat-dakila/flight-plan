@@ -106,9 +106,19 @@ A review target is the viewer's **own** when it is a branch with no pull request
 | The viewer's own | Built on open, then the author's page | The author's page | The author's page, with the review status, the reviewers, the conversation and Submit review |
 | Someone else's | Built on open, then the reviewer's page | The reviewer's page | The reviewer's page |
 
-The **author's page** is where a Flight Plan is edited: its segments, its contexts, its diagrams and its Code Walkthrough. Only the viewer's own Flight Plan can be edited. Until it is uploaded its header shows the review target, the label "Your Flight Plan", Chat and the Settings Menu, and the page has no review status, no reviewers, no comments and no Submit review.
+The **author's page** is where a Flight Plan is edited: its segments, its contexts, its diagrams and its Code Walkthrough. Only the viewer's own Flight Plan can be edited. Until it is uploaded its header shows the review target, the label "Your Flight Plan" and the Settings Menu, and the page has no review status, no reviewers, no comments and no Submit review.
 
 A Flight Plan is **uploaded** once it has been published, to the pull request description or as a Claude artifact. The author's page offers Share only when the artifact is `complete`. While it is not, the header holds "Mark as complete", which makes it `complete`.
+
+### Changed files and side panels
+
+Panels dock at both edges of the reviewer's page and the author's page.
+
+At the left is the **changed files explorer**. It lists the changed files of the review target as a tree, sorted the way an editor sorts one: folders first, then files, each by name, with a folder that only holds one folder merged into it, such as `src/pokedex`. Each file shows the icon of its language or framework, a mark for whether the change added, modified or deleted it, the kinds of [findings](code-walkthrough.md#findings) its waypoints carry, and how many of its waypoints are reviewed. Clicking a file goes to its file section in the Code Walkthrough, and the file being read is highlighted. A changed file the Code Walkthrough leaves out is listed as not covered and leads nowhere. Its Filter button opens the same [filter](code-walkthrough.md#filters) as the Review Navigator's Filter, with no key of its own. The filter and the Reviewed tick narrow the explorer as they narrow the walkthrough: the files they hide leave the tree, the explorer counts them, and while anything is ticked it names the ticks with a way to clear them.
+
+At the right is the **activity bar**, with a button for the section rail and one for [Chat](agent-conversation.md#chat). The button of the panel that shows is pressed; pressing it again hides the panel, and pressing the other swaps them. The Chat button carries the mark of the agent the setup names, or a speech mark when none is set up.
+
+The explorer and the right panel can be made wider or narrower by dragging their inner edge, and double-clicking the edge gives a panel its own width back. The section rail and Chat each keep their own width. The widths are kept in the browser, so the page opens with them again. Each panel can be hidden and shown again: the explorer with Ctrl+E, the section rail with Ctrl+A and Chat with Ctrl+C, or with the hide control at the top of each panel. Ctrl+C is left to copying while text is selected. The page opens with the explorer and the section rail shown. A published Flight Plan keeps the section rail at the left, with a stop per file, and has no explorer.
 
 ### Review Navigator
 

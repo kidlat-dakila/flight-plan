@@ -1,7 +1,6 @@
-import { CheckIcon } from "lucide-react"
 import type { ReactNode } from "react"
 import Button from "@/components/blocks/button"
-import FindingMark from "@/components/FindingMark"
+import { filterMarkerOf } from "@/components/WaypointFilterMenu"
 import { NoWriteUpTag } from "@/components/WriteUpIcon"
 import { useNavigatorSection, useSectionSteps } from "@/lib/navigator"
 import { walkthroughNavigationOf, type WalkthroughNavigationRequest } from "@/lib/walkthrough-navigation"
@@ -21,17 +20,9 @@ interface CodeWalkthroughProps {
 
 const ARRANGE_FILES_LABEL = "Arrange files"
 
-const ReviewedMark = () => (
-  <span aria-hidden="true" className="inline-flex size-3.5 shrink-0 items-center justify-center rounded-full bg-waypoint text-line-foreground">
-    <CheckIcon className="size-2.5" strokeWidth={3.5} />
-  </span>
-)
-
-const markerOf: WalkthroughNavigationRequest["markerOf"] = (key) => (key === "reviewed" ? <ReviewedMark /> : <FindingMark kind={key} />)
-
 const CodeWalkthrough = ({ anchorId, heading, coverageLabel, emptyMessage, writeUpNotice = null, navigation, children, onArrangeFiles }: CodeWalkthroughProps) => {
   const sectionSteps = useSectionSteps(anchorId)
-  useNavigatorSection(anchorId, walkthroughNavigationOf({ ...navigation, markerOf, sectionSteps }))
+  useNavigatorSection(anchorId, walkthroughNavigationOf({ ...navigation, markerOf: filterMarkerOf, sectionSteps }))
   return (
     <section id={anchorId} aria-labelledby={`${anchorId}-heading`} data-view-section-id="code-walkthrough-section" className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-10">
       <div className="flex items-center gap-3">

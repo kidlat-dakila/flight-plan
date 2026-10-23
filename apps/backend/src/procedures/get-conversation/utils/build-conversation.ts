@@ -39,7 +39,7 @@ const FREE_TEXT_LABEL = "Your answer"
 
 const PANEL_LABELS = {
   heading: "Chat with the agent",
-  closeLabel: "Close the chat",
+  closeLabel: "Hide chat",
   placeholder: "Ask about this review",
   sendLabel: "Send",
 } as const

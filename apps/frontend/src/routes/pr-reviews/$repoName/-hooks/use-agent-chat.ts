@@ -20,7 +20,7 @@ export interface AgentChat {
   readonly isSending: boolean
   readonly sendProblem: string | null
   readonly answering: QuestionAnswering
-  readonly onToggle: () => void
+  readonly onOpen: () => void
   readonly onClose: () => void
   readonly onAsk: (reference: string) => void
   readonly onClearReference: () => void
@@ -79,7 +79,7 @@ export const useAgentChat = (reviewKey: ReviewKey, onProblem: (content: ToastCon
       pendingBatchId: answerQuestions.isPending ? answerQuestions.variables.batchId : null,
       rejection: answerRejection,
     },
-    onToggle: () => { setIsOpen((wasOpen) => !wasOpen) },
+    onOpen: () => { setIsOpen(true) },
     onClose: () => { setIsOpen(false) },
     onAsk: (askedReference) => {
       setReference(askedReference)
