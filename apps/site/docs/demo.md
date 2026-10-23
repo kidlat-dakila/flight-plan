@@ -49,4 +49,12 @@ A link between the client and the router copies every input and result through J
 
 The backend code is bundled for the browser with two adjustments in `apps/site/demo/vite.config.mts`. Modules that only work in Node, such as tree-sitter and Fastify, are replaced by stubs that throw if called; the demo never calls them. `node:crypto` is replaced by `apps/site/demo/app/node-crypto.ts`, a SHA-1 that gives the same fingerprints as Node's.
 
+## The demo notice
+
+A demo opens with a dialog, "Thanks for checking out Flight Plan!", that says the page is a demo running in the browser and shows the commands that install Flight Plan, from the backend's `INSTALL_GUIDE`. It is the frontend's `UnavailableFeatureDialog`, the one a published Flight Plan shows. `apps/site/demo/app/demo-notice.tsx` holds its text and its store.
+
+The dialog opens again after each write a visitor makes: submitting a review, adding a comment, replying to or resolving a thread, ticking a file or a waypoint as reviewed, and requesting or removing a reviewer. `afterDemoWriteLink` in `apps/site/demo/app/demo-write-link.ts` sits in the tRPC client's links and opens it once one of these mutations has succeeded, so the visitor sees what they did under the dialog.
+
+Writing `off` to the local storage key `flightplan-demo-notice` turns the dialog off. The capture scripts do, so it never covers a recording.
+
 Links to a demo repository on GitHub stay on the page and show a note, because those repositories do not exist. The logo in the app's header leaves the demo for the site's home page at `/`.

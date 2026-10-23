@@ -9,6 +9,8 @@ import { appRouter, type AppRouter } from "@flightplan/backend/router"
 import { createApp } from "@flightplan/frontend/app"
 import { keepAnchorLinksOnPage } from "./anchor-links"
 import { readDemos, readMount, type DemoMount } from "./demo-data"
+import { createNoticeStore, DemoNotice, openNotice } from "./demo-notice"
+import { afterDemoWriteLink } from "./demo-write-link"
 import { keepForgeLinksInDemo } from "./forge-links"
 import { keepHomeLinkOnSite } from "./home-link"
 import { readShippedInstructionTexts } from "./instruction-texts"
@@ -17,6 +19,18 @@ import "./demo.css"
 
 const ROOT_ID = "demo-root"
 const UNKNOWN_DEMO_MESSAGE = "This demo is not available."
+const NOTICE_SWITCH_KEY = "flightplan-demo-notice"
+const NOTICE_OFF = "off"
+
+const isNoticeOff = (): boolean => {
+  try {
+    return window.localStorage.getItem(NOTICE_SWITCH_KEY) === NOTICE_OFF
+  } catch {
+    return false
+  }
+}
+
+const ignoreWrite = (): void => undefined
 
 const startingPathOf = (demos: readonly DemoReview[], mount: DemoMount): string | null => {
   const selected = demos.find((demo) => demo.name === mount.selectedName)
@@ -36,12 +50,22 @@ const mountDemo = async (element: HTMLElement): Promise<void> => {
   keepForgeLinksInDemo(demos)
   keepAnchorLinksOnPage()
   keepHomeLinkOnSite()
+  const isNoticeShown = !isNoticeOff()
+  const noticeStore = createNoticeStore(isNoticeShown)
+  const showNotice = (): void => {
+    openNotice(noticeStore)
+  }
   const context = await createDemoProcedureContext(demos, new Date(), () => crypto.randomUUID(), readShippedInstructionTexts)
   const trpcClient = createTRPCClient<AppRouter>({
-    links: [jsonWireLink<AppRouter>(), unstable_localLink({ router: appRouter, createContext: async () => await Promise.resolve(context) })],
+    links: [jsonWireLink<AppRouter>(), afterDemoWriteLink<AppRouter>(isNoticeShown ? showNotice : ignoreWrite), unstable_localLink({ router: appRouter, createContext: async () => await Promise.resolve(context) })],
   })
   const app = createApp({ queryClient: new QueryClient(), trpcClient, history: createHashHistory() })
-  createRoot(element).render(<StrictMode>{app}</StrictMode>)
+  createRoot(element).render(
+    <StrictMode>
+      {app}
+      <DemoNotice store={noticeStore} />
+    </StrictMode>,
+  )
 }
 
 const FAILURE_PREFIX = "The demo could not start."

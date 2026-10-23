@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import Button from "@flightplan/ui/blocks/button"
 import Dialog, { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@flightplan/ui/blocks/dialog"
 import IconButton from "@flightplan/ui/IconButton"
@@ -25,6 +25,7 @@ interface UnavailableFeatureDialogProps {
 
 const UnavailableFeatureDialog = ({ title, description, closeLabel, install, onClose }: UnavailableFeatureDialogProps) => {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
   const copyCommand = (command: string): void => {
     navigator.clipboard.writeText(command).then(
       () => {
@@ -37,12 +38,12 @@ const UnavailableFeatureDialog = ({ title, description, closeLabel, install, onC
   }
   return (
     <Dialog open onOpenChange={(isOpen) => { if (!isOpen) onClose() }}>
-      <DialogContent>
+      <DialogContent initialFocus={closeButtonRef}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-3 text-sm">
+        <div className="flex min-w-0 flex-col gap-3 text-sm">
           <p>{install.intro}</p>
           <ul className="flex flex-col gap-3">
             {install.commands.map(({ label, command }) => {
@@ -66,7 +67,7 @@ const UnavailableFeatureDialog = ({ title, description, closeLabel, install, onC
           </ul>
         </div>
         <DialogFooter>
-          <Button type="button" onClick={onClose}>{closeLabel}</Button>
+          <Button ref={closeButtonRef} type="button" onClick={onClose}>{closeLabel}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
