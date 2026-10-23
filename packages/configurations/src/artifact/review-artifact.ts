@@ -135,6 +135,7 @@ export interface TraceNodeEdge {
 export interface TraceDiagram {
   readonly astCodeGroup: ASTCodeGroupGraph
   readonly importGraphGroup: ImportGraphGroup
+  readonly title: string | null
   readonly description: string | null
   readonly traceNodes: readonly TraceNode[]
   readonly traceNodeEdges: readonly TraceNodeEdge[]
@@ -186,6 +187,7 @@ export interface Segment {
   readonly context: string
   readonly traceDiagram: TraceDiagram | null
   readonly blastDiagram: Blast | null
+  readonly hiddenBlastDiagram?: Blast
   readonly walkthrough: CodeWalkthrough
   readonly isContextRequired: boolean
 }

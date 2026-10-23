@@ -297,6 +297,7 @@ export const traceEdgeSchema = z.strictObject({
 export const traceDiagramViewSchema = z.strictObject({
   anchorId: z.string(),
   title: z.string(),
+  writtenTitle: z.string().nullable(),
   description: proseSchema.nullable(),
   descriptionMarkdown: z.string(),
   descriptionHint: z.string().nullable(),

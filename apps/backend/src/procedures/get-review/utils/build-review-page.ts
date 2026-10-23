@@ -2,6 +2,7 @@ import { reviewPreferencesOf, type ArrangedSection } from "@/procedures/get-revi
 import type { Setup } from "@/procedures/get-setup/utils/setup"
 import type { LineColor } from "@/procedures/list-repositories/utils/line-color"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
+import type { MigrationNotice } from "@/procedures/migrate-review/utils/migration-notice"
 import {
   buildBlast,
   buildCodeDefinitions,
@@ -17,6 +18,7 @@ import {
   resolveCodeTarget,
   selectFilterKeys,
   steppingOf,
+  summarizeWalkthroughFiles,
   waypointAnchorId,
   waypointIdByLinkId,
   type HighlightedSource,
@@ -30,6 +32,7 @@ import {
 import type { CodeLink, ReviewArtifact, Segment, TokenLine, WalkthroughControls } from "@flightplan/configurations"
 import type { ReviewedMarks } from "@flightplan/reviewed-marks"
 import { buildCompleteAction, type BranchLinking } from "./build-complete-action"
+import { buildFileExplorer, diffTypesOf, selectedFilterLabelsOf } from "./build-file-explorer"
 import { buildStaleNotice } from "./build-notices"
 import { buildCompletionNotice, buildProgress, isWritingNow, type WritingActivity } from "./build-progress"
 import { buildRail } from "./build-rail"
@@ -51,7 +54,7 @@ import { blobLinkOf, type ForgeLocation } from "./forge-links"
 import { mergeSegments } from "./merged-segment"
 import type { PullRequestReading } from "./pull-request-forge"
 import type { ReviewTargetDetail } from "./review-target-detail"
-import type { GetReviewInput, ReviewPage, ReviewShell, SegmentOutline, SegmentView } from "./schemas"
+import type { GetReviewInput, ReviewPage, ReviewPanels, ReviewShell, SegmentOutline, SegmentView } from "./schemas"
 import { isShownInSegments } from "./segmentation"
 import { buildChangedFiles } from "./start/build-changed-files"
 import type { ReviewRequest } from "./start/review-request"
@@ -186,12 +189,18 @@ const buildSegment = (
   }
 }
 
+const PANELS: ReviewPanels = {
+  explorer: { label: "Changed files", hideLabel: "Hide changed files", showLabel: "Show changed files" },
+  sections: { label: "Sections", hideLabel: "Hide sections", showLabel: "Show sections" },
+  chat: { label: "Chat", hideLabel: "Hide chat", showLabel: "Show chat" },
+}
+
 const AUTHOR_LABEL = "Your Flight Plan"
 const COMPLETE_STATUS = "complete"
 
-const isUploaded = (source: ReviewPageSource): boolean => source.publications.length > 0
+const isUploaded = (source: Pick<ReviewPageSource, "publications">): boolean => source.publications.length > 0
 
-const isKeptPrivate = (source: ReviewPageSource): boolean => source.isOwn && !isUploaded(source)
+const isKeptPrivate = (source: Pick<ReviewPageSource, "isOwn" | "publications">): boolean => source.isOwn && !isUploaded(source)
 
 const isLeftToComplete = (source: ReviewPageSource, artifact: ReviewArtifact): boolean =>
   source.isOwn && artifact.status !== COMPLETE_STATUS
@@ -215,7 +224,7 @@ const unavailableReasonOf = (source: ReviewPageSource): string | null => {
   return source.forge.kind === "unavailable" ? source.forge.reason : null
 }
 
-const reviewerRequestsOf = (source: ReviewPageSource): ReviewerRequestAbilities =>
+const reviewerRequestsOf = (source: Pick<ReviewPageSource, "forge" | "isOwn" | "publications">): ReviewerRequestAbilities =>
   source.forge?.kind === "read" && !isKeptPrivate(source) ? source.forge.pullRequest.abilities : NO_REVIEWER_REQUESTS
 
 const placedThreadIdsOf = (segments: readonly SegmentView[]): ReadonlySet<string> =>
@@ -233,8 +242,10 @@ const buildUnbuiltPage = (source: ReviewPageSource, shell: ReviewShell): ReviewP
   message: source.unavailableMessage ?? UNBUILT_MESSAGE,
 })
 
-export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput): ReviewPage => {
-  const shell = buildShell(
+type ShellSource = Pick<ReviewPageSource, "repository" | "lineColor" | "target" | "detail" | "artifact" | "notice" | "isOwn" | "forge" | "publications">
+
+const shellOf = (source: ShellSource): ReviewShell =>
+  buildShell(
     source.repository,
     source.lineColor,
     source.target,
@@ -244,6 +255,17 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     isKeptPrivate(source) ? AUTHOR_LABEL : null,
     reviewerRequestsOf(source),
   )
+
+export const buildMigrationPage = (source: ShellSource, notice: MigrationNotice): ReviewPage => ({
+  kind: "needs-migration",
+  shell: shellOf(source),
+  isOwn: source.isOwn,
+  changedFiles: buildChangedFiles(source.detail),
+  ...notice,
+})
+
+export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput): ReviewPage => {
+  const shell = shellOf(source)
   if (source.artifact === null) return buildUnbuiltPage(source, shell)
   const { artifact } = source
   const resolvedTargets = new Map(
@@ -299,13 +321,20 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     progress: buildProgress(artifact, source.activity),
     completion: buildCompletionNotice(artifact),
     unassignedFiles: buildUnassignedFiles(artifact),
-    rail: buildRail(segments, conversation),
+    rail: buildRail(segments, conversation, false),
     segments,
     conversation,
     composer: discussion === null ? null : COMPOSER_LABELS,
     reviewDraft: isReviewable ? buildReviewDraft(discussion, unavailableReasonOf(source)) : null,
     sharing: isLeftToComplete(source, artifact) ? null : buildSharing(source.publications, hasForge, source.now, source.isPublishing),
-    chatLabel: "Chat",
+    panels: PANELS,
+    fileExplorer: buildFileExplorer({
+      changedPaths: artifact.changedPaths,
+      diffTypes: diffTypesOf(artifact),
+      summaries: walkthroughs.flatMap(summarizeWalkthroughFiles),
+      anchorIdByPath: new Map(segments.flatMap((segment) => segment.walkthrough.files).map((file) => [file.path, file.anchorId] as const)),
+      filterValues: selectedFilterLabelsOf(settings.walkthroughControls.filter),
+    }),
     codeLinks: buildCodeLinks(resolvedTargets, artifact, stepping, context),
     codeDefinitions,
   }

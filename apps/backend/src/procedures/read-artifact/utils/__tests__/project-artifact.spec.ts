@@ -25,3 +25,13 @@ describe("the waypoints an agent reads", () => {
     expect(sent).not.toContain("\"codeBlocks\"")
   })
 })
+
+describe("the full artifact an agent reads", () => {
+  it("leaves out the Blast Diagram a segment only shows with segments off", () => {
+    const hiddenBlastDiagram = { nodes: [], edges: [] }
+
+    const sent = JSON.stringify(projectSegments("full", DRAFT_ARTIFACT, [{ ...DRAFT_SEGMENT, hiddenBlastDiagram }]))
+
+    expect(sent).not.toContain("hiddenBlastDiagram")
+  })
+})

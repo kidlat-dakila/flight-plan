@@ -2,6 +2,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react"
 import type { ComponentProps } from "react"
 import TraceBand, { type TraceBandAuthoring } from "@/components/TraceBand"
 import { findNavigator, findNavigatorButton, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
+import { WritingContext } from "@/lib/writing-context"
 
 type TraceBandProps = ComponentProps<typeof TraceBand>
 
@@ -11,6 +12,7 @@ const createProps = (overrides: Partial<TraceBandProps> = {}): TraceBandProps =>
   diagram: {
     anchorId: "trace-price",
     title: "A shopper sees a price",
+    writtenTitle: null,
     description: [{ kind: "paragraph", inlines: [{ kind: "text", text: "A shopper opens a product, and the page asks for its price." }] }],
     descriptionMarkdown: "A shopper opens a product, and the page asks for its price.",
     unwrittenLabel: "Not written yet.",
@@ -40,6 +42,24 @@ describe("TraceBand", () => {
     expect(screen.queryByRole("heading", { level: 3 })).toBeNull()
     expect(screen.queryByText("A shopper sees a price")).toBeNull()
     expect(screen.queryByText(/\d+ nodes?/)).toBeNull()
+  })
+
+  it("puts the title written for its only diagram in place of its heading", () => {
+    const { diagram } = createProps()
+    render(<TraceBand {...createProps({ diagram: diagram === null ? null : { ...diagram, writtenTitle: "Price product flow diagram" } })} />)
+
+    expect(screen.getByRole("heading", { level: 2, name: "Price product flow diagram" })).toBeTruthy()
+    expect(screen.queryByText("Trace Diagram")).toBeNull()
+  })
+
+  it("draws a skeleton in place of its heading while an agent writes the title of its only diagram", () => {
+    render(
+      <WritingContext value="Writing the review">
+        <TraceBand {...createProps()} />
+      </WritingContext>,
+    )
+
+    expect(screen.getByRole("heading", { level: 2, name: "Writing the review" })).toBeTruthy()
   })
 
   it("says that a description is not written yet", () => {
@@ -86,12 +106,33 @@ describe("TraceBand", () => {
     expect(screen.getByText("The editor")).toBeTruthy()
     expect(screen.queryByRole("button", { name: "Edit" })).toBeNull()
     expect(screen.queryByText("A shopper opens a product, and the page asks for its price.")).toBeNull()
-    expect(renderDescriptionEditor).toHaveBeenCalledWith(expect.objectContaining({ markdown: "A shopper opens a product, and the page asks for its price.", onSave: authoring.description.onSave }))
+    expect(renderDescriptionEditor).toHaveBeenCalledWith(expect.objectContaining({ markdown: "A shopper opens a product, and the page asks for its price." }))
+  })
+
+  it("asks the author for the title above the editor and saves it with the description", () => {
+    const authoring = createAuthoring()
+    const { diagram } = createProps()
+    const renderDescriptionEditor = vi.fn((request: { readonly onSave: (markdown: string) => void }) => (
+      <button type="button" onClick={() => { request.onSave("A shopper opens a product.") }}>Save</button>
+    ))
+    const props = createProps({
+      diagram: diagram === null ? null : { ...diagram, writtenTitle: "Price flow diagram" },
+      authoring: { ...authoring, description: { ...authoring.description, isWriting: true } },
+      renderDescriptionEditor,
+    })
+    render(<TraceBand {...props} />)
+
+    expect(screen.getByRole("textbox", { name: "Title" })).toBe(screen.getByDisplayValue("Price flow diagram"))
+    fireEvent.change(screen.getByRole("textbox", { name: "Title" }), { target: { value: "Price product flow diagram" } })
+    fireEvent.click(screen.getByRole("button", { name: "Save" }))
+
+    expect(authoring.description.onSave).toHaveBeenCalledWith({ title: "Price product flow diagram", description: "A shopper opens a product." })
   })
 
   const tabDiagram = (anchorId: string, title: string, text: string) => ({
     anchorId,
     title,
+    writtenTitle: title,
     description: [{ kind: "paragraph" as const, inlines: [{ kind: "text" as const, text }] }],
     descriptionMarkdown: text,
     unwrittenLabel: "Not written yet.",
@@ -108,6 +149,8 @@ describe("TraceBand", () => {
     render(<TraceBand {...createProps({ diagram: null, tabs: diagramTabs })} />)
 
     const tabList = screen.getByRole("tablist", { name: "Trace Diagram" })
+
+    expect(screen.getByRole("heading", { level: 2, name: "Trace Diagram" })).toBeTruthy()
 
     expect(within(tabList).getAllByRole("tab").map((tab) => tab.textContent)).toStrictEqual(["Stock check", "Checkout"])
     expect(screen.getByRole("tab", { name: "Stock check" }).getAttribute("aria-selected")).toBe("true")

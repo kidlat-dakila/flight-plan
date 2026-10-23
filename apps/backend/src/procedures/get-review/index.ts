@@ -2,8 +2,12 @@ import type { ProcedureContext } from "@/procedures/context"
 import { messageBodiesOf } from "@/procedures/get-conversation/utils/conversation"
 import { isAgentOnlineFor } from "@/procedures/get-conversation/utils/conversation-actions"
 import { selfAuthorIdOf } from "@/procedures/get-setup/utils/git-identity"
+import { updateCommandOf } from "@/procedures/get-update-notice/utils/update-notice"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { listLinkablePullRequests } from "@/procedures/mark-complete/utils/linkable-pull-requests"
+import { migrationNoticeOf } from "@/procedures/migrate-review/utils/migration-notice"
+import type { UnmigratedState } from "@/procedures/migrate-review/utils/review-version"
+import { readReviewVersionState } from "@/procedures/migrate-review/utils/stored-version-state"
 import { isPublishingUnderway } from "@/procedures/publish-artifact/utils/publishing-progress"
 import { codeLinkIdsIn, highlightReview, type HighlightedReview } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
@@ -11,7 +15,7 @@ import { NO_REVIEWED_MARKS } from "@flightplan/reviewed-marks"
 import { readBranchAuthorEmail } from "./utils/branch-author"
 import type { BranchLinking } from "./utils/build-complete-action"
 import { NO_WRITING_ACTIVITY, type WritingActivity } from "./utils/build-progress"
-import { buildReviewPage } from "./utils/build-review-page"
+import { buildMigrationPage, buildReviewPage } from "./utils/build-review-page"
 import { branchNameOf } from "./utils/change-reader"
 import { findReviewTarget } from "./utils/find-review-target"
 import { readLiveTargetDetail, withForgeDetail } from "./utils/live-target-detail"
@@ -26,14 +30,18 @@ import { buildReviewPrompt } from "./utils/start/review-prompt"
 
 const NOTHING_HIGHLIGHTED: HighlightedReview = { sources: [], solutionTokens: new Map() }
 
-const findListedSubject = async (key: ReviewKey, context: ProcedureContext): Promise<ReviewSubject | null> => {
+type ArtifactReader = (key: ReviewKey) => Promise<ReviewArtifact | null>
+
+const readNoArtifact: ArtifactReader = async () => await Promise.resolve(null)
+
+const findListedSubject = async (key: ReviewKey, context: ProcedureContext, readArtifact: ArtifactReader): Promise<ReviewSubject | null> => {
   const repositories = await context.repositoryStore.list()
   const repository = repositories.find((candidate) => candidate.name === key.repositoryName)
   if (repository === undefined) return null
   const target = await findReviewTarget(repository, key.targetId, context)
   if (target === null) return null
   const [artifact, sampleDetail, viewerLogin, branchAuthorEmail, gitIdentity, forge] = await Promise.all([
-    context.reviewStore.findArtifact(key),
+    readArtifact(key),
     context.reviewStore.findTargetDetail(key),
     context.repositoryStore.readViewerLogin(repository.name),
     target.kind === "branch" ? readBranchAuthorEmail(repository, target.name, context) : null,
@@ -66,8 +74,12 @@ const findFixtureSubject = async (key: ReviewKey, context: ProcedureContext): Pr
   return null
 }
 
-export const findReviewSubject = async (key: ReviewKey, context: ProcedureContext): Promise<ReviewSubject | null> =>
-  (await findListedSubject(key, context)) ?? (await findFixtureSubject(key, context))
+export const findReviewSubject = async (
+  key: ReviewKey,
+  context: ProcedureContext,
+  readArtifact: ArtifactReader = context.reviewStore.findArtifact,
+): Promise<ReviewSubject | null> =>
+  (await findListedSubject(key, context, readArtifact)) ?? (await findFixtureSubject(key, context))
 
 export const findPullRequestSubject = async (key: ReviewKey, context: ProcedureContext): Promise<PullRequestSubject | null> => {
   const subject = await findReviewSubject(key, context)
@@ -101,8 +113,18 @@ const openedArtifactOf = async (subject: ReviewSubject, key: ReviewKey, context:
   return opening.kind === "built" ? { artifact: opening.artifact, unavailableMessage: null } : { artifact: null, unavailableMessage: opening.message }
 }
 
+const updateCommandFor = (context: ProcedureContext): string | null =>
+  context.updateChecker === undefined ? null : updateCommandOf(context.updateChecker.installPath)
+
+const getMigrationPage = async (key: ReviewKey, state: UnmigratedState, context: ProcedureContext): Promise<ReviewPage | null> => {
+  const [subject, publications] = await Promise.all([findReviewSubject(key, context, readNoArtifact), context.reviewStore.readPublications(key)])
+  return subject === null ? null : buildMigrationPage({ ...subject, publications }, migrationNoticeOf(state, updateCommandFor(context)))
+}
+
 export const getReview = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewPage | null> => {
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
+  const versionState = await readReviewVersionState(key, context)
+  if (versionState.kind !== "current") return await getMigrationPage(key, versionState, context)
   const found = await findReviewSubject(key, context)
   if (found === null) return null
   const opened = await openedArtifactOf(found, key, context)

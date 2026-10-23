@@ -38,6 +38,7 @@ One data directory serves every repository the user reviews. Each repository has
 │   └── flightplan/
 ├── logs/
 │   └── <log id>.json
+├── init.json
 └── server.json
 ```
 
@@ -56,6 +57,7 @@ One data directory serves every repository the user reviews. Each repository has
 | Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review, live and troubleshoot skills and an `.mcp.json` that points at the running server. Flight Plan writes it again each time the agents are saved and when the published `flightplan` command starts with skills newer than the ones installed, and Claude loads `flightplan` from this folder |
 | Install stamps | `agent-installs/<agent>.json` | For each agent Flight Plan installed, the folder it installed into and a fingerprint of the plugin's files and the server's address at the time. The published `flightplan` command installs an agent again when it starts and the folder or the fingerprint differs, so the agent's skills and address stay current. A development server neither reads nor writes it |
 | Error logs | `logs/` | One JSON file per error Flight Plan logged and per troubleshoot request the user made, named by its log id, `<UTC date>-<UTC time>-<6 hex characters>` (`20261023-142530-a1b2c3`). An error holds where it happened (`source`), its message, its stack, the Flight Plan version and the operating system; a request holds what the user wrote, the page they asked from, the error that page showed, the log id of that error and of the latest errors, and the agent. Tokens, keys, passwords, credentials in addresses, emails, the user name and the home folder are taken out before a file is written. The same error from the same source is written once in 10 minutes. When Flight Plan starts it removes the files older than 30 days and all but the newest 500 (see [troubleshooting](troubleshooting.md)) |
+| Migrated version | `init.json` | The version of the last [migration](migrations.md) that ran, as `migratedVersion`. Flight Plan writes it after each migration that succeeds, and runs every migration when the file is missing |
 | Saved port | `server.json` | The port the `flightplan` command last listened on with every saved agent pointing at it. The next run tries this port first, so the address in the agents' files stays true. When the server has to move to another port, the new address makes every install out of date, so it installs the saved agents again and writes the new port here. A development server neither reads nor writes it |
 
 Forge credentials are never stored in this directory. They go in the operating system keychain (see [forge](forge.md#credentials)).
@@ -91,6 +93,7 @@ A review artifact's top-level fields:
 
 | Field | Content |
 |---|---|
+| `version` | The version of the Flight Plan that last saved the file, such as `0.1.11`. A development build, which has no version, writes the newest [review artifact migration](migrations.md#review-artifact-migrations)'s, and nothing while there is none. A file with no `version` was saved before Flight Plan wrote one. A copy published to a Claude artifact carries it too |
 | `schema` | The format version, `4`. A document of version `2` or `3` is read too: version `2` under the names of version `3`, and version `3`, written before nodes were [required](review-artifact.md#required-nodes), with every node of its sections required when an agent writes it. |
 | `meta` | The document's kind (`review`), the base commit the change is compared with, and the [review request](flight-plan-review.md#opening-a-review): the configuration, the order of the Code Walkthrough, the writer (an agent with its model and effort, the author, or nobody), when it was made, the last [write-up](flight-plan-review.md#write-up)'s choice, and whether the reviewer declined the write-up |
 | `artifact` | The [review artifact](review-artifact.md): its title, its status (`drafting`, `authoring` or `complete`), the [sections](review-artifact.md#sections) it generates, the head commit, its segments, the resolved source files, its [context code blocks](review-artifact.md#context-code-blocks) and the paths of every changed file |

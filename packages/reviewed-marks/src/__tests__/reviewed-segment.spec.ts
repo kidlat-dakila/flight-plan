@@ -140,6 +140,7 @@ describe("withReviewedTrace", () => {
       diagram: {
         anchorId: "diagram",
         title: "Diagram",
+        writtenTitle: null,
         description: null,
         descriptionMarkdown: "",
         descriptionHint: null,

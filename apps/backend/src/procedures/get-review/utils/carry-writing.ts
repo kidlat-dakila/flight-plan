@@ -184,16 +184,16 @@ const isSameDrawing = (traceDiagram: TraceDiagram, written: TraceDiagram): boole
   edgeKeysOf(traceDiagram).join(KEY_SEPARATOR) === edgeKeysOf(written).join(KEY_SEPARATOR)
   && listTraceNodes(traceDiagram.traceNodes).length === listTraceNodes(written.traceNodes).length
 
-const carryDescription = (traceDiagram: TraceDiagram | null, written: TraceDiagram | null): TraceDiagram | null =>
+const carryTraceWriting = (traceDiagram: TraceDiagram | null, written: TraceDiagram | null): TraceDiagram | null =>
   traceDiagram === null || written === null || !isSameDrawing(traceDiagram, written)
     ? traceDiagram
-    : { ...traceDiagram, description: written.description }
+    : { ...traceDiagram, title: written.title, description: written.description }
 
 const carrySegmentWriting = (segment: Segment, written: Segment, fileOrder: FileOrder): Segment => ({
   ...segment,
   title: written.title.trim() === UNWRITTEN ? segment.title : written.title,
   context: written.context,
-  traceDiagram: carryDescription(segment.traceDiagram, written.traceDiagram),
+  traceDiagram: carryTraceWriting(segment.traceDiagram, written.traceDiagram),
   blastDiagram: carryBlast(segment.blastDiagram, written.blastDiagram),
   walkthrough: fileOrder === WRITTEN_ORDER
     ? {

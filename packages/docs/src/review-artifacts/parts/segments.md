@@ -24,7 +24,7 @@ The shared segment always has a Blast Diagram, and so does a review with one seg
 
 ## Turning segments off
 
-With **Split reviews into segments** off in your [review configuration](/docs/setup/review-configuration/#advanced-options), or **Split this review into segments** unticked when you ask your agent to explain one review, the page shows the review as one segment. It has one Context for the whole change, one Code Walkthrough with every file, the Blast Diagrams together, and a tab for each Trace Diagram.
+With **Split reviews into segments** off in your [review configuration](/docs/setup/review-configuration/#advanced-options), or **Split this review into segments** unticked when you ask your agent to explain one review, the page shows the review as one segment. It has one Context for the whole change, one Code Walkthrough with every file, the Blast Diagrams together, and the shared segment's code drawn in the Trace Diagram of each path that uses it, with a tab for each diagram.
 
 ## On your own Flight Plan
 

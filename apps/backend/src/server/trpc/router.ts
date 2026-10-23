@@ -47,6 +47,7 @@ import { listConfigurationsRoute } from "./routes/list-configurations"
 import { listRecentRepositoriesRoute } from "./routes/list-recent-repositories"
 import { listRepositoriesRoute } from "./routes/list-repositories"
 import { markCompleteRoute } from "./routes/mark-complete"
+import { migrateReviewRoute } from "./routes/migrate-review"
 import { openAgentTerminalRoute } from "./routes/open-agent-terminal"
 import { publishArtifactRoute } from "./routes/publish-artifact"
 import { recordErrorRoute } from "./routes/record-error"
@@ -135,6 +136,7 @@ export const appRouter = createRouter({
     recordActivity: recordReviewerActivityRoute,
     requestWriteUp: requestWriteUpRoute,
     delete: deleteReviewRoute,
+    migrate: migrateReviewRoute,
     setReviewed: setReviewedRoute,
     editContext: editContextRoute,
     editSegments: editSegmentsRoute,

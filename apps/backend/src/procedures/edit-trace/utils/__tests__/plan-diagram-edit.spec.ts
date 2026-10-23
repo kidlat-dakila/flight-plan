@@ -90,26 +90,32 @@ describe("planDiagramEdit", () => {
     ).toMatchObject({ kind: "rejected" })
   })
 
-  it("writes the description of the diagram, trimmed, and leaves its cards and lines as they are", () => {
+  it("writes the title and the description of the diagram, trimmed, and leaves its cards and lines as they are", () => {
     const artifact = sampleArtifact()
     const traceDiagram = artifact.segments.find((segment) => segment.id === SEGMENT_ID)?.traceDiagram
 
-    const planned = planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", description: "  Two endpoints run the stock guard.\n" }, null)
+    const planned = planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", title: " Reserve stock flow diagram ", description: "  Two endpoints run the stock guard.\n" }, null)
 
     expect(planned.kind === "planned" ? planned.artifact.segments.find((segment) => segment.id === SEGMENT_ID)?.traceDiagram : null).toStrictEqual({
       ...traceDiagram,
+      title: "Reserve stock flow diagram",
       description: "Two endpoints run the stock guard.",
     })
   })
 
-  it("refuses an empty description of the diagram, and one that links to code the Flight Plan does not hold", () => {
+  it("refuses an empty title or description of the diagram, and a description that links to code the Flight Plan does not hold", () => {
     const artifact = sampleArtifact()
 
-    expect(planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", description: "  " }, null)).toStrictEqual({
+    expect(planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", title: " ", description: "Two endpoints run the stock guard." }, null)).toStrictEqual({
+      kind: "rejected",
+      message: "Write the title. It names the flow the diagram shows.",
+    })
+
+    expect(planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", title: "Reserve stock flow diagram", description: "  " }, null)).toStrictEqual({
       kind: "rejected",
       message: "Write the description. It tells the diagram in words.",
     })
-    expect(planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", description: "See [`total()`](code:src/nowhere.ts#total)." }, null)).toMatchObject({ kind: "rejected" })
+    expect(planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", title: "Reserve stock flow diagram", description: "See [`total()`](code:src/nowhere.ts#total)." }, null)).toMatchObject({ kind: "rejected" })
   })
 
   it("keeps an edited diagram readable after it is written to a file and read back", () => {
@@ -117,7 +123,7 @@ describe("planDiagramEdit", () => {
     const withLines = artifactOf(planDiagramEdit(withPage, SEGMENT_ID, { kind: "add-card", path: PATH, source: { kind: "lines", lineStart: 4, lineEnd: 6 }, isPrefilled: true, hasChildComponents: false }, TEXT))
     const moved = artifactOf(planDiagramEdit(withLines, SEGMENT_ID, { kind: "move-cards", places: [{ nodeId: PAGE_BLOCK_ID, x: 40, y: 60 }] }, null))
 
-    const cards = cardsOf(parseStoredReview(formatStoredReview(scaffoldOf(moved)))?.artifact)
+    const cards = cardsOf(parseStoredReview(formatStoredReview(scaffoldOf(moved), null))?.artifact)
 
     expect(cards.find((card) => card.id === PAGE_BLOCK_ID)).toMatchObject({ position: { x: 40, y: 60 }, children: [{ type: "component" }] })
     expect(lastOf(cards).codeBlocks[0]).toMatchObject({ name: "Lines 4 to 6" })

@@ -143,7 +143,7 @@ export const useTraceEditing = (reviewKey: ReviewKey, onProblem: (content: Toast
           if (isLastDescriptionOf(segmentId)) editTrace.reset()
           setDescribedSegmentIds((segmentIds) => [...segmentIds, segmentId])
         },
-        onSave: (markdown) => { save(segmentId, { kind: "describe", description: markdown }) },
+        onSave: ({ title, description }) => { save(segmentId, { kind: "describe", title, description }) },
         onCancel: () => {
           if (isLastDescriptionOf(segmentId)) editTrace.reset()
           stopDescribing(segmentId)

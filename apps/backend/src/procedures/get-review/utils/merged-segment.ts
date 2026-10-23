@@ -25,6 +25,9 @@ const joinBlasts = (blasts: readonly Blast[]): Blast | null => {
   }
 }
 
+const joinedBlastsOf = ({ blastDiagram, hiddenBlastDiagram }: Segment): Blast[] =>
+  [blastDiagram, hiddenBlastDiagram].filter((blast): blast is Blast => blast !== null && blast !== undefined)
+
 const joinFiles = (files: readonly FileSection[]): FileSection[] =>
   firstOfEachPath(files).map((file) => ({
     path: file.path,
@@ -39,7 +42,7 @@ export const mergeSegments = ([first, ...others]: readonly [Segment, ...Segment[
     changedPaths: [...new Set(segments.flatMap((segment) => segment.changedPaths))].sort((one, two) => one.localeCompare(two)),
     context: first.context,
     traceDiagram: null,
-    blastDiagram: joinBlasts(segments.flatMap((segment) => (segment.blastDiagram === null ? [] : [segment.blastDiagram]))),
+    blastDiagram: joinBlasts(segments.flatMap(joinedBlastsOf)),
     walkthrough: {
       files: joinFiles(segments.flatMap((segment) => segment.walkthrough.files)),
       isArranged: segments.every((segment) => segment.walkthrough.isArranged === true),

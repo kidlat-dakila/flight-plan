@@ -10,6 +10,7 @@ import {
   conversationReply,
   missingPage,
   modelChoiceReply,
+  needsMigrationPage,
   permissionReply,
   pendingComment,
   showSectionInView,
@@ -150,9 +151,10 @@ describe("the review page", () => {
 
     expect(await within(band).findByRole("heading", { name: "Count held units in the stock check" })).toBeTruthy()
     expect(within(band).getByRole("list", { name: "Reviewers" })).toBeTruthy()
-    expect(within(band).getByRole("button", { name: "Chat" })).toBeTruthy()
+    expect(within(band).queryByRole("button", { name: "Chat" })).toBeNull()
     expect(within(band).getByRole("button", { name: "Share" })).toBeTruthy()
     expect(within(band).getByRole("button", { name: "Submit review" })).toBeTruthy()
+    expect(within(screen.getByRole("navigation", { name: "Panels" })).getByRole("button", { name: "Chat" })).toBeTruthy()
 
     expect(screen.getAllByRole("button", { name: "Settings" })).toHaveLength(1)
     expect(within(band).queryByRole("button", { name: "More actions" })).toBeNull()
@@ -1033,7 +1035,7 @@ describe("the review page", () => {
     })
   })
 
-  it("opens the chat panel from the band and closes it again", async () => {
+  it("opens the chat panel from the activity bar and hides it again", async () => {
     renderReview({
       "review.get": () => ({ data: artifactPage }),
       "conversation.watch": () => ({ data: conversationReply }),
@@ -1047,9 +1049,139 @@ describe("the review page", () => {
     expect(within(panel).getByText("Agent offline")).toBeTruthy()
     expect(within(panel).getByText("Ask about this review.")).toBeTruthy()
 
-    fireEvent.click(within(panel).getByRole("button", { name: "Close the chat" }))
+    fireEvent.click(within(panel).getByRole("button", { name: "Hide chat" }))
 
     expect(screen.queryByRole("complementary", { name: "Chat with the agent" })).toBeNull()
+    expect(screen.queryByRole("complementary", { name: "Sections" })).toBeNull()
+  })
+
+  it("lists the changed files in the explorer, each a link to its code panel", async () => {
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+
+    const explorer = await screen.findByRole("complementary", { name: "Changed files" })
+
+    expect(within(explorer).getByText("3 files • 1 not in the walkthrough")).toBeTruthy()
+    expect(within(explorer).getByRole("link", { name: /cart\.ts/ }).getAttribute("href")).toBe("#checkout-file-1")
+    expect(within(explorer).getByRole("link", { name: /price\.ts/ }).getAttribute("href")).toBe("#stock-file-1")
+    expect(within(explorer).queryByRole("link", { name: /package\.json/ })).toBeNull()
+    expect(within(explorer).getByText("Not covered")).toBeTruthy()
+    expect(within(explorer).getByRole("img", { name: "1 of 4 waypoints reviewed" })).toBeTruthy()
+  })
+
+  it("folds a folder of the explorer", async () => {
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+
+    const explorer = await screen.findByRole("complementary", { name: "Changed files" })
+    fireEvent.click(within(explorer).getByRole("button", { name: "src" }))
+
+    expect(within(explorer).queryByRole("link", { name: /cart\.ts/ })).toBeNull()
+    expect(within(explorer).getByRole("button", { name: "src" }).getAttribute("aria-expanded")).toBe("false")
+  })
+
+  it("hides the explorer and shows it again, by its buttons and by Ctrl+E", async () => {
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+
+    const explorer = await screen.findByRole("complementary", { name: "Changed files" })
+    fireEvent.click(within(explorer).getByRole("button", { name: "Hide changed files" }))
+
+    expect(screen.queryByRole("complementary", { name: "Changed files" })).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Show changed files" }))
+    expect(await screen.findByRole("complementary", { name: "Changed files" })).toBeTruthy()
+
+    fireEvent.keyDown(window, { key: "e", ctrlKey: true })
+    expect(screen.queryByRole("complementary", { name: "Changed files" })).toBeNull()
+
+    fireEvent.keyDown(window, { key: "e", ctrlKey: true })
+    expect(await screen.findByRole("complementary", { name: "Changed files" })).toBeTruthy()
+  })
+
+  it("keeps the width the reviewer gives a docked panel when the page opens again", async () => {
+    const first = renderReview({ "review.get": () => ({ data: artifactPage }) })
+    fireEvent.keyDown(await screen.findByRole("slider", { name: "Changed files width" }), { key: "ArrowRight" })
+    const chosen = screen.getByRole("complementary", { name: "Changed files" }).parentElement?.style.width ?? ""
+    first.unmount()
+
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+
+    expect(chosen).not.toBe("296px")
+    expect((await screen.findByRole("complementary", { name: "Changed files" })).parentElement?.style.width).toBe(chosen)
+    expect(JSON.parse(window.localStorage.getItem("flight-plan:layout:v1") ?? "{}")).toMatchObject({ explorerWidthPx: Number.parseInt(chosen, 10) })
+    window.localStorage.removeItem("flight-plan:layout:v1")
+  })
+
+  it("shows the sections or the chat in the right panel, and hides it when the open one is pressed again", async () => {
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "conversation.watch": () => ({ data: conversationReply }),
+      "conversation.modelChoice": () => ({ data: null }),
+    })
+
+    const panels = await screen.findByRole("navigation", { name: "Panels" })
+    expect(await screen.findByRole("complementary", { name: "Sections" })).toBeTruthy()
+    expect(within(panels).getByRole("button", { name: "Sections" }).getAttribute("aria-pressed")).toBe("true")
+
+    fireEvent.click(within(panels).getByRole("button", { name: "Chat" }))
+
+    expect(await screen.findByRole("complementary", { name: "Chat with the agent" })).toBeTruthy()
+    expect(screen.queryByRole("complementary", { name: "Sections" })).toBeNull()
+
+    fireEvent.keyDown(window, { key: "a", ctrlKey: true })
+
+    expect(await screen.findByRole("complementary", { name: "Sections" })).toBeTruthy()
+    expect(screen.queryByRole("complementary", { name: "Chat with the agent" })).toBeNull()
+
+    fireEvent.click(within(panels).getByRole("button", { name: "Sections" }))
+
+    expect(screen.queryByRole("complementary", { name: "Sections" })).toBeNull()
+  })
+
+  it("leaves Ctrl+C to copying while text is selected", async () => {
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "conversation.watch": () => ({ data: conversationReply }),
+      "conversation.modelChoice": () => ({ data: null }),
+    })
+    const explorer = await screen.findByRole("complementary", { name: "Changed files" })
+    window.getSelection()?.selectAllChildren(within(explorer).getByRole("heading", { name: "Changed files" }))
+
+    fireEvent.keyDown(window, { key: "c", ctrlKey: true })
+
+    expect(screen.queryByRole("complementary", { name: "Chat with the agent" })).toBeNull()
+
+    window.getSelection()?.removeAllRanges()
+    fireEvent.keyDown(window, { key: "c", ctrlKey: true })
+
+    expect(await screen.findByRole("complementary", { name: "Chat with the agent" })).toBeTruthy()
+  })
+
+  it("filters the waypoints from the explorer's own Filter menu, with no key of its own", async () => {
+    const getReview = vi.fn(() => ({ data: artifactPage }))
+    renderReview({ "review.get": getReview })
+
+    const explorer = await screen.findByRole("complementary", { name: "Changed files" })
+    fireEvent.click(within(explorer).getByRole("menuitem", { name: /Filter/ }))
+    fireEvent.click(await screen.findByRole("menuitemcheckbox", { name: /Bug/ }))
+
+    await waitFor(() => {
+      expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ filterKeys: ["bug"] }))
+    })
+  })
+
+  it("clears the waypoint filter from the explorer", async () => {
+    const filteredPage = {
+      ...artifactPage,
+      fileExplorer: { ...artifactPage.fileExplorer, filter: { label: "Filtered by", values: ["Bug"], clearLabel: "Clear" } },
+    }
+    const getReview = vi.fn((input: unknown) => ({ data: asksForBug(input) ? filteredPage : artifactPage }))
+    renderReview({ "review.get": getReview }, `${REVIEW_PATH}?filter=%5B%22bug%22%5D`)
+
+    const explorer = await screen.findByRole("complementary", { name: "Changed files" })
+    fireEvent.click(await within(explorer).findByRole("button", { name: "Clear" }))
+
+    await waitFor(() => {
+      expect(getReview).toHaveBeenLastCalledWith(expect.objectContaining({ filterKeys: [] }))
+    })
   })
 
   it("sends a message to the agent from the chat panel", async () => {
@@ -1246,6 +1378,23 @@ describe("the review page", () => {
     expect(screen.queryByRole("menuitem", { name: "Delete" })).toBeNull()
     expect(screen.getAllByRole("button", { name: "Settings" })).toHaveLength(1)
     expect(screen.queryByRole("navigation", { name: "Review sections" })).toBeNull()
+  })
+
+  it("shows a Flight Plan of another version as a page to convert, and the review once it is converted", async () => {
+    const migrateReview = vi.fn(() => ({ data: { message: "Flight Plan updated" } }))
+    renderReview({
+      "review.get": () => ({ data: migrateReview.mock.calls.length === 0 ? needsMigrationPage : artifactPage }),
+      "review.migrate": migrateReview,
+    })
+
+    expect(await screen.findByRole("heading", { name: "This Flight Plan comes from a newer version" })).toBeTruthy()
+    expect(screen.getByText("npm install -g @kidlat-dakila/flightplan@latest")).toBeTruthy()
+    expect(screen.queryByRole("navigation", { name: "Review sections" })).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Convert and open" }))
+
+    expect(await screen.findByRole("navigation", { name: "Review sections" })).toBeTruthy()
+    expect(migrateReview).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412" })
   })
 
   it("shows the falling plane, the backend's message and a way back when the review cannot be opened", async () => {

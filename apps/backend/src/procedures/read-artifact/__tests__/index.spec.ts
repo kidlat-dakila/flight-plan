@@ -37,14 +37,14 @@ describe("readArtifact", () => {
           { path: PRICE_PATH, declarations: ["priceOf"] },
           { path: SUBTOTAL_PATH, declarations: ["lineTotal", "subtotal"] },
         ],
-        unwritten: { total: 11 },
+        unwritten: { total: 12 },
         segments: [{
           segmentId: "all",
           files: [
             { path: PRICE_PATH, waypoints: [{ id: "w1", declaration: "priceOf", title: null, isReadingWritten: false }] },
             { path: SUBTOTAL_PATH, waypoints: [{ id: "w2" }, { id: "w3" }] },
           ],
-          traceDiagram: { isDescriptionWritten: false, nodes: [{ id: "j-subtotal", parentId: null, type: "function", label: null, isChanged: true }] },
+          traceDiagram: { isTitleWritten: false, isDescriptionWritten: false, nodes: [{ id: "j-subtotal", parentId: null, type: "function", label: null, isChanged: true }] },
           blastDiagram: { nodes: [{ path: "src/cart/CartPage.tsx", diffType: null }, { path: "src/cart/CartTotal.tsx" }, { path: SUBTOTAL_PATH, diffType: "modified" }] },
         }],
       },

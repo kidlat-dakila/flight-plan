@@ -48,7 +48,7 @@ const LOCAL_FACTS = [
         </p>
         <div class="hero-actions">
           <InstallCommand />
-          <p class="demo-line">or <a class="quiet-link" href={DEMO_HREF}>try our demo to see it firsthand</a>!</p>
+          <p class="demo-line">Or <a class="quiet-link" href={DEMO_HREF}>try our demo to see it first-hand</a>!</p>
         </div>
       </div>
     </div>
@@ -173,10 +173,10 @@ const LOCAL_FACTS = [
 <style>
   .hero {
     position: relative;
+    isolation: isolate;
     display: flex;
     align-items: center;
     min-height: max(38rem, calc(100svh - 3.5rem));
-    overflow: hidden;
   }
 
   .hero-column {
@@ -186,10 +186,14 @@ const LOCAL_FACTS = [
   }
 
   .hero-copy {
-    max-width: max(27.5rem, calc(clamp(3rem, 1.5rem + 3.4vw, 4.5rem) * 7.1));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
   h1 {
+    max-width: 15ch;
     font-size: clamp(3rem, 1.5rem + 3.4vw, 4.5rem);
     line-height: 0.98;
     letter-spacing: -0.04em;
@@ -204,8 +208,8 @@ const LOCAL_FACTS = [
   }
 
   .hero-lede {
-    max-width: 36ch;
-    margin: 1.75rem 0 2rem;
+    max-width: 60ch;
+    margin: 1.75rem 0 2.25rem;
     font-size: 1.1875rem;
     line-height: 1.75rem;
   }
@@ -213,16 +217,10 @@ const LOCAL_FACTS = [
   .hero-actions {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    width: 100%;
     gap: 1.1rem;
   }
-
-
-
-
-
-
-
 
   .demo-line {
     color: var(--muted-ink);
@@ -290,22 +288,17 @@ const LOCAL_FACTS = [
 
   @media (max-width: 63.99rem) {
     .hero {
-      display: block;
       min-height: 0;
     }
 
     .hero-column {
-      padding-block: 3.5rem 0;
-    }
-
-    .hero-copy {
-      max-width: 40rem;
+      padding-block: 3.5rem 4rem;
     }
 
     .hero-lede {
-      max-width: 52ch;
+      font-size: 1.0625rem;
+      line-height: 1.65rem;
     }
-
   }
 
   @media (max-width: 63.99rem) {

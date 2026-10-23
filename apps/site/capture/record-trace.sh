@@ -9,7 +9,7 @@ trap 'agent-browser record stop >/dev/null 2>&1 || true; rm -rf "$WORK_DIR"' EXI
 source "$SCRIPT_DIR/browser.sh"
 source "$SCRIPT_DIR/review-clip.sh"
 
-TRACE_HEADING="#fixture-segment-2-trace-diagram-heading"
+TRACE_HEADING="#trace-diagram-heading"
 REST_X=110
 REST_Y=140
 REST_STEPS=12

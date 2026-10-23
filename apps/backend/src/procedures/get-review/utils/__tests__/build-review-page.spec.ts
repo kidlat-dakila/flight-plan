@@ -286,11 +286,11 @@ describe("buildReviewPage", () => {
     })
     expect(page.kind === "artifact" ? page.rail.groups.map((group) => group.sections.map((section) => section.kind)) : []).toStrictEqual([
       ["context", "traceDiagram", "walkthrough"],
-      ["context", "traceDiagram", "blastDiagram", "walkthrough"],
+      ["context", "traceDiagram", "walkthrough", "blastDiagram"],
     ])
   })
 
-  it("lists the walkthrough's files as rail children, one per file", () => {
+  it("leaves the files out of the rail and lists them in the file explorer, each with the anchor of its code panel", () => {
     const artifact = createArtifact({
       isSegmented: true,
       segments: [
@@ -300,10 +300,17 @@ describe("buildReviewPage", () => {
     })
     const page = buildReviewPage(createSource({ artifact }), createInput())
 
-    expect(page.kind === "artifact" ? page.rail.groups.map((group) => group.sections.find((section) => section.kind === "walkthrough")?.children) : []).toStrictEqual([
-      [{ anchorId: "one-file-1", label: "src/price.ts" }, { anchorId: "one-file-2", label: "src/cart.ts" }],
-      [],
-    ])
+    expect(page.kind === "artifact" ? page.rail.groups.map((group) => group.sections.find((section) => section.kind === "walkthrough")?.children) : []).toStrictEqual([[], []])
+    expect(page).toMatchObject({
+      panels: { explorer: { label: "Changed files" } },
+      fileExplorer: {
+        rows: [
+          { kind: "folder", id: "src" },
+          { kind: "file", id: CART_PATH, anchorId: "one-file-2" },
+          { kind: "file", id: PRICE_PATH, anchorId: "one-file-1" },
+        ],
+      },
+    })
   })
 
   it("leaves a change that is not segmented without a segment title, and its anchors without a prefix", () => {

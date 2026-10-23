@@ -27,7 +27,7 @@ const contextStateOf = (segment: Segment): SectionState => stateOf(true, segment
 
 const traceStateOf = (segments: readonly Segment[]): SectionState => {
   const nodes = segments.flatMap(traceNodesOf)
-  const isWritten = nodes.some(isTraceNodeWritten) || segments.some((segment) => (segment.traceDiagram?.description ?? null) !== null)
+  const isWritten = nodes.some(isTraceNodeWritten) || segments.some((segment) => (segment.traceDiagram?.title ?? segment.traceDiagram?.description ?? null) !== null)
   return stateOf(nodes.length > 0, isWritten)
 }
 

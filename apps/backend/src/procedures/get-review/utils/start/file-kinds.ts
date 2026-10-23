@@ -47,7 +47,7 @@ interface FileKindCount {
   readonly count: number
 }
 
-const extensionOf = (path: string): string => {
+export const extensionOf = (path: string): string => {
   const fileName = path.slice(path.lastIndexOf(PATH_SEPARATOR) + 1)
   const separatorIndex = fileName.lastIndexOf(EXTENSION_SEPARATOR)
   return separatorIndex <= 0 ? "" : fileName.slice(separatorIndex + 1).toLowerCase()

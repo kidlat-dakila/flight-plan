@@ -477,6 +477,21 @@ const Badge = ({ badge }: { readonly badge: NavigatorBadge }) => (
 
 const hasSubmenu = (menu: NavigatorMenu): boolean => menu.itemGroups.flat().some((item) => item.kind === "submenu")
 
+export const NavigatorMenuBody = ({ menu }: { readonly menu: NavigatorMenu }) => (
+  <>
+    <MenubarGroup>
+      <MenubarLabel>{menu.heading}</MenubarLabel>
+      {menu.itemGroups.map((items, position) => (
+        <div key={items.map((item) => item.id).join(ANCHOR_SEPARATOR)}>
+          {position === 0 ? null : <MenubarSeparator />}
+          {items.map((item) => (item.kind === "choice" ? <ChoiceItem key={item.id} choice={item} /> : <SubmenuItem key={item.id} submenu={item} />))}
+        </div>
+      ))}
+    </MenubarGroup>
+    <KeyHints hints={hasSubmenu(menu) ? SUBMENU_HINTS : MENU_HINTS} />
+  </>
+)
+
 interface MenuControlProps {
   readonly control: NavigatorMenu
   readonly navigator: NavigatorState
@@ -500,16 +515,7 @@ const MenuControl = ({ control, navigator, density }: MenuControlProps) => (
         <Keycap label={control.key} />
       </MenubarTrigger>
       <MenubarContent side="top" sideOffset={12} className="min-w-[17rem]">
-        <MenubarGroup>
-          <MenubarLabel>{control.heading}</MenubarLabel>
-          {control.itemGroups.map((items, position) => (
-            <div key={items.map((item) => item.id).join(ANCHOR_SEPARATOR)}>
-              {position === 0 ? null : <MenubarSeparator />}
-              {items.map((item) => (item.kind === "choice" ? <ChoiceItem key={item.id} choice={item} /> : <SubmenuItem key={item.id} submenu={item} />))}
-            </div>
-          ))}
-        </MenubarGroup>
-        <KeyHints hints={hasSubmenu(control) ? SUBMENU_HINTS : MENU_HINTS} />
+        <NavigatorMenuBody menu={control} />
       </MenubarContent>
     </MenubarMenu>
   </Menubar>

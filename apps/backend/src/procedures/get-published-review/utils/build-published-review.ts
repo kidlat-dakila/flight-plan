@@ -1,3 +1,4 @@
+import { buildRail } from "@/procedures/get-review/utils/build-rail"
 import { targetTitleOf } from "@/procedures/get-review/utils/build-shell"
 import { COMPOSER_LABELS } from "@/procedures/get-review/utils/discussion"
 import type { ReviewPage } from "@/procedures/get-review/utils/schemas"
@@ -31,7 +32,7 @@ export const buildPublishedReview = (
   actions: { shareLabel: SHARE_LABEL, submitLabel: SUBMIT_LABEL },
   unavailableFeature: UNAVAILABLE_FEATURE,
   unassignedFiles: page.unassignedFiles,
-  rail: page.rail,
+  rail: buildRail(page.segments, page.conversation, true),
   segments: page.segments,
   composer: COMPOSER_LABELS,
   codeLinks: page.codeLinks,

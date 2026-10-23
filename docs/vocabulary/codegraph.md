@@ -153,6 +153,7 @@ interface CodegraphSegment {
   importGraph: ImportGraphFile[]
   traceDiagram: TraceFlow | null
   blastDiagram: Blast | null
+  hiddenBlastDiagram: Blast | null
   codeWalkthrough: LinkedCodeWalkthrough
   codeReferences: FileCodeReferences[]
 }
@@ -165,6 +166,7 @@ interface CodegraphSegment {
 | `importGraph` | The changed files of the segment, and the files of its group the diff did not touch. A deleted file of a cluster is with the first segment of that cluster. |
 | `traceDiagram` | `null` for a segment in which nothing that runs changed |
 | `blastDiagram` | `null` for an entry segment nothing outside the change uses. See [When a segment has a Blast Diagram](codegraph/segments.md#when-a-segment-has-a-blast-diagram). |
+| `hiddenBlastDiagram` | The Blast Diagram of such an entry segment, kept for a review whose segments are off. `null` on every other segment. |
 
 A waypoint holds its `codeBlocks`: the block it stops at first, then the changed blocks inside it, each the same object as in the linked group its Trace Diagram is drawn from. A waypoint of the codegraph carries more than the stored one: its line `range`, a `category` (`function`, `class`, `method`, `variable`, `import`, `type`, `statement` or `file`), and the id of the Trace Diagram node it belongs to, `null` when the diagram has no node for it.
 

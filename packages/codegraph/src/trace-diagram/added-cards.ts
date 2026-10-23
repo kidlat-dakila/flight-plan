@@ -47,6 +47,7 @@ const NO_CHANGE = { added: [], removed: [], isCreated: false }
 export const createEmptyTrace = (): TraceDiagram => ({
   astCodeGroup: EMPTY_GROUP,
   importGraphGroup: [],
+  title: null,
   description: null,
   traceNodes: [],
   traceNodeEdges: [],

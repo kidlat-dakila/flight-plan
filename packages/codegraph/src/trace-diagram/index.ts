@@ -283,5 +283,5 @@ export const generateTraceDiagram = ({ group, importGraphGroup, scope }: TraceSo
   const { nodes, edges } = withGroups(keptNodes, keptEdges, groupCardNodes(keptNodes))
   const traceNodeEdges = withCardEdges({ nodes, edges, importerCountByPath })
   const parentIdById = listCardParents({ nodes, edges: traceNodeEdges, importerCountByPath })
-  return { astCodeGroup: group, importGraphGroup, description: null, traceNodes: nestNodes(nodes, parentIdById), traceNodeEdges, isRequired: false }
+  return { astCodeGroup: group, importGraphGroup, title: null, description: null, traceNodes: nestNodes(nodes, parentIdById), traceNodeEdges, isRequired: false }
 }

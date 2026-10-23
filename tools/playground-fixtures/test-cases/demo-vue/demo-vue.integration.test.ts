@@ -203,7 +203,7 @@ describe("demo-vue", () => {
       ],
     })
 
-    const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
+    const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF, isSegmented: false })
 
     await expectCaseSnapshot(codegraph)
   })

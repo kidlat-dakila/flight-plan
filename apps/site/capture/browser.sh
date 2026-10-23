@@ -3,6 +3,7 @@ DEMO_REVIEW_URL="${DEMO_URL}#/pr-reviews/pokedex-web/pr-57"
 SITE_URL="${DEMO_URL%%/demo/*}"
 FASTAPI_REVIEW_URL="$SITE_URL/demo/demo-fastapi/#/pr-reviews/pokedex-api/pr-42"
 GUIDE_STORAGE_KEY="flightplan-guide-tooltips"
+DEMO_NOTICE_STORAGE_KEY="flightplan-demo-notice"
 CONFIGURATION_URL="${DEMO_URL}#/settings/profiles/standard"
 PAGE_SETTLE_MS=3500
 SCROLL_SETTLE_MS=1200
@@ -20,6 +21,7 @@ evaluate() {
 turn_guide_tips_off() {
   browse open "$SITE_URL/"
   browse eval "localStorage.setItem('$GUIDE_STORAGE_KEY',JSON.stringify({state:{firstSeenAt:Date.now(),isOff:true,tooltips:{},deferredAt:{},actions:{}},version:1}))"
+  browse eval "localStorage.setItem('$DEMO_NOTICE_STORAGE_KEY','off')"
 }
 
 open_page() {

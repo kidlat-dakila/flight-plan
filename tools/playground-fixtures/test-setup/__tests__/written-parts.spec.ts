@@ -58,6 +58,7 @@ const nodeOf = (id: string, overrides: Partial<TraceNode> = {}): TraceNode => ({
 const generatedTrace: TraceDiagram = {
   astCodeGroup: { astGraphs: [], rootASTGraphs: [], codeBlocks: [], diffBlocks: [], diffContains: [], chainContains: [], diffChains: [] },
   importGraphGroup: [],
+  title: null,
   description: null,
   traceNodes: [
     nodeOf("reserve.tsx#component@1:1", {
@@ -83,6 +84,7 @@ const generatedSegment: CodegraphSegment = {
     ],
     edges: [{ importer: "reserve.ts", imported: "stock.ts" }],
   },
+  hiddenBlastDiagram: null,
   codeWalkthrough: { files: [{ path: "stock.ts", waypoints: [waypointOf("stockOf")] }] },
   codeReferences: [],
 }
@@ -98,6 +100,8 @@ const writtenSnapshot = {
         title: "Stock check",
         context: ["## Summary", "", "Held stock is subtracted."],
         traceDiagram: {
+          title: "Reserve item flow diagram",
+          description: "A shopper reserves an item, and the stock is read.",
           traceNodes: [
             {
               id: "reserve.tsx#component@1:1",
@@ -173,6 +177,10 @@ describe("withWrittenParts", () => {
     ])
   })
 
+  it("keeps the title and the description written for the trace", () => {
+    expect(segment.traceDiagram).toMatchObject({ title: "Reserve item flow diagram", description: "A shopper reserves an item, and the stock is read." })
+  })
+
   it("keeps the impact written on a file the change did not touch, and none on a file of the change", () => {
     expect(segment.blastDiagram?.nodes).toStrictEqual([
       { path: "reserve.ts", diffType: null, impactType: "behaviour-changes", impactReason: "A reservation is refused sooner.", isRequired: false },
@@ -204,7 +212,7 @@ describe("withWrittenParts", () => {
   it("keeps the rest of a snapshot whose trace was written in a shape it no longer has", () => {
     const older = {
       ...writtenSnapshot,
-      codegraph: { segments: writtenSnapshot.codegraph.segments.map((writtenSegment) => ({ ...writtenSegment, traceDiagram: { title: "An older trace", nodes: [] } })) },
+      codegraph: { segments: writtenSnapshot.codegraph.segments.map((writtenSegment) => ({ ...writtenSegment, traceDiagram: { caption: "An older trace", nodes: [] } })) },
     }
     const [olderSegment] = withWrittenParts(generated, readWrittenParts(older)).segments
 

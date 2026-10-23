@@ -18,9 +18,9 @@ Each node is a card for a function, a component, a hook or another block of code
 - its parameters,
 - rows grouped under **State**, **Hooks**, **Effects**, **Calls**, **Triggers** and **Steps**, or **Properties** and **Methods** for a class. **Calls** takes the name of the kind of call when there is one, such as **Request** or **Storage**.
 
-Components that render each other are drawn inside one another. Above the board, your agent's description tells the diagram in words. Until it's written, Flight Plan's hint names the code the path runs through.
+Components that render each other are drawn inside one another. Your agent gives the diagram a title that names the flow it shows, such as "Submit order flow diagram". With one Trace Diagram on the page, the title is the section's heading. With several, each title labels its diagram's tab. Above the board, your agent's description tells the diagram in words. Until it's written, Flight Plan's hint names the code the path runs through.
 
-Flight Plan builds the nodes, the edges, the rows, the classifications and the change marks from the code. Your agent writes the description, the label and description of each node, and the labels of its rows. It can't add a node or draw an edge.
+Flight Plan builds the nodes, the edges, the rows, the classifications and the change marks from the code. Your agent writes the title and the description, the label and description of each node, and the labels of its rows. It can't add a node or draw an edge.
 
 A change that touches only types, imports or top-level statements has no Trace Diagram, because nothing that runs has changed.
 
@@ -30,7 +30,7 @@ A change that touches only types, imports or top-level statements has no Trace D
 - Click a row to open the node's code in a side panel, focused on that row's lines. Click the node's head to see all its code. The panel shows your agent's description first, and the waypoints of the Code Walkthrough inside the code. A card your agent hasn't explained says **Not explained yet.**, and **Explain this card** (G) asks your agent for that card alone.
 - A node's menu can **Show only the paths through this node**, or hide the nodes it leads to.
 - **Collapse all** and **Expand all** (Q) fold every card.
-- With segments off, each Trace Diagram has a tab of its own.
+- With segments off, the code several paths share is drawn in the diagram of each path that reaches it. When the change has several paths, each diagram has a tab of its own.
 
 ## On your own Flight Plan
 

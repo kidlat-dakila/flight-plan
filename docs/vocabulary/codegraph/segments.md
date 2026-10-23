@@ -220,6 +220,8 @@ A Blast Diagram is there to answer one question: did the author forget something
 
 A page usually has none: nothing uses it but the code that was changed with it. A function, a hook or a component that unchanged code uses has one.
 
+An entry segment that draws none still keeps the Blast Diagram it would have had, as `hiddenBlastDiagram`: its changed files, and under `importBound` the files they use. Segments shown in their own sections never draw it. With [segments off](../review-artifact.md#segments-off) the review is one segment, so its Blast Diagram joins it with the others, and covers every file of the change.
+
 **Using is tested per block, not per file.** A file that imports a changed file and uses only what did not change in it is not in the diagram.
 
 ```ts

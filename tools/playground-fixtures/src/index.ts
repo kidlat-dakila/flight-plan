@@ -17,6 +17,7 @@ const FIXTURE_NAME_PATTERN = /^[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9-]*$/
 const MISSING_FILE_CODE = "ENOENT"
 const MOCK_AUTHOR = "fixture-author"
 const MOCK_UPDATED_AT = "2026-01-01T00:00:00.000Z"
+const DEMO_CASE_PREFIX = "demo-"
 
 export interface FixtureReviewTarget {
   readonly kind: "pull-request"
@@ -104,6 +105,11 @@ const LINE_BREAK = "\n"
 
 const caseNameOf = (fixtureName: string): string => fixtureName.split(NAME_SEPARATOR).at(0) ?? fixtureName
 
+const isDemoCase = (caseName: string): boolean => caseName.startsWith(DEMO_CASE_PREFIX)
+
+const isSegmentedCase = (caseName: string, snapshot: CaseSnapshot): boolean =>
+  !isDemoCase(caseName) && snapshot.codegraph.segments.length > 1
+
 const readSnapshot = async (testCasesPath: string, fixtureName: string): Promise<CaseSnapshot> => {
   if (!FIXTURE_NAME_PATTERN.test(fixtureName)) throw new UnknownFixtureError(fixtureName)
   const parsed: unknown = JSON.parse(await readFixtureText(testCasesPath, fixtureName))
@@ -120,10 +126,11 @@ const readStoredGroups = (text: string): StoredCodeGroupGraph[] => {
 
 export const getReviewArtifactFixture = async (testCasesPath: string, fixtureName: string): Promise<ReviewArtifact> => {
   const snapshot = await readSnapshot(testCasesPath, fixtureName)
-  const baseFiles = await readRepositoryFiles(join(testCasesPath, caseNameOf(fixtureName), REPOSITORY_FOLDER))
+  const caseName = caseNameOf(fixtureName)
+  const baseFiles = await readRepositoryFiles(join(testCasesPath, caseName, REPOSITORY_FOLDER))
   const hasBlocks = snapshot.codegraph.segments.some((segment) => segment.traceDiagram !== null || segment.codeWalkthrough.files.length > 0)
   const storedGroups = hasBlocks ? readStoredGroups(await readFixtureText(testCasesPath, fixtureName, CODE_BLOCKS)) : []
-  return toReviewArtifact(snapshot, applyDiffs(baseFiles, [snapshot.diff.join(LINE_BREAK)]), storedGroups)
+  return toReviewArtifact(snapshot, applyDiffs(baseFiles, [snapshot.diff.join(LINE_BREAK)]), storedGroups, isSegmentedCase(caseName, snapshot))
 }
 
 const snapshotNameOf = (fixtureName: string): string => fixtureName.split(NAME_SEPARATOR).at(-1) ?? fixtureName

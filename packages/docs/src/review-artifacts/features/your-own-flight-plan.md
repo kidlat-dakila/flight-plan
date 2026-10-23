@@ -15,7 +15,7 @@ On the author's page every part can be edited:
 
 - [Segments](/docs/review-artifacts/parts/segments/): their labels, their files and their order.
 - [Context](/docs/review-artifacts/parts/context/): the text, with links to code.
-- [Trace Diagram](/docs/review-artifacts/parts/trace-diagram/): its cards, lines and description.
+- [Trace Diagram](/docs/review-artifacts/parts/trace-diagram/): its cards, lines, title and description.
 - [Blast Diagram](/docs/review-artifacts/parts/blast-diagram/): the impact of each file.
 - [Code Walkthrough](/docs/review-artifacts/parts/code-walkthrough/): the waypoints, the files and their order. **Write description** (C) opens a waypoint's form, with its title, its explanation, the **Core change** mark and additional context for your reviewers.
 

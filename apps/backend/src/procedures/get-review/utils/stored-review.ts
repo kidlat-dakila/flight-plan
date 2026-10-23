@@ -14,7 +14,7 @@ export interface ReviewScaffold {
   readonly baseCommit: string
 }
 
-const STORED_SCHEMA_VERSION = 4
+export const STORED_SCHEMA_VERSION = 4
 const PRE_REQUIREMENT_SCHEMA_VERSION = 3
 const RETIRED_MANUAL_WRITER = "manual"
 const NO_AGENT_WRITER = { kind: "none" } as const
@@ -90,6 +90,7 @@ const upgradedStoredReview = (stored: unknown): unknown =>
 
 const storedReviewSchema = z.strictObject({
   schema: z.union([z.literal(PRE_REQUIREMENT_SCHEMA_VERSION), z.literal(STORED_SCHEMA_VERSION)]),
+  version: z.string().optional(),
   meta: z.strictObject({
     kind: z.literal("review"),
     baseCommit: z.string(),
@@ -100,7 +101,7 @@ const storedReviewSchema = z.strictObject({
 
 const unflattenedOf = (flat: unknown): unknown => (Array.isArray(flat) ? unflatten([...withCurrentClassifications(flat)]) : null)
 
-const parseStored = (text: string): unknown => {
+export const parseStored = (text: string): unknown => {
   try {
     return unflattenedOf(JSON.parse(text))
   } catch {
@@ -113,17 +114,39 @@ const withRequirementOf = (artifact: ReviewArtifact, request: ReviewRequest, sch
     ? withRequiredSections(artifact, WRITE_UP_SECTIONS)
     : artifact
 
-export const parseStoredReview = (text: string): ReviewScaffold | null => {
-  const stored = storedReviewSchema.safeParse(upgradedStoredReview(parseStored(text)))
+export interface UnknownKeys {
+  readonly path: readonly PropertyKey[]
+  readonly keys: readonly string[]
+}
+
+export const unknownKeysIn = (stored: unknown): readonly UnknownKeys[] => {
+  const parsed = storedReviewSchema.safeParse(upgradedStoredReview(stored))
+  return parsed.success
+    ? []
+    : parsed.error.issues.flatMap((issue) => (issue.code === "unrecognized_keys" ? [{ path: issue.path, keys: issue.keys }] : []))
+}
+
+export const savedVersionOf = (text: string): string | null => {
+  const stored = parseStored(text)
+  return isRecord(stored) && typeof stored.version === "string" ? stored.version : null
+}
+
+export const parseStoredValue = (value: unknown): ReviewScaffold | null => {
+  const stored = storedReviewSchema.safeParse(upgradedStoredReview(value))
   if (!stored.success) return null
   const { schema, meta, artifact } = stored.data
   return { artifact: withRequirementOf(artifact, meta.request, schema), request: meta.request, baseCommit: meta.baseCommit }
 }
 
-export const formatStoredReview = (scaffold: ReviewScaffold): string =>
+export const parseStoredReview = (text: string): ReviewScaffold | null => parseStoredValue(parseStored(text))
+
+const versionFieldOf = (version: string | null): { readonly version?: string } => (version === null ? {} : { version })
+
+export const formatStoredReview = (scaffold: ReviewScaffold, version: string | null): string =>
   `${stringify(
     {
       schema: STORED_SCHEMA_VERSION,
+      ...versionFieldOf(version),
       meta: {
         kind: "review",
         baseCommit: scaffold.baseCommit,

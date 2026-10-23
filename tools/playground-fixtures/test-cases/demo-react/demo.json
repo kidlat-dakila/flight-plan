@@ -21,14 +21,14 @@
   "comments": [
     {
       "author": "dinesh",
-      "body": "I'll try the filters on staging once the Pokemon API is merged.",
+      "body": "I'll try the trainer filter on staging once the Pokemon API is merged.",
       "minutesAgo": 60
     }
   ],
   "threads": [
     {
       "path": "src/hooks/use-pokemon.ts",
-      "line": 16,
+      "line": 10,
       "isResolved": false,
       "comments": [
         {
@@ -45,29 +45,29 @@
     },
     {
       "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-      "line": 21,
+      "line": 10,
       "isResolved": true,
       "comments": [
         {
           "author": "dinesh",
-          "body": "Why does the trainer filter go to the API when the type filter doesn't?",
+          "body": "Does picking Every trainer send an empty `trainer_id`?",
           "minutesAgo": 200
         },
         {
           "author": "richard",
-          "body": "`GET /api/pokemon` takes a `trainer_id` and has no type parameter, so the type is filtered on the list we already loaded.",
+          "body": "No. `EVERY` turns into `null`, and `fetchPokemon` leaves the query string out for `null`.",
           "minutesAgo": 180
         }
       ]
     },
     {
       "path": "src/stores/pokemon-filters.ts",
-      "line": 22,
+      "line": 9,
       "isResolved": false,
       "comments": [
         {
           "author": "dinesh",
-          "body": "Should the filters reset when I leave the page? They're still set when I come back to it.",
+          "body": "Should the filter reset when I leave the page? The trainer is still picked when I come back to it.",
           "minutesAgo": 120
         }
       ]
@@ -83,19 +83,19 @@
     {
       "author": "dinesh",
       "verdict": "comment",
-      "body": "Works for me locally. One question on the filters.",
+      "body": "Works for me locally. One question on the filter.",
       "minutesAgo": 118
     }
   ],
   "chat": [
     {
       "from": "reviewer",
-      "body": "Why does usePokemon read the store itself instead of taking the filters as arguments?",
+      "body": "Why does usePokemon read the store itself instead of taking the trainer as an argument?",
       "minutesAgo": 40
     },
     {
       "from": "agent",
-      "body": "`usePokemon()` calls `usePokemonFilters()` with one selector per filter, so `<PokemonPage />` passes it nothing and the hook renders again only when `type` or `trainerId` changes. `<PokemonFilters />` writes the same store, so the list follows the filters with no props between the two components.",
+      "body": "`usePokemon()` calls `usePokemonFilters()` with a selector for `trainerId`, so `<PokemonPage />` passes it nothing and the hook renders again only when the trainer changes. `<PokemonFilters />` writes the same store, so the list follows the select with no props between the two components.",
       "minutesAgo": 39
     }
   ],

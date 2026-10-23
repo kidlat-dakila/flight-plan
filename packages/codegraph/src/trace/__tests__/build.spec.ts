@@ -1,6 +1,6 @@
 import { createSegment, createViewContext } from "@/__tests__/review-fixture"
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
-import { buildTrace } from "@/trace/build"
+import { buildTrace, buildTraceTabs } from "@/trace/build"
 import { presentDiagramOf } from "@/trace-diagram/__tests__/diagram-fixture"
 import type { TraceNodeView } from "@flightplan/configurations"
 
@@ -83,6 +83,23 @@ describe("the hints of the trace band", () => {
 
     expect(band.diagram?.descriptionHint).toBeNull()
     expect(band.diagram?.nodes.map((node) => node.hint)).toStrictEqual(band.diagram?.nodes.map(() => null))
+  })
+
+  it("names a diagram by the names of its changed cards until its title is written", () => {
+    const diagram = buildTrace(createSegment({ traceDiagram: presentDiagramOf(FILES, PROMO_CHANGE) }), "", [], createViewContext()).diagram
+
+    expect(diagram?.writtenTitle).toBeNull()
+    expect(diagram?.title).not.toBe("")
+  })
+
+  it("names a diagram and its tab by the title written for it", () => {
+    const written = { ...presentDiagramOf(FILES, PROMO_CHANGE), title: "Apply promo code flow diagram" }
+    const segments = [createSegment({ id: "one", traceDiagram: written }), createSegment({ id: "two", traceDiagram: presentDiagramOf(FILES, PROMO_CHANGE) })]
+    const band = buildTraceTabs(segments, "", [], createViewContext())
+
+    expect(band.heading).toBe("Trace Diagram")
+    expect(band.tabs[0]).toMatchObject({ label: "Apply promo code flow diagram", diagram: { title: "Apply promo code flow diagram", writtenTitle: "Apply promo code flow diagram" } })
+    expect(band.tabs[1]?.diagram.writtenTitle).toBeNull()
   })
 })
 

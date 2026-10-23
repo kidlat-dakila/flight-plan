@@ -86,6 +86,7 @@ const descriptionCandidates = (segment: Segment): Candidate[] => {
         describe: () => ({
           file: null,
           node: {
+            title: traceDiagram.title,
             description: traceDiagram.description,
             nodes: flattenTraceNodes(traceDiagram.traceNodes).map(traceStubOf),
             edges: traceDiagram.traceNodeEdges.map(({ from, to }) => ({ from, to })),

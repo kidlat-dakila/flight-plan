@@ -5,7 +5,8 @@ CLIP_WIDTH=1600
 STEP_MS=1100
 READ_MS=2000
 DRAG_STEPS=4
-GLIDE_STEPS=8
+GLIDE_STEPS=16
+GLIDE_MS=500
 POINTER_X=0
 POINTER_Y=0
 DRAG_BOTTOM_GAP=60
@@ -35,10 +36,7 @@ click_marked() {
 
 glide_pointer_to() {
   local target_x="$1" target_y="$2"
-  local step
-  for step in $(seq 1 "$GLIDE_STEPS"); do
-    browse mouse move "$((POINTER_X + (target_x - POINTER_X) * step / GLIDE_STEPS))" "$((POINTER_Y + (target_y - POINTER_Y) * step / GLIDE_STEPS))"
-  done
+  browse mouse move "$target_x" "$target_y" --steps "$GLIDE_STEPS" --duration "$GLIDE_MS"
   POINTER_X="$target_x"
   POINTER_Y="$target_y"
 }
@@ -135,7 +133,6 @@ open_review() {
   local scheme="$1" url="$2"
   browse open "about:blank"
   open_page "$WIDTH" "$HEIGHT" "$SCALE" "$scheme" "$url"
-  browse eval "document.querySelector('.demo-exit')?.remove()"
   load_whole_review
 }
 

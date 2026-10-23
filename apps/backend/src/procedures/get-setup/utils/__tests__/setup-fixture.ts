@@ -104,6 +104,7 @@ export const createSetupContext = (setup: Setup, repositories: readonly Reposito
   closeTerminal: null,
   now: () => NOW,
   dataNotice: null,
+  runningVersion: null,
   appUrl: "http://localhost:4200",
   errorLog: createMockErrorLog(),
 })

@@ -67,6 +67,27 @@ export const scrollToAnchor = (anchorId: string): void => {
   document.getElementById(anchorId)?.scrollIntoView({ block: "start" })
 }
 
+const SETTLE_FRAME_LIMIT = 60
+const STEADY_FRAMES_NEEDED = 8
+const STEADY_DISTANCE_PX = 1
+
+const settleOnAnchor = (anchorId: string, framesLeft: number, steadyFrames: number, scrolledTop: number | null): void => {
+  const element = document.getElementById(anchorId)
+  if (element === null) return
+  const isSteady = scrolledTop !== null && Math.abs(element.getBoundingClientRect().top - scrolledTop) < STEADY_DISTANCE_PX
+  const nextSteadyFrames = isSteady ? steadyFrames + 1 : 0
+  if (framesLeft === 0 || nextSteadyFrames >= STEADY_FRAMES_NEEDED) return
+  element.scrollIntoView({ block: "start" })
+  const top = element.getBoundingClientRect().top
+  requestAnimationFrame(() => {
+    settleOnAnchor(anchorId, framesLeft - 1, nextSteadyFrames, top)
+  })
+}
+
+export const scrollToSettledAnchor = (anchorId: string): void => {
+  settleOnAnchor(anchorId, SETTLE_FRAME_LIMIT, 0, null)
+}
+
 const focusElementsOf = (waypointId: string): Element[] =>
   [...document.querySelectorAll(`[${WAYPOINT_FOCUS_ATTRIBUTE}]`)].filter((element) => element.getAttribute(WAYPOINT_FOCUS_ATTRIBUTE) === waypointId)
 

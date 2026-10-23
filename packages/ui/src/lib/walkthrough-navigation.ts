@@ -11,6 +11,7 @@ import {
   type NavigatorChoice,
   type NavigatorControl,
   type NavigatorGroup,
+  type NavigatorMenu,
   type NavigatorMenuItem,
   type NavigatorSubmenu,
   type SectionSteps,
@@ -85,6 +86,8 @@ export interface WalkthroughNavigationRequest {
   readonly onFileCollapsedChange: (isCollapsed: boolean) => void
   readonly onCurrentOpenChange: (isOpen: boolean) => void
 }
+
+export type WaypointFilterRequest = Pick<WalkthroughNavigationRequest, "controls" | "markerOf" | "onFilterChange" | "onShowReviewedChange">
 
 export const EXPLAIN_WAYPOINT_ACTION_ID = "explain-waypoint-action"
 export const EXPLAIN_CODE_BLOCK_ACTION_ID = "explain-code-block-action"
@@ -203,7 +206,7 @@ const reviewGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup =>
   ...writeUpButtonsOf(request),
 ]
 
-const reviewedChoicesOf = (request: WalkthroughNavigationRequest): NavigatorChoice[] => {
+const reviewedChoicesOf = (request: WaypointFilterRequest): NavigatorChoice[] => {
   const { onShowReviewedChange } = request
   const toggle = request.controls.reviewedToggle
   return onShowReviewedChange === null
@@ -224,7 +227,7 @@ const reviewedChoicesOf = (request: WalkthroughNavigationRequest): NavigatorChoi
 const isFindingFilterKey = (key: string): key is FindingFilterKey =>
   FINDING_FILTER_KEYS.some((findingKey) => findingKey === key)
 
-const filterChoiceOf = (request: WalkthroughNavigationRequest, onFilterChange: (keys: readonly string[] | null) => void) => (option: FilterOption): NavigatorChoice => ({
+const filterChoiceOf = (request: WaypointFilterRequest, onFilterChange: (keys: readonly string[] | null) => void) => (option: FilterOption): NavigatorChoice => ({
   kind: "choice",
   id: option.key,
   label: option.label,
@@ -236,9 +239,9 @@ const filterChoiceOf = (request: WalkthroughNavigationRequest, onFilterChange: (
   onToggle: () => { onFilterChange(option.toggledKeys.length === 0 ? null : option.toggledKeys) },
 })
 
-const filterGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup => {
+export const waypointFilterMenuOf = (request: WaypointFilterRequest): NavigatorMenu | null => {
   const { onFilterChange } = request
-  if (onFilterChange === null) return []
+  if (onFilterChange === null) return null
   const { filter } = request.controls
   const choiceOf = filterChoiceOf(request, onFilterChange)
   const submenuOf = (submenu: FilterSubmenu): NavigatorSubmenu => ({
@@ -253,7 +256,7 @@ const filterGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup =>
     ...group.options.map(choiceOf),
     ...(group.more === null ? [] : [submenuOf(group.more)]),
   ])
-  return [{
+  return {
     kind: "menu",
     key: FILTER_KEY,
     actionId: "filter-action",
@@ -261,7 +264,12 @@ const filterGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup =>
     badge: filter.badge,
     heading: filter.heading,
     itemGroups: [...groupItems, filter.submenus.map(submenuOf), reviewedChoicesOf(request)].filter((items) => items.length > 0),
-  }]
+  }
+}
+
+const filterGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup => {
+  const menu = waypointFilterMenuOf(request)
+  return menu === null ? [] : [menu]
 }
 
 const layoutGroupOf = (request: WalkthroughNavigationRequest): NavigatorGroup => {

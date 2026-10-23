@@ -21,13 +21,13 @@ Every video is an H.264 MP4 and a VP9 WebM, and every file exists in a light and
 
 ## Where the pictures come from
 
-Every picture but the trace video comes from the site's demo of the `demo-react` review, at `http://localhost:4400/demo/demo-react/#/pr-reviews/pokedex-web/pr-57`, the pull request "Implement page PokemonPage". The trace video comes from the `demo-fastapi` review, at `http://localhost:4400/demo/demo-fastapi/#/pr-reviews/pokedex-api/pr-42`, the pull request "Implement route /api/pokemon", whose segment 2 draws a larger diagram. Both are playground fixtures in `tools/playground-fixtures/test-cases/`, and each review's prose is part of its fixture, so every machine shows the same reviews. Every part of them is written, so no picture shows a hint, Not explained yet or the drafting strip.
+Every picture but the trace video comes from the site's demo of the `demo-react` review, at `http://localhost:4400/demo/demo-react/#/pr-reviews/pokedex-web/pr-57`, the pull request "Implement page PokemonPage". The trace video comes from the `demo-fastapi` review, at `http://localhost:4400/demo/demo-fastapi/#/pr-reviews/pokedex-api/pr-42`, the pull request "Implement route /api/pokemon", whose Trace Diagram is larger. Both are playground fixtures in `tools/playground-fixtures/test-cases/`, and each review's prose is part of its fixture, so every machine shows the same reviews. Every part of them is written, so no picture shows a hint, Not explained yet or the drafting strip.
 
-The demo keeps everything in memory, so the captures read no data of yours, start with no reviewed marks and show the presets as they ship. Before each page, `open_page` in `browser.sh` opens the site's home page and writes `flightplan-guide-tooltips` with `isOff: true` to its local storage, so no guide tip covers the review. The trace video records segment 2 of the FastAPI review, "New route handlers, service functions and Pokemon model, modified app". The Change Overview video records the Change Overview of segment 2 of the React review, and the other videos record its segment 1. The Spotlight screenshot is the waypoint for `usePokemon()`, marked Core change and Spotlight. The explain on demand screenshot is the dialog that "Explain this review" in the ⚙ menu opens. The configurations screenshot is the demo's settings page of the Standard preset, at `#/settings/profiles/standard`, with the "Waypoint reading" field open.
+The demo keeps everything in memory, so the captures read no data of yours, start with no reviewed marks and show the presets as they ship. Before each page, `open_page` in `browser.sh` opens the site's home page and writes `flightplan-guide-tooltips` with `isOff: true` and `flightplan-demo-notice` with `off` to its local storage, so no guide tip and no demo notice covers the review. The demos have segments off, so each review is one page with one Context, one Trace Diagram, one Code Walkthrough and one Blast Diagram, and every video records the part of that page it shows. The Spotlight screenshot is the waypoint for `usePokemon()`, marked Core change and Spotlight. The explain on demand screenshot is the dialog that "Explain this review" in the ⚙ menu opens. The configurations screenshot is the demo's settings page of the Standard preset, at `#/settings/profiles/standard`, with the "Waypoint reading" field open.
 
 ## Before you capture
 
-- Install [agent-browser](https://github.com/vercel-labs/agent-browser), `ffmpeg` with the `libx264` and `libvpx-vp9` encoders, and `python3`.
+- Install [agent-browser](https://github.com/vercel-labs/agent-browser), `ffmpeg` with the `libx264` and `libvpx-vp9` encoders, `python3`, and [uv](https://docs.astral.sh/uv/) for the hero's camera.
 - Start the site with `nx dev site`. The scripts read the demo at `http://localhost:4400/demo/demo-react/`; set `DEMO_URL` to read it elsewhere.
 
 ## Capturing
@@ -36,7 +36,7 @@ Each target writes over the files the site uses:
 
 | Target | Takes about |
 |---|---|
-| `nx run site:record-hero` | 3 minutes |
+| `nx run site:record-hero` | 6 minutes |
 | `nx run site:record-change-overview` | 1 minute |
 | `nx run site:record-trace` | 2 minutes |
 | `nx run site:record-blast` | 2 minutes |
@@ -61,28 +61,28 @@ Then rebuild the site with `nx build site` and look at the landing page with `nx
 
 ### Hero video
 
-`record-hero.sh` records the review one frame at a time instead of in real time, so the scrolling stays smooth whatever the machine's speed.
+`record-hero.sh` records the review in real time, with agent-browser's pointer drawn over the page, and then moves a camera over the recording, so the video zooms in on each feature while it is used and zooms out between them.
 
-1. It opens the demo's review in a 1440 × 900 window at 1.5 times the pixel density, removes the demo's "Other repositories" link, and opens the waypoint for `usePokemon()`.
-2. It scrolls through the page once so that every part loads.
-3. It stops at four places: the Context of segment 1, its Trace Diagram, its Blast Diagram and the `usePokemon()` waypoint. Between two stops it takes 36 frames along an ease-in-out curve.
-4. `ffmpeg` holds each stop for 2.4 seconds, crossfades from the last frame back to the first so the loop has no jump, cuts off the app's top band and scales the frames to 1920 × 1124.
-5. It writes the videos at 30 frames per second and saves the last frame as the poster.
+1. It opens the demo's review in a 1440 × 900 window at twice the pixel density, scrolls through the page once so that every part loads, and settles on the Change Overview.
+2. It records four shots. It hovers the `usePokemon` card of the Change Overview, opens the Trace Diagram in full screen and clicks the `PokemonPage` node, hovers `usePokemonFilters` in `PokemonFilters.tsx`, then opens the Risk waypoint "Added the query of the trainers" and previews its fix.
+3. While it records, it writes down when the camera turns and what it frames: the box of the element in use, such as a card with its hover card or the code of the side panel, or the whole window.
+4. `hero-camera.py` moves the camera from one frame to the next over 1.1 seconds along an ease-in-out curve, at most 1.6 times closer than the whole window, and cuts each frame of the recording to 1920 × 1200. It runs Pillow through `uv`.
+5. `ffmpeg` crossfades the end of the take into its first 1.2 seconds so the loop has no jump, plays it 1.5 times as fast, writes the videos at 30 frames per second and saves the first frame as the poster.
 
 ### Panel videos
 
-`record-change-overview.sh`, `record-trace.sh`, `record-blast.sh` and `record-walkthrough.sh` record in real time, with agent-browser's pointer drawn over the page, so the clicks, drags and hovers show. What they share is in `review-clip.sh`. For each clip it opens the review in a 1440 × 900 window at twice the pixel density, wide enough for the Review Navigator at the foot of the page to keep its labels in every section, removes the demo's "Other repositories" link, scrolls through the page once so that every part loads, and arranges the starting view. It then parks the pointer, takes the focus off the page, and records the clip's steps. Every clip ends in the view it started from, so it loops without a jump. The videos are scaled to 1600 × 1000 at 30 frames per second, and each script saves one moment of its clip as the poster.
+`record-change-overview.sh`, `record-trace.sh`, `record-blast.sh` and `record-walkthrough.sh` record in real time, with agent-browser's pointer drawn over the page, so the clicks, drags and hovers show. What they share is in `review-clip.sh`. For each clip it opens the review in a 1440 × 900 window at twice the pixel density, wide enough for the Review Navigator at the foot of the page to keep its labels in every section, scrolls through the page once so that every part loads, and arranges the starting view. It then parks the pointer, takes the focus off the page, and records the clip's steps. Every clip ends in the view it started from, so it loops without a jump. The videos are scaled to 1600 × 1000 at 30 frames per second, and each script saves one moment of its clip as the poster.
 
 The two diagrams are recorded in full screen. Before clicking a node that the side panel covers, or one pushed past the left edge, the script drags the board until the node is in view.
 
 | Clip | Starts at | Steps | Poster |
 |---|---|---|---|
-| Change Overview | The Change Overview of segment 2 | Hovers the cards of `fetchPokemon`, `usePokemon` and `PokemonPage`, from the bottom row up, each of which shows its code, then parks the pointer. | The card of `usePokemon` with its code |
-| Trace | The diagram of segment 2 of the FastAPI review, in full screen | Clicks the `add_pokemon` card, which opens its code in the side panel, and closes the panel with Escape. Clicks the row "Commits the insert to the database" of `create_pokemon`, then opens the waypoint for that line in the panel. After each click the pointer moves to an empty spot of the board, so it doesn't rest on the code in the panel. Closes the panel with Escape. | The waypoint for `session.commit()` open |
-| Blast | The Blast Diagram of segment 1, in full screen | Clicks `router.tsx`, then `src/main.tsx`, the file the change reaches without changing what it does, then `use-pokemon.ts`. Closes the panel, presses Import bound to add the files the change did not touch, then presses Export bound and drags the board back to where it started. | The Import bound view |
+| Change Overview | The Change Overview of the React review | Hovers the cards of `fetchPokemon`, `usePokemon` and `PokemonPage`, from the bottom row up, each of which shows its code, then parks the pointer. Between two cards the pointer steps aside to an empty spot beside the overview, so the card it leaves closes before the next one opens. | The card of `usePokemon` with its code |
+| Trace | The Trace Diagram of the FastAPI review, in full screen | Clicks the `add_pokemon` card, which opens its code in the side panel, and closes the panel with Escape. Clicks the row "Commits the insert to the database" of `create_pokemon`, then opens the waypoint for that line in the panel. After each click the pointer moves to an empty spot of the board, so it doesn't rest on the code in the panel. Closes the panel with Escape. | The waypoint for `session.commit()` open |
+| Blast | The Blast Diagram of the React review, in full screen | Clicks `router.tsx`, then `src/main.tsx`, the file the change reaches without changing what it does, then `use-pokemon.ts`. Closes the panel, presses Import bound to add the files the change did not touch, then presses Export bound and drags the board back to where it started. | The Import bound view |
 | Waypoints | The waypoint for the trainers query in `PokemonFilters.tsx`, marked Risk | Opens it, scrolls through its finding and trace, presses Preview the fix, then Hide the fix, scrolls back and closes it. | The fix open |
-| Filters | The heading of segment 1's Code Walkthrough | Opens the first waypoint, ticks Component and UI state in the Filter menu, which goes to the first waypoint the filter keeps, then unticks them, closes the first waypoint and scrolls back to the heading. | The filtered walkthrough |
-| Tooltips | Line 12 of `pokemon-filters.ts` | Hovers `usePokemonFilters`, the exported store, whose card lists the files that use it, then `set`, whose card shows the line that defines it. | The card of `usePokemonFilters` |
+| Filters | The heading of the Code Walkthrough | Opens the first waypoint, ticks Component and UI state in the Filter menu, which goes to the first waypoint the filter keeps, then unticks them, closes the first waypoint and scrolls back to the heading. | The filtered walkthrough |
+| Tooltips | Line 8 of `pokemon-filters.ts` | Hovers `usePokemonFilters`, the exported store, whose card lists the files that use it, then `set` on line 11, whose card shows the line that defines it. | The card of `usePokemonFilters` |
 
 ### Screenshots
 
@@ -94,9 +94,9 @@ The two diagrams are recorded in full screen. Before clicking a node that the si
 
 ## When the app changes
 
-The scripts find each part by its element id, such as `fixture-segment-1-blast-diagram-heading` or `fixture-segment-1-file-4`, a waypoint by a name in its label, such as `usePokemon()`, and nodes, rows, buttons and filter options by the names and labels they show. If a script stops with "nothing to click for", compare that name with the review page.
+The scripts find each part by its element id, such as `blast-diagram-heading`, a file of the walkthrough by the path in its header, such as `stores/pokemon-filters.ts`, a waypoint by a name in its label, such as `usePokemon()`, and nodes, rows, buttons and filter options by the names and labels they show. If a script stops with "nothing to click for", compare that name with the review page.
 
-The hero lines the video up with its text through `--frame-rail` in `src/components/HeroMedia.astro`. It is the width of the review page's left column (the section rail, its gap and the gutter, 16.5rem in a 1440 window) as a share of the video's height. If that column changes width on the review page, change `--frame-rail` with it, or the video either covers the text or leaves a gap beside it.
+The hero plays its video behind the text, under a wash of the page colour that is thickest behind the text, in `src/components/HeroMedia.astro`. If a recording makes the text hard to read, thicken the wash there.
 
 When a capture shows different content, update its alt text in `src/components/review-screenshots.ts`.
 

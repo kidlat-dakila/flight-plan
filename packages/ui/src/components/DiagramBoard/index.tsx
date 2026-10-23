@@ -1,6 +1,7 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { useRef, useState, type ComponentProps, type ReactNode, type RefObject } from "react"
 import IconButton from "@/components/IconButton"
+import PanelResizeHandle from "@/components/PanelResizeHandle"
 import { ReviewNavigatorBar } from "@/components/ReviewNavigator"
 import { DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM, offsetZoomedAt, wheelTravelPx, zoomAfterWheel, zoomedIn, zoomedOut } from "@/lib/board-zoom"
 import type { Point } from "@/lib/diagram-path"
@@ -44,8 +45,6 @@ const MIN_INLINE_HEIGHT_PX = 160
 const MAX_INLINE_HEIGHT = "70vh"
 const RESIZE_LABEL = "Side panel width"
 const OWN_PANEL_WIDTH_PX = 669
-const OWN_WIDTH_TEXT = "Its own width"
-const RESIZE_HINT = "Drag to resize, double-click to reset"
 const ZOOM_IN_LABEL = "Zoom in"
 const ZOOM_OUT_LABEL = "Zoom out"
 const FULL_SCREEN_LABEL = "Full screen"
@@ -216,18 +215,14 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
             {panel === null
               ? null
               : (
-                  <div
-                    role="slider"
-                    tabIndex={0}
-                    aria-orientation="horizontal"
-                    aria-label={RESIZE_LABEL}
-                    aria-valuemin={narrowestPx}
-                    aria-valuemax={widestPanelPx(window.innerWidth)}
-                    aria-valuenow={panelWidthPx ?? OWN_PANEL_WIDTH_PX}
-                    aria-valuetext={panelWidthPx === null ? OWN_WIDTH_TEXT : `${String(panelWidthPx)} pixels`}
-                    title={RESIZE_HINT}
-                    data-resizing={isResizing}
-                    className="relative z-10 w-px shrink-0 cursor-col-resize touch-none bg-border transition-colors duration-[180ms] ease-out after:absolute after:inset-y-0 after:-right-1 after:-left-1 hover:bg-foreground focus-visible:bg-ring focus-visible:outline-2 focus-visible:outline-ring data-[resizing=true]:bg-foreground"
+                  <PanelResizeHandle
+                    label={RESIZE_LABEL}
+                    widthPx={panelWidthPx}
+                    ownWidthPx={OWN_PANEL_WIDTH_PX}
+                    narrowestPx={narrowestPx}
+                    widestPx={widestPanelPx(window.innerWidth)}
+                    isResizing={isResizing}
+                    className="relative"
                     onPointerDown={startResize}
                     onKeyDown={resizeByKey}
                     onDoubleClick={resetWidth}

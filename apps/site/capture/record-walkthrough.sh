@@ -10,11 +10,11 @@ trap 'agent-browser record stop >/dev/null 2>&1 || true; rm -rf "$WORK_DIR"' EXI
 source "$SCRIPT_DIR/browser.sh"
 source "$SCRIPT_DIR/review-clip.sh"
 
-WALKTHROUGH_HEADING="document.getElementById('fixture-segment-1-code-walkthrough-heading')"
-FORM_FILE="#fixture-segment-1-file-3"
+WALKTHROUGH_HEADING="document.getElementById('code-walkthrough-heading')"
+STORE_FILE="[...document.querySelectorAll('[id^=file-]')].find(element=>element.querySelector('h3')?.textContent==='stores/pokemon-filters.ts')"
 RISK_WAYPOINT="[...document.querySelectorAll('[data-waypoint-mark]')].find(element=>element.getAttribute('aria-label').startsWith('Risk waypoint'))"
 RISK_BOX="[...document.querySelectorAll('section[aria-label]')].find(section=>section.getAttribute('aria-label')==='Added the query of the trainers')"
-FIRST_WAYPOINT="document.querySelector('#fixture-segment-1-code-walkthrough [data-waypoint-mark]')"
+FIRST_WAYPOINT="document.querySelector('#code-walkthrough [data-waypoint-mark]')"
 
 toggle_of() {
   echo "($1).querySelector('button[aria-expanded]')"
@@ -28,12 +28,12 @@ filter_option() {
   echo "[...document.querySelectorAll('[role=menuitemcheckbox]')].find(element=>element.textContent.trim().startsWith('$1'))"
 }
 
-name_in_form() {
-  echo "[...document.querySelectorAll('$FORM_FILE [data-line=\"$1\"] [data-slot=hover-card-trigger]')].find(element=>element.textContent==='$2')"
+name_in_store() {
+  echo "[...($STORE_FILE).querySelectorAll('[data-line=\"$1\"] [data-slot=hover-card-trigger]')].find(element=>element.textContent==='$2')"
 }
 
-form_line() {
-  echo "document.querySelector('$FORM_FILE [data-line=\"$1\"]')"
+store_line() {
+  echo "($STORE_FILE).querySelector('[data-line=\"$1\"]')"
 }
 
 settle_on_risk_waypoint() {
@@ -47,6 +47,7 @@ waypoints_scenario() {
   scroll_smoothly_to "$(button_in "$RISK_BOX" "Preview the fix")" 420
   browse wait "$READ_MS"
   click_marked "$(button_in "$RISK_BOX" "Preview the fix")"
+  park_pointer
   scroll_smoothly_to "$(button_in "$RISK_BOX" "Hide the fix")" 200
   browse wait "$READ_MS"
   agent-browser screenshot "$poster" >/dev/null 2>&1
@@ -83,19 +84,19 @@ filters_scenario() {
   park_pointer
 }
 
-settle_on_form() {
-  settle_on "$(form_line 12)" 200
+settle_on_store() {
+  settle_on "$(store_line 8)" 200
 }
 
 tooltips_scenario() {
   local poster="$1"
-  hover_marked "$(name_in_form 12 "usePokemonFilters")"
+  hover_marked "$(name_in_store 8 "usePokemonFilters")"
   browse wait "$READ_MS"
   agent-browser screenshot "$poster" >/dev/null 2>&1
   browse wait "$READ_MS"
   glide_pointer_to 120 "$((HEIGHT - 260))"
   browse wait "$STEP_MS"
-  hover_marked "$(name_in_form 16 "set")"
+  hover_marked "$(name_in_store 11 "set")"
   browse wait "$READ_MS"
   browse wait "$READ_MS"
   glide_pointer_to "$PARK_X" "$PARK_Y"
@@ -108,5 +109,5 @@ is_selected() {
 
 is_selected waypoints && record_review_clip walkthrough-waypoints "$DEMO_REVIEW_URL" settle_on_risk_waypoint waypoints_scenario
 is_selected filters && record_review_clip walkthrough-filters "$DEMO_REVIEW_URL" settle_on_walkthrough filters_scenario
-is_selected tooltips && record_review_clip walkthrough-tooltips "$DEMO_REVIEW_URL" settle_on_form tooltips_scenario
+is_selected tooltips && record_review_clip walkthrough-tooltips "$DEMO_REVIEW_URL" settle_on_store tooltips_scenario
 exit 0

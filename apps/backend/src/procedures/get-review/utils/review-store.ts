@@ -34,6 +34,8 @@ export interface ReviewStore {
   readonly writeImportRequest: (key: ReviewKey, request: ImportRequest) => Promise<void>
   readonly findRequest: (key: ReviewKey) => Promise<ReviewRequest | null>
   readonly readScaffold: (key: ReviewKey) => Promise<ReviewScaffold | null>
+  readonly readStoredText: (key: ReviewKey) => Promise<string | null>
+  readonly writeStoredText: (key: ReviewKey, text: string) => Promise<void>
   readonly writeScaffold: (key: ReviewKey, scaffold: ReviewScaffold) => Promise<void>
   readonly deleteScaffold: (key: ReviewKey) => Promise<void>
   readonly moveScaffold: (from: ReviewKey, to: ReviewKey) => Promise<boolean>
@@ -69,6 +71,7 @@ export class InMemoryReviewStore implements ReviewStore {
   private publishingRequests: ReadonlyMap<string, PublishingRequest | null> = new Map()
   private importRequests: ReadonlyMap<string, ImportRequest> = new Map()
   private scaffolds: ReadonlyMap<string, ReviewScaffold> = new Map()
+  private storedTexts: ReadonlyMap<string, string> = new Map()
   private amendedArtifacts: ReadonlyMap<string, ReviewArtifact> = new Map()
 
   public constructor(reviews: readonly StoredReview[]) {
@@ -84,7 +87,7 @@ export class InMemoryReviewStore implements ReviewStore {
     )
 
   public readonly listTargetIds = async (repositoryName: string): Promise<readonly string[]> =>
-    await Promise.resolve(targetIdsIn(this.scaffolds.keys(), repositoryName))
+    await Promise.resolve(targetIdsIn(new Set([...this.scaffolds.keys(), ...this.storedTexts.keys()]), repositoryName))
 
   public readonly findTargetDetail = async (key: ReviewKey): Promise<ReviewTargetDetail | null> =>
     await Promise.resolve(this.reviews.get(storageKeyOf(key))?.detail ?? null)
@@ -141,6 +144,15 @@ export class InMemoryReviewStore implements ReviewStore {
   public readonly writeScaffold = async (key: ReviewKey, scaffold: ReviewScaffold): Promise<void> => {
     this.scaffolds = withEntry(this.scaffolds, key, scaffold)
     this.amendedArtifacts = withEntry(this.amendedArtifacts, key, scaffold.artifact)
+    this.storedTexts = withoutEntry(this.storedTexts, key)
+    await Promise.resolve()
+  }
+
+  public readonly readStoredText = async (key: ReviewKey): Promise<string | null> =>
+    await Promise.resolve(this.storedTexts.get(storageKeyOf(key)) ?? null)
+
+  public readonly writeStoredText = async (key: ReviewKey, text: string): Promise<void> => {
+    this.storedTexts = withEntry(this.storedTexts, key, text)
     await Promise.resolve()
   }
 

@@ -30,30 +30,6 @@ const pageTitle = `${entry.story.repository.forgeSlug} #${String(entry.story.pul
   </head>
   <body>
     <div id="demo-root" data-demo={entry.name} data-demos={JSON.stringify(names)} data-data-url={DEMO_DATA_URL}></div>
-    <a class="demo-exit" href="/demo/">Demo <span aria-hidden="true">•</span> Other repositories</a>
     <script type="module" src={`${DEMO_APP_URL}/app.js`}></script>
   </body>
 </html>
-
-<style is:global>
-  .demo-exit {
-    position: fixed;
-    left: 1rem;
-    bottom: 1rem;
-    z-index: 60;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    height: 2rem;
-    padding: 0 0.75rem;
-    border-radius: 0.375rem;
-    background: oklch(0.218 0 0);
-    color: oklch(0.97 0 0);
-    font: 700 0.8125rem "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-    text-decoration: none;
-  }
-
-  .demo-exit span {
-    color: oklch(0.76 0 0);
-  }
-</style>

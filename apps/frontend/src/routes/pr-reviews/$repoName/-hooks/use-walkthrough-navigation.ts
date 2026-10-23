@@ -4,6 +4,7 @@ import type { WalkthroughNavigation } from "@flightplan/ui/CodeWalkthrough"
 import type { CommentRange, WriteUpTarget } from "@flightplan/ui/FileRows"
 import { coveredTopOf } from "@flightplan/ui/lib/pinned-rows"
 import type { WalkthroughControls, WriteUpScope } from "@flightplan/ui/lib/walkthrough-navigation"
+import type { WaypointFilterNavigation } from "@flightplan/ui/WaypointFilterMenu"
 import { firstUnreviewedWaypointIdOf, isFilterApplied } from "./filtered-waypoints"
 import type { ReadingPosition } from "./use-reading-position"
 import type { SteppedWaypoint, WaypointStepping } from "./use-waypoint-stepping"
@@ -46,6 +47,7 @@ interface WalkthroughHandlers {
 export interface WalkthroughLayout {
   readonly onFileCollapsedChange: (anchorId: string, isCollapsed: boolean) => void
   readonly navigationOf: (segment: NavigatedSegment, position: ReadingPosition, state: WalkthroughState) => WalkthroughNavigation
+  readonly reviewFilter: WaypointFilterNavigation | null
 }
 
 const NO_FILTER_KEYS: readonly string[] = []
@@ -53,6 +55,11 @@ const NO_FILTER_KEYS: readonly string[] = []
 const isReadInto = (anchorId: string): boolean => {
   const rect = document.getElementById(anchorId)?.getBoundingClientRect()
   return rect !== undefined && rect.height > 0 && rect.top < coveredTopOf()
+}
+
+const readWalkthroughAnchorIdOf = (segments: readonly NavigatedSegment[]): string | null => {
+  const anchorIds = segments.map((segment) => segment.walkthrough.anchorId)
+  return anchorIds.filter(isReadInto).at(-1) ?? anchorIds.at(0) ?? null
 }
 
 const scrollInstantlyTo = (anchorId: string): void => {
@@ -145,7 +152,27 @@ export const useWalkthroughNavigation = (
   }
   const { onReviewedChange, onFilterChange, onShowReviewedChange, onCommentOnWaypoint, onWriteDescription, onWriteUp, agentLabel } = handlers
 
+  const firstSegment = segments.at(0)
+  const reviewFilter: WaypointFilterNavigation | null = firstSegment === undefined
+    ? null
+    : {
+        controls: firstSegment.walkthrough.controls,
+        onFilterChange: onFilterChange === null
+          ? null
+          : (keys) => {
+              awaitFilter(keys ?? NO_FILTER_KEYS, readWalkthroughAnchorIdOf(segments) ?? firstSegment.walkthrough.anchorId)
+              onFilterChange(keys)
+            },
+        onShowReviewedChange: onShowReviewedChange === null
+          ? null
+          : (isShown) => {
+              holdPlaceThroughRefresh(readWalkthroughAnchorIdOf(segments) ?? firstSegment.walkthrough.anchorId)
+              onShowReviewedChange(isShown)
+            },
+      }
+
   return {
+    reviewFilter,
     onFileCollapsedChange: (anchorId, isCollapsed) => { changeCollapse([anchorId], isCollapsed, anchorId) },
     navigationOf: (segment, position, state) => {
       const { controls } = segment.walkthrough

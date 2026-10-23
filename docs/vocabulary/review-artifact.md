@@ -12,7 +12,7 @@ An artifact is stored as JSON, and its format is described in [data storage](dat
 |---|---|---|
 | Title | The pull request's own title, copied from the forge | Yes |
 | [Context Section](#context-section) | Why the change exists, what changes from outside, and what changed inside | Yes |
-| [Trace Diagram](trace-diagram.md) | The path the change runs through, with a description that tells the diagram in words, or one line saying why the change has none | Yes |
+| [Trace Diagram](trace-diagram.md) | The path the change runs through, with a title that names the flow and a description that tells the diagram in words, or one line saying why the change has none | Yes |
 | [Blast Diagram](blast-diagram.md) | The files the change is connected to through imports, and what it does to the ones it did not touch | No |
 | [Code Walkthrough](code-walkthrough.md) | The changed files, with explanations on top of the lines they are about | Yes |
 | [Segments](#segments) | A split of a large change into parts, each read on its own | Only when the reviewer splits the change |
@@ -25,11 +25,11 @@ An artifact also records where it is filed (the pull request number, or the bran
 |---|---|
 | `drafting` | The agent is still writing. The web app shows it anyway, with an indicator, so the reviewer can start reading and does not mistake a gap for an omission. |
 | `authoring` | The author is writing the artifact by hand. No agent writes it, and the web app shows no progress and no placeholder for a part that is not written. |
-| `complete` | The author marked it as complete with "Mark as complete", which runs no check. Or the agent said it is finished, and every [required node](#required-nodes) is written: a context and a title on a segment whose context is required, a title and a reading on a required waypoint, with a solution on each of its bugs, risks and nits when the findings are on, a label on a required Trace Diagram node and on each of its trigger labels, a description on a required Trace Diagram that has a node, an impact type on a required Blast Diagram file the change reaches, with a reason where the file breaks or changes behaviour, and a description on a required context code block. Writing to a complete artifact makes it `drafting` again. |
+| `complete` | The author marked it as complete with "Mark as complete", which runs no check. Or the agent said it is finished, and every [required node](#required-nodes) is written: a context and a title on a segment whose context is required, a title and a reading on a required waypoint, with a solution on each of its bugs, risks and nits when the findings are on, a label on a required Trace Diagram node and on each of its trigger labels, a title and a description on a required Trace Diagram that has a node, an impact type on a required Blast Diagram file the change reaches, with a reason where the file breaks or changes behaviour, and a description on a required context code block. Writing to a complete artifact makes it `drafting` again. |
 
 ## Required nodes
 
-Every node the agent writes says whether the review asks for it: `isRequired` on a waypoint, a Trace Diagram node, a Trace Diagram (its description), a Blast Diagram file and a [context code block](#context-code-blocks), and `isContextRequired` on a segment (its title and context). Flight Plan builds every node unrequired. When the review is handed to an agent, Flight Plan requires the nodes of the write-up sections it is given (`context`, `traceDiagram`, `blastDiagram`, `walkthrough`, `findings`), the context of the first segment alone when [segments are off](#segments-off), with `withRequiredSections`; a node once required stays required. The agent may write only required nodes, its unwritten work lists only them, the progress counts only them, and the artifact is complete once each of them is written. A review built without an agent, or written by its author, requires nothing.
+Every node the agent writes says whether the review asks for it: `isRequired` on a waypoint, a Trace Diagram node, a Trace Diagram (its title and description), a Blast Diagram file and a [context code block](#context-code-blocks), and `isContextRequired` on a segment (its title and context). Flight Plan builds every node unrequired. When the review is handed to an agent, Flight Plan requires the nodes of the write-up sections it is given (`context`, `traceDiagram`, `blastDiagram`, `walkthrough`, `findings`), the context of the first segment alone when [segments are off](#segments-off), with `withRequiredSections`; a node once required stays required. The agent may write only required nodes, its unwritten work lists only them, the progress counts only them, and the artifact is complete once each of them is written. A review built without an agent, or written by its author, requires nothing.
 
 ## Sections
 
@@ -91,7 +91,7 @@ A large pull request can be split into segments, so it can be read one part at a
 
 Every segment has an **id**, a short unique string that Flight Plan makes when it builds the segment, and a **title**, a very short text of what its context is about, which the agent writes. No tool changes an id. Every write an agent makes names the segment it writes by that id, and everything the agent reads comes back with the id of the segment it belongs to.
 
-Whether a segment has a Trace Diagram or a Blast Diagram is decided by the [codegraph](codegraph.md). A segment without one stores `null` for it and no reason. The agent writes neither diagram's structure. A Blast Diagram stores two graphs of files: the files that use the change, which carry the impact types and reasons, and under `importBound` the files the change uses, which carry nothing written. See [Blast Diagram](blast-diagram.md#two-views).
+Whether a segment has a Trace Diagram or a Blast Diagram is decided by the [codegraph](codegraph.md). A segment without one stores `null` for it and no reason. An entry segment whose Blast Diagram is not drawn keeps it as `hiddenBlastDiagram`, which only [segments off](#segments-off) shows and the agent never reads. The agent writes neither diagram's structure. A Blast Diagram stores two graphs of files: the files that use the change, which carry the impact types and reasons, and under `importBound` the files the change uses, which carry nothing written. See [Blast Diagram](blast-diagram.md#two-views).
 
 ### Segments off
 
@@ -103,11 +103,11 @@ With segments off, the page shows the stored segments as one (`mergeSegments` in
 |---|---|
 | Context | The first segment's context, the one Context of the whole change. Only the first segment's context is required, and no segment needs a title. |
 | Code Walkthrough | The File Sections of every segment, those of one path joined into one, sorted by the walkthrough [order](code-walkthrough.md#order) |
-| Blast Diagram | The Blast Diagrams of every segment joined: each file and each import once, a file's first impact winning |
-| Trace Diagram | One tab per segment that has a Trace Diagram, in `tabs` of the Trace band, each with the segment's id, the diagram's title as its label, and the diagram. With fewer than two, `tabs` is empty and `diagram` holds the one there is. |
+| Blast Diagram | The Blast Diagrams of every segment joined, the hidden ones (`hiddenBlastDiagram`) among them: each file and each import once, a file's first impact winning |
+| Trace Diagram | The shared segment has none: its cards are drawn in the diagrams of the entry segments that reach them, as the codegraph built them with segments off. One tab per segment that has a Trace Diagram, in `tabs` of the Trace band, each with the segment's id, the diagram's title as its label, and the diagram. With fewer than two, `tabs` is empty and `diagram` holds the one there is. |
 | Ids | The merged segment takes the first segment's id, so filters and reviewed marks are kept under it. Each tab's diagram keeps its own segment's id for the agent's writes. |
 
-Editing the segments keeps the choice; adding a second segment to an artifact of one makes it segmented.
+Editing the segments keeps the choice; adding a second segment to an artifact of one makes it segmented. A write-up that turns segments on or off rebuilds the artifact at its commits with the new choice, carrying over what is written, because the Trace Diagrams are drawn for it (`scaffoldSegmentedAs` in `apps/backend/src/procedures/write-up-review/utils/segmented-scaffold.ts`). When the repository cannot be read, as in the site's demo, the artifact keeps its diagrams and takes the new choice.
 
 ## General components
 

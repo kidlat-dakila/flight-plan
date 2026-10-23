@@ -56,7 +56,7 @@ const writtenFileSchema = z.object({
 const writtenSegmentSchema = z.object({
   title: z.string().nullable(),
   context: z.array(z.string()).default([]),
-  traceDiagram: z.object({ description: z.string().nullable().default(null), traceNodes: z.array(writtenTraceNodeSchema).default([]) }).nullable(),
+  traceDiagram: z.object({ title: z.string().nullable().default(null), description: z.string().nullable().default(null), traceNodes: z.array(writtenTraceNodeSchema).default([]) }).nullable(),
   blastDiagram: z.object({ nodes: z.array(z.unknown()) }).nullable().optional(),
   codeWalkthrough: z.object({ files: z.array(writtenFileSchema) }),
 })
@@ -114,7 +114,7 @@ const withWrittenTraceNode = (node: TraceNode, writtenById: ReadonlyMap<string, 
 const withWrittenTrace = (traceDiagram: TraceDiagram | null, written: WrittenTrace | null | undefined): TraceDiagram | null => {
   if (traceDiagram === null || written === null || written === undefined) return traceDiagram
   const writtenById = new Map(listWrittenTraceNodes(written.traceNodes).map((node) => [node.id, node]))
-  return { ...traceDiagram, description: written.description, traceNodes: traceDiagram.traceNodes.map((node) => withWrittenTraceNode(node, writtenById)) }
+  return { ...traceDiagram, title: written.title, description: written.description, traceNodes: traceDiagram.traceNodes.map((node) => withWrittenTraceNode(node, writtenById)) }
 }
 
 const withWrittenBlast = (blastDiagram: Blast | null, written: WrittenSegment["blastDiagram"]): Blast | null => {

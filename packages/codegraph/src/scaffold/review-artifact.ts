@@ -40,6 +40,7 @@ export interface SegmentParts {
   readonly importGraph: readonly SegmentFile[]
   readonly traceDiagram: TraceDiagram | null
   readonly blastDiagram: Blast | null
+  readonly hiddenBlastDiagram: Blast | null
   readonly walkthrough: { readonly files: readonly RangedFileSection[] }
   readonly codeReferences: readonly FileCodeReferences[]
 }
@@ -110,6 +111,7 @@ const toSegment = (parts: SegmentParts): Segment => ({
   context: parts.context,
   traceDiagram: parts.traceDiagram,
   blastDiagram: parts.blastDiagram,
+  ...(parts.hiddenBlastDiagram === null ? {} : { hiddenBlastDiagram: parts.hiddenBlastDiagram }),
   walkthrough: { files: parts.walkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map(toWaypoint) })) },
   isContextRequired: false,
 })

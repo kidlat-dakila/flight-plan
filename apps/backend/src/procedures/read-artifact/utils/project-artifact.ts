@@ -49,6 +49,7 @@ const flatTraceOf = (segment: Segment): unknown =>
   segment.traceDiagram === null
     ? null
     : {
+        title: segment.traceDiagram.title,
         description: segment.traceDiagram.description,
         isDescriptionRequired: segment.traceDiagram.isRequired,
         nodes: flattenTraceNodes(segment.traceDiagram.traceNodes),
@@ -65,6 +66,7 @@ const segmentOverviewOf = (segment: Segment): unknown => ({
   traceDiagram: segment.traceDiagram === null
     ? null
     : {
+        isTitleWritten: segment.traceDiagram.title !== null,
         isDescriptionWritten: segment.traceDiagram.description !== null,
         isDescriptionRequired: segment.traceDiagram.isRequired,
         nodes: traceStubsOf(segment),
@@ -91,6 +93,9 @@ const SEGMENT_PARTS: Readonly<Record<Exclude<ArtifactSection, "overview" | "full
   "code-walkthrough": (segment) => ({ segmentId: segment.id, walkthrough: storedWalkthroughOf(segment) }),
 }
 
+const shownSegmentOf = ({ id, title, changedPaths, context, traceDiagram, blastDiagram, walkthrough, isContextRequired }: Segment): Segment =>
+  ({ id, title, changedPaths, context, traceDiagram, blastDiagram, walkthrough, isContextRequired })
+
 export const projectSegments = (
   section: Exclude<ArtifactSection, "overview" | "diff">,
   artifact: ReviewArtifact,
@@ -101,7 +106,7 @@ export const projectSegments = (
         title: artifact.title,
         status: artifact.status,
         commit: artifact.commit,
-        segments: segments.map((segment) => ({ ...segment, traceDiagram: flatTraceOf(segment), walkthrough: storedWalkthroughOf(segment) })),
+        segments: segments.map((segment) => ({ ...shownSegmentOf(segment), traceDiagram: flatTraceOf(segment), walkthrough: storedWalkthroughOf(segment) })),
         contextCodeBlocks: artifact.contextCodeBlocks
           .filter((listed) => listed.description !== null)
           .map((listed) => ({ id: contextIdOf(listed), description: listed.description })),

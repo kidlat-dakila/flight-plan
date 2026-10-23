@@ -34,6 +34,8 @@ import { InMemoryConfigurationStore, type ConfigurationStore } from "@/procedure
 import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-catalog"
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { ARTIFACT_MIGRATIONS } from "@/procedures/migrate-review/utils/artifact-migrations"
+import { writtenVersionOf } from "@/procedures/migrate-review/utils/review-version"
 import { InMemoryAgentTerminalRegistry } from "@/procedures/open-agent-terminal/utils/agent-terminals"
 import type { TerminalCloser, TerminalOpener } from "@/procedures/open-agent-terminal/utils/terminal-opener"
 import { writeSamplePublishedPage, type PublishedPageWriter } from "@/procedures/publish-artifact/utils/published-page-writer"
@@ -98,6 +100,7 @@ export interface ProcedureContext {
   readonly now: () => Date
   readonly errorLog: ErrorLog
   readonly dataNotice: string | null
+  readonly runningVersion: string | null
   readonly fixtureCatalog?: FixtureCatalog
   readonly updateChecker?: UpdateChecker
 }
@@ -166,6 +169,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   now: () => new Date(),
   errorLog: createMockErrorLog(),
   dataNotice: SAMPLE_DATA_NOTICE,
+  runningVersion: null,
 })
 
 const seedDemoScaffolds = async (store: InMemoryReviewStore, demos: readonly DemoReview[], now: Date): Promise<void> => {
@@ -209,6 +213,7 @@ export const createDemoProcedureContext = async (
     now: () => new Date(),
     errorLog: createMockErrorLog(),
     dataNotice: null,
+    runningVersion: null,
   }
   demos.forEach((demo) => {
     startDemoAgent({ key: demoReviewKeyOf(demo), replies: toDemoAgentReplies(demo), readContext: () => context })
@@ -227,6 +232,7 @@ export interface LocalMachine {
   readonly homePath: string
   readonly platform: string
   readonly environment: Environment
+  readonly runningVersion: string | null
 }
 
 const COMMIT_LIMIT = 1000
@@ -261,7 +267,8 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     errorLog,
     setupStore,
     configurationStore: new FileConfigurationStore(machine.dataPath),
-    reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),
+    reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore, writtenVersionOf(machine.runningVersion, ARTIFACT_MIGRATIONS)),
+    runningVersion: machine.runningVersion,
     pullRequestForge: createPullRequestForge({
       openRepository,
       readForges: async () => (await setupStore.read()).forges,

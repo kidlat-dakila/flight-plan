@@ -264,7 +264,8 @@ const toDiagram = (traceDiagram: TraceDiagram, segmentId: string, scope: string,
   const stepsByEdgeId = groupBy(listDiagramSteps(nodes), (step) => edgeIdOf(step.from.id, step.to.id))
   return {
     anchorId: `${scope}trace-${segmentId}`,
-    title: nodes.length === 0 ? EMPTY_TITLE : titleOf(nodes),
+    title: traceDiagram.title ?? (nodes.length === 0 ? EMPTY_TITLE : titleOf(nodes)),
+    writtenTitle: traceDiagram.title,
     description: traceDiagram.description === null ? null : parseProse(traceDiagram.description, context.knownLinkIds),
     descriptionMarkdown: traceDiagram.description ?? UNWRITTEN_MARKDOWN,
     descriptionHint: traceDiagram.description === null ? traceHintOf(nodes.map((node) => classificationOfBlock(node.codeBlocks[0]))) : null,

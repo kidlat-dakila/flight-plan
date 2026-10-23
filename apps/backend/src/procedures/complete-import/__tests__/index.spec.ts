@@ -1,3 +1,4 @@
+import { parse, stringify } from "devalue"
 import { completeImport } from "@/procedures/complete-import"
 import type { ProcedureContext } from "@/procedures/context"
 import { createConversationContext, KEY } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
@@ -30,7 +31,7 @@ describe("completeImport", () => {
   it("stores the fetched file as the review target's Flight Plan, finishes the import and removes the file", async () => {
     const { context, importFiles } = createContext()
     await importReview(INPUT, context)
-    importFiles.write(KEY, formatStoredReview(SCAFFOLD))
+    importFiles.write(KEY, formatStoredReview(SCAFFOLD, null))
 
     await expect(completeImport(KEY, context)).resolves.toMatchObject({ kind: "imported" })
 
@@ -41,7 +42,7 @@ describe("completeImport", () => {
 
   it("stores nothing when the reviewer asked for no import", async () => {
     const { context, importFiles } = createContext()
-    importFiles.write(KEY, formatStoredReview(SCAFFOLD))
+    importFiles.write(KEY, formatStoredReview(SCAFFOLD, null))
 
     await expect(completeImport(KEY, context)).resolves.toMatchObject({ kind: "rejected" })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toBeNull()
@@ -55,6 +56,18 @@ describe("completeImport", () => {
       kind: "rejected",
       message: "There is no file at /sample-imports/storefront/pr-412.json yet. Copy the Flight Plan there, then call record-import again.",
     })
+  })
+
+  it("stores a Flight Plan of a newer Flight Plan as it came, for the reviewer to convert when they open it", async () => {
+    const { context, importFiles } = createContext()
+    await importReview(INPUT, context)
+    const stored: unknown = parse(formatStoredReview(SCAFFOLD, "0.9.0"))
+    const newer = stringify(typeof stored === "object" && stored !== null ? { ...stored, owner: "A field of a newer Flight Plan" } : stored)
+    importFiles.write(KEY, newer)
+
+    await expect(completeImport(KEY, { ...context, runningVersion: "0.1.11" })).resolves.toMatchObject({ kind: "imported" })
+
+    await expect(context.reviewStore.readStoredText(KEY)).resolves.toBe(newer)
   })
 
   it("refuses a file that is not a Flight Plan", async () => {

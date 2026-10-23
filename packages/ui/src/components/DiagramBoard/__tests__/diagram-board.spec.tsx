@@ -245,7 +245,12 @@ describe("DiagramBoard", () => {
 
     expect(chosen).not.toBe("")
     expect((await screen.findByText("Node detail")).parentElement?.style.width).toBe(chosen)
-    expect(JSON.parse(window.localStorage.getItem("flight-plan:layout:v1") ?? "{}")).toStrictEqual({ diagramPanelWidthPx: Number.parseInt(chosen, 10) })
+    expect(JSON.parse(window.localStorage.getItem("flight-plan:layout:v1") ?? "{}")).toStrictEqual({
+      diagramPanelWidthPx: Number.parseInt(chosen, 10),
+      explorerWidthPx: null,
+      sectionsWidthPx: null,
+      chatWidthPx: null,
+    })
   })
 
   it("opens the side panel at its own width when what the browser kept cannot be read", async () => {

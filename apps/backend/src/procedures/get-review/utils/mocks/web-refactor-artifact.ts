@@ -73,7 +73,10 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
         [
           ["start", "read-server-config"],
         ],
-        "When the server starts, `start()` reads the environment and hands it to `readServerConfig()`. The parser turns it into the host and the port, and reads nothing from the process itself.",
+        {
+          title: "Start server flow diagram",
+          description: "When the server starts, `start()` reads the environment and hands it to `readServerConfig()`. The parser turns it into the host and the port, and reads nothing from the process itself.",
+        },
       ),
       blastDiagram: null,
       walkthrough: {
