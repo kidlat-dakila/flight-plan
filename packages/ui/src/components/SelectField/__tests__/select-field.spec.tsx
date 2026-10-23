@@ -47,7 +47,7 @@ describe("SelectField", () => {
 
     expect(select.getAttribute("aria-invalid")).toBe("true")
     expect(screen.getByRole("alert").textContent).toBe("Choose one of the models Claude offers.")
-    expect(select.getAttribute("aria-describedby")).toBe(screen.getByRole("alert").id)
+    expect(select.getAttribute("aria-describedby")).toBe(screen.getByText("Choose one of the models Claude offers.").id)
   })
 
   it("shows no error and is valid when there is no error message", () => {

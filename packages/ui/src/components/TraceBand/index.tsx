@@ -25,6 +25,7 @@ export interface DescriptionEditing {
   readonly isWriting: boolean
   readonly isSaving: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly onEdit: () => void
   readonly onSave: (markdown: string) => void
   readonly onCancel: () => void
@@ -35,6 +36,7 @@ export interface DescriptionEditorRequest {
   readonly markdown: string
   readonly isSaving: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly onSave: (markdown: string) => void
   readonly onCancel: () => void
 }
@@ -100,6 +102,7 @@ const Description = ({ heading, diagram, codeLinks, editing, renderEditor, onOpe
           markdown: diagram.descriptionMarkdown,
           isSaving: editing.isSaving,
           errorMessage: editing.errorMessage,
+          onTroubleshoot: editing.onTroubleshoot ?? null,
           onSave: editing.onSave,
           onCancel: editing.onCancel,
         })}

@@ -6,6 +6,7 @@ import { BandSlotContext } from "@/band-slot"
 import { useColorTheme } from "@/color-theme"
 import ServerError from "@/routes/-components/ServerError"
 import { SETTINGS_LINKS } from "@/settings-links"
+import type { Failure } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import BandLine from "@flightplan/ui/BandLine"
 import BlastBand from "@flightplan/ui/BlastBand"
@@ -48,6 +49,7 @@ import { useContextEditing } from "./-hooks/use-context-editing"
 import { useLiveAgent } from "./-hooks/use-live-agent"
 import { useReadingPositionStore } from "./-hooks/use-reading-position"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
+import { useReviewerActivity } from "./-hooks/use-reviewer-activity"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useTargetSwitching } from "./-hooks/use-target-switching"
 import { useToast } from "./-hooks/use-toast"
@@ -144,7 +146,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const [isArranging, setIsArranging] = useState(false)
   const [isChoosingPullRequest, setIsChoosingPullRequest] = useState(false)
   const [arrangedWalkthroughSegmentId, setArrangedWalkthroughSegmentId] = useState<string | null>(null)
-  const [toastMessage, showToast] = useToast()
+  const [toast, showToast] = useToast()
   const { isOwn } = page
   const progress = page.kind === "artifact" ? page.progress : null
   useCompletionNotification(
@@ -172,8 +174,8 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const refreshReview = async (): Promise<void> => {
     await queryClient.invalidateQueries(trpc.review.get.pathFilter())
   }
-  const reportError = (error: { readonly message: string }): void => {
-    showToast(error.message)
+  const reportError = (error: Failure): void => {
+    showToast(error)
   }
   const copyText = (text: string, copiedMessage: string): void => {
     navigator.clipboard.writeText(text).then(
@@ -185,6 +187,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       },
     )
   }
+  useReviewerActivity(reviewKey)
   const liveAgent = useLiveAgent(reviewKey, page.kind === "artifact", { onMessage: showToast })
   const agentAnnouncer = { onMessage: showToast, onCopy: copyText, onAgentAsked: liveAgent.onAgentAction }
   const writeUpDialog = useWriteUpDialog(reviewKey, page.kind === "artifact", agentAnnouncer)
@@ -278,7 +281,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
         staleTime: "static",
       })
       .then(onResolved, (error: unknown) => {
-        showToast(error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE)
+        showToast(error instanceof Error ? error : UNKNOWN_ERROR_MESSAGE)
       })
   }
 
@@ -349,6 +352,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 isSubmitting={discussion.isSubmitting}
                                 isDiscarding={discussion.isDiscarding}
                                 errorMessage={discussion.submissionError}
+                                onTroubleshoot={discussion.onSubmissionTroubleshoot}
                                 submissionCount={discussion.submissionCount}
                                 renderEditor={renderCommentEditor}
                                 onSubmit={discussion.onSubmit}
@@ -444,7 +448,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 renderDescriptionEditor={isOwn
                                   ? (request) => (
                                       <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
-                                        <ContextEditor {...request} renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />} />
+                                        <ContextEditor {...request} onTroubleshoot={request.onTroubleshoot ?? null} renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />} />
                                       </Suspense>
                                     )
                                   : null}
@@ -559,6 +563,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                             isSaving={segmentEditing.addition.isSaving}
                             isDeleting={false}
                             errorMessage={segmentEditing.addition.errorMessage}
+                            onTroubleshoot={segmentEditing.addition.onTroubleshoot}
                             onSave={segmentEditing.addition.onSave}
                             onDelete={null}
                             onClose={segmentEditing.addition.onCancel}
@@ -716,12 +721,13 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
               content={liveAgent.dialog}
               isOpening={liveAgent.isOpening}
               problem={liveAgent.problem}
+              onTroubleshoot={liveAgent.onTroubleshoot}
               onOpenTerminal={liveAgent.onOpenTerminal}
               onCopy={copyText}
               onClose={liveAgent.onClose}
             />
           )}
-      <Toast message={toastMessage} />
+      <Toast message={toast?.message ?? null} onTroubleshoot={toast?.onTroubleshoot ?? null} />
     </div>
   )
 }

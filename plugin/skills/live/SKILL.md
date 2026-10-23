@@ -1,6 +1,6 @@
 ---
 name: live
-description: Use when the reviewer runs /flightplan:live <repository>/<target> to keep this session serving one Flight Plan review. Waits on the review's listening stream for parts to write up and chat messages, does each one, keeps Flight Plan told that the session is online, and goes back to waiting until the reviewer closes the terminal.
+description: Use when the reviewer runs /flightplan:live <repository>/<target> to keep this session serving one Flight Plan review. Waits on the review's listening stream for parts to write up and chat messages, does each one, keeps Flight Plan told that the session is online, and goes back to waiting until the reviewer closes the terminal or Flight Plan ends the session because the review sat idle.
 argument-hint: <repository>/<target>
 allowed-tools: mcp__plugin_flightplan_flightplan__* Bash(curl -sN *)
 ---
@@ -11,7 +11,8 @@ The reviewer reads a review in Flight Plan's web app, and this session is the
 agent behind it. Flight Plan asks for work on the review's listening stream:
 parts of the review to write up, and the reviewer's chat messages and answers.
 You do each one and go back to listening. You keep doing that until the reviewer
-closes this terminal.
+closes this terminal, or until Flight Plan tells you to stop because the reviewer
+has been away from the review for 10 minutes.
 
 **The review comes from the argument:** `$ARGUMENTS`. It is
 `<repository>/<target>`, such as `storefront/pr-412`: everything before the last
@@ -54,6 +55,10 @@ exits. Its output is one of these:
   request from Flight Plan, such as a part to write up, a Flight Plan to publish
   or one to fetch. Do all of it, then listen again.
 - **`event: idle`**: nothing came for a while. Listen again at once.
+- **`event: stop`**: the reviewer has been away from the review for 10 minutes,
+  so Flight Plan ended this session. Do not listen again. Tell the reviewer in
+  this terminal that the session ended because the review was idle, and stop.
+  If Flight Plan opened this terminal, it closes it.
 - **Nothing, or an error:** Flight Plan restarted or is not running. Wait a few
   seconds, call `ping`, and listen again. If `ping` keeps failing, tell the
   reviewer in this terminal that Flight Plan cannot be reached, and stop.

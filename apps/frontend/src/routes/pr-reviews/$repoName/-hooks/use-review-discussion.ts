@@ -1,9 +1,11 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useDeferredValue, useState } from "react"
+import { type Failure, useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import type { LineAddress } from "@flightplan/ui/CodeBlock"
 import type { CommentRange } from "@flightplan/ui/FileRows"
 import type { ReviewerRequesting } from "@flightplan/ui/ReviewHeader"
+import type { ToastContent } from "./use-toast"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -25,6 +27,7 @@ export interface ReviewDiscussion {
   readonly isDiscarding: boolean
   readonly submissionCount: number
   readonly submissionError: string | null
+  readonly onSubmissionTroubleshoot: (() => void) | null
   readonly reviewerRequesting: ReviewerRequesting
   readonly onStartComment: (path: string, address: LineAddress | null, isExtending: boolean) => void
   readonly onStartRangeComment: (path: string, range: CommentRange) => void
@@ -74,8 +77,9 @@ export const composeAt = (
   }
 }
 
-export const useReviewDiscussion = (reviewKey: ReviewKey, showToast: (message: string) => void): ReviewDiscussion => {
+export const useReviewDiscussion = (reviewKey: ReviewKey, showToast: (content: ToastContent) => void): ReviewDiscussion => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const queryClient = useQueryClient()
   const [composing, setComposing] = useState<Composing | null>(null)
   const [submissionCount, setSubmissionCount] = useState(0)
@@ -89,8 +93,8 @@ export const useReviewDiscussion = (reviewKey: ReviewKey, showToast: (message: s
   const refreshReviewers = async (): Promise<void> => {
     await Promise.all([refreshReview(), queryClient.invalidateQueries(trpc.review.searchReviewers.pathFilter())])
   }
-  const reportError = (error: { readonly message: string }): void => {
-    showToast(error.message)
+  const reportError = (error: Failure): void => {
+    showToast(error)
   }
   const refreshing = { onSuccess: refreshReview, onError: reportError }
 
@@ -130,6 +134,7 @@ export const useReviewDiscussion = (reviewKey: ReviewKey, showToast: (message: s
     isDiscarding: discardComment.isPending,
     submissionCount,
     submissionError: submitReview.error?.message ?? null,
+    onSubmissionTroubleshoot: troubleshootFailure(submitReview.error),
     reviewerRequesting: {
       query: reviewerQuery,
       options: reviewers.data ?? null,

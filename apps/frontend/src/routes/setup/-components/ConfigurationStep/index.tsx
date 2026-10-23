@@ -35,6 +35,7 @@ const ConfigurationStep = <Classification extends string>({
       pendingLabel="Finishing…"
       isPending={isPending}
       errorMessage={problem !== null && problem.field === null ? problem.message : null}
+      onTroubleshoot={problem?.onTroubleshoot ?? null}
     />
   </ReviewConfigurationForm>
 )

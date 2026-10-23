@@ -2,7 +2,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import type { SegmentContent } from "@/routes/pr-reviews/$repoName/-components/SegmentEditor"
 import type { MoveDirection, SegmentAuthoring, SegmentWriting } from "@/routes/pr-reviews/$repoName/-components/SegmentHeader"
+import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
+import type { ToastContent } from "./use-toast"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -24,8 +26,9 @@ export interface SegmentEditing {
 
 const isWrittenInForm = (edit: SegmentEdit): boolean => edit.kind === "add" || edit.kind === "change"
 
-export const useSegmentEditing = (reviewKey: ReviewKey, onProblem: (message: string) => void): SegmentEditing => {
+export const useSegmentEditing = (reviewKey: ReviewKey, onProblem: (content: ToastContent) => void): SegmentEditing => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const queryClient = useQueryClient()
   const [writingSegmentIds, setWritingSegmentIds] = useState<readonly string[]>([])
   const [isAdding, setIsAdding] = useState(false)
@@ -44,7 +47,7 @@ export const useSegmentEditing = (reviewKey: ReviewKey, onProblem: (message: str
         if (edit.kind === "change" || edit.kind === "remove") stopWriting(edit.segmentId)
       },
       onError: (error, { edit }) => {
-        if (!isWrittenInForm(edit)) onProblem(error.message)
+        if (!isWrittenInForm(edit)) onProblem(error)
       },
     }),
   )
@@ -54,6 +57,7 @@ export const useSegmentEditing = (reviewKey: ReviewKey, onProblem: (message: str
   const lastEdit: SegmentEdit | null = editSegments.variables?.edit ?? null
   const rejectionMessage = editSegments.data?.kind === "rejected" ? editSegments.data.message : null
   const failureMessage = rejectionMessage ?? editSegments.error?.message ?? null
+  const failureTroubleshoot = rejectionMessage === null ? troubleshootFailure(editSegments.error) : null
   const isLastAddition = lastEdit?.kind === "add"
 
   return {
@@ -63,6 +67,7 @@ export const useSegmentEditing = (reviewKey: ReviewKey, onProblem: (message: str
       isWriting: isAdding,
       isSaving: isLastAddition && editSegments.isPending,
       errorMessage: isLastAddition ? failureMessage : null,
+      onTroubleshoot: isLastAddition ? failureTroubleshoot : null,
       onEdit: () => {
         if (isLastAddition) editSegments.reset()
         setIsAdding(true)
@@ -80,6 +85,7 @@ export const useSegmentEditing = (reviewKey: ReviewKey, onProblem: (message: str
           isWriting: writingSegmentIds.includes(segmentId),
           isSaving: isLastChange && editSegments.isPending,
           errorMessage: isLastChange ? failureMessage : null,
+          onTroubleshoot: isLastChange ? failureTroubleshoot : null,
           onEdit: () => {
             if (isLastChange) editSegments.reset()
             setWritingSegmentIds((segmentIds) => (segmentIds.includes(segmentId) ? segmentIds : [...segmentIds, segmentId]))

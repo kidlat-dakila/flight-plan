@@ -1,16 +1,25 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { formatIdlePacket, formatInbound, formatListenPacket, listenCommandOf } from "@/procedures/get-conversation/utils/agent-text"
+import { formatIdlePacket, formatInbound, formatListenPacket, formatStopPacket, listenCommandOf } from "@/procedures/get-conversation/utils/agent-text"
 import { inboundAfter, lastDeliveredSequenceOf, lastSequenceOf } from "@/procedures/get-conversation/utils/conversation"
-import { appendAndPublish, findReviewTarget } from "@/procedures/get-conversation/utils/conversation-actions"
+import {
+  appendAndPublish,
+  findReviewTarget,
+  isReviewerIdleFor,
+  restartIdleClockForNewSession,
+} from "@/procedures/get-conversation/utils/conversation-actions"
 import { readsOnChange, type ConversationSubscription } from "@/procedures/get-conversation/utils/conversation-hub"
+import { idleDeadlineOf } from "@/procedures/get-conversation/utils/reviewer-activity"
 import type { ConversationKey } from "@/procedures/get-conversation/utils/schemas"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 
 export const LISTEN_WINDOW_MS = 540_000
 
+const MS_PER_MINUTE = 60_000
+
 export type ListenPacket
   = | { readonly kind: "work", readonly throughSequence: number, readonly text: string }
     | { readonly kind: "idle", readonly text: string }
+    | { readonly kind: "stop", readonly text: string }
 
 export type Listening
   = | { readonly kind: "listening", readonly packets: AsyncIterable<ListenPacket> }
@@ -49,7 +58,30 @@ const recordDelivery = async (key: ReviewKey, packet: WorkPacket, context: Proce
   )
 }
 
+const waitDeadlineOf = (key: ReviewKey, context: ProcedureContext, listenDeadlineMs: number): number => {
+  const { reviewerActivity, idleLimitMs } = context.conversationEnvironment
+  const idleDeadlineMs = idleDeadlineOf(reviewerActivity.activityOf(key), idleLimitMs)
+  return idleDeadlineMs === null ? listenDeadlineMs : Math.min(listenDeadlineMs, idleDeadlineMs)
+}
+
 const waitForPacket = async (
+  key: ReviewKey,
+  subscription: ConversationSubscription,
+  context: ProcedureContext,
+  signal: AbortSignal | null,
+  listenDeadlineMs: number,
+): Promise<WorkPacket | null> => {
+  const remainingMs = () => waitDeadlineOf(key, context, listenDeadlineMs) - context.now().getTime()
+  const packets = readsOnChange(subscription, { signal, remainingMs }, async () => await claimPacket(key, context))
+  for await (const packet of packets) {
+    if (packet !== null) return packet
+  }
+  const isWindowOpen = context.now().getTime() < listenDeadlineMs
+  const shouldKeepWaiting = signal?.aborted !== true && isWindowOpen && !isReviewerIdleFor(key, context)
+  return shouldKeepWaiting ? await waitForPacket(key, subscription, context, signal, listenDeadlineMs) : null
+}
+
+const nextPacketOf = async (
   key: ReviewKey,
   subscription: ConversationSubscription,
   context: ProcedureContext,
@@ -57,19 +89,33 @@ const waitForPacket = async (
 ): Promise<WorkPacket | null> => {
   const waiting = await claimPacket(key, context)
   if (waiting !== null) return waiting
-  const deadlineMs = context.now().getTime() + LISTEN_WINDOW_MS
-  const remainingMs = () => deadlineMs - context.now().getTime()
-  const packets = readsOnChange(subscription, { signal, remainingMs }, async () => await claimPacket(key, context))
-  for await (const packet of packets) {
-    if (packet !== null) return packet
-  }
-  return null
+  return await waitForPacket(key, subscription, context, signal, context.now().getTime() + LISTEN_WINDOW_MS)
 }
 
 const idlePacketOf = (key: ReviewKey, context: ProcedureContext): ListenPacket => ({
   kind: "idle",
   text: formatIdlePacket(listenCommandOf(context.conversationEnvironment.serverUrl, key)),
 })
+
+const endPacketOf = (key: ReviewKey, context: ProcedureContext): ListenPacket => {
+  const { idleLimitMs } = context.conversationEnvironment
+  return idleLimitMs !== null && isReviewerIdleFor(key, context)
+    ? { kind: "stop", text: formatStopPacket(idleLimitMs / MS_PER_MINUTE) }
+    : idlePacketOf(key, context)
+}
+
+const closeAgentTerminal = async (key: ReviewKey, context: ProcedureContext): Promise<void> => {
+  const { agentTerminals } = context.conversationEnvironment
+  const window = agentTerminals.windowOf(key)
+  if (window === null || context.closeTerminal === null) return
+  agentTerminals.forget(key)
+  await context.closeTerminal(window)
+}
+
+const endIdleSession = async (key: ReviewKey, context: ProcedureContext): Promise<void> => {
+  context.conversationEnvironment.reviewerActivity.markIdleStopped(key, context.now())
+  await closeAgentTerminal(key, context)
+}
 
 const packetsOf = async function* (
   key: ReviewKey,
@@ -78,15 +124,18 @@ const packetsOf = async function* (
 ): AsyncGenerator<ListenPacket> {
   const { presence, hub } = context.conversationEnvironment
   const subscription = hub.subscribe(key)
+  restartIdleClockForNewSession(key, context)
   presence.openStream(key)
   hub.publish(key)
   try {
-    const packet = await waitForPacket(key, subscription, context, signal)
+    const packet = await nextPacketOf(key, subscription, context, signal)
     if (packet !== null) {
       yield packet
       await recordDelivery(key, packet, context)
     } else if (signal?.aborted !== true) {
-      yield idlePacketOf(key, context)
+      const endPacket = endPacketOf(key, context)
+      yield endPacket
+      if (endPacket.kind === "stop") await endIdleSession(key, context)
     }
   } finally {
     subscription.close()

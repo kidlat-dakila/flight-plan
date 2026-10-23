@@ -1,5 +1,6 @@
 import Button from "@/components/blocks/button"
 import Dialog, { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/blocks/dialog"
+import ProblemAlert from "@/components/ProblemAlert"
 import { cn } from "@/lib/utils"
 
 interface BrowsedFolder {
@@ -22,6 +23,7 @@ interface FolderBrowserDialogProps {
   readonly description: string
   readonly browser: FolderBrowser | null
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly onOpenFolder: (path: string) => void
   readonly onChooseRepository: (path: string) => void
   readonly onChooseFolder: ((path: string) => void) | null
@@ -115,6 +117,7 @@ const FolderBrowserDialog = ({
   description,
   browser,
   errorMessage,
+  onTroubleshoot = null,
   onOpenFolder,
   onChooseRepository,
   onChooseFolder,
@@ -135,7 +138,7 @@ const FolderBrowserDialog = ({
               onChooseRepository={onChooseRepository}
             />
           )}
-      {errorMessage === null ? null : <p role="alert" className="text-sm text-destructive">{errorMessage}</p>}
+      {errorMessage === null ? null : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} className="text-sm text-destructive" />}
       {browser === null || onChooseFolder === null
         ? null
         : (

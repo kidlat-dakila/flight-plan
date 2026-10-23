@@ -2,6 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import type { ProcedureContext } from "@/procedures/context"
 import { readNodes } from "@/procedures/read-nodes"
 import { readNodesInputShape } from "@/procedures/read-nodes/utils/schemas"
+import { recordingFailures } from "@/server/mcp/tool-failures"
 import { errorResult, jsonResult } from "@/server/mcp/tool-result"
 
 const DESCRIPTION = [
@@ -15,12 +16,12 @@ export const registerNodesTool = (mcpServer: McpServer, context: ProcedureContex
   mcpServer.registerTool(
     "nodes",
     { description: DESCRIPTION, inputSchema: readNodesInputShape },
-    async (input) => {
+    recordingFailures(context.errorLog, "nodes", async (input) => {
       const reading = await readNodes(input, context)
       if (reading.kind === "rejected") return errorResult(reading.message)
       return reading.kind === "selected"
         ? jsonResult({ items: reading.items })
         : jsonResult({ items: reading.items, total: reading.total, remaining: reading.remaining, unwritten: reading.unwritten })
-    },
+    }),
   )
 }

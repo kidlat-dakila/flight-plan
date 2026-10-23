@@ -33,6 +33,7 @@ const ReviewSettingsPage = () => {
         <SettingsActions
           isPending={saving.isPending}
           errorMessage={saving.errorMessage}
+          onTroubleshoot={saving.onTroubleshoot}
           savedMessage={saving.savedMessage}
         />
       </ReviewConfigurationForm>

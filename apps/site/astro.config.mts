@@ -100,6 +100,7 @@ export default defineConfig({
             "docs/git-connection/bitbucket",
           ],
         },
+        { slug: "docs/troubleshooting" },
       ],
     }),
   ],

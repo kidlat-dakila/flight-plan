@@ -460,7 +460,7 @@ describe("the setup page", () => {
 
     const alert = await screen.findByRole("alert")
     expect(alert.textContent).toBe("Choose one of the models Claude offers.")
-    expect(screen.getByRole("combobox", { name: "Model for Claude" }).getAttribute("aria-describedby")).toBe(alert.id)
+    expect(screen.getByRole("combobox", { name: "Model for Claude" }).getAttribute("aria-describedby")).toBe(within(alert).getByText("Choose one of the models Claude offers.").id)
   })
 
   it("keeps the step open and shows why it was not saved", async () => {
@@ -507,7 +507,9 @@ describe("the setup page", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Save and continue" }))
 
-    expect((await screen.findByRole("alert")).textContent).toBe("The data directory cannot be written.")
+    const alert = await screen.findByRole("alert")
+    expect(within(alert).getByText("The data directory cannot be written.")).toBeTruthy()
+    expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
   })
 
   it("explains how Flight Plan works with git and what a code host adds", async () => {
@@ -996,7 +998,9 @@ describe("the setup page", () => {
     fireEvent.change(await screen.findByRole("combobox", { name: "Repository folder" }), { target: { value: "/work/notes" } })
     fireEvent.click(screen.getByRole("button", { name: "Add" }))
 
-    expect((await screen.findByRole("alert")).textContent).toBe("/work/notes is not a git repository.")
+    const alert = await screen.findByRole("alert")
+    expect(within(alert).getByText("/work/notes is not a git repository.")).toBeTruthy()
+    expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
     expect(addRepository).toHaveBeenCalledWith({ path: "/work/notes", trackedAuthorIds: [] })
   })
 
@@ -1131,7 +1135,9 @@ describe("the setup page", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Finish setup" }))
 
-    expect((await screen.findByRole("alert")).textContent).toBe("Add at least one repository.")
+    const alert = await screen.findByRole("alert")
+    expect(within(alert).getByText("Add at least one repository.")).toBeTruthy()
+    expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
   })
 
   it("does not finish the setup when the review configuration is refused", async () => {

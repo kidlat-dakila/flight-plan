@@ -7,6 +7,7 @@ import LabelSegments, { type LabelSegment } from "@flightplan/ui/LabelSegments"
 import { LINE_COLOR_CLASSES, type LineColor } from "@flightplan/ui/lib/line-color"
 import { cn } from "@flightplan/ui/lib/utils"
 import LineRoundel from "@flightplan/ui/LineRoundel"
+import { TroubleshootLink } from "@flightplan/ui/ProblemAlert"
 import type { StopStatus } from "@flightplan/ui/StopRing"
 
 interface ReviewTarget {
@@ -63,6 +64,7 @@ interface RepositoryLineProps {
   readonly onDismissNewTarget: (targetId: string) => void
   readonly onConfigure: () => void
   readonly onAddTarget: () => void
+  readonly onTroubleshoot: (shownError: string) => void
 }
 
 const RAIL_GRID = "grid grid-cols-[2.5rem_minmax(0,1fr)]"
@@ -78,9 +80,12 @@ interface LineStopsProps {
   readonly repositoryName: string
   readonly content: LineContent
   readonly onAddTarget: () => void
+  readonly onTroubleshoot: (shownError: string) => void
 }
 
-const LineStops = ({ repositoryName, content, onAddTarget }: LineStopsProps) => {
+const shownProblemOf = (message: string, detail: string | null): string => (detail === null ? message : `${message} ${detail}`)
+
+const LineStops = ({ repositoryName, content, onAddTarget, onTroubleshoot }: LineStopsProps) => {
   if (content.kind === "targets") {
     return (
       <ol>
@@ -127,6 +132,9 @@ const LineStops = ({ repositoryName, content, onAddTarget }: LineStopsProps) => 
           {content.detail === null
             ? null
             : <p className="font-mono text-[0.82rem] wrap-anywhere text-muted-foreground">{content.detail}</p>}
+          <span className="text-sm">
+            <TroubleshootLink onClick={() => { onTroubleshoot(shownProblemOf(content.message, content.detail)) }} />
+          </span>
         </div>
       </div>
     )
@@ -154,6 +162,7 @@ const RepositoryLine = ({
   onDismissNewTarget,
   onConfigure,
   onAddTarget,
+  onTroubleshoot,
 }: RepositoryLineProps) => {
   const headingId = useId()
   return (
@@ -191,7 +200,7 @@ const RepositoryLine = ({
           />
         ))}
       </ul>
-      <LineStops repositoryName={name} content={content} onAddTarget={onAddTarget} />
+      <LineStops repositoryName={name} content={content} onAddTarget={onAddTarget} onTroubleshoot={onTroubleshoot} />
     </section>
   )
 }

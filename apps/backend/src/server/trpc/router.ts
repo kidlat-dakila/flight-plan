@@ -37,6 +37,7 @@ import { getSettingsRoute } from "./routes/get-settings"
 import { getSetupRoute } from "./routes/get-setup"
 import { getSetupGateRoute } from "./routes/get-setup-gate"
 import { getTargetSwitcherRoute } from "./routes/get-target-switcher"
+import { getTroubleshootFormRoute } from "./routes/get-troubleshoot-form"
 import { getUpdateNoticeRoute } from "./routes/get-update-notice"
 import { getWriteUpPlanRoute } from "./routes/get-write-up-plan"
 import { healthRoute } from "./routes/health"
@@ -48,11 +49,14 @@ import { listRepositoriesRoute } from "./routes/list-repositories"
 import { markCompleteRoute } from "./routes/mark-complete"
 import { openAgentTerminalRoute } from "./routes/open-agent-terminal"
 import { publishArtifactRoute } from "./routes/publish-artifact"
+import { recordErrorRoute } from "./routes/record-error"
+import { recordReviewerActivityRoute } from "./routes/record-reviewer-activity"
 import { removeRepositoryRoute } from "./routes/remove-repository"
 import { removeReviewRequestRoute } from "./routes/remove-review-request"
 import { removeSetupRepositoryRoute } from "./routes/remove-setup-repository"
 import { replyToThreadRoute } from "./routes/reply-to-thread"
 import { requestReviewerRoute } from "./routes/request-reviewer"
+import { requestTroubleshootingRoute } from "./routes/request-troubleshooting"
 import { requestWriteUpRoute } from "./routes/request-write-up"
 import { resolveThreadRoute } from "./routes/resolve-thread"
 import { saveConfigurationRoute } from "./routes/save-configuration"
@@ -128,6 +132,7 @@ export const appRouter = createRouter({
     declineWriteUp: declineWriteUpRoute,
     liveAgent: getLiveAgentRoute,
     openAgentTerminal: openAgentTerminalRoute,
+    recordActivity: recordReviewerActivityRoute,
     requestWriteUp: requestWriteUpRoute,
     delete: deleteReviewRoute,
     setReviewed: setReviewedRoute,
@@ -154,6 +159,11 @@ export const appRouter = createRouter({
     importForm: getImportFormRoute,
     import: importReviewRoute,
     markComplete: markCompleteRoute,
+  }),
+  troubleshooting: createRouter({
+    form: getTroubleshootFormRoute,
+    request: requestTroubleshootingRoute,
+    recordError: recordErrorRoute,
   }),
   conversation: createRouter({
     get: getConversationRoute,

@@ -10,6 +10,7 @@ export interface LiveAgentFacts {
   readonly isLiveAgent: boolean
   readonly canOpenTerminal: boolean
   readonly isOnline: boolean
+  readonly idleStoppedAt: Date | null
 }
 
 const externalLivePromptOf = (key: ReviewKey): string =>
@@ -39,6 +40,7 @@ const dialogOf = (facts: LiveAgentFacts): LaunchAgentDialog => {
 export const buildLiveAgent = (facts: LiveAgentFacts): LiveAgent => ({
   kind: "live",
   isOnline: facts.isOnline,
+  idleStoppedAt: facts.isOnline ? null : facts.idleStoppedAt?.toISOString() ?? null,
   statusLabel: `${AGENT_LABELS[facts.agent]} ${facts.isOnline ? "online" : "offline"}`,
   dialog: dialogOf(facts),
 })

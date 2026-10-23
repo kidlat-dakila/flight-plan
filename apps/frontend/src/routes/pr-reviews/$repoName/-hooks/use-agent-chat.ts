@@ -1,9 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
 import { useState } from "react"
+import type { Failure } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import type { Conversation, ModelChoice, QuestionAnswering } from "@flightplan/ui/ChatPanel"
 import type { GivenAnswer } from "@flightplan/ui/QuestionBatch"
+import type { ToastContent } from "./use-toast"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -27,15 +29,15 @@ export interface AgentChat {
   readonly onChooseModel: (model: string) => void
 }
 
-export const useAgentChat = (reviewKey: ReviewKey, onProblem: (message: string) => void): AgentChat => {
+export const useAgentChat = (reviewKey: ReviewKey, onProblem: (content: ToastContent) => void): AgentChat => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const [isOpen, setIsOpen] = useState(false)
   const [reference, setReference] = useState<string | null>(null)
   const conversation = useSubscription(trpc.conversation.watch.subscriptionOptions(reviewKey, { enabled: isOpen }))
   const modelChoice = useQuery({ ...trpc.conversation.modelChoice.queryOptions(reviewKey), enabled: isOpen })
-  const reportError = (error: { readonly message: string }): void => {
-    onProblem(error.message)
+  const reportError = (error: Failure): void => {
+    onProblem(error)
   }
   const sendMessage = useMutation(
     trpc.conversation.sendMessage.mutationOptions({

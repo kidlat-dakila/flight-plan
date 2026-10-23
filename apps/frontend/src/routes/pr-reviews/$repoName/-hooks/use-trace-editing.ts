@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { inferInput, inferOutput, TRPCOptionsProxy } from "@trpc/tanstack-react-query"
 import { useState } from "react"
+import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import type { AppRouter } from "@flightplan/backend/router"
 import type { CardMoving, TraceBandAuthoring } from "@flightplan/ui/TraceBand"
+import type { ToastContent } from "./use-toast"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -26,6 +28,7 @@ export interface CardAddition {
   readonly note: string | null
   readonly isSaving: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onSubmit: (card: NewCard) => void
   readonly onClose: () => void
 }
@@ -35,6 +38,7 @@ export interface CardChange {
   readonly nodeId: string
   readonly isSaving: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onSave: (content: CardContent) => void
   readonly onClose: () => void
 }
@@ -62,8 +66,9 @@ const FORM_EDIT_KINDS: readonly DiagramEdit["kind"][] = ["add-card", "change-car
 
 const isWrittenInForm = (edit: DiagramEdit): boolean => FORM_EDIT_KINDS.includes(edit.kind)
 
-export const useTraceEditing = (reviewKey: ReviewKey, onProblem: (message: string) => void): TraceEditing => {
+export const useTraceEditing = (reviewKey: ReviewKey, onProblem: (content: ToastContent) => void): TraceEditing => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const queryClient = useQueryClient()
   const [addedCard, setAddedCard] = useState<AddedCard | null>(null)
   const [modifiedCard, setModifiedCard] = useState<ModifiedCard | null>(null)
@@ -91,7 +96,7 @@ export const useTraceEditing = (reviewKey: ReviewKey, onProblem: (message: strin
         if (edit.kind === "describe") stopDescribing(segmentId)
       },
       onError: (error, { edit }) => {
-        if (!isWrittenInForm(edit)) onProblem(error.message)
+        if (!isWrittenInForm(edit)) onProblem(error)
       },
     }),
   )
@@ -101,6 +106,7 @@ export const useTraceEditing = (reviewKey: ReviewKey, onProblem: (message: strin
   const lastEdit: DiagramEdit | null = editTrace.variables?.edit ?? null
   const rejectionMessage = editTrace.data?.kind === "rejected" ? editTrace.data.message : null
   const failureMessage = rejectionMessage ?? editTrace.error?.message ?? null
+  const failureTroubleshoot = rejectionMessage === null ? troubleshootFailure(editTrace.error) : null
   const isLastAddition = lastEdit?.kind === "add-card"
   const startAddition = (added: AddedCard): void => {
     if (isLastAddition) editTrace.reset()
@@ -132,6 +138,7 @@ export const useTraceEditing = (reviewKey: ReviewKey, onProblem: (message: strin
         isWriting: describedSegmentIds.includes(segmentId),
         isSaving: isLastDescriptionOf(segmentId) && editTrace.isPending,
         errorMessage: isLastDescriptionOf(segmentId) ? failureMessage : null,
+        onTroubleshoot: isLastDescriptionOf(segmentId) ? failureTroubleshoot : null,
         onEdit: () => {
           if (isLastDescriptionOf(segmentId)) editTrace.reset()
           setDescribedSegmentIds((segmentIds) => [...segmentIds, segmentId])
@@ -151,6 +158,7 @@ export const useTraceEditing = (reviewKey: ReviewKey, onProblem: (message: strin
           note: addedCard.lineEnd === null ? null : LINE_END_NOTE,
           isSaving: isLastAddition && editTrace.isPending,
           errorMessage: isLastAddition ? failureMessage : null,
+          onTroubleshoot: isLastAddition ? failureTroubleshoot : null,
           onSubmit: (card) => {
             save(addedCard.segmentId, { kind: "add-card", ...card, ...(addedCard.lineEnd === null ? {} : { lineEnd: addedCard.lineEnd }) })
           },
@@ -162,6 +170,7 @@ export const useTraceEditing = (reviewKey: ReviewKey, onProblem: (message: strin
           ...modifiedCard,
           isSaving: isLastChange && editTrace.isPending,
           errorMessage: isLastChange ? failureMessage : null,
+          onTroubleshoot: isLastChange ? failureTroubleshoot : null,
           onSave: (content) => { save(modifiedCard.segmentId, { kind: "change-card", nodeId: modifiedCard.nodeId, ...content }) },
           onClose: () => { setModifiedCard(null) },
         },

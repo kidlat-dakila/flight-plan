@@ -2,7 +2,7 @@ import { httpLink, splitLink, TRPCClientError, type TRPCLink } from "@trpc/clien
 import { observable } from "@trpc/server/observable"
 import type { AppRouter } from "@flightplan/backend/router"
 
-export type ProcedureReply = { readonly data: unknown } | { readonly errorMessage: string }
+export type ProcedureReply = { readonly data: unknown } | { readonly errorMessage: string, readonly logId?: string }
 
 export type ProcedureHandlers = Readonly<Partial<Record<string, (input: unknown) => ProcedureReply>>>
 
@@ -35,7 +35,7 @@ const toResponse = (path: string, reply: ProcedureReply): Response =>
           error: {
             message: reply.errorMessage,
             code: JSON_RPC_BAD_REQUEST,
-            data: { code: "BAD_REQUEST", httpStatus: HTTP_BAD_REQUEST, path },
+            data: { code: "BAD_REQUEST", httpStatus: HTTP_BAD_REQUEST, path, logId: reply.logId ?? null },
           },
         },
         { status: HTTP_BAD_REQUEST },

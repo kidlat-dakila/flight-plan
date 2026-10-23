@@ -14,6 +14,7 @@ export interface ContextEditing {
   readonly isWriting: boolean
   readonly isSaving: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onEdit: () => void
   readonly onSave: (markdown: string) => void
   readonly onCancel: () => void
@@ -71,6 +72,7 @@ const ContextBand = ({
                 markdown={markdown}
                 isSaving={editing.isSaving}
                 errorMessage={editing.errorMessage}
+                onTroubleshoot={editing.onTroubleshoot}
                 renderCodeLinkDialog={renderCodeLinkDialog}
                 onSave={editing.onSave}
                 onCancel={editing.onCancel}

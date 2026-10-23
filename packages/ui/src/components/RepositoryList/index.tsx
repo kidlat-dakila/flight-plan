@@ -3,6 +3,7 @@ import AuthorField from "@/components/AuthorField"
 import Avatar from "@/components/Avatar"
 import Button from "@/components/blocks/button"
 import IconButton from "@/components/IconButton"
+import ProblemAlert from "@/components/ProblemAlert"
 import type { RepositoryRow } from "@/lib/repository-rows"
 import { cn } from "@/lib/utils"
 
@@ -37,12 +38,14 @@ export interface AuthorSearch {
   readonly options: readonly AuthorOption[]
   readonly message: string | null
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
 }
 
 interface RepositoryListProps<Followed extends FollowedRepository> {
   readonly rows: readonly RepositoryRow<Followed>[]
   readonly listMessage: string | null
   readonly repositoryErrorMessage: string | null
+  readonly onRepositoryTroubleshoot?: (() => void) | null
   readonly isChangingRepositories: boolean
   readonly authorSearch: AuthorSearch
   readonly followedFooter?: (followed: Followed) => ReactNode
@@ -106,6 +109,7 @@ const RepositoryAuthorField = ({
       options={authorOptions}
       message={isSearchedHere ? authorSearch.message : null}
       errorMessage={isSearchedHere ? authorSearch.errorMessage : null}
+      onTroubleshoot={isSearchedHere ? authorSearch.onTroubleshoot ?? null : null}
       onQueryChange={(query) => { onQueryChange(authorRole, query) }}
       onOpen={() => { onQueryChange(authorRole, isSearchedHere ? authorSearch.query : "") }}
       onSelect={onSelect}
@@ -213,6 +217,7 @@ const RepositoryList = <Followed extends FollowedRepository>({
   rows,
   listMessage,
   repositoryErrorMessage,
+  onRepositoryTroubleshoot = null,
   isChangingRepositories,
   authorSearch,
   followedFooter,
@@ -253,7 +258,7 @@ const RepositoryList = <Followed extends FollowedRepository>({
       </div>
       {repositoryErrorMessage === null
         ? null
-        : <p role="alert" className="pt-2 text-sm text-destructive">{repositoryErrorMessage}</p>}
+        : <ProblemAlert message={repositoryErrorMessage} onTroubleshoot={onRepositoryTroubleshoot} className="pt-2 text-sm text-destructive" />}
     </div>
   </>
 )

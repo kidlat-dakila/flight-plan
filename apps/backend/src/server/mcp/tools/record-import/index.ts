@@ -2,6 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { completeImport } from "@/procedures/complete-import"
 import { completeImportInputShape } from "@/procedures/complete-import/utils/schemas"
 import type { ProcedureContext } from "@/procedures/context"
+import { recordingFailures } from "@/server/mcp/tool-failures"
 import { errorResult, textResult } from "@/server/mcp/tool-result"
 
 const DESCRIPTION = [
@@ -14,9 +15,9 @@ export const registerRecordImportTool = (mcpServer: McpServer, context: Procedur
   mcpServer.registerTool(
     "record-import",
     { description: DESCRIPTION, inputSchema: completeImportInputShape },
-    async (input) => {
+    recordingFailures(context.errorLog, "record-import", async (input) => {
       const completion = await completeImport(input, context)
       return completion.kind === "imported" ? textResult(completion.note) : errorResult(completion.message)
-    },
+    }),
   )
 }

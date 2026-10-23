@@ -2,6 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import type { ProcedureContext } from "@/procedures/context"
 import { getInstructions } from "@/procedures/get-instructions"
 import { getInstructionsInputShape } from "@/procedures/get-instructions/utils/schemas"
+import { recordingFailures } from "@/server/mcp/tool-failures"
 import { errorResult, jsonResult } from "@/server/mcp/tool-result"
 
 const DESCRIPTION = [
@@ -15,12 +16,12 @@ export const registerGetInstructionsTool = (mcpServer: McpServer, context: Proce
   mcpServer.registerTool(
     "get-instructions",
     { description: DESCRIPTION, inputSchema: getInstructionsInputShape },
-    async (input) => {
+    recordingFailures(context.errorLog, "get-instructions", async (input) => {
       const instructions = await getInstructions(input, context)
       if (instructions.kind === "rejected") return errorResult(instructions.message)
       return instructions.kind === "indexed"
         ? jsonResult(instructions.index)
         : jsonResult({ configuration: instructions.configuration, fields: instructions.fields })
-    },
+    }),
   )
 }

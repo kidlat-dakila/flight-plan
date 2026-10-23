@@ -13,6 +13,7 @@ interface FilePickerProps {
   readonly files: readonly FileOption[]
   readonly message: string | null
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly className?: string
   readonly onQueryChange: (query: string) => void
   readonly onSelect: (path: string) => void
@@ -39,6 +40,7 @@ const FilePicker = ({
   files,
   message,
   errorMessage,
+  onTroubleshoot = null,
   className,
   onQueryChange,
   onSelect,
@@ -51,6 +53,7 @@ const FilePicker = ({
     suggestions={files.map(toSuggestion)}
     message={message}
     errorMessage={errorMessage}
+    onTroubleshoot={onTroubleshoot}
     isLiteral
     className={className}
     onValueChange={onQueryChange}

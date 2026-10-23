@@ -3,6 +3,7 @@ import { InMemoryAgentPresenceRegistry } from "@/procedures/get-conversation/uti
 import type { ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
 import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/conversation-store"
 import { startDemoAgent } from "@/procedures/get-conversation/utils/demo-agent"
+import { IDLE_LIMIT_MS, InMemoryReviewerActivityRegistry } from "@/procedures/get-conversation/utils/reviewer-activity"
 import { readSampleInstructionTexts, type InstructionReader } from "@/procedures/get-instructions/utils/instruction-texts"
 import { PACKAGE_NAME } from "@/procedures/get-published-review/utils/install-guide"
 import { skipBranchPull, type BranchPuller } from "@/procedures/get-review/utils/branch-puller"
@@ -33,8 +34,11 @@ import { InMemoryConfigurationStore, type ConfigurationStore } from "@/procedure
 import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-catalog"
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
-import type { TerminalOpener } from "@/procedures/open-agent-terminal/utils/terminal-opener"
+import { InMemoryAgentTerminalRegistry } from "@/procedures/open-agent-terminal/utils/agent-terminals"
+import type { TerminalCloser, TerminalOpener } from "@/procedures/open-agent-terminal/utils/terminal-opener"
 import { writeSamplePublishedPage, type PublishedPageWriter } from "@/procedures/publish-artifact/utils/published-page-writer"
+import { createErrorLog, createLogStamper, InMemoryLogStorage, type ErrorLog, type LogStorage, type MachineFacts } from "@/procedures/record-error/utils/error-log"
+import { recordingAdapterOpener } from "@/utils/adapter-failure-recorder"
 import { createAgentDetector } from "@/utils/agent-detector"
 import { createAgentInstaller, createInstallChecker } from "@/utils/agent-installer"
 import { createAgentModelLister } from "@/utils/agent-model-lister"
@@ -55,6 +59,7 @@ import { createGitIdentityReader } from "@/utils/git-identity-reader"
 import { createImportFileStore } from "@/utils/import-file-store"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
+import { createLogFileStorage } from "@/utils/log-file-storage"
 import { createLatestVersionReader, latestManifestUrlOf } from "@/utils/npm-registry-reader"
 import { createPublishedPageWriter } from "@/utils/published-page-writer"
 import { createPullRequestForge } from "@/utils/pull-request-forge"
@@ -67,7 +72,7 @@ import { FileReviewStore } from "@/utils/review-file-store"
 import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
 import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
-import { createTerminalOpener } from "@/utils/terminal-opener"
+import { createTerminalCloser, createTerminalOpener } from "@/utils/terminal-opener"
 import { createUpdateCheckFile } from "@/utils/update-check-file"
 import type { CodeHighlighter } from "@flightplan/codegraph"
 import { readRemote, assembleGitAdapter, GitAdapterError } from "@flightplan/git-forge"
@@ -88,8 +93,10 @@ export interface ProcedureContext {
   readonly writePublishedPage: PublishedPageWriter
   readonly importFiles: ImportFileStore
   readonly openTerminal: TerminalOpener | null
+  readonly closeTerminal: TerminalCloser | null
   readonly appUrl: string
   readonly now: () => Date
+  readonly errorLog: ErrorLog
   readonly dataNotice: string | null
   readonly fixtureCatalog?: FixtureCatalog
   readonly updateChecker?: UpdateChecker
@@ -97,6 +104,20 @@ export interface ProcedureContext {
 
 const MOCK_SERVER_URL = "http://localhost:3000"
 const MOCK_APP_URL = "http://localhost:4200"
+const MOCK_LOGS_PATH = "~/.flightplan/logs"
+const LOG_SUFFIX_LENGTH = 6
+
+const MOCK_MACHINE_FACTS: MachineFacts = { version: null, platform: "mock", identity: { homePath: "", userName: "" } }
+
+const newLogSuffix = (): string => randomUUID().slice(0, LOG_SUFFIX_LENGTH)
+
+const createStampedErrorLog = (storage: LogStorage, facts: MachineFacts): ErrorLog =>
+  createErrorLog({ storage, facts, stamp: createLogStamper(() => new Date(), newLogSuffix) })
+
+export const createMockErrorLog = (): ErrorLog => createStampedErrorLog(new InMemoryLogStorage(MOCK_LOGS_PATH), MOCK_MACHINE_FACTS)
+
+export const createLocalErrorLog = (dataPath: string, facts: MachineFacts): ErrorLog =>
+  createStampedErrorLog(createLogFileStorage(dataPath), facts)
 
 export const createConversationEnvironment = (
   overrides: Partial<ConversationEnvironment> = {},
@@ -104,6 +125,9 @@ export const createConversationEnvironment = (
   store: new InMemoryConversationStore(),
   hub: createConversationHub(),
   presence: new InMemoryAgentPresenceRegistry(),
+  reviewerActivity: new InMemoryReviewerActivityRegistry(),
+  agentTerminals: new InMemoryAgentTerminalRegistry(),
+  idleLimitMs: IDLE_LIMIT_MS,
   serverUrl: MOCK_SERVER_URL,
   newId: randomUUID,
   ...overrides,
@@ -137,8 +161,10 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   writePublishedPage: writeSamplePublishedPage,
   importFiles: new InMemoryImportFileStore(),
   openTerminal: null,
+  closeTerminal: null,
   appUrl: MOCK_APP_URL,
   now: () => new Date(),
+  errorLog: createMockErrorLog(),
   dataNotice: SAMPLE_DATA_NOTICE,
 })
 
@@ -172,20 +198,16 @@ export const createDemoProcedureContext = async (
     setupStore: new InMemorySetupStore(toDemoSetup(demos)),
     configurationStore: new InMemoryConfigurationStore([]),
     setupEnvironment: createMockSetupEnvironment(),
-    conversationEnvironment: {
-      store: conversationStore,
-      hub: createConversationHub(),
-      presence: new InMemoryAgentPresenceRegistry(),
-      serverUrl: MOCK_SERVER_URL,
-      newId,
-    },
+    conversationEnvironment: createConversationEnvironment({ store: conversationStore, idleLimitMs: null, newId }),
     highlightCode: createCodeHighlighter(),
     readInstructionTexts,
     writePublishedPage: writeSamplePublishedPage,
     importFiles: new InMemoryImportFileStore(),
     openTerminal: null,
+    closeTerminal: null,
     appUrl: MOCK_APP_URL,
     now: () => new Date(),
+    errorLog: createMockErrorLog(),
     dataNotice: null,
   }
   demos.forEach((demo) => {
@@ -222,12 +244,12 @@ export const createLocalUpdateChecker = ({ dataPath, runningVersion, installPath
   readLatestVersion: createLatestVersionReader({ manifestUrl: latestManifestUrlOf(PACKAGE_NAME) }),
 })
 
-export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachine): ProcedureContext => {
+export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachine, errorLog: ErrorLog): ProcedureContext => {
   const mockContext = createMockProcedureContext(startedAt)
   const setupStore = new FileSetupStore(machine.dataPath)
   const repositoryAdapterDependencies = {
     readRemote,
-    openAdapter: assembleGitAdapter,
+    openAdapter: recordingAdapterOpener(assembleGitAdapter, errorLog),
     readCredential: createForgeCredentialReader(readFromKeychain),
     environment: machine.environment,
   }
@@ -236,6 +258,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
   const readGitIdentity = createGitIdentityReader({ runCommand, environment: machine.environment })
   return {
     ...mockContext,
+    errorLog,
     setupStore,
     configurationStore: new FileConfigurationStore(machine.dataPath),
     reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),
@@ -248,6 +271,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     writePublishedPage: createPublishedPageWriter({ bundlePath: machine.publishedBundlePath, dataPath: machine.dataPath }),
     importFiles: createImportFileStore(machine.dataPath),
     openTerminal: createTerminalOpener({ platform: machine.platform, runCommand, environment: machine.environment }),
+    closeTerminal: createTerminalCloser({ platform: machine.platform, runCommand, environment: machine.environment }),
     appUrl: machine.appUrl,
     changeReader: createGitChangeReader({ runCommand, environment: machine.environment }),
     pullBranch: createBranchPuller({ runCommand, environment: machine.environment }),

@@ -7,6 +7,7 @@ import Dialog, {
   DialogHeader,
   DialogTitle,
 } from "@/components/blocks/dialog"
+import ProblemAlert from "@/components/ProblemAlert"
 import RepositoryAuthors, { type AuthorRole, type AuthorsChoice } from "@/components/RepositoryAuthors"
 import { closeUnlessSuggestionsOpen } from "@/lib/dialog-close"
 import { submitHandlerOf } from "@/lib/form-submit"
@@ -20,6 +21,7 @@ interface ConfigureRepositoryDialogProps {
   readonly isSaving: boolean
   readonly isRemoving: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
   readonly onAuthorSelect: (role: AuthorRole, authorId: string) => void
   readonly onTrackedAuthorRemove: (authorId: string) => void
@@ -75,6 +77,7 @@ const ConfigureRepositoryDialog = ({
   isSaving,
   isRemoving,
   errorMessage,
+  onTroubleshoot = null,
   onAuthorQueryChange,
   onAuthorSelect,
   onTrackedAuthorRemove,
@@ -100,7 +103,7 @@ const ConfigureRepositoryDialog = ({
           onTrackedAuthorRemove={onTrackedAuthorRemove}
         />
         <a href={configurationHref} className="w-fit text-sm underline">Prompt configurations</a>
-        {errorMessage === null ? null : <p role="alert" className="text-sm text-destructive">{errorMessage}</p>}
+        {errorMessage === null ? null : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} className="text-sm text-destructive" />}
         <ConfigureFooter name={name} isSaving={isSaving} isRemoving={isRemoving} onRemove={onRemove} onClose={onClose} />
       </form>
     </DialogContent>

@@ -1,5 +1,5 @@
 import { addRepository } from "@/procedures/add-repository"
-import { createConversationEnvironment, type ProcedureContext, openSampleRepository } from "@/procedures/context"
+import { createConversationEnvironment, createMockErrorLog, type ProcedureContext, openSampleRepository } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { skipBranchPull } from "@/procedures/get-review/utils/branch-puller"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
@@ -43,9 +43,11 @@ const createContext = (repositories: readonly Repository[], setup: Setup = EMPTY
   writePublishedPage: writeSamplePublishedPage,
   importFiles: new InMemoryImportFileStore(),
   openTerminal: null,
+  closeTerminal: null,
   now: () => NOW,
   dataNotice: null,
   appUrl: "http://localhost:4200",
+  errorLog: createMockErrorLog(),
 })
 
 const NOBODY_TRACKED = { trackedAuthorIds: [] }

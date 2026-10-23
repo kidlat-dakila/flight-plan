@@ -8,6 +8,7 @@ import Dialog, { DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import CodeViewEditor from "@flightplan/ui/CodeViewEditor"
 import FilePicker from "@flightplan/ui/FilePicker"
 import { rangeLabelOf, type LineRange } from "@flightplan/ui/lib/line-selection"
+import ProblemAlert from "@flightplan/ui/ProblemAlert"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -34,7 +35,7 @@ const SAVING_LABEL = "Adding…"
 const CHECKBOX_CLASSES = "size-4 accent-(--primary)"
 const BLOCK_CLASSES = "flex w-full flex-col rounded-md border border-input px-2.5 py-1.5 text-left transition-colors duration-[180ms] ease-out hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60 aria-pressed:border-primary aria-pressed:bg-accent"
 
-const AddCardDialog = ({ reviewKey, addition: { segmentId, note, isSaving, errorMessage, onSubmit, onClose } }: AddCardDialogProps) => {
+const AddCardDialog = ({ reviewKey, addition: { segmentId, note, isSaving, errorMessage, onTroubleshoot, onSubmit, onClose } }: AddCardDialogProps) => {
   const fileSearch = useFileSearch(reviewKey, "repository")
   const [path, setPath] = useState<string | null>(null)
   const [source, setSource] = useState<CardSource | null>(null)
@@ -72,6 +73,7 @@ const AddCardDialog = ({ reviewKey, addition: { segmentId, note, isSaving, error
           files={fileSearch.files}
           message={fileSearch.message}
           errorMessage={fileSearch.errorMessage}
+          onTroubleshoot={fileSearch.onTroubleshoot}
           onQueryChange={fileSearch.onQueryChange}
           onSelect={handleSelectFile}
         />
@@ -135,7 +137,7 @@ const AddCardDialog = ({ reviewKey, addition: { segmentId, note, isSaving, error
                   {pickedBlock.childComponentsLabel}
                 </label>
               )}
-          {errorMessage === null ? null : <p role="alert" className="text-sm text-destructive">{errorMessage}</p>}
+          {errorMessage === null ? null : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} className="text-sm text-destructive" />}
         </div>
         <DialogFooter>
           <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>

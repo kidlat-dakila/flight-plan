@@ -27,6 +27,7 @@ interface AddTargetDialogProps {
   readonly title: string
   readonly search: AddableTargetSearch
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onQueryChange: (query: string) => void
   readonly onSelect: (targetId: string) => void
   readonly onClose: () => void
@@ -36,7 +37,7 @@ const DESCRIPTION = "Search the local and remote branches. A branch with an open
 const FIELD_LABEL = "Branch"
 const FIELD_PLACEHOLDER = "Search branches and pull requests"
 
-const AddTargetDialog = ({ title, search, errorMessage, onQueryChange, onSelect, onClose }: AddTargetDialogProps) => (
+const AddTargetDialog = ({ title, search, errorMessage, onTroubleshoot, onQueryChange, onSelect, onClose }: AddTargetDialogProps) => (
   <Dialog open onOpenChange={closeUnlessSuggestionsOpen(onClose)}>
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
@@ -51,6 +52,7 @@ const AddTargetDialog = ({ title, search, errorMessage, onQueryChange, onSelect,
         suggestions={search.options}
         message={search.message}
         errorMessage={errorMessage}
+        onTroubleshoot={onTroubleshoot}
         onValueChange={onQueryChange}
         onSelect={onSelect}
       />

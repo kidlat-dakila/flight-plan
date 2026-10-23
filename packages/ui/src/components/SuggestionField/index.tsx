@@ -1,5 +1,6 @@
 import { useId, useState, type KeyboardEvent, type ReactNode } from "react"
 import Input from "@/components/blocks/input"
+import ProblemAlert from "@/components/ProblemAlert"
 import { cn } from "@/lib/utils"
 
 export interface Suggestion {
@@ -19,6 +20,7 @@ interface SuggestionFieldProps {
   readonly suggestions: readonly Suggestion[]
   readonly message: string | null
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly isLiteral?: boolean
   readonly className?: string
   readonly onValueChange: (value: string) => void
@@ -45,6 +47,7 @@ const SuggestionField = ({
   suggestions,
   message,
   errorMessage,
+  onTroubleshoot = null,
   isLiteral = false,
   className,
   onValueChange,
@@ -162,7 +165,7 @@ const SuggestionField = ({
             : null}
         </div>
       </div>
-      {hasError ? <p id={errorId} role="alert" className="text-sm text-destructive">{errorMessage}</p> : null}
+      {errorMessage === null ? null : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} messageId={errorId} className="text-sm text-destructive" />}
     </div>
   )
 }

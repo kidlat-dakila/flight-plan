@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { MoveDirection } from "@/routes/pr-reviews/$repoName/-components/SegmentHeader"
 import { useTRPC } from "@/trpc"
+import type { ToastContent } from "./use-toast"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -14,7 +15,7 @@ export interface WalkthroughEditing {
   readonly onRemoveWaypoint: (segmentId: string, waypointId: string) => void
 }
 
-export const useWalkthroughEditing = (reviewKey: ReviewKey, onProblem: (message: string) => void): WalkthroughEditing => {
+export const useWalkthroughEditing = (reviewKey: ReviewKey, onProblem: (content: ToastContent) => void): WalkthroughEditing => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const editWalkthrough = useMutation(
@@ -23,7 +24,7 @@ export const useWalkthroughEditing = (reviewKey: ReviewKey, onProblem: (message:
         if (editing.kind === "rejected") onProblem(editing.message)
         else await queryClient.invalidateQueries(trpc.review.get.pathFilter())
       },
-      onError: (error) => { onProblem(error.message) },
+      onError: (error) => { onProblem(error) },
     }),
   )
 

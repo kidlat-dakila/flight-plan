@@ -19,6 +19,7 @@ interface AuthorFieldProps {
   readonly options: readonly AuthorOption[]
   readonly message: string | null
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly onQueryChange: (query: string) => void
   readonly onOpen: () => void
   readonly onSelect: (authorId: string) => void
@@ -32,6 +33,7 @@ const AuthorField = ({
   options,
   message,
   errorMessage,
+  onTroubleshoot = null,
   onQueryChange,
   onOpen,
   onSelect,
@@ -51,6 +53,7 @@ const AuthorField = ({
     }))}
     message={message}
     errorMessage={errorMessage}
+    onTroubleshoot={onTroubleshoot}
     className="max-w-md"
     onValueChange={onQueryChange}
     onOpen={onOpen}

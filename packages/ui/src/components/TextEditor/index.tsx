@@ -20,6 +20,7 @@ import { Marked, type marked } from "marked"
 import { useId, useState, type ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import Input from "@/components/blocks/input"
+import ProblemAlert from "@/components/ProblemAlert"
 import codeLinkNode, { CODE_LINK_NODE_NAME, type CodeLinkAttributes } from "@/lib/code-link-node"
 import { cn } from "@/lib/utils"
 import containerExtensions from "./containers"
@@ -35,6 +36,7 @@ interface TextEditorProps {
   readonly label: string
   readonly value: string
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly className?: string
   readonly shouldFocus?: boolean
   readonly canUseSections?: boolean
@@ -267,6 +269,7 @@ const TextEditor = ({
   label,
   value,
   errorMessage,
+  onTroubleshoot = null,
   className,
   shouldFocus = false,
   canUseSections = false,
@@ -319,7 +322,7 @@ const TextEditor = ({
           : null}
         <EditorContent editor={editor} aria-describedby={hasError ? errorId : undefined} />
       </div>
-      {hasError ? <p id={errorId} role="alert" className="text-sm text-destructive">{errorMessage}</p> : null}
+      {errorMessage === null ? null : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} messageId={errorId} className="text-sm text-destructive" />}
       {isLinkingCode && renderCodeLinkDialog !== undefined
         ? renderCodeLinkDialog({
             selectedText: selectedTextOf(editor),

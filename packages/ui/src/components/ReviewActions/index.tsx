@@ -5,6 +5,7 @@ import Button from "@/components/blocks/button"
 import DropdownMenu, { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/blocks/dropdown-menu"
 import type { CommentEditorRenderer } from "@/components/CommentThread"
 import OutwardLink from "@/components/OutwardLink"
+import ProblemAlert from "@/components/ProblemAlert"
 import { cn } from "@/lib/utils"
 
 type ReviewVerdict = "comment" | "approve" | "request-changes"
@@ -82,6 +83,7 @@ interface SubmitReviewMenuProps {
   readonly isSubmitting: boolean
   readonly isDiscarding: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly submissionCount: number
   readonly renderEditor: CommentEditorRenderer
   readonly onSubmit: (verdict: ReviewVerdict, body: string) => void
@@ -190,6 +192,7 @@ export const SubmitReviewMenu = ({
   isSubmitting,
   isDiscarding,
   errorMessage,
+  onTroubleshoot = null,
   submissionCount,
   renderEditor,
   onSubmit,
@@ -266,7 +269,7 @@ export const SubmitReviewMenu = ({
                 ))}
               </ul>
             )}
-        {errorMessage === null ? null : <p role="alert" className="text-destructive">{errorMessage}</p>}
+        {errorMessage === null ? null : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} className="text-destructive" />}
         <Button type="submit" disabled={isSubmitting} className="self-end">{draft.submitLabel}</Button>
       </form>
     </BandPopover>

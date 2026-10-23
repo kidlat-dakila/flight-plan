@@ -2,6 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import type { ProcedureContext } from "@/procedures/context"
 import { updateNodes } from "@/procedures/update-nodes"
 import { updateNodesInputShape } from "@/procedures/update-nodes/utils/schemas"
+import { recordingFailures } from "@/server/mcp/tool-failures"
 import { errorResult, jsonResult } from "@/server/mcp/tool-result"
 
 const DESCRIPTION = [
@@ -20,11 +21,11 @@ export const registerUpdateNodesTool = (mcpServer: McpServer, context: Procedure
   mcpServer.registerTool(
     "update-nodes",
     { description: DESCRIPTION, inputSchema: updateNodesInputShape },
-    async (input) => {
+    recordingFailures(context.errorLog, "update-nodes", async (input) => {
       const writing = await updateNodes(input, context)
       return writing.kind === "written"
         ? jsonResult({ note: writing.note, nodes: writing.nodes, unwritten: writing.unwritten })
         : errorResult(writing.message)
-    },
+    }),
   )
 }

@@ -7,6 +7,9 @@ import { registerTrpc } from "./server/trpc/plugin"
 import { registerWeb } from "./server/web/plugin"
 
 const TRPC_BATCH_PARAM_LENGTH = 5000
+const UNKNOWN_ROUTE = "an unknown route"
+
+export const requestSourceOf = (method: string, route: string | undefined): string => `Request ${method} ${route ?? UNKNOWN_ROUTE}`
 
 export const buildServer = async (
   options: FastifyServerOptions = {},
@@ -15,6 +18,9 @@ export const buildServer = async (
 ): Promise<FastifyInstance> => {
   const server = Fastify({ maxParamLength: TRPC_BATCH_PARAM_LENGTH, ...options })
   await server.register(sensible)
+  server.addHook("onError", async (request, _reply, error) => {
+    await context.errorLog.recordFailure(requestSourceOf(request.method, request.routeOptions.url), error).saving
+  })
   await registerTrpc(server, context)
   registerMcp(server, context)
   await registerApi(server, context)

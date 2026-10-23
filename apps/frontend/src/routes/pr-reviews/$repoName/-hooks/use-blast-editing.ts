@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import type { BlastAssessment } from "@flightplan/ui/BlastDiagram"
 
@@ -10,11 +11,13 @@ interface ReviewKey {
 interface BlastEditing {
   readonly isSaving: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onSave: (assessment: BlastAssessment) => void
 }
 
 export const useBlastEditing = (reviewKey: ReviewKey, path: string, onSaved: () => void): BlastEditing => {
   const trpc = useTRPC()
+  const troubleshootFailure = useFailureTroubleshooting()
   const queryClient = useQueryClient()
   const editBlast = useMutation(
     trpc.review.editBlast.mutationOptions({
@@ -30,6 +33,7 @@ export const useBlastEditing = (reviewKey: ReviewKey, path: string, onSaved: () 
   return {
     isSaving: editBlast.isPending,
     errorMessage: rejectionMessage ?? editBlast.error?.message ?? null,
+    onTroubleshoot: rejectionMessage === null ? troubleshootFailure(editBlast.error) : null,
     onSave: (assessment) => { editBlast.mutate({ ...reviewKey, path, ...assessment }) },
   }
 }

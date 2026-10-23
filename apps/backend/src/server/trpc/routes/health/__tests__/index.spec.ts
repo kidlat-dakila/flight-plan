@@ -1,4 +1,4 @@
-import { createConversationEnvironment, type ProcedureContext, openSampleRepository } from "@/procedures/context"
+import { createConversationEnvironment, createMockErrorLog, type ProcedureContext, openSampleRepository } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { skipBranchPull } from "@/procedures/get-review/utils/branch-puller"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
@@ -30,9 +30,11 @@ const context: ProcedureContext = {
   writePublishedPage: writeSamplePublishedPage,
   importFiles: new InMemoryImportFileStore(),
   openTerminal: null,
+  closeTerminal: null,
   now: () => new Date("2026-10-01T12:00:00.000Z"),
   dataNotice: null,
   appUrl: "http://localhost:4200",
+  errorLog: createMockErrorLog(),
 }
 
 describe("health route", () => {

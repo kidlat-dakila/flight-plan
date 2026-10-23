@@ -26,6 +26,7 @@ const AgentsStep = ({ backStep, problem, isPending, ...form }: AgentsStepProps) 
         pendingLabel="Saving…"
         isPending={isPending}
         errorMessage={problem !== null && problem.field === null ? problem.message : null}
+        onTroubleshoot={problem?.onTroubleshoot ?? null}
       />
     </AgentsForm>
   </>

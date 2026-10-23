@@ -5,10 +5,12 @@ import { useAuthorsChoice } from "@/authors-choice"
 import { useRepositoryFinder } from "@/repository-finder"
 import AddTargetDialog from "@/routes/-components/AddTargetDialog"
 import { useTargetAddition } from "@/routes/-hooks/use-target-addition"
+import { useFailureTroubleshooting, usePageErrorTroubleshooting, useTroubleshoot } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import AddRepositoryDialog from "@flightplan/ui/AddRepositoryDialog"
 import Button from "@flightplan/ui/blocks/button"
 import ConfigureRepositoryDialog from "@flightplan/ui/ConfigureRepositoryDialog"
+import { TROUBLESHOOT_LABEL } from "@flightplan/ui/ProblemAlert"
 import SelectField from "@flightplan/ui/SelectField"
 import AuthorFilter from "./-components/AuthorFilter"
 import EmptyRepositoryIndex from "./-components/EmptyRepositoryIndex"
@@ -48,6 +50,7 @@ const TargetAddition = ({ repository, onClose }: TargetAdditionProps) => {
       title={repository.title}
       search={addition.search}
       errorMessage={addition.errorMessage}
+      onTroubleshoot={addition.onTroubleshoot}
       onQueryChange={addition.onQueryChange}
       onSelect={addition.onSelect}
       onClose={onClose}
@@ -91,6 +94,11 @@ const RepositoriesPage = () => {
     ...trpc.repository.list.queryOptions({ statuses, authors, fixtureCase }),
     refetchInterval: REFRESH_INTERVAL_MS,
   })
+  const troubleshootFailure = useFailureTroubleshooting()
+  const troubleshoot = useTroubleshoot()
+  const troubleshootShownError = (shownError: string) => {
+    troubleshoot({ errorLogId: null, shownError })
+  }
   const [isFormOpen, setIsFormOpen] = useState(false)
   const finder = useRepositoryFinder(isFormOpen)
   const [configuring, setConfiguring] = useState<ConfiguringRepository | null>(null)
@@ -145,6 +153,8 @@ const RepositoriesPage = () => {
       },
     }),
   )
+
+  const configurationFailure = configureRepository.error ?? removeRepository.error ?? configuration.error
 
   const handleConfigurationClose = () => {
     configureRepository.reset()
@@ -202,6 +212,7 @@ const RepositoriesPage = () => {
         authors={additionAuthors.authors}
         isAdding={addRepository.isPending}
         errorMessage={addRepository.error?.message ?? null}
+        onTroubleshoot={troubleshootFailure(addRepository.error)}
         onQueryChange={finder.onQueryChange}
         onChooseFolder={(path) => {
           addRepository.reset()
@@ -230,9 +241,8 @@ const RepositoriesPage = () => {
         authors={configureAuthors.authors}
         isSaving={configureRepository.isPending}
         isRemoving={removeRepository.isPending}
-        errorMessage={
-          configureRepository.error?.message ?? removeRepository.error?.message ?? configuration.error?.message ?? null
-        }
+        errorMessage={configurationFailure?.message ?? null}
+        onTroubleshoot={troubleshootFailure(configurationFailure)}
         onAuthorQueryChange={configureAuthors.onAuthorQueryChange}
         onAuthorSelect={configureAuthors.onAuthorSelect}
         onTrackedAuthorRemove={configureAuthors.onTrackedAuthorRemove}
@@ -273,6 +283,7 @@ const RepositoriesPage = () => {
               onDismissNewTarget={(targetId) => {
                 dismissNewTarget.mutate({ repositoryName: repository.name, targetId })
               }}
+              onTroubleshoot={troubleshootShownError}
             />
           ))
         : <EmptyRepositoryIndex />}
@@ -296,6 +307,7 @@ const RepositoriesPage = () => {
                 isDismissing={false}
                 onConfigure={() => undefined}
                 onAddTarget={() => undefined}
+                onTroubleshoot={troubleshootShownError}
                 onDismissNewTarget={() => undefined}
               />
             </FixturesSection>
@@ -307,11 +319,15 @@ const RepositoriesPage = () => {
 
 const RepositoryIndexError = ({ error }: ErrorComponentProps) => {
   const router = useRouter()
+  const troubleshoot = usePageErrorTroubleshooting(error)
   return (
     <section role="alert" className="max-w-prose">
       <h1 className={PAGE_HEADING_CLASSES}>Could not load your repositories</h1>
       <p className="mt-2 text-muted-foreground">{error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE}</p>
-      <Button className="mt-4" onClick={() => { void router.invalidate() }}>Try again</Button>
+      <div className="mt-4 flex items-center gap-4">
+        <Button onClick={() => { void router.invalidate() }}>Try again</Button>
+        <Button variant="outline" onClick={troubleshoot}>{TROUBLESHOOT_LABEL}</Button>
+      </div>
     </section>
   )
 }

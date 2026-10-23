@@ -6,6 +6,7 @@ const FACTS: LiveAgentFacts = {
   isLiveAgent: true,
   canOpenTerminal: true,
   isOnline: false,
+  idleStoppedAt: null,
 }
 
 describe("buildLiveAgent", () => {
@@ -25,6 +26,13 @@ describe("buildLiveAgent", () => {
 
   it("says the agent is online", () => {
     expect(buildLiveAgent({ ...FACTS, isOnline: true })).toMatchObject({ isOnline: true, statusLabel: "Claude online" })
+  })
+
+  it("says when the agent was stopped for idleness, only while it is offline", () => {
+    const idleStoppedAt = new Date("2026-10-03T12:10:00.000Z")
+
+    expect(buildLiveAgent({ ...FACTS, idleStoppedAt })).toMatchObject({ idleStoppedAt: "2026-10-03T12:10:00.000Z" })
+    expect(buildLiveAgent({ ...FACTS, idleStoppedAt, isOnline: true })).toMatchObject({ idleStoppedAt: null })
   })
 
   it("offers only the command to copy where Flight Plan cannot open a terminal", () => {

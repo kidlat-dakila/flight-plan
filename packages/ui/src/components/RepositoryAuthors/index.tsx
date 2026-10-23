@@ -31,6 +31,7 @@ export interface AuthorsChoice {
     readonly options: readonly AuthorOption[]
     readonly message: string | null
     readonly errorMessage: string | null
+    readonly onTroubleshoot?: (() => void) | null
   }
 }
 
@@ -93,6 +94,7 @@ const RoleField = ({
       options={isSearchedHere ? search.options : NO_AUTHOR_OPTIONS}
       message={isSearchedHere ? search.message : null}
       errorMessage={isSearchedHere ? search.errorMessage : null}
+      onTroubleshoot={isSearchedHere ? search.onTroubleshoot ?? null : null}
       onQueryChange={(query) => { onAuthorQueryChange(authorRole, query) }}
       onOpen={() => { onAuthorQueryChange(authorRole, isSearchedHere ? search.query : "") }}
       onSelect={(authorId) => { onAuthorSelect(authorRole, authorId) }}

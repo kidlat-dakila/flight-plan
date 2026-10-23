@@ -7,6 +7,7 @@ import Dialog, {
   DialogTitle,
 } from "@/components/blocks/dialog"
 import FolderBrowserDialog, { type FolderBrowser } from "@/components/FolderBrowserDialog"
+import ProblemAlert from "@/components/ProblemAlert"
 import RepositoryAuthors, { type AuthorRole, type AuthorsChoice } from "@/components/RepositoryAuthors"
 import SuggestionField from "@/components/SuggestionField"
 import { closeUnlessSuggestionsOpen } from "@/lib/dialog-close"
@@ -27,6 +28,7 @@ export interface FolderBrowse {
   readonly isOpen: boolean
   readonly browser: FolderBrowser | null
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
 }
 
 interface AddRepositoryDialogProps {
@@ -36,6 +38,7 @@ interface AddRepositoryDialogProps {
   readonly authors: AuthorsChoice
   readonly isAdding: boolean
   readonly errorMessage: string | null
+  readonly onTroubleshoot?: (() => void) | null
   readonly onQueryChange: (query: string) => void
   readonly onChooseFolder: (path: string) => void
   readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
@@ -57,6 +60,7 @@ const AddRepositoryDialog = ({
   authors,
   isAdding,
   errorMessage,
+  onTroubleshoot = null,
   onQueryChange,
   onChooseFolder,
   onAuthorQueryChange,
@@ -106,7 +110,7 @@ const AddRepositoryDialog = ({
           onAuthorSelect={onAuthorSelect}
           onTrackedAuthorRemove={onTrackedAuthorRemove}
         />
-        {errorMessage === null ? null : <p role="alert" className="text-sm text-destructive">{errorMessage}</p>}
+        {errorMessage === null ? null : <ProblemAlert message={errorMessage} onTroubleshoot={onTroubleshoot} className="text-sm text-destructive" />}
         <DialogFooter>
           <Button type="button" variant="outline" className="sm:mr-auto" onClick={onBrowse}>Browse folders</Button>
           <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
@@ -119,6 +123,7 @@ const AddRepositoryDialog = ({
         description="Open folders until you reach a repository, then choose it."
         browser={browse.browser}
         errorMessage={browse.errorMessage}
+        onTroubleshoot={browse.onTroubleshoot ?? null}
         onOpenFolder={onBrowseFolder}
         onChooseRepository={onChooseFolder}
         onChooseFolder={null}

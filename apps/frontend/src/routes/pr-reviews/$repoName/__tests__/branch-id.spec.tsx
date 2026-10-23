@@ -95,6 +95,11 @@ const withReviewed = (page: ReviewPage, waypointIds: readonly string[]): ReviewP
 
 const EMPTY_RECT = { x: 0, y: 0, width: 0, height: 0, top: 0, right: 0, bottom: 0, left: 0 }
 
+const showPage = (visibility: DocumentVisibilityState): void => {
+  vi.spyOn(document, "visibilityState", "get").mockReturnValue(visibility)
+  fireEvent(document, new Event("visibilitychange", { bubbles: true }))
+}
+
 const renderReview = (handlers: ProcedureHandlers, path = REVIEW_PATH) =>
   render(
     createApp({
@@ -1155,6 +1160,39 @@ describe("the review page", () => {
     expect(screen.queryByRole("dialog")).toBeNull()
   })
 
+  it("tells Flight Plan the reviewer is on the review only while the page is showing", async () => {
+    const recordActivity = vi.fn(() => ({ data: { kind: "recorded" } }))
+    renderReview({ "review.get": () => ({ data: artifactPage }), "review.recordActivity": recordActivity })
+
+    await waitFor(() => {
+      expect(recordActivity).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412" })
+    })
+    const reportsWhileShowing = recordActivity.mock.calls.length
+    showPage("hidden")
+    expect(recordActivity).toHaveBeenCalledTimes(reportsWhileShowing)
+    showPage("visible")
+
+    await waitFor(() => {
+      expect(recordActivity).toHaveBeenCalledTimes(reportsWhileShowing + 1)
+    })
+  })
+
+  it("asks to start the agent again when the reviewer comes back to a review whose agent stopped while it sat idle", async () => {
+    const liveAgent = vi.fn(() => ({ data: liveAgentReply(true) }))
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }),
+      "review.liveAgent": liveAgent,
+    })
+    expect(await screen.findByText("Claude online")).toBeTruthy()
+
+    showPage("hidden")
+    liveAgent.mockReturnValue({ data: liveAgentReply(false, "2026-10-03T12:10:00.000Z") })
+    showPage("visible")
+
+    expect(await screen.findByRole("dialog", { name: "Claude is offline" })).toBeTruthy()
+  })
+
   it("switches the agent's model from the chat panel", async () => {
     const chooseModel = vi.fn(() => ({ data: { kind: "chosen" } }))
     renderReview({
@@ -1192,7 +1230,9 @@ describe("the review page", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Submit review" }))
     fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Submit review" }))
 
-    expect((await screen.findByRole("alert")).textContent).toBe("Write a summary or a comment before you submit.")
+    const alert = await screen.findByRole("alert")
+    expect(within(alert).getByText("Write a summary or a comment before you submit.")).toBeTruthy()
+    expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
   })
 
   it("says why Flight Plan could not build the review, without the review actions", async () => {

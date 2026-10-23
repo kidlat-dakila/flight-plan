@@ -63,6 +63,7 @@ const CodeLinkDialog = ({ reviewKey, selectedText, onInsert, onClose }: CodeLink
           files={fileSearch.files}
           message={fileSearch.message}
           errorMessage={fileSearch.errorMessage}
+          onTroubleshoot={fileSearch.onTroubleshoot}
           onQueryChange={fileSearch.onQueryChange}
           onSelect={handleSelectFile}
         />

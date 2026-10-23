@@ -381,7 +381,9 @@ describe("the index page", () => {
     fireEvent.focus(await screen.findByRole("combobox", { name: "Branch" }))
     fireEvent.click(await screen.findByRole("option", { name: /gone/ }))
 
-    expect((await screen.findByRole("alert")).textContent).toBe("This branch is no longer in the repository.")
+    const alert = await screen.findByRole("alert")
+    expect(within(alert).getByText("This branch is no longer in the repository.")).toBeTruthy()
+    expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
     expect(screen.getByRole("dialog", { name: "Add a branch to storefront" })).toBeTruthy()
   })
 
@@ -511,7 +513,8 @@ describe("the index page", () => {
 
     const alert = await screen.findByRole("alert")
 
-    expect(alert.textContent).toBe("ghost@acme.example is not an author of this repository.")
+    expect(within(alert).getByText("ghost@acme.example is not an author of this repository.")).toBeTruthy()
+    expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
     expect(screen.getByRole("combobox", { name: "Repository folder" })).toBeTruthy()
   })
 
@@ -646,7 +649,9 @@ describe("the index page", () => {
 
       fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
-      expect((await screen.findByRole("alert")).textContent).toBe("storefront is no longer on the list.")
+      const alert = await screen.findByRole("alert")
+      expect(within(alert).getByText("storefront is no longer on the list.")).toBeTruthy()
+      expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
       expect(screen.getByRole("heading", { name: "Configure storefront" })).toBeTruthy()
     })
 
@@ -686,7 +691,9 @@ describe("the index page", () => {
 
       fireEvent.click(await screen.findByRole("button", { name: "Configure storefront" }))
 
-      expect((await screen.findByRole("alert")).textContent).toBe("storefront is no longer on the list.")
+      const alert = await screen.findByRole("alert")
+      expect(within(alert).getByText("storefront is no longer on the list.")).toBeTruthy()
+      expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
     })
   })
 })

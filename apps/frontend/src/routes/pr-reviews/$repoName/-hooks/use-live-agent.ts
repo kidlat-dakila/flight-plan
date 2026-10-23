@@ -1,8 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useState } from "react"
+import { useTroubleshoot } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
 import type { LaunchAgentDialogContent } from "@flightplan/ui/LaunchAgentDialog"
 import type { AgentStatus } from "@flightplan/ui/ReviewHeader"
+import type { ToastContent } from "./use-toast"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -10,7 +12,7 @@ interface ReviewKey {
 }
 
 interface LiveAgentAnnouncer {
-  readonly onMessage: (message: string) => void
+  readonly onMessage: (content: ToastContent) => void
 }
 
 type Opening = "unchecked" | "open" | "closed"
@@ -20,6 +22,7 @@ export interface LiveAgentState {
   readonly dialog: LaunchAgentDialogContent | null
   readonly isOpening: boolean
   readonly problem: string | null
+  readonly onTroubleshoot: (() => void) | null
   readonly onAgentAction: () => void
   readonly onOpenTerminal: () => void
   readonly onClose: () => void
@@ -29,7 +32,9 @@ const PRESENCE_INTERVAL_MS = 5000
 
 export const useLiveAgent = (reviewKey: ReviewKey, hasArtifact: boolean, announcer: LiveAgentAnnouncer): LiveAgentState => {
   const trpc = useTRPC()
+  const troubleshoot = useTroubleshoot()
   const [opening, setOpening] = useState<Opening>("unchecked")
+  const [lastIdleStop, setLastIdleStop] = useState<string | null | undefined>(undefined)
   const { data } = useQuery({
     ...trpc.review.liveAgent.queryOptions(reviewKey),
     refetchInterval: PRESENCE_INTERVAL_MS,
@@ -42,6 +47,12 @@ export const useLiveAgent = (reviewKey: ReviewKey, hasArtifact: boolean, announc
   if (opening === "unchecked" && live !== null && isOfferedOnOpen !== null) {
     setOpening(isOfferedOnOpen && isOffline ? "open" : "closed")
   }
+  const idleStop = live?.idleStoppedAt ?? null
+  if (live !== null && lastIdleStop === undefined) setLastIdleStop(idleStop)
+  if (lastIdleStop !== undefined && idleStop !== null && idleStop !== lastIdleStop) {
+    setLastIdleStop(idleStop)
+    setOpening("open")
+  }
 
   const terminal = useMutation(
     trpc.review.openAgentTerminal.mutationOptions({
@@ -50,9 +61,10 @@ export const useLiveAgent = (reviewKey: ReviewKey, hasArtifact: boolean, announc
         setOpening("closed")
         announcer.onMessage(result.message)
       },
-      onError: (error) => { announcer.onMessage(error.message) },
+      onError: (error) => { announcer.onMessage(error) },
     }),
   )
+  const terminalProblem = terminal.data?.kind === "rejected" ? terminal.data.message : null
   const open = (): void => {
     terminal.reset()
     setOpening("open")
@@ -62,7 +74,12 @@ export const useLiveAgent = (reviewKey: ReviewKey, hasArtifact: boolean, announc
     status: live === null ? null : { isOnline: live.isOnline, label: live.statusLabel, onClick: live.isOnline ? null : open },
     dialog: opening === "open" && isOffline ? live.dialog : null,
     isOpening: terminal.isPending,
-    problem: terminal.data?.kind === "rejected" ? terminal.data.message : null,
+    problem: terminalProblem,
+    onTroubleshoot: terminalProblem === null
+      ? null
+      : () => {
+          troubleshoot({ errorLogId: null, shownError: terminalProblem })
+        },
     onAgentAction: () => {
       if (isOffline) open()
     },

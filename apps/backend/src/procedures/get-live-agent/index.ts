@@ -18,5 +18,6 @@ export const getLiveAgent = async (input: GetLiveAgentInput, context: ProcedureC
     isLiveAgent: writer.writer.kind === "agent",
     canOpenTerminal: context.openTerminal !== null,
     isOnline: isAgentOnlineFor(key, context),
+    idleStoppedAt: context.conversationEnvironment.reviewerActivity.activityOf(key).idleStoppedAt,
   })
 }

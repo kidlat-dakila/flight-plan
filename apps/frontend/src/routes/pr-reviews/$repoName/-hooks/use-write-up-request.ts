@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useTRPC } from "@/trpc"
 import type { WriteUpTarget as WaypointWriteUpTarget } from "@flightplan/ui/FileRows"
+import type { ToastContent } from "./use-toast"
 
 interface ReviewKey {
   readonly repositoryName: string
@@ -8,7 +9,7 @@ interface ReviewKey {
 }
 
 interface WriteUpAnnouncer {
-  readonly onMessage: (message: string) => void
+  readonly onMessage: (content: ToastContent) => void
   readonly onCopy: (text: string, copiedMessage: string) => void
   readonly onAgentAsked: () => void
 }
@@ -29,7 +30,7 @@ export const useWriteUpRequest = (reviewKey: ReviewKey, announcer: WriteUpAnnoun
         if (result.kind === "started" && result.prompt === null) announcer.onAgentAsked()
         await queryClient.invalidateQueries(trpc.review.get.pathFilter())
       },
-      onError: (error) => { announcer.onMessage(error.message) },
+      onError: (error) => { announcer.onMessage(error) },
     }),
   )
   return (target) => {
