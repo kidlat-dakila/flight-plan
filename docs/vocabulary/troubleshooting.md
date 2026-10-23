@@ -12,7 +12,7 @@ Flight Plan logs anything that goes wrong, handled or not, in the **error log**:
 | `Forge <adapter> <operation>` | A call to git or a forge through a `GitAdapter`, also one Flight Plan recovers from. `open` is an adapter that could not be opened |
 | `Page <path>` | An error the web app threw on that page, reported through `troubleshooting.recordError` |
 | `Agent install`, `Agent terminal`, `Troubleshoot terminal` | Bringing an agent up to date, or opening a terminal for it |
-| `Flight Plan start`, `Flight Plan process`, `Log cleanup` | Starting the server, a crash, and pruning the log |
+| `Flight Plan start`, `Flight Plan process`, `Log cleanup`, `Data migration` | Starting the server, a crash, pruning the log, and a [migration](migrations.md) |
 
 **Redaction.** Before an entry is written, `redactText` takes out private keys, `Authorization` values, bearer and basic credentials, forge tokens (`ghp_`, `github_pat_`, `glpat-`, `ATBB`, `ATATT`), JSON web tokens, values of fields named like a token, secret, password, key or credential, credentials in an address, emails, the user name, and the home folder, which it writes as `~`. A troubleshoot request is redacted the same way.
 

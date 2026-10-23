@@ -38,6 +38,7 @@ One data directory serves every repository the user reviews. Each repository has
 │   └── flightplan/
 ├── logs/
 │   └── <log id>.json
+├── init.json
 └── server.json
 ```
 
@@ -56,6 +57,7 @@ One data directory serves every repository the user reviews. Each repository has
 | Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review, live and troubleshoot skills and an `.mcp.json` that points at the running server. Flight Plan writes it again each time the agents are saved and when the published `flightplan` command starts with skills newer than the ones installed, and Claude loads `flightplan` from this folder |
 | Install stamps | `agent-installs/<agent>.json` | For each agent Flight Plan installed, the folder it installed into and a fingerprint of the plugin's files and the server's address at the time. The published `flightplan` command installs an agent again when it starts and the folder or the fingerprint differs, so the agent's skills and address stay current. A development server neither reads nor writes it |
 | Error logs | `logs/` | One JSON file per error Flight Plan logged and per troubleshoot request the user made, named by its log id, `<UTC date>-<UTC time>-<6 hex characters>` (`20261023-142530-a1b2c3`). An error holds where it happened (`source`), its message, its stack, the Flight Plan version and the operating system; a request holds what the user wrote, the page they asked from, the error that page showed, the log id of that error and of the latest errors, and the agent. Tokens, keys, passwords, credentials in addresses, emails, the user name and the home folder are taken out before a file is written. The same error from the same source is written once in 10 minutes. When Flight Plan starts it removes the files older than 30 days and all but the newest 500 (see [troubleshooting](troubleshooting.md)) |
+| Migrated version | `init.json` | The version of the last [migration](migrations.md) that ran, as `migratedVersion`. Flight Plan writes it after each migration that succeeds, and runs every migration when the file is missing |
 | Saved port | `server.json` | The port the `flightplan` command last listened on with every saved agent pointing at it. The next run tries this port first, so the address in the agents' files stays true. When the server has to move to another port, the new address makes every install out of date, so it installs the saved agents again and writes the new port here. A development server neither reads nor writes it |
 
 Forge credentials are never stored in this directory. They go in the operating system keychain (see [forge](forge.md#credentials)).

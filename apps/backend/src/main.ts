@@ -24,8 +24,10 @@ import { toTerminalLine } from "./procedures/get-update-notice/utils/update-noti
 import { pruneErrorLogs } from "./procedures/prune-error-logs"
 import type { ErrorLog } from "./procedures/record-error/utils/error-log"
 import { refreshAgentInstalls } from "./procedures/refresh-agent-installs"
+import { runMigrations } from "./procedures/run-migrations"
 import { buildServer } from "./server"
 import { openBrowser } from "./utils/browser-opener"
+import { createInitFile } from "./utils/init-file"
 import { findFreePort, isPortFree } from "./utils/port-probe"
 import { isFlightPlanRunning } from "./utils/running-instance-probe"
 import { createSavedPortFile } from "./utils/saved-port-file"
@@ -43,6 +45,7 @@ const FAILURE_EXIT_CODE = 1
 const START_SOURCE = "Flight Plan start"
 const CRASH_SOURCE = "Flight Plan process"
 const LOG_CLEANUP_SOURCE = "Log cleanup"
+const MIGRATION_SOURCE = "Data migration"
 const AGENT_REFRESH_SOURCE = "Agent install"
 const UNKNOWN_USER_NAME = ""
 
@@ -96,6 +99,12 @@ const cleanUpLogs = async (context: ProcedureContext): Promise<void> => {
   })
 }
 
+const migrateData = async (context: ProcedureContext, dataPath: string): Promise<void> => {
+  await runMigrations(context, createInitFile(dataPath)).catch(async (failure: unknown) => {
+    await context.errorLog.recordFailure(MIGRATION_SOURCE, failure).saving
+  })
+}
+
 const startDevelopmentServer = async (errorLog: ErrorLog): Promise<void> => {
   const serverConfig = { host: readHost(process.env), port: readRequestedPort(process.env) ?? DEVELOPMENT_PORT }
   const context = {
@@ -103,6 +112,7 @@ const startDevelopmentServer = async (errorLog: ErrorLog): Promise<void> => {
     ...(await openDevelopmentContext(join(__dirname, FIXTURE_CASES_PATH_FROM_BUILD))),
   }
   await cleanUpLogs(context)
+  await migrateData(context, readDataPath(process.env, homedir()))
   const server = await buildServer({ logger: true }, context)
   watchForCrashes(errorLog, server)
   await server.listen(serverConfig)
@@ -185,6 +195,7 @@ const launch = async (command: LaunchCommand, runningVersion: string | null, err
   const serverUrl = serverUrlOf(serverConfig)
   const context = { ...openLocalContext(serverConfig, serverUrl, errorLog), updateChecker }
   await cleanUpLogs(context)
+  await migrateData(context, dataPath)
   const server = await buildServer({ logger: { level: PUBLISHED_LOG_LEVEL } }, context, join(__dirname, WEB_PATH_FROM_BUILD))
   watchForCrashes(errorLog, server)
   await server.listen(serverConfig)
