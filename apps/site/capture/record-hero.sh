@@ -4,105 +4,156 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MEDIA_DIR="${1:-$SCRIPT_DIR/../public/media}"
 POSTER_DIR="${2:-$SCRIPT_DIR/../src/assets/screenshots}"
+SCHEMES="${3:-light dark}"
 WORK_DIR="$(mktemp -d)"
-trap 'rm -rf "$WORK_DIR"' EXIT
+trap 'agent-browser record stop >/dev/null 2>&1 || true; rm -rf "$WORK_DIR"' EXIT
 source "$SCRIPT_DIR/browser.sh"
+source "$SCRIPT_DIR/review-clip.sh"
 
-SCALE=1.5
-FRAME_SETTLE_MS=90
-MOVE_FRAMES=36
-CROSSFADE_FRAMES=24
-FRAMES_PER_SECOND=30
-OUTPUT_FILTER="crop=2160:1264:0:84,scale=1920:1124:flags=lanczos"
+CAMERA_MOVE_MS=1200
+LOOP_SECONDS=1.2
+CROSSFADE_SECONDS=0.8
+PLAYBACK_SPEED=1.5
+RECORD_START=0
+SHOT_LOG=""
 
-stop_offsets() {
-  evaluate "(()=>{const top=(selector,offset)=>Math.round(document.querySelector(selector).getBoundingClientRect().top+scrollY-offset);return [top('#fixture-segment-1-context-heading',80),top('#fixture-segment-1-trace-fixture-segment-1 > div.rounded-md',90),top('#fixture-segment-1-blast-diagram',90),top('#capture-waypoint',300)].join(' ')})()"
+CHANGE_OVERVIEW_HEADING="[...document.querySelectorAll('h3')].find(heading=>heading.textContent==='Change Overview')"
+TRACE_HEADING="document.getElementById('trace-diagram-heading')"
+HOVER_CARD="document.querySelector('[data-slot=hover-card-content]')"
+RISK_WAYPOINT="[...document.querySelectorAll('[data-waypoint-mark]')].find(element=>element.getAttribute('aria-label').startsWith('Risk waypoint'))"
+RISK_BOX="[...document.querySelectorAll('section[aria-label]')].find(section=>section.getAttribute('aria-label')==='Added the query of the trainers')"
+FULL_SCREEN_BUTTON="[...document.querySelectorAll('button[aria-label=\"Full screen\"]')].find(element=>element.getBoundingClientRect().top>0)"
+
+card_named() {
+  echo "[...($CHANGE_OVERVIEW_HEADING).parentElement.querySelectorAll('button')].find(element=>element.textContent.replace(/^(Added|Modified|Deleted)/,'').startsWith('$1'))"
 }
 
-write_timeline() {
-  python3 - "$1" "$MOVE_FRAMES" <<'PY'
-import sys
-
-stops = [int(value) for value in sys.argv[1].split()]
-move_frames = int(sys.argv[2])
-ease = lambda t: 4 * t * t * t if t < 0.5 else 1 - (-2 * t + 2) ** 3 / 2
-for index, stop in enumerate(stops):
-    print(stop)
-    if index + 1 < len(stops):
-        target = stops[index + 1]
-        for frame in range(1, move_frames):
-            print(round(stop + (target - stop) * ease(frame / move_frames)))
-PY
+name_in_view() {
+  echo "[...document.querySelectorAll('[data-slot=hover-card-trigger]')].find(element=>{const box=element.getBoundingClientRect();return element.textContent==='$1'&&box.top>120&&box.bottom<innerHeight-80})"
 }
 
-write_playlist() {
-  python3 - "$1" "$2" "$FRAMES_PER_SECOND" "$CROSSFADE_FRAMES" "$MOVE_FRAMES" <<'PY'
-import sys
-
-folder, frame_count, fps, crossfade, move = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5])
-frame = 1 / fps
-last = frame_count - 1
-holds = {index: 2.4 for index in range(0, last, move)}
-holds[last] = 1.0
-entries = [(f"{last:04d}.png", 1.4)]
-entries += [(f"crossfade_{index:02d}.png", frame) for index in range(1, crossfade + 1)]
-entries += [(f"{index:04d}.png", holds.get(index, frame)) for index in range(frame_count)]
-for name, duration in entries:
-    print(f"file '{folder}/{name}'\nduration {duration:.4f}")
-print(f"file '{folder}/{entries[-1][0]}'")
-PY
+button_in() {
+  echo "[...($1).querySelectorAll('button')].find(element=>element.textContent.trim()==='$2')"
 }
 
-record_frames() {
-  local scheme="$1" frames="$2"
-  browse open "about:blank"
-  open_page 1440 900 "$SCALE" "$scheme" "$DEMO_REVIEW_URL"
-  browse eval "document.querySelector('.demo-exit')?.remove()"
-  browse eval "$OPEN_CORE_CHANGE_WAYPOINT"
-  for warm_up in 2000 4000 6000 8000 10000 0; do
-    browse eval "scrollTo(0,$warm_up)"
-    browse wait 700
-  done
-  local index=0
-  while read -r offset; do
-    browse eval "scrollTo(0,$offset)"
-    browse wait "$FRAME_SETTLE_MS"
-    agent-browser screenshot "$frames/$(printf %04d "$index").png" >/dev/null 2>&1
-    index=$((index + 1))
-  done < <(write_timeline "$(stop_offsets)")
-  echo "$index"
+seconds_since_start() {
+  python3 -c "import time;print(round(time.time()-$RECORD_START,3))"
 }
 
-write_crossfade() {
-  local frames="$1" last="$2"
-  for index in $(seq 1 "$CROSSFADE_FRAMES"); do
-    local weight
-    weight="$(python3 -c "print(round($index / ($CROSSFADE_FRAMES + 1), 4))")"
-    ffmpeg -loglevel error -y -i "$frames/$last" -i "$frames/0000.png" \
-      -filter_complex "[0][1]blend=all_expr='A*(1-$weight)+B*$weight'" "$frames/crossfade_$(printf %02d "$index").png"
-  done
+aim_camera() {
+  local rect
+  rect="$(evaluate "(()=>{const boxes=[$1].flat().filter(Boolean).map(element=>element.getBoundingClientRect());const left=Math.min(...boxes.map(box=>box.left));const top=Math.min(...boxes.map(box=>box.top));const right=Math.max(...boxes.map(box=>box.right));const bottom=Math.max(...boxes.map(box=>box.bottom));return [left,top,right-left,bottom-top].map(Math.round).join(' ')})()")"
+  if [[ "$rect" == *Infinity* ]]; then
+    echo "nothing to aim the camera at: $1" >&2
+    return 1
+  fi
+  echo "$(seconds_since_start) $rect" >>"$SHOT_LOG"
+  browse wait "$CAMERA_MOVE_MS"
 }
 
-encode() {
-  local scheme="$1" frames="$2" frame_count="$3"
-  local last
-  last="$(printf %04d $((frame_count - 1))).png"
-  write_crossfade "$frames" "$last"
-  write_playlist "$frames" "$frame_count" > "$frames/playlist.txt"
-  local filter="$OUTPUT_FILTER,fps=$FRAMES_PER_SECOND,format=yuv420p"
-  ffmpeg -loglevel error -y -f concat -safe 0 -i "$frames/playlist.txt" -vf "$filter" \
-    -c:v libx264 -preset slow -crf 28 -profile:v high -movflags +faststart -an "$MEDIA_DIR/hero-$scheme.mp4"
-  ffmpeg -loglevel error -y -f concat -safe 0 -i "$frames/playlist.txt" -vf "$filter" \
-    -c:v libvpx-vp9 -crf 40 -b:v 0 -row-mt 1 -deadline good -cpu-used 2 -an "$MEDIA_DIR/hero-$scheme.webm"
-  ffmpeg -loglevel error -y -i "$frames/$last" -vf "$OUTPUT_FILTER" "$POSTER_DIR/hero-poster-$scheme.png"
+widen_camera() {
+  echo "$(seconds_since_start) 0 0 $WIDTH $HEIGHT" >>"$SHOT_LOG"
+  browse wait "$CAMERA_MOVE_MS"
+}
+
+settle_on_change_overview() {
+  settle_on "$CHANGE_OVERVIEW_HEADING" 90
+}
+
+change_overview_shot() {
+  hover_marked "$(card_named "usePokemonHook")"
+  aim_camera "$(card_named "usePokemonHook"),$HOVER_CARD"
+  browse wait "$READ_MS"
+  widen_camera
+  park_pointer
+}
+
+trace_shot() {
+  scroll_smoothly_to "$TRACE_HEADING" 80
+  click_marked "$FULL_SCREEN_BUTTON"
+  click_marked "$(node_named "PokemonPage")"
+  aim_camera "$PANEL.querySelector('[data-code-block]')"
+  browse wait "$READ_MS"
+  widen_camera
+  browse press Escape
+  browse wait "$STEP_MS"
+  browse press Escape
+  park_pointer
+}
+
+tooltip_shot() {
+  scroll_smoothly_to "$RISK_WAYPOINT" 300
+  hover_marked "$(name_in_view "usePokemonFilters")"
+  aim_camera "$(name_in_view "usePokemonFilters"),$HOVER_CARD"
+  browse wait "$READ_MS"
+  widen_camera
+  park_pointer
+}
+
+risk_shot() {
+  click_marked "$RISK_WAYPOINT"
+  scroll_smoothly_to "$RISK_BOX" 90
+  aim_camera "$RISK_BOX"
+  browse wait "$READ_MS"
+  click_marked "$(button_in "$RISK_BOX" "Preview the fix")"
+  aim_camera "$(button_in "$RISK_BOX" "Hide the fix"),($(button_in "$RISK_BOX" "Hide the fix")).nextElementSibling"
+  browse wait "$READ_MS"
+  park_pointer
+  widen_camera
+}
+
+record_take() {
+  local scheme="$1" raw="$2"
+  SHOT_LOG="$WORK_DIR/shots-$scheme.txt"
+  : >"$SHOT_LOG"
+  open_review "$scheme" "$DEMO_REVIEW_URL"
+  settle_on_change_overview
+  park_pointer
+  browse eval "document.activeElement?.blur()"
+  browse record start "$raw" --cursor
+  RECORD_START="$(python3 -c 'import time;print(time.time())')"
+  browse wait 1400
+  change_overview_shot
+  trace_shot
+  tooltip_shot
+  risk_shot
+  browse record stop
+}
+
+render_camera() {
+  local raw="$1" shots="$2" moved="$3"
+  uv run --quiet --with pillow python3 "$SCRIPT_DIR/hero-camera.py" "$raw" "$shots" "$moved" "$WIDTH" "$HEIGHT"
+}
+
+loop_back_to_start() {
+  local moved="$1" looped="$2"
+  local duration offset
+  duration="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$moved")"
+  offset="$(python3 -c "print(round($duration-$LOOP_SECONDS-$CROSSFADE_SECONDS,3))")"
+  ffmpeg -loglevel error -y -i "$moved" -i "$moved" -filter_complex \
+    "[0]trim=start=$LOOP_SECONDS,setpts=PTS-STARTPTS[body];[1]trim=end=$LOOP_SECONDS,setpts=PTS-STARTPTS[head];[body][head]xfade=transition=fade:duration=$CROSSFADE_SECONDS:offset=$offset" \
+    -c:v libx264 -preset fast -crf 10 -pix_fmt yuv444p "$looped"
+}
+
+encode_hero() {
+  local scheme="$1" looped="$2"
+  local filter="setpts=PTS/$PLAYBACK_SPEED,fps=30,format=yuv420p"
+  ffmpeg -loglevel error -y -i "$looped" -vf "$filter" \
+    -c:v libx264 -preset slow -crf 33 -profile:v high -movflags +faststart -an "$MEDIA_DIR/hero-$scheme.mp4"
+  ffmpeg -loglevel error -y -i "$looped" -vf "$filter" \
+    -c:v libvpx-vp9 -crf 47 -b:v 0 -row-mt 1 -deadline good -cpu-used 2 -an "$MEDIA_DIR/hero-$scheme.webm"
+  ffmpeg -loglevel error -y -i "$looped" -frames:v 1 "$POSTER_DIR/hero-poster-$scheme.png"
   echo "recorded hero-$scheme.mp4, hero-$scheme.webm and hero-poster-$scheme.png"
 }
 
 mkdir -p "$MEDIA_DIR" "$POSTER_DIR"
-for scheme in light dark; do
-  frames="$WORK_DIR/$scheme"
-  mkdir -p "$frames"
-  frame_count="$(record_frames "$scheme" "$frames" | tail -1)"
-  encode "$scheme" "$frames" "$frame_count"
+for scheme in $SCHEMES; do
+  raw="$WORK_DIR/raw-$scheme.mp4"
+  moved="$WORK_DIR/moved-$scheme.mkv"
+  looped="$WORK_DIR/looped-$scheme.mkv"
+  record_take "$scheme" "$raw"
+  render_camera "$raw" "$SHOT_LOG" "$moved"
+  loop_back_to_start "$moved" "$looped"
+  encode_hero "$scheme" "$looped"
 done
 reset_browser

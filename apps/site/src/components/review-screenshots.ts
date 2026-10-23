@@ -22,7 +22,7 @@ import waypointsPosterLight from "@/assets/screenshots/walkthrough-waypoints-pos
 export const HERO_POSTER = {
   light: heroPosterLight,
   dark: heroPosterDark,
-  alt: "Flight Plan's review page for pull request 57 of pokedex-web. The section rail is at the left, and the Code Walkthrough of src/hooks/use-pokemon.ts has the waypoint for usePokemon() open, marked Core change and Spotlight, with the agent's note on why it is a core change.",
+  alt: "Flight Plan's review page for pull request 57 of pokedex-web, at the Change Overview: the changed code blocks in rows by the kind of code they are, Page, Component, Schema / data model, UI state and Logic, between the tree of changed files and the Sections rail.",
 } as const
 
 export const HERO_VIDEOS = {
@@ -33,7 +33,7 @@ export const HERO_VIDEOS = {
 export const CHANGE_OVERVIEW_POSTER = {
   light: changeOverviewPosterLight,
   dark: changeOverviewPosterDark,
-  alt: "The Change Overview of a segment, with its changed code blocks in rows by classification, Page, Component, UI state and Logic. The pointer rests on the card of usePokemon, which shows the hook's code.",
+  alt: "The Change Overview of the Pokemon page review, with its changed code blocks in rows by classification, Page, Component, Schema / data model, UI state and Logic. The pointer rests on the card of usePokemon, which shows the hook's code.",
 } as const
 
 export const CHANGE_OVERVIEW_VIDEOS = {
@@ -55,7 +55,7 @@ export const TRACE_VIDEOS = {
 export const BLAST_POSTER = {
   light: blastPosterLight,
   dark: blastPosterDark,
-  alt: "A Blast Diagram in full screen, in its Import bound view: the changed files of the segment among the files they import that the change did not touch, such as SessionProvider.tsx and button.tsx.",
+  alt: "A Blast Diagram in full screen, in its Import bound view: the changed files of the pull request among the files they import that the change did not touch, such as SessionProvider.tsx and button.tsx.",
 } as const
 
 export const BLAST_VIDEOS = {
@@ -94,7 +94,7 @@ export const FILTERS_VIDEOS = {
 export const TOOLTIPS_POSTER = {
   light: tooltipsPosterLight,
   dark: tooltipsPosterDark,
-  alt: "A hover card on usePokemonFilters in the code. It lists 3 usages in 2 files, the lines of use-pokemon.ts and PokemonFilters.tsx that call it.",
+  alt: "A hover card on usePokemonFilters in the code. It lists 2 usages in 2 files, the lines of use-pokemon.ts and PokemonFilters.tsx that call it.",
 } as const
 
 export const TOOLTIPS_VIDEOS = {

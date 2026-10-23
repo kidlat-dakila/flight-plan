@@ -51,7 +51,6 @@ open_demo() {
   turn_guide_tips_off
   browse open "$SITE_URL$path"
   browse wait "$PAGE_SETTLE_MS"
-  browse eval "document.querySelector('.demo-exit')?.remove()"
 }
 
 park_pointer_at() {

@@ -5,13 +5,10 @@
     "new file mode 100644",
     "--- /dev/null",
     "+++ b/src/types/pokemon.ts",
-    "@@ -0,0 +1,15 @@",
-    "+export const POKEMON_TYPES = [",
-    "+  \"normal\", \"fire\", \"water\", \"grass\", \"electric\", \"ice\", \"fighting\", \"poison\", \"ground\",",
-    "+  \"flying\", \"psychic\", \"bug\", \"rock\", \"ghost\", \"dragon\", \"dark\", \"steel\", \"fairy\",",
-    "+] as const",
-    "+",
-    "+export type PokemonType = (typeof POKEMON_TYPES)[number]",
+    "@@ -0,0 +1,12 @@",
+    "+export type PokemonType =",
+    "+  | \"normal\" | \"fire\" | \"water\" | \"grass\" | \"electric\" | \"ice\" | \"fighting\" | \"poison\" | \"ground\"",
+    "+  | \"flying\" | \"psychic\" | \"bug\" | \"rock\" | \"ghost\" | \"dragon\" | \"dark\" | \"steel\" | \"fairy\"",
     "+",
     "+export interface Pokemon {",
     "+  id: number",
@@ -37,54 +34,36 @@
     "new file mode 100644",
     "--- /dev/null",
     "+++ b/src/stores/pokemon-filters.ts",
-    "@@ -0,0 +1,24 @@",
+    "@@ -0,0 +1,13 @@",
     "+import { create } from \"zustand\"",
-    "+import type { PokemonType } from \"@/types/pokemon\"",
     "+",
     "+interface PokemonFiltersState {",
-    "+  type: PokemonType | null",
     "+  trainerId: number | null",
-    "+  setType: (type: PokemonType | null) => void",
     "+  setTrainerId: (trainerId: number | null) => void",
-    "+  clear: () => void",
     "+}",
     "+",
     "+export const usePokemonFilters = create<PokemonFiltersState>((set) => ({",
-    "+  type: null,",
     "+  trainerId: null,",
-    "+  setType: (type) => {",
-    "+    set({ type })",
-    "+  },",
     "+  setTrainerId: (trainerId) => {",
     "+    set({ trainerId })",
-    "+  },",
-    "+  clear: () => {",
-    "+    set({ type: null, trainerId: null })",
     "+  },",
     "+}))",
     "diff --git a/src/hooks/use-pokemon.ts b/src/hooks/use-pokemon.ts",
     "new file mode 100644",
     "--- /dev/null",
     "+++ b/src/hooks/use-pokemon.ts",
-    "@@ -0,0 +1,20 @@",
+    "@@ -0,0 +1,13 @@",
     "+import { useQuery } from \"@tanstack/react-query\"",
     "+import { fetchPokemon } from \"@/api/pokemon\"",
     "+import { usePokemonFilters } from \"@/stores/pokemon-filters\"",
-    "+import type { Pokemon, PokemonType } from \"@/types/pokemon\"",
     "+",
     "+const POKEMON_QUERY_KEY = [\"pokemon\"] as const",
     "+",
-    "+function hasType(pokemon: Pokemon, type: PokemonType | null): boolean {",
-    "+  return type === null || pokemon.primary_type === type || pokemon.secondary_type === type",
-    "+}",
-    "+",
     "+export function usePokemon() {",
-    "+  const type = usePokemonFilters((state) => state.type)",
     "+  const trainerId = usePokemonFilters((state) => state.trainerId)",
     "+  return useQuery({",
     "+    queryKey: [...POKEMON_QUERY_KEY, trainerId],",
     "+    queryFn: () => fetchPokemon(trainerId),",
-    "+    select: (pokemon) => pokemon.filter((entry) => hasType(entry, type)),",
     "+  })",
     "+}",
     "diff --git a/src/lib/format.ts b/src/lib/format.ts",
@@ -102,39 +81,24 @@
     "new file mode 100644",
     "--- /dev/null",
     "+++ b/src/routes/pokemon/components/PokemonFilters.tsx",
-    "@@ -0,0 +1,34 @@",
-    "+import { Button } from \"@/components/ui\"",
+    "@@ -0,0 +1,19 @@",
     "+import { useTrainers } from \"@/hooks/use-trainers\"",
     "+import { usePokemonFilters } from \"@/stores/pokemon-filters\"",
-    "+import { POKEMON_TYPES, type PokemonType } from \"@/types/pokemon\"",
     "+",
     "+const EVERY = \"\"",
     "+",
     "+export function PokemonFilters() {",
-    "+  const { type, trainerId, setType, setTrainerId, clear } = usePokemonFilters()",
+    "+  const { trainerId, setTrainerId } = usePokemonFilters()",
     "+  const { data: trainers = [] } = useTrainers()",
     "+  return (",
-    "+    <div>",
-    "+      <select value={type ?? EVERY} onChange={(event) => setType(event.target.value === EVERY ? null : (event.target.value as PokemonType))}>",
-    "+        <option value={EVERY}>Every type</option>",
-    "+        {POKEMON_TYPES.map((pokemonType) => (",
-    "+          <option key={pokemonType} value={pokemonType}>",
-    "+            {pokemonType}",
-    "+          </option>",
-    "+        ))}",
-    "+      </select>",
-    "+      <select value={trainerId ?? EVERY} onChange={(event) => setTrainerId(event.target.value === EVERY ? null : Number(event.target.value))}>",
-    "+        <option value={EVERY}>Every trainer</option>",
-    "+        {trainers.map((trainer) => (",
-    "+          <option key={trainer.id} value={trainer.id}>",
-    "+            {trainer.name}",
-    "+          </option>",
-    "+        ))}",
-    "+      </select>",
-    "+      <Button variant=\"ghost\" onClick={clear}>",
-    "+        Clear filters",
-    "+      </Button>",
-    "+    </div>",
+    "+    <select value={trainerId ?? EVERY} onChange={(event) => setTrainerId(event.target.value === EVERY ? null : Number(event.target.value))}>",
+    "+      <option value={EVERY}>Every trainer</option>",
+    "+      {trainers.map((trainer) => (",
+    "+        <option key={trainer.id} value={trainer.id}>",
+    "+          {trainer.name}",
+    "+        </option>",
+    "+      ))}",
+    "+    </select>",
     "+  )",
     "+}",
     "diff --git a/src/routes/pokemon/index.tsx b/src/routes/pokemon/index.tsx",
@@ -184,7 +148,7 @@
       {
         "title": "Groundwork for the new components and hooks",
         "context": [
-          "This change adds a Pokemon page at /pokemon and a link to it in the header of every page. The page lists the Pokemon from the API with their level and types, and a professor can narrow the list to one type or to the Pokemon of one trainer."
+          "This change adds a Pokemon page at /pokemon and a link to it in the header of every page. The page lists the Pokemon from the API with their level and types, and a professor can pick a trainer to list only the Pokemon of that trainer."
         ],
         "kind": "shared",
         "importGraph": [
@@ -258,7 +222,6 @@
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": null,
             "importedBy": [
-              "src/routes/pokemon/components/PokemonFilters.tsx",
               "src/routes/root-layout.tsx"
             ],
             "importsTo": [
@@ -419,12 +382,8 @@
               "src/hooks/use-pokemon.ts",
               "src/routes/pokemon/components/PokemonFilters.tsx"
             ],
-            "importsTo": [
-              "src/types/pokemon.ts"
-            ],
-            "importedFilePaths": {
-              "@/types/pokemon": "src/types/pokemon.ts"
-            }
+            "importsTo": [],
+            "importedFilePaths": {}
           },
           {
             "filePath": "src/types/item.ts",
@@ -442,10 +401,7 @@
             "diffType": "added",
             "importedBy": [
               "src/api/pokemon.ts",
-              "src/hooks/use-pokemon.ts",
-              "src/lib/format.ts",
-              "src/routes/pokemon/components/PokemonFilters.tsx",
-              "src/stores/pokemon-filters.ts"
+              "src/lib/format.ts"
             ],
             "importsTo": [],
             "importedFilePaths": {}
@@ -533,10 +489,6 @@
             },
             {
               "importer": "src/hooks/use-pokemon.ts",
-              "imported": "src/types/pokemon.ts"
-            },
-            {
-              "importer": "src/hooks/use-pokemon.ts",
               "imported": "src/stores/pokemon-filters.ts"
             },
             {
@@ -564,10 +516,6 @@
               "imported": "src/stores/pokemon-filters.ts"
             },
             {
-              "importer": "src/routes/pokemon/components/PokemonFilters.tsx",
-              "imported": "src/types/pokemon.ts"
-            },
-            {
               "importer": "src/routes/pokemon/index.tsx",
               "imported": "src/hooks/use-pokemon.ts"
             },
@@ -578,10 +526,6 @@
             {
               "importer": "src/routes/pokemon/index.tsx",
               "imported": "src/lib/format.ts"
-            },
-            {
-              "importer": "src/stores/pokemon-filters.ts",
-              "imported": "src/types/pokemon.ts"
             }
           ],
           "importBound": {
@@ -623,10 +567,6 @@
               {
                 "importer": "src/routes/root-layout.tsx",
                 "imported": "src/components/ui/button.tsx"
-              },
-              {
-                "importer": "src/stores/pokemon-filters.ts",
-                "imported": "src/types/pokemon.ts"
               }
             ]
           }
@@ -692,61 +632,52 @@
                   "id": "w3",
                   "title": "Added the shape of the filter store",
                   "declaration": "PokemonFiltersState",
-                  "reading": "The author added an interface `PokemonFiltersState` with the two filters, `type` and `trainerId`, each `null` when nothing is chosen, and the three actions that change them. [`create()` types the store with it](code:src/stores/pokemon-filters.ts#L12), so that [`<PokemonFilters />`](code:src/routes/pokemon/components/PokemonFilters.tsx#L9) and [`usePokemon()`](code:src/hooks/use-pokemon.ts#L13-14) read typed values.",
+                  "reading": "The author added an interface `PokemonFiltersState` with one filter, `trainerId`, which is `null` when no trainer is chosen, and the action `setTrainerId()` that changes it. [`create()` types the store with it](code:src/stores/pokemon-filters.ts#L8), so that [`<PokemonFilters />`](code:src/routes/pokemon/components/PokemonFilters.tsx#L7) and [`usePokemon()`](code:src/hooks/use-pokemon.ts#L8) read a typed `trainerId`.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
-                    "lineStart": 4,
-                    "lineEnd": 10
+                    "lineStart": 3,
+                    "lineEnd": 6
                   },
                   "category": "type",
                   "traceNodeId": null,
                   "codeBlockIds": [
-                    "src/stores/pokemon-filters.ts#type-declaration@4:1"
+                    "src/stores/pokemon-filters.ts#type-declaration@3:1"
                   ],
                   "children": []
                 },
                 {
                   "id": "w4",
-                  "title": "Added the Zustand store of the Pokemon filters",
+                  "title": "Added the Zustand store of the trainer filter",
                   "declaration": "usePokemonFilters",
-                  "reading": "The author added a Zustand store `usePokemonFilters` that:\n\n- starts with no type and no trainer chosen\n- sets the type with `setType()` and the trainer with `setTrainerId()`\n- sets both back to `null` with `clear()`\n\n[`<PokemonFilters />` writes the filters](code:src/routes/pokemon/components/PokemonFilters.tsx#L9) and [`usePokemon()` reads them](code:src/hooks/use-pokemon.ts#L13-14), with no import between the two, so that a pick in the filters changes the list the page shows.",
-                  "coreChange": "This store is where the filters live. The filter component writes it and [`usePokemon()`](code:src/hooks/use-pokemon.ts#usePokemon) reads it, so what each filter starts at and what `clear()` sets decide what the page lists.",
+                  "reading": "The author added a Zustand store `usePokemonFilters` that:\n\n- starts with `trainerId` set to `null`, so that no trainer is chosen\n- sets the chosen trainer with `setTrainerId()`\n\n[`<PokemonFilters />` writes the trainer](code:src/routes/pokemon/components/PokemonFilters.tsx#L10) and [`usePokemon()` reads it](code:src/hooks/use-pokemon.ts#L8), with no import between the two, so that a pick in the select changes the list the page shows.",
+                  "coreChange": "This store is where the trainer filter lives. [`<PokemonFilters />`](code:src/routes/pokemon/components/PokemonFilters.tsx#PokemonFilters) writes it and [`usePokemon()`](code:src/hooks/use-pokemon.ts#usePokemon) reads it, so what `trainerId` starts at decides what the page lists when it opens.",
                   "findings": [
                     {
                       "id": "finding-filters-outlive-page",
                       "kind": "question",
-                      "title": "`usePokemonFilters` keeps the filters after the page closes",
-                      "reading": "[`create()` makes the store once, at the top of the module](code:src/stores/pokemon-filters.ts#L12), outside every component. So the chosen type and trainer stay set when a professor opens another page and comes back to /pokemon. Should the page open with the filters the professor chose last, or with no filter?",
+                      "title": "`usePokemonFilters` keeps the chosen trainer after the page closes",
+                      "reading": "[`create()` makes the store once, when the module loads](code:src/stores/pokemon-filters.ts#L8), outside every component. So the chosen trainer stays set when a professor opens another page and comes back to /pokemon. Should the page open with the trainer the professor chose last, or with Every trainer?",
                       "trace": null,
                       "solution": null
                     }
                   ],
                   "range": {
-                    "lineStart": 12,
-                    "lineEnd": 24
+                    "lineStart": 8,
+                    "lineEnd": 13
                   },
                   "category": "variable",
                   "traceNodeId": null,
                   "codeBlockIds": [
-                    "src/stores/pokemon-filters.ts#state@12:1",
-                    "src/stores/pokemon-filters.ts#effect@12:34",
-                    "src/stores/pokemon-filters.ts#function@12:62",
-                    "src/stores/pokemon-filters.ts#variable@12:63",
-                    "src/stores/pokemon-filters.ts#property@13:3",
-                    "src/stores/pokemon-filters.ts#property@14:3",
-                    "src/stores/pokemon-filters.ts#function@15:3",
-                    "src/stores/pokemon-filters.ts#variable@15:13",
-                    "src/stores/pokemon-filters.ts#call@16:5",
-                    "src/stores/pokemon-filters.ts#property@16:11",
-                    "src/stores/pokemon-filters.ts#function@18:3",
-                    "src/stores/pokemon-filters.ts#variable@18:18",
-                    "src/stores/pokemon-filters.ts#call@19:5",
-                    "src/stores/pokemon-filters.ts#property@19:11",
-                    "src/stores/pokemon-filters.ts#function@21:3",
-                    "src/stores/pokemon-filters.ts#call@22:5",
-                    "src/stores/pokemon-filters.ts#property@22:11",
-                    "src/stores/pokemon-filters.ts#property@22:23"
+                    "src/stores/pokemon-filters.ts#state@8:1",
+                    "src/stores/pokemon-filters.ts#effect@8:34",
+                    "src/stores/pokemon-filters.ts#function@8:62",
+                    "src/stores/pokemon-filters.ts#variable@8:63",
+                    "src/stores/pokemon-filters.ts#property@9:3",
+                    "src/stores/pokemon-filters.ts#function@10:3",
+                    "src/stores/pokemon-filters.ts#variable@10:18",
+                    "src/stores/pokemon-filters.ts#call@11:5",
+                    "src/stores/pokemon-filters.ts#property@11:11"
                   ],
                   "children": []
                 }
@@ -757,55 +688,37 @@
               "waypoints": [
                 {
                   "id": "w5",
-                  "title": "Added the list of Pokemon types",
-                  "declaration": "POKEMON_TYPES",
-                  "reading": "The author added a constant `POKEMON_TYPES` that lists the 18 Pokemon types, from `\"normal\"` to `\"fairy\"`. [`<PokemonFilters />` renders one option per type](code:src/routes/pokemon/components/PokemonFilters.tsx#L15-19), so that the type filter offers every type.",
+                  "title": "Added the union of the Pokemon type names",
+                  "declaration": "PokemonType",
+                  "reading": "The author added a type `PokemonType` that is the union of the 18 Pokemon type names, from `\"normal\"` to `\"fairy\"`. [The interface `Pokemon` types `primary_type` and `secondary_type` with it](code:src/types/pokemon.ts#L9-10), so that the code that reads the types of a Pokemon gets one of these names, not any string.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
                     "lineStart": 1,
-                    "lineEnd": 4
+                    "lineEnd": 3
                   },
-                  "category": "variable",
+                  "category": "type",
                   "traceNodeId": null,
                   "codeBlockIds": [
-                    "src/types/pokemon.ts#root-variable@1:1"
+                    "src/types/pokemon.ts#type-declaration@1:1"
                   ],
                   "children": []
                 },
                 {
                   "id": "w6",
-                  "title": "Added the type of one Pokemon type",
-                  "declaration": "PokemonType",
-                  "reading": "The author added a type `PokemonType` that is the union of the names in `POKEMON_TYPES`. [The filter store keeps the chosen type as one](code:src/stores/pokemon-filters.ts#L5), so that the store holds only a type the list has.",
-                  "coreChange": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 6,
-                    "lineEnd": 6
-                  },
-                  "category": "type",
-                  "traceNodeId": null,
-                  "codeBlockIds": [
-                    "src/types/pokemon.ts#type-declaration@6:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w7",
                   "title": "Added the `Pokemon` interface",
                   "declaration": "Pokemon",
-                  "reading": "The author added an interface `Pokemon` with an `id`, a `name`, a `level`, a `primary_type`, a `secondary_type` that is `null` for a Pokemon with one type, and a `trainer_id` that is `null` for a Pokemon with no trainer. The fields keep the snake_case names of the JSON the API returns, so that [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon) returns the response as it is.",
+                  "reading": "The author added an interface `Pokemon` with an `id`, a `name`, a `level`, a `primary_type`, a `secondary_type` that is `null` for a Pokemon with one type, and a `trainer_id` that is `null` for a Pokemon with no trainer. The fields keep the snake_case names of the JSON the API returns, because [`request()` returns the parsed JSON as it is](code:src/api/client.ts#L19). [`fetchPokemon()` returns a list of them](code:src/api/pokemon.ts#fetchPokemon), so that the page reads each Pokemon by these names.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
-                    "lineStart": 8,
-                    "lineEnd": 15
+                    "lineStart": 5,
+                    "lineEnd": 12
                   },
                   "category": "type",
                   "traceNodeId": null,
                   "codeBlockIds": [
-                    "src/types/pokemon.ts#type-declaration@8:1"
+                    "src/types/pokemon.ts#type-declaration@5:1"
                   ],
                   "children": []
                 }
@@ -856,8 +769,8 @@
                 "endColumn": 44,
                 "path": "src/types/pokemon.ts",
                 "lines": [
-                  8,
-                  15
+                  5,
+                  12
                 ],
                 "isLibrary": false
               },
@@ -1102,29 +1015,7 @@
             "path": "src/stores/pokemon-filters.ts",
             "references": [
               {
-                "line": 5,
-                "startColumn": 8,
-                "endColumn": 19,
-                "path": "src/types/pokemon.ts",
-                "lines": [
-                  6,
-                  6
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 7,
-                "startColumn": 18,
-                "endColumn": 29,
-                "path": "src/types/pokemon.ts",
-                "lines": [
-                  6,
-                  6
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 12,
+                "line": 8,
                 "startColumn": 33,
                 "endColumn": 39,
                 "path": "src/stores/pokemon-filters.ts",
@@ -1139,68 +1030,35 @@
                 }
               },
               {
-                "line": 12,
+                "line": 8,
                 "startColumn": 40,
                 "endColumn": 59,
                 "path": "src/stores/pokemon-filters.ts",
                 "lines": [
-                  4,
-                  10
+                  3,
+                  6
                 ],
                 "isLibrary": false
               },
               {
-                "line": 16,
+                "line": 11,
                 "startColumn": 4,
                 "endColumn": 7,
                 "path": "src/stores/pokemon-filters.ts",
                 "lines": [
-                  12,
-                  12
+                  8,
+                  8
                 ],
                 "isLibrary": false
               },
               {
-                "line": 16,
-                "startColumn": 10,
-                "endColumn": 14,
-                "path": "src/stores/pokemon-filters.ts",
-                "lines": [
-                  15,
-                  15
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 19,
-                "startColumn": 4,
-                "endColumn": 7,
-                "path": "src/stores/pokemon-filters.ts",
-                "lines": [
-                  12,
-                  12
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 19,
+                "line": 11,
                 "startColumn": 10,
                 "endColumn": 19,
                 "path": "src/stores/pokemon-filters.ts",
                 "lines": [
-                  18,
-                  18
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 22,
-                "startColumn": 4,
-                "endColumn": 7,
-                "path": "src/stores/pokemon-filters.ts",
-                "lines": [
-                  12,
-                  12
+                  10,
+                  10
                 ],
                 "isLibrary": false
               }
@@ -1208,34 +1066,27 @@
             "languageReferences": [],
             "exports": [
               {
-                "line": 12,
+                "line": 8,
                 "startColumn": 13,
                 "endColumn": 30,
                 "lines": [
-                  12,
-                  24
+                  8,
+                  13
                 ],
                 "usages": [
                   {
-                    "line": 13,
-                    "startColumn": 15,
-                    "endColumn": 32,
-                    "path": "src/hooks/use-pokemon.ts",
-                    "text": "  const type = usePokemonFilters((state) => state.type)"
-                  },
-                  {
-                    "line": 14,
+                    "line": 8,
                     "startColumn": 20,
                     "endColumn": 37,
                     "path": "src/hooks/use-pokemon.ts",
                     "text": "  const trainerId = usePokemonFilters((state) => state.trainerId)"
                   },
                   {
-                    "line": 9,
-                    "startColumn": 60,
-                    "endColumn": 77,
+                    "line": 7,
+                    "startColumn": 38,
+                    "endColumn": 55,
                     "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                    "text": "  const { type, trainerId, setType, setTrainerId, clear } = usePokemonFilters()"
+                    "text": "  const { trainerId, setTrainerId } = usePokemonFilters()"
                   }
                 ]
               }
@@ -1245,35 +1096,24 @@
             "path": "src/types/pokemon.ts",
             "references": [
               {
-                "line": 6,
-                "startColumn": 34,
-                "endColumn": 47,
-                "path": "src/types/pokemon.ts",
-                "lines": [
-                  1,
-                  4
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 12,
+                "line": 9,
                 "startColumn": 16,
                 "endColumn": 27,
                 "path": "src/types/pokemon.ts",
                 "lines": [
-                  6,
-                  6
+                  1,
+                  3
                 ],
                 "isLibrary": false
               },
               {
-                "line": 13,
+                "line": 10,
                 "startColumn": 18,
                 "endColumn": 29,
                 "path": "src/types/pokemon.ts",
                 "lines": [
-                  6,
-                  6
+                  1,
+                  3
                 ],
                 "isLibrary": false
               }
@@ -1282,68 +1122,21 @@
             "exports": [
               {
                 "line": 1,
-                "startColumn": 13,
-                "endColumn": 26,
-                "lines": [
-                  1,
-                  4
-                ],
-                "usages": [
-                  {
-                    "line": 15,
-                    "startColumn": 9,
-                    "endColumn": 22,
-                    "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                    "text": "        {POKEMON_TYPES.map((pokemonType) => ("
-                  }
-                ]
-              },
-              {
-                "line": 6,
                 "startColumn": 12,
                 "endColumn": 23,
                 "lines": [
-                  6,
-                  6
+                  1,
+                  3
                 ],
-                "usages": [
-                  {
-                    "line": 8,
-                    "startColumn": 41,
-                    "endColumn": 52,
-                    "path": "src/hooks/use-pokemon.ts",
-                    "text": "function hasType(pokemon: Pokemon, type: PokemonType | null): boolean {"
-                  },
-                  {
-                    "line": 13,
-                    "startColumn": 126,
-                    "endColumn": 137,
-                    "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                    "text": "      <select value={type ?? EVERY} onChange={(event) => setType(event.target.value === EVERY ? null : (event.target.value as PokemonType))}>"
-                  },
-                  {
-                    "line": 5,
-                    "startColumn": 8,
-                    "endColumn": 19,
-                    "path": "src/stores/pokemon-filters.ts",
-                    "text": "  type: PokemonType | null"
-                  },
-                  {
-                    "line": 7,
-                    "startColumn": 18,
-                    "endColumn": 29,
-                    "path": "src/stores/pokemon-filters.ts",
-                    "text": "  setType: (type: PokemonType | null) => void"
-                  }
-                ]
+                "usages": []
               },
               {
-                "line": 8,
+                "line": 5,
                 "startColumn": 17,
                 "endColumn": 24,
                 "lines": [
-                  8,
-                  15
+                  5,
+                  12
                 ],
                 "usages": [
                   {
@@ -1361,13 +1154,6 @@
                     "text": "  return request<Pokemon[]>(`/pokemon${query}`)"
                   },
                   {
-                    "line": 8,
-                    "startColumn": 26,
-                    "endColumn": 33,
-                    "path": "src/hooks/use-pokemon.ts",
-                    "text": "function hasType(pokemon: Pokemon, type: PokemonType | null): boolean {"
-                  },
-                  {
                     "line": 11,
                     "startColumn": 37,
                     "endColumn": 44,
@@ -1381,9 +1167,9 @@
         ]
       },
       {
-        "title": "New PokemonPage and usePokemon, modified router",
+        "title": "New components and hooks, modified router",
         "context": [
-          "This segment adds the Pokemon page at /pokemon. The page lists the Pokemon from the API with their level and types, and a professor can narrow the list to one type or to the Pokemon of one trainer."
+          "This segment adds the Pokemon page at /pokemon. The page lists the Pokemon from the API with their level and types, and a professor can pick a trainer to list only the Pokemon of that trainer."
         ],
         "kind": "entry",
         "importGraph": [
@@ -1473,7 +1259,6 @@
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": null,
             "importedBy": [
-              "src/routes/pokemon/components/PokemonFilters.tsx",
               "src/routes/root-layout.tsx"
             ],
             "importsTo": [
@@ -1518,13 +1303,11 @@
             ],
             "importsTo": [
               "src/api/pokemon.ts",
-              "src/stores/pokemon-filters.ts",
-              "src/types/pokemon.ts"
+              "src/stores/pokemon-filters.ts"
             ],
             "importedFilePaths": {
               "@/api/pokemon": "src/api/pokemon.ts",
-              "@/stores/pokemon-filters": "src/stores/pokemon-filters.ts",
-              "@/types/pokemon": "src/types/pokemon.ts"
+              "@/stores/pokemon-filters": "src/stores/pokemon-filters.ts"
             }
           },
           {
@@ -1613,16 +1396,12 @@
               "src/routes/pokemon/index.tsx"
             ],
             "importsTo": [
-              "src/components/ui/index.ts",
               "src/hooks/use-trainers.ts",
-              "src/stores/pokemon-filters.ts",
-              "src/types/pokemon.ts"
+              "src/stores/pokemon-filters.ts"
             ],
             "importedFilePaths": {
-              "@/components/ui": "src/components/ui/index.ts",
               "@/hooks/use-trainers": "src/hooks/use-trainers.ts",
-              "@/stores/pokemon-filters": "src/stores/pokemon-filters.ts",
-              "@/types/pokemon": "src/types/pokemon.ts"
+              "@/stores/pokemon-filters": "src/stores/pokemon-filters.ts"
             }
           },
           {
@@ -1696,8 +1475,8 @@
           }
         ],
         "traceDiagram": {
-          "title": null,
-          "description": "This diagram shows how the route table opens the Pokemon page, and how [`usePokemon()`](code:src/hooks/use-pokemon.ts#usePokemon) loads the Pokemon through [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon) with the filters of the store. It also shows what happens when the user picks a type, picks a trainer or clears the filters, and how each choice reaches the filter store.",
+          "title": "List Pokemon and pick trainer flow diagram",
+          "description": "This diagram shows how the route table renders the Pokemon page, and how [`usePokemon()`](code:src/hooks/use-pokemon.ts#usePokemon) loads the Pokemon of the chosen trainer through [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon). It also shows what happens when the user picks a trainer, and how the choice reaches the filter store.",
           "traceNodes": [
             {
               "id": "src/router.tsx#root-variable@8:1",
@@ -1737,77 +1516,6 @@
               ]
             },
             {
-              "id": "src/stores/pokemon-filters.ts#state@12:1",
-              "type": "state",
-              "label": "Keeps the chosen type and trainer",
-              "description": "When a professor picks a type, picks a trainer or clicks Clear filters, [a handler of `<PokemonFilters />` sets this store](code:src/routes/pokemon/components/PokemonFilters.tsx#L13). [`usePokemon()` reads the type and the trainer from it](code:src/hooks/use-pokemon.ts#L13-14).",
-              "codeBlockIds": [
-                "src/stores/pokemon-filters.ts#state@12:1",
-                "src/stores/pokemon-filters.ts#effect@12:34",
-                "src/stores/pokemon-filters.ts#effect-callback@12:62",
-                "src/stores/pokemon-filters.ts#function@12:62",
-                "src/stores/pokemon-filters.ts#variable@12:63",
-                "src/stores/pokemon-filters.ts#property@13:3",
-                "src/stores/pokemon-filters.ts#property@14:3",
-                "src/stores/pokemon-filters.ts#function@15:3",
-                "src/stores/pokemon-filters.ts#variable@15:13",
-                "src/stores/pokemon-filters.ts#call@16:5",
-                "src/stores/pokemon-filters.ts#property@16:11",
-                "src/stores/pokemon-filters.ts#function@18:3",
-                "src/stores/pokemon-filters.ts#variable@18:18",
-                "src/stores/pokemon-filters.ts#call@19:5",
-                "src/stores/pokemon-filters.ts#property@19:11",
-                "src/stores/pokemon-filters.ts#function@21:3",
-                "src/stores/pokemon-filters.ts#call@22:5",
-                "src/stores/pokemon-filters.ts#property@22:11",
-                "src/stores/pokemon-filters.ts#property@22:23"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/pokemon-filters.ts#state@12:1",
-                "src/stores/pokemon-filters.ts#effect@12:34",
-                "src/stores/pokemon-filters.ts#function@12:62",
-                "src/stores/pokemon-filters.ts#variable@12:63",
-                "src/stores/pokemon-filters.ts#property@13:3",
-                "src/stores/pokemon-filters.ts#property@14:3",
-                "src/stores/pokemon-filters.ts#function@15:3",
-                "src/stores/pokemon-filters.ts#variable@15:13",
-                "src/stores/pokemon-filters.ts#call@16:5",
-                "src/stores/pokemon-filters.ts#property@16:11",
-                "src/stores/pokemon-filters.ts#function@18:3",
-                "src/stores/pokemon-filters.ts#variable@18:18",
-                "src/stores/pokemon-filters.ts#call@19:5",
-                "src/stores/pokemon-filters.ts#property@19:11",
-                "src/stores/pokemon-filters.ts#function@21:3",
-                "src/stores/pokemon-filters.ts#call@22:5",
-                "src/stores/pokemon-filters.ts#property@22:11",
-                "src/stores/pokemon-filters.ts#property@22:23"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Starts with no type chosen",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#property@13:3"
-                },
-                {
-                  "label": "Starts with no trainer chosen",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#property@14:3"
-                },
-                {
-                  "label": "Sets the chosen type",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#function@15:3"
-                },
-                {
-                  "label": "Sets the chosen trainer",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#function@18:3"
-                },
-                {
-                  "label": "Sets both filters back to null",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#function@21:3"
-                }
-              ]
-            },
-            {
               "id": "src/routes/root-layout.tsx#component@5:1",
               "type": "component",
               "label": "Renders the header and the page under it",
@@ -1829,7 +1537,7 @@
             {
               "id": "src/routes/pokemon/index.tsx#component@5:1",
               "type": "component",
-              "label": "Lists the Pokemon that match the filters",
+              "label": "Lists the Pokemon of the chosen trainer",
               "description": "When a professor opens /pokemon, the route table renders this page through [`element: <PokemonPage />`](code:src/router.tsx#L14).",
               "codeBlockIds": [
                 "src/routes/pokemon/index.tsx#component@5:1",
@@ -1869,95 +1577,61 @@
               ],
               "children": [
                 {
-                  "id": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
+                  "id": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
                   "type": "component",
-                  "label": "Renders the type and trainer filters",
-                  "description": "When a professor opens /pokemon, the page renders this component above the list. It reads the filters from the store and [the trainers from `useTrainers()`](code:src/hooks/use-trainers.ts#L6-8).",
+                  "label": "Renders the trainer select",
+                  "description": "When a professor opens /pokemon, [the page renders this component above the list](code:src/routes/pokemon/index.tsx#L10). It reads the chosen trainer from the store and [the trainers from `useTrainers()`](code:src/hooks/use-trainers.ts#L6-8). When a professor picks a trainer, the handler of the select calls [`setTrainerId()`](code:src/stores/pokemon-filters.ts#L10-12) on the filter store.",
                   "codeBlockIds": [
-                    "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-                    "src/types/pokemon.ts#root-variable@1:1",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@6:1",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#state@9:3",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#external-value@10:3",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-root@11:3",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@12:5",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@13:7",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@14:9",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@15:10",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#function@15:28",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@15:29",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@16:11",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@21:7",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@22:9",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@23:10",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#function@23:23",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@23:24",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@24:11",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@29:7",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31"
+                    "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@4:1",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#state@7:3",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#external-value@8:3",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render-root@9:3",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render@10:5",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render@11:7",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@12:8",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#function@12:21",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@12:22",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render@13:9"
                   ],
                   "diffCodeBlockIds": [
-                    "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-                    "src/types/pokemon.ts#root-variable@1:1",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@6:1",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#state@9:3",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#external-value@10:3",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-root@11:3",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@12:5",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@13:7",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@14:9",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@15:10",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#function@15:28",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@15:29",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@16:11",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@21:7",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@22:9",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@23:10",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#function@23:23",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@23:24",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@24:11",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@29:7",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31"
+                    "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@4:1",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#state@7:3",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#external-value@8:3",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render-root@9:3",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render@10:5",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render@11:7",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@12:8",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#function@12:21",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@12:22",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render@13:9"
                   ],
                   "children": [],
                   "triggerLabels": [
                     {
-                      "label": "A professor picks a type",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37"
-                    },
-                    {
                       "label": "A professor picks a trainer",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42"
-                    },
-                    {
-                      "label": "A professor clicks Clear filters",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31"
+                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40"
                     }
                   ],
                   "blockLabels": [
                     {
-                      "label": "Lists every Pokemon type as an option",
-                      "codeBlockId": "src/types/pokemon.ts#root-variable@1:1"
+                      "label": "Uses an empty value for Every trainer",
+                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@4:1"
                     },
                     {
-                      "label": "Uses an empty value for Every type and Every trainer",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@6:1"
+                      "label": "Reads the chosen trainer and its setter from the store",
+                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#state@7:3"
                     },
                     {
-                      "label": "Reads the filters and their actions from the store",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#state@9:3"
+                      "label": "Gets the trainers for the options",
+                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#external-value@8:3"
                     },
                     {
-                      "label": "Gets the trainers for the trainer select",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#external-value@10:3"
-                    },
-                    {
-                      "label": "Renders one option per type",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#function@15:28"
+                      "label": "Renders one option per trainer",
+                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#function@12:21"
                     }
                   ]
                 }
@@ -1965,7 +1639,7 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Gets the Pokemon that match the filters",
+                  "label": "Gets the Pokemon of the chosen trainer",
                   "codeBlockId": "src/routes/pokemon/index.tsx#external-value@6:3"
                 },
                 {
@@ -1975,80 +1649,94 @@
               ]
             },
             {
-              "id": "src/hooks/use-pokemon.ts#hook@12:1",
-              "type": "hook",
-              "label": "Loads the Pokemon that match the filters",
-              "description": "When a professor opens /pokemon, [`<PokemonPage />` calls this hook](code:src/routes/pokemon/index.tsx#L6).",
+              "id": "src/stores/pokemon-filters.ts#state@8:1",
+              "type": "state",
+              "label": "Keeps the chosen trainer",
+              "description": "Three paths reach this store:\n\n- When a professor picks a trainer, [the handler of `<PokemonFilters />` calls `setTrainerId()`](code:src/routes/pokemon/components/PokemonFilters.tsx#L10).\n- When a professor opens /pokemon, `<PokemonPage />` calls `usePokemon()`, and [`usePokemon()` reads `trainerId` from the store](code:src/hooks/use-pokemon.ts#L8).\n- When a professor opens /pokemon, `<PokemonPage />` renders `<PokemonFilters />`, and [`<PokemonFilters />` reads `trainerId` and `setTrainerId()` from the store](code:src/routes/pokemon/components/PokemonFilters.tsx#L7).",
               "codeBlockIds": [
-                "src/hooks/use-pokemon.ts#hook@12:1",
-                "src/hooks/use-pokemon.ts#root-variable@6:1",
-                "src/hooks/use-pokemon.ts#state@13:3",
-                "src/hooks/use-pokemon.ts#component-effect@13:16",
-                "src/hooks/use-pokemon.ts#effect-callback@13:34",
-                "src/hooks/use-pokemon.ts#function@13:34",
-                "src/hooks/use-pokemon.ts#variable@13:35",
-                "src/hooks/use-pokemon.ts#state@14:3",
-                "src/hooks/use-pokemon.ts#component-effect@14:21",
-                "src/hooks/use-pokemon.ts#effect-callback@14:39",
-                "src/hooks/use-pokemon.ts#function@14:39",
-                "src/hooks/use-pokemon.ts#variable@14:40",
-                "src/hooks/use-pokemon.ts#component-effect@15:10",
-                "src/hooks/use-pokemon.ts#property@16:5",
-                "src/hooks/use-pokemon.ts#effect-callback@17:5",
-                "src/hooks/use-pokemon.ts#function@17:14",
-                "src/hooks/use-pokemon.ts#effect-callback@18:5",
-                "src/hooks/use-pokemon.ts#function@18:13",
-                "src/hooks/use-pokemon.ts#variable@18:14",
-                "src/hooks/use-pokemon.ts#function@18:41",
-                "src/hooks/use-pokemon.ts#variable@18:42"
+                "src/stores/pokemon-filters.ts#state@8:1",
+                "src/stores/pokemon-filters.ts#effect@8:34",
+                "src/stores/pokemon-filters.ts#effect-callback@8:62",
+                "src/stores/pokemon-filters.ts#function@8:62",
+                "src/stores/pokemon-filters.ts#variable@8:63",
+                "src/stores/pokemon-filters.ts#property@9:3",
+                "src/stores/pokemon-filters.ts#function@10:3",
+                "src/stores/pokemon-filters.ts#variable@10:18",
+                "src/stores/pokemon-filters.ts#call@11:5",
+                "src/stores/pokemon-filters.ts#property@11:11"
               ],
               "diffCodeBlockIds": [
-                "src/hooks/use-pokemon.ts#hook@12:1",
-                "src/hooks/use-pokemon.ts#root-variable@6:1",
-                "src/hooks/use-pokemon.ts#state@13:3",
-                "src/hooks/use-pokemon.ts#component-effect@13:16",
-                "src/hooks/use-pokemon.ts#function@13:34",
-                "src/hooks/use-pokemon.ts#variable@13:35",
-                "src/hooks/use-pokemon.ts#state@14:3",
-                "src/hooks/use-pokemon.ts#component-effect@14:21",
-                "src/hooks/use-pokemon.ts#function@14:39",
-                "src/hooks/use-pokemon.ts#variable@14:40",
-                "src/hooks/use-pokemon.ts#component-effect@15:10",
-                "src/hooks/use-pokemon.ts#property@16:5",
-                "src/hooks/use-pokemon.ts#effect-callback@17:5",
-                "src/hooks/use-pokemon.ts#function@17:14",
-                "src/hooks/use-pokemon.ts#effect-callback@18:5",
-                "src/hooks/use-pokemon.ts#function@18:13",
-                "src/hooks/use-pokemon.ts#variable@18:14",
-                "src/hooks/use-pokemon.ts#function@18:41",
-                "src/hooks/use-pokemon.ts#variable@18:42"
+                "src/stores/pokemon-filters.ts#state@8:1",
+                "src/stores/pokemon-filters.ts#effect@8:34",
+                "src/stores/pokemon-filters.ts#function@8:62",
+                "src/stores/pokemon-filters.ts#variable@8:63",
+                "src/stores/pokemon-filters.ts#property@9:3",
+                "src/stores/pokemon-filters.ts#function@10:3",
+                "src/stores/pokemon-filters.ts#variable@10:18",
+                "src/stores/pokemon-filters.ts#call@11:5",
+                "src/stores/pokemon-filters.ts#property@11:11"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Starts with no trainer chosen",
+                  "codeBlockId": "src/stores/pokemon-filters.ts#property@9:3"
+                },
+                {
+                  "label": "Sets the chosen trainer",
+                  "codeBlockId": "src/stores/pokemon-filters.ts#function@10:3"
+                }
+              ]
+            },
+            {
+              "id": "src/hooks/use-pokemon.ts#hook@7:1",
+              "type": "hook",
+              "label": "Loads the Pokemon of the chosen trainer",
+              "description": "When a professor opens /pokemon, [`<PokemonPage />` calls this hook](code:src/routes/pokemon/index.tsx#L6).",
+              "codeBlockIds": [
+                "src/hooks/use-pokemon.ts#hook@7:1",
+                "src/hooks/use-pokemon.ts#root-variable@5:1",
+                "src/hooks/use-pokemon.ts#state@8:3",
+                "src/hooks/use-pokemon.ts#component-effect@8:21",
+                "src/hooks/use-pokemon.ts#effect-callback@8:39",
+                "src/hooks/use-pokemon.ts#function@8:39",
+                "src/hooks/use-pokemon.ts#variable@8:40",
+                "src/hooks/use-pokemon.ts#component-effect@9:10",
+                "src/hooks/use-pokemon.ts#property@10:5",
+                "src/hooks/use-pokemon.ts#effect-callback@11:5",
+                "src/hooks/use-pokemon.ts#function@11:14"
+              ],
+              "diffCodeBlockIds": [
+                "src/hooks/use-pokemon.ts#hook@7:1",
+                "src/hooks/use-pokemon.ts#root-variable@5:1",
+                "src/hooks/use-pokemon.ts#state@8:3",
+                "src/hooks/use-pokemon.ts#component-effect@8:21",
+                "src/hooks/use-pokemon.ts#function@8:39",
+                "src/hooks/use-pokemon.ts#variable@8:40",
+                "src/hooks/use-pokemon.ts#component-effect@9:10",
+                "src/hooks/use-pokemon.ts#property@10:5",
+                "src/hooks/use-pokemon.ts#effect-callback@11:5",
+                "src/hooks/use-pokemon.ts#function@11:14"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
                   "label": "Starts the key of every Pokemon query",
-                  "codeBlockId": "src/hooks/use-pokemon.ts#root-variable@6:1"
-                },
-                {
-                  "label": "Reads the chosen type from the store",
-                  "codeBlockId": "src/hooks/use-pokemon.ts#state@13:3"
+                  "codeBlockId": "src/hooks/use-pokemon.ts#root-variable@5:1"
                 },
                 {
                   "label": "Reads the chosen trainer from the store",
-                  "codeBlockId": "src/hooks/use-pokemon.ts#state@14:3"
+                  "codeBlockId": "src/hooks/use-pokemon.ts#state@8:3"
                 },
                 {
                   "label": "Loads the Pokemon again when the trainer changes",
-                  "codeBlockId": "src/hooks/use-pokemon.ts#component-effect@15:10"
+                  "codeBlockId": "src/hooks/use-pokemon.ts#component-effect@9:10"
                 },
                 {
                   "label": "Requests the Pokemon of the chosen trainer",
-                  "codeBlockId": "src/hooks/use-pokemon.ts#effect-callback@17:5"
-                },
-                {
-                  "label": "Keeps only the Pokemon of the chosen type",
-                  "codeBlockId": "src/hooks/use-pokemon.ts#effect-callback@18:5"
+                  "codeBlockId": "src/hooks/use-pokemon.ts#effect-callback@11:5"
                 }
               ]
             },
@@ -2056,7 +1744,7 @@
               "id": "src/api/pokemon.ts#function@4:1",
               "type": "function",
               "label": "Requests the Pokemon from the API",
-              "description": "`useQuery` runs this function as [the query function of `usePokemon()`](code:src/hooks/use-pokemon.ts#L17), with the trainer of the store.",
+              "description": "When a professor opens /pokemon or picks a trainer, `useQuery` runs [the query function of `usePokemon()`](code:src/hooks/use-pokemon.ts#L11), and the query function calls this function with the chosen trainer.",
               "codeBlockIds": [
                 "src/api/pokemon.ts#function@4:1",
                 "src/api/pokemon.ts#root-argument-value@4:30",
@@ -2079,33 +1767,10 @@
               ]
             },
             {
-              "id": "src/hooks/use-pokemon.ts#function@8:1",
-              "type": "function",
-              "label": "Checks whether a Pokemon has the chosen type",
-              "description": "[The `select` function of `usePokemon()` calls it](code:src/hooks/use-pokemon.ts#L18) for each loaded Pokemon.",
-              "codeBlockIds": [
-                "src/hooks/use-pokemon.ts#function@8:1",
-                "src/hooks/use-pokemon.ts#root-argument-value@8:18",
-                "src/hooks/use-pokemon.ts#root-argument-value@8:36",
-                "src/hooks/use-pokemon.ts#root-argument-value@9:27",
-                "src/hooks/use-pokemon.ts#root-argument-value@9:60"
-              ],
-              "diffCodeBlockIds": [
-                "src/hooks/use-pokemon.ts#function@8:1",
-                "src/hooks/use-pokemon.ts#root-argument-value@8:18",
-                "src/hooks/use-pokemon.ts#root-argument-value@8:36",
-                "src/hooks/use-pokemon.ts#root-argument-value@9:27",
-                "src/hooks/use-pokemon.ts#root-argument-value@9:60"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
               "id": "src/lib/format.ts#function@11:1",
               "type": "function",
               "label": "Writes the types of a Pokemon as text",
-              "description": "When a professor opens /pokemon, [`<PokemonPage />` calls this function for each Pokemon of the list](code:src/routes/pokemon/index.tsx#L17).",
+              "description": "When the Pokemon have loaded, [`<PokemonPage />` calls this function for each Pokemon of the list](code:src/routes/pokemon/index.tsx#L17).",
               "codeBlockIds": [
                 "src/lib/format.ts#function@11:1",
                 "src/lib/format.ts#root-argument-value@11:29",
@@ -2130,91 +1795,39 @@
               ]
             },
             {
-              "id": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37",
-              "type": "render-event",
-              "label": "Sets the chosen type in the store",
-              "description": "When a professor picks a type, the handler calls [`setType()`](code:src/stores/pokemon-filters.ts#L15-17) with the type, or with `null` for Every type.",
-              "codeBlockIds": [
-                "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37",
-                "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@6:1",
-                "src/routes/pokemon/components/PokemonFilters.tsx#function@13:47",
-                "src/routes/pokemon/components/PokemonFilters.tsx#variable@13:48",
-                "src/routes/pokemon/components/PokemonFilters.tsx#condition@13:66"
-              ],
-              "diffCodeBlockIds": [
-                "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37",
-                "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@6:1",
-                "src/routes/pokemon/components/PokemonFilters.tsx#function@13:47",
-                "src/routes/pokemon/components/PokemonFilters.tsx#variable@13:48",
-                "src/routes/pokemon/components/PokemonFilters.tsx#condition@13:66"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Compares the picked value with the value of Every type",
-                  "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@6:1"
-                },
-                {
-                  "label": "Checks whether Every type is picked",
-                  "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#condition@13:66"
-                }
-              ]
-            },
-            {
-              "id": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42",
+              "id": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40",
               "type": "render-event",
               "label": "Sets the chosen trainer in the store",
-              "description": "When a professor picks a trainer, the handler calls [`setTrainerId()`](code:src/stores/pokemon-filters.ts#L18-20) with the id of the trainer, or with `null` for Every trainer.",
+              "description": "When a professor picks a trainer, the handler calls [`setTrainerId()`](code:src/stores/pokemon-filters.ts#L10-12) with the id of the trainer, or with `null` for Every trainer.",
               "codeBlockIds": [
-                "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42",
-                "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@6:1",
-                "src/routes/pokemon/components/PokemonFilters.tsx#function@21:52",
-                "src/routes/pokemon/components/PokemonFilters.tsx#variable@21:53",
-                "src/routes/pokemon/components/PokemonFilters.tsx#condition@21:76"
+                "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40",
+                "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@4:1",
+                "src/routes/pokemon/components/PokemonFilters.tsx#function@10:50",
+                "src/routes/pokemon/components/PokemonFilters.tsx#variable@10:51",
+                "src/routes/pokemon/components/PokemonFilters.tsx#condition@10:74"
               ],
               "diffCodeBlockIds": [
-                "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42",
-                "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@6:1",
-                "src/routes/pokemon/components/PokemonFilters.tsx#function@21:52",
-                "src/routes/pokemon/components/PokemonFilters.tsx#variable@21:53",
-                "src/routes/pokemon/components/PokemonFilters.tsx#condition@21:76"
+                "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40",
+                "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@4:1",
+                "src/routes/pokemon/components/PokemonFilters.tsx#function@10:50",
+                "src/routes/pokemon/components/PokemonFilters.tsx#variable@10:51",
+                "src/routes/pokemon/components/PokemonFilters.tsx#condition@10:74"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
                   "label": "Compares the picked value with the value of Every trainer",
-                  "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@6:1"
+                  "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@4:1"
                 },
                 {
                   "label": "Checks whether Every trainer is picked",
-                  "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#condition@21:76"
+                  "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#condition@10:74"
                 }
               ]
-            },
-            {
-              "id": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31",
-              "type": "render-event",
-              "label": "Clears both filters in the store",
-              "description": "When a professor clicks Clear filters, the button calls [`clear()`](code:src/stores/pokemon-filters.ts#L21-23).",
-              "codeBlockIds": [
-                "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31"
-              ],
-              "diffCodeBlockIds": [
-                "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "traceNodeEdges": [
-            {
-              "id": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31 -> src/stores/pokemon-filters.ts#state@12:1",
-              "from": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31",
-              "to": "src/stores/pokemon-filters.ts#state@12:1"
-            },
             {
               "id": "src/router.tsx#root-variable@8:1 -> src/routes/root-layout.tsx#component@5:1",
               "from": "src/router.tsx#root-variable@8:1",
@@ -2226,44 +1839,34 @@
               "to": "src/routes/pokemon/index.tsx#component@5:1"
             },
             {
-              "id": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37 -> src/stores/pokemon-filters.ts#state@12:1",
-              "from": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37",
-              "to": "src/stores/pokemon-filters.ts#state@12:1"
+              "id": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40 -> src/stores/pokemon-filters.ts#state@8:1",
+              "from": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40",
+              "to": "src/stores/pokemon-filters.ts#state@8:1"
             },
             {
-              "id": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42 -> src/stores/pokemon-filters.ts#state@12:1",
-              "from": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42",
-              "to": "src/stores/pokemon-filters.ts#state@12:1"
-            },
-            {
-              "id": "src/routes/pokemon/index.tsx#component@5:1 -> src/hooks/use-pokemon.ts#hook@12:1",
+              "id": "src/routes/pokemon/index.tsx#component@5:1 -> src/hooks/use-pokemon.ts#hook@7:1",
               "from": "src/routes/pokemon/index.tsx#component@5:1",
-              "to": "src/hooks/use-pokemon.ts#hook@12:1"
+              "to": "src/hooks/use-pokemon.ts#hook@7:1"
             },
             {
-              "id": "src/hooks/use-pokemon.ts#hook@12:1 -> src/stores/pokemon-filters.ts#state@12:1",
-              "from": "src/hooks/use-pokemon.ts#hook@12:1",
-              "to": "src/stores/pokemon-filters.ts#state@12:1"
+              "id": "src/hooks/use-pokemon.ts#hook@7:1 -> src/stores/pokemon-filters.ts#state@8:1",
+              "from": "src/hooks/use-pokemon.ts#hook@7:1",
+              "to": "src/stores/pokemon-filters.ts#state@8:1"
             },
             {
-              "id": "src/routes/pokemon/index.tsx#component@5:1 -> src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
+              "id": "src/routes/pokemon/index.tsx#component@5:1 -> src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
               "from": "src/routes/pokemon/index.tsx#component@5:1",
-              "to": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1"
+              "to": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1"
             },
             {
-              "id": "src/hooks/use-pokemon.ts#hook@12:1 -> src/api/pokemon.ts#function@4:1",
-              "from": "src/hooks/use-pokemon.ts#hook@12:1",
+              "id": "src/hooks/use-pokemon.ts#hook@7:1 -> src/api/pokemon.ts#function@4:1",
+              "from": "src/hooks/use-pokemon.ts#hook@7:1",
               "to": "src/api/pokemon.ts#function@4:1"
             },
             {
-              "id": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1 -> src/stores/pokemon-filters.ts#state@12:1",
-              "from": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-              "to": "src/stores/pokemon-filters.ts#state@12:1"
-            },
-            {
-              "id": "src/hooks/use-pokemon.ts#hook@12:1 -> src/hooks/use-pokemon.ts#function@8:1",
-              "from": "src/hooks/use-pokemon.ts#hook@12:1",
-              "to": "src/hooks/use-pokemon.ts#function@8:1"
+              "id": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1 -> src/stores/pokemon-filters.ts#state@8:1",
+              "from": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
+              "to": "src/stores/pokemon-filters.ts#state@8:1"
             },
             {
               "id": "src/routes/pokemon/index.tsx#component@5:1 -> src/lib/format.ts#function@11:1",
@@ -2271,19 +1874,9 @@
               "to": "src/lib/format.ts#function@11:1"
             },
             {
-              "id": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1 -> src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37",
-              "from": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-              "to": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37"
-            },
-            {
-              "id": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1 -> src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42",
-              "from": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-              "to": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42"
-            },
-            {
-              "id": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1 -> src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31",
-              "from": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-              "to": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31"
+              "id": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1 -> src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40",
+              "from": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
+              "to": "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40"
             }
           ]
         },
@@ -2477,10 +2070,6 @@
                 "imported": "src/stores/pokemon-filters.ts"
               },
               {
-                "importer": "src/hooks/use-pokemon.ts",
-                "imported": "src/types/pokemon.ts"
-              },
-              {
                 "importer": "src/hooks/use-trainers.ts",
                 "imported": "src/api/trainers.ts"
               },
@@ -2518,19 +2107,11 @@
               },
               {
                 "importer": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "imported": "src/components/ui/button.tsx"
-              },
-              {
-                "importer": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "imported": "src/hooks/use-trainers.ts"
               },
               {
                 "importer": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "imported": "src/stores/pokemon-filters.ts"
-              },
-              {
-                "importer": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "imported": "src/types/pokemon.ts"
               },
               {
                 "importer": "src/routes/pokemon/index.tsx",
@@ -2563,10 +2144,6 @@
               {
                 "importer": "src/routes/trainers/index.tsx",
                 "imported": "src/routes/trainers/components/TrainerRow.tsx"
-              },
-              {
-                "importer": "src/stores/pokemon-filters.ts",
-                "imported": "src/types/pokemon.ts"
               }
             ]
           }
@@ -2578,10 +2155,10 @@
               "path": "src/api/pokemon.ts",
               "waypoints": [
                 {
-                  "id": "w8",
+                  "id": "w7",
                   "title": "Added `fetchPokemon()` to request the Pokemon",
                   "declaration": "fetchPokemon",
-                  "reading": "The author added a function `fetchPokemon()` that sends a `GET` request to `/pokemon`, with `?trainer_id=` and the id when a trainer is chosen, and returns the Pokemon of the response. [`request()` puts `/api` in front of the path](code:src/api/client.ts#L14). [`usePokemon()` runs `fetchPokemon()` as its query function](code:src/hooks/use-pokemon.ts#L17), so that the page loads only the Pokemon of the chosen trainer.",
+                  "reading": "The author added a function `fetchPokemon()` that sends a `GET` request to `/pokemon`, with `?trainer_id=` and the id when a trainer is given, and returns the Pokemon of the response. [`request()` puts `/api` in front of the path](code:src/api/client.ts#L14). [`usePokemon()` calls `fetchPokemon()` in its query function](code:src/hooks/use-pokemon.ts#L11), so that the page loads only the Pokemon of the chosen trainer.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -2604,153 +2181,96 @@
               "path": "src/hooks/use-pokemon.ts",
               "waypoints": [
                 {
-                  "id": "w9",
+                  "id": "w8",
                   "title": "Added the query key of the Pokemon",
                   "declaration": "POKEMON_QUERY_KEY",
-                  "reading": "The author added a constant `POKEMON_QUERY_KEY` that holds `[\"pokemon\"]`. [`usePokemon()` adds the chosen trainer to it](code:src/hooks/use-pokemon.ts#L16), so that each trainer has its own cached list and a new trainer loads the list again.",
+                  "reading": "The author added a constant `POKEMON_QUERY_KEY` that holds `[\"pokemon\"]`. [`usePokemon()` adds the chosen trainer to it](code:src/hooks/use-pokemon.ts#L10), so that each trainer has its own cached list and a new trainer loads the list again.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
-                    "lineStart": 6,
-                    "lineEnd": 6
+                    "lineStart": 5,
+                    "lineEnd": 5
                   },
                   "category": "variable",
                   "traceNodeId": null,
                   "codeBlockIds": [
-                    "src/hooks/use-pokemon.ts#root-variable@6:1"
+                    "src/hooks/use-pokemon.ts#root-variable@5:1"
                   ],
                   "children": []
                 },
                 {
-                  "id": "w10",
-                  "title": "Added `hasType()` to match a Pokemon against the type filter",
-                  "declaration": "hasType",
-                  "reading": "The author added a function `hasType()` that returns `true` when no type is chosen, or when the primary or the secondary type of the Pokemon is the chosen type. [The `select` function of `usePokemon()` calls it](code:src/hooks/use-pokemon.ts#L18), so that a Pokemon with two types shows under both of them.",
-                  "coreChange": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 8,
-                    "lineEnd": 10
-                  },
-                  "category": "function",
-                  "traceNodeId": "src/hooks/use-pokemon.ts#function@8:1",
-                  "codeBlockIds": [
-                    "src/hooks/use-pokemon.ts#function@8:1",
-                    "src/hooks/use-pokemon.ts#root-argument-value@8:18",
-                    "src/hooks/use-pokemon.ts#root-argument-value@8:36",
-                    "src/hooks/use-pokemon.ts#root-argument-value@9:27",
-                    "src/hooks/use-pokemon.ts#root-argument-value@9:60"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w11",
-                  "title": "Added `usePokemon()` to load the Pokemon that match the filters",
+                  "id": "w9",
+                  "title": "Added `usePokemon()` to load the Pokemon of the chosen trainer",
                   "declaration": "usePokemon",
-                  "reading": "The author added a hook `usePokemon()` that:\n\n- reads the chosen type and trainer from [the filter store](code:src/stores/pokemon-filters.ts#usePokemonFilters)\n- loads the Pokemon of the trainer with [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon), under a key that holds the trainer\n- keeps the Pokemon of the chosen type in `select`, with [`hasType()`](code:src/hooks/use-pokemon.ts#hasType)\n\n[`<PokemonPage />` calls it](code:src/routes/pokemon/index.tsx#L6), so that the list follows both filters. The trainer filter goes to the API, and the type filter runs in the browser on the loaded list.",
-                  "coreChange": "This is where the two filters reach the data: the trainer goes into the query key and the request, and the type filters the loaded list in `select`. The page, the filter component and the store all exist for it.",
+                  "reading": "The author added a hook `usePokemon()` that:\n\n- reads `trainerId` from [the filter store](code:src/stores/pokemon-filters.ts#usePokemonFilters)\n- loads the Pokemon of that trainer with [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon), under a key that holds the trainer\n\n[`<PokemonPage />` calls it with no argument](code:src/routes/pokemon/index.tsx#L6), so that the list follows [the trainer select](code:src/routes/pokemon/components/PokemonFilters.tsx#L10) with no prop between the select and the page.",
+                  "coreChange": "This is where the trainer filter reaches the data: `trainerId` from [the filter store](code:src/stores/pokemon-filters.ts#usePokemonFilters) goes into the query key and into the request. The page, the select and the store all exist for it.",
                   "findings": [],
                   "range": {
-                    "lineStart": 12,
-                    "lineEnd": 20
+                    "lineStart": 7,
+                    "lineEnd": 13
                   },
                   "category": "function",
-                  "traceNodeId": "src/hooks/use-pokemon.ts#hook@12:1",
+                  "traceNodeId": "src/hooks/use-pokemon.ts#hook@7:1",
                   "codeBlockIds": [
-                    "src/hooks/use-pokemon.ts#hook@12:1",
-                    "src/hooks/use-pokemon.ts#state@13:3",
-                    "src/hooks/use-pokemon.ts#component-effect@13:16",
-                    "src/hooks/use-pokemon.ts#function@13:34",
-                    "src/hooks/use-pokemon.ts#variable@13:35",
-                    "src/hooks/use-pokemon.ts#state@14:3",
-                    "src/hooks/use-pokemon.ts#component-effect@14:21",
-                    "src/hooks/use-pokemon.ts#function@14:39",
-                    "src/hooks/use-pokemon.ts#variable@14:40",
-                    "src/hooks/use-pokemon.ts#component-effect@15:10",
-                    "src/hooks/use-pokemon.ts#property@16:5",
-                    "src/hooks/use-pokemon.ts#effect-callback@17:5",
-                    "src/hooks/use-pokemon.ts#function@17:14",
-                    "src/hooks/use-pokemon.ts#effect-callback@18:5",
-                    "src/hooks/use-pokemon.ts#function@18:13",
-                    "src/hooks/use-pokemon.ts#variable@18:14",
-                    "src/hooks/use-pokemon.ts#function@18:41",
-                    "src/hooks/use-pokemon.ts#variable@18:42"
+                    "src/hooks/use-pokemon.ts#hook@7:1",
+                    "src/hooks/use-pokemon.ts#state@8:3",
+                    "src/hooks/use-pokemon.ts#component-effect@8:21",
+                    "src/hooks/use-pokemon.ts#function@8:39",
+                    "src/hooks/use-pokemon.ts#variable@8:40",
+                    "src/hooks/use-pokemon.ts#component-effect@9:10",
+                    "src/hooks/use-pokemon.ts#property@10:5",
+                    "src/hooks/use-pokemon.ts#effect-callback@11:5",
+                    "src/hooks/use-pokemon.ts#function@11:14"
                   ],
                   "children": [
                     {
-                      "id": "w11.1",
-                      "title": "Added the read of the chosen type",
-                      "declaration": "usePokemon › type",
-                      "reading": "The author added a call to [`usePokemonFilters()`](code:src/stores/pokemon-filters.ts#usePokemonFilters) with a selector that returns `type`. The hook renders again when the type changes, and [`select` keeps the Pokemon of that type](code:src/hooks/use-pokemon.ts#L18).",
-                      "coreChange": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 13,
-                        "lineEnd": 13
-                      },
-                      "category": "statement",
-                      "traceNodeId": "src/hooks/use-pokemon.ts#hook@12:1",
-                      "codeBlockIds": [
-                        "src/hooks/use-pokemon.ts#state@13:3",
-                        "src/hooks/use-pokemon.ts#component-effect@13:16",
-                        "src/hooks/use-pokemon.ts#function@13:34",
-                        "src/hooks/use-pokemon.ts#variable@13:35"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w11.2",
+                      "id": "w9.1",
                       "title": "Added the read of the chosen trainer",
                       "declaration": "usePokemon › trainerId",
-                      "reading": "The author added a call to [`usePokemonFilters()`](code:src/stores/pokemon-filters.ts#usePokemonFilters) with a selector that returns `trainerId`. [The query key holds it](code:src/hooks/use-pokemon.ts#L16), and [the query function sends it](code:src/hooks/use-pokemon.ts#L17).",
+                      "reading": "The author added a call to [`usePokemonFilters()`](code:src/stores/pokemon-filters.ts#usePokemonFilters) with a selector that returns `trainerId`. The hook renders again only when the trainer changes, and [the query key holds the trainer](code:src/hooks/use-pokemon.ts#L10).",
                       "coreChange": null,
                       "findings": [],
                       "range": {
-                        "lineStart": 14,
-                        "lineEnd": 14
+                        "lineStart": 8,
+                        "lineEnd": 8
                       },
                       "category": "statement",
-                      "traceNodeId": "src/hooks/use-pokemon.ts#hook@12:1",
+                      "traceNodeId": "src/hooks/use-pokemon.ts#hook@7:1",
                       "codeBlockIds": [
-                        "src/hooks/use-pokemon.ts#state@14:3",
-                        "src/hooks/use-pokemon.ts#component-effect@14:21",
-                        "src/hooks/use-pokemon.ts#function@14:39",
-                        "src/hooks/use-pokemon.ts#variable@14:40"
+                        "src/hooks/use-pokemon.ts#state@8:3",
+                        "src/hooks/use-pokemon.ts#component-effect@8:21",
+                        "src/hooks/use-pokemon.ts#function@8:39",
+                        "src/hooks/use-pokemon.ts#variable@8:40"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w11.3",
+                      "id": "w9.2",
                       "title": "Added the query of the Pokemon",
                       "declaration": "usePokemon › useQuery",
-                      "reading": "The author added a call to `useQuery` with the key `[\"pokemon\", trainerId]`, a query function that calls [`fetchPokemon(trainerId)`](code:src/api/pokemon.ts#fetchPokemon), and a `select` function that keeps the Pokemon for which [`hasType()`](code:src/hooks/use-pokemon.ts#hasType) returns `true`. A new trainer is a new key, so the query requests again. A new type only runs `select` again on the cached list.",
+                      "reading": "The author added a call to `useQuery` with the key `[\"pokemon\", 3]` for the trainer with id 3, or `[\"pokemon\", null]` for Every trainer, and a query function that calls [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon) with the same trainer. A new trainer is a new key, so `useQuery` requests the list again, and [`<PokemonPage />` reads the result](code:src/routes/pokemon/index.tsx#L6).",
                       "coreChange": null,
                       "findings": [
                         {
                           "id": "finding-list-blanks-on-trainer-change",
                           "kind": "nit",
-                          "title": "`usePokemon()` empties the list each time the trainer changes",
-                          "reading": "[The query key holds `trainerId`](code:src/hooks/use-pokemon.ts#L16), so a new trainer starts a new query with no data. While it loads, `isPending` is `true` and `data` is `undefined`, so [the page shows `Loading the Pokemon…` and no list](code:src/routes/pokemon/index.tsx#L11-13). `placeholderData: keepPreviousData` from `@tanstack/react-query` keeps the last list on screen until the new one arrives, for one more option. The fix also imports `keepPreviousData` on [the first line of the file](code:src/hooks/use-pokemon.ts#L1).",
+                          "title": "`usePokemon()` empties the list for a trainer it has not loaded yet",
+                          "reading": "[The query key holds `trainerId`](code:src/hooks/use-pokemon.ts#L10), so a trainer with no cached list starts a new query with no data. While it loads, `isPending` is `true` and `data` is `undefined`, so [the page shows `Loading the Pokemon…`](code:src/routes/pokemon/index.tsx#L11) and [no list](code:src/routes/pokemon/index.tsx#L13). `placeholderData: keepPreviousData` from `@tanstack/react-query` keeps the last list on screen until the new one arrives, for one more option. The fix also imports `keepPreviousData` on [the first line of the file](code:src/hooks/use-pokemon.ts#L1).",
                           "trace": null,
-                          "solution": "  return useQuery({\n    queryKey: [...POKEMON_QUERY_KEY, trainerId],\n    queryFn: () => fetchPokemon(trainerId),\n    select: (pokemon) => pokemon.filter((entry) => hasType(entry, type)),\n    placeholderData: keepPreviousData,\n  })"
+                          "solution": "  return useQuery({\n    queryKey: [...POKEMON_QUERY_KEY, trainerId],\n    queryFn: () => fetchPokemon(trainerId),\n    placeholderData: keepPreviousData,\n  })"
                         }
                       ],
                       "range": {
-                        "lineStart": 15,
-                        "lineEnd": 19
+                        "lineStart": 9,
+                        "lineEnd": 12
                       },
                       "category": "statement",
-                      "traceNodeId": "src/hooks/use-pokemon.ts#hook@12:1",
+                      "traceNodeId": "src/hooks/use-pokemon.ts#hook@7:1",
                       "codeBlockIds": [
-                        "src/hooks/use-pokemon.ts#component-effect@15:10",
-                        "src/hooks/use-pokemon.ts#property@16:5",
-                        "src/hooks/use-pokemon.ts#effect-callback@17:5",
-                        "src/hooks/use-pokemon.ts#function@17:14",
-                        "src/hooks/use-pokemon.ts#effect-callback@18:5",
-                        "src/hooks/use-pokemon.ts#function@18:13",
-                        "src/hooks/use-pokemon.ts#variable@18:14",
-                        "src/hooks/use-pokemon.ts#function@18:41",
-                        "src/hooks/use-pokemon.ts#variable@18:42"
+                        "src/hooks/use-pokemon.ts#component-effect@9:10",
+                        "src/hooks/use-pokemon.ts#property@10:5",
+                        "src/hooks/use-pokemon.ts#effect-callback@11:5",
+                        "src/hooks/use-pokemon.ts#function@11:14"
                       ],
                       "children": []
                     }
@@ -2762,7 +2282,7 @@
               "path": "src/router.tsx",
               "waypoints": [
                 {
-                  "id": "w12",
+                  "id": "w10",
                   "title": "Modified the route table to add the Pokemon page",
                   "declaration": "router",
                   "reading": "The author modified the route table `router` to add a child route `pokemon` of the layout that renders [`<PokemonPage />`](code:src/routes/pokemon/index.tsx#PokemonPage). `src/main.tsx` passes this table to `<RouterProvider />`, so that the page opens at `/pokemon` inside [`<RootLayout />`](code:src/routes/root-layout.tsx#RootLayout), where [the header links to it](code:src/routes/root-layout.tsx#L11).",
@@ -2789,216 +2309,143 @@
               "path": "src/routes/pokemon/components/PokemonFilters.tsx",
               "waypoints": [
                 {
-                  "id": "w13",
-                  "title": "Added the value of the Every options",
+                  "id": "w11",
+                  "title": "Added the value of the Every trainer option",
                   "declaration": "EVERY",
-                  "reading": "The author added a constant `EVERY` that holds `\"\"`. [The type select](code:src/routes/pokemon/components/PokemonFilters.tsx#L13-14) and [the trainer select](code:src/routes/pokemon/components/PokemonFilters.tsx#L21-22) use it as the value of their first option, and their handlers turn it into `null`. So the store holds `null` for no filter, and never `\"\"`.",
+                  "reading": "The author added a constant `EVERY` that holds `\"\"`. [The trainer select uses it as the value of its first option, `Every trainer`](code:src/routes/pokemon/components/PokemonFilters.tsx#L11), and [its handler calls `setTrainerId(null)` when that option is picked](code:src/routes/pokemon/components/PokemonFilters.tsx#L10). So the store holds `null` for Every trainer and never `\"\"`, and [`fetchPokemon()` sends no `trainer_id` for `null`](code:src/api/pokemon.ts#L5).",
                   "coreChange": null,
                   "findings": [],
                   "range": {
-                    "lineStart": 6,
-                    "lineEnd": 6
+                    "lineStart": 4,
+                    "lineEnd": 4
                   },
                   "category": "variable",
                   "traceNodeId": null,
                   "codeBlockIds": [
-                    "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@6:1"
+                    "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@4:1"
                   ],
                   "children": []
                 },
                 {
-                  "id": "w14",
-                  "title": "Added `<PokemonFilters />` to choose the filters",
+                  "id": "w12",
+                  "title": "Added `<PokemonFilters />` to pick a trainer",
                   "declaration": "PokemonFilters",
-                  "reading": "The author added a component `<PokemonFilters />` that:\n\n- renders a select with `Every type` and one option per type of [`POKEMON_TYPES`](code:src/types/pokemon.ts#POKEMON_TYPES)\n- renders a select with `Every trainer` and one option per trainer from [`useTrainers()`](code:src/hooks/use-trainers.ts#L6-8)\n- renders a `Clear filters` button\n- writes each choice to [the filter store](code:src/stores/pokemon-filters.ts#usePokemonFilters)\n\n[`<PokemonPage />` renders it above the list](code:src/routes/pokemon/index.tsx#L10), so that a professor can narrow the list.",
+                  "reading": "The author added a component `<PokemonFilters />` that:\n\n- renders a select with `Every trainer` and one option per trainer from [`useTrainers()`](code:src/hooks/use-trainers.ts#L6-8)\n- shows the trainer of [the filter store](code:src/stores/pokemon-filters.ts#usePokemonFilters) as the picked option\n- writes each pick to the store with [`setTrainerId()`](code:src/stores/pokemon-filters.ts#L10-12)\n\n[`<PokemonPage />` renders it above the list](code:src/routes/pokemon/index.tsx#L10), so that a professor can narrow the list to one trainer.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
-                    "lineStart": 8,
-                    "lineEnd": 34
+                    "lineStart": 6,
+                    "lineEnd": 19
                   },
                   "category": "function",
-                  "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
+                  "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
                   "codeBlockIds": [
-                    "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#state@9:3",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#external-value@10:3",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-root@11:3",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@12:5",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@13:7",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#function@13:47",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@13:48",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#condition@13:66",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@14:9",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@15:10",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#function@15:28",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@15:29",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@16:11",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@21:7",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#function@21:52",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@21:53",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#condition@21:76",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@22:9",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@23:10",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#function@23:23",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@23:24",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@24:11",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render@29:7",
-                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31"
+                    "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#state@7:3",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#external-value@8:3",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render-root@9:3",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render@10:5",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#function@10:50",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@10:51",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#condition@10:74",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render@11:7",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@12:8",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#function@12:21",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#variable@12:22",
+                    "src/routes/pokemon/components/PokemonFilters.tsx#render@13:9"
                   ],
                   "children": [
                     {
-                      "id": "w14.1",
+                      "id": "w12.1",
                       "title": "Added the read of the filter store",
-                      "declaration": "PokemonFilters › type",
-                      "reading": "The author added a call to [`usePokemonFilters()`](code:src/stores/pokemon-filters.ts#usePokemonFilters) with no selector, which returns the whole store: `type`, `trainerId` and the three actions. [The type select shows `type`](code:src/routes/pokemon/components/PokemonFilters.tsx#L13), [the trainer select shows `trainerId`](code:src/routes/pokemon/components/PokemonFilters.tsx#L21), and the handlers call the actions.",
+                      "declaration": "PokemonFilters › trainerId",
+                      "reading": "The author added a call to [`usePokemonFilters()`](code:src/stores/pokemon-filters.ts#usePokemonFilters) with no selector, which returns the whole store: `trainerId` and `setTrainerId()`. [The select shows `trainerId` as its value](code:src/routes/pokemon/components/PokemonFilters.tsx#L10), and [its handler calls `setTrainerId()`](code:src/routes/pokemon/components/PokemonFilters.tsx#L10).",
                       "coreChange": null,
                       "findings": [],
                       "range": {
-                        "lineStart": 9,
-                        "lineEnd": 9
+                        "lineStart": 7,
+                        "lineEnd": 7
                       },
                       "category": "statement",
-                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
+                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
                       "codeBlockIds": [
-                        "src/routes/pokemon/components/PokemonFilters.tsx#state@9:3"
+                        "src/routes/pokemon/components/PokemonFilters.tsx#state@7:3"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w14.2",
+                      "id": "w12.2",
                       "title": "Added the query of the trainers",
                       "declaration": "PokemonFilters › trainers",
-                      "reading": "The author added a call to [`useTrainers()`](code:src/hooks/use-trainers.ts#L6-8) that gives the loaded trainers, with `[]` until they arrive. [The trainer select renders one option per trainer](code:src/routes/pokemon/components/PokemonFilters.tsx#L23-27), so the select offers only `Every trainer` while the trainers load.",
+                      "reading": "The author added a call to [`useTrainers()`](code:src/hooks/use-trainers.ts#L6-8) that gives the loaded trainers, with `[]` until they arrive. [The select renders one option per trainer](code:src/routes/pokemon/components/PokemonFilters.tsx#L12-16), so the select offers only `Every trainer` while the trainers load.",
                       "coreChange": null,
                       "findings": [
                         {
                           "id": "finding-trainer-error-hidden",
                           "kind": "risk",
                           "title": "`<PokemonFilters />` hides a failed load of the trainers",
-                          "reading": "[`useTrainers()` reports a failed request in `isError`](code:src/hooks/use-trainers.ts#L7), and `<PokemonFilters />` reads only `data`, with `[]` in its place. So when the trainers do not load, [the trainer select offers `Every trainer` alone](code:src/routes/pokemon/components/PokemonFilters.tsx#L21-28), and nothing tells the professor why. The fix reads `isError` here, and the trainer select then needs a message for it.",
+                          "reading": "[`useTrainers()` reports a failed request in `isError`](code:src/hooks/use-trainers.ts#L7), and `<PokemonFilters />` reads only `data`, with `[]` in its place. So when the trainers do not load, [the select offers `Every trainer` alone](code:src/routes/pokemon/components/PokemonFilters.tsx#L10-17), and nothing tells the professor why. The fix reads `isError` here, and [the select](code:src/routes/pokemon/components/PokemonFilters.tsx#L10-17) then needs a message for `hasTrainerError`.",
                           "trace": [
                             "A professor opens /pokemon while `GET /api/trainers` answers `500`.",
                             "[`request()` throws `ApiError(500, \"Internal Server Error\")`](code:src/api/client.ts#L18).",
                             "[`useTrainers()` returns `data: undefined` and `isError: true`](code:src/hooks/use-trainers.ts#L7).",
-                            "[`trainers` falls back to `[]`](code:src/routes/pokemon/components/PokemonFilters.tsx#L10).",
-                            "[The trainer select renders `Every trainer` and no other option](code:src/routes/pokemon/components/PokemonFilters.tsx#L21-28)."
+                            "[`trainers` falls back to `[]`](code:src/routes/pokemon/components/PokemonFilters.tsx#L8).",
+                            "[The select renders `Every trainer` and no other option](code:src/routes/pokemon/components/PokemonFilters.tsx#L10-17)."
                           ],
                           "solution": "  const { data: trainers = [], isError: hasTrainerError } = useTrainers()"
                         }
                       ],
                       "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
+                      "codeBlockIds": [
+                        "src/routes/pokemon/components/PokemonFilters.tsx#external-value@8:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w12.3",
+                      "title": "Added the handler of the trainer select",
+                      "declaration": "PokemonFilters › select.onChange",
+                      "reading": "The author added an `onChange` handler that calls [`setTrainerId(3)`](code:src/stores/pokemon-filters.ts#L10-12) when a professor picks the trainer with id 3, and `setTrainerId(null)` when the picked value is [`EVERY`](code:src/routes/pokemon/components/PokemonFilters.tsx#EVERY). [`usePokemon()` puts the trainer in its query key](code:src/hooks/use-pokemon.ts#L10), so that the page requests the Pokemon of that trainer.",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
                         "lineStart": 10,
                         "lineEnd": 10
                       },
                       "category": "statement",
-                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
+                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
                       "codeBlockIds": [
-                        "src/routes/pokemon/components/PokemonFilters.tsx#external-value@10:3"
+                        "src/routes/pokemon/components/PokemonFilters.tsx#render-event@10:40",
+                        "src/routes/pokemon/components/PokemonFilters.tsx#function@10:50",
+                        "src/routes/pokemon/components/PokemonFilters.tsx#variable@10:51",
+                        "src/routes/pokemon/components/PokemonFilters.tsx#condition@10:74"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w14.3",
-                      "title": "Added the handler of the type select",
-                      "declaration": "PokemonFilters › select.onChange",
-                      "reading": "The author added an `onChange` handler that calls [`setType()`](code:src/stores/pokemon-filters.ts#L15-17) with the picked type, or with `null` when the picked value is [`EVERY`](code:src/routes/pokemon/components/PokemonFilters.tsx#L6). [`usePokemon()` reads the type](code:src/hooks/use-pokemon.ts#L13), so that the list keeps only that type.",
-                      "coreChange": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 13,
-                        "lineEnd": 13
-                      },
-                      "category": "statement",
-                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-                      "codeBlockIds": [
-                        "src/routes/pokemon/components/PokemonFilters.tsx#render-event@13:37",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#function@13:47",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#variable@13:48",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#condition@13:66"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w14.4",
-                      "title": "Added one option per Pokemon type",
-                      "declaration": "PokemonFilters › Markup loop :15",
-                      "reading": "The author added a loop that renders one `<option>` per name of [`POKEMON_TYPES`](code:src/types/pokemon.ts#POKEMON_TYPES), with the name as its value and as its text.",
-                      "coreChange": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 15,
-                        "lineEnd": 19
-                      },
-                      "category": "statement",
-                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-                      "codeBlockIds": [
-                        "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@15:10",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#function@15:28",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#variable@15:29",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#render@16:11"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w14.5",
-                      "title": "Added the handler of the trainer select",
-                      "declaration": "PokemonFilters › select.onChange (2)",
-                      "reading": "The author added an `onChange` handler that calls [`setTrainerId()`](code:src/stores/pokemon-filters.ts#L18-20) with `Number(event.target.value)`, or with `null` when the picked value is [`EVERY`](code:src/routes/pokemon/components/PokemonFilters.tsx#L6). [`usePokemon()` puts the trainer in its query key](code:src/hooks/use-pokemon.ts#L16), so that the page requests the Pokemon of that trainer.",
-                      "coreChange": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 21,
-                        "lineEnd": 21
-                      },
-                      "category": "statement",
-                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-                      "codeBlockIds": [
-                        "src/routes/pokemon/components/PokemonFilters.tsx#render-event@21:42",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#function@21:52",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#variable@21:53",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#condition@21:76"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w14.6",
+                      "id": "w12.4",
                       "title": "Added one option per trainer",
-                      "declaration": "PokemonFilters › Markup loop :23",
-                      "reading": "The author added a loop that renders one `<option>` per trainer, with the `id` as its value and the `name` as its text. [The handler of the select turns the value back into a number](code:src/routes/pokemon/components/PokemonFilters.tsx#L21).",
+                      "declaration": "PokemonFilters › Markup loop :12",
+                      "reading": "The author added a loop that renders one `<option>` per trainer, with the `id` as its value and the `name` as its text. [The handler of the select turns the value back into a number](code:src/routes/pokemon/components/PokemonFilters.tsx#L10), so that the store holds the id as a number.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
-                        "lineStart": 23,
-                        "lineEnd": 27
+                        "lineStart": 12,
+                        "lineEnd": 16
                       },
                       "category": "statement",
-                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
+                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
                       "codeBlockIds": [
-                        "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@23:10",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#function@23:23",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#variable@23:24",
-                        "src/routes/pokemon/components/PokemonFilters.tsx#render@24:11"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w14.7",
-                      "title": "Added the button that clears the filters",
-                      "declaration": "PokemonFilters › Button.onClick",
-                      "reading": "The author added a `<Button variant=\"ghost\">` with the text `Clear filters` that calls [`clear()`](code:src/stores/pokemon-filters.ts#L21-23) when clicked. Both selects show their `Every` option again, and the page lists every Pokemon.",
-                      "coreChange": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 29,
-                        "lineEnd": 29
-                      },
-                      "category": "statement",
-                      "traceNodeId": "src/routes/pokemon/components/PokemonFilters.tsx#component@8:1",
-                      "codeBlockIds": [
-                        "src/routes/pokemon/components/PokemonFilters.tsx#render-event@29:31"
+                        "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@12:8",
+                        "src/routes/pokemon/components/PokemonFilters.tsx#function@12:21",
+                        "src/routes/pokemon/components/PokemonFilters.tsx#variable@12:22",
+                        "src/routes/pokemon/components/PokemonFilters.tsx#render@13:9"
                       ],
                       "children": []
                     }
@@ -3010,10 +2457,10 @@
               "path": "src/routes/pokemon/index.tsx",
               "waypoints": [
                 {
-                  "id": "w15",
+                  "id": "w13",
                   "title": "Added `<PokemonPage />` to list the Pokemon",
                   "declaration": "PokemonPage",
-                  "reading": "The author added a page component `<PokemonPage />` that:\n\n- renders the heading `Pokemon` and [`<PokemonFilters />`](code:src/routes/pokemon/components/PokemonFilters.tsx#PokemonFilters)\n- loads the Pokemon that match the filters with [`usePokemon()`](code:src/hooks/use-pokemon.ts#usePokemon)\n- shows `Loading the Pokemon…` while they load, and `The Pokemon could not be loaded.` when the request fails\n- renders one line per Pokemon with its name, its level and [its types](code:src/lib/format.ts#formatTypes)\n\n[The route table renders it at `/pokemon`](code:src/router.tsx#L14), and [the header links to it](code:src/routes/root-layout.tsx#L11), so that a professor can browse the Pokemon.",
+                  "reading": "The author added a page component `<PokemonPage />` that:\n\n- renders the heading `Pokemon` and [`<PokemonFilters />`](code:src/routes/pokemon/components/PokemonFilters.tsx#PokemonFilters)\n- loads the Pokemon of the chosen trainer with [`usePokemon()`](code:src/hooks/use-pokemon.ts#usePokemon)\n- shows `Loading the Pokemon…` while they load, and `The Pokemon could not be loaded.` when the request fails\n- renders one line per Pokemon with its name, its level and [its types](code:src/lib/format.ts#formatTypes)\n\n[The route table renders it at `/pokemon`](code:src/router.tsx#L14), and [the header links to it](code:src/routes/root-layout.tsx#L11), so that a professor can browse the Pokemon.",
                   "coreChange": null,
                   "findings": [],
                   "range": {
@@ -3042,10 +2489,10 @@
                   ],
                   "children": [
                     {
-                      "id": "w15.1",
-                      "title": "Added the query of the Pokemon",
+                      "id": "w13.1",
+                      "title": "Added the read of the Pokemon query",
                       "declaration": "PokemonPage › pokemon",
-                      "reading": "The author added a call to [`usePokemon()`](code:src/hooks/use-pokemon.ts#usePokemon) that gives the filtered `pokemon` and the flags `isPending` and `isError`. [The three conditions below read them](code:src/routes/pokemon/index.tsx#L11-13).",
+                      "reading": "The author added a call to [`usePokemon()`](code:src/hooks/use-pokemon.ts#usePokemon) that gives the Pokemon of the chosen trainer as `pokemon`, and the flags `isPending` and `isError`. [The three conditions below read them](code:src/routes/pokemon/index.tsx#L11-13).",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -3060,10 +2507,10 @@
                       "children": []
                     },
                     {
-                      "id": "w15.2",
+                      "id": "w13.2",
                       "title": "Added the loading message of the Pokemon list",
                       "declaration": "PokemonPage › Markup condition :11",
-                      "reading": "The author added a condition that renders `<p>Loading the Pokemon…</p>` while the query is pending. [The filters stay above it](code:src/routes/pokemon/index.tsx#L10), so a professor can change them while the list loads.",
+                      "reading": "The author added a condition that renders `<p>Loading the Pokemon…</p>` while the query is pending. [The trainer select stays above it](code:src/routes/pokemon/index.tsx#L10), so a professor can pick another trainer while the list loads.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -3079,10 +2526,10 @@
                       "children": []
                     },
                     {
-                      "id": "w15.3",
+                      "id": "w13.3",
                       "title": "Added the error message of the Pokemon list",
                       "declaration": "PokemonPage › Markup condition :12",
-                      "reading": "The author added a condition that renders `<p>The Pokemon could not be loaded.</p>` when the query fails, as it does when [`request()` throws an `ApiError`](code:src/api/client.ts#L18).",
+                      "reading": "The author added a condition that renders `<p>The Pokemon could not be loaded.</p>` when the query fails, as it does when [`request()` throws an `ApiError`](code:src/api/client.ts#L18), so that a failed request shows a message in place of the list.",
                       "coreChange": null,
                       "findings": [],
                       "range": {
@@ -3098,7 +2545,7 @@
                       "children": []
                     },
                     {
-                      "id": "w15.4",
+                      "id": "w13.4",
                       "title": "Added the list of the Pokemon",
                       "declaration": "PokemonPage › Markup condition :13",
                       "reading": "The author added a condition that renders a `<ul>` once the Pokemon have loaded, with one `<li>` per Pokemon that shows its name, `Lv.` and its level, and the text of [`formatTypes()`](code:src/lib/format.ts#formatTypes).",
@@ -3107,10 +2554,10 @@
                         {
                           "id": "finding-empty-list-no-message",
                           "kind": "nit",
-                          "title": "`<PokemonPage />` renders an empty list when no Pokemon matches",
-                          "reading": "When the trainer has no Pokemon, or none of them has the chosen type, [`select` returns `[]`](code:src/hooks/use-pokemon.ts#L18). `[]` is truthy, so the condition renders an empty `<ul>`, and the professor sees the filters with nothing under them. A message for an empty list says that the filters match nothing, for one more condition.",
+                          "title": "`<PokemonPage />` renders an empty list when the trainer has no Pokemon",
+                          "reading": "When the API returns `[]` for the chosen trainer, [`fetchPokemon()` returns it as it is](code:src/api/pokemon.ts#L6). `[]` is truthy, so the condition renders an empty `<ul>`, and the professor sees the select with nothing under it. A message for an empty list says that there is no Pokemon to show, for one more condition.",
                           "trace": null,
-                          "solution": "      {pokemon && pokemon.length === 0 && <p>No Pokemon match these filters.</p>}\n      {pokemon && pokemon.length > 0 && (\n        <ul>\n          {pokemon.map((entry) => (\n            <li key={entry.id}>\n              {entry.name} Lv. {entry.level} {formatTypes(entry)}\n            </li>\n          ))}\n        </ul>\n      )}"
+                          "solution": "      {pokemon && pokemon.length === 0 && <p>No Pokemon to show.</p>}\n      {pokemon && pokemon.length > 0 && (\n        <ul>\n          {pokemon.map((entry) => (\n            <li key={entry.id}>\n              {entry.name} Lv. {entry.level} {formatTypes(entry)}\n            </li>\n          ))}\n        </ul>\n      )}"
                         }
                       ],
                       "range": {
@@ -3145,8 +2592,8 @@
                 "endColumn": 71,
                 "path": "src/types/pokemon.ts",
                 "lines": [
-                  8,
-                  15
+                  5,
+                  12
                 ],
                 "isLibrary": false
               },
@@ -3189,8 +2636,8 @@
                 "endColumn": 24,
                 "path": "src/types/pokemon.ts",
                 "lines": [
-                  8,
-                  15
+                  5,
+                  12
                 ],
                 "isLibrary": false
               },
@@ -3225,7 +2672,7 @@
                 ],
                 "usages": [
                   {
-                    "line": 17,
+                    "line": 11,
                     "startColumn": 19,
                     "endColumn": 31,
                     "path": "src/hooks/use-pokemon.ts",
@@ -3240,105 +2687,17 @@
             "references": [
               {
                 "line": 8,
-                "startColumn": 26,
-                "endColumn": 33,
-                "path": "src/types/pokemon.ts",
-                "lines": [
-                  8,
-                  15
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 8,
-                "startColumn": 41,
-                "endColumn": 52,
-                "path": "src/types/pokemon.ts",
-                "lines": [
-                  6,
-                  6
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 9,
-                "startColumn": 9,
-                "endColumn": 13,
-                "path": "src/hooks/use-pokemon.ts",
-                "lines": [
-                  8,
-                  8
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 9,
-                "startColumn": 26,
-                "endColumn": 33,
-                "path": "src/hooks/use-pokemon.ts",
-                "lines": [
-                  8,
-                  8
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 9,
-                "startColumn": 51,
-                "endColumn": 55,
-                "path": "src/hooks/use-pokemon.ts",
-                "lines": [
-                  8,
-                  8
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 9,
-                "startColumn": 59,
-                "endColumn": 66,
-                "path": "src/hooks/use-pokemon.ts",
-                "lines": [
-                  8,
-                  8
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 9,
-                "startColumn": 86,
-                "endColumn": 90,
-                "path": "src/hooks/use-pokemon.ts",
-                "lines": [
-                  8,
-                  8
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 13,
-                "startColumn": 15,
-                "endColumn": 32,
-                "path": "src/stores/pokemon-filters.ts",
-                "lines": [
-                  12,
-                  24
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 14,
                 "startColumn": 20,
                 "endColumn": 37,
                 "path": "src/stores/pokemon-filters.ts",
                 "lines": [
-                  12,
-                  24
+                  8,
+                  13
                 ],
                 "isLibrary": false
               },
               {
-                "line": 15,
+                "line": 9,
                 "startColumn": 9,
                 "endColumn": 17,
                 "path": "src/hooks/use-pokemon.ts",
@@ -3353,29 +2712,29 @@
                 }
               },
               {
-                "line": 16,
+                "line": 10,
                 "startColumn": 18,
                 "endColumn": 35,
                 "path": "src/hooks/use-pokemon.ts",
                 "lines": [
-                  6,
-                  6
+                  5,
+                  5
                 ],
                 "isLibrary": false
               },
               {
-                "line": 16,
+                "line": 10,
                 "startColumn": 37,
                 "endColumn": 46,
                 "path": "src/hooks/use-pokemon.ts",
                 "lines": [
-                  14,
-                  14
+                  8,
+                  8
                 ],
                 "isLibrary": false
               },
               {
-                "line": 17,
+                "line": 11,
                 "startColumn": 19,
                 "endColumn": 31,
                 "path": "src/api/pokemon.ts",
@@ -3386,35 +2745,13 @@
                 "isLibrary": false
               },
               {
-                "line": 17,
+                "line": 11,
                 "startColumn": 32,
                 "endColumn": 41,
                 "path": "src/hooks/use-pokemon.ts",
                 "lines": [
-                  14,
-                  14
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 18,
-                "startColumn": 51,
-                "endColumn": 58,
-                "path": "src/hooks/use-pokemon.ts",
-                "lines": [
                   8,
-                  10
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 18,
-                "startColumn": 66,
-                "endColumn": 70,
-                "path": "src/hooks/use-pokemon.ts",
-                "lines": [
-                  13,
-                  13
+                  8
                 ],
                 "isLibrary": false
               }
@@ -3422,12 +2759,12 @@
             "languageReferences": [],
             "exports": [
               {
-                "line": 12,
+                "line": 7,
                 "startColumn": 16,
                 "endColumn": 26,
                 "lines": [
-                  12,
-                  20
+                  7,
+                  13
                 ],
                 "usages": [
                   {
@@ -3483,8 +2820,8 @@
                 "endColumn": 44,
                 "path": "src/types/pokemon.ts",
                 "lines": [
-                  8,
-                  15
+                  5,
+                  12
                 ],
                 "isLibrary": false
               },
@@ -3680,18 +3017,18 @@
             "path": "src/routes/pokemon/components/PokemonFilters.tsx",
             "references": [
               {
-                "line": 9,
-                "startColumn": 60,
-                "endColumn": 77,
+                "line": 7,
+                "startColumn": 38,
+                "endColumn": 55,
                 "path": "src/stores/pokemon-filters.ts",
                 "lines": [
-                  12,
-                  24
+                  8,
+                  13
                 ],
                 "isLibrary": false
               },
               {
-                "line": 10,
+                "line": 8,
                 "startColumn": 34,
                 "endColumn": 45,
                 "path": "src/hooks/use-trainers.ts",
@@ -3702,253 +3039,121 @@
                 "isLibrary": false
               },
               {
-                "line": 13,
-                "startColumn": 21,
-                "endColumn": 25,
-                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "lines": [
-                  9,
-                  9
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 13,
-                "startColumn": 29,
-                "endColumn": 34,
-                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "lines": [
-                  6,
-                  6
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 13,
-                "startColumn": 57,
-                "endColumn": 64,
-                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "lines": [
-                  9,
-                  9
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 13,
-                "startColumn": 88,
-                "endColumn": 93,
-                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "lines": [
-                  6,
-                  6
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 13,
-                "startColumn": 126,
-                "endColumn": 137,
-                "path": "src/types/pokemon.ts",
-                "lines": [
-                  6,
-                  6
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 14,
-                "startColumn": 23,
+                "line": 10,
+                "startColumn": 19,
                 "endColumn": 28,
                 "path": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "lines": [
-                  6,
-                  6
+                  7,
+                  7
                 ],
                 "isLibrary": false
               },
               {
-                "line": 15,
-                "startColumn": 9,
-                "endColumn": 22,
-                "path": "src/types/pokemon.ts",
+                "line": 10,
+                "startColumn": 32,
+                "endColumn": 37,
+                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "lines": [
-                  1,
+                  4,
                   4
                 ],
                 "isLibrary": false
               },
               {
-                "line": 16,
-                "startColumn": 23,
-                "endColumn": 34,
+                "line": 10,
+                "startColumn": 60,
+                "endColumn": 72,
                 "path": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "lines": [
-                  15,
-                  15
+                  7,
+                  7
                 ],
                 "isLibrary": false
               },
               {
-                "line": 16,
-                "startColumn": 43,
-                "endColumn": 54,
+                "line": 10,
+                "startColumn": 96,
+                "endColumn": 101,
                 "path": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "lines": [
-                  15,
-                  15
+                  4,
+                  4
                 ],
                 "isLibrary": false
               },
               {
-                "line": 17,
-                "startColumn": 13,
-                "endColumn": 24,
-                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "lines": [
-                  15,
-                  15
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 21,
+                "line": 11,
                 "startColumn": 21,
-                "endColumn": 30,
+                "endColumn": 26,
                 "path": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "lines": [
-                  9,
-                  9
+                  4,
+                  4
                 ],
                 "isLibrary": false
               },
               {
-                "line": 21,
-                "startColumn": 34,
-                "endColumn": 39,
+                "line": 12,
+                "startColumn": 7,
+                "endColumn": 15,
                 "path": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "lines": [
-                  6,
-                  6
+                  8,
+                  8
                 ],
                 "isLibrary": false
               },
               {
-                "line": 21,
-                "startColumn": 62,
-                "endColumn": 74,
-                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "lines": [
-                  9,
-                  9
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 21,
-                "startColumn": 98,
-                "endColumn": 103,
-                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "lines": [
-                  6,
-                  6
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 22,
-                "startColumn": 23,
+                "line": 13,
+                "startColumn": 21,
                 "endColumn": 28,
                 "path": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "lines": [
-                  6,
-                  6
+                  12,
+                  12
                 ],
                 "isLibrary": false
               },
               {
-                "line": 23,
-                "startColumn": 9,
-                "endColumn": 17,
+                "line": 13,
+                "startColumn": 40,
+                "endColumn": 47,
                 "path": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "lines": [
-                  10,
-                  10
+                  12,
+                  12
                 ],
                 "isLibrary": false
               },
               {
-                "line": 24,
-                "startColumn": 23,
-                "endColumn": 30,
+                "line": 14,
+                "startColumn": 11,
+                "endColumn": 18,
                 "path": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "lines": [
-                  23,
-                  23
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 24,
-                "startColumn": 42,
-                "endColumn": 49,
-                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "lines": [
-                  23,
-                  23
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 25,
-                "startColumn": 13,
-                "endColumn": 20,
-                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "lines": [
-                  23,
-                  23
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 29,
-                "startColumn": 7,
-                "endColumn": 13,
-                "path": "src/components/ui/button.tsx",
-                "lines": [
-                  14,
-                  16
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 29,
-                "startColumn": 39,
-                "endColumn": 44,
-                "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                "lines": [
-                  9,
-                  9
+                  12,
+                  12
                 ],
                 "isLibrary": false
               }
             ],
             "languageReferences": [
               {
-                "line": 21,
-                "startColumn": 113,
-                "endColumn": 119,
+                "line": 10,
+                "startColumn": 111,
+                "endColumn": 117,
                 "name": "Number"
               }
             ],
             "exports": [
               {
-                "line": 8,
+                "line": 6,
                 "startColumn": 16,
                 "endColumn": 30,
                 "lines": [
-                  8,
-                  34
+                  6,
+                  19
                 ],
                 "usages": [
                   {
@@ -3971,8 +3176,8 @@
                 "endColumn": 58,
                 "path": "src/hooks/use-pokemon.ts",
                 "lines": [
-                  12,
-                  20
+                  7,
+                  13
                 ],
                 "isLibrary": false
               },
@@ -3982,8 +3187,8 @@
                 "endColumn": 21,
                 "path": "src/routes/pokemon/components/PokemonFilters.tsx",
                 "lines": [
-                  8,
-                  34
+                  6,
+                  19
                 ],
                 "isLibrary": false
               },
@@ -4258,29 +3463,7 @@
             "path": "src/stores/pokemon-filters.ts",
             "references": [
               {
-                "line": 5,
-                "startColumn": 8,
-                "endColumn": 19,
-                "path": "src/types/pokemon.ts",
-                "lines": [
-                  6,
-                  6
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 7,
-                "startColumn": 18,
-                "endColumn": 29,
-                "path": "src/types/pokemon.ts",
-                "lines": [
-                  6,
-                  6
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 12,
+                "line": 8,
                 "startColumn": 33,
                 "endColumn": 39,
                 "path": "src/stores/pokemon-filters.ts",
@@ -4295,68 +3478,35 @@
                 }
               },
               {
-                "line": 12,
+                "line": 8,
                 "startColumn": 40,
                 "endColumn": 59,
                 "path": "src/stores/pokemon-filters.ts",
                 "lines": [
-                  4,
-                  10
+                  3,
+                  6
                 ],
                 "isLibrary": false
               },
               {
-                "line": 16,
+                "line": 11,
                 "startColumn": 4,
                 "endColumn": 7,
                 "path": "src/stores/pokemon-filters.ts",
                 "lines": [
-                  12,
-                  12
+                  8,
+                  8
                 ],
                 "isLibrary": false
               },
               {
-                "line": 16,
-                "startColumn": 10,
-                "endColumn": 14,
-                "path": "src/stores/pokemon-filters.ts",
-                "lines": [
-                  15,
-                  15
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 19,
-                "startColumn": 4,
-                "endColumn": 7,
-                "path": "src/stores/pokemon-filters.ts",
-                "lines": [
-                  12,
-                  12
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 19,
+                "line": 11,
                 "startColumn": 10,
                 "endColumn": 19,
                 "path": "src/stores/pokemon-filters.ts",
                 "lines": [
-                  18,
-                  18
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 22,
-                "startColumn": 4,
-                "endColumn": 7,
-                "path": "src/stores/pokemon-filters.ts",
-                "lines": [
-                  12,
-                  12
+                  10,
+                  10
                 ],
                 "isLibrary": false
               }
@@ -4364,34 +3514,27 @@
             "languageReferences": [],
             "exports": [
               {
-                "line": 12,
+                "line": 8,
                 "startColumn": 13,
                 "endColumn": 30,
                 "lines": [
-                  12,
-                  24
+                  8,
+                  13
                 ],
                 "usages": [
                   {
-                    "line": 13,
-                    "startColumn": 15,
-                    "endColumn": 32,
-                    "path": "src/hooks/use-pokemon.ts",
-                    "text": "  const type = usePokemonFilters((state) => state.type)"
-                  },
-                  {
-                    "line": 14,
+                    "line": 8,
                     "startColumn": 20,
                     "endColumn": 37,
                     "path": "src/hooks/use-pokemon.ts",
                     "text": "  const trainerId = usePokemonFilters((state) => state.trainerId)"
                   },
                   {
-                    "line": 9,
-                    "startColumn": 60,
-                    "endColumn": 77,
+                    "line": 7,
+                    "startColumn": 38,
+                    "endColumn": 55,
                     "path": "src/routes/pokemon/components/PokemonFilters.tsx",
-                    "text": "  const { type, trainerId, setType, setTrainerId, clear } = usePokemonFilters()"
+                    "text": "  const { trainerId, setTrainerId } = usePokemonFilters()"
                   }
                 ]
               }

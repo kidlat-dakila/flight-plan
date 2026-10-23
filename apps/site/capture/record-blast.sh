@@ -9,7 +9,7 @@ trap 'agent-browser record stop >/dev/null 2>&1 || true; rm -rf "$WORK_DIR"' EXI
 source "$SCRIPT_DIR/browser.sh"
 source "$SCRIPT_DIR/review-clip.sh"
 
-BLAST_HEADING="#fixture-segment-1-blast-diagram-heading"
+BLAST_HEADING="#blast-diagram-heading"
 
 open_blast() {
   open_board_full_screen "$BLAST_HEADING"

@@ -54,7 +54,6 @@ open_demo_page() {
   local width="$1" height="$2" scheme="$3" url="$4"
   browse open "about:blank"
   open_page "$width" "$height" "$SCALE" "$scheme" "$url"
-  browse eval "document.querySelector('.demo-exit')?.remove()"
 }
 
 open_demo_review() {
