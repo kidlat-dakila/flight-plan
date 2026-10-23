@@ -37,6 +37,7 @@ On the page each node is a card. This entry holds the rules every card shares; e
 interface TraceDiagram {
   astCodeGroup: ASTCodeGroupGraph
   importGraphGroup: ImportGraphGroup
+  title: string | null
   description: string | null
   traceNodes: TraceNode[]
   traceNodeEdges: TraceNodeEdge[]
@@ -344,7 +345,8 @@ An agent reads and writes one node at a time. A node that carried its children w
 
 | What is drawn | From |
 |---|---|
-| The description of the diagram, above the board | The `description` of the diagram: its caption, in five sentences at most. A diagram nobody has described yet says "Not written yet." there. The board is named after the code of its changed nodes for a screen reader, and shows no title. |
+| The title of the diagram | The `title` of the diagram: the flow it shows, such as "Submit order flow diagram". When a segment's diagram is the only one on the page it is the heading of the Trace Diagram section, in place of "Trace Diagram". When there are several, the section keeps "Trace Diagram" as its heading and each title is the label of its diagram's tab. A diagram with no title yet keeps "Trace Diagram" as its heading, drawn as a skeleton while an agent is writing, and a tab is named after the code of its changed nodes. The board is named after the title for a screen reader. The section rail and the Review Navigator always say Trace Diagram. |
+| The description of the diagram, above the board | The `description` of the diagram: its caption, in five sentences at most. A diagram nobody has described yet says "Not written yet." there. |
 | A node, headed by the name of its code and the path of its file, with its type and its label below | A `TraceNode`. The path is cut to its last two folders and its file, such as `routes/orders/index.tsx`. A route card is headed by its route path, a router card reads Router for its type, a NestJS resolver Resolver, and a NestJS controller Controller. A node with no label has its header and its type alone. |
 | A node as added or modified | Its `diffCodeBlocks`. A node whose every line is new is added. |
 | A node inside another | Its place in `children`, drawn inside the card of its parent, as [Children](#children) says |
@@ -446,6 +448,7 @@ Collapsing a node hides the nodes it leads to, and focusing on a node shows only
 | Which nodes exist, their type, their blocks, which node is inside which and how they connect | The codegraph |
 | Which blocks of a node are trigger labels | The codegraph |
 | Which nodes are changed | The diff |
+| The title of the diagram | The agent, or the author on their own page. It names the flow the diagram shows, in six words at most, ending in "flow diagram": the action of one flow, two flows joined with "and", or the page or entry that three or more flows start from. Required on every diagram that has a node. |
 | The description of the diagram | The agent, or the author on their own page. It tells the diagram as text: where its paths start, what they run through and where they reach the change. Five sentences at most, and required on every diagram that has a node. |
 | Each node's label and description | The agent. A description tells how the node is reached and what it runs next, not the change. |
 | The label of each trigger label | The agent |
@@ -472,16 +475,16 @@ The author of a Flight Plan changes the diagram on their own page. Every change 
 
 Clearing the diagram and removing it are asked first: the page saves them only once the author confirms.
 
-**No change to the cards or the lines rewrites the description.** It stays as it was written, also after the cards and the lines it tells of changed, until the author edits it.
+**No change to the cards or the lines rewrites the title or the description.** They stay as they were written, also after the cards and the lines they tell of changed, until the author edits them.
 
 **A generated diagram is only changed by its author.** Nothing an author does elsewhere generates it again or adds, removes or moves a card: not arranging the segments, not changing the label or the files of a segment, not editing a context. Only the changes of this table change it.
 
 | Change | What is stored |
 |---|---|
 | Remove the diagram | The `traceDiagram` of the segment is `null` |
-| Clear the diagram | The diagram stays, with no nodes, no edges and no description |
-| Edit the description | The `description` of the diagram, as Markdown. An empty one is refused, and so is a code link to code the Flight Plan does not hold. |
-| Add a diagram | A diagram with no nodes, no edges and no description, drawn from no group |
+| Clear the diagram | The diagram stays, with no nodes, no edges, no title and no description |
+| Edit the title and the description | The `title` of the diagram, as plain text, and its `description`, as Markdown, saved together. An empty title or description is refused, and so is a code link to code the Flight Plan does not hold. |
+| Add a diagram | A diagram with no nodes, no edges, no title and no description, drawn from no group |
 | Drag a card | The `position` of every node at the top level, as drawn at the drop. A node with no `position` beside nodes that have one is stacked to the right of them. |
 | Draw a line | An edge with a `fromRowId` and a `toSide`. A line starts at the right of a row and ends at the left, the top or the bottom of another node: the side nearest to where the author drops it on that node. It joins no node to a node inside it. |
 | Remove a line | The edge is taken out. A line the codegraph drew is taken out by the two nodes it joins, with every line between their rows. |

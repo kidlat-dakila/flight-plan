@@ -1,6 +1,6 @@
 The Trace Diagram: how execution reaches the change, read like a
 debugging trace, from the code that starts a path to the changed code. A
-segment's `traceDiagram` is an object with a `description`, `nodes` and `edges`, or
+segment's `traceDiagram` is an object with a `title`, a `description`, `nodes` and `edges`, or
 `null` when the segment has no diagram.
 
 **Flight Plan draws it, and you write the words on it.** The nodes and the edges
@@ -88,6 +88,9 @@ rendered, and it does not say whether the connection is proven or assumed.
 
 ## What the reviewer sees
 
+- **The title names the flow.** When the diagram is the only one on the
+  page it is the heading of the section, and when there are several it is
+  the label of the diagram's tab.
 - **The description is read first.** It is shown above the board: the
   caption of the diagram, in five sentences at most. Until it is written
   the page says so.
@@ -130,8 +133,11 @@ With `update-nodes { segmentId, traceDiagram: [{ id, label, description, trigger
 
 A node inside another is written by its own `id`, like any other.
 
-With `update-nodes { segmentId, traceDiagramDescription }`:
+With `update-nodes { segmentId, traceDiagramTitle, traceDiagramDescription }`:
 
+- `traceDiagramTitle` — the name of the flow the diagram shows, in a few
+  words. Required on every segment that has a diagram. See
+  `traceDiagram.title`.
 - `traceDiagramDescription` — the caption of the diagram, in five sentences at
   most. Required on every segment that has a diagram. See
   `traceDiagram.description`.

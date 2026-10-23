@@ -122,6 +122,7 @@ export const createTraceNode = (id: string, overrides: Partial<TraceNode> = {}):
 export const createTrace = (traceNodes: readonly TraceNode[], traceNodeEdges: readonly TraceNodeEdge[] = []): TraceDiagram => ({
   astCodeGroup: { astGraphs: [], rootASTGraphs: [], codeBlocks: [], diffBlocks: [], diffContains: [], chainContains: [], diffChains: [] },
   importGraphGroup: [],
+  title: null,
   description: null,
   traceNodes,
   traceNodeEdges,

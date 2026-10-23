@@ -1696,6 +1696,7 @@
           }
         ],
         "traceDiagram": {
+          "title": null,
           "description": "This diagram shows how the route table opens the Pokemon page, and how [`usePokemon()`](code:src/hooks/use-pokemon.ts#usePokemon) loads the Pokemon through [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon) with the filters of the store. It also shows what happens when the user picks a type, picks a trainer or clears the filters, and how each choice reaches the filter store.",
           "traceNodes": [
             {

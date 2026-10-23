@@ -1678,6 +1678,7 @@
           }
         ],
         "traceDiagram": {
+          "title": null,
           "description": "This diagram shows how the router opens the Pokemon page, and how [`usePokemon()`](code:src/composables/use-pokemon.ts#usePokemon) loads the Pokemon through [`fetchPokemon()`](code:src/api/pokemon.ts#fetchPokemon) with the filters of the store. It also shows what happens when the user clears the filters, and how the click reaches the filter store.",
           "traceNodes": [
             {

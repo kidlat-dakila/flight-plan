@@ -1,5 +1,6 @@
-import { useState, type KeyboardEvent, type ReactNode } from "react"
+import { useId, useState, type KeyboardEvent, type ReactNode } from "react"
 import Button from "@/components/blocks/button"
+import Input from "@/components/blocks/input"
 import Prose from "@/components/Prose"
 import TraceDiagram, { type CardMoving, type TraceAuthoring, type TraceEdge, type TraceNode } from "@/components/TraceDiagram"
 import Unwritten from "@/components/Unwritten"
@@ -13,6 +14,7 @@ export type { CardMoving }
 interface BandDiagram {
   readonly anchorId: string
   readonly title: string
+  readonly writtenTitle: string | null
   readonly description: ProseBlocks | null
   readonly descriptionMarkdown: string
   readonly unwrittenLabel: string
@@ -21,13 +23,18 @@ interface BandDiagram {
   readonly edges: readonly TraceEdge[]
 }
 
+export interface TraceWriting {
+  readonly title: string
+  readonly description: string
+}
+
 export interface DescriptionEditing {
   readonly isWriting: boolean
   readonly isSaving: boolean
   readonly errorMessage: string | null
   readonly onTroubleshoot?: (() => void) | null
   readonly onEdit: () => void
-  readonly onSave: (markdown: string) => void
+  readonly onSave: (writing: TraceWriting) => void
   readonly onCancel: () => void
 }
 
@@ -83,6 +90,8 @@ const EDIT_DESCRIPTION_LABEL = "Edit"
 const NO_DIAGRAM_MESSAGE = "This segment has no Trace Diagram."
 const DESCRIPTION_SKELETON_LINE_COUNT = 3
 const DESCRIPTION_CLASSES = "max-w-[55rem] pb-4"
+const TITLE_FIELD_LABEL = "Title"
+const HEADING_SKELETON_CLASSES = "w-80 max-w-full"
 
 interface DescriptionProps {
   readonly heading: string
@@ -93,21 +102,38 @@ interface DescriptionProps {
   readonly onOpenCodeLink: (anchorId: string) => void
 }
 
+interface WritingFormProps {
+  readonly heading: string
+  readonly diagram: BandDiagram
+  readonly editing: DescriptionEditing
+  readonly renderEditor: (request: DescriptionEditorRequest) => ReactNode
+}
+
+const WritingForm = ({ heading, diagram, editing, renderEditor }: WritingFormProps) => {
+  const [title, setTitle] = useState(diagram.writtenTitle ?? "")
+  const titleId = useId()
+  return (
+    <div className="flex flex-col gap-3 pb-4">
+      <div className="flex max-w-[55rem] flex-col gap-1.5">
+        <label htmlFor={titleId} className="text-sm font-semibold text-foreground">{TITLE_FIELD_LABEL}</label>
+        <Input id={titleId} value={title} disabled={editing.isSaving} onChange={(event) => { setTitle(event.target.value) }} />
+      </div>
+      {renderEditor({
+        label: `${heading} description`,
+        markdown: diagram.descriptionMarkdown,
+        isSaving: editing.isSaving,
+        errorMessage: editing.errorMessage,
+        onTroubleshoot: editing.onTroubleshoot ?? null,
+        onSave: (markdown) => { editing.onSave({ title, description: markdown }) },
+        onCancel: editing.onCancel,
+      })}
+    </div>
+  )
+}
+
 const Description = ({ heading, diagram, codeLinks, editing, renderEditor, onOpenCodeLink }: DescriptionProps) => {
   if (editing?.isWriting === true && renderEditor !== null) {
-    return (
-      <div className="pb-4">
-        {renderEditor({
-          label: `${heading} description`,
-          markdown: diagram.descriptionMarkdown,
-          isSaving: editing.isSaving,
-          errorMessage: editing.errorMessage,
-          onTroubleshoot: editing.onTroubleshoot ?? null,
-          onSave: editing.onSave,
-          onCancel: editing.onCancel,
-        })}
-      </div>
-    )
+    return <WritingForm heading={heading} diagram={diagram} editing={editing} renderEditor={renderEditor} />
   }
   return diagram.description === null
     ? (
@@ -224,6 +250,19 @@ const DiagramTabs = ({ tabs, tabEditing, ...panel }: DiagramTabsProps) => {
   )
 }
 
+interface BandHeadingProps {
+  readonly heading: string
+  readonly diagram: BandDiagram | null
+  readonly isTabbed: boolean
+}
+
+const BandHeading = ({ heading, diagram, isTabbed }: BandHeadingProps) => {
+  if (diagram === null || isTabbed) return <>{heading}</>
+  return diagram.writtenTitle === null
+    ? <Unwritten isPending className={HEADING_SKELETON_CLASSES}>{heading}</Unwritten>
+    : <>{diagram.writtenTitle}</>
+}
+
 const TraceBand = ({
   anchorId,
   heading,
@@ -246,7 +285,9 @@ const TraceBand = ({
   return (
     <section id={anchorId} aria-labelledby={`${anchorId}-heading`} data-view-section-id={VIEW_SECTION_ID} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
       <div className="flex items-center gap-3 pb-4">
-        <h2 id={`${anchorId}-heading`} className="text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">{heading}</h2>
+        <h2 id={`${anchorId}-heading`} className="text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">
+          <BandHeading heading={heading} diagram={diagram} isTabbed={tabs.length > 0} />
+        </h2>
         {writeUpNotice === null ? null : <NoWriteUpTag label={writeUpNotice} />}
         {authoring !== null && diagram === null && tabs.length === 0
           ? <Button variant="link" size="sm" disabled={authoring.board.isPending} onClick={authoring.onAddDiagram}>{ADD_DIAGRAM_LABEL}</Button>

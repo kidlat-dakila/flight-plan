@@ -80,7 +80,7 @@ context, the answer is already in a call below.
 5 update-nodes { segmentId, context, title }
                                      why the change matters, and a very short title for it
 6 nodes { unfilled: true }           the next few pieces of work, code attached
-   update-nodes { segmentId, waypoints | traceDiagram | traceDiagramDescription }
+   update-nodes { segmentId, waypoints | traceDiagram | traceDiagramTitle | traceDiagramDescription }
    …repeat until only `context-description` is left
 7 nodes { unfilled: true, needs: ["context-description"] }
    update-nodes { segmentId, contextCodeBlocks }
@@ -113,8 +113,8 @@ before step 6            { fields: ["walkthrough.files", "walkthrough.files.wayp
                                     "walkthrough.files.waypoints.title", "walkthrough.files.waypoints.reading"] }
 before a trace label     { fields: ["traceDiagram", "traceDiagram.nodes.label", "traceDiagram.nodes.description",
                                     "traceDiagram.nodes.triggerLabels.label"] }
-before a trace description
-                         { fields: ["traceDiagram.description"] }
+before a trace title and description
+                         { fields: ["traceDiagram.title", "traceDiagram.description"] }
 before a finding         { fields: ["walkthrough.files.waypoints.findings"] }
 before step 7            { fields: ["contextCodeBlocks", "contextCodeBlocks.description"] }
 ```
@@ -223,13 +223,13 @@ nodes { unfilled: true, limit: 10 }
     → the next pieces of work, each with:
         segmentId the segment it belongs to, which the write names
         needs     what to write: title, reading, segment-title, label, trigger-label,
-                  trace-description …
+                  trace-title, trace-description …
         node      what it holds now
         code      the lines it covers, with what the change did to them
         lineage   its ancestors, for a nested waypoint
 update-nodes { segmentId, waypoints: [{ id, title, reading }],
                traceDiagram: [{ id, label, description, triggerLabels: [{ codeBlockId, label }] }],
-               traceDiagramDescription }
+               traceDiagramTitle, traceDiagramDescription }
 nodes { unfilled: true }    → total falls
 …until total is 0
 ```
@@ -258,13 +258,16 @@ the call names, a code link that does not resolve, a `question` carrying a
 solution. A batch is all or nothing. Fix the entry it names and send the batch
 again. Do not work around a refusal.
 
-**Every Trace Diagram needs a description.** It is the diagram told in
-words, in five sentences at most, and the reviewer reads it above the diagram.
-`nodes` hands it out as `trace-description`, after the nodes of its diagram,
-with the diagram's nodes and edges. Write it with
-`update-nodes { segmentId, traceDiagramDescription }` once the labels of that
-diagram are written, so it uses their words. `complete` refuses an artifact
-where a diagram has none.
+**Every Trace Diagram needs a title and a description.** The title names the
+flow the diagram shows in a few words, and the reviewer reads it as the
+heading of the diagram, or as its tab when there are several. The description
+is the diagram told in words, in five sentences at most, and the reviewer
+reads it above the diagram. `nodes` hands them out as `trace-title` and
+`trace-description`, after the nodes of their diagram, with the diagram's
+nodes and edges. Write both with
+`update-nodes { segmentId, traceDiagramTitle, traceDiagramDescription }` once
+the labels of that diagram are written, so they use their words. `complete`
+refuses an artifact where a diagram has no title or no description.
 
 **Decide which waypoints carry `coreChange`** from
 `get-instructions { fields: ["walkthrough.files.waypoints.coreChange"] }`.

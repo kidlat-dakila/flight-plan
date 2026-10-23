@@ -271,6 +271,21 @@ export const traceDiagramSchema = z
   .strictObject({
     astCodeGroup: z.custom<ASTCodeGroupGraph>(isReference),
     importGraphGroup: z.custom<ImportGraphGroup>(Array.isArray),
+    title: z
+      .string()
+      .register(configurations, {
+        version: 0.1,
+        configurationType: "editable",
+        _ui: {
+          title: "Trace Diagram title",
+          description: "The name of the flow the diagram shows, in a few words.",
+        },
+        fieldDescription: "traceDiagram.title.md",
+        exampleValue: "Submit order flow diagram",
+        defaultInstruction: "traceDiagram.title.md",
+      })
+      .nullable()
+      .default(null),
     description: z
       .string()
       .register(configurations, {

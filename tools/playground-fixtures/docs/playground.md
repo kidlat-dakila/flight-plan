@@ -17,7 +17,7 @@ The test cases live in `tools/playground-fixtures/test-cases/`. The codegraph it
 | **Case** | One test: a repository, a change to it, and the snapshot of what the codegraph builds from them. |
 | **Case repository** | The files in a kind's `repo/` folder. It is the repository *before* the change. |
 | **Context** | A Markdown text that says what the diffs of one segment of a case change. Each segment of the snapshot holds its own, under the segment's title. |
-| **Written parts** | What an agent writes in a review, as opposed to what the codegraph generates: the title and the context of each segment, and the prose of the diagrams and the walkthrough (the description of a Trace Diagram, a label and a description for a trace node, a label for each of its trigger labels, an impact type and an impact reason for a blast file, a title, a reading and the findings of a waypoint). They are in the snapshot only, never in a test. |
+| **Written parts** | What an agent writes in a review, as opposed to what the codegraph generates: the title and the context of each segment, and the prose of the diagrams and the walkthrough (the title and the description of a Trace Diagram, a label and a description for a trace node, a label for each of its trigger labels, an impact type and an impact reason for a blast file, a title, a reading and the findings of a waypoint). They are in the snapshot only, never in a test. |
 | **Snapshot** | The committed JSON file of a case: its title, its diff and its codegraph with the written parts in it, a context in each segment. It is a complete review of the change. |
 | **Fixture** | A snapshot as another project reads it, through `src/index.ts`. A fixture case is a kind, and a review artifact fixture is one snapshot. |
 | **Diff** | A unified diff text written in the test. Applying the diffs of a case to the case repository gives the repository *after* the change. |
@@ -352,7 +352,7 @@ A snapshot is a complete review of its change, so it holds what an agent writes 
 | What | Where in the snapshot | Fields |
 |---|---|---|
 | A segment | `codegraph.segments[]` | `title`, and `context`, one line of Markdown per entry |
-| A Trace Diagram | `traceDiagram` | `description`, required on every segment that has a diagram |
+| A Trace Diagram | `traceDiagram` | `title` and `description`, required on every segment that has a diagram |
 | A trace node | `traceDiagram.traceNodes[]`, and the `children[]` of a node at any depth | `label`, `description` |
 | A trigger label of a trace node | `triggerLabels[]` of a node | `label` |
 | A block label of a trace node | `blockLabels[]` of a node | `label` |
@@ -395,7 +395,7 @@ A snapshot whose written parts are empty is a draft: every node has only the nam
 `expectCaseSnapshot(codegraph)` compares what the codegraph generates, and nothing an agent writes:
 
 1. It reads the committed snapshot of the case.
-2. It carries the written parts of that snapshot over to the codegraph it was handed: a segment, with its title, its context and the description of its Trace Diagram, by its place, a trace node by `id` at any depth, a trigger label by its `codeBlockId`, a blast file by `path`, a file by `path`, a waypoint by `declaration`, with its findings.
+2. It carries the written parts of that snapshot over to the codegraph it was handed: a segment, with its title, its context and the title and description of its Trace Diagram, by its place, a trace node by `id` at any depth, a trigger label by its `codeBlockId`, a blast file by `path`, a file by `path`, a waypoint by `declaration`, with its findings.
 3. It compares the result with the committed file.
 
 So rewording a context, a label or a reading never fails a case, and a change in a node, an edge, a ring, a line range or anything else that is generated always does. `nx run playground-fixtures:snapshot` rewrites what is generated and keeps what is written. What was written for a node, a file or a waypoint the codegraph no longer has is dropped by that rewrite, and shows in `git diff`.

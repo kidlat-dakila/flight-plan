@@ -12,6 +12,7 @@ export const WORK_KINDS = [
   "label",
   "trigger-label",
   "block-label",
+  "trace-title",
   "trace-description",
   "solution",
   "context-description",
@@ -115,6 +116,17 @@ const blockLabelWork = (segment: Segment, node: TraceNode): Work[] =>
       message: `The block \`${listed.codeBlock.id}\` of \`${node.id}\` has no label. Say what the block does, starting with a verb.`,
     } as const))
 
+const titleWork = (segment: Segment): Work[] =>
+  isTraceDescriptionRequired(segment) && segment.traceDiagram?.title === null
+    ? [{
+        target: "trace-diagram",
+        id: null,
+        segmentId: segment.id,
+        needs: "trace-title",
+        message: "The Trace Diagram has no title. Name the flow it shows in a few words, ending in \"flow diagram\".",
+      }]
+    : []
+
 const descriptionWork = (segment: Segment): Work[] =>
   isTraceDescriptionRequired(segment) && segment.traceDiagram?.description === null
     ? [{
@@ -140,7 +152,7 @@ const nodeWork = (segment: Segment): Work[] =>
     ...(node.rows === undefined ? [...triggerLabelWork(segment, node), ...blockLabelWork(segment, node)] : []),
   ])
 
-const traceWork = (segment: Segment): Work[] => [...nodeWork(segment), ...descriptionWork(segment)]
+const traceWork = (segment: Segment): Work[] => [...nodeWork(segment), ...titleWork(segment), ...descriptionWork(segment)]
 
 const segmentWork = (segment: Segment, isTitled: boolean): Work[] => [
   ...blastWork(segment),

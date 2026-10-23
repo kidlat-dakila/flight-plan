@@ -22,7 +22,7 @@ diff marks. The reviewer is already reading it while you write.
 | A segment's title and its context | The title, copied from the change |
 | | Which files have a section, their paths and their order |
 | A waypoint's title, reading, core-change note and findings | Which waypoints exist, the declaration each is about, and its lines |
-| A Trace Diagram's description, a node's label and description, and the label of each of its trigger labels | Which nodes exist, how they connect, which node is inside which, and which trigger labels a node has |
+| A Trace Diagram's title and description, a node's label and description, and the label of each of its trigger labels | Which nodes exist, how they connect, which node is inside which, and which trigger labels a node has |
 | A Blast Diagram file's impact type and impact reason, on a file the change did not touch | Which files exist, which the change touched and how they import each other |
 | A context code block's description, where the block is required | Which code blocks are listed, and which are required |
 | A `code:` link in a sentence | The code a link shows, and every diff mark |
@@ -34,7 +34,7 @@ file, a waypoint or a node, and no tool takes a line number for a waypoint.
 ## What this review asks you to write
 
 Each node says whether this review asks you to write it: `isRequired` on a
-waypoint, a Trace Diagram node, a Trace Diagram (its description) and a Blast
+waypoint, a Trace Diagram node, a Trace Diagram (its title and description) and a Blast
 Diagram file, and `isContextRequired` on a segment (its title and context).
 Write only the nodes marked `true`. A write to any other node is refused.
 `nodes` lists only the work on required nodes, and `complete` succeeds once
@@ -53,7 +53,7 @@ nodes are then marked required, and Flight Plan tells you.
       "id": "3f9a1c2e",
       "title": "<a very short text of the context>",
       "context": "<Markdown>",
-      "traceDiagram": { "description": "…", "nodes": [...], "edges": [...] }, // or null when the segment has none
+      "traceDiagram": { "title": "…", "description": "…", "nodes": [...], "edges": [...] }, // or null when the segment has none
       "blastDiagram": { "nodes": [...], "edges": [...], "importBound": { "nodes": [...], "edges": [...] } },   // or null when the segment has none
       "walkthrough": {
         "files": [{ "path": "…", "waypoints": [...] }]
@@ -82,7 +82,7 @@ names a `segmentId`, and any segment of the artifact will do.
 | `get-instructions` | How to write each field, for the configuration the reviewer chose |
 | `read` | One part of the artifact: `overview` to get oriented, `diff` for the change |
 | `nodes` | What is still unwritten, each piece with the code it covers |
-| `update-nodes` | Every word you write, on one segment, in one batch: its title, context and Trace Diagram description by name, and its waypoints, diagram nodes and context code blocks by id. Answers with how many nodes are complete and how many are not |
+| `update-nodes` | Every word you write, on one segment, in one batch: its title, context and Trace Diagram title and description by name, and its waypoints, diagram nodes and context code blocks by id. Answers with how many nodes are complete and how many are not |
 | `complete` | Says the artifact is finished, and checks it |
 
 ## What is refused
@@ -98,10 +98,10 @@ none of it, and the refusal names the entry.
 - A `question` carrying a trace or a solution.
 - An `impactType` or an `impactReason` on a file of the change.
 - A `breaks` or a `behaviour-changes` with no `impactReason`, or an `impactReason` on an `unaffected` file.
-- A `traceDiagramDescription` on a segment that has no Trace Diagram.
+- A `traceDiagramTitle` or a `traceDiagramDescription` on a segment that has no Trace Diagram.
 - A `position` on a nested waypoint, past the end of its file, or given to two
   waypoints of one file.
 - On `complete`: an empty context, a segment with no title, a
-  waypoint with no title or no reading, a Trace Diagram with no description, a Trace Diagram node or one of its trigger labels with no
+  waypoint with no title or no reading, a Trace Diagram with no title or no description, a Trace Diagram node or one of its trigger labels with no
   label, a file the change reaches that nobody assessed, or a `bug`, `risk` or
   `nit` with no solution.

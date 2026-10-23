@@ -101,7 +101,7 @@ const writeEverything = (artifact: ReviewArtifact): ReviewArtifact => ({
     context: "Estimates depend on the zone now.",
     traceDiagram: segment.traceDiagram === null
       ? null
-      : { ...segment.traceDiagram, description: "A shopper opens the cart, and the estimate is read.", traceNodes: segment.traceDiagram.traceNodes.map(writeTraceNode) },
+      : { ...segment.traceDiagram, title: "Open cart flow diagram", description: "A shopper opens the cart, and the estimate is read.", traceNodes: segment.traceDiagram.traceNodes.map(writeTraceNode) },
     walkthrough: {
       files: segment.walkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map(writeWaypoint) })),
     },

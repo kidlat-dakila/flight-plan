@@ -1495,6 +1495,7 @@
           }
         ],
         "traceDiagram": {
+          "title": null,
           "description": "This diagram shows how the Pokemon router registers the routes of `/api/pokemon` and `/api/pokemon/{pokemon_id}`. It also shows what happens when a request reaches one of them, and how the Pokemon reaches the database through the session.",
           "traceNodes": [
             {

@@ -39,6 +39,7 @@ const MISSING_BLOCK_MESSAGE = "This code block is no longer in the file."
 const HELD_CARD_MESSAGE = "This code already has a card on the diagram."
 const LINES_OUTSIDE_FILE_MESSAGE = "These lines are not in the file."
 const BACKWARDS_LINES_MESSAGE = "The first line of a row cannot come after its last line."
+const EMPTY_TITLE_MESSAGE = "Write the title. It names the flow the diagram shows."
 const EMPTY_DESCRIPTION_MESSAGE = "Write the description. It tells the diagram in words."
 const NEW_CARD_SIDE = "left"
 const EDGE_END_SEPARATOR = " -> "
@@ -225,18 +226,20 @@ const planCardChange = (drawing: Drawing, edit: EditOf<"change-card">): PlannedD
   return plan(drawing, { ...traceDiagram, traceNodes: changed, traceNodeEdges: traceDiagram.traceNodeEdges.filter((edge) => !isCutOff(edge)) }, edit.nodeId)
 }
 
-const planDescription = (drawing: Drawing, written: string): PlannedDiagramEdit => {
-  const description = written.trim()
+const planDescription = (drawing: Drawing, edit: Extract<DiagramEdit, { readonly kind: "describe" }>): PlannedDiagramEdit => {
+  const title = edit.title.trim()
+  const description = edit.description.trim()
+  if (title === "") return reject(EMPTY_TITLE_MESSAGE)
   if (description === "") return reject(EMPTY_DESCRIPTION_MESSAGE)
   const unresolvedLinkIds = unresolvedLinkIdsIn([description], drawing.artifact.sources)
   if (unresolvedLinkIds.length > 0) return reject(unresolvedLinksMessage(unresolvedLinkIds))
-  return plan(drawing, { ...drawing.traceDiagram, description })
+  return plan(drawing, { ...drawing.traceDiagram, title, description })
 }
 
 const planOnDiagram = (drawing: Drawing, edit: Exclude<DiagramEdit, { readonly kind: "add-diagram" }>, cardText: string | null): PlannedDiagramEdit => {
   if (edit.kind === "remove-diagram") return plan(drawing, null)
   if (edit.kind === "clear-diagram") return plan(drawing, createEmptyTrace())
-  if (edit.kind === "describe") return planDescription(drawing, edit.description)
+  if (edit.kind === "describe") return planDescription(drawing, edit)
   if (edit.kind === "move-cards") return planCardMoves(drawing, edit.places)
   if (edit.kind === "add-line") return planLine(drawing, edit)
   if (edit.kind === "remove-line") return planLineRemoval(drawing, edit)

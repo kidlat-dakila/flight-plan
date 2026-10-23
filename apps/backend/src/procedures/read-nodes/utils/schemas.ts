@@ -15,7 +15,7 @@ export const readNodesInputShape = {
     .array(z.enum(WORK_KINDS))
     .min(1)
     .optional()
-    .describe("For `unfilled`: only these kinds of work. `impact` is a file of the Blast Diagram nobody assessed; `label` is a Trace Diagram node still showing its declaration's name; `trigger-label` is an event or a data fetch of a node with no label; `block-label` is an argument, a state, a hook, an effect or a step of a node with no label; `trace-description` is a Trace Diagram with no description, handed out with its nodes and edges; `context-description` is a context code block with no description: code of the repository with its lines and the code that uses it, a name of a library with an import statement, or a name of the language alone."),
+    .describe("For `unfilled`: only these kinds of work. `impact` is a file of the Blast Diagram nobody assessed; `label` is a Trace Diagram node still showing its declaration's name; `trigger-label` is an event or a data fetch of a node with no label; `block-label` is an argument, a state, a hook, an effect or a step of a node with no label; `trace-title` is a Trace Diagram with no title and `trace-description` one with no description, both handed out with its nodes and edges; `context-description` is a context code block with no description: code of the repository with its lines and the code that uses it, a name of a library with an import statement, or a name of the language alone."),
   segmentId: segmentIdShape,
   limit: z.number().int().positive().optional().describe("For `unfilled`: how many to return. Default 10."),
   maxLines: z.number().int().positive().optional().describe("Most lines of code per item. Default 120. The rest is counted, not sent."),

@@ -19,6 +19,7 @@ describe("unwrittenWork", () => {
       "waypoint:w3:title",
       "waypoint:w3:reading",
       "trace-node:j-subtotal:label",
+      "trace-diagram::trace-title",
       "trace-diagram::trace-description",
     ])
   })
@@ -99,12 +100,13 @@ describe("unwrittenWork", () => {
     ])
   })
 
-  it("asks a description of a Trace Diagram that has a node and none of one that is described or empty", () => {
+  it("asks a title and a description of a Trace Diagram that has a node, and none of one that has them or is empty", () => {
     const withTrace = (traceDiagram: ReturnType<typeof draftTraceOf>) => ({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, traceDiagram }] })
     const drawn = draftTraceOf([DRAFT_TRACE_NODE])
 
-    expect(needsOf(null, unwrittenWork(withTrace(drawn)))).toStrictEqual(["context", "trace-description"])
-    expect(needsOf(null, unwrittenWork(withTrace({ ...drawn, description: "A cart is shown, and its total is summed." })))).toStrictEqual(["context"])
+    expect(needsOf(null, unwrittenWork(withTrace(drawn)))).toStrictEqual(["context", "trace-title", "trace-description"])
+    expect(needsOf(null, unwrittenWork(withTrace({ ...drawn, description: "A cart is shown, and its total is summed." })))).toStrictEqual(["context", "trace-title"])
+    expect(needsOf(null, unwrittenWork(withTrace({ ...drawn, title: "View cart flow diagram", description: "A cart is shown, and its total is summed." })))).toStrictEqual(["context"])
     expect(needsOf(null, unwrittenWork(withTrace(draftTraceOf([]))))).toStrictEqual(["context"])
   })
 

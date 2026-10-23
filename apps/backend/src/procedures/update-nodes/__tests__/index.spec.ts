@@ -38,7 +38,7 @@ describe("updateNodes", () => {
       }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", nodes: { complete: 1, incomplete: 7 }, unwritten: { total: 9 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", nodes: { complete: 1, incomplete: 7 }, unwritten: { total: 10 } })
     await expect(waypointOf(context, "w3")).resolves.toStrictEqual({
       id: "w3",
       declaration: "subtotal",
@@ -61,7 +61,7 @@ describe("updateNodes", () => {
       blastDiagram: [{ path: "src/cart/CartTotal.tsx", impactType: "unaffected" }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 2 entries.", unwritten: { total: 8 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 2 entries.", unwritten: { total: 9 } })
     const artifact = await context.reviewStore.findArtifact(KEY)
     expect(artifact?.segments[0]).toMatchObject({
       traceDiagram: { traceNodes: [{ id: "j-subtotal", label: "Rounds the cart total once" }] },
@@ -124,17 +124,18 @@ describe("updateNodes", () => {
       ...SEGMENT_KEY,
       title: "Rounding moves to the total",
       context: markdown,
+      traceDiagramTitle: "View cart flow diagram",
       traceDiagramDescription: "When a cart is shown, the total is summed and rounded once.",
       waypoints: [{ id: "w1", title: "Returned zero" }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 4 entries.", unwritten: { total: 8 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 5 entries.", unwritten: { total: 8 } })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       segments: [{
         id: "all",
         title: "Rounding moves to the total",
         context: markdown,
-        traceDiagram: { description: "When a cart is shown, the total is summed and rounded once." },
+        traceDiagram: { title: "View cart flow diagram", description: "When a cart is shown, the total is summed and rounded once." },
         walkthrough: { files: [{ path: PRICE_PATH, waypoints: [{ title: "Returned zero" }] }, { path: SUBTOTAL_PATH }] },
       }],
     })
@@ -170,12 +171,15 @@ describe("updateNodes", () => {
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toStrictEqual(unrequiredW1)
   })
 
-  it("refuses a Trace Diagram description on a segment that has no diagram", async () => {
+  it("refuses a Trace Diagram title or description on a segment that has no diagram", async () => {
     const context = await createArtifactContext(TWO_SEGMENT_ARTIFACT)
 
     const writing = await updateNodes({ ...KEY, segmentId: "first", title: "Rounding", traceDiagramDescription: "A cart is shown." }, context)
 
-    expect(messageOf(writing)).toBe("This segment has no Trace Diagram to describe. Nothing was written.")
+    expect(messageOf(writing)).toBe("This segment has no Trace Diagram to title or describe. Nothing was written.")
+    await expect(updateNodes({ ...KEY, segmentId: "first", traceDiagramTitle: "View cart flow diagram" }, context)).resolves.toMatchObject({
+      message: "This segment has no Trace Diagram to title or describe. Nothing was written.",
+    })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ segments: [{ title: TWO_SEGMENT_ARTIFACT.segments[0].title }, {}] })
   })
 
@@ -191,7 +195,7 @@ describe("updateNodes", () => {
   it("refuses a call that writes nothing", async () => {
     const context = await createArtifactContext()
 
-    await expect(updateNodes(SEGMENT_KEY, context)).resolves.toMatchObject({ kind: "rejected", message: "Give at least one of title, context, traceDiagramDescription, waypoints, trace, blast or contextCodeBlocks. Nothing was written." })
+    await expect(updateNodes(SEGMENT_KEY, context)).resolves.toMatchObject({ kind: "rejected", message: "Give at least one of title, context, traceDiagramTitle, traceDiagramDescription, waypoints, trace, blast or contextCodeBlocks. Nothing was written." })
   })
 
   it("rejects a review target with no artifact", async () => {

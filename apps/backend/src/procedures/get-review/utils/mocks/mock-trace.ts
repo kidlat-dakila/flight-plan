@@ -96,11 +96,18 @@ const nodeOf = (mock: MockTraceNode, sources: readonly SourceFile[]): TraceNode 
 
 const listNodes = (nodes: readonly TraceNode[]): TraceNode[] => nodes.flatMap((node) => [node, ...listNodes(node.children)])
 
+export interface MockTraceWriting {
+  readonly title: string | null
+  readonly description: string | null
+}
+
+const UNWRITTEN_TRACE: MockTraceWriting = { title: null, description: null }
+
 export const mockTrace = (
   sources: readonly SourceFile[],
   nodes: readonly MockTraceNode[],
   edges: readonly MockTraceEdge[],
-  description: string | null = null,
+  { title, description }: MockTraceWriting = UNWRITTEN_TRACE,
 ): TraceDiagram => {
   const traceNodes = nodes.map((node) => nodeOf(node, sources))
   const everyNode = listNodes(traceNodes)
@@ -116,6 +123,7 @@ export const mockTrace = (
       diffChains: [],
     },
     importGraphGroup: [],
+    title,
     description,
     traceNodes,
     traceNodeEdges: edges.map(([from, to]) => ({ id: [from, to].join(EDGE_ID_SEPARATOR), from, to })),

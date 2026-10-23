@@ -23,6 +23,7 @@ export interface StoredTraceNode {
 }
 
 export interface StoredTraceDiagram {
+  readonly title: string | null
   readonly description: string | null
   readonly traceNodes: readonly StoredTraceNode[]
   readonly traceNodeEdges: readonly TraceNodeEdge[]
@@ -59,7 +60,8 @@ const storeNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, c
   blockLabels: blockLabels.map(storeBlockLabel),
 })
 
-export const storeTraceDiagram = ({ description, traceNodes, traceNodeEdges }: TraceDiagram): StoredTraceDiagram => ({
+export const storeTraceDiagram = ({ title, description, traceNodes, traceNodeEdges }: TraceDiagram): StoredTraceDiagram => ({
+  title,
   description,
   traceNodes: traceNodes.map(storeNode),
   traceNodeEdges,
@@ -89,6 +91,7 @@ export const linkTraceDiagram = (stored: StoredTraceDiagram, astCodeGroup: ASTCo
   return {
     astCodeGroup,
     importGraphGroup,
+    title: stored.title,
     description: stored.description,
     traceNodes: stored.traceNodes.map((node) => linkNode(node, blockById)),
     traceNodeEdges: stored.traceNodeEdges,

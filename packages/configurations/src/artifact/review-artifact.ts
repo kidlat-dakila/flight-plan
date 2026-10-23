@@ -135,6 +135,7 @@ export interface TraceNodeEdge {
 export interface TraceDiagram {
   readonly astCodeGroup: ASTCodeGroupGraph
   readonly importGraphGroup: ImportGraphGroup
+  readonly title: string | null
   readonly description: string | null
   readonly traceNodes: readonly TraceNode[]
   readonly traceNodeEdges: readonly TraceNodeEdge[]

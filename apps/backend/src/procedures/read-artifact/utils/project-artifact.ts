@@ -49,6 +49,7 @@ const flatTraceOf = (segment: Segment): unknown =>
   segment.traceDiagram === null
     ? null
     : {
+        title: segment.traceDiagram.title,
         description: segment.traceDiagram.description,
         isDescriptionRequired: segment.traceDiagram.isRequired,
         nodes: flattenTraceNodes(segment.traceDiagram.traceNodes),
@@ -65,6 +66,7 @@ const segmentOverviewOf = (segment: Segment): unknown => ({
   traceDiagram: segment.traceDiagram === null
     ? null
     : {
+        isTitleWritten: segment.traceDiagram.title !== null,
         isDescriptionWritten: segment.traceDiagram.description !== null,
         isDescriptionRequired: segment.traceDiagram.isRequired,
         nodes: traceStubsOf(segment),

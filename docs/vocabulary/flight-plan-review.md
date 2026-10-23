@@ -62,7 +62,7 @@ The reviewer asks the agent to write a review up from the review page, choosing 
 | `walkthroughOrder` | The chosen [walkthrough order](code-walkthrough.md#order) |
 | `isSegmented` | Whether the review is split into segments |
 
-A count is of the parts still unwritten that choosing the section would require: the context of each segment (the first alone with segments off), the labels and descriptions of the Trace Diagram, the files of the Blast Diagram to assess, the titles and readings of the waypoints. Findings count the waypoints the agent reads for them. The plan is asked for again with the sections the reviewer ticks, and its counts and labels follow. Unless the reviewer chose otherwise, the sections are those of the last write-up of this review, or else those the Write-ups of the [review preferences](review-preferences.md) mark Always; the configuration is the review's, or else the default; the order is the last write-up's, or else the preference's.
+A count is of the parts still unwritten that choosing the section would require: the context of each segment (the first alone with segments off), the labels and descriptions of the Trace Diagram and its title, the files of the Blast Diagram to assess, the titles and readings of the waypoints. Findings count the waypoints the agent reads for them. The plan is asked for again with the sections the reviewer ticks, and its counts and labels follow. Unless the reviewer chose otherwise, the sections are those of the last write-up of this review, or else those the Write-ups of the [review preferences](review-preferences.md) mark Always; the configuration is the review's, or else the default; the order is the last write-up's, or else the preference's.
 
 The review page opens the [Write-up Dialog](../DESIGN.md#write-up-dialog) on its own while `isOffered` is false: the first time a review opens, right after Flight Plan built it. It shows the choice in short, and "Configure" shows the inputs. "Not now" calls `review.declineWriteUp` (`procedures/decline-write-up/`), which keeps `isWriteUpDeclined` with the request, so the page does not ask again. With no agent set up the dialog is not shown. "Explain this review" in the Settings Menu of the review page opens it again at any time.
 
@@ -70,7 +70,7 @@ The review page opens the [Write-up Dialog](../DESIGN.md#write-up-dialog) on its
 
 ## Progress and completion
 
-While a review artifact is drafting, the page states how far the writing is: how many parts need nothing more, out of every part the agent writes. A part is what the MCP tools hand out as unwritten work: a segment's context and title, a waypoint, a Trace Diagram node, the description of a Trace Diagram and a file of the Blast Diagram that the change reaches. Only [required](review-artifact.md#required-nodes) parts are counted, so a section the configuration turned off is not counted.
+While a review artifact is drafting, the page states how far the writing is: how many parts need nothing more, out of every part the agent writes. A part is what the MCP tools hand out as unwritten work: a segment's context and title, a waypoint, a Trace Diagram node, the title and description of a Trace Diagram and a file of the Blast Diagram that the change reaches. Only [required](review-artifact.md#required-nodes) parts are counted, so a section the configuration turned off is not counted.
 
 The page also says who is writing:
 
@@ -81,7 +81,7 @@ The page also says who is writing:
 
 A part that is not written is drawn as a skeleton while an agent writes it, and as plain "not written" while the live agent is offline.
 
-Outside those states, each section of a segment that has parts to write and none written up says "Not explained yet" beside its heading: the Context with no context, a Trace Diagram with no description and no label, a Blast Diagram with files to assess and none assessed, a Code Walkthrough with waypoints and no title or reading. The page data carries it per segment as `writeUpNotices` (`procedures/get-review/utils/write-up-notices.ts`), one label or `null` per section. A section with nothing to write, such as a segment with no Trace Diagram, says nothing.
+Outside those states, each section of a segment that has parts to write and none written up says "Not explained yet" beside its heading: the Context with no context, a Trace Diagram with no title, no description and no label, a Blast Diagram with files to assess and none assessed, a Code Walkthrough with waypoints and no title or reading. The page data carries it per segment as `writeUpNotices` (`procedures/get-review/utils/write-up-notices.ts`), one label or `null` per section. A section with nothing to write, such as a segment with no Trace Diagram, says nothing.
 
 When the agent completes the artifact, the page that watched it being written raises a browser notification with the title of the review target, and says the same in a toast. It fires whether or not the page has focus, and a click on it brings the page to the front. The browser's permission is asked for when the reviewer asks the agent for a write-up. A page opened on a review that is already complete raises nothing.
 
@@ -196,7 +196,7 @@ What a refresh keeps is decided part by part, by comparing the code as the two a
 | A Trace Diagram node's label, description, trigger labels and block labels | The lines of its code block are the same |
 | A File Section's waypoint order | The whole file is the same |
 | A segment's title, context, file order and the impacts of its Blast Diagram | The segment has the same changed files and every one of them is the same |
-| The description of a Trace Diagram | The same, and the diagram has the same edges and as many nodes |
+| The title and the description of a Trace Diagram | The same, and the diagram has the same edges and as many nodes |
 
 A part is not kept when a code link in it no longer resolves, or points at lines of a file that changed.
 

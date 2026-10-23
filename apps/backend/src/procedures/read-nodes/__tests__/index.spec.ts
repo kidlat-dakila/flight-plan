@@ -11,7 +11,7 @@ describe("readNodes", () => {
       kind: "unfilled",
       total: 8,
       remaining: 6,
-      unwritten: { total: 11 },
+      unwritten: { total: 12 },
       items: [
         { kind: "blast-node", id: "src/cart/CartPage.tsx", needs: ["impact"], node: { importsCarryingTheChange: ["src/cart/CartTotal.tsx"] }, code: null },
         { kind: "blast-node", id: "src/cart/CartTotal.tsx", needs: ["impact"], node: { importsCarryingTheChange: [SUBTOTAL_PATH] }, code: null },
@@ -51,10 +51,10 @@ describe("readNodes", () => {
     expect(reading).toMatchObject({ kind: "unfilled", total: 1, items: [{ kind: "context", id: null, needs: ["context"], node: { context: "" } }] })
   })
 
-  it("lists an undescribed Trace Diagram as one item with no id, with its nodes and its edges", async () => {
+  it("lists an untitled and undescribed Trace Diagram as one item with no id, with its nodes and its edges", async () => {
     const context = await createArtifactContext()
 
-    const reading = await readNodes({ ...KEY, unfilled: true, needs: ["trace-description"] }, context)
+    const reading = await readNodes({ ...KEY, unfilled: true, needs: ["trace-title", "trace-description"] }, context)
 
     expect(reading).toMatchObject({
       kind: "unfilled",
@@ -63,8 +63,8 @@ describe("readNodes", () => {
         kind: "trace-diagram",
         id: null,
         segmentId: "all",
-        needs: ["trace-description"],
-        node: { description: null, nodes: [{ id: "j-subtotal", parentId: null, type: "function", label: null }], edges: [] },
+        needs: ["trace-title", "trace-description"],
+        node: { title: null, description: null, nodes: [{ id: "j-subtotal", parentId: null, type: "function", label: null }], edges: [] },
         code: null,
       }],
     })

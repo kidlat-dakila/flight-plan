@@ -11,7 +11,7 @@ export interface RequestedEdits {
 }
 
 const CONTEXT_NODE = "the context and the title"
-const TRACE_DESCRIPTION_NODE = "the Trace Diagram description"
+const TRACE_DESCRIPTION_NODE = "the Trace Diagram title and description"
 
 const quotedId = (id: string): string => `\`${id}\``
 
@@ -21,7 +21,7 @@ const unrequiredContextOf = (segment: Segment, edit: SegmentEdit): string[] =>
   !segment.isContextRequired && (isWritten(edit.title) || isWritten(edit.context)) ? [CONTEXT_NODE] : []
 
 const unrequiredDescriptionOf = (segment: Segment, edit: SegmentEdit): string[] =>
-  isWritten(edit.traceDiagramDescription) && segment.traceDiagram !== null && !segment.traceDiagram.isRequired ? [TRACE_DESCRIPTION_NODE] : []
+  (isWritten(edit.traceDiagramTitle) || isWritten(edit.traceDiagramDescription)) && segment.traceDiagram !== null && !segment.traceDiagram.isRequired ? [TRACE_DESCRIPTION_NODE] : []
 
 const unrequiredWaypointIdsOf = (segment: Segment, edits: readonly WaypointEdit[]): string[] => {
   const unrequiredIds = new Set(waypointsOf(segment).filter(({ waypoint }) => !waypoint.isRequired).map(({ waypoint }) => waypoint.id))

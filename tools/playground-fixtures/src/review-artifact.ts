@@ -72,6 +72,7 @@ const storedTraceNodeSchema: z.ZodType<StoredTraceNode> = z.lazy(() =>
 )
 
 const storedTraceSchema = z.object({
+  title: z.string().nullable().default(null),
   description: z.string().nullable().default(null),
   traceNodes: z.array(storedTraceNodeSchema),
   traceNodeEdges: z.array(z.object({ id: z.string(), from: z.string(), to: z.string() })),
