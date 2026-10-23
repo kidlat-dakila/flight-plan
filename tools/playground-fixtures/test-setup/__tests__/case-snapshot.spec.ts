@@ -49,6 +49,7 @@ describe("caseSnapshotOf", () => {
     importGraph: [],
     traceDiagram: null,
     blastDiagram: null,
+    hiddenBlastDiagram: null,
     codeWalkthrough: { files: [] },
     codeReferences: [],
   })

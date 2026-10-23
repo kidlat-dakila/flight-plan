@@ -168,7 +168,7 @@
       {
         "title": "Groundwork for the new components and composables",
         "context": [
-          "This segment adds the Pokemon type, the Pinia store that keeps the chosen filters and a formatter for the types of a Pokemon, which the new Pokemon page uses. It also adds a Pokemon link to the header of every page."
+          "This change adds a Pokemon page at /pokemon and a link to it in the header of every page, and installs Pinia in the app. The page lists the Pokemon from the API with their level and types, and a professor can narrow the list to one type or to the Pokemon of one trainer."
         ],
         "kind": "shared",
         "importGraph": [
@@ -455,108 +455,7 @@
             }
           }
         ],
-        "traceDiagram": {
-          "description": "This diagram shows how the filter store keeps the chosen type and trainer, how [`formatTypes()`](code:src/lib/format.ts#formatTypes) writes the types of a Pokemon, and how the header links to the Pokemon page.",
-          "traceNodes": [
-            {
-              "id": "src/views/RootLayout.vue#component@1:1",
-              "type": "component",
-              "label": "Renders the header and the page under it",
-              "description": "When a professor opens any page, the router renders this layout through [`component: RootLayout`](code:src/router.ts#L13).",
-              "codeBlockIds": [
-                "src/views/RootLayout.vue#component@1:1",
-                "src/views/RootLayout.vue#render-root@10:1",
-                "src/views/RootLayout.vue#render@11:3",
-                "src/views/RootLayout.vue#render@12:5",
-                "src/views/RootLayout.vue#render@14:7"
-              ],
-              "diffCodeBlockIds": [
-                "src/views/RootLayout.vue#render@14:7"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/stores/pokemon-filters.ts#state@5:1",
-              "type": "state",
-              "label": "Keeps the chosen type and trainer",
-              "description": "When a professor opens /pokemon, [`PokemonFilters` binds its selects to the filters of this store](code:src/views/pokemon/components/PokemonFilters.vue#L8-9), and [`usePokemon()` reads them](code:src/composables/use-pokemon.ts#L14).",
-              "codeBlockIds": [
-                "src/stores/pokemon-filters.ts#state@5:1",
-                "src/stores/pokemon-filters.ts#effect@5:39",
-                "src/stores/pokemon-filters.ts#effect-callback@5:69",
-                "src/stores/pokemon-filters.ts#function@5:69",
-                "src/stores/pokemon-filters.ts#state@6:3",
-                "src/stores/pokemon-filters.ts#state@7:3",
-                "src/stores/pokemon-filters.ts#function@9:3",
-                "src/stores/pokemon-filters.ts#property@14:12",
-                "src/stores/pokemon-filters.ts#property@14:18",
-                "src/stores/pokemon-filters.ts#property@14:29"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/pokemon-filters.ts#state@5:1",
-                "src/stores/pokemon-filters.ts#effect@5:39",
-                "src/stores/pokemon-filters.ts#function@5:69",
-                "src/stores/pokemon-filters.ts#state@6:3",
-                "src/stores/pokemon-filters.ts#state@7:3",
-                "src/stores/pokemon-filters.ts#function@9:3",
-                "src/stores/pokemon-filters.ts#property@14:12",
-                "src/stores/pokemon-filters.ts#property@14:18",
-                "src/stores/pokemon-filters.ts#property@14:29"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Keeps the chosen type, null at first",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#state@6:3"
-                },
-                {
-                  "label": "Keeps the chosen trainer, null at first",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#state@7:3"
-                },
-                {
-                  "label": "Sets both filters back to null",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#function@9:3"
-                },
-                {
-                  "label": "Returns the two filters and the clear action",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#property@14:12"
-                }
-              ]
-            },
-            {
-              "id": "src/lib/format.ts#function@9:1",
-              "type": "function",
-              "label": "Writes the types of a Pokemon as text",
-              "description": "When a professor opens /pokemon, [`PokemonPage` calls this function for each Pokemon of the list](code:src/views/pokemon/PokemonPage.vue#L16).",
-              "codeBlockIds": [
-                "src/lib/format.ts#function@9:1",
-                "src/lib/format.ts#root-argument-value@9:29",
-                "src/lib/format.ts#condition@10:3",
-                "src/lib/format.ts#root-argument-value@10:3",
-                "src/lib/format.ts#root-argument-value@10:37"
-              ],
-              "diffCodeBlockIds": [
-                "src/lib/format.ts#function@9:1",
-                "src/lib/format.ts#root-argument-value@9:29",
-                "src/lib/format.ts#condition@10:3",
-                "src/lib/format.ts#root-argument-value@10:3",
-                "src/lib/format.ts#root-argument-value@10:37"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Checks whether the Pokemon has a second type",
-                  "codeBlockId": "src/lib/format.ts#condition@10:3"
-                }
-              ]
-            }
-          ],
-          "traceNodeEdges": []
-        },
+        "traceDiagram": null,
         "blastDiagram": {
           "nodes": [
             {
@@ -725,6 +624,7 @@
             ]
           }
         },
+        "hiddenBlastDiagram": null,
         "codeWalkthrough": {
           "files": [
             {
@@ -742,7 +642,7 @@
                     "lineEnd": 10
                   },
                   "category": "function",
-                  "traceNodeId": "src/lib/format.ts#function@9:1",
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/lib/format.ts#function@9:1",
                     "src/lib/format.ts#root-argument-value@9:29",
@@ -778,7 +678,7 @@
                     "lineEnd": 15
                   },
                   "category": "variable",
-                  "traceNodeId": "src/stores/pokemon-filters.ts#state@5:1",
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/stores/pokemon-filters.ts#state@5:1",
                     "src/stores/pokemon-filters.ts#effect@5:39",
@@ -868,7 +768,7 @@
                     "lineEnd": 24
                   },
                   "category": "function",
-                  "traceNodeId": "src/views/RootLayout.vue#component@1:1",
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/views/RootLayout.vue#component@1:1",
                     "src/views/RootLayout.vue#render@14:7"
@@ -1787,6 +1687,7 @@
               "description": "When the app starts, [`src/main.ts` installs this router with `app.use(router)`](code:src/main.ts#L10). When a professor opens a page, `<RouterView />` renders the route that matches its path.",
               "codeBlockIds": [
                 "src/router.ts#root-variable@8:1",
+                "src/router.ts#effect-callback@13:7",
                 "src/router.ts#property@14:7",
                 "src/router.ts#property@16:11",
                 "src/router.ts#effect-callback@16:28"
@@ -1808,6 +1709,25 @@
                   "codeBlockId": "src/router.ts#effect-callback@16:28"
                 }
               ]
+            },
+            {
+              "id": "src/views/RootLayout.vue#component@1:1",
+              "type": "component",
+              "label": "Renders the header and the page under it",
+              "description": "When a professor opens any page, the router renders this layout through [`component: RootLayout`](code:src/router.ts#L13).",
+              "codeBlockIds": [
+                "src/views/RootLayout.vue#component@1:1",
+                "src/views/RootLayout.vue#render-root@10:1",
+                "src/views/RootLayout.vue#render@11:3",
+                "src/views/RootLayout.vue#render@12:5",
+                "src/views/RootLayout.vue#render@14:7"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/RootLayout.vue#render@14:7"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/views/pokemon/PokemonPage.vue#component@1:1",
@@ -2134,6 +2054,11 @@
           ],
           "traceNodeEdges": [
             {
+              "id": "src/router.ts#root-variable@8:1 -> src/views/RootLayout.vue#component@1:1",
+              "from": "src/router.ts#root-variable@8:1",
+              "to": "src/views/RootLayout.vue#component@1:1"
+            },
+            {
               "id": "src/router.ts#root-variable@8:1 -> src/views/pokemon/PokemonPage.vue#component@1:1",
               "from": "src/router.ts#root-variable@8:1",
               "to": "src/views/pokemon/PokemonPage.vue#component@1:1"
@@ -2186,6 +2111,306 @@
           ]
         },
         "blastDiagram": null,
+        "hiddenBlastDiagram": {
+          "nodes": [
+            {
+              "path": "src/api/pokemon.ts",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/composables/use-pokemon.ts",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/router.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/views/pokemon/PokemonPage.vue",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/views/pokemon/components/PokemonFilters.vue",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            }
+          ],
+          "edges": [
+            {
+              "importer": "src/composables/use-pokemon.ts",
+              "imported": "src/api/pokemon.ts"
+            },
+            {
+              "importer": "src/main.ts",
+              "imported": "src/router.ts"
+            },
+            {
+              "importer": "src/router.ts",
+              "imported": "src/views/pokemon/PokemonPage.vue"
+            },
+            {
+              "importer": "src/views/pokemon/PokemonPage.vue",
+              "imported": "src/composables/use-pokemon.ts"
+            },
+            {
+              "importer": "src/views/pokemon/PokemonPage.vue",
+              "imported": "src/views/pokemon/components/PokemonFilters.vue"
+            }
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/api/pokemon.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/composables/use-pokemon.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/main.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/router.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "diffType": "added"
+              },
+              {
+                "path": "src/views/pokemon/components/PokemonFilters.vue",
+                "diffType": "added"
+              },
+              {
+                "path": "src/App.vue",
+                "diffType": null
+              },
+              {
+                "path": "src/api/client.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/api/items.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/api/trainers.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/components/session.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/BaseButton.vue",
+                "diffType": null
+              },
+              {
+                "path": "src/composables/use-items.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/composables/use-trainers.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/format.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/stores/pokemon-filters.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/types/item.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/pokemon.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/types/trainer.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/views/RootLayout.vue",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/views/help/HelpPage.vue",
+                "diffType": null
+              },
+              {
+                "path": "src/views/items/ItemsPage.vue",
+                "diffType": null
+              },
+              {
+                "path": "src/views/trainers/TrainersPage.vue",
+                "diffType": null
+              },
+              {
+                "path": "src/views/trainers/components/TrainerRow.vue",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/App.vue",
+                "imported": "src/components/session.ts"
+              },
+              {
+                "importer": "src/api/items.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/api/items.ts",
+                "imported": "src/types/item.ts"
+              },
+              {
+                "importer": "src/api/pokemon.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/api/pokemon.ts",
+                "imported": "src/types/pokemon.ts"
+              },
+              {
+                "importer": "src/api/trainers.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/api/trainers.ts",
+                "imported": "src/types/trainer.ts"
+              },
+              {
+                "importer": "src/composables/use-items.ts",
+                "imported": "src/api/items.ts"
+              },
+              {
+                "importer": "src/composables/use-pokemon.ts",
+                "imported": "src/api/pokemon.ts"
+              },
+              {
+                "importer": "src/composables/use-pokemon.ts",
+                "imported": "src/stores/pokemon-filters.ts"
+              },
+              {
+                "importer": "src/composables/use-pokemon.ts",
+                "imported": "src/types/pokemon.ts"
+              },
+              {
+                "importer": "src/composables/use-trainers.ts",
+                "imported": "src/api/trainers.ts"
+              },
+              {
+                "importer": "src/lib/format.ts",
+                "imported": "src/types/pokemon.ts"
+              },
+              {
+                "importer": "src/main.ts",
+                "imported": "src/App.vue"
+              },
+              {
+                "importer": "src/router.ts",
+                "imported": "src/views/RootLayout.vue"
+              },
+              {
+                "importer": "src/router.ts",
+                "imported": "src/views/help/HelpPage.vue"
+              },
+              {
+                "importer": "src/router.ts",
+                "imported": "src/views/items/ItemsPage.vue"
+              },
+              {
+                "importer": "src/router.ts",
+                "imported": "src/views/pokemon/PokemonPage.vue"
+              },
+              {
+                "importer": "src/router.ts",
+                "imported": "src/views/trainers/TrainersPage.vue"
+              },
+              {
+                "importer": "src/stores/pokemon-filters.ts",
+                "imported": "src/types/pokemon.ts"
+              },
+              {
+                "importer": "src/views/RootLayout.vue",
+                "imported": "src/components/session.ts"
+              },
+              {
+                "importer": "src/views/RootLayout.vue",
+                "imported": "src/components/ui/BaseButton.vue"
+              },
+              {
+                "importer": "src/views/items/ItemsPage.vue",
+                "imported": "src/composables/use-items.ts"
+              },
+              {
+                "importer": "src/views/items/ItemsPage.vue",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/views/pokemon/PokemonPage.vue",
+                "imported": "src/composables/use-pokemon.ts"
+              },
+              {
+                "importer": "src/views/pokemon/PokemonPage.vue",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/views/pokemon/PokemonPage.vue",
+                "imported": "src/views/pokemon/components/PokemonFilters.vue"
+              },
+              {
+                "importer": "src/views/pokemon/components/PokemonFilters.vue",
+                "imported": "src/components/ui/BaseButton.vue"
+              },
+              {
+                "importer": "src/views/pokemon/components/PokemonFilters.vue",
+                "imported": "src/composables/use-trainers.ts"
+              },
+              {
+                "importer": "src/views/pokemon/components/PokemonFilters.vue",
+                "imported": "src/stores/pokemon-filters.ts"
+              },
+              {
+                "importer": "src/views/pokemon/components/PokemonFilters.vue",
+                "imported": "src/types/pokemon.ts"
+              },
+              {
+                "importer": "src/views/trainers/TrainersPage.vue",
+                "imported": "src/composables/use-trainers.ts"
+              },
+              {
+                "importer": "src/views/trainers/TrainersPage.vue",
+                "imported": "src/views/trainers/components/TrainerRow.vue"
+              },
+              {
+                "importer": "src/views/trainers/components/TrainerRow.vue",
+                "imported": "src/types/trainer.ts"
+              }
+            ]
+          }
+        },
         "codeWalkthrough": {
           "files": [
             {
@@ -3807,6 +4032,166 @@
                     "endColumn": 49,
                     "path": "src/router.ts",
                     "text": "        { path: \"pokemon\", component: PokemonPage },"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/views/RootLayout.vue",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 22,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "inject"
+                }
+              },
+              {
+                "line": 7,
+                "startColumn": 23,
+                "endColumn": 33,
+                "path": "src/components/session.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "RouterLink"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "RouterLink"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "RouterLink"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "RouterLink"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 42,
+                "endColumn": 49,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/views/RootLayout.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue-router",
+                  "name": "RouterView"
+                }
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  24
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 17,
+                    "endColumn": 27,
+                    "path": "src/router.ts",
+                    "text": "      component: RootLayout,"
                   }
                 ]
               }

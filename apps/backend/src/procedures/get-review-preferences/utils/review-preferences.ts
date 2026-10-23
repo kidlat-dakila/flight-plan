@@ -49,7 +49,7 @@ export const DEFAULT_REVIEW_PREFERENCES: ReviewPreferences = {
     walkthrough: "on-demand",
     findings: "always",
   },
-  isSegmented: true,
+  isSegmented: false,
   walkthroughOrder: "imports-bottom-up",
   sectionOrder: ARRANGED_SECTIONS,
   ignoredPaths: DEFAULT_IGNORED_PATHS,

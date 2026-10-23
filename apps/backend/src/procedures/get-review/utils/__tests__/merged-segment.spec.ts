@@ -3,6 +3,7 @@ import type { Blast } from "@flightplan/configurations"
 import { CART_PATH, createSegment, createWaypoint, PRICE_PATH } from "./review-fixture"
 
 const RATES_PATH = "src/rates.ts"
+const TAX_PATH = "src/tax.ts"
 
 const blastOf = (paths: readonly string[], importBound?: Blast["importBound"]): Blast => ({
   nodes: paths.map((path) => ({ path, diffType: null, impactType: null, impactReason: null, isRequired: false })),
@@ -42,6 +43,22 @@ describe("mergeSegments", () => {
       traceDiagram: null,
       isContextRequired: first.isContextRequired,
     })
+  })
+
+  it("joins the hidden Blast Diagram of a segment the segmented page draws none for", () => {
+    const hidden = createSegment({
+      id: "rates",
+      title: "Rates",
+      context: "Rates load once.",
+      changedPaths: [RATES_PATH],
+      blastDiagram: null,
+      hiddenBlastDiagram: blastOf([RATES_PATH], { nodes: [{ path: RATES_PATH, diffType: null }, { path: TAX_PATH, diffType: null }], edges: [] }),
+    })
+
+    const { blastDiagram } = mergeSegments([first, hidden])
+
+    expect(blastDiagram?.nodes.map((node) => node.path)).toStrictEqual([PRICE_PATH, CART_PATH, RATES_PATH])
+    expect(blastDiagram?.importBound?.nodes.map((node) => node.path)).toStrictEqual([RATES_PATH, TAX_PATH])
   })
 
   it("joins the File Sections of one path, with their waypoints in segment order", () => {

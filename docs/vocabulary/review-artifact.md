@@ -91,7 +91,7 @@ A large pull request can be split into segments, so it can be read one part at a
 
 Every segment has an **id**, a short unique string that Flight Plan makes when it builds the segment, and a **title**, a very short text of what its context is about, which the agent writes. No tool changes an id. Every write an agent makes names the segment it writes by that id, and everything the agent reads comes back with the id of the segment it belongs to.
 
-Whether a segment has a Trace Diagram or a Blast Diagram is decided by the [codegraph](codegraph.md). A segment without one stores `null` for it and no reason. The agent writes neither diagram's structure. A Blast Diagram stores two graphs of files: the files that use the change, which carry the impact types and reasons, and under `importBound` the files the change uses, which carry nothing written. See [Blast Diagram](blast-diagram.md#two-views).
+Whether a segment has a Trace Diagram or a Blast Diagram is decided by the [codegraph](codegraph.md). A segment without one stores `null` for it and no reason. An entry segment whose Blast Diagram is not drawn keeps it as `hiddenBlastDiagram`, which only [segments off](#segments-off) shows and the agent never reads. The agent writes neither diagram's structure. A Blast Diagram stores two graphs of files: the files that use the change, which carry the impact types and reasons, and under `importBound` the files the change uses, which carry nothing written. See [Blast Diagram](blast-diagram.md#two-views).
 
 ### Segments off
 
@@ -103,11 +103,11 @@ With segments off, the page shows the stored segments as one (`mergeSegments` in
 |---|---|
 | Context | The first segment's context, the one Context of the whole change. Only the first segment's context is required, and no segment needs a title. |
 | Code Walkthrough | The File Sections of every segment, those of one path joined into one, sorted by the walkthrough [order](code-walkthrough.md#order) |
-| Blast Diagram | The Blast Diagrams of every segment joined: each file and each import once, a file's first impact winning |
-| Trace Diagram | One tab per segment that has a Trace Diagram, in `tabs` of the Trace band, each with the segment's id, the diagram's title as its label, and the diagram. With fewer than two, `tabs` is empty and `diagram` holds the one there is. |
+| Blast Diagram | The Blast Diagrams of every segment joined, the hidden ones (`hiddenBlastDiagram`) among them: each file and each import once, a file's first impact winning |
+| Trace Diagram | The shared segment has none: its cards are drawn in the diagrams of the entry segments that reach them, as the codegraph built them with segments off. One tab per segment that has a Trace Diagram, in `tabs` of the Trace band, each with the segment's id, the diagram's title as its label, and the diagram. With fewer than two, `tabs` is empty and `diagram` holds the one there is. |
 | Ids | The merged segment takes the first segment's id, so filters and reviewed marks are kept under it. Each tab's diagram keeps its own segment's id for the agent's writes. |
 
-Editing the segments keeps the choice; adding a second segment to an artifact of one makes it segmented.
+Editing the segments keeps the choice; adding a second segment to an artifact of one makes it segmented. A write-up that turns segments on or off rebuilds the artifact at its commits with the new choice, carrying over what is written, because the Trace Diagrams are drawn for it (`scaffoldSegmentedAs` in `apps/backend/src/procedures/write-up-review/utils/segmented-scaffold.ts`). When the repository cannot be read, as in the site's demo, the artifact keeps its diagrams and takes the new choice.
 
 ## General components
 

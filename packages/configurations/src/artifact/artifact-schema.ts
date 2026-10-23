@@ -307,6 +307,11 @@ export const traceDiagramSchema = z
 
 const blastEdgeSchema = z.strictObject({ importer: z.string(), imported: z.string() })
 
+const importBoundSchema = z.strictObject({
+  nodes: z.array(z.strictObject({ path: z.string(), diffType: z.enum(DIFF_TYPES).nullable() })),
+  edges: z.array(blastEdgeSchema),
+})
+
 export const blastSchema = z
   .strictObject({
     nodes: z.array(
@@ -350,12 +355,7 @@ export const blastSchema = z
       }),
     ),
     edges: z.array(blastEdgeSchema),
-    importBound: z
-      .strictObject({
-        nodes: z.array(z.strictObject({ path: z.string(), diffType: z.enum(DIFF_TYPES).nullable() })),
-        edges: z.array(blastEdgeSchema),
-      })
-      .optional(),
+    importBound: importBoundSchema.optional(),
   })
   .register(configurations, {
     version: 0.1,
@@ -363,6 +363,20 @@ export const blastSchema = z
     summary: "The Blast Diagram: which files to assess, and where to stop.",
     fieldDescription: "blastDiagram.md",
   })
+
+const hiddenBlastSchema = z.strictObject({
+  nodes: z.array(
+    z.strictObject({
+      path: z.string(),
+      diffType: z.enum(DIFF_TYPES).nullable(),
+      impactType: z.enum(IMPACT_TYPES).nullable(),
+      impactReason: z.string().nullable(),
+      isRequired: z.boolean().default(false),
+    }),
+  ),
+  edges: z.array(blastEdgeSchema),
+  importBound: importBoundSchema.optional(),
+})
 
 const segmentSchema = z.strictObject({
   id: z
@@ -399,6 +413,7 @@ const segmentSchema = z.strictObject({
     }),
   traceDiagram: traceDiagramSchema.nullable(),
   blastDiagram: blastSchema.nullable(),
+  hiddenBlastDiagram: hiddenBlastSchema.optional(),
   isContextRequired: z.boolean().default(false),
   walkthrough: z
     .strictObject({

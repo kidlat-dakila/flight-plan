@@ -1,12 +1,16 @@
-import { createConversationEnvironment, createMockProcedureContext, type ProcedureContext } from "@/procedures/context"
+import { createConversationEnvironment, createMockProcedureContext, openSampleRepository, type ProcedureContext } from "@/procedures/context"
 import { SequentialIds } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
+import type { RecordedChange } from "@/procedures/get-review/utils/change-reader"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { WALKTHROUGH_ONLY_ARTIFACT } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 import { waypointsOf } from "@/procedures/read-artifact/utils/artifact-walk"
+import { createChangeRepositoryOpener } from "@/procedures/request-review/__tests__/change-repository"
+import { buildArtifactAt } from "@/procedures/request-review/utils/build-artifact"
 import { writeUpReview } from "@/procedures/write-up-review"
 import type { WriteUpReviewInput } from "@/procedures/write-up-review/utils/schemas"
+import type { RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import type { ReviewArtifact } from "@flightplan/configurations"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
@@ -34,11 +38,11 @@ const INPUT: WriteUpReviewInput = {
   isSegmented: false,
 }
 
-const createWritingContext = async (artifact: ReviewArtifact = UNREQUIRED_ARTIFACT): Promise<ProcedureContext> => {
+const createWritingContext = async (artifact: ReviewArtifact = UNREQUIRED_ARTIFACT, baseCommit = "0000000"): Promise<ProcedureContext> => {
   const reviewStore = new InMemoryReviewStore([])
   await reviewStore.writeScaffold(KEY, {
     artifact,
-    baseCommit: "0000000",
+    baseCommit,
     request: { configurationId: "standard", preset: "standard", order: "foundations-first", customOrder: null, writer: { kind: "none" }, requestedAt: NOW },
   })
   return {
@@ -99,5 +103,88 @@ describe("writeUpReview", () => {
 
     await expect(writeUpReview({ ...INPUT, sections: ["context"] }, context)).resolves.toStrictEqual({ kind: "written", message: "Everything you chose is already explained." })
     await expect(context.conversationEnvironment.store.read(KEY)).resolves.toMatchObject({ journal: [] })
+  })
+})
+
+const FORMAT_PATH = "src/format.ts"
+const PAGE_PATHS = ["src/pageA.ts", "src/pageB.ts"] as const
+const MAIN_PATH = "src/main.ts"
+const MAIN_TEXT = "import { pageA } from \"./pageA\"\nimport { pageB } from \"./pageB\"\npageA()\npageB()\n"
+
+const pageTextOf = (name: string, mark: string): string => `import { format } from "./format"\nexport const ${name} = () => format("${mark}")\n`
+
+const modifiedDiffOf = (path: string, line: number, removed: string, added: string): string =>
+  [`diff --git a/${path} b/${path}`, `--- a/${path}`, `+++ b/${path}`, `@@ -${String(line)} +${String(line)} @@`, `-${removed}`, `+${added}`].join("\n")
+
+const FORMAT_CHANGE: RecordedChange = {
+  repositoryPath: "/Users/dev/projects/storefront",
+  branchName: "feature/trimmed-labels",
+  revision: { headCommit: "1111111aaaaaaa", baseCommit: "0000000bbbbbbb" },
+  diff: [
+    modifiedDiffOf(FORMAT_PATH, 1, "export const format = (text) => text", "export const format = (text) => text.trim()"),
+    modifiedDiffOf(PAGE_PATHS[0], 2, "export const pageA = () => format(\"a\")", "export const pageA = () => format(\"A\")"),
+    modifiedDiffOf(PAGE_PATHS[1], 2, "export const pageB = () => format(\"b\")", "export const pageB = () => format(\"B\")"),
+  ].join("\n"),
+  changedPaths: [FORMAT_PATH, ...PAGE_PATHS],
+  texts: {
+    [MAIN_PATH]: MAIN_TEXT,
+    [FORMAT_PATH]: "export const format = (text) => text.trim()\n",
+    [PAGE_PATHS[0]]: pageTextOf("pageA", "A"),
+    [PAGE_PATHS[1]]: pageTextOf("pageB", "B"),
+  },
+}
+
+const FORMAT_BASE_TEXTS = {
+  [MAIN_PATH]: MAIN_TEXT,
+  [FORMAT_PATH]: "export const format = (text) => text\n",
+  [PAGE_PATHS[0]]: pageTextOf("pageA", "a"),
+  [PAGE_PATHS[1]]: pageTextOf("pageB", "b"),
+}
+
+const formatOpener = createChangeRepositoryOpener([{ change: FORMAT_CHANGE, baseTexts: FORMAT_BASE_TEXTS }])
+
+const segmentedFormatArtifactOf = async (): Promise<ReviewArtifact> => {
+  const opened = await formatOpener(FORMAT_CHANGE.repositoryPath, EMPTY_SETUP.forges)
+  const building = await buildArtifactAt(opened.resolved, {
+    ...FORMAT_CHANGE.revision,
+    title: "Trimmed labels",
+    newId: new SequentialIds().next,
+    ignoredPaths: [],
+    isSegmented: true,
+  })
+  if (building.kind === "unavailable") throw new Error(building.message)
+  return { ...building.artifact, status: "complete" }
+}
+
+const traceNamesOf = (artifact: ReviewArtifact | null): (string[] | null)[] =>
+  artifact?.segments.map((segment) => segment.traceDiagram?.traceNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null) ?? []
+
+const createSegmentingContext = async (artifact: ReviewArtifact, openRepository: RepositoryAdapterOpener): Promise<ProcedureContext> => {
+  const context = await createWritingContext(artifact, FORMAT_CHANGE.revision.baseCommit)
+  return { ...context, openRepository }
+}
+
+describe("writeUpReview with another segments choice than the review's", () => {
+  it("rebuilds the review at its commits, so with segments off the shared files are drawn only in the traces of the lines that reach them", async () => {
+    const artifact = await segmentedFormatArtifactOf()
+    const context = await createSegmentingContext(artifact, formatOpener)
+
+    await writeUpReview({ ...INPUT, sections: ["traceDiagram"], isSegmented: false }, context)
+
+    const rebuilt = await context.reviewStore.findArtifact(KEY)
+    expect(traceNamesOf(artifact)).toStrictEqual([["format"], ["pageA", "format"], ["pageB", "format"]])
+    expect(rebuilt?.isSegmented).toBe(false)
+    expect(traceNamesOf(rebuilt)).toStrictEqual([null, ["pageA", "format"], ["pageB", "format"]])
+  })
+
+  it("keeps the diagrams it has when the repository cannot be read", async () => {
+    const artifact = await segmentedFormatArtifactOf()
+    const context = await createSegmentingContext(artifact, openSampleRepository)
+
+    await writeUpReview({ ...INPUT, sections: ["traceDiagram"], isSegmented: false }, context)
+
+    const kept = await context.reviewStore.findArtifact(KEY)
+    expect(kept?.isSegmented).toBe(false)
+    expect(traceNamesOf(kept)).toStrictEqual(traceNamesOf(artifact))
   })
 })

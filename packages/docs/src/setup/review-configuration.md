@@ -46,6 +46,6 @@ Every changed file is covered whichever you choose.
 
 **Advanced options** holds three more settings.
 
-- **Split reviews into segments**, on to start with. Flight Plan groups the changed files into [segments](/docs/review-artifacts/parts/segments/), each with its own Context, Trace Diagram, Blast Diagram and Code Walkthrough. With segments off, a review is one segment with one Context for the whole change, and each Trace Diagram gets a tab of its own.
+- **Split reviews into segments**, off to start with. Flight Plan groups the changed files into [segments](/docs/review-artifacts/parts/segments/), each with its own Context, Trace Diagram, Blast Diagram and Code Walkthrough. With segments off, a review is one segment with one Context for the whole change, and the code several paths share is drawn in the Trace Diagram of each path that uses it.
 - **Display arrangement**, the order of the four sections in each segment. To start with it's Context, Trace Diagram, Blast Diagram, Code Walkthrough.
 - **Ignored files**, path patterns written from the root of the repository, as in a `.gitignore`. Flight Plan leaves the files they match out of every review. To start with, the list leaves out tests in TypeScript and Python, e2e tests included. **Add pattern** adds a row.

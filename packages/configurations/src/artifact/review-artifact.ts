@@ -186,6 +186,7 @@ export interface Segment {
   readonly context: string
   readonly traceDiagram: TraceDiagram | null
   readonly blastDiagram: Blast | null
+  readonly hiddenBlastDiagram?: Blast
   readonly walkthrough: CodeWalkthrough
   readonly isContextRequired: boolean
 }

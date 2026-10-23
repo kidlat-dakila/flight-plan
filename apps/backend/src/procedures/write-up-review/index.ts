@@ -7,6 +7,7 @@ import { findConfiguration } from "@/procedures/list-configurations/utils/config
 import { handToWriter } from "@/procedures/request-review"
 import { planWriteUp } from "./utils/plan-write-up"
 import type { WriteUpResult, WriteUpReviewInput } from "./utils/schemas"
+import { scaffoldSegmentedAs } from "./utils/segmented-scaffold"
 
 const NOTHING_LEFT_MESSAGE = "Everything you chose is already explained."
 
@@ -23,7 +24,7 @@ export const writeUpReview = async (input: WriteUpReviewInput, context: Procedur
   const target = await findReviewTarget(repository, input.targetId, context)
   if (target === null) return null
   const planned = planWriteUp(input, {
-    scaffold,
+    scaffold: await scaffoldSegmentedAs(scaffold, input.isSegmented, repository, context),
     configuration: findConfiguration(savedConfigurations, input.configurationId),
     writer: defaultWriterOf(setup.agents, LIVE_AGENTS)?.writer ?? null,
     noAgentMessage: NO_AGENT_MESSAGE,

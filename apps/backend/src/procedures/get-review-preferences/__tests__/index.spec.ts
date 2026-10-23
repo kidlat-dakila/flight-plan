@@ -15,7 +15,7 @@ describe("getReviewPreferences", () => {
           walkthrough: "on-demand",
           findings: "always",
         },
-        isSegmented: true,
+        isSegmented: false,
         walkthroughOrder: "imports-bottom-up",
         sectionOrder: ["context", "traceDiagram", "blastDiagram", "walkthrough"],
       },

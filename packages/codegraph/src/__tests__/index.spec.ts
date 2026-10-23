@@ -2,8 +2,11 @@ import { BASE_COMMIT, createFakeGitAdapter, HEAD_COMMIT, type FakeChange } from 
 import { buildBranchCodegraph, buildBranchReviewArtifact, buildCodegraph, storeCodeWalkthrough, storeTraceDiagram, type BranchReviewArtifact, type Codegraph } from "@/index"
 import { STOREFRONT_CHANGE } from "./change-fixture"
 
-const codegraphOf = async (change: FakeChange): Promise<Codegraph> =>
-  await buildCodegraph({ gitAdapter: createFakeGitAdapter(change), baseCommit: BASE_COMMIT, headCommit: HEAD_COMMIT })
+const SEGMENTED = { isSegmented: true }
+const UNSEGMENTED = { isSegmented: false }
+
+const codegraphOf = async (change: FakeChange, { isSegmented } = SEGMENTED): Promise<Codegraph> =>
+  await buildCodegraph({ gitAdapter: createFakeGitAdapter(change), baseCommit: BASE_COMMIT, headCommit: HEAD_COMMIT, isSegmented })
 
 const storedOf = ({ segments }: Codegraph): unknown[] =>
   segments.map((segment) => ({
@@ -20,7 +23,7 @@ describe("buildBranchCodegraph", () => {
     const compare = vi.spyOn(gitAdapter, "compare")
     const ref = { kind: "branch", name: "sale-prices" } as const
 
-    const codegraph = await buildBranchCodegraph({ gitAdapter, ref })
+    const codegraph = await buildBranchCodegraph({ gitAdapter, ref, ...SEGMENTED })
 
     expect(baseSha.mock.calls).toStrictEqual([[ref]])
     expect(headSha.mock.calls).toStrictEqual([[ref]])
@@ -32,7 +35,7 @@ describe("buildBranchCodegraph", () => {
     const gitAdapter = createFakeGitAdapter(STOREFRONT_CHANGE)
     vi.spyOn(gitAdapter, "headSha").mockRejectedValue(new Error("sale-prices is not in this checkout."))
 
-    await expect(buildBranchCodegraph({ gitAdapter, ref: { kind: "branch", name: "sale-prices" } })).rejects.toThrow("sale-prices is not in this checkout.")
+    await expect(buildBranchCodegraph({ gitAdapter, ref: { kind: "branch", name: "sale-prices" }, ...SEGMENTED })).rejects.toThrow("sale-prices is not in this checkout.")
   })
 })
 
@@ -219,6 +222,16 @@ describe("buildCodegraph", () => {
     expect(segments.map((segment) => segment.blastDiagram === null)).toStrictEqual([false, true, true])
   })
 
+  it("keeps the blast an entry segment does not draw as its hidden Blast Diagram, with its changed files and what they import", async () => {
+    const { segments } = await codegraphOf(STOREFRONT_CHANGE)
+    const entrySegments = segments.slice(1)
+
+    expect(segments.map((segment) => segment.hiddenBlastDiagram === null)).toStrictEqual([true, false, false])
+    expect(entrySegments.map((segment) => segment.codeWalkthrough.files.every((file) => segment.hiddenBlastDiagram?.nodes.some((node) => node.path === file.path) === true)))
+      .toStrictEqual([true, true])
+    expect(entrySegments.map((segment) => segment.hiddenBlastDiagram?.importBound !== undefined)).toStrictEqual([true, true])
+  })
+
   it("numbers the waypoints through every segment and links each to the diagrams of its own", async () => {
     const { segments } = await codegraphOf(STOREFRONT_CHANGE)
     const waypoints = segments.flatMap((segment) => segment.codeWalkthrough.files).flatMap((file) => file.waypoints.map((waypoint) => ({ path: file.path, ...waypoint })))
@@ -271,6 +284,37 @@ describe("buildCodegraph", () => {
       importBound: { nodes: [{ path: "src/cart.ts", diffType: "modified" }], edges: [] },
     })
     expect(segments[0].codeWalkthrough.files).toStrictEqual([])
+  })
+
+  it("draws no trace for the shared segment with segments off, and the shared files in the trace of each line of change that reaches them", async () => {
+    const page = (name: string, mark: string): string => [`import { format } from "./format"`, `export const ${name} = () => format("${mark}")`].join("\n")
+    const main = ["import { pageA } from \"./pageA\"", "import { pageB } from \"./pageB\"", "pageA()", "pageB()"].join("\n")
+    const { segments } = await codegraphOf({
+      base: { "src/main.ts": main, "src/pageA.ts": page("pageA", "a"), "src/pageB.ts": page("pageB", "b"), "src/format.ts": "export const format = (text) => text" },
+      head: { "src/main.ts": main, "src/pageA.ts": page("pageA", "A"), "src/pageB.ts": page("pageB", "B"), "src/format.ts": "export const format = (text) => text.trim()" },
+    }, UNSEGMENTED)
+
+    expect(segments.map((segment) => [segment.kind, segment.traceDiagram?.traceNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null])).toStrictEqual([
+      ["shared", null],
+      ["entry", ["pageA", "format"]],
+      ["entry", ["pageB", "format"]],
+    ])
+  })
+
+  it("draws a shared file above the lines of change into each of their traces with segments off", async () => {
+    const page = (name: string, mark: string): string => `export const ${name} = () => "${mark}"`
+    const routes = (mark: string): string => ["import { pageA } from \"./pageA\"", "import { pageB } from \"./pageB\"", `export const routes = () => [pageA(), pageB(), "${mark}"]`].join("\n")
+    const main = ["import { routes } from \"./routes\"", "routes()"].join("\n")
+    const { segments } = await codegraphOf({
+      base: { "src/main.ts": main, "src/admin.ts": main, "src/routes.ts": routes("a"), "src/pageA.ts": page("pageA", "a"), "src/pageB.ts": page("pageB", "b") },
+      head: { "src/main.ts": main, "src/admin.ts": main, "src/routes.ts": routes("A"), "src/pageA.ts": page("pageA", "A"), "src/pageB.ts": page("pageB", "B") },
+    }, UNSEGMENTED)
+
+    expect(segments.map((segment) => segment.traceDiagram?.traceNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
+      null,
+      ["routes", "pageA"],
+      ["routes", "pageB"],
+    ])
   })
 
   it("splits a change into the shared segment, with a trace of the shared files alone, and one entry segment per line of change, each with the trace of its own line", async () => {

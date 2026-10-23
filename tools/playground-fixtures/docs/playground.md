@@ -105,7 +105,7 @@ Any other commit is refused. Everything about a forge (pull requests, reviewers,
        ],
      })
 
-     const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
+     const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF, isSegmented: true })
 
      await expectCaseSnapshot(codegraph)
    })
@@ -194,7 +194,7 @@ The title is written into the snapshot as its `title`, and it names the snapshot
          ],
        })
 
-       const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
+       const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF, isSegmented: true })
 
        await expectCaseSnapshot(codegraph)
      })
@@ -386,6 +386,8 @@ Each segment has its own context: what the segment's change does, for a reviewer
 
 Write it from the diffs and the case repository, never from the codegraph: the context says what the change is, and the codegraph is what was generated from it.
 
+A `demo-` kind's case hands `isSegmented: false` to `buildBranchCodegraph`, so its shared segment has no Trace Diagram and its cards are drawn in the diagrams of the lines of change that reach them. Every other kind hands `true`. A `demo-` kind's fixture has segments off, so the page shows the first segment's context alone, as the one Context of the whole change. That context starts with "This change" and says what the whole change does, as `context.md` asks of a review whose segments are off. The contexts of the other segments still start with "This segment".
+
 A snapshot whose written parts are empty is a draft: every node has only the name of its declaration, no waypoint has a reading, and its fixture is a review artifact still being drafted.
 
 ### What a case compares
@@ -418,6 +420,7 @@ A snapshot is JSON with three fields. `title` is the title of the case, as writt
 | `importGraph` | The files the change reaches through imports, each with `diffType`, `importedBy` and `importsTo`. A file you expect and do not see means an import was not resolved. |
 | `traceDiagram` | The diagram in its stored form: `traceNodes`, each with its `type`, the ids of its blocks, the nodes inside it and its trigger labels, and `traceNodeEdges`. A block id leads to a block of the case's `code-blocks/` snapshot. `null` when the change touches no function, class or value. A shared segment has one too, drawn from the blocks of its own files. |
 | `blastDiagram` | The changed files of the segment and the files that use what changed in them, each with its `diffType`, its `impactType` and its `impactReason`, and one edge per use between two of them. `null` on an entry segment nothing outside the change uses, when the change has several segments. |
+| `hiddenBlastDiagram` | The Blast Diagram such an entry segment keeps for segments off, generated like `blastDiagram` and never drawn in segments. `null` on every other segment. |
 | `codeWalkthrough` | One File Section per changed file, one waypoint per changed declaration, each with its `category`, the ids of its nodes in the two diagrams and the ids of its code blocks in `codeBlockIds`. |
 | `codeReferences` | For each file of the Code Walkthrough and of the trace nodes: every name used in it, with its line and columns, the `path` and `lines` of its definition, `isLibrary` for a name whose import statement is all there is to show, and `library`, the specifier and the imported name, for such a name. Beside them `languageReferences`: every name the file neither imports nor declares, with its line and columns. |
 
@@ -454,7 +457,7 @@ The functions read `<kind>/snapshots/*.snapshot.json` and `<kind>/repo/` under t
 | `title` | The snapshot's `title` |
 | `status` | `complete` when every segment of the snapshot has a title, `drafting` otherwise |
 | `commit` | A mocked constant, forty `2`s, the head commit of the case adapter |
-| `isSegmented` | Whether the codegraph has more than one segment |
+| `isSegmented` | `false` for a `demo-` kind, which shows its review with segments off as the default review preferences do. Otherwise whether the codegraph has more than one segment |
 | `changedPaths` | The paths the snapshot's `diff` changes, in order |
 | `sources` | One per changed path: the file of `repo/` with the diff applied, each line marked from the diff, the line range of every waypoint in it under `declarations`, and the names it uses with where each is defined under `references`. Then one per file that a code view of a trace node shows or a reference leads to and the change did not touch, with every line as it is at the head commit |
 | `contextCodeBlocks` | The items a description can be written for, listed from the segments: code blocks of the repository, names of libraries and names of the language. None is required and none has a description |
@@ -462,7 +465,7 @@ The functions read `<kind>/snapshots/*.snapshot.json` and `<kind>/repo/` under t
 | A segment's `title` | The segment's title, or an empty text while nothing is written |
 | A segment's `changedPaths` | The files of its `importGraph` that have a `diffType` |
 | A segment's `context` | The `context` of that segment in the snapshot, joined into one Markdown text |
-| `traceDiagram`, `blastDiagram` | The segment's `blastDiagram` as it is, and its `traceDiagram` linked to the groups of the case's `code-blocks/` snapshot, so every block id is the block itself. `traceDiagram` is `null` when there is no trace |
+| `traceDiagram`, `blastDiagram`, `hiddenBlastDiagram` | The segment's `blastDiagram` as it is, its `hiddenBlastDiagram` as it is when there is one, and its `traceDiagram` linked to the groups of the case's `code-blocks/` snapshot, so every block id is the block itself. `traceDiagram` is `null` when there is no trace |
 | `walkthrough` | The segment's `codeWalkthrough`, without what only the codegraph keeps on a waypoint: `range`, `category` and the ids of its diagram nodes |
 
 ## Rules

@@ -184,7 +184,7 @@
       {
         "title": "Groundwork for the new components and hooks",
         "context": [
-          "This segment adds the Pokemon type, the store that keeps the chosen filters and a formatter for the types of a Pokemon, which the new Pokemon page uses. It also adds a Pokemon link to the header of every page."
+          "This change adds a Pokemon page at /pokemon and a link to it in the header of every page. The page lists the Pokemon from the API with their level and types, and a professor can narrow the list to one type or to the Pokemon of one trainer."
         ],
         "kind": "shared",
         "importGraph": [
@@ -462,130 +462,7 @@
             "importedFilePaths": {}
           }
         ],
-        "traceDiagram": {
-          "description": "This diagram shows how the filter store keeps the chosen type and trainer, how [`formatTypes()`](code:src/lib/format.ts#formatTypes) writes the types of a Pokemon, and how the header links to the Pokemon page.",
-          "traceNodes": [
-            {
-              "id": "src/stores/pokemon-filters.ts#state@12:1",
-              "type": "state",
-              "label": "Keeps the chosen type and trainer",
-              "description": "When a professor opens /pokemon, [`<PokemonFilters />` reads and sets the filters in this store](code:src/routes/pokemon/components/PokemonFilters.tsx#L9), and [`usePokemon()` reads them](code:src/hooks/use-pokemon.ts#L13-14).",
-              "codeBlockIds": [
-                "src/stores/pokemon-filters.ts#state@12:1",
-                "src/stores/pokemon-filters.ts#effect@12:34",
-                "src/stores/pokemon-filters.ts#effect-callback@12:62",
-                "src/stores/pokemon-filters.ts#function@12:62",
-                "src/stores/pokemon-filters.ts#variable@12:63",
-                "src/stores/pokemon-filters.ts#property@13:3",
-                "src/stores/pokemon-filters.ts#property@14:3",
-                "src/stores/pokemon-filters.ts#function@15:3",
-                "src/stores/pokemon-filters.ts#variable@15:13",
-                "src/stores/pokemon-filters.ts#call@16:5",
-                "src/stores/pokemon-filters.ts#property@16:11",
-                "src/stores/pokemon-filters.ts#function@18:3",
-                "src/stores/pokemon-filters.ts#variable@18:18",
-                "src/stores/pokemon-filters.ts#call@19:5",
-                "src/stores/pokemon-filters.ts#property@19:11",
-                "src/stores/pokemon-filters.ts#function@21:3",
-                "src/stores/pokemon-filters.ts#call@22:5",
-                "src/stores/pokemon-filters.ts#property@22:11",
-                "src/stores/pokemon-filters.ts#property@22:23"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/pokemon-filters.ts#state@12:1",
-                "src/stores/pokemon-filters.ts#effect@12:34",
-                "src/stores/pokemon-filters.ts#function@12:62",
-                "src/stores/pokemon-filters.ts#variable@12:63",
-                "src/stores/pokemon-filters.ts#property@13:3",
-                "src/stores/pokemon-filters.ts#property@14:3",
-                "src/stores/pokemon-filters.ts#function@15:3",
-                "src/stores/pokemon-filters.ts#variable@15:13",
-                "src/stores/pokemon-filters.ts#call@16:5",
-                "src/stores/pokemon-filters.ts#property@16:11",
-                "src/stores/pokemon-filters.ts#function@18:3",
-                "src/stores/pokemon-filters.ts#variable@18:18",
-                "src/stores/pokemon-filters.ts#call@19:5",
-                "src/stores/pokemon-filters.ts#property@19:11",
-                "src/stores/pokemon-filters.ts#function@21:3",
-                "src/stores/pokemon-filters.ts#call@22:5",
-                "src/stores/pokemon-filters.ts#property@22:11",
-                "src/stores/pokemon-filters.ts#property@22:23"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Starts with no type chosen",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#property@13:3"
-                },
-                {
-                  "label": "Starts with no trainer chosen",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#property@14:3"
-                },
-                {
-                  "label": "Sets the chosen type",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#function@15:3"
-                },
-                {
-                  "label": "Sets the chosen trainer",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#function@18:3"
-                },
-                {
-                  "label": "Sets both filters back to null",
-                  "codeBlockId": "src/stores/pokemon-filters.ts#function@21:3"
-                }
-              ]
-            },
-            {
-              "id": "src/routes/root-layout.tsx#component@5:1",
-              "type": "component",
-              "label": "Renders the header and the page under it",
-              "description": "When a professor opens any page, the route table renders this layout through [`element: <RootLayout />`](code:src/router.tsx#L11).",
-              "codeBlockIds": [
-                "src/routes/root-layout.tsx#component@5:1",
-                "src/routes/root-layout.tsx#render-root@7:3",
-                "src/routes/root-layout.tsx#render@8:5",
-                "src/routes/root-layout.tsx#render@9:7",
-                "src/routes/root-layout.tsx#render@11:9"
-              ],
-              "diffCodeBlockIds": [
-                "src/routes/root-layout.tsx#render@11:9"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/lib/format.ts#function@11:1",
-              "type": "function",
-              "label": "Writes the types of a Pokemon as text",
-              "description": "When a professor opens /pokemon, [`<PokemonPage />` calls this function for each Pokemon of the list](code:src/routes/pokemon/index.tsx#L17).",
-              "codeBlockIds": [
-                "src/lib/format.ts#function@11:1",
-                "src/lib/format.ts#root-argument-value@11:29",
-                "src/lib/format.ts#condition@12:10",
-                "src/lib/format.ts#root-argument-value@12:10",
-                "src/lib/format.ts#root-argument-value@12:44"
-              ],
-              "diffCodeBlockIds": [
-                "src/lib/format.ts#function@11:1",
-                "src/lib/format.ts#root-argument-value@11:29",
-                "src/lib/format.ts#condition@12:10",
-                "src/lib/format.ts#root-argument-value@12:10",
-                "src/lib/format.ts#root-argument-value@12:44"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Checks whether the Pokemon has a second type",
-                  "codeBlockId": "src/lib/format.ts#condition@12:10"
-                }
-              ]
-            }
-          ],
-          "traceNodeEdges": []
-        },
+        "traceDiagram": null,
         "blastDiagram": {
           "nodes": [
             {
@@ -754,6 +631,7 @@
             ]
           }
         },
+        "hiddenBlastDiagram": null,
         "codeWalkthrough": {
           "files": [
             {
@@ -771,7 +649,7 @@
                     "lineEnd": 13
                   },
                   "category": "function",
-                  "traceNodeId": "src/lib/format.ts#function@11:1",
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/lib/format.ts#function@11:1",
                     "src/lib/format.ts#root-argument-value@11:29",
@@ -798,7 +676,7 @@
                     "lineEnd": 24
                   },
                   "category": "function",
-                  "traceNodeId": "src/routes/root-layout.tsx#component@5:1",
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/routes/root-layout.tsx#component@5:1",
                     "src/routes/root-layout.tsx#render@11:9"
@@ -849,7 +727,7 @@
                     "lineEnd": 24
                   },
                   "category": "variable",
-                  "traceNodeId": "src/stores/pokemon-filters.ts#state@12:1",
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/stores/pokemon-filters.ts#state@12:1",
                     "src/stores/pokemon-filters.ts#effect@12:34",
@@ -1827,6 +1705,8 @@
               "description": "When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />`. When a professor opens a page, `<RouterProvider />` renders the route that matches its path.",
               "codeBlockIds": [
                 "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@11:5",
+                "src/router.tsx#render@11:14",
                 "src/router.tsx#property@12:5",
                 "src/router.tsx#property@14:9",
                 "src/router.tsx#effect-callback@14:26",
@@ -1841,6 +1721,10 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
+                {
+                  "label": "Renders the layout around every page",
+                  "codeBlockId": "src/router.tsx#effect-callback@11:5"
+                },
                 {
                   "label": "Renders the pages inside the layout",
                   "codeBlockId": "src/router.tsx#property@12:5"
@@ -1921,6 +1805,25 @@
                   "codeBlockId": "src/stores/pokemon-filters.ts#function@21:3"
                 }
               ]
+            },
+            {
+              "id": "src/routes/root-layout.tsx#component@5:1",
+              "type": "component",
+              "label": "Renders the header and the page under it",
+              "description": "When a professor opens any page, the route table renders this layout through [`element: <RootLayout />`](code:src/router.tsx#L11).",
+              "codeBlockIds": [
+                "src/routes/root-layout.tsx#component@5:1",
+                "src/routes/root-layout.tsx#render-root@7:3",
+                "src/routes/root-layout.tsx#render@8:5",
+                "src/routes/root-layout.tsx#render@9:7",
+                "src/routes/root-layout.tsx#render@11:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/root-layout.tsx#render@11:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/routes/pokemon/index.tsx#component@5:1",
@@ -2312,6 +2215,11 @@
               "to": "src/stores/pokemon-filters.ts#state@12:1"
             },
             {
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/root-layout.tsx#component@5:1",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/routes/root-layout.tsx#component@5:1"
+            },
+            {
               "id": "src/router.tsx#root-variable@8:1 -> src/routes/pokemon/index.tsx#component@5:1",
               "from": "src/router.tsx#root-variable@8:1",
               "to": "src/routes/pokemon/index.tsx#component@5:1"
@@ -2662,6 +2570,7 @@
             ]
           }
         },
+        "hiddenBlastDiagram": null,
         "codeWalkthrough": {
           "files": [
             {
@@ -4194,6 +4103,151 @@
                     "endColumn": 46,
                     "path": "src/router.tsx",
                     "text": "      { path: \"pokemon\", element: <PokemonPage /> },"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/routes/root-layout.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 37,
+                "endColumn": 47,
+                "path": "src/components/SessionProvider.tsx",
+                "lines": [
+                  18,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 15,
+                "endColumn": 28,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  14,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 41,
+                "endColumn": 48,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Outlet"
+                }
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  5,
+                  24
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 14,
+                    "endColumn": 24,
+                    "path": "src/router.tsx",
+                    "text": "    element: <RootLayout />,"
                   }
                 ]
               }

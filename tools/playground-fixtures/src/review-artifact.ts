@@ -92,6 +92,7 @@ const codegraphSegmentSchema = z.object({
   importGraph: z.array(importGraphFileSchema),
   traceDiagram: storedTraceSchema.nullable(),
   blastDiagram: blastSchema.nullable(),
+  hiddenBlastDiagram: blastSchema.nullable(),
   codeWalkthrough: z.object({ files: z.array(storedFileSectionSchema) }),
   codeReferences: z.array(z.object({ path: z.string(), references: z.array(codeReferenceSchema), languageReferences: z.array(languageReferenceSchema).default([]), exports: z.array(codeExportSchema).default([]) })),
 })
@@ -152,13 +153,19 @@ const toSegmentParts = (segment: CodegraphSegment, { traceDiagram, walkthrough }
   importGraph: segment.importGraph,
   traceDiagram,
   blastDiagram: segment.blastDiagram,
+  hiddenBlastDiagram: segment.hiddenBlastDiagram,
   walkthrough,
   codeReferences: segment.codeReferences,
 })
 
 const isWritten = (segments: readonly CodegraphSegment[]): boolean => segments.every((segment) => segment.title !== null)
 
-export const toReviewArtifact = (snapshot: CaseSnapshot, headFiles: RepositoryFiles, storedGroups: readonly StoredCodeGroupGraph[]): ReviewArtifact => {
+export const toReviewArtifact = (
+  snapshot: CaseSnapshot,
+  headFiles: RepositoryFiles,
+  storedGroups: readonly StoredCodeGroupGraph[],
+  isSegmented: boolean,
+): ReviewArtifact => {
   const { segments } = snapshot.codegraph
   const groups = storedGroups.map(linkCodeGroupGraph)
   const blockById: BlockById = new Map([...groups.flatMap((group) => group.codeBlocks)].reverse().map((block) => [block.id, block] as const))
@@ -171,7 +178,7 @@ export const toReviewArtifact = (snapshot: CaseSnapshot, headFiles: RepositoryFi
       hunks: parseHunks(snapshot.diff.join(LINE_BREAK)),
       textOf: (path) => headFiles.get(path) ?? null,
       segments: segments.map((segment, position) => toSegmentParts(segment, linked[position], position)),
-      isSegmented: segments.length > 1,
+      isSegmented,
     }),
   )
 }

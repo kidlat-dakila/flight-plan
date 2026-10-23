@@ -1,3 +1,5 @@
+import { mkdtemp, rm, symlink } from "node:fs/promises"
+import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
 import {
@@ -76,7 +78,7 @@ describe("getAllReviewArtifactFixturesByCase", () => {
 })
 
 describe("getReviewArtifactFixture", () => {
-  it("returns a snapshot as a review artifact, with the context and the diagrams of each segment", async () => {
+  it("returns a snapshot as a review artifact, with the context and the diagrams of each segment, and segments off for a demo", async () => {
     const artifact = await getReviewArtifactFixture(TEST_CASES_PATH, POKEMON_FIXTURE)
     const routeSegment = artifact.segments[1]
 
@@ -84,7 +86,7 @@ describe("getReviewArtifactFixture", () => {
       title: "Implement route /api/pokemon",
       status: "complete",
       commit: "2222222222222222222222222222222222222222",
-      isSegmented: true,
+      isSegmented: false,
       segments: [
         { id: "fixture-segment-1", title: "Groundwork for the new route handlers and service functions" },
         { id: "fixture-segment-2", title: "New route handlers, service functions and Pokemon model, modified app" },
@@ -94,6 +96,7 @@ describe("getReviewArtifactFixture", () => {
     expect(routeSegment.changedPaths).toContain("src/pokedex/pokemon/routes.py")
     expect(routeSegment.traceDiagram?.traceNodes.map((node) => node.codeBlocks[0].name)).toContain("read_all_pokemon")
     expect(routeSegment.traceDiagram?.astCodeGroup.codeBlocks).toContain(routeSegment.traceDiagram?.traceNodes[0].codeBlocks[0])
+    expect(artifact.segments[0].context).toContain("This change adds an API that lists, reads, creates, updates and deletes Pokemon")
     expect(routeSegment.context).toContain("This segment adds an API that lists, reads, creates, updates and deletes Pokemon")
     expect(artifact.segments[0].blastDiagram?.nodes.map((node) => node.diffType)).toContain("added")
   })
@@ -120,6 +123,16 @@ describe("getReviewArtifactFixture", () => {
       { text: "app.include_router(pokemon_router, prefix=\"/api\", dependencies=[Depends(verify_api_key)])", mark: "added", number: 16 },
     ])
     expect(source?.lines.filter((line) => line.mark === "context").length).toBeGreaterThan(0)
+  })
+
+  it("returns the same snapshot in segments outside a demo", async () => {
+    const testCasesPath = await mkdtemp(join(tmpdir(), "playground-fixtures-"))
+    await symlink(join(TEST_CASES_PATH, "demo-fastapi"), join(testCasesPath, "fastapi"))
+
+    const artifact = await getReviewArtifactFixture(testCasesPath, "fastapi/implement-route-api-pokemon")
+    await rm(testCasesPath, { recursive: true, force: true })
+
+    expect(artifact.isSegmented).toBe(true)
   })
 
   it("marks an artifact complete when every segment of its snapshot is titled", async () => {

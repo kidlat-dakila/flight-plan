@@ -30,7 +30,7 @@ A change that touches only types, imports or top-level statements has no Trace D
 - Click a row to open the node's code in a side panel, focused on that row's lines. Click the node's head to see all its code. The panel shows your agent's description first, and the waypoints of the Code Walkthrough inside the code. A card your agent hasn't explained says **Not explained yet.**, and **Explain this card** (G) asks your agent for that card alone.
 - A node's menu can **Show only the paths through this node**, or hide the nodes it leads to.
 - **Collapse all** and **Expand all** (Q) fold every card.
-- With segments off, each Trace Diagram has a tab of its own.
+- With segments off, the code several paths share is drawn in the diagram of each path that reaches it. When the change has several paths, each diagram has a tab of its own.
 
 ## On your own Flight Plan
 

@@ -42,10 +42,11 @@ export interface StoredBlast extends Omit<Blast, "nodes"> {
   readonly nodes: readonly Omit<BlastNode, "isRequired">[]
 }
 
-export interface StoredCodegraphSegment extends Omit<CodegraphSegment, "traceDiagram" | "codeWalkthrough" | "blastDiagram"> {
+export interface StoredCodegraphSegment extends Omit<CodegraphSegment, "traceDiagram" | "codeWalkthrough" | "blastDiagram" | "hiddenBlastDiagram"> {
   readonly context: readonly string[]
   readonly traceDiagram: StoredTraceDiagram | null
   readonly blastDiagram: StoredBlast | null
+  readonly hiddenBlastDiagram: StoredBlast | null
   readonly codeWalkthrough: StoredCodeWalkthrough
 }
 
@@ -76,6 +77,7 @@ export const storeCodegraph = ({ segments }: Codegraph, written: WrittenParts): 
     ...segment,
     traceDiagram: segment.traceDiagram === null ? null : storeTraceDiagram(segment.traceDiagram),
     blastDiagram: segment.blastDiagram === null ? null : storeBlast(segment.blastDiagram),
+    hiddenBlastDiagram: segment.hiddenBlastDiagram === null ? null : storeBlast(segment.hiddenBlastDiagram),
     codeWalkthrough: storeCodeWalkthrough(segment.codeWalkthrough),
   })),
 })

@@ -67,7 +67,7 @@ describe("getSettings", () => {
     expect(page).toMatchObject({
       section: "review",
       selectedConfigurationId: "minimal",
-      preferences: { spotlight: ["page", "component", "api-route", "database-read-write", "data-model", "hook"], isSegmented: true, walkthroughOrder: "imports-bottom-up" },
+      preferences: { spotlight: ["page", "component", "api-route", "database-read-write", "data-model", "hook"], isSegmented: false, walkthroughOrder: "imports-bottom-up" },
     })
     expect(page.section === "review" ? page.presets.map((option) => option.configurationId) : []).toStrictEqual([
       "standard",

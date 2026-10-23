@@ -83,6 +83,7 @@ const generatedSegment: CodegraphSegment = {
     ],
     edges: [{ importer: "reserve.ts", imported: "stock.ts" }],
   },
+  hiddenBlastDiagram: null,
   codeWalkthrough: { files: [{ path: "stock.ts", waypoints: [waypointOf("stockOf")] }] },
   codeReferences: [],
 }

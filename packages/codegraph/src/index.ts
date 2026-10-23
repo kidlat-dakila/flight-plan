@@ -76,6 +76,7 @@ export interface CodegraphSegment {
   readonly importGraph: readonly ImportGraphFile[]
   readonly traceDiagram: TraceDiagram | null
   readonly blastDiagram: Blast | null
+  readonly hiddenBlastDiagram: Blast | null
   readonly codeWalkthrough: LinkedCodeWalkthrough
   readonly codeReferences: readonly FileCodeReferences[]
 }
@@ -104,6 +105,7 @@ interface Drawing {
   readonly linkedGroupOf: (group: StoredCodeGroupGraph) => ASTCodeGroupGraph
   readonly diffTypes: ReadonlyMap<string, DiffType>
   readonly segmentCount: number
+  readonly isSegmented: boolean
 }
 
 const FIRST_WAYPOINT_NUMBER = 1
@@ -179,19 +181,41 @@ const joinBlasts = (one: Blast, two: Blast): Blast => ({
   edges: [...one.edges, ...two.edges.filter((edge) => one.edges.every((drawn) => drawn.importer !== edge.importer || drawn.imported !== edge.imported))],
 })
 
-const blastOf = ({ cluster, group, kind, filePaths, sharedFilePaths, deletedFilePaths }: PlannedSegment, { diffTypes, segmentCount }: Drawing): Blast | null => {
-  const ofDeleted = deletedFilePaths.length === 0 ? null : blastOfDeleted(cluster.importGraph, deletedFilePaths)
+const otherSharedFilePathsOf = ({ kind, sharedFilePaths }: PlannedSegment): readonly string[] => (kind === "shared" ? [] : sharedFilePaths)
+
+const blastOfDeletedIn = ({ cluster, deletedFilePaths }: PlannedSegment): Blast | null =>
+  deletedFilePaths.length === 0 ? null : blastOfDeleted(cluster.importGraph, deletedFilePaths)
+
+const blastOf = (planned: PlannedSegment, { diffTypes }: Drawing): Blast | null => {
+  const { group, filePaths } = planned
+  const ofDeleted = blastOfDeletedIn(planned)
   if (group === null) return ofDeleted
-  const isAlwaysDrawn = segmentCount === 1 || kind === "shared"
-  const otherSharedFilePaths = kind === "shared" ? [] : sharedFilePaths
-  if (!isAlwaysDrawn && ofDeleted === null && listReachedFilePaths(group, filePaths, otherSharedFilePaths).length === 0) return null
-  const ofBlocks = generateBlastFromBlocks({ group, filePaths, sharedFilePaths: otherSharedFilePaths, diffTypes })
+  const ofBlocks = generateBlastFromBlocks({ group, filePaths, sharedFilePaths: otherSharedFilePathsOf(planned), diffTypes })
   const exportBound = ofDeleted === null ? ofBlocks : joinBlasts(ofBlocks, ofDeleted)
   return { ...exportBound, importBound: generateImportBound({ group, filePaths, diffTypes }) }
 }
 
-const traceOf = ({ cluster, group, kind, filePaths, sharedFilePaths }: PlannedSegment, { linkedGroupOf }: Drawing): TraceDiagram | null => {
-  if (group === null) return null
+const isBlastDrawnInSegments = (planned: PlannedSegment, { segmentCount }: Drawing): boolean => {
+  const { group, kind, filePaths } = planned
+  if (group === null || segmentCount === 1 || kind === "shared" || blastOfDeletedIn(planned) !== null) return true
+  return listReachedFilePaths(group, filePaths, otherSharedFilePathsOf(planned)).length > 0
+}
+
+interface DrawnFiles {
+  readonly filePaths: readonly string[]
+  readonly sharedFilePaths: readonly string[]
+}
+
+const drawnFilesOf = ({ kind, filePaths, sharedFilePaths }: PlannedSegment, { isSegmented }: Drawing): DrawnFiles =>
+  isSegmented || kind === SHARED ? { filePaths, sharedFilePaths } : { filePaths: [...filePaths, ...sharedFilePaths], sharedFilePaths: [] }
+
+const isFoldedIntoLines = ({ kind }: PlannedSegment, { isSegmented }: Drawing): boolean => !isSegmented && kind === SHARED
+
+const traceOf = (planned: PlannedSegment, drawing: Drawing): TraceDiagram | null => {
+  const { cluster, group, kind } = planned
+  if (group === null || isFoldedIntoLines(planned, drawing)) return null
+  const { linkedGroupOf } = drawing
+  const { filePaths, sharedFilePaths } = drawnFilesOf(planned, drawing)
   const isWholeGroup = sharedFilePaths.length === 0 && group.astGraphs.every((astGraph) => astGraph.diffBlockIds.length === 0 || filePaths.includes(astGraph.filePath))
   const groupPaths = new Set(group.astGraphs.map((astGraph) => astGraph.filePath))
   const importGraphGroup = cluster.importGraph.filter((file) => groupPaths.has(file.filePath))
@@ -229,6 +253,8 @@ const exportedNamesIn = (group: StoredCodeGroupGraph | null, importGraph: readon
 const drawSegment = (planned: PlannedSegment, drawing: Drawing, firstWaypointNumber: number): CodegraphSegment => {
   const { cluster, group, kind, filePaths } = planned
   const traceDiagram = traceOf(planned, drawing)
+  const blastDiagram = blastOf(planned, drawing)
+  const isBlastDrawn = isBlastDrawnInSegments(planned, drawing)
   const codeWalkthrough = group === null
     ? NO_WALKTHROUGH
     : generateWalkthroughFromBlocks({ group: drawing.linkedGroupOf(group), filePaths, traceDiagram, firstWaypointNumber })
@@ -237,7 +263,8 @@ const drawSegment = (planned: PlannedSegment, drawing: Drawing, firstWaypointNum
     kind,
     importGraph: importGraphOf(planned),
     traceDiagram,
-    blastDiagram: blastOf(planned, drawing),
+    blastDiagram: isBlastDrawn ? blastDiagram : null,
+    hiddenBlastDiagram: isBlastDrawn ? null : blastDiagram,
     codeWalkthrough,
     codeReferences: generateCodeReferences(cluster.astGraphFiles, listViewedPaths(traceDiagram, codeWalkthrough), exportedNamesIn(group, cluster.importGraph)),
   }
@@ -252,6 +279,7 @@ const withUnreadFiles = (segment: CodegraphSegment, unread: CodegraphSegment): C
   ...segment,
   importGraph: [...segment.importGraph, ...unread.importGraph],
   blastDiagram: joinDrawnBlasts(segment.blastDiagram, unread.blastDiagram),
+  hiddenBlastDiagram: joinDrawnBlasts(segment.hiddenBlastDiagram, unread.hiddenBlastDiagram),
   codeWalkthrough: { ...segment.codeWalkthrough, files: [...segment.codeWalkthrough.files, ...unread.codeWalkthrough.files] },
   codeReferences: [...segment.codeReferences, ...unread.codeReferences],
 })
@@ -270,9 +298,13 @@ export interface BranchChange {
   readonly ref: TargetRef
 }
 
-export const buildBranchCodegraph = async ({ gitAdapter, ref }: BranchChange): Promise<Codegraph> => {
+export interface Segmentation {
+  readonly isSegmented: boolean
+}
+
+export const buildBranchCodegraph = async ({ gitAdapter, ref, isSegmented }: BranchChange & Segmentation): Promise<Codegraph> => {
   const [baseCommit, headCommit] = await Promise.all([gitAdapter.baseSha(ref), gitAdapter.headSha(ref)])
-  return await buildCodegraph({ gitAdapter, baseCommit, headCommit })
+  return await buildCodegraph({ gitAdapter, baseCommit, headCommit, isSegmented })
 }
 
 const looseClusterOf = (group: StoredCodeGroupGraph, { diffTypes, headCommit }: ImportGraphContext): TracedCluster => ({
@@ -288,7 +320,7 @@ const looseClusterOf = (group: StoredCodeGroupGraph, { diffTypes, headCommit }: 
   codeGroups: [group],
 })
 
-const buildCodegraphIn = async (gitAdapter: GitAdapter, context: ImportGraphContext): Promise<Codegraph> => {
+const buildCodegraphIn = async (gitAdapter: GitAdapter, context: ImportGraphContext, { isSegmented }: Segmentation): Promise<Codegraph> => {
   const changedPaths = [...context.diffTypes.keys()]
   const importGraphs = await Promise.all(changedPaths.map(async (filePath) => await traceImportGraph(context, filePath)))
   const importGraphByPath = new Map(changedPaths.map((filePath, index) => [filePath, importGraphs[index]] as const))
@@ -301,12 +333,12 @@ const buildCodegraphIn = async (gitAdapter: GitAdapter, context: ImportGraphCont
   const planned = withUnreadInShared([...clusters, ...looseClusters].flatMap(planCluster))
   const linkedByGroup = new Map(codeGroups.map((group) => [group, linkCodeGroupGraph(group)] as const))
   const linkedGroupOf = (group: StoredCodeGroupGraph): ASTCodeGroupGraph => linkedByGroup.get(group) ?? linkCodeGroupGraph(group)
-  const drawing: Drawing = { linkedGroupOf, diffTypes: context.diffTypes, segmentCount: planned.length }
+  const drawing: Drawing = { linkedGroupOf, diffTypes: context.diffTypes, segmentCount: planned.length, isSegmented }
   return { segments: planned.reduce(addSegment(drawing), []) }
 }
 
-export const buildCodegraph = async (change: ImportGraphChange): Promise<Codegraph> =>
-  await buildCodegraphIn(change.gitAdapter, await createImportGraphContext(change))
+export const buildCodegraph = async (change: ImportGraphChange & Segmentation): Promise<Codegraph> =>
+  await buildCodegraphIn(change.gitAdapter, await createImportGraphContext(change), change)
 
 export interface BranchReview extends BranchChange {
   readonly title: string
@@ -335,6 +367,7 @@ const toSegmentParts = (segment: CodegraphSegment, id: string): SegmentParts => 
   importGraph: segment.importGraph,
   traceDiagram: segment.traceDiagram,
   blastDiagram: segment.blastDiagram,
+  hiddenBlastDiagram: segment.hiddenBlastDiagram,
   walkthrough: segment.codeWalkthrough,
   codeReferences: segment.codeReferences,
 })
@@ -351,7 +384,7 @@ export interface CommitReview {
 
 export const buildCommitReviewArtifact = async ({ gitAdapter, baseCommit, headCommit, title, newId, ignoredPaths, isSegmented }: CommitReview): Promise<ReviewArtifact> => {
   const context = withoutIgnoredPaths(await createImportGraphContext({ gitAdapter, baseCommit, headCommit }), ignoredPaths)
-  const codegraph = await buildCodegraphIn(gitAdapter, context)
+  const codegraph = await buildCodegraphIn(gitAdapter, context, { isSegmented })
   const segments = codegraph.segments.map((segment) => toSegmentParts(segment, segmentIdOf(newId())))
   const hunks = hunksIn(context)
   const headPaths = listSourcePaths(hunks, segments).filter((path) => context.diffTypes.get(path) !== DELETED)

@@ -19,7 +19,7 @@ interface ReviewPreferences {
 |---|---|---|
 | `spotlight` | The [classifications](codegraph/classifications.md) of the changes that matter most to the user, in the order of the hierarchy, each once | Page, Component, API route, Database read/write, Schema / data model and Hook |
 | `sectionWriteUps` | For each section, whether the agent always writes its write-up when it writes a review, or only when the reviewer asks | Context, Trace Diagram and Findings always; Blast Diagram and Code Walkthrough on demand |
-| `isSegmented` | Whether a review is split into [segments](review-artifact.md#segments) | Yes |
+| `isSegmented` | Whether a review is split into [segments](review-artifact.md#segments) | No |
 | `walkthroughOrder` | How the files of a [Code Walkthrough](code-walkthrough.md) are ordered: by the [import graph](codegraph/import-graph.md) from the file others import up to the files that import it, the other way round, or the spotlight and the core changes first | From the bottom of the import graph up |
 | `sectionOrder` | The order of the four sections of a segment, each once | Context, Trace Diagram, Blast Diagram, Code Walkthrough |
 | `ignoredPaths` | Path patterns, in the `.gitignore` style and from the root of the repository, of the files a review leaves out | The tests of TypeScript and Python, e2e tests included |
