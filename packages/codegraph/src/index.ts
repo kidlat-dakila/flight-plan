@@ -224,7 +224,7 @@ const traceOf = (planned: PlannedSegment, drawing: Drawing): TraceDiagram | null
   const otherLineFilePaths = group.astGraphs
     .filter((astGraph) => astGraph.diffBlockIds.length > 0 && !filePaths.includes(astGraph.filePath) && !sharedFilePaths.includes(astGraph.filePath))
     .map((astGraph) => astGraph.filePath)
-  const scope = { filePaths, sharedFilePaths: otherSharedFilePaths, otherLineFilePaths }
+  const scope = { filePaths, sharedFilePaths: otherSharedFilePaths, otherLineFilePaths, lineFilePaths: planned.filePaths }
   return generateTraceDiagram({ group: linkedGroupOf(group), importGraphGroup, scope: isWholeGroup ? null : scope })
 }
 

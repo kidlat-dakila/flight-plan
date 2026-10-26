@@ -75,6 +75,47 @@ describe("the chains of a group", () => {
     expect(chains).toStrictEqual(["render-event onClick → root-argument-value onSave → function saveReview"])
   })
 
+  it("hands a function bound with bind as the function itself", () => {
+    const chains = chainsIn(
+      {
+        "src/save.ts": codeOf("export const saveReview = (id) => {", "  return api.save(id)", "}"),
+        "src/save-button.tsx": codeOf("export function SaveButton({ onSave }) {", "  return <button onClick={onSave}>Save</button>", "}"),
+        "src/review-page.tsx": codeOf(
+          "import { saveReview } from \"./save\"",
+          "import { SaveButton } from \"./save-button\"",
+          "export const ReviewPage = () => <SaveButton onSave={saveReview.bind(null, 1)} />",
+        ),
+      },
+      { "src/save.ts": [rangeAt(2, 10, 2, 13)] },
+    )
+
+    expect(chains).toStrictEqual(["render-event onClick → root-argument-value onSave → function saveReview"])
+  })
+
+  it("does not step from an argument to the value it was handed when it calls a member the argument does not have", () => {
+    const group = groupOf(
+      {
+        "src/trainers.ts": codeOf("export const loadTrainers = () => {", "  return db.trainers()", "}"),
+        "src/trainer-list.tsx": codeOf("export function TrainerList({ trainers }) {", "  return <ul>{trainers.map((trainer) => <li>{trainer}</li>)}</ul>", "}"),
+        "src/trainers-page.tsx": codeOf(
+          "import { TrainerList } from \"./trainer-list\"",
+          "import { loadTrainers } from \"./trainers\"",
+          "export const TrainersPage = () => {",
+          "  const trainers = loadTrainers()",
+          "  return <TrainerList trainers={trainers} />",
+          "}",
+        ),
+      },
+      { "src/trainers-page.tsx": [rangeAt(4, 1, 4, 34)] },
+    )
+
+    expect(blockNamed(group, "root-argument-value", "trainers").nextBlockIds).toStrictEqual([])
+    expect(chainsOf(group)).toStrictEqual([
+      "component TrainersPage → external-value trainers",
+      "component TrainersPage → render-root → render TrainerList → external-value trainers",
+    ])
+  })
+
   it("steps from a call of a member of an argument to the block of that member, and on to what was handed to it", () => {
     const chains = chainsIn(
       {

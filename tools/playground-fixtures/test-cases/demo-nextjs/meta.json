@@ -1,0 +1,6 @@
+{
+  "title": "Next.js demo with server actions and Drizzle",
+  "packages": ["next", "react", "react-dom", "drizzle-orm"],
+  "language": "typescript",
+  "mainFramework": "next"
+}

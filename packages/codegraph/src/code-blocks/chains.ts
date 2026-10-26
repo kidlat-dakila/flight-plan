@@ -153,8 +153,10 @@ const isStateCallback = (block: StoredCodeBlock, index: BlockIndex): boolean => 
 
 const isHandlerSlot = (block: StoredCodeBlock, index: BlockIndex): boolean => HANDLING_TYPES.has(block.type) && !isStateCallback(block, index)
 
+const callsUnknownMember = (symbol: StoredCodeBlockSymbol): boolean => symbol.member?.blockId === null
+
 const isCalling = (symbol: StoredCodeBlockSymbol, holder: StoredCodeBlock, index: BlockIndex): boolean =>
-  RUNNING_USES.has(symbol.use) || (NAMING_USES.has(symbol.use) && !isHandedOn(symbol) && isHandlerSlot(holder, index))
+  (RUNNING_USES.has(symbol.use) && !callsUnknownMember(symbol)) || (NAMING_USES.has(symbol.use) && !isHandedOn(symbol) && isHandlerSlot(holder, index))
 
 const argumentNamedBy = (symbol: StoredCodeBlockSymbol, index: BlockIndex): StoredCodeBlock | null => {
   const named = runMemberOf(symbol, index) ?? findBlock(namedIdOf(symbol), index)

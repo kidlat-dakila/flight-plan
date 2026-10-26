@@ -4,7 +4,7 @@
 
 ## Where the demos come from
 
-Every playground fixture whose folder name starts with `demo-` is a demo. Today these are `tools/playground-fixtures/test-cases/demo-react/`, `demo-vue/` and `demo-fastapi/`.
+Every playground fixture whose folder name starts with `demo-` is a demo. Today these are `tools/playground-fixtures/test-cases/demo-react/`, `demo-vue/`, `demo-nextjs/` and `demo-fastapi/`.
 
 A demo uses the fixture's review artifact as it is, with segments off as the default review preferences have them, and adds a `demo.json` beside the fixture's `meta.json`. It describes the pull request around the review:
 

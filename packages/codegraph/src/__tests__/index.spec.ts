@@ -317,6 +317,24 @@ describe("buildCodegraph", () => {
     ])
   })
 
+  it("with segments off, a line of change draws only the shared changes it reaches", async () => {
+    const pageA = (mark: string): string => ["import { format, shout } from \"./format\"", `export const pageA = () => format(shout("${mark}"))`].join("\n")
+    const pageB = (mark: string): string => ["import { format } from \"./format\"", `export const pageB = () => format("${mark}")`].join("\n")
+    const format = (ending: string): string => [`export const format = (text) => text${ending}`, `export const shout = (text) => text.toUpperCase()${ending}`].join("\n")
+    const main = ["import { pageA } from \"./pageA\"", "import { pageB } from \"./pageB\"", "pageA()", "pageB()"].join("\n")
+    const report = ["import { shout } from \"./format\"", "export const report = () => shout(\"report\")"].join("\n")
+    const { segments } = await codegraphOf({
+      base: { "src/main.ts": main, "src/report.ts": report, "src/pageA.ts": pageA("a"), "src/pageB.ts": pageB("b"), "src/format.ts": format("") },
+      head: { "src/main.ts": main, "src/report.ts": report, "src/pageA.ts": pageA("A"), "src/pageB.ts": pageB("B"), "src/format.ts": format(".trim()") },
+    }, UNSEGMENTED)
+
+    expect(segments.map((segment) => [segment.kind, segment.traceDiagram?.traceNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null])).toStrictEqual([
+      ["shared", null],
+      ["entry", ["pageA", "format", "shout"]],
+      ["entry", ["pageB", "format"]],
+    ])
+  })
+
   it("splits a change into the shared segment, with a trace of the shared files alone, and one entry segment per line of change, each with the trace of its own line", async () => {
     const page = (name: string, mark: string): string => [`import { format } from "./format"`, `export const ${name} = () => format("${mark}")`].join("\n")
     const main = ["import { pageA } from \"./pageA\"", "import { pageB } from \"./pageB\"", "pageA()", "pageB()"].join("\n")

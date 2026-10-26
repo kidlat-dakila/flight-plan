@@ -1,0 +1,111 @@
+{
+  "repository": {
+    "name": "pokedex-next",
+    "forgeSlug": "acme/pokedex-next"
+  },
+  "pullRequest": {
+    "number": 63,
+    "author": "richard",
+    "updatedMinutesAgo": 20
+  },
+  "reviewers": [
+    {
+      "login": "gilfoyle",
+      "state": "changes-requested"
+    },
+    {
+      "login": "dinesh",
+      "state": "commented"
+    }
+  ],
+  "comments": [
+    {
+      "author": "dinesh",
+      "body": "I'll fix the typos in the seeded Pokemon on staging once editing is merged.",
+      "minutesAgo": 55
+    }
+  ],
+  "threads": [
+    {
+      "path": "src/app/pokemon/actions.ts",
+      "line": 26,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "gilfoyle",
+          "body": "Nothing checks that the Pokemon still exists. If it was deleted after the form opened, `savePokemon` updates no row and the redirect lands on a 404.",
+          "minutesAgo": 130
+        },
+        {
+          "author": "richard",
+          "body": "Fair. I'll have `savePokemon` return the updated row and call `notFound()` when there is none.",
+          "minutesAgo": 90
+        }
+      ]
+    },
+    {
+      "path": "src/app/pokemon/components/PokemonForm.tsx",
+      "line": 16,
+      "isResolved": true,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "`trainerId` is a number and the option values are strings. Does the select still open on the right trainer?",
+          "minutesAgo": 190
+        },
+        {
+          "author": "richard",
+          "body": "It does. React compares the default value with each option's value as text, so `3` picks the option with value `\"3\"`.",
+          "minutesAgo": 170
+        }
+      ]
+    },
+    {
+      "path": "src/db/queries/pokemon.ts",
+      "line": 16,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "If I pick No trainer while editing, does `set(fields)` take the Pokemon away from its trainer?",
+          "minutesAgo": 110
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author": "gilfoyle",
+      "verdict": "request-changes",
+      "body": "Saving a Pokemon that was deleted in the meantime ends on a 404. Details inline.",
+      "minutesAgo": 128
+    },
+    {
+      "author": "dinesh",
+      "verdict": "comment",
+      "body": "Editing works for me locally. One question on the trainer.",
+      "minutesAgo": 108
+    }
+  ],
+  "chat": [
+    {
+      "from": "reviewer",
+      "body": "Why does EditPokemonPage bind the id to updatePokemon instead of passing it to PokemonForm?",
+      "minutesAgo": 35
+    },
+    {
+      "from": "agent",
+      "body": "`updatePokemon.bind(null, pokemon.id)` returns a function that takes only `formData`, the shape `PokemonFormProps` asks of `action`. `PokemonForm` therefore submits to `createPokemon` and to the bound `updatePokemon` in the same way, and never needs to know which Pokemon it edits.",
+      "minutesAgo": 34
+    }
+  ],
+  "agentReplies": [
+    "This is a demo, so my replies are written in advance. With your own agent, I read the change and answer here, and the code I mention opens as a link.",
+    "In a real review I'd answer from the code you selected. Here every reply is scripted, so try the comments, the reviewed marks and the review menu instead."
+  ],
+  "avatars": {
+    "richard": "/demo-avatars/richard.svg",
+    "gilfoyle": "/demo-avatars/gilfoyle.svg",
+    "dinesh": "/demo-avatars/dinesh.svg"
+  }
+}
