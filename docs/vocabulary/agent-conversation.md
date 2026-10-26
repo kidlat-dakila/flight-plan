@@ -12,7 +12,7 @@ A conversation is a **journal**: an ordered list of events, each numbered by its
 
 | Event | Who adds it | Meaning |
 |---|---|---|
-| Reviewer message | The reviewer | Something the reviewer wrote, with the code reference it is about, if any |
+| Reviewer message | The reviewer | Something the reviewer wrote, with the reference to the code or the part of the review artifact it is about, if any, and the highlighted text as its **excerpt**, which only Chat shows |
 | Agent message | The agent | Something the agent wrote to the reviewer |
 | Question batch | The agent, or Flight Plan for a permission request | One question or several, answered together |
 | Answers | The reviewer | The answers to one question batch |
@@ -46,7 +46,14 @@ Codex and Cursor have no live skill. The Launch Agent dialog gives them a one-li
 
 ## Chat
 
-The reviewer reads and answers the conversation in **Chat**, a panel at the right of the review page that the Chat button of the [activity bar](flight-plan-review.md#changed-files-and-side-panels), or Ctrl+C, opens. It shows the messages and question batches in journal order and follows each change as it is appended. A question batch that is open is answered in the panel: a pick per question, several where the question allows it, and the reviewer's own words; a permission request shows what the tool would run, with Allow and Deny. Messages are Markdown. A [CodeLink](review-artifact.md#codelink) in a message, `[label](code:path#target)`, opens the code as it does in the review artifact, when the review's sources hold that code. Selecting code and choosing "Ask the agent" attaches a code reference such as `storefront@9f2c1ab:src/x.ts#L3-9` to the next message.
+The reviewer reads and answers the conversation in **Chat**, a panel at the right of the review page that the Chat button of the [activity bar](flight-plan-review.md#changed-files-and-side-panels), or Ctrl+C, opens. It shows the messages and question batches in journal order and follows each change as it is appended. A question batch that is open is answered in the panel: a pick per question, several where the question allows it, and the reviewer's own words; a permission request shows what the tool would run, with Allow and Deny. Messages are Markdown. A [CodeLink](review-artifact.md#codelink) in a message, `[label](code:path#target)`, opens the code as it does in the review artifact, when the review's sources hold that code.
+
+The selection toolbar's ask button is named after the review's agent, with its logo: "Ask Claude", "Ask Codex" or "Ask Cursor", and "Ask the agent" with no agent set up. It works on any text of the review: code, waypoint titles and readings, findings, the Trace Diagram's title, description and cards, Blast Diagram files, and a segment's title and context. "Add comment" stays on code. Choosing it attaches to the next message a reference that says where the text is in the review artifact:
+
+- Code gets its code reference, `storefront@9f2c1ab:src/x.ts#L3-9`, from `review.codeReference` (`procedures/build-code-reference/`).
+- Other text gets the part of the review artifact and the quoted words, ``waypoint `w2` of the review artifact, where it says "retries twice"``, from `review.textReference` (`procedures/build-text-reference/`). The part is a waypoint, a segment, a segment's Trace Diagram, a Trace Diagram node, a Blast Diagram file, a context code block, or the review artifact itself when the text belongs to none of them.
+
+Chat shows the highlighted text above the message box and on the sent message, code as code and other text as a quote. The reviewer message keeps that text as its excerpt for display only, and the agent gets the reference alone. A message with no excerpt shows its reference.
 
 The live agent of a review target is the session that writes its review artifact, so it can answer about the review and, when the reviewer asks, change the artifact through the same MCP tools it writes with.
 

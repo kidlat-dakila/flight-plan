@@ -11,7 +11,7 @@ description: Talk to your agent about the review, answer its questions and appro
 
 Type in **Ask about this review** and press Enter. Shift+Enter starts a new line. If your agent isn't online, Flight Plan asks you to start it, and the agent answers once it is.
 
-To ask about specific code, select it and choose **Ask the agent**. The reference to those lines is attached above the message box. Code links in the agent's answers open the code they point at.
+To ask about something specific, select it and choose **Ask Claude** (named after your agent). This works on code and on any other text in the review, such as a waypoint, a finding, a Trace Diagram card or a segment's context. What you selected appears above the message box and stays on the message you send. Flight Plan tells the agent where it sits in the review. Code links in the agent's answers open the code they point at.
 
 The panel's header shows whether the agent is online: **Agent online** or **Agent offline**. When the agent offers more than one model, you can switch from the panel. The next terminal Flight Plan opens starts the agent with it.
 

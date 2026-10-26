@@ -9,12 +9,18 @@ import { cn } from "@/lib/utils"
 
 type AgentState = "online" | "offline"
 
+export interface Excerpt {
+  readonly kind: "code" | "text"
+  readonly text: string
+}
+
 interface Message {
   readonly kind: "message"
   readonly id: string
   readonly author: "reviewer" | "agent"
   readonly authorLabel: string
   readonly reference: string | null
+  readonly excerpt: Excerpt | null
   readonly body: ProseBlocks
   readonly timeLabel: string
 }
@@ -47,6 +53,7 @@ interface ChatPanelProps {
   readonly modelChoice: ModelChoice | null
   readonly codeLinks: CodeLinkTargets
   readonly reference: string | null
+  readonly excerpt: Excerpt | null
   readonly isSending: boolean
   readonly sendProblem: string | null
   readonly answering: QuestionAnswering
@@ -62,6 +69,10 @@ interface ChatPanelProps {
 const REMOVE_REFERENCE_LABEL = "Remove the reference"
 const TEXTAREA_CLASSES = "min-h-16 w-full resize-none rounded-lg border border-input bg-card px-2.5 py-1.5 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
 const REFERENCE_CLASSES = "self-start rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[0.6875rem] leading-4 wrap-anywhere"
+const EXCERPT_CLASSES: Record<Excerpt["kind"], string> = {
+  code: "max-h-24 min-w-0 overflow-auto rounded-md bg-code px-2.5 py-1.5 font-mono text-xs leading-5 whitespace-pre",
+  text: "max-h-24 min-w-0 overflow-y-auto border-l-2 border-border pl-2.5 text-muted-foreground whitespace-pre-line wrap-anywhere",
+}
 
 const STATE_RING_CLASSES: Record<AgentState, string> = {
   online: "fill-(--line) stroke-(--line) [stroke-width:2]",
@@ -74,13 +85,25 @@ interface MessageEntryProps {
   readonly onOpenCodeLink: (anchorId: string) => void
 }
 
+interface AttachmentProps {
+  readonly reference: string
+  readonly excerpt: Excerpt | null
+  readonly className?: string
+}
+
+const Attachment = ({ reference, excerpt, className }: AttachmentProps) => {
+  if (excerpt === null) return <span className={cn(REFERENCE_CLASSES, className)}>{reference}</span>
+  if (excerpt.kind === "code") return <pre title={reference} className={cn(EXCERPT_CLASSES.code, className)}>{excerpt.text}</pre>
+  return <blockquote title={reference} className={cn(EXCERPT_CLASSES.text, className)}>{excerpt.text}</blockquote>
+}
+
 const MessageEntry = ({ message, codeLinks, onOpenCodeLink }: MessageEntryProps) => (
   <>
     <p className="flex items-baseline gap-2">
       <span className="font-bold">{message.authorLabel}</span>
       <span className="text-xs text-muted-foreground tabular-nums">{message.timeLabel}</span>
     </p>
-    {message.reference === null ? null : <p className={REFERENCE_CLASSES}>{message.reference}</p>}
+    {message.reference === null ? null : <Attachment reference={message.reference} excerpt={message.excerpt} />}
     <Prose blocks={message.body} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
   </>
 )
@@ -90,6 +113,7 @@ const ChatPanel = ({
   modelChoice,
   codeLinks,
   reference,
+  excerpt,
   isSending,
   sendProblem,
   answering,
@@ -170,10 +194,10 @@ const ChatPanel = ({
         {reference === null
           ? null
           : (
-              <p className="flex items-start gap-1">
-                <span className={cn(REFERENCE_CLASSES, "flex-1")}>{reference}</span>
+              <div className="flex items-start gap-1">
+                <Attachment reference={reference} excerpt={excerpt} className="flex-1" />
                 <IconButton icon="close" label={REMOVE_REFERENCE_LABEL} className="size-5" onClick={onClearReference} />
-              </p>
+              </div>
             )}
         <textarea
           aria-label={conversation.placeholder}

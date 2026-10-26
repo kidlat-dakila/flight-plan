@@ -154,7 +154,18 @@ describe("generateWalkthroughFromBlocks", () => {
   it("links a waypoint of a changed nested function to the trace node of the function that holds it", () => {
     const page: GroupFile = {
       filePath: "src/page.ts",
-      lines: ["export function render() {", "  const format = (value) => {", "    return String(value)", "  }", "  return format(1)", "}"],
+      lines: [
+        "export function render() {",
+        "  const format = (value) => {",
+        "    return String(value)",
+        "  }",
+        "  return format(1)",
+        "}",
+        "",
+        "export function show() {",
+        "  return render()",
+        "}",
+      ],
       diffLines: [[3, 3]],
     }
     const [waypoint] = walkthroughOf([page]).files[0].waypoints

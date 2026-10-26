@@ -172,7 +172,7 @@ describe("writeUpReview with another segments choice than the review's", () => {
     await writeUpReview({ ...INPUT, sections: ["traceDiagram"], isSegmented: false }, context)
 
     const rebuilt = await context.reviewStore.findArtifact(KEY)
-    expect(traceNamesOf(artifact)).toStrictEqual([["format"], ["pageA", "format"], ["pageB", "format"]])
+    expect(traceNamesOf(artifact)).toStrictEqual([null, ["pageA", "format"], ["pageB", "format"]])
     expect(rebuilt?.isSegmented).toBe(false)
     expect(traceNamesOf(rebuilt)).toStrictEqual([null, ["pageA", "format"], ["pageB", "format"]])
   })

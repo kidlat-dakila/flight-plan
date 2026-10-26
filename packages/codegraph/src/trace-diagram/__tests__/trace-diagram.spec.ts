@@ -21,6 +21,11 @@ const SHOP = {
   "src/orders-page.tsx": codeOf("import { OrderList } from \"./order-list\"", "export const OrdersPage = () => <main><OrderList /></main>"),
 }
 const ORDERS_CHANGE = { "src/orders.ts": [rangeAt(2, 10, 2, 12)] }
+const ORDERS_VIEW = codeOf("import { loadOrders } from \"./orders\"", "export const showOrders = () => {", "  return loadOrders()", "}")
+const ORDERS_VIEW_EDGE = { id: "src/orders-view.ts#function@2:1 -> src/orders.ts#function@2:1", from: "src/orders-view.ts#function@2:1", to: "src/orders.ts#function@2:1" }
+
+const rowIdsOf = (nodes: readonly TraceNode[], nodeId: string): string[] =>
+  (nodes.find((node) => node.id === nodeId)?.blockLabels ?? []).map(({ codeBlock }) => codeBlock.id)
 
 describe("the Trace Diagram of a group", () => {
   it("makes one node per root block on a chain, typed as that block, and an edge where a chain steps from one root block into another", () => {
@@ -80,11 +85,13 @@ describe("the Trace Diagram of a group", () => {
   })
 
   it("gives a statement at the top level of a file no node and no edge, and keeps what it runs", () => {
-    const files = { "src/pricing.ts": PRICING, "src/main.ts": codeOf("import { priceOf } from \"./pricing\"", "priceOf({ price: 1 })") }
+    const files = { "src/pricing.ts": PRICING, "src/cart.ts": CART, "src/main.ts": codeOf("import { subtotalOf } from \"./cart\"", "subtotalOf([])") }
     const diagram = diagramOf(files, PRICING_CHANGE)
 
-    expect(outlineOfNodes(diagram)).toStrictEqual(["function priceOf (changed)"])
-    expect(diagram?.traceNodeEdges).toStrictEqual([])
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function subtotalOf", "function priceOf (changed)"])
+    expect(diagram?.traceNodeEdges).toStrictEqual([
+      { id: "src/cart.ts#function@2:1 -> src/pricing.ts#function@1:1", from: "src/cart.ts#function@2:1", to: "src/pricing.ts#function@1:1" },
+    ])
   })
 
   it("has no diagram when only a statement at the top level of a file changed", () => {
@@ -99,6 +106,13 @@ describe("the Trace Diagram of a group", () => {
     expect(diagramOf(types, { "src/types.ts": [rangeAt(2, 3, 2, 16)] })).toBeNull()
   })
 
+  it("has no diagram when no line joins the nodes of the change", () => {
+    const prices = codeOf("export const priceOf = (item) => {", "  return item.price", "}", "export const taxOf = (item) => {", "  return item.tax", "}")
+
+    expect(diagramOf({ "src/pricing.ts": PRICING }, PRICING_CHANGE)).toBeNull()
+    expect(diagramOf({ "src/pricing.ts": prices }, { "src/pricing.ts": [rangeAt(2, 3, 2, 9), rangeAt(5, 3, 5, 9)] })).toBeNull()
+  })
+
   it("gives a value at the top level of a file that is not exported no node, and lists it as a step of every node that reads it", () => {
     const orders = codeOf(
       "const ORDERS_KEY = [\"orders\"]",
@@ -109,12 +123,12 @@ describe("the Trace Diagram of a group", () => {
       "  return ORDERS_KEY.length",
       "}",
     )
-    const diagram = diagramOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(1, 20, 1, 29)] })
+    const diagram = diagramOf({ "src/orders.ts": orders, "src/orders-view.ts": ORDERS_VIEW }, { "src/orders.ts": [rangeAt(1, 20, 1, 29)] })
     const nodes = diagram?.traceNodes ?? []
 
-    expect(outlineOfNodes(diagram)).toStrictEqual(["function loadOrders (changed)", "function countOrders (changed)"])
-    expect(diagram?.traceNodeEdges).toStrictEqual([])
-    expect(nodes.map((node) => node.blockLabels.map(({ codeBlock }) => codeBlock.id))).toStrictEqual([
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function countOrders (changed)", "function showOrders", "function loadOrders (changed)"])
+    expect(diagram?.traceNodeEdges).toStrictEqual([ORDERS_VIEW_EDGE])
+    expect([rowIdsOf(nodes, "src/orders.ts#function@2:1"), rowIdsOf(nodes, "src/orders.ts#function@5:1")]).toStrictEqual([
       ["src/orders.ts#root-variable@1:1"],
       ["src/orders.ts#root-variable@1:1"],
     ])
@@ -122,10 +136,11 @@ describe("the Trace Diagram of a group", () => {
 
   it("gives an exported value that is plain no node, and lists it as a step of every node that reads it", () => {
     const orders = codeOf("export const ORDERS_KEY = [\"orders\"]", "export const loadOrders = () => {", "  return ORDERS_KEY", "}")
-    const diagram = diagramOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(1, 27, 1, 36)] })
+    const diagram = diagramOf({ "src/orders.ts": orders, "src/orders-view.ts": ORDERS_VIEW }, { "src/orders.ts": [rangeAt(1, 27, 1, 36)] })
 
-    expect(outlineOfNodes(diagram)).toStrictEqual(["function loadOrders (changed)"])
-    expect(diagram?.traceNodes[0].blockLabels.map(({ codeBlock }) => codeBlock.id)).toStrictEqual(["src/orders.ts#root-variable@1:1"])
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function showOrders", "function loadOrders (changed)"])
+    expect(diagram?.traceNodeEdges).toStrictEqual([ORDERS_VIEW_EDGE])
+    expect(rowIdsOf(diagram?.traceNodes ?? [], "src/orders.ts#function@2:1")).toStrictEqual(["src/orders.ts#root-variable@1:1"])
   })
 
   it("keeps a node for an exported value made by a call", () => {

@@ -313,7 +313,7 @@ With segments off, the codegraph draws the shared segment into the lines of chan
 
 ## When there is no diagram
 
-A change that touches only types, interfaces or import lines changes nothing that runs, so it has no Trace Diagram. Neither has a change that touches only statements at the top level of a file, which are no nodes. Neither has a file no language reads.
+A change that touches only types, interfaces or import lines changes nothing that runs, so it has no Trace Diagram. Neither has a change that touches only statements at the top level of a file, which are no nodes. Neither has a file no language reads. Neither has a segment whose diagram would draw no line: one card alone, or cards that nothing joins, show no flow, so the segment has no Trace Diagram and its waypoints link to no node.
 
 ## Three forms
 

@@ -293,6 +293,7 @@ export const generateTraceDiagram = ({ group, importGraphGroup, scope }: TraceSo
   const keptEdges = allEdges.filter((edge) => !leftOutIds.has(edge.from) && !leftOutIds.has(edge.to))
   const { nodes, edges } = withGroups(keptNodes, keptEdges, groupCardNodes(keptNodes))
   const traceNodeEdges = withCardEdges({ nodes, edges, importerCountByPath })
+  if (traceNodeEdges.length === 0) return null
   const parentIdById = listCardParents({ nodes, edges: traceNodeEdges, importerCountByPath })
   return { astCodeGroup: group, importGraphGroup, title: null, description: null, traceNodes: nestNodes(nodes, parentIdById), traceNodeEdges, isRequired: false }
 }

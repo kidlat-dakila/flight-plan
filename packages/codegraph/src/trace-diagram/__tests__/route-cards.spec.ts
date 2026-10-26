@@ -77,10 +77,12 @@ describe("the card of a route path of a Python framework", () => {
       "@app.route(\"/users\", methods=[\"GET\", \"POST\"])",
       "def users():",
       "    return list_users()",
+      "def list_users():",
+      "    return query_users()",
     )
-    const diagram = presentDiagramOf({ "shop/views.py": views }, { "shop/views.py": [rangeAt(5, 5, 5, 24)] })
+    const diagram = presentDiagramOf({ "shop/views.py": views }, { "shop/views.py": [rangeAt(5, 5, 5, 24), rangeAt(7, 5, 7, 24)] })
 
-    expect(outlineOfNodes(diagram)).toStrictEqual(["route users", "  function users (changed)"])
+    expect(outlineOfNodes(diagram)).toStrictEqual(["route users", "  function users (changed)", "function list_users (changed)"])
     expect(diagram.traceNodes[0].id).toBe("shop/views.py#route@/users")
   })
 })
@@ -89,10 +91,13 @@ const NEXT_FILES = {
   "package.json": JSON.stringify({ dependencies: { next: "16.0.0" } }),
   "app/api/users/[id]/route.ts": codeOf(
     "export async function GET(request, { params }) {",
-    "  return Response.json(await db.user.find(params.id))",
+    "  return Response.json(await findUser(params.id))",
     "}",
     "export async function DELETE(request, { params }) {",
     "  await db.user.delete(params.id)",
+    "}",
+    "async function findUser(id) {",
+    "  return db.user.find(id)",
     "}",
   ),
   "pages/api/posts.ts": codeOf("export default async function handler(req, res) {", "  res.json(await db.post.findMany())", "}"),
@@ -100,7 +105,7 @@ const NEXT_FILES = {
 }
 
 const NEXT_CHANGES = {
-  "app/api/users/[id]/route.ts": [rangeAt(2, 3, 2, 54), rangeAt(5, 3, 5, 33)],
+  "app/api/users/[id]/route.ts": [rangeAt(2, 3, 2, 50), rangeAt(5, 3, 5, 33), rangeAt(8, 3, 8, 25)],
   "pages/api/posts.ts": [rangeAt(2, 3, 2, 38)],
   "app/actions.ts": [rangeAt(3, 3, 3, 33)],
 }
@@ -116,11 +121,13 @@ describe("the card of a Next.js route file", () => {
       "route handler",
       "  function handler (changed)",
       "function createUser (changed)",
+      "function findUser (changed)",
     ])
     expect(diagram.traceNodes.map((node) => node.id)).toStrictEqual([
       "app/api/users/[id]/route.ts#route@/api/users/[id]",
       "pages/api/posts.ts#route@/api/posts",
       "app/actions.ts#function@2:1",
+      "app/api/users/[id]/route.ts#function@7:1",
     ])
   })
 })
@@ -199,13 +206,13 @@ describe("the card of a route path below a mount", () => {
   })
 
   it("puts the prefix of a blueprint and of an included router before their routes", () => {
-    const blueprint = codeOf("from flask import Blueprint", "bp = Blueprint(\"users\", __name__)", "@bp.get(\"/users\")", "def users():", "    return list_users()")
+    const blueprint = codeOf("from flask import Blueprint", "bp = Blueprint(\"users\", __name__)", "@bp.get(\"/users\")", "def users():", "    return list_users()", "def list_users():", "    return query_users()")
     const flask = codeOf("from flask import Flask", "from shop.users import bp", "app = Flask(__name__)", "app.register_blueprint(bp, url_prefix=\"/api\")")
-    const router = codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/items\")", "@router.get(\"/\")", "async def items():", "    return list_items()")
+    const router = codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/items\")", "@router.get(\"/\")", "async def items():", "    return list_items()", "def list_items():", "    return query_items()")
     const fastapi = codeOf("from fastapi import FastAPI", "from shop.items import router", "app = FastAPI()", "app.include_router(router, prefix=\"/v1\")")
 
-    expect(presentDiagramOf({ "shop/users.py": blueprint, "shop/main.py": flask }, { "shop/users.py": [rangeAt(5, 5, 5, 24)] }).traceNodes[0].id).toBe("shop/users.py#route@/api/users")
-    expect(presentDiagramOf({ "shop/items.py": router, "shop/main.py": fastapi }, { "shop/items.py": [rangeAt(5, 5, 5, 24)] }).traceNodes[0].id).toBe("shop/items.py#route@/v1/items")
+    expect(presentDiagramOf({ "shop/users.py": blueprint, "shop/main.py": flask }, { "shop/users.py": [rangeAt(5, 5, 5, 24), rangeAt(7, 5, 7, 24)] }).traceNodes[0].id).toBe("shop/users.py#route@/api/users")
+    expect(presentDiagramOf({ "shop/items.py": router, "shop/main.py": fastapi }, { "shop/items.py": [rangeAt(5, 5, 5, 24), rangeAt(7, 5, 7, 24)] }).traceNodes[0].id).toBe("shop/items.py#route@/v1/items")
   })
 })
 
@@ -359,10 +366,10 @@ describe("the dependencies of a FastAPI route", () => {
   })
 
   it("draws no line between a router the change leaves alone and the routes it changes", () => {
-    const items = codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/items\")", "@router.get(\"/\")", "async def items():", "    return list_items()")
-    const handlerOnly = presentDiagramOf({ "shop/items.py": items }, { "shop/items.py": [rangeAt(5, 5, 5, 24)] })
+    const items = codeOf("from fastapi import APIRouter", "router = APIRouter(prefix=\"/items\")", "@router.get(\"/\")", "async def items():", "    return list_items()", "def list_items():", "    return query_items()")
+    const handlerOnly = presentDiagramOf({ "shop/items.py": items }, { "shop/items.py": [rangeAt(5, 5, 5, 24), rangeAt(7, 5, 7, 24)] })
 
-    expect(handlerOnly.traceNodeEdges).toStrictEqual([])
+    expect(handlerOnly.traceNodeEdges.map((edge) => edge.id)).toStrictEqual(["shop/items.py#function@3:1 -> shop/items.py#function@6:1"])
   })
 
   it("makes no node of an include that only hands a dependency, and draws the dependency's line to the route card", () => {

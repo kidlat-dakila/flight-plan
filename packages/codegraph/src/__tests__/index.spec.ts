@@ -148,10 +148,10 @@ describe("buildCodegraph", () => {
     ])
   })
 
-  it("draws the trace of each segment from the top of its chains down to its change, and none for a file no language reads", async () => {
+  it("draws the trace of each segment from the top of its chains down to its change, and none for a file no language reads or a change that draws no line", async () => {
     const { segments } = await codegraphOf(STOREFRONT_CHANGE)
 
-    expect(segments.map((segment) => segment.traceDiagram === null)).toStrictEqual([false, false, true])
+    expect(segments.map((segment) => segment.traceDiagram === null)).toStrictEqual([false, true, true])
     expect(segments[0].traceDiagram?.traceNodes.map((node) => [node.id, node.type])).toStrictEqual([
       ["src/ui.ts#function@3:1", "function"],
       ["src/cart.ts#class@3:1", "class"],
@@ -256,7 +256,7 @@ describe("buildCodegraph", () => {
         path: "src/logger.ts",
         declaration: "log",
         category: "function",
-        traceNodeId: "src/logger.ts#function@1:1",
+        traceNodeId: null,
       },
       {
         id: "w4",
@@ -265,6 +265,17 @@ describe("buildCodegraph", () => {
         category: "file",
         traceNodeId: null,
       },
+    ])
+  })
+
+  it("gives a segment no trace when its changes draw cards and no line between them", async () => {
+    const pricing = (rate: string): string => [`export const priceOf = (item) => item.price * ${rate}`, "", `export const taxOf = (item) => item.price * ${rate} / 10`].join("\n")
+    const { segments } = await codegraphOf({ base: { "src/pricing.ts": pricing("1") }, head: { "src/pricing.ts": pricing("2") } })
+
+    expect(segments.map((segment) => segment.traceDiagram)).toStrictEqual([null])
+    expect(segments[0].codeWalkthrough.files.flatMap((file) => file.waypoints).map((waypoint) => [waypoint.declaration, waypoint.traceNodeId])).toStrictEqual([
+      ["priceOf", null],
+      ["taxOf", null],
     ])
   })
 
@@ -335,7 +346,7 @@ describe("buildCodegraph", () => {
     ])
   })
 
-  it("splits a change into the shared segment, with a trace of the shared files alone, and one entry segment per line of change, each with the trace of its own line", async () => {
+  it("splits a change into the shared segment and one entry segment per line of change, each with the trace of its own line", async () => {
     const page = (name: string, mark: string): string => [`import { format } from "./format"`, `export const ${name} = () => format("${mark}")`].join("\n")
     const main = ["import { pageA } from \"./pageA\"", "import { pageB } from \"./pageB\"", "pageA()", "pageB()"].join("\n")
     const { segments } = await codegraphOf({
@@ -349,7 +360,7 @@ describe("buildCodegraph", () => {
       ["entry", ["src/pageB.ts"]],
     ])
     expect(segments.map((segment) => segment.traceDiagram?.traceNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
-      ["format"],
+      null,
       ["pageA", "format"],
       ["pageB", "format"],
     ])
@@ -393,7 +404,7 @@ describe("buildCodegraph", () => {
     ])
     expect(segments.map((segment) => segment.blastDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([["src/routes.ts", "src/admin.ts", "src/main.ts"], null, null])
     expect(segments.map((segment) => segment.traceDiagram?.traceNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
-      ["routes"],
+      null,
       ["routes", "pageA"],
       ["routes", "pageB"],
     ])

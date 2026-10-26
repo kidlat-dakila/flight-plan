@@ -2942,31 +2942,7 @@
             "importedFilePaths": {}
           }
         ],
-        "traceDiagram": {
-          "title": "View Pokemon flow diagram",
-          "description": "This diagram shows how the Pokemon page loads a Pokemon and renders it with a link to its edit page.",
-          "traceNodes": [
-            {
-              "id": "src/app/pokemon/[id]/page.tsx#component@5:1",
-              "type": "component",
-              "label": "Renders the Pokemon with a link to edit it",
-              "description": "Three paths open this page:\n\n- When a professor opens `/pokemon/3`, Next.js renders this page for the Pokemon with id 3.\n- When a professor creates a Pokemon, [`createPokemon()` redirects to it](code:src/app/pokemon/actions.ts#L22).\n- When a professor saves the edit page, [`updatePokemon()` redirects to it](code:src/app/pokemon/actions.ts#L28).",
-              "codeBlockIds": [
-                "src/app/pokemon/[id]/page.tsx#component@5:1",
-                "src/app/pokemon/[id]/page.tsx#render-root@9:3",
-                "src/app/pokemon/[id]/page.tsx#render@10:5",
-                "src/app/pokemon/[id]/page.tsx#render@15:7"
-              ],
-              "diffCodeBlockIds": [
-                "src/app/pokemon/[id]/page.tsx#render@15:7"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            }
-          ],
-          "traceNodeEdges": []
-        },
+        "traceDiagram": null,
         "blastDiagram": null,
         "hiddenBlastDiagram": {
           "nodes": [
@@ -3030,7 +3006,7 @@
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "traceNodeId": "src/app/pokemon/[id]/page.tsx#component@5:1",
+                  "traceNodeId": null,
                   "codeBlockIds": [
                     "src/app/pokemon/[id]/page.tsx#component@5:1",
                     "src/app/pokemon/[id]/page.tsx#render@15:7"

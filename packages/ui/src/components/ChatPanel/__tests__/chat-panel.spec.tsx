@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
-import ChatPanel, { type Conversation, type ModelChoice, type QuestionAnswering } from "@/components/ChatPanel"
+import ChatPanel, { type Conversation, type Excerpt, type ModelChoice, type QuestionAnswering } from "@/components/ChatPanel"
 import { paragraph } from "@/lib/__tests__/review-samples"
 import type { CodeLinkTargets } from "@/lib/review-content"
 
@@ -14,8 +14,8 @@ const createConversation = (overrides: Partial<Conversation> = {}): Conversation
   agentState: "online",
   agentStateLabel: "Agent online",
   entries: [
-    { kind: "message", id: "m1", author: "reviewer", authorLabel: "You", reference: "storefront@abc:src/a.ts#L3", body: paragraph("Why here?"), timeLabel: "just now" },
-    { kind: "message", id: "a1", author: "agent", authorLabel: "Agent", reference: null, body: paragraph("It guards the call."), timeLabel: "just now" },
+    { kind: "message", id: "m1", author: "reviewer", authorLabel: "You", reference: "storefront@abc:src/a.ts#L3", excerpt: null, body: paragraph("Why here?"), timeLabel: "just now" },
+    { kind: "message", id: "a1", author: "agent", authorLabel: "Agent", reference: null, excerpt: null, body: paragraph("It guards the call."), timeLabel: "just now" },
   ],
   ...overrides,
 })
@@ -29,6 +29,7 @@ const MODEL_CHOICE: ModelChoice = {
 
 interface PanelOptions {
   readonly reference?: string | null
+  readonly excerpt?: Excerpt | null
   readonly modelChoice?: ModelChoice | null
   readonly sendProblem?: string | null
   readonly onSend?: (body: string) => void
@@ -46,6 +47,7 @@ const renderPanel = (conversation: Conversation, options: PanelOptions = {}) =>
       modelChoice={options.modelChoice ?? null}
       codeLinks={options.codeLinks ?? {}}
       reference={options.reference ?? null}
+      excerpt={options.excerpt ?? null}
       isSending={false}
       sendProblem={options.sendProblem ?? null}
       answering={NOT_ANSWERING}
@@ -109,6 +111,47 @@ describe("ChatPanel", () => {
     expect(onClearReference).toHaveBeenCalledTimes(1)
   })
 
+  it("shows the highlighted code attached to the next message in place of its reference", () => {
+    renderPanel(createConversation({ entries: [] }), {
+      reference: "storefront@abc:src/b.ts#L9-10",
+      excerpt: { kind: "code", text: "const total = 1\nreturn total" },
+    })
+
+    const excerpt = screen.getByText(/const total = 1/)
+
+    expect(excerpt.textContent).toBe("const total = 1\nreturn total")
+    expect(excerpt.getAttribute("title")).toBe("storefront@abc:src/b.ts#L9-10")
+    expect(screen.queryByText("storefront@abc:src/b.ts#L9-10")).toBeNull()
+    expect(screen.getByRole("button", { name: "Remove the reference" })).toBeTruthy()
+  })
+
+  it("shows the highlighted text attached to the next message as a quote", () => {
+    renderPanel(createConversation({ entries: [] }), {
+      reference: "storefront@abc:waypoint price-of \"The hold\"",
+      excerpt: { kind: "text", text: "The hold is released on cancel." },
+    })
+
+    expect(screen.getByText("The hold is released on cancel.").tagName).toBe("BLOCKQUOTE")
+  })
+
+  it("shows the highlighted text of a sent message in place of its reference", () => {
+    renderPanel(createConversation({
+      entries: [{
+        kind: "message",
+        id: "m2",
+        author: "reviewer",
+        authorLabel: "You",
+        reference: "storefront@abc:src/c.ts#L2",
+        excerpt: { kind: "code", text: "holdStock(cart)" },
+        body: paragraph("Is this awaited?"),
+        timeLabel: "just now",
+      }],
+    }))
+
+    expect(screen.getByText("holdStock(cart)")).toBeTruthy()
+    expect(screen.queryByText("storefront@abc:src/c.ts#L2")).toBeNull()
+  })
+
   it("lets the reviewer switch the agent's model", () => {
     const onChooseModel = vi.fn()
     renderPanel(createConversation(), { modelChoice: MODEL_CHOICE, onChooseModel })
@@ -153,6 +196,7 @@ describe("ChatPanel", () => {
           author: "agent",
           authorLabel: "Agent",
           reference: null,
+          excerpt: null,
           body: [{ kind: "paragraph", inlines: [{ kind: "code-link", text: "priceOf()", isCode: true, linkId: "src/price.ts#priceOf" }] }],
           timeLabel: "just now",
         }],

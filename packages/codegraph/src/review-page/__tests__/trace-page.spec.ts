@@ -8,7 +8,9 @@ import type { ReviewArtifact } from "@flightplan/configurations"
 
 const PROMO_PATH = "src/promo.ts"
 const PROMO = codeOf("export const fetchPromo = (code) => {", "  return code.trim()", "}")
-const promoDiagram = presentDiagramOf({ [PROMO_PATH]: PROMO }, { [PROMO_PATH]: [rangeAt(2, 10, 2, 20)] })
+const REDEEM_PATH = "src/redeem.ts"
+const REDEEM = codeOf("import { fetchPromo } from \"./promo\"", "", "export const redeem = (code) => fetchPromo(code)")
+const promoDiagram = presentDiagramOf({ [PROMO_PATH]: PROMO, [REDEEM_PATH]: REDEEM }, { [PROMO_PATH]: [rangeAt(2, 10, 2, 20)] })
 
 const highlighted: HighlightedReview = { sources: fixtureSources, solutionTokens: new Map() }
 const preferences: ViewPreferences = { spotlight: [], walkthroughOrder: "imports-bottom-up" }

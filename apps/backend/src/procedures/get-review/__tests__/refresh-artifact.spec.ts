@@ -36,8 +36,8 @@ const changeWith = (headCommit: string, labelLine: string): RecordedChange => ({
   texts: { [PATH]: `${[...ESTIMATE_LINES, labelLine].join("\n")}\n` },
 })
 
-const FIRST_CHANGE = changeWith("1111111aaaaaaa", "export const label = () => \"fast\"")
-const SECOND_CHANGE = changeWith("2222222aaaaaaa", "export const label = () => \"faster\"")
+const FIRST_CHANGE = changeWith("1111111aaaaaaa", "export const label = (zone: string) => (estimate(zone) === 1 ? \"fast\" : \"slow\")")
+const SECOND_CHANGE = changeWith("2222222aaaaaaa", "export const label = (zone: string) => (estimate(zone) === 1 ? \"faster\" : \"slow\")")
 
 interface Harness {
   readonly reviewStore: ReviewStore
@@ -150,7 +150,7 @@ describe("getReview on a target that moved", () => {
     await getReview(PAGE_INPUT, harness.contextAt(SECOND_CHANGE))
 
     await expect(readingsOf(harness.reviewStore)).resolves.toStrictEqual({ estimate: "Reading of estimate", label: "" })
-    await expect(traceLabelsOf(harness.reviewStore)).resolves.toStrictEqual(["Label of estimate", null])
+    await expect(traceLabelsOf(harness.reviewStore)).resolves.toStrictEqual([null, "Label of estimate"])
     await expect(contextDescriptionsOf(harness.reviewStore)).resolves.toMatchObject({ estimate: "Description of estimate" })
   })
 
