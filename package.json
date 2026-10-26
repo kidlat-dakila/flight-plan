@@ -10,7 +10,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "nx run-many -t dev -p frontend backend site",
+    "dev": "nx run-many -t dev -p frontend backend site trace-diagram-lab",
     "lint": "nx run-many -t eslint:lint",
     "lint:fix": "nx run-many -t eslint:lint --args=--fix",
     "hard-reset": "jiti tools/hard-reset/index.ts",

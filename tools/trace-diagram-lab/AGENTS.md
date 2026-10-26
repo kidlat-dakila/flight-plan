@@ -43,6 +43,7 @@ test-setup/             expectTraceSnapshot and the trim, and the code blocks sp
 
 | Command | What it does |
 |---|---|
+| `nx serve trace-diagram-lab` | Starts the lab on http://localhost:4410, with the fixtures served by the same Vite. `pnpm dev` at the root starts it too, next to the frontend, the backend and the site |
 | `nx test trace-diagram-lab` | Runs both Vitest projects, and fails a case whose result differs from its snapshot |
 | `nx run trace-diagram-lab:snapshot` | Runs the cases and rewrites their snapshots, then rewrites the `code-blocks/` file of every snapshot |
 | `nx e2e trace-diagram-lab-e2e` | Takes the screenshot of every fixture in Docker (Docker Desktop must be running) and compares it with its baseline. `--update-snapshots` rewrites the baselines, and `--grep "<fixture id>"` limits it to one fixture |

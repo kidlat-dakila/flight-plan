@@ -23,22 +23,19 @@
   ],
   "references": [
     {
+      "path": "../../packages/configurations/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/ui/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/configurations/tsconfig.lib.json"
+      "path": "../playground-fixtures/tsconfig.lib.json"
     },
     {
       "path": "../../packages/git-forge/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/reviewed-marks/tsconfig.lib.json"
-    },
-    {
       "path": "../../packages/codegraph/tsconfig.lib.json"
-    },
-    {
-      "path": "../playground-fixtures/tsconfig.lib.json"
     }
   ]
 }
