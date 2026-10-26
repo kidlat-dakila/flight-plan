@@ -1,5 +1,5 @@
 import * as path from "node:path"
-import { ResolverFactory, type ResolveOptions } from "enhanced-resolve"
+import enhancedResolve, { type ResolveOptions } from "enhanced-resolve"
 import * as jsonc from "jsonc-parser"
 import { fitsGlob } from "@/catalogue/matching/file-patterns"
 import { Memo } from "@/shared/memo"
@@ -41,7 +41,7 @@ export const MAIN_FIELDS: (string | string[])[] = [
 
 type Callback<Value> = (error: NodeJS.ErrnoException | null, value?: Value) => void
 type ResolverFileSystem = NonNullable<ResolveOptions["fileSystem"]>
-type ModuleResolver = ReturnType<typeof ResolverFactory.createResolver>
+type ModuleResolver = ReturnType<typeof enhancedResolve.ResolverFactory.createResolver>
 interface Stats { isFile: () => boolean, isDirectory: () => boolean, isSymbolicLink: () => boolean }
 
 const SCOPED_NAME_PARTS = 2
@@ -393,7 +393,7 @@ export function moduleResolver(files: ReadonlySet<string>, read: Read): ResolveM
   const resolverFor = async (config: string | null): Promise<ModuleResolver> =>
     resolvers.remember(config ?? "", async () =>
       aliases.then((alias) =>
-        ResolverFactory.createResolver({
+        enhancedResolve.ResolverFactory.createResolver({
           fileSystem,
           extensions: EXTENSIONS,
           extensionAlias: EMITTED,

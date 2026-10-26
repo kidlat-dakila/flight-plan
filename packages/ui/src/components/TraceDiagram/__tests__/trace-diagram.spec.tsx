@@ -414,6 +414,35 @@ describe("TraceDiagram", () => {
     expect(focusedLabels()).toStrictEqual([])
   })
 
+  it("opens on the page, not full screen", () => {
+    renderDiagram()
+
+    expect(screen.queryByRole("dialog", { name: "A checkout" })).toBeNull()
+  })
+
+  it("opens full screen with no node open when asked to, and opens the side panel of a pressed node", async () => {
+    render(
+      <TraceDiagram
+        title="A checkout"
+        nodes={NODES}
+        edges={EDGES}
+        codeLinks={CODE_LINKS}
+        codeDefinitions={{}}
+        isReviewPending={false}
+        isFullScreenAtStart
+        onOpenCodeLink={vi.fn()}
+        onWaypointReviewedChange={vi.fn()}
+      />,
+    )
+    const board = await screen.findByRole("dialog", { name: "A checkout" })
+
+    expect(within(board).queryByRole("region", { name: "Price of a line" })).toBeNull()
+
+    fireEvent.click(within(board).getByRole("button", { name: /Function.*Price of a line/ }))
+
+    expect(await within(board).findByRole("region", { name: "Price of a line" })).toBeTruthy()
+  })
+
   it("hides the nodes a collapsed node leads to, and shows them again when it is expanded", () => {
     const { container } = renderDiagram()
 

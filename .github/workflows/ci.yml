@@ -57,6 +57,64 @@ jobs:
       - name: Lint, type-check and test what the change affects
         run: nx affected -t eslint:lint typecheck test --base="$NX_BASE" --head=HEAD
 
+  trace-diagram-screenshots:
+    name: Trace Diagram screenshots
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --ipc=host
+    steps:
+      - name: Check out the commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Trust the checkout inside the container
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
+        with:
+          version: 12.9.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          echo "$GITHUB_WORKSPACE/node_modules/.bin" >> "$GITHUB_PATH"
+
+      - name: Find the commit to compare against
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            echo "NX_BASE=$(git merge-base "origin/$BASE_REF" HEAD)" >> "$GITHUB_ENV"
+          else
+            echo "NX_BASE=$BEFORE" >> "$GITHUB_ENV"
+          fi
+
+      - name: Compare the Trace Diagram screenshots the change affects
+        run: nx affected -t e2e-native --base="$NX_BASE" --head=HEAD
+
+      - name: Keep the screenshot diffs of a failed run
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trace-diagram-screenshots
+          path: tools/trace-diagram-lab-e2e/test-output/playwright/
+          retention-days: 14
+
   deploy-site:
     name: Deploy the site to Vercel
     needs: checks

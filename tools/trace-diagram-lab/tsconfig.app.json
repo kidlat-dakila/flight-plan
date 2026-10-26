@@ -1,0 +1,44 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/tools/trace-diagram-lab/app",
+    "types": [
+      "node",
+      "@nx/react/typings/cssmodule.d.ts",
+      "@nx/react/typings/image.d.ts",
+      "vite/client"
+    ],
+    "rootDir": "src"
+  },
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.tsx",
+    "src/**/*.test.tsx",
+    "vite.config.mts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "references": [
+    {
+      "path": "../../packages/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/configurations/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/git-forge/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/reviewed-marks/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/codegraph/tsconfig.lib.json"
+    },
+    {
+      "path": "../playground-fixtures/tsconfig.lib.json"
+    }
+  ]
+}

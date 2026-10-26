@@ -95,7 +95,7 @@ export const caseSnapshotOf = ({ title, diff }: CaseChange, codegraph: Codegraph
 
 const CASE_REPOSITORY = { id: "git", root: "", secret: null, username: "", baseUrl: "" } as const
 
-const readCaseDiff = async (): Promise<string> => {
+export const readCaseDiff = async (): Promise<string> => {
   const resolved = await assembleGitAdapter(CASE_REPOSITORY)
   if (!resolved.ok) throw resolved.error
   return await resolved.gitAdapter.diff(CASE_REF)

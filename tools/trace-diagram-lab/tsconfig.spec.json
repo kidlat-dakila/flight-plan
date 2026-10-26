@@ -1,0 +1,51 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/tools/trace-diagram-lab/spec",
+    "types": [
+      "vitest/globals",
+      "vitest/importMeta",
+      "vite/client",
+      "node",
+      "vitest",
+      "@nx/react/typings/cssmodule.d.ts",
+      "@nx/react/typings/image.d.ts"
+    ],
+    "rootDir": "."
+  },
+  "include": [
+    "vite.config.mts",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx",
+    "test-setup/**/*.ts"
+  ],
+  "exclude": [
+    "cases/**"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "../../packages/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/configurations/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/git-forge/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/reviewed-marks/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/codegraph/tsconfig.lib.json"
+    },
+    {
+      "path": "../playground-fixtures/tsconfig.lib.json"
+    },
+    {
+      "path": "../playground-fixtures/tsconfig.spec.json"
+    }
+  ]
+}

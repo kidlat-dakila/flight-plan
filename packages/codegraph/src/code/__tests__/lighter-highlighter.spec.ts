@@ -1,4 +1,4 @@
-import { createCodeHighlighter, mergeTokens } from "@/utils/code-highlighter"
+import { createCodeHighlighter, mergeTokens } from "@/code/lighter-highlighter"
 
 describe("mergeTokens", () => {
   it("joins neighbouring tokens of the same kind", () => {

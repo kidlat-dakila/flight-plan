@@ -6,6 +6,10 @@ import { applyDiffs } from "./apply-diffs"
 import { readRepositoryFiles } from "./repository-files"
 import { caseSnapshotSchema, toReviewArtifact, type CaseSnapshot } from "./review-artifact"
 
+export { applyDiffs, type RepositoryFiles } from "./apply-diffs"
+export { readRepositoryFiles } from "./repository-files"
+export { caseSnapshotSchema, toReviewArtifact, type CaseSnapshot } from "./review-artifact"
+
 const REPOSITORY_FOLDER = "repo"
 const SNAPSHOT_FOLDER = "snapshots"
 const SNAPSHOT_SUFFIX = ".snapshot.json"
@@ -118,7 +122,7 @@ const readSnapshot = async (testCasesPath: string, fixtureName: string): Promise
 
 const isGroupList = (parsed: unknown): parsed is StoredCodeGroupGraph[] => Array.isArray(parsed)
 
-const readStoredGroups = (text: string): StoredCodeGroupGraph[] => {
+export const readStoredGroups = (text: string): StoredCodeGroupGraph[] => {
   const parsed: unknown = JSON.parse(text)
   if (!isGroupList(parsed)) throw new Error("The code blocks of a fixture are a list of groups.")
   return parsed

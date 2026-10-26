@@ -75,6 +75,8 @@ interface TraceBandProps {
   readonly codeLinks: CodeLinkTargets
   readonly codeDefinitions: CodeDefinitions
   readonly isReviewPending: boolean
+  readonly isFullScreenAtStart?: boolean
+  readonly openTabIdAtStart?: string | null
   readonly writeUpNotice?: string | null
   readonly onWriteUpNode?: ((nodeId: string) => void) | null
   readonly authoring?: TraceBandAuthoring | null
@@ -151,6 +153,7 @@ interface DiagramPanelProps {
   readonly codeLinks: CodeLinkTargets
   readonly codeDefinitions: CodeDefinitions
   readonly isReviewPending: boolean
+  readonly isFullScreenAtStart: boolean
   readonly authoring: TraceBandAuthoring | null
   readonly cardMoving: CardMoving | null
   readonly onWriteUpNode: ((nodeId: string) => void) | null
@@ -169,6 +172,7 @@ const DiagramPanel = ({
   codeLinks,
   codeDefinitions,
   isReviewPending,
+  isFullScreenAtStart,
   authoring,
   cardMoving,
   onWriteUpNode,
@@ -192,6 +196,7 @@ const DiagramPanel = ({
       codeLinks={codeLinks}
       codeDefinitions={codeDefinitions}
       isReviewPending={isReviewPending}
+      isFullScreenAtStart={isFullScreenAtStart}
       authoring={authoring?.board ?? null}
       cardMoving={cardMoving}
       navigatorAnchorId={anchorId}
@@ -205,10 +210,16 @@ const DiagramPanel = ({
 interface DiagramTabsProps extends Omit<DiagramPanelProps, "diagram" | "authoring" | "cardMoving" | "onWriteUpNode"> {
   readonly tabs: readonly TraceTab[]
   readonly tabEditing: TraceTabEditing
+  readonly openTabIdAtStart: string | null
 }
 
-const DiagramTabs = ({ tabs, tabEditing, ...panel }: DiagramTabsProps) => {
-  const [openIndex, setOpenIndex] = useState(0)
+const FIRST_TAB_INDEX = 0
+
+const tabIndexOf = (tabs: readonly TraceTab[], tabId: string | null): number =>
+  Math.max(tabs.findIndex((tab) => tab.id === tabId), FIRST_TAB_INDEX)
+
+const DiagramTabs = ({ tabs, tabEditing, openTabIdAtStart, ...panel }: DiagramTabsProps) => {
+  const [openIndex, setOpenIndex] = useState(() => tabIndexOf(tabs, openTabIdAtStart))
   const openTab = tabs.at(openIndex) ?? tabs[0]
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>): void => {
     const nextIndex = tabIndexAfterKey(event.key, openIndex, tabs.length)
@@ -272,6 +283,8 @@ const TraceBand = ({
   codeLinks,
   codeDefinitions,
   isReviewPending,
+  isFullScreenAtStart = false,
+  openTabIdAtStart = null,
   writeUpNotice = null,
   onWriteUpNode = null,
   authoring = null,
@@ -281,7 +294,7 @@ const TraceBand = ({
   onWaypointReviewedChange,
 }: TraceBandProps) => {
   const canEditDescription = authoring !== null && diagram !== null && renderDescriptionEditor !== null && !authoring.description.isWriting
-  const panel = { anchorId, heading, codeLinks, codeDefinitions, isReviewPending, renderDescriptionEditor, onOpenCodeLink, onWaypointReviewedChange }
+  const panel = { anchorId, heading, codeLinks, codeDefinitions, isReviewPending, isFullScreenAtStart, renderDescriptionEditor, onOpenCodeLink, onWaypointReviewedChange }
   return (
     <section id={anchorId} aria-labelledby={`${anchorId}-heading`} data-view-section-id={VIEW_SECTION_ID} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
       <div className="flex items-center gap-3 pb-4">
@@ -295,7 +308,7 @@ const TraceBand = ({
         {canEditDescription ? <Button variant="link" size="sm" onClick={authoring.description.onEdit}>{EDIT_DESCRIPTION_LABEL}</Button> : null}
       </div>
       {authoring !== null && diagram === null && tabs.length === 0 ? <p className="text-muted-foreground">{NO_DIAGRAM_MESSAGE}</p> : null}
-      {tabs.length === 0 ? null : <DiagramTabs {...panel} tabs={tabs} tabEditing={tabEditing ?? NO_TAB_EDITING} />}
+      {tabs.length === 0 ? null : <DiagramTabs {...panel} tabs={tabs} tabEditing={tabEditing ?? NO_TAB_EDITING} openTabIdAtStart={openTabIdAtStart} />}
       {diagram === null || tabs.length > 0
         ? null
         : (

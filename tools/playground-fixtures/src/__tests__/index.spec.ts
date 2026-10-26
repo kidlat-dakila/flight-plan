@@ -7,6 +7,7 @@ import {
   getAllReviewArtifactFixturesByCase,
   getFixtureRepository,
   getReviewArtifactFixture,
+  readStoredGroups,
   UnknownFixtureCaseError,
   UnknownFixtureError,
 } from "@/index"
@@ -156,4 +157,14 @@ describe("getReviewArtifactFixture", () => {
       await expect(getReviewArtifactFixture(TEST_CASES_PATH, name)).rejects.toThrow(UnknownFixtureError)
     },
   )
+})
+
+describe("readStoredGroups", () => {
+  it("reads the stored groups of a code blocks file", () => {
+    expect(readStoredGroups("[]")).toStrictEqual([])
+  })
+
+  it("throws for a file that holds no list of groups", () => {
+    expect(() => readStoredGroups("{}")).toThrow("The code blocks of a fixture are a list of groups.")
+  })
 })

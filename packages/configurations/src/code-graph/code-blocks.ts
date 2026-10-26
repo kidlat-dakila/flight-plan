@@ -103,6 +103,8 @@ export const CODE_BLOCK_CLASSIFICATIONS = [
 
 export type CodeBlockClassification = (typeof CODE_BLOCK_CLASSIFICATIONS)[number]
 
+export const DEFAULT_SPOTLIGHT: readonly CodeBlockClassification[] = ["page", "component", "api-route", "database-read-write", "data-model", "hook"]
+
 export const primaryClassificationOf = (classifications: readonly CodeBlockClassification[]): CodeBlockClassification | null =>
   classifications.length === 0 ? null : classifications[0]
 

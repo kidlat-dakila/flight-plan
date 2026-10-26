@@ -27,7 +27,7 @@ This file applies to every task. Nested `AGENTS.md` files add rules for their fo
 3. **Names carry the meaning.** Names must be understandable, concise, consistent and distinguishable, with one word per concept across the whole stack. See [naming](docs/agents/naming.md).
 4. **No code comments.** Do not write inline comments, block comments, docstrings, JSDoc or TODOs, including in examples. Make code explain itself through names, small functions and named constants. Tooling directives such as `eslint-disable` or `@ts-expect-error` are allowed only when there is no other way, and they need the user's approval.
 5. **Every change ships with tests.** New behaviour gets new tests. Changed behaviour gets updated tests. Bug fixes start with a failing test. See [testing](docs/agents/testing.md).
-6. **Verify before you say it is done.** After every change, run ESLint (`eslint:lint`), type-check and tests for every project you touched, and fix every error before you continue. ESLint enforces most of these rules, and every rule is an error, so a clean run is required, not optional. For a UI change, also open the running app with `agent-browser` and check it. Report what you ran and what it printed.
+6. **Verify before you say it is done.** After every change, run ESLint (`eslint:lint`), type-check and tests for every project you touched, and fix every error before you continue. ESLint enforces most of these rules, and every rule is an error, so a clean run is required, not optional. For a UI change, also open the running app with `agent-browser` and check it. After any change in `packages/codegraph`, also run the Trace Diagram lab's tests and screenshots (`nx test trace-diagram-lab` and `nx e2e trace-diagram-lab-e2e`); see `tools/trace-diagram-lab/AGENTS.md`. Report what you ran and what it printed.
 7. **Finish the work.** Do not leave stubs, placeholder data outside explicit mock APIs, skipped tests, `any`, non-null assertions to silence the compiler, or disabled lint rules. If something cannot be done properly, stop and say so.
 
 ## Workspace
@@ -42,6 +42,7 @@ packages/git-forge  the adapters that reach a repository and its forge: plain gi
 packages/reviewed-marks  what the reviewer's reviewed marks make reviewed, shared by the backend and the published copy, imported as @flightplan/reviewed-marks
 tools/npm-package  assembles the npm package `@kidlat-dakila/flightplan` in dist/package from the built backend, frontend and published bundle
 tools/playground-fixtures  the codegraph's end-to-end cases and their snapshots, and the functions that read those snapshots, imported as @flightplan/playground-fixtures
+tools/trace-diagram-lab  a page that renders the Trace Band of every playground and lab fixture as the app does, with its own trace cases; screenshot-tested by tools/trace-diagram-lab-e2e
 src/               legacy VS Code extension, read-only reference for porting
 ```
 
@@ -64,7 +65,7 @@ Always run tasks through Nx, and call `nx` directly, never through `pnpm nx` or 
 | `pnpm start` | Run the production build in `dist/package` as the `flightplan` command does, without building it first; arguments such as `--port` pass through |
 | `nx show project <project>` | List a project's targets |
 
-A husky pre-commit hook runs `nx affected -t eslint:lint typecheck` for the projects the staged files touch, and ESLint on the root `eslint*.config.ts` files when they are staged. Never bypass it with `--no-verify`. If it fails, fix the cause.
+A husky pre-commit hook runs `nx affected -t eslint:lint typecheck test` for the projects the staged files touch (never the `e2e` screenshot tests), and ESLint on the root `eslint*.config.ts` files when they are staged. Never bypass it with `--no-verify`. If it fails, fix the cause.
 
 The lint target is `eslint:lint`, not `lint`. If a project you touch has no `typecheck` or `test` target, add one in the same change instead of skipping the check.
 

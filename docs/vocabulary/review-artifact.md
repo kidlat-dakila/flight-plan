@@ -95,9 +95,9 @@ Whether a segment has a Trace Diagram or a Blast Diagram is decided by the [code
 
 ### Segments off
 
-`isSegmented` on the artifact is the choice the `isSegmented` of the [review preferences](review-preferences.md) made when the artifact was built. The codegraph always cuts the change into its segments and stores them; the choice only decides how the page shows them. A review is shown in segments when it is segmented and has more than one segment (`isShownInSegments` in `apps/backend/src/procedures/get-review/utils/segmentation.ts`).
+`isSegmented` on the artifact is the choice the `isSegmented` of the [review preferences](review-preferences.md) made when the artifact was built. The codegraph always cuts the change into its segments and stores them; the choice only decides how the page shows them. A review is shown in segments when it is segmented and has more than one segment (`isShownInSegments` in `packages/codegraph/src/review-page/shown-segments.ts`).
 
-With segments off, the page shows the stored segments as one (`mergeSegments` in `merged-segment.ts`):
+With segments off, the page shows the stored segments as one (`mergeSegments` in `packages/codegraph/src/review-page/merged-segment.ts`):
 
 | Part | What the page shows |
 |---|---|

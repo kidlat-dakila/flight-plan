@@ -1,0 +1,51 @@
+{
+  "name": "trace-diagram-lab-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "tools/trace-diagram-lab-e2e/src",
+  "tags": [
+    "type:e2e",
+    "platform:node"
+  ],
+  "implicitDependencies": [
+    "trace-diagram-lab"
+  ],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        {
+          "externalDependencies": [
+            "typescript"
+          ]
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/dist/out-tsc/{projectRoot}"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsc --build tsconfig.json"
+      }
+    },
+    "e2e": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "bash tools/trace-diagram-lab-e2e/scripts/e2e-in-docker.sh"
+      }
+    },
+    "e2e-native": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "playwright test"
+      }
+    }
+  }
+}

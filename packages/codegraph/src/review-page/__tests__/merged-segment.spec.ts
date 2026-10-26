@@ -1,6 +1,6 @@
-import { mergeSegments } from "@/procedures/get-review/utils/merged-segment"
+import { CART_PATH, createSegment, createWaypoint, PRICE_PATH } from "@/__tests__/review-fixture"
+import { mergeSegments } from "@/review-page/merged-segment"
 import type { Blast } from "@flightplan/configurations"
-import { CART_PATH, createSegment, createWaypoint, PRICE_PATH } from "./review-fixture"
 
 const RATES_PATH = "src/rates.ts"
 const TAX_PATH = "src/tax.ts"

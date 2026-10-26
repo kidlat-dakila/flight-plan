@@ -97,6 +97,8 @@ export const moduleBoundaries = (allowedImports: readonly string[]) => ({
       onlyDependOnLibsWithTags: ["type:configuration", "type:codegraph", "type:git-forge", "type:fixtures", "type:reviewed-marks"],
     },
     { sourceTag: "type:fixtures", onlyDependOnLibsWithTags: ["type:configuration", "type:codegraph", "type:git-forge"] },
+    { sourceTag: "type:lab", onlyDependOnLibsWithTags: ["type:ui", "type:configuration", "type:codegraph", "type:git-forge", "type:fixtures"] },
+    { sourceTag: "type:e2e", onlyDependOnLibsWithTags: [] },
     { sourceTag: "type:configuration", onlyDependOnLibsWithTags: [] },
     { sourceTag: "type:codegraph", onlyDependOnLibsWithTags: ["type:configuration", "type:git-forge", "type:reviewed-marks"] },
     { sourceTag: "type:reviewed-marks", onlyDependOnLibsWithTags: ["type:configuration"] },

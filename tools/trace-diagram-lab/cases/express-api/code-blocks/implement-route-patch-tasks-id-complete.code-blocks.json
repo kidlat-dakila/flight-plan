@@ -1,0 +1,6354 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "src/index.ts",
+        "codeBlockIds": [
+          "src/index.ts#import@1:1",
+          "src/index.ts#import@2:1",
+          "src/index.ts#root-variable@4:1",
+          "src/index.ts#root-variable@6:1",
+          "src/index.ts#root-statement@8:1",
+          "src/index.ts#middleware@8:1",
+          "src/index.ts#root-statement@9:1",
+          "src/index.ts#middleware@9:1",
+          "src/index.ts#effect-callback@9:19",
+          "src/index.ts#root-statement@11:1",
+          "src/index.ts#effect@11:1",
+          "src/index.ts#code-event@11:18",
+          "src/index.ts#function@11:18",
+          "src/index.ts#telemetry@12:3"
+        ],
+        "rootBlockIds": [
+          "src/index.ts#import@1:1",
+          "src/index.ts#import@2:1",
+          "src/index.ts#root-variable@4:1",
+          "src/index.ts#root-variable@6:1",
+          "src/index.ts#root-statement@8:1",
+          "src/index.ts#root-statement@9:1",
+          "src/index.ts#root-statement@11:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/index.ts#root-variable@6:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/index.ts#middleware@8:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/index.ts#effect-callback@9:19",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/tasks/routes.ts#root-variable@4:1"
+        ],
+        "exports": {}
+      },
+      {
+        "filePath": "src/tasks/routes.ts",
+        "codeBlockIds": [
+          "src/tasks/routes.ts#import@1:1",
+          "src/tasks/routes.ts#import@2:1",
+          "src/tasks/routes.ts#root-variable@4:1",
+          "src/tasks/routes.ts#function@6:1",
+          "src/tasks/routes.ts#root-argument-value@6:24",
+          "src/tasks/routes.ts#root-argument-value@7:21",
+          "src/tasks/routes.ts#root-argument-value@6:38",
+          "src/tasks/routes.ts#root-argument-value@9:5",
+          "src/tasks/routes.ts#root-argument-value@6:53",
+          "src/tasks/routes.ts#variable@7:3",
+          "src/tasks/routes.ts#condition@8:3",
+          "src/tasks/routes.ts#call@9:5",
+          "src/tasks/routes.ts#property@9:28",
+          "src/tasks/routes.ts#call@12:3",
+          "src/tasks/routes.ts#root-statement@15:1",
+          "src/tasks/routes.ts#route@15:1",
+          "src/tasks/routes.ts#effect-callback@15:22",
+          "src/tasks/routes.ts#function@15:22",
+          "src/tasks/routes.ts#variable@15:23",
+          "src/tasks/routes.ts#variable@15:29",
+          "src/tasks/routes.ts#call@16:3",
+          "src/tasks/routes.ts#root-statement@19:1",
+          "src/tasks/routes.ts#route@19:1",
+          "src/tasks/routes.ts#effect-callback@19:25",
+          "src/tasks/routes.ts#function@19:25",
+          "src/tasks/routes.ts#variable@19:26",
+          "src/tasks/routes.ts#variable@19:31",
+          "src/tasks/routes.ts#external-value@20:3",
+          "src/tasks/routes.ts#condition@21:3",
+          "src/tasks/routes.ts#call@22:5",
+          "src/tasks/routes.ts#call@25:3",
+          "src/tasks/routes.ts#root-statement@28:1",
+          "src/tasks/routes.ts#route@28:1",
+          "src/tasks/routes.ts#effect-callback@28:36",
+          "src/tasks/routes.ts#effect-callback@28:51",
+          "src/tasks/routes.ts#function@28:51",
+          "src/tasks/routes.ts#variable@28:52",
+          "src/tasks/routes.ts#variable@28:57",
+          "src/tasks/routes.ts#external-value@29:3",
+          "src/tasks/routes.ts#condition@30:3",
+          "src/tasks/routes.ts#call@31:5",
+          "src/tasks/routes.ts#call@34:3"
+        ],
+        "rootBlockIds": [
+          "src/tasks/routes.ts#import@1:1",
+          "src/tasks/routes.ts#import@2:1",
+          "src/tasks/routes.ts#root-variable@4:1",
+          "src/tasks/routes.ts#function@6:1",
+          "src/tasks/routes.ts#root-statement@15:1",
+          "src/tasks/routes.ts#root-statement@19:1",
+          "src/tasks/routes.ts#root-statement@28:1"
+        ],
+        "diffBlockIds": [
+          "src/tasks/routes.ts#import@1:1",
+          "src/tasks/routes.ts#import@2:1",
+          "src/tasks/routes.ts#function@6:1",
+          "src/tasks/routes.ts#root-argument-value@6:24",
+          "src/tasks/routes.ts#root-argument-value@7:21",
+          "src/tasks/routes.ts#root-argument-value@6:38",
+          "src/tasks/routes.ts#root-argument-value@9:5",
+          "src/tasks/routes.ts#root-argument-value@6:53",
+          "src/tasks/routes.ts#variable@7:3",
+          "src/tasks/routes.ts#condition@8:3",
+          "src/tasks/routes.ts#call@9:5",
+          "src/tasks/routes.ts#property@9:28",
+          "src/tasks/routes.ts#call@12:3",
+          "src/tasks/routes.ts#route@28:1",
+          "src/tasks/routes.ts#effect-callback@28:36",
+          "src/tasks/routes.ts#function@28:51",
+          "src/tasks/routes.ts#variable@28:52",
+          "src/tasks/routes.ts#variable@28:57",
+          "src/tasks/routes.ts#external-value@29:3",
+          "src/tasks/routes.ts#condition@30:3",
+          "src/tasks/routes.ts#call@31:5",
+          "src/tasks/routes.ts#call@34:3"
+        ],
+        "diffContains": [
+          "effect",
+          "route",
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/tasks/routes.ts#root-variable@4:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/routes.ts#root-argument-value@6:24",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/routes.ts#root-argument-value@6:38",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/routes.ts#root-argument-value@6:53",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/routes.ts#call@16:3",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/tasks/routes.ts#external-value@20:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/routes.ts#external-value@29:3",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/tasks/service.ts#function@4:1",
+          "src/tasks/service.ts#function@6:1",
+          "src/tasks/service.ts#function@8:1"
+        ],
+        "exports": {
+          "tasksRouter": "src/tasks/routes.ts#root-variable@4:1"
+        }
+      },
+      {
+        "filePath": "src/tasks/service.ts",
+        "codeBlockIds": [
+          "src/tasks/service.ts#import@1:1",
+          "src/tasks/service.ts#import@2:1",
+          "src/tasks/service.ts#function@4:1",
+          "src/tasks/service.ts#function@6:1",
+          "src/tasks/service.ts#root-argument-value@6:26",
+          "src/tasks/service.ts#function@8:1",
+          "src/tasks/service.ts#root-argument-value@8:30",
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10",
+          "src/tasks/service.ts#property@10:63"
+        ],
+        "rootBlockIds": [
+          "src/tasks/service.ts#import@1:1",
+          "src/tasks/service.ts#import@2:1",
+          "src/tasks/service.ts#function@4:1",
+          "src/tasks/service.ts#function@6:1",
+          "src/tasks/service.ts#function@8:1"
+        ],
+        "diffBlockIds": [
+          "src/tasks/service.ts#import@1:1",
+          "src/tasks/service.ts#function@8:1",
+          "src/tasks/service.ts#root-argument-value@8:30",
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10",
+          "src/tasks/service.ts#property@10:63"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/tasks/service.ts#function@4:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/service.ts#function@4:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/tasks/service.ts#function@6:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/service.ts#function@6:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/tasks/service.ts#function@8:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/service.ts#external-value@9:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/service.ts#condition@10:10",
+            "symbolIndex": 1
+          }
+        ],
+        "externalBlockIds": [
+          "src/tasks/task.ts#type-declaration@1:1",
+          "src/tasks/store.ts#function@8:1",
+          "src/tasks/store.ts#function@10:1",
+          "src/tasks/store.ts#function@12:1"
+        ],
+        "exports": {
+          "listTasks": "src/tasks/service.ts#function@4:1",
+          "findTask": "src/tasks/service.ts#function@6:1",
+          "completeTask": "src/tasks/service.ts#function@8:1"
+        }
+      },
+      {
+        "filePath": "src/tasks/store.ts",
+        "codeBlockIds": [
+          "src/tasks/store.ts#import@1:1",
+          "src/tasks/store.ts#root-variable@3:1",
+          "src/tasks/store.ts#property@4:9",
+          "src/tasks/store.ts#property@4:16",
+          "src/tasks/store.ts#property@4:50",
+          "src/tasks/store.ts#property@5:9",
+          "src/tasks/store.ts#property@5:16",
+          "src/tasks/store.ts#property@5:50",
+          "src/tasks/store.ts#function@8:1",
+          "src/tasks/store.ts#function@10:1",
+          "src/tasks/store.ts#root-argument-value@10:26",
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#root-argument-value@12:26",
+          "src/tasks/store.ts#root-argument-value@13:13",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "rootBlockIds": [
+          "src/tasks/store.ts#import@1:1",
+          "src/tasks/store.ts#root-variable@3:1",
+          "src/tasks/store.ts#function@8:1",
+          "src/tasks/store.ts#function@10:1",
+          "src/tasks/store.ts#function@12:1"
+        ],
+        "diffBlockIds": [
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#root-argument-value@12:26",
+          "src/tasks/store.ts#root-argument-value@13:13",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/tasks/store.ts#root-variable@3:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/store.ts#function@8:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/store.ts#function@10:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/store.ts#function@12:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/tasks/store.ts#root-argument-value@12:26",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/tasks/task.ts#type-declaration@1:1"
+        ],
+        "exports": {
+          "readTasks": "src/tasks/store.ts#function@8:1",
+          "readTask": "src/tasks/store.ts#function@10:1",
+          "saveTask": "src/tasks/store.ts#function@12:1"
+        }
+      },
+      {
+        "filePath": "src/tasks/task.ts",
+        "codeBlockIds": [
+          "src/tasks/task.ts#type-declaration@1:1"
+        ],
+        "rootBlockIds": [
+          "src/tasks/task.ts#type-declaration@1:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "Task": "src/tasks/task.ts#type-declaration@1:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "src/index.ts"
+    ],
+    "codeBlocks": [
+      {
+        "id": "src/index.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/index.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/index.ts#root-variable@4:1",
+        "name": "PORT",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 18
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "isPlain": true,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/index.ts#effect@11:1",
+          "src/index.ts#telemetry@12:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/index.ts#root-variable@6:1",
+        "name": "app",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 13
+              },
+              "end": {
+                "line": 6,
+                "column": 20
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "express",
+            "importedName": "default",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/index.ts#middleware@8:1",
+          "src/index.ts#middleware@9:1",
+          "src/index.ts#effect@11:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/index.ts#root-statement@8:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/index.ts#middleware@8:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/index.ts#middleware@8:1",
+        "type": "middleware",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/index.ts#root-statement@8:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 1
+              },
+              "end": {
+                "line": 8,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "use"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/index.ts#root-variable@6:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 9
+              },
+              "end": {
+                "line": 8,
+                "column": 21
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "json"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "express",
+            "importedName": "default",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "use",
+          "runs": "middleware",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Express",
+          "kind": "route",
+          "part": "mount",
+          "heading": null,
+          "groupKey": null,
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/index.ts#root-statement@9:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/index.ts#middleware@9:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/index.ts#middleware@9:1",
+        "type": "middleware",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": "src/index.ts#root-statement@9:1",
+        "childrenBlockIds": [
+          "src/index.ts#effect-callback@9:19"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 1
+              },
+              "end": {
+                "line": 9,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "use"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/index.ts#root-variable@6:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "use",
+          "runs": "middleware",
+          "path": "/tasks",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Express",
+          "kind": "route",
+          "part": "mount",
+          "heading": null,
+          "groupKey": "/tasks",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/index.ts#effect-callback@9:19",
+        "name": "1",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 19
+            },
+            "end": {
+              "line": 9,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/index.ts#middleware@9:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 19
+              },
+              "end": {
+                "line": 9,
+                "column": 30
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/tasks/routes.ts#root-variable@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "use",
+          "runs": "middleware",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/index.ts#root-statement@11:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/index.ts#effect@11:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "effect",
+          "event",
+          "app-setup",
+          "telemetry"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/index.ts#effect@11:1",
+        "type": "effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": "src/index.ts#root-statement@11:1",
+        "childrenBlockIds": [
+          "src/index.ts#code-event@11:18"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "effect",
+          "event",
+          "app-setup",
+          "telemetry"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 1
+              },
+              "end": {
+                "line": 11,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "listen"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/index.ts#root-variable@6:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 12
+              },
+              "end": {
+                "line": 11,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/index.ts#root-variable@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "listen",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/index.ts#code-event@11:18",
+        "name": "1",
+        "type": "code-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 18
+            },
+            "end": {
+              "line": 13,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/index.ts#effect@11:1",
+        "childrenBlockIds": [
+          "src/index.ts#function@11:18"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "event",
+          "telemetry"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "listen",
+          "runs": "event",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/index.ts#function@11:18",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 18
+            },
+            "end": {
+              "line": 13,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/index.ts#code-event@11:18",
+        "childrenBlockIds": [
+          "src/index.ts#telemetry@12:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "telemetry"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/index.ts#telemetry@12:3",
+        "type": "telemetry",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 3
+            },
+            "end": {
+              "line": 12,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": "src/index.ts#function@11:18",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "telemetry"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 48
+              },
+              "end": {
+                "line": 12,
+                "column": 52
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/index.ts#root-variable@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 81
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 16
+            },
+            "end": {
+              "line": 1,
+              "column": 64
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 16
+              },
+              "end": {
+                "line": 1,
+                "column": 64
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 62
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 10
+            },
+            "end": {
+              "line": 2,
+              "column": 24
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 10
+              },
+              "end": {
+                "line": 2,
+                "column": 24
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#root-variable@4:1",
+        "name": "tasksRouter",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/tasks/routes.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 28
+              },
+              "end": {
+                "line": 4,
+                "column": 34
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "express",
+            "importedName": "Router",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/index.ts#effect-callback@9:19",
+          "src/tasks/routes.ts#route@15:1",
+          "src/tasks/routes.ts#route@19:1",
+          "src/tasks/routes.ts#route@28:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#function@6:1",
+        "name": "requireTaskId",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#root-argument-value@6:24",
+          "src/tasks/routes.ts#root-argument-value@6:38",
+          "src/tasks/routes.ts#root-argument-value@6:53",
+          "src/tasks/routes.ts#variable@7:3",
+          "src/tasks/routes.ts#condition@8:3",
+          "src/tasks/routes.ts#call@12:3"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 24
+            }
+          },
+          {
+            "start": {
+              "line": 6,
+              "column": 36
+            },
+            "end": {
+              "line": 6,
+              "column": 38
+            }
+          },
+          {
+            "start": {
+              "line": 6,
+              "column": 51
+            },
+            "end": {
+              "line": 6,
+              "column": 53
+            }
+          },
+          {
+            "start": {
+              "line": 6,
+              "column": 71
+            },
+            "end": {
+              "line": 6,
+              "column": 77
+            }
+          },
+          {
+            "start": {
+              "line": 13,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 1
+              },
+              "end": {
+                "line": 6,
+                "column": 24
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 36
+              },
+              "end": {
+                "line": 6,
+                "column": 38
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 51
+              },
+              "end": {
+                "line": 6,
+                "column": 53
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 71
+              },
+              "end": {
+                "line": 6,
+                "column": 77
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 1
+              },
+              "end": {
+                "line": 13,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#function@6:1",
+          "src/tasks/routes.ts#condition@8:3",
+          "src/tasks/routes.ts#call@9:5",
+          "src/tasks/routes.ts#call@12:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/tasks/routes.ts#effect-callback@28:36"
+        ],
+        "nextBlockIds": [
+          "src/tasks/routes.ts#condition@8:3",
+          "src/tasks/routes.ts#call@12:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#root-argument-value@6:24",
+        "name": "req",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 24
+            },
+            "end": {
+              "line": 6,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@6:1",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#root-argument-value@7:21"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 24
+            },
+            "end": {
+              "line": 6,
+              "column": 36
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 24
+              },
+              "end": {
+                "line": 6,
+                "column": 36
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 29
+              },
+              "end": {
+                "line": 6,
+                "column": 36
+              }
+            },
+            "use": "type",
+            "type": "unopened-import",
+            "specifier": "express",
+            "importedName": "Request",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/routes.ts#variable@7:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#root-argument-value@7:21",
+        "name": "params",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 21
+            },
+            "end": {
+              "line": 7,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#root-argument-value@6:24",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 21
+            },
+            "end": {
+              "line": 7,
+              "column": 31
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 21
+              },
+              "end": {
+                "line": 7,
+                "column": 31
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#root-argument-value@6:38",
+        "name": "res",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 38
+            },
+            "end": {
+              "line": 6,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@6:1",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#root-argument-value@9:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 38
+            },
+            "end": {
+              "line": 6,
+              "column": 51
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 38
+              },
+              "end": {
+                "line": 6,
+                "column": 51
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 43
+              },
+              "end": {
+                "line": 6,
+                "column": 51
+              }
+            },
+            "use": "type",
+            "type": "unopened-import",
+            "specifier": "express",
+            "importedName": "Response",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/routes.ts#call@9:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#root-argument-value@9:5",
+        "name": "status",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#root-argument-value@6:38",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 15
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 5
+              },
+              "end": {
+                "line": 9,
+                "column": 15
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#root-argument-value@6:53",
+        "name": "next",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 53
+            },
+            "end": {
+              "line": 6,
+              "column": 71
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 53
+            },
+            "end": {
+              "line": 6,
+              "column": 71
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 53
+              },
+              "end": {
+                "line": 6,
+                "column": 71
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 59
+              },
+              "end": {
+                "line": 6,
+                "column": 71
+              }
+            },
+            "use": "type",
+            "type": "unopened-import",
+            "specifier": "express",
+            "importedName": "NextFunction",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/routes.ts#call@12:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#variable@7:3",
+        "name": "id",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 21
+            }
+          },
+          {
+            "start": {
+              "line": 7,
+              "column": 31
+            },
+            "end": {
+              "line": 7,
+              "column": 35
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 3
+              },
+              "end": {
+                "line": 7,
+                "column": 21
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 31
+              },
+              "end": {
+                "line": 7,
+                "column": 35
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 21
+              },
+              "end": {
+                "line": 7,
+                "column": 34
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "params",
+                "id"
+              ],
+              "blockId": "src/tasks/routes.ts#root-argument-value@7:21"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#root-argument-value@6:24"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/routes.ts#condition@8:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#condition@8:3",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@6:1",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#call@9:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 3
+            },
+            "end": {
+              "line": 8,
+              "column": 42
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 11
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 4
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 3
+              },
+              "end": {
+                "line": 8,
+                "column": 42
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 25
+              },
+              "end": {
+                "line": 8,
+                "column": 27
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 32
+              },
+              "end": {
+                "line": 8,
+                "column": 34
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 5
+              },
+              "end": {
+                "line": 10,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 3
+              },
+              "end": {
+                "line": 11,
+                "column": 4
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#condition@8:3",
+          "src/tasks/routes.ts#call@9:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 25
+              },
+              "end": {
+                "line": 8,
+                "column": 27
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#variable@7:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 32
+              },
+              "end": {
+                "line": 8,
+                "column": 34
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#variable@7:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/tasks/routes.ts#call@9:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#call@9:5",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 68
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#condition@8:3",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#property@9:28"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 15
+            },
+            "end": {
+              "line": 9,
+              "column": 28
+            }
+          },
+          {
+            "start": {
+              "line": 9,
+              "column": 65
+            },
+            "end": {
+              "line": 9,
+              "column": 68
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 15
+              },
+              "end": {
+                "line": 9,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 65
+              },
+              "end": {
+                "line": 9,
+                "column": 68
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#call@9:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 5
+              },
+              "end": {
+                "line": 9,
+                "column": 15
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "status"
+              ],
+              "blockId": "src/tasks/routes.ts#root-argument-value@9:5"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#root-argument-value@6:38"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#property@9:28",
+        "name": "error",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 28
+            },
+            "end": {
+              "line": 9,
+              "column": 65
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#call@9:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 28
+            },
+            "end": {
+              "line": 9,
+              "column": 65
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 28
+              },
+              "end": {
+                "line": 9,
+                "column": 65
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#call@12:3",
+        "name": "next",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 3
+            },
+            "end": {
+              "line": 12,
+              "column": 9
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 12,
+              "column": 3
+            },
+            "end": {
+              "line": 12,
+              "column": 9
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 3
+              },
+              "end": {
+                "line": 12,
+                "column": 9
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#call@12:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 3
+              },
+              "end": {
+                "line": 12,
+                "column": 7
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#root-argument-value@6:53"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#root-statement@15:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 1
+            },
+            "end": {
+              "line": 17,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#route@15:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#route@15:1",
+        "type": "route",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 1
+            },
+            "end": {
+              "line": 17,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#root-statement@15:1",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#effect-callback@15:22"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 1
+              },
+              "end": {
+                "line": 15,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#root-variable@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "get",
+          "runs": "route",
+          "path": "/tasks",
+          "method": "GET",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Express",
+          "kind": "route",
+          "part": "holder",
+          "heading": "GET",
+          "groupKey": "/tasks",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/tasks/routes.ts#effect-callback@15:22",
+        "name": "(_req, res) => …",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 22
+            },
+            "end": {
+              "line": 17,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#route@15:1",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#function@15:22"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "get",
+          "runs": "route",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Express",
+          "kind": "route",
+          "part": "handler",
+          "heading": "GET",
+          "groupKey": "/tasks",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/tasks/routes.ts#function@15:22",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 22
+            },
+            "end": {
+              "line": 17,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#effect-callback@15:22",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#variable@15:23",
+          "src/tasks/routes.ts#variable@15:29",
+          "src/tasks/routes.ts#call@16:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#variable@15:23",
+        "name": "_req",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 23
+            },
+            "end": {
+              "line": 15,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@15:22",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#variable@15:29",
+        "name": "res",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 29
+            },
+            "end": {
+              "line": 15,
+              "column": 32
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@15:22",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/tasks/routes.ts#call@16:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#call@16:3",
+        "name": "res.json",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 3
+            },
+            "end": {
+              "line": 16,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@15:22",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 3
+              },
+              "end": {
+                "line": 16,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "json"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#variable@15:29"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 12
+              },
+              "end": {
+                "line": 16,
+                "column": 21
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/service.ts#function@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#root-statement@19:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 1
+            },
+            "end": {
+              "line": 26,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#route@19:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#route@19:1",
+        "type": "route",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 1
+            },
+            "end": {
+              "line": 26,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#root-statement@19:1",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#effect-callback@19:25"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 1
+              },
+              "end": {
+                "line": 19,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#root-variable@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "get",
+          "runs": "route",
+          "path": "/tasks/:id",
+          "method": "GET",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Express",
+          "kind": "route",
+          "part": "holder",
+          "heading": "GET",
+          "groupKey": "/tasks/:id",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/tasks/routes.ts#effect-callback@19:25",
+        "name": "(req, res) => …",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 25
+            },
+            "end": {
+              "line": 26,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#route@19:1",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#function@19:25"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "get",
+          "runs": "route",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Express",
+          "kind": "route",
+          "part": "handler",
+          "heading": "GET",
+          "groupKey": "/tasks/:id",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/tasks/routes.ts#function@19:25",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 25
+            },
+            "end": {
+              "line": 26,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#effect-callback@19:25",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#variable@19:26",
+          "src/tasks/routes.ts#variable@19:31",
+          "src/tasks/routes.ts#external-value@20:3",
+          "src/tasks/routes.ts#condition@21:3",
+          "src/tasks/routes.ts#call@25:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#variable@19:26",
+        "name": "req",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 26
+            },
+            "end": {
+              "line": 19,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@19:25",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/tasks/routes.ts#external-value@20:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#variable@19:31",
+        "name": "res",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 31
+            },
+            "end": {
+              "line": 19,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@19:25",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/tasks/routes.ts#call@22:5",
+          "src/tasks/routes.ts#call@25:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#external-value@20:3",
+        "name": "task",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 3
+            },
+            "end": {
+              "line": 20,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@19:25",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 16
+              },
+              "end": {
+                "line": 20,
+                "column": 24
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/service.ts#function@6:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 32
+              },
+              "end": {
+                "line": 20,
+                "column": 45
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "params",
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#variable@19:26"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/routes.ts#condition@21:3",
+          "src/tasks/routes.ts#call@25:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#condition@21:3",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 3
+            },
+            "end": {
+              "line": 24,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@19:25",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#call@22:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 7
+              },
+              "end": {
+                "line": 21,
+                "column": 11
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#external-value@20:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#call@22:5",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 22,
+              "column": 5
+            },
+            "end": {
+              "line": 22,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#condition@21:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 22,
+                "column": 5
+              },
+              "end": {
+                "line": 22,
+                "column": 15
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "status"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#variable@19:31"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#call@25:3",
+        "name": "res.json",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 25,
+              "column": 3
+            },
+            "end": {
+              "line": 25,
+              "column": 17
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@19:25",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 3
+              },
+              "end": {
+                "line": 25,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "json"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#variable@19:31"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 12
+              },
+              "end": {
+                "line": 25,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#external-value@20:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#root-statement@28:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 1
+            },
+            "end": {
+              "line": 35,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#route@28:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#route@28:1",
+        "type": "route",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 1
+            },
+            "end": {
+              "line": 35,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#root-statement@28:1",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#effect-callback@28:36",
+          "src/tasks/routes.ts#effect-callback@28:51"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 28,
+              "column": 1
+            },
+            "end": {
+              "line": 28,
+              "column": 36
+            }
+          },
+          {
+            "start": {
+              "line": 28,
+              "column": 49
+            },
+            "end": {
+              "line": 28,
+              "column": 51
+            }
+          },
+          {
+            "start": {
+              "line": 35,
+              "column": 2
+            },
+            "end": {
+              "line": 35,
+              "column": 3
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 28,
+                "column": 1
+              },
+              "end": {
+                "line": 28,
+                "column": 36
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 28,
+                "column": 49
+              },
+              "end": {
+                "line": 28,
+                "column": 51
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 35,
+                "column": 2
+              },
+              "end": {
+                "line": 35,
+                "column": 3
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#function@6:1",
+          "src/tasks/routes.ts#condition@8:3",
+          "src/tasks/routes.ts#call@9:5",
+          "src/tasks/routes.ts#call@12:3",
+          "src/tasks/routes.ts#route@28:1",
+          "src/tasks/routes.ts#effect-callback@28:36",
+          "src/tasks/routes.ts#function@28:51",
+          "src/tasks/routes.ts#external-value@29:3",
+          "src/tasks/routes.ts#condition@30:3",
+          "src/tasks/routes.ts#call@31:5",
+          "src/tasks/routes.ts#call@34:3",
+          "src/tasks/service.ts#function@8:1",
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10",
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 28,
+                "column": 1
+              },
+              "end": {
+                "line": 28,
+                "column": 18
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "patch"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#root-variable@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/tasks/routes.ts#effect-callback@28:36",
+          "src/tasks/routes.ts#effect-callback@28:51"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "patch",
+          "runs": "route",
+          "path": "/tasks/:id/complete",
+          "method": "PATCH",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Express",
+          "kind": "route",
+          "part": "holder",
+          "heading": "PATCH",
+          "groupKey": "/tasks/:id/complete",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/tasks/routes.ts#effect-callback@28:36",
+        "name": "1",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 36
+            },
+            "end": {
+              "line": 28,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#route@28:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 28,
+              "column": 36
+            },
+            "end": {
+              "line": 28,
+              "column": 49
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 28,
+                "column": 36
+              },
+              "end": {
+                "line": 28,
+                "column": 49
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 28,
+                "column": 36
+              },
+              "end": {
+                "line": 28,
+                "column": 49
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#function@6:1",
+          "src/tasks/routes.ts#condition@8:3",
+          "src/tasks/routes.ts#call@9:5",
+          "src/tasks/routes.ts#call@12:3",
+          "src/tasks/routes.ts#effect-callback@28:36"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 28,
+                "column": 36
+              },
+              "end": {
+                "line": 28,
+                "column": 49
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#function@6:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/tasks/routes.ts#function@6:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "patch",
+          "runs": "middleware",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Express",
+          "kind": "route",
+          "part": "middleware",
+          "heading": "PATCH",
+          "groupKey": "/tasks/:id/complete",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/tasks/routes.ts#effect-callback@28:51",
+        "name": "(req, res) => …",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 51
+            },
+            "end": {
+              "line": 35,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#route@28:1",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#function@28:51"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#function@28:51",
+          "src/tasks/routes.ts#external-value@29:3",
+          "src/tasks/routes.ts#condition@30:3",
+          "src/tasks/routes.ts#call@31:5",
+          "src/tasks/routes.ts#call@34:3",
+          "src/tasks/service.ts#function@8:1",
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10",
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/tasks/routes.ts#function@28:51"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": {
+          "specifier": "express",
+          "name": "patch",
+          "runs": "route",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Express",
+          "kind": "route",
+          "part": "handler",
+          "heading": "PATCH",
+          "groupKey": "/tasks/:id/complete",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/tasks/routes.ts#function@28:51",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 51
+            },
+            "end": {
+              "line": 35,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#effect-callback@28:51",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#variable@28:52",
+          "src/tasks/routes.ts#variable@28:57",
+          "src/tasks/routes.ts#external-value@29:3",
+          "src/tasks/routes.ts#condition@30:3",
+          "src/tasks/routes.ts#call@34:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 28,
+              "column": 51
+            },
+            "end": {
+              "line": 28,
+              "column": 52
+            }
+          },
+          {
+            "start": {
+              "line": 28,
+              "column": 55
+            },
+            "end": {
+              "line": 28,
+              "column": 57
+            }
+          },
+          {
+            "start": {
+              "line": 28,
+              "column": 60
+            },
+            "end": {
+              "line": 28,
+              "column": 66
+            }
+          },
+          {
+            "start": {
+              "line": 35,
+              "column": 1
+            },
+            "end": {
+              "line": 35,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 28,
+                "column": 51
+              },
+              "end": {
+                "line": 28,
+                "column": 52
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 28,
+                "column": 55
+              },
+              "end": {
+                "line": 28,
+                "column": 57
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 28,
+                "column": 60
+              },
+              "end": {
+                "line": 28,
+                "column": 66
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 35,
+                "column": 1
+              },
+              "end": {
+                "line": 35,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#function@28:51",
+          "src/tasks/routes.ts#external-value@29:3",
+          "src/tasks/routes.ts#condition@30:3",
+          "src/tasks/routes.ts#call@31:5",
+          "src/tasks/routes.ts#call@34:3",
+          "src/tasks/service.ts#function@8:1",
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10",
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/tasks/routes.ts#external-value@29:3",
+          "src/tasks/routes.ts#condition@30:3",
+          "src/tasks/routes.ts#call@34:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#variable@28:52",
+        "name": "req",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 52
+            },
+            "end": {
+              "line": 28,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@28:51",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 28,
+              "column": 52
+            },
+            "end": {
+              "line": 28,
+              "column": 55
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 28,
+                "column": 52
+              },
+              "end": {
+                "line": 28,
+                "column": 55
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/tasks/routes.ts#external-value@29:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#variable@28:57",
+        "name": "res",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 57
+            },
+            "end": {
+              "line": 28,
+              "column": 60
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@28:51",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 28,
+              "column": 57
+            },
+            "end": {
+              "line": 28,
+              "column": 60
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 28,
+                "column": 57
+              },
+              "end": {
+                "line": 28,
+                "column": 60
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/tasks/routes.ts#call@31:5",
+          "src/tasks/routes.ts#call@34:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#external-value@29:3",
+        "name": "task",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 29,
+              "column": 3
+            },
+            "end": {
+              "line": 29,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@28:51",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 29,
+              "column": 3
+            },
+            "end": {
+              "line": 29,
+              "column": 51
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 29,
+                "column": 3
+              },
+              "end": {
+                "line": 29,
+                "column": 51
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 29,
+                "column": 16
+              },
+              "end": {
+                "line": 29,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 29,
+                "column": 36
+              },
+              "end": {
+                "line": 29,
+                "column": 49
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#external-value@29:3",
+          "src/tasks/service.ts#function@8:1",
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10",
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 29,
+                "column": 16
+              },
+              "end": {
+                "line": 29,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/service.ts#function@8:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 29,
+                "column": 36
+              },
+              "end": {
+                "line": 29,
+                "column": 49
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "params",
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#variable@28:52"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/routes.ts#condition@30:3",
+          "src/tasks/routes.ts#call@34:3"
+        ],
+        "nextBlockIds": [
+          "src/tasks/service.ts#function@8:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#condition@30:3",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 30,
+              "column": 3
+            },
+            "end": {
+              "line": 33,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@28:51",
+        "childrenBlockIds": [
+          "src/tasks/routes.ts#call@31:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 30,
+              "column": 3
+            },
+            "end": {
+              "line": 30,
+              "column": 28
+            }
+          },
+          {
+            "start": {
+              "line": 32,
+              "column": 5
+            },
+            "end": {
+              "line": 32,
+              "column": 11
+            }
+          },
+          {
+            "start": {
+              "line": 33,
+              "column": 3
+            },
+            "end": {
+              "line": 33,
+              "column": 4
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 30,
+                "column": 3
+              },
+              "end": {
+                "line": 30,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 30,
+                "column": 7
+              },
+              "end": {
+                "line": 30,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 32,
+                "column": 5
+              },
+              "end": {
+                "line": 32,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 33,
+                "column": 3
+              },
+              "end": {
+                "line": 33,
+                "column": 4
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#external-value@29:3",
+          "src/tasks/routes.ts#condition@30:3",
+          "src/tasks/routes.ts#call@31:5",
+          "src/tasks/service.ts#function@8:1",
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10",
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 30,
+                "column": 7
+              },
+              "end": {
+                "line": 30,
+                "column": 11
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#external-value@29:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/tasks/routes.ts#call@31:5",
+          "src/tasks/routes.ts#external-value@29:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#call@31:5",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 31,
+              "column": 5
+            },
+            "end": {
+              "line": 31,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#condition@30:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 31,
+              "column": 5
+            },
+            "end": {
+              "line": 31,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 31,
+                "column": 26
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 31,
+                "column": 15
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#call@31:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 31,
+                "column": 15
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "status"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#variable@28:57"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/routes.ts#call@34:3",
+        "name": "res.json",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 34,
+              "column": 3
+            },
+            "end": {
+              "line": 34,
+              "column": 17
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/routes.ts#function@28:51",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 34,
+              "column": 3
+            },
+            "end": {
+              "line": 34,
+              "column": 17
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 34,
+                "column": 3
+              },
+              "end": {
+                "line": 34,
+                "column": 17
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 34,
+                "column": 3
+              },
+              "end": {
+                "line": 34,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 34,
+                "column": 12
+              },
+              "end": {
+                "line": 34,
+                "column": 16
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/routes.ts#external-value@29:3",
+          "src/tasks/routes.ts#call@34:3",
+          "src/tasks/service.ts#function@8:1",
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10",
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 34,
+                "column": 3
+              },
+              "end": {
+                "line": 34,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "json"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#variable@28:57"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 34,
+                "column": 12
+              },
+              "end": {
+                "line": 34,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/routes.ts#external-value@29:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/tasks/routes.ts#external-value@29:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/routes.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/service.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 29
+            },
+            "end": {
+              "line": 1,
+              "column": 39
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 29
+              },
+              "end": {
+                "line": 1,
+                "column": 39
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/service.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/service.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/service.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/service.ts#function@4:1",
+        "name": "listTasks",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/tasks/service.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 30
+              },
+              "end": {
+                "line": 4,
+                "column": 34
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/task.ts#type-declaration@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 40
+              },
+              "end": {
+                "line": 4,
+                "column": 49
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/store.ts#function@8:1"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/routes.ts#call@16:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/service.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/service.ts#function@6:1",
+        "name": "findTask",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 71
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/tasks/service.ts#root-argument-value@6:26"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/tasks/service.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 39
+              },
+              "end": {
+                "line": 6,
+                "column": 43
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/task.ts#type-declaration@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 59
+              },
+              "end": {
+                "line": 6,
+                "column": 67
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/store.ts#function@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 68
+              },
+              "end": {
+                "line": 6,
+                "column": 70
+              }
+            },
+            "use": "value",
+            "handedToId": "src/tasks/store.ts#root-argument-value@10:26",
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/service.ts#root-argument-value@6:26"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/routes.ts#external-value@20:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/service.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/service.ts#root-argument-value@6:26",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 26
+            },
+            "end": {
+              "line": 6,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/service.ts#function@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/tasks/service.ts#function@6:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/service.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/service.ts#function@8:1",
+        "name": "completeTask",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/tasks/service.ts#root-argument-value@8:30",
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/tasks/service.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 30
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 40
+            },
+            "end": {
+              "line": 8,
+              "column": 64
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 3
+            },
+            "end": {
+              "line": 10,
+              "column": 10
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 1
+              },
+              "end": {
+                "line": 8,
+                "column": 30
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 40
+              },
+              "end": {
+                "line": 8,
+                "column": 64
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 3
+              },
+              "end": {
+                "line": 10,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 1
+              },
+              "end": {
+                "line": 11,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/service.ts#function@8:1",
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10",
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 43
+              },
+              "end": {
+                "line": 8,
+                "column": 47
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/task.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/routes.ts#external-value@29:3"
+        ],
+        "nextBlockIds": [
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/service.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/service.ts#root-argument-value@8:30",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 30
+            },
+            "end": {
+              "line": 8,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/service.ts#function@8:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 30
+            },
+            "end": {
+              "line": 8,
+              "column": 40
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 30
+              },
+              "end": {
+                "line": 8,
+                "column": 40
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/tasks/service.ts#external-value@9:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/service.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/service.ts#external-value@9:3",
+        "name": "task",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/service.ts#function@8:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 28
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 3
+              },
+              "end": {
+                "line": 9,
+                "column": 28
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/service.ts#external-value@9:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 16
+              },
+              "end": {
+                "line": 9,
+                "column": 24
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/store.ts#function@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 25
+              },
+              "end": {
+                "line": 9,
+                "column": 27
+              }
+            },
+            "use": "value",
+            "handedToId": "src/tasks/store.ts#root-argument-value@10:26",
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/service.ts#root-argument-value@8:30"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/service.ts#condition@10:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/service.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/service.ts#condition@10:10",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 10
+            },
+            "end": {
+              "line": 10,
+              "column": 78
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/service.ts#function@8:1",
+        "childrenBlockIds": [
+          "src/tasks/service.ts#property@10:63"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 10
+            },
+            "end": {
+              "line": 10,
+              "column": 63
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 75
+            },
+            "end": {
+              "line": 10,
+              "column": 78
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 10
+              },
+              "end": {
+                "line": 10,
+                "column": 63
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 10
+              },
+              "end": {
+                "line": 10,
+                "column": 14
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 43
+              },
+              "end": {
+                "line": 10,
+                "column": 51
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 57
+              },
+              "end": {
+                "line": 10,
+                "column": 61
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 75
+              },
+              "end": {
+                "line": 10,
+                "column": 78
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/service.ts#condition@10:10",
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 10
+              },
+              "end": {
+                "line": 10,
+                "column": 14
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/service.ts#external-value@9:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 43
+              },
+              "end": {
+                "line": 10,
+                "column": 51
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/store.ts#function@12:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 57
+              },
+              "end": {
+                "line": 10,
+                "column": 61
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/service.ts#external-value@9:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/tasks/service.ts#external-value@9:3",
+          "src/tasks/store.ts#function@12:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/service.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/service.ts#property@10:63",
+        "name": "isDone",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 63
+            },
+            "end": {
+              "line": 10,
+              "column": 75
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/service.ts#condition@10:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 63
+            },
+            "end": {
+              "line": 10,
+              "column": 75
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 63
+              },
+              "end": {
+                "line": 10,
+                "column": 75
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/service.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#root-variable@3:1",
+        "name": "tasks",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/tasks/store.ts#property@4:9",
+          "src/tasks/store.ts#property@4:16",
+          "src/tasks/store.ts#property@4:50",
+          "src/tasks/store.ts#property@5:9",
+          "src/tasks/store.ts#property@5:16",
+          "src/tasks/store.ts#property@5:50"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "isPlain": true,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 3,
+                "column": 31
+              },
+              "end": {
+                "line": 3,
+                "column": 35
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/task.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/store.ts#function@8:1",
+          "src/tasks/store.ts#function@10:1",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#property@4:9",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 9
+            },
+            "end": {
+              "line": 4,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/store.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#property@4:16",
+        "name": "title",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 16
+            },
+            "end": {
+              "line": 4,
+              "column": 48
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/store.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#property@4:50",
+        "name": "isDone",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 50
+            },
+            "end": {
+              "line": 4,
+              "column": 63
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/store.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#property@5:9",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 9
+            },
+            "end": {
+              "line": 5,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/store.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#property@5:16",
+        "name": "title",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 16
+            },
+            "end": {
+              "line": 5,
+              "column": 48
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/store.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#property@5:50",
+        "name": "isDone",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 50
+            },
+            "end": {
+              "line": 5,
+              "column": 62
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/store.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#function@8:1",
+        "name": "readTasks",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 59
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/tasks/store.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 30
+              },
+              "end": {
+                "line": 8,
+                "column": 34
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/task.ts#type-declaration@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 44
+              },
+              "end": {
+                "line": 8,
+                "column": 56
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "values"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/store.ts#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/service.ts#function@4:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#function@10:1",
+        "name": "readTask",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 72
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/tasks/store.ts#root-argument-value@10:26"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/tasks/store.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 39
+              },
+              "end": {
+                "line": 10,
+                "column": 43
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/task.ts#type-declaration@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 59
+              },
+              "end": {
+                "line": 10,
+                "column": 68
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/store.ts#root-variable@3:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 69
+              },
+              "end": {
+                "line": 10,
+                "column": 71
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/store.ts#root-argument-value@10:26"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/service.ts#function@6:1",
+          "src/tasks/service.ts#external-value@9:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#root-argument-value@10:26",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 26
+            },
+            "end": {
+              "line": 10,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/store.ts#function@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/tasks/store.ts#function@10:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/tasks/service.ts#function@6:1",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "src/tasks/service.ts#external-value@9:3",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#function@12:1",
+        "name": "saveTask",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 15,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/tasks/store.ts#root-argument-value@12:26",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/tasks/store.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 26
+            }
+          },
+          {
+            "start": {
+              "line": 12,
+              "column": 36
+            },
+            "end": {
+              "line": 12,
+              "column": 48
+            }
+          },
+          {
+            "start": {
+              "line": 14,
+              "column": 3
+            },
+            "end": {
+              "line": 14,
+              "column": 14
+            }
+          },
+          {
+            "start": {
+              "line": 15,
+              "column": 1
+            },
+            "end": {
+              "line": 15,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 1
+              },
+              "end": {
+                "line": 12,
+                "column": 26
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 36
+              },
+              "end": {
+                "line": 12,
+                "column": 48
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 3
+              },
+              "end": {
+                "line": 14,
+                "column": 14
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 1
+              },
+              "end": {
+                "line": 15,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/store.ts#function@12:1",
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 39
+              },
+              "end": {
+                "line": 12,
+                "column": 43
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/task.ts#type-declaration@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 10
+              },
+              "end": {
+                "line": 14,
+                "column": 14
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/store.ts#root-argument-value@12:26"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/service.ts#condition@10:10"
+        ],
+        "nextBlockIds": [
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#root-argument-value@12:26",
+        "name": "task",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 26
+            },
+            "end": {
+              "line": 12,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/store.ts#function@12:1",
+        "childrenBlockIds": [
+          "src/tasks/store.ts#root-argument-value@13:13"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 12,
+              "column": 26
+            },
+            "end": {
+              "line": 12,
+              "column": 36
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 26
+              },
+              "end": {
+                "line": 12,
+                "column": 36
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 32
+              },
+              "end": {
+                "line": 12,
+                "column": 36
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/tasks/task.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/tasks/store.ts#call@13:3",
+          "src/tasks/store.ts#function@12:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#root-argument-value@13:13",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 13
+            },
+            "end": {
+              "line": 13,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/store.ts#root-argument-value@12:26",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 13,
+              "column": 13
+            },
+            "end": {
+              "line": 13,
+              "column": 20
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 13
+              },
+              "end": {
+                "line": 13,
+                "column": 20
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/store.ts#call@13:3",
+        "name": "tasks.set",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 3
+            },
+            "end": {
+              "line": 13,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/tasks/store.ts#function@12:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 13,
+              "column": 3
+            },
+            "end": {
+              "line": 13,
+              "column": 13
+            }
+          },
+          {
+            "start": {
+              "line": 13,
+              "column": 20
+            },
+            "end": {
+              "line": 13,
+              "column": 27
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 3
+              },
+              "end": {
+                "line": 13,
+                "column": 13
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 20
+              },
+              "end": {
+                "line": 13,
+                "column": 27
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/tasks/store.ts#call@13:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 3
+              },
+              "end": {
+                "line": 13,
+                "column": 12
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "set"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/store.ts#root-variable@3:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 13
+              },
+              "end": {
+                "line": 13,
+                "column": 20
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": "src/tasks/store.ts#root-argument-value@13:13"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/store.ts#root-argument-value@12:26"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 22
+              },
+              "end": {
+                "line": 13,
+                "column": 26
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/tasks/store.ts#root-argument-value@12:26"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/tasks/task.ts#type-declaration@1:1",
+        "name": "Task",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/tasks/task.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "data-model"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/tasks/service.ts#function@4:1",
+          "src/tasks/service.ts#function@6:1",
+          "src/tasks/service.ts#function@8:1",
+          "src/tasks/store.ts#root-variable@3:1",
+          "src/tasks/store.ts#function@8:1",
+          "src/tasks/store.ts#function@10:1",
+          "src/tasks/store.ts#root-argument-value@12:26",
+          "src/tasks/store.ts#function@12:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/tasks/task.ts",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "src/tasks/routes.ts#import@1:1",
+      "src/tasks/routes.ts#import@2:1",
+      "src/tasks/routes.ts#function@6:1",
+      "src/tasks/routes.ts#root-argument-value@6:24",
+      "src/tasks/routes.ts#root-argument-value@7:21",
+      "src/tasks/routes.ts#root-argument-value@6:38",
+      "src/tasks/routes.ts#root-argument-value@9:5",
+      "src/tasks/routes.ts#root-argument-value@6:53",
+      "src/tasks/routes.ts#variable@7:3",
+      "src/tasks/routes.ts#condition@8:3",
+      "src/tasks/routes.ts#call@9:5",
+      "src/tasks/routes.ts#property@9:28",
+      "src/tasks/routes.ts#call@12:3",
+      "src/tasks/routes.ts#route@28:1",
+      "src/tasks/routes.ts#effect-callback@28:36",
+      "src/tasks/routes.ts#function@28:51",
+      "src/tasks/routes.ts#variable@28:52",
+      "src/tasks/routes.ts#variable@28:57",
+      "src/tasks/routes.ts#external-value@29:3",
+      "src/tasks/routes.ts#condition@30:3",
+      "src/tasks/routes.ts#call@31:5",
+      "src/tasks/routes.ts#call@34:3",
+      "src/tasks/service.ts#import@1:1",
+      "src/tasks/service.ts#function@8:1",
+      "src/tasks/service.ts#root-argument-value@8:30",
+      "src/tasks/service.ts#external-value@9:3",
+      "src/tasks/service.ts#condition@10:10",
+      "src/tasks/service.ts#property@10:63",
+      "src/tasks/store.ts#function@12:1",
+      "src/tasks/store.ts#root-argument-value@12:26",
+      "src/tasks/store.ts#root-argument-value@13:13",
+      "src/tasks/store.ts#call@13:3"
+    ],
+    "diffContains": [
+      "effect",
+      "route",
+      "logic"
+    ],
+    "chainContains": [
+      "effect",
+      "route",
+      "logic"
+    ],
+    "diffChainIds": [
+      "src/tasks/routes.ts#route@28:1"
+    ]
+  }
+]

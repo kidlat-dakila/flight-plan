@@ -39,14 +39,19 @@ tools/playground-fixtures/
 │       ├── <kind>.integration.test.ts   every case of the kind
 │       ├── meta.json                    what the case repository is built with
 │       ├── repo/                        the case repository, before the change
-│       └── snapshots/
-│           └── <test name>.snapshot.json   one per case, committed
+│       ├── snapshots/
+│       │   └── <test name>.snapshot.json      one per case, committed
+│       └── code-blocks/
+│           └── <test name>.code-blocks.json   the stored code blocks of each snapshot, generated whole
 └── test-setup/
-    ├── mock-git-forge.ts    replaces three functions of @flightplan/git-forge
-    ├── setup-test.ts        setupTest({ repoPath, diffs })
-    ├── case-adapter.ts      the git adapter a case reads through
-    ├── written-parts.ts     withWrittenParts(codegraph, written)
-    └── case-snapshot.ts     expectCaseSnapshot(codegraph)
+    ├── index.ts               the entry another project's tests import
+    ├── mock-git-forge.ts      replaces three functions of @flightplan/git-forge
+    ├── setup-test.ts          setupTest({ repoPath, diffs })
+    ├── case-adapter.ts        the git adapter a case reads through
+    ├── written-parts.ts       withWrittenParts(codegraph, written)
+    ├── case-snapshot.ts       expectCaseSnapshot(codegraph)
+    ├── fixture-change.ts      sets a case up again from the diff its snapshot holds
+    └── code-block-snapshot.ts the stored code blocks of a snapshot, and the file they are compared with
 ```
 
 One kind has one test file, one `meta.json` and one case repository. Many cases share that repository, because each case brings its own diffs.
@@ -428,7 +433,7 @@ Read the context first, then the two diagrams and the walkthrough against it. Wh
 
 ## Reading the snapshots from code
 
-`src/index.ts` is what another project imports, as `@flightplan/playground-fixtures`. It reads the committed snapshots from disk and never runs a case, so what it returns is as fresh as the last `nx run playground-fixtures:snapshot`. Every function takes `testCasesPath`, the path of a folder laid out as `test-cases/` is, as its first argument.
+`src/index.ts` is what another project imports, as `@flightplan/playground-fixtures`. It reads the committed snapshots from disk and never runs a case, so what it returns is as fresh as the last `nx run playground-fixtures:snapshot`. Each of the four readers below takes `testCasesPath`, the path of a folder laid out as `test-cases/` is, as its first argument.
 
 | Function | Returns |
 |---|---|
@@ -446,7 +451,32 @@ const [firstFixture] = await getAllReviewArtifactFixturesByCase(testCasesPath, f
 const fixture = await getReviewArtifactFixture(testCasesPath, firstFixture)
 ```
 
-The functions read `<kind>/snapshots/*.snapshot.json` and `<kind>/repo/` under the path they are given. The development build of `apps/backend` passes the path of `test-cases/` in the workspace, and the index page lists one kind at a time in its Fixtures section, as a repository. A production build does not have the code that reads them.
+The functions read `<kind>/snapshots/*.snapshot.json`, `<kind>/code-blocks/` and `<kind>/repo/` under the path they are given. The development build of `apps/backend` passes the path of `test-cases/` in the workspace, and the index page lists one kind at a time in its Fixtures section, as a repository. A production build does not have the code that reads them. The Trace Diagram lab, `tools/trace-diagram-lab`, reads every fixture through them too and draws its Trace Band; see its [AGENTS.md](../../trace-diagram-lab/AGENTS.md).
+
+`src/index.ts` also exports the pieces `getReviewArtifactFixture` is built from, for a project that keeps snapshots of its own in another shape and turns them into review artifacts the same way:
+
+| Export | What it does |
+|---|---|
+| `readRepositoryFiles(repoPath)` | Reads a case repository from disk, as `RepositoryFiles`: a map of each path to its text |
+| `applyDiffs(baseFiles, diffs)` | The files after the change: the diffs applied to the base files. It refuses a diff it cannot read with `UnreadableDiffError`, and one that does not match the files with `DiffMismatchError` |
+| `readStoredGroups(text)` | The groups of code blocks in the text of a `code-blocks/` file |
+| `caseSnapshotSchema`, `CaseSnapshot` | The schema and the type of a snapshot as `toReviewArtifact` reads it |
+| `toReviewArtifact(snapshot, headFiles, storedGroups, isSegmented)` | A snapshot as a `ReviewArtifact`, as the next section describes |
+| `UnknownFixtureCaseError`, `UnknownFixtureError` | What the readers throw for a kind or a snapshot that does not exist |
+
+### Reading the cases from another project's tests
+
+`test-setup/index.ts` is the entry another project's tests import, as `@flightplan/playground-fixtures/test-setup`, to run cases of its own the way this project runs its cases. It imports Vitest, so nothing outside a test imports it.
+
+| Export | What it does |
+|---|---|
+| `setupTest({ repoPath, diffs })` | Makes the mocked `@flightplan/git-forge` answer from a case repository and its diffs |
+| `CASE_REF`, `CASE_BRANCH`, `CASE_REMOTE`, `BASE_COMMIT`, `HEAD_COMMIT`, `createCaseAdapter` | The case adapter and the constants it answers with |
+| `caseSnapshotOf(change, codegraph, written)`, `caseTitleOf`, `snapshotNameOf`, `snapshotPathOf`, `readCaseDiff`, `serializeCase` | What `expectCaseSnapshot` is built from: the snapshot of a codegraph with its written parts, the title and file of a test, the diff of the case set up, and the JSON a snapshot is written as |
+| `readWrittenParts(snapshot)`, `NOTHING_WRITTEN` | The written parts of a snapshot, matched as [What a case compares](#what-a-case-compares) says, and the value for a snapshot that does not exist yet |
+| `listFixtureNames`, `setupFixtureChange`, `storedCodeBlocksOf`, `codeBlocksPathOf` | The fixtures of a cases folder, a case set up again from its snapshot's diff, and the stored code blocks of a snapshot with the path of the file they are compared with |
+
+The mock itself is not an export: another project's Vitest config names `test-setup/mock-git-forge.ts` by its path under `setupFiles`, and resolves `@flightplan/playground-fixtures/test-setup` to `test-setup/index.ts` with an alias, as `tools/trace-diagram-lab/vite.config.mts` does.
 
 ### A snapshot as a review artifact
 

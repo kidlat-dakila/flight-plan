@@ -15,6 +15,11 @@
       "import": "./src/index.ts",
       "default": "./src/index.ts"
     },
+    "./test-setup": {
+      "types": "./test-setup/index.ts",
+      "import": "./test-setup/index.ts",
+      "default": "./test-setup/index.ts"
+    },
     "./package.json": "./package.json"
   },
   "nx": {

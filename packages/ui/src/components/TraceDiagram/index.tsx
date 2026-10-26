@@ -184,6 +184,7 @@ interface TraceDiagramProps {
   readonly authoring?: TraceAuthoring | null
   readonly cardMoving?: CardMoving | null
   readonly navigatorAnchorId?: string | null
+  readonly isFullScreenAtStart?: boolean
   readonly onWriteUpNode?: ((nodeId: string) => void) | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
@@ -917,7 +918,7 @@ const lineOfConnection = ({ source, sourceHandle, target, targetHandle }: FlowCo
   return { from: source, fromRowId: sourceHandle.slice(ROW_HANDLE_PREFIX.length), to: target, toSide }
 }
 
-const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, cardMoving = null, navigatorAnchorId = null, onWriteUpNode = null, onOpenCodeLink, onWaypointReviewedChange }: TraceDiagramProps) => {
+const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, cardMoving = null, navigatorAnchorId = null, isFullScreenAtStart = false, onWriteUpNode = null, onOpenCodeLink, onWaypointReviewedChange }: TraceDiagramProps) => {
   const [draggedPositionById, setDraggedPositionById] = useState<PositionById>(NO_POSITIONS)
   const [selectedLineId, setSelectedLineId] = useState<string | null>(null)
   const [droppedLine, setDroppedLine] = useState<DroppedLine | null>(null)
@@ -925,7 +926,7 @@ const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isRevie
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const [concealment, setConcealment] = useState<Concealment>(NOTHING_CONCEALED)
-  const [isFullScreen, setIsFullScreen] = useState(false)
+  const [isFullScreen, setIsFullScreen] = useState(isFullScreenAtStart)
   const [askedDiscard, setAskedDiscard] = useState<DiagramDiscard | null>(null)
   const markers = useEdgeMarkers()
   const { collapsedNodeIds, focusedNodeId } = concealment

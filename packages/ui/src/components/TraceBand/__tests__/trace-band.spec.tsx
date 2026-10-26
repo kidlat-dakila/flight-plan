@@ -182,6 +182,43 @@ describe("TraceBand", () => {
     expect(screen.queryByRole("button", { name: "Add a diagram" })).toBeNull()
   })
 
+  it("opens its diagram on the page unless asked to open it full screen", async () => {
+    const { unmount } = render(<TraceBand {...createProps()} />)
+
+    expect(screen.queryByRole("dialog", { name: "A shopper sees a price" })).toBeNull()
+
+    unmount()
+    render(<TraceBand {...createProps({ isFullScreenAtStart: true })} />)
+
+    expect(await screen.findByRole("dialog", { name: "A shopper sees a price" })).toBeTruthy()
+  })
+
+  it("opens the diagram of the open tab full screen when asked to", async () => {
+    render(<TraceBand {...createProps({ diagram: null, tabs: diagramTabs, isFullScreenAtStart: true })} />)
+
+    expect(await screen.findByRole("dialog", { name: "Stock check" })).toBeTruthy()
+    expect(screen.queryByRole("dialog", { name: "Checkout" })).toBeNull()
+  })
+
+  it("opens the tab it is asked to open at start, and the first tab for an id it does not have", () => {
+    const { unmount } = render(<TraceBand {...createProps({ diagram: null, tabs: diagramTabs, openTabIdAtStart: "checkout" })} />)
+
+    expect(screen.getByRole("tab", { name: "Checkout" }).getAttribute("aria-selected")).toBe("true")
+    expect(screen.getByText("A shopper pays, and the order is written.")).toBeTruthy()
+
+    unmount()
+    render(<TraceBand {...createProps({ diagram: null, tabs: diagramTabs, openTabIdAtStart: "missing" })} />)
+
+    expect(screen.getByRole("tab", { name: "Stock check" }).getAttribute("aria-selected")).toBe("true")
+  })
+
+  it("opens the diagram of the tab asked for full screen when asked to", async () => {
+    render(<TraceBand {...createProps({ diagram: null, tabs: diagramTabs, openTabIdAtStart: "checkout", isFullScreenAtStart: true })} />)
+
+    expect(await screen.findByRole("dialog", { name: "Checkout" })).toBeTruthy()
+    expect(screen.queryByRole("dialog", { name: "Stock check" })).toBeNull()
+  })
+
   it("shows only its heading when the trace is absent", () => {
     render(<TraceBand {...createProps({ diagram: null })} />)
 

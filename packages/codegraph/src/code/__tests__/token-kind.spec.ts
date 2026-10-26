@@ -1,4 +1,4 @@
-import { tokenKindOf } from "@/utils/code-highlighter/token-kind"
+import { tokenKindOf } from "@/code/token-kind"
 
 describe("tokenKindOf", () => {
   it("names the kind of a token from its innermost scope", () => {

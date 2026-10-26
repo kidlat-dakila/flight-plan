@@ -46,7 +46,6 @@ import { createAgentInstaller, createInstallChecker } from "@/utils/agent-instal
 import { createAgentModelLister } from "@/utils/agent-model-lister"
 import { createAuthorLookup } from "@/utils/author-lookup"
 import { createBranchPuller } from "@/utils/branch-puller"
-import { createCodeHighlighter } from "@/utils/code-highlighter"
 import { createCommitAuthorReader } from "@/utils/commit-author-reader"
 import { FileConfigurationStore } from "@/utils/configuration-file-store"
 import { FileConversationStore } from "@/utils/conversation-file-store"
@@ -76,7 +75,7 @@ import { FileSetupStore } from "@/utils/setup-file-store"
 import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
 import { createTerminalCloser, createTerminalOpener } from "@/utils/terminal-opener"
 import { createUpdateCheckFile } from "@/utils/update-check-file"
-import type { CodeHighlighter } from "@flightplan/codegraph"
+import { createCodeHighlighter, type CodeHighlighter } from "@flightplan/codegraph"
 import { readRemote, assembleGitAdapter, GitAdapterError } from "@flightplan/git-forge"
 
 export interface ProcedureContext {
