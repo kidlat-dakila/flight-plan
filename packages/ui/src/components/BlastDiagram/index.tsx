@@ -6,6 +6,7 @@ import DiagramNodePanel from "@/components/DiagramNodePanel"
 import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
 import { WriteUpOffer } from "@/components/WriteUpIcon"
+import { artifactPartMark } from "@/lib/artifact-part"
 import { straightPath, type Point } from "@/lib/diagram-path"
 import { neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
 import { navigatorButtonOf, WRITE_UP_KEY, type NavigatorButton, type NavigatorGroup } from "@/lib/navigator-controls"
@@ -165,7 +166,7 @@ const BlastDiagram = ({ title, board, codeLinks, authoring, navigation = null, o
       panel={selectedNode === null
         ? null
         : (
-            <DiagramNodePanel title={selectedNode.path} titleKind="code" kindLabel={selectedNode.markLabel} target={null} onClose={closePanel}>
+            <DiagramNodePanel title={selectedNode.path} titleKind="code" kindLabel={selectedNode.markLabel} target={null} partMark={artifactPartMark("blast-node", selectedNode.path)} onClose={closePanel}>
               {isEditingImpact ? authoring.renderImpactEditor(selectedNode, stopEditingImpact) : null}
               {isEditingImpact || !isOfferedWriteUp(selectedNode)
                 ? null
@@ -241,6 +242,7 @@ const BlastDiagram = ({ title, board, codeLinks, authoring, navigation = null, o
           title={node.path}
           aria-pressed={node.id === selectedNodeId}
           data-user-action-id="blast-diagram-card-action"
+          {...artifactPartMark("blast-node", node.path)}
           data-mark={node.mark}
           data-quiet={isQuietBlastFileMark(node.mark)}
           data-standing={standingOf(node.id === focalNodeId, nearby.nodeIds.has(node.id), hasFocus)}

@@ -1,3 +1,5 @@
+import { createContext } from "react"
+
 export type ArtifactPart
   = | { readonly kind: "review" }
     | { readonly kind: "segment", readonly segmentId: string }
@@ -17,6 +19,8 @@ export interface ArtifactPartMark {
 export interface SegmentMark {
   readonly "data-segment-id": string
 }
+
+export const SegmentIdContext = createContext<string | null>(null)
 
 const PART_SELECTOR = "[data-artifact-part]"
 const SEGMENT_SELECTOR = "[data-segment-id]"

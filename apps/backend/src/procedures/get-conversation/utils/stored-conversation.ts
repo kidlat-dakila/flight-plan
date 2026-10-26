@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { AGENT_NAMES } from "@/procedures/get-setup/utils/setup"
-import { DELIVERY_CHANNELS, QUESTION_ORIGINS, type Conversation } from "./conversation"
+import { DELIVERY_CHANNELS, EXCERPT_KINDS, QUESTION_ORIGINS, type Conversation } from "./conversation"
 
 const JSON_INDENT = 2
 const SCHEMA_VERSION = 1
@@ -15,12 +15,15 @@ const questionSchema = z.strictObject({
   allowsMultiple: z.boolean(),
 })
 
+const excerptSchema = z.strictObject({ kind: z.enum(EXCERPT_KINDS), text: z.string() })
+
 const eventSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("reviewer-message"),
     id: z.string(),
     body: z.string(),
     reference: z.string().nullable(),
+    excerpt: excerptSchema.nullable().default(null),
     sentAt: storedDate,
   }),
   z.strictObject({ kind: z.literal("agent-message"), id: z.string(), body: z.string(), sentAt: storedDate }),

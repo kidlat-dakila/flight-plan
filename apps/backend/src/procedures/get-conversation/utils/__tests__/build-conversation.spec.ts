@@ -27,6 +27,22 @@ describe("buildConversation", () => {
     expect(view.agentStateLabel).toBe("Agent offline")
   })
 
+  it("shows the text the reviewer asked about beside its reference, and none on the agent's messages", () => {
+    const excerpt = { kind: "text", text: "rounds the total once" } as const
+    const view = buildConversation(
+      snapshotOf([
+        { ...reviewerMessage("m1", "Why?"), reference: "waypoint `w2` of the review artifact, where it says \"rounds the total once\"", excerpt },
+        { kind: "agent-message", id: "a1", body: "Because.", sentAt: STARTED_AT },
+      ]),
+      LATER,
+    )
+
+    expect(view.entries).toMatchObject([
+      { id: "m1", reference: "waypoint `w2` of the review artifact, where it says \"rounds the total once\"", excerpt },
+      { id: "a1", reference: null, excerpt: null },
+    ])
+  })
+
   it("shows an open batch as waiting for the reviewer, and an answered one with its answer", () => {
     const answered = buildConversation(
       snapshotOf([

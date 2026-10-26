@@ -5,6 +5,7 @@ import { addSetupRepositoryRoute } from "./routes/add-setup-repository"
 import { answerQuestionsRoute } from "./routes/answer-questions"
 import { browseFoldersRoute } from "./routes/browse-folders"
 import { buildCodeReferenceRoute } from "./routes/build-code-reference"
+import { buildTextReferenceRoute } from "./routes/build-text-reference"
 import { chooseModelRoute } from "./routes/choose-model"
 import { completeSetupRoute } from "./routes/complete-setup"
 import { configureRepositoryRoute } from "./routes/configure-repository"
@@ -148,6 +149,7 @@ export const appRouter = createRouter({
     searchFiles: searchFilesRoute,
     fileCode: getFileCodeRoute,
     codeReference: buildCodeReferenceRoute,
+    textReference: buildTextReferenceRoute,
     addComment: addCommentRoute,
     discardComment: discardCommentRoute,
     replyToThread: replyToThreadRoute,

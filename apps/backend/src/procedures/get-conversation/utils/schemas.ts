@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { proseSchema } from "@flightplan/configurations"
+import { EXCERPT_KINDS } from "./conversation"
 
 export const AGENT_STATES = ["online", "offline"] as const
 
@@ -12,12 +13,15 @@ export const conversationKeySchema = z.strictObject({
 
 export const questionOptionSchema = z.strictObject({ label: z.string(), description: z.string() })
 
+export const excerptSchema = z.strictObject({ kind: z.enum(EXCERPT_KINDS), text: z.string() })
+
 export const messageEntrySchema = z.strictObject({
   kind: z.literal("message"),
   id: z.string(),
   author: z.enum(["reviewer", "agent"]),
   authorLabel: z.string(),
   reference: z.string().nullable(),
+  excerpt: excerptSchema.nullable(),
   body: proseSchema,
   timeLabel: z.string(),
 })

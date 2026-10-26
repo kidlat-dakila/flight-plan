@@ -250,4 +250,15 @@ describe("BlastDiagram", () => {
 
     expect(within(await screen.findByRole("region", { name: "src/price.ts" })).queryByRole("button", { name: "Edit impact" })).toBeNull()
   })
+
+  it("marks each file and the side panel of a pressed one with the path of the file", async () => {
+    renderDiagram()
+    const file = screen.getByRole("button", { name: /price\.ts/ })
+
+    expect(file.dataset).toMatchObject({ artifactPart: "blast-node", artifactId: "src/price.ts" })
+
+    fireEvent.click(file)
+
+    expect((await screen.findByRole("region", { name: "src/price.ts" })).dataset).toMatchObject({ artifactPart: "blast-node", artifactId: "src/price.ts" })
+  })
 })

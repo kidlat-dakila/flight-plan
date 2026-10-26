@@ -12,7 +12,14 @@ export const sendReviewerMessage = async (
   const messageId = context.conversationEnvironment.newId()
   await appendAndPublish(
     key,
-    [{ kind: "reviewer-message", id: messageId, body: input.body, reference: input.reference, sentAt: context.now() }],
+    [{
+      kind: "reviewer-message",
+      id: messageId,
+      body: input.body,
+      reference: input.reference,
+      excerpt: input.excerpt,
+      sentAt: context.now(),
+    }],
     context,
   )
   return { kind: "sent", messageId }

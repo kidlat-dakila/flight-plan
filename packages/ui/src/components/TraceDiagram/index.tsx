@@ -43,6 +43,7 @@ import NodeCodeView, { type CodeView, type LineSpan } from "@/components/NodeCod
 import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
 import { WriteUpOffer } from "@/components/WriteUpIcon"
+import { artifactPartMark } from "@/lib/artifact-part"
 import { straightPath, type Point } from "@/lib/diagram-path"
 import { cutOffBy, lineageOf, neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
 import { navigatorButtonOf, WRITE_UP_KEY, type NavigatorButton } from "@/lib/navigator-controls"
@@ -477,6 +478,7 @@ const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, 
   return (
     <div
       data-node-id={node.id}
+      {...artifactPartMark("trace-node", node.id)}
       data-type={node.type}
       data-change={node.change ?? undefined}
       data-emphasis={emphasis ?? undefined}
@@ -552,6 +554,7 @@ const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, 
 }
 
 interface TriggerRowProps {
+  readonly nodeId: string
   readonly trigger: TraceTriggerLabel
   readonly placed: PlacedRow
   readonly emphasis: Emphasis | null
@@ -559,12 +562,13 @@ interface TriggerRowProps {
   readonly onHoverChange: (isHovered: boolean) => void
 }
 
-const TriggerRow = ({ trigger, placed, emphasis, onSelect, onHoverChange }: TriggerRowProps) => {
+const TriggerRow = ({ nodeId, trigger, placed, emphasis, onSelect, onHoverChange }: TriggerRowProps) => {
   const TypeIcon = Object.hasOwn(TYPE_ICONS, trigger.type) ? TYPE_ICONS[trigger.type] : WorkflowIcon
   return (
     <button
       type="button"
       data-trigger-id={trigger.id}
+      {...artifactPartMark("trace-node", nodeId)}
       data-change={trigger.change ?? undefined}
       aria-label={`${trigger.typeLabel}: ${trigger.label}`}
       title={trigger.isDraft ? trigger.hint ?? undefined : undefined}
@@ -588,6 +592,7 @@ const TriggerRow = ({ trigger, placed, emphasis, onSelect, onHoverChange }: Trig
 }
 
 interface BlockRowButtonProps {
+  readonly nodeId: string
   readonly row: BlockRow
   readonly placed: PlacedRow
   readonly emphasis: Emphasis | null
@@ -595,12 +600,13 @@ interface BlockRowButtonProps {
   readonly onHoverChange: (isHovered: boolean) => void
 }
 
-const BlockRowButton = ({ row: { kind, kindLabel, block }, placed, emphasis, onSelect, onHoverChange }: BlockRowButtonProps) => {
+const BlockRowButton = ({ nodeId, row: { kind, kindLabel, block }, placed, emphasis, onSelect, onHoverChange }: BlockRowButtonProps) => {
   const KindIcon = Object.hasOwn(BLOCK_LIST_ICONS, kind) ? BLOCK_LIST_ICONS[kind] : WorkflowIcon
   return (
     <button
       type="button"
       data-block-id={block.id}
+      {...artifactPartMark("trace-node", nodeId)}
       data-block-kind={kind}
       data-change={block.change ?? undefined}
       aria-label={`${kindLabel}: ${block.label}`}
@@ -711,10 +717,10 @@ const FlowNodeView = ({ data: { node, frame, cardActions, emphasis, isSelected, 
         const heading = headingById.get(placed.id)
         const blockRow = blockRowById.get(placed.id)
         const trigger = triggerById.get(placed.id)
-        if (heading !== undefined) return [<span key={placed.id} data-row-heading={node.id} className={ROW_HEADING_CLASSES} style={boxStyleOf(placed)}>{heading.label}</span>]
+        if (heading !== undefined) return [<span key={placed.id} data-row-heading={node.id} {...artifactPartMark("trace-node", node.id)} className={ROW_HEADING_CLASSES} style={boxStyleOf(placed)}>{heading.label}</span>]
         if (placed.kind === "parameters") {
           return [
-            <ul key={placed.id} aria-label={PARAMETERS_LABEL} className={PARAMETERS_CLASSES} style={boxStyleOf(placed)}>
+            <ul key={placed.id} aria-label={PARAMETERS_LABEL} {...artifactPartMark("trace-node", node.id)} className={PARAMETERS_CLASSES} style={boxStyleOf(placed)}>
               {node.parameters.map((parameter) => (
                 <li key={parameter} title={parameter} className={PARAMETER_CHIP_CLASSES}>
                   <span className="truncate">{parameter}</span>
@@ -726,10 +732,10 @@ const FlowNodeView = ({ data: { node, frame, cardActions, emphasis, isSelected, 
         const selectRow = () => {
           onSelect(placed.id)
         }
-        if (blockRow !== undefined) return [<BlockRowButton key={placed.id} row={blockRow} placed={placed} emphasis={emphasis} onSelect={selectRow} onHoverChange={onHoverChange} />]
+        if (blockRow !== undefined) return [<BlockRowButton key={placed.id} nodeId={node.id} row={blockRow} placed={placed} emphasis={emphasis} onSelect={selectRow} onHoverChange={onHoverChange} />]
         return trigger === undefined
           ? []
-          : [<TriggerRow key={placed.id} trigger={trigger} placed={placed} emphasis={emphasis} onSelect={selectRow} onHoverChange={onHoverChange} />]
+          : [<TriggerRow key={placed.id} nodeId={node.id} trigger={trigger} placed={placed} emphasis={emphasis} onSelect={selectRow} onHoverChange={onHoverChange} />]
       })}
       {frame.handles.map((handle) => (
         <Handle
@@ -1130,6 +1136,7 @@ const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isRevie
               <DiagramNodePanel
                 title={selectedNode.label}
                 kindLabel={selectedNode.typeLabel}
+                partMark={artifactPartMark("trace-node", selectedNode.id)}
                 target={selectedNode.codeViews.length === 0 ? selectedTarget : null}
                 codeViews={selectedNode.codeViews.map((view) => (
                   <NodeCodeView

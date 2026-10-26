@@ -5,6 +5,7 @@ import Prose from "@/components/Prose"
 import TraceDiagram, { type CardMoving, type TraceAuthoring, type TraceEdge, type TraceNode } from "@/components/TraceDiagram"
 import Unwritten from "@/components/Unwritten"
 import { NoWriteUpTag } from "@/components/WriteUpIcon"
+import { artifactPartMark } from "@/lib/artifact-part"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { TAB_CLASSES, TAB_LIST_CLASSES, tabIndexAfterKey } from "@/lib/tab-bar"
 import { cn } from "@/lib/utils"
@@ -296,7 +297,7 @@ const TraceBand = ({
   const canEditDescription = authoring !== null && diagram !== null && renderDescriptionEditor !== null && !authoring.description.isWriting
   const panel = { anchorId, heading, codeLinks, codeDefinitions, isReviewPending, isFullScreenAtStart, renderDescriptionEditor, onOpenCodeLink, onWaypointReviewedChange }
   return (
-    <section id={anchorId} aria-labelledby={`${anchorId}-heading`} data-view-section-id={VIEW_SECTION_ID} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
+    <section id={anchorId} aria-labelledby={`${anchorId}-heading`} data-view-section-id={VIEW_SECTION_ID} {...artifactPartMark("trace-diagram")} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
       <div className="flex items-center gap-3 pb-4">
         <h2 id={`${anchorId}-heading`} className="text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">
           <BandHeading heading={heading} diagram={diagram} isTabbed={tabs.length > 0} />

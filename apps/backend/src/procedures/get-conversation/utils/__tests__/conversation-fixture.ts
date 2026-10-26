@@ -67,6 +67,7 @@ export const reviewerMessage = (id: string, body: string): ReviewerMessage => ({
   id,
   body,
   reference: null,
+  excerpt: null,
   sentAt: STARTED_AT,
 })
 

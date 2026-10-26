@@ -44,6 +44,15 @@ describe("TraceBand", () => {
     expect(screen.queryByText(/\d+ nodes?/)).toBeNull()
   })
 
+  it("marks its heading and description as the Trace Diagram of the segment", () => {
+    render(<TraceBand {...createProps()} />)
+
+    const heading = screen.getByRole("heading", { level: 2, name: "Trace Diagram" })
+
+    expect(heading.closest("[data-artifact-part]")?.getAttribute("data-artifact-part")).toBe("trace-diagram")
+    expect(screen.getByText("A shopper opens a product, and the page asks for its price.").closest("[data-artifact-part]")?.getAttribute("data-artifact-part")).toBe("trace-diagram")
+  })
+
   it("puts the title written for its only diagram in place of its heading", () => {
     const { diagram } = createProps()
     render(<TraceBand {...createProps({ diagram: diagram === null ? null : { ...diagram, writtenTitle: "Price product flow diagram" } })} />)

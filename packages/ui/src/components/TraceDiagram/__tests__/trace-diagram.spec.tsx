@@ -606,4 +606,29 @@ describe("TraceDiagram for an author", () => {
     expect(container.querySelectorAll(handleSelectorOf("side:bottom"))).toHaveLength(NODE_PLACES.length)
     expect(container.querySelectorAll(handleSelectorOf("row:")).length).toBeGreaterThan(0)
   })
+
+  it("marks each card, each of its rows and the side panel of a pressed node as that node of the trace", async () => {
+    render(
+      <TraceDiagram
+        title="A checkout"
+        nodes={NODES}
+        edges={EDGES}
+        codeLinks={CODE_LINKS}
+        codeDefinitions={{}}
+        isReviewPending={false}
+        isFullScreenAtStart
+        onOpenCodeLink={vi.fn()}
+        onWaypointReviewedChange={vi.fn()}
+      />,
+    )
+    const board = await screen.findByRole("dialog", { name: "A checkout" })
+    const row = within(board).getByRole("button", { name: "Event: A shopper removes the line" })
+
+    expect(row.dataset).toMatchObject({ artifactPart: "trace-node", artifactId: "cart-line" })
+    expect(board.querySelector("[data-node-id=price]")?.getAttribute("data-artifact-id")).toBe("price")
+
+    fireEvent.click(within(board).getByRole("button", { name: /Function.*Price of a line/ }))
+
+    expect((await within(board).findByRole("region", { name: "Price of a line" })).dataset).toMatchObject({ artifactPart: "trace-node", artifactId: "price" })
+  })
 })

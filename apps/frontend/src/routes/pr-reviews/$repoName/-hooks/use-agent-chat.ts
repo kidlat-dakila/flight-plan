@@ -3,7 +3,7 @@ import { useSubscription } from "@trpc/tanstack-react-query"
 import { useState } from "react"
 import type { Failure } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
-import type { Conversation, ModelChoice, QuestionAnswering } from "@flightplan/ui/ChatPanel"
+import type { Conversation, Excerpt, ModelChoice, QuestionAnswering } from "@flightplan/ui/ChatPanel"
 import type { GivenAnswer } from "@flightplan/ui/QuestionBatch"
 import type { ToastContent } from "./use-toast"
 
@@ -12,9 +12,15 @@ interface ReviewKey {
   readonly targetId: string
 }
 
+interface Attachment {
+  readonly reference: string
+  readonly excerpt: Excerpt
+}
+
 export interface AgentChat {
   readonly isOpen: boolean
   readonly reference: string | null
+  readonly excerpt: Excerpt | null
   readonly conversation: Conversation | undefined
   readonly modelChoice: ModelChoice | null
   readonly isSending: boolean
@@ -22,7 +28,7 @@ export interface AgentChat {
   readonly answering: QuestionAnswering
   readonly onOpen: () => void
   readonly onClose: () => void
-  readonly onAsk: (reference: string) => void
+  readonly onAsk: (reference: string, excerpt: Excerpt) => void
   readonly onClearReference: () => void
   readonly onSend: (body: string) => void
   readonly onAnswer: (batchId: string, answers: readonly GivenAnswer[]) => void
@@ -33,7 +39,7 @@ export const useAgentChat = (reviewKey: ReviewKey, onProblem: (content: ToastCon
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const [isOpen, setIsOpen] = useState(false)
-  const [reference, setReference] = useState<string | null>(null)
+  const [attachment, setAttachment] = useState<Attachment | null>(null)
   const conversation = useSubscription(trpc.conversation.watch.subscriptionOptions(reviewKey, { enabled: isOpen }))
   const modelChoice = useQuery({ ...trpc.conversation.modelChoice.queryOptions(reviewKey), enabled: isOpen })
   const reportError = (error: Failure): void => {
@@ -42,7 +48,7 @@ export const useAgentChat = (reviewKey: ReviewKey, onProblem: (content: ToastCon
   const sendMessage = useMutation(
     trpc.conversation.sendMessage.mutationOptions({
       onSuccess: (result) => {
-        if (result.kind === "sent") setReference(null)
+        if (result.kind === "sent") setAttachment(null)
       },
       onError: reportError,
     }),
@@ -70,7 +76,8 @@ export const useAgentChat = (reviewKey: ReviewKey, onProblem: (content: ToastCon
 
   return {
     isOpen,
-    reference,
+    reference: attachment?.reference ?? null,
+    excerpt: attachment?.excerpt ?? null,
     conversation: conversation.data,
     modelChoice: modelChoice.data ?? null,
     isSending: sendMessage.isPending,
@@ -81,12 +88,12 @@ export const useAgentChat = (reviewKey: ReviewKey, onProblem: (content: ToastCon
     },
     onOpen: () => { setIsOpen(true) },
     onClose: () => { setIsOpen(false) },
-    onAsk: (askedReference) => {
-      setReference(askedReference)
+    onAsk: (reference, excerpt) => {
+      setAttachment({ reference, excerpt })
       setIsOpen(true)
     },
-    onClearReference: () => { setReference(null) },
-    onSend: (body) => { sendMessage.mutate({ ...reviewKey, body, reference }) },
+    onClearReference: () => { setAttachment(null) },
+    onSend: (body) => { sendMessage.mutate({ ...reviewKey, body, reference: attachment?.reference ?? null, excerpt: attachment?.excerpt ?? null }) },
     onAnswer: (batchId, answers) => {
       answerQuestions.mutate({
         ...reviewKey,

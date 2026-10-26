@@ -1,4 +1,4 @@
-import { commentRangeBetween } from "@/routes/pr-reviews/$repoName/-hooks/use-code-selection"
+import { commentRangeBetween } from "@/routes/pr-reviews/$repoName/-hooks/use-text-selection"
 
 const newLine = (lineLabel: string) => ({ side: "new" as const, lineLabel })
 

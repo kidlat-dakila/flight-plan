@@ -6,19 +6,20 @@ describe("sendReviewerMessage", () => {
   it("keeps the message for the live agent to pick up, and starts no agent", async () => {
     const { context, environment } = createConversationContext()
 
-    const sending = await sendReviewerMessage({ ...KEY, body: "Why the retry?", reference: "storefront@9f2c1ab:src/x.ts#L3-9" }, context)
+    const excerpt = { kind: "code", text: "retry(fetchPrice)" } as const
+    const sending = await sendReviewerMessage({ ...KEY, body: "Why the retry?", reference: "storefront@9f2c1ab:src/x.ts#L3-9", excerpt }, context)
 
     expect(sending).toStrictEqual({ kind: "sent", messageId: "id-1" })
     const { journal } = await environment.store.read(KEY)
     expect(pendingInboundOf(journal).map(({ event }) => event)).toMatchObject([
-      { kind: "reviewer-message", body: "Why the retry?", reference: "storefront@9f2c1ab:src/x.ts#L3-9" },
+      { kind: "reviewer-message", body: "Why the retry?", reference: "storefront@9f2c1ab:src/x.ts#L3-9", excerpt },
     ])
   })
 
   it("rejects a message for a repository Flight Plan does not follow, and keeps nothing", async () => {
     const { context, environment } = createConversationContext()
 
-    const sending = await sendReviewerMessage({ repositoryName: "billing", targetId: "pr-1", body: "Hi", reference: null }, context)
+    const sending = await sendReviewerMessage({ repositoryName: "billing", targetId: "pr-1", body: "Hi", reference: null, excerpt: null }, context)
 
     expect(sending).toStrictEqual({ kind: "rejected", message: "Flight Plan has no repository named \"billing\". It follows: storefront." })
     await expect(environment.store.read({ repositoryName: "billing", targetId: "pr-1" })).resolves.toMatchObject({ journal: [] })

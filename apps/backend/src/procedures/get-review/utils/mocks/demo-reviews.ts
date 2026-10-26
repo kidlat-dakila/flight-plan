@@ -183,7 +183,7 @@ const toChatEvents = (message: DemoStory["chat"][number], id: string, sequence: 
   return message.from === "agent"
     ? [{ kind: "agent-message", id, body: message.body, sentAt }]
     : [
-        { kind: "reviewer-message", id, body: message.body, reference: null, sentAt },
+        { kind: "reviewer-message", id, body: message.body, reference: null, excerpt: null, sentAt },
         { kind: "delivery", id: `${id}-delivery`, throughSequence: sequence, channel: "spawn", deliveredAt: sentAt },
       ]
 }
