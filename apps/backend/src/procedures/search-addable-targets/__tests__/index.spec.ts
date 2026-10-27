@@ -78,6 +78,18 @@ describe("searchAddableTargets", () => {
     })
   })
 
+  it("reads the branches against the repository's base branch, and says when that branch is gone", async () => {
+    const message = "The branch develop to compare with does not exist in this repository."
+    const openRepository = vi.fn(createAddableRepositoryOpener({
+      listBranches: async () => await Promise.reject(new GitAdapterError(message, "no-repo")),
+    }))
+    const context = createContext({ openRepository })
+    await context.repositoryStore.replaceBaseBranch("storefront", "develop")
+
+    await expect(searchAddableTargets({ repositoryName: "storefront", query: "" }, context)).resolves.toStrictEqual({ options: [], message })
+    expect(openRepository).toHaveBeenCalledWith("/Users/dev/projects/storefront", null, "develop")
+  })
+
   it("says so when nothing matches, and reports nothing for a repository that is not listed", async () => {
     await expect(searchAddableTargets({ repositoryName: "storefront", query: "zzz" }, createContext())).resolves.toStrictEqual({
       options: [],

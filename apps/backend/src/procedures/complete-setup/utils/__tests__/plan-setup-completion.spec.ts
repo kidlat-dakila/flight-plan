@@ -46,10 +46,22 @@ describe("planSetupCompletion", () => {
       setup: { ...READY_TO_FINISH, forges: GITHUB_FORGES, isComplete: true },
       additions: [
         {
-          repository: { name: "checkout-web", path: CHECKOUT_WEB.path, forge: "gh", forgeSlug: null, problem: null, targets: [] },
+          repository: { name: "checkout-web", path: CHECKOUT_WEB.path, forge: "gh", forgeSlug: null, problem: null, targets: [], baseBranch: null },
           authors: { selfAuthor: DEV, trackedAuthors: [LENA] },
         },
       ],
+    })
+  })
+
+  it("lists each repository with the base branch saved for it", () => {
+    const withBaseBranch = {
+      ...READY_TO_FINISH,
+      repositories: READY_TO_FINISH.repositories.map((repository) => ({ ...repository, baseBranch: "develop" })),
+    }
+
+    expect(planSetupCompletion(withBaseBranch, [], {})).toMatchObject({
+      kind: "accepted",
+      additions: [{ repository: { name: "checkout-web", baseBranch: "develop" } }],
     })
   })
 

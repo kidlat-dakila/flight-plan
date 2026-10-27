@@ -44,7 +44,7 @@ export const createAuthorLookup = (
   options: AuthorLookupOptions,
 ): Pick<SetupEnvironment, "searchAuthors" | "findAuthor"> => {
   const searchForge = async (source: AuthorSource, query: string, searchPeople: PeopleSearch): Promise<AuthorSearchResult> => {
-    const opened = await options.openRepository(source.repositoryPath, source.forges)
+    const opened = await options.openRepository(source.repositoryPath, source.forges, null)
     if (!opened.resolved.ok) return { authors: [], problem: opened.resolved.error.problem }
     try {
       const people = await searchPeople(opened.resolved.gitAdapter, query)

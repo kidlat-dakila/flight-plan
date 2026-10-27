@@ -8,6 +8,7 @@ const PUBLICATIONS = [{ kind: "claude" as const, url: "https://claude.ai/artifac
 const repository: Repository = {
   name: "storefront",
   path: "/work/storefront",
+  baseBranch: null,
   forge: "git",
   forgeSlug: null,
   problem: null,

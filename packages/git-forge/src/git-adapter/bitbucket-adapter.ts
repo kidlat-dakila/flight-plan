@@ -286,6 +286,7 @@ export interface BitbucketAdapterOptions {
   root?: string
   fetcher?: Fetcher
   environment?: Readonly<Record<string, string | undefined>>
+  baseBranch?: string | null
 }
 
 export class BitbucketAdapter extends BaseGitAdapter {

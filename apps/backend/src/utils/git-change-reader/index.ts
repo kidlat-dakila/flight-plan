@@ -30,6 +30,9 @@ const headRefsOf = (branchName: string): readonly string[] => [
   `refs/remotes/origin/${branchName}`,
 ]
 
+const baseRefsOf = (baseBranch: string | null): readonly string[] =>
+  baseBranch === null ? MAINLINE_REFS : [`refs/remotes/origin/${baseBranch}`, `refs/heads/${baseBranch}`]
+
 const isConfinedPath = (path: string): boolean =>
   path !== ""
   && !path.startsWith("/")
@@ -53,10 +56,10 @@ export const createGitChangeReader = ({ runCommand, environment }: GitChangeRead
   }
 
   return {
-    findRevision: async (repositoryPath, branchName) => {
+    findRevision: async (repositoryPath, branchName, baseBranch) => {
       const [headCommit, baseCommit] = await Promise.all([
         findCommit(repositoryPath, headRefsOf(branchName)),
-        findCommit(repositoryPath, MAINLINE_REFS),
+        findCommit(repositoryPath, baseRefsOf(baseBranch)),
       ])
       return headCommit === null || baseCommit === null ? null : { headCommit, baseCommit }
     },

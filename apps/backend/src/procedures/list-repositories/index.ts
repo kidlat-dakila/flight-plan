@@ -22,7 +22,7 @@ const findReviewedBranch = async (
 ): Promise<ReviewedBranch | null> => {
   const key = { repositoryName: repository.name, targetId: branchTargetIdOf(branchName) }
   const [revision, request] = await Promise.all([
-    context.changeReader.findRevision(repository.path, branchName),
+    context.changeReader.findRevision(repository.path, branchName, repository.baseBranch),
     context.reviewStore.findRequest(key),
   ])
   return revision === null ? null : { name: branchName, requestedAt: request?.requestedAt ?? context.now() }

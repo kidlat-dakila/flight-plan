@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tansta
 import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
 import { useId, useState, type ReactNode } from "react"
 import { useAuthorsChoice } from "@/authors-choice"
+import { UNKNOWN_BASE_BRANCH, useBaseBranchChoice } from "@/base-branch-choice"
 import { useRepositoryFinder } from "@/repository-finder"
 import AddTargetDialog from "@/routes/-components/AddTargetDialog"
 import { useTargetAddition } from "@/routes/-hooks/use-target-addition"
@@ -104,12 +105,14 @@ const RepositoriesPage = () => {
   const [configuring, setConfiguring] = useState<ConfiguringRepository | null>(null)
   const [addingTo, setAddingTo] = useState<AddingRepository | null>(null)
   const additionAuthors = useAuthorsChoice({ isEnabled: isFormOpen, folderPath: finder.search.query, repositoryName: null, saved: null })
+  const additionBranch = useBaseBranchChoice({ isEnabled: isFormOpen, folderPath: finder.search.query, saved: null })
   const addRepository = useMutation(
     trpc.repository.add.mutationOptions({
       onSuccess: async () => {
         setIsFormOpen(false)
         finder.reset()
         additionAuthors.reset()
+        additionBranch.reset()
         await queryClient.invalidateQueries(trpc.repository.list.pathFilter())
       },
     }),
@@ -125,9 +128,15 @@ const RepositoriesPage = () => {
     repositoryName: configuring?.name ?? null,
     saved: configuration.data ?? null,
   })
+  const configureBranch = useBaseBranchChoice({
+    isEnabled: configuring !== null,
+    folderPath: configuration.data?.path ?? "",
+    saved: configuration.data?.baseBranch ?? null,
+  })
   const closeConfiguration = () => {
     setConfiguring(null)
     configureAuthors.reset()
+    configureBranch.reset()
   }
   const configureRepository = useMutation(
     trpc.repository.configure.mutationOptions({
@@ -166,6 +175,7 @@ const RepositoriesPage = () => {
     addRepository.reset()
     finder.reset()
     additionAuthors.reset()
+    additionBranch.reset()
     setIsFormOpen(false)
   }
 
@@ -210,6 +220,7 @@ const RepositoriesPage = () => {
         search={finder.search}
         browse={finder.browse}
         authors={additionAuthors.authors}
+        baseBranch={additionBranch.baseBranch}
         isAdding={addRepository.isPending}
         errorMessage={addRepository.error?.message ?? null}
         onTroubleshoot={troubleshootFailure(addRepository.error)}
@@ -221,7 +232,11 @@ const RepositoriesPage = () => {
         onAuthorQueryChange={additionAuthors.onAuthorQueryChange}
         onAuthorSelect={additionAuthors.onAuthorSelect}
         onTrackedAuthorRemove={additionAuthors.onTrackedAuthorRemove}
-        onSubmit={() => { addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection }) }}
+        onBaseBranchQueryChange={additionBranch.onQueryChange}
+        onBaseBranchChange={additionBranch.onBaseBranchChange}
+        onSubmit={() => {
+          addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection, ...additionBranch.selection })
+        }}
         onBrowse={() => {
           addRepository.reset()
           finder.onBrowse()
@@ -239,6 +254,7 @@ const RepositoriesPage = () => {
         path={configuration.data?.path ?? ""}
         configurationHref={configuring?.configurationHref ?? ""}
         authors={configureAuthors.authors}
+        baseBranch={configureBranch.baseBranch ?? UNKNOWN_BASE_BRANCH}
         isSaving={configureRepository.isPending}
         isRemoving={removeRepository.isPending}
         errorMessage={configurationFailure?.message ?? null}
@@ -246,9 +262,15 @@ const RepositoriesPage = () => {
         onAuthorQueryChange={configureAuthors.onAuthorQueryChange}
         onAuthorSelect={configureAuthors.onAuthorSelect}
         onTrackedAuthorRemove={configureAuthors.onTrackedAuthorRemove}
+        onBaseBranchQueryChange={configureBranch.onQueryChange}
+        onBaseBranchChange={configureBranch.onBaseBranchChange}
         onSave={() => {
           if (configuring !== null) {
-            configureRepository.mutate({ repositoryName: configuring.name, ...configureAuthors.selection })
+            configureRepository.mutate({
+              repositoryName: configuring.name,
+              ...configureAuthors.selection,
+              ...configureBranch.selection,
+            })
           }
         }}
         onRemove={() => {

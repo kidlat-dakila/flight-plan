@@ -54,7 +54,7 @@ export const isOpenedWithoutArtifact = (subject: ReviewSubject): boolean => subj
 
 export const buildOpeningArtifact = async (subject: ReviewSubject, key: ReviewKey, context: ProcedureContext): Promise<ArtifactOpening> => {
   const [setup, savedConfigurations] = await Promise.all([context.setupStore.read(), context.configurationStore.read()])
-  const opened = await context.openRepository(subject.repository.path, setup.forges)
+  const opened = await context.openRepository(subject.repository.path, setup.forges, subject.repository.baseBranch)
   const preferences = reviewPreferencesOf(setup.reviewPreferences)
   const building = await buildArtifact(opened.resolved, {
     branchName: branchNameOf(subject.target),

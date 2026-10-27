@@ -8,6 +8,7 @@ const FOLLOWED: FollowedRepository = {
   authorSearchPlaceholder: "Type a name or email",
   selfAuthor: null,
   trackedAuthors: [],
+  baseBranch: "main",
 }
 
 const ROWS = [
@@ -17,6 +18,8 @@ const ROWS = [
 ]
 
 const AUTHOR_SEARCH = { repositoryName: null, role: null, query: "", options: [], message: null, errorMessage: null }
+const BASE_BRANCH_SEARCH = { repositoryName: null, query: "", options: [], message: null, errorMessage: null }
+const DEVELOP = { id: "develop", label: "develop", detail: "3 days ago", stateLabel: null, isDisabled: false }
 
 const renderList = (overrides: Partial<React.ComponentProps<typeof RepositoryList<typeof FOLLOWED>>> = {}) =>
   render(
@@ -26,11 +29,14 @@ const renderList = (overrides: Partial<React.ComponentProps<typeof RepositoryLis
       repositoryErrorMessage={null}
       isChangingRepositories={false}
       authorSearch={AUTHOR_SEARCH}
+      baseBranchSearch={BASE_BRANCH_SEARCH}
       onOpenAddRepository={vi.fn()}
       onFollow={vi.fn()}
       onUnfollow={vi.fn()}
       onAuthorQueryChange={vi.fn()}
       onAuthorTrackingChange={vi.fn()}
+      onBaseBranchQueryChange={vi.fn()}
+      onBaseBranchChange={vi.fn()}
       {...overrides}
     />,
   )
@@ -68,13 +74,13 @@ describe("RepositoryList", () => {
     expect(onUnfollow).toHaveBeenCalledWith("storefront")
   })
 
-  it("shows the user git config names under a followed row, with no way to change them, and asks only who to track", () => {
+  it("shows the user git config names under a followed row, with no way to change them, and asks only who to track and what to compare with", () => {
     const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
     const rows = [{ ...ROWS[0], followed: { ...FOLLOWED, selfAuthor: dev } }]
     renderList({ rows })
 
     expect(screen.getByText("Dev Harper")).toBeTruthy()
-    expect(screen.getAllByRole("combobox")).toHaveLength(1)
+    expect(screen.getAllByRole("combobox")).toHaveLength(2)
     expect(screen.getByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
     expect(screen.queryByRole("button", { name: /as you/ })).toBeNull()
   })
@@ -85,5 +91,44 @@ describe("RepositoryList", () => {
     expect(screen.getAllByRole("link", { name: "Prompt configurations" }).map((link) => link.getAttribute("href"))).toStrictEqual([
       "/pr-reviews/storefront/configurations",
     ])
+  })
+
+  it("puts the branch to compare with first under a followed row, showing the one the backend sent", () => {
+    renderList()
+
+    const fields = screen.getAllByRole<HTMLInputElement>("combobox")
+    expect(fields[0].value).toBe("main")
+    expect(fields[0]).toBe(screen.getByRole("combobox", { name: "Branch to compare with" }))
+  })
+
+  it("searches the branches of the repository whose field is used, and keeps the other rows idle", () => {
+    const onBaseBranchQueryChange = vi.fn()
+    const rows = [ROWS[0], { ...ROWS[1], followed: { ...FOLLOWED, name: "ledger", path: "/work/ledger", baseBranch: null } }]
+    renderList({
+      rows,
+      baseBranchSearch: { ...BASE_BRANCH_SEARCH, repositoryName: "ledger", options: [DEVELOP] },
+      onBaseBranchQueryChange,
+    })
+    const [storefrontField, ledgerField] = screen.getAllByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" })
+
+    fireEvent.focus(storefrontField)
+    expect(onBaseBranchQueryChange).toHaveBeenLastCalledWith("storefront", "")
+    expect(screen.queryByRole("option", { name: /develop/ })).toBeNull()
+
+    fireEvent.change(ledgerField, { target: { value: "dev" } })
+    expect(onBaseBranchQueryChange).toHaveBeenLastCalledWith("ledger", "dev")
+  })
+
+  it("saves the branch chosen for the repository at once", () => {
+    const onBaseBranchChange = vi.fn()
+    renderList({
+      baseBranchSearch: { ...BASE_BRANCH_SEARCH, repositoryName: "storefront", options: [DEVELOP] },
+      onBaseBranchChange,
+    })
+
+    fireEvent.focus(screen.getByRole("combobox", { name: "Branch to compare with" }))
+    fireEvent.click(screen.getByRole("option", { name: /develop/ }))
+
+    expect(onBaseBranchChange).toHaveBeenCalledWith("storefront", "develop")
   })
 })

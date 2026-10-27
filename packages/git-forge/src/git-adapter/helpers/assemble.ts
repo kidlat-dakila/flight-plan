@@ -29,10 +29,11 @@ export interface GitAdapterInput {
   username: string
   baseUrl: string
   environment?: Readonly<Record<string, string | undefined>>
+  baseBranch?: string | null
 }
 
 export async function assembleGitAdapter(input: GitAdapterInput): Promise<Resolved> {
-  const { id, root, secret, username, baseUrl, environment } = input
+  const { id, root, secret, username, baseUrl, environment, baseBranch } = input
   const remote = await readRemote(root)
   const repo = remote?.fullName ?? ""
 
@@ -47,7 +48,7 @@ export async function assembleGitAdapter(input: GitAdapterInput): Promise<Resolv
   })
   if (!selection.ok) return { ok: false, error: selection.error, repo }
 
-  if (id === "git") return { ok: true, gitAdapter: new BaseGitAdapter({ root, repo, environment }), repo }
+  if (id === "git") return { ok: true, gitAdapter: new BaseGitAdapter({ root, repo, environment, baseBranch }), repo }
 
   if (repo === "") {
     return {
@@ -62,7 +63,7 @@ export async function assembleGitAdapter(input: GitAdapterInput): Promise<Resolv
 
   switch (id) {
     case "gh":
-      return { ok: true, gitAdapter: new GithubCLIAdapter({ root, repo, environment }), repo }
+      return { ok: true, gitAdapter: new GithubCLIAdapter({ root, repo, environment, baseBranch }), repo }
     case "github":
       return {
         ok: true,
@@ -70,6 +71,7 @@ export async function assembleGitAdapter(input: GitAdapterInput): Promise<Resolv
           repo,
           root,
           environment,
+          baseBranch,
           token: secret ?? "",
           baseUrl,
         }),
@@ -82,6 +84,7 @@ export async function assembleGitAdapter(input: GitAdapterInput): Promise<Resolv
           repo,
           root,
           environment,
+          baseBranch,
           token: secret ?? "",
           baseUrl,
         }),
@@ -90,15 +93,15 @@ export async function assembleGitAdapter(input: GitAdapterInput): Promise<Resolv
     case "glab":
       return {
         ok: true,
-        gitAdapter: new GitlabCLIAdapter({ root, repo, environment, baseUrl: remote === null ? "" : `https://${remote.host}` }),
+        gitAdapter: new GitlabCLIAdapter({ root, repo, environment, baseBranch, baseUrl: remote === null ? "" : `https://${remote.host}` }),
         repo,
       }
     case "bitbucket":
       return {
         ok: true,
         gitAdapter: isCloudUrl(baseUrl)
-          ? new BitbucketAdapter({ repo, root, environment, username, token: secret ?? "" })
-          : new BitbucketDataCenterAdapter({ repo, root, environment, token: secret ?? "", baseUrl }),
+          ? new BitbucketAdapter({ repo, root, environment, baseBranch, username, token: secret ?? "" })
+          : new BitbucketDataCenterAdapter({ repo, root, environment, baseBranch, token: secret ?? "", baseUrl }),
         repo,
       }
   }

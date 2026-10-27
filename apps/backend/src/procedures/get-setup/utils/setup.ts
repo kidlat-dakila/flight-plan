@@ -62,6 +62,7 @@ export interface SetupRepository {
   readonly path: string
   readonly selfAuthor: RepositoryAuthor | null
   readonly trackedAuthors: readonly RepositoryAuthor[]
+  readonly baseBranch: string | null
 }
 
 export interface Setup {

@@ -4,14 +4,24 @@ import { searchAdditionAuthorsInputSchema } from "@/procedures/search-addition-a
 
 const PATH_ONLY = { path: "/work/ledger-api" }
 const WITH_AUTHORS = { ...PATH_ONLY, trackedAuthorIds: ["lena@acme.example"] }
+const WITH_BASE_BRANCH = { ...WITH_AUTHORS, baseBranch: "develop" }
 const NO_REPOSITORY_NAME = { repositoryName: null }
 
 describe("repository addition input schemas", () => {
   it.each([addRepositoryInputSchema, addSetupRepositoryInputSchema])(
-    "need the tracked authors along with the path",
+    "need the tracked authors and the base branch along with the path",
     (schema) => {
-      expect(schema.safeParse(WITH_AUTHORS).success).toBe(true)
+      expect(schema.safeParse(WITH_BASE_BRANCH).success).toBe(true)
+      expect(schema.safeParse({ ...WITH_AUTHORS, baseBranch: null }).success).toBe(true)
+      expect(schema.safeParse(WITH_AUTHORS).success).toBe(false)
       expect(schema.safeParse(PATH_ONLY).success).toBe(false)
+    },
+  )
+
+  it.each([addRepositoryInputSchema, addSetupRepositoryInputSchema])(
+    "refuse an empty base branch",
+    (schema) => {
+      expect(schema.safeParse({ ...WITH_AUTHORS, baseBranch: "" }).success).toBe(false)
     },
   )
 

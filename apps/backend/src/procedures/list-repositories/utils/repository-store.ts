@@ -1,5 +1,5 @@
 import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
-import type { ListedRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
+import type { RegisteredRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
 import { dismissNewTarget } from "@/procedures/dismiss-new-target/utils/dismiss-new-target"
 import type { Repository, ReviewTarget } from "./repository"
 import { targetIdOf } from "./target-id"
@@ -7,12 +7,13 @@ import { targetIdOf } from "./target-id"
 export interface RepositoryStore {
   readonly notice: string | null
   readonly list: () => Promise<readonly Repository[]>
-  readonly listRegistered: () => Promise<readonly ListedRepository[]>
+  readonly listRegistered: () => Promise<readonly RegisteredRepository[]>
   readonly add: (repository: Repository, authors: SelectedAuthors) => Promise<void>
   readonly readAuthors: (repositoryName: string) => Promise<SelectedAuthors | null>
   readonly readViewerLogin: (repositoryName: string) => Promise<string | null>
   readonly refresh: (repositoryName: string) => Promise<void>
   readonly replaceAuthors: (repositoryName: string, authors: SelectedAuthors) => Promise<boolean>
+  readonly replaceBaseBranch: (repositoryName: string, baseBranch: string) => Promise<boolean>
   readonly remove: (repositoryName: string) => Promise<boolean>
   readonly dismissNewTarget: (repositoryName: string, targetId: string) => Promise<Repository | null>
   readonly addTarget: (repositoryName: string, target: ReviewTarget) => Promise<Repository | null>
@@ -39,8 +40,8 @@ export class InMemoryRepositoryStore implements RepositoryStore {
 
   public readonly list = async (): Promise<readonly Repository[]> => await Promise.resolve(this.repositories)
 
-  public readonly listRegistered = async (): Promise<readonly ListedRepository[]> =>
-    await Promise.resolve(this.repositories.map(({ name, path }) => ({ name, path })))
+  public readonly listRegistered = async (): Promise<readonly RegisteredRepository[]> =>
+    await Promise.resolve(this.repositories.map(({ name, path, baseBranch }) => ({ name, path, baseBranch })))
 
   public readonly add = async (repository: Repository, authors: SelectedAuthors): Promise<void> => {
     this.repositories = [...this.repositories, repository]
@@ -62,6 +63,12 @@ export class InMemoryRepositoryStore implements RepositoryStore {
   public readonly replaceAuthors = async (repositoryName: string, authors: SelectedAuthors): Promise<boolean> => {
     if (!this.repositories.some((repository) => repository.name === repositoryName)) return await Promise.resolve(false)
     this.authorsByName = new Map([...this.authorsByName, [repositoryName, authors]])
+    return await Promise.resolve(true)
+  }
+
+  public readonly replaceBaseBranch = async (repositoryName: string, baseBranch: string): Promise<boolean> => {
+    if (!this.repositories.some((repository) => repository.name === repositoryName)) return await Promise.resolve(false)
+    this.repositories = this.repositories.map((stored) => (stored.name === repositoryName ? { ...stored, baseBranch } : stored))
     return await Promise.resolve(true)
   }
 

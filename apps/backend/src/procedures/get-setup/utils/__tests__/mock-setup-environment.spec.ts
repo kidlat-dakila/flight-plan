@@ -44,3 +44,23 @@ describe("the mock setup environment", () => {
     await expect(environment.findAuthor({ repositoryPath, forge: "gh", forges: null }, "@nobody")).resolves.toBeNull()
   })
 })
+
+describe("the mock setup environment's branches", () => {
+  it("detects the main branch of a repository folder, and none of another folder", async () => {
+    const environment = createMockSetupEnvironment()
+
+    await expect(environment.detectMainBranch("/Users/dev/projects/checkout-web")).resolves.toBe("main")
+    await expect(environment.detectMainBranch("/Users/dev/projects/payments-service")).resolves.toBe("master")
+    await expect(environment.detectMainBranch("/Users/dev/projects/meeting-notes")).resolves.toBeNull()
+  })
+
+  it("lists the branches of a repository folder with their main branch, and none of another folder", async () => {
+    const environment = createMockSetupEnvironment()
+
+    const branches = await environment.listBranches("/Users/dev/projects/checkout-web")
+
+    expect(branches?.map((branch) => branch.name)).toContain("main")
+    expect(branches?.map((branch) => branch.name)).toContain("develop")
+    await expect(environment.listBranches("/Users/dev/projects/meeting-notes")).resolves.toBeNull()
+  })
+})

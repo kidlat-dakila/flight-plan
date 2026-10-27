@@ -49,6 +49,7 @@ const storefront = {
   authorSearchPlaceholder: "Type a name or email",
   selfAuthor: dev,
   trackedAuthors: [lena],
+  baseBranch: "main",
   configurationHref: "/pr-reviews/storefront/configurations",
   emptyMessage: null,
 }
@@ -61,6 +62,7 @@ const docsSite = {
   authorSearchPlaceholder: "Type a name or username",
   selfAuthor: null,
   trackedAuthors: [],
+  baseBranch: "develop",
   configurationHref: "/pr-reviews/docs-site/configurations",
   emptyMessage: "No team members are picked, so Flight Plan follows everyone in this repository.",
 }
@@ -370,7 +372,7 @@ describe("the settings pages", () => {
       fireEvent.click(ledger)
 
       await waitFor(() => {
-        expect(add).toHaveBeenCalledWith({ path: "/Users/dev/projects/ledger", trackedAuthorIds: [] })
+        expect(add).toHaveBeenCalledWith({ path: "/Users/dev/projects/ledger", trackedAuthorIds: [], baseBranch: null })
       })
       await waitFor(() => {
         expect(readSettings.mock.calls.length).toBeGreaterThan(readsBefore)
@@ -389,8 +391,34 @@ describe("the settings pages", () => {
       fireEvent.click(await screen.findByRole("button", { name: "Stop tracking Lena Okafor" }))
 
       await waitFor(() => {
-        expect(configure).toHaveBeenCalledWith({ repositoryName: "storefront", trackedAuthorIds: [] })
+        expect(configure).toHaveBeenCalledWith({ repositoryName: "storefront", trackedAuthorIds: [], baseBranch: null })
       })
+    })
+
+    it("saves the branch chosen to compare a followed repository with, along with its team members", async () => {
+      const configure = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "accepted" } })
+      const searchBaseBranches = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
+        data: {
+          options: [{ id: "release", label: "release", detail: "Last commit 2 days ago", stateLabel: null, isDisabled: false }],
+          message: null,
+          detectedBranch: "main",
+        },
+      })
+      renderApp({ "repository.configure": configure, "repository.searchBaseBranches": searchBaseBranches }, "/settings/repositories")
+
+      const [storefrontField, docsSiteField] = await screen.findAllByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" })
+      expect([storefrontField.value, docsSiteField.value]).toStrictEqual(["main", "develop"])
+      fireEvent.focus(storefrontField)
+      fireEvent.click(await screen.findByRole("option", { name: /^release/ }))
+
+      await waitFor(() => {
+        expect(configure).toHaveBeenCalledWith({
+          repositoryName: "storefront",
+          trackedAuthorIds: ["lena@acme.example"],
+          baseBranch: "release",
+        })
+      })
+      expect(searchBaseBranches).toHaveBeenCalledWith({ path: "/Users/dev/projects/storefront", query: "" })
     })
 
     it("searches team members of a followed repository with what is already chosen", async () => {

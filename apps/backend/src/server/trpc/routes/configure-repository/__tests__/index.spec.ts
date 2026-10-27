@@ -6,7 +6,7 @@ describe("repository.configure route", () => {
     const caller = appRouter.createCaller(createSetupContext(AT_REPOSITORIES, [STOREFRONT]))
 
     await expect(
-      caller.repository.configure({ repositoryName: "storefront", trackedAuthorIds: [] }),
+      caller.repository.configure({ repositoryName: "storefront", trackedAuthorIds: [], baseBranch: null }),
     ).resolves.toStrictEqual({ name: "storefront" })
   })
 
@@ -14,7 +14,7 @@ describe("repository.configure route", () => {
     const caller = appRouter.createCaller(createSetupContext(AT_REPOSITORIES, [STOREFRONT]))
 
     await expect(
-      caller.repository.configure({ repositoryName: "storefront", trackedAuthorIds: ["ghost@acme.example"] }),
+      caller.repository.configure({ repositoryName: "storefront", trackedAuthorIds: ["ghost@acme.example"], baseBranch: null }),
     ).rejects.toMatchObject({ code: "BAD_REQUEST", message: "ghost@acme.example is not an author of this repository." })
   })
 })

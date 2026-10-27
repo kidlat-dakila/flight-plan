@@ -17,7 +17,7 @@ export const scaffoldSegmentedAs = async (
 ): Promise<ReviewScaffold> => {
   if (scaffold.artifact.isSegmented === isSegmented) return scaffold
   const setup = await context.setupStore.read()
-  const opened = await context.openRepository(repository.path, setup.forges)
+  const opened = await context.openRepository(repository.path, setup.forges, repository.baseBranch)
   const building = await buildArtifactAt(opened.resolved, {
     baseCommit: scaffold.baseCommit,
     headCommit: scaffold.artifact.commit,

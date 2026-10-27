@@ -1,5 +1,5 @@
 import { getSetup } from "@/procedures/get-setup"
-import { AT_AGENTS, AT_CONFIGURATION, AT_FORGES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { AT_AGENTS, AT_CONFIGURATION, AT_FORGES, CHECKOUT_WEB, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 
@@ -89,5 +89,14 @@ describe("getSetup", () => {
 
     await expect(getSetup({ step: "repositories" }, context)).resolves.toMatchObject({ form: { step: "repositories" } })
     await expect(getSetup({ step: "agents" }, createSetupContext(AT_FORGES))).resolves.toMatchObject({ form: { step: "forges" } })
+  })
+
+  it("shows the base branch saved for each repository, and the detected main branch for one saved without it", async () => {
+    const ledger = { ...CHECKOUT_WEB, name: "payments-service", path: "/Users/dev/projects/payments-service", baseBranch: "develop" }
+    const setup = { ...AT_CONFIGURATION, repositories: [...AT_CONFIGURATION.repositories, ledger] }
+
+    await expect(getSetup({ step: "repositories" }, createSetupContext(setup))).resolves.toMatchObject({
+      form: { repositories: [{ name: "checkout-web", baseBranch: "main" }, { name: "payments-service", baseBranch: "develop" }] },
+    })
   })
 })

@@ -222,6 +222,7 @@ export interface BitbucketDataCenterAdapterOptions {
   root?: string
   fetcher?: Fetcher
   environment?: Readonly<Record<string, string | undefined>>
+  baseBranch?: string | null
 }
 
 export class BitbucketDataCenterAdapter extends BaseGitAdapter {

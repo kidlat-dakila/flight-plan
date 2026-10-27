@@ -2,6 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient, useSuspenseQue
 import { createFileRoute } from "@tanstack/react-router"
 import { useDeferredValue, useState } from "react"
 import { useAuthorsChoice } from "@/authors-choice"
+import { NO_BASE_BRANCH_SELECTION, useBaseBranchChoice, useRepositoryBranchSearch, type BaseBranchSelection } from "@/base-branch-choice"
 import { useRepositoryFinder } from "@/repository-finder"
 import { useFailureTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
@@ -36,6 +37,8 @@ interface AuthorSelection {
   readonly trackedAuthorIds: string[]
 }
 
+type RepositoryChoice = AuthorSelection & BaseBranchSelection
+
 const NO_SELECTION: AuthorSelection = { trackedAuthorIds: [] }
 
 const authorSelectionOf = (repository: FollowedRepository | undefined): AuthorSelection =>
@@ -64,8 +67,10 @@ const RepositoriesSettingsPage = () => {
   const [authorQuery, setAuthorQuery] = useState<AuthorQuery | null>(null)
   const finder = useRepositoryFinder(isAddOpen)
   const additionAuthors = useAuthorsChoice({ isEnabled: isAddOpen, folderPath: finder.search.query, repositoryName: null, saved: null })
+  const additionBranch = useBaseBranchChoice({ isEnabled: isAddOpen, folderPath: finder.search.query, saved: null })
   const deferredAuthorQuery = useDeferredValue(authorQuery)
   const repositories = page.section === SECTION.section ? page.repositories : NO_FOLLOWED_REPOSITORIES
+  const branchSearch = useRepositoryBranchSearch("repository", repositories)
   const findRepository = (name: string | undefined) => repositories.find((repository) => repository.name === name)
 
   const recentRepositories = useQuery({
@@ -97,6 +102,7 @@ const RepositoriesSettingsPage = () => {
     setIsAddOpen(false)
     finder.reset()
     additionAuthors.reset()
+    additionBranch.reset()
   }
 
   const addRepository = useMutation(
@@ -110,9 +116,10 @@ const RepositoriesSettingsPage = () => {
   const followRepository = useMutation(trpc.repository.add.mutationOptions({ onSuccess: refreshRepositories }))
   const removeRepository = useMutation(trpc.repository.remove.mutationOptions({ onSuccess: refreshRepositories }))
   const configureRepository = useMutation(trpc.repository.configure.mutationOptions({ onSuccess: refreshRepositories }))
-  const configure = (repositoryName: string, selection: AuthorSelection) => {
+  const configure = (repositoryName: string, choice: RepositoryChoice) => {
     setAuthorQuery(null)
-    configureRepository.mutate({ repositoryName, ...selection })
+    branchSearch.close()
+    configureRepository.mutate({ repositoryName, ...choice })
   }
   if (page.section !== SECTION.section) return null
 
@@ -133,6 +140,7 @@ const RepositoriesSettingsPage = () => {
         repositoryErrorMessage={repositoryFailure?.message ?? null}
         onRepositoryTroubleshoot={troubleshootFailure(repositoryFailure)}
         isChangingRepositories={followRepository.isPending || removeRepository.isPending}
+        baseBranchSearch={branchSearch.search}
         authorSearch={{
           repositoryName: authorQuery?.repositoryName ?? null,
           role: authorQuery?.role ?? null,
@@ -147,7 +155,7 @@ const RepositoriesSettingsPage = () => {
         onFollow={(path) => {
           removeRepository.reset()
           configureRepository.reset()
-          followRepository.mutate({ path, ...NO_SELECTION })
+          followRepository.mutate({ path, ...NO_SELECTION, ...NO_BASE_BRANCH_SELECTION })
         }}
         onUnfollow={(name) => {
           followRepository.reset()
@@ -156,7 +164,14 @@ const RepositoriesSettingsPage = () => {
         }}
         onAuthorQueryChange={(repositoryName, role, query) => { setAuthorQuery({ repositoryName, role, query }) }}
         onAuthorTrackingChange={(repositoryName, authorId, isTracked) => {
-          configure(repositoryName, withTracking(authorSelectionOf(findRepository(repositoryName)), authorId, isTracked))
+          configure(repositoryName, {
+            ...withTracking(authorSelectionOf(findRepository(repositoryName)), authorId, isTracked),
+            ...NO_BASE_BRANCH_SELECTION,
+          })
+        }}
+        onBaseBranchQueryChange={branchSearch.onQueryChange}
+        onBaseBranchChange={(repositoryName, baseBranch) => {
+          configure(repositoryName, { ...authorSelectionOf(findRepository(repositoryName)), baseBranch })
         }}
       />
       <AddRepositoryDialog
@@ -164,6 +179,7 @@ const RepositoriesSettingsPage = () => {
         search={finder.search}
         browse={finder.browse}
         authors={additionAuthors.authors}
+        baseBranch={additionBranch.baseBranch}
         isAdding={addRepository.isPending}
         errorMessage={addRepository.error?.message ?? null}
         onTroubleshoot={troubleshootFailure(addRepository.error)}
@@ -175,7 +191,11 @@ const RepositoriesSettingsPage = () => {
         onAuthorQueryChange={additionAuthors.onAuthorQueryChange}
         onAuthorSelect={additionAuthors.onAuthorSelect}
         onTrackedAuthorRemove={additionAuthors.onTrackedAuthorRemove}
-        onSubmit={() => { addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection }) }}
+        onBaseBranchQueryChange={additionBranch.onQueryChange}
+        onBaseBranchChange={additionBranch.onBaseBranchChange}
+        onSubmit={() => {
+          addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection, ...additionBranch.selection })
+        }}
         onBrowse={() => {
           addRepository.reset()
           finder.onBrowse()

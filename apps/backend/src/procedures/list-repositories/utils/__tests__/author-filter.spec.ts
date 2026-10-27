@@ -17,6 +17,7 @@ const pullRequestBy = (author: string, number: number): ReviewTarget => ({
 const repository: Repository = {
   name: "storefront",
   path: "/work/storefront",
+  baseBranch: null,
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,

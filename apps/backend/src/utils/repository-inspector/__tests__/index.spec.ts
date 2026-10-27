@@ -72,6 +72,7 @@ const forgesWith = (forge: SetupForge): ForgesChoice => ({
 
 const request = (overrides: Partial<InspectionRequest> = {}): InspectionRequest => ({
   path: "/work/storefront",
+  baseBranch: null,
   forges: null,
   trackedAuthorIds: [],
   selfAuthorId: null,
@@ -168,6 +169,28 @@ describe("RepositoryInspector on local git", () => {
     })
   })
 
+  it("opens the adapter with the base branch chosen for the repository", async () => {
+    const { inspector, opened } = harness(ready(branchAdapter()))
+
+    await inspector.inspect(request({ baseBranch: "develop" }))
+
+    expect(opened()).toMatchObject([{ id: "git", baseBranch: "develop" }])
+  })
+
+  it("reports a base branch the repository no longer has as the repository's problem", async () => {
+    const message = "The branch develop to compare with does not exist in this repository."
+    const missingBase = adapterWith("git", {
+      listBranches: async () => await Promise.reject(new GitAdapterError(message, "no-repo")),
+      fetchRemotes: async () => { await Promise.resolve() },
+    })
+    const { inspector } = harness(ready(missingBase))
+
+    await expect(inspector.inspect(request({ baseBranch: "develop", trackedAuthorIds: ["mira@acme.test"] }))).resolves.toMatchObject({
+      problem: { kind: "no-repo", detail: message },
+      branches: [],
+    })
+  })
+
   it("does not look up a credential", async () => {
     const { inspector, credentialLookups } = harness(ready(branchAdapter()))
 
@@ -256,7 +279,7 @@ describe("RepositoryInspector on a forge", () => {
     await inspector.inspect(request({ forges: { connections: [{ forge: "github", username: "dev", baseUrl: "https://ghe.acme.test", hasCredential: true }] } }))
 
     expect(opened()).toStrictEqual([
-      { id: "github", root: "/work/storefront", secret: "secret-token", username: "dev", baseUrl: "https://ghe.acme.test", environment: { PATH: "/usr/bin" } },
+      { id: "github", root: "/work/storefront", secret: "secret-token", username: "dev", baseUrl: "https://ghe.acme.test", environment: { PATH: "/usr/bin" }, baseBranch: null },
     ])
   })
 

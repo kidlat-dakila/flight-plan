@@ -20,6 +20,7 @@ const NOW = new Date("2026-10-01T12:00:00.000Z")
 const storefront: Repository = {
   name: "storefront",
   path: "/work/storefront",
+  baseBranch: null,
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,

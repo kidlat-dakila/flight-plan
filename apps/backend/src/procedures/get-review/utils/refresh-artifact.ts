@@ -32,7 +32,7 @@ export const refreshArtifact = async (subject: ReviewSubject, key: ReviewKey, co
   const pull = await context.pullBranch(subject.repository.path, branchName)
   if (pull.kind === "failed") return subject.artifact
   const setup = await context.setupStore.read()
-  const opened = await context.openRepository(subject.repository.path, setup.forges)
+  const opened = await context.openRepository(subject.repository.path, setup.forges, subject.repository.baseBranch)
   const building = await buildArtifact(opened.resolved, {
     branchName,
     title: targetTitleOf(subject.target),

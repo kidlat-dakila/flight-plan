@@ -1,4 +1,5 @@
 import { useState } from "react"
+import BaseBranchField, { type BaseBranchChoice } from "@/components/BaseBranchField"
 import Button from "@/components/blocks/button"
 import Dialog, {
   DialogContent,
@@ -18,6 +19,7 @@ interface ConfigureRepositoryDialogProps {
   readonly path: string
   readonly configurationHref: string
   readonly authors: AuthorsChoice
+  readonly baseBranch: BaseBranchChoice
   readonly isSaving: boolean
   readonly isRemoving: boolean
   readonly errorMessage: string | null
@@ -25,6 +27,8 @@ interface ConfigureRepositoryDialogProps {
   readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
   readonly onAuthorSelect: (role: AuthorRole, authorId: string) => void
   readonly onTrackedAuthorRemove: (authorId: string) => void
+  readonly onBaseBranchQueryChange: (query: string) => void
+  readonly onBaseBranchChange: (branchName: string) => void
   readonly onSave: () => void
   readonly onRemove: () => void
   readonly onClose: () => void
@@ -74,6 +78,7 @@ const ConfigureRepositoryDialog = ({
   path,
   configurationHref,
   authors,
+  baseBranch,
   isSaving,
   isRemoving,
   errorMessage,
@@ -81,6 +86,8 @@ const ConfigureRepositoryDialog = ({
   onAuthorQueryChange,
   onAuthorSelect,
   onTrackedAuthorRemove,
+  onBaseBranchQueryChange,
+  onBaseBranchChange,
   onSave,
   onRemove,
   onClose,
@@ -89,13 +96,21 @@ const ConfigureRepositoryDialog = ({
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>{`Configure ${name}`}</DialogTitle>
-        <DialogDescription>Pick the team members whose work Flight Plan lists in this repository.</DialogDescription>
+        <DialogDescription>
+          Pick the branch to compare with and the team members whose work Flight Plan lists in this repository.
+        </DialogDescription>
       </DialogHeader>
       <form onSubmit={submitHandlerOf(onSave)} className="grid gap-4">
         <div className="grid gap-1.5">
           <p className="text-sm font-bold">Repository folder</p>
           <p className="font-mono text-[0.82rem] wrap-anywhere text-muted-foreground">{path}</p>
         </div>
+        <BaseBranchField
+          baseBranch={baseBranch.branchName}
+          search={baseBranch.search}
+          onQueryChange={onBaseBranchQueryChange}
+          onBaseBranchChange={onBaseBranchChange}
+        />
         <RepositoryAuthors
           authors={authors}
           onAuthorQueryChange={onAuthorQueryChange}

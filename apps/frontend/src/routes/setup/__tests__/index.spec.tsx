@@ -126,6 +126,7 @@ const checkoutWeb = {
   authorSearchPlaceholder: "Type a name or email",
   selfAuthor: null,
   trackedAuthors: [],
+  baseBranch: "main",
 }
 
 const checkoutWebWithSelf = { ...checkoutWeb, selfAuthor: dev }
@@ -176,6 +177,12 @@ const agentsPage = pageOf(agentsForm, { progressLabel: "Step 3 of 4", backStep: 
 const configurationPage = pageOf(configurationForm, { progressLabel: "Step 4 of 4", backStep: "agents" })
 
 const noFolders: ProcedureReply = { data: { options: [], message: null } }
+
+const branchOptionOf = (name: string) => ({ id: name, label: name, detail: "Last commit 2 days ago", stateLabel: null, isDisabled: false })
+
+const branchesOf = (detectedBranch: string | null, ...names: string[]): ProcedureReply => ({
+  data: { options: names.map(branchOptionOf), message: null, detectedBranch },
+})
 
 const NO_RECENT_MESSAGE = "No repository in your home folder has a commit from you on main or master."
 
@@ -814,7 +821,7 @@ describe("the setup page", () => {
     fireEvent.click(checkoutWebRow)
 
     expect(await screen.findByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
-    expect(addRepository).toHaveBeenCalledWith({ path: "/Users/dev/projects/checkout-web", trackedAuthorIds: [] })
+    expect(addRepository).toHaveBeenCalledWith({ path: "/Users/dev/projects/checkout-web", trackedAuthorIds: [], baseBranch: null })
     expect(within(repositories).getByRole<HTMLInputElement>("checkbox", { name: /^checkout-web/ }).checked).toBe(true)
   })
 
@@ -898,7 +905,7 @@ describe("the setup page", () => {
     expect(await screen.findByText(NO_RECENT_MESSAGE)).toBeTruthy()
   })
 
-  it("searches for repository folders as the user types, then adds the chosen folder with its authors", async () => {
+  it("searches for repository folders as the user types, then adds the chosen folder with its authors and main branch", async () => {
     const searchFolders = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
       data: {
         options: [{ path: "/Users/dev/projects/checkout-web", name: "checkout-web", isAdded: false, stateLabel: null }],
@@ -918,6 +925,7 @@ describe("the setup page", () => {
       "setup.searchFolders": searchFolders,
       "repository.authorForm": () => localGitAuthorForm,
       "repository.searchAuthors": searchAuthors,
+      "repository.searchBaseBranches": () => branchesOf("main", "main"),
       "setup.addRepository": addRepository,
     })
 
@@ -927,6 +935,9 @@ describe("the setup page", () => {
     fireEvent.change(field, { target: { value: "check" } })
     fireEvent.click(await screen.findByRole("option", { name: "/Users/dev/projects/checkout-web" }))
     expect(addRepository).not.toHaveBeenCalled()
+    await waitFor(() => {
+      expect(screen.getByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" }).value).toBe("main")
+    })
     fireEvent.focus(await screen.findByRole("combobox", { name: "Track branches from specific team members" }))
     fireEvent.click(await screen.findByRole("option", { name: /Dev Harper/ }))
     fireEvent.click(screen.getByRole("button", { name: "Add" }))
@@ -943,6 +954,7 @@ describe("the setup page", () => {
     expect(addRepository).toHaveBeenCalledWith({
       path: "/Users/dev/projects/checkout-web",
       trackedAuthorIds: ["dev@acme.example"],
+      baseBranch: "main",
     })
     await waitFor(() => {
       expect(screen.queryByRole("combobox", { name: "Repository folder" })).toBeNull()
@@ -1041,7 +1053,35 @@ describe("the setup page", () => {
     const alert = await screen.findByRole("alert")
     expect(within(alert).getByText("/work/notes is not a git repository.")).toBeTruthy()
     expect(within(alert).getByRole("button", { name: "Troubleshoot" })).toBeTruthy()
-    expect(addRepository).toHaveBeenCalledWith({ path: "/work/notes", trackedAuthorIds: [] })
+    expect(addRepository).toHaveBeenCalledWith({ path: "/work/notes", trackedAuthorIds: [], baseBranch: null })
+  })
+
+  it("asks for the branch to compare with once the folder is a git repository, and adds it with the branch picked", async () => {
+    const searchBaseBranches = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(branchesOf("main", "main", "develop"))
+    const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "ledger" } })
+    renderApp({
+      "setup.get": () => pageOf(emptyRepositoriesForm),
+      "setup.searchFolders": () => noFolders,
+      "repository.authorForm": () => localGitAuthorForm,
+      "repository.searchBaseBranches": searchBaseBranches,
+      "setup.addRepository": addRepository,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+    expect(screen.queryByRole("combobox", { name: "Branch to compare with" })).toBeNull()
+    fireEvent.change(await screen.findByRole("combobox", { name: "Repository folder" }), { target: { value: "/work/ledger" } })
+    const branchField = await screen.findByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" })
+    await waitFor(() => {
+      expect(branchField.value).toBe("main")
+    })
+    fireEvent.focus(branchField)
+    fireEvent.click(await screen.findByRole("option", { name: /^develop/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Add" }))
+
+    await waitFor(() => {
+      expect(addRepository).toHaveBeenCalledWith({ path: "/work/ledger", trackedAuthorIds: [], baseBranch: "develop" })
+    })
+    expect(searchBaseBranches).toHaveBeenCalledWith({ path: "/work/ledger", query: "" })
   })
 
   it("closes the dialog without adding when it is cancelled", async () => {
@@ -1067,7 +1107,9 @@ describe("the setup page", () => {
     })
 
     expect(await screen.findByText("Dev Harper")).toBeTruthy()
-    expect(screen.getAllByRole("combobox")).toHaveLength(1)
+    expect(screen.getAllByRole("combobox")).toHaveLength(2)
+    expect(screen.getByRole("combobox", { name: "Branch to compare with" })).toBeTruthy()
+    expect(screen.getByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
     expect(screen.queryByRole("button", { name: /as you/ })).toBeNull()
   })
 
@@ -1102,6 +1144,46 @@ describe("the setup page", () => {
       isTracked: true,
     })
     expect(screen.getByRole<HTMLButtonElement>("button", { name: "Save and continue" }).disabled).toBe(false)
+  })
+
+  it("compares a followed repository with the branch chosen for it, saved at once", async () => {
+    const searchBaseBranches = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(branchesOf("main", "main", "develop"))
+    const getSetup = vi
+      .fn<() => ProcedureReply>()
+      .mockReturnValueOnce(pageOf(selfChosenRepositoriesForm))
+      .mockReturnValue(pageOf({ ...selfChosenRepositoriesForm, repositories: [{ ...checkoutWebWithSelf, baseBranch: "develop" }] }))
+    const setBaseBranch = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { baseBranch: "develop" } })
+    renderApp({
+      "setup.get": getSetup,
+      "setup.searchFolders": () => noFolders,
+      "setup.searchBaseBranches": searchBaseBranches,
+      "setup.setBaseBranch": setBaseBranch,
+    })
+
+    const field = await screen.findByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" })
+    expect(field.value).toBe("main")
+    fireEvent.focus(field)
+    fireEvent.click(await screen.findByRole("option", { name: /^develop/ }))
+
+    await waitFor(() => {
+      expect(screen.getByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" }).value).toBe("develop")
+    })
+    expect(searchBaseBranches).toHaveBeenCalledWith({ path: "/Users/dev/projects/checkout-web", query: "" })
+    expect(setBaseBranch).toHaveBeenCalledWith({ repositoryName: "checkout-web", baseBranch: "develop" })
+  })
+
+  it("shows why the branch to compare with was not saved", async () => {
+    renderApp({
+      "setup.get": () => pageOf(selfChosenRepositoriesForm),
+      "setup.searchFolders": () => noFolders,
+      "setup.searchBaseBranches": () => branchesOf("main", "main", "develop"),
+      "setup.setBaseBranch": () => ({ errorMessage: "develop is no longer a branch of checkout-web." }),
+    })
+
+    fireEvent.focus(await screen.findByRole("combobox", { name: "Branch to compare with" }))
+    fireEvent.click(await screen.findByRole("option", { name: /^develop/ }))
+
+    expect(await screen.findByText("develop is no longer a branch of checkout-web.")).toBeTruthy()
   })
 
   it("stops tracking a user and removes a repository", async () => {

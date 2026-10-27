@@ -9,6 +9,7 @@ export const repositoryConfigurationSchema = z.strictObject({
   path: z.string(),
   form: authorFormSchema,
   trackedAuthors: z.array(trackedAuthorSchema),
+  baseBranch: z.string().nullable(),
 })
 
 export type GetRepositoryConfigurationInput = z.infer<typeof getRepositoryConfigurationInputSchema>

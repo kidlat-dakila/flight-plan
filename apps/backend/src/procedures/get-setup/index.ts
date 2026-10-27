@@ -1,6 +1,7 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { buildSetupPage } from "./utils/build-setup-page"
 import { listOfferedModels } from "./utils/list-agent-models"
+import { findRepositoryBaseBranches } from "./utils/repository-base-branches"
 import { findRepositoryForges } from "./utils/repository-forges"
 import { findRepositoryIdentities } from "./utils/repository-identities"
 import type { GetSetupInput, SetupPage } from "./utils/schemas"
@@ -9,12 +10,13 @@ import { resolveStep } from "./utils/setup-progress"
 export const getSetup = async (input: GetSetupInput, context: ProcedureContext): Promise<SetupPage> => {
   const setup = await context.setupStore.read()
   const step = resolveStep(setup, input.step)
-  const [agentDetections, terminalApps, cliProbes, repositoryForges, repositoryIdentities] = await Promise.all([
+  const [agentDetections, terminalApps, cliProbes, repositoryForges, repositoryIdentities, repositoryBaseBranches] = await Promise.all([
     step === "agents" ? context.setupEnvironment.detectAgents() : [],
     step === "agents" ? context.setupEnvironment.detectTerminalApps() : [],
     step === "forges" ? context.setupEnvironment.probeForgeClis() : [],
     step === "repositories" ? findRepositoryForges(setup, context.setupEnvironment) : {},
     step === "repositories" ? findRepositoryIdentities(setup, context.setupEnvironment) : {},
+    step === "repositories" ? findRepositoryBaseBranches(setup.repositories, context.setupEnvironment) : {},
   ])
   const agentModels = await listOfferedModels(agentDetections, setup.agents, context.setupEnvironment)
   return buildSetupPage({
@@ -26,5 +28,6 @@ export const getSetup = async (input: GetSetupInput, context: ProcedureContext):
     cliProbes,
     repositoryForges,
     repositoryIdentities,
+    repositoryBaseBranches,
   })
 }

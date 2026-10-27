@@ -30,11 +30,11 @@ describe("createRepositoryAdapterOpener", () => {
   it("opens plain git when no forge is set up", async () => {
     const { open, opened, credentialLookups } = opener()
 
-    const repository = await open("/work/ledger", null)
+    const repository = await open("/work/ledger", null, null)
 
     expect(repository).toMatchObject({ forge: "git", adapterName: "git", forgeSlug: "platform/ledger", resolved: UNREADABLE })
     expect(opened()).toStrictEqual([
-      { id: "git", root: "/work/ledger", secret: null, username: "", baseUrl: "", environment: { PATH: "/usr/bin" } },
+      { id: "git", root: "/work/ledger", secret: null, username: "", baseUrl: "", environment: { PATH: "/usr/bin" }, baseBranch: null },
     ])
     expect(credentialLookups()).toStrictEqual([])
   })
@@ -56,6 +56,22 @@ describe("createRepositoryAdapterOpener", () => {
 
     expect(opened()[0]).toMatchObject({ id: forge, secret: null })
     expect(credentialLookups()).toStrictEqual([])
+  })
+
+  it("compares with the base branch chosen for the repository", async () => {
+    const { open, opened } = opener()
+
+    await open("/work/ledger", forgesOf("gitlab"), "develop")
+
+    expect(opened()[0]).toMatchObject({ id: "gitlab", baseBranch: "develop" })
+  })
+
+  it("leaves the base branch to the adapter's guess when none is passed", async () => {
+    const { open, opened } = opener()
+
+    await open("/work/ledger", null)
+
+    expect(opened()[0]).toMatchObject({ baseBranch: null })
   })
 
   it("names no slug for a folder without a remote", async () => {

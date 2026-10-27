@@ -19,11 +19,11 @@ const newListings = (
   listedRepositories: readonly ListedRepository[],
   repositoryForges: RepositoryForges,
 ): RepositoryListing[] =>
-  setup.repositories.flatMap(({ selfAuthor, trackedAuthors, path }) => {
+  setup.repositories.flatMap(({ selfAuthor, trackedAuthors, path, baseBranch }) => {
     const addition = planRepositoryAddition(listedRepositories, path)
     return addition.kind === "accepted"
       ? [{
-          repository: { ...addition.repository, forge: FORGE_ADAPTERS[repositoryForgeOf(repositoryForges, path)] },
+          repository: { ...addition.repository, forge: FORGE_ADAPTERS[repositoryForgeOf(repositoryForges, path)], baseBranch },
           authors: { selfAuthor, trackedAuthors },
         }]
       : []

@@ -57,6 +57,7 @@ const setupSchema = z.strictObject({
       path: z.string(),
       selfAuthor: authorSchema.nullable(),
       trackedAuthors: z.array(authorSchema),
+      baseBranch: z.string().nullable().default(null),
     }),
   ),
   isComplete: z.boolean(),

@@ -1,7 +1,8 @@
 import { z } from "zod"
 import { authorSelectionShape } from "@/procedures/add-repository/utils/schemas"
+import { baseBranchSelectionShape } from "@/procedures/set-base-branch/utils/schemas"
 
-export const configureRepositoryInputSchema = z.strictObject({ repositoryName: z.string(), ...authorSelectionShape })
+export const configureRepositoryInputSchema = z.strictObject({ repositoryName: z.string(), ...authorSelectionShape, ...baseBranchSelectionShape })
 
 export const configuredRepositorySchema = z.strictObject({ name: z.string() })
 

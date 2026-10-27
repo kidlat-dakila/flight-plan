@@ -22,7 +22,7 @@ const findUnlistedBranchTarget = async (
 ): Promise<BranchTarget | null> => {
   const branchName = branchNameOfTargetId(targetId)
   if (branchName === null) return null
-  const revision = await changeReader.findRevision(repository.path, branchName)
+  const revision = await changeReader.findRevision(repository.path, branchName, repository.baseBranch)
   return revision === null ? null : toUnlistedBranchTarget(branchName, now())
 }
 

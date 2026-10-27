@@ -10,6 +10,7 @@ const SECOND_MS = 1000
 const repository: Repository = {
   name: "storefront",
   path: "/work/storefront",
+  baseBranch: null,
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,

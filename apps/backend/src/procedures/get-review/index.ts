@@ -48,7 +48,7 @@ const findListedSubject = async (key: ReviewKey, context: ProcedureContext, read
     target.kind === "branch" ? context.setupEnvironment.readGitIdentity(repository.path) : null,
     target.kind === "pull-request" ? context.pullRequestForge.read(repository, target.number) : null,
   ])
-  const detail = sampleDetail ?? await readLiveTargetDetail(context.changeReader, repository.path, branchNameOf(target))
+  const detail = sampleDetail ?? await readLiveTargetDetail(context.changeReader, repository, branchNameOf(target))
   return {
     repository,
     lineColor: lineColorAt(repositories.indexOf(repository)),

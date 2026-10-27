@@ -126,6 +126,7 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
   {
     name: "storefront",
     path: "/Users/dev/projects/storefront",
+    baseBranch: null,
     forge: "gh",
     forgeSlug: "acme/storefront",
     problem: null,
@@ -134,6 +135,7 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
   {
     name: "flight-plan",
     path: "/Users/dev/projects/flight-plan",
+    baseBranch: null,
     forge: "git",
     forgeSlug: null,
     problem: null,
@@ -142,6 +144,7 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
   {
     name: "ledger-api",
     path: "/Users/dev/projects/ledger-api",
+    baseBranch: null,
     forge: "gitlab",
     forgeSlug: "acme/ledger-api",
     problem: { kind: "auth", detail: "GitLab answered 401 to GET /api/v4/user: 401 Unauthorized" },
@@ -150,6 +153,7 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
   {
     name: "docs-site",
     path: "/Users/dev/projects/docs-site",
+    baseBranch: null,
     forge: "github",
     forgeSlug: "acme/docs-site",
     problem: null,

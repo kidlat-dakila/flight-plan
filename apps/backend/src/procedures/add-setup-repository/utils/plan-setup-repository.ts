@@ -19,6 +19,7 @@ export const planSetupRepository = (
       path: addition.repository.path,
       selfAuthor: null,
       trackedAuthors: [],
+      baseBranch: null,
     },
   }
 }

@@ -75,6 +75,19 @@ describe("parseSettings", () => {
     expect(parseSettings(savedWithDefault)).toStrictEqual({ ...READY_TO_FINISH, forges: GITHUB_FORGES })
   })
 
+  it("reads repositories saved before a base branch could be chosen as having none saved", () => {
+    const repository = { name: "checkout-web", path: "/Users/dev/projects/checkout-web", selfAuthor: null, trackedAuthors: [] }
+    const settings = { defaultConfiguration: null, setup: { agents: null, forges: null, repositories: [repository], isComplete: false } }
+
+    expect(parseSettings(JSON.stringify(settings))?.repositories).toStrictEqual([{ ...repository, baseBranch: null }])
+  })
+
+  it("reads back the base branch saved with a repository", () => {
+    const withBaseBranch = { ...READY_TO_FINISH, repositories: READY_TO_FINISH.repositories.map((repository) => ({ ...repository, baseBranch: "develop" })) }
+
+    expect(parseSettings(formatSettings(withBaseBranch))).toStrictEqual(withBaseBranch)
+  })
+
   it("refuses text that is not JSON", () => {
     expect(parseSettings("{ not json")).toBeNull()
   })

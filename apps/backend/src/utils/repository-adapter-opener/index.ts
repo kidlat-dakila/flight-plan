@@ -28,10 +28,14 @@ export interface OpenedRepository {
   readonly resolved: Resolved
 }
 
-export type RepositoryAdapterOpener = (path: string, forges: ForgesChoice | null) => Promise<OpenedRepository>
+export type RepositoryAdapterOpener = (
+  path: string,
+  forges: ForgesChoice | null,
+  baseBranch?: string | null,
+) => Promise<OpenedRepository>
 
 export const createRepositoryAdapterOpener = (dependencies: RepositoryAdapterOpenerDependencies): RepositoryAdapterOpener =>
-  async (path, forges) => {
+  async (path, forges, baseBranch = null) => {
     const remote = await dependencies.readRemote(path)
     const choice = selectForge(forges, remote)
     const adapterName = FORGE_ADAPTERS[choice.forge]
@@ -42,6 +46,7 @@ export const createRepositoryAdapterOpener = (dependencies: RepositoryAdapterOpe
       username: choice.connection?.username ?? "",
       baseUrl: choice.connection?.baseUrl ?? "",
       environment: dependencies.environment,
+      baseBranch,
     })
     return { forge: choice.forge, adapterName, forgeSlug: remote?.fullName ?? null, resolved }
   }

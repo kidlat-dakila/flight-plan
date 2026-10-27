@@ -5,7 +5,7 @@ const FIXTURE_NAME_SEPARATOR = "/"
 
 export const createFixtureFileCatalog = (testCasesPath: string): FixtureCatalog => ({
   listCaseNames: async () => await getAllFixtureCases(testCasesPath),
-  readRepository: async (caseName) => await getFixtureRepository(testCasesPath, caseName),
+  readRepository: async (caseName) => ({ ...(await getFixtureRepository(testCasesPath, caseName)), baseBranch: null }),
   readArtifact: async (caseName, snapshotName) =>
     await getReviewArtifactFixture(testCasesPath, [caseName, snapshotName].join(FIXTURE_NAME_SEPARATOR)),
 })

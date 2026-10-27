@@ -34,8 +34,8 @@ Each adapter declares what it can do, instead of failing when asked. The web app
 | `compare` | The diff between two commits, used for staleness | Yes |
 | `blob` | A file's content at a commit | Yes |
 | `headSha` | The commit at the head of a pull request or branch | Yes |
-| `baseSha` | The commit a pull request or branch is compared against: where it left its target branch, or the tip of that branch when the checkout does not hold both commits | Yes |
-| `branches` | List the branches that the main branch does not contain, with their last author and where each began: those of the checkout and its remotes, or those of the checkout alone | Yes |
+| `baseSha` | The commit a pull request or branch is compared against: where it left the repository's branch to compare with, or the tip of that branch when the checkout does not hold both commits | Yes |
+| `branches` | List the branches that the repository's branch to compare with does not contain, with their last author and where each began: those of the checkout and its remotes, or those of the checkout alone | Yes |
 | `history` | Name the signed-in user, and list pull requests in every state with their reviews, comments and commits | No |
 | `people` | Search the people tied to the repository, for the tracked authors | No |
 | `files` | List the paths of every file at a commit | Yes |
@@ -55,19 +55,27 @@ What a reviewer can review is a **review target**: either a pull request, identi
 
 Where a review target stands in its review is its [branch status](branch-status.md).
 
+### The branch to compare with
+
+Each repository Flight Plan follows has a **branch to compare with**. A review target's diff is taken against it, from the merge base. The branches Flight Plan lists for the repository, offers to add by hand and offers for a new Flight Plan are those it does not contain, and a branch begins at its oldest commit that the branch to compare with lacks.
+
+It is stored as `baseBranch` with the repository in the setup (see [data storage](data-storage.md)). A `null` branch, which is how a setup saved before the field existed reads, is detected: it is the branch `origin/HEAD` points to, or the first of `main` and `master` that exists. When the stored branch exists neither as `origin/<branch>` nor as `<branch>`, the repository shows a problem that names it.
+
+The branch is chosen with a searchable field on the Repositories step of the setup page, in Settings → Repositories, in the Add repository dialog once a folder is picked, and in the Configure repository dialog. In Settings it is the first field under a followed repository, and a choice there is saved at once. The field starts on the detected branch, and adding a repository saves that branch unless the user picks another. It offers the local branches and the `origin` branches, one row per name, each with the time of its last commit, and matches the typed text fuzzily.
+
 ### Which review targets the index lists
 
 A review target is listed when it belongs to a person Flight Plan follows in that repository:
 
 - On a forge, a pull request is listed when its author is one of the repository's tracked authors or is the signed-in user. Every state is read, up to 15 pull requests per author, newest update first. With no tracked author, every pull request is listed: the forge reads the repository's 50 most recently updated pull requests of any author, in every state, besides those of the signed-in user.
-- On local git, a branch is listed when the main branch does not contain it and the author of its last commit is one of the repository's tracked authors or the author the user chose as themselves. With no tracked author, Flight Plan lists no branch on its own, not even the user's, and the line shows only the branches added by hand. When it lists none, the line says so and offers to add a branch. The main branch is read from `origin/HEAD`, or is the first of `origin/main`, `origin/master`, `main` and `master` that exists.
+- On local git, a branch is listed when the branch to compare with does not contain it and the author of its last commit is one of the repository's tracked authors or the author the user chose as themselves. With no tracked author, Flight Plan lists no branch on its own, not even the user's, and the line shows only the branches added by hand. When it lists none, the line says so and offers to add a branch.
 
 - On either, a branch that has a review artifact and is still in the checkout is listed too, whoever wrote its last commit. It is dated by when its review artifact was requested.
-- On either, a review target the user added by hand is listed too, whoever wrote it. An added pull request is read with the pull requests of its author, so its branch status is derived as for any other, and an added branch is listed while it is a local or a remote branch that the main branch does not contain. On a forge, an added branch is left out once a listed pull request comes from it.
+- On either, a review target the user added by hand is listed too, whoever wrote it. An added pull request is read with the pull requests of its author, so its branch status is derived as for any other, and an added branch is listed while it is a local or a remote branch that the branch to compare with does not contain. On a forge, an added branch is left out once a listed pull request comes from it.
 
 ### Adding a review target by hand
 
-The plus button on a repository's line searches that repository's branches, local and remote, for a review target to add. The main branch and the branches it contains are left out, and a remote branch with the same name as a local one is one branch. Each branch that an open pull request comes from is offered as that pull request in its place: the forge lists up to 100 open pull requests, newest update first, and each says the branch it comes from (`headBranch`). On local git, or when the forge cannot list them, every branch is offered as a branch. An empty search offers the five most recently updated, and a typed search ranks every branch and pull request by a fuzzy match of the branch name, the title and `#<number>`, and offers the ten best. A review target the line already lists is offered but cannot be chosen.
+The plus button on a repository's line searches that repository's branches, local and remote, for a review target to add. The branch to compare with and the branches it contains are left out, and a remote branch with the same name as a local one is one branch. Each branch that an open pull request comes from is offered as that pull request in its place: the forge lists up to 100 open pull requests, newest update first, and each says the branch it comes from (`headBranch`). On local git, or when the forge cannot list them, every branch is offered as a branch. An empty search offers the five most recently updated, and a typed search ranks every branch and pull request by a fuzzy match of the branch name, the title and `#<number>`, and offers the ten best. A review target the line already lists is offered but cannot be chosen.
 
 Adding reads the branches and pull requests again and adds the one asked for, or the open pull request that now comes from the branch asked for. It is stored in `<repository>/targets.json`, and an added review target is never new.
 
@@ -88,7 +96,7 @@ A person is identified by their login, written with a leading `@`, and a tracked
 
 ### New review targets
 
-A review target is **new** when it began after Flight Plan first listed its repository, has the branch status `no-review`, and the user has not dismissed it. A pull request began when it was opened. A branch began at its oldest commit that the main branch lacks. The index prompts for a review of each new review target until the user dismisses it, or until its Flight Plan is complete and uploaded. Apart from that and from listing the branches that have one, the index does not look at review artifacts: its links point at the review page, `/pr-reviews/<repository>/pr-<number>` for a pull request and `/pr-reviews/<repository>/branch-<name>` for a branch. The moment Flight Plan first listed the repository and the dismissed review targets are stored in `<repository>/targets.json` (see [data storage](data-storage.md)).
+A review target is **new** when it began after Flight Plan first listed its repository, has the branch status `no-review`, and the user has not dismissed it. A pull request began when it was opened. A branch began at its oldest commit that the branch to compare with lacks. The index prompts for a review of each new review target until the user dismisses it, or until its Flight Plan is complete and uploaded. Apart from that and from listing the branches that have one, the index does not look at review artifacts: its links point at the review page, `/pr-reviews/<repository>/pr-<number>` for a pull request and `/pr-reviews/<repository>/branch-<name>` for a branch. The moment Flight Plan first listed the repository and the dismissed review targets are stored in `<repository>/targets.json` (see [data storage](data-storage.md)).
 
 ### Which forge serves a repository
 
@@ -100,7 +108,7 @@ The user's recent repositories are the ten repositories in the home folder with 
 
 The forge that serves a repository also decides which users the repository needs. A repository that local git serves, and whose git config has no email, needs the author the user chose as themselves, and may have tracked authors besides. When git config has an email, that email is the user and no author is chosen. A repository that any other forge serves has no author chosen as the user, because the forge knows who is signed in. Neither needs a tracked author. This holds for the setup page, the Add repository dialog and the Configure repository dialog alike.
 
-A pull request records the branch it is opened against when the forge says so. That matters for stacked pull requests: the diff must be taken against the branch below, not against the main branch.
+A pull request records the branch it is opened against when the forge says so. That matters for stacked pull requests: the diff must be taken against the branch below, not against the repository's branch to compare with.
 
 ## Discussion and reviews
 

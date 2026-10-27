@@ -6,6 +6,8 @@ export type RepositoryAddition
 
 export type ListedRepository = Pick<Repository, "name" | "path">
 
+export type RegisteredRepository = Pick<Repository, "name" | "path" | "baseBranch">
+
 const ABSOLUTE_PATH_PATTERN = /^(?:\/|[A-Za-z]:[\\/])/
 const LAST_SEGMENT_PATTERN = /[^\\/]+$/
 const TRAILING_SEPARATOR_PATTERN = /[\\/]+$/
@@ -37,6 +39,6 @@ export const planRepositoryAddition = (repositories: readonly ListedRepository[]
   }
   return {
     kind: "accepted",
-    repository: { name, path, forge: "git", forgeSlug: null, problem: null, targets: [] },
+    repository: { name, path, forge: "git", forgeSlug: null, problem: null, targets: [], baseBranch: null },
   }
 }

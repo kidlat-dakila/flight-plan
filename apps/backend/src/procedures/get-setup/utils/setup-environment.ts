@@ -1,5 +1,6 @@
 import type { RepositoryActivity } from "@/procedures/list-recent-repositories/utils/repository-activity"
 import type { ForgeProblem } from "@/procedures/list-repositories/utils/repository"
+import type { RepositoryBranch } from "@/procedures/search-base-branches/utils/repository-branches"
 import type { ListedModel } from "./agent-models"
 import type { GitIdentity } from "./git-identity"
 import type { AgentInstall, AgentName, ForgesChoice, RepositoryAuthor, SetupForge, TerminalApp } from "./setup"
@@ -75,5 +76,7 @@ export interface SetupEnvironment {
   readonly findAuthor: (source: AuthorSource, authorId: string) => Promise<RepositoryAuthor | null>
   readonly readGitIdentity: (repositoryPath: string) => Promise<GitIdentity | null>
   readonly readRepositoryActivity: (repositoryPath: string, authorEmail: string) => Promise<RepositoryActivity | null>
+  readonly detectMainBranch: (repositoryPath: string) => Promise<string | null>
+  readonly listBranches: (repositoryPath: string) => Promise<readonly RepositoryBranch[] | null>
   readonly saveForgeCredential: (forge: SetupForge, token: string) => Promise<CredentialSaving>
 }

@@ -8,6 +8,7 @@ const AFTER_BASELINE = new Date("2026-10-01T11:00:00.000Z")
 const registered: SetupRepository = {
   name: "storefront",
   path: "/work/storefront",
+  baseBranch: null,
   selfAuthor: null,
   trackedAuthors: [{ id: "@mira", name: "Mira", detail: "@mira", avatarUrl: null }],
 }

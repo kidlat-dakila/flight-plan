@@ -34,6 +34,7 @@ const target: PullRequestTarget = {
 const repository: Repository = {
   name: "storefront",
   path: "/work/storefront",
+  baseBranch: null,
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,

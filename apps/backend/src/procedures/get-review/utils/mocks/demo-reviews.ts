@@ -99,6 +99,7 @@ const toPullRequestTarget = (demo: DemoReview, now: Date): PullRequestTarget => 
 export const toDemoRepository = (demo: DemoReview, now: Date): Repository => ({
   name: demo.story.repository.name,
   path: `${DEMO_PATH_PREFIX}${demo.story.repository.name}`,
+  baseBranch: null,
   forge: "gh",
   forgeSlug: demo.story.repository.forgeSlug,
   problem: null,
@@ -215,6 +216,7 @@ export const toDemoSetup = (demos: readonly DemoReview[]): Setup => ({
   repositories: demos.map((demo) => ({
     name: demo.story.repository.name,
     path: `${DEMO_PATH_PREFIX}${demo.story.repository.name}`,
+    baseBranch: null,
     selfAuthor: null,
     trackedAuthors: [],
   })),

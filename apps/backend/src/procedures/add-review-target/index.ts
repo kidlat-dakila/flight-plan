@@ -13,7 +13,7 @@ export const addReviewTarget = async (
   const [registered, setup] = await Promise.all([context.repositoryStore.listRegistered(), context.setupStore.read()])
   const repository = registered.find((candidate) => candidate.name === input.repositoryName)
   if (repository === undefined) return null
-  const reading = await readAddableTargets(repository.path, setup.forges, context.openRepository)
+  const reading = await readAddableTargets(repository, setup.forges, context.openRepository)
   if (reading.kind === "unreadable") return { kind: "unavailable", message: reading.message }
   const target = findAddableTarget(reading.targets, input.targetId)
   if (target === null) return { kind: "unavailable", message: GONE_TARGET_MESSAGE }
