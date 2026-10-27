@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { AGENT_NAMES, SETUP_FORGES, SETUP_STEPS } from "@/procedures/get-setup/utils/setup"
+import { AGENT_NAMES, SETUP_FORGES, SETUP_STEPS, TERMINAL_APPS } from "@/procedures/get-setup/utils/setup"
 
 export const repositoriesInputSchema = z.strictObject({ step: z.literal("repositories") })
 
@@ -15,6 +15,7 @@ export const agentsInputSchema = z.strictObject({
     }),
   ),
   defaultAgent: z.enum(AGENT_NAMES).nullable(),
+  terminalApp: z.enum(TERMINAL_APPS).nullable(),
 })
 
 export const forgesInputSchema = z.strictObject({

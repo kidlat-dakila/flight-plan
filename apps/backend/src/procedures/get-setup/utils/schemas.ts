@@ -3,7 +3,7 @@ import { reviewPreferencesSchema, spotlightGroupSchema } from "@/procedures/get-
 import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
 import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
 import { FORGE_FIELD_NAMES } from "./forge-catalog"
-import { AGENT_NAMES, SETUP_FORGES, SETUP_STEPS } from "./setup"
+import { AGENT_NAMES, SETUP_FORGES, SETUP_STEPS, TERMINAL_APPS } from "./setup"
 
 export const ROUTE_STOP_STATES = ["saved", "current", "upcoming"] as const
 
@@ -38,10 +38,17 @@ export const agentOptionSchema = z.strictObject({
   modelOptions: z.array(modelOptionSchema),
 })
 
+export const terminalAppOptionSchema = z.strictObject({
+  terminalApp: z.enum(TERMINAL_APPS),
+  label: z.string(),
+})
+
 export const agentsStepSchema = z.strictObject({
   step: z.literal("agents"),
   agents: z.array(agentOptionSchema),
   defaultAgent: z.enum(AGENT_NAMES).nullable(),
+  terminalApps: z.array(terminalAppOptionSchema),
+  terminalApp: z.enum(TERMINAL_APPS).nullable(),
 })
 
 export const forgeAvailabilitySchema = z.discriminatedUnion("kind", [

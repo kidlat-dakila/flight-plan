@@ -9,12 +9,22 @@ import { resolveStep } from "./utils/setup-progress"
 export const getSetup = async (input: GetSetupInput, context: ProcedureContext): Promise<SetupPage> => {
   const setup = await context.setupStore.read()
   const step = resolveStep(setup, input.step)
-  const [agentDetections, cliProbes, repositoryForges, repositoryIdentities] = await Promise.all([
+  const [agentDetections, terminalApps, cliProbes, repositoryForges, repositoryIdentities] = await Promise.all([
     step === "agents" ? context.setupEnvironment.detectAgents() : [],
+    step === "agents" ? context.setupEnvironment.detectTerminalApps() : [],
     step === "forges" ? context.setupEnvironment.probeForgeClis() : [],
     step === "repositories" ? findRepositoryForges(setup, context.setupEnvironment) : {},
     step === "repositories" ? findRepositoryIdentities(setup, context.setupEnvironment) : {},
   ])
   const agentModels = await listOfferedModels(agentDetections, setup.agents, context.setupEnvironment)
-  return buildSetupPage({ setup, step, agentDetections, agentModels, cliProbes, repositoryForges, repositoryIdentities })
+  return buildSetupPage({
+    setup,
+    step,
+    agentDetections,
+    agentModels,
+    terminalApps,
+    cliProbes,
+    repositoryForges,
+    repositoryIdentities,
+  })
 }

@@ -22,7 +22,7 @@ This runs on your machine, with tree-sitter. The review is ready to read. A part
 
 The first time a review opens, a dialog asks **Ask Claude to explain this review?**, with the name of your agent. It lists the parts your agent will write, from your [review configuration](/docs/setup/review-configuration/), and how many there are. **Explain** asks your agent, and **Not now** leaves the review as it is. **Explain this review** in the ⚙ menu opens the dialog again. You can also ask for one waypoint, one card or one file at a time. See [Explaining a review](/docs/review-artifacts/features/explaining/).
 
-Claude works in a terminal you can see, started with `/flightplan:live <repository>/<target>`. When it isn't online, Flight Plan asks you to start it, and can open the terminal for you on macOS. It explains the parts you picked with the Flight Plan review skill. With Codex or Cursor, Flight Plan copies a one-line prompt for you to run in your own session. Either way, the agent works through the same MCP tools:
+Claude works in a terminal you can see, started with `/flightplan:live <repository>/<target>`. When it isn't online, Flight Plan asks you to start it. On macOS it can start it for you, in a new tab of the [terminal app](/docs/setup/agent-integration/#terminal-app) you picked. It explains the parts you picked with the Flight Plan review skill. With Codex or Cursor, Flight Plan copies a one-line prompt for you to run in your own session. Either way, the agent works through the same MCP tools:
 
 | Tool | What the agent does with it |
 |---|---|

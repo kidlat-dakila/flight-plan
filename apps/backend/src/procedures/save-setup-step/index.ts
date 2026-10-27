@@ -41,12 +41,13 @@ const findAgentsWithCli = async (input: AgentsInput, context: ProcedureContext):
 }
 
 const inspectMachine = async (input: AgentsInput, context: ProcedureContext): Promise<AgentsMachine> => {
-  const [folderContents, agentsWithCli, agentModels] = await Promise.all([
+  const [folderContents, agentsWithCli, agentModels, installedTerminalApps] = await Promise.all([
     readFolderContents(input, context),
     findAgentsWithCli(input, context),
     listModelsOf(pickedAgentsOf(input), context.setupEnvironment),
+    context.setupEnvironment.detectTerminalApps(),
   ])
-  return { folderContents, agentsWithCli, agentModels }
+  return { folderContents, agentsWithCli, agentModels, installedTerminalApps }
 }
 
 const planRepositoriesStep = (setup: Setup): SetupPlan => {

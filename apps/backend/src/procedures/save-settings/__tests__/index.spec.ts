@@ -12,6 +12,7 @@ const AGENTS_INPUT: SaveSettingsInput = {
   section: "agents",
   agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default", effort: "default" }],
   defaultAgent: null,
+  terminalApp: null,
 }
 
 const PREFERENCES = toPreferencesData(DEFAULT_REVIEW_PREFERENCES)
@@ -30,6 +31,15 @@ describe("saveSettings", () => {
       defaultConfiguration: "minimal",
       isComplete: true,
     })
+  })
+
+  it("keeps the saved terminal app when none is picked, and saves the one picked", async () => {
+    const context = createSetupContext(COMPLETE_SETUP)
+
+    await saveSettings(AGENTS_INPUT, context)
+    await expect(context.setupStore.read()).resolves.toMatchObject({ agents: { terminalApp: "iterm" } })
+    await saveSettings({ ...AGENTS_INPUT, terminalApp: "terminal" }, context)
+    await expect(context.setupStore.read()).resolves.toMatchObject({ agents: { terminalApp: "terminal" } })
   })
 
   it("saves the forges", async () => {

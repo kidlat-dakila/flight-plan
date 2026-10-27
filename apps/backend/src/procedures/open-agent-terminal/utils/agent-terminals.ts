@@ -1,23 +1,23 @@
 import { reviewKeyId } from "@/procedures/get-conversation/utils/conversation"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
-import type { TerminalWindow } from "./terminal-opener"
+import type { AgentTab } from "./terminal-opener"
 
 export interface AgentTerminalRegistry {
-  readonly windowOf: (key: ReviewKey) => TerminalWindow | null
-  readonly remember: (key: ReviewKey, window: TerminalWindow) => void
+  readonly tabOf: (key: ReviewKey) => AgentTab | null
+  readonly remember: (key: ReviewKey, tab: AgentTab) => void
   readonly forget: (key: ReviewKey) => void
 }
 
 export class InMemoryAgentTerminalRegistry implements AgentTerminalRegistry {
-  private windows: ReadonlyMap<string, TerminalWindow> = new Map()
+  private tabs: ReadonlyMap<string, AgentTab> = new Map()
 
-  public readonly windowOf = (key: ReviewKey): TerminalWindow | null => this.windows.get(reviewKeyId(key)) ?? null
+  public readonly tabOf = (key: ReviewKey): AgentTab | null => this.tabs.get(reviewKeyId(key)) ?? null
 
-  public readonly remember = (key: ReviewKey, window: TerminalWindow): void => {
-    this.windows = new Map([...this.windows, [reviewKeyId(key), window]])
+  public readonly remember = (key: ReviewKey, tab: AgentTab): void => {
+    this.tabs = new Map([...this.tabs, [reviewKeyId(key), tab]])
   }
 
   public readonly forget = (key: ReviewKey): void => {
-    this.windows = new Map([...this.windows].filter(([id]) => id !== reviewKeyId(key)))
+    this.tabs = new Map([...this.tabs].filter(([id]) => id !== reviewKeyId(key)))
   }
 }

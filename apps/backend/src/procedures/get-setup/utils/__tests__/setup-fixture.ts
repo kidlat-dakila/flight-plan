@@ -30,6 +30,7 @@ export const SAVED_AGENTS: AgentsChoice = {
     { agent: "codex", installPath: "/Users/dev/.codex", model: "default", effort: "default" },
   ],
   defaultAgent: "codex",
+  terminalApp: "iterm",
 }
 
 export const LOCAL_GIT_FORGES: ForgesChoice = {

@@ -39,6 +39,8 @@ const agentsForm = {
     { agent: "cursor", label: "Cursor", isPicked: false, installPath: "", pathHint: "Cursor was not found on this machine.", unavailableReason: "cursor-agent is not installed on this machine.", model: "default", effort: "default", modelOptions: defaultOnly("Your Cursor default") },
   ],
   defaultAgent: null,
+  terminalApps: [{ terminalApp: "terminal", label: "Terminal" }, { terminalApp: "ghostty", label: "Ghostty" }],
+  terminalApp: "terminal",
 }
 
 const forgesForm = {
@@ -365,7 +367,45 @@ describe("the setup page", () => {
         { agent: "cursor", isPicked: false, installPath: "", model: "default", effort: "default" },
       ],
       defaultAgent: null,
+      terminalApp: "terminal",
     })
+  })
+
+  it("offers the installed terminal apps and saves the one chosen", async () => {
+    const saveStep = vi
+      .fn<(input: unknown) => ProcedureReply>()
+      .mockReturnValue({ data: { kind: "accepted", nextStep: "configuration" } })
+    renderApp({ "setup.get": () => pageOf(agentsForm), "setup.saveStep": saveStep })
+
+    const terminalApps = await screen.findByRole<HTMLSelectElement>("combobox", { name: "Terminal app" })
+
+    expect(within(terminalApps).getAllByRole("option").map((option) => option.textContent)).toStrictEqual(["Terminal", "Ghostty"])
+    expect(terminalApps.value).toBe("terminal")
+    fireEvent.change(terminalApps, { target: { value: "ghostty" } })
+    fireEvent.click(screen.getByRole("button", { name: "Save and continue" }))
+
+    await waitFor(() => {
+      expect(saveStep).toHaveBeenCalled()
+    })
+    expect(saveStep.mock.calls[0]?.[0]).toMatchObject({ step: "agents", terminalApp: "ghostty" })
+  })
+
+  it("shows a rejected terminal app under that field", async () => {
+    renderApp({
+      "setup.get": () => pageOf(agentsForm),
+      "setup.saveStep": () => ({
+        data: {
+          kind: "rejected",
+          message: "Ghostty is not installed on this machine. Pick another terminal app.",
+          field: { owner: "terminal", name: "terminalApp" },
+        },
+      }),
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Save and continue" }))
+
+    expect((await screen.findByRole("alert")).textContent).toBe("Ghostty is not installed on this machine. Pick another terminal app.")
+    expect(screen.getByRole("combobox", { name: "Terminal app" }).getAttribute("aria-invalid")).toBe("true")
   })
 
   it("offers the models of a picked agent and saves the one chosen", async () => {

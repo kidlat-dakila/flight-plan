@@ -1,69 +1,109 @@
 import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
-import type { TerminalCloser, TerminalOpener, TerminalWindow } from "@/procedures/open-agent-terminal/utils/terminal-opener"
-import type { CommandRunner } from "@/utils/run-command"
+import type { TerminalApp } from "@/procedures/get-setup/utils/setup"
+import type { AgentTab, TerminalCloser, TerminalOpener, TerminalOpening } from "@/procedures/open-agent-terminal/utils/terminal-opener"
+import type { CommandOutcome, CommandRunner } from "@/utils/run-command"
+import { APPLE_SCRIPT_EXECUTABLE } from "./apple-script"
+import { ghosttyCloseScriptArgumentsOf, ghosttyOpeningOf, ghosttyOpenScriptArgumentsOf } from "./ghostty"
+import { itermCloseScriptArgumentsOf, itermOpeningOf, itermOpenScriptArgumentsOf } from "./iterm"
+import { terminalCloseScriptArgumentsOf, terminalOpeningOf, terminalOpenScriptArgumentsOf } from "./terminal"
+import { deviceNameOf, ttyOf, ttyPathOf, ttyRecordingCommandOf } from "./tty"
+import { WARP_TAB_CONFIG_URL, warpOpeningOf, warpTabConfigOf, warpTabConfigPathOf } from "./warp"
 
 const MAC = "darwin"
-const APPLE_SCRIPT_EXECUTABLE = "osascript"
+const OPEN_EXECUTABLE = "open"
+const KILL_EXECUTABLE = "/usr/bin/pkill"
 const SUCCESS_EXIT_CODE = 0
 const NO_REASON = "macOS gave no reason."
-const DEVICE_PREFIX = "/dev/"
-const CLOSE_WAIT_STEPS = 20
-const CLOSE_WAIT_STEP_SECONDS = 0.25
-const WINDOW_PATTERN = /^(\d+) (\/dev\/\S+)$/
+
+export interface TerminalFiles {
+  readonly write: (path: string, text: string) => Promise<void>
+  readonly read: (path: string) => Promise<string | null>
+  readonly remove: (path: string) => Promise<void>
+}
 
 export interface TerminalOpenerOptions {
   readonly platform: string
   readonly runCommand: CommandRunner
   readonly environment: Environment
+  readonly homePath: string
+  readonly temporaryPath: string
+  readonly newId: () => string
+  readonly files: TerminalFiles
 }
 
-export const appleScriptStringOf = (text: string): string => `"${text.replaceAll("\\", "\\\\").replaceAll("\"", "\\\"")}"`
+type AppOpener = (options: TerminalOpenerOptions, command: string) => Promise<TerminalOpening>
 
-const scriptArgumentsOf = (lines: readonly string[]): readonly string[] => lines.flatMap((line) => ["-e", line])
+const failedOf = (reason: string): TerminalOpening => ({ kind: "failed", reason: reason.trim() === "" ? NO_REASON : reason.trim() })
 
-export const terminalScriptArgumentsOf = (command: string): readonly string[] => scriptArgumentsOf([
-  "tell application \"Terminal\"",
-  "activate",
-  `set agentTab to do script ${appleScriptStringOf(command)}`,
-  "set agentTty to tty of agentTab",
-  "repeat with agentWindow in windows",
-  "if (tty of tabs of agentWindow) contains agentTty then return ((id of agentWindow) as text) & \" \" & agentTty",
-  "end repeat",
-  "end tell",
-])
+const reasonOf = (failure: unknown): string => (failure instanceof Error ? failure.message : NO_REASON)
 
-export const closeScriptArgumentsOf = (window: TerminalWindow): readonly string[] => scriptArgumentsOf([
-  "tell application \"Terminal\"",
-  `if not (exists window id ${String(window.windowId)}) then return`,
-  `set agentWindow to window id ${String(window.windowId)}`,
-  `if (tty of tabs of agentWindow) does not contain ${appleScriptStringOf(window.tty)} then return`,
-  `do shell script ${appleScriptStringOf(`/usr/bin/pkill -t ${window.tty.slice(DEVICE_PREFIX.length)} || true`)}`,
-  `repeat ${String(CLOSE_WAIT_STEPS)} times`,
-  "if not (busy of tab 1 of agentWindow) then exit repeat",
-  `delay ${String(CLOSE_WAIT_STEP_SECONDS)}`,
-  "end repeat",
-  "close agentWindow",
-  "end tell",
-])
+const openingOf = (outcome: CommandOutcome, openedOf: (output: string) => TerminalOpening): TerminalOpening =>
+  outcome.exitCode === SUCCESS_EXIT_CODE ? openedOf(outcome.output) : failedOf(outcome.errorOutput)
 
-export const terminalWindowOf = (output: string): TerminalWindow | null => {
-  const match = WINDOW_PATTERN.exec(output.trim())
-  return match === null ? null : { windowId: Number(match[1]), tty: match[2] }
+const runScript = async (options: TerminalOpenerOptions, scriptArguments: readonly string[]): Promise<CommandOutcome> =>
+  await options.runCommand(APPLE_SCRIPT_EXECUTABLE, scriptArguments, options.environment)
+
+const newTtyPathOf = (options: TerminalOpenerOptions): string => ttyPathOf(options.temporaryPath, options.newId())
+
+const openInTerminal: AppOpener = async (options, command) =>
+  openingOf(await runScript(options, terminalOpenScriptArgumentsOf(command)), terminalOpeningOf)
+
+const openInIterm: AppOpener = async (options, command) =>
+  openingOf(await runScript(options, itermOpenScriptArgumentsOf(command)), itermOpeningOf)
+
+const openInGhostty: AppOpener = async (options, command) => {
+  const ttyPath = newTtyPathOf(options)
+  const outcome = await runScript(options, ghosttyOpenScriptArgumentsOf(ttyRecordingCommandOf(command, ttyPath)))
+  return openingOf(outcome, (output) => ghosttyOpeningOf(output, ttyPath))
+}
+
+const writeWarpTabConfig = async (options: TerminalOpenerOptions, command: string): Promise<string | null> =>
+  await options.files.write(warpTabConfigPathOf(options.homePath), warpTabConfigOf(command)).then(() => null, reasonOf)
+
+const openInWarp: AppOpener = async (options, command) => {
+  const ttyPath = newTtyPathOf(options)
+  const writeFailure = await writeWarpTabConfig(options, ttyRecordingCommandOf(command, ttyPath))
+  if (writeFailure !== null) return failedOf(writeFailure)
+  const outcome = await options.runCommand(OPEN_EXECUTABLE, [WARP_TAB_CONFIG_URL], options.environment)
+  return openingOf(outcome, () => warpOpeningOf(ttyPath))
+}
+
+const APP_OPENERS: Record<TerminalApp, AppOpener> = {
+  terminal: openInTerminal,
+  iterm: openInIterm,
+  ghostty: openInGhostty,
+  warp: openInWarp,
+}
+
+const recordedTtyOf = async (options: TerminalOpenerOptions, ttyPath: string): Promise<string | null> => {
+  const text = await options.files.read(ttyPath).catch(() => null)
+  return text === null ? null : ttyOf(text)
+}
+
+const endRecordedTab = async (options: TerminalOpenerOptions, ttyPath: string, end: (tty: string) => Promise<unknown>): Promise<void> => {
+  const tty = await recordedTtyOf(options, ttyPath)
+  if (tty !== null) await end(tty)
+  await options.files.remove(ttyPath).catch(() => undefined)
+}
+
+const closeTab = async (options: TerminalOpenerOptions, tab: AgentTab): Promise<void> => {
+  switch (tab.terminalApp) {
+    case "terminal":
+      await runScript(options, terminalCloseScriptArgumentsOf(tab))
+      return
+    case "iterm":
+      await runScript(options, itermCloseScriptArgumentsOf(tab))
+      return
+    case "ghostty":
+      await endRecordedTab(options, tab.ttyPath, async (tty) => await runScript(options, ghosttyCloseScriptArgumentsOf(tab.terminalId, tty)))
+      return
+    case "warp":
+      await endRecordedTab(options, tab.ttyPath, async (tty) => await options.runCommand(KILL_EXECUTABLE, ["-t", deviceNameOf(tty)], options.environment))
+  }
 }
 
 export const createTerminalOpener = (options: TerminalOpenerOptions): TerminalOpener | null =>
-  options.platform === MAC
-    ? async (command) => {
-      const outcome = await options.runCommand(APPLE_SCRIPT_EXECUTABLE, terminalScriptArgumentsOf(command), options.environment)
-      return outcome.exitCode === SUCCESS_EXIT_CODE
-        ? { kind: "opened", window: terminalWindowOf(outcome.output) }
-        : { kind: "failed", reason: outcome.errorOutput.trim() === "" ? NO_REASON : outcome.errorOutput.trim() }
-    }
-    : null
+  options.platform === MAC ? async (command, terminalApp) => await APP_OPENERS[terminalApp](options, command) : null
 
 export const createTerminalCloser = (options: TerminalOpenerOptions): TerminalCloser | null =>
-  options.platform === MAC
-    ? async (window) => {
-      await options.runCommand(APPLE_SCRIPT_EXECUTABLE, closeScriptArgumentsOf(window), options.environment)
-    }
-    : null
+  options.platform === MAC ? async (tab) => { await closeTab(options, tab) } : null

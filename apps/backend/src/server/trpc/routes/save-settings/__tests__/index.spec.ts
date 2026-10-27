@@ -21,6 +21,7 @@ describe("settings.save route", () => {
         section: "agents",
         agents: [{ agent: "cursor", isPicked: true, installPath: "", model: "default", effort: "default" }],
         defaultAgent: null,
+        terminalApp: null,
       }),
     ).resolves.toStrictEqual({
       kind: "rejected",

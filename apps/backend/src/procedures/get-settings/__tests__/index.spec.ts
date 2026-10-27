@@ -26,6 +26,15 @@ describe("getSettings", () => {
     })
   })
 
+  it("offers the installed terminal apps in the agents section and selects the saved one", async () => {
+    const page = await getSettings({ section: "agents" }, createSetupContext(COMPLETE_SETUP))
+
+    expect(page).toMatchObject({
+      terminalApps: [{ terminalApp: "terminal", label: "Terminal" }, { terminalApp: "iterm", label: "iTerm2" }],
+      terminalApp: "iterm",
+    })
+  })
+
   it("fills the forges section with the saved connections and what each command line program reports", async () => {
     const setup: Setup = { ...COMPLETE_SETUP, forges: GITHUB_FORGES }
     const page = await getSettings({ section: "forges" }, createSetupContext(setup))

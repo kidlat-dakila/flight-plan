@@ -2,7 +2,14 @@ import { isAbsolutePath } from "@/procedures/add-repository/utils/plan-repositor
 import { AGENT_CLI_NAMES, AGENT_LABELS } from "@/procedures/get-setup/utils/agent-catalog"
 import { isAgentFolder } from "@/procedures/get-setup/utils/agent-folders"
 import { offerModels, savedModelOf, type AgentModels, type ModelOffer } from "@/procedures/get-setup/utils/agent-models"
-import type { AgentInstall, AgentName, AgentsChoice } from "@/procedures/get-setup/utils/setup"
+import {
+  DEFAULT_TERMINAL_APP,
+  type AgentInstall,
+  type AgentName,
+  type AgentsChoice,
+  type TerminalApp,
+} from "@/procedures/get-setup/utils/setup"
+import { TERMINAL_APP_LABELS } from "@/procedures/get-setup/utils/terminal-catalog"
 import { resolveDefault } from "./resolve-default"
 import type { AgentsInput, RejectedField, StepRejection } from "./schemas"
 
@@ -16,6 +23,8 @@ const NO_DEFAULT_MESSAGE = "Choose which of your agents is the default."
 export const INSTALL_PATH_FIELD = "installPath"
 export const MODEL_FIELD = "model"
 export const EFFORT_FIELD = "effort"
+export const TERMINAL_APP_FIELD = "terminalApp"
+export const TERMINAL_FIELD_OWNER = "terminal"
 const CLI_FIELD = "cli"
 
 const reject = (message: string, field: RejectedField | null = null): AgentsPlan => ({ kind: "rejected", message, field })
@@ -58,6 +67,7 @@ export interface AgentsMachine {
   readonly folderContents: readonly FolderContent[]
   readonly agentsWithCli: readonly AgentName[]
   readonly agentModels: AgentModels
+  readonly installedTerminalApps: readonly TerminalApp[]
 }
 
 const pickedInstalls = (input: AgentsInput): AgentInstall[] =>
@@ -90,6 +100,17 @@ const firstModelRejection = (
 ): AgentsPlan | null =>
   installs.map((install) => modelRejectionOf(install, machine, savedChoice)).find((rejection) => rejection !== null) ?? null
 
+const missingTerminalAppMessage = (terminalApp: TerminalApp): string =>
+  `${TERMINAL_APP_LABELS[terminalApp]} is not installed on this machine. Pick another terminal app.`
+
+const terminalAppRejectionOf = (terminalApp: TerminalApp | null, machine: AgentsMachine): AgentsPlan | null =>
+  terminalApp === null || machine.installedTerminalApps.includes(terminalApp)
+    ? null
+    : reject(missingTerminalAppMessage(terminalApp), { owner: TERMINAL_FIELD_OWNER, name: TERMINAL_APP_FIELD })
+
+const savedTerminalAppOf = (savedChoice: AgentsChoice | null): TerminalApp =>
+  savedChoice?.terminalApp ?? DEFAULT_TERMINAL_APP
+
 export const planAgentsChoice = (
   input: AgentsInput,
   machine: AgentsMachine,
@@ -111,5 +132,8 @@ export const planAgentsChoice = (
   if (folderRejection !== null) return folderRejection
   const defaultAgent = resolveDefault(installs.map((install) => install.agent), input.defaultAgent)
   if (defaultAgent === null) return reject(NO_DEFAULT_MESSAGE)
-  return { kind: "accepted", choice: { installs, defaultAgent } }
+  const terminalAppRejection = terminalAppRejectionOf(input.terminalApp, machine)
+  if (terminalAppRejection !== null) return terminalAppRejection
+  const terminalApp = input.terminalApp ?? savedTerminalAppOf(savedChoice)
+  return { kind: "accepted", choice: { installs, defaultAgent, terminalApp } }
 }

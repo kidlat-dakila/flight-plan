@@ -58,6 +58,7 @@ const createHarness = (): Harness => {
     agents: {
       installs: [{ agent: "claude", installPath: "/home/.claude", model: "default", effort: "default" }],
       defaultAgent: "claude",
+      terminalApp: "terminal",
     },
   })
   return {

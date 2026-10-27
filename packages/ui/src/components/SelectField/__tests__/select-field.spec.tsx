@@ -56,4 +56,22 @@ describe("SelectField", () => {
     expect(screen.getByRole("combobox", { name: "Model for Claude" }).getAttribute("aria-invalid")).toBe("false")
     expect(screen.queryByRole("alert")).toBeNull()
   })
+
+  it("describes the select with its hint and then its error message", () => {
+    render(
+      <SelectField
+        label="Terminal app"
+        options={OPTIONS}
+        value="opus"
+        hint="Flight Plan opens your agent in a new tab of this app."
+        errorMessage="Warp is not installed on this machine. Pick another terminal app."
+        onChange={vi.fn()}
+      />,
+    )
+
+    const hintId = screen.getByText("Flight Plan opens your agent in a new tab of this app.").id
+    const errorId = screen.getByText("Warp is not installed on this machine. Pick another terminal app.").id
+
+    expect(screen.getByRole("combobox", { name: "Terminal app" }).getAttribute("aria-describedby")).toBe(`${hintId} ${errorId}`)
+  })
 })

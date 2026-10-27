@@ -6,7 +6,7 @@ import type { ReviewKey, StoredReview } from "@/procedures/get-review/utils/revi
 import type { Reviewer } from "@/procedures/get-review/utils/review-target-detail"
 import { DEFAULT_ORDER, type ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import type { ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
-import { DEFAULT_EFFORT, DEFAULT_MODEL, type AgentName, type PresetName, type Setup } from "@/procedures/get-setup/utils/setup"
+import { DEFAULT_EFFORT, DEFAULT_MODEL, DEFAULT_TERMINAL_APP, type AgentName, type PresetName, type Setup } from "@/procedures/get-setup/utils/setup"
 import type { PullRequestTarget, Repository } from "@/procedures/list-repositories/utils/repository"
 import { reviewArtifactSchema, type ReviewArtifact } from "@flightplan/configurations"
 
@@ -206,6 +206,7 @@ export const toDemoSetup = (demos: readonly DemoReview[]): Setup => ({
   agents: {
     installs: [{ agent: DEMO_AGENT, installPath: DEMO_AGENT_PATH, model: DEFAULT_MODEL, effort: DEFAULT_EFFORT }],
     defaultAgent: DEMO_AGENT,
+    terminalApp: DEFAULT_TERMINAL_APP,
   },
   forges: {
     connections: [{ forge: "gh", username: DEMO_VIEWER, baseUrl: GITHUB_URL, hasCredential: true }],

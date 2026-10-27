@@ -305,6 +305,8 @@ const SetupPage = () => {
                   form={{
                     agents: form.agents,
                     defaultAgent: form.defaultAgent,
+                    terminalApps: form.terminalApps,
+                    terminalApp: form.terminalApp,
                     backStep: page.backStep,
                     problem,
                     isPending: saveStep.isPending,

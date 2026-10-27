@@ -9,6 +9,13 @@ import { cn } from "@/lib/utils"
 
 type AgentName = "claude" | "codex" | "cursor"
 
+type TerminalApp = "terminal" | "iterm" | "ghostty" | "warp"
+
+interface TerminalAppOption {
+  readonly terminalApp: TerminalApp
+  readonly label: string
+}
+
 interface ModelOption {
   readonly model: string
   readonly label: string
@@ -38,11 +45,14 @@ export interface AgentsChoice {
     readonly effort: string
   }[]
   readonly defaultAgent: AgentName | null
+  readonly terminalApp: TerminalApp | null
 }
 
 interface AgentsFormProps {
   readonly agents: readonly AgentOption[]
   readonly defaultAgent: AgentName | null
+  readonly terminalApps: readonly TerminalAppOption[]
+  readonly terminalApp: TerminalApp | null
   readonly problem: FormProblem | null
   readonly children: ReactNode
   readonly folderBrowser: FolderBrowser | null
@@ -78,6 +88,10 @@ const BROWSER_DESCRIPTION = "Open folders until you reach the one to install int
 const MODEL_FIELD = "model"
 const EFFORT_FIELD = "effort"
 const SETTING_FIELDS: readonly string[] = [MODEL_FIELD, EFFORT_FIELD]
+
+const TERMINAL_OWNER = "terminal"
+const TERMINAL_APP_LABEL = "Terminal app"
+const TERMINAL_APP_HINT = "Flight Plan opens your agent in a new tab of this app."
 
 const ignoreRepository = () => undefined
 
@@ -130,6 +144,31 @@ const AgentRunSettings = ({
     </>
   )
 }
+
+interface TerminalAppFieldProps {
+  readonly terminalApps: readonly TerminalAppOption[]
+  readonly terminalApp: TerminalApp | null
+  readonly errorMessage: string | null
+  readonly onChange: (terminalApp: TerminalApp) => void
+}
+
+const TerminalAppField = ({ terminalApps, terminalApp, errorMessage, onChange }: TerminalAppFieldProps) => (
+  <div className="border-b border-border py-3">
+    <SelectField
+      label={TERMINAL_APP_LABEL}
+      hint={TERMINAL_APP_HINT}
+      options={terminalApps.map((option) => ({ value: option.terminalApp, label: option.label }))}
+      value={terminalApp ?? ""}
+      errorMessage={errorMessage}
+      className="max-w-xl"
+      selectClassName="w-60"
+      onChange={(chosenApp) => {
+        const terminalAppOption = terminalApps.find((option) => option.terminalApp === chosenApp)
+        if (terminalAppOption !== undefined) onChange(terminalAppOption.terminalApp)
+      }}
+    />
+  </div>
+)
 
 const AgentRow = ({
   option,
@@ -235,6 +274,8 @@ const AgentRow = ({
 const AgentsForm = ({
   agents,
   defaultAgent,
+  terminalApps,
+  terminalApp,
   problem,
   children,
   folderBrowser,
@@ -258,6 +299,7 @@ const AgentsForm = ({
     Object.fromEntries(agents.map((option) => [option.agent, option.effort])),
   )
   const [chosenDefault, setChosenDefault] = useState(defaultAgent)
+  const [chosenTerminalApp, setChosenTerminalApp] = useState(terminalApp)
   const [browsingOption, setBrowsingOption] = useState<AgentOption | null>(null)
 
   const handleBrowse = (option: AgentOption) => {
@@ -285,6 +327,7 @@ const AgentsForm = ({
         effort: effortByAgent[option.agent] ?? option.effort,
       })),
       defaultAgent: chosenDefault,
+      terminalApp: chosenTerminalApp,
     })
   }
 
@@ -331,6 +374,16 @@ const AgentsForm = ({
           />
         ))}
       </ul>
+      {terminalApps.length === 0
+        ? null
+        : (
+            <TerminalAppField
+              terminalApps={terminalApps}
+              terminalApp={chosenTerminalApp}
+              errorMessage={problem?.field?.owner === TERMINAL_OWNER ? problem.message : null}
+              onChange={setChosenTerminalApp}
+            />
+          )}
       {children}
       <FolderBrowserDialog
         isOpen={browsingOption !== null}

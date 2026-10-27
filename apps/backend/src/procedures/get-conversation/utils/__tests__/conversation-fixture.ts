@@ -13,6 +13,7 @@ export const STARTED_AT = new Date("2026-10-03T12:00:00.000Z")
 export const CLAUDE_AGENTS: AgentsChoice = {
   installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "opus", effort: "default" }],
   defaultAgent: "claude",
+  terminalApp: "terminal",
 }
 
 export const WITH_CLAUDE: Setup = { ...EMPTY_SETUP, agents: CLAUDE_AGENTS }

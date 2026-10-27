@@ -106,10 +106,10 @@ const endPacketOf = (key: ReviewKey, context: ProcedureContext): ListenPacket =>
 
 const closeAgentTerminal = async (key: ReviewKey, context: ProcedureContext): Promise<void> => {
   const { agentTerminals } = context.conversationEnvironment
-  const window = agentTerminals.windowOf(key)
-  if (window === null || context.closeTerminal === null) return
+  const tab = agentTerminals.tabOf(key)
+  if (tab === null || context.closeTerminal === null) return
   agentTerminals.forget(key)
-  await context.closeTerminal(window)
+  await context.closeTerminal(tab)
 }
 
 const endIdleSession = async (key: ReviewKey, context: ProcedureContext): Promise<void> => {

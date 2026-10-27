@@ -16,9 +16,12 @@ type SectionReader = (setup: Setup, context: ProcedureContext) => Promise<Settin
 const NO_AUTHORS: SelectedAuthors = { selfAuthor: null, trackedAuthors: [] }
 
 const readAgentsSection: SectionReader = async (setup, context) => {
-  const agentDetections = await context.setupEnvironment.detectAgents()
+  const [agentDetections, terminalApps] = await Promise.all([
+    context.setupEnvironment.detectAgents(),
+    context.setupEnvironment.detectTerminalApps(),
+  ])
   const agentModels = await listOfferedModels(agentDetections, setup.agents, context.setupEnvironment)
-  return toAgentsSection(buildAgentsStep(setup.agents, agentDetections, agentModels))
+  return toAgentsSection(buildAgentsStep(setup.agents, agentDetections, agentModels, terminalApps))
 }
 
 const readForgesSection: SectionReader = async (setup, context) =>

@@ -14,6 +14,7 @@ const AGENTS_INPUT: SaveSetupStepInput = {
   step: "agents",
   agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default", effort: "default" }],
   defaultAgent: null,
+  terminalApp: null,
 }
 
 const GITHUB_TOKEN_INPUT: SaveSetupStepInput = {
@@ -57,6 +58,24 @@ describe("saveSetupStep", () => {
       agents: { defaultAgent: "claude" },
       defaultConfiguration: null,
     })
+  })
+
+  it("saves the terminal app picked with the agents", async () => {
+    const context = createSetupContext(AT_AGENTS)
+
+    await expect(saveSetupStep({ ...AGENTS_INPUT, terminalApp: "iterm" }, context)).resolves.toMatchObject({ kind: "accepted" })
+    await expect(context.setupStore.read()).resolves.toMatchObject({ agents: { terminalApp: "iterm" } })
+  })
+
+  it("rejects a terminal app that is not installed and saves nothing", async () => {
+    const context = createSetupContext(AT_AGENTS)
+
+    await expect(saveSetupStep({ ...AGENTS_INPUT, terminalApp: "warp" }, context)).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "Warp is not installed on this machine. Pick another terminal app.",
+      field: { owner: "terminal", name: "terminalApp" },
+    })
+    await expect(context.setupStore.read()).resolves.toStrictEqual(AT_AGENTS)
   })
 
   it("leaves the stored setup unchanged when a step is rejected", async () => {

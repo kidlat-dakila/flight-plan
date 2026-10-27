@@ -8,10 +8,21 @@ import {
   type AgentModels,
 } from "./agent-models"
 import type { AgentsStep } from "./schemas"
-import { AGENT_NAMES, DEFAULT_MODEL, type AgentName, type AgentsChoice } from "./setup"
+import {
+  AGENT_NAMES,
+  DEFAULT_MODEL,
+  DEFAULT_TERMINAL_APP,
+  TERMINAL_APPS,
+  type AgentName,
+  type AgentsChoice,
+  type TerminalApp,
+} from "./setup"
 import type { AgentDetection } from "./setup-environment"
+import { TERMINAL_APP_LABELS } from "./terminal-catalog"
 
 type AgentOption = AgentsStep["agents"][number]
+
+type TerminalAppOption = AgentsStep["terminalApps"][number]
 
 type AgentLocation = Pick<AgentOption, "isPicked" | "installPath" | "pathHint">
 
@@ -62,12 +73,34 @@ const toAgentOption = (
 const defaultAgentOf = (choice: AgentsChoice | null, detections: readonly AgentDetection[]): AgentName | null =>
   choice !== null && hasCli(choice.defaultAgent, detections) ? choice.defaultAgent : null
 
+const toTerminalAppOption = (terminalApp: TerminalApp): TerminalAppOption => ({
+  terminalApp,
+  label: TERMINAL_APP_LABELS[terminalApp],
+})
+
+const offeredTerminalAppsOf = (installedTerminalApps: readonly TerminalApp[]): readonly TerminalApp[] =>
+  TERMINAL_APPS.filter((terminalApp) => installedTerminalApps.includes(terminalApp))
+
+const selectedTerminalAppOf = (
+  choice: AgentsChoice | null,
+  offeredTerminalApps: readonly TerminalApp[],
+): TerminalApp | null => {
+  const preferredTerminalApps = [...(choice === null ? [] : [choice.terminalApp]), DEFAULT_TERMINAL_APP, ...offeredTerminalApps]
+  return preferredTerminalApps.find((terminalApp) => offeredTerminalApps.includes(terminalApp)) ?? null
+}
+
 export const buildAgentsStep = (
   choice: AgentsChoice | null,
   detections: readonly AgentDetection[],
   agentModels: AgentModels,
-): AgentsStep => ({
-  step: "agents",
-  agents: AGENT_NAMES.map((agent) => toAgentOption(agent, choice, detections, agentModels)),
-  defaultAgent: defaultAgentOf(choice, detections),
-})
+  installedTerminalApps: readonly TerminalApp[],
+): AgentsStep => {
+  const offeredTerminalApps = offeredTerminalAppsOf(installedTerminalApps)
+  return {
+    step: "agents",
+    agents: AGENT_NAMES.map((agent) => toAgentOption(agent, choice, detections, agentModels)),
+    defaultAgent: defaultAgentOf(choice, detections),
+    terminalApps: offeredTerminalApps.map(toTerminalAppOption),
+    terminalApp: selectedTerminalAppOf(choice, offeredTerminalApps),
+  }
+}

@@ -3,7 +3,7 @@ title: Agent integration
 description: Pick the coding agent that explains your reviews, and where Flight Plan installs into it.
 ---
 
-Flight Plan builds each review from the code on its own. What it can't do alone is explain each part of the change and find potential bugs. That's what your agent adds: it writes the summaries, the labels, the explanations and the findings, and answers your questions in Chat. In this step you pick your agent, and Flight Plan installs its review skill and its MCP server into it.
+Flight Plan builds each review from the code on its own. What it can't do alone is explain each part of the change and find potential bugs. That's what your agent adds: it writes the summaries, the labels, the explanations and the findings, and answers your questions in Chat. In this step you pick your agent and the terminal app it runs in, and Flight Plan installs its review skill and its MCP server into it.
 
 ![Checking Codex in Settings → Agent integration, then picking Opus and the High effort for Claude](../../media/setup-agents-light.webm)
 
@@ -26,11 +26,24 @@ For each agent you check:
 - **Effort** appears for models that offer one: Default, Low, Medium, High, Extra high or Max.
 - **Default** marks the agent that explains your reviews when you pick more than one.
 
+## Terminal app
+
+**Terminal app** is the app Flight Plan opens your agent in. It lists the apps installed on your Mac, out of Terminal, iTerm2, Ghostty and Warp. Terminal is the default. It's saved with your agents. The field shows only on macOS, because that's the only system where Flight Plan opens a terminal for you.
+
+Flight Plan opens a new tab in the app's front window, and opens a window only when the app has none. Each app opens the tab its own way:
+
+| App | How Flight Plan opens the tab |
+|---|---|
+| Terminal | Presses Cmd-T for you. macOS asks you once to allow Flight Plan under **System Settings → Privacy & Security → Accessibility**. Until you allow it, Flight Plan opens a new Terminal window and tells you how to get tabs. |
+| iTerm2 | With AppleScript. |
+| Ghostty | With AppleScript, which Ghostty has from version 1.3. |
+| Warp | With a Tab Config file that Flight Plan writes to `~/.warp/tab_configs/flightplan.toml`. |
+
 ## How Flight Plan works with your agent
 
-Your agent runs in a terminal you can see, never in the background. In Claude, `/flightplan:live <repository>/<target>` keeps the session working on one review, for example `/flightplan:live storefront/pr-412`. It waits for the parts you ask it to explain and for your messages in Chat, and does each one. Leave the terminal open while you review. Closing it takes the agent offline. When you leave the review's tab for 10 minutes, Flight Plan ends the session and closes the terminal it opened. When you come back, it asks you to start the agent again.
+Your agent runs in a terminal you can see, never in the background. In Claude, `/flightplan:live <repository>/<target>` keeps the session working on one review, for example `/flightplan:live storefront/pr-412`. It waits for the parts you ask it to explain and for your messages in Chat, and does each one. Leave the terminal open while you review. Closing it takes the agent offline. When you leave the review's tab for 10 minutes, Flight Plan ends the session and closes the terminal tab it opened. In Terminal, when that tab is the only one in its window, the window closes. Warp can't close a tab by script, so there Flight Plan ends the session and leaves the tab open. When you come back, it asks you to start the agent again.
 
-When the agent is offline and a review needs it, Flight Plan asks you to start it. On macOS, **Open a terminal for me** opens Terminal in the repository's folder and starts Claude there with the command. You can also copy the command and run it in a Claude session you started yourself. Claude runs as an interactive session, so it runs on your subscription.
+When the agent is offline and a review needs it, Flight Plan asks you to start it. On macOS, **Open a terminal for me** opens a tab in your [terminal app](#terminal-app), in the repository's folder, and starts Claude there with the command. Flight Plan then tells you where it started, such as **Claude is starting in iTerm2.** You can also copy the command and run it in a Claude session you started yourself. Claude runs as an interactive session, so it runs on your subscription.
 
 The top bar of a review shows whether your agent is online, such as **Claude online**.
 

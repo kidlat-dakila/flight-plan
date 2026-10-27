@@ -56,14 +56,14 @@ describe("chooseInstall", () => {
   const codex: AgentInstall = { agent: "codex", installPath: "/home/.codex", model: "default", effort: "default" }
 
   it("takes the default agent when it can run live", () => {
-    expect(chooseInstall({ installs: [codex, INSTALL], defaultAgent: "claude" }, ["claude"])).toStrictEqual(INSTALL)
+    expect(chooseInstall({ installs: [codex, INSTALL], defaultAgent: "claude", terminalApp: "terminal" }, ["claude"])).toStrictEqual(INSTALL)
   })
 
   it("falls back to the first agent that can run live", () => {
-    expect(chooseInstall({ installs: [codex, INSTALL], defaultAgent: "codex" }, ["claude"])).toStrictEqual(INSTALL)
+    expect(chooseInstall({ installs: [codex, INSTALL], defaultAgent: "codex", terminalApp: "terminal" }, ["claude"])).toStrictEqual(INSTALL)
   })
 
   it("finds none when no agent can run live", () => {
-    expect(chooseInstall({ installs: [codex], defaultAgent: "codex" }, ["claude"])).toBeNull()
+    expect(chooseInstall({ installs: [codex], defaultAgent: "codex", terminalApp: "terminal" }, ["claude"])).toBeNull()
   })
 })

@@ -9,6 +9,7 @@ const inputOf = (overrides: Partial<AgentsInput>): AgentsInput => ({
     { agent: "cursor", isPicked: false, installPath: "", model: "default", effort: "default" },
   ],
   defaultAgent: null,
+  terminalApp: null,
   ...overrides,
 })
 
@@ -30,6 +31,7 @@ const MACHINE = {
       { model: "opus", label: "Opus 5.5", efforts: LISTED_EFFORTS },
     ],
   },
+  installedTerminalApps: ["terminal", "ghostty"] as const,
 }
 
 describe("planAgentsChoice", () => {
@@ -39,6 +41,7 @@ describe("planAgentsChoice", () => {
       choice: {
         installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "default", effort: "default" }],
         defaultAgent: "claude",
+        terminalApp: "terminal",
       },
     })
   })
@@ -169,11 +172,47 @@ describe("planAgentsChoice", () => {
     const savedChoice = {
       installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet", effort: "default" }],
       defaultAgent: "claude",
+      terminalApp: "terminal",
     } as const
 
     expect(planAgentsChoice(inputOf({ agents }), MACHINE, savedChoice)).toMatchObject({
       kind: "accepted",
       choice: { installs: [{ agent: "claude", model: "sonnet" }] },
+    })
+  })
+
+  it("keeps the terminal app picked when it is installed", () => {
+    expect(planAgentsChoice(inputOf({ terminalApp: "ghostty" }), MACHINE, null)).toMatchObject({
+      kind: "accepted",
+      choice: { terminalApp: "ghostty" },
+    })
+  })
+
+  it("rejects a terminal app that is not installed", () => {
+    expect(planAgentsChoice(inputOf({ terminalApp: "warp" }), MACHINE, null)).toStrictEqual({
+      kind: "rejected",
+      message: "Warp is not installed on this machine. Pick another terminal app.",
+      field: { owner: "terminal", name: "terminalApp" },
+    })
+  })
+
+  it("keeps the saved terminal app when none is picked, and Terminal when none is saved", () => {
+    const savedChoice = {
+      installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "default", effort: "default" }],
+      defaultAgent: "claude",
+      terminalApp: "iterm",
+    } as const
+
+    expect(planAgentsChoice(inputOf({}), MACHINE, savedChoice)).toMatchObject({ kind: "accepted", choice: { terminalApp: "iterm" } })
+    expect(planAgentsChoice(inputOf({}), MACHINE, null)).toMatchObject({ kind: "accepted", choice: { terminalApp: "terminal" } })
+  })
+
+  it("names an agent problem before a terminal app that is not installed", () => {
+    const input = inputOf({ terminalApp: "warp" })
+
+    expect(planAgentsChoice(input, { ...MACHINE, agentsWithCli: [] }, null)).toMatchObject({
+      kind: "rejected",
+      field: { owner: "claude", name: "cli" },
     })
   })
 })
