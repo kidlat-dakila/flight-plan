@@ -118,6 +118,7 @@ export const useTraceEditing = (reviewKey: ReviewKey, onProblem: (content: Toast
   return {
     cardMovingOf: (segmentId) => ({
       onMoveCards: (places) => { save(segmentId, { kind: "move-cards", places: [...places] }) },
+      onResizeCard: (nodeId, width) => { save(segmentId, { kind: "resize-card", nodeId, width }) },
     }),
     authoringOf: (segmentId) => ({
       board: {

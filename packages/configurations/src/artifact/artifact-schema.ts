@@ -263,6 +263,7 @@ const traceNodeSchema: z.ZodType<TraceNode> = z.lazy(() =>
     blockLabels: z.array(blockLabelSchema).default([]),
     rows: z.array(traceRowSchema).optional(),
     position: cardPositionSchema.optional(),
+    width: z.number().positive().optional(),
     isRequired: z.boolean().default(false),
   }),
 )

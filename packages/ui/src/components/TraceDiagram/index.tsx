@@ -15,25 +15,14 @@ import {
   type ReactFlowState,
 } from "@xyflow/react"
 import {
-  AnchorIcon,
-  AppWindowIcon,
-  ArrowUpRightIcon,
-  BracesIcon,
   ChevronsDownUpIcon,
   ChevronsUpDownIcon,
   CrosshairIcon,
-  DatabaseIcon,
-  MousePointerClickIcon,
   PencilIcon,
   PlusIcon,
-  RouteIcon,
-  SlidersHorizontalIcon,
   Trash2Icon,
-  WorkflowIcon,
-  ZapIcon,
-  type LucideIcon,
 } from "lucide-react"
-import { useState } from "react"
+import { useState, type PointerEvent as ReactPointerEvent, type ReactNode } from "react"
 import ConfirmDialog from "@/components/ConfirmDialog"
 import DiagramBoard, { type BoardView } from "@/components/DiagramBoard"
 import { DiagramEdge, EdgeMarkerDefs, useEdgeMarkers, type EdgeKind, type EdgeMarkers, type Emphasis } from "@/components/DiagramEdges"
@@ -50,8 +39,9 @@ import { navigatorButtonOf, WRITE_UP_KEY, type NavigatorButton } from "@/lib/nav
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { arrangeTrace, nearestSideOf, placeUnplacedCards, type CardSide, type PositionById } from "@/lib/trace-arrangement"
 import { toTraceFlow, type FlowFrame, type FlowHandleType } from "@/lib/trace-flow"
-import { layoutTrace, NODE_HEAD_HEIGHT, ROW_WIDTH, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/trace-layout"
+import { innerWidthOf, layoutTrace, nestedCardWidthOf, NODE_HEAD_HEIGHT, NODE_WIDTH, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/trace-layout"
 import { cn } from "@/lib/utils"
+import BlockTypeIcon, { BlockListIcon } from "./type-icons"
 
 export type NodeChange = "added" | "modified"
 
@@ -110,6 +100,7 @@ export interface TraceNode {
   readonly triggerLabels: readonly TraceTriggerLabel[]
   readonly rowGroups: readonly TraceRowGroup[]
   readonly position: Point | null
+  readonly width?: number
   readonly children: readonly TraceNode[]
 }
 
@@ -173,6 +164,7 @@ interface DiscardConfirmation {
 
 export interface CardMoving {
   readonly onMoveCards: (places: readonly CardPlace[]) => void
+  readonly onResizeCard: (nodeId: string, width: number) => void
 }
 
 interface TraceDiagramProps {
@@ -199,29 +191,6 @@ interface Concealment {
 const CARD_NO_WRITE_UP_LABEL = "Not explained yet."
 const CARD_BEING_WRITTEN_LABEL = "The agent is explaining this card."
 const WRITE_UP_CARD_LABEL = "Explain this card"
-
-const TYPE_ICONS: Readonly<Record<string, LucideIcon>> = {
-  "root-argument-value": SlidersHorizontalIcon,
-  "call": ArrowUpRightIcon,
-  "request": ArrowUpRightIcon,
-  "component": AppWindowIcon,
-  "hook": AnchorIcon,
-  "class": BracesIcon,
-  "root-variable": SlidersHorizontalIcon,
-  "config": SlidersHorizontalIcon,
-  "state": DatabaseIcon,
-  "derived": DatabaseIcon,
-  "data": DatabaseIcon,
-  "data-fetch": DatabaseIcon,
-  "cache": DatabaseIcon,
-  "render-event": MousePointerClickIcon,
-  "code-event": MousePointerClickIcon,
-  "effect": ZapIcon,
-  "component-effect": ZapIcon,
-  "route": RouteIcon,
-  "resolver": RouteIcon,
-  "middleware": RouteIcon,
-}
 
 const CHANGE_BORDER_CLASSES: Record<NodeChange, string> = {
   added: "border-diff-added",
@@ -267,14 +236,8 @@ const NODE_CLASSES = "absolute inset-0 rounded-md transition-colors duration-[18
 const HEAD_CLASSES = "flex w-full flex-col rounded-md text-left"
 const HEAD_BAR_CLASSES = "flex h-7 shrink-0 items-center gap-2 rounded-t-md border-b border-input bg-foreground/5 px-2.5"
 const HEAD_BODY_CLASSES = "flex min-h-0 flex-1 flex-col justify-center gap-1 px-3"
-const BLOCK_LIST_ICONS: Readonly<Record<string, LucideIcon>> = {
-  argument: SlidersHorizontalIcon,
-  property: SlidersHorizontalIcon,
-  state: DatabaseIcon,
-  hook: AnchorIcon,
-  effect: ZapIcon,
-  call: ArrowUpRightIcon,
-}
+const ROW_ICON_CLASSES = "size-3.5 shrink-0 text-muted-foreground"
+const HEAD_PATH_CLASSES = "truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground"
 const TRIGGER_CLASSES = "absolute flex items-center gap-2 rounded border border-input bg-card px-2 text-left transition-colors duration-[180ms] ease-out hover:bg-accent"
 const NODE_MENU_CLASSES = "absolute top-1 right-1 z-10 hidden gap-0.5 rounded-md border border-input bg-card p-0.5 group-focus-within:flex group-hover:flex data-[pinned=true]:flex"
 const NODE_MENU_BUTTON_CLASSES = "flex size-6 items-center justify-center rounded text-foreground transition-colors duration-[180ms] ease-out hover:bg-accent aria-pressed:text-primary-text"
@@ -322,12 +285,22 @@ const CONNECT_HANDLE_SIZE = 10
 const CONNECT_HANDLE_CLASSES = "nodrag right-auto bottom-auto z-10 size-2.5 min-h-0 min-w-0 transform-none rounded-full border border-primary bg-card opacity-60 transition-opacity duration-[180ms] ease-out hover:opacity-100"
 const LINE_HIT_AREA_CLASSES = "cursor-pointer fill-none stroke-transparent [stroke-width:14]"
 const NO_POSITIONS: PositionById = new Map()
+const NO_WIDTHS: WidthById = new Map()
+const MAX_CARD_WIDTH = 720
+const RESIZE_GRIP_TOP = 40
+const RESIZE_GRIP_BOTTOM_INSET = 8
+const RESIZE_GRIP_STYLE = { top: RESIZE_GRIP_TOP, height: NODE_HEAD_HEIGHT - RESIZE_GRIP_TOP - RESIZE_GRIP_BOTTOM_INSET }
+const RESIZE_GRIP_LABEL = "Drag to change the width of this card"
+const RESIZE_GRIP_CLASSES = "nodrag nopan absolute -right-1 z-10 hidden w-2 cursor-ew-resize touch-none justify-center group-focus-within:flex group-hover:flex data-[dragging=true]:flex"
+const RESIZE_GRIP_BAR_CLASSES = "h-full w-1 rounded-full bg-primary/60 transition-colors duration-[180ms] ease-out hover:bg-primary"
 const NODE_SELECTOR = ".react-flow__node"
 const CONNECTION_RADIUS = 28
 const CONNECTION_LINE_STYLE = { stroke: "var(--primary)", strokeWidth: 2 }
 const COLLAPSE_ALL_LABEL = "Collapse all"
 const EXPAND_ALL_LABEL = "Expand all"
 const COLLAPSE_KEY = "q"
+
+type WidthById = ReadonlyMap<string, number>
 
 const listNodes = (nodes: readonly TraceNode[]): TraceNode[] => nodes.flatMap((node) => [node, ...listNodes(node.children)])
 
@@ -357,25 +330,25 @@ interface ChipPacking {
   readonly lineWidth: number
 }
 
-const chipWidthOf = (parameter: string): number => Math.min(ROW_WIDTH, parameter.length * PARAMETER_CHAR_WIDTH_PX + PARAMETER_CHIP_PADDING_PX)
+const chipWidthOf = (parameter: string, rowWidth: number): number => Math.min(rowWidth, parameter.length * PARAMETER_CHAR_WIDTH_PX + PARAMETER_CHIP_PADDING_PX)
 
-const parameterLineCountOf = (parameters: readonly string[]): number =>
+const parameterLineCountOf = (parameters: readonly string[], rowWidth: number): number =>
   parameters.reduce<ChipPacking>(({ lineCount, lineWidth }, parameter) => {
-    const width = chipWidthOf(parameter)
+    const width = chipWidthOf(parameter, rowWidth)
     const widthOnLine = lineWidth === 0 ? width : lineWidth + PARAMETER_CHIP_GAP_PX + width
-    return widthOnLine <= ROW_WIDTH ? { lineCount, lineWidth: widthOnLine } : { lineCount: lineCount + 1, lineWidth: width }
+    return widthOnLine <= rowWidth ? { lineCount, lineWidth: widthOnLine } : { lineCount: lineCount + 1, lineWidth: width }
   }, { lineCount: 1, lineWidth: 0 }).lineCount
 
 const parametersIdOf = (node: TraceNode): string => `${node.id}${PARAMETERS_ID_SUFFIX}`
 
-const parametersRowsOf = (node: TraceNode): LayoutRow[] =>
-  node.parameters.length === 0 ? [] : [{ id: parametersIdOf(node), kind: "parameters", lineCount: parameterLineCountOf(node.parameters) }]
+const parametersRowsOf = (node: TraceNode, cardWidth: number): LayoutRow[] =>
+  node.parameters.length === 0 ? [] : [{ id: parametersIdOf(node), kind: "parameters", lineCount: parameterLineCountOf(node.parameters, innerWidthOf(cardWidth)) }]
 
 const rowKindOf = ({ isDraft }: Pick<TraceTriggerLabel, "isDraft">): LayoutRowKind => (isDraft ? "row" : "two-line-row")
 
-const toLayoutRows = (node: TraceNode): LayoutRow[] => {
+const toLayoutRows = (node: TraceNode, cardWidth: number): LayoutRow[] => {
   const rowById = new Map([...node.blockLists.flatMap(({ blocks }) => blocks), ...node.triggerLabels].map((row) => [row.id, row] as const))
-  return [...parametersRowsOf(node), ...node.rowGroups.flatMap(({ label, rowIds, childIds }, groupIndex): LayoutRow[] => [
+  return [...parametersRowsOf(node, cardWidth), ...node.rowGroups.flatMap(({ label, rowIds, childIds }, groupIndex): LayoutRow[] => [
     ...(label === null ? [] : [{ id: headingIdOf(node, groupIndex), kind: "heading" as const }]),
     ...rowIds.flatMap((rowId): LayoutRow[] => {
       const row = rowById.get(rowId)
@@ -385,11 +358,34 @@ const toLayoutRows = (node: TraceNode): LayoutRow[] => {
   ])]
 }
 
-const toLayoutNode = (node: TraceNode): LayoutNode => ({
+const toNestedLayoutNode = (node: TraceNode, cardWidth: number): LayoutNode => ({
   id: node.id,
-  rows: toLayoutRows(node),
-  children: node.children.map(toLayoutNode),
+  rows: toLayoutRows(node, cardWidth),
+  children: node.children.map((child) => toNestedLayoutNode(child, nestedCardWidthOf(cardWidth))),
 })
+
+const toLayoutNode = (node: TraceNode, requestedWidth: number | undefined): LayoutNode => {
+  const cardWidth = Math.max(NODE_WIDTH, requestedWidth ?? NODE_WIDTH)
+  const layoutNode = toNestedLayoutNode(node, cardWidth)
+  return requestedWidth === undefined ? layoutNode : { ...layoutNode, requestedWidth }
+}
+
+const storedWidthsOf = (nodes: readonly TraceNode[]): WidthById =>
+  new Map(nodes.flatMap((node) => (node.width === undefined ? [] : [[node.id, node.width] as const])))
+
+const withWidth = (widthById: WidthById, nodeId: string, width: number): WidthById => new Map([...widthById, [nodeId, width]])
+
+const withoutWidth = (widthById: WidthById, nodeId: string): WidthById => new Map([...widthById].filter(([id]) => id !== nodeId))
+
+const clampedCardWidthOf = (width: number): number => Math.min(MAX_CARD_WIDTH, Math.max(NODE_WIDTH, width))
+
+interface WidthDrag {
+  readonly startX: number
+  readonly startWidth: number
+}
+
+const widthAfterDrag = ({ startX, startWidth }: WidthDrag, pointerX: number, zoom: number): number =>
+  clampedCardWidthOf(startWidth + (pointerX - startX) / zoom)
 
 const topIdsOf = (nodes: readonly TraceNode[]): ReadonlyMap<string, string> =>
   new Map(nodes.flatMap((node) => listNodes([node]).map((inside) => [inside.id, node.id] as const)))
@@ -430,6 +426,61 @@ interface CardActions {
   readonly onRemove: () => void
 }
 
+interface CardResizing {
+  readonly onResize: (width: number) => void
+  readonly onResizeEnd: (width: number) => void
+  readonly onResizeCancel: () => void
+}
+
+const PRIMARY_BUTTON = 0
+
+const zoomOf = (state: ReactFlowState): number => state.transform[2]
+
+interface ResizeGripProps {
+  readonly width: number
+  readonly resizing: CardResizing
+}
+
+const ResizeGrip = ({ width, resizing: { onResize, onResizeEnd, onResizeCancel } }: ResizeGripProps) => {
+  const zoom = useStore(zoomOf)
+  const [drag, setDrag] = useState<WidthDrag | null>(null)
+  const startDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.button !== PRIMARY_BUTTON) return
+    event.currentTarget.setPointerCapture(event.pointerId)
+    setDrag({ startX: event.clientX, startWidth: width })
+  }
+  const moveDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (drag !== null) onResize(widthAfterDrag(drag, event.clientX, zoom))
+  }
+  const endDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (drag === null) return
+    setDrag(null)
+    onResizeEnd(Math.round(widthAfterDrag(drag, event.clientX, zoom)))
+  }
+  const cancelDrag = () => {
+    if (drag === null) return
+    setDrag(null)
+    onResizeCancel()
+  }
+  return (
+    <div
+      role="separator"
+      aria-orientation="vertical"
+      aria-label={RESIZE_GRIP_LABEL}
+      title={RESIZE_GRIP_LABEL}
+      data-dragging={drag !== null}
+      className={RESIZE_GRIP_CLASSES}
+      style={RESIZE_GRIP_STYLE}
+      onPointerDown={startDrag}
+      onPointerMove={moveDrag}
+      onPointerUp={endDrag}
+      onPointerCancel={cancelDrag}
+    >
+      <span aria-hidden="true" className={RESIZE_GRIP_BAR_CLASSES} />
+    </div>
+  )
+}
+
 interface NodeBoxProps {
   readonly node: TraceNode
   readonly cardActions: CardActions | null
@@ -442,6 +493,7 @@ interface NodeBoxProps {
   readonly onHoverChange: (isHovered: boolean) => void
   readonly onFocusToggle: () => void
   readonly onCollapseToggle: () => void
+  readonly children?: ReactNode
 }
 
 const NodeHint = ({ hint }: { readonly hint: string | null }) =>
@@ -471,8 +523,7 @@ const authoringButtonsOf = (authoring: TraceAuthoring | null, cardCount: number,
 const discardOf = (authoring: TraceAuthoring, discard: DiagramDiscard): (() => void) =>
   discard === "clear" ? authoring.onClearDiagram : authoring.onRemoveDiagram
 
-const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle }: NodeBoxProps) => {
-  const TypeIcon = Object.hasOwn(TYPE_ICONS, node.type) ? TYPE_ICONS[node.type] : WorkflowIcon
+const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle, children }: NodeBoxProps) => {
   const CollapseIcon = isCollapsed ? ChevronsUpDownIcon : ChevronsDownUpIcon
   const collapseLabel = isCollapsed ? EXPAND_LABEL : COLLAPSE_LABEL
   return (
@@ -498,9 +549,8 @@ const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, 
         onClick={onSelect}
       >
         <span data-node-header={node.id} className={HEAD_BAR_CLASSES}>
-          <TypeIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
-          <span className="max-w-[60%] shrink-0 truncate font-mono text-[0.75rem] leading-4 font-bold">{node.name}</span>
-          <span title={node.shortPath} className="ml-auto min-w-0 truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{node.shortPath}</span>
+          <BlockTypeIcon type={node.type} className={ROW_ICON_CLASSES} />
+          <span className="min-w-0 truncate font-mono text-[0.75rem] leading-4 font-bold">{node.name}</span>
         </span>
         <span className={HEAD_BODY_CLASSES}>
           <span className="flex min-w-0 items-center gap-1 text-[0.6875rem] leading-4 text-muted-foreground">
@@ -517,6 +567,7 @@ const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, 
               ? <NodeHint hint={node.hint} />
               : <span className="line-clamp-2 text-[0.8125rem] leading-4 font-bold">{node.label}</span>}
           </Unwritten>
+          <span data-node-path={node.id} title={node.shortPath} className={HEAD_PATH_CLASSES}>{node.shortPath}</span>
         </span>
       </button>
       {depth > 0 && cardActions === null
@@ -549,6 +600,7 @@ const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, 
                   )}
             </div>
           )}
+      {children}
     </div>
   )
 }
@@ -562,34 +614,31 @@ interface TriggerRowProps {
   readonly onHoverChange: (isHovered: boolean) => void
 }
 
-const TriggerRow = ({ nodeId, trigger, placed, emphasis, onSelect, onHoverChange }: TriggerRowProps) => {
-  const TypeIcon = Object.hasOwn(TYPE_ICONS, trigger.type) ? TYPE_ICONS[trigger.type] : WorkflowIcon
-  return (
-    <button
-      type="button"
-      data-trigger-id={trigger.id}
-      {...artifactPartMark("trace-node", nodeId)}
-      data-change={trigger.change ?? undefined}
-      aria-label={`${trigger.typeLabel}: ${trigger.label}`}
-      title={trigger.isDraft ? trigger.hint ?? undefined : undefined}
-      className={cn(TRIGGER_CLASSES, trigger.change !== null && CHANGE_BORDER_CLASSES[trigger.change], emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis])}
-      style={boxStyleOf(placed)}
-      onMouseEnter={() => { onHoverChange(true) }}
-      onMouseLeave={() => { onHoverChange(false) }}
-      onFocus={() => { onHoverChange(true) }}
-      onBlur={() => { onHoverChange(false) }}
-      onClick={onSelect}
-    >
-      <TypeIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
-      <span className="flex min-w-0 flex-col">
-        <Unwritten isPending={trigger.isDraft} className="h-4 w-24 py-0 text-[0.75rem]">
-          <span className={cn("truncate text-[0.75rem] leading-4", trigger.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{trigger.label}</span>
-        </Unwritten>
-        {trigger.isDraft ? null : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{trigger.name}</span>}
-      </span>
-    </button>
-  )
-}
+const TriggerRow = ({ nodeId, trigger, placed, emphasis, onSelect, onHoverChange }: TriggerRowProps) => (
+  <button
+    type="button"
+    data-trigger-id={trigger.id}
+    {...artifactPartMark("trace-node", nodeId)}
+    data-change={trigger.change ?? undefined}
+    aria-label={`${trigger.typeLabel}: ${trigger.label}`}
+    title={trigger.isDraft ? trigger.hint ?? undefined : undefined}
+    className={cn(TRIGGER_CLASSES, trigger.change !== null && CHANGE_BORDER_CLASSES[trigger.change], emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis])}
+    style={boxStyleOf(placed)}
+    onMouseEnter={() => { onHoverChange(true) }}
+    onMouseLeave={() => { onHoverChange(false) }}
+    onFocus={() => { onHoverChange(true) }}
+    onBlur={() => { onHoverChange(false) }}
+    onClick={onSelect}
+  >
+    <BlockTypeIcon type={trigger.type} className={ROW_ICON_CLASSES} />
+    <span className="flex min-w-0 flex-col">
+      <Unwritten isPending={trigger.isDraft} className="h-4 w-24 py-0 text-[0.75rem]">
+        <span className={cn("truncate text-[0.75rem] leading-4", trigger.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{trigger.label}</span>
+      </Unwritten>
+      {trigger.isDraft ? null : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{trigger.name}</span>}
+    </span>
+  </button>
+)
 
 interface BlockRowButtonProps {
   readonly nodeId: string
@@ -600,40 +649,38 @@ interface BlockRowButtonProps {
   readonly onHoverChange: (isHovered: boolean) => void
 }
 
-const BlockRowButton = ({ nodeId, row: { kind, kindLabel, block }, placed, emphasis, onSelect, onHoverChange }: BlockRowButtonProps) => {
-  const KindIcon = Object.hasOwn(BLOCK_LIST_ICONS, kind) ? BLOCK_LIST_ICONS[kind] : WorkflowIcon
-  return (
-    <button
-      type="button"
-      data-block-id={block.id}
-      {...artifactPartMark("trace-node", nodeId)}
-      data-block-kind={kind}
-      data-change={block.change ?? undefined}
-      aria-label={`${kindLabel}: ${block.label}`}
-      title={block.isDraft ? block.hint ?? undefined : undefined}
-      className={cn(TRIGGER_CLASSES, block.change !== null && CHANGE_BORDER_CLASSES[block.change], emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis])}
-      style={boxStyleOf(placed)}
-      onMouseEnter={() => { onHoverChange(true) }}
-      onMouseLeave={() => { onHoverChange(false) }}
-      onFocus={() => { onHoverChange(true) }}
-      onBlur={() => { onHoverChange(false) }}
-      onClick={onSelect}
-    >
-      <KindIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
-      <span className="flex min-w-0 flex-col">
-        <Unwritten isPending={block.isDraft} className="h-4 w-24 py-0 text-[0.75rem]">
-          <span className={cn("truncate text-[0.75rem] leading-4", block.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{block.label}</span>
-        </Unwritten>
-        {block.isDraft ? null : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{block.name}</span>}
-      </span>
-    </button>
-  )
-}
+const BlockRowButton = ({ nodeId, row: { kind, kindLabel, block }, placed, emphasis, onSelect, onHoverChange }: BlockRowButtonProps) => (
+  <button
+    type="button"
+    data-block-id={block.id}
+    {...artifactPartMark("trace-node", nodeId)}
+    data-block-kind={kind}
+    data-change={block.change ?? undefined}
+    aria-label={`${kindLabel}: ${block.label}`}
+    title={block.isDraft ? block.hint ?? undefined : undefined}
+    className={cn(TRIGGER_CLASSES, block.change !== null && CHANGE_BORDER_CLASSES[block.change], emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis])}
+    style={boxStyleOf(placed)}
+    onMouseEnter={() => { onHoverChange(true) }}
+    onMouseLeave={() => { onHoverChange(false) }}
+    onFocus={() => { onHoverChange(true) }}
+    onBlur={() => { onHoverChange(false) }}
+    onClick={onSelect}
+  >
+    <BlockListIcon kind={kind} className={ROW_ICON_CLASSES} />
+    <span className="flex min-w-0 flex-col">
+      <Unwritten isPending={block.isDraft} className="h-4 w-24 py-0 text-[0.75rem]">
+        <span className={cn("truncate text-[0.75rem] leading-4", block.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{block.label}</span>
+      </Unwritten>
+      {block.isDraft ? null : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{block.name}</span>}
+    </span>
+  </button>
+)
 
 interface FlowNodeData extends Record<string, unknown> {
   readonly node: TraceNode
   readonly frame: FlowFrame
   readonly cardActions: CardActions | null
+  readonly resizing: CardResizing | null
   readonly emphasis: Emphasis | null
   readonly isSelected: boolean
   readonly isCollapsed: boolean
@@ -694,7 +741,7 @@ const connectHandlesOf = (frame: FlowFrame): ConnectHandle[] => [
   })),
 ]
 
-const FlowNodeView = ({ data: { node, frame, cardActions, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle } }: NodeProps<FlowNode>) => {
+const FlowNodeView = ({ data: { node, frame, cardActions, resizing, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle } }: NodeProps<FlowNode>) => {
   const headingById = new Map(listRowHeadings(node).map((heading) => [heading.id, heading] as const))
   const blockRowById = new Map(listBlockRows(node).map((row) => [row.block.id, row] as const))
   const triggerById = new Map(node.triggerLabels.map((trigger) => [trigger.id, trigger] as const))
@@ -712,7 +759,9 @@ const FlowNodeView = ({ data: { node, frame, cardActions, emphasis, isSelected, 
         onHoverChange={onHoverChange}
         onFocusToggle={onFocusToggle}
         onCollapseToggle={onCollapseToggle}
-      />
+      >
+        {resizing === null ? null : <ResizeGrip width={frame.width} resizing={resizing} />}
+      </NodeBox>
       {frame.rows.flatMap((placed) => {
         const heading = headingById.get(placed.id)
         const blockRow = blockRowById.get(placed.id)
@@ -926,6 +975,7 @@ const lineOfConnection = ({ source, sourceHandle, target, targetHandle }: FlowCo
 
 const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, cardMoving = null, navigatorAnchorId = null, isFullScreenAtStart = false, onWriteUpNode = null, onOpenCodeLink, onWaypointReviewedChange }: TraceDiagramProps) => {
   const [draggedPositionById, setDraggedPositionById] = useState<PositionById>(NO_POSITIONS)
+  const [draggedWidthById, setDraggedWidthById] = useState<WidthById>(NO_WIDTHS)
   const [selectedLineId, setSelectedLineId] = useState<string | null>(null)
   const [droppedLine, setDroppedLine] = useState<DroppedLine | null>(null)
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
@@ -943,7 +993,8 @@ const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isRevie
   const shownNodes = listNodes(shownTopNodes)
   const shownIds = new Set(shownNodes.map((node) => node.id))
   const shownEdges = edges.filter((edge) => shownIds.has(edge.from) && shownIds.has(edge.to))
-  const layoutNodes = shownTopNodes.map(toLayoutNode)
+  const widthById: WidthById = new Map([...storedWidthsOf(nodes), ...draggedWidthById])
+  const layoutNodes = shownTopNodes.map((node) => toLayoutNode(node, widthById.get(node.id)))
   const computedLayout = layoutTrace(layoutNodes, shownEdges)
   const storedPositionById: PositionById = new Map(nodes.flatMap((node) => (node.position === null ? [] : [[node.id, node.position] as const])))
   const positionById: PositionById = new Map([...placeUnplacedCards(computedLayout, storedPositionById), ...draggedPositionById])
@@ -958,6 +1009,20 @@ const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isRevie
           cardMoving.onMoveCards(placesOfTops.map((place) => (place.nodeId === nodeId ? { nodeId, x: position.x, y: position.y } : place)))
         },
       }
+  const setDraggedWidth = (nodeId: string, width: number) => {
+    setDraggedWidthById((dragged) => withWidth(dragged, nodeId, width))
+  }
+  const resizingOf = (frame: FlowFrame): CardResizing | null =>
+    cardMoving === null || frame.depth > 0
+      ? null
+      : {
+          onResize: (width) => { setDraggedWidth(frame.id, width) },
+          onResizeEnd: (width) => {
+            setDraggedWidth(frame.id, width)
+            cardMoving.onResizeCard(frame.id, width)
+          },
+          onResizeCancel: () => { setDraggedWidthById((dragged) => withoutWidth(dragged, frame.id)) },
+        }
   const canvasAuthoring: CanvasAuthoring | null = authoring === null
     ? null
     : {
@@ -1022,6 +1087,7 @@ const TraceDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isRevie
                   onEdit: () => { authoring.onEditCard(frame.id) },
                   onRemove: () => { authoring.onRemoveCard(frame.id) },
                 },
+            resizing: resizingOf(frame),
             emphasis: emphasisOf(frame.id, selected.nodeIds, hovered.nodeIds),
             isSelected: frame.id === selectedNodeId,
             isCollapsed: collapsedNodeIds.includes(frame.id),

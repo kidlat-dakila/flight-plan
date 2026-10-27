@@ -118,6 +118,30 @@ describe("planDiagramEdit", () => {
     expect(planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", title: "Reserve stock flow diagram", description: "See [`total()`](code:src/nowhere.ts#total)." }, null)).toMatchObject({ kind: "rejected" })
   })
 
+  it("stores the width a top-level card is dragged to, and keeps it after the diagram is written to a file and read back", () => {
+    const artifact = artifactOf(addPage(sampleArtifact(), true))
+    const cards = cardsOf(artifact)
+
+    const resized = artifactOf(planDiagramEdit(artifact, SEGMENT_ID, { kind: "resize-card", nodeId: PAGE_BLOCK_ID, width: 420 }, null))
+
+    expect(cardsOf(resized)).toStrictEqual(cards.map((card) => (card.id === PAGE_BLOCK_ID ? { ...card, width: 420 } : card)))
+    expect(cardsOf(parseStoredReview(formatStoredReview(scaffoldOf(resized), null))?.artifact).find((card) => card.id === PAGE_BLOCK_ID)).toMatchObject({ width: 420 })
+  })
+
+  it("refuses to resize a card that is not on the diagram, or a card inside another card", () => {
+    const artifact = artifactOf(addPage(sampleArtifact(), true))
+    const card = lastOf(cardsOf(artifact))
+
+    expect(planDiagramEdit(artifact, SEGMENT_ID, { kind: "resize-card", nodeId: "gone", width: 420 }, null)).toStrictEqual({
+      kind: "rejected",
+      message: "This card is no longer on the diagram.",
+    })
+    expect(planDiagramEdit(artifact, SEGMENT_ID, { kind: "resize-card", nodeId: card.children[0].id, width: 420 }, null)).toStrictEqual({
+      kind: "rejected",
+      message: "A card inside another card moves with the card around it.",
+    })
+  })
+
   it("keeps an edited diagram readable after it is written to a file and read back", () => {
     const withPage = artifactOf(addPage(sampleArtifact(), true))
     const withLines = artifactOf(planDiagramEdit(withPage, SEGMENT_ID, { kind: "add-card", path: PATH, source: { kind: "lines", lineStart: 4, lineEnd: 6 }, isPrefilled: true, hasChildComponents: false }, TEXT))

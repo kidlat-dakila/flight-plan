@@ -68,6 +68,18 @@ describe("editTrace", () => {
     await expect(edit(context, { kind: "move-cards", places: [{ nodeId: "gone", x: 0, y: 0 }] })).resolves.toMatchObject({ kind: "rejected" })
   })
 
+  it("stores the width of a resized card, and the page returns it only for that card", async () => {
+    const context = createContext()
+
+    await expect(edit(context, { kind: "resize-card", nodeId: "checkout", width: 360 })).resolves.toStrictEqual({ kind: "saved", nodeId: null })
+
+    const diagram = await readDiagram(context)
+
+    expect(diagram?.nodes.find((node) => node.id === "checkout")?.width).toBe(360)
+    expect(diagram?.nodes.find((node) => node.id === "post-checkout")).not.toHaveProperty("width")
+    await expect(edit(context, { kind: "resize-card", nodeId: "gone", width: 360 })).resolves.toMatchObject({ kind: "rejected" })
+  })
+
   it("saves the label, the description and the rows of a card, ordered by their first line", async () => {
     const context = createContext()
     const later = { ...ROW, label: "", lineStart: 10, lineEnd: 11 }
