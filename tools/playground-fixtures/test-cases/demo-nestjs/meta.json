@@ -1,0 +1,6 @@
+{
+  "title": "NestJS demo with TypeORM and class-validator",
+  "packages": ["@nestjs/common", "@nestjs/core", "@nestjs/typeorm", "@nestjs/testing", "typeorm", "class-validator", "express", "reflect-metadata", "supertest"],
+  "language": "typescript",
+  "mainFramework": "nest"
+}

@@ -37,6 +37,60 @@ describe("the blocks a decorator writes", () => {
   })
 })
 
+const ENTITY = codeOf(
+  "import { Entity, ManyToOne, OneToMany } from \"typeorm\"",
+  "import { Trainer } from \"./trainer\"",
+  "import { Photo } from \"./photo\"",
+  "@Entity()",
+  "export class Pokemon {",
+  "  @ManyToOne(() => Trainer, { nullable: true })",
+  "  trainer!: Trainer | null",
+  "  @OneToMany(() => Photo, (photo) => photo.pokemon)",
+  "  photos!: Photo[]",
+  "  @Track(() => audit())",
+  "  level!: number",
+  "}",
+)
+
+const REFERENCED = {
+  "src/pokemon.ts": ENTITY,
+  "src/trainer.ts": codeOf("export class Trainer {}"),
+  "src/photo.ts": codeOf("export class Photo {}"),
+}
+
+describe("an arrow a decorator is handed", () => {
+  it("reads an arrow that only names a class or a member as a reference, so the decorator hands over no callback", () => {
+    const outline = outlineOf(groupOf(REFERENCED), "src/pokemon.ts")
+
+    expect(outline.filter((line) => line.includes(" 6:") || line.includes(" 8:"))).toStrictEqual([
+      "  property Pokemon.trainer 6:3-7:27",
+      "    property nullable 6:31-6:45",
+      "  property Pokemon.photos 8:3-9:19",
+    ])
+  })
+
+  it("keeps an arrow that calls something a callback of the decorator", () => {
+    const outline = outlineOf(groupOf(REFERENCED), "src/pokemon.ts")
+
+    expect(outline.filter((line) => line.includes(" 10:"))).toStrictEqual([
+      "  property Pokemon.level 10:3-11:17",
+      "    effect 10:4-10:24",
+      "      effect-callback 0 10:10-10:23",
+      "        function 10:10-10:23",
+    ])
+  })
+
+  it("reads the class an arrow names as a value the property uses", () => {
+    const trainer = blockNamed(groupOf(REFERENCED), "property", "Pokemon.trainer")
+
+    expect(symbolsOf(trainer)).toStrictEqual([
+      "call unopened-import typeorm:ManyToOne",
+      "value external-block src/trainer.ts#class@1:1",
+      "type external-block src/trainer.ts#class@1:1",
+    ])
+  })
+})
+
 describe("the members of a class", () => {
   it("counts a parameter of the constructor marked private, public, protected or readonly as a member reached through this", () => {
     const group = groupOf({

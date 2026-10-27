@@ -184,6 +184,7 @@ export interface BlockCard {
   readonly routePaths?: readonly string[]
   readonly isAppWide?: boolean
   readonly isAppMount?: boolean
+  readonly isOnNoRouter?: boolean
   readonly mountedModule?: string
   readonly routePatterns?: readonly RoutePattern[]
   readonly excludedRoutePatterns?: readonly RoutePattern[]

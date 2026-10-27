@@ -244,11 +244,24 @@ describe("the cards Nest writes", () => {
         "export class AppModule {}",
       ),
     })).toStrictEqual([
+      "imports: Nest route mount",
       "module: Nest route mount at /admin",
       "module: Nest route mount at /admin/metrics",
       "controllers: Nest route mount",
       "useClass: Nest route middleware",
     ])
+  })
+
+  it("makes the imports of a module a mount on no router, and its controllers a mount on the module", () => {
+    const mounts = groupOf({
+      "src/app.module.ts": codeOf(
+        "import { Module } from \"@nestjs/common\"",
+        "@Module({ imports: [UsersModule], controllers: [HealthController] })",
+        "export class AppModule {}",
+      ),
+    }).codeBlocks.filter((block) => block.card?.part === "mount")
+
+    expect(mounts.map((block) => [block.name, block.card?.isOnNoRouter ?? false])).toStrictEqual([["imports", true], ["controllers", false]])
   })
 
   it("makes what a consumer applies middleware of the routes it is chosen for", () => {

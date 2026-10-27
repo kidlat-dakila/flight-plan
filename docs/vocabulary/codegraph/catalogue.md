@@ -690,6 +690,11 @@ interface LocationSetting {
     under?: string                          // the key the configuration sits under: "jest" in package.json, "tool.pytest.ini_options"
     base?: "config" | "package"             // what a value is relative to: the folder of the file (the default) or of the manifest
     levelsUp?: number                       // folders to climb from the file's folder first: 1 for a Django settings.py
+    namedBy?: {                             // the configuration is the file a script of the file at glob names
+      scripts: string                       // the key of the scripts: "scripts.*" in package.json
+      command: string                       // the command the flag follows: "jest", "vitest", "playwright"
+      flags: string[]                       // the flags written before the path: "--config" and "-c"
+    }
   }[]
   keys: {
     key: string                             // "test.include", "*.migrations.directory", "config(0).path", "main(config_path)"
@@ -701,6 +706,7 @@ interface LocationSetting {
     defaultBase?: "config" | "package"      // what the default is relative to, when not the configuration: next-intl's messages folder
     separator?: string                      // what a value is split on besides spaces: ";" in Flask-Babel's folders
     isScope?: boolean                       // a folder the other keys are read below: Jest roots, pytest testpaths
+    isBase?: boolean                        // a folder that replaces what values are relative to: Jest rootDir
   }[]
   marks?: "file" | "folder"                 // the configuration file, or its folder, is itself the location: a Helm Chart.yaml
 }
@@ -717,6 +723,8 @@ interface LocationSetting {
 | `modules` | A dotted Python module, as a folder, or the module of a class: Django's `orders.apps.OrdersConfig` is `orders` |
 | `url-globs` | A path the app serves, below `public`, with `{{lng}}` as a wildcard |
 | `regex` | A regular expression, tested against the path from the folder of its configuration |
+
+**A configuration can be the file a script names.** A file with `namedBy` is not found by its glob: the glob names the manifest, and every script under `scripts` that runs `command` with one of `flags` names a configuration, as `--config path`, `--config=path` or `-c path`. The path is read from the folder of that manifest, and a JSON value written in place of a path names nothing. Jest, Vitest and Playwright name theirs with `--config` or `-c` in a script of `package.json`, so a NestJS project's `"test:e2e": "jest --config ./test/jest-e2e.json"` makes `test/jest-e2e.json` a configuration of Jest. A named configuration is read beside the package's own, and beside the default when the package has none, since a script without the flag still runs the tool with its own. Its values are relative to its own folder for Jest, whose `rootDir` is that folder when it writes none, and for Playwright, and to the folder of the package for Vitest, whose root is where it runs. `readRepository` in `read-groups.ts` reads the manifests and every configuration `listConfigPaths` names in one `blobs` call, then the files `listScriptConfigPaths` finds named in them in a second.
 
 A key is a path of names through the configuration, `*` for any name, and `name(argument)` for the argument of a call written anywhere in the file, by position or by keyword. A configuration in JSON, TOML, INI, YAML or `.env` is read as data, one in JavaScript, TypeScript or Python is parsed, and every value that is not written out is silent. A path built from fixed parts is written out: `path.join` and `path.resolve` of the path module with text and `__dirname`, and `fileURLToPath(new URL("./src/locales", import.meta.url))`. In Python a setting may be a name at the top of the file, a key written on an object (`app.config["BABEL_TRANSLATION_DIRECTORIES"] = …`), or a name in the body of a class at the top (`class Config:`).
 

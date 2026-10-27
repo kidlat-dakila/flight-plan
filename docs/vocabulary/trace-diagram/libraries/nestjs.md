@@ -63,6 +63,51 @@ export class UsersController {
 
 The line from the controller to a route card stands for the methods the route card holds. A guard or another enhancer of the whole controller has its lines to the route cards, as [Guards, interceptors, pipes, filters and middleware](#guards-interceptors-pipes-filters-and-middleware) says, and none to the controller.
 
+## Modules
+
+**A module is a [class card](../class-card.md) with a line to each module it imports and each controller it lists**, when a change lies down that line. `controllers` and `imports` of `@Module` are mounts: the chain steps from `imports: [UsersModule]` to `UsersModule`, and from `controllers: [UsersController]` to the controller, so the root module leads to the route cards of a new controller. A module has no method, but it is a router and keeps its card, as a controller does. What it hands over that is no router, an entity in `TypeOrmModule.forFeature([User])` or a class in `providers`, has no line from it.
+
+```ts
+// src/app.module.ts
+@Module({ imports: [UsersModule] })
+export class AppModule {}
+
+// src/users/users.module.ts
+@Module({ imports: [TypeOrmModule.forFeature([User])], controllers: [UsersController], providers: [UsersService] })
+export class UsersModule {}
+```
+
+```mermaid
+flowchart LR
+  app["AppModule"] --> module["UsersModule"] --> controller["UsersController"] --> users["/users"]
+```
+
+## Request bodies and entities
+
+**A handler has a line to the class Nest fills from its request, and a constructor to the entity of the repository it is injected with.** The chain steps from a handler to the class a parameter decorated with `@Body()`, `@Query()` or `@Param()` of `@nestjs/common` is typed by, and from a constructor to the class `@InjectRepository()` of `@nestjs/typeorm` names. Each class is a card of its own, though it has no method: no card makes it, Nest and TypeORM do. A parameter of a type of the language, `@Param("id", ParseIntPipe) id: number`, and its pipe draw no line, and neither does a class a parameter of a service is only typed by. A plain value the decorators of a DTO read, `ROLES` in `@IsIn(ROLES)`, is a row of its card.
+
+```ts
+// src/users/users.controller.ts
+@Post()
+create(@Body() draft: CreateUserDto) {
+  return this.usersService.create(draft)
+}
+
+// src/users/users.service.ts
+constructor(@InjectRepository(User) private readonly users: Repository<User>) {}
+```
+
+```mermaid
+flowchart LR
+  create["POST: UsersController.create"] --> dto["CreateUserDto"]
+  create --> serviceCreate["UsersService.create"]
+  constructor["UsersService.constructor"] --> user["User"]
+```
+
+**The line to an entity leaves the constructor, not the module.** `@InjectRepository(User)` is where the class takes the repository that every one of its methods reads and writes `User` through, so the constructor is drawn in the class card of the service with that line. `TypeOrmModule.forFeature([User])` only registers the repository in the module, and a module has lines only to the routers it mounts, as [Modules](#modules) says.
+
+**A DTO has a line to the class-validator constraint it names.** `@Validate(NamesDiffer)` on a property of a DTO hands the constraint class to class-validator, which creates it and calls its `validate()` while `ValidationPipe` checks the body. The chain steps from that property to the constraint, so the card of the DTO, which holds the property as a row, has a line to the card of the constraint.
+
 ## Paths
 
 **A route's path is, outermost first, the global prefix, the version, the path RouterModule gives its module, the path of its controller, and the path of its decorator.**

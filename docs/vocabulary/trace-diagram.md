@@ -55,6 +55,7 @@ interface TraceNode {
   blockLabels: BlockLabel[]
   rows?: TraceRow[]
   position?: { x: number, y: number }
+  width?: number
 }
 
 interface TraceRow {
@@ -101,9 +102,10 @@ interface TraceNodeEdge {
 | `from`, `to` of an edge | The ids of two nodes: the first runs the second |
 | `rows` | The rows of the node as an author chose them, each with its type, its label and its lines. A node without `rows` lists its rows from its `codeBlocks`, as [On the page](#on-the-page) says. |
 | `position` | Where an author dragged the node to, on the board. A node without one is placed by the page. |
+| `width` | How wide an author dragged a node at the top level, in pixels of the board. A node without one is drawn at the width the page gives it. |
 | `fromRowId`, `toSide` of an edge | Only on a line an author drew: the row the line leaves, and the side of the node it reaches |
 
-A node has no size, and no position until an author drags it. The page places the nodes and the edges when it draws them.
+A node has no height, no width until an author drags its edge, and no position until an author drags it. The page places the nodes and the edges when it draws them.
 
 ## Nodes
 
@@ -121,7 +123,7 @@ A node has no size, and no position until an author drags it. The page places th
 | The registrations of a route path, such as `router.get("/api/users", …)` | One node for the path: a [route card](trace-diagram/route-card.md) |
 | A store, such as `export const useCartStore = create(…)`, `defineStore(…)` or `createSlice(…)`, and an API of RTK Query | One node of the type `state`: a [state card](trace-diagram/state.md) |
 | A value that only joins stores, such as `configureStore({ reducer: { cart: cartSlice.reducer } })` | No node, as [Values that join stores](trace-diagram/state.md#values-that-join-stores) says |
-| A plain value or a class with no method, such as `export const MAX_RETRIES = 5` | No node. It is a step of every node that reads it, as [Plain code](#plain-code) says. |
+| A plain value or a class with no method, such as `export const MAX_RETRIES = 5` | No node. A plain value is a step of every node that steps into it, and a class with no method a step of every node that makes it, as [Plain code](#plain-code) says. A class a mount is written in, a [NestJS module](trace-diagram/libraries/nestjs.md#modules), is a router and keeps its node, as a controller does, and so does a class a framework fills, such as a [request body](trace-diagram/libraries/nestjs.md#request-bodies-and-entities). |
 | A value at the top level of a file that is not exported and holds no function, such as `const ORDERS_KEY = ["orders"]` | No node. It is a step of every node that reads it, as [Values that are not exported](#values-that-are-not-exported) says. |
 | A statement at the top level of a file, such as `app.use(rateLimit())` or `"use client"` | No node, and no edge. A block it runs keeps its own node. |
 | A changed import, type or interface | No node. Nothing that runs is different. |
@@ -194,7 +196,7 @@ flowchart LR
 
 ### Plain code
 
-**A root block that is plain is no node.** A value is plain when every value in it, at any depth, is written out as it is. One value made by calling a function anywhere inside it, or one function inside it, makes it a node. A plain value is a step of every node that reads it, as a [value that is not exported](#values-that-are-not-exported) is: each node that reads it lists it as a row.
+**A root block that is plain is no node.** A value is plain when every value in it, at any depth, is written out as it is. One value made by calling a function anywhere inside it, or one function inside it, makes it a node. A plain value is a step of every node that reads it, as a [value that is not exported](#values-that-are-not-exported) is: each node that reads it lists it as a row. A class with no method is a step only of a node that makes it, `new Point()`. A class a node only names keeps its node, with a line from each node that steps into it: the request body of a handler and the entity of a repository, as [What a chain steps through](codegraph/chains.md#what-a-chain-steps-through) says, and a class handed to an empty `Depends()`.
 
 | Root block | Node | Why |
 |---|---|---|
@@ -206,7 +208,9 @@ flowchart LR
 | `export enum Role { Admin = "admin", User = "user" }` | No | An enum of plain values |
 | `export interface User { … }`, `export type Role = …` | No | A type |
 | `CurrentUser = Annotated[User, Depends(current_user)]` in Python | No | An [annotated alias](codegraph/code-blocks.md#a-code-block), a type: each node whose parameter it types holds it, as if written in place there, with the line of what it holds, though it holds a call |
-| `export class Point { x = 0; y = 0 }` | No | A class with no method |
+| `export class Point { x = 0; y = 0 }` | No | A class with no method: a row of each node that makes it with `new Point()` |
+| `export class CreateUserDto { name = "" }`, with `add(@Body() draft: CreateUserDto)` | Yes | A class with no method that no node makes: Nest fills it from the request, and the handler has a line to it |
+| `@Module({ controllers: [UsersController] }) export class UsersModule {}` | Yes | A class with no method that a mount is written in: a router |
 | `export const cache = new Map()` | No | `new` of a class of the language |
 | `export const redis = new Redis(url)` | No | `new` of a class of a library |
 | `export const origin = new Point()` | No | `new` of a class of the repository with no method |
@@ -252,7 +256,7 @@ A component is read first: a page component that is a route too, as in Next.js o
 
 ### Values that are not exported
 
-**A value that is not exported is a step of the nodes that read it.** A `root-variable` that its file does not export, that holds no function, method, event, effect or callback, and that code in a node reads, is no node of its own. Only its own file can read it, so it says nothing a card would add, and a card for it pulls a line from every node that reads it. Each node with a step into the value holds the value and what of it is shown, and lists the value as a step row, with the lines of its declaration. A step into the value is carried on to what the value leads to, as `const DEFAULT_PRICE = priceOf(sample)` leads to `priceOf()`. A value that no node reads, such as one only a statement at the top level of a file reads, keeps its node. A [plain](#plain-code) value is folded the same way, whether or not its file exports it.
+**A value that is not exported is a step of the nodes that read it.** A `root-variable` that its file does not export, that holds no function, method, event, effect or callback, and that code in a node reads, is no node of its own. Only its own file can read it, so it says nothing a card would add, and a card for it pulls a line from every node that reads it. Each node with a step into the value holds the value and what of it is shown, and lists the value as a step row, with the lines of its declaration. A step into the value is carried on to what the value leads to, as `const DEFAULT_PRICE = priceOf(sample)` leads to `priceOf()`. A value that no node steps into keeps its node: one only a statement at the top level of a file reads, one only a type names, as `CreateUserDto` in `create(draft: CreateUserDto)` of a service, and one that is only handed over, as `User` in `TypeOrmModule.forFeature([User])`. A class with no method that no node makes keeps its node too, though a node steps into it, as `CreateUserDto` in `add(@Body() draft: CreateUserDto)` of a handler does. A [plain](#plain-code) value is folded the same way, whether or not its file exports it.
 
 ## Edges
 
@@ -486,6 +490,7 @@ Clearing the diagram and removing it are asked first: the page saves them only o
 | Edit the title and the description | The `title` of the diagram, as plain text, and its `description`, as Markdown, saved together. An empty title or description is refused, and so is a code link to code the Flight Plan does not hold. |
 | Add a diagram | A diagram with no nodes, no edges, no title and no description, drawn from no group |
 | Drag a card | The `position` of every node at the top level, as drawn at the drop. A node with no `position` beside nodes that have one is stacked to the right of them. |
+| Drag the right edge of a card | The `width` of that node at the top level, in whole pixels, never below the width the page gives a card. A node inside another takes the width of the node around it. |
 | Draw a line | An edge with a `fromRowId` and a `toSide`. A line starts at the right of a row and ends at the left, the top or the bottom of another node: the side nearest to where the author drops it on that node. It joins no node to a node inside it. |
 | Remove a line | The edge is taken out. A line the codegraph drew is taken out by the two nodes it joins, with every line between their rows. |
 | Delete a card | The node, the nodes inside it and every node it leads to, through any number of edges, are taken out with their edges. A node that leads to it stays. |

@@ -1,5 +1,5 @@
 import { LIBRARIES } from "@/code-blocks/libraries"
-import { listConfigPaths, placedClassificationsOf, readRepositoryLocations, type RepositoryLocations } from "@/code-blocks/locations"
+import { listConfigPaths, listScriptConfigPaths, placedClassificationsOf, readRepositoryLocations, type RepositoryLocations } from "@/code-blocks/locations"
 import { isManifestPath, readManifest } from "@/code-blocks/manifests"
 import type { CodeBlockClassification } from "@/code-blocks/types"
 
@@ -15,7 +15,9 @@ export const requirementsWith = (...packages: readonly string[]): string => pack
 export const locationsOf = (files: RepositoryFiles): RepositoryLocations => {
   const filePaths = Object.keys(files)
   const manifests = filePaths.filter(isManifestPath).map((manifestPath) => readManifest(manifestPath, files[manifestPath]))
-  const configTextByPath = new Map(listConfigPaths(filePaths, LIBRARIES).map((configPath) => [configPath, files[configPath]] as const))
+  const textsOf = (paths: readonly string[]): (readonly [string, string])[] => paths.map((configPath) => [configPath, files[configPath]] as const)
+  const listedTextByPath = new Map(textsOf(listConfigPaths(filePaths, LIBRARIES)))
+  const configTextByPath = new Map([...listedTextByPath, ...textsOf(listScriptConfigPaths(filePaths, listedTextByPath, LIBRARIES))])
   return readRepositoryLocations({ manifests, configTextByPath, libraries: LIBRARIES })
 }
 

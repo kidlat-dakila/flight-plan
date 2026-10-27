@@ -29,6 +29,9 @@ const PAIR_TYPE = "pair"
 const METHOD_TYPE = "method_definition"
 const SHORTHAND_TYPE = "shorthand_property_identifier"
 const ARGUMENTS_TYPE = "arguments"
+const ARROW_TYPE = "arrow_function"
+const DECORATOR_TYPE = "decorator"
+const REFERENCE_BODY_TYPES: ReadonlySet<string> = new Set([NAME_TYPE, MEMBER_TYPE])
 const REQUEST_GLOBAL = "fetch"
 const REQUEST_OPTIONS_INDEX = 1
 const METHOD_OPTION = "method"
@@ -80,8 +83,18 @@ const slotsOfArgument = (argument: SyntaxNode, index: number, reader: CallReader
   return isCallbackValue(argument, reader) ? [{ node: argument, name: String(index) }] : []
 }
 
+const isReferenceArrow = (argument: SyntaxNode): boolean =>
+  argument.type === ARROW_TYPE && REFERENCE_BODY_TYPES.has(argument.childForFieldName("body")?.type ?? "")
+
+const isDecoratorCall = (call: SyntaxNode): boolean => call.parent?.type === DECORATOR_TYPE
+
+export const isDecoratorReference = (argument: SyntaxNode): boolean => {
+  const call = argument.parent?.type === ARGUMENTS_TYPE ? argument.parent.parent : null
+  return call !== null && isDecoratorCall(call) && isReferenceArrow(argument)
+}
+
 export const listCallbackSlots = (call: SyntaxNode, reader: CallReader): CallbackSlot[] =>
-  listArguments(call).flatMap((argument, index) => slotsOfArgument(argument, index, reader))
+  listArguments(call).flatMap((argument, index) => (isDecoratorReference(argument) ? [] : slotsOfArgument(argument, index, reader)))
 
 const isLanguageMethod = (call: SyntaxNode): boolean => {
   const method = methodNameOf(call)

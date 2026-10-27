@@ -57,6 +57,21 @@ describe("readCodeGroupGraphs", () => {
     expect(testBlocks.some((block) => block.type !== "file")).toBe(true)
   })
 
+  it("leaves out a test that a configuration named by a script of package.json places", async () => {
+    const manifest = JSON.stringify({ scripts: { "test:e2e": "jest --config ./test/jest-e2e.json" }, devDependencies: { jest: "29.7.0" } })
+    const e2eConfig = JSON.stringify({ rootDir: ".", testEnvironment: "node", testRegex: ".e2e-spec.ts$" })
+    const e2eSpec = codeOf("import { priceOf } from \"../src/pricing\"", "", "it(\"prices\", () => priceOf({ price: 1 }))")
+    const files = { "package.json": manifest, "test/jest-e2e.json": e2eConfig, "src/pricing.ts": PRICING }
+    const groups = await groupsOf({
+      base: { ...files, "test/pricing.e2e-spec.ts": e2eSpec },
+      head: { ...files, "src/pricing.ts": CHANGE.head["src/pricing.ts"], "test/pricing.e2e-spec.ts": codeOf(e2eSpec, "it(\"prices more\", () => 1)") },
+    })
+    const e2eBlocks = groups.flatMap((group) => group.codeBlocks).filter((block) => block.filePath === "test/pricing.e2e-spec.ts")
+
+    expect(groups.map((group) => group.astGraphs.map((astGraph) => astGraph.filePath))).toStrictEqual([["src/pricing.ts"], ["test/pricing.e2e-spec.ts"]])
+    expect(e2eBlocks.map(({ type, classifications }) => ({ type, classifications }))).toStrictEqual([{ type: "file", classifications: ["test"] }])
+  })
+
   it("places the changes of the patch of each file, with their columns", async () => {
     const groups = await groupsOf(CHANGE)
     const changed = groups.flatMap((group) => group.codeBlocks).filter((block) => block.lineOfCodeDiffs !== null)

@@ -10,6 +10,7 @@ interface RouteIndex {
 
 export interface Mount {
   readonly block: StoredCodeBlock
+  readonly holderId: string | null
   readonly routerId: string | null
   readonly prefix: string | null
   readonly targetIds: ReadonlySet<string>
@@ -137,9 +138,11 @@ const listModulesImportedWhole = (within: readonly StoredCodeBlock[]): string[] 
 const mountOf = (block: StoredCodeBlock, index: RouteIndex): Mount => {
   const within = withinOf(block, index)
   const plugins = within.filter((inside) => inside.id !== block.id && PLUGIN_TYPES.has(inside.type))
+  const holderId = routerIdOf(block) ?? classAroundOf(block, index) ?? valueAroundOf(block, index)
   return {
     block,
-    routerId: routerIdOf(block) ?? classAroundOf(block, index) ?? valueAroundOf(block, index),
+    holderId,
+    routerId: block.card?.isOnNoRouter === true ? null : holderId,
     prefix: block.card?.groupKey ?? null,
     targetIds: new Set([
       ...within.flatMap(namedTargetIdsOf),
@@ -184,6 +187,15 @@ const listRouterIds = (blocks: readonly StoredCodeBlock[], index: RouteIndex): R
     const parentId = routerId === null ? null : (index.blockById.get(routerId)?.parentBlockId ?? null)
     return [routerId, parentId].filter((id) => id !== null)
   }))
+
+const holderIdsOf = (mounts: readonly Mount[]): string[] => mounts.flatMap((mount) => (mount.holderId === null ? [] : [mount.holderId]))
+
+export const listMountedRouterIds = (blocks: readonly StoredCodeBlock[]): ReadonlyMap<string, readonly string[]> => {
+  const index = routeIndexOf(blocks)
+  const mounts = listMounts(blocks, index)
+  const routerIds = new Set([...listRouterIds(blocks, index), ...holderIdsOf(mounts)])
+  return new Map(mounts.map((mount) => [mount.block.id, namedTargetIdsOf(mount.block).filter((targetId) => routerIds.has(targetId))] as const))
+}
 
 const isMountedRouter = (block: StoredCodeBlock, routerIds: ReadonlySet<string>, index: RouteIndex): boolean => {
   const parent = block.parentBlockId === null ? undefined : index.blockById.get(block.parentBlockId)

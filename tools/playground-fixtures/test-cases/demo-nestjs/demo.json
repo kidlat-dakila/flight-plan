@@ -1,0 +1,116 @@
+{
+  "repository": {
+    "name": "pokedex-nest",
+    "forgeSlug": "acme/pokedex-nest"
+  },
+  "pullRequest": {
+    "number": 65,
+    "author": "richard",
+    "updatedMinutesAgo": 30
+  },
+  "reviewers": [
+    {
+      "login": "gilfoyle",
+      "state": "changes-requested"
+    },
+    {
+      "login": "dinesh",
+      "state": "commented"
+    }
+  ],
+  "comments": [
+    {
+      "author": "dinesh",
+      "body": "I'll seed a few Pokemon on staging once this is merged.",
+      "minutesAgo": 70
+    }
+  ],
+  "threads": [
+    {
+      "path": "src/pokemon/pokemon.dto.ts",
+      "line": 55,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "gilfoyle",
+          "body": "`UpdatePokemonDto` checks `primaryType` with `@IsString()` only. A PATCH with `{\"primaryType\": \"thunder\"}` goes straight into the row, and a POST with the same body gets a 422.",
+          "minutesAgo": 150
+        },
+        {
+          "author": "richard",
+          "body": "Good catch. I'll put `@IsIn(POKEMON_TYPES)` on both types of the update DTO too.",
+          "minutesAgo": 100
+        }
+      ]
+    },
+    {
+      "path": "src/pokemon/pokemon.service.ts",
+      "line": 34,
+      "isResolved": true,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "Does `Object.assign` keep an explicit null? I want `{\"trainerId\": null}` to release a Pokemon from its trainer.",
+          "minutesAgo": 210
+        },
+        {
+          "author": "richard",
+          "body": "It keeps it. A field left out of the body is not on `changes` at all, so a null still clears the trainer.",
+          "minutesAgo": 190
+        }
+      ]
+    },
+    {
+      "path": "src/pokemon/pokemon.controller.ts",
+      "line": 32,
+      "isResolved": true,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "Should DELETE return the deleted Pokemon instead of an empty 204?",
+          "minutesAgo": 180
+        },
+        {
+          "author": "richard",
+          "body": "I'd keep the 204. The client already has the Pokemon it asked to delete.",
+          "minutesAgo": 175
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author": "gilfoyle",
+      "verdict": "request-changes",
+      "body": "PATCH saves types that POST returns a 422 for. Details inline.",
+      "minutesAgo": 148
+    },
+    {
+      "author": "dinesh",
+      "verdict": "comment",
+      "body": "The controller asks for the API key with `ApiKeyGuard` like the trainers controller does. One question on partial updates.",
+      "minutesAgo": 120
+    }
+  ],
+  "chat": [
+    {
+      "from": "reviewer",
+      "body": "Why does update look the trainer up only when trainerId is not null?",
+      "minutesAgo": 45
+    },
+    {
+      "from": "agent",
+      "body": "`PokemonService.update()` calls `this.trainers.find()` only when `changes.trainerId != null`. A body with `\"trainerId\": null` passes `@IsOptional()`, and `Object.assign()` copies the null onto the Pokemon, so the save writes `NULL` and the Pokemon has no trainer. There is no trainer to look up in that case.",
+      "minutesAgo": 44
+    }
+  ],
+  "agentReplies": [
+    "This is a demo, so my replies are written in advance. With your own agent, I read the change and answer here, and the code I mention opens as a link.",
+    "In a real review I'd answer from the code you selected. Here every reply is scripted, so try the comments, the reviewed marks and the review menu instead."
+  ],
+  "avatars": {
+    "richard": "/demo-avatars/richard.svg",
+    "gilfoyle": "/demo-avatars/gilfoyle.svg",
+    "dinesh": "/demo-avatars/dinesh.svg"
+  }
+}

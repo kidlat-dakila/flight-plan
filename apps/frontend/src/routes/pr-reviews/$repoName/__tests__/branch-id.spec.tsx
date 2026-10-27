@@ -376,7 +376,7 @@ describe("the review page", () => {
 
     expect(await screen.findByText("Adds a component.")).toBeTruthy()
 
-    fireEvent.click(screen.getByRole("button", { name: /^CartLinesrc\/cart-line\.tsx/ }))
+    fireEvent.click(screen.getByRole("button", { name: /^CartLine.*src\/cart-line\.tsx/ }))
     const panel = await screen.findByRole("region", { name: "CartLine" })
     await waitFor(() => {
       expect(within(panel).getByRole("button", { name: /Explain this card/ })).toBeTruthy()

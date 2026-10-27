@@ -1,12 +1,13 @@
 import * as path from "node:path"
 import { fitsGlob } from "@/catalogue/matching/file-patterns"
-import type { CatalogueLibrary, ConfigFile, LocationHolds, LocationKey, LocationSetting } from "@/catalogue/types"
+import type { CatalogueLibrary, ConfigFile, LocationHolds, LocationKey, LocationSetting, ScriptFlag } from "@/catalogue/types"
 import { isUsed } from "@/code-blocks/languages/file-catalogue"
 import type { PackageManifest } from "@/code-blocks/manifests"
 import type { CodeBlockClassification } from "@/code-blocks/types"
 import { Memo } from "@/shared/memo"
 import { readConfig, type ConfigReader } from "./config-values"
 import { splitWords } from "./key-paths"
+import { listFlagValues } from "./script-flags"
 
 export interface LocationRule {
   readonly classification: CodeBlockClassification
@@ -94,13 +95,38 @@ const suffixesOf = (filePath: string): string[] => filePath.split(FOLDER_SEPARAT
 const listConfigFiles = (libraries: readonly CatalogueLibrary[]): ConfigFile[] =>
   libraries.flatMap((library) => (library.locations ?? []).flatMap((setting) => setting.files))
 
+const fitsConfigGlob = (glob: string, filePath: string): boolean =>
+  fitsName(glob, lastSegmentOf(filePath)) && suffixesOf(filePath).some((suffix) => fitsGlob(glob, suffix))
+
 export const listConfigPaths = (filePaths: readonly string[], libraries: readonly CatalogueLibrary[]): string[] => {
   const globs = [...new Set(listConfigFiles(libraries).map((file) => file.glob))]
-  return filePaths.filter((filePath) => {
-    const fileName = lastSegmentOf(filePath)
-    const candidates = globs.filter((glob) => fitsName(glob, fileName))
-    return candidates.length > 0 && suffixesOf(filePath).some((suffix) => candidates.some((glob) => fitsGlob(glob, suffix)))
+  return filePaths.filter((filePath) => globs.some((glob) => fitsConfigGlob(glob, filePath)))
+}
+
+interface NamingFile {
+  readonly glob: string
+  readonly flag: ScriptFlag
+}
+
+const namingFileOf = ({ glob, namedBy }: ConfigFile): NamingFile[] => (namedBy === undefined ? [] : [{ glob, flag: namedBy }])
+
+const pathsNamedBy = (namingPath: string, reader: ConfigReader, flag: ScriptFlag): string[] =>
+  (reader.valuesAt(flag.scripts) ?? []).flatMap((script) => listFlagValues(script, flag).flatMap((value) => joinPath(folderOf(namingPath), value) ?? []))
+
+export const listScriptConfigPaths = (
+  filePaths: readonly string[],
+  configTextByPath: ReadonlyMap<string, string>,
+  libraries: readonly CatalogueLibrary[],
+): string[] => {
+  const namingFiles = listConfigFiles(libraries).flatMap(namingFileOf)
+  const held = new Set(filePaths)
+  const named = [...configTextByPath].flatMap(([filePath, text]) => {
+    const fitting = namingFiles.filter(({ glob }) => fitsConfigGlob(glob, filePath))
+    if (fitting.length === 0) return []
+    const reader = readConfig(filePath, text)
+    return fitting.flatMap(({ flag }) => pathsNamedBy(filePath, reader, flag))
   })
+  return [...new Set(named)].filter((filePath) => held.has(filePath) && !configTextByPath.has(filePath))
 }
 
 const evaluationFoldersOf = (library: CatalogueLibrary, manifests: readonly PackageManifest[]): string[] => {
@@ -116,9 +142,23 @@ const findConfigs = (setting: LocationSetting, folder: string, readerByPath: Rea
   [...readerByPath].flatMap(([filePath, reader]) => {
     if (!isWithin(folder, filePath)) return []
     const relative = relativeTo(folder, filePath)
-    const file = setting.files.find((candidate) => fitsGlob(candidate.glob, relative) && (candidate.under === undefined || reader.holdsSection(candidate.under)))
+    const file = setting.files.find(
+      (candidate) => candidate.namedBy === undefined && fitsGlob(candidate.glob, relative) && (candidate.under === undefined || reader.holdsSection(candidate.under)),
+    )
     return file === undefined ? [] : [{ filePath, file, reader }]
   })
+
+const findScriptConfigsOf = (file: ConfigFile, flag: ScriptFlag, folder: string, readerByPath: ReadonlyMap<string, ConfigReader>): FoundConfig[] =>
+  [...readerByPath]
+    .filter(([namingPath]) => isWithin(folder, namingPath) && fitsGlob(file.glob, relativeTo(folder, namingPath)))
+    .flatMap(([namingPath, namingReader]) =>
+      pathsNamedBy(namingPath, namingReader, flag).flatMap((filePath) => {
+        const reader = readerByPath.get(filePath)
+        return reader === undefined ? [] : [{ filePath, file, reader }]
+      }))
+
+const findScriptConfigs = (setting: LocationSetting, folder: string, readerByPath: ReadonlyMap<string, ConfigReader>): FoundConfig[] =>
+  setting.files.flatMap((file) => (file.namedBy === undefined ? [] : findScriptConfigsOf(file, file.namedBy, folder, readerByPath)))
 
 const baseOf = ({ filePath, file }: FoundConfig, folder: string): string =>
   file.base === "package" ? folder : levelsAbove(folderOf(filePath), file.levelsUp ?? 0)
@@ -184,12 +224,18 @@ const ruleOf = (classification: CodeBlockClassification, scoped: Scoped, key: Lo
 const foldersOfKey = (key: LocationKey, read: KeyValues, folders: readonly string[], { packageFolder }: Bases): readonly string[] =>
   read.isDefault && key.defaultBase === "package" ? [packageFolder] : folders
 
-const rulesOfKeys = (setting: LocationSetting, read: KeyReading, bases: Bases, scoped: Scoped): LocationRule[] => {
-  const scopeKeys = setting.keys.filter((key) => key.isScope === true)
-  const scopes = scopeKeys.flatMap((key) => valuesOfKey(key, read).values.flatMap((value) => joinPath(bases.base, cleanValue(value)) ?? []))
+const foldersOfKeys = (keys: readonly LocationKey[], read: KeyReading, base: string): string[] =>
+  keys.flatMap((key) => valuesOfKey(key, read).values.flatMap((value) => joinPath(base, cleanValue(value)) ?? []))
+
+const isPlacingKey = (key: LocationKey): boolean => key.isScope !== true && key.isBase !== true
+
+const rulesOfKeys = (setting: LocationSetting, read: KeyReading, written: Bases, scoped: Scoped): LocationRule[] => {
+  const [movedBase = written.base] = foldersOfKeys(setting.keys.filter((key) => key.isBase === true), read, written.base)
+  const bases = { ...written, base: movedBase }
+  const scopes = foldersOfKeys(setting.keys.filter((key) => key.isScope === true), read, bases.base)
   const folders = scopes.length === 0 ? [bases.base] : scopes
   return setting.keys
-    .filter((key) => key.isScope !== true)
+    .filter(isPlacingKey)
     .flatMap((key) => {
       const keyValues = valuesOfKey(key, read)
       return foldersOfKey(key, keyValues, folders, bases).flatMap((folder) =>
@@ -219,15 +265,25 @@ const rulesOfConfig = (setting: LocationSetting, config: FoundConfig, folder: st
   return rulesOfKeys(setting, readKeys(setting, config), { base: baseOf(config, folder), packageFolder: folder }, { folder: ROOT, excludedFolders: [] })
 }
 
+interface FolderConfigs {
+  readonly folder: string
+  readonly configs: readonly FoundConfig[]
+}
+
+const rulesOfOwnConfigs = (setting: LocationSetting, { folder, configs }: FolderConfigs, configured: readonly string[]): LocationRule[] => {
+  if (configs.length > 0) return configs.flatMap((config) => rulesOfConfig(setting, config, folder))
+  if (setting.marks !== undefined) return []
+  const excludedFolders = configured.filter((other) => other !== folder && isWithin(folder, other))
+  return rulesOfKeys(setting, readKeys(setting, null), { base: folder, packageFolder: folder }, { folder, excludedFolders })
+}
+
 const rulesOfSetting = (setting: LocationSetting, folders: readonly string[], readerByPath: ReadonlyMap<string, ConfigReader>): LocationRule[] => {
   const found = folders.map((folder) => ({ folder, configs: findConfigs(setting, folder, readerByPath) }))
   const configured = found.filter(({ configs }) => configs.length > 0).map(({ folder }) => folder)
-  return found.flatMap(({ folder, configs }) => {
-    if (configs.length > 0) return configs.flatMap((config) => rulesOfConfig(setting, config, folder))
-    if (setting.marks !== undefined) return []
-    const excludedFolders = configured.filter((other) => other !== folder && isWithin(folder, other))
-    return rulesOfKeys(setting, readKeys(setting, null), { base: folder, packageFolder: folder }, { folder, excludedFolders })
-  })
+  return found.flatMap((own) => [
+    ...rulesOfOwnConfigs(setting, own, configured),
+    ...findScriptConfigs(setting, own.folder, readerByPath).flatMap((config) => rulesOfConfig(setting, config, own.folder)),
+  ])
 }
 
 const ruleKeyOf = (rule: LocationRule): string => JSON.stringify(rule)

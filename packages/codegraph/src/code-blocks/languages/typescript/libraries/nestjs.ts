@@ -97,6 +97,8 @@ const CHILDREN_KEY = "children"
 
 const CONTROLLERS_KEY = "controllers"
 
+const IMPORTS_KEY = "imports"
+
 const PROVIDE_KEY = "provide"
 
 const PROVIDED_CLASS_KEYS: ReadonlySet<string> = new Set(["useClass", "useExisting"])
@@ -330,11 +332,18 @@ const readRouterModuleSeeds = (reading: CardReading): CardSeed[] =>
       return block === null || path === null ? [] : [{ blockId: block.id, card: nestCardOf("mount", { groupKey: path }) }]
     }))
 
+const MODULE_MOUNT_BY_KEY: ReadonlyMap<string, BlockCard> = new Map([
+  [CONTROLLERS_KEY, nestCardOf("mount")],
+  [IMPORTS_KEY, nestCardOf("mount", { isOnNoRouter: true })],
+])
+
 const readModuleSeeds = (reading: CardReading): CardSeed[] =>
   reading.matches.filter(isDecoratorNamed(MODULE_DECORATOR)).flatMap((match) => {
     const module = innermostAround(reading.blocks, match.range, isOfType(CLASS))
-    const controllers = module === null ? [] : childrenOf(reading.blocks, module).filter((child) => child.type === PROPERTY && child.name === CONTROLLERS_KEY)
-    return controllers.map((property) => ({ blockId: property.id, card: nestCardOf("mount") }))
+    return (module === null ? [] : childrenOf(reading.blocks, module)).flatMap((child) => {
+      const card = child.type === PROPERTY ? MODULE_MOUNT_BY_KEY.get(child.name ?? "") : undefined
+      return card === undefined ? [] : [{ blockId: child.id, card }]
+    })
   })
 
 const readControllerSeeds = (reading: CardReading): CardSeed[] =>

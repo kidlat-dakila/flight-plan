@@ -1,5 +1,7 @@
 import { groupBy } from "@/shared/group-by"
+import { listFilledClassIds } from "./filled-classes"
 import { listCalledProcedureIds, listRouterIds } from "./procedure-calls"
+import { listMountedRouterIds } from "./route-mounts"
 import type { StoredCodeBlock, StoredCodeBlockSymbol } from "./stored-types"
 import type { CodeBlockType } from "./types"
 
@@ -15,6 +17,8 @@ interface ChainIndex {
   readonly heldMarkupIds: ReadonlySet<string>
   readonly calledArgumentIds: ReadonlySet<string>
   readonly calledProcedureIdsById: ReadonlyMap<string, readonly string[]>
+  readonly mountedRouterIdsById: ReadonlyMap<string, readonly string[]>
+  readonly filledClassIdsById: ReadonlyMap<string, readonly string[]>
   readonly routerIds: ReadonlySet<string>
 }
 
@@ -224,7 +228,12 @@ const isUntraced = (block: StoredCodeBlock, index: ChainIndex): boolean => {
 const listSteps = (block: StoredCodeBlock, index: ChainIndex): string[] => {
   if (isUntraced(block, index)) return []
   const handed = block.type === ARGUMENT ? listHandedSteps(block, index) : []
-  const stepped = [...[...listNestedSteps(block, index), ...listSymbolSteps(block, index), ...handed].map((next) => next.id), ...(index.calledProcedureIdsById.get(block.id) ?? [])]
+  const stepped = [
+    ...[...listNestedSteps(block, index), ...listSymbolSteps(block, index), ...handed].map((next) => next.id),
+    ...(index.calledProcedureIdsById.get(block.id) ?? []),
+    ...(index.mountedRouterIdsById.get(block.id) ?? []),
+    ...(index.filledClassIdsById.get(block.id) ?? []),
+  ]
   return [...new Set(stepped)].filter((nextId) => nextId !== block.id)
 }
 
@@ -265,6 +274,8 @@ export const traceChains = (codeBlocks: readonly StoredCodeBlock[], hints: Chain
     ...hints,
     calledArgumentIds: listCalledArgumentIds(codeBlocks, { blockById }),
     calledProcedureIdsById: listCalledProcedureIds(codeBlocks),
+    mountedRouterIdsById: listMountedRouterIds(codeBlocks),
+    filledClassIdsById: listFilledClassIds(codeBlocks),
     routerIds: listRouterIds(codeBlocks),
   }
   const stepIdsById = new Map(codeBlocks.map((block) => [block.id, listSteps(block, index)] as const))

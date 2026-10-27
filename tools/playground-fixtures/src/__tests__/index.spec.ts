@@ -51,7 +51,7 @@ describe("getFixtureRepository", () => {
     })
   })
 
-  it.each(["demo-fastapi", "demo-nextjs", "demo-react", "demo-t3", "demo-vue"])("numbers the pull requests of %s in the order of the snapshots", async (caseName) => {
+  it.each(["demo-fastapi", "demo-nestjs", "demo-nextjs", "demo-react", "demo-t3", "demo-vue"])("numbers the pull requests of %s in the order of the snapshots", async (caseName) => {
     const repository = await getFixtureRepository(TEST_CASES_PATH, caseName)
     const fixtureNames = await getAllReviewArtifactFixturesByCase(TEST_CASES_PATH, caseName)
 

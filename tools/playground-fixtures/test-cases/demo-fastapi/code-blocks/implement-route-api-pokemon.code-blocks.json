@@ -6632,6 +6632,7 @@
         "diffSourceIds": [
           "src/pokedex/pokemon/routes.py#root-variable@7:1",
           "src/pokedex/pokemon/routes.py#function@10:1",
+          "src/pokedex/pokemon/schemas.py#class@38:1",
           "src/pokedex/pokemon/service.py#function@10:1",
           "src/pokedex/pokemon/service.py#external-value@11:5",
           "src/pokedex/pokemon/service.py#data-fetch@11:13",
@@ -6755,7 +6756,8 @@
         "usedByIds": [],
         "nextBlockIds": [
           "src/pokedex/pokemon/routes.py#root-variable@7:1",
-          "src/pokedex/pokemon/service.py#function@10:1"
+          "src/pokedex/pokemon/service.py#function@10:1",
+          "src/pokedex/pokemon/schemas.py#class@38:1"
         ],
         "handedFrom": [],
         "filePath": "src/pokedex/pokemon/routes.py",
@@ -7108,6 +7110,7 @@
         "diffSourceIds": [
           "src/pokedex/pokemon/routes.py#root-variable@7:1",
           "src/pokedex/pokemon/routes.py#function@15:1",
+          "src/pokedex/pokemon/schemas.py#class@38:1",
           "src/pokedex/pokemon/service.py#function@17:1",
           "src/pokedex/pokemon/service.py#external-value@18:5",
           "src/pokedex/pokemon/service.py#data-fetch@18:15",
@@ -7230,7 +7233,8 @@
         "usedByIds": [],
         "nextBlockIds": [
           "src/pokedex/pokemon/routes.py#root-variable@7:1",
-          "src/pokedex/pokemon/service.py#function@17:1"
+          "src/pokedex/pokemon/service.py#function@17:1",
+          "src/pokedex/pokemon/schemas.py#class@38:1"
         ],
         "handedFrom": [],
         "filePath": "src/pokedex/pokemon/routes.py",
@@ -7584,6 +7588,15 @@
           "src/pokedex/pokemon/models.py#class@7:1",
           "src/pokedex/pokemon/routes.py#root-variable@7:1",
           "src/pokedex/pokemon/routes.py#function@20:1",
+          "src/pokedex/pokemon/schemas.py#root-variable@3:1",
+          "src/pokedex/pokemon/schemas.py#class@9:1",
+          "src/pokedex/pokemon/schemas.py#method@16:5",
+          "src/pokedex/pokemon/schemas.py#condition@19:9",
+          "src/pokedex/pokemon/schemas.py#throw@20:13",
+          "src/pokedex/pokemon/schemas.py#method@23:5",
+          "src/pokedex/pokemon/schemas.py#condition@25:9",
+          "src/pokedex/pokemon/schemas.py#throw@26:13",
+          "src/pokedex/pokemon/schemas.py#class@38:1",
           "src/pokedex/pokemon/service.py#function@24:1",
           "src/pokedex/pokemon/service.py#condition@25:5",
           "src/pokedex/pokemon/service.py#call@26:9",
@@ -7687,7 +7700,9 @@
         "usedByIds": [],
         "nextBlockIds": [
           "src/pokedex/pokemon/routes.py#root-variable@7:1",
-          "src/pokedex/pokemon/service.py#function@24:1"
+          "src/pokedex/pokemon/service.py#function@24:1",
+          "src/pokedex/pokemon/schemas.py#class@9:1",
+          "src/pokedex/pokemon/schemas.py#class@38:1"
         ],
         "handedFrom": [],
         "filePath": "src/pokedex/pokemon/routes.py",
@@ -8093,6 +8108,8 @@
         "diffSourceIds": [
           "src/pokedex/pokemon/routes.py#root-variable@7:1",
           "src/pokedex/pokemon/routes.py#function@25:1",
+          "src/pokedex/pokemon/schemas.py#class@30:1",
+          "src/pokedex/pokemon/schemas.py#class@38:1",
           "src/pokedex/pokemon/service.py#function@17:1",
           "src/pokedex/pokemon/service.py#external-value@18:5",
           "src/pokedex/pokemon/service.py#data-fetch@18:15",
@@ -8218,7 +8235,9 @@
         "usedByIds": [],
         "nextBlockIds": [
           "src/pokedex/pokemon/routes.py#root-variable@7:1",
-          "src/pokedex/pokemon/service.py#function@34:1"
+          "src/pokedex/pokemon/service.py#function@34:1",
+          "src/pokedex/pokemon/schemas.py#class@30:1",
+          "src/pokedex/pokemon/schemas.py#class@38:1"
         ],
         "handedFrom": [],
         "filePath": "src/pokedex/pokemon/routes.py",
@@ -21751,10 +21770,7 @@
       "src/pokedex/pokemon/routes.py#function@15:1",
       "src/pokedex/pokemon/routes.py#function@20:1",
       "src/pokedex/pokemon/routes.py#function@25:1",
-      "src/pokedex/pokemon/routes.py#function@30:1",
-      "src/pokedex/pokemon/schemas.py#class@9:1",
-      "src/pokedex/pokemon/schemas.py#class@30:1",
-      "src/pokedex/pokemon/schemas.py#class@38:1"
+      "src/pokedex/pokemon/routes.py#function@30:1"
     ]
   },
   {

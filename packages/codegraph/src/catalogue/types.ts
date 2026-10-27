@@ -183,11 +183,18 @@ export type LocationHolds = "globs" | "paths" | "folders" | "names" | "files" | 
 
 export type LocationBase = "config" | "package"
 
+export interface ScriptFlag {
+  readonly scripts: string
+  readonly command: string
+  readonly flags: readonly string[]
+}
+
 export interface ConfigFile {
   readonly glob: string
   readonly under?: string
   readonly base?: LocationBase
   readonly levelsUp?: number
+  readonly namedBy?: ScriptFlag
 }
 
 export interface LocationKey {
@@ -200,6 +207,7 @@ export interface LocationKey {
   readonly defaultBase?: LocationBase
   readonly separator?: string
   readonly isScope?: boolean
+  readonly isBase?: boolean
 }
 
 export interface LocationSetting {
