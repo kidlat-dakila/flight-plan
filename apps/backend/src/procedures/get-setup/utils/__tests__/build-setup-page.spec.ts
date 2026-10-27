@@ -16,6 +16,7 @@ const sourceOf = (overrides: Partial<SetupPageSource>): SetupPageSource => ({
   step: "agents",
   agentDetections: [],
   agentModels: {},
+  terminalApps: [],
   cliProbes: [],
   repositoryForges: {},
   repositoryIdentities: {},
@@ -245,6 +246,41 @@ describe("buildSetupPage", () => {
       defaultAgent: null,
       agents: [{ agent: "claude", isPicked: true }, { agent: "codex", isPicked: false }, { agent: "cursor", isPicked: false }],
     })
+  })
+
+  it("offers only the installed terminal apps, in Flight Plan's order and with their names", () => {
+    const { form } = buildSetupPage(sourceOf({ terminalApps: ["warp", "terminal", "ghostty"] }))
+
+    expect(form).toMatchObject({
+      terminalApps: [
+        { terminalApp: "terminal", label: "Terminal" },
+        { terminalApp: "ghostty", label: "Ghostty" },
+        { terminalApp: "warp", label: "Warp" },
+      ],
+    })
+  })
+
+  it("selects the saved terminal app while it is installed", () => {
+    const { form } = buildSetupPage(sourceOf({ setup: AT_CONFIGURATION, terminalApps: ["terminal", "iterm"] }))
+
+    expect(form).toMatchObject({ terminalApp: "iterm" })
+  })
+
+  it("selects Terminal when the saved terminal app is gone, or when none is saved", () => {
+    expect(buildSetupPage(sourceOf({ setup: AT_CONFIGURATION, terminalApps: ["terminal", "warp"] })).form).toMatchObject({
+      terminalApp: "terminal",
+    })
+    expect(buildSetupPage(sourceOf({ terminalApps: ["iterm", "terminal"] })).form).toMatchObject({ terminalApp: "terminal" })
+  })
+
+  it("selects the first installed terminal app when neither the saved one nor Terminal is installed", () => {
+    expect(buildSetupPage(sourceOf({ setup: AT_CONFIGURATION, terminalApps: ["warp", "ghostty"] })).form).toMatchObject({
+      terminalApp: "ghostty",
+    })
+  })
+
+  it("selects no terminal app when the machine has none Flight Plan can open", () => {
+    expect(buildSetupPage(sourceOf({})).form).toMatchObject({ terminalApps: [], terminalApp: null })
   })
 
   it("asks no way of talking to the agent, since Flight Plan always starts it itself", () => {

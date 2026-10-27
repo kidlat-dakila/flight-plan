@@ -59,6 +59,13 @@ describe("where a repository keeps its tests", () => {
 
       expect(testsOf(files, candidates)).toStrictEqual(["packages/cart/checks/total.ts", "packages/users/src/name.test.ts", "src/app.test.ts"])
     })
+
+    it("reads a configuration a script names with --config, relative to the folder of the package", () => {
+      const manifest = JSON.stringify({ scripts: { "test:checks": "vitest run --config ./config/vitest.checks.ts" }, devDependencies: { vitest: "4.1.6" } })
+      const files = { "package.json": manifest, "config/vitest.checks.ts": codeOf("export default defineConfig({ test: { include: [\"tests/**/*.check.ts\"] } })") }
+
+      expect(testsOf(files)).toStrictEqual(["src/cart.test.ts", "src/cart.spec.tsx", "tests/cart.check.ts", "e2e/checkout.spec.ts"])
+    })
   })
 
   describe("Jest", () => {
@@ -100,6 +107,65 @@ describe("where a repository keeps its tests", () => {
 
       expect(testsOf(files, candidates)).toStrictEqual(["apps/web/src/total.check.ts", "apps/api/src/order.test.ts"])
     })
+
+    describe("a configuration a script names with --config", () => {
+      const nestCandidates = ["src/app.controller.spec.ts", "src/app.service.ts", "test/pokemon.e2e-spec.ts", "test/app.ts"]
+      const e2eConfig = JSON.stringify({ moduleFileExtensions: ["js", "json", "ts"], rootDir: ".", testEnvironment: "node", testRegex: ".e2e-spec.ts$", transform: { "^.+\\.(t|j)s$": "ts-jest" } })
+
+      it("reads the e2e configuration of a stock NestJS project beside the jest key of package.json", () => {
+        const manifest = JSON.stringify({
+          scripts: { "test": "jest", "test:e2e": "jest --config ./test/jest-e2e.json" },
+          devDependencies: { jest: "29.7.0" },
+          jest: { moduleFileExtensions: ["js", "json", "ts"], rootDir: "src", testRegex: ".*\\.spec\\.ts$", testEnvironment: "node" },
+        })
+
+        expect(testsOf({ "package.json": manifest, "test/jest-e2e.json": e2eConfig }, nestCandidates)).toStrictEqual(["src/app.controller.spec.ts", "test/pokemon.e2e-spec.ts"])
+      })
+
+      it("keeps the default testMatch beside it when no configuration of its own is there", () => {
+        const manifest = JSON.stringify({ scripts: { "test": "jest", "test:e2e": "jest --config ./test/jest-e2e.json" }, devDependencies: { jest: "29.7.0" } })
+
+        expect(testsOf({ "package.json": manifest, "test/jest-e2e.json": e2eConfig }, nestCandidates)).toStrictEqual(["src/app.controller.spec.ts", "test/pokemon.e2e-spec.ts"])
+      })
+
+      it("reads the path after -c and after --config=", () => {
+        const manifest = JSON.stringify({ scripts: { "test:e2e": "cross-env CI=1 jest -c jest.e2e.config.js --runInBand", "test:checks": "npm run build && npx jest --config=checks/jest.json" }, devDependencies: { jest: "29.7.0" } })
+        const files = {
+          "package.json": manifest,
+          "jest.e2e.config.js": codeOf("module.exports = { testMatch: [\"<rootDir>/e2e/**/*.flow.ts\"] }"),
+          "checks/jest.json": JSON.stringify({ testMatch: ["**/*.check.ts"] }),
+        }
+
+        expect(testsOf(files, ["e2e/checkout.flow.ts", "tests/cart.check.ts", "checks/cart.check.ts", "src/cart.ts"])).toStrictEqual(["e2e/checkout.flow.ts", "checks/cart.check.ts"])
+      })
+
+      it("moves its base to the rootDir it writes", () => {
+        const manifest = JSON.stringify({ scripts: { e2e: "jest --config config/jest.e2e.json" }, devDependencies: { jest: "29.7.0" } })
+        const files = { "package.json": manifest, "config/jest.e2e.json": JSON.stringify({ rootDir: "..", roots: ["<rootDir>/tests"], testMatch: ["**/*.check.ts"] }) }
+
+        expect(testsOf(files, ["tests/cart.check.ts", "config/cart.check.ts", "src/cart.check.ts"])).toStrictEqual(["tests/cart.check.ts"])
+      })
+
+      it("reads no configuration from another command, a JSON value or a file the repository does not hold", () => {
+        const manifest = JSON.stringify({
+          scripts: { "lint": "eslint -c e2e/rules.json .", "test:inline": "jest --config '{\"testMatch\":[\"**/*.check.ts\"]}'", "test:gone": "jest --config ./missing.json" },
+          devDependencies: { jest: "29.7.0" },
+        })
+        const files = { "package.json": manifest, "e2e/rules.json": JSON.stringify({ testMatch: ["**/*.check.ts"] }) }
+
+        expect(testsOf(files, ["tests/cart.check.ts", "src/cart.test.ts"])).toStrictEqual(["src/cart.test.ts"])
+      })
+
+      it("resolves the path against the folder of the package whose script names it", () => {
+        const files = {
+          "package.json": manifestWith(),
+          "apps/api/package.json": JSON.stringify({ scripts: { "test:e2e": "jest --config ./test/jest-e2e.json" }, devDependencies: { jest: "29.7.0" } }),
+          "apps/api/test/jest-e2e.json": e2eConfig,
+        }
+
+        expect(testsOf(files, ["apps/api/test/pokemon.e2e-spec.ts", "apps/api/test/app.ts", "test/pokemon.e2e-spec.ts"])).toStrictEqual(["apps/api/test/pokemon.e2e-spec.ts"])
+      })
+    })
   })
 
   describe("Playwright", () => {
@@ -131,6 +197,17 @@ describe("where a repository keeps its tests", () => {
       const candidates = ["apps/web/flows/login.spec.ts", "apps/web/src/login.spec.ts", "apps/admin/src/login.spec.ts"]
 
       expect(testsOf(files, candidates)).toStrictEqual(["apps/web/flows/login.spec.ts", "apps/admin/src/login.spec.ts"])
+    })
+
+    it("reads a configuration a script names with -c beside its own, from the folder of that configuration", () => {
+      const manifest = JSON.stringify({ scripts: { "e2e:smoke": "playwright test -c config/playwright.smoke.ts" }, devDependencies: { "@playwright/test": "1.58.2" } })
+      const files = {
+        "package.json": manifest,
+        "playwright.config.ts": codeOf("export default defineConfig({ testDir: \"./e2e\" })"),
+        "config/playwright.smoke.ts": codeOf("export default defineConfig({ testDir: \"../smoke\" })"),
+      }
+
+      expect(testsOf(files, ["e2e/checkout.spec.ts", "smoke/home.spec.ts", "src/cart.spec.tsx"])).toStrictEqual(["e2e/checkout.spec.ts", "smoke/home.spec.ts"])
     })
   })
 

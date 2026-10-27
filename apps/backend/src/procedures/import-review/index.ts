@@ -27,6 +27,7 @@ export const importReview = async (input: ImportReviewInput, context: ProcedureC
       id: context.conversationEnvironment.newId(),
       body: fetchingRequestOf(key, input.artifactUrl, context.importFiles.pathOf(key)),
       reference: null,
+      excerpt: null,
       sentAt: requestedAt,
     }],
     context,

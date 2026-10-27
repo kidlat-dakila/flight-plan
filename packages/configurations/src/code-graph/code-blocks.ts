@@ -103,6 +103,8 @@ export const CODE_BLOCK_CLASSIFICATIONS = [
 
 export type CodeBlockClassification = (typeof CODE_BLOCK_CLASSIFICATIONS)[number]
 
+export const DEFAULT_SPOTLIGHT: readonly CodeBlockClassification[] = ["page", "component", "api-route", "database-read-write", "data-model", "hook"]
+
 export const primaryClassificationOf = (classifications: readonly CodeBlockClassification[]): CodeBlockClassification | null =>
   classifications.length === 0 ? null : classifications[0]
 
@@ -182,6 +184,7 @@ export interface BlockCard {
   readonly routePaths?: readonly string[]
   readonly isAppWide?: boolean
   readonly isAppMount?: boolean
+  readonly isOnNoRouter?: boolean
   readonly mountedModule?: string
   readonly routePatterns?: readonly RoutePattern[]
   readonly excludedRoutePatterns?: readonly RoutePattern[]

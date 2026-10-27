@@ -9,7 +9,7 @@ When something goes wrong in Flight Plan, you don't have to work out what happen
 
 Every error Flight Plan shows you comes with a **Troubleshoot** button: on a page that couldn't load, under a form that couldn't save, and in the message at the bottom of a review.
 
-Press it, and Flight Plan shows you the error and asks what you were doing when it happened. You can leave that empty. Press **Launch Claude**, and Flight Plan opens Terminal and starts Claude with this command:
+Press it, and Flight Plan shows you the error and asks what you were doing when it happened. You can leave that empty. Press **Launch Claude**, and Flight Plan opens a new tab in your [terminal app](/docs/setup/agent-integration/#terminal-app) and starts Claude with this command:
 
 ```text
 /flightplan:troubleshoot <log id>
@@ -25,7 +25,7 @@ Something can look wrong without any error, like a diagram that stays empty or a
 
 Troubleshooting runs in Claude, so Claude has to be one of your agents. You add it in Settings, under [Agents](/docs/setup/agent-integration/).
 
-Flight Plan opens Terminal on macOS. On other systems it shows you the command instead. Copy it and run it in a terminal.
+Flight Plan opens your terminal app on macOS. On other systems it shows you the command instead. Copy it and run it in a terminal.
 
 ## What Flight Plan logs
 

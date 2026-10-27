@@ -20,7 +20,7 @@ The ⚙ menu in the header switches between dark and light mode, and links to ea
 
 | Settings page | What it holds |
 |---|---|
-| **Agent integration** | Your agents. Saving installs Flight Plan into each agent again. |
+| **Agent integration** | Your agents and your terminal app. Saving installs Flight Plan into each agent again. |
 | **Git integration** | Your connections to GitHub, GitLab and Bitbucket. |
 | **Prompt configurations** | The presets, your own configurations, and which one is the default. See [Prompt configurations](/docs/presets/). |
 | **Repositories** | The repositories you follow and the team members you track in each one. Each change is saved as you make it. |

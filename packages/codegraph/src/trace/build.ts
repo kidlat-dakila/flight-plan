@@ -206,6 +206,7 @@ const toNodeView = (node: TraceNode, setting: CodeViewSetting, context: ReviewVi
     triggerLabels: storedRows === null ? node.triggerLabels.map(toTriggerLabelView) : storedRows.map((row) => toStoredRowView(row, node)),
     rowGroups: storedRows === null ? listRowGroups(node, rows) : groupStoredRows(storedRows),
     position: node.position ?? null,
+    ...(node.width === undefined ? {} : { width: node.width }),
     children: node.children.map((child) => toNodeView(child, setting, context)),
   }
 }

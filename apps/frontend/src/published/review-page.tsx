@@ -6,8 +6,8 @@ import SelectionReference from "@/routes/pr-reviews/$repoName/-components/Select
 import UnassignedFilesDialog from "@/routes/pr-reviews/$repoName/-components/UnassignedFilesDialog"
 import WalkthroughFileSection from "@/routes/pr-reviews/$repoName/-components/WalkthroughFileSection"
 import WalkthroughScrolling from "@/routes/pr-reviews/$repoName/-components/WalkthroughScrolling"
-import { useCodeSelection } from "@/routes/pr-reviews/$repoName/-hooks/use-code-selection"
 import { useReadingPositionStore } from "@/routes/pr-reviews/$repoName/-hooks/use-reading-position"
+import { useTextSelection } from "@/routes/pr-reviews/$repoName/-hooks/use-text-selection"
 import { useWalkthroughNavigation } from "@/routes/pr-reviews/$repoName/-hooks/use-walkthrough-navigation"
 import { useWaypointStepping, waypointAnchorIdsOf } from "@/routes/pr-reviews/$repoName/-hooks/use-waypoint-stepping"
 import BandLine from "@flightplan/ui/BandLine"
@@ -79,7 +79,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
   const [isListingUnassignedFiles, setIsListingUnassignedFiles] = useState(false)
   const marking = useReviewedMarks(review)
   const stepping = useWaypointStepping(marking.segments)
-  const codeSelection = useCodeSelection()
+  const textSelection = useTextSelection()
   const railSections = [...marking.rail.groups.flatMap((group) => group.sections), ...marking.rail.sections]
   const readingPosition = useReadingPositionStore(
     railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId)]),
@@ -252,7 +252,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
           {isFeatureUnavailable
             ? <UnavailableFeatureDialog {...review.unavailableFeature} onClose={() => { setIsFeatureUnavailable(false) }} />
             : null}
-          <SelectionReference selection={codeSelection} onComment={showUnavailableFeature} onAsk={null} />
+          <SelectionReference selection={textSelection} agent={null} onComment={showUnavailableFeature} onAsk={null} />
           <WalkthroughScrolling walkthroughStore={stepping.store} />
           <ReviewNavigatorBar />
           <ReviewGuideTooltips reviewMode="teammate" />

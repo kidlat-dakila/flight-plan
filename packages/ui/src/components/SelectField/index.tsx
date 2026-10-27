@@ -8,6 +8,8 @@ interface SelectFieldProps {
   readonly options: readonly { readonly value: string, readonly label: string }[]
   readonly value: string
   readonly className?: string
+  readonly selectClassName?: string
+  readonly hint?: string | null
   readonly errorMessage?: string | null
   readonly onTroubleshoot?: (() => void) | null
   readonly isLabelHidden?: boolean
@@ -19,22 +21,27 @@ const SelectField = ({
   options,
   value,
   className,
+  selectClassName,
+  hint = null,
   errorMessage = null,
   onTroubleshoot = null,
   isLabelHidden = false,
   onChange,
 }: SelectFieldProps) => {
   const fieldId = useId()
+  const hintId = useId()
   const errorId = useId()
+  const describedBy = [hint === null ? null : hintId, errorMessage === null ? null : errorId].filter((id) => id !== null)
   return (
     <div className={cn("grid gap-1.5", className)}>
       <label htmlFor={fieldId} className={isLabelHidden ? "sr-only" : "text-sm font-bold"}>{label}</label>
-      <div className="relative">
+      {hint === null ? null : <p id={hintId} className="text-sm text-muted-foreground">{hint}</p>}
+      <div className={cn("relative", selectClassName)}>
         <select
           id={fieldId}
           value={value}
           aria-invalid={errorMessage !== null}
-          aria-describedby={errorMessage === null ? undefined : errorId}
+          aria-describedby={describedBy.length === 0 ? undefined : describedBy.join(" ")}
           className="h-8 w-full cursor-pointer appearance-none rounded-lg border border-input bg-card pr-8 pl-2.5 text-sm transition-colors duration-[180ms] ease-out outline-none hover:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20"
           onChange={(event) => { onChange(event.target.value) }}
         >

@@ -40,10 +40,11 @@ const blockListsOf = (nodeId: string): [string, string, string[]][] =>
 describe("the head of a node of the trace band", () => {
   it("gives the name of the code and its path down to the last two folders", () => {
     const deepPath = "apps/shop/src/routes/orders/index.ts"
-    const segment = createSegment({ traceDiagram: presentDiagramOf({ [deepPath]: PROMO }, { [deepPath]: [rangeAt(2, 10, 2, 20)] }) })
-    const [node] = buildTrace(segment, "", [], createViewContext()).diagram?.nodes ?? []
+    const files = { [deepPath]: PROMO, "apps/shop/src/routes/orders/apply.ts": codeOf("import { fetchPromo } from \"./index\"", "export const applyPromo = (code) => fetchPromo(code)") }
+    const segment = createSegment({ traceDiagram: presentDiagramOf(files, { [deepPath]: [rangeAt(2, 10, 2, 20)] }) })
+    const node = buildTrace(segment, "", [], createViewContext()).diagram?.nodes.find((one) => one.name === "fetchPromo")
 
-    expect([node.name, node.shortPath]).toStrictEqual(["fetchPromo", "routes/orders/index.ts"])
+    expect([node?.name, node?.shortPath]).toStrictEqual(["fetchPromo", "routes/orders/index.ts"])
   })
 })
 
@@ -350,6 +351,7 @@ const RENAME_FILES = {
     "  return users.map((u) => { if (u.id) { return { ...u, n: 1 } } return u })",
     "}",
   ),
+  "src/rename-form.ts": codeOf("import { renameUser } from \"./rename\"", "export const submitRename = (param) => renameUser(param)"),
 }
 const RENAME = "src/rename.ts#function@2:1"
 const STORE_FILES = {
@@ -367,6 +369,13 @@ const STORE_FILES = {
     "    })",
     "  },",
     "}))",
+  ),
+  "src/add-button.tsx": codeOf(
+    "import { useCartStore } from \"./store\"",
+    "export const AddButton = ({ product }) => {",
+    "  const addItem = useCartStore((state) => state.addItem)",
+    "  return <button onClick={() => addItem(product)}>Add</button>",
+    "}",
   ),
 }
 const HELPER_FILES = {
@@ -418,7 +427,8 @@ describe("the steps of a node of the trace band", () => {
 
   it("lists a value at the top level of its file that is not exported as a step of the node that reads it, marked as changed with the lines of its declaration", () => {
     const orders = codeOf("const ORDERS_KEY = [\"orders\"]", "export const loadOrders = () => {", "  return ORDERS_KEY", "}")
-    const steps = stepsOf(bandOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(1, 20, 1, 29)] }), "src/orders.ts#function@2:1")
+    const page = codeOf("import { loadOrders } from \"./orders\"", "export const showOrders = () => loadOrders()")
+    const steps = stepsOf(bandOf({ "src/orders.ts": orders, "src/orders-page.ts": page }, { "src/orders.ts": [rangeAt(1, 20, 1, 29)] }), "src/orders.ts#function@2:1")
 
     expect(steps.map(({ name, change, lines }) => [name, change, lines])).toStrictEqual([["ORDERS_KEY", "modified", [[1, 1]]]])
   })
@@ -433,7 +443,11 @@ describe("the steps of a node of the trace band", () => {
     const band = bandOf(STORE_FILES, { "src/store.ts": [rangeAt(5, 1, 11, 10)] })
     const namedRows = (nodeId: string): [string, string | null][] => stepsOf(band, nodeId).map(({ name, change }) => [name, change])
 
-    expect(listNodeViews(band.nodes).map((node) => [node.id, node.name])).toStrictEqual([["src/store.ts#state@2:1", "useCartStore"]])
+    expect(listNodeViews(band.nodes).map((node) => [node.id, node.name])).toStrictEqual([
+      ["src/add-button.tsx#component@2:1", "AddButton"],
+      ["src/store.ts#state@2:1", "useCartStore"],
+      ["src/add-button.tsx#render-event@4:18", "button.onClick"],
+    ])
     expect(namedRows("src/store.ts#state@2:1")).toStrictEqual([["addItem", "modified"]])
   })
 
@@ -444,7 +458,10 @@ describe("the steps of a node of the trace band", () => {
   })
 
   it("names a step of several statements after the first two, and counts the others", () => {
-    const files = { "src/sum.ts": codeOf("export const sum = () => {", "  const one = 1", "  const two = 2", "  const three = 3", "  const four = 4", "  return one + two + three + four", "}") }
+    const files = {
+      "src/sum.ts": codeOf("export const sum = () => {", "  const one = 1", "  const two = 2", "  const three = 3", "  const four = 4", "  return one + two + three + four", "}"),
+      "src/total.ts": codeOf("import { sum } from \"./sum\"", "export const total = () => sum()"),
+    }
     const steps = stepsOf(bandOf(files, { "src/sum.ts": [rangeAt(2, 1, 5, 20)] }), "src/sum.ts#function@1:1")
 
     expect(steps.map(({ name, lines }) => [name, lines])).toStrictEqual([["one, two +2", [[2, 5]]]])

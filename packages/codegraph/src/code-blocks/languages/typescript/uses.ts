@@ -53,9 +53,19 @@ export const targetOf = (resolution: Resolution): ReadTarget =>
         filePath: resolution.variable.importedFilePath,
       }
 
+const BINDING_METHOD = "bind"
+
+const boundCallOf = (member: SyntaxNode): SyntaxNode | null => {
+  const call = member.parent
+  const isBinding = member.childForFieldName("property")?.text === BINDING_METHOD
+  return isBinding && call?.type === CALL_TYPE && isFieldOf(member, "function") ? call : null
+}
+
 export const chainFrom = (name: SyntaxNode): MemberChain => {
   const { parent } = name
   if (parent?.type !== MEMBER_TYPE || !isFieldOf(name, "object")) return { outermost: name, path: [] }
+  const bound = boundCallOf(parent)
+  if (bound !== null) return chainFrom(bound)
   const { outermost, path } = chainFrom(parent)
   return { outermost, path: [parent.childForFieldName("property")?.text ?? "", ...path] }
 }

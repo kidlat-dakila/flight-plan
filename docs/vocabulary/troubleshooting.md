@@ -26,7 +26,7 @@ A **troubleshoot request** is what the user asks Flight Plan to troubleshoot, sa
 
 The user makes one in the **Troubleshoot Dialog**. It opens from the Troubleshoot button in the top bar with no error, and from the Troubleshoot link of any error the web app shows from a failed call, with that error. A field message that only says what to fix has no link.
 
-Flight Plan then opens a terminal in the logs folder and starts Claude, the only agent that troubleshoots, with `/flightplan:troubleshoot <log id>`. What the user wrote never goes on the command line. Where Flight Plan cannot open a terminal, the dialog gives the command to copy.
+Flight Plan then opens a terminal in the logs folder and starts Claude, the only agent that troubleshoots, with `/flightplan:troubleshoot <log id>` (`troubleshooting.request`, `procedures/request-troubleshooting/`). The terminal is a new tab in the setup's **terminal app** (`terminalApp` of the agents choice, Terminal by default), opened the same way as a live agent's (see [agent conversation](agent-conversation.md)), and the dialog's message names that app. What the user wrote never goes on the command line. Where Flight Plan cannot open a terminal, the dialog gives the command to copy.
 
 ## The troubleshoot skill
 

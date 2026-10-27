@@ -13,7 +13,11 @@
       "continuous": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "astro dev"
+        "command": "portless --name site.flightplan --app-port 4400 astro dev",
+        "env": {
+          "PORTLESS_PORT": "443",
+          "PORTLESS_SYNC_HOSTS": "0"
+        }
       },
       "dependsOn": [
         "watch-demo",

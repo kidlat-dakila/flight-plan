@@ -25,9 +25,14 @@ export const classOfDeclaredProperty = (block: CodeBlock): CodeBlock | null => {
 
 const ROUTE_KIND = "route"
 const CONTROLLER: CardPart = "controller"
+const MOUNT: CardPart = "mount"
 const DECLARING_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>([PARAMETER, PROPERTY])
 
 export const isController = (block: CodeBlock): boolean => block.type === CLASS && block.card?.kind === ROUTE_KIND && block.card.part === CONTROLLER
+
+const isMount = (block: CodeBlock): boolean => block.card?.kind === ROUTE_KIND && block.card.part === MOUNT
+
+export const isRouterClass = (block: CodeBlock): boolean => isController(block) || (block.type === CLASS && block.childrenBlocks.some(isMount))
 
 export const isDrawnInAnotherCard = (method: CodeBlock): boolean => (method.cardOwner ?? null) !== null || method.card?.kind === ROUTE_KIND
 

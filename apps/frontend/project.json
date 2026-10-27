@@ -18,7 +18,11 @@
         }
       ],
       "options": {
-        "command": "until nc -z localhost 3000; do sleep 0.2; done; vite"
+        "command": "until nc -z localhost 3000; do sleep 0.2; done; portless --name flightplan --app-port 4200 vite",
+        "env": {
+          "PORTLESS_PORT": "443",
+          "PORTLESS_SYNC_HOSTS": "0"
+        }
       }
     },
     "build-published": {

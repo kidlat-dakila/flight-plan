@@ -1,8 +1,9 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
-import { useRef, useState, type ComponentProps, type ReactNode, type RefObject } from "react"
+import { use, useRef, useState, type ComponentProps, type ReactNode, type RefObject } from "react"
 import IconButton from "@/components/IconButton"
 import PanelResizeHandle from "@/components/PanelResizeHandle"
 import { ReviewNavigatorBar } from "@/components/ReviewNavigator"
+import { SegmentIdContext, segmentMark } from "@/lib/artifact-part"
 import { DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM, offsetZoomedAt, wheelTravelPx, zoomAfterWheel, zoomedIn, zoomedOut } from "@/lib/board-zoom"
 import type { Point } from "@/lib/diagram-path"
 import { ESCAPE_KEY_REASON } from "@/lib/dialog-close"
@@ -99,6 +100,7 @@ const STICKY_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} sticky top-[calc(var(--
 const FULL_SCREEN_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} absolute inset-x-0 top-2`
 
 const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, panel, actions = null, navigation = null, renderCanvas = null, children = null, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {
+  const segmentId = use(SegmentIdContext)
   const [zoom, setZoom] = useState(DEFAULT_ZOOM)
   const { offset, isDragging, startDrag, swallowClickAfterDrag, panTo } = useDragPan()
   const boardRef = useRef<HTMLDivElement>(null)
@@ -205,6 +207,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
             initialFocus={popupRef}
             aria-label={label}
             data-navigator-scope=""
+            {...(segmentId === null ? {} : segmentMark(segmentId))}
             className="fixed inset-0 z-50 flex bg-background text-foreground outline-none duration-150 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
           >
             <div ref={listenToWheel} className="relative min-w-0 flex-1">

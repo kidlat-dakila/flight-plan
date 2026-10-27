@@ -1,7 +1,7 @@
 import type { RepositoryActivity } from "@/procedures/list-recent-repositories/utils/repository-activity"
 import { matchUsers } from "@/procedures/search-repository-authors/utils/match-users"
 import type { AgentModels } from "./agent-models"
-import { DEFAULT_MODEL, type AgentName, type RepositoryAuthor, type SetupForge } from "./setup"
+import { DEFAULT_MODEL, type AgentName, type RepositoryAuthor, type SetupForge, type TerminalApp } from "./setup"
 import type {
   AuthorSource,
   FolderEntry,
@@ -12,6 +12,7 @@ import type {
 
 const HOME_PATH = "/Users/dev"
 const AGENT_WITHOUT_CLI: AgentName = "cursor"
+const MOCK_TERMINAL_APPS: readonly TerminalApp[] = ["terminal", "iterm"]
 const MOCK_FORGE_WITHOUT_ACCOUNT: SetupForge = "git"
 const ROOT_PATH = "/"
 const PATH_SEPARATOR = "/"
@@ -138,6 +139,7 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
       { agent: "cursor", installPath: null, hasCli: false },
     ]),
   hasAgentCli: async (agent) => await Promise.resolve(agent !== AGENT_WITHOUT_CLI),
+  detectTerminalApps: async () => await Promise.resolve(MOCK_TERMINAL_APPS),
   listAgentModels: async (agent) => await Promise.resolve(MOCK_AGENT_MODELS[agent] ?? []),
   installAgent: async () => await Promise.resolve({ kind: "installed" }),
   isAgentInstallCurrent: async () => await Promise.resolve(true),

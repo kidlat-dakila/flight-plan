@@ -108,6 +108,7 @@ const toEntry = ({ event }: JournalEntry, journal: readonly JournalEntry[], now:
       author: "reviewer",
       authorLabel: REVIEWER_LABEL,
       reference: event.reference,
+      excerpt: event.excerpt,
       body: parseMessage(event.body),
       timeLabel: formatRelativeTime(event.sentAt, now),
     }
@@ -119,6 +120,7 @@ const toEntry = ({ event }: JournalEntry, journal: readonly JournalEntry[], now:
       author: "agent",
       authorLabel: AGENT_LABEL,
       reference: null,
+      excerpt: null,
       body: parseMessage(event.body),
       timeLabel: formatRelativeTime(event.sentAt, now),
     }

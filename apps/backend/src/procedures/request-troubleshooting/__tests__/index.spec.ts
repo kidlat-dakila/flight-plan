@@ -1,5 +1,5 @@
-import { WITH_CLAUDE } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
-import { EMPTY_SETUP, type Setup } from "@/procedures/get-setup/utils/setup"
+import { CLAUDE_AGENTS, WITH_CLAUDE } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
+import { EMPTY_SETUP, type Setup, type TerminalApp } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import type { TerminalOpener, TerminalOpening } from "@/procedures/open-agent-terminal/utils/terminal-opener"
 import { createTestErrorLog, errorEntryOf, LOGS_FOLDER } from "@/procedures/record-error/utils/__tests__/error-log-fixture"
@@ -14,6 +14,10 @@ const PAGE = { path: "/settings/agents", title: "Agents" }
 
 const INPUT: RequestTroubleshootingInput = { errorLogId: ATTACHED_ID, shownError: "The token was refused.", description: "I saved the agents.", page: PAGE }
 
+const OPENED: TerminalOpening = { kind: "opened", tab: null, isWindowFallback: false }
+
+const setupWith = (terminalApp: TerminalApp): Setup => ({ ...WITH_CLAUDE, agents: { ...CLAUDE_AGENTS, terminalApp } })
+
 const openerOf = (opening: TerminalOpening) => vi.fn<TerminalOpener>(async () => await Promise.resolve(opening))
 
 const contextOf = (openTerminal: TerminalOpener | null, setup: Setup = WITH_CLAUDE) => {
@@ -23,12 +27,13 @@ const contextOf = (openTerminal: TerminalOpener | null, setup: Setup = WITH_CLAU
 
 describe("requestTroubleshooting", () => {
   it("saves the request and starts Claude on it in Terminal, in the logs folder", async () => {
-    const opener = openerOf({ kind: "opened", window: null })
+    const opener = openerOf(OPENED)
     const { context, storage } = contextOf(opener)
 
     await expect(requestTroubleshooting(INPUT, context)).resolves.toStrictEqual({ kind: "opened", message: "Claude is starting in Terminal to troubleshoot." })
     expect(opener).toHaveBeenCalledWith(
       `cd '/Users/dana/.flightplan/logs' && claude '/flightplan:troubleshoot ${REQUEST_ID}' '--model' 'opus' '--allowedTools' 'mcp__plugin_flightplan_flightplan__*' 'WebFetch(domain:github.com)' 'WebFetch(domain:raw.githubusercontent.com)'`,
+      "terminal",
     )
     await expect(storage.read(REQUEST_ID)).resolves.toMatchObject({
       kind: "request",
@@ -38,6 +43,23 @@ describe("requestTroubleshooting", () => {
       errorLogId: ATTACHED_ID,
       recentErrorLogIds: [OLDER_ID],
       agent: "Claude",
+    })
+  })
+
+  it("starts the agent in the terminal app the setup chose, and names it", async () => {
+    const opener = openerOf(OPENED)
+    const { context } = contextOf(opener, setupWith("ghostty"))
+
+    await expect(requestTroubleshooting(INPUT, context)).resolves.toStrictEqual({ kind: "opened", message: "Claude is starting in Ghostty to troubleshoot." })
+    expect(opener.mock.calls[0]?.[1]).toBe("ghostty")
+  })
+
+  it("tells how to get tabs when Terminal opened a window because macOS refused the keystroke", async () => {
+    const { context } = contextOf(openerOf({ ...OPENED, isWindowFallback: true }))
+
+    await expect(requestTroubleshooting(INPUT, context)).resolves.toStrictEqual({
+      kind: "opened",
+      message: "Claude is starting in a new Terminal window to troubleshoot. To open tabs instead, allow Flight Plan in System Settings under Privacy & Security, Accessibility.",
     })
   })
 
@@ -51,7 +73,7 @@ describe("requestTroubleshooting", () => {
     })
   })
 
-  it("logs why Terminal could not be opened and gives the command to copy", async () => {
+  it("logs why the terminal app could not be opened and gives the command to copy", async () => {
     const { context, storage } = contextOf(openerOf({ kind: "failed", reason: "Not allowed." }))
 
     await expect(requestTroubleshooting(INPUT, context)).resolves.toMatchObject({
@@ -59,10 +81,13 @@ describe("requestTroubleshooting", () => {
       message: "Flight Plan could not open Terminal. Not allowed. Copy the command and run it in a terminal yourself.",
     })
     await expect(storage.read("20261023-142530-000002")).resolves.toMatchObject({ source: "Troubleshoot terminal", message: "Not allowed." })
+    await expect(requestTroubleshooting(INPUT, contextOf(openerOf({ kind: "failed", reason: "Not allowed." }), setupWith("iterm")).context)).resolves.toMatchObject({
+      message: "Flight Plan could not open iTerm2. Not allowed. Copy the command and run it in a terminal yourself.",
+    })
   })
 
   it("asks what went wrong when there is no error to start from", async () => {
-    const { context, storage } = contextOf(openerOf({ kind: "opened", window: null }))
+    const { context, storage } = contextOf(openerOf(OPENED))
 
     await expect(requestTroubleshooting({ ...INPUT, errorLogId: null, shownError: null, description: "" }, context)).resolves.toStrictEqual({
       kind: "rejected",
@@ -73,7 +98,7 @@ describe("requestTroubleshooting", () => {
   })
 
   it("refuses when no agent can troubleshoot", async () => {
-    const { context } = contextOf(openerOf({ kind: "opened", window: null }), EMPTY_SETUP)
+    const { context } = contextOf(openerOf(OPENED), EMPTY_SETUP)
 
     await expect(requestTroubleshooting(INPUT, context)).resolves.toStrictEqual({
       kind: "rejected",
@@ -83,7 +108,7 @@ describe("requestTroubleshooting", () => {
   })
 
   it("keeps no log id that Flight Plan did not log", async () => {
-    const { context, storage } = contextOf(openerOf({ kind: "opened", window: null }))
+    const { context, storage } = contextOf(openerOf(OPENED))
 
     await requestTroubleshooting({ ...INPUT, errorLogId: "20261023-000000-abcdef" }, context)
 

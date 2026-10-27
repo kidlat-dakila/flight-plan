@@ -14,7 +14,7 @@ const collect = async (packets: AsyncIterable<ListenPacket>): Promise<readonly L
 
 const LISTEN_COMMAND = "curl -sN \"http://localhost:3000/api/storefront/pr-412/live/agent\""
 const STOP_TEXT = "The reviewer has been away from this review for 10 minutes, so Flight Plan ended this live session.\n\nDo not listen again. Tell the reviewer in this terminal that the session ended because the review was idle, and stop. They can start a new session from the review page."
-const TERMINAL_WINDOW = { windowId: 4120, tty: "/dev/ttys007" }
+const AGENT_TAB = { terminalApp: "iterm", tty: "/dev/ttys007" } as const
 const LISTEN_START = new Date("2026-10-03T12:00:00.000Z")
 const FIVE_MINUTES_MS = 300_000
 const SLOW_RELISTEN_MS = 20_000
@@ -81,14 +81,14 @@ describe("listenForReviewer", () => {
     vi.useRealTimers()
   })
 
-  it("tells the agent to stop once the reviewer has been away for the idle limit, and closes the terminal Flight Plan opened", async () => {
+  it("tells the agent to stop once the reviewer has been away for the idle limit, and closes the agent's tab Flight Plan opened", async () => {
     vi.useFakeTimers({ now: LISTEN_START })
     const { context, environment } = createConversationContext()
     const closeTerminal = vi.fn<TerminalCloser>(async () => {
       await Promise.resolve()
     })
     const timedContext = { ...context, now: () => new Date(), closeTerminal }
-    environment.agentTerminals.remember(KEY, TERMINAL_WINDOW)
+    environment.agentTerminals.remember(KEY, AGENT_TAB)
     const first = await listenForReviewer(KEY, timedContext, null)
     const firstCollecting = first.kind === "listening" ? collect(first.packets) : Promise.resolve([])
     await vi.advanceTimersByTimeAsync(LISTEN_WINDOW_MS)
@@ -100,10 +100,24 @@ describe("listenForReviewer", () => {
     await vi.advanceTimersByTimeAsync(IDLE_LIMIT_MS - LISTEN_WINDOW_MS - SLOW_RELISTEN_MS)
 
     await expect(secondCollecting).resolves.toStrictEqual([{ kind: "stop", text: STOP_TEXT }])
-    expect(closeTerminal).toHaveBeenCalledWith(TERMINAL_WINDOW)
-    expect(environment.agentTerminals.windowOf(KEY)).toBeNull()
+    expect(closeTerminal).toHaveBeenCalledWith(AGENT_TAB)
+    expect(environment.agentTerminals.tabOf(KEY)).toBeNull()
     expect(environment.reviewerActivity.activityOf(KEY).idleStoppedAt).toStrictEqual(new Date(LISTEN_START.getTime() + IDLE_LIMIT_MS))
     vi.useRealTimers()
+  })
+
+  it("closes nothing on an idle stop when Flight Plan opened no tab for the agent", async () => {
+    const { context, environment, clock } = createConversationContext()
+    const closeTerminal = vi.fn<TerminalCloser>(async () => {
+      await Promise.resolve()
+    })
+    environment.presence.markSeen(KEY, clock.now())
+    environment.reviewerActivity.markActive(KEY, new Date(clock.now().getTime() - IDLE_LIMIT_MS))
+
+    const listening = await listenForReviewer(KEY, { ...context, closeTerminal }, null)
+
+    await expect(listening.kind === "listening" ? collect(listening.packets) : Promise.resolve([])).resolves.toStrictEqual([{ kind: "stop", text: STOP_TEXT }])
+    expect(closeTerminal).not.toHaveBeenCalled()
   })
 
   it("keeps waiting while the reviewer is active on the review", async () => {

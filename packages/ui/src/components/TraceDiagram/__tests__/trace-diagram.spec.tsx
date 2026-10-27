@@ -1,8 +1,10 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
-import TraceDiagram, { type TraceAuthoring, type TraceEdge, type TraceNode } from "@/components/TraceDiagram"
+import TraceDiagram, { type CardMoving, type TraceAuthoring, type TraceEdge, type TraceNode } from "@/components/TraceDiagram"
+import { typeIconOf } from "@/components/TraceDiagram/type-icons"
 import { findNavigatorButton, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
 import { CODE_LINKS, codeLine, paragraph } from "@/lib/__tests__/review-samples"
-import { NODE_HEAD_HEIGHT } from "@/lib/trace-layout"
+import { ZOOM_STEP } from "@/lib/board-zoom"
+import { NODE_HEAD_HEIGHT, NODE_WIDTH } from "@/lib/trace-layout"
 
 const node = (overrides: Partial<TraceNode> & Pick<TraceNode, "id" | "label">): TraceNode => ({
   type: "function",
@@ -94,31 +96,31 @@ const EDGES: readonly TraceEdge[] = [
 ]
 
 const NODE_PLACES: readonly Place[] = [
-  { left: 24, top: 24, width: 284, height: 472 },
-  { left: 34, top: 120, width: 264, height: 362 },
-  { left: 404, top: 120, width: 264, height: 104 },
-  { left: 764, top: 52, width: 264, height: 104 },
-  { left: 764, top: 188, width: 264, height: 104 },
+  { left: 24, top: 24, width: 284, height: 504 },
+  { left: 34, top: 136, width: 264, height: 378 },
+  { left: 404, top: 136, width: 264, height: 120 },
+  { left: 764, top: 60, width: 264, height: 120 },
+  { left: 764, top: 212, width: 264, height: 120 },
 ]
 
 const LINE_PATHS: readonly string[] = [
-  "M 308 168 L 380 168 L 404 168",
-  "M 668 168 L 740 100 L 764 100",
-  "M 668 168 L 740 236 L 764 236",
+  "M 308 192 L 380 192 L 404 192",
+  "M 668 192 L 740 116 L 764 116",
+  "M 668 192 L 740 268 L 764 268",
 ]
 
 const PASSING_LINE_PATHS: readonly string[] = [
-  "M 308 168 L 380 168 L 404 168",
-  "M 668 168 L 740 85 L 764 85",
-  "M 668 168 L 740 212 L 764 212",
-  "M 308 72 L 404 72 L 668 72 L 740 67 L 764 67",
+  "M 308 192 L 380 192 L 404 192",
+  "M 668 192 L 740 97 L 764 97",
+  "M 668 192 L 740 240 L 764 240",
+  "M 308 80 L 404 80 L 668 80 L 740 79 L 764 79",
 ]
 
 const ROW_LINE_PATHS: readonly string[] = [
-  "M 308 320 L 380 320 L 404 320",
-  "M 668 320 L 692 320 L 692 784 L 0 784 L 0 444 L 24 444",
-  "M 288 320 L 308 320",
-  "M 24 444 L 44 444",
+  "M 308 352 L 380 352 L 404 352",
+  "M 668 352 L 692 352 L 692 848 L 0 848 L 0 476 L 24 476",
+  "M 288 352 L 308 352",
+  "M 24 476 L 44 476",
 ]
 
 const renderDiagram = () =>
@@ -237,12 +239,25 @@ describe("TraceDiagram", () => {
     expect(within(row).getByText("button.onClick")).toBeTruthy()
   })
 
-  it("heads each node with the name of its code and its short path, apart from what is written about it", () => {
+  it("heads each node with the name of its code alone, apart from what is written about it and its short path", () => {
     const { container } = renderDiagram()
     const header = container.querySelector<HTMLElement>("[data-node-header=\"price\"]")
 
-    expect(header === null ? [] : [within(header).getByText("priceOf").tagName, within(header).getByText("src/price.ts").tagName]).toStrictEqual(["SPAN", "SPAN"])
+    expect(header === null ? null : within(header).getByText("priceOf").tagName).toBe("SPAN")
+    expect(header === null ? null : within(header).queryByText("src/price.ts")).toBeNull()
     expect(header === null ? null : within(header).queryByText("Price of a line")).toBeNull()
+  })
+
+  it("puts the short path of a node on the last line of its head, under what is written about it, titled with the whole path", () => {
+    const { container } = renderDiagram()
+    const path = container.querySelector<HTMLElement>("[data-node-path=\"price\"]")
+    const body = path?.parentElement ?? null
+
+    expect(path?.textContent).toBe("src/price.ts")
+    expect(path?.title).toBe("src/price.ts")
+    expect(body?.lastElementChild).toBe(path)
+    expect(body === null ? null : within(body).getByText("Price of a line")).toBeTruthy()
+    expect(body?.previousElementSibling?.getAttribute("data-node-header")).toBe("price")
   })
 
   it("gives a written trigger label a line of its own above the name of the code, in a row taller than the row of a listed block", () => {
@@ -414,6 +429,35 @@ describe("TraceDiagram", () => {
     expect(focusedLabels()).toStrictEqual([])
   })
 
+  it("opens on the page, not full screen", () => {
+    renderDiagram()
+
+    expect(screen.queryByRole("dialog", { name: "A checkout" })).toBeNull()
+  })
+
+  it("opens full screen with no node open when asked to, and opens the side panel of a pressed node", async () => {
+    render(
+      <TraceDiagram
+        title="A checkout"
+        nodes={NODES}
+        edges={EDGES}
+        codeLinks={CODE_LINKS}
+        codeDefinitions={{}}
+        isReviewPending={false}
+        isFullScreenAtStart
+        onOpenCodeLink={vi.fn()}
+        onWaypointReviewedChange={vi.fn()}
+      />,
+    )
+    const board = await screen.findByRole("dialog", { name: "A checkout" })
+
+    expect(within(board).queryByRole("region", { name: "Price of a line" })).toBeNull()
+
+    fireEvent.click(within(board).getByRole("button", { name: /Function.*Price of a line/ }))
+
+    expect(await within(board).findByRole("region", { name: "Price of a line" })).toBeTruthy()
+  })
+
   it("hides the nodes a collapsed node leads to, and shows them again when it is expanded", () => {
     const { container } = renderDiagram()
 
@@ -561,7 +605,7 @@ describe("TraceDiagram for an author", () => {
     const draggableIdsOf = (container: HTMLElement): (string | null)[] =>
       [...container.querySelectorAll(".react-flow__node.draggable")].map((card) => card.getAttribute("data-id"))
     const moving = render(
-      <TraceDiagram title="A checkout" nodes={NODES} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} cardMoving={{ onMoveCards: vi.fn() }} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+      <TraceDiagram title="A checkout" nodes={NODES} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} cardMoving={{ onMoveCards: vi.fn(), onResizeCard: vi.fn() }} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
     )
 
     expect(draggableIdsOf(moving.container)).toStrictEqual(["cart-page", "route", "price", "audit"])
@@ -576,5 +620,134 @@ describe("TraceDiagram for an author", () => {
     expect(container.querySelectorAll(handleSelectorOf("side:top"))).toHaveLength(NODE_PLACES.length)
     expect(container.querySelectorAll(handleSelectorOf("side:bottom"))).toHaveLength(NODE_PLACES.length)
     expect(container.querySelectorAll(handleSelectorOf("row:")).length).toBeGreaterThan(0)
+  })
+
+  it("marks each card, each of its rows and the side panel of a pressed node as that node of the trace", async () => {
+    render(
+      <TraceDiagram
+        title="A checkout"
+        nodes={NODES}
+        edges={EDGES}
+        codeLinks={CODE_LINKS}
+        codeDefinitions={{}}
+        isReviewPending={false}
+        isFullScreenAtStart
+        onOpenCodeLink={vi.fn()}
+        onWaypointReviewedChange={vi.fn()}
+      />,
+    )
+    const board = await screen.findByRole("dialog", { name: "A checkout" })
+    const row = within(board).getByRole("button", { name: "Event: A shopper removes the line" })
+
+    expect(row.dataset).toMatchObject({ artifactPart: "trace-node", artifactId: "cart-line" })
+    expect(board.querySelector("[data-node-id=price]")?.getAttribute("data-artifact-id")).toBe("price")
+
+    fireEvent.click(within(board).getByRole("button", { name: /Function.*Price of a line/ }))
+
+    expect((await within(board).findByRole("region", { name: "Price of a line" })).dataset).toMatchObject({ artifactPart: "trace-node", artifactId: "price" })
+  })
+})
+
+const RESIZE_GRIP_NAME = "Drag to change the width of this card"
+
+const createCardMoving = (): CardMoving => ({ onMoveCards: vi.fn(), onResizeCard: vi.fn() })
+
+const renderMovableDiagram = (cardMoving: CardMoving, nodes: readonly TraceNode[] = NODES) =>
+  render(
+    <TraceDiagram title="A checkout" nodes={nodes} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} cardMoving={cardMoving} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+  )
+
+const gripOf = (container: HTMLElement, nodeId: string): HTMLElement => {
+  const box = boxOf(container, nodeId)
+  if (box === null) throw new Error(`No card ${nodeId}`)
+  return within(box).getByRole("separator", { name: RESIZE_GRIP_NAME })
+}
+
+const dragGrip = (grip: HTMLElement, distance: number) => {
+  const startX = 100
+  fireEvent.pointerDown(grip, { pointerId: 1, clientX: startX })
+  fireEvent.pointerMove(grip, { pointerId: 1, clientX: startX + distance })
+  fireEvent.pointerUp(grip, { pointerId: 1, clientX: startX + distance })
+  fireEvent.click(grip)
+}
+
+describe("TraceDiagram card resizing", () => {
+  beforeEach(() => {
+    Reflect.defineProperty(Element.prototype, "setPointerCapture", { value: vi.fn(), configurable: true, writable: true })
+  })
+
+  it("gives every top card a grip on its right edge for a reader with card moving, and nobody else", () => {
+    const moving = renderMovableDiagram(createCardMoving())
+
+    expect(screen.getAllByRole("separator", { name: RESIZE_GRIP_NAME })).toHaveLength(4)
+    expect(within(boxOf(moving.container, "cart-line") ?? document.body).queryByRole("separator", { name: RESIZE_GRIP_NAME })).toBeNull()
+    moving.unmount()
+    renderAuthoredDiagram(createAuthoring())
+    expect(screen.queryAllByRole("separator", { name: RESIZE_GRIP_NAME })).toStrictEqual([])
+  })
+
+  it("widens the card while its grip is dragged, leaves the other cards of its column as they are, and saves the whole width on release without selecting the card", () => {
+    const cardMoving = createCardMoving()
+    const { container } = renderMovableDiagram(cardMoving)
+    const grip = gripOf(container, "price")
+
+    fireEvent.pointerDown(grip, { pointerId: 1, clientX: 100 })
+    fireEvent.pointerMove(grip, { pointerId: 1, clientX: 160.4 })
+
+    expect(placeOf(boxOf(container, "price")).width).toBeCloseTo(NODE_WIDTH + 60.4)
+    expect(placeOf(boxOf(container, "audit")).width).toBe(NODE_WIDTH)
+
+    fireEvent.pointerUp(grip, { pointerId: 1, clientX: 160.4 })
+    fireEvent.click(grip)
+
+    expect(cardMoving.onResizeCard).toHaveBeenCalledWith("price", NODE_WIDTH + 60)
+    expect(cardMoving.onMoveCards).not.toHaveBeenCalled()
+    expect(screen.queryByRole("dialog")).toBeNull()
+  })
+
+  it("keeps a dragged width between the width of a node and the widest a card can be", () => {
+    const cardMoving = createCardMoving()
+    const { container } = renderMovableDiagram(cardMoving)
+
+    dragGrip(gripOf(container, "price"), -200)
+    dragGrip(gripOf(container, "route"), 2000)
+
+    expect(cardMoving.onResizeCard).toHaveBeenNthCalledWith(1, "price", NODE_WIDTH)
+    expect(cardMoving.onResizeCard).toHaveBeenNthCalledWith(2, "route", 720)
+  })
+
+  it("turns the distance dragged on screen into the distance on the board, at the zoom of the board", () => {
+    const cardMoving = createCardMoving()
+    const { container } = renderMovableDiagram(cardMoving)
+
+    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }))
+    dragGrip(gripOf(container, "price"), 100)
+
+    expect(cardMoving.onResizeCard).toHaveBeenCalledWith("price", NODE_WIDTH + 100 / ZOOM_STEP)
+  })
+
+  it("draws a card at its stored width", () => {
+    const resized = NODES.map((one) => (one.id === "price" ? { ...one, width: 400 } : one))
+    const { container } = renderMovableDiagram(createCardMoving(), resized)
+
+    expect(placeOf(boxOf(container, "price")).width).toBe(400)
+    expect(placeOf(boxOf(container, "audit")).width).toBe(NODE_WIDTH)
+  })
+})
+
+const BLOCK_TYPES = [
+  "function", "method", "hook", "component", "class", "root-variable", "root-statement", "type-declaration", "import", "directive", "file",
+  "condition", "switch", "switch-case", "loop", "try-catch", "throw", "call", "effect", "component-effect", "effect-callback", "code-event",
+  "route", "resolver", "middleware", "render", "render-condition", "render-loop", "render-event", "render-root", "state", "derived", "data",
+  "data-fetch", "cache", "auth", "request", "navigation", "publish", "validation", "config", "feature-flag", "storage", "telemetry",
+  "transaction", "external-value", "root-argument-value", "variable", "property", "deleted",
+]
+
+describe("typeIconOf", () => {
+  it("gives every type of block an icon of its own, apart from the icon of a type it does not know", () => {
+    const icons = BLOCK_TYPES.map(typeIconOf)
+
+    expect(new Set(icons).size).toBe(BLOCK_TYPES.length)
+    expect(icons).not.toContain(typeIconOf("unknown-type"))
   })
 })

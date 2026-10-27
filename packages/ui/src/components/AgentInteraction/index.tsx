@@ -26,11 +26,11 @@ const InteractionPart = ({ heading, text }: InteractionPartProps) => (
 
 const LaunchNote = () => (
   <InfoCallout title={LAUNCH_TITLE}>
-    Flight Plan can open your terminal app and start your agent there. Or you can start it yourself by prompting your
-    agent with
+    Flight Plan can open your terminal app and start your agent there, in a new tab. Or you can start it yourself by
+    prompting your agent with
     {" "}
     <code className={INLINE_CODE_CLASSES}>/flightplan:live &lt;repository&gt;/&lt;target&gt;</code>
-    .
+    . On a Mac, you choose the app in the Terminal app field.
   </InfoCallout>
 )
 

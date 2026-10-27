@@ -1,4 +1,4 @@
-import type { CodeBlockClassification, WalkthroughOrder } from "@flightplan/configurations"
+import { DEFAULT_SPOTLIGHT, DEFAULT_WALKTHROUGH_ORDER, type CodeBlockClassification, type WalkthroughOrder } from "@flightplan/configurations"
 
 export { WALKTHROUGH_ORDERS, type WalkthroughOrder } from "@flightplan/configurations"
 
@@ -41,7 +41,7 @@ export const DEFAULT_IGNORED_PATHS: readonly string[] = [
 ]
 
 export const DEFAULT_REVIEW_PREFERENCES: ReviewPreferences = {
-  spotlight: ["page", "component", "api-route", "database-read-write", "data-model", "hook"],
+  spotlight: DEFAULT_SPOTLIGHT,
   sectionWriteUps: {
     context: "always",
     traceDiagram: "always",
@@ -50,7 +50,7 @@ export const DEFAULT_REVIEW_PREFERENCES: ReviewPreferences = {
     findings: "always",
   },
   isSegmented: false,
-  walkthroughOrder: "imports-bottom-up",
+  walkthroughOrder: DEFAULT_WALKTHROUGH_ORDER,
   sectionOrder: ARRANGED_SECTIONS,
   ignoredPaths: DEFAULT_IGNORED_PATHS,
 }

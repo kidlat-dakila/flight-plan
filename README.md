@@ -143,7 +143,29 @@ pnpm dev
 ```
 
 `pnpm dev` runs the backend on `http://localhost:3000` (tRPC at `/api/trpc`, MCP at `POST /mcp`), the frontend on
-`http://localhost:4200`, which proxies `/api` to the backend, and the site on `http://localhost:4400`.
+`http://localhost:4200`, which proxies `/api` to the backend, the site on `http://localhost:4400` and the Trace Diagram
+lab on `http://localhost:4410`.
+
+It also gives each of them a name through [portless](https://portless.sh/):
+
+| URL | App |
+|---|---|
+| `https://flightplan.localhost` | the frontend |
+| `https://site.flightplan.localhost` | the site |
+| `https://api.flightplan.localhost` | the backend |
+| `https://trace-diagram-lab.flightplan.localhost` | the Trace Diagram lab |
+
+The portless proxy listens on port 443, and macOS lets only root listen there. Install it once as a startup service,
+which asks for your password:
+
+```bash
+pnpm exec portless service install
+```
+
+After that the proxy starts with your Mac and `pnpm dev` needs no `sudo`; it only registers the apps with the proxy.
+portless leaves `/etc/hosts` alone (`PORTLESS_SYNC_HOSTS=0`): Chrome, Brave and Firefox resolve `*.localhost` by
+themselves, Safari may not. The backend's links and the MCP address stay on `http://localhost:3000`, since agents and
+`curl` don't trust portless's certificate. `PORTLESS=0 pnpm dev` runs everything without the proxy.
 
 `pnpm install` also installs a pre-commit hook (husky) that runs ESLint and type-checking for the projects a commit
 touches.

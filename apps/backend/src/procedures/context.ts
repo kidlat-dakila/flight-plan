@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto"
+import { tmpdir } from "node:os"
 import { InMemoryAgentPresenceRegistry } from "@/procedures/get-conversation/utils/agent-presence"
 import type { ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
 import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/conversation-store"
@@ -46,7 +47,6 @@ import { createAgentInstaller, createInstallChecker } from "@/utils/agent-instal
 import { createAgentModelLister } from "@/utils/agent-model-lister"
 import { createAuthorLookup } from "@/utils/author-lookup"
 import { createBranchPuller } from "@/utils/branch-puller"
-import { createCodeHighlighter } from "@/utils/code-highlighter"
 import { createCommitAuthorReader } from "@/utils/commit-author-reader"
 import { FileConfigurationStore } from "@/utils/configuration-file-store"
 import { FileConversationStore } from "@/utils/conversation-file-store"
@@ -74,9 +74,11 @@ import { FileReviewStore } from "@/utils/review-file-store"
 import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
 import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
-import { createTerminalCloser, createTerminalOpener } from "@/utils/terminal-opener"
+import { createTerminalAppDetector } from "@/utils/terminal-app-detector"
+import { createTerminalCloser, createTerminalOpener, type TerminalOpenerOptions } from "@/utils/terminal-opener"
+import { readTextOrNull, removeFile, writeText } from "@/utils/text-file"
 import { createUpdateCheckFile } from "@/utils/update-check-file"
-import type { CodeHighlighter } from "@flightplan/codegraph"
+import { createCodeHighlighter, type CodeHighlighter } from "@flightplan/codegraph"
 import { readRemote, assembleGitAdapter, GitAdapterError } from "@flightplan/git-forge"
 
 export interface ProcedureContext {
@@ -250,6 +252,16 @@ export const createLocalUpdateChecker = ({ dataPath, runningVersion, installPath
   readLatestVersion: createLatestVersionReader({ manifestUrl: latestManifestUrlOf(PACKAGE_NAME) }),
 })
 
+const localTerminalOptionsOf = (machine: LocalMachine): TerminalOpenerOptions => ({
+  platform: machine.platform,
+  runCommand,
+  environment: machine.environment,
+  homePath: machine.homePath,
+  temporaryPath: tmpdir(),
+  newId: randomUUID,
+  files: { write: writeText, read: readTextOrNull, remove: removeFile },
+})
+
 export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachine, errorLog: ErrorLog): ProcedureContext => {
   const mockContext = createMockProcedureContext(startedAt)
   const setupStore = new FileSetupStore(machine.dataPath)
@@ -277,8 +289,8 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     readInstructionTexts: new InstructionFileReader(machine.configurationsPath).read,
     writePublishedPage: createPublishedPageWriter({ bundlePath: machine.publishedBundlePath, dataPath: machine.dataPath }),
     importFiles: createImportFileStore(machine.dataPath),
-    openTerminal: createTerminalOpener({ platform: machine.platform, runCommand, environment: machine.environment }),
-    closeTerminal: createTerminalCloser({ platform: machine.platform, runCommand, environment: machine.environment }),
+    openTerminal: createTerminalOpener(localTerminalOptionsOf(machine)),
+    closeTerminal: createTerminalCloser(localTerminalOptionsOf(machine)),
     appUrl: machine.appUrl,
     changeReader: createGitChangeReader({ runCommand, environment: machine.environment }),
     pullBranch: createBranchPuller({ runCommand, environment: machine.environment }),
@@ -297,6 +309,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     setupEnvironment: {
       ...mockContext.setupEnvironment,
       detectAgents: createAgentDetector(machine),
+      detectTerminalApps: createTerminalAppDetector(machine),
       hasAgentCli: createAgentCliProbe(machine),
       listAgentModels: createAgentModelLister(machine),
       installAgent: createAgentInstaller({ ...machine, runCommand }),

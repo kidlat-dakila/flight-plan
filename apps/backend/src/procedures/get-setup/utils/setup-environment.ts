@@ -2,7 +2,7 @@ import type { RepositoryActivity } from "@/procedures/list-recent-repositories/u
 import type { ForgeProblem } from "@/procedures/list-repositories/utils/repository"
 import type { ListedModel } from "./agent-models"
 import type { GitIdentity } from "./git-identity"
-import type { AgentInstall, AgentName, ForgesChoice, RepositoryAuthor, SetupForge } from "./setup"
+import type { AgentInstall, AgentName, ForgesChoice, RepositoryAuthor, SetupForge, TerminalApp } from "./setup"
 
 export interface AgentDetection {
   readonly agent: AgentName
@@ -61,6 +61,7 @@ export interface AuthorSearchResult {
 export interface SetupEnvironment {
   readonly detectAgents: () => Promise<readonly AgentDetection[]>
   readonly hasAgentCli: (agent: AgentName) => Promise<boolean>
+  readonly detectTerminalApps: () => Promise<readonly TerminalApp[]>
   readonly listAgentModels: (agent: AgentName) => Promise<readonly ListedModel[]>
   readonly installAgent: (install: AgentInstall) => Promise<AgentInstallation>
   readonly isAgentInstallCurrent: (install: AgentInstall) => Promise<boolean>

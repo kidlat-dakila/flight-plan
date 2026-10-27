@@ -6,7 +6,7 @@ import { buildRepositoriesStep } from "./build-repositories-step"
 import { buildRoute } from "./build-route"
 import type { RepositoryIdentities } from "./git-identity"
 import type { SetupPage, SetupStepForm } from "./schemas"
-import { SETUP_STEPS, type RepositoryForges, type Setup, type SetupStep } from "./setup"
+import { SETUP_STEPS, type RepositoryForges, type Setup, type SetupStep, type TerminalApp } from "./setup"
 import type { AgentDetection, CliProbe } from "./setup-environment"
 import { stepBefore, stepNumberOf } from "./setup-progress"
 
@@ -15,13 +15,14 @@ export interface SetupPageSource {
   readonly step: SetupStep
   readonly agentDetections: readonly AgentDetection[]
   readonly agentModels: AgentModels
+  readonly terminalApps: readonly TerminalApp[]
   readonly cliProbes: readonly CliProbe[]
   readonly repositoryForges: RepositoryForges
   readonly repositoryIdentities: RepositoryIdentities
 }
 
 const FORM_BUILDERS: Record<SetupStep, (source: SetupPageSource) => SetupStepForm> = {
-  agents: (source) => buildAgentsStep(source.setup.agents, source.agentDetections, source.agentModels),
+  agents: (source) => buildAgentsStep(source.setup.agents, source.agentDetections, source.agentModels, source.terminalApps),
   forges: (source) => buildForgesStep(source.setup.forges, source.cliProbes),
   configuration: (source) => buildConfigurationStep(source.setup),
   repositories: (source) => buildRepositoriesStep(source.setup, source.repositoryForges, source.repositoryIdentities),

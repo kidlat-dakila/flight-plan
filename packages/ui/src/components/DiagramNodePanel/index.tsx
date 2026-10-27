@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import CodeBlock from "@/components/CodeBlock"
 import IconButton from "@/components/IconButton"
 import OutwardLink from "@/components/OutwardLink"
+import type { ArtifactPartMark } from "@/lib/artifact-part"
 import type { CodeLinkTarget } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
@@ -11,12 +12,13 @@ interface DiagramNodePanelProps {
   readonly kindLabel: string
   readonly target: CodeLinkTarget | null
   readonly codeViews?: ReactNode
+  readonly partMark?: ArtifactPartMark | null
   readonly children: ReactNode
   readonly onClose: () => void
 }
 
-const DiagramNodePanel = ({ title, titleKind = "plain", kindLabel, target, codeViews = null, children, onClose }: DiagramNodePanelProps) => (
-  <section aria-label={title} className="flex min-h-full flex-col">
+const DiagramNodePanel = ({ title, titleKind = "plain", kindLabel, target, codeViews = null, partMark = null, children, onClose }: DiagramNodePanelProps) => (
+  <section aria-label={title} {...partMark} className="flex min-h-full flex-col">
     <div className="sticky top-0 z-10 flex items-start gap-3 border-b bg-background px-4 py-3">
       <div className="min-w-0 flex-1">
         <p className="text-xs text-muted-foreground">{kindLabel}</p>

@@ -63,6 +63,7 @@ describe("the row groups of a route card", () => {
   it("heads a handler registered for several methods with all of them, after the headings of one method", () => {
     const views = codeOf(
       "from flask import Flask",
+      "from shop.users import list_users",
       "app = Flask(__name__)",
       "@app.route(\"/users\", methods=[\"GET\", \"POST\"])",
       "def users():",
@@ -71,7 +72,8 @@ describe("the row groups of a route card", () => {
       "def remove_users():",
       "    return clear_users()",
     )
-    const node = nodeViewNamed({ "shop/views.py": views }, { "shop/views.py": [rangeAt(5, 5, 5, 24), rangeAt(8, 5, 8, 25)] }, "/users")
+    const users = codeOf("def list_users():", "    return find_users()")
+    const node = nodeViewNamed({ "shop/views.py": views, "shop/users.py": users }, { "shop/views.py": [rangeAt(6, 5, 6, 24), rangeAt(9, 5, 9, 25)], "shop/users.py": [rangeAt(2, 5, 2, 24)] }, "/users")
 
     expect(groupsOf(node)).toStrictEqual([["DELETE", 0, ["remove_users"]], ["GET · POST", 0, ["users"]]])
   })
@@ -81,8 +83,18 @@ describe("the cards of Next.js", () => {
   const manifest = JSON.stringify({ dependencies: { next: "16.0.0" } })
 
   it("heads a route file with its path and groups the methods it exports", () => {
-    const route = codeOf("export async function GET() {", "  return Response.json(await db.user.findMany())", "}", "export async function POST(request) {", "  await db.user.create(await request.json())", "}")
-    const node = nodeViewNamed({ "package.json": manifest, "app/api/users/route.ts": route }, { "app/api/users/route.ts": [rangeAt(2, 3, 2, 50), rangeAt(5, 3, 5, 45)] }, "/api/users")
+    const route = codeOf(
+      "import { findUsers } from \"./queries\"",
+      "export async function GET() {",
+      "  return Response.json(await findUsers())",
+      "}",
+      "export async function POST(request) {",
+      "  await db.user.create(await request.json())",
+      "}",
+    )
+    const queries = codeOf("export const findUsers = () => {", "  return db.user.findMany()", "}")
+    const files = { "package.json": manifest, "app/api/users/route.ts": route, "app/api/users/queries.ts": queries }
+    const node = nodeViewNamed(files, { "app/api/users/route.ts": [rangeAt(3, 3, 3, 42), rangeAt(6, 3, 6, 45)], "app/api/users/queries.ts": [rangeAt(2, 3, 2, 27)] }, "/api/users")
 
     expect(node?.typeLabel).toBe("Route")
     expect(groupsOf(node)).toStrictEqual([["POST", 0, ["POST"]], ["GET", 0, ["GET"]]])
@@ -90,7 +102,8 @@ describe("the cards of Next.js", () => {
 
   it("reads Server action for a function a \"use server\" directive names", () => {
     const actions = codeOf("\"use server\"", "export async function createUser(formData) {", "  await db.user.create(formData)", "}")
-    const node = nodeViewNamed({ "app/actions.ts": actions }, { "app/actions.ts": [rangeAt(3, 3, 3, 33)] }, "createUser")
+    const page = codeOf("import { createUser } from \"./actions\"", "export default function SignUpPage() {", "  return <form action={createUser} />", "}")
+    const node = nodeViewNamed({ "app/actions.ts": actions, "app/page.tsx": page }, { "app/actions.ts": [rangeAt(3, 3, 3, 33)] }, "createUser")
 
     expect(node?.typeLabel).toBe("Server action")
     expect(groupsOf(node)).toStrictEqual([[null, 1, []]])

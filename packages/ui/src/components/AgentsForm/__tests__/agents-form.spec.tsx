@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, render, screen, within } from "@testing-library/react"
 import AgentsForm from "@/components/AgentsForm"
 
 const DEFAULT_EFFORT = { effort: "default", label: "Default" }
@@ -14,11 +14,18 @@ const AGENTS = [
   { agent: "cursor" as const, label: "Cursor", isPicked: false, installPath: "", pathHint: "Cursor was not found on this machine.", unavailableReason: "cursor-agent is not installed on this machine.", model: "default", effort: "default", modelOptions: [] },
 ]
 
+const TERMINAL_APPS = [
+  { terminalApp: "terminal" as const, label: "Terminal" },
+  { terminalApp: "iterm" as const, label: "iTerm2" },
+]
+
 const renderForm = (overrides: Partial<React.ComponentProps<typeof AgentsForm>> = {}) =>
   render(
     <AgentsForm
       agents={AGENTS}
       defaultAgent="claude"
+      terminalApps={TERMINAL_APPS}
+      terminalApp="terminal"
       problem={null}
       folderBrowser={null}
       folderBrowserErrorMessage={null}
@@ -56,7 +63,44 @@ describe("AgentsForm", () => {
         { agent: "cursor", isPicked: false, installPath: "", model: "default", effort: "default" },
       ],
       defaultAgent: "claude",
+      terminalApp: "terminal",
     })
+  })
+
+  it("offers the installed terminal apps and submits the one picked", () => {
+    const onSubmit = vi.fn()
+    renderForm({ onSubmit })
+    const terminalApps = screen.getByRole<HTMLSelectElement>("combobox", { name: "Terminal app" })
+
+    expect(within(terminalApps).getAllByRole("option").map((option) => option.textContent)).toStrictEqual(["Terminal", "iTerm2"])
+    expect(terminalApps.value).toBe("terminal")
+    expect(screen.getByText("Flight Plan opens your agent in a new tab of this app.")).toBeTruthy()
+
+    fireEvent.change(terminalApps, { target: { value: "iterm" } })
+    fireEvent.click(screen.getByRole("button", { name: "Save" }))
+
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ terminalApp: "iterm" }))
+  })
+
+  it("hides the terminal app when Flight Plan cannot open one", () => {
+    const onSubmit = vi.fn()
+    renderForm({ terminalApps: [], terminalApp: null, onSubmit })
+
+    expect(screen.queryByRole("combobox", { name: "Terminal app" })).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Save" }))
+
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ terminalApp: null }))
+  })
+
+  it("shows a problem about the terminal app under that field", () => {
+    renderForm({
+      problem: { message: "Warp is not installed on this machine. Pick another terminal app.", field: { owner: "terminal", name: "terminalApp" } },
+    })
+
+    expect(screen.getByRole("alert").textContent).toBe("Warp is not installed on this machine. Pick another terminal app.")
+    expect(screen.getByRole("combobox", { name: "Terminal app" }).getAttribute("aria-invalid")).toBe("true")
+    expect(screen.getByLabelText("Install folder for Claude").getAttribute("aria-invalid")).toBe("false")
   })
 
   it("shows a problem about an install folder under that folder", () => {

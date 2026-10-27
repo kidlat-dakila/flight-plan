@@ -3,6 +3,6 @@
   "private": true,
   "description": "The npm version the release workflow stages publishes with, installed by npm ci from the lockfile beside it.",
   "dependencies": {
-    "npm": "11.21.0"
+    "npm": "12.2.1"
   }
 }

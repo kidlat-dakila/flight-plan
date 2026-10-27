@@ -121,6 +121,7 @@ export interface TraceNode {
   readonly blockLabels: readonly BlockLabel[]
   readonly rows?: readonly TraceRow[] | undefined
   readonly position?: CardPosition | undefined
+  readonly width?: number | undefined
   readonly isRequired: boolean
 }
 

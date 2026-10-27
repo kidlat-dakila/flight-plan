@@ -7,6 +7,7 @@ import {
   getAllReviewArtifactFixturesByCase,
   getFixtureRepository,
   getReviewArtifactFixture,
+  readStoredGroups,
   UnknownFixtureCaseError,
   UnknownFixtureError,
 } from "@/index"
@@ -50,7 +51,7 @@ describe("getFixtureRepository", () => {
     })
   })
 
-  it.each(["demo-fastapi", "demo-react", "demo-vue"])("numbers the pull requests of %s in the order of the snapshots", async (caseName) => {
+  it.each(["demo-fastapi", "demo-nestjs", "demo-nextjs", "demo-react", "demo-t3", "demo-vue"])("numbers the pull requests of %s in the order of the snapshots", async (caseName) => {
     const repository = await getFixtureRepository(TEST_CASES_PATH, caseName)
     const fixtureNames = await getAllReviewArtifactFixturesByCase(TEST_CASES_PATH, caseName)
 
@@ -156,4 +157,14 @@ describe("getReviewArtifactFixture", () => {
       await expect(getReviewArtifactFixture(TEST_CASES_PATH, name)).rejects.toThrow(UnknownFixtureError)
     },
   )
+})
+
+describe("readStoredGroups", () => {
+  it("reads the stored groups of a code blocks file", () => {
+    expect(readStoredGroups("[]")).toStrictEqual([])
+  })
+
+  it("throws for a file that holds no list of groups", () => {
+    expect(() => readStoredGroups("{}")).toThrow("The code blocks of a fixture are a list of groups.")
+  })
 })

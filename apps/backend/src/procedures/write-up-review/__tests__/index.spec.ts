@@ -17,7 +17,7 @@ const NOW = new Date("2026-10-01T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "pr-416" }
 const CLAUDE_SETUP = {
   ...EMPTY_SETUP,
-  agents: { installs: [{ agent: "claude", installPath: "/home/.claude", model: "opus", effort: "max" }], defaultAgent: "claude" },
+  agents: { installs: [{ agent: "claude", installPath: "/home/.claude", model: "opus", effort: "max" }], defaultAgent: "claude", terminalApp: "terminal" },
 } as const
 
 const UNREQUIRED_ARTIFACT: ReviewArtifact = {
@@ -172,7 +172,7 @@ describe("writeUpReview with another segments choice than the review's", () => {
     await writeUpReview({ ...INPUT, sections: ["traceDiagram"], isSegmented: false }, context)
 
     const rebuilt = await context.reviewStore.findArtifact(KEY)
-    expect(traceNamesOf(artifact)).toStrictEqual([["format"], ["pageA", "format"], ["pageB", "format"]])
+    expect(traceNamesOf(artifact)).toStrictEqual([null, ["pageA", "format"], ["pageB", "format"]])
     expect(rebuilt?.isSegmented).toBe(false)
     expect(traceNamesOf(rebuilt)).toStrictEqual([null, ["pageA", "format"], ["pageB", "format"]])
   })

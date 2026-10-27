@@ -256,6 +256,7 @@ export interface TraceNodeView {
   triggerLabels: TraceTriggerLabelView[]
   rowGroups: TraceRowGroupView[]
   position: { x: number, y: number } | null
+  width?: number
   children: TraceNodeView[]
 }
 
@@ -281,6 +282,7 @@ export const traceNodeSchema: z.ZodType<TraceNodeView> = z.lazy(() =>
     triggerLabels: z.array(traceTriggerLabelSchema),
     rowGroups: z.array(traceRowGroupSchema),
     position: pointSchema.nullable(),
+    width: z.number().positive().optional(),
     children: z.array(traceNodeSchema),
   }),
 )

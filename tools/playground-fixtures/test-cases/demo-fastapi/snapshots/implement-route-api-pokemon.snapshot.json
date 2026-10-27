@@ -1631,107 +1631,6 @@
               "blockLabels": []
             },
             {
-              "id": "src/pokedex/pokemon/schemas.py#class@9:1",
-              "type": "class",
-              "label": "Parses and checks the body of a create request",
-              "description": "When a client sends `POST /api/pokemon`, FastAPI parses the body into this model, because [`add_pokemon()` takes `draft: PokemonCreate`](code:src/pokedex/pokemon/routes.py#L21).",
-              "codeBlockIds": [
-                "src/pokedex/pokemon/schemas.py#class@9:1",
-                "src/pokedex/pokemon/schemas.py#property@10:5",
-                "src/pokedex/pokemon/schemas.py#property@11:5",
-                "src/pokedex/pokemon/schemas.py#property@12:5",
-                "src/pokedex/pokemon/schemas.py#property@13:5",
-                "src/pokedex/pokemon/schemas.py#property@14:5",
-                "src/pokedex/pokemon/schemas.py#method@16:5",
-                "src/pokedex/pokemon/schemas.py#method@23:5"
-              ],
-              "diffCodeBlockIds": [
-                "src/pokedex/pokemon/schemas.py#class@9:1",
-                "src/pokedex/pokemon/schemas.py#property@10:5",
-                "src/pokedex/pokemon/schemas.py#property@11:5",
-                "src/pokedex/pokemon/schemas.py#property@12:5",
-                "src/pokedex/pokemon/schemas.py#property@13:5",
-                "src/pokedex/pokemon/schemas.py#property@14:5",
-                "src/pokedex/pokemon/schemas.py#method@16:5",
-                "src/pokedex/pokemon/schemas.py#method@23:5"
-              ],
-              "children": [
-                {
-                  "id": "src/pokedex/pokemon/schemas.py#method@16:5",
-                  "type": "method",
-                  "label": "Raises ValueError for a type outside the list",
-                  "description": "When `PokemonCreate` parses a body, pydantic calls this method once for `primary_type` and once for `secondary_type`, because of `@field_validator(\"primary_type\", \"secondary_type\")`.",
-                  "codeBlockIds": [
-                    "src/pokedex/pokemon/schemas.py#method@16:5",
-                    "src/pokedex/pokemon/schemas.py#root-argument-value@18:31",
-                    "src/pokedex/pokemon/schemas.py#condition@19:9",
-                    "src/pokedex/pokemon/schemas.py#throw@20:13"
-                  ],
-                  "diffCodeBlockIds": [
-                    "src/pokedex/pokemon/schemas.py#method@16:5",
-                    "src/pokedex/pokemon/schemas.py#root-argument-value@18:31",
-                    "src/pokedex/pokemon/schemas.py#condition@19:9",
-                    "src/pokedex/pokemon/schemas.py#throw@20:13"
-                  ],
-                  "children": [],
-                  "triggerLabels": [],
-                  "blockLabels": [
-                    {
-                      "label": "Checks whether the type is set and not in the list",
-                      "codeBlockId": "src/pokedex/pokemon/schemas.py#condition@19:9"
-                    }
-                  ]
-                },
-                {
-                  "id": "src/pokedex/pokemon/schemas.py#method@23:5",
-                  "type": "method",
-                  "label": "Raises ValueError when both types are the same",
-                  "description": "When pydantic has parsed every field of `PokemonCreate`, it calls this method on the new model, because of `mode=\"after\"`.",
-                  "codeBlockIds": [
-                    "src/pokedex/pokemon/schemas.py#method@23:5",
-                    "src/pokedex/pokemon/schemas.py#condition@25:9",
-                    "src/pokedex/pokemon/schemas.py#throw@26:13"
-                  ],
-                  "diffCodeBlockIds": [
-                    "src/pokedex/pokemon/schemas.py#method@23:5",
-                    "src/pokedex/pokemon/schemas.py#condition@25:9",
-                    "src/pokedex/pokemon/schemas.py#throw@26:13"
-                  ],
-                  "children": [],
-                  "triggerLabels": [],
-                  "blockLabels": [
-                    {
-                      "label": "Checks whether the two types are the same",
-                      "codeBlockId": "src/pokedex/pokemon/schemas.py#condition@25:9"
-                    }
-                  ]
-                }
-              ],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Limits the name to 1 to 40 characters",
-                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@10:5"
-                },
-                {
-                  "label": "Limits the level to 1 to 100, and sets 5 when it is left out",
-                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@11:5"
-                },
-                {
-                  "label": "Requires the first type",
-                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@12:5"
-                },
-                {
-                  "label": "Sets the second type to None when it is left out",
-                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@13:5"
-                },
-                {
-                  "label": "Sets the trainer to None when it is left out",
-                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@14:5"
-                }
-              ]
-            },
-            {
               "id": "src/pokedex/pokemon/routes.py#root-variable@7:1",
               "type": "root-variable",
               "label": "Puts /pokemon before every route of the file",
@@ -1796,6 +1695,64 @@
                 {
                   "label": "Filters the query to the Pokemon of that trainer",
                   "codeBlockId": "src/pokedex/pokemon/service.py#external-value@13:9"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/pokemon/schemas.py#class@38:1",
+              "type": "class",
+              "label": "Builds the response body from a stored Pokemon",
+              "description": "Four paths reach this model:\n\n- When a client sends `GET /api/pokemon`, FastAPI builds one from each Pokemon that `read_all_pokemon()` returns, because [`read_all_pokemon()` has `response_model=list[PokemonRead]`](code:src/pokedex/pokemon/routes.py#L10).\n- When a client sends `GET /api/pokemon/{pokemon_id}`, FastAPI builds one from the Pokemon that `read_pokemon()` returns, because [`read_pokemon()` has `response_model=PokemonRead`](code:src/pokedex/pokemon/routes.py#L15).\n- When a client sends `POST /api/pokemon`, FastAPI builds one from the new Pokemon that `add_pokemon()` returns, because [`add_pokemon()` has `response_model=PokemonRead`](code:src/pokedex/pokemon/routes.py#L20).\n- When a client sends `PATCH /api/pokemon/{pokemon_id}`, FastAPI builds one from the changed Pokemon that `edit_pokemon()` returns, because [`edit_pokemon()` has `response_model=PokemonRead`](code:src/pokedex/pokemon/routes.py#L25).",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/schemas.py#class@38:1",
+                "src/pokedex/pokemon/schemas.py#property@39:5",
+                "src/pokedex/pokemon/schemas.py#property@41:5",
+                "src/pokedex/pokemon/schemas.py#property@42:5",
+                "src/pokedex/pokemon/schemas.py#property@43:5",
+                "src/pokedex/pokemon/schemas.py#property@44:5",
+                "src/pokedex/pokemon/schemas.py#property@45:5",
+                "src/pokedex/pokemon/schemas.py#property@46:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/pokemon/schemas.py#class@38:1",
+                "src/pokedex/pokemon/schemas.py#property@39:5",
+                "src/pokedex/pokemon/schemas.py#property@41:5",
+                "src/pokedex/pokemon/schemas.py#property@42:5",
+                "src/pokedex/pokemon/schemas.py#property@43:5",
+                "src/pokedex/pokemon/schemas.py#property@44:5",
+                "src/pokedex/pokemon/schemas.py#property@45:5",
+                "src/pokedex/pokemon/schemas.py#property@46:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Reads each field from an attribute of the stored Pokemon",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@39:5"
+                },
+                {
+                  "label": "Puts the id in the response",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@41:5"
+                },
+                {
+                  "label": "Puts the name in the response",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@42:5"
+                },
+                {
+                  "label": "Puts the level in the response",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@43:5"
+                },
+                {
+                  "label": "Puts the first type in the response",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@44:5"
+                },
+                {
+                  "label": "Puts the second type in the response, or None",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@45:5"
+                },
+                {
+                  "label": "Puts the trainer in the response, or None",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@46:5"
                 }
               ]
             },
@@ -1929,6 +1886,107 @@
               ]
             },
             {
+              "id": "src/pokedex/pokemon/schemas.py#class@9:1",
+              "type": "class",
+              "label": "Parses and checks the body of a create request",
+              "description": "When a client sends `POST /api/pokemon`, FastAPI parses the body into this model, because [`add_pokemon()` takes `draft: PokemonCreate`](code:src/pokedex/pokemon/routes.py#L21).",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/schemas.py#class@9:1",
+                "src/pokedex/pokemon/schemas.py#property@10:5",
+                "src/pokedex/pokemon/schemas.py#property@11:5",
+                "src/pokedex/pokemon/schemas.py#property@12:5",
+                "src/pokedex/pokemon/schemas.py#property@13:5",
+                "src/pokedex/pokemon/schemas.py#property@14:5",
+                "src/pokedex/pokemon/schemas.py#method@16:5",
+                "src/pokedex/pokemon/schemas.py#method@23:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/pokemon/schemas.py#class@9:1",
+                "src/pokedex/pokemon/schemas.py#property@10:5",
+                "src/pokedex/pokemon/schemas.py#property@11:5",
+                "src/pokedex/pokemon/schemas.py#property@12:5",
+                "src/pokedex/pokemon/schemas.py#property@13:5",
+                "src/pokedex/pokemon/schemas.py#property@14:5",
+                "src/pokedex/pokemon/schemas.py#method@16:5",
+                "src/pokedex/pokemon/schemas.py#method@23:5"
+              ],
+              "children": [
+                {
+                  "id": "src/pokedex/pokemon/schemas.py#method@16:5",
+                  "type": "method",
+                  "label": "Raises ValueError for a type outside the list",
+                  "description": "When `PokemonCreate` parses a body, pydantic calls this method once for `primary_type` and once for `secondary_type`, because of `@field_validator(\"primary_type\", \"secondary_type\")`.",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/schemas.py#method@16:5",
+                    "src/pokedex/pokemon/schemas.py#root-argument-value@18:31",
+                    "src/pokedex/pokemon/schemas.py#condition@19:9",
+                    "src/pokedex/pokemon/schemas.py#throw@20:13"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/schemas.py#method@16:5",
+                    "src/pokedex/pokemon/schemas.py#root-argument-value@18:31",
+                    "src/pokedex/pokemon/schemas.py#condition@19:9",
+                    "src/pokedex/pokemon/schemas.py#throw@20:13"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Checks whether the type is set and not in the list",
+                      "codeBlockId": "src/pokedex/pokemon/schemas.py#condition@19:9"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/pokedex/pokemon/schemas.py#method@23:5",
+                  "type": "method",
+                  "label": "Raises ValueError when both types are the same",
+                  "description": "When pydantic has parsed every field of `PokemonCreate`, it calls this method on the new model, because of `mode=\"after\"`.",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/schemas.py#method@23:5",
+                    "src/pokedex/pokemon/schemas.py#condition@25:9",
+                    "src/pokedex/pokemon/schemas.py#throw@26:13"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/schemas.py#method@23:5",
+                    "src/pokedex/pokemon/schemas.py#condition@25:9",
+                    "src/pokedex/pokemon/schemas.py#throw@26:13"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Checks whether the two types are the same",
+                      "codeBlockId": "src/pokedex/pokemon/schemas.py#condition@25:9"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Limits the name to 1 to 40 characters",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@10:5"
+                },
+                {
+                  "label": "Limits the level to 1 to 100, and sets 5 when it is left out",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@11:5"
+                },
+                {
+                  "label": "Requires the first type",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@12:5"
+                },
+                {
+                  "label": "Sets the second type to None when it is left out",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@13:5"
+                },
+                {
+                  "label": "Sets the trainer to None when it is left out",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@14:5"
+                }
+              ]
+            },
+            {
               "id": "src/pokedex/pokemon/service.py#function@34:1",
               "type": "function",
               "label": "Writes the changed fields onto the stored Pokemon",
@@ -2003,6 +2061,52 @@
               ]
             },
             {
+              "id": "src/pokedex/pokemon/schemas.py#class@30:1",
+              "type": "class",
+              "label": "Parses the body of an update request, every field optional",
+              "description": "When a client sends `PATCH /api/pokemon/{pokemon_id}`, FastAPI parses the body into this model, because [`edit_pokemon()` takes `changes: PokemonUpdate`](code:src/pokedex/pokemon/routes.py#L26). This model has no `check_known_type()`. So [a PATCH stores a `primary_type` such as `\"thunder\"`](code:src/pokedex/pokemon/service.py#L39-41), and [a POST with the same type gets a 422](code:src/pokedex/pokemon/schemas.py#L19-20).",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/schemas.py#class@30:1",
+                "src/pokedex/pokemon/schemas.py#property@31:5",
+                "src/pokedex/pokemon/schemas.py#property@32:5",
+                "src/pokedex/pokemon/schemas.py#property@33:5",
+                "src/pokedex/pokemon/schemas.py#property@34:5",
+                "src/pokedex/pokemon/schemas.py#property@35:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/pokemon/schemas.py#class@30:1",
+                "src/pokedex/pokemon/schemas.py#property@31:5",
+                "src/pokedex/pokemon/schemas.py#property@32:5",
+                "src/pokedex/pokemon/schemas.py#property@33:5",
+                "src/pokedex/pokemon/schemas.py#property@34:5",
+                "src/pokedex/pokemon/schemas.py#property@35:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Limits the name to 1 to 40 characters, and sets None when it is left out",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@31:5"
+                },
+                {
+                  "label": "Limits the level to 1 to 100, and sets None when it is left out",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@32:5"
+                },
+                {
+                  "label": "Sets the first type to None when it is left out",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@33:5"
+                },
+                {
+                  "label": "Sets the second type to None when it is left out",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@34:5"
+                },
+                {
+                  "label": "Sets the trainer to None when it is left out",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@35:5"
+                }
+              ]
+            },
+            {
               "id": "src/pokedex/pokemon/service.py#function@46:1",
               "type": "function",
               "label": "Deletes the stored Pokemon",
@@ -2067,9 +2171,19 @@
               "to": "src/pokedex/pokemon/service.py#function@10:1"
             },
             {
+              "id": "src/pokedex/pokemon/routes.py#function@10:1 -> src/pokedex/pokemon/schemas.py#class@38:1",
+              "from": "src/pokedex/pokemon/routes.py#function@10:1",
+              "to": "src/pokedex/pokemon/schemas.py#class@38:1"
+            },
+            {
               "id": "src/pokedex/pokemon/routes.py#function@15:1 -> src/pokedex/pokemon/service.py#function@17:1",
               "from": "src/pokedex/pokemon/routes.py#function@15:1",
               "to": "src/pokedex/pokemon/service.py#function@17:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/routes.py#function@15:1 -> src/pokedex/pokemon/schemas.py#class@38:1",
+              "from": "src/pokedex/pokemon/routes.py#function@15:1",
+              "to": "src/pokedex/pokemon/schemas.py#class@38:1"
             },
             {
               "id": "src/pokedex/pokemon/routes.py#function@20:1 -> src/pokedex/pokemon/service.py#function@24:1",
@@ -2077,9 +2191,29 @@
               "to": "src/pokedex/pokemon/service.py#function@24:1"
             },
             {
+              "id": "src/pokedex/pokemon/routes.py#function@20:1 -> src/pokedex/pokemon/schemas.py#class@9:1",
+              "from": "src/pokedex/pokemon/routes.py#function@20:1",
+              "to": "src/pokedex/pokemon/schemas.py#class@9:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/routes.py#function@20:1 -> src/pokedex/pokemon/schemas.py#class@38:1",
+              "from": "src/pokedex/pokemon/routes.py#function@20:1",
+              "to": "src/pokedex/pokemon/schemas.py#class@38:1"
+            },
+            {
               "id": "src/pokedex/pokemon/routes.py#function@25:1 -> src/pokedex/pokemon/service.py#function@34:1",
               "from": "src/pokedex/pokemon/routes.py#function@25:1",
               "to": "src/pokedex/pokemon/service.py#function@34:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/routes.py#function@25:1 -> src/pokedex/pokemon/schemas.py#class@30:1",
+              "from": "src/pokedex/pokemon/routes.py#function@25:1",
+              "to": "src/pokedex/pokemon/schemas.py#class@30:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/routes.py#function@25:1 -> src/pokedex/pokemon/schemas.py#class@38:1",
+              "from": "src/pokedex/pokemon/routes.py#function@25:1",
+              "to": "src/pokedex/pokemon/schemas.py#class@38:1"
             },
             {
               "id": "src/pokedex/pokemon/routes.py#function@30:1 -> src/pokedex/pokemon/service.py#function@46:1",

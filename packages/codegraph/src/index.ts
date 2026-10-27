@@ -43,6 +43,7 @@ export * from "./code-walkthrough/stored"
 export * from "./code/definitions"
 export * from "./code/highlight-review"
 export * from "./code/highlighter"
+export { createCodeHighlighter } from "./code/lighter-highlighter"
 export * from "./code/lines"
 export * from "./code/links"
 export * from "./code/marked-source"
@@ -58,6 +59,10 @@ export * from "./trace/build"
 export * from "./trace/names"
 export * from "./prose/parse-prose"
 export type * from "./review-view-context"
+export * from "./review-page/review-view"
+export * from "./review-page/segment-heading"
+export * from "./review-page/trace-band"
+export * from "./review-page/trace-page"
 export * from "./scaffold/context-code-blocks"
 export * from "./scaffold/hunks"
 export * from "./scaffold/review-artifact"
@@ -224,7 +229,7 @@ const traceOf = (planned: PlannedSegment, drawing: Drawing): TraceDiagram | null
   const otherLineFilePaths = group.astGraphs
     .filter((astGraph) => astGraph.diffBlockIds.length > 0 && !filePaths.includes(astGraph.filePath) && !sharedFilePaths.includes(astGraph.filePath))
     .map((astGraph) => astGraph.filePath)
-  const scope = { filePaths, sharedFilePaths: otherSharedFilePaths, otherLineFilePaths }
+  const scope = { filePaths, sharedFilePaths: otherSharedFilePaths, otherLineFilePaths, lineFilePaths: planned.filePaths }
   return generateTraceDiagram({ group: linkedGroupOf(group), importGraphGroup, scope: isWholeGroup ? null : scope })
 }
 

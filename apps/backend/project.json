@@ -194,6 +194,7 @@
       "continuous": true,
       "executor": "@nx/js:node",
       "dependsOn": [
+        "register-route",
         {
           "projects": [
             "frontend"
@@ -204,6 +205,16 @@
       "options": {
         "buildTarget": "backend:build:development",
         "runBuildTargetDependencies": false
+      }
+    },
+    "register-route": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "case \"$PORTLESS\" in 0|false|skip) ;; *) portless proxy start && portless alias api.flightplan 3000 --force ;; esac",
+        "env": {
+          "PORTLESS_PORT": "443",
+          "PORTLESS_SYNC_HOSTS": "0"
+        }
       }
     },
     "typecheck": {

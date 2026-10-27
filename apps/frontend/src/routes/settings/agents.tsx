@@ -36,6 +36,8 @@ const AgentsSettingsPage = () => {
       <AgentsForm
         agents={page.agents}
         defaultAgent={page.defaultAgent}
+        terminalApps={page.terminalApps}
+        terminalApp={page.terminalApp}
         problem={saving.problem}
         folderBrowser={browsedPath === null ? null : (folderBrowser.data ?? null)}
         folderBrowserErrorMessage={folderBrowser.error?.message ?? null}

@@ -1,0 +1,6 @@
+{
+  "title": "T3 Stack demo with tRPC, Prisma and Tailwind",
+  "packages": ["next", "react", "@trpc/server", "@trpc/client", "@trpc/react-query", "@tanstack/react-query", "@prisma/client", "zod", "superjson", "server-only"],
+  "language": "typescript",
+  "mainFramework": "next"
+}

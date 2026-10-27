@@ -376,7 +376,7 @@ describe("the review page", () => {
 
     expect(await screen.findByText("Adds a component.")).toBeTruthy()
 
-    fireEvent.click(screen.getByRole("button", { name: /^CartLinesrc\/cart-line\.tsx/ }))
+    fireEvent.click(screen.getByRole("button", { name: /^CartLine.*src\/cart-line\.tsx/ }))
     const panel = await screen.findByRole("region", { name: "CartLine" })
     await waitFor(() => {
       expect(within(panel).getByRole("button", { name: /Explain this card/ })).toBeTruthy()
@@ -1199,7 +1199,108 @@ describe("the review page", () => {
     fireEvent.click(within(panel).getByRole("button", { name: "Send" }))
 
     await waitFor(() => {
-      expect(sendMessage).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", body: "Why the retry?", reference: null })
+      expect(sendMessage).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", body: "Why the retry?", reference: null, excerpt: null })
+    })
+  })
+
+  describe("asking the agent about selected text", () => {
+    const codeReferenceText = "storefront@9f2c1ab:src/price.ts#L11"
+    const textReferenceText = "storefront@9f2c1ab:review/segments/stock#quote"
+
+    const renderAskingReview = (handlers: ProcedureHandlers) =>
+      renderReview({
+        "review.get": () => ({ data: artifactPage }),
+        "review.writeUpPlan": () => ({ data: { ...writeUpPlan, isOffered: true } }),
+        "conversation.watch": () => ({ data: conversationReply }),
+        "conversation.modelChoice": () => ({ data: null }),
+        ...handlers,
+      })
+
+    const select = (element: Element): void => {
+      window.getSelection()?.selectAllChildren(element)
+      fireEvent.mouseUp(document)
+    }
+
+    const askAndSend = async (toolbarName: string): Promise<void> => {
+      fireEvent.click(within(await screen.findByRole("toolbar", { name: toolbarName })).getByRole("button", { name: "Ask Claude" }))
+      const panel = await screen.findByRole("complementary", { name: "Chat with the agent" })
+      fireEvent.change(within(panel).getByRole("textbox", { name: "Ask about this review" }), { target: { value: "Why?" } })
+      fireEvent.click(within(panel).getByRole("button", { name: "Send" }))
+    }
+
+    afterEach(() => {
+      window.getSelection()?.removeAllRanges()
+    })
+
+    it("names the agent with its mark on the toolbar of selected code", async () => {
+      renderAskingReview({})
+      const code = await screen.findByText("export const priceOf = () => 1")
+
+      select(code)
+
+      const ask = within(await screen.findByRole("toolbar", { name: "Selected code" })).getByRole("button", { name: "Ask Claude" })
+      expect(ask.querySelector("[data-agent-mark='claude']")).not.toBeNull()
+    })
+
+    it("sends the code reference with the selected code, without line numbers or diff marks", async () => {
+      const codeReference = vi.fn(() => ({ data: { reference: codeReferenceText } }))
+      const sendMessage = vi.fn(() => ({ data: { kind: "sent", messageId: "m1" } }))
+      renderAskingReview({ "review.codeReference": codeReference, "conversation.sendMessage": sendMessage })
+
+      select((await screen.findByText("export const priceOf = () => 1")).closest("[data-line]") ?? document.body)
+      await askAndSend("Selected code")
+
+      await waitFor(() => {
+        expect(sendMessage).toHaveBeenCalledWith({
+          repositoryName: "storefront",
+          targetId: "pr-412",
+          body: "Why?",
+          reference: codeReferenceText,
+          excerpt: { kind: "code", text: "export const priceOf = () => 1" },
+        })
+      })
+      expect(codeReference).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", path: "src/price.ts", lineStart: 11, lineEnd: 11 })
+    })
+
+    it("asks for a text reference to a segment's context and sends the highlighted text", async () => {
+      const textReference = vi.fn(() => ({ data: { reference: textReferenceText } }))
+      const sendMessage = vi.fn(() => ({ data: { kind: "sent", messageId: "m1" } }))
+      renderAskingReview({ "review.textReference": textReference, "conversation.sendMessage": sendMessage })
+
+      select(await screen.findByText("Why stock matters."))
+      await askAndSend("Selected text")
+
+      await waitFor(() => {
+        expect(sendMessage).toHaveBeenCalledWith(expect.objectContaining({ reference: textReferenceText, excerpt: { kind: "text", text: "Why stock matters." } }))
+      })
+      expect(textReference).toHaveBeenCalledWith({
+        repositoryName: "storefront",
+        targetId: "pr-412",
+        part: { kind: "segment", segmentId: "stock" },
+        quote: "Why stock matters.",
+      })
+    })
+
+    it("asks for a text reference to the waypoint whose reading was highlighted", async () => {
+      const textReference = vi.fn(() => ({ data: { reference: textReferenceText } }))
+      renderAskingReview({ "review.textReference": textReference })
+      fireEvent.click(await screen.findByRole("button", { name: /waypoint [0-9]+ of [0-9]+: Held units reduce the price$/i }))
+
+      select(await screen.findByText("Reading of Held units reduce the price."))
+      fireEvent.click(within(await screen.findByRole("toolbar", { name: "Selected text" })).getByRole("button", { name: "Ask Claude" }))
+
+      await waitFor(() => {
+        expect(textReference).toHaveBeenCalledWith(expect.objectContaining({ part: { kind: "waypoint", waypointId: "price-of" }, quote: "Reading of Held units reduce the price." }))
+      })
+    })
+
+    it("leaves text outside the review content alone", async () => {
+      renderAskingReview({})
+      const explorer = await screen.findByRole("complementary", { name: "Changed files" })
+
+      select(within(explorer).getByRole("heading", { name: "Changed files" }))
+
+      expect(screen.queryByRole("toolbar", { name: "Selected text" })).toBeNull()
     })
   })
 

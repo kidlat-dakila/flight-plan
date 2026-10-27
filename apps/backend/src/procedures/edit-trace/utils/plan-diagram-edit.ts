@@ -87,6 +87,14 @@ const planCardMoves = (drawing: Drawing, places: readonly CardPlace[]): PlannedD
   return plan(drawing, { ...traceDiagram, traceNodes: placeCards(traceDiagram.traceNodes, places) })
 }
 
+const planCardResize = (drawing: Drawing, { nodeId, width }: EditOf<"resize-card">): PlannedDiagramEdit => {
+  const { traceDiagram } = drawing
+  if (!listTraceNodes(traceDiagram.traceNodes).some((node) => node.id === nodeId)) return reject(MISSING_CARD_MESSAGE)
+  if (!traceDiagram.traceNodes.some((node) => node.id === nodeId)) return reject(NESTED_CARD_MESSAGE)
+  const resized = traceDiagram.traceNodes.map((node) => (node.id === nodeId ? { ...node, width } : node))
+  return plan(drawing, { ...traceDiagram, traceNodes: resized })
+}
+
 const lineIdOf = ({ from, fromRowId, to, toSide }: Omit<EditOf<"add-line">, "kind">): string =>
   [`${from}#${fromRowId}`, `${to}@${toSide}`].join(EDGE_END_SEPARATOR)
 
@@ -241,6 +249,7 @@ const planOnDiagram = (drawing: Drawing, edit: Exclude<DiagramEdit, { readonly k
   if (edit.kind === "clear-diagram") return plan(drawing, createEmptyTrace())
   if (edit.kind === "describe") return planDescription(drawing, edit)
   if (edit.kind === "move-cards") return planCardMoves(drawing, edit.places)
+  if (edit.kind === "resize-card") return planCardResize(drawing, edit)
   if (edit.kind === "add-line") return planLine(drawing, edit)
   if (edit.kind === "remove-line") return planLineRemoval(drawing, edit)
   if (edit.kind === "remove-card") return planCardRemoval(drawing, edit.nodeId)

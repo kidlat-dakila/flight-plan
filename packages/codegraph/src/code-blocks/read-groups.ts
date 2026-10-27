@@ -12,7 +12,7 @@ import type { PatchDiff } from "./deleted-blocks"
 import { splitIntoGroups, type IsLeftOut } from "./group-files"
 import { LIBRARIES } from "./libraries"
 import { linkCodeGroupGraph } from "./link-group"
-import { isTestPath, listConfigPaths, placedClassificationsOf, readRepositoryLocations, type RepositoryLocations } from "./locations"
+import { isTestPath, listConfigPaths, listScriptConfigPaths, placedClassificationsOf, readRepositoryLocations, type RepositoryLocations } from "./locations"
 import { findManifestOf, isManifestPath, readManifest, type PackageManifest } from "./manifests"
 import { diffsOf } from "./patch-ranges"
 import type { StoredCodeGroupGraph } from "./stored-types"
@@ -89,14 +89,19 @@ const textsOf = (paths: readonly string[], written: ReadonlyMap<string, string>)
     return text === undefined ? [] : [[filePath, text] as const]
   })
 
+const readTexts = async (gitAdapter: GitAdapter, filePaths: readonly string[], commit: string): Promise<ReadonlyMap<string, string>> =>
+  filePaths.length === 0 ? new Map<string, string>() : await gitAdapter.blobs(filePaths, commit)
+
 export const readRepository = async (gitAdapter: GitAdapter, commit: string): Promise<Repository> => {
   const filePaths = await gitAdapter.listFiles(commit)
   const manifestPaths = filePaths.filter(isManifestPath)
   const configPaths = listConfigPaths(filePaths, LIBRARIES)
-  const wanted = [...new Set([...manifestPaths, ...configPaths])]
-  const written = wanted.length === 0 ? new Map<string, string>() : await gitAdapter.blobs(wanted, commit)
+  const written = await readTexts(gitAdapter, [...new Set([...manifestPaths, ...configPaths])], commit)
   const manifests = textsOf(manifestPaths, written).map(([manifestPath, text]) => readManifest(manifestPath, text))
-  const configTextByPath = new Map(textsOf(configPaths, written))
+  const listedTextByPath = new Map(textsOf(configPaths, written))
+  const scriptConfigPaths = listScriptConfigPaths(filePaths, listedTextByPath, LIBRARIES)
+  const scriptConfigTexts = textsOf(scriptConfigPaths, await readTexts(gitAdapter, scriptConfigPaths, commit))
+  const configTextByPath = new Map([...listedTextByPath, ...scriptConfigTexts])
   return { manifests, locations: readRepositoryLocations({ manifests, configTextByPath, libraries: LIBRARIES }) }
 }
 

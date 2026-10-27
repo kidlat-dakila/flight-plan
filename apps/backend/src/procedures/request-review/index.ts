@@ -17,7 +17,7 @@ export const sentMessageOf = (agent: AgentName): string => `Sent to ${AGENT_LABE
 export const sendToAgent = async (key: ReviewKey, prompt: string, context: ProcedureContext): Promise<void> => {
   await appendAndPublish(
     key,
-    [{ kind: "reviewer-message", id: context.conversationEnvironment.newId(), body: prompt, reference: null, sentAt: context.now() }],
+    [{ kind: "reviewer-message", id: context.conversationEnvironment.newId(), body: prompt, reference: null, excerpt: null, sentAt: context.now() }],
     context,
   )
 }

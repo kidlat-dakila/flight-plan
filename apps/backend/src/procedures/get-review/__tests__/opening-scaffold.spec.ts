@@ -56,6 +56,7 @@ const AGENT_SETUP: Setup = {
   agents: {
     installs: [{ agent: "claude", installPath: "/home/.claude", model: "default", effort: "default" }],
     defaultAgent: "claude",
+    terminalApp: "terminal",
   },
 }
 

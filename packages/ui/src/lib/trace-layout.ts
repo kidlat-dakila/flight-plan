@@ -12,6 +12,7 @@ export interface LayoutRow {
 
 export interface LayoutNode {
   readonly id: string
+  readonly requestedWidth?: number
   readonly rows: readonly LayoutRow[]
   readonly children: readonly LayoutNode[]
 }
@@ -124,7 +125,7 @@ interface Route {
 type ColumnById = ReadonlyMap<string, number>
 
 export const NODE_WIDTH = 264
-export const NODE_HEAD_HEIGHT = 96
+export const NODE_HEAD_HEIGHT = 112
 export const ROW_HEIGHT = 36
 export const TWO_LINE_ROW_HEIGHT = 48
 export const ROW_HEADING_HEIGHT = 16
@@ -140,8 +141,11 @@ export const COLUMN_GAP = 96
 export const NODE_GAP = 32
 export const MARGIN = 24
 const HALF = 2
-export const ROW_WIDTH = NODE_WIDTH - INSET * HALF
 const NOTHING_PLACED: Placement = { nodes: [], rows: [], lanes: [] }
+
+export const innerWidthOf = (cardWidth: number): number => cardWidth - INSET * HALF
+
+export const nestedCardWidthOf = (cardWidth: number): number => Math.max(NODE_WIDTH, innerWidthOf(cardWidth))
 
 const sumOf = (numbers: readonly number[]): number => numbers.reduce((total, one) => total + one, 0)
 
@@ -179,14 +183,14 @@ const heightOfPart = (part: LayoutPart): number => (part.kind === "row" ? rowHei
 const sizeOf = (node: LayoutNode): Size => {
   const childSizes = node.children.map(sizeOf)
   return {
-    width: Math.max(NODE_WIDTH, ...childSizes.map((size) => size.width + INSET * HALF)),
+    width: Math.max(NODE_WIDTH, node.requestedWidth ?? NODE_WIDTH, ...childSizes.map((size) => size.width + INSET * HALF)),
     height: NODE_HEAD_HEIGHT + sumOf(partsOf(node).map(heightOfPart)) + BOTTOM_PADDING,
   }
 }
 
 const placeNode = (node: LayoutNode, box: Omit<Box, "height">, depth: number, topId: string): Placement => {
   const { height } = sizeOf(node)
-  const inner = { x: box.x + INSET, width: box.width - INSET * HALF }
+  const inner = { x: box.x + INSET, width: innerWidthOf(box.width) }
   const placeOne = (part: LayoutPart, y: number): Placement =>
     part.kind === "row"
       ? { nodes: [], rows: [{ id: part.row.id, kind: part.row.kind, nodeId: node.id, ...inner, y, height: rowHeightOf(part.row) }], lanes: [] }
@@ -320,6 +324,16 @@ const desiredTopOf = ({ toId, anchorHeight }: ColumnItem, anchorsOfItem: (toId: 
 const placeItem = ({ node, toId, edgeIds }: ColumnItem, column: number, box: Omit<Box, "height">): Placement =>
   node === null ? { ...NOTHING_PLACED, lanes: [{ toId, column, x: box.x, width: box.width, y: box.y, edgeIds }] } : placeNode(node, box, 0, node.id)
 
+const isResized = (node: LayoutNode): boolean => node.requestedWidth !== undefined
+
+const widthsOf = (items: readonly ColumnItem[], isCounted: (node: LayoutNode) => boolean): number[] =>
+  items.flatMap(({ node }) => (node !== null && isCounted(node) ? [sizeOf(node).width] : []))
+
+const itemWidthOf = ({ node }: ColumnItem, columnWidth: number, laneWidth: number): number => {
+  if (node === null) return laneWidth
+  return isResized(node) ? sizeOf(node).width : columnWidth
+}
+
 const offsetsWithin = (members: readonly WantedItem[]): readonly number[] =>
   members.reduce<OffsetStack>(
     ({ bottom, offsets }, { item }) => ({ bottom: bottom + item.height + NODE_GAP, offsets: [...offsets, bottom] }),
@@ -352,12 +366,13 @@ const placeColumn = (items: readonly ColumnItem[], column: number, x: number, an
   const wanted = items
     .map((item, index) => ({ item, index, top: desiredTopOf(item, anchorsOfItem) }))
     .sort((one, two) => one.top - two.top || one.index - two.index)
-  const width = Math.max(NODE_WIDTH, ...items.flatMap(({ node }) => (node === null ? [] : [sizeOf(node).width])))
+  const columnWidth = Math.max(NODE_WIDTH, ...widthsOf(items, (node) => !isResized(node)))
+  const laneWidth = Math.max(columnWidth, ...widthsOf(items, isResized))
   return mergePlacements(
     clustersOf(wanted).flatMap((cluster) => {
       const top = Math.round(cluster.top)
       const offsets = offsetsWithin(cluster.members)
-      return cluster.members.map(({ item }, index) => placeItem(item, column, { x, y: top + offsets[index], width }))
+      return cluster.members.map(({ item }, index) => placeItem(item, column, { x, y: top + offsets[index], width: itemWidthOf(item, columnWidth, laneWidth) }))
     }),
   )
 }

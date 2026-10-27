@@ -43,6 +43,7 @@ const requestClaudeArtifact = async (key: ReviewKey, context: ProcedureContext):
       id: newId(),
       body: publishingRequestOf(key, files, earlierClaudeUrlOf(publications)),
       reference: null,
+      excerpt: null,
       sentAt: requestedAt,
     }],
     context,

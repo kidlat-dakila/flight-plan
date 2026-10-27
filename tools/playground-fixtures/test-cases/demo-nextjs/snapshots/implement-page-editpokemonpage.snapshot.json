@@ -1,0 +1,3174 @@
+{
+  "title": "Implement page EditPokemonPage",
+  "diff": [
+    "diff --git a/src/db/queries/pokemon.ts b/src/db/queries/pokemon.ts",
+    "--- a/src/db/queries/pokemon.ts",
+    "+++ b/src/db/queries/pokemon.ts",
+    "@@ -13,0 +14,4 @@ export async function insertPokemon(fields: NewPokemon): Promise<Pokemon> {",
+    "+",
+    "+export async function savePokemon(id: number, fields: NewPokemon): Promise<void> {",
+    "+  await db.update(pokemon).set(fields).where(eq(pokemon.id, id))",
+    "+}",
+    "diff --git a/src/app/pokemon/actions.ts b/src/app/pokemon/actions.ts",
+    "--- a/src/app/pokemon/actions.ts",
+    "+++ b/src/app/pokemon/actions.ts",
+    "@@ -2,0 +3 @@",
+    "+import { revalidatePath } from \"next/cache\"",
+    "@@ -4 +5 @@ import { redirect } from \"next/navigation\"",
+    "-import { insertPokemon } from \"@/db/queries/pokemon\"",
+    "+import { insertPokemon, savePokemon } from \"@/db/queries/pokemon\"",
+    "@@ -22,0 +24,6 @@ export async function createPokemon(formData: FormData) {",
+    "+",
+    "+export async function updatePokemon(id: number, formData: FormData) {",
+    "+  await savePokemon(id, readPokemonFields(formData))",
+    "+  revalidatePath(`/pokemon/${id}`)",
+    "+  redirect(`/pokemon/${id}`)",
+    "+}",
+    "diff --git a/src/app/pokemon/components/PokemonForm.tsx b/src/app/pokemon/components/PokemonForm.tsx",
+    "--- a/src/app/pokemon/components/PokemonForm.tsx",
+    "+++ b/src/app/pokemon/components/PokemonForm.tsx",
+    "@@ -2 +2 @@ import { SubmitButton } from \"@/components/ui/SubmitButton\"",
+    "-import type { Trainer } from \"@/db/schema\"",
+    "+import type { Pokemon, Trainer } from \"@/db/schema\"",
+    "@@ -6,0 +7 @@ interface PokemonFormProps {",
+    "+  pokemon?: Pokemon",
+    "@@ -9 +10 @@ interface PokemonFormProps {",
+    "-export function PokemonForm({ action, trainers }: PokemonFormProps) {",
+    "+export function PokemonForm({ action, trainers, pokemon }: PokemonFormProps) {",
+    "@@ -12,4 +13,4 @@ export function PokemonForm({ action, trainers }: PokemonFormProps) {",
+    "-      <input name=\"name\" placeholder=\"Name\" required />",
+    "-      <input name=\"level\" type=\"number\" min={1} max={100} required />",
+    "-      <input name=\"primaryType\" placeholder=\"Type\" required />",
+    "-      <select name=\"trainerId\">",
+    "+      <input name=\"name\" placeholder=\"Name\" defaultValue={pokemon?.name} required />",
+    "+      <input name=\"level\" type=\"number\" min={1} max={100} defaultValue={pokemon?.level} required />",
+    "+      <input name=\"primaryType\" placeholder=\"Type\" defaultValue={pokemon?.primaryType} required />",
+    "+      <select name=\"trainerId\" defaultValue={pokemon?.trainerId ?? \"\"}>",
+    "diff --git a/src/app/pokemon/[id]/edit/page.tsx b/src/app/pokemon/[id]/edit/page.tsx",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/app/pokemon/[id]/edit/page.tsx",
+    "@@ -0,0 +1,18 @@",
+    "+import { notFound } from \"next/navigation\"",
+    "+import { updatePokemon } from \"@/app/pokemon/actions\"",
+    "+import { PokemonForm } from \"@/app/pokemon/components/PokemonForm\"",
+    "+import { findPokemon } from \"@/db/queries/pokemon\"",
+    "+import { findTrainers } from \"@/db/queries/trainers\"",
+    "+",
+    "+export default async function EditPokemonPage({ params }: { params: Promise<{ id: string }> }) {",
+    "+  const { id } = await params",
+    "+  const pokemon = await findPokemon(Number(id))",
+    "+  if (pokemon === undefined) notFound()",
+    "+  const trainers = await findTrainers()",
+    "+  return (",
+    "+    <main>",
+    "+      <h1>Edit {pokemon.name}</h1>",
+    "+      <PokemonForm action={updatePokemon.bind(null, pokemon.id)} trainers={trainers} pokemon={pokemon} />",
+    "+    </main>",
+    "+  )",
+    "+}",
+    "diff --git a/src/app/pokemon/[id]/page.tsx b/src/app/pokemon/[id]/page.tsx",
+    "--- a/src/app/pokemon/[id]/page.tsx",
+    "+++ b/src/app/pokemon/[id]/page.tsx",
+    "@@ -0,0 +1 @@",
+    "+import Link from \"next/link\"",
+    "@@ -13,0 +15 @@ export default async function PokemonPage({ params }: { params: Promise<{ id: st",
+    "+      <Link href={`/pokemon/${pokemon.id}/edit`}>Edit</Link>"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Groundwork for EditPokemonPage",
+        "context": [
+          "This change adds a page that edits a Pokemon, and an Edit link to it on the page of each Pokemon. The edit page opens the Pokemon form with the saved name, level, type and trainer, and a save writes the changes to the database and opens the page of the Pokemon again."
+        ],
+        "kind": "shared",
+        "importGraph": [
+          {
+            "filePath": "src/app/pokemon/actions.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/app/pokemon/[id]/edit/page.tsx",
+              "src/app/pokemon/new/page.tsx"
+            ],
+            "importsTo": [
+              "src/db/queries/pokemon.ts",
+              "src/db/schema.ts"
+            ],
+            "importedFilePaths": {
+              "@/db/queries/pokemon": "src/db/queries/pokemon.ts",
+              "@/db/schema": "src/db/schema.ts"
+            }
+          },
+          {
+            "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/app/pokemon/[id]/edit/page.tsx",
+              "src/app/pokemon/new/page.tsx"
+            ],
+            "importsTo": [
+              "src/components/ui/SubmitButton.tsx",
+              "src/db/schema.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui/SubmitButton": "src/components/ui/SubmitButton.tsx",
+              "@/db/schema": "src/db/schema.ts"
+            }
+          },
+          {
+            "filePath": "src/app/pokemon/new/page.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/app/pokemon/actions.ts",
+              "src/app/pokemon/components/PokemonForm.tsx"
+            ],
+            "importedFilePaths": {
+              "@/app/pokemon/actions": "src/app/pokemon/actions.ts",
+              "@/app/pokemon/components/PokemonForm": "src/app/pokemon/components/PokemonForm.tsx",
+              "@/db/queries/trainers": "src/db/queries/trainers.ts"
+            }
+          },
+          {
+            "filePath": "src/components/ui/SubmitButton.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/app/pokemon/components/PokemonForm.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/db/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/db/queries/pokemon.ts",
+              "src/db/queries/trainers.ts"
+            ],
+            "importsTo": [
+              "src/db/schema.ts"
+            ],
+            "importedFilePaths": {
+              "./schema": "src/db/schema.ts"
+            }
+          },
+          {
+            "filePath": "src/db/queries/pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/app/pokemon/[id]/edit/page.tsx",
+              "src/app/pokemon/[id]/page.tsx",
+              "src/app/pokemon/actions.ts"
+            ],
+            "importsTo": [
+              "src/db/index.ts",
+              "src/db/schema.ts"
+            ],
+            "importedFilePaths": {
+              "@/db": "src/db/index.ts",
+              "@/db/schema": "src/db/schema.ts"
+            }
+          },
+          {
+            "filePath": "src/db/queries/trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/app/pokemon/[id]/edit/page.tsx"
+            ],
+            "importsTo": [
+              "src/db/index.ts",
+              "src/db/schema.ts"
+            ],
+            "importedFilePaths": {
+              "@/db": "src/db/index.ts",
+              "@/db/schema": "src/db/schema.ts"
+            }
+          },
+          {
+            "filePath": "src/db/schema.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/app/pokemon/actions.ts",
+              "src/app/pokemon/components/PokemonForm.tsx",
+              "src/db/index.ts",
+              "src/db/queries/pokemon.ts",
+              "src/db/queries/trainers.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": null,
+        "blastDiagram": {
+          "nodes": [
+            {
+              "path": "src/app/pokemon/actions.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/app/pokemon/components/PokemonForm.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/db/queries/pokemon.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/app/pokemon/[id]/edit/page.tsx",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/app/pokemon/new/page.tsx",
+              "diffType": null,
+              "impactType": "unaffected",
+              "impactReason": null
+            }
+          ],
+          "edges": [
+            {
+              "importer": "src/app/pokemon/[id]/edit/page.tsx",
+              "imported": "src/app/pokemon/components/PokemonForm.tsx"
+            },
+            {
+              "importer": "src/app/pokemon/[id]/edit/page.tsx",
+              "imported": "src/app/pokemon/actions.ts"
+            },
+            {
+              "importer": "src/app/pokemon/actions.ts",
+              "imported": "src/db/queries/pokemon.ts"
+            },
+            {
+              "importer": "src/app/pokemon/new/page.tsx",
+              "imported": "src/app/pokemon/components/PokemonForm.tsx"
+            }
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/app/pokemon/actions.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/db/queries/pokemon.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/components/ui/SubmitButton.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/db/index.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/db/schema.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/app/pokemon/actions.ts",
+                "imported": "src/db/queries/pokemon.ts"
+              },
+              {
+                "importer": "src/app/pokemon/actions.ts",
+                "imported": "src/db/schema.ts"
+              },
+              {
+                "importer": "src/app/pokemon/components/PokemonForm.tsx",
+                "imported": "src/components/ui/SubmitButton.tsx"
+              },
+              {
+                "importer": "src/app/pokemon/components/PokemonForm.tsx",
+                "imported": "src/db/schema.ts"
+              },
+              {
+                "importer": "src/db/queries/pokemon.ts",
+                "imported": "src/db/index.ts"
+              },
+              {
+                "importer": "src/db/queries/pokemon.ts",
+                "imported": "src/db/schema.ts"
+              }
+            ]
+          }
+        },
+        "hiddenBlastDiagram": null,
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/app/pokemon/actions.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": "Added the server action `updatePokemon()` to save an edited Pokemon",
+                  "declaration": "updatePokemon",
+                  "reading": "The author added a server action `updatePokemon()` that:\n\n- reads the fields of the form with [`readPokemonFields()`](code:src/app/pokemon/actions.ts#L10-18)\n- saves them on the Pokemon with the given id with [`savePokemon()`](code:src/db/queries/pokemon.ts#savePokemon)\n- calls `revalidatePath(\"/pokemon/3\")` for the Pokemon with id 3, so that the cached page of that Pokemon is rendered again with the saved values\n- redirects to `/pokemon/3`\n\nIt takes the id before the form data, so that [the edit page binds the id](code:src/app/pokemon/[id]/edit/page.tsx#L15) and passes [`<PokemonForm />`](code:src/app/pokemon/components/PokemonForm.tsx#PokemonForm) a function of the form data alone, the same shape as [`createPokemon()`](code:src/app/pokemon/actions.ts#L20-23).",
+                  "coreChange": "This is where a save of the edit page reaches the database: the form data goes through the same [`readPokemonFields()`](code:src/app/pokemon/actions.ts#L10-18) as a new Pokemon, then to [`savePokemon()`](code:src/db/queries/pokemon.ts#savePokemon) for one id.",
+                  "findings": [
+                    {
+                      "id": "finding-save-missing-pokemon",
+                      "kind": "question",
+                      "title": "`updatePokemon()` redirects as after a save when no row has the id",
+                      "reading": "[`savePokemon()` returns `void`](code:src/db/queries/pokemon.ts#L15), and [its update changes no row when no Pokemon has the id](code:src/db/queries/pokemon.ts#L16). `updatePokemon()` then redirects to `/pokemon/3` as after a save, and [the Pokemon page renders the 404 page](code:src/app/pokemon/[id]/page.tsx#L8). Nothing tells the professor that the edits were not saved. No code in this repository deletes a Pokemon, so only a row deleted outside the app between the load of the edit page and the save reaches this. Should the save say that the Pokemon no longer exists?",
+                      "trace": null,
+                      "solution": null
+                    }
+                  ],
+                  "range": {
+                    "lineStart": 25,
+                    "lineEnd": 29
+                  },
+                  "category": "function",
+                  "traceNodeId": null,
+                  "codeBlockIds": [
+                    "src/app/pokemon/actions.ts#function@25:1",
+                    "src/app/pokemon/actions.ts#root-argument-value@25:37",
+                    "src/app/pokemon/actions.ts#root-argument-value@25:49",
+                    "src/app/pokemon/actions.ts#call@26:3",
+                    "src/app/pokemon/actions.ts#cache@27:3",
+                    "src/app/pokemon/actions.ts#navigation@28:3"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/app/pokemon/components/PokemonForm.tsx",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "title": "Modified `PokemonFormProps` to take an optional Pokemon",
+                  "declaration": "PokemonFormProps",
+                  "reading": "The author modified the interface `PokemonFormProps` to add an optional prop `pokemon` of [the type `Pokemon`](code:src/db/schema.ts#L18), a row of the `pokemon` table. [The edit page passes the Pokemon it loaded](code:src/app/pokemon/[id]/edit/page.tsx#L15), and `src/app/pokemon/new/page.tsx` passes none, so that the edit page and the new Pokemon page render the same form.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 8
+                  },
+                  "category": "type",
+                  "traceNodeId": null,
+                  "codeBlockIds": [
+                    "src/app/pokemon/components/PokemonForm.tsx#type-declaration@4:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w3",
+                  "title": "Modified `<PokemonForm />` to fill in a saved Pokemon",
+                  "declaration": "PokemonForm",
+                  "reading": "The author modified the component `<PokemonForm />` to use the prop `pokemon` as the default value of each field:\n\n- the name, the level and the type inputs show `pokemon.name`, `pokemon.level` and `pokemon.primaryType`\n- the trainer select opens on `pokemon.trainerId`, or on `\"\"` for `No trainer` when the Pokemon has no trainer or no Pokemon is given\n\n[The edit page passes the Pokemon it loaded](code:src/app/pokemon/[id]/edit/page.tsx#L15), so that a professor changes the saved values and does not type them again. Without a `pokemon`, as in `src/app/pokemon/new/page.tsx`, each input gets `undefined` and stays empty, and the select opens on `No trainer` as before.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 27
+                  },
+                  "category": "function",
+                  "traceNodeId": null,
+                  "codeBlockIds": [
+                    "src/app/pokemon/components/PokemonForm.tsx#component@10:1",
+                    "src/app/pokemon/components/PokemonForm.tsx#root-argument-value@10:49",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@13:7",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@14:7",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@15:7",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@16:7"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/db/queries/pokemon.ts",
+              "waypoints": [
+                {
+                  "id": "w4",
+                  "title": "Added the query `savePokemon()` to update a Pokemon",
+                  "declaration": "savePokemon",
+                  "reading": "The author added a query `savePokemon()` that sets the given fields on the row of the `pokemon` table with the given `id`, and returns nothing. It writes every field it gets, so a professor who picks `No trainer` sets `trainer_id` to `null`, because [`readPokemonFields()` returns `trainerId: null` for `No trainer`](code:src/app/pokemon/actions.ts#L16). [`updatePokemon()` calls it with the fields of the form](code:src/app/pokemon/actions.ts#L26), so that a save on the edit page changes the Pokemon in the database.",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 15,
+                    "lineEnd": 17
+                  },
+                  "category": "function",
+                  "traceNodeId": null,
+                  "codeBlockIds": [
+                    "src/db/queries/pokemon.ts#function@15:1",
+                    "src/db/queries/pokemon.ts#root-argument-value@15:35",
+                    "src/db/queries/pokemon.ts#root-argument-value@15:47",
+                    "src/db/queries/pokemon.ts#call@16:3",
+                    "src/db/queries/pokemon.ts#data@16:9"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/app/pokemon/actions.ts",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 48,
+                "endColumn": 58,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 27,
+                "endColumn": 35,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 17,
+                "endColumn": 25,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 18,
+                "endColumn": 26,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 24,
+                "endColumn": 32,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 15,
+                "endColumn": 24,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 29,
+                "endColumn": 39,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 56,
+                "endColumn": 65,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 25,
+                "endColumn": 38,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  10,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 39,
+                "endColumn": 56,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 57,
+                "endColumn": 65,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 2,
+                "endColumn": 10,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "next/navigation",
+                  "name": "redirect"
+                }
+              },
+              {
+                "line": 22,
+                "startColumn": 23,
+                "endColumn": 31,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 8,
+                "endColumn": 19,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 20,
+                "endColumn": 22,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 24,
+                "endColumn": 41,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 42,
+                "endColumn": 50,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 2,
+                "endColumn": 16,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "next/cache",
+                  "name": "revalidatePath"
+                }
+              },
+              {
+                "line": 27,
+                "startColumn": 29,
+                "endColumn": 31,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 2,
+                "endColumn": 10,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "next/navigation",
+                  "name": "redirect"
+                }
+              },
+              {
+                "line": 28,
+                "startColumn": 23,
+                "endColumn": 25,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 10,
+                "startColumn": 37,
+                "endColumn": 45,
+                "name": "FormData"
+              },
+              {
+                "line": 11,
+                "startColumn": 20,
+                "endColumn": 26,
+                "name": "String"
+              },
+              {
+                "line": 13,
+                "startColumn": 10,
+                "endColumn": 16,
+                "name": "String"
+              },
+              {
+                "line": 14,
+                "startColumn": 11,
+                "endColumn": 17,
+                "name": "Number"
+              },
+              {
+                "line": 15,
+                "startColumn": 17,
+                "endColumn": 23,
+                "name": "String"
+              },
+              {
+                "line": 16,
+                "startColumn": 49,
+                "endColumn": 55,
+                "name": "Number"
+              },
+              {
+                "line": 20,
+                "startColumn": 46,
+                "endColumn": 54,
+                "name": "FormData"
+              },
+              {
+                "line": 25,
+                "startColumn": 58,
+                "endColumn": 66,
+                "name": "FormData"
+              }
+            ],
+            "exports": [
+              {
+                "line": 20,
+                "startColumn": 22,
+                "endColumn": 35,
+                "lines": [
+                  20,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 27,
+                    "endColumn": 40,
+                    "path": "src/app/pokemon/new/page.tsx",
+                    "text": "      <PokemonForm action={createPokemon} trainers={trainers} />"
+                  }
+                ]
+              },
+              {
+                "line": 25,
+                "startColumn": 22,
+                "endColumn": 35,
+                "lines": [
+                  25,
+                  29
+                ],
+                "usages": [
+                  {
+                    "line": 15,
+                    "startColumn": 27,
+                    "endColumn": 40,
+                    "path": "src/app/pokemon/[id]/edit/page.tsx",
+                    "text": "      <PokemonForm action={updatePokemon.bind(null, pokemon.id)} trainers={trainers} pokemon={pokemon} />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/app/pokemon/components/PokemonForm.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 12,
+                "endColumn": 19,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 12,
+                "endColumn": 19,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 59,
+                "endColumn": 75,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  4,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 18,
+                "endColumn": 24,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 58,
+                "endColumn": 65,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 72,
+                "endColumn": 79,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 65,
+                "endColumn": 72,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 45,
+                "endColumn": 52,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 23,
+                "endColumn": 30,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 42,
+                "endColumn": 49,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 13,
+                "endColumn": 20,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 7,
+                "endColumn": 19,
+                "path": "src/components/ui/SubmitButton.tsx",
+                "lines": [
+                  5,
+                  12
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 21,
+                "endColumn": 29,
+                "name": "FormData"
+              },
+              {
+                "line": 5,
+                "startColumn": 34,
+                "endColumn": 41,
+                "name": "Promise"
+              }
+            ],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  10,
+                  27
+                ],
+                "usages": [
+                  {
+                    "line": 15,
+                    "startColumn": 7,
+                    "endColumn": 18,
+                    "path": "src/app/pokemon/[id]/edit/page.tsx",
+                    "text": "      <PokemonForm action={updatePokemon.bind(null, pokemon.id)} trainers={trainers} pokemon={pokemon} />"
+                  },
+                  {
+                    "line": 10,
+                    "startColumn": 7,
+                    "endColumn": 18,
+                    "path": "src/app/pokemon/new/page.tsx",
+                    "text": "      <PokemonForm action={createPokemon} trainers={trainers} />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/db/queries/pokemon.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 55,
+                "endColumn": 62,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 24,
+                "endColumn": 26,
+                "path": "src/db/index.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 41,
+                "endColumn": 48,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 56,
+                "endColumn": 58,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "drizzle-orm",
+                  "name": "eq"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 59,
+                "endColumn": 66,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 71,
+                "endColumn": 73,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 44,
+                "endColumn": 54,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 65,
+                "endColumn": 72,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 27,
+                "endColumn": 29,
+                "path": "src/db/index.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 37,
+                "endColumn": 44,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 53,
+                "endColumn": 59,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 54,
+                "endColumn": 64,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 8,
+                "endColumn": 10,
+                "path": "src/db/index.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 18,
+                "endColumn": 25,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 31,
+                "endColumn": 37,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 45,
+                "endColumn": 47,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "drizzle-orm",
+                  "name": "eq"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 48,
+                "endColumn": 55,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 60,
+                "endColumn": 62,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 47,
+                "endColumn": 54,
+                "name": "Promise"
+              },
+              {
+                "line": 10,
+                "startColumn": 57,
+                "endColumn": 64,
+                "name": "Promise"
+              },
+              {
+                "line": 15,
+                "startColumn": 67,
+                "endColumn": 74,
+                "name": "Promise"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 22,
+                "endColumn": 33,
+                "lines": [
+                  5,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 24,
+                    "endColumn": 35,
+                    "path": "src/app/pokemon/[id]/edit/page.tsx",
+                    "text": "  const pokemon = await findPokemon(Number(id))"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 24,
+                    "endColumn": 35,
+                    "path": "src/app/pokemon/[id]/page.tsx",
+                    "text": "  const pokemon = await findPokemon(Number(id))"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 22,
+                "endColumn": 35,
+                "lines": [
+                  10,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 21,
+                    "startColumn": 25,
+                    "endColumn": 38,
+                    "path": "src/app/pokemon/actions.ts",
+                    "text": "  const inserted = await insertPokemon(readPokemonFields(formData))"
+                  }
+                ]
+              },
+              {
+                "line": 15,
+                "startColumn": 22,
+                "endColumn": 33,
+                "lines": [
+                  15,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 26,
+                    "startColumn": 8,
+                    "endColumn": 19,
+                    "path": "src/app/pokemon/actions.ts",
+                    "text": "  await savePokemon(id, readPokemonFields(formData))"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "New EditPokemonPage",
+        "context": [
+          "This segment adds the edit page of a Pokemon, which loads the Pokemon and the trainers and shows the Pokemon form with the saved values. A save writes the changes to that Pokemon and opens its page, and an id that matches no Pokemon shows the 404 page."
+        ],
+        "kind": "entry",
+        "importGraph": [
+          {
+            "filePath": "src/app/pokemon/[id]/edit/page.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [],
+            "importsTo": [
+              "src/app/pokemon/actions.ts",
+              "src/app/pokemon/components/PokemonForm.tsx",
+              "src/db/queries/pokemon.ts",
+              "src/db/queries/trainers.ts"
+            ],
+            "importedFilePaths": {
+              "@/app/pokemon/actions": "src/app/pokemon/actions.ts",
+              "@/app/pokemon/components/PokemonForm": "src/app/pokemon/components/PokemonForm.tsx",
+              "@/db/queries/pokemon": "src/db/queries/pokemon.ts",
+              "@/db/queries/trainers": "src/db/queries/trainers.ts"
+            }
+          },
+          {
+            "filePath": "src/app/pokemon/new/page.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/app/pokemon/actions.ts",
+              "src/app/pokemon/components/PokemonForm.tsx"
+            ],
+            "importedFilePaths": {
+              "@/app/pokemon/actions": "src/app/pokemon/actions.ts",
+              "@/app/pokemon/components/PokemonForm": "src/app/pokemon/components/PokemonForm.tsx",
+              "@/db/queries/trainers": "src/db/queries/trainers.ts"
+            }
+          },
+          {
+            "filePath": "src/components/ui/SubmitButton.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/app/pokemon/components/PokemonForm.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/db/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/db/queries/pokemon.ts",
+              "src/db/queries/trainers.ts"
+            ],
+            "importsTo": [
+              "src/db/schema.ts"
+            ],
+            "importedFilePaths": {
+              "./schema": "src/db/schema.ts"
+            }
+          },
+          {
+            "filePath": "src/db/queries/trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/app/pokemon/[id]/edit/page.tsx"
+            ],
+            "importsTo": [
+              "src/db/index.ts",
+              "src/db/schema.ts"
+            ],
+            "importedFilePaths": {
+              "@/db": "src/db/index.ts",
+              "@/db/schema": "src/db/schema.ts"
+            }
+          },
+          {
+            "filePath": "src/db/schema.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/app/pokemon/actions.ts",
+              "src/app/pokemon/components/PokemonForm.tsx",
+              "src/db/index.ts",
+              "src/db/queries/pokemon.ts",
+              "src/db/queries/trainers.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Load and save Pokemon flow diagram",
+          "description": "This diagram shows how the edit page loads a Pokemon and the trainers and renders them in the Pokemon form. It also shows what happens when the user clicks Save, and how the changed Pokemon reaches the database through [`savePokemon()`](code:src/db/queries/pokemon.ts#savePokemon).",
+          "traceNodes": [
+            {
+              "id": "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+              "type": "component",
+              "label": "Loads the Pokemon and renders it in the form",
+              "description": "When a professor opens `/pokemon/3/edit`, Next.js renders this page with `params` that hold `{ id: \"3\" }`. [The Edit link of the Pokemon page](code:src/app/pokemon/[id]/page.tsx#L15) opens that path.",
+              "codeBlockIds": [
+                "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+                "src/app/pokemon/[id]/edit/page.tsx#root-argument-value@7:49",
+                "src/app/pokemon/[id]/edit/page.tsx#variable@8:3",
+                "src/app/pokemon/[id]/edit/page.tsx#external-value@9:3",
+                "src/app/pokemon/[id]/edit/page.tsx#condition@10:3",
+                "src/app/pokemon/[id]/edit/page.tsx#call@10:30",
+                "src/app/pokemon/[id]/edit/page.tsx#external-value@11:3",
+                "src/app/pokemon/[id]/edit/page.tsx#render-root@12:3",
+                "src/app/pokemon/[id]/edit/page.tsx#render@13:5",
+                "src/app/pokemon/[id]/edit/page.tsx#render@14:7",
+                "src/app/pokemon/[id]/edit/page.tsx#render@15:7",
+                "src/app/pokemon/[id]/edit/page.tsx#render-event@15:20"
+              ],
+              "diffCodeBlockIds": [
+                "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+                "src/app/pokemon/[id]/edit/page.tsx#root-argument-value@7:49",
+                "src/app/pokemon/[id]/edit/page.tsx#variable@8:3",
+                "src/app/pokemon/[id]/edit/page.tsx#external-value@9:3",
+                "src/app/pokemon/[id]/edit/page.tsx#condition@10:3",
+                "src/app/pokemon/[id]/edit/page.tsx#call@10:30",
+                "src/app/pokemon/[id]/edit/page.tsx#external-value@11:3",
+                "src/app/pokemon/[id]/edit/page.tsx#render-root@12:3",
+                "src/app/pokemon/[id]/edit/page.tsx#render@13:5",
+                "src/app/pokemon/[id]/edit/page.tsx#render@14:7",
+                "src/app/pokemon/[id]/edit/page.tsx#render@15:7",
+                "src/app/pokemon/[id]/edit/page.tsx#render-event@15:20"
+              ],
+              "children": [
+                {
+                  "id": "src/app/pokemon/components/PokemonForm.tsx#component@10:1",
+                  "type": "component",
+                  "label": "Renders the form with the saved values",
+                  "description": "When a professor opens `/pokemon/3/edit`, [the edit page renders this form](code:src/app/pokemon/[id]/edit/page.tsx#L15) with the Pokemon with id 3, the trainers and `updatePokemon.bind(null, 3)` as `action`. When a professor clicks Save, [the form calls `action` with the form data](code:src/app/pokemon/components/PokemonForm.tsx#L12).",
+                  "codeBlockIds": [
+                    "src/app/pokemon/components/PokemonForm.tsx#component@10:1",
+                    "src/app/pokemon/components/PokemonForm.tsx#root-argument-value@10:31",
+                    "src/app/pokemon/components/PokemonForm.tsx#root-argument-value@10:49",
+                    "src/app/pokemon/components/PokemonForm.tsx#render-root@11:3",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@12:5",
+                    "src/app/pokemon/components/PokemonForm.tsx#render-event@12:11",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@13:7",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@14:7",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@15:7",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@16:7"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/app/pokemon/components/PokemonForm.tsx#component@10:1",
+                    "src/app/pokemon/components/PokemonForm.tsx#root-argument-value@10:49",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@13:7",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@14:7",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@15:7",
+                    "src/app/pokemon/components/PokemonForm.tsx#render@16:7"
+                  ],
+                  "children": [],
+                  "triggerLabels": [
+                    {
+                      "label": "A professor clicks Save",
+                      "codeBlockId": "src/app/pokemon/components/PokemonForm.tsx#render-event@12:11"
+                    }
+                  ],
+                  "blockLabels": []
+                }
+              ],
+              "triggerLabels": [
+                {
+                  "label": "A professor saves the Pokemon",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#render-event@15:20"
+                }
+              ],
+              "blockLabels": [
+                {
+                  "label": "Reads the id from the URL",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#variable@8:3"
+                },
+                {
+                  "label": "Loads the Pokemon with that id",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#external-value@9:3"
+                },
+                {
+                  "label": "Checks whether a Pokemon was found",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#condition@10:3"
+                },
+                {
+                  "label": "Renders the 404 page when none was found",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#call@10:30"
+                },
+                {
+                  "label": "Loads the trainers for the trainer select",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#external-value@11:3"
+                }
+              ]
+            },
+            {
+              "id": "src/app/pokemon/actions.ts#function@25:1",
+              "type": "function",
+              "label": "Saves the Pokemon and opens its page",
+              "description": "When a professor clicks Save, [the form calls its `action`](code:src/app/pokemon/components/PokemonForm.tsx#L12), which [the edit page made with `updatePokemon.bind(null, 3)`](code:src/app/pokemon/[id]/edit/page.tsx#L15). Next.js then runs this server action as `updatePokemon(3, formData)`.",
+              "codeBlockIds": [
+                "src/app/pokemon/actions.ts#function@25:1",
+                "src/app/pokemon/actions.ts#root-argument-value@25:37",
+                "src/app/pokemon/actions.ts#root-argument-value@25:49",
+                "src/app/pokemon/actions.ts#call@26:3",
+                "src/app/pokemon/actions.ts#cache@27:3",
+                "src/app/pokemon/actions.ts#navigation@28:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/app/pokemon/actions.ts#function@25:1",
+                "src/app/pokemon/actions.ts#root-argument-value@25:37",
+                "src/app/pokemon/actions.ts#root-argument-value@25:49",
+                "src/app/pokemon/actions.ts#call@26:3",
+                "src/app/pokemon/actions.ts#cache@27:3",
+                "src/app/pokemon/actions.ts#navigation@28:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Saves the fields of the form on the Pokemon",
+                  "codeBlockId": "src/app/pokemon/actions.ts#call@26:3"
+                },
+                {
+                  "label": "Clears the cached page of the Pokemon",
+                  "codeBlockId": "src/app/pokemon/actions.ts#cache@27:3"
+                },
+                {
+                  "label": "Redirects to the page of the Pokemon",
+                  "codeBlockId": "src/app/pokemon/actions.ts#navigation@28:3"
+                }
+              ]
+            },
+            {
+              "id": "src/db/queries/pokemon.ts#function@15:1",
+              "type": "function",
+              "label": "Updates the row of the Pokemon",
+              "description": "When a professor clicks Save, the form calls `updatePokemon(3, formData)`, and [`updatePokemon()` calls this function](code:src/app/pokemon/actions.ts#L26) with `3` and the fields that [`readPokemonFields()`](code:src/app/pokemon/actions.ts#L10-18) reads from the form.",
+              "codeBlockIds": [
+                "src/db/queries/pokemon.ts#function@15:1",
+                "src/db/queries/pokemon.ts#root-argument-value@15:35",
+                "src/db/queries/pokemon.ts#root-argument-value@15:47",
+                "src/db/queries/pokemon.ts#call@16:3",
+                "src/db/queries/pokemon.ts#data@16:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/db/queries/pokemon.ts#function@15:1",
+                "src/db/queries/pokemon.ts#root-argument-value@15:35",
+                "src/db/queries/pokemon.ts#root-argument-value@15:47",
+                "src/db/queries/pokemon.ts#call@16:3",
+                "src/db/queries/pokemon.ts#data@16:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Sets the fields on the row with this id",
+                  "codeBlockId": "src/db/queries/pokemon.ts#call@16:3"
+                }
+              ]
+            },
+            {
+              "id": "src/app/pokemon/[id]/edit/page.tsx#render-event@15:20",
+              "type": "render-event",
+              "label": "Saves the form data on this Pokemon",
+              "description": "When a professor clicks Save, [the form calls its `action`](code:src/app/pokemon/components/PokemonForm.tsx#L12), and this function is that `action`. It calls [`updatePokemon(3, formData)`](code:src/app/pokemon/actions.ts#updatePokemon) for the Pokemon with id 3.",
+              "codeBlockIds": [
+                "src/app/pokemon/[id]/edit/page.tsx#render-event@15:20"
+              ],
+              "diffCodeBlockIds": [
+                "src/app/pokemon/[id]/edit/page.tsx#render-event@15:20"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/app/pokemon/components/PokemonForm.tsx#render-event@12:11",
+              "type": "render-event",
+              "label": "Calls the save action with the form data",
+              "description": "When a professor clicks [the Save button](code:src/components/ui/SubmitButton.tsx#L8-10), React calls `action` with the form data. On the edit page, `action` is `updatePokemon.bind(null, 3)`, so [`updatePokemon(3, formData)`](code:src/app/pokemon/actions.ts#updatePokemon) runs on the server.",
+              "codeBlockIds": [
+                "src/app/pokemon/components/PokemonForm.tsx#render-event@12:11"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/app/pokemon/components/PokemonForm.tsx#render-event@12:11 -> src/app/pokemon/actions.ts#function@25:1",
+              "from": "src/app/pokemon/components/PokemonForm.tsx#render-event@12:11",
+              "to": "src/app/pokemon/actions.ts#function@25:1"
+            },
+            {
+              "id": "src/app/pokemon/components/PokemonForm.tsx#component@10:1 -> src/app/pokemon/actions.ts#function@25:1",
+              "from": "src/app/pokemon/components/PokemonForm.tsx#component@10:1",
+              "to": "src/app/pokemon/actions.ts#function@25:1"
+            },
+            {
+              "id": "src/app/pokemon/[id]/edit/page.tsx#component@7:1 -> src/app/pokemon/components/PokemonForm.tsx#component@10:1",
+              "from": "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+              "to": "src/app/pokemon/components/PokemonForm.tsx#component@10:1"
+            },
+            {
+              "id": "src/app/pokemon/actions.ts#function@25:1 -> src/db/queries/pokemon.ts#function@15:1",
+              "from": "src/app/pokemon/actions.ts#function@25:1",
+              "to": "src/db/queries/pokemon.ts#function@15:1"
+            },
+            {
+              "id": "src/app/pokemon/[id]/edit/page.tsx#component@7:1 -> src/app/pokemon/[id]/edit/page.tsx#render-event@15:20",
+              "from": "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+              "to": "src/app/pokemon/[id]/edit/page.tsx#render-event@15:20"
+            },
+            {
+              "id": "src/app/pokemon/components/PokemonForm.tsx#component@10:1 -> src/app/pokemon/components/PokemonForm.tsx#render-event@12:11",
+              "from": "src/app/pokemon/components/PokemonForm.tsx#component@10:1",
+              "to": "src/app/pokemon/components/PokemonForm.tsx#render-event@12:11"
+            }
+          ]
+        },
+        "blastDiagram": null,
+        "hiddenBlastDiagram": {
+          "nodes": [
+            {
+              "path": "src/app/pokemon/[id]/edit/page.tsx",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            }
+          ],
+          "edges": [],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/app/pokemon/[id]/edit/page.tsx",
+                "diffType": "added"
+              },
+              {
+                "path": "src/app/pokemon/actions.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/components/ui/SubmitButton.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/db/index.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/db/queries/pokemon.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/db/queries/trainers.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/db/schema.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/app/pokemon/[id]/edit/page.tsx",
+                "imported": "src/app/pokemon/actions.ts"
+              },
+              {
+                "importer": "src/app/pokemon/[id]/edit/page.tsx",
+                "imported": "src/app/pokemon/components/PokemonForm.tsx"
+              },
+              {
+                "importer": "src/app/pokemon/[id]/edit/page.tsx",
+                "imported": "src/db/queries/pokemon.ts"
+              },
+              {
+                "importer": "src/app/pokemon/[id]/edit/page.tsx",
+                "imported": "src/db/queries/trainers.ts"
+              },
+              {
+                "importer": "src/app/pokemon/actions.ts",
+                "imported": "src/db/queries/pokemon.ts"
+              },
+              {
+                "importer": "src/app/pokemon/actions.ts",
+                "imported": "src/db/schema.ts"
+              },
+              {
+                "importer": "src/app/pokemon/components/PokemonForm.tsx",
+                "imported": "src/components/ui/SubmitButton.tsx"
+              },
+              {
+                "importer": "src/app/pokemon/components/PokemonForm.tsx",
+                "imported": "src/db/schema.ts"
+              },
+              {
+                "importer": "src/db/queries/pokemon.ts",
+                "imported": "src/db/index.ts"
+              },
+              {
+                "importer": "src/db/queries/pokemon.ts",
+                "imported": "src/db/schema.ts"
+              },
+              {
+                "importer": "src/db/queries/trainers.ts",
+                "imported": "src/db/index.ts"
+              },
+              {
+                "importer": "src/db/queries/trainers.ts",
+                "imported": "src/db/schema.ts"
+              }
+            ]
+          }
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/app/pokemon/[id]/edit/page.tsx",
+              "waypoints": [
+                {
+                  "id": "w5",
+                  "title": "Added `<EditPokemonPage />` to edit a Pokemon",
+                  "declaration": "EditPokemonPage",
+                  "reading": "The author added a page component `<EditPokemonPage />` at `/pokemon/[id]/edit` that:\n\n- loads the Pokemon of the id in the URL with [`findPokemon()`](code:src/db/queries/pokemon.ts#L5-8), and renders the 404 page when no Pokemon has that id\n- loads the trainers with [`findTrainers()`](code:src/db/queries/trainers.ts#L5-7)\n- renders the heading `Edit` with the name of the Pokemon, such as `Edit Pikachu`\n- renders [`<PokemonForm />`](code:src/app/pokemon/components/PokemonForm.tsx#PokemonForm) with the Pokemon, the trainers and [`updatePokemon()`](code:src/app/pokemon/actions.ts#updatePokemon) bound to the id of the Pokemon\n\n[The Edit link of the Pokemon page opens it](code:src/app/pokemon/[id]/page.tsx#L15), so that a professor can change a Pokemon after it is created.",
+                  "coreChange": "This is the page the pull request exists for: it loads a saved Pokemon into [the form of a new Pokemon](code:src/app/pokemon/components/PokemonForm.tsx#PokemonForm) and saves it through [`updatePokemon()`](code:src/app/pokemon/actions.ts#updatePokemon). The other cards fill the form, update the row and link to this page.",
+                  "findings": [],
+                  "range": {
+                    "lineStart": 7,
+                    "lineEnd": 18
+                  },
+                  "category": "function",
+                  "traceNodeId": "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+                  "codeBlockIds": [
+                    "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+                    "src/app/pokemon/[id]/edit/page.tsx#root-argument-value@7:49",
+                    "src/app/pokemon/[id]/edit/page.tsx#variable@8:3",
+                    "src/app/pokemon/[id]/edit/page.tsx#external-value@9:3",
+                    "src/app/pokemon/[id]/edit/page.tsx#condition@10:3",
+                    "src/app/pokemon/[id]/edit/page.tsx#call@10:30",
+                    "src/app/pokemon/[id]/edit/page.tsx#external-value@11:3",
+                    "src/app/pokemon/[id]/edit/page.tsx#render-root@12:3",
+                    "src/app/pokemon/[id]/edit/page.tsx#render@13:5",
+                    "src/app/pokemon/[id]/edit/page.tsx#render@14:7",
+                    "src/app/pokemon/[id]/edit/page.tsx#render@15:7",
+                    "src/app/pokemon/[id]/edit/page.tsx#render-event@15:20"
+                  ],
+                  "children": [
+                    {
+                      "id": "w5.1",
+                      "title": "Added the read of the id from the URL",
+                      "declaration": "EditPokemonPage › id",
+                      "reading": "The author added a statement that awaits `params` and reads `id`, such as `\"3\"` for `/pokemon/3/edit`. `id` is a string, so [the next line turns it into a number](code:src/app/pokemon/[id]/edit/page.tsx#L9) for [`findPokemon()`](code:src/db/queries/pokemon.ts#L5-8).",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/app/pokemon/[id]/edit/page.tsx#variable@8:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.2",
+                      "title": "Added the load of the Pokemon",
+                      "declaration": "EditPokemonPage › pokemon",
+                      "reading": "The author added a call to [`findPokemon(3)`](code:src/db/queries/pokemon.ts#L5-8) for `/pokemon/3/edit`, which returns the Pokemon with id 3, or `undefined` when no row has that id. [The condition below renders the 404 page for `undefined`](code:src/app/pokemon/[id]/edit/page.tsx#L10).",
+                      "coreChange": null,
+                      "findings": [
+                        {
+                          "id": "finding-edit-page-nan-id",
+                          "kind": "risk",
+                          "title": "`<EditPokemonPage />` sends `NaN` to Postgres for an id that is not a number",
+                          "reading": "`Number(id)` returns `NaN` for `/pokemon/abc/edit`, and [`findPokemon(NaN)` sends `NaN` as the id of the query](code:src/db/queries/pokemon.ts#L6). The `id` column is [a `serial`](code:src/db/schema.ts#L10), so Postgres returns an error for the input `NaN`, and the page fails with a server error before [the condition below renders the 404 page](code:src/app/pokemon/[id]/edit/page.tsx#L10). No database runs for this repository, so the error was not reproduced. [The Pokemon page reads its id the same way](code:src/app/pokemon/[id]/page.tsx#L7).",
+                          "trace": [
+                            "A professor opens `/pokemon/abc/edit`.",
+                            "[`const { id } = await params`](code:src/app/pokemon/[id]/edit/page.tsx#L8) → `\"abc\"`.",
+                            "[`findPokemon(Number(\"abc\"))`](code:src/app/pokemon/[id]/edit/page.tsx#L9) → `findPokemon(NaN)`.",
+                            "[`db.select().from(pokemon).where(eq(pokemon.id, NaN))`](code:src/db/queries/pokemon.ts#L6) → Postgres returns `invalid input syntax for type integer: \"NaN\"`, and the query throws."
+                          ],
+                          "solution": "  const pokemon = Number.isInteger(Number(id)) ? await findPokemon(Number(id)) : undefined"
+                        }
+                      ],
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 9
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/app/pokemon/[id]/edit/page.tsx#external-value@9:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.3",
+                      "title": "Added the 404 for a Pokemon that does not exist",
+                      "declaration": "EditPokemonPage › Condition :10",
+                      "reading": "The author added a condition that calls `notFound()` when `pokemon` is `undefined`. `notFound()` throws, so Next.js renders the 404 page, and the lines below run only with a Pokemon, as on [the Pokemon page](code:src/app/pokemon/[id]/page.tsx#L8).",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 10,
+                        "lineEnd": 10
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/app/pokemon/[id]/edit/page.tsx#condition@10:3",
+                        "src/app/pokemon/[id]/edit/page.tsx#call@10:30"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.4",
+                      "title": "Added the load of the trainers",
+                      "declaration": "EditPokemonPage › trainers",
+                      "reading": "The author added a call to [`findTrainers()`](code:src/db/queries/trainers.ts#L5-7), which returns every trainer ordered by name. [The form renders one option per trainer](code:src/app/pokemon/components/PokemonForm.tsx#L18-22) in its trainer select, as it does for `src/app/pokemon/new/page.tsx`.",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 11,
+                        "lineEnd": 11
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/app/pokemon/[id]/edit/page.tsx#external-value@11:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.5",
+                      "title": "Added the save action bound to the Pokemon",
+                      "declaration": "EditPokemonPage › PokemonForm.action",
+                      "reading": "The author added a prop `action` that holds `updatePokemon.bind(null, 3)` for the Pokemon with id 3. It is a function of the form data alone, [the type that `PokemonFormProps` gives `action`](code:src/app/pokemon/components/PokemonForm.tsx#L5). When a professor clicks Save, [the form calls it](code:src/app/pokemon/components/PokemonForm.tsx#L12), and the call reaches [`updatePokemon(3, formData)`](code:src/app/pokemon/actions.ts#updatePokemon), so that the save updates this Pokemon and inserts no new one.",
+                      "coreChange": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 15
+                      },
+                      "category": "statement",
+                      "traceNodeId": "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/app/pokemon/[id]/edit/page.tsx#render-event@15:20"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/app/pokemon/[id]/edit/page.tsx",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 23,
+                "endColumn": 29,
+                "path": "src/app/pokemon/[id]/edit/page.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 24,
+                "endColumn": 35,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 43,
+                "endColumn": 45,
+                "path": "src/app/pokemon/[id]/edit/page.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/app/pokemon/[id]/edit/page.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 29,
+                "endColumn": 37,
+                "path": "src/app/pokemon/[id]/edit/page.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "next/navigation",
+                  "name": "notFound"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 25,
+                "endColumn": 37,
+                "path": "src/db/queries/trainers.ts",
+                "lines": [
+                  5,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 16,
+                "endColumn": 23,
+                "path": "src/app/pokemon/[id]/edit/page.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 18,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  27
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 27,
+                "endColumn": 40,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  25,
+                  29
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 52,
+                "endColumn": 59,
+                "path": "src/app/pokemon/[id]/edit/page.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 75,
+                "endColumn": 83,
+                "path": "src/app/pokemon/[id]/edit/page.tsx",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 94,
+                "endColumn": 101,
+                "path": "src/app/pokemon/[id]/edit/page.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 7,
+                "startColumn": 68,
+                "endColumn": 75,
+                "name": "Promise"
+              },
+              {
+                "line": 9,
+                "startColumn": 36,
+                "endColumn": 42,
+                "name": "Number"
+              }
+            ],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 30,
+                "endColumn": 45,
+                "lines": [
+                  7,
+                  18
+                ],
+                "usages": []
+              }
+            ]
+          },
+          {
+            "path": "src/app/pokemon/actions.ts",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 48,
+                "endColumn": 58,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 27,
+                "endColumn": 35,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 17,
+                "endColumn": 25,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 18,
+                "endColumn": 26,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 24,
+                "endColumn": 32,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 15,
+                "endColumn": 24,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 29,
+                "endColumn": 39,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 56,
+                "endColumn": 65,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 25,
+                "endColumn": 38,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  10,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 39,
+                "endColumn": 56,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 57,
+                "endColumn": 65,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 2,
+                "endColumn": 10,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "next/navigation",
+                  "name": "redirect"
+                }
+              },
+              {
+                "line": 22,
+                "startColumn": 23,
+                "endColumn": 31,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 8,
+                "endColumn": 19,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 20,
+                "endColumn": 22,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 24,
+                "endColumn": 41,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  10,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 42,
+                "endColumn": 50,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 2,
+                "endColumn": 16,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "next/cache",
+                  "name": "revalidatePath"
+                }
+              },
+              {
+                "line": 27,
+                "startColumn": 29,
+                "endColumn": 31,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 2,
+                "endColumn": 10,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "next/navigation",
+                  "name": "redirect"
+                }
+              },
+              {
+                "line": 28,
+                "startColumn": 23,
+                "endColumn": 25,
+                "path": "src/app/pokemon/actions.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 10,
+                "startColumn": 37,
+                "endColumn": 45,
+                "name": "FormData"
+              },
+              {
+                "line": 11,
+                "startColumn": 20,
+                "endColumn": 26,
+                "name": "String"
+              },
+              {
+                "line": 13,
+                "startColumn": 10,
+                "endColumn": 16,
+                "name": "String"
+              },
+              {
+                "line": 14,
+                "startColumn": 11,
+                "endColumn": 17,
+                "name": "Number"
+              },
+              {
+                "line": 15,
+                "startColumn": 17,
+                "endColumn": 23,
+                "name": "String"
+              },
+              {
+                "line": 16,
+                "startColumn": 49,
+                "endColumn": 55,
+                "name": "Number"
+              },
+              {
+                "line": 20,
+                "startColumn": 46,
+                "endColumn": 54,
+                "name": "FormData"
+              },
+              {
+                "line": 25,
+                "startColumn": 58,
+                "endColumn": 66,
+                "name": "FormData"
+              }
+            ],
+            "exports": [
+              {
+                "line": 20,
+                "startColumn": 22,
+                "endColumn": 35,
+                "lines": [
+                  20,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 27,
+                    "endColumn": 40,
+                    "path": "src/app/pokemon/new/page.tsx",
+                    "text": "      <PokemonForm action={createPokemon} trainers={trainers} />"
+                  }
+                ]
+              },
+              {
+                "line": 25,
+                "startColumn": 22,
+                "endColumn": 35,
+                "lines": [
+                  25,
+                  29
+                ],
+                "usages": [
+                  {
+                    "line": 15,
+                    "startColumn": 27,
+                    "endColumn": 40,
+                    "path": "src/app/pokemon/[id]/edit/page.tsx",
+                    "text": "      <PokemonForm action={updatePokemon.bind(null, pokemon.id)} trainers={trainers} pokemon={pokemon} />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/app/pokemon/components/PokemonForm.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 12,
+                "endColumn": 19,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 12,
+                "endColumn": 19,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 59,
+                "endColumn": 75,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  4,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 18,
+                "endColumn": 24,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 58,
+                "endColumn": 65,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 72,
+                "endColumn": 79,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 65,
+                "endColumn": 72,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 45,
+                "endColumn": 52,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 23,
+                "endColumn": 30,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 42,
+                "endColumn": 49,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 13,
+                "endColumn": 20,
+                "path": "src/app/pokemon/components/PokemonForm.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 7,
+                "endColumn": 19,
+                "path": "src/components/ui/SubmitButton.tsx",
+                "lines": [
+                  5,
+                  12
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 21,
+                "endColumn": 29,
+                "name": "FormData"
+              },
+              {
+                "line": 5,
+                "startColumn": 34,
+                "endColumn": 41,
+                "name": "Promise"
+              }
+            ],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  10,
+                  27
+                ],
+                "usages": [
+                  {
+                    "line": 15,
+                    "startColumn": 7,
+                    "endColumn": 18,
+                    "path": "src/app/pokemon/[id]/edit/page.tsx",
+                    "text": "      <PokemonForm action={updatePokemon.bind(null, pokemon.id)} trainers={trainers} pokemon={pokemon} />"
+                  },
+                  {
+                    "line": 10,
+                    "startColumn": 7,
+                    "endColumn": 18,
+                    "path": "src/app/pokemon/new/page.tsx",
+                    "text": "      <PokemonForm action={createPokemon} trainers={trainers} />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/db/queries/pokemon.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 55,
+                "endColumn": 62,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 24,
+                "endColumn": 26,
+                "path": "src/db/index.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 41,
+                "endColumn": 48,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 56,
+                "endColumn": 58,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "drizzle-orm",
+                  "name": "eq"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 59,
+                "endColumn": 66,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 71,
+                "endColumn": 73,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 44,
+                "endColumn": 54,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 65,
+                "endColumn": 72,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 27,
+                "endColumn": 29,
+                "path": "src/db/index.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 37,
+                "endColumn": 44,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 53,
+                "endColumn": 59,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 54,
+                "endColumn": 64,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 8,
+                "endColumn": 10,
+                "path": "src/db/index.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 18,
+                "endColumn": 25,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 31,
+                "endColumn": 37,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 45,
+                "endColumn": 47,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "drizzle-orm",
+                  "name": "eq"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 48,
+                "endColumn": 55,
+                "path": "src/db/schema.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 60,
+                "endColumn": 62,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 47,
+                "endColumn": 54,
+                "name": "Promise"
+              },
+              {
+                "line": 10,
+                "startColumn": 57,
+                "endColumn": 64,
+                "name": "Promise"
+              },
+              {
+                "line": 15,
+                "startColumn": 67,
+                "endColumn": 74,
+                "name": "Promise"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 22,
+                "endColumn": 33,
+                "lines": [
+                  5,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 24,
+                    "endColumn": 35,
+                    "path": "src/app/pokemon/[id]/edit/page.tsx",
+                    "text": "  const pokemon = await findPokemon(Number(id))"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 24,
+                    "endColumn": 35,
+                    "path": "src/app/pokemon/[id]/page.tsx",
+                    "text": "  const pokemon = await findPokemon(Number(id))"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 22,
+                "endColumn": 35,
+                "lines": [
+                  10,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 21,
+                    "startColumn": 25,
+                    "endColumn": 38,
+                    "path": "src/app/pokemon/actions.ts",
+                    "text": "  const inserted = await insertPokemon(readPokemonFields(formData))"
+                  }
+                ]
+              },
+              {
+                "line": 15,
+                "startColumn": 22,
+                "endColumn": 33,
+                "lines": [
+                  15,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 26,
+                    "startColumn": 8,
+                    "endColumn": 19,
+                    "path": "src/app/pokemon/actions.ts",
+                    "text": "  await savePokemon(id, readPokemonFields(formData))"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Modified PokemonPage",
+        "context": [
+          "This segment adds an Edit link under the level and the type on the page of a Pokemon, which opens the edit page of that Pokemon."
+        ],
+        "kind": "entry",
+        "importGraph": [
+          {
+            "filePath": "src/app/pokemon/[id]/page.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/db/queries/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/db/queries/pokemon": "src/db/queries/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/app/pokemon/new/page.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/app/pokemon/actions.ts",
+              "src/app/pokemon/components/PokemonForm.tsx"
+            ],
+            "importedFilePaths": {
+              "@/app/pokemon/actions": "src/app/pokemon/actions.ts",
+              "@/app/pokemon/components/PokemonForm": "src/app/pokemon/components/PokemonForm.tsx",
+              "@/db/queries/trainers": "src/db/queries/trainers.ts"
+            }
+          },
+          {
+            "filePath": "src/components/ui/SubmitButton.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/app/pokemon/components/PokemonForm.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/db/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/db/queries/pokemon.ts",
+              "src/db/queries/trainers.ts"
+            ],
+            "importsTo": [
+              "src/db/schema.ts"
+            ],
+            "importedFilePaths": {
+              "./schema": "src/db/schema.ts"
+            }
+          },
+          {
+            "filePath": "src/db/queries/trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/app/pokemon/[id]/edit/page.tsx"
+            ],
+            "importsTo": [
+              "src/db/index.ts",
+              "src/db/schema.ts"
+            ],
+            "importedFilePaths": {
+              "@/db": "src/db/index.ts",
+              "@/db/schema": "src/db/schema.ts"
+            }
+          },
+          {
+            "filePath": "src/db/schema.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/app/pokemon/actions.ts",
+              "src/app/pokemon/components/PokemonForm.tsx",
+              "src/db/index.ts",
+              "src/db/queries/pokemon.ts",
+              "src/db/queries/trainers.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": null,
+        "blastDiagram": null,
+        "hiddenBlastDiagram": {
+          "nodes": [
+            {
+              "path": "src/app/pokemon/[id]/page.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            }
+          ],
+          "edges": [],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/app/pokemon/[id]/page.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/db/index.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/db/queries/pokemon.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/db/schema.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/app/pokemon/[id]/page.tsx",
+                "imported": "src/db/queries/pokemon.ts"
+              },
+              {
+                "importer": "src/db/queries/pokemon.ts",
+                "imported": "src/db/index.ts"
+              },
+              {
+                "importer": "src/db/queries/pokemon.ts",
+                "imported": "src/db/schema.ts"
+              }
+            ]
+          }
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/app/pokemon/[id]/page.tsx",
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "title": "Modified `<PokemonPage />` to link to the edit page",
+                  "declaration": "PokemonPage",
+                  "reading": "The author modified the page component `<PokemonPage />` to render a `<Link>` with the text `Edit` under the level and the type, to `/pokemon/3/edit` for the Pokemon with id 3. Next.js renders [`<EditPokemonPage />`](code:src/app/pokemon/[id]/edit/page.tsx#EditPokemonPage) at that path, so that a professor can open the edit page from the Pokemon. [`updatePokemon()` redirects back to this page after a save](code:src/app/pokemon/actions.ts#L28).",
+                  "coreChange": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 18
+                  },
+                  "category": "function",
+                  "traceNodeId": null,
+                  "codeBlockIds": [
+                    "src/app/pokemon/[id]/page.tsx#component@5:1",
+                    "src/app/pokemon/[id]/page.tsx#render@15:7"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/app/pokemon/[id]/page.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 23,
+                "endColumn": 29,
+                "path": "src/app/pokemon/[id]/page.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 24,
+                "endColumn": 35,
+                "path": "src/db/queries/pokemon.ts",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 43,
+                "endColumn": 45,
+                "path": "src/app/pokemon/[id]/page.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/app/pokemon/[id]/page.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 29,
+                "endColumn": 37,
+                "path": "src/app/pokemon/[id]/page.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "next/navigation",
+                  "name": "notFound"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/app/pokemon/[id]/page.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 13,
+                "endColumn": 20,
+                "path": "src/app/pokemon/[id]/page.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 29,
+                "endColumn": 36,
+                "path": "src/app/pokemon/[id]/page.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 11,
+                "path": "src/app/pokemon/[id]/page.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "next/link",
+                  "name": "default"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 30,
+                "endColumn": 37,
+                "path": "src/app/pokemon/[id]/page.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 64,
+                "endColumn": 71,
+                "name": "Promise"
+              },
+              {
+                "line": 7,
+                "startColumn": 36,
+                "endColumn": 42,
+                "name": "Number"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 30,
+                "endColumn": 41,
+                "lines": [
+                  5,
+                  18
+                ],
+                "usages": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

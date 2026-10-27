@@ -38,6 +38,23 @@ The app is the value `FastAPI()` makes, and a router the value `APIRouter()` mak
 
 The call `Depends(…)` is no node: the line goes from the function it names. Nor is an app or a router that only hands its dependencies, `app = FastAPI(dependencies=[Depends(verify_key)])`: the dependency is the card. A dependency of a dependency is a call of it the same way, written as a default or in `Annotated`: `def current_user(db: Annotated[Session, Depends(get_db)])` has a line to `get_db`. `Security(…)` is read as `Depends(…)` is.
 
+## Request bodies and response models
+
+**A handler has a line to the pydantic model FastAPI parses its body into, and to the one it builds its response from.** The chain steps from a handler to the class a parameter is typed by when that class is a pydantic model, a class of `BaseModel` or of a model of the repository that is one, and to a pydantic model the handler names itself, as `response_model=PokemonRead` or `response_model=list[PokemonRead]` of its decorator does. Each model is a card of its own, though it may have no method: no card makes it, FastAPI does. A parameter with a dependency written in it, `Annotated[User, Depends(current_user)]`, is no body, and a class that is no pydantic model draws no line.
+
+```python
+@router.post("/", response_model=PokemonRead, status_code=201)
+def add_pokemon(draft: PokemonCreate, session: SessionDep):
+    return create_pokemon(session, draft)
+```
+
+```mermaid
+flowchart LR
+  add["POST: add_pokemon"] --> create["PokemonCreate"]
+  add --> read["PokemonRead"]
+  add --> service["create_pokemon"]
+```
+
 ## Aliases
 
 **An alias of `Annotated` is no card.** `CurrentUser = Annotated[User, Depends(current_user)]` stands for a type, and a parameter typed `CurrentUser` is read as if `Annotated[User, Depends(current_user)]` were written there: the handler card holds it, and the line goes from the handler to `current_user`, in whatever file the alias is declared.

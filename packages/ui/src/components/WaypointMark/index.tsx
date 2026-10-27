@@ -8,6 +8,7 @@ import ReviewToggle from "@/components/ReviewToggle"
 import { SpotlightChip, SpotlightRays } from "@/components/SpotlightMark"
 import type { WaypointContent } from "@/components/WaypointBox"
 import { KeycapButton } from "@/components/WriteUpIcon"
+import { artifactPartMark } from "@/lib/artifact-part"
 import {
   GUTTER_CARD_COLLISION_AVOIDANCE,
   GUTTER_CARD_GAP_PX,
@@ -28,7 +29,6 @@ import { WAYPOINT_KEY } from "@/lib/walkthrough-navigation"
 export type WaypointMarkKind = FindingMarkKind | "plain"
 
 export interface MarkedWaypoint extends WaypointContent {
-  readonly id: string
   readonly rangeLabel: string | null
   readonly mark: { readonly kind: WaypointMarkKind, readonly label: string }
   readonly lines: { readonly lineStart: number, readonly lineEnd: number } | null
@@ -287,6 +287,7 @@ const WaypointMark = ({
               collisionPadding={placement.collisionPadding}
               collisionAvoidance={GUTTER_CARD_COLLISION_AVOIDANCE}
               data-view-section-id="waypoint-card-section"
+              {...artifactPartMark("waypoint", waypoint.id)}
               className={CARD_CLASSES}
             >
               <HoverCardArrow />

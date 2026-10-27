@@ -42,6 +42,28 @@ const TYPED_CLIENT = codeOf(
 )
 const UNTYPED_CLIENT = codeOf("import { createTRPCReact } from \"@trpc/react-query\"", "export const api = createTRPCReact()")
 
+const CALLER_FILES: FixtureFiles = {
+  ...SERVER_FILES,
+  "src/server/root.ts": codeOf(
+    "import { t } from \"./trpc\"",
+    "import { todoRouter } from \"./todo-router\"",
+    "export const appRouter = t.router({ todo: todoRouter })",
+    "export const createCaller = t.createCallerFactory(appRouter)",
+  ),
+  "src/server/caller.ts": codeOf("import { createCaller } from \"./root\"", "export const api = createCaller({})"),
+  "src/app/todos-page.tsx": codeOf(
+    "import { api } from \"../server/caller\"",
+    "export default async function TodosPage() {",
+    "  const created = await api.todo.create(\"a\")",
+    "  return <p>{created}</p>",
+    "}",
+  ),
+}
+const LIST_CHANGE = { "src/server/todo-router.ts": [rangeAt(5, 1, 5, 34)] }
+
+const callerCallOf = (group: StoredCodeGroupGraph): StoredCodeBlock | undefined =>
+  group.codeBlocks.find((block) => block.filePath === "src/app/todos-page.tsx" && block.outerSymbols.some((symbol) => symbol.member !== undefined))
+
 const requestOf = (group: StoredCodeGroupGraph): StoredCodeBlock | undefined =>
   group.codeBlocks.find((block) => block.filePath === "src/client/add-todo.tsx" && block.type === "request")
 
@@ -81,5 +103,33 @@ describe("the procedure a tRPC client calls", () => {
     const group = groupOf(files, SAVE_TODO_CHANGE)
 
     expect(requestOf(group)?.nextBlockIds).toStrictEqual([])
+  })
+
+  it("steps from a call on a server caller to the procedure its full path names, through the router the caller is made from", () => {
+    const group = groupOf(CALLER_FILES, SAVE_TODO_CHANGE)
+
+    expect(callerCallOf(group)?.nextBlockIds).toStrictEqual([PROCEDURE])
+    expect(group.diffChainIds).toContain("src/app/todos-page.tsx#component@2:1")
+  })
+
+  it("reaches no change in a router through a caller that is only handed the router", () => {
+    const group = groupOf(CALLER_FILES, LIST_CHANGE)
+
+    expect(callerCallOf(group)?.nextBlockIds).toStrictEqual([])
+    expect(group.diffChainIds).not.toContain("src/app/todos-page.tsx#component@2:1")
+  })
+
+  it("reaches no change in a router through a request handler that is only handed the router", () => {
+    const files = {
+      ...CALLER_FILES,
+      "src/app/api/trpc/route.ts": codeOf(
+        "import { fetchRequestHandler } from \"@trpc/server/adapters/fetch\"",
+        "import { appRouter } from \"../../../server/root\"",
+        "export const handler = (req) => fetchRequestHandler({ endpoint: \"/api/trpc\", req, router: appRouter })",
+      ),
+    }
+    const group = groupOf(files, LIST_CHANGE)
+
+    expect(group.diffChainIds.filter((blockId) => blockId.startsWith("src/app/"))).toStrictEqual([])
   })
 })

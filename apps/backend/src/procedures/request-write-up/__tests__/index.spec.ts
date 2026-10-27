@@ -11,7 +11,7 @@ const NOW = new Date("2026-10-01T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "pr-416" }
 const CLAUDE_SETUP: Setup = {
   ...EMPTY_SETUP,
-  agents: { installs: [{ agent: "claude", installPath: "/home/.claude", model: "opus", effort: "max" }], defaultAgent: "claude" },
+  agents: { installs: [{ agent: "claude", installPath: "/home/.claude", model: "opus", effort: "max" }], defaultAgent: "claude", terminalApp: "terminal" },
 }
 
 const createWritingContext = async (setup: Setup = CLAUDE_SETUP): Promise<ProcedureContext> => {

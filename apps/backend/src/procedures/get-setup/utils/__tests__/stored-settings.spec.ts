@@ -1,5 +1,5 @@
 import { DEFAULT_REVIEW_PREFERENCES } from "@/procedures/get-review-preferences/utils/review-preferences"
-import { GITHUB_FORGES, READY_TO_FINISH } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { GITHUB_FORGES, READY_TO_FINISH, SAVED_AGENTS } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { formatSettings, parseSettings } from "@/procedures/get-setup/utils/stored-settings"
 
@@ -81,6 +81,35 @@ describe("parseSettings", () => {
 
   it("refuses a setup with an agent Flight Plan does not know", () => {
     const settings = { defaultConfiguration: null, setup: { ...EMPTY_SETUP, agents: { installs: [], defaultAgent: "copilot" } } }
+
+    expect(parseSettings(JSON.stringify(settings))).toBeNull()
+  })
+
+  it("reads agents saved before a terminal app could be chosen as Terminal", () => {
+    const settings = {
+      defaultConfiguration: null,
+      setup: {
+        agents: { installs: [], defaultAgent: "claude" },
+        forges: null,
+        repositories: [],
+        isComplete: false,
+      },
+    }
+
+    expect(parseSettings(JSON.stringify(settings))?.agents?.terminalApp).toBe("terminal")
+  })
+
+  it("reads back the saved terminal app", () => {
+    const saved = formatSettings({ ...READY_TO_FINISH, agents: { ...SAVED_AGENTS, terminalApp: "ghostty" } })
+
+    expect(parseSettings(saved)?.agents?.terminalApp).toBe("ghostty")
+  })
+
+  it("refuses a terminal app Flight Plan does not know", () => {
+    const settings = {
+      defaultConfiguration: null,
+      setup: { ...EMPTY_SETUP, agents: { installs: [], defaultAgent: "claude", terminalApp: "hyper" } },
+    }
 
     expect(parseSettings(JSON.stringify(settings))).toBeNull()
   })

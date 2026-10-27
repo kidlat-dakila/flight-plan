@@ -3,6 +3,7 @@ import WaypointBox, { type WaypointContent } from "@/components/WaypointBox"
 import { createFinding, paragraph } from "@/lib/__tests__/review-samples"
 
 const createWaypoint = (overrides: Partial<WaypointContent> = {}): WaypointContent => ({
+  id: "price-of",
   anchorId: "waypoint-price-of",
   depth: 0,
   title: "Held units reduce the price",
@@ -210,5 +211,11 @@ describe("WaypointBox", () => {
     )
 
     expect(within(screen.getByRole("region", { name: "Held units reduce the price" })).getByRole("button", { name: "Edit the waypoint" })).toBeTruthy()
+  })
+
+  it("marks what it shows as its waypoint", () => {
+    renderBox(createWaypoint(), true)
+
+    expect(screen.getByRole("region", { name: "Held units reduce the price" }).dataset).toMatchObject({ artifactPart: "waypoint", artifactId: "price-of" })
   })
 })

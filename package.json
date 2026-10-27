@@ -1,7 +1,7 @@
 {
   "name": "flight-plan",
   "description": "Read a pull request as an ordered walkthrough beside its code, written by your assistant through MCP tools.",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kidlat-dakila/flight-plan.git"
@@ -10,7 +10,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "nx run-many -t dev -p frontend backend site",
+    "dev": "nx run-many -t dev -p frontend backend site trace-diagram-lab",
     "lint": "nx run-many -t eslint:lint",
     "lint:fix": "nx run-many -t eslint:lint --args=--fix",
     "hard-reset": "jiti tools/hard-reset/index.ts",
@@ -31,16 +31,20 @@
     "@fontsource-variable/inter": "^5.3.0",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@nx-extend/shadcn-ui": "^7.0.1",
+    "@nx/devkit": "23.3.0",
     "@nx/esbuild": "23.3.0",
     "@nx/eslint": "23.3.0",
     "@nx/eslint-plugin": "23.3.0",
     "@nx/js": "23.3.0",
     "@nx/node": "23.3.0",
+    "@nx/playwright": "23.3.0",
     "@nx/react": "23.3.0",
     "@nx/vite": "23.3.0",
     "@nx/vitest": "23.3.0",
     "@nx/web": "23.3.0",
+    "@playwright/test": "^1.36.0",
     "@stylistic/eslint-plugin": "^5.10.0",
+    "@swc-node/register": "~1.12.1",
     "@swc/cli": "~0.8.1",
     "@swc/core": "~1.15.5",
     "@swc/helpers": "~0.5.18",
@@ -70,6 +74,7 @@
     "eslint-plugin-jsx-a11y": "6.10.1",
     "eslint-plugin-n": "^18.4.0",
     "eslint-plugin-no-comments": "^1.2.1",
+    "eslint-plugin-playwright": "^1.6.2",
     "eslint-plugin-react-hooks": "^7.1.1",
     "fast-check": "^4.10.2",
     "globals": "^17.12.0",
@@ -78,6 +83,7 @@
     "jiti": "2.4.2",
     "jsdom": "^27.1.0",
     "nx": "23.3.0",
+    "portless": "0.15.12",
     "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3",
     "typescript-eslint": "^8.61.1",
@@ -124,7 +130,7 @@
     "tree-sitter-python": "0.25.0",
     "tree-sitter-typescript": "0.23.2",
     "typescript": "^6.0.3",
-    "zod": "^4.5.4",
+    "zod": "^4.6.6",
     "zustand": "^5.0.15"
   },
   "license": "FSL-1.1-ALv2"

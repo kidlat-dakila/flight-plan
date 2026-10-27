@@ -9,6 +9,15 @@ export const DELIVERY_CHANNELS = ["listener", "spawn", "turn-end"] as const
 
 export type DeliveryChannel = (typeof DELIVERY_CHANNELS)[number]
 
+export const EXCERPT_KINDS = ["code", "text"] as const
+
+export type ExcerptKind = (typeof EXCERPT_KINDS)[number]
+
+export interface Excerpt {
+  readonly kind: ExcerptKind
+  readonly text: string
+}
+
 export interface QuestionOption {
   readonly label: string
   readonly description: string
@@ -33,6 +42,7 @@ export interface ReviewerMessage {
   readonly id: string
   readonly body: string
   readonly reference: string | null
+  readonly excerpt: Excerpt | null
   readonly sentAt: Date
 }
 

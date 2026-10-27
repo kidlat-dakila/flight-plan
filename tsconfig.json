@@ -32,6 +32,12 @@
     },
     {
       "path": "./packages/reviewed-marks"
+    },
+    {
+      "path": "./tools/trace-diagram-lab-e2e"
+    },
+    {
+      "path": "./tools/trace-diagram-lab"
     }
   ]
 }

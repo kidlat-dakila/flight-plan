@@ -18,6 +18,8 @@ const agentsSection = {
     { agent: "codex", label: "Codex", isPicked: false, installPath: "/Users/dev/.codex", pathHint: "Found on this machine.", unavailableReason: null, model: "default", effort: "default", modelOptions: defaultOnly("Your Codex default") },
   ],
   defaultAgent: "claude",
+  terminalApps: [{ terminalApp: "terminal", label: "Terminal" }, { terminalApp: "iterm", label: "iTerm2" }],
+  terminalApp: "iterm",
 }
 
 const forgesSection = {
@@ -208,6 +210,7 @@ describe("the settings pages", () => {
         { agent: "codex", isPicked: false, installPath: "/Users/dev/.codex", model: "default", effort: "default" },
       ],
       defaultAgent: "claude",
+      terminalApp: "iterm",
     })
     expect(screen.getByRole("heading", { level: 2, name: "Agent integration" })).toBeTruthy()
   })

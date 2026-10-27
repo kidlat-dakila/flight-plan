@@ -10,7 +10,7 @@ export const SAVED_MESSAGES: Record<SaveSettingsInput["section"], string> = {
 
 export const toStepInput = (input: StepSettingsInput): SaveSetupStepInput => {
   if (input.section === "agents") {
-    return { step: "agents", agents: input.agents, defaultAgent: input.defaultAgent }
+    return { step: "agents", agents: input.agents, defaultAgent: input.defaultAgent, terminalApp: input.terminalApp }
   }
   if (input.section === "forges") return { step: "forges", forges: input.forges }
   return { step: "configuration", configurationId: input.configurationId }

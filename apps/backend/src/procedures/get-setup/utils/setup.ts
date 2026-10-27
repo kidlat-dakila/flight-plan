@@ -8,6 +8,12 @@ export const AGENT_NAMES = ["claude", "codex", "cursor"] as const
 
 export type AgentName = (typeof AGENT_NAMES)[number]
 
+export const TERMINAL_APPS = ["terminal", "iterm", "ghostty", "warp"] as const
+
+export type TerminalApp = (typeof TERMINAL_APPS)[number]
+
+export const DEFAULT_TERMINAL_APP: TerminalApp = "terminal"
+
 export const SETUP_FORGES = ["git", "gh", "glab", "github", "gitlab", "bitbucket"] as const
 
 export type SetupForge = (typeof SETUP_FORGES)[number]
@@ -30,6 +36,7 @@ export interface AgentInstall {
 export interface AgentsChoice {
   readonly installs: readonly AgentInstall[]
   readonly defaultAgent: AgentName
+  readonly terminalApp: TerminalApp
 }
 
 export interface ForgeConnection {
@@ -74,6 +81,8 @@ export const EMPTY_SETUP: Setup = {
   reviewPreferences: null,
   isComplete: false,
 }
+
+export const terminalAppOf = (setup: Setup): TerminalApp => setup.agents?.terminalApp ?? DEFAULT_TERMINAL_APP
 
 export const LOCAL_GIT_FORGE: SetupForge = "git"
 

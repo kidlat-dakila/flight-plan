@@ -1,5 +1,6 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { AGENT_LABELS } from "@/procedures/get-setup/utils/agent-catalog"
+import { terminalAppOf } from "@/procedures/get-setup/utils/setup"
 import { loggedErrorOf } from "@/procedures/get-troubleshoot-form"
 import { NO_AGENT_PROBLEM } from "@/procedures/get-troubleshoot-form/utils/troubleshoot-form"
 import { troubleshootingInstallOf } from "@/procedures/get-troubleshoot-form/utils/troubleshooting-agent"
@@ -29,7 +30,8 @@ export const requestTroubleshooting = async (
   context: TroubleshootingContext,
 ): Promise<TroubleshootingOpening> => {
   if (isDescriptionMissing(input)) return missingDescription
-  const install = troubleshootingInstallOf(await context.setupStore.read())
+  const setup = await context.setupStore.read()
+  const install = troubleshootingInstallOf(setup)
   if (install === null) return rejectedOpening(NO_AGENT_PROBLEM)
   const errorLogId = await loggedErrorIdOf(context.errorLog, input.errorLogId)
   const request = await context.errorLog.saveRequest({
@@ -46,7 +48,8 @@ export const requestTroubleshooting = async (
     model: install.model,
     effort: install.effort,
   })
-  const terminal = context.openTerminal === null ? null : await context.openTerminal(command)
+  const terminalApp = terminalAppOf(setup)
+  const terminal = context.openTerminal === null ? null : await context.openTerminal(command, terminalApp)
   if (terminal?.kind === "failed") await context.errorLog.record({ source: TERMINAL_SOURCE, message: terminal.reason, stack: null }).saving
-  return openingOf(terminal, command, AGENT_LABELS[install.agent])
+  return openingOf(terminal, { command, agentLabel: AGENT_LABELS[install.agent], terminalApp })
 }

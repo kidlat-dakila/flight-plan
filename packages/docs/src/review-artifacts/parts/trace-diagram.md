@@ -34,4 +34,4 @@ A change that touches only types, imports or top-level statements has no Trace D
 
 ## On your own Flight Plan
 
-On your own Flight Plan, you can draw the diagram yourself: **Add card** (C) for a code block or for lines you select, drag cards around, draw a line from a row to another card, and edit or delete cards. **Clear diagram** (K) takes every card off, and **Remove diagram** (L) takes the diagram away. Both ask you to confirm first. The three are in the Review Navigator at the foot of the page. **Edit** above the board changes the description, and **Add a diagram** starts one for a segment that has none.
+On your own Flight Plan, you can draw the diagram yourself: **Add card** (C) for a code block or for lines you select, drag cards around, drag the right edge of a card to make it wider, draw a line from a row to another card, and edit or delete cards. **Clear diagram** (K) takes every card off, and **Remove diagram** (L) takes the diagram away. Both ask you to confirm first. The three are in the Review Navigator at the foot of the page. **Edit** above the board changes the description, and **Add a diagram** starts one for a segment that has none.

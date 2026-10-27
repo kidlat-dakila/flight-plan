@@ -10,6 +10,7 @@ export interface TraceScope {
   readonly filePaths: readonly string[]
   readonly sharedFilePaths: readonly string[]
   readonly otherLineFilePaths: readonly string[]
+  readonly lineFilePaths?: readonly string[]
 }
 
 export interface TraceSources {
@@ -269,7 +270,17 @@ export const listTraceNodes = (nodes: readonly TraceNode[]): TraceNode[] => node
 
 export const generateTraceDiagram = ({ group, importGraphGroup, scope }: TraceSources): TraceDiagram | null => {
   const reach = reachWithin(group, scope)
-  const tops = group.diffChains.filter(reach.leadsToOwnChange).map((block) => ({ block, isBelowOwnChange: false }))
+  const linePaths = new Set(scope?.lineFilePaths ?? [])
+  const leadsToLine = (block: CodeBlock): boolean => scope?.lineFilePaths === undefined || block.diffSources.some((source) => linePaths.has(filePathOf(source)))
+  const ownTops = group.diffChains.filter(reach.leadsToOwnChange)
+  const topsWithin = (topIds: ReadonlySet<string>): ReadonlySet<string> => {
+    const walked = walkChains(ownTops.filter((block) => topIds.has(block.id)).map((block) => ({ block, isBelowOwnChange: false })), reach)
+    const walkedRootIds = new Set(walked.blocks.map((block) => rootBlockOf(block).id))
+    const joined = ownTops.filter((block) => !topIds.has(block.id) && walkedRootIds.has(rootBlockOf(block).id))
+    return joined.length === 0 ? topIds : topsWithin(new Set([...topIds, ...joined.map((block) => block.id)]))
+  }
+  const topIds = topsWithin(new Set(ownTops.filter(leadsToLine).map((block) => block.id)))
+  const tops = ownTops.filter((block) => topIds.has(block.id)).map((block) => ({ block, isBelowOwnChange: false }))
   const walk = withoutOtherLines(walkChains(tops, reach), reach)
   const shownBlocks = listShownBlocks(walk.blocks, group, reach)
   const nodeBlocks = listNodeBlocks(shownBlocks)
@@ -282,6 +293,7 @@ export const generateTraceDiagram = ({ group, importGraphGroup, scope }: TraceSo
   const keptEdges = allEdges.filter((edge) => !leftOutIds.has(edge.from) && !leftOutIds.has(edge.to))
   const { nodes, edges } = withGroups(keptNodes, keptEdges, groupCardNodes(keptNodes))
   const traceNodeEdges = withCardEdges({ nodes, edges, importerCountByPath })
+  if (traceNodeEdges.length === 0) return null
   const parentIdById = listCardParents({ nodes, edges: traceNodeEdges, importerCountByPath })
   return { astCodeGroup: group, importGraphGroup, title: null, description: null, traceNodes: nestNodes(nodes, parentIdById), traceNodeEdges, isRequired: false }
 }

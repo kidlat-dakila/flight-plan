@@ -4,12 +4,12 @@ The card of a node of the type `class` in a [Trace Diagram](../trace-diagram.md)
 
 ## What is a class card
 
-**A class with a method is a class card.** A class with no method holds only values, so it is [plain](../trace-diagram.md#plain-code) and has no card: it is a row of every card that reads it. A class component is a [component card](component-card.md), as [component and route come first](../trace-diagram.md#component-and-route-come-first) says. **A method drawn in another card is no method of its class card**: a method of a view class or a controller a route registers is a card inside its [route card](route-card.md#methods-and-handlers), and a class whose every method is drawn elsewhere has no card, a constructor that only takes its parameters aside. A [NestJS controller](libraries/nestjs.md#controllers) keeps its card all the same, typed Controller, with a line to each route card of its methods; a [NestJS resolver](libraries/nestjs.md#graphql-resolvers) is a router card.
+**A class with a method is a class card.** A class with no method holds only values, so it is [plain](../trace-diagram.md#plain-code) and has no card: it is a row of every card that makes it, `new Point()`. A class with no method that no card makes keeps its card: a DTO a handler takes its request in, with a line from the handler, an entity, with a line from the constructor that injects its repository, as [Request bodies and entities](libraries/nestjs.md#request-bodies-and-entities) says, a DTO only a parameter type names, and a [NestJS module](libraries/nestjs.md#modules). A class component is a [component card](component-card.md), as [component and route come first](../trace-diagram.md#component-and-route-come-first) says. **A method drawn in another card is no method of its class card**: a method of a view class or a controller a route registers is a card inside its [route card](route-card.md#methods-and-handlers), and a class whose every method is drawn elsewhere has no card, a constructor that only takes its parameters aside. A [NestJS controller](libraries/nestjs.md#controllers) keeps its card all the same, typed Controller, with a line to each route card of its methods; a [NestJS resolver](libraries/nestjs.md#graphql-resolvers) is a router card.
 
 | Code | Card |
 |---|---|
 | `export class CartStore { items = []; add(item) { … } }` | Class card |
-| `export class Point { x = 0; y = 0 }` | None. A row of the cards that read it. |
+| `export class Point { x = 0; y = 0 }` | None. A row of the cards that make it. |
 | `export class Modal extends React.Component { render() { … } }` | Component card |
 
 ## Rows and methods

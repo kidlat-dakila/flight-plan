@@ -7,7 +7,7 @@ interface ProcedureIndex {
 }
 
 interface ClientCall {
-  readonly client: StoredCodeBlock
+  readonly routers: readonly StoredCodeBlock[]
   readonly procedurePath: readonly string[]
 }
 
@@ -24,6 +24,8 @@ const CALL: StoredCodeBlockSymbol["use"] = "call"
 const NAMING_A_TYPE: StoredCodeBlockSymbol["use"] = "type"
 const NAMING_USES: ReadonlySet<StoredCodeBlockSymbol["use"]> = new Set<StoredCodeBlockSymbol["use"]>(["value", "read"])
 const CLIENT_METHOD_COUNT = 1
+const CALLER_PATH_LENGTH = 1
+const CALLING_USES: ReadonlySet<StoredCodeBlockSymbol["use"]> = new Set<StoredCodeBlockSymbol["use"]>([CALL])
 const NO_CALLED_PROCEDURES: CalledProcedureIdsById = new Map()
 
 const isTrpcPart = (block: StoredCodeBlock, part: CardPart): boolean => block.card?.library === TRPC && block.card.kind === ROUTER_KIND && block.card.part === part
@@ -69,13 +71,32 @@ const listTopRouters = (blocks: readonly StoredCodeBlock[], index: Pick<Procedur
   return routers.filter((router) => !joinedIds.has(router.id))
 }
 
-const clientCallOf = (block: StoredCodeBlock, index: ProcedureIndex): ClientCall | null => {
-  if (!CLIENT_SPECIFIERS.has(block.catalogue?.specifier ?? "")) return null
-  const symbol = block.outerSymbols.find((candidate) => candidate.use === CALL && (candidate.member?.path.length ?? 0) > CLIENT_METHOD_COUNT)
-  const client = symbol === undefined ? null : targetOf(symbol, index)
-  if (symbol?.member === undefined || client === null) return null
-  return { client, procedurePath: symbol.member.path.slice(0, -CLIENT_METHOD_COUNT) }
+const memberCallsOf = (block: StoredCodeBlock, minPathLength: number): StoredCodeBlockSymbol[] =>
+  block.outerSymbols.filter((symbol) => symbol.use === CALL && (symbol.member?.path.length ?? 0) >= minPathLength)
+
+const hookCallsOf = (block: StoredCodeBlock, index: ProcedureIndex): ClientCall[] =>
+  memberCallsOf(block, CLIENT_METHOD_COUNT + 1).flatMap((symbol) => {
+    const client = targetOf(symbol, index)
+    if (symbol.member === undefined || client === null) return []
+    return [{ routers: listRoutersOf(client, index), procedurePath: symbol.member.path.slice(0, -CLIENT_METHOD_COUNT) }]
+  })
+
+const listRoutersCalledInto = (block: StoredCodeBlock, index: ProcedureIndex, visitedIds: ReadonlySet<string> = new Set()): StoredCodeBlock[] => {
+  const named = targetsOf(block, NAMING_USES, index).filter(isRouter)
+  const called = targetsOf(block, CALLING_USES, index).filter((target) => !visitedIds.has(target.id) && target.id !== block.id)
+  const visited = new Set([...visitedIds, block.id, ...called.map((target) => target.id)])
+  return [...named, ...called.flatMap((target) => listRoutersCalledInto(target, index, visited))]
 }
+
+const callerCallsOf = (block: StoredCodeBlock, index: ProcedureIndex): ClientCall[] =>
+  memberCallsOf(block, CALLER_PATH_LENGTH).flatMap((symbol) => {
+    const caller = targetOf(symbol, index)
+    const routers = caller === null ? [] : listRoutersCalledInto(caller, index)
+    return symbol.member === undefined || routers.length === 0 ? [] : [{ routers, procedurePath: symbol.member.path }]
+  })
+
+const clientCallsOf = (block: StoredCodeBlock, index: ProcedureIndex): ClientCall[] =>
+  CLIENT_SPECIFIERS.has(block.catalogue?.specifier ?? "") ? hookCallsOf(block, index) : callerCallsOf(block, index)
 
 const listRoutersNamedByType = (named: StoredCodeBlock, index: ProcedureIndex): StoredCodeBlock[] => {
   if (isRouter(named)) return [named]
@@ -97,9 +118,11 @@ const listProceduresAt = (scope: StoredCodeBlock, path: readonly string[], index
         : [property, ...listRoutersNamedBy(property, index)].flatMap((next) => listProceduresAt(next, rest, index)))
 }
 
-const listCalledProcedureIdsOf = (call: ClientCall, index: ProcedureIndex): string[] => [
-  ...new Set(listRoutersOf(call.client, index).flatMap((router) => listProceduresAt(router, call.procedurePath, index)).map((procedure) => procedure.id)),
+const listCalledProcedureIdsOf = (calls: readonly ClientCall[], index: ProcedureIndex): string[] => [
+  ...new Set(calls.flatMap((call) => call.routers.flatMap((router) => listProceduresAt(router, call.procedurePath, index))).map((procedure) => procedure.id)),
 ]
+
+export const listRouterIds = (codeBlocks: readonly StoredCodeBlock[]): ReadonlySet<string> => new Set(codeBlocks.filter(isRouter).map((router) => router.id))
 
 export const listCalledProcedureIds = (codeBlocks: readonly StoredCodeBlock[]): CalledProcedureIdsById => {
   if (!codeBlocks.some(isRouter)) return NO_CALLED_PROCEDURES
@@ -107,8 +130,7 @@ export const listCalledProcedureIds = (codeBlocks: readonly StoredCodeBlock[]): 
   const index: ProcedureIndex = { blockById, topRouters: listTopRouters(codeBlocks, { blockById }) }
   return new Map(
     codeBlocks.flatMap((block) => {
-      const call = clientCallOf(block, index)
-      const procedureIds = call === null ? [] : listCalledProcedureIdsOf(call, index)
+      const procedureIds = listCalledProcedureIdsOf(clientCallsOf(block, index), index)
       return procedureIds.length === 0 ? [] : [[block.id, procedureIds] as const]
     }),
   )

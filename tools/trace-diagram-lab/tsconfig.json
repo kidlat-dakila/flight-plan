@@ -1,0 +1,56 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@test-setup/*": [
+        "./test-setup/*"
+      ],
+      "@flightplan/ui/lib/*": [
+        "../../packages/ui/src/lib/*"
+      ],
+      "@flightplan/ui/*": [
+        "../../packages/ui/src/components/*"
+      ],
+      "@flightplan/codegraph": [
+        "../../packages/codegraph/src/index.ts"
+      ],
+      "@flightplan/configurations": [
+        "../../packages/configurations/src/index.ts"
+      ],
+      "@flightplan/git-forge": [
+        "../../packages/git-forge/src/index.ts"
+      ],
+      "@flightplan/playground-fixtures": [
+        "../playground-fixtures/src/index.ts"
+      ],
+      "@flightplan/playground-fixtures/test-setup": [
+        "../playground-fixtures/test-setup/index.ts"
+      ],
+      "@flightplan/reviewed-marks": [
+        "../../packages/reviewed-marks/src/index.ts"
+      ]
+    }
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

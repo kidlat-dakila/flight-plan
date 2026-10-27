@@ -20,6 +20,8 @@ const STORE = codeOf(
   "}",
 )
 
+const CHECKOUT = codeOf("import { Store } from \"./store\"", "export const openStore = () => {", "  return new Store()", "}")
+
 const rowNamesOf = (node: TraceNode | undefined): string[] => (node?.blockLabels ?? []).map(({ codeBlock }) => nameOfBlock(codeBlock))
 
 const nodeNamed = (nodes: readonly TraceNode[], name: string): TraceNode | undefined => listTraceNodes(nodes).find((node) => node.codeBlocks[0].name === name)
@@ -33,8 +35,9 @@ describe("the card of a class", () => {
   })
 
   it("lists a property of the class as a row of the class, and no method as a row", () => {
-    const diagram = presentDiagramOf({ "src/store.ts": STORE }, { "src/store.ts": [rangeAt(3, 3, 3, 13)] })
+    const diagram = presentDiagramOf({ "src/store.ts": STORE, "src/checkout.ts": CHECKOUT }, { "src/store.ts": [rangeAt(3, 3, 3, 13)] })
 
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function openStore", "class Store (changed)"])
     expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Store"))).toStrictEqual(["Store.items"])
   })
 
@@ -66,10 +69,11 @@ describe("the card of a class", () => {
     const files = {
       "src/point.ts": codeOf("export class Point {", "  x = 0", "}"),
       "src/origin.ts": codeOf("import { Point } from \"./point\"", "export const originOf = () => {", "  return new Point()", "}"),
+      "src/map.ts": codeOf("import { originOf } from \"./origin\"", "export const centerOf = () => {", "  return originOf()", "}"),
     }
     const diagram = diagramOf(files, { "src/point.ts": [rangeAt(2, 3, 2, 8)] })
 
-    expect(outlineOfNodes(diagram)).toStrictEqual(["function originOf (changed)"])
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function centerOf", "function originOf (changed)"])
   })
 })
 
@@ -154,11 +158,13 @@ const PYTHON_STORE = codeOf(
   "        return price_of(self.items[0])",
 )
 
+const PYTHON_CHECKOUT = codeOf("from shop.store import Store", "def open_store(owner):", "    return Store(owner)")
+
 describe("the card of a Python class", () => {
   it("lists a property declared in __init__ as a row of the class, and draws no card for an __init__ that only declares it", () => {
-    const diagram = presentDiagramOf({ "shop/store.py": PYTHON_STORE }, { "shop/store.py": [rangeAt(5, 9, 5, 24)] })
+    const diagram = presentDiagramOf({ "shop/store.py": PYTHON_STORE, "shop/checkout.py": PYTHON_CHECKOUT }, { "shop/store.py": [rangeAt(5, 9, 5, 24)] })
 
-    expect(outlineOfNodes(diagram)).toStrictEqual(["class Store (changed)"])
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function open_store", "class Store (changed)"])
     expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Store"))).toStrictEqual(["Store.items"])
   })
 

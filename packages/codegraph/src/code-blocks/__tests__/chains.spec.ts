@@ -75,6 +75,47 @@ describe("the chains of a group", () => {
     expect(chains).toStrictEqual(["render-event onClick → root-argument-value onSave → function saveReview"])
   })
 
+  it("hands a function bound with bind as the function itself", () => {
+    const chains = chainsIn(
+      {
+        "src/save.ts": codeOf("export const saveReview = (id) => {", "  return api.save(id)", "}"),
+        "src/save-button.tsx": codeOf("export function SaveButton({ onSave }) {", "  return <button onClick={onSave}>Save</button>", "}"),
+        "src/review-page.tsx": codeOf(
+          "import { saveReview } from \"./save\"",
+          "import { SaveButton } from \"./save-button\"",
+          "export const ReviewPage = () => <SaveButton onSave={saveReview.bind(null, 1)} />",
+        ),
+      },
+      { "src/save.ts": [rangeAt(2, 10, 2, 13)] },
+    )
+
+    expect(chains).toStrictEqual(["render-event onClick → root-argument-value onSave → function saveReview"])
+  })
+
+  it("does not step from an argument to the value it was handed when it calls a member the argument does not have", () => {
+    const group = groupOf(
+      {
+        "src/trainers.ts": codeOf("export const loadTrainers = () => {", "  return db.trainers()", "}"),
+        "src/trainer-list.tsx": codeOf("export function TrainerList({ trainers }) {", "  return <ul>{trainers.map((trainer) => <li>{trainer}</li>)}</ul>", "}"),
+        "src/trainers-page.tsx": codeOf(
+          "import { TrainerList } from \"./trainer-list\"",
+          "import { loadTrainers } from \"./trainers\"",
+          "export const TrainersPage = () => {",
+          "  const trainers = loadTrainers()",
+          "  return <TrainerList trainers={trainers} />",
+          "}",
+        ),
+      },
+      { "src/trainers-page.tsx": [rangeAt(4, 1, 4, 34)] },
+    )
+
+    expect(blockNamed(group, "root-argument-value", "trainers").nextBlockIds).toStrictEqual([])
+    expect(chainsOf(group)).toStrictEqual([
+      "component TrainersPage → external-value trainers",
+      "component TrainersPage → render-root → render TrainerList → external-value trainers",
+    ])
+  })
+
   it("steps from a call of a member of an argument to the block of that member, and on to what was handed to it", () => {
     const chains = chainsIn(
       {
@@ -742,5 +783,200 @@ describe("a chain through the origin of a value", () => {
     const chains = chainsIn({ "src/cart-store.ts": store, "src/button.tsx": BUTTON }, { "src/cart-store.ts": [rangeAt(3, 5, 3, 8)] })
 
     expect(chains).toStrictEqual(["render-event onClick → function → external-value addItem → effect-callback 0 → function → function addItem → effect"])
+  })
+})
+
+const NEST_CONTROLLER = codeOf(
+  "import { Controller, Get } from \"@nestjs/common\"",
+  "@Controller(\"users\")",
+  "export class UsersController {",
+  "  @Get()",
+  "  findAll() {",
+  "    return []",
+  "  }",
+  "}",
+)
+
+const NEST_MODULES: FixtureFiles = {
+  "src/users/users.controller.ts": NEST_CONTROLLER,
+  "src/users/user.entity.ts": codeOf("export class User {", "  name = \"\"", "}"),
+  "src/users/users.module.ts": codeOf(
+    "import { Module } from \"@nestjs/common\"",
+    "import { TypeOrmModule } from \"@nestjs/typeorm\"",
+    "import { User } from \"./user.entity\"",
+    "import { UsersController } from \"./users.controller\"",
+    "@Module({ imports: [TypeOrmModule.forFeature([User])], controllers: [UsersController] })",
+    "export class UsersModule {}",
+  ),
+  "src/api.module.ts": codeOf("import { Module } from \"@nestjs/common\"", "import { UsersModule } from \"./users/users.module\"", "@Module({ imports: [UsersModule] })", "export class ApiModule {}"),
+  "src/app.module.ts": codeOf("import { Module } from \"@nestjs/common\"", "import { ApiModule } from \"./api.module\"", "@Module({ imports: [ApiModule] })", "export class AppModule {}"),
+}
+
+describe("a chain through a mount", () => {
+  it("steps from a mount to the routers it hands over, through every module a module imports, down to the controller", () => {
+    expect(chainsIn(NEST_MODULES, { "src/users/users.controller.ts": [rangeAt(6, 12, 6, 14)] })).toStrictEqual([
+      "class AppModule → property imports → class ApiModule → property imports → class UsersModule → property controllers → class UsersController → method UsersController.findAll",
+    ])
+  })
+
+  it("takes no step from a mount to a value it hands over that is no router", () => {
+    expect(chainsIn(NEST_MODULES, { "src/users/user.entity.ts": [rangeAt(2, 10, 2, 12)] })).toStrictEqual(["class User"])
+  })
+
+  it("steps from a mount to a router that is a value, through the slot that hands it over", () => {
+    const files = {
+      "server/users.ts": codeOf("import { Router } from \"express\"", "export const users = Router()", "users.get(\"/users\", (req, res) => res.json([]))"),
+      "server/app.ts": codeOf("import express from \"express\"", "import { users } from \"./users\"", "const app = express()", "app.use(\"/api\", users)"),
+    }
+
+    expect(chainsIn(files, { "server/users.ts": [rangeAt(2, 23, 2, 31)] })).toStrictEqual(["route → root-variable users", "middleware → effect-callback 1 → root-variable users"])
+  })
+})
+
+const USER_DTOS = codeOf("export class CreateUserDto {", "  name = \"\"", "}", "export class UserFilter {", "  role = \"\"", "}")
+
+const NEST_BODIES: FixtureFiles = {
+  "src/users/user.dto.ts": USER_DTOS,
+  "src/users/users.controller.ts": codeOf(
+    "import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from \"@nestjs/common\"",
+    "import { CreateUserDto, UserFilter } from \"./user.dto\"",
+    "@Controller(\"users\")",
+    "export class UsersController {",
+    "  @Post()",
+    "  add(@Body() draft: CreateUserDto) {",
+    "    return draft",
+    "  }",
+    "  @Get(\":id\")",
+    "  read(@Param(\"id\", ParseIntPipe) id: number, @Query() filter: UserFilter) {",
+    "    return id",
+    "  }",
+    "}",
+  ),
+  "src/users/users.service.ts": codeOf("import { CreateUserDto } from \"./user.dto\"", "export class UsersService {", "  create(draft: CreateUserDto) {", "    return draft", "  }", "}"),
+}
+
+const validatedDtos = (decorator: string): string =>
+  codeOf(
+    "import { IsString, Validate, ValidatorConstraint, ValidatorConstraintInterface } from \"class-validator\"",
+    "@ValidatorConstraint({ name: \"namesDiffer\" })",
+    "export class NamesDiffer implements ValidatorConstraintInterface {",
+    "  validate(nickname: string) {",
+    "    return nickname !== \"\"",
+    "  }",
+    "}",
+    "export class CreateUserDto {",
+    "  @IsString()",
+    `  ${decorator}`,
+    "  nickname!: string",
+    "}",
+  )
+
+const ENTITY = codeOf("export class User {", "  name = \"\"", "}")
+
+const serviceInjecting = (parameter: string): string =>
+  codeOf(
+    "import { Injectable } from \"@nestjs/common\"",
+    "import { InjectRepository } from \"@nestjs/typeorm\"",
+    "import { Repository } from \"typeorm\"",
+    "import { User } from \"./user.entity\"",
+    "@Injectable()",
+    "export class UsersService {",
+    `  constructor(${parameter}) {}`,
+    "  findAll() {",
+    "    return this.users.find()",
+    "  }",
+    "}",
+  )
+
+const PYDANTIC_SCHEMAS = codeOf(
+  "from pydantic import BaseModel",
+  "class ItemBase(BaseModel):",
+  "    name: str",
+  "class ItemCreate(ItemBase):",
+  "    price: int",
+  "class ItemRead(BaseModel):",
+  "    id: int",
+  "class Owner(BaseModel):",
+  "    login: str",
+  "class Note:",
+  "    text: str",
+)
+
+const fastapiRoutes = (...lines: readonly string[]): string =>
+  codeOf(
+    "from typing import Annotated",
+    "from fastapi import APIRouter, Depends",
+    "from shop.schemas import ItemCreate, ItemRead, Note, Owner",
+    "router = APIRouter()",
+    "def current_owner():",
+    "    return find_owner()",
+    ...lines,
+  )
+
+describe("a chain into the classes a framework fills", () => {
+  it("steps from a Nest handler to the class a @Body() or @Query() parameter is typed by, and from no other type", () => {
+    expect(chainsIn(NEST_BODIES, { "src/users/user.dto.ts": [rangeAt(2, 3, 2, 12), rangeAt(5, 3, 5, 12)] })).toStrictEqual([
+      "class UsersController → method UsersController.add → class CreateUserDto",
+      "class UsersController → method UsersController.read → class UserFilter",
+    ])
+  })
+
+  it("steps from the constructor that injects a TypeORM repository to its entity", () => {
+    const files = { "src/users/user.entity.ts": ENTITY, "src/users/users.service.ts": serviceInjecting("@InjectRepository(User) private readonly users: Repository<User>") }
+
+    expect(chainsIn(files, { "src/users/user.entity.ts": [rangeAt(2, 3, 2, 12)] })).toStrictEqual(["class UsersService → method UsersService.constructor → class User"])
+  })
+
+  it("takes no step to an entity a parameter is only typed by", () => {
+    const files = { "src/users/user.entity.ts": ENTITY, "src/users/users.service.ts": serviceInjecting("private readonly users: Repository<User>") }
+
+    expect(chainsIn(files, { "src/users/user.entity.ts": [rangeAt(2, 3, 2, 12)] })).toStrictEqual(["class User"])
+  })
+
+  it("steps from a FastAPI handler to the pydantic model of its body and of its response, through a model it extends", () => {
+    const files = {
+      "shop/schemas.py": PYDANTIC_SCHEMAS,
+      "shop/routes.py": fastapiRoutes("@router.post(\"/items\", response_model=list[ItemRead])", "def add_item(draft: ItemCreate):", "    return save_item(draft)"),
+    }
+
+    expect(chainsIn(files, { "shop/schemas.py": [rangeAt(5, 5, 5, 15), rangeAt(7, 5, 7, 12)] })).toStrictEqual([
+      "function add_item → class ItemCreate",
+      "function add_item → class ItemRead",
+    ])
+  })
+
+  it("takes no step from a FastAPI handler to a dependency's model or to a class that is no pydantic model", () => {
+    const files = {
+      "shop/schemas.py": PYDANTIC_SCHEMAS,
+      "shop/routes.py": fastapiRoutes("@router.get(\"/items\")", "def read_items(owner: Annotated[Owner, Depends(current_owner)], note: Note):", "    return list_items(owner, note)"),
+    }
+
+    expect(chainsIn(files, { "shop/schemas.py": [rangeAt(9, 5, 9, 15), rangeAt(11, 5, 11, 14)] })).toStrictEqual(["class Owner", "class Note"])
+  })
+
+  it("steps from a property to the class-validator constraint its @Validate() names", () => {
+    const files = { "src/users/user.dto.ts": validatedDtos("@Validate(NamesDiffer)") }
+
+    expect(chainsIn(files, { "src/users/user.dto.ts": [rangeAt(4, 3, 4, 11)] })).toStrictEqual(["class CreateUserDto → property CreateUserDto.nickname → class NamesDiffer → method NamesDiffer.validate"])
+  })
+
+  it("takes no step to a class a decorator of another library names", () => {
+    const files = { "src/users/user.dto.ts": `import { Type } from "class-transformer"\n${validatedDtos("@Type(() => NamesDiffer)")}` }
+
+    expect(chainsIn(files, { "src/users/user.dto.ts": [rangeAt(5, 3, 5, 11)] })).toStrictEqual(["class NamesDiffer → method NamesDiffer.validate"])
+  })
+
+  it("takes no step from a handler of another library to the class its parameter is typed by", () => {
+    const files = {
+      "src/users/user.dto.ts": USER_DTOS,
+      "src/routes.ts": codeOf(
+        "import { Router, type Request } from \"express\"",
+        "import { CreateUserDto } from \"./users/user.dto\"",
+        "export const users = Router()",
+        "users.post(\"/users\", (req: Request<object, object, CreateUserDto>, res) => res.json(req.body))",
+      ),
+    }
+
+    expect(chainsIn(files, { "src/users/user.dto.ts": [rangeAt(2, 3, 2, 12)] })).toStrictEqual(["class CreateUserDto"])
   })
 })

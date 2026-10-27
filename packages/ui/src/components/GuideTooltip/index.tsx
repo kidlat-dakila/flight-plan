@@ -11,12 +11,15 @@ import { cn } from "@/lib/utils"
 
 export type GuideTooltipSide = "top" | "bottom" | "left" | "right"
 
+export type GuideTooltipAlign = "start" | "center" | "end"
+
 interface GuideTooltipProps {
   readonly id: string
   readonly title?: string | null
   readonly content: ReactNode
   readonly anchorSelector: string
   readonly side?: GuideTooltipSide
+  readonly align?: GuideTooltipAlign
   readonly delay?: number
   readonly triggers: GuideTriggers
 }
@@ -113,7 +116,7 @@ const useGuideKeys = (isOpen: boolean, onKey: (event: KeyboardEvent) => void): v
   }, [isOpen])
 }
 
-const GuideTooltip = ({ id, title = null, content, anchorSelector, side = "top", delay = DEFAULT_GUIDE_DELAY_MS, triggers }: GuideTooltipProps) => {
+const GuideTooltip = ({ id, title = null, content, anchorSelector, side = "top", align = "center", delay = DEFAULT_GUIDE_DELAY_MS, triggers }: GuideTooltipProps) => {
   const { showTooltip } = useGuideTooltip(id, { delay, triggers })
   const [phase, setPhase] = useState<Phase>("tip")
   const anchor = useGuideAnchor(anchorSelector, showTooltip)
@@ -148,6 +151,7 @@ const GuideTooltip = ({ id, title = null, content, anchorSelector, side = "top",
         <Popover.Positioner
           anchor={anchor}
           side={side}
+          align={align}
           sideOffset={SIDE_OFFSET_PX}
           collisionPadding={COLLISION_PADDING_PX}
           className="isolate z-50 data-[anchor-hidden]:hidden"

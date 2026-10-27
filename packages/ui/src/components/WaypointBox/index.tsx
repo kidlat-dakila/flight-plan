@@ -7,10 +7,12 @@ import Prose from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
 import { SpotlightChip, type Spotlight } from "@/components/SpotlightMark"
 import Unwritten from "@/components/Unwritten"
+import { artifactPartMark } from "@/lib/artifact-part"
 import type { CodeLinkTargets, Finding, FindingKind, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
 export interface WaypointContent {
+  readonly id: string
   readonly anchorId: string
   readonly depth: number
   readonly title: string
@@ -70,6 +72,7 @@ const WaypointBox = ({
 }: WaypointBoxProps) => (
   <section
     id={waypoint.anchorId}
+    {...artifactPartMark("waypoint", waypoint.id)}
     aria-label={waypoint.title}
     data-current={isCurrent}
     data-reviewed={waypoint.isReviewed}

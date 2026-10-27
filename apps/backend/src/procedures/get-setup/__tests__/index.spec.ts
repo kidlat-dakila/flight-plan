@@ -1,6 +1,7 @@
 import { getSetup } from "@/procedures/get-setup"
 import { AT_AGENTS, AT_CONFIGURATION, AT_FORGES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
+import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 
 describe("getSetup", () => {
   it("opens the repositories step when nothing is saved", async () => {
@@ -19,6 +20,25 @@ describe("getSetup", () => {
       step: "agents",
       agents: [{ installPath: "/Users/dev/.claude" }, { installPath: "/Users/dev/.codex" }, { installPath: "" }],
     })
+  })
+
+  it("offers the terminal apps installed on the machine and picks Terminal until one is saved", async () => {
+    const page = await getSetup({ step: null }, createSetupContext(AT_AGENTS))
+
+    expect(page.form).toMatchObject({
+      terminalApps: [{ terminalApp: "terminal", label: "Terminal" }, { terminalApp: "iterm", label: "iTerm2" }],
+      terminalApp: "terminal",
+    })
+  })
+
+  it("looks for terminal apps only on the agents step", async () => {
+    const detectTerminalApps = vi.fn<SetupEnvironment["detectTerminalApps"]>().mockResolvedValue([])
+    const baseContext = createSetupContext(AT_FORGES)
+    const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, detectTerminalApps } }
+
+    await getSetup({ step: null }, context)
+
+    expect(detectTerminalApps).not.toHaveBeenCalled()
   })
 
   it("offers the models each agent with a command line program lists", async () => {
@@ -47,6 +67,7 @@ describe("getSetup", () => {
       agents: {
         installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "haiku", effort: "default" }],
         defaultAgent: "claude",
+        terminalApp: "terminal",
       },
     } as const
     const page = await getSetup({ step: "configuration" }, createSetupContext(setup))

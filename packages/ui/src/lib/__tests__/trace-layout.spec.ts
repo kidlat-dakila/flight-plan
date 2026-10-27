@@ -144,6 +144,32 @@ describe("layoutTrace", () => {
     expect(height).toBeGreaterThan(nodes[0].y + nodes[0].height)
   })
 
+  it("draws a card that asks for a width at that width, with its rows and the cards inside it as wide as it lets them be", () => {
+    const card: LayoutNode = { ...leaf("page", ["click"]), requestedWidth: 400, children: [leaf("list")] }
+    const { nodes: [page, list], rows: [click] } = layoutTrace([card], [])
+
+    expect(page.width).toBe(400)
+    expect(click.x + click.width).toBeLessThan(page.x + page.width)
+    expect(click.width).toBeGreaterThan(NODE_WIDTH)
+    expect(list.width).toBe(click.width)
+  })
+
+  it("widens only the card that asks for a width, and starts the next column after it", () => {
+    const { nodes, edges } = layoutTrace([leaf("page"), { ...leaf("price"), requestedWidth: 480 }, leaf("tax"), leaf("total")], [edge("a", "page", "price"), edge("b", "page", "tax"), edge("c", "tax", "total")])
+    const [, price, tax, total] = nodes
+
+    expect([price.width, tax.width]).toStrictEqual([480, NODE_WIDTH])
+    expect(tax.x).toBe(price.x)
+    expect(total.x).toBeGreaterThan(price.x + price.width)
+    expect(edges.find((placed) => placed.id === "c")?.points[0].x).toBe(tax.x + tax.width)
+  })
+
+  it("draws a card that asks for less than the width of a node at the width of a node", () => {
+    const { nodes } = layoutTrace([{ ...leaf("page"), requestedWidth: 100 }], [])
+
+    expect(nodes[0].width).toBe(NODE_WIDTH)
+  })
+
   it("places a node level with the row that leads to it", () => {
     const { nodes, rows } = layoutTrace([leaf("page", ["state", "hook", "submit"]), leaf("handler")], [edge("a", "page", "handler", { fromRowId: "submit" })])
     const [, handler] = nodes

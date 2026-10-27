@@ -22,3 +22,7 @@
 
 
 <!-- nx configuration end-->
+
+# Trace Diagram lab
+
+After any change in `packages/codegraph`, run `nx test trace-diagram-lab` and `nx e2e trace-diagram-lab-e2e` before you say the work is done. The e2e target compares a screenshot of every fixture's Trace Diagram with its baseline and runs in Docker, so Docker Desktop must be running. Update a baseline (`--update-snapshots --grep "<fixture id>"`) only when the new drawing is the intended one. See `tools/trace-diagram-lab/AGENTS.md`.

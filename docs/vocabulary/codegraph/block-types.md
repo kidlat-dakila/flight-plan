@@ -374,6 +374,8 @@ The excluded methods are a closed list that belongs to the language, like the fo
 
 **A call that provides a value is no effect.** A call a [catalogue](catalogue.md) pattern names with `provides` is handed a value, also where that value is a function: `provide(themeKey, { toggleTheme })` of Vue is no block, and `toggleTheme` is a `value` use of the block around the call. The function is reached from the component that [reads the value](symbols.md#where-a-value-comes-from).
 
+**An arrow a decorator is handed that only names something is no callback.** In the arguments of a decorator, an arrow whose body is a name or a member path, with no call in it, is a reference: `@ManyToOne(() => Trainer)`, `@OneToMany(() => Photo, (photo) => photo.pokemon)` and `@Type(() => Address)` are no effect, the arrow is no block, and the name in it is a `value` use of the block the decorator is written on. An arrow that does more, as `@Track(() => audit())`, is a callback, so the decorator is an effect.
+
 **A callback passed by name counts.** `useEffect(syncCart, [cart])` and `mutationFn: removeUser` are callbacks when the name leads to a `function` block, when the key starts with `on`, or when the [catalogue](catalogue.md) names that slot.
 
 **Where the effect is decides its type.** Directly in the body of a component or of a hook it is a `component-effect`. Anywhere else it is an `effect`, also in the attribute of an event: `handleSubmit(onSubmit)` in `<form onSubmit={handleSubmit(onSubmit)}>` runs with the event, so it is an `effect` of the `render-event`. An effect in a hook runs with the component that calls the hook, so moving an effect into a hook does not change its type.

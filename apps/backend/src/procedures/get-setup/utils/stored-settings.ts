@@ -5,8 +5,10 @@ import {
   AGENT_NAMES,
   DEFAULT_EFFORT,
   DEFAULT_MODEL,
+  DEFAULT_TERMINAL_APP,
   EMPTY_SETUP,
   SETUP_FORGES,
+  TERMINAL_APPS,
   type Setup,
 } from "./setup"
 
@@ -30,8 +32,9 @@ const agentsChoiceSchema = z.strictObject({
     }),
   ),
   defaultAgent: z.enum(AGENT_NAMES),
+  terminalApp: z.enum(TERMINAL_APPS).default(DEFAULT_TERMINAL_APP),
   connection: z.enum(RETIRED_AGENT_CONNECTIONS).optional(),
-}).transform(({ installs, defaultAgent }) => ({ installs, defaultAgent }))
+}).transform(({ installs, defaultAgent, terminalApp }) => ({ installs, defaultAgent, terminalApp }))
 
 const forgesChoiceSchema = z.strictObject({
   connections: z.array(

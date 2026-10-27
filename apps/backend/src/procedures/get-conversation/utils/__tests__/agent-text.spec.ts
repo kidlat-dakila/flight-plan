@@ -3,9 +3,9 @@ import { appendEvents, EMPTY_CONVERSATION } from "@/procedures/get-conversation/
 import { agentQuestion, KEY, STARTED_AT } from "./conversation-fixture"
 
 describe("formatInbound", () => {
-  it("writes the reviewer's messages and answers as text the agent reads", () => {
+  it("writes the reviewer's messages and answers as text the agent reads, with the reference and without the excerpt", () => {
     const { conversation } = appendEvents(EMPTY_CONVERSATION, [
-      { kind: "reviewer-message", id: "m1", body: "Is this safe?", reference: "storefront@9f2c1ab:src/x.ts#L3-9", sentAt: STARTED_AT },
+      { kind: "reviewer-message", id: "m1", body: "Is this safe?", reference: "storefront@9f2c1ab:src/x.ts#L3-9", excerpt: { kind: "code", text: "const total = 0" }, sentAt: STARTED_AT },
       agentQuestion("q1"),
       {
         kind: "answers",

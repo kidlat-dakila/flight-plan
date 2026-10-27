@@ -48,6 +48,18 @@ const PINIA_STORE = codeOf(
   "})",
 )
 
+const PINIA_FILES = {
+  "stores/cart.ts": PINIA_STORE,
+  "ui/cart.tsx": codeOf(
+    "import { useCartStore, useWishlistStore } from \"../stores/cart\"",
+    "export const Cart = () => {",
+    "  const cart = useCartStore()",
+    "  const wishlist = useWishlistStore()",
+    "  return <button onClick={() => wishlist.add(cart.items[0])} />",
+    "}",
+  ),
+}
+
 const SLICE = codeOf(
   "import { createSlice, createAsyncThunk, createSelector, configureStore, createListenerMiddleware } from \"@reduxjs/toolkit\"",
   "export const checkout = createAsyncThunk(\"cart/checkout\", async (items) => api.post(\"/orders\", items))",
@@ -110,14 +122,14 @@ describe("the card of a Zustand store", () => {
 
 describe("the card of a Pinia store", () => {
   it("lists the state, the getters and the actions of a store written with options as rows", () => {
-    const diagram = presentDiagramOf({ "stores/cart.ts": PINIA_STORE }, { "stores/cart.ts": [rangeAt(4, 19, 4, 29), rangeAt(6, 22, 6, 41), rangeAt(12, 7, 12, 22)] })
+    const diagram = presentDiagramOf(PINIA_FILES, { "stores/cart.ts": [rangeAt(4, 19, 4, 29), rangeAt(6, 22, 6, 41), rangeAt(12, 7, 12, 22)] })
 
-    expect(outlineOfNodes(diagram)).toStrictEqual(["state useCartStore (changed)"])
+    expect(outlineOfNodes(diagram)).toStrictEqual(["state useCartStore (changed)", "component Cart", "render-event onClick"])
     expect(rowNamesOf(nodeNamed(diagram, "useCartStore"))).toStrictEqual(["items", "count", "checkout"])
   })
 
   it("lists the refs, the computed values and the functions of a setup store as rows", () => {
-    const diagram = presentDiagramOf({ "stores/cart.ts": PINIA_STORE }, { "stores/cart.ts": [rangeAt(17, 3, 17, 23), rangeAt(19, 27, 19, 52)] })
+    const diagram = presentDiagramOf(PINIA_FILES, { "stores/cart.ts": [rangeAt(17, 3, 17, 23), rangeAt(19, 27, 19, 52)] })
 
     expect(rowNamesOf(nodeNamed(diagram, "useWishlistStore"))).toStrictEqual(["items", "count", "add"])
   })
@@ -147,7 +159,7 @@ describe("the card of a Redux slice", () => {
   })
 
   it("lists the keys of its initial state as rows", () => {
-    const diagram = presentDiagramOf({ "store/cart-slice.ts": SLICE }, { "store/cart-slice.ts": [rangeAt(5, 19, 5, 28)] })
+    const diagram = presentDiagramOf({ "store/cart-slice.ts": SLICE }, { "store/cart-slice.ts": [rangeAt(5, 19, 5, 28), rangeAt(7, 30, 7, 61)] })
 
     expect(rowNamesOf(nodeNamed(diagram, "cartSlice"))).toStrictEqual(["items"])
   })
@@ -225,6 +237,16 @@ const VALTIO_STORE = codeOf(
   "})",
 )
 
+const MOBX_FILES = {
+  "stores/cart.ts": MOBX_STORE,
+  "ui/add-button.tsx": codeOf("import { CartStore } from \"../stores/cart\"", "const store = new CartStore()", "export const AddButton = () => <button onClick={() => store.addItem(1)} />"),
+}
+
+const VALTIO_FILES = {
+  "stores/cart.ts": VALTIO_STORE,
+  "ui/add-button.tsx": codeOf("import { cart } from \"../stores/cart\"", "export const AddButton = () => <button onClick={() => cart.addItem(1)} />"),
+}
+
 const EFFECTOR_STORE = codeOf(
   "import { createEvent, createStore } from \"effector\"",
   "export const addItem = createEvent()",
@@ -233,8 +255,8 @@ const EFFECTOR_STORE = codeOf(
 
 describe("the card of a MobX, a Valtio, an XState Store or a Nano Stores store", () => {
   it("is one node, with its state, its getters and its actions as rows", () => {
-    const mobx = presentDiagramOf({ "stores/cart.ts": MOBX_STORE }, { "stores/cart.ts": [rangeAt(11, 5, 11, 29)] })
-    const valtio = presentDiagramOf({ "stores/cart.ts": VALTIO_STORE }, { "stores/cart.ts": [rangeAt(4, 26, 4, 50)] })
+    const mobx = presentDiagramOf(MOBX_FILES, { "stores/cart.ts": [rangeAt(11, 5, 11, 29)] })
+    const valtio = presentDiagramOf(VALTIO_FILES, { "stores/cart.ts": [rangeAt(4, 26, 4, 50)] })
 
     expect(outlineOfNodes(mobx).filter((line) => line.includes("CartStore") || line.includes("addItem"))).toHaveLength(1)
     expect(rowNamesOf(nodeNamed(mobx, "CartStore"))).toContain("CartStore.addItem")

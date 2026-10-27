@@ -7,7 +7,7 @@ import type { ReadBlock } from "@/code-blocks/reading"
 import { rangeOfNode } from "@/code-blocks/source-range"
 import type { CodeBlockCatalogue, CodeBlockType, Position, SourceRange } from "@/code-blocks/types"
 import { listParameters, patternOf, readArgumentBlocks } from "./arguments"
-import { catalogueOfSlot, findCallbackSlot, typeOfCall, typeOfConstruction, typeOfMember, typeOfSlot, type CallbackSlot, type CallReader, type EffectPlace } from "./calls"
+import { catalogueOfSlot, findCallbackSlot, isDecoratorReference, typeOfCall, typeOfConstruction, typeOfMember, typeOfSlot, type CallbackSlot, type CallReader, type EffectPlace } from "./calls"
 import { isFirstAssignmentOf, memberAssignedIn } from "./class-members"
 import { withDecoratorsInside } from "./decorators"
 import type { MadeBlock } from "./made-by"
@@ -251,7 +251,7 @@ const isOwnedValue = (value: SyntaxNode, ownerTypes: readonly string[]): boolean
 
 const readInlineCallable: ReadSeeds = (callable, context, reader) => {
   const { parent } = callable
-  if (parent === null || isOwnedValue(callable, [DECLARATOR_TYPE, FIELD_TYPE])) return []
+  if (parent === null || isOwnedValue(callable, [DECLARATOR_TYPE, FIELD_TYPE]) || isDecoratorReference(callable)) return []
   if (isOwnedValue(callable, [PAIR_TYPE])) return findCallbackSlot(parent, reader) === null ? [] : [seedAt(callable, typeOfCallable(callable, null, context))]
   if (parent.type === EXPORT_TYPE) return readDefaultValue(callable, typeOfCallable(callable, null, context))
   const name = callable.childForFieldName("name")?.text ?? null

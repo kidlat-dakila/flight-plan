@@ -1,6 +1,6 @@
 import type { CodeBlock, CodeBlockType } from "@flightplan/configurations"
 import { isCardNodeBlock, isCardNotNodeBlock } from "./cards"
-import { classOfDeclaredProperty, hasMethodsOfItsOwn, isController } from "./cards/class"
+import { classOfDeclaredProperty, hasMethodsOfItsOwn, isRouterClass } from "./cards/class"
 
 export interface NodeStep {
   readonly from: CodeBlock
@@ -111,21 +111,24 @@ const listBlocksWithin = (block: CodeBlock): CodeBlock[] => block.childrenBlocks
 const isLocalValue = (block: CodeBlock): boolean =>
   block.parentBlock === null && block.type === ROOT_VARIABLE && !block.isExported && !listBlocksWithin(block).some((inner) => RUNNING_TYPES.has(inner.type))
 
+const listCalledBlocks = (block: CodeBlock): CodeBlock[] =>
+  block.outerSymbols.flatMap((symbol) =>
+    symbol.use === CALLING && (symbol.type === "internal-code-block" || symbol.type === "external-block") ? [symbol.codeBlockReference] : [])
+
 const makesClassWithMethods = (block: CodeBlock): boolean =>
-  [block, ...listBlocksWithin(block)].some((inner) =>
-    inner.outerSymbols.some((symbol) =>
-      symbol.use === CALLING
-      && (symbol.type === "internal-code-block" || symbol.type === "external-block")
-      && symbol.codeBlockReference.type === CLASS
-      && hasMethodsOfItsOwn(symbol.codeBlockReference)))
+  [block, ...listBlocksWithin(block)].some((inner) => listCalledBlocks(inner).some((called) => called.type === CLASS && hasMethodsOfItsOwn(called)))
 
 const isPlainValue = (block: CodeBlock): boolean => block.type === ROOT_VARIABLE && block.isPlain === true && !makesClassWithMethods(block)
 
-const isPlainRoot = (block: CodeBlock): boolean => block.parentBlock === null && (isPlainValue(block) || block.isAnnotatedAlias === true || (block.type === CLASS && !hasMethodsOfItsOwn(block) && !isController(block)))
+const isPlainRoot = (block: CodeBlock): boolean => block.parentBlock === null && (isPlainValue(block) || block.isAnnotatedAlias === true || (block.type === CLASS && !hasMethodsOfItsOwn(block) && !isRouterClass(block)))
+
+const isSteppedInto = (value: CodeBlock, reader: CodeBlock): boolean => reader.nextBlocks.some((next) => rootOf(next).id === value.id)
+
+const isMadeBy = (value: CodeBlock, reader: CodeBlock): boolean => value.type !== CLASS || listCalledBlocks(reader).some((called) => called.id === value.id)
 
 const isReadInNode = (reader: CodeBlock, value: CodeBlock): boolean => {
   const readerRoot = rootOf(reader)
-  return readerRoot.id !== value.id && (readerRoot.type !== STATEMENT || nodeBlockOf(reader) !== null)
+  return readerRoot.id !== value.id && isSteppedInto(value, reader) && isMadeBy(value, reader) && (readerRoot.type !== STATEMENT || nodeBlockOf(reader) !== null)
 }
 
 export const isFoldedValue = (block: CodeBlock): boolean => (isLocalValue(block) || isPlainRoot(block)) && block.usedBy.some((reader) => isReadInNode(reader, block))

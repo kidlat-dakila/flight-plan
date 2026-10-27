@@ -1,4 +1,13 @@
-import type { CatalogueLibrary } from "@/catalogue/types"
+import type { CatalogueLibrary, ConfigFile, LocationBase } from "@/catalogue/types"
+
+const PACKAGE_SCRIPTS = "scripts.*"
+const CONFIG_FLAGS: readonly string[] = ["--config", "-c"]
+
+const configNamedByScript = (command: string, base?: LocationBase): ConfigFile => ({
+  glob: "package.json",
+  namedBy: { scripts: PACKAGE_SCRIPTS, command, flags: CONFIG_FLAGS },
+  ...(base === undefined ? {} : { base }),
+})
 
 export const vitestLibrary: CatalogueLibrary = {
   name: "Vitest",
@@ -11,7 +20,7 @@ export const vitestLibrary: CatalogueLibrary = {
   locations: [
     {
       classification: "test",
-      files: [{ glob: "vitest.config.*" }, { glob: "vite.config.*" }],
+      files: [{ glob: "vitest.config.*" }, { glob: "vite.config.*" }, configNamedByScript("vitest", "package")],
       keys: [{ key: "test.include", holds: "globs", default: ["**/*.{test,spec}.?(c|m)[jt]s?(x)"] }],
     },
   ],
@@ -28,8 +37,9 @@ export const jestLibrary: CatalogueLibrary = {
   locations: [
     {
       classification: "test",
-      files: [{ glob: "jest.config.*" }, { glob: "package.json", under: "jest" }],
+      files: [{ glob: "jest.config.*" }, { glob: "package.json", under: "jest" }, configNamedByScript("jest")],
       keys: [
+        { key: "rootDir", holds: "folders", isBase: true },
         { key: "roots", holds: "folders", isScope: true },
         { key: "testMatch", holds: "globs", default: ["**/__tests__/**/*.?([mc])[jt]s?(x)", "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"], unlessRead: "testRegex" },
         { key: "testRegex", holds: "regex" },
@@ -49,7 +59,7 @@ export const playwrightLibrary: CatalogueLibrary = {
   locations: [
     {
       classification: "test",
-      files: [{ glob: "playwright.config.*" }],
+      files: [{ glob: "playwright.config.*" }, configNamedByScript("playwright")],
       keys: [
         { key: "testDir", holds: "folders", isScope: true },
         { key: "testMatch", holds: "globs", default: ["**/*.@(spec|test).?(c|m)[jt]s?(x)"] },
