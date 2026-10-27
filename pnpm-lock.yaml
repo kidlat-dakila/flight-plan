@@ -324,6 +324,9 @@ importers:
       nx:
         specifier: 23.3.0
         version: 23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23))
+      portless:
+        specifier: 0.15.12
+        version: 0.15.12
       sharp:
         specifier: ^0.35.5
         version: 0.35.5(@types/node@24.13.3)
@@ -7785,6 +7788,12 @@ packages:
   portfinder@1.0.38:
     resolution: {integrity: sha512-rEwq/ZHlJIKw++XtLAO8PPuOQA/zaPJOZJ37BVuN97nLpMJeuDVLVGRwbFoBgLudgdTMP2hdRJP++H+8QOA3vg==}
     engines: {node: '>= 10.12'}
+
+  portless@0.15.12:
+    resolution: {integrity: sha512-Lbz85zLboOMkvq2unXYfJ/YMpsvFZYQgrwGEbinZErp045y9fLm4obm7E77V2BI2Om0Mh6tX/2w2ftFqRs5kfQ==}
+    engines: {node: '>=24'}
+    os: [darwin, linux, win32]
+    hasBin: true
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -18108,6 +18117,8 @@ snapshots:
       debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
+
+  portless@0.15.12: {}
 
   possible-typed-array-names@1.1.0: {}
 

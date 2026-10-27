@@ -54,7 +54,7 @@ Always run tasks through Nx, and call `nx` directly, never through `pnpm nx` or 
 
 | Command | Purpose |
 |---|---|
-| `pnpm dev` | Run the backend (:3000), the frontend (:4200) and the site (:4400) side by side |
+| `pnpm dev` | Run the backend (:3000), the frontend (:4200), the site (:4400) and the Trace Diagram lab (:4410) side by side, also served by portless at `https://api.flightplan.localhost`, `https://flightplan.localhost`, `https://site.flightplan.localhost` and `https://trace-diagram-lab.flightplan.localhost` (see the README for the one-time proxy install) |
 | `pnpm lint` | Run ESLint on every project |
 | `pnpm lint:fix` | Run ESLint on every project and apply its automatic fixes |
 | `nx run-many -t eslint:lint typecheck test -p <projects>` | Verify specific projects |
