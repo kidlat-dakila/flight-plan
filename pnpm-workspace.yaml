@@ -12,8 +12,15 @@ allowBuilds:
   tree-sitter-python: true
   tree-sitter-typescript: true
   unrs-resolver: false
+minimumReleaseAgeExclude:
+  - "@shadcn/registry@0.2.1"
+  - shadcn@4.23.0
 overrides:
+  "@azure/msal-node@<7.1.0": ^7.1.0
   "@modelcontextprotocol/sdk@<1.32.0": ^1.32.0
+  body-parser@<2.4.0: ^2.4.0
   deepmerge-ts@<8.0.0: ^8.0.2
   follow-redirects@<1.16.1: ^1.16.1
-  undici@>=7.0.0 <7.29.1: ^7.29.1
+  undici@>=7.0.0 <7.30.1: ^7.30.1
+  undici@>=8.0.0 <8.12.2: ^8.12.2
+  zod@>=4.0.0 <4.6.6: ^4.6.6
