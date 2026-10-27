@@ -20,7 +20,7 @@ import {
 import { FILE_ICONS } from "./file-icon"
 
 export const REVIEWER_STATES = ["pending", "commented", "approved", "changes-requested"] as const
-export const SECTION_KINDS = ["context", "traceDiagram", "blastDiagram", "walkthrough", "conversation"] as const
+export const SECTION_KINDS = ["context", "changeOverview", "traceDiagram", "blastDiagram", "walkthrough", "conversation"] as const
 
 const personSchema = z.strictObject({
   name: z.string(),
@@ -166,7 +166,7 @@ export const contextBandSchema = z.strictObject({
   markdown: z.string(),
   isDraft: z.boolean(),
   unwrittenLabel: z.string(),
-  changeOverview: changeOverviewSchema,
+  changeOverview: changeOverviewSchema.extend({ anchorId: z.string() }),
 })
 
 export const REVIEW_VERDICTS = ["comment", "approve", "request-changes"] as const

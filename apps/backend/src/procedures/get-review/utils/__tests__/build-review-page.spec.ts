@@ -269,7 +269,11 @@ describe("buildReviewPage", () => {
           title: "One",
           heading: "Segment 1: One",
           detailLabel: "2 files",
-          context: { anchorId: "one-context", context: [{ kind: "paragraph", inlines: [{ kind: "text", text: "First part." }] }] },
+          context: {
+            anchorId: "one-context",
+            context: [{ kind: "paragraph", inlines: [{ kind: "text", text: "First part." }] }],
+            changeOverview: { anchorId: "one-change-overview" },
+          },
           traceDiagram: { anchorId: "one-trace-diagram" },
           blastDiagram: null,
           walkthrough: { anchorId: "one-code-walkthrough" },
@@ -285,8 +289,8 @@ describe("buildReviewPage", () => {
       },
     })
     expect(page.kind === "artifact" ? page.rail.groups.map((group) => group.sections.map((section) => section.kind)) : []).toStrictEqual([
-      ["context", "traceDiagram", "walkthrough"],
-      ["context", "traceDiagram", "walkthrough", "blastDiagram"],
+      ["context", "changeOverview", "traceDiagram", "walkthrough"],
+      ["context", "changeOverview", "traceDiagram", "walkthrough", "blastDiagram"],
     ])
   })
 
@@ -560,7 +564,7 @@ describe("buildReviewPage", () => {
     const page = buildReviewPage(createSource({ setup }), createInput())
 
     expect(page).toMatchObject({ segments: [{ sectionOrder: [...sectionOrder] }] })
-    expect(page.kind === "artifact" ? page.rail.groups[0].sections.map((section) => section.kind) : []).toStrictEqual(["walkthrough", "context", "traceDiagram"])
+    expect(page.kind === "artifact" ? page.rail.groups[0].sections.map((section) => section.kind) : []).toStrictEqual(["walkthrough", "context", "changeOverview", "traceDiagram"])
   })
 
   it("applies the waypoint filter it is asked for to every segment, and counts the waypoints of the whole review", () => {

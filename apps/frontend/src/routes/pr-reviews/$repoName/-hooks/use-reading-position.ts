@@ -74,6 +74,10 @@ export const useReadingPositionStore = (sectionAnchorIds: readonly string[], way
   return store
 }
 
+export const holdCurrentAnchorId = (store: ReadingPositionStore, anchorId: string): void => {
+  store.setState((position) => ({ ...position, currentAnchorId: anchorId }), true)
+}
+
 export const useReadingPosition = (store: ReadingPositionStore): ReadingPosition => useStore(store)
 
 export const useCurrentAnchorId = (store: ReadingPositionStore): string | null => useStore(store, (position) => position.currentAnchorId)

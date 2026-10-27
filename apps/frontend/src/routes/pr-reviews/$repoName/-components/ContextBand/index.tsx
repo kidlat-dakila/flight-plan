@@ -29,6 +29,7 @@ interface ContextBandProps {
   readonly unwrittenLabel: string
   readonly writeUpNotice: string | null
   readonly changeOverview: {
+    readonly anchorId: string
     readonly heading: string
     readonly emptyMessage: string | null
     readonly rows: readonly ChangeOverviewRow[]

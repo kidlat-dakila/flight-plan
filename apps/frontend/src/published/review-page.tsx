@@ -6,6 +6,7 @@ import SelectionReference from "@/routes/pr-reviews/$repoName/-components/Select
 import UnassignedFilesDialog from "@/routes/pr-reviews/$repoName/-components/UnassignedFilesDialog"
 import WalkthroughFileSection from "@/routes/pr-reviews/$repoName/-components/WalkthroughFileSection"
 import WalkthroughScrolling from "@/routes/pr-reviews/$repoName/-components/WalkthroughScrolling"
+import { navigatorRailOf } from "@/routes/pr-reviews/$repoName/-hooks/navigator-rail"
 import { useReadingPositionStore } from "@/routes/pr-reviews/$repoName/-hooks/use-reading-position"
 import { useTextSelection } from "@/routes/pr-reviews/$repoName/-hooks/use-text-selection"
 import { useWalkthroughNavigation } from "@/routes/pr-reviews/$repoName/-hooks/use-walkthrough-navigation"
@@ -50,6 +51,7 @@ interface PublishedContextProps {
   readonly isDraft: boolean
   readonly unwrittenLabel: string
   readonly changeOverview: {
+    readonly anchorId: string
     readonly heading: string
     readonly emptyMessage: string | null
     readonly rows: readonly ChangeOverviewRow[]
@@ -126,7 +128,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
         </div>
       </SignBand>
       <main className={cn("w-full px-6 pb-24", ACCENT_LINE_CLASS, LAYOUT_VARIABLES)}>
-        <ReviewNavigator rail={marking.rail} onSectionJump={stepping.onSectionEntered}>
+        <ReviewNavigator rail={navigatorRailOf(marking.rail)} onSectionJump={stepping.onSectionEntered}>
           <ReviewNotices
             staleNotice={null}
             unassignedFiles={review.unassignedFiles}

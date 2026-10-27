@@ -80,7 +80,7 @@ const segment = <File extends OrderedFile>(id: string, title: string | null, pos
     markdown: `Why ${id} matters.`,
     isDraft: false,
     unwrittenLabel: "Not written yet.",
-    changeOverview: { heading: "Change Overview", emptyMessage: null, rows: [] },
+    changeOverview: { anchorId: `${id}-change-overview`, heading: "Change Overview", emptyMessage: null, rows: [] },
   },
   traceDiagram: { ...ABSENT_TRACE, anchorId: `${id}-trace-diagram` },
   blastDiagram: null,

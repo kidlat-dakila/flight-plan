@@ -24,6 +24,7 @@ export interface ChangeOverviewRow {
 }
 
 interface ChangeOverviewProps {
+  readonly anchorId: string
   readonly heading: string
   readonly emptyMessage: string | null
   readonly rows: readonly ChangeOverviewRow[]
@@ -88,10 +89,10 @@ const Plate = ({ card, onOpenWaypoint }: PlateProps) => {
   )
 }
 
-const ChangeOverview = ({ heading, emptyMessage, rows, onOpenWaypoint }: ChangeOverviewProps) => {
+const ChangeOverview = ({ anchorId, heading, emptyMessage, rows, onOpenWaypoint }: ChangeOverviewProps) => {
   const headingId = useId()
   return (
-    <section aria-labelledby={headingId} data-view-section-id="change-overview-section" className="pt-6">
+    <section id={anchorId} aria-labelledby={headingId} data-view-section-id="change-overview-section" className="scroll-mt-(--section-scroll-margin) pt-6">
       <h3 id={headingId} className="pb-3 text-base leading-6 font-bold text-foreground">{heading}</h3>
       {emptyMessage === null ? null : <p className="text-muted-foreground">{emptyMessage}</p>}
       {rows.length === 0

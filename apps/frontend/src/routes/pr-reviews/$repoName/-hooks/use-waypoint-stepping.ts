@@ -56,6 +56,7 @@ export interface WaypointStepping {
   readonly onPreviewWaypoint: (waypointId: string) => void
   readonly onCurrentOpenChange: (isOpen: boolean) => void
   readonly onOpenCodeLink: (anchorId: string) => void
+  readonly onFileEntered: (anchorId: string) => void
 }
 
 const FOCUS_RELEASE_SCROLL_PX = 160
@@ -71,21 +72,32 @@ const SETTLE_FRAME_LIMIT = 60
 const STEADY_FRAMES_NEEDED = 8
 const STEADY_DISTANCE_PX = 1
 
-const settleOnAnchor = (anchorId: string, framesLeft: number, steadyFrames: number, scrolledTop: number | null): void => {
-  const element = document.getElementById(anchorId)
+interface Settling {
+  readonly anchorId: string
+  readonly framesLeft: number
+  readonly steadyFrames: number
+  readonly scrolledTop: number | null
+  readonly onSettled: () => void
+}
+
+const settleOnAnchor = (settling: Settling): void => {
+  const element = document.getElementById(settling.anchorId)
   if (element === null) return
-  const isSteady = scrolledTop !== null && Math.abs(element.getBoundingClientRect().top - scrolledTop) < STEADY_DISTANCE_PX
-  const nextSteadyFrames = isSteady ? steadyFrames + 1 : 0
-  if (framesLeft === 0 || nextSteadyFrames >= STEADY_FRAMES_NEEDED) return
-  element.scrollIntoView({ block: "start" })
-  const top = element.getBoundingClientRect().top
+  const isSteady = settling.scrolledTop !== null && Math.abs(element.getBoundingClientRect().top - settling.scrolledTop) < STEADY_DISTANCE_PX
+  const steadyFrames = isSteady ? settling.steadyFrames + 1 : 0
+  if (settling.framesLeft === 0 || steadyFrames >= STEADY_FRAMES_NEEDED) {
+    settling.onSettled()
+    return
+  }
+  element.scrollIntoView({ block: "start", behavior: "instant" })
+  const scrolledTop = element.getBoundingClientRect().top
   requestAnimationFrame(() => {
-    settleOnAnchor(anchorId, framesLeft - 1, nextSteadyFrames, top)
+    settleOnAnchor({ ...settling, framesLeft: settling.framesLeft - 1, steadyFrames, scrolledTop })
   })
 }
 
-export const scrollToSettledAnchor = (anchorId: string): void => {
-  settleOnAnchor(anchorId, SETTLE_FRAME_LIMIT, 0, null)
+export const jumpToSettledAnchor = (anchorId: string, onSettled: () => void): void => {
+  settleOnAnchor({ anchorId, framesLeft: SETTLE_FRAME_LIMIT, steadyFrames: 0, scrolledTop: null, onSettled })
 }
 
 const focusElementsOf = (waypointId: string): Element[] =>
@@ -100,8 +112,11 @@ const visibleShareOf = (waypointId: string): number => {
   return visible / Math.max(1, bottom - top)
 }
 
+const fileWaypointsOf = (file: SteppedFile): SteppedWaypoint[] =>
+  file.rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint] : []))
+
 const waypointsOf = (segment: SteppedSegment): SteppedWaypoint[] =>
-  segment.walkthrough.files.flatMap((file) => file.rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint] : [])))
+  segment.walkthrough.files.flatMap(fileWaypointsOf)
 
 export const waypointAnchorIdsOf = (segments: readonly SteppedSegment[]): string[] =>
   segments.flatMap(waypointsOf).map((waypoint) => waypoint.anchorId)
@@ -213,6 +228,12 @@ export const useWaypointStepping = (segments: readonly SteppedSegment[]): Waypoi
       const waypoint = waypoints.find((candidate) => candidate.anchorId === anchorId)
       if (waypoint === undefined) scrollToAnchor(anchorId)
       else visitWaypoint(waypoint.id, true)
+    },
+    onFileEntered: (anchorId) => {
+      const entered = segments.flatMap((segment) => segment.walkthrough.files).find((file) => file.anchorId === anchorId)
+      const first = entered === undefined ? undefined : fileWaypointsOf(entered).at(0)
+      if (first === undefined) return
+      updateWalkthrough(store, (state) => withSectionEntered(state, first.id, anchorId))
     },
   }
 }

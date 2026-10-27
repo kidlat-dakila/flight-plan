@@ -8,7 +8,10 @@ const walkthroughChildren = (segment: SegmentView, isListingFiles: boolean): Rai
 type ArrangedSection = SegmentView["sectionOrder"][number]
 
 const railSectionsBySection = (segment: SegmentView, isListingFiles: boolean): Readonly<Record<ArrangedSection, readonly RailSection[]>> => ({
-  context: [{ anchorId: segment.context.anchorId, kind: "context", label: segment.context.heading, children: [] }],
+  context: [
+    { anchorId: segment.context.anchorId, kind: "context", label: segment.context.heading, children: [] },
+    { anchorId: segment.context.changeOverview.anchorId, kind: "changeOverview", label: segment.context.changeOverview.heading, children: [] },
+  ],
   traceDiagram: [{ anchorId: segment.traceDiagram.anchorId, kind: "traceDiagram", label: segment.traceDiagram.heading, children: [] }],
   blastDiagram: segment.blastDiagram === null
     ? []

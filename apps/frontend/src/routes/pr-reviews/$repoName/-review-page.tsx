@@ -50,12 +50,13 @@ import TerminusHeading from "./-components/TerminusHeading"
 import UnassignedFilesDialog from "./-components/UnassignedFilesDialog"
 import WalkthroughFileSection from "./-components/WalkthroughFileSection"
 import WalkthroughScrolling from "./-components/WalkthroughScrolling"
+import { navigatorRailOf } from "./-hooks/navigator-rail"
 import { useAgentChat } from "./-hooks/use-agent-chat"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
 import { useLiveAgent } from "./-hooks/use-live-agent"
 import { usePanelWidths } from "./-hooks/use-panel-widths"
-import { useReadingPositionStore } from "./-hooks/use-reading-position"
+import { holdCurrentAnchorId, useReadingPositionStore } from "./-hooks/use-reading-position"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
 import { useReviewPanels } from "./-hooks/use-review-panels"
 import { useReviewerActivity } from "./-hooks/use-reviewer-activity"
@@ -67,7 +68,7 @@ import { useTraceEditing } from "./-hooks/use-trace-editing"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
 import { useWalkthroughNavigation } from "./-hooks/use-walkthrough-navigation"
 import { useWaypointAuthoring } from "./-hooks/use-waypoint-authoring"
-import { scrollToAnchor, scrollToSettledAnchor, useWaypointStepping, waypointAnchorIdsOf } from "./-hooks/use-waypoint-stepping"
+import { jumpToSettledAnchor, scrollToAnchor, useWaypointStepping, waypointAnchorIdsOf } from "./-hooks/use-waypoint-stepping"
 import { useWriteUpDialog } from "./-hooks/use-write-up-dialog"
 import { useWriteUpRequest } from "./-hooks/use-write-up-request"
 
@@ -261,10 +262,21 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const handleToggleWaypoint = stepping.onToggleWaypoint
   const railSections = [...(artifact?.rail.groups.flatMap((group) => group.sections) ?? []), ...(artifact?.rail.sections ?? [])]
   const fileAnchorIdsBySection = new Map(artifact?.segments.map((segment) => [segment.walkthrough.anchorId, segment.walkthrough.files.map((file) => file.anchorId)] as const))
-  const readingPosition = useReadingPositionStore(
-    railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId), ...(fileAnchorIdsBySection.get(section.anchorId) ?? [])]),
-    waypointAnchorIdsOf(artifact?.segments ?? NO_SEGMENTS),
-  )
+  const readingAnchorIds = railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId), ...(fileAnchorIdsBySection.get(section.anchorId) ?? [])])
+  const readingPosition = useReadingPositionStore(readingAnchorIds, waypointAnchorIdsOf(artifact?.segments ?? NO_SEGMENTS))
+  const jumpToHeldAnchor = (anchorId: string): void => {
+    jumpToSettledAnchor(anchorId, () => {
+      if (readingAnchorIds.includes(anchorId)) holdCurrentAnchorId(readingPosition, anchorId)
+    })
+  }
+  const handleOpenFile = (anchorId: string): void => {
+    stepping.onFileEntered(anchorId)
+    jumpToHeldAnchor(anchorId)
+  }
+  const handleJumpToSection = (anchorId: string): void => {
+    stepping.onSectionEntered(anchorId)
+    jumpToHeldAnchor(anchorId)
+  }
   const walkthroughLayout = useWalkthroughNavigation(artifact?.segments ?? NO_SEGMENTS, stepping, {
     onReviewedChange: isOwn
       ? null
@@ -434,7 +446,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       {page.kind !== "artifact"
         ? null
         : (
-            <ReviewNavigator rail={page.rail} onSectionJump={stepping.onSectionEntered}>
+            <ReviewNavigator rail={navigatorRailOf(page.rail)} onSectionJump={stepping.onSectionEntered}>
               <WritingProviders writingLabel={page.progress?.isWriting === true ? page.progress.label : null} agent={writeUpDialog.agent}>
                 <ReviewNotices
                   staleNotice={page.staleNotice}
@@ -736,7 +748,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           explorer={page.fileExplorer}
                           readingPosition={readingPosition}
                           filterNavigation={walkthroughLayout.reviewFilter}
-                          onOpenFile={scrollToSettledAnchor}
+                          onOpenFile={handleOpenFile}
                           onHide={() => { panels.onToggle("explorer") }}
                           onClearFilter={() => { onSearchChange({ filter: undefined }) }}
                         />
@@ -768,6 +780,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                     groups={page.rail.groups}
                                     sections={page.rail.sections}
                                     readingPosition={readingPosition}
+                                    onJump={handleJumpToSection}
                                     onEditGroup={isOwn ? handleEditRailGroup : null}
                                     onArrangeGroups={isOwn && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
                                   />

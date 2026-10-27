@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react"
+import { fireEvent, render, screen, within } from "@testing-library/react"
 import SectionRail, { type RailGroup } from "@/components/SectionRail"
 
 const GROUPS: readonly RailGroup[] = [
@@ -53,5 +53,19 @@ describe("SectionRail", () => {
 
     expect(screen.queryByRole("link", { name: /files/ })).toBeNull()
     expect(screen.getByRole("link", { name: "Context" })).toBeTruthy()
+  })
+
+  it("hands a clicked section, file or segment to the jump instead of following its link", () => {
+    const onJump = vi.fn()
+    render(<SectionRail label="Review sections" groups={GROUPS} sections={TRAILING} currentAnchorId={null} onJump={onJump} />)
+
+    const isFollowed = [
+      fireEvent.click(screen.getByRole("link", { name: "Trace Diagram" })),
+      fireEvent.click(screen.getByRole("link", { name: "A checkout" })),
+      fireEvent.click(screen.getByRole("link", { name: /Checkout.*3 files/ })),
+    ]
+
+    expect(isFollowed).toStrictEqual([false, false, false])
+    expect(onJump.mock.calls).toStrictEqual([["stock-trace"], ["stock-trace-a"], ["segment-checkout"]])
   })
 })
