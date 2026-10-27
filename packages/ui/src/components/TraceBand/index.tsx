@@ -1,13 +1,13 @@
-import { useId, useState, type KeyboardEvent, type ReactNode } from "react"
+import { useId, useState, type ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import Input from "@/components/blocks/input"
 import Prose from "@/components/Prose"
+import TabRow from "@/components/TabRow"
 import TraceDiagram, { type CardMoving, type TraceAuthoring, type TraceEdge, type TraceNode } from "@/components/TraceDiagram"
 import Unwritten from "@/components/Unwritten"
 import { NoWriteUpTag } from "@/components/WriteUpIcon"
 import { artifactPartMark } from "@/lib/artifact-part"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
-import { TAB_CLASSES, TAB_LIST_CLASSES, tabIndexAfterKey } from "@/lib/tab-bar"
 import { cn } from "@/lib/utils"
 
 export type { CardMoving }
@@ -222,32 +222,14 @@ const tabIndexOf = (tabs: readonly TraceTab[], tabId: string | null): number =>
 const DiagramTabs = ({ tabs, tabEditing, openTabIdAtStart, ...panel }: DiagramTabsProps) => {
   const [openIndex, setOpenIndex] = useState(() => tabIndexOf(tabs, openTabIdAtStart))
   const openTab = tabs.at(openIndex) ?? tabs[0]
-  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>): void => {
-    const nextIndex = tabIndexAfterKey(event.key, openIndex, tabs.length)
-    if (nextIndex === null) return
-    event.preventDefault()
-    setOpenIndex(nextIndex)
-    event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>("[role=tab]").item(nextIndex).focus()
-  }
+  const rowTabs = tabs.map((tab, index) => ({
+    key: tab.id,
+    label: tab.label,
+    controlsId: index === openIndex ? openTab.diagram.anchorId : undefined,
+  }))
   return (
     <>
-      <div role="tablist" aria-label={panel.heading} className={cn(TAB_LIST_CLASSES, "mb-4")}>
-        {tabs.map((tab, index) => (
-          <button
-            key={tab.id}
-            type="button"
-            role="tab"
-            aria-selected={index === openIndex}
-            aria-controls={index === openIndex ? openTab.diagram.anchorId : undefined}
-            tabIndex={index === openIndex ? 0 : -1}
-            className={TAB_CLASSES}
-            onClick={() => { setOpenIndex(index) }}
-            onKeyDown={handleKeyDown}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <TabRow tabs={rowTabs} openIndex={openIndex} label={panel.heading} className="mb-4" onOpen={setOpenIndex} />
       <section id={openTab.diagram.anchorId} role="tabpanel" aria-label={openTab.label} data-view-section-id={VIEW_SECTION_ID} className="scroll-mt-(--section-scroll-margin)">
         <DiagramPanel
           key={openTab.id}

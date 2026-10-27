@@ -3,7 +3,8 @@ import { NodeViewContent, NodeViewWrapper, type NodeViewProps } from "@tiptap/re
 import { PlusIcon, XIcon } from "lucide-react"
 import { useRef, useState, type KeyboardEvent } from "react"
 import Button from "@/components/blocks/button"
-import { TAB_CLASSES, TAB_LIST_CLASSES, tabIndexAfterKey } from "@/lib/tab-bar"
+import { TAB_LIST_CLASSES, tabIndexAfterKey } from "@/lib/tab-bar"
+import { cn } from "@/lib/utils"
 import {
   childrenOf,
   headingsOf,
@@ -28,7 +29,12 @@ export interface TabsViewState {
 const TAB_NAME_LABEL = "Tab name"
 const ADD_TAB_LABEL = "Add a tab"
 const REMOVE_TABS_LABEL = "Remove tabs"
-const TAB_NAME_CLASSES = "-mb-px w-36 border-b-2 border-ring bg-transparent pb-2 text-sm font-bold text-foreground outline-none"
+const TAB_PLATE_CLASSES
+  = "flex h-8 items-center rounded-t-md border border-b-0 border-transparent pr-2 text-sm font-medium text-muted-foreground transition-colors duration-[180ms] ease-out hover:text-foreground hover:not-data-open:bg-muted data-open:border-border data-open:bg-card data-open:font-semibold data-open:text-foreground"
+const TAB_BUTTON_CLASSES = "flex h-full cursor-pointer items-center rounded-t-md pr-2 pl-3 whitespace-nowrap focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+const TAB_NAME_CLASSES = "mr-2 ml-3 h-6 w-36 border-b-2 border-ring bg-transparent text-sm font-semibold text-foreground outline-none"
+const TAB_DELETE_CLASSES
+  = "flex size-4.5 shrink-0 items-center justify-center rounded-sm text-muted-foreground hover:bg-[color-mix(in_oklch,var(--muted),var(--foreground)_6%)] hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
 export const ICON_BUTTON_CLASSES = "flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
 const STEP_BY_ARROW: Readonly<Record<string, number>> = { ArrowLeft: -1, ArrowRight: 1 }
 
@@ -98,9 +104,9 @@ const TabsView = ({ node, getPos, editor }: NodeViewProps) => {
   return (
     <NodeViewWrapper className="flex flex-col gap-4">
       <div ref={keepDragsFromEditor} {...{ [TAB_BAR_ATTRIBUTE]: "" }} contentEditable={false} className="flex items-end gap-3">
-        <div role="tablist" className={TAB_LIST_CLASSES}>
+        <div role="tablist" className={cn(TAB_LIST_CLASSES, "min-w-0 flex-1")}>
           {labels.map((label, index) => (
-            <div key={`${String(index)}-${label}`} role="presentation" className="flex items-end gap-1">
+            <div key={`${String(index)}-${label}`} role="presentation" data-open={index === openIndex ? "" : undefined} className={TAB_PLATE_CLASSES}>
               {index === namingIndex
                 ? (
                     <ItemNameField
@@ -119,7 +125,7 @@ const TabsView = ({ node, getPos, editor }: NodeViewProps) => {
                       aria-selected={index === openIndex}
                       tabIndex={index === openIndex ? 0 : -1}
                       draggable
-                      className={TAB_CLASSES}
+                      className={TAB_BUTTON_CLASSES}
                       onClick={() => { setViewState({ openIndex: index }) }}
                       onDoubleClick={() => { setViewState({ namingIndex: index }) }}
                       onKeyDown={(event) => { handleTabKey(event, index) }}
@@ -142,12 +148,12 @@ const TabsView = ({ node, getPos, editor }: NodeViewProps) => {
                 type="button"
                 aria-label={deleteLabelOf(label)}
                 title={deleteLabelOf(label)}
-                className={`${ICON_BUTTON_CLASSES} mb-1.5`}
+                className={TAB_DELETE_CLASSES}
                 onClick={() => {
                   replaceBlock(withItemRemoved(node, index, { openIndex: openIndexAfterDelete(openIndex, index, labels.length - 1), namingIndex: null }))
                 }}
               >
-                <XIcon aria-hidden="true" className="size-3.5" />
+                <XIcon aria-hidden="true" className="size-3" />
               </button>
             </div>
           ))}
@@ -155,13 +161,13 @@ const TabsView = ({ node, getPos, editor }: NodeViewProps) => {
             type="button"
             aria-label={ADD_TAB_LABEL}
             title={ADD_TAB_LABEL}
-            className={`${ICON_BUTTON_CLASSES} mb-1.5`}
+            className={`${ICON_BUTTON_CLASSES} mb-1 ml-1`}
             onClick={() => { replaceBlock(withItemAppended(node, newItemOf(node, TABS_KIND), { openIndex: labels.length, namingIndex: labels.length })) }}
           >
             <PlusIcon aria-hidden="true" className="size-4" />
           </button>
         </div>
-        <Button type="button" variant="ghost" size="sm" className="mb-1" onClick={() => { replaceBlock(headingsOf(node)) }}>
+        <Button type="button" variant="ghost" size="sm" className="mb-0.5" onClick={() => { replaceBlock(headingsOf(node)) }}>
           {REMOVE_TABS_LABEL}
         </Button>
       </div>
