@@ -1,0 +1,111 @@
+{
+  "repository": {
+    "name": "pokedex-t3",
+    "forgeSlug": "acme/pokedex-t3"
+  },
+  "pullRequest": {
+    "number": 64,
+    "author": "richard",
+    "updatedMinutesAgo": 20
+  },
+  "reviewers": [
+    {
+      "login": "gilfoyle",
+      "state": "changes-requested"
+    },
+    {
+      "login": "dinesh",
+      "state": "commented"
+    }
+  ],
+  "comments": [
+    {
+      "author": "dinesh",
+      "body": "I'll fix the typos in the seeded Pokemon on staging once editing is merged.",
+      "minutesAgo": 55
+    }
+  ],
+  "threads": [
+    {
+      "path": "src/server/api/routers/pokemon.ts",
+      "line": 21,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "gilfoyle",
+          "body": "Prisma's `update` throws `P2025` when the Pokemon was deleted after the form opened. tRPC sends that as an `INTERNAL_SERVER_ERROR`, and the form shows nothing.",
+          "minutesAgo": 130
+        },
+        {
+          "author": "richard",
+          "body": "Fair. I'll catch `P2025` and throw a `TRPCError` with the `NOT_FOUND` code, then show `update.error` under the form.",
+          "minutesAgo": 90
+        }
+      ]
+    },
+    {
+      "path": "src/app/pokemon/_components/PokemonForm.tsx",
+      "line": 30,
+      "isResolved": true,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "Would an `EditPokemonForm` read better than one form that picks the mutation?",
+          "minutesAgo": 190
+        },
+        {
+          "author": "richard",
+          "body": "The two would share every field. The only difference is which mutation runs, so one `if` keeps the form in one place.",
+          "minutesAgo": 170
+        }
+      ]
+    },
+    {
+      "path": "src/server/api/routers/pokemon.ts",
+      "line": 20,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "If I pick No trainer while editing, does `update` take the Pokemon away from its trainer?",
+          "minutesAgo": 110
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author": "gilfoyle",
+      "verdict": "request-changes",
+      "body": "Saving a Pokemon that was deleted in the meantime fails with no message. Details inline.",
+      "minutesAgo": 128
+    },
+    {
+      "author": "dinesh",
+      "verdict": "comment",
+      "body": "Editing works for me locally. One question on the trainer.",
+      "minutesAgo": 108
+    }
+  ],
+  "chat": [
+    {
+      "from": "reviewer",
+      "body": "Why does EditPokemonPage load the Pokemon without a request to /api/trpc?",
+      "minutesAgo": 35
+    },
+    {
+      "from": "agent",
+      "body": "`~/trpc/server` builds `api` with `createCaller`, so on the server `api.pokemon.byId(...)` runs the `byId` procedure in the same process. Only `PokemonForm` runs in the browser, and its `api.pokemon.update.useMutation()` goes through `/api/trpc`.",
+      "minutesAgo": 34
+    }
+  ],
+  "agentReplies": [
+    "This is a demo, so my replies are written in advance. With your own agent, I read the change and answer here, and the code I mention opens as a link.",
+    "In a real review I'd answer from the code you selected. Here every reply is scripted, so try the comments, the reviewed marks and the review menu instead."
+  ],
+  "avatars": {
+    "richard": "/demo-avatars/richard.svg",
+    "gilfoyle": "/demo-avatars/gilfoyle.svg",
+    "dinesh": "/demo-avatars/dinesh.svg"
+  }
+}

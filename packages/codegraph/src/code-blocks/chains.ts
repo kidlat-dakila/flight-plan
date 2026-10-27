@@ -1,5 +1,5 @@
 import { groupBy } from "@/shared/group-by"
-import { listCalledProcedureIds } from "./procedure-calls"
+import { listCalledProcedureIds, listRouterIds } from "./procedure-calls"
 import type { StoredCodeBlock, StoredCodeBlockSymbol } from "./stored-types"
 import type { CodeBlockType } from "./types"
 
@@ -15,6 +15,7 @@ interface ChainIndex {
   readonly heldMarkupIds: ReadonlySet<string>
   readonly calledArgumentIds: ReadonlySet<string>
   readonly calledProcedureIdsById: ReadonlyMap<string, readonly string[]>
+  readonly routerIds: ReadonlySet<string>
 }
 
 type Types = ReadonlySet<CodeBlockType>
@@ -121,7 +122,7 @@ const runMemberOf = (symbol: StoredCodeBlockSymbol, index: BlockIndex): StoredCo
 const reachedThrough = (symbol: StoredCodeBlockSymbol, isHandler: boolean, index: ChainIndex): StoredCodeBlock[] => {
   const member = runMemberOf(symbol, index)
   const referenced = member ?? findBlock(namedIdOf(symbol), index)
-  if (referenced === null) return []
+  if (referenced === null || index.routerIds.has(referenced.id)) return []
   const isRun = RUNNING_USES.has(symbol.use) || (isHandler && NAMING_USES.has(symbol.use))
   if (isValue(referenced, index)) return symbol.use === NAMING_A_TYPE && referenced.isAnnotatedAlias !== true ? [] : [referenced]
   const hasUnknownMember = symbol.member !== undefined && member === null
@@ -264,6 +265,7 @@ export const traceChains = (codeBlocks: readonly StoredCodeBlock[], hints: Chain
     ...hints,
     calledArgumentIds: listCalledArgumentIds(codeBlocks, { blockById }),
     calledProcedureIdsById: listCalledProcedureIds(codeBlocks),
+    routerIds: listRouterIds(codeBlocks),
   }
   const stepIdsById = new Map(codeBlocks.map((block) => [block.id, listSteps(block, index)] as const))
   const runs = codeBlocks.flatMap((block) => (stepIdsById.get(block.id) ?? []).map((nextId) => ({ runnerId: block.id, nextId })))
