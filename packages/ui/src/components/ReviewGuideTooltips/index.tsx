@@ -13,6 +13,8 @@ interface ReviewGuideTooltipsProps {
 
 const FALLBACK_AGENT_LABEL = "the agent"
 const STEPPING_ACTION_IDS = ["next-waypoint-action", "previous-waypoint-action"]
+const EXPLORER_FILTER_ACTION_ID = "explorer-filter-action"
+const FILTER_ACTION_IDS = ["filter-action", EXPLORER_FILTER_ACTION_ID]
 const FILTER_STEP_COUNT = 5
 const NAVIGATOR_TOOLBAR = "[role='toolbar']"
 
@@ -101,13 +103,15 @@ const ReviewGuideTooltips = ({ reviewMode }: ReviewGuideTooltipsProps) => {
       />
       <GuideTooltip
         id="filter-waypoint-tooltip"
-        title="Find the part of the change you're looking for"
-        content={<KeyedText parts={["Press ", { keycap: "F" }, " to keep only what matters to you and skip the trivial parts."]} />}
-        anchorSelector={navigatorActionSelectorOf("filter-action")}
+        title="Too many lines of code to review?"
+        content="Use the filter to narrow it down to what matters most, like core changes, findings, the kinds of code you care about or the code you haven't reviewed yet."
+        anchorSelector={actionSelectorOf(EXPLORER_FILTER_ACTION_ID)}
+        side="right"
+        align="start"
         triggers={{
           viewVisible: ["code-walkthrough-section"],
           tooltipDependent: ["next-waypoint-tooltip"],
-          preFeatureUse: ["filter-action"],
+          preFeatureUse: FILTER_ACTION_IDS,
           postFeatureUse: { actionIds: STEPPING_ACTION_IDS, times: FILTER_STEP_COUNT },
         }}
       />
