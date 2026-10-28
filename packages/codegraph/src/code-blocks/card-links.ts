@@ -1,4 +1,5 @@
 import { methodHeadingOf } from "@/code-blocks/libraries/route-cards"
+import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
 import type { StoredCodeBlock, StoredCodeBlockSymbol } from "./stored-types"
 import type { BlockCard, CardKind, CardPart, CodeBlockType } from "./types"
@@ -10,6 +11,8 @@ interface LinkIndex {
 }
 
 type CardById = ReadonlyMap<string, BlockCard>
+
+type Link = readonly [string, BlockCard]
 
 const HOLDER: CardPart = "holder"
 const HANDLER: CardPart = "handler"
@@ -208,10 +211,25 @@ const linkPartsBeside = (index: LinkIndex, cardById: CardById): (readonly [strin
     return holder === null ? [] : [[part.id, { ...card, ownerId: holder.id }] as const]
   })
 
-const leavesOf = (block: StoredCodeBlock, index: LinkIndex): StoredCodeBlock[] => {
-  const properties = childrenOf(block, index).filter((child) => child.type === PROPERTY)
-  return properties.length === 0 ? [block] : properties.flatMap((property) => leavesOf(property, index))
+interface PendingBlocks {
+  readonly block: StoredCodeBlock
+  readonly below: PendingBlocks | null
 }
+
+const propertiesOf = (block: StoredCodeBlock, index: LinkIndex): readonly StoredCodeBlock[] => childrenOf(block, index).filter((child) => child.type === PROPERTY)
+
+const pushAll = (blocks: readonly StoredCodeBlock[], below: PendingBlocks | null): PendingBlocks | null =>
+  blocks.reduceRight<PendingBlocks | null>((pending, block) => ({ block, below: pending }), below)
+
+function* walkLeaves(block: StoredCodeBlock, index: LinkIndex): Generator<StoredCodeBlock> {
+  for (let pending: PendingBlocks | null = { block, below: null }; pending !== null;) {
+    const properties = propertiesOf(pending.block, index)
+    if (properties.length === 0) yield pending.block
+    pending = pushAll(properties, pending.below)
+  }
+}
+
+const leavesOf = (block: StoredCodeBlock, index: LinkIndex): StoredCodeBlock[] => [...walkLeaves(block, index)]
 
 const linkJoiners = (index: LinkIndex, cardById: CardById): (readonly [string, BlockCard])[] =>
   index.blocks.flatMap((root) => {
@@ -231,9 +249,43 @@ const canTake = (block: StoredCodeBlock | undefined, linked: BlockCard, cardById
   return card === undefined || (card.ownerId === null && card.part === linked.part)
 }
 
+type CardAt = (block: StoredCodeBlock) => BlockCard | undefined
+
+const aroundIdOf = (blockId: string, index: LinkIndex, cardAt: CardAt): string | null => {
+  const block = index.blockById.get(blockId)
+  return block === undefined ? null : (cardAt(block)?.ownerId ?? block.parentBlockId)
+}
+
+function* walkAround(startId: string, index: LinkIndex, cardAt: CardAt): Generator<string> {
+  const maxSteps = index.blocks.length
+  for (let aroundId: string | null = startId, steps = 0; aroundId !== null && steps < maxSteps; aroundId = aroundIdOf(aroundId, index, cardAt), steps += 1) yield aroundId
+}
+
+const leadsBackTo = (blockId: string, startId: string, index: LinkIndex, cardAt: CardAt): boolean => [...walkAround(startId, index, cardAt)].includes(blockId)
+
+const closesLoop = ([blockId, linked]: Link, index: LinkIndex, cardAt: CardAt): boolean => linked.ownerId !== null && leadsBackTo(blockId, linked.ownerId, index, cardAt)
+
+const takeLink = (index: LinkIndex, cardById: CardById) => (taken: CardById, link: Link): CardById => {
+  const cardAt: CardAt = (block) => taken.get(block.id) ?? cardOf(block, cardById)
+  return taken.has(link[0]) || closesLoop(link, index, cardAt) ? taken : new Map([...taken, link])
+}
+
+const isUncardedRoot = ([blockId]: Link, index: LinkIndex, cardById: CardById): boolean => {
+  const block = index.blockById.get(blockId)
+  return block?.parentBlockId === null && cardOf(block, cardById) === undefined
+}
+
+const withoutOwner = ([blockId, linked]: Link): Link => [blockId, { ...linked, ownerId: null }]
+
+const acceptedOf = (found: readonly Link[], index: LinkIndex, cardById: CardById): Link[] => {
+  const taken = found.reduce<CardById>(takeLink(index, cardById), new Map())
+  const refused = firstOfEach(found.filter(([blockId]) => !taken.has(blockId)), ([blockId]) => blockId)
+  return [...taken, ...refused.filter((link) => isUncardedRoot(link, index, cardById)).map(withoutOwner)]
+}
+
 const linkRound = (index: LinkIndex, cardById: CardById): CardById => {
   const found = LINKS.flatMap((link) => link(index, cardById)).filter(([blockId, linked]) => canTake(index.blockById.get(blockId), linked, cardById))
-  const fresh = found.filter(([blockId], position) => found.findIndex(([otherId]) => otherId === blockId) === position)
+  const fresh = acceptedOf(found, index, cardById)
   return fresh.length === 0 ? cardById : new Map([...cardById, ...fresh])
 }
 

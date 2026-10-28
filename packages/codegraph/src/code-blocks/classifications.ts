@@ -249,11 +249,21 @@ const usesByHolder = (blocks: readonly StoredCodeBlock[], { libraryUsesByPath }:
   return new Map([...groupBy(placed, ({ holderId }) => holderId)].map(([holderId, held]) => [holderId, held.map(({ use }) => use)] as const))
 }
 
-interface ClassifiedTree {
+interface TreeSummary {
   readonly earned: readonly CodeBlockClassification[]
   readonly diffEarned: readonly CodeBlockClassification[]
   readonly hasChange: boolean
-  readonly entries: readonly (readonly [string, BlockClassifications])[]
+  readonly classified: BlockClassifications
+}
+
+interface Visit {
+  readonly block: StoredCodeBlock
+  readonly depth: number
+}
+
+interface PendingVisits {
+  readonly visit: Visit
+  readonly below: PendingVisits | null
 }
 
 const isChanged = (block: StoredCodeBlock): boolean => block.lineOfCodeDiffs !== null
@@ -265,22 +275,61 @@ const diffOf = (classifications: readonly CodeBlockClassification[], diffEarned:
   return diffEarned.length === 0 ? classifications.slice(0, 1) : diffEarned
 }
 
-const classifyTree = (
-  block: StoredCodeBlock,
-  blockById: ReadonlyMap<string, StoredCodeBlock>,
-  ownById: ReadonlyMap<string, readonly CodeBlockClassification[]>,
-): ClassifiedTree => {
-  const children = block.childrenBlockIds.flatMap((childId) => {
-    const child = blockById.get(childId)
-    return child === undefined ? [] : [classifyTree(child, blockById, ownById)]
-  })
-  const own = ownById.get(block.id) ?? NO_CLASSIFICATIONS
+const summaryOf = (block: StoredCodeBlock, children: readonly TreeSummary[], own: readonly CodeBlockClassification[]): TreeSummary => {
   const earned = sortClassifications([...own, ...children.flatMap((child) => child.earned)])
   const diffEarned = sortClassifications([...(isChanged(block) ? own : []), ...children.flatMap((child) => child.diffEarned)])
   const hasChange = isChanged(block) || children.some((child) => child.hasChange)
   const classifications = orFallback(earned)
-  const diffClassifications = diffOf(classifications, diffEarned, hasChange)
-  return { earned, diffEarned, hasChange, entries: [[block.id, { classifications, diffClassifications }], ...children.flatMap((child) => child.entries)] }
+  return { earned, diffEarned, hasChange, classified: { classifications, diffClassifications: diffOf(classifications, diffEarned, hasChange) } }
+}
+
+const childrenOf = (block: StoredCodeBlock, blockById: ReadonlyMap<string, StoredCodeBlock>): StoredCodeBlock[] =>
+  block.childrenBlockIds.flatMap((childId) => {
+    const child = blockById.get(childId)
+    return child === undefined ? [] : [child]
+  })
+
+const TOP_DEPTH = 0
+const NO_SUMMARIES: ReadonlyMap<string, TreeSummary> = new Map()
+
+const pushVisits = (blocks: readonly StoredCodeBlock[], depth: number, below: PendingVisits | null): PendingVisits | null =>
+  blocks.reduceRight<PendingVisits | null>((pending, block) => ({ visit: { block, depth }, below: pending }), below)
+
+function* walkDown(tops: readonly StoredCodeBlock[], blockById: ReadonlyMap<string, StoredCodeBlock>): Generator<Visit> {
+  for (let pending = pushVisits(tops, TOP_DEPTH, null); pending !== null;) {
+    const { visit, below } = pending
+    yield visit
+    const children = visit.depth < blockById.size ? childrenOf(visit.block, blockById) : []
+    pending = pushVisits(children, visit.depth + 1, below)
+  }
+}
+
+const summarizeLevel = (
+  level: readonly StoredCodeBlock[],
+  below: ReadonlyMap<string, TreeSummary>,
+  ownById: ReadonlyMap<string, readonly CodeBlockClassification[]>,
+): ReadonlyMap<string, TreeSummary> =>
+  new Map(level.map((block) => [block.id, summaryOf(block, block.childrenBlockIds.flatMap((childId) => below.get(childId) ?? []), ownById.get(block.id) ?? NO_CLASSIFICATIONS)] as const))
+
+function* summarizeUpward(levels: readonly (readonly StoredCodeBlock[])[], ownById: ReadonlyMap<string, readonly CodeBlockClassification[]>): Generator<ReadonlyMap<string, TreeSummary>> {
+  for (let depth = levels.length - 1, below = NO_SUMMARIES; depth >= TOP_DEPTH; depth -= 1) {
+    below = summarizeLevel(levels[depth], below, ownById)
+    yield below
+  }
+}
+
+const classifyTrees = (
+  tops: readonly StoredCodeBlock[],
+  blockById: ReadonlyMap<string, StoredCodeBlock>,
+  ownById: ReadonlyMap<string, readonly CodeBlockClassification[]>,
+): ReadonlyMap<string, BlockClassifications> => {
+  const visits = [...walkDown(tops, blockById)]
+  const levels = [...groupBy(visits, ({ depth }) => depth).values()].map((level) => level.map(({ block }) => block))
+  const summaryById = new Map([...summarizeUpward(levels, ownById)].flatMap((summaries) => [...summaries]))
+  return new Map(visits.flatMap(({ block }) => {
+    const summary = summaryById.get(block.id)
+    return summary === undefined ? [] : [[block.id, summary.classified] as const]
+  }))
 }
 
 export const classifyGroup = (blocks: readonly StoredCodeBlock[], signals: GroupSignals): ClassifiedGroup => {
@@ -288,8 +337,7 @@ export const classifyGroup = (blocks: readonly StoredCodeBlock[], signals: Group
   const ownById = new Map(blocks.map((block) => [block.id, readOwnClassifications(block, holderUses.get(block.id) ?? [], signals)] as const))
   const blockById = new Map(blocks.map((block) => [block.id, block] as const))
   const isTop = (block: StoredCodeBlock): boolean => block.parentBlockId === null || !blockById.has(block.parentBlockId)
-  const classifiedById = new Map(blocks.filter(isTop).flatMap((block) => classifyTree(block, blockById, ownById).entries))
-  return { ownById, classifiedById }
+  return { ownById, classifiedById: classifyTrees(blocks.filter(isTop), blockById, ownById) }
 }
 
 const orphanClassifications = (block: StoredCodeBlock, ownById: ReadonlyMap<string, readonly CodeBlockClassification[]>): BlockClassifications => {

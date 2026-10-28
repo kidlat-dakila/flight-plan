@@ -16,8 +16,13 @@ const NOT_FOUND = -1
 const isInRange = (line: SourceLine, range: LineRange): boolean =>
   line.number !== null && line.number >= range.lineStart && line.number <= range.lineEnd
 
+const removedRowCountBefore = (lines: readonly SourceLine[], index: number): number => {
+  const keptRowDistance = lines.slice(0, index).reverse().findIndex((line) => line.mark !== "removed")
+  return keptRowDistance === NOT_FOUND ? index : keptRowDistance
+}
+
 const firstRemovedRowBefore = (lines: readonly SourceLine[], index: number): number =>
-  index > 0 && lines[index - 1]?.mark === "removed" ? firstRemovedRowBefore(lines, index - 1) : index
+  index - removedRowCountBefore(lines, index)
 
 export const rowSpanOf = (source: SourceFile, range: LineRange): RowSpan | null => {
   const first = source.lines.findIndex((line) => isInRange(line, range))

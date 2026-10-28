@@ -2,6 +2,7 @@ import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
 import { readBindings as readScopedBindings } from "@/ast-graph/languages/python/bindings"
 import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
 import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
+import { chainFrom, selfAndAncestorsOf } from "@/ast-graph/walk-tree"
 import { annotatedTypeFilling, annotatedTypeOf } from "@/code-blocks/languages/python/annotated"
 import { NO_EXPRESSION, type Binding, type DeclaredMember, type Expression, type ParameterBinding, type PassedValue, type Site, type SyntaxReader } from "./syntax-reader"
 
@@ -198,11 +199,11 @@ const parameterNamesOf = (definition: SyntaxNode): (string | null)[] => paramete
 
 const TYPE_NAME_TYPES: ReadonlySet<string> = new Set([NAME_TYPE, MEMBER_TYPE])
 
-const typeNameOf = (annotation: SyntaxNode | null): SyntaxNode | null => {
-  if (annotation === null) return null
-  if (TYPE_NAME_TYPES.has(annotation.type)) return annotation
-  return typeNameOf(annotatedTypeOf(annotation))
-}
+const ancestorsOf = (node: SyntaxNode): SyntaxNode[] => selfAndAncestorsOf(node).slice(1)
+
+const isTypeName = (node: SyntaxNode): boolean => TYPE_NAME_TYPES.has(node.type)
+
+const typeNameOf = (annotation: SyntaxNode | null): SyntaxNode | null => [...chainFrom(annotation, annotatedTypeOf)].find(isTypeName) ?? null
 
 const parameterTypeOf = (parameter: SyntaxNode): SyntaxNode | null => typeNameOf(parameter.childForFieldName("type")?.firstNamedChild ?? null)
 
@@ -215,20 +216,21 @@ const classOfMethod = (definition: SyntaxNode): SyntaxNode | null => {
   return block?.type === BLOCK_TYPE && block.parent?.type === CLASS_TYPE && !isStaticMethod(definition) ? block.parent : null
 }
 
-const definingFunctionOf = (node: SyntaxNode | null, name: string): SyntaxNode | null => {
-  if (node === null || node.type === CLASS_TYPE) return null
-  if (node.type === FUNCTION_TYPE && parameterNamesOf(node).includes(name)) return node
-  return definingFunctionOf(node.parent, name)
+const isDefiningFunction = (node: SyntaxNode, name: string): boolean => node.type === FUNCTION_TYPE && parameterNamesOf(node).includes(name)
+
+const definingFunctionOf = (name: SyntaxNode): SyntaxNode | null => {
+  const scope = ancestorsOf(name).find((ancestor) => ancestor.type === CLASS_TYPE || isDefiningFunction(ancestor, name.text))
+  return scope?.type === FUNCTION_TYPE ? scope : null
 }
 
 const receiverBindingOf = (name: SyntaxNode): Binding | null => {
-  const definition = definingFunctionOf(name.parent, name.text)
+  const definition = definingFunctionOf(name)
   const declaration = definition === null || parameterNamesOf(definition)[0] !== name.text ? null : classOfMethod(definition)
   return declaration === null ? null : { kind: "class", declaration }
 }
 
 const parameterBindingOf = (name: SyntaxNode): ParameterBinding | null => {
-  const definition = definingFunctionOf(name.parent, name.text)
+  const definition = definingFunctionOf(name)
   const parameters = definition === null ? [] : parametersOf(definition)
   const position = parameters.findIndex((parameter) => nameOfParameter(parameter) === name.text)
   return definition === null || position < 0 ? null : { kind: "parameter", holder: definition, parameter: parameters[position], position }

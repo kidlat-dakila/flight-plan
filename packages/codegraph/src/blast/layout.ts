@@ -1,3 +1,4 @@
+import { groupBy } from "@/shared/group-by"
 import type { Blast, BlastEdge, BlastNode } from "@flightplan/configurations"
 
 export interface Point {
@@ -46,7 +47,8 @@ const offsetBetween = (from: Point, to: Point): Point => ({ x: to.x - from.x, y:
 
 const lengthOf = ({ x, y }: Point): number => Math.max(MIN_DISTANCE, Math.hypot(x, y))
 
-const highestOf = (values: readonly number[]): number => (values.length === 0 ? 0 : Math.max(...values))
+const highestOf = (values: readonly number[]): number =>
+  values.length === 0 ? 0 : values.reduce((highest, value) => Math.max(highest, value), Number.NEGATIVE_INFINITY)
 
 const averageOf = (values: readonly number[]): number => values.reduce((total, value) => total + value, 0) / values.length
 
@@ -78,6 +80,16 @@ interface Imports {
   readonly importersOf: Links
 }
 
+interface ImportPair {
+  readonly importer: number
+  readonly imported: number
+}
+
+const linksOf = (pairs: readonly ImportPair[], positionCount: number, from: keyof ImportPair, to: keyof ImportPair): Links => {
+  const pairsByPosition = groupBy(pairs, (pair) => pair[from])
+  return Array.from({ length: positionCount }, (_links, position) => (pairsByPosition.get(position) ?? []).map((pair) => pair[to]))
+}
+
 const importsOf = (blastDiagram: Blast): Imports => {
   const positionByPath = new Map(blastDiagram.nodes.map((node, position) => [node.path, position] as const))
   const pairs = blastDiagram.edges.flatMap((edge) => {
@@ -86,9 +98,49 @@ const importsOf = (blastDiagram: Blast): Imports => {
     return importer === undefined || imported === undefined || importer === imported ? [] : [{ importer, imported }]
   })
   return {
-    importedOf: blastDiagram.nodes.map((_node, position) => pairs.filter((pair) => pair.importer === position).map((pair) => pair.imported)),
-    importersOf: blastDiagram.nodes.map((_node, position) => pairs.filter((pair) => pair.imported === position).map((pair) => pair.importer)),
+    importedOf: linksOf(pairs, blastDiagram.nodes.length, "importer", "imported"),
+    importersOf: linksOf(pairs, blastDiagram.nodes.length, "imported", "importer"),
   }
+}
+
+interface PositionTrie<Value> {
+  readonly value: Value | undefined
+  readonly branches: readonly (PositionTrie<Value> | undefined)[]
+}
+
+const BINARY = 2
+const EMPTY_TRIE: PositionTrie<never> = { value: undefined, branches: [] }
+
+const digitsOf = (position: number): number[] => Array.from(position.toString(BINARY), Number)
+
+const branchOf = <Value>(node: PositionTrie<Value> | undefined, digit: number): PositionTrie<Value> | undefined => node?.branches[digit]
+
+const valueAt = <Value>(trie: PositionTrie<Value>, position: number): Value | undefined =>
+  digitsOf(position).reduce<PositionTrie<Value> | undefined>(branchOf, trie)?.value
+
+const withBranch = <Value>(branches: PositionTrie<Value>["branches"], digit: number, branch: PositionTrie<Value>): PositionTrie<Value>["branches"] =>
+  Array.from({ length: BINARY }, (_branch, at) => (at === digit ? branch : branches[at]))
+
+const withValueAlong = <Value>(node: PositionTrie<Value>, digits: readonly number[], value: Value): PositionTrie<Value> => {
+  if (digits.length === 0) return { ...node, value }
+  const [digit, ...rest] = digits
+  return { ...node, branches: withBranch(node.branches, digit, withValueAlong(node.branches[digit] ?? EMPTY_TRIE, rest, value)) }
+}
+
+const withValueAt = <Value>(trie: PositionTrie<Value>, position: number, value: Value): PositionTrie<Value> =>
+  withValueAlong(trie, digitsOf(position), value)
+
+interface Stacked<Item> {
+  readonly item: Item
+  readonly below: Stacked<Item> | null
+}
+
+function* itemsOf<Item>(stacked: Stacked<Item> | null): Generator<Item> {
+  for (let held = stacked; held !== null; held = held.below) yield held.item
+}
+
+const iterateUntil = <State>(start: State, step: (state: State) => State, isDone: (state: State) => boolean): State => {
+  for (let state = start; ; state = step(state)) if (isDone(state)) return state
 }
 
 interface Walk {
@@ -98,27 +150,76 @@ interface Walk {
 
 const keyOf = (importer: number, imported: number): string => `${String(importer)}>${String(imported)}`
 
-const walkFrom = (position: number, importedOf: Links, trail: readonly number[], walk: Walk): Walk => {
-  if (walk.finished.includes(position)) return walk
-  const walked = importedOf[position].reduce<Walk>(
-    (held, imported) =>
-      trail.includes(imported) || imported === position
-        ? { ...held, loopCloserKeys: new Set([...held.loopCloserKeys, keyOf(position, imported)]) }
-        : walkFrom(imported, importedOf, [...trail, position], held),
-    walk,
-  )
-  return { ...walked, finished: [...walked.finished, position] }
+const ENTERED = "entered"
+const FINISHED = "finished"
+
+type WalkMark = typeof ENTERED | typeof FINISHED
+
+interface Frame {
+  readonly position: number
+  readonly nextImport: number
+}
+
+interface Walking {
+  readonly trail: Stacked<Frame> | null
+  readonly marks: PositionTrie<WalkMark>
+  readonly finished: Stacked<number> | null
+  readonly loopCloserKeys: Stacked<string> | null
+}
+
+const NOT_WALKED: Walking = { trail: null, marks: EMPTY_TRIE, finished: null, loopCloserKeys: null }
+
+const enter = (walking: Walking, position: number): Walking => ({
+  ...walking,
+  trail: { item: { position, nextImport: 0 }, below: walking.trail },
+  marks: withValueAt(walking.marks, position, ENTERED),
+})
+
+const leave = (walking: Walking, { item: { position }, below }: Stacked<Frame>): Walking => ({
+  ...walking,
+  trail: below,
+  marks: withValueAt(walking.marks, position, FINISHED),
+  finished: { item: position, below: walking.finished },
+})
+
+const follow = (walking: Walking, { item: { position, nextImport }, below }: Stacked<Frame>, imported: number): Walking => {
+  const advanced = { ...walking, trail: { item: { position, nextImport: nextImport + 1 }, below } }
+  const mark = valueAt(walking.marks, imported)
+  if (mark === ENTERED) return { ...advanced, loopCloserKeys: { item: keyOf(position, imported), below: walking.loopCloserKeys } }
+  return mark === FINISHED ? advanced : enter(advanced, imported)
+}
+
+const stepThrough = (importedOf: Links) => (walking: Walking): Walking => {
+  if (walking.trail === null) return walking
+  const imports = importedOf[walking.trail.item.position]
+  const { nextImport } = walking.trail.item
+  return nextImport < imports.length ? follow(walking, walking.trail, imports[nextImport]) : leave(walking, walking.trail)
+}
+
+const isTrailEmpty = (walking: Walking): boolean => walking.trail === null
+
+const walkFromRoot = (importedOf: Links) => (walking: Walking, _imported: readonly number[], root: number): Walking =>
+  valueAt(walking.marks, root) === undefined ? iterateUntil(enter(walking, root), stepThrough(importedOf), isTrailEmpty) : walking
+
+const walkImports = (importedOf: Links): Walk => {
+  const walked = importedOf.reduce(walkFromRoot(importedOf), NOT_WALKED)
+  return {
+    finished: [...itemsOf(walked.finished)].reverse(),
+    loopCloserKeys: new Set([...itemsOf(walked.loopCloserKeys)].reverse()),
+  }
 }
 
 const columnsOf = ({ importedOf, importersOf }: Imports): number[] => {
-  const walk = importedOf.reduce<Walk>((held, _imported, position) => walkFrom(position, importedOf, [], held), { finished: [], loopCloserKeys: new Set() })
+  const walk = walkImports(importedOf)
   const importersFirst = [...walk.finished].reverse()
-  const columnByPosition = importersFirst.reduce<ReadonlyMap<number, number>>((columns, position) => {
+  const columnByPosition = importersFirst.reduce<PositionTrie<number>>((columns, position) => {
     const before = importersOf[position].filter((importer) => !walk.loopCloserKeys.has(keyOf(importer, position)))
-    return new Map([...columns, [position, highestOf(before.map((importer) => (columns.get(importer) ?? -1) + 1))]])
-  }, new Map())
-  return importedOf.map((_imported, position) => columnByPosition.get(position) ?? 0)
+    return withValueAt(columns, position, highestOf(before.map((importer) => (valueAt(columns, importer) ?? -1) + 1)))
+  }, EMPTY_TRIE)
+  return importedOf.map((_imported, position) => valueAt(columnByPosition, position) ?? 0)
 }
+
+export const blastColumnsOf = (blastDiagram: Blast): number[] => columnsOf(importsOf(blastDiagram))
 
 const rowsByColumnOf = (columns: readonly number[]): number[][] =>
   Array.from({ length: highestOf(columns) + 1 }, (_column, column) => columns.flatMap((held, position) => (held === column ? [position] : [])))
