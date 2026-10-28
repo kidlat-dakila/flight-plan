@@ -1,5 +1,5 @@
 import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
-import type { ListedRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
+import type { RegisteredRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
 import { toRepositoryEntry } from "@/procedures/get-setup/utils/build-repositories-step"
 import type { GitIdentity } from "@/procedures/get-setup/utils/git-identity"
 import type { SetupForge } from "@/procedures/get-setup/utils/setup"
@@ -8,7 +8,7 @@ import { isNobodyTracked } from "@/procedures/list-repositories/utils/tracked-au
 import type { FollowedRepository, RepositoriesSection } from "./schemas"
 
 export interface RepositoryFollowing {
-  readonly repository: ListedRepository
+  readonly repository: RegisteredRepository
   readonly authors: SelectedAuthors
   readonly forge: SetupForge
   readonly identity: GitIdentity | null

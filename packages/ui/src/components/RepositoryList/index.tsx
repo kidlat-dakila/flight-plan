@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import AuthorField from "@/components/AuthorField"
 import Avatar from "@/components/Avatar"
+import BaseBranchField, { IDLE_BRANCH_SEARCH, type BranchSearch } from "@/components/BaseBranchField"
 import Button from "@/components/blocks/button"
 import IconButton from "@/components/IconButton"
 import ProblemAlert from "@/components/ProblemAlert"
@@ -29,6 +30,7 @@ export interface FollowedRepository {
   readonly authorSearchPlaceholder: string
   readonly selfAuthor: TrackedAuthor | null
   readonly trackedAuthors: readonly TrackedAuthor[]
+  readonly baseBranch: string | null
 }
 
 export interface AuthorSearch {
@@ -41,6 +43,10 @@ export interface AuthorSearch {
   readonly onTroubleshoot?: (() => void) | null
 }
 
+export interface BaseBranchSearch extends BranchSearch {
+  readonly repositoryName: string | null
+}
+
 interface RepositoryListProps<Followed extends FollowedRepository> {
   readonly rows: readonly RepositoryRow<Followed>[]
   readonly listMessage: string | null
@@ -48,12 +54,15 @@ interface RepositoryListProps<Followed extends FollowedRepository> {
   readonly onRepositoryTroubleshoot?: (() => void) | null
   readonly isChangingRepositories: boolean
   readonly authorSearch: AuthorSearch
+  readonly baseBranchSearch: BaseBranchSearch
   readonly followedFooter?: (followed: Followed) => ReactNode
   readonly onOpenAddRepository: () => void
   readonly onFollow: (path: string) => void
   readonly onUnfollow: (name: string) => void
   readonly onAuthorQueryChange: (repositoryName: string, role: AuthorRole, query: string) => void
   readonly onAuthorTrackingChange: (repositoryName: string, authorId: string, isTracked: boolean) => void
+  readonly onBaseBranchQueryChange: (repositoryName: string, query: string) => void
+  readonly onBaseBranchChange: (repositoryName: string, branchName: string) => void
 }
 
 interface RepositoryAuthorFieldProps {
@@ -70,8 +79,11 @@ interface RepositoryAuthorFieldProps {
 interface FollowedFieldsProps {
   readonly repository: FollowedRepository
   readonly authorSearch: AuthorSearch
+  readonly baseBranchSearch: BaseBranchSearch
   readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
   readonly onAuthorTrackingChange: (authorId: string, isTracked: boolean) => void
+  readonly onBaseBranchQueryChange: (query: string) => void
+  readonly onBaseBranchChange: (branchName: string) => void
 }
 
 interface RepositoryRowItemProps<Followed extends FollowedRepository> extends Omit<FollowedFieldsProps, "repository"> {
@@ -125,13 +137,26 @@ const SelfAuthorLine = ({ author }: { readonly author: TrackedAuthor }) => (
   </div>
 )
 
+const branchSearchOf = (baseBranchSearch: BaseBranchSearch, repositoryName: string): BranchSearch =>
+  baseBranchSearch.repositoryName === repositoryName ? baseBranchSearch : IDLE_BRANCH_SEARCH
+
 const FollowedFields = ({
   repository,
   authorSearch,
+  baseBranchSearch,
   onAuthorQueryChange,
   onAuthorTrackingChange,
+  onBaseBranchQueryChange,
+  onBaseBranchChange,
 }: FollowedFieldsProps) => (
   <div className="grid max-w-xl gap-3 pt-3 pl-7">
+    <BaseBranchField
+      baseBranch={repository.baseBranch}
+      search={branchSearchOf(baseBranchSearch, repository.name)}
+      className="max-w-md"
+      onQueryChange={onBaseBranchQueryChange}
+      onBaseBranchChange={onBaseBranchChange}
+    />
     {repository.selfAuthor === null ? null : <SelfAuthorLine author={repository.selfAuthor} />}
     <RepositoryAuthorField
       label="Track branches from specific team members"
@@ -169,10 +194,13 @@ const RepositoryRowItem = <Followed extends FollowedRepository>({
   isChanging,
   followedFooter,
   authorSearch,
+  baseBranchSearch,
   onFollow,
   onUnfollow,
   onAuthorQueryChange,
   onAuthorTrackingChange,
+  onBaseBranchQueryChange,
+  onBaseBranchChange,
 }: RepositoryRowItemProps<Followed>) => {
   const { followed } = row
   const isLocked = followed === null && row.stateLabel !== null
@@ -203,8 +231,11 @@ const RepositoryRowItem = <Followed extends FollowedRepository>({
               <FollowedFields
                 repository={followed}
                 authorSearch={authorSearch}
+                baseBranchSearch={baseBranchSearch}
                 onAuthorQueryChange={onAuthorQueryChange}
                 onAuthorTrackingChange={onAuthorTrackingChange}
+                onBaseBranchQueryChange={onBaseBranchQueryChange}
+                onBaseBranchChange={onBaseBranchChange}
               />
               {followedFooter === undefined ? null : <div className="pt-3 pl-7">{followedFooter(followed)}</div>}
             </>
@@ -220,12 +251,15 @@ const RepositoryList = <Followed extends FollowedRepository>({
   onRepositoryTroubleshoot = null,
   isChangingRepositories,
   authorSearch,
+  baseBranchSearch,
   followedFooter,
   onOpenAddRepository,
   onFollow,
   onUnfollow,
   onAuthorQueryChange,
   onAuthorTrackingChange,
+  onBaseBranchQueryChange,
+  onBaseBranchChange,
 }: RepositoryListProps<Followed>) => (
   <>
     <h3 className="pb-2 text-sm font-bold">{RECENT_HEADING}</h3>
@@ -241,12 +275,15 @@ const RepositoryList = <Followed extends FollowedRepository>({
                 isChanging={isChangingRepositories}
                 followedFooter={followedFooter}
                 authorSearch={authorSearch}
+                baseBranchSearch={baseBranchSearch}
                 onFollow={() => { onFollow(row.path) }}
                 onUnfollow={onUnfollow}
                 onAuthorQueryChange={(role, query) => { onAuthorQueryChange(row.followed?.name ?? row.name, role, query) }}
                 onAuthorTrackingChange={(authorId, isTracked) => {
                   onAuthorTrackingChange(row.followed?.name ?? row.name, authorId, isTracked)
                 }}
+                onBaseBranchQueryChange={(query) => { onBaseBranchQueryChange(row.followed?.name ?? row.name, query) }}
+                onBaseBranchChange={(branchName) => { onBaseBranchChange(row.followed?.name ?? row.name, branchName) }}
               />
             ))}
           </ul>

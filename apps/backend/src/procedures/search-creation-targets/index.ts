@@ -22,7 +22,7 @@ export const searchCreationTargets = async (
   if (repository === undefined) return null
   const [viewerLogin, branchTips] = await Promise.all([
     context.repositoryStore.readViewerLogin(repository.name),
-    readBranchTips(repository.path, setup.forges, context.openRepository),
+    readBranchTips(repository, setup.forges, context.openRepository),
   ])
   const targets = selectCreationTargets({
     targets: repository.targets,

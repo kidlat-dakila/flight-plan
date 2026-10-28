@@ -12,6 +12,7 @@ export interface ReviewScaffold {
   readonly artifact: ReviewArtifact
   readonly request: ReviewRequest
   readonly baseCommit: string
+  readonly baseBranch?: string
 }
 
 export const STORED_SCHEMA_VERSION = 4
@@ -94,6 +95,7 @@ const storedReviewSchema = z.strictObject({
   meta: z.strictObject({
     kind: z.literal("review"),
     baseCommit: z.string(),
+    baseBranch: z.string().optional(),
     request: requestSchema,
   }),
   artifact: z.preprocess(withoutRetiredKeys, reviewArtifactSchema),
@@ -131,11 +133,19 @@ export const savedVersionOf = (text: string): string | null => {
   return isRecord(stored) && typeof stored.version === "string" ? stored.version : null
 }
 
+const baseBranchFieldOf = (baseBranch: string | undefined): { readonly baseBranch?: string } =>
+  (baseBranch === undefined ? {} : { baseBranch })
+
 export const parseStoredValue = (value: unknown): ReviewScaffold | null => {
   const stored = storedReviewSchema.safeParse(upgradedStoredReview(value))
   if (!stored.success) return null
   const { schema, meta, artifact } = stored.data
-  return { artifact: withRequirementOf(artifact, meta.request, schema), request: meta.request, baseCommit: meta.baseCommit }
+  return {
+    artifact: withRequirementOf(artifact, meta.request, schema),
+    request: meta.request,
+    baseCommit: meta.baseCommit,
+    ...baseBranchFieldOf(meta.baseBranch),
+  }
 }
 
 export const parseStoredReview = (text: string): ReviewScaffold | null => parseStoredValue(parseStored(text))
@@ -150,6 +160,7 @@ export const formatStoredReview = (scaffold: ReviewScaffold, version: string | n
       meta: {
         kind: "review",
         baseCommit: scaffold.baseCommit,
+        ...baseBranchFieldOf(scaffold.baseBranch),
         request: { ...scaffold.request, requestedAt: scaffold.request.requestedAt.toISOString() },
       },
       artifact: scaffold.artifact,

@@ -4,6 +4,7 @@ import type { Repository } from "@/procedures/list-repositories/utils/repository
 const storefront: Repository = {
   name: "storefront",
   path: "/work/storefront",
+  baseBranch: null,
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
@@ -21,6 +22,7 @@ describe("planRepositoryAddition", () => {
         forgeSlug: null,
         problem: null,
         targets: [],
+        baseBranch: null,
       },
     })
   })

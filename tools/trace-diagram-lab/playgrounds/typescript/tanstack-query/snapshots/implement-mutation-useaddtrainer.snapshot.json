@@ -1,0 +1,1382 @@
+{
+  "title": "Implement mutation useAddTrainer",
+  "diff": [
+    "diff --git a/src/api/add-trainer.ts b/src/api/add-trainer.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/api/add-trainer.ts",
+    "@@ -0,0 +1,8 @@",
+    "+import { request } from \"@/api/client\"",
+    "+import type { Trainer } from \"@/types/trainer\"",
+    "+",
+    "+export type TrainerDraft = Omit<Trainer, \"id\">",
+    "+",
+    "+export function addTrainer(draft: TrainerDraft): Promise<Trainer> {",
+    "+  return request<Trainer>(\"/trainers\", { method: \"POST\", body: JSON.stringify(draft) })",
+    "+}",
+    "diff --git a/src/hooks/use-add-trainer.ts b/src/hooks/use-add-trainer.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/hooks/use-add-trainer.ts",
+    "@@ -0,0 +1,11 @@",
+    "+import { useMutation, useQueryClient } from \"@tanstack/react-query\"",
+    "+import { addTrainer } from \"@/api/add-trainer\"",
+    "+import { TRAINERS_QUERY_KEY } from \"@/hooks/use-trainers\"",
+    "+",
+    "+export function useAddTrainer() {",
+    "+  const queryClient = useQueryClient()",
+    "+  return useMutation({",
+    "+    mutationFn: addTrainer,",
+    "+    onSuccess: () => queryClient.invalidateQueries({ queryKey: TRAINERS_QUERY_KEY }),",
+    "+  })",
+    "+}",
+    "diff --git a/src/pages/trainers/TrainersPage.tsx b/src/pages/trainers/TrainersPage.tsx",
+    "--- a/src/pages/trainers/TrainersPage.tsx",
+    "+++ b/src/pages/trainers/TrainersPage.tsx",
+    "@@ -1,0 +2 @@ import { useTrainers } from \"@/hooks/use-trainers\"",
+    "+import { AddTrainerForm } from \"./components/AddTrainerForm\"",
+    "@@ -9,7 +10,10 @@ export function TrainersPage() {",
+    "-    <table>",
+    "-      <tbody>",
+    "-        {trainers.map((trainer) => (",
+    "-          <TrainerRow key={trainer.id} trainer={trainer} />",
+    "-        ))}",
+    "-      </tbody>",
+    "-    </table>",
+    "+    <section>",
+    "+      <AddTrainerForm />",
+    "+      <table>",
+    "+        <tbody>",
+    "+          {trainers.map((trainer) => (",
+    "+            <TrainerRow key={trainer.id} trainer={trainer} />",
+    "+          ))}",
+    "+        </tbody>",
+    "+      </table>",
+    "+    </section>",
+    "diff --git a/src/pages/trainers/components/AddTrainerForm.tsx b/src/pages/trainers/components/AddTrainerForm.tsx",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pages/trainers/components/AddTrainerForm.tsx",
+    "@@ -0,0 +1,23 @@",
+    "+import { useState, type FormEvent } from \"react\"",
+    "+import { useAddTrainer } from \"@/hooks/use-add-trainer\"",
+    "+",
+    "+const DEFAULT_HOMETOWN = \"Pallet Town\"",
+    "+",
+    "+export function AddTrainerForm() {",
+    "+  const [name, setName] = useState(\"\")",
+    "+  const { mutate: addTrainer, isPending } = useAddTrainer()",
+    "+",
+    "+  const submit = (event: FormEvent<HTMLFormElement>) => {",
+    "+    event.preventDefault()",
+    "+    addTrainer({ name, hometown: DEFAULT_HOMETOWN }, { onSuccess: () => setName(\"\") })",
+    "+  }",
+    "+",
+    "+  return (",
+    "+    <form onSubmit={submit}>",
+    "+      <input value={name} placeholder=\"Trainer name\" onChange={(event) => setName(event.target.value)} />",
+    "+      <button type=\"submit\" disabled={isPending || name === \"\"}>",
+    "+        Add trainer",
+    "+      </button>",
+    "+    </form>",
+    "+  )",
+    "+}"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New AddTrainerForm, useAddTrainer and addTrainer, modified TrainersPage",
+        "importGraph": [
+          {
+            "filePath": "src/App.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/pages/trainers/TrainersPage.tsx"
+            ],
+            "importedFilePaths": {
+              "@/pages/items/ItemsPage": "src/pages/items/ItemsPage.tsx",
+              "@/pages/trainers/TrainersPage": "src/pages/trainers/TrainersPage.tsx"
+            }
+          },
+          {
+            "filePath": "src/api/add-trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/hooks/use-add-trainer.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/api/client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/add-trainer.ts",
+              "src/api/trainers.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/api/trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/hooks/use-trainers.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/hooks/use-add-trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pages/trainers/components/AddTrainerForm.tsx"
+            ],
+            "importsTo": [
+              "src/api/add-trainer.ts",
+              "src/hooks/use-trainers.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/add-trainer": "src/api/add-trainer.ts",
+              "@/hooks/use-trainers": "src/hooks/use-trainers.ts"
+            }
+          },
+          {
+            "filePath": "src/hooks/use-trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/hooks/use-add-trainer.ts",
+              "src/pages/trainers/TrainersPage.tsx"
+            ],
+            "importsTo": [
+              "src/api/trainers.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/trainers": "src/api/trainers.ts"
+            }
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/App.tsx"
+            ],
+            "importedFilePaths": {
+              "@/App": "src/App.tsx",
+              "@/lib/query-client": "src/lib/query-client.ts"
+            }
+          },
+          {
+            "filePath": "src/pages/trainers/TrainersPage.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/App.tsx"
+            ],
+            "importsTo": [
+              "src/hooks/use-trainers.ts",
+              "src/pages/trainers/components/AddTrainerForm.tsx",
+              "src/pages/trainers/components/TrainerRow.tsx"
+            ],
+            "importedFilePaths": {
+              "@/hooks/use-trainers": "src/hooks/use-trainers.ts",
+              "./components/AddTrainerForm": "src/pages/trainers/components/AddTrainerForm.tsx",
+              "./components/TrainerRow": "src/pages/trainers/components/TrainerRow.tsx"
+            }
+          },
+          {
+            "filePath": "src/pages/trainers/components/AddTrainerForm.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pages/trainers/TrainersPage.tsx"
+            ],
+            "importsTo": [
+              "src/hooks/use-add-trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/hooks/use-add-trainer": "src/hooks/use-add-trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/pages/trainers/components/TrainerRow.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pages/trainers/TrainersPage.tsx"
+            ],
+            "importsTo": [
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/types/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/add-trainer.ts",
+              "src/api/trainers.ts",
+              "src/pages/trainers/components/TrainerRow.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Add trainer flow diagram",
+          "description": "This diagram shows how the trainers page renders the form that adds a trainer. It also shows what happens when the user types a name or submits the form, and how the new trainer reaches the API through `addTrainer()`.",
+          "traceNodes": [
+            {
+              "id": "src/App.tsx#component@4:1",
+              "type": "component",
+              "label": "Renders the trainers and the items",
+              "description": "When the user opens the app, `main.tsx` renders this component inside `QueryClientProvider`.",
+              "codeBlockIds": [
+                "src/App.tsx#component@4:1",
+                "src/App.tsx#render-root@5:3",
+                "src/App.tsx#render@6:5",
+                "src/App.tsx#render@7:7"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pages/trainers/TrainersPage.tsx#component@5:1",
+                  "type": "component",
+                  "label": "Lists the trainers with a form to add one",
+                  "description": "When the user opens the app, [`App` renders this page](code:src/App.tsx#L7). The page renders the form and the table once `useTrainers()` has loaded the trainers.",
+                  "codeBlockIds": [
+                    "src/pages/trainers/TrainersPage.tsx#component@5:1",
+                    "src/pages/trainers/TrainersPage.tsx#render-root@9:3",
+                    "src/pages/trainers/TrainersPage.tsx#render@10:5",
+                    "src/pages/trainers/TrainersPage.tsx#render@11:7",
+                    "src/pages/trainers/TrainersPage.tsx#render@12:7",
+                    "src/pages/trainers/TrainersPage.tsx#render@13:9",
+                    "src/pages/trainers/TrainersPage.tsx#render-loop@14:12",
+                    "src/pages/trainers/TrainersPage.tsx#function@14:25",
+                    "src/pages/trainers/TrainersPage.tsx#variable@14:26",
+                    "src/pages/trainers/TrainersPage.tsx#render@15:13"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pages/trainers/TrainersPage.tsx#render@10:5",
+                    "src/pages/trainers/TrainersPage.tsx#render@11:7",
+                    "src/pages/trainers/TrainersPage.tsx#render@12:7",
+                    "src/pages/trainers/TrainersPage.tsx#render@13:9",
+                    "src/pages/trainers/TrainersPage.tsx#render-loop@14:12",
+                    "src/pages/trainers/TrainersPage.tsx#function@14:25",
+                    "src/pages/trainers/TrainersPage.tsx#variable@14:26",
+                    "src/pages/trainers/TrainersPage.tsx#render@15:13"
+                  ],
+                  "children": [
+                    {
+                      "id": "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1",
+                      "type": "component",
+                      "label": "Shows a name field and an Add trainer button",
+                      "description": "When `TrainersPage` has loaded the trainers, [it renders this form](code:src/pages/trainers/TrainersPage.tsx#L11) above the table.\n\n- When the user types in the name field, the input runs its `onChange` handler.\n- When the user submits the form, the form runs `submit()`.",
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#state@7:3",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#external-value@8:3",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render-root@15:3",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render@16:5",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render@17:7",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render-event@17:54",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render@18:7"
+                      ],
+                      "diffCodeBlockIds": [
+                        "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#state@7:3",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#external-value@8:3",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render-root@15:3",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render@16:5",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render@17:7",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render-event@17:54",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render@18:7"
+                      ],
+                      "children": [],
+                      "triggerLabels": [
+                        {
+                          "label": "A user submits the form with a name",
+                          "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11"
+                        },
+                        {
+                          "label": "A user types a trainer name",
+                          "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#render-event@17:54"
+                        }
+                      ],
+                      "blockLabels": [
+                        {
+                          "label": "Keeps the name the user typed",
+                          "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#state@7:3"
+                        },
+                        {
+                          "label": "Gets the mutation that adds a trainer and whether it runs",
+                          "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#external-value@8:3"
+                        }
+                      ]
+                    }
+                  ],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Renders one row for each trainer",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#function@14:25"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/hooks/use-add-trainer.ts#hook@5:1",
+              "type": "hook",
+              "label": "Adds a trainer and refreshes the trainers list",
+              "description": "When `AddTrainerForm` renders, [it calls this hook](code:src/pages/trainers/components/AddTrainerForm.tsx#L8) and keeps `mutate` as `addTrainer`. When the user submits the form, TanStack Query runs `mutationFn` with the new trainer. When the request succeeds, it runs [`onSuccess`, which marks the `[\"trainers\"]` query as stale](code:src/hooks/use-add-trainer.ts#L9).",
+              "codeBlockIds": [
+                "src/hooks/use-add-trainer.ts#hook@5:1",
+                "src/hooks/use-add-trainer.ts#external-value@6:3",
+                "src/hooks/use-add-trainer.ts#component-effect@7:10",
+                "src/hooks/use-add-trainer.ts#effect-callback@8:5",
+                "src/hooks/use-add-trainer.ts#code-event@9:5",
+                "src/hooks/use-add-trainer.ts#function@9:16",
+                "src/hooks/use-add-trainer.ts#cache@9:22",
+                "src/hooks/use-add-trainer.ts#property@9:54"
+              ],
+              "diffCodeBlockIds": [
+                "src/hooks/use-add-trainer.ts#hook@5:1",
+                "src/hooks/use-add-trainer.ts#external-value@6:3",
+                "src/hooks/use-add-trainer.ts#component-effect@7:10",
+                "src/hooks/use-add-trainer.ts#effect-callback@8:5",
+                "src/hooks/use-add-trainer.ts#code-event@9:5",
+                "src/hooks/use-add-trainer.ts#function@9:16",
+                "src/hooks/use-add-trainer.ts#cache@9:22",
+                "src/hooks/use-add-trainer.ts#property@9:54"
+              ],
+              "children": [],
+              "triggerLabels": [
+                {
+                  "label": "The API saves the new trainer",
+                  "codeBlockId": "src/hooks/use-add-trainer.ts#code-event@9:5"
+                }
+              ],
+              "blockLabels": [
+                {
+                  "label": "Gets the query client of the app",
+                  "codeBlockId": "src/hooks/use-add-trainer.ts#external-value@6:3"
+                },
+                {
+                  "label": "Makes the mutation that adds a trainer",
+                  "codeBlockId": "src/hooks/use-add-trainer.ts#component-effect@7:10"
+                },
+                {
+                  "label": "Sends the new trainer to the API",
+                  "codeBlockId": "src/hooks/use-add-trainer.ts#effect-callback@8:5"
+                }
+              ]
+            },
+            {
+              "id": "src/api/add-trainer.ts#function@6:1",
+              "type": "function",
+              "label": "Posts a new trainer to the API",
+              "description": "When the user submits the form, `submit()` calls `mutate()` of `useAddTrainer()`, and [`useMutation` runs this function as its `mutationFn`](code:src/hooks/use-add-trainer.ts#L8) with the name and the hometown.",
+              "codeBlockIds": [
+                "src/api/add-trainer.ts#function@6:1",
+                "src/api/add-trainer.ts#root-argument-value@6:28",
+                "src/api/add-trainer.ts#property@7:42",
+                "src/api/add-trainer.ts#property@7:58"
+              ],
+              "diffCodeBlockIds": [
+                "src/api/add-trainer.ts#function@6:1",
+                "src/api/add-trainer.ts#root-argument-value@6:28",
+                "src/api/add-trainer.ts#property@7:42",
+                "src/api/add-trainer.ts#property@7:58"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Sends the request as a POST",
+                  "codeBlockId": "src/api/add-trainer.ts#property@7:42"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11",
+              "type": "render-event",
+              "label": "Adds a trainer with the typed name",
+              "description": "When the user submits the form, [the form runs `submit()`](code:src/pages/trainers/components/AddTrainerForm.tsx#L16) with the submit event.",
+              "codeBlockIds": [
+                "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11",
+                "src/pages/trainers/components/AddTrainerForm.tsx#function@10:3",
+                "src/pages/trainers/components/AddTrainerForm.tsx#variable@10:19",
+                "src/pages/trainers/components/AddTrainerForm.tsx#call@11:5",
+                "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11",
+                "src/pages/trainers/components/AddTrainerForm.tsx#function@10:3",
+                "src/pages/trainers/components/AddTrainerForm.tsx#variable@10:19",
+                "src/pages/trainers/components/AddTrainerForm.tsx#call@11:5",
+                "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Stops the browser from reloading the page",
+                  "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#variable@10:19"
+                },
+                {
+                  "label": "Runs the mutation with the typed name",
+                  "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5",
+              "type": "effect",
+              "label": "Runs the mutation with the new trainer",
+              "description": "When the user submits the form, `submit()` calls `addTrainer()`, the `mutate` function that `useAddTrainer()` returns, with the typed name and `DEFAULT_HOMETOWN`.",
+              "codeBlockIds": [
+                "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5",
+                "src/pages/trainers/components/AddTrainerForm.tsx#root-variable@4:1",
+                "src/pages/trainers/components/AddTrainerForm.tsx#property@12:18",
+                "src/pages/trainers/components/AddTrainerForm.tsx#property@12:24",
+                "src/pages/trainers/components/AddTrainerForm.tsx#code-event@12:56"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5",
+                "src/pages/trainers/components/AddTrainerForm.tsx#root-variable@4:1",
+                "src/pages/trainers/components/AddTrainerForm.tsx#property@12:18",
+                "src/pages/trainers/components/AddTrainerForm.tsx#property@12:24",
+                "src/pages/trainers/components/AddTrainerForm.tsx#code-event@12:56"
+              ],
+              "children": [],
+              "triggerLabels": [
+                {
+                  "label": "The API saves the new trainer",
+                  "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#code-event@12:56"
+                }
+              ],
+              "blockLabels": [
+                {
+                  "label": "Gives Pallet Town as the hometown",
+                  "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#root-variable@4:1"
+                },
+                {
+                  "label": "Uses the typed name as the trainer name",
+                  "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#property@12:18"
+                },
+                {
+                  "label": "Uses the default hometown for every new trainer",
+                  "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#property@12:24"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/trainers/components/AddTrainerForm.tsx#code-event@12:56",
+              "type": "code-event",
+              "label": "Clears the name field",
+              "description": "When the API returns the new trainer, TanStack Query runs this `onSuccess` callback, which [`submit()` passes to `addTrainer()`](code:src/pages/trainers/components/AddTrainerForm.tsx#L12).",
+              "codeBlockIds": [
+                "src/pages/trainers/components/AddTrainerForm.tsx#code-event@12:56",
+                "src/pages/trainers/components/AddTrainerForm.tsx#function@12:67"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/AddTrainerForm.tsx#code-event@12:56",
+                "src/pages/trainers/components/AddTrainerForm.tsx#function@12:67"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pages/trainers/components/AddTrainerForm.tsx#render-event@17:54",
+              "type": "render-event",
+              "label": "Stores the typed name",
+              "description": "When the user types in the name field, [the input runs this handler](code:src/pages/trainers/components/AddTrainerForm.tsx#L17) with the change event.",
+              "codeBlockIds": [
+                "src/pages/trainers/components/AddTrainerForm.tsx#render-event@17:54",
+                "src/pages/trainers/components/AddTrainerForm.tsx#function@17:64",
+                "src/pages/trainers/components/AddTrainerForm.tsx#variable@17:65"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/AddTrainerForm.tsx#render-event@17:54",
+                "src/pages/trainers/components/AddTrainerForm.tsx#function@17:64",
+                "src/pages/trainers/components/AddTrainerForm.tsx#variable@17:65"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11 -> src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5",
+              "from": "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11",
+              "to": "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5"
+            },
+            {
+              "id": "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5 -> src/hooks/use-add-trainer.ts#hook@5:1",
+              "from": "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5",
+              "to": "src/hooks/use-add-trainer.ts#hook@5:1"
+            },
+            {
+              "id": "src/App.tsx#component@4:1 -> src/pages/trainers/TrainersPage.tsx#component@5:1",
+              "from": "src/App.tsx#component@4:1",
+              "to": "src/pages/trainers/TrainersPage.tsx#component@5:1"
+            },
+            {
+              "id": "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1 -> src/hooks/use-add-trainer.ts#hook@5:1",
+              "from": "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1",
+              "to": "src/hooks/use-add-trainer.ts#hook@5:1"
+            },
+            {
+              "id": "src/hooks/use-add-trainer.ts#hook@5:1 -> src/api/add-trainer.ts#function@6:1",
+              "from": "src/hooks/use-add-trainer.ts#hook@5:1",
+              "to": "src/api/add-trainer.ts#function@6:1"
+            },
+            {
+              "id": "src/pages/trainers/TrainersPage.tsx#component@5:1 -> src/pages/trainers/components/AddTrainerForm.tsx#component@6:1",
+              "from": "src/pages/trainers/TrainersPage.tsx#component@5:1",
+              "to": "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1"
+            },
+            {
+              "id": "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1 -> src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11",
+              "from": "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1",
+              "to": "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11"
+            },
+            {
+              "id": "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5 -> src/pages/trainers/components/AddTrainerForm.tsx#code-event@12:56",
+              "from": "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5",
+              "to": "src/pages/trainers/components/AddTrainerForm.tsx#code-event@12:56"
+            },
+            {
+              "id": "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1 -> src/pages/trainers/components/AddTrainerForm.tsx#render-event@17:54",
+              "from": "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1",
+              "to": "src/pages/trainers/components/AddTrainerForm.tsx#render-event@17:54"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/api/add-trainer.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "TrainerDraft",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 4
+                  },
+                  "codeBlockIds": [
+                    "src/api/add-trainer.ts#type-declaration@4:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w2",
+                  "declaration": "addTrainer",
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 8
+                  },
+                  "codeBlockIds": [
+                    "src/api/add-trainer.ts#function@6:1",
+                    "src/api/add-trainer.ts#root-argument-value@6:28",
+                    "src/api/add-trainer.ts#property@7:42",
+                    "src/api/add-trainer.ts#property@7:58"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/hooks/use-add-trainer.ts",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "useAddTrainer",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/hooks/use-add-trainer.ts#hook@5:1",
+                    "src/hooks/use-add-trainer.ts#external-value@6:3",
+                    "src/hooks/use-add-trainer.ts#component-effect@7:10",
+                    "src/hooks/use-add-trainer.ts#effect-callback@8:5",
+                    "src/hooks/use-add-trainer.ts#code-event@9:5",
+                    "src/hooks/use-add-trainer.ts#function@9:16",
+                    "src/hooks/use-add-trainer.ts#cache@9:22",
+                    "src/hooks/use-add-trainer.ts#property@9:54"
+                  ],
+                  "children": [
+                    {
+                      "id": "w3.1",
+                      "declaration": "useAddTrainer › queryClient",
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "codeBlockIds": [
+                        "src/hooks/use-add-trainer.ts#external-value@6:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.2",
+                      "declaration": "useAddTrainer › useMutation",
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 10
+                      },
+                      "codeBlockIds": [
+                        "src/hooks/use-add-trainer.ts#component-effect@7:10",
+                        "src/hooks/use-add-trainer.ts#effect-callback@8:5",
+                        "src/hooks/use-add-trainer.ts#code-event@9:5",
+                        "src/hooks/use-add-trainer.ts#function@9:16",
+                        "src/hooks/use-add-trainer.ts#cache@9:22",
+                        "src/hooks/use-add-trainer.ts#property@9:54"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/pages/trainers/TrainersPage.tsx",
+              "waypoints": [
+                {
+                  "id": "w4",
+                  "declaration": "TrainersPage",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 21
+                  },
+                  "codeBlockIds": [
+                    "src/pages/trainers/TrainersPage.tsx#component@5:1",
+                    "src/pages/trainers/TrainersPage.tsx#render@10:5",
+                    "src/pages/trainers/TrainersPage.tsx#render@11:7",
+                    "src/pages/trainers/TrainersPage.tsx#render@12:7",
+                    "src/pages/trainers/TrainersPage.tsx#render@13:9",
+                    "src/pages/trainers/TrainersPage.tsx#render-loop@14:12",
+                    "src/pages/trainers/TrainersPage.tsx#function@14:25",
+                    "src/pages/trainers/TrainersPage.tsx#variable@14:26",
+                    "src/pages/trainers/TrainersPage.tsx#render@15:13"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+              "waypoints": [
+                {
+                  "id": "w5",
+                  "declaration": "DEFAULT_HOMETOWN",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 4
+                  },
+                  "codeBlockIds": [
+                    "src/pages/trainers/components/AddTrainerForm.tsx#root-variable@4:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w6",
+                  "declaration": "AddTrainerForm",
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 23
+                  },
+                  "codeBlockIds": [
+                    "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#state@7:3",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#external-value@8:3",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#function@10:3",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#variable@10:19",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#call@11:5",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#property@12:18",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#property@12:24",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#code-event@12:56",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#function@12:67",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#render-root@15:3",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#render@16:5",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#render@17:7",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#render-event@17:54",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#function@17:64",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#variable@17:65",
+                    "src/pages/trainers/components/AddTrainerForm.tsx#render@18:7"
+                  ],
+                  "children": [
+                    {
+                      "id": "w6.1",
+                      "declaration": "AddTrainerForm › name",
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 7
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/AddTrainerForm.tsx#state@7:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.2",
+                      "declaration": "AddTrainerForm › addTrainer",
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/AddTrainerForm.tsx#external-value@8:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.3",
+                      "declaration": "AddTrainerForm › submit",
+                      "range": {
+                        "lineStart": 10,
+                        "lineEnd": 13
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/AddTrainerForm.tsx#function@10:3",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#variable@10:19",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#call@11:5",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#property@12:18",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#property@12:24",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#code-event@12:56",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#function@12:67"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.4",
+                      "declaration": "AddTrainerForm › form.onSubmit",
+                      "range": {
+                        "lineStart": 16,
+                        "lineEnd": 16
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render-event@16:11"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.5",
+                      "declaration": "AddTrainerForm › input.onChange",
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 17
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/AddTrainerForm.tsx#render-event@17:54",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#function@17:64",
+                        "src/pages/trainers/components/AddTrainerForm.tsx#variable@17:65"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/api/add-trainer.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/types/trainer.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 34,
+                "endColumn": 46,
+                "path": "src/api/add-trainer.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 57,
+                "endColumn": 64,
+                "path": "src/types/trainer.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/api/client.ts",
+                "lines": [
+                  3,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/types/trainer.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 78,
+                "endColumn": 83,
+                "path": "src/api/add-trainer.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 4,
+                "startColumn": 27,
+                "endColumn": 31,
+                "name": "Omit"
+              },
+              {
+                "line": 6,
+                "startColumn": 49,
+                "endColumn": 56,
+                "name": "Promise"
+              },
+              {
+                "line": 7,
+                "startColumn": 63,
+                "endColumn": 67,
+                "name": "JSON"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 12,
+                "endColumn": 24,
+                "lines": [
+                  4,
+                  4
+                ],
+                "usages": []
+              },
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 16,
+                    "endColumn": 26,
+                    "path": "src/hooks/use-add-trainer.ts",
+                    "text": "    mutationFn: addTrainer,"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/App.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 7,
+                "endColumn": 19,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  5,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 7,
+                "endColumn": 16,
+                "path": "src/App.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 19,
+                "lines": [
+                  4,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 7,
+                    "endColumn": 10,
+                    "path": "src/main.tsx",
+                    "text": "      <App />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/hooks/use-add-trainer.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 22,
+                "endColumn": 36,
+                "path": "src/hooks/use-add-trainer.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/react-query",
+                  "name": "useQueryClient"
+                }
+              },
+              {
+                "line": 7,
+                "startColumn": 9,
+                "endColumn": 20,
+                "path": "src/hooks/use-add-trainer.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/react-query",
+                  "name": "useMutation"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 26,
+                "path": "src/api/add-trainer.ts",
+                "lines": [
+                  6,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 21,
+                "endColumn": 32,
+                "path": "src/hooks/use-add-trainer.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 63,
+                "endColumn": 81,
+                "path": "src/hooks/use-trainers.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 29,
+                "lines": [
+                  5,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 44,
+                    "endColumn": 57,
+                    "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                    "text": "  const { mutate: addTrainer, isPending } = useAddTrainer()"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 26,
+                "endColumn": 34,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useState"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 44,
+                "endColumn": 57,
+                "path": "src/hooks/use-add-trainer.ts",
+                "lines": [
+                  5,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 25,
+                "endColumn": 34,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "FormEvent"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 4,
+                "endColumn": 9,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 4,
+                "endColumn": 14,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 17,
+                "endColumn": 21,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 33,
+                "endColumn": 49,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 72,
+                "endColumn": 79,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 20,
+                "endColumn": 26,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  10,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 20,
+                "endColumn": 24,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 74,
+                "endColumn": 81,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 38,
+                "endColumn": 47,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 51,
+                "endColumn": 55,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 10,
+                "startColumn": 35,
+                "endColumn": 50,
+                "name": "HTMLFormElement"
+              }
+            ],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  6,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 7,
+                    "endColumn": 21,
+                    "path": "src/pages/trainers/TrainersPage.tsx",
+                    "text": "      <AddTrainerForm />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pages/trainers/TrainersPage.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 49,
+                "endColumn": 60,
+                "path": "src/hooks/use-trainers.ts",
+                "lines": [
+                  6,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 7,
+                "endColumn": 21,
+                "path": "src/pages/trainers/components/AddTrainerForm.tsx",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 11,
+                "endColumn": 19,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 13,
+                "endColumn": 23,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  3,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 29,
+                "endColumn": 36,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 50,
+                "endColumn": 57,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 28,
+                "lines": [
+                  5,
+                  21
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 7,
+                    "endColumn": 19,
+                    "path": "src/App.tsx",
+                    "text": "      <TrainersPage />"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

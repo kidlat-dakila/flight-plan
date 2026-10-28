@@ -7,6 +7,7 @@ const DEFAULT_REQUEST = { statuses: null, authors: null }
 const storefront: Repository = {
   name: "storefront",
   path: "/work/storefront",
+  baseBranch: null,
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
@@ -50,6 +51,7 @@ const storefront: Repository = {
 const localRepository: Repository = {
   name: "flight plan",
   path: "/work/flight plan",
+  baseBranch: null,
   forge: "git",
   forgeSlug: null,
   problem: null,
@@ -67,6 +69,7 @@ const localRepository: Repository = {
 const unreachableRepository: Repository = {
   name: "ledger-api",
   path: "/work/ledger-api",
+  baseBranch: null,
   forge: "gitlab",
   forgeSlug: "acme/ledger-api",
   problem: { kind: "auth", detail: "GitLab answered 401 to GET /api/v4/user: 401 Unauthorized" },

@@ -7,6 +7,7 @@ const CASE_NAMES = ["react-spa", "typescript"]
 const typescriptRepository: Repository = {
   name: "typescript",
   path: "/fixtures/typescript",
+  baseBranch: null,
   forge: "git",
   forgeSlug: null,
   problem: null,

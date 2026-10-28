@@ -183,11 +183,37 @@ async function readRemoteHead(root: string): Promise<string | null> {
   }
 }
 
-async function findDefaultBranch(root: string): Promise<string | null> {
-  return (
-    (await readRemoteHead(root))
-    ?? (await findFirstExistingRevision(root, DEFAULT_BRANCH_GUESSES))
+interface DefaultBranch { revision: string, name: string }
+
+function toChosenBranch(baseBranch: string | null | undefined): string | null {
+  const name = baseBranch?.trim() ?? ""
+  return name === "" ? null : name
+}
+
+function missingChosenBranchError(name: string): GitAdapterError {
+  return new GitAdapterError(
+    `The branch ${name} to compare with does not exist in this repository.`,
+    "no-repo",
   )
+}
+
+async function findChosenBranch(root: string, name: string): Promise<DefaultBranch> {
+  const revision = await findFirstExistingRevision(root, [`origin/${name}`, name])
+  if (revision === null) throw missingChosenBranchError(name)
+  return { revision, name }
+}
+
+async function guessDefaultBranch(root: string): Promise<DefaultBranch | null> {
+  const revision = (await readRemoteHead(root)) ?? (await findFirstExistingRevision(root, DEFAULT_BRANCH_GUESSES))
+  return revision === null ? null : { revision, name: revision.replace(REMOTE_PREFIX_PATTERN, "") }
+}
+
+async function findDefaultBranch(root: string, chosenBranch: string | null): Promise<DefaultBranch | null> {
+  return chosenBranch === null ? await guessDefaultBranch(root) : await findChosenBranch(root, chosenBranch)
+}
+
+async function findDefaultRevision(root: string, chosenBranch: string | null): Promise<string | null> {
+  return (await findDefaultBranch(root, chosenBranch))?.revision ?? null
 }
 
 async function summarizeBranch(
@@ -294,6 +320,7 @@ export interface BaseGitAdapterOptions {
   root?: string
   repo?: string
   environment?: Readonly<Record<string, string | undefined>>
+  baseBranch?: string | null
 }
 
 export class BaseGitAdapter {
@@ -312,11 +339,13 @@ export class BaseGitAdapter {
 
   protected readonly root: string
   protected readonly environment: BaseGitAdapterOptions["environment"]
+  protected readonly chosenBranch: string | null
 
-  constructor({ root = process.cwd(), repo = "", environment }: BaseGitAdapterOptions = {}) {
+  constructor({ root = process.cwd(), repo = "", environment, baseBranch }: BaseGitAdapterOptions = {}) {
     this.root = root
     this.repo = repo
     this.environment = environment
+    this.chosenBranch = toChosenBranch(baseBranch)
   }
 
   supports(capability: Capability): boolean {
@@ -350,14 +379,14 @@ export class BaseGitAdapter {
     const name = branchNameOf(ref)
     const head = await resolveBranch(this.root, name)
     if (head === null) throw missingBranchError(name)
-    const base = await findDefaultBranch(this.root)
+    const base = await findDefaultRevision(this.root, this.chosenBranch)
     if (base === null) throw missingDefaultBranchError()
     return await runGit(this.root, ["diff", `${base}...${head}`])
   }
 
   async baseSha(ref: TargetRef): Promise<string> {
     const [target, head] = await Promise.all([this.target(ref), this.headSha(ref)])
-    const base = target?.baseSha ?? (await findDefaultBranch(this.root))
+    const base = target?.baseSha ?? (await findDefaultRevision(this.root, this.chosenBranch))
     if (base === null) throw missingDefaultBranchError()
     return (await findMergeBase(this.root, base, head)) ?? base
   }
@@ -451,19 +480,22 @@ export class BaseGitAdapter {
   }
 
   async listBranches(scope: BranchScope = "everywhere"): Promise<BranchTip[]> {
-    const base = await findDefaultBranch(this.root)
-    const unmergedFilter = base === null ? [] : [`--no-merged=${base}`]
+    const base = await findDefaultBranch(this.root, this.chosenBranch)
+    const unmergedFilter = base === null ? [] : [`--no-merged=${base.revision}`]
     const output = await runGit(this.root, [
       "for-each-ref",
       ...unmergedFilter,
       `--format=${BRANCH_REF_FORMAT}`,
       ...REF_NAMESPACES[scope],
     ])
-    return parseBranchTips(output, base?.replace(REMOTE_PREFIX_PATTERN, "") ?? null)
+    return parseBranchTips(output, base?.name ?? null)
   }
 
   async branchStart(name: string): Promise<BranchStart | null> {
-    const [base, head] = await Promise.all([findDefaultBranch(this.root), resolveBranch(this.root, name)])
+    const [base, head] = await Promise.all([
+      findDefaultRevision(this.root, this.chosenBranch),
+      resolveBranch(this.root, name),
+    ])
     if (base === null || head === null) return null
     const branchLog = await runGit(this.root, ["log", `--format=${BRANCH_START_FORMAT}`, `${base}..${head}`])
     return parseBranchStart(branchLog)

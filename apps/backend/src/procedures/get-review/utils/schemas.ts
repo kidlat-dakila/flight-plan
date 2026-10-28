@@ -20,7 +20,7 @@ import {
 import { FILE_ICONS } from "./file-icon"
 
 export const REVIEWER_STATES = ["pending", "commented", "approved", "changes-requested"] as const
-export const SECTION_KINDS = ["context", "traceDiagram", "blastDiagram", "walkthrough", "conversation"] as const
+export const SECTION_KINDS = ["context", "changeOverview", "traceDiagram", "blastDiagram", "walkthrough", "conversation"] as const
 
 const personSchema = z.strictObject({
   name: z.string(),
@@ -166,7 +166,7 @@ export const contextBandSchema = z.strictObject({
   markdown: z.string(),
   isDraft: z.boolean(),
   unwrittenLabel: z.string(),
-  changeOverview: changeOverviewSchema,
+  changeOverview: changeOverviewSchema.extend({ anchorId: z.string() }),
 })
 
 export const REVIEW_VERDICTS = ["comment", "approve", "request-changes"] as const
@@ -322,6 +322,41 @@ export const completeActionSchema = z.strictObject({
   pullRequestChoice: pullRequestChoiceSchema.nullable(),
 })
 
+export const CREATION_FACT_TONES = ["plain", "added", "removed", "quiet"] as const
+export const CREATION_FACT_SIZES = ["large", "small"] as const
+
+export const creationFactSchema = z.strictObject({
+  label: z.string(),
+  value: z.string(),
+  tone: z.enum(CREATION_FACT_TONES),
+  size: z.enum(CREATION_FACT_SIZES),
+})
+
+export const creationAreaSchema = z.strictObject({
+  name: z.string(),
+  isPath: z.boolean(),
+  fileCountLabel: z.string(),
+  addedLabel: z.string(),
+  removedLabel: z.string(),
+  addedShare: z.number().min(0).max(1),
+  removedShare: z.number().min(0).max(1),
+})
+
+export const reviewCreationSchema = z.strictObject({
+  heading: z.string(),
+  author: personSchema.nullable(),
+  introduction: z.array(labelSegmentSchema),
+  baseBranch: z.strictObject({
+    branchName: z.string().nullable(),
+    noteLabel: z.string().nullable(),
+  }),
+  facts: z.array(creationFactSchema),
+  areas: z.strictObject({ heading: z.string(), rows: z.array(creationAreaSchema) }),
+  problem: z.string().nullable(),
+  createLabel: z.string(),
+  creatingLabel: z.string(),
+})
+
 export const reviewPageSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("missing"),
@@ -341,6 +376,14 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
     updateCommand: z.string().nullable(),
     copyLabel: z.string(),
     changedFiles: z.array(labelSegmentSchema),
+  }),
+  z.strictObject({
+    kind: z.literal("creation"),
+    shell: shellSchema,
+    isOwn: z.boolean(),
+    panels: reviewPanelsSchema,
+    fileExplorer: fileExplorerSchema,
+    creation: reviewCreationSchema,
   }),
   z.strictObject({
     kind: z.literal("artifact"),
@@ -370,6 +413,7 @@ export const getReviewInputSchema = z.strictObject({
   targetId: z.string(),
   filterKeys: z.array(z.string()),
   isShowingReviewed: z.boolean(),
+  baseBranch: z.string().nullable().default(null),
 })
 
 export type ArtifactFreshness = z.infer<typeof artifactFreshnessSchema>
@@ -395,5 +439,8 @@ export type ConversationBand = z.infer<typeof conversationBandSchema>
 export type ReviewDraft = z.infer<typeof reviewDraftSchema>
 export type CompleteAction = z.infer<typeof completeActionSchema>
 export type Sharing = z.infer<typeof sharingSchema>
+export type CreationFact = z.infer<typeof creationFactSchema>
+export type CreationArea = z.infer<typeof creationAreaSchema>
+export type ReviewCreation = z.infer<typeof reviewCreationSchema>
 export type ReviewPage = z.infer<typeof reviewPageSchema>
-export type GetReviewInput = z.infer<typeof getReviewInputSchema>
+export type GetReviewInput = z.input<typeof getReviewInputSchema>

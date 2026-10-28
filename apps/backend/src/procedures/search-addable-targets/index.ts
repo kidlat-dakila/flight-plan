@@ -13,7 +13,7 @@ export const searchAddableTargets = async (
   const [repositories, setup] = await Promise.all([context.repositoryStore.list(), context.setupStore.read()])
   const repository = repositories.find((candidate) => candidate.name === input.repositoryName)
   if (repository === undefined) return null
-  const reading = await readAddableTargets(repository.path, setup.forges, context.openRepository)
+  const reading = await readAddableTargets(repository, setup.forges, context.openRepository)
   if (reading.kind === "unreadable") return { options: [], message: reading.message }
   const ranked = await rankAddableTargets(reading.targets, input.query)
   return buildAddableSuggestions(ranked, repository.targets.map(targetIdOf), input.query, context.now())

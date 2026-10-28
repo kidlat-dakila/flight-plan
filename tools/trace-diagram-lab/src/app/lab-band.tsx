@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
 import TraceBand from "@flightplan/ui/TraceBand"
 import type { TraceFixturePage, TracePageSegment } from "./trace-fixture-schemas"
+import { useIsPainted } from "./use-is-painted"
 
 interface LabBandProps {
   readonly fixtureId: string
@@ -11,19 +11,6 @@ interface LabBandProps {
 }
 
 const ignoreCodeLink = (): void => undefined
-
-const useIsPainted = (): boolean => {
-  const [isPainted, setIsPainted] = useState(false)
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      setIsPainted(true)
-    })
-    return () => {
-      cancelAnimationFrame(frame)
-    }
-  }, [])
-  return isPainted
-}
 
 const LabBand = ({ fixtureId, diagramId, page, segment, tabId }: LabBandProps) => {
   const isPainted = useIsPainted()

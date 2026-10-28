@@ -19,6 +19,7 @@ const FETCH_INTERVAL_MS = 300_000
 
 export interface InspectionRequest {
   readonly path: string
+  readonly baseBranch: string | null
   readonly forges: ForgesChoice | null
   readonly trackedAuthorIds: readonly string[]
   readonly selfAuthorId: string | null
@@ -87,7 +88,7 @@ export class RepositoryInspector {
   }
 
   public readonly inspect = async (request: InspectionRequest): Promise<RepositoryInspection> => {
-    const opened = await this.openRepository(request.path, request.forges)
+    const opened = await this.openRepository(request.path, request.forges, request.baseBranch)
     const base = { forge: opened.adapterName, forgeSlug: opened.forgeSlug }
     if (!opened.resolved.ok) return failedInspection(base, repositoryProblemOf(opened.resolved.error))
     return base.forge === "git"

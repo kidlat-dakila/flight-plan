@@ -1,7 +1,7 @@
 import { AT_REPOSITORIES, CHECKOUT_WEB, createSetupContext, READY_TO_FINISH } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { appRouter } from "@/server/trpc/router"
 
-const NOBODY_TRACKED = { trackedAuthorIds: [] }
+const NOBODY_TRACKED = { trackedAuthorIds: [], baseBranch: null }
 
 describe("setup.addRepository route", () => {
   it("delegates to the add-setup-repository procedure", async () => {

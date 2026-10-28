@@ -45,4 +45,5 @@ export interface Repository {
   readonly forgeSlug: string | null
   readonly problem: RepositoryProblem | null
   readonly targets: readonly ReviewTarget[]
+  readonly baseBranch: string | null
 }

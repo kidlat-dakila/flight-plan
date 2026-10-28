@@ -184,7 +184,7 @@ export class AdapterPullRequestForge implements PullRequestForge {
     })
 
   private readonly open = async (repository: Repository): Promise<OpenedRepository> =>
-    await this.dependencies.openRepository(repository.path, await this.dependencies.readForges())
+    await this.dependencies.openRepository(repository.path, await this.dependencies.readForges(), repository.baseBranch)
 
   private readonly readFresh = async (repository: Repository, number: number): Promise<PullRequestReading> => {
     try {

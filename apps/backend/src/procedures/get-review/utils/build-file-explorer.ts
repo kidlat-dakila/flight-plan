@@ -7,7 +7,7 @@ import type { FileExplorer, FileExplorerRow } from "./schemas"
 export interface FileExplorerSource {
   readonly changedPaths: readonly string[]
   readonly diffTypes: ReadonlyMap<string, DiffType>
-  readonly summaries: readonly WalkthroughFileSummary[]
+  readonly summaries: readonly WalkthroughFileSummary[] | null
   readonly anchorIdByPath: ReadonlyMap<string, string>
   readonly filterValues: readonly string[]
 }
@@ -92,8 +92,11 @@ const matchOf = (summary: WalkthroughFileSummary, isFiltered: boolean): FileRow[
     ? { count: summary.matchCount, label: countLabel(summary.matchCount, "waypoint matches the filter", "waypoints match the filter") }
     : null
 
+const hasWalkthrough = (source: FileExplorerSource): boolean => source.summaries !== null
+
 const fileRowBuilderOf = (source: FileExplorerSource, summaryByPath: ReadonlyMap<string, WalkthroughFileSummary>): FileRowBuilder => {
   const isFiltered = source.filterValues.length > 0
+  const isCoverageShown = hasWalkthrough(source)
   return (path, { depth, ancestorIds }) => {
     const summary = summaryByPath.get(path) ?? null
     const diffType = source.diffTypes.get(path) ?? null
@@ -106,7 +109,7 @@ const fileRowBuilderOf = (source: FileExplorerSource, summaryByPath: ReadonlyMap
       icon: fileIconOf(path),
       change: diffType === null ? null : { kind: diffType, label: CHANGE_LABELS[diffType] },
       anchorId: source.anchorIdByPath.get(path) ?? null,
-      noteLabel: summary === null ? NOT_COVERED_LABEL : null,
+      noteLabel: summary === null && isCoverageShown ? NOT_COVERED_LABEL : null,
       marks: summary === null ? [] : summary.markKinds.map((kind) => ({ kind, label: WAYPOINT_MARK_LABELS[kind] })),
       reviewed: summary === null ? null : reviewedOf(summary),
       match: summary === null ? null : matchOf(summary, isFiltered),
@@ -129,11 +132,11 @@ const hiddenLabelOf = (hiddenCount: number, isFiltered: boolean): string | null 
 }
 
 export const buildFileExplorer = (source: FileExplorerSource): FileExplorer => {
-  const summaryByPath = new Map(source.summaries.map((summary) => [summary.path, summary] as const))
+  const summaryByPath = new Map((source.summaries ?? []).map((summary) => [summary.path, summary] as const))
   const isHidden = (path: string): boolean => summaryByPath.get(path)?.isShown === false
   const shownPaths = source.changedPaths.filter((path) => !isHidden(path))
   const hiddenCount = source.changedPaths.length - shownPaths.length
-  const notCoveredCount = source.changedPaths.filter((path) => !summaryByPath.has(path)).length
+  const notCoveredCount = hasWalkthrough(source) ? source.changedPaths.filter((path) => !summaryByPath.has(path)).length : 0
   const isFiltered = source.filterValues.length > 0
   return {
     summary: summaryLabelsOf(source.changedPaths.length, hiddenCount, notCoveredCount),

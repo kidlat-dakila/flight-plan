@@ -49,4 +49,5 @@ export const buildRepository = (
   forgeSlug: inspection.forgeSlug,
   problem: inspection.problem,
   targets: targetsOf(registered, inspection, memory),
+  baseBranch: registered.baseBranch,
 })

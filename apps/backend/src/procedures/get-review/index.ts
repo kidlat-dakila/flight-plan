@@ -4,6 +4,7 @@ import { isAgentOnlineFor } from "@/procedures/get-conversation/utils/conversati
 import { selfAuthorIdOf } from "@/procedures/get-setup/utils/git-identity"
 import { updateCommandOf } from "@/procedures/get-update-notice/utils/update-notice"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
+import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import { listLinkablePullRequests } from "@/procedures/mark-complete/utils/linkable-pull-requests"
 import { migrationNoticeOf } from "@/procedures/migrate-review/utils/migration-notice"
 import type { UnmigratedState } from "@/procedures/migrate-review/utils/review-version"
@@ -15,16 +16,18 @@ import { NO_REVIEWED_MARKS } from "@flightplan/reviewed-marks"
 import { readBranchAuthorEmail } from "./utils/branch-author"
 import type { BranchLinking } from "./utils/build-complete-action"
 import { NO_WRITING_ACTIVITY, type WritingActivity } from "./utils/build-progress"
-import { buildMigrationPage, buildReviewPage } from "./utils/build-review-page"
+import { buildCreationPage, buildMigrationPage, buildReviewPage } from "./utils/build-review-page"
 import { branchNameOf } from "./utils/change-reader"
+import { readCreation } from "./utils/creation-reading"
 import { findReviewTarget } from "./utils/find-review-target"
 import { readLiveTargetDetail, withForgeDetail } from "./utils/live-target-detail"
-import { buildOpeningArtifact, isOpenedWithoutArtifact } from "./utils/opening-scaffold"
+import { isOpenedWithoutArtifact } from "./utils/opening-scaffold"
 import { isOwnTarget } from "./utils/own-target"
 import { refreshArtifact } from "./utils/refresh-artifact"
 import { isPullRequestSubject, type PullRequestSubject } from "./utils/review-action"
 import type { ReviewKey } from "./utils/review-store"
 import type { ReviewSubject } from "./utils/review-subject"
+import type { ReviewTargetDetail } from "./utils/review-target-detail"
 import type { GetReviewInput, ReviewPage } from "./utils/schemas"
 import { buildReviewPrompt } from "./utils/start/review-prompt"
 
@@ -33,6 +36,21 @@ const NOTHING_HIGHLIGHTED: HighlightedReview = { sources: [], solutionTokens: ne
 type ArtifactReader = (key: ReviewKey) => Promise<ReviewArtifact | null>
 
 const readNoArtifact: ArtifactReader = async () => await Promise.resolve(null)
+
+const readStoredBaseBranch = async (key: ReviewKey, context: ProcedureContext): Promise<string | null> =>
+  (await context.reviewStore.readScaffold(key))?.baseBranch ?? null
+
+const readComparedDetail = async (
+  key: ReviewKey,
+  repository: Repository,
+  target: ReviewTarget,
+  artifact: ReviewArtifact | null,
+  context: ProcedureContext,
+): Promise<ReviewTargetDetail | null> => {
+  const storedBaseBranch = artifact === null ? null : await readStoredBaseBranch(key, context)
+  const baseBranch = storedBaseBranch ?? repository.baseBranch
+  return await readLiveTargetDetail(context.changeReader, { path: repository.path, baseBranch }, branchNameOf(target))
+}
 
 const findListedSubject = async (key: ReviewKey, context: ProcedureContext, readArtifact: ArtifactReader): Promise<ReviewSubject | null> => {
   const repositories = await context.repositoryStore.list()
@@ -48,7 +66,7 @@ const findListedSubject = async (key: ReviewKey, context: ProcedureContext, read
     target.kind === "branch" ? context.setupEnvironment.readGitIdentity(repository.path) : null,
     target.kind === "pull-request" ? context.pullRequestForge.read(repository, target.number) : null,
   ])
-  const detail = sampleDetail ?? await readLiveTargetDetail(context.changeReader, repository.path, branchNameOf(target))
+  const detail = sampleDetail ?? await readComparedDetail(key, repository, target, artifact, context)
   return {
     repository,
     lineColor: lineColorAt(repositories.indexOf(repository)),
@@ -102,15 +120,9 @@ const readBranchLinking = async (subject: ReviewSubject, context: ProcedureConte
   return { branch: target, pullRequests: await listLinkablePullRequests(subject.repository, target.name, context) }
 }
 
-interface OpenedArtifact {
-  readonly artifact: ReviewArtifact | null
-  readonly unavailableMessage: string | null
-}
-
-const openedArtifactOf = async (subject: ReviewSubject, key: ReviewKey, context: ProcedureContext): Promise<OpenedArtifact> => {
-  if (!isOpenedWithoutArtifact(subject)) return { artifact: await refreshArtifact(subject, key, context), unavailableMessage: null }
-  const opening = await buildOpeningArtifact(subject, key, context)
-  return opening.kind === "built" ? { artifact: opening.artifact, unavailableMessage: null } : { artifact: null, unavailableMessage: opening.message }
+const getCreationPage = async (subject: ReviewSubject, key: ReviewKey, baseBranch: string | null, context: ProcedureContext): Promise<ReviewPage> => {
+  const [reading, publications] = await Promise.all([readCreation(subject, baseBranch, context), context.reviewStore.readPublications(key)])
+  return buildCreationPage({ ...subject, publications }, reading)
 }
 
 const updateCommandFor = (context: ProcedureContext): string | null =>
@@ -127,8 +139,8 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
   if (versionState.kind !== "current") return await getMigrationPage(key, versionState, context)
   const found = await findReviewSubject(key, context)
   if (found === null) return null
-  const opened = await openedArtifactOf(found, key, context)
-  const subject = { ...found, artifact: opened.artifact }
+  if (isOpenedWithoutArtifact(found)) return await getCreationPage(found, key, input.baseBranch ?? null, context)
+  const subject = { ...found, artifact: await refreshArtifact(found, key, context) }
   const [marks, pendingComments, publications, publishingRequest, setup, activity, branchLinking, conversation, request] = await Promise.all([
     subject.isOwn ? NO_REVIEWED_MARKS : context.reviewStore.readReviewedMarks(key),
     context.reviewStore.readPendingComments(key),
@@ -152,7 +164,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
       isPublishing: isPublishingUnderway(publishingRequest, publications, isAgentOnlineFor(key, context), context.now()),
       now: context.now(),
       setup,
-      unavailableMessage: opened.unavailableMessage,
+      unavailableMessage: null,
       activity,
       request,
       chatLinkIds: codeLinkIdsIn(messageBodiesOf(conversation.journal)),

@@ -8,6 +8,8 @@ const SUGGESTIONS: readonly Suggestion[] = [
 ]
 
 interface FieldOverrides {
+  readonly value?: string
+  readonly isSelect?: boolean
   readonly suggestions?: readonly Suggestion[]
   readonly message?: string | null
   readonly errorMessage?: string | null
@@ -15,6 +17,7 @@ interface FieldOverrides {
   readonly onSelect?: (id: string) => void
   readonly onOpen?: () => void
   readonly onEnter?: () => void
+  readonly onBlur?: () => void
 }
 
 const renderField = (overrides: FieldOverrides = {}) =>
@@ -23,7 +26,8 @@ const renderField = (overrides: FieldOverrides = {}) =>
       label="Track an author"
       hint="Searches the authors of the last 1,000 commits."
       placeholder="Type a name"
-      value=""
+      value={overrides.value ?? ""}
+      isSelect={overrides.isSelect}
       suggestions={overrides.suggestions ?? SUGGESTIONS}
       message={overrides.message ?? null}
       errorMessage={overrides.errorMessage ?? null}
@@ -31,6 +35,7 @@ const renderField = (overrides: FieldOverrides = {}) =>
       onSelect={overrides.onSelect ?? vi.fn()}
       onOpen={overrides.onOpen ?? vi.fn()}
       onEnter={overrides.onEnter}
+      onBlur={overrides.onBlur}
     />,
   )
 
@@ -157,5 +162,60 @@ describe("SuggestionField", () => {
 
     expect(onEnter).toHaveBeenCalledTimes(1)
     expect(onSelect).toHaveBeenCalledWith("teo")
+  })
+
+  it("tells that focus left the field, and closes the list", () => {
+    const onBlur = vi.fn()
+    renderField({ onBlur })
+    const field = screen.getByRole("combobox")
+
+    fireEvent.focus(field)
+    fireEvent.blur(field)
+
+    expect(onBlur).toHaveBeenCalledTimes(1)
+    expect(field.getAttribute("aria-expanded")).toBe("false")
+  })
+
+  it("reads as a select when it is one: a chevron at its end that leaves every click to the field", () => {
+    const { container } = renderField({ value: "main", isSelect: true })
+
+    const chevron = container.querySelector("svg")
+    expect(chevron?.getAttribute("aria-hidden")).toBe("true")
+    expect(chevron?.classList.contains("pointer-events-none")).toBe(true)
+    expect(screen.getByRole("combobox").classList.contains("pr-8")).toBe(true)
+  })
+
+  it("selects its text on focus when it is a select, so typing replaces the value", () => {
+    renderField({ value: "main", isSelect: true })
+    const field = screen.getByRole<HTMLInputElement>("combobox")
+
+    fireEvent.focus(field)
+
+    expect([field.selectionStart, field.selectionEnd]).toStrictEqual([0, "main".length])
+  })
+
+  it("opens its list again on a click when it is a select", () => {
+    renderField({ value: "main", isSelect: true })
+    const field = screen.getByRole("combobox")
+
+    fireEvent.focus(field)
+    fireEvent.keyDown(field, { key: "Escape" })
+    fireEvent.click(field)
+
+    expect(field.getAttribute("aria-expanded")).toBe("true")
+  })
+
+  it("draws no chevron, keeps the text as it is on focus and stays closed on a click when it is not a select", () => {
+    const { container } = renderField({ value: "teo" })
+    const field = screen.getByRole<HTMLInputElement>("combobox")
+    field.setSelectionRange(3, 3)
+
+    fireEvent.focus(field)
+    fireEvent.keyDown(field, { key: "Escape" })
+    fireEvent.click(field)
+
+    expect(container.querySelector("svg")).toBeNull()
+    expect([field.selectionStart, field.selectionEnd]).toStrictEqual([3, 3])
+    expect(field.getAttribute("aria-expanded")).toBe("false")
   })
 })

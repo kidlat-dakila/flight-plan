@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Trainer {
+  id       Int       @id @default(autoincrement())
+  name     String
+  hometown String
+  pokemon  Pokemon[]
+}
+
+model Pokemon {
+  id          Int      @id @default(autoincrement())
+  name        String
+  level       Int
+  primaryType String
+  trainer     Trainer? @relation(fields: [trainerId], references: [id])
+  trainerId   Int?
+}

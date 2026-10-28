@@ -1,0 +1,2380 @@
+{
+  "title": "Implement function catchPokemon",
+  "diff": [
+    "diff --git a/src/pokemon/pokemon.entity.ts b/src/pokemon/pokemon.entity.ts",
+    "--- a/src/pokemon/pokemon.entity.ts",
+    "+++ b/src/pokemon/pokemon.entity.ts",
+    "@@ -1 +1 @@",
+    "-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from \"typeorm\"",
+    "+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from \"typeorm\"",
+    "@@ -14,0 +15,3 @@ export class Pokemon {",
+    "+  @CreateDateColumn()",
+    "+  caughtAt!: Date",
+    "+",
+    "diff --git a/src/trainers/trainer.entity.ts b/src/trainers/trainer.entity.ts",
+    "--- a/src/trainers/trainer.entity.ts",
+    "+++ b/src/trainers/trainer.entity.ts",
+    "@@ -3,0 +4,2 @@ import { Pokemon } from \"@/pokemon/pokemon.entity\"",
+    "+const TEAM_SIZE = 6",
+    "+",
+    "@@ -16,0 +19,4 @@ export class Trainer {",
+    "+",
+    "+  hasRoomInTeam(): boolean {",
+    "+    return this.team.length < TEAM_SIZE",
+    "+  }",
+    "diff --git a/src/errors.ts b/src/errors.ts",
+    "--- a/src/errors.ts",
+    "+++ b/src/errors.ts",
+    "@@ -8,0 +9,6 @@ export class NotFoundError extends Error {",
+    "+",
+    "+export class TeamFullError extends Error {",
+    "+  constructor(readonly trainerName: string) {",
+    "+    super(`${trainerName} already carries six Pokemon`)",
+    "+  }",
+    "+}",
+    "diff --git a/src/trainers/team.ts b/src/trainers/team.ts",
+    "--- a/src/trainers/team.ts",
+    "+++ b/src/trainers/team.ts",
+    "@@ -2,2 +2,2 @@ import { dataSource } from \"@/data-source\"",
+    "-import { NotFoundError } from \"@/errors\"",
+    "-import type { Pokemon } from \"@/pokemon/pokemon.entity\"",
+    "+import { NotFoundError, TeamFullError } from \"@/errors\"",
+    "+import { Pokemon } from \"@/pokemon/pokemon.entity\"",
+    "@@ -6,0 +7 @@ const trainers = dataSource.getRepository(Trainer)",
+    "+const pokemon = dataSource.getRepository(Pokemon)",
+    "@@ -12,0 +14,7 @@ export const readTeam = async (trainerId: number): Promise<Pokemon[]> => {",
+    "+",
+    "+export const catchPokemon = async (trainerId: number, species: string): Promise<Pokemon> => {",
+    "+  const trainer: Trainer | null = await trainers.findOne({ where: { id: trainerId }, relations: { team: true } })",
+    "+  if (trainer === null) throw new NotFoundError(\"trainer\", trainerId)",
+    "+  if (!trainer.hasRoomInTeam()) throw new TeamFullError(trainer.name)",
+    "+  return pokemon.save(pokemon.create({ species, trainer }))",
+    "+}",
+    "diff --git a/src/scripts/catch-pokemon.ts b/src/scripts/catch-pokemon.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/scripts/catch-pokemon.ts",
+    "@@ -0,0 +1,11 @@",
+    "+import { dataSource } from \"@/data-source\"",
+    "+import { catchPokemon } from \"@/trainers/team\"",
+    "+",
+    "+const catchOne = async (trainerId: number, species: string) => {",
+    "+  await dataSource.initialize()",
+    "+  const pokemon = await catchPokemon(trainerId, species)",
+    "+  console.log(`${pokemon.trainer.name} caught ${pokemon.species} at ${pokemon.caughtAt.toISOString()}`)",
+    "+  await dataSource.destroy()",
+    "+}",
+    "+",
+    "+void catchOne(Number(process.argv[2]), process.argv[3])"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Groundwork for catchOne",
+        "importGraph": [
+          {
+            "filePath": "src/data-source.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokemon/pokedex.ts",
+              "src/scripts/catch-pokemon.ts",
+              "src/scripts/show-pokedex.ts",
+              "src/scripts/show-team.ts",
+              "src/trainers/team.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/pokemon.entity.ts",
+              "src/settings.ts",
+              "src/trainers/trainer.entity.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/pokemon.entity": "src/pokemon/pokemon.entity.ts",
+              "@/settings": "src/settings.ts",
+              "@/trainers/trainer.entity": "src/trainers/trainer.entity.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/pokedex.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/scripts/show-pokedex.ts"
+            ],
+            "importsTo": [
+              "src/data-source.ts",
+              "src/pokemon/pokemon.entity.ts"
+            ],
+            "importedFilePaths": {
+              "@/data-source": "src/data-source.ts",
+              "@/pokemon/pokemon.entity": "src/pokemon/pokemon.entity.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/pokemon.entity.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/data-source.ts",
+              "src/pokemon/pokedex.ts",
+              "src/trainers/team.ts",
+              "src/trainers/trainer.entity.ts"
+            ],
+            "importsTo": [
+              "src/trainers/trainer.entity.ts"
+            ],
+            "importedFilePaths": {
+              "@/trainers/trainer.entity": "src/trainers/trainer.entity.ts"
+            }
+          },
+          {
+            "filePath": "src/scripts/show-pokedex.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/data-source.ts",
+              "src/pokemon/pokedex.ts"
+            ],
+            "importedFilePaths": {
+              "@/data-source": "src/data-source.ts",
+              "@/pokemon/pokedex": "src/pokemon/pokedex.ts"
+            }
+          },
+          {
+            "filePath": "src/scripts/show-team.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/data-source.ts",
+              "src/trainers/team.ts"
+            ],
+            "importedFilePaths": {
+              "@/data-source": "src/data-source.ts",
+              "@/trainers/team": "src/trainers/team.ts"
+            }
+          },
+          {
+            "filePath": "src/settings.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/data-source.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/trainers/team.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/scripts/catch-pokemon.ts",
+              "src/scripts/show-team.ts"
+            ],
+            "importsTo": [
+              "src/data-source.ts",
+              "src/errors.ts",
+              "src/pokemon/pokemon.entity.ts",
+              "src/trainers/trainer.entity.ts"
+            ],
+            "importedFilePaths": {
+              "@/data-source": "src/data-source.ts",
+              "@/errors": "src/errors.ts",
+              "@/pokemon/pokemon.entity": "src/pokemon/pokemon.entity.ts",
+              "@/trainers/trainer.entity": "src/trainers/trainer.entity.ts"
+            }
+          },
+          {
+            "filePath": "src/trainers/trainer.entity.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/data-source.ts",
+              "src/pokemon/pokemon.entity.ts",
+              "src/trainers/team.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/pokemon.entity.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/pokemon.entity": "src/pokemon/pokemon.entity.ts"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Catch Pokemon data flow diagram",
+          "description": "This diagram shows how `catchPokemon()` loads a trainer with its team, calls `hasRoomInTeam()` of the `Trainer` entity and inserts a row through the repository of the pokemon table. It also holds the `Pokemon` entity, whose `caughtAt` column TypeORM fills when the row is inserted.",
+          "traceNodes": [
+            {
+              "id": "src/pokemon/pokemon.entity.ts#class@4:1",
+              "type": "class",
+              "label": "Maps a Pokemon to a row of the pokemon table",
+              "description": "No node of the diagram calls this entity. [`catchPokemon()` inserts its rows](code:src/trainers/team.ts#L19) through the repository of the pokemon table, and [`catchOne()` prints `caughtAt`](code:src/scripts/catch-pokemon.ts#L7).",
+              "codeBlockIds": [
+                "src/pokemon/pokemon.entity.ts#class@4:1",
+                "src/pokemon/pokemon.entity.ts#property@15:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokemon/pokemon.entity.ts#property@15:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Stores the time TypeORM inserts the row",
+                  "codeBlockId": "src/pokemon/pokemon.entity.ts#property@15:3"
+                }
+              ]
+            },
+            {
+              "id": "src/trainers/trainer.entity.ts#class@6:1",
+              "type": "class",
+              "label": "Maps a trainer to a row of the trainers table",
+              "description": "[`catchPokemon()` calls `hasRoomInTeam()`](code:src/trainers/team.ts#L18) on the trainer it loads. `dataSource` in `src/data-source.ts` lists this entity.",
+              "codeBlockIds": [
+                "src/trainers/trainer.entity.ts#class@6:1",
+                "src/trainers/trainer.entity.ts#method@20:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/trainers/trainer.entity.ts#method@20:3"
+              ],
+              "children": [
+                {
+                  "id": "src/trainers/trainer.entity.ts#method@20:3",
+                  "type": "method",
+                  "label": "Returns true when the team holds fewer than six Pokemon",
+                  "description": "When someone runs `src/scripts/catch-pokemon.ts`, `catchOne()` calls `catchPokemon()`, and [`catchPokemon()` calls this method](code:src/trainers/team.ts#L18) on the trainer it loaded with its team.",
+                  "codeBlockIds": [
+                    "src/trainers/trainer.entity.ts#method@20:3",
+                    "src/trainers/trainer.entity.ts#root-variable@4:1"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/trainers/trainer.entity.ts#method@20:3",
+                    "src/trainers/trainer.entity.ts#root-variable@4:1"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Limits a team to six Pokemon",
+                      "codeBlockId": "src/trainers/trainer.entity.ts#root-variable@4:1"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/trainers/team.ts#function@15:1",
+              "type": "function",
+              "label": "Adds a Pokemon to the team of a trainer, or throws",
+              "description": "When someone runs `src/scripts/catch-pokemon.ts`, [`catchOne()` calls this function](code:src/scripts/catch-pokemon.ts#L6) with the trainer id and the species of the command line.",
+              "codeBlockIds": [
+                "src/trainers/team.ts#function@15:1",
+                "src/trainers/team.ts#root-variable@7:1",
+                "src/trainers/team.ts#root-argument-value@15:36",
+                "src/trainers/team.ts#root-argument-value@15:55",
+                "src/trainers/team.ts#external-value@16:3",
+                "src/trainers/team.ts#data-fetch@16:41",
+                "src/trainers/team.ts#property@16:60",
+                "src/trainers/team.ts#property@16:69",
+                "src/trainers/team.ts#property@16:86",
+                "src/trainers/team.ts#property@16:99",
+                "src/trainers/team.ts#condition@17:3",
+                "src/trainers/team.ts#throw@17:25",
+                "src/trainers/team.ts#condition@18:3",
+                "src/trainers/team.ts#throw@18:33",
+                "src/trainers/team.ts#data@19:10",
+                "src/trainers/team.ts#property@19:40",
+                "src/trainers/team.ts#property@19:49"
+              ],
+              "diffCodeBlockIds": [
+                "src/trainers/team.ts#function@15:1",
+                "src/trainers/team.ts#root-variable@7:1",
+                "src/trainers/team.ts#root-argument-value@15:36",
+                "src/trainers/team.ts#root-argument-value@15:55",
+                "src/trainers/team.ts#external-value@16:3",
+                "src/trainers/team.ts#data-fetch@16:41",
+                "src/trainers/team.ts#property@16:60",
+                "src/trainers/team.ts#property@16:69",
+                "src/trainers/team.ts#property@16:86",
+                "src/trainers/team.ts#property@16:99",
+                "src/trainers/team.ts#condition@17:3",
+                "src/trainers/team.ts#throw@17:25",
+                "src/trainers/team.ts#condition@18:3",
+                "src/trainers/team.ts#throw@18:33",
+                "src/trainers/team.ts#data@19:10",
+                "src/trainers/team.ts#property@19:40",
+                "src/trainers/team.ts#property@19:49"
+              ],
+              "children": [],
+              "triggerLabels": [
+                {
+                  "label": "The trainer of the id is loaded with its team",
+                  "codeBlockId": "src/trainers/team.ts#data-fetch@16:41"
+                }
+              ],
+              "blockLabels": [
+                {
+                  "label": "Gets the repository of the pokemon table",
+                  "codeBlockId": "src/trainers/team.ts#root-variable@7:1"
+                },
+                {
+                  "label": "Loads the trainer of the id with its team, or null",
+                  "codeBlockId": "src/trainers/team.ts#external-value@16:3"
+                },
+                {
+                  "label": "Throws NotFoundError when no trainer has the id",
+                  "codeBlockId": "src/trainers/team.ts#condition@17:3"
+                },
+                {
+                  "label": "Throws TeamFullError when the team has no room",
+                  "codeBlockId": "src/trainers/team.ts#condition@18:3"
+                },
+                {
+                  "label": "Inserts a row for the species, linked to the trainer, and returns it",
+                  "codeBlockId": "src/trainers/team.ts#data@19:10"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/trainers/team.ts#function@15:1 -> src/trainers/trainer.entity.ts#method@20:3",
+              "from": "src/trainers/team.ts#function@15:1",
+              "to": "src/trainers/trainer.entity.ts#method@20:3"
+            },
+            {
+              "id": "src/trainers/trainer.entity.ts#class@6:1 -> src/trainers/trainer.entity.ts#method@20:3",
+              "from": "src/trainers/trainer.entity.ts#class@6:1",
+              "to": "src/trainers/trainer.entity.ts#method@20:3"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokemon/pokemon.entity.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "Pokemon",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 20
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/pokemon.entity.ts#class@4:1",
+                    "src/pokemon/pokemon.entity.ts#property@15:3"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/trainers/team.ts",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "pokemon",
+                  "range": {
+                    "lineStart": 7,
+                    "lineEnd": 7
+                  },
+                  "codeBlockIds": [
+                    "src/trainers/team.ts#root-variable@7:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w3",
+                  "declaration": "catchPokemon",
+                  "range": {
+                    "lineStart": 15,
+                    "lineEnd": 20
+                  },
+                  "codeBlockIds": [
+                    "src/trainers/team.ts#function@15:1",
+                    "src/trainers/team.ts#root-argument-value@15:36",
+                    "src/trainers/team.ts#root-argument-value@15:55",
+                    "src/trainers/team.ts#external-value@16:3",
+                    "src/trainers/team.ts#data-fetch@16:41",
+                    "src/trainers/team.ts#property@16:60",
+                    "src/trainers/team.ts#property@16:69",
+                    "src/trainers/team.ts#property@16:86",
+                    "src/trainers/team.ts#property@16:99",
+                    "src/trainers/team.ts#condition@17:3",
+                    "src/trainers/team.ts#throw@17:25",
+                    "src/trainers/team.ts#condition@18:3",
+                    "src/trainers/team.ts#throw@18:33",
+                    "src/trainers/team.ts#data@19:10",
+                    "src/trainers/team.ts#property@19:40",
+                    "src/trainers/team.ts#property@19:49"
+                  ],
+                  "children": [
+                    {
+                      "id": "w3.1",
+                      "declaration": "catchPokemon › trainer",
+                      "range": {
+                        "lineStart": 16,
+                        "lineEnd": 16
+                      },
+                      "codeBlockIds": [
+                        "src/trainers/team.ts#external-value@16:3",
+                        "src/trainers/team.ts#data-fetch@16:41",
+                        "src/trainers/team.ts#property@16:60",
+                        "src/trainers/team.ts#property@16:69",
+                        "src/trainers/team.ts#property@16:86",
+                        "src/trainers/team.ts#property@16:99"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.2",
+                      "declaration": "catchPokemon › Condition :17",
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 17
+                      },
+                      "codeBlockIds": [
+                        "src/trainers/team.ts#condition@17:3",
+                        "src/trainers/team.ts#throw@17:25"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.3",
+                      "declaration": "catchPokemon › Condition :18",
+                      "range": {
+                        "lineStart": 18,
+                        "lineEnd": 18
+                      },
+                      "codeBlockIds": [
+                        "src/trainers/team.ts#condition@18:3",
+                        "src/trainers/team.ts#throw@18:33"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.4",
+                      "declaration": "catchPokemon › save",
+                      "range": {
+                        "lineStart": 19,
+                        "lineEnd": 19
+                      },
+                      "codeBlockIds": [
+                        "src/trainers/team.ts#data@19:10",
+                        "src/trainers/team.ts#property@19:40",
+                        "src/trainers/team.ts#property@19:49"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/trainers/trainer.entity.ts",
+              "waypoints": [
+                {
+                  "id": "w4",
+                  "declaration": "TEAM_SIZE",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 4
+                  },
+                  "codeBlockIds": [
+                    "src/trainers/trainer.entity.ts#root-variable@4:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w5",
+                  "declaration": "Trainer.hasRoomInTeam",
+                  "range": {
+                    "lineStart": 20,
+                    "lineEnd": 22
+                  },
+                  "codeBlockIds": [
+                    "src/trainers/trainer.entity.ts#method@20:3"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokemon/pokemon.entity.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "Entity"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 3,
+                "endColumn": 25,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "PrimaryGeneratedColumn"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 3,
+                "endColumn": 9,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "Column"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 3,
+                "endColumn": 9,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "Column"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 3,
+                "endColumn": 19,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "CreateDateColumn"
+                }
+              },
+              {
+                "line": 18,
+                "startColumn": 3,
+                "endColumn": 12,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "ManyToOne"
+                }
+              },
+              {
+                "line": 18,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 12,
+                "endColumn": 19,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 16,
+                "startColumn": 13,
+                "endColumn": 17,
+                "name": "Date"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 20,
+                "lines": [
+                  4,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 22,
+                    "endColumn": 29,
+                    "path": "src/data-source.ts",
+                    "text": "  entities: [Trainer, Pokemon],"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 19,
+                    "endColumn": 26,
+                    "path": "src/pokemon/pokedex.ts",
+                    "text": "    .getRepository(Pokemon)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 41,
+                    "endColumn": 48,
+                    "path": "src/trainers/team.ts",
+                    "text": "const pokemon = dataSource.getRepository(Pokemon)"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 59,
+                    "endColumn": 66,
+                    "path": "src/trainers/team.ts",
+                    "text": "export const readTeam = async (trainerId: number): Promise<Pokemon[]> => {"
+                  },
+                  {
+                    "line": 15,
+                    "startColumn": 80,
+                    "endColumn": 87,
+                    "path": "src/trainers/team.ts",
+                    "text": "export const catchPokemon = async (trainerId: number, species: string): Promise<Pokemon> => {"
+                  },
+                  {
+                    "line": 17,
+                    "startColumn": 19,
+                    "endColumn": 26,
+                    "path": "src/trainers/trainer.entity.ts",
+                    "text": "  @OneToMany(() => Pokemon, (pokemon) => pokemon.trainer)"
+                  },
+                  {
+                    "line": 18,
+                    "startColumn": 9,
+                    "endColumn": 16,
+                    "path": "src/trainers/trainer.entity.ts",
+                    "text": "  team!: Pokemon[]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/trainers/team.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 17,
+                "endColumn": 27,
+                "path": "src/data-source.ts",
+                "lines": [
+                  7,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 42,
+                "endColumn": 49,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 26,
+                "path": "src/data-source.ts",
+                "lines": [
+                  7,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 41,
+                "endColumn": 48,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  4,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 59,
+                "endColumn": 66,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  4,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 24,
+                "endColumn": 32,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 56,
+                "endColumn": 65,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 34,
+                "endColumn": 47,
+                "path": "src/errors.ts",
+                "lines": [
+                  1,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 59,
+                "endColumn": 68,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 80,
+                "endColumn": 87,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  4,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 40,
+                "endColumn": 48,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 72,
+                "endColumn": 81,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 34,
+                "endColumn": 47,
+                "path": "src/errors.ts",
+                "lines": [
+                  1,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 59,
+                "endColumn": 68,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 7,
+                "endColumn": 14,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 42,
+                "endColumn": 55,
+                "path": "src/errors.ts",
+                "lines": [
+                  10,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 56,
+                "endColumn": 63,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 22,
+                "endColumn": 29,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 39,
+                "endColumn": 46,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 48,
+                "endColumn": 55,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 9,
+                "startColumn": 51,
+                "endColumn": 58,
+                "name": "Promise"
+              },
+              {
+                "line": 15,
+                "startColumn": 72,
+                "endColumn": 79,
+                "name": "Promise"
+              }
+            ],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 21,
+                "lines": [
+                  9,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 21,
+                    "endColumn": 29,
+                    "path": "src/scripts/show-team.ts",
+                    "text": "  const team = await readTeam(trainerId)"
+                  }
+                ]
+              },
+              {
+                "line": 15,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  15,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 24,
+                    "endColumn": 36,
+                    "path": "src/scripts/catch-pokemon.ts",
+                    "text": "  const pokemon = await catchPokemon(trainerId, species)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/trainers/trainer.entity.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "Entity"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 3,
+                "endColumn": 25,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "PrimaryGeneratedColumn"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 3,
+                "endColumn": 9,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "Column"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 3,
+                "endColumn": 9,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "Column"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 3,
+                "endColumn": 12,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "OneToMany"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  4,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  4,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 30,
+                "endColumn": 39,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 20,
+                "lines": [
+                  6,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 13,
+                    "endColumn": 20,
+                    "path": "src/data-source.ts",
+                    "text": "  entities: [Trainer, Pokemon],"
+                  },
+                  {
+                    "line": 18,
+                    "startColumn": 19,
+                    "endColumn": 26,
+                    "path": "src/pokemon/pokemon.entity.ts",
+                    "text": "  @ManyToOne(() => Trainer, (trainer) => trainer.team, { onDelete: \"CASCADE\" })"
+                  },
+                  {
+                    "line": 19,
+                    "startColumn": 12,
+                    "endColumn": 19,
+                    "path": "src/pokemon/pokemon.entity.ts",
+                    "text": "  trainer!: Trainer"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 42,
+                    "endColumn": 49,
+                    "path": "src/trainers/team.ts",
+                    "text": "const trainers = dataSource.getRepository(Trainer)"
+                  },
+                  {
+                    "line": 16,
+                    "startColumn": 17,
+                    "endColumn": 24,
+                    "path": "src/trainers/team.ts",
+                    "text": "  const trainer: Trainer | null = await trainers.findOne({ where: { id: trainerId }, relations: { team: true } })"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "New catchOne and TeamFullError",
+        "importGraph": [
+          {
+            "filePath": "src/data-source.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokemon/pokedex.ts",
+              "src/scripts/catch-pokemon.ts",
+              "src/scripts/show-pokedex.ts",
+              "src/scripts/show-team.ts",
+              "src/trainers/team.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/pokemon.entity.ts",
+              "src/settings.ts",
+              "src/trainers/trainer.entity.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/pokemon.entity": "src/pokemon/pokemon.entity.ts",
+              "@/settings": "src/settings.ts",
+              "@/trainers/trainer.entity": "src/trainers/trainer.entity.ts"
+            }
+          },
+          {
+            "filePath": "src/errors.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/trainers/team.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokemon/pokedex.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/scripts/show-pokedex.ts"
+            ],
+            "importsTo": [
+              "src/data-source.ts",
+              "src/pokemon/pokemon.entity.ts"
+            ],
+            "importedFilePaths": {
+              "@/data-source": "src/data-source.ts",
+              "@/pokemon/pokemon.entity": "src/pokemon/pokemon.entity.ts"
+            }
+          },
+          {
+            "filePath": "src/scripts/catch-pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [],
+            "importsTo": [
+              "src/data-source.ts",
+              "src/trainers/team.ts"
+            ],
+            "importedFilePaths": {
+              "@/data-source": "src/data-source.ts",
+              "@/trainers/team": "src/trainers/team.ts"
+            }
+          },
+          {
+            "filePath": "src/scripts/show-pokedex.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/data-source.ts",
+              "src/pokemon/pokedex.ts"
+            ],
+            "importedFilePaths": {
+              "@/data-source": "src/data-source.ts",
+              "@/pokemon/pokedex": "src/pokemon/pokedex.ts"
+            }
+          },
+          {
+            "filePath": "src/scripts/show-team.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/data-source.ts",
+              "src/trainers/team.ts"
+            ],
+            "importedFilePaths": {
+              "@/data-source": "src/data-source.ts",
+              "@/trainers/team": "src/trainers/team.ts"
+            }
+          },
+          {
+            "filePath": "src/settings.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/data-source.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Catch Pokemon script flow diagram",
+          "description": "This diagram shows how `catchOne()` in the catch-pokemon script opens the data source and calls `catchPokemon()` with a trainer id and a species. It also shows what happens when someone runs the script, and how the new Pokemon reaches the pokemon table through `pokemon.save()`.",
+          "traceNodes": [
+            {
+              "id": "src/scripts/catch-pokemon.ts#function@4:1",
+              "type": "function",
+              "label": "Opens the database, catches a Pokemon and prints it",
+              "description": "When someone runs `src/scripts/catch-pokemon.ts` with a trainer id and a species, [the last line calls this function](code:src/scripts/catch-pokemon.ts#L11) with the two command-line arguments.",
+              "codeBlockIds": [
+                "src/scripts/catch-pokemon.ts#function@4:1",
+                "src/scripts/catch-pokemon.ts#root-argument-value@4:25",
+                "src/scripts/catch-pokemon.ts#root-argument-value@4:44",
+                "src/scripts/catch-pokemon.ts#call@5:3",
+                "src/scripts/catch-pokemon.ts#external-value@6:3",
+                "src/scripts/catch-pokemon.ts#telemetry@7:3",
+                "src/scripts/catch-pokemon.ts#call@8:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/scripts/catch-pokemon.ts#function@4:1",
+                "src/scripts/catch-pokemon.ts#root-argument-value@4:25",
+                "src/scripts/catch-pokemon.ts#root-argument-value@4:44",
+                "src/scripts/catch-pokemon.ts#call@5:3",
+                "src/scripts/catch-pokemon.ts#external-value@6:3",
+                "src/scripts/catch-pokemon.ts#telemetry@7:3",
+                "src/scripts/catch-pokemon.ts#call@8:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Opens the connection of the data source",
+                  "codeBlockId": "src/scripts/catch-pokemon.ts#call@5:3"
+                },
+                {
+                  "label": "Catches a Pokemon of the species for the trainer",
+                  "codeBlockId": "src/scripts/catch-pokemon.ts#external-value@6:3"
+                },
+                {
+                  "label": "Prints the trainer, the species and the catch time",
+                  "codeBlockId": "src/scripts/catch-pokemon.ts#telemetry@7:3"
+                },
+                {
+                  "label": "Closes the connection of the data source",
+                  "codeBlockId": "src/scripts/catch-pokemon.ts#call@8:3"
+                }
+              ]
+            },
+            {
+              "id": "src/trainers/team.ts#function@15:1",
+              "type": "function",
+              "label": "Adds a Pokemon to the team of a trainer, or throws",
+              "description": "When someone runs `src/scripts/catch-pokemon.ts`, [`catchOne()` calls this function](code:src/scripts/catch-pokemon.ts#L6) with the trainer id and the species of the command line.",
+              "codeBlockIds": [
+                "src/trainers/team.ts#function@15:1",
+                "src/trainers/team.ts#root-variable@7:1",
+                "src/trainers/team.ts#root-argument-value@15:36",
+                "src/trainers/team.ts#root-argument-value@15:55",
+                "src/trainers/team.ts#external-value@16:3",
+                "src/trainers/team.ts#data-fetch@16:41",
+                "src/trainers/team.ts#property@16:60",
+                "src/trainers/team.ts#property@16:69",
+                "src/trainers/team.ts#property@16:86",
+                "src/trainers/team.ts#property@16:99",
+                "src/trainers/team.ts#condition@17:3",
+                "src/trainers/team.ts#throw@17:25",
+                "src/trainers/team.ts#condition@18:3",
+                "src/trainers/team.ts#throw@18:33",
+                "src/trainers/team.ts#data@19:10",
+                "src/trainers/team.ts#property@19:40",
+                "src/trainers/team.ts#property@19:49"
+              ],
+              "diffCodeBlockIds": [
+                "src/trainers/team.ts#function@15:1",
+                "src/trainers/team.ts#root-variable@7:1",
+                "src/trainers/team.ts#root-argument-value@15:36",
+                "src/trainers/team.ts#root-argument-value@15:55",
+                "src/trainers/team.ts#external-value@16:3",
+                "src/trainers/team.ts#data-fetch@16:41",
+                "src/trainers/team.ts#property@16:60",
+                "src/trainers/team.ts#property@16:69",
+                "src/trainers/team.ts#property@16:86",
+                "src/trainers/team.ts#property@16:99",
+                "src/trainers/team.ts#condition@17:3",
+                "src/trainers/team.ts#throw@17:25",
+                "src/trainers/team.ts#condition@18:3",
+                "src/trainers/team.ts#throw@18:33",
+                "src/trainers/team.ts#data@19:10",
+                "src/trainers/team.ts#property@19:40",
+                "src/trainers/team.ts#property@19:49"
+              ],
+              "children": [],
+              "triggerLabels": [
+                {
+                  "label": "The trainer of the id is loaded with its team",
+                  "codeBlockId": "src/trainers/team.ts#data-fetch@16:41"
+                }
+              ],
+              "blockLabels": [
+                {
+                  "label": "Gets the repository of the pokemon table",
+                  "codeBlockId": "src/trainers/team.ts#root-variable@7:1"
+                },
+                {
+                  "label": "Loads the trainer of the id with its team, or null",
+                  "codeBlockId": "src/trainers/team.ts#external-value@16:3"
+                },
+                {
+                  "label": "Throws NotFoundError when no trainer has the id",
+                  "codeBlockId": "src/trainers/team.ts#condition@17:3"
+                },
+                {
+                  "label": "Throws TeamFullError when the team has no room",
+                  "codeBlockId": "src/trainers/team.ts#condition@18:3"
+                },
+                {
+                  "label": "Inserts a row for the species, linked to the trainer, and returns it",
+                  "codeBlockId": "src/trainers/team.ts#data@19:10"
+                }
+              ]
+            },
+            {
+              "id": "src/trainers/trainer.entity.ts#class@6:1",
+              "type": "class",
+              "label": "Maps a trainer to a row of the trainers table",
+              "description": "[`catchPokemon()` calls `hasRoomInTeam()`](code:src/trainers/team.ts#L18) on the trainer it loads. `dataSource` in `src/data-source.ts` lists this entity.",
+              "codeBlockIds": [
+                "src/trainers/trainer.entity.ts#class@6:1",
+                "src/trainers/trainer.entity.ts#method@20:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/trainers/trainer.entity.ts#method@20:3"
+              ],
+              "children": [
+                {
+                  "id": "src/trainers/trainer.entity.ts#method@20:3",
+                  "type": "method",
+                  "label": "Returns true when the team holds fewer than six Pokemon",
+                  "description": "When someone runs `src/scripts/catch-pokemon.ts`, `catchOne()` calls `catchPokemon()`, and [`catchPokemon()` calls this method](code:src/trainers/team.ts#L18) on the trainer it loaded with its team.",
+                  "codeBlockIds": [
+                    "src/trainers/trainer.entity.ts#method@20:3",
+                    "src/trainers/trainer.entity.ts#root-variable@4:1"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/trainers/trainer.entity.ts#method@20:3",
+                    "src/trainers/trainer.entity.ts#root-variable@4:1"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Limits a team to six Pokemon",
+                      "codeBlockId": "src/trainers/trainer.entity.ts#root-variable@4:1"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/errors.ts#class@10:1",
+              "type": "class",
+              "label": "Names the trainer whose team is full",
+              "description": "When the trainer has no room in the team, [`catchPokemon()` throws this error](code:src/trainers/team.ts#L18).",
+              "codeBlockIds": [
+                "src/errors.ts#class@10:1",
+                "src/errors.ts#method@11:3",
+                "src/errors.ts#root-argument-value@11:15"
+              ],
+              "diffCodeBlockIds": [
+                "src/errors.ts#class@10:1",
+                "src/errors.ts#method@11:3",
+                "src/errors.ts#root-argument-value@11:15"
+              ],
+              "children": [
+                {
+                  "id": "src/errors.ts#method@11:3",
+                  "type": "method",
+                  "label": "Builds the message from the name of the trainer",
+                  "description": "When the team has no room, [`catchPokemon()` calls this constructor](code:src/trainers/team.ts#L18) with the name of the trainer.",
+                  "codeBlockIds": [
+                    "src/errors.ts#method@11:3",
+                    "src/errors.ts#call@12:5"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/errors.ts#method@11:3",
+                    "src/errors.ts#call@12:5"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Sets the message to the name and \"already carries six Pokemon\"",
+                      "codeBlockId": "src/errors.ts#call@12:5"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps the name of the trainer on the error",
+                  "codeBlockId": "src/errors.ts#root-argument-value@11:15"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/scripts/catch-pokemon.ts#function@4:1 -> src/trainers/team.ts#function@15:1",
+              "from": "src/scripts/catch-pokemon.ts#function@4:1",
+              "to": "src/trainers/team.ts#function@15:1"
+            },
+            {
+              "id": "src/trainers/team.ts#function@15:1 -> src/trainers/trainer.entity.ts#method@20:3",
+              "from": "src/trainers/team.ts#function@15:1",
+              "to": "src/trainers/trainer.entity.ts#method@20:3"
+            },
+            {
+              "id": "src/trainers/team.ts#function@15:1 -> src/errors.ts#class@10:1",
+              "from": "src/trainers/team.ts#function@15:1",
+              "to": "src/errors.ts#class@10:1"
+            },
+            {
+              "id": "src/trainers/trainer.entity.ts#class@6:1 -> src/trainers/trainer.entity.ts#method@20:3",
+              "from": "src/trainers/trainer.entity.ts#class@6:1",
+              "to": "src/trainers/trainer.entity.ts#method@20:3"
+            },
+            {
+              "id": "src/errors.ts#class@10:1 -> src/errors.ts#method@11:3",
+              "from": "src/errors.ts#class@10:1",
+              "to": "src/errors.ts#method@11:3"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/errors.ts",
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "declaration": "TeamFullError",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 14
+                  },
+                  "codeBlockIds": [
+                    "src/errors.ts#class@10:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "TeamFullError.constructor",
+                  "range": {
+                    "lineStart": 11,
+                    "lineEnd": 13
+                  },
+                  "codeBlockIds": [
+                    "src/errors.ts#method@11:3",
+                    "src/errors.ts#root-argument-value@11:15",
+                    "src/errors.ts#call@12:5"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/scripts/catch-pokemon.ts",
+              "waypoints": [
+                {
+                  "id": "w8",
+                  "declaration": "catchOne",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/scripts/catch-pokemon.ts#function@4:1",
+                    "src/scripts/catch-pokemon.ts#root-argument-value@4:25",
+                    "src/scripts/catch-pokemon.ts#root-argument-value@4:44",
+                    "src/scripts/catch-pokemon.ts#call@5:3",
+                    "src/scripts/catch-pokemon.ts#external-value@6:3",
+                    "src/scripts/catch-pokemon.ts#telemetry@7:3",
+                    "src/scripts/catch-pokemon.ts#call@8:3"
+                  ],
+                  "children": [
+                    {
+                      "id": "w8.1",
+                      "declaration": "catchOne › dataSource.initialize",
+                      "range": {
+                        "lineStart": 5,
+                        "lineEnd": 5
+                      },
+                      "codeBlockIds": [
+                        "src/scripts/catch-pokemon.ts#call@5:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w8.2",
+                      "declaration": "catchOne › pokemon",
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "codeBlockIds": [
+                        "src/scripts/catch-pokemon.ts#external-value@6:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w8.3",
+                      "declaration": "catchOne › Telemetry :7",
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 7
+                      },
+                      "codeBlockIds": [
+                        "src/scripts/catch-pokemon.ts#telemetry@7:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w8.4",
+                      "declaration": "catchOne › dataSource.destroy",
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "codeBlockIds": [
+                        "src/scripts/catch-pokemon.ts#call@8:3"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w9",
+                  "declaration": "Lines 11–11",
+                  "range": {
+                    "lineStart": 11,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/scripts/catch-pokemon.ts#root-statement@11:1"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/errors.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 21,
+                "path": "src/errors.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 25,
+                "endColumn": 35,
+                "path": "src/errors.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 13,
+                "endColumn": 24,
+                "path": "src/errors.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 1,
+                "startColumn": 35,
+                "endColumn": 40,
+                "name": "Error"
+              },
+              {
+                "line": 10,
+                "startColumn": 35,
+                "endColumn": 40,
+                "name": "Error"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 13,
+                "endColumn": 26,
+                "lines": [
+                  1,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 34,
+                    "endColumn": 47,
+                    "path": "src/trainers/team.ts",
+                    "text": "  if (trainer === null) throw new NotFoundError(\"trainer\", trainerId)"
+                  },
+                  {
+                    "line": 17,
+                    "startColumn": 34,
+                    "endColumn": 47,
+                    "path": "src/trainers/team.ts",
+                    "text": "  if (trainer === null) throw new NotFoundError(\"trainer\", trainerId)"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 26,
+                "lines": [
+                  10,
+                  14
+                ],
+                "usages": [
+                  {
+                    "line": 18,
+                    "startColumn": 42,
+                    "endColumn": 55,
+                    "path": "src/trainers/team.ts",
+                    "text": "  if (!trainer.hasRoomInTeam()) throw new TeamFullError(trainer.name)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/scripts/catch-pokemon.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 8,
+                "endColumn": 18,
+                "path": "src/data-source.ts",
+                "lines": [
+                  7,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 24,
+                "endColumn": 36,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  15,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 37,
+                "endColumn": 46,
+                "path": "src/scripts/catch-pokemon.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 48,
+                "endColumn": 55,
+                "path": "src/scripts/catch-pokemon.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/scripts/catch-pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 48,
+                "endColumn": 55,
+                "path": "src/scripts/catch-pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 70,
+                "endColumn": 77,
+                "path": "src/scripts/catch-pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 8,
+                "endColumn": 18,
+                "path": "src/data-source.ts",
+                "lines": [
+                  7,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 5,
+                "endColumn": 13,
+                "path": "src/scripts/catch-pokemon.ts",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 7,
+                "startColumn": 2,
+                "endColumn": 9,
+                "name": "console"
+              },
+              {
+                "line": 11,
+                "startColumn": 14,
+                "endColumn": 20,
+                "name": "Number"
+              },
+              {
+                "line": 11,
+                "startColumn": 21,
+                "endColumn": 28,
+                "name": "process"
+              },
+              {
+                "line": 11,
+                "startColumn": 39,
+                "endColumn": 46,
+                "name": "process"
+              }
+            ],
+            "exports": []
+          },
+          {
+            "path": "src/trainers/team.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 17,
+                "endColumn": 27,
+                "path": "src/data-source.ts",
+                "lines": [
+                  7,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 42,
+                "endColumn": 49,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 26,
+                "path": "src/data-source.ts",
+                "lines": [
+                  7,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 41,
+                "endColumn": 48,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  4,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 59,
+                "endColumn": 66,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  4,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 24,
+                "endColumn": 32,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 56,
+                "endColumn": 65,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 34,
+                "endColumn": 47,
+                "path": "src/errors.ts",
+                "lines": [
+                  1,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 59,
+                "endColumn": 68,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 80,
+                "endColumn": 87,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  4,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 40,
+                "endColumn": 48,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 72,
+                "endColumn": 81,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 34,
+                "endColumn": 47,
+                "path": "src/errors.ts",
+                "lines": [
+                  1,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 59,
+                "endColumn": 68,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 7,
+                "endColumn": 14,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 42,
+                "endColumn": 55,
+                "path": "src/errors.ts",
+                "lines": [
+                  10,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 56,
+                "endColumn": 63,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 22,
+                "endColumn": 29,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 39,
+                "endColumn": 46,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 48,
+                "endColumn": 55,
+                "path": "src/trainers/team.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 9,
+                "startColumn": 51,
+                "endColumn": 58,
+                "name": "Promise"
+              },
+              {
+                "line": 15,
+                "startColumn": 72,
+                "endColumn": 79,
+                "name": "Promise"
+              }
+            ],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 21,
+                "lines": [
+                  9,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 21,
+                    "endColumn": 29,
+                    "path": "src/scripts/show-team.ts",
+                    "text": "  const team = await readTeam(trainerId)"
+                  }
+                ]
+              },
+              {
+                "line": 15,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  15,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 24,
+                    "endColumn": 36,
+                    "path": "src/scripts/catch-pokemon.ts",
+                    "text": "  const pokemon = await catchPokemon(trainerId, species)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/trainers/trainer.entity.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "Entity"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 3,
+                "endColumn": 25,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "PrimaryGeneratedColumn"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 3,
+                "endColumn": 9,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "Column"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 3,
+                "endColumn": 9,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "Column"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 3,
+                "endColumn": 12,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typeorm",
+                  "name": "OneToMany"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  4,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/pokemon/pokemon.entity.ts",
+                "lines": [
+                  4,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 30,
+                "endColumn": 39,
+                "path": "src/trainers/trainer.entity.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 20,
+                "lines": [
+                  6,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 13,
+                    "endColumn": 20,
+                    "path": "src/data-source.ts",
+                    "text": "  entities: [Trainer, Pokemon],"
+                  },
+                  {
+                    "line": 18,
+                    "startColumn": 19,
+                    "endColumn": 26,
+                    "path": "src/pokemon/pokemon.entity.ts",
+                    "text": "  @ManyToOne(() => Trainer, (trainer) => trainer.team, { onDelete: \"CASCADE\" })"
+                  },
+                  {
+                    "line": 19,
+                    "startColumn": 12,
+                    "endColumn": 19,
+                    "path": "src/pokemon/pokemon.entity.ts",
+                    "text": "  trainer!: Trainer"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 42,
+                    "endColumn": 49,
+                    "path": "src/trainers/team.ts",
+                    "text": "const trainers = dataSource.getRepository(Trainer)"
+                  },
+                  {
+                    "line": 16,
+                    "startColumn": 17,
+                    "endColumn": 24,
+                    "path": "src/trainers/team.ts",
+                    "text": "  const trainer: Trainer | null = await trainers.findOne({ where: { id: trainerId }, relations: { team: true } })"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

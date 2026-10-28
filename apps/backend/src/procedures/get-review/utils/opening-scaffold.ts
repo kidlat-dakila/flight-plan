@@ -21,6 +21,7 @@ export type ArtifactOpening
 export interface OpeningChoices {
   readonly isOwn: boolean
   readonly configuration: Configuration
+  readonly baseBranch: string
   readonly now: Date
 }
 
@@ -30,7 +31,7 @@ const COMPLETE_STATUS = "complete"
 
 const writerOf = (isOwn: boolean): ReviewWriter => (isOwn ? AUTHOR_WRITER : NO_WRITER)
 
-export const openingScaffoldOf = (built: BranchReviewArtifact, { isOwn, configuration, now }: OpeningChoices): ReviewScaffold => {
+export const openingScaffoldOf = (built: BranchReviewArtifact, { isOwn, configuration, baseBranch, now }: OpeningChoices): ReviewScaffold => {
   const writer = writerOf(isOwn)
   const starting = startingArtifactOf(built.artifact, writer, { requiredContextKinds: configuration.contextCodeBlockKinds })
   return {
@@ -44,6 +45,7 @@ export const openingScaffoldOf = (built: BranchReviewArtifact, { isOwn, configur
       requestedAt: now,
     },
     baseCommit: built.baseCommit,
+    baseBranch,
   }
 }
 
@@ -52,9 +54,14 @@ export const defaultConfigurationOf = (configurationId: string, saved: readonly 
 
 export const isOpenedWithoutArtifact = (subject: ReviewSubject): boolean => subject.isStored && subject.artifact === null
 
-export const buildOpeningArtifact = async (subject: ReviewSubject, key: ReviewKey, context: ProcedureContext): Promise<ArtifactOpening> => {
+export const buildOpeningArtifact = async (
+  subject: ReviewSubject,
+  key: ReviewKey,
+  baseBranch: string,
+  context: ProcedureContext,
+): Promise<ArtifactOpening> => {
   const [setup, savedConfigurations] = await Promise.all([context.setupStore.read(), context.configurationStore.read()])
-  const opened = await context.openRepository(subject.repository.path, setup.forges)
+  const opened = await context.openRepository(subject.repository.path, setup.forges, baseBranch)
   const preferences = reviewPreferencesOf(setup.reviewPreferences)
   const building = await buildArtifact(opened.resolved, {
     branchName: branchNameOf(subject.target),
@@ -67,6 +74,7 @@ export const buildOpeningArtifact = async (subject: ReviewSubject, key: ReviewKe
   const scaffold = openingScaffoldOf(building, {
     isOwn: subject.isOwn,
     configuration: defaultConfigurationOf(defaultConfigurationIdOf(setup), savedConfigurations),
+    baseBranch,
     now: context.now(),
   })
   await context.reviewStore.writeScaffold(key, scaffold)

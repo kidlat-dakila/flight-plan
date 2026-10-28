@@ -1,3 +1,4 @@
+import BaseBranchField, { type BaseBranchChoice } from "@/components/BaseBranchField"
 import Button from "@/components/blocks/button"
 import Dialog, {
   DialogContent,
@@ -36,6 +37,7 @@ interface AddRepositoryDialogProps {
   readonly search: FolderSearch
   readonly browse: FolderBrowse
   readonly authors: AuthorsChoice
+  readonly baseBranch: BaseBranchChoice | null
   readonly isAdding: boolean
   readonly errorMessage: string | null
   readonly onTroubleshoot?: (() => void) | null
@@ -44,6 +46,8 @@ interface AddRepositoryDialogProps {
   readonly onAuthorQueryChange: (role: AuthorRole, query: string) => void
   readonly onAuthorSelect: (role: AuthorRole, authorId: string) => void
   readonly onTrackedAuthorRemove: (authorId: string) => void
+  readonly onBaseBranchQueryChange: (query: string) => void
+  readonly onBaseBranchChange: (branchName: string) => void
   readonly onSubmit: () => void
   readonly onBrowse: () => void
   readonly onBrowseFolder: (path: string) => void
@@ -58,6 +62,7 @@ const AddRepositoryDialog = ({
   search,
   browse,
   authors,
+  baseBranch,
   isAdding,
   errorMessage,
   onTroubleshoot = null,
@@ -66,6 +71,8 @@ const AddRepositoryDialog = ({
   onAuthorQueryChange,
   onAuthorSelect,
   onTrackedAuthorRemove,
+  onBaseBranchQueryChange,
+  onBaseBranchChange,
   onSubmit,
   onBrowse,
   onBrowseFolder,
@@ -80,8 +87,8 @@ const AddRepositoryDialog = ({
       <DialogHeader>
         <DialogTitle>Add repository</DialogTitle>
         <DialogDescription>
-          Search this machine for a folder that holds a git repository, or type its full path. Then choose the users
-          Flight Plan follows in it.
+          Search this machine for a folder that holds a git repository, or type its full path. Then choose the branch
+          to compare with and the users Flight Plan follows in it.
         </DialogDescription>
       </DialogHeader>
       <form onSubmit={submitHandlerOf(onSubmit)} className="grid gap-4">
@@ -104,6 +111,16 @@ const AddRepositoryDialog = ({
           onSelect={onChooseFolder}
           onEnter={onSubmit}
         />
+        {baseBranch === null
+          ? null
+          : (
+              <BaseBranchField
+                baseBranch={baseBranch.branchName}
+                search={baseBranch.search}
+                onQueryChange={onBaseBranchQueryChange}
+                onBaseBranchChange={onBaseBranchChange}
+              />
+            )}
         <RepositoryAuthors
           authors={authors}
           onAuthorQueryChange={onAuthorQueryChange}

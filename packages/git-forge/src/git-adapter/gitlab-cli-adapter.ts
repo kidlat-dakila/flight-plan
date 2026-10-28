@@ -8,6 +8,7 @@ export interface GitlabCliAdapterOptions {
   repo?: string
   baseUrl?: string
   environment?: Readonly<Record<string, string | undefined>>
+  baseBranch?: string | null
 }
 
 export class GitlabCLIAdapter extends GitlabAdapter {

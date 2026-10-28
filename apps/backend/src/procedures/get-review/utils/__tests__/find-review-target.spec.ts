@@ -23,6 +23,7 @@ const REPOSITORY: Repository = {
   forgeSlug: "acme/storefront",
   problem: null,
   targets: [LISTED_TARGET],
+  baseBranch: null,
 }
 
 const SPIKE_CHANGE: RecordedChange = {
@@ -55,5 +56,13 @@ describe("findReviewTarget", () => {
     await expect(findReviewTarget(REPOSITORY, "branch-spike/gone", lookup)).resolves.toBeNull()
     await expect(findReviewTarget(REPOSITORY, "pr-1", lookup)).resolves.toBeNull()
     await expect(findReviewTarget(REPOSITORY, "branch-", lookup)).resolves.toBeNull()
+  })
+
+  it("looks for an unlisted branch's revision against the repository's base branch", async () => {
+    const findRevision = vi.fn(lookup.changeReader.findRevision)
+
+    await findReviewTarget({ ...REPOSITORY, baseBranch: "develop" }, "branch-spike/returns", { ...lookup, changeReader: { findRevision } })
+
+    expect(findRevision).toHaveBeenCalledWith("/work/storefront", "spike/returns", "develop")
   })
 })

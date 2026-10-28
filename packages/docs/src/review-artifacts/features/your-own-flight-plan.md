@@ -7,7 +7,7 @@ A pull request you opened, or a branch with your last commit on it, opens on the
 
 ## Open it
 
-Open it from the home page, or use **Create Flight Plan** on the repository's line and pick the pull request or branch. Flight Plan builds the review from the code, as it does for any review, and the header says **Your Flight Plan**. The dialog that asks your agent to [explain the review](/docs/review-artifacts/features/explaining/) opens here too.
+Open it from the home page, or use **Create Flight Plan** on the repository's line and pick the pull request or branch. The page shows what the change touches and the branch it's compared with. **Create Review Artifact** builds the review from the code, as it does for any review, and the header says **Your Flight Plan**. The dialog that asks your agent to [explain the review](/docs/review-artifacts/features/explaining/) opens here too.
 
 ## Edit it
 

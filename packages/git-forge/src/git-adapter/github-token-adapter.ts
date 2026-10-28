@@ -7,6 +7,7 @@ export interface GithubTokenAdapterOptions {
   root?: string
   baseUrl?: string
   environment?: Readonly<Record<string, string | undefined>>
+  baseBranch?: string | null
 }
 
 export class GithubTokenAdapter extends GithubAdapter {

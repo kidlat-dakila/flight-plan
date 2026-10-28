@@ -1,4 +1,5 @@
 import type { RepositoryActivity } from "@/procedures/list-recent-repositories/utils/repository-activity"
+import type { RepositoryBranch } from "@/procedures/search-base-branches/utils/repository-branches"
 import { matchUsers } from "@/procedures/search-repository-authors/utils/match-users"
 import type { AgentModels } from "./agent-models"
 import { DEFAULT_MODEL, type AgentName, type RepositoryAuthor, type SetupForge, type TerminalApp } from "./setup"
@@ -92,6 +93,36 @@ const MOCK_REPOSITORY_ACTIVITY: Readonly<Record<string, RepositoryActivity>> = {
   },
 }
 
+const DEFAULT_MOCK_MAIN_BRANCH = "main"
+
+const MOCK_MAIN_BRANCHES: Readonly<Record<string, string>> = {
+  "/Users/dev/projects/payments-service": "master",
+}
+
+const MOCK_FEATURE_BRANCHES: readonly RepositoryBranch[] = [
+  { name: "develop", committedAt: new Date("2026-09-29T15:20:00.000Z") },
+  { name: "release/2026.10", committedAt: new Date("2026-09-26T11:00:00.000Z") },
+  { name: "feature/held-stock", committedAt: new Date("2026-09-30T08:10:00.000Z") },
+  { name: "fix/rounding", committedAt: new Date("2026-09-18T13:45:00.000Z") },
+  { name: "spike/new-checkout", committedAt: new Date("2026-08-30T10:00:00.000Z") },
+  { name: "chore/upgrade-node", committedAt: new Date("2026-09-12T09:30:00.000Z") },
+]
+
+const MOCK_MAIN_BRANCH_COMMITTED_AT = new Date("2026-09-30T09:30:00.000Z")
+
+const isMockRepository = (path: string): boolean =>
+  MOCK_FOLDERS.some((folder) => folder.path === path && folder.isRepository)
+
+const detectMockMainBranch = (path: string): string | null =>
+  isMockRepository(path) ? (MOCK_MAIN_BRANCHES[path] ?? DEFAULT_MOCK_MAIN_BRANCH) : null
+
+const listMockBranches = (path: string): readonly RepositoryBranch[] | null => {
+  const mainBranch = detectMockMainBranch(path)
+  return mainBranch === null
+    ? null
+    : [{ name: mainBranch, committedAt: MOCK_MAIN_BRANCH_COMMITTED_AT }, ...MOCK_FEATURE_BRANCHES]
+}
+
 const parentPathOf = (path: string): string | null => {
   if (path === ROOT_PATH) return null
   const parentPath = path.slice(0, path.lastIndexOf(PATH_SEPARATOR))
@@ -152,8 +183,7 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
   listFolders: async (path) => await Promise.resolve(listMockFolders(path)),
   readFolderEntries: async (path) =>
     await Promise.resolve(listMockFolders(path)?.folders.map((folder) => folder.name) ?? null),
-  isRepositoryFolder: async (path) =>
-    await Promise.resolve(MOCK_FOLDERS.some((folder) => folder.path === path && folder.isRepository)),
+  isRepositoryFolder: async (path) => await Promise.resolve(isMockRepository(path)),
   findRepositoryForge: async (_path, forges) =>
     await Promise.resolve(forges?.connections.find((connection) => connection.forge !== MOCK_FORGE_WITHOUT_ACCOUNT)?.forge ?? MOCK_FORGE_WITHOUT_ACCOUNT),
   searchAuthors: async (source, query) =>
@@ -162,5 +192,7 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
     await Promise.resolve(mockAuthorsOf(source).find((author) => author.id === authorId) ?? null),
   readGitIdentity: async () => await Promise.resolve(null),
   readRepositoryActivity: async (path) => await Promise.resolve(MOCK_REPOSITORY_ACTIVITY[path] ?? null),
+  detectMainBranch: async (path) => await Promise.resolve(detectMockMainBranch(path)),
+  listBranches: async (path) => await Promise.resolve(listMockBranches(path)),
   saveForgeCredential: async () => await Promise.resolve({ kind: "saved" }),
 })

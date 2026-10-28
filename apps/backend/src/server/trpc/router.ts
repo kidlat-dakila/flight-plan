@@ -10,6 +10,7 @@ import { chooseModelRoute } from "./routes/choose-model"
 import { completeSetupRoute } from "./routes/complete-setup"
 import { configureRepositoryRoute } from "./routes/configure-repository"
 import { createConfigurationRoute } from "./routes/create-configuration"
+import { createReviewRoute } from "./routes/create-review"
 import { declineWriteUpRoute } from "./routes/decline-write-up"
 import { deleteConfigurationRoute } from "./routes/delete-configuration"
 import { deleteReviewRoute } from "./routes/delete-review"
@@ -67,13 +68,16 @@ import { saveSettingsRoute } from "./routes/save-settings"
 import { saveSetupStepRoute } from "./routes/save-setup-step"
 import { searchAddableTargetsRoute } from "./routes/search-addable-targets"
 import { searchAdditionAuthorsRoute } from "./routes/search-addition-authors"
+import { searchBaseBranchesRoute } from "./routes/search-base-branches"
 import { searchCreationTargetsRoute } from "./routes/search-creation-targets"
 import { searchFilesRoute } from "./routes/search-files"
 import { searchRepositoryAuthorsRoute } from "./routes/search-repository-authors"
 import { searchRepositoryFoldersRoute } from "./routes/search-repository-folders"
+import { searchReviewBaseBranchesRoute } from "./routes/search-review-base-branches"
 import { searchReviewersRoute } from "./routes/search-reviewers"
 import { sendReviewerMessageRoute } from "./routes/send-reviewer-message"
 import { setAuthorTrackingRoute } from "./routes/set-author-tracking"
+import { setBaseBranchRoute } from "./routes/set-base-branch"
 import { setReviewedRoute } from "./routes/set-reviewed"
 import { submitReviewRoute } from "./routes/submit-review"
 import { watchConversationRoute } from "./routes/watch-conversation"
@@ -91,6 +95,7 @@ export const appRouter = createRouter({
     add: addRepositoryRoute,
     authorForm: getAuthorFormRoute,
     searchAuthors: searchAdditionAuthorsRoute,
+    searchBaseBranches: searchBaseBranchesRoute,
     configuration: getRepositoryConfigurationRoute,
     configure: configureRepositoryRoute,
     remove: removeRepositoryRoute,
@@ -106,6 +111,8 @@ export const appRouter = createRouter({
     removeRepository: removeSetupRepositoryRoute,
     searchAuthors: searchRepositoryAuthorsRoute,
     setAuthorTracking: setAuthorTrackingRoute,
+    searchBaseBranches: searchBaseBranchesRoute,
+    setBaseBranch: setBaseBranchRoute,
     complete: completeSetupRoute,
   }),
   settings: createRouter({
@@ -126,6 +133,8 @@ export const appRouter = createRouter({
   }),
   review: createRouter({
     get: getReviewRoute,
+    create: createReviewRoute,
+    searchBaseBranches: searchReviewBaseBranchesRoute,
     creationForm: getCreationFormRoute,
     searchTargets: searchCreationTargetsRoute,
     targetSwitcher: getTargetSwitcherRoute,

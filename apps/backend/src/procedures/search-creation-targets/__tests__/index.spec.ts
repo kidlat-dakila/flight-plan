@@ -88,6 +88,24 @@ describe("searchCreationTargets", () => {
     })
   })
 
+  it("reads the checkout against the repository's base branch, and offers the pull requests alone when that branch is gone", async () => {
+    const openRepository = vi.fn(createChangeRepositoryOpener([
+      {
+        change: STOREFRONT_CHANGE,
+        baseTexts: {},
+        listBranches: async () =>
+          await Promise.reject(new GitAdapterError("The branch develop to compare with does not exist in this repository.", "no-repo")),
+      },
+    ]))
+    const context = createContext({ openRepository })
+    await context.repositoryStore.replaceBaseBranch("storefront", "develop")
+
+    await expect(searchCreationTargets({ repositoryName: "storefront", query: "spike" }, context)).resolves.toMatchObject({
+      options: [{ id: "pr-414" }],
+    })
+    expect(openRepository).toHaveBeenCalledWith("/Users/dev/projects/storefront", null, "develop")
+  })
+
   it("says so when nothing matches, and reports nothing for a repository that is not listed", async () => {
     await expect(searchCreationTargets({ repositoryName: "storefront", query: "zzz" }, createContext())).resolves.toStrictEqual({
       options: [],

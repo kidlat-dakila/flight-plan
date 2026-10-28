@@ -1,5 +1,5 @@
 import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
-import type { ListedRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
+import type { RegisteredRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
 import { withRepository } from "@/procedures/add-setup-repository/utils/plan-setup-repository"
 import { selfAuthorIdOf } from "@/procedures/get-setup/utils/git-identity"
 import type { ForgesChoice, SetupRepository } from "@/procedures/get-setup/utils/setup"
@@ -17,6 +17,7 @@ import {
 } from "@/procedures/list-repositories/utils/target-memory"
 import { withoutRepository } from "@/procedures/remove-setup-repository/utils/without-repository"
 import { withAuthors } from "@/procedures/set-author-tracking/utils/author-tracking"
+import { withBaseBranch } from "@/procedures/set-base-branch/utils/base-branch"
 import type { RepositoryInspector } from "@/utils/repository-inspector"
 import type { TargetMemoryStore } from "@/utils/target-memory-file-store"
 
@@ -41,14 +42,14 @@ export class LiveRepositoryStore implements RepositoryStore {
     return await Promise.all(setup.repositories.map(async (registered) => await this.describe(registered, setup.forges)))
   }
 
-  public readonly listRegistered = async (): Promise<readonly ListedRepository[]> =>
-    (await this.dependencies.setupStore.read()).repositories.map(({ name, path }) => ({ name, path }))
+  public readonly listRegistered = async (): Promise<readonly RegisteredRepository[]> =>
+    (await this.dependencies.setupStore.read()).repositories.map(({ name, path, baseBranch }) => ({ name, path, baseBranch }))
 
   public readonly add = async (repository: Repository, authors: SelectedAuthors): Promise<void> => {
     const setup = await this.dependencies.setupStore.read()
     if (setup.repositories.some((registered) => registered.path === repository.path)) return
     await this.dependencies.setupStore.write(
-      withRepository(setup, { name: repository.name, path: repository.path, ...authors }),
+      withRepository(setup, { name: repository.name, path: repository.path, ...authors, baseBranch: repository.baseBranch }),
     )
   }
 
@@ -78,6 +79,13 @@ export class LiveRepositoryStore implements RepositoryStore {
     const setup = await this.dependencies.setupStore.read()
     if (!setup.repositories.some((listed) => listed.name === repositoryName)) return false
     await this.dependencies.setupStore.write(withAuthors(setup, repositoryName, authors))
+    return true
+  }
+
+  public readonly replaceBaseBranch = async (repositoryName: string, baseBranch: string): Promise<boolean> => {
+    const setup = await this.dependencies.setupStore.read()
+    if (!setup.repositories.some((listed) => listed.name === repositoryName)) return false
+    await this.dependencies.setupStore.write(withBaseBranch(setup, repositoryName, baseBranch))
     return true
   }
 
@@ -119,6 +127,7 @@ export class LiveRepositoryStore implements RepositoryStore {
   ): Promise<RepositoryInspection> =>
     await this.dependencies.inspector.inspect({
       path: registered.path,
+      baseBranch: registered.baseBranch,
       forges,
       trackedAuthorIds: registered.trackedAuthors.map((author) => author.id),
       selfAuthorId: selfAuthorIdOf(await this.dependencies.readGitIdentity(registered.path)),

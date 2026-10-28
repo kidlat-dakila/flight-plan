@@ -1,0 +1,13 @@
+{
+  "name": "pokedex-trpc",
+  "private": true,
+  "dependencies": {
+    "@tanstack/react-query": "5.81.2",
+    "@trpc/client": "11.4.2",
+    "@trpc/react-query": "11.4.2",
+    "@trpc/server": "11.4.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "zod": "3.25.67"
+  }
+}

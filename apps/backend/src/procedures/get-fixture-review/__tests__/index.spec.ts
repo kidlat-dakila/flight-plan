@@ -12,6 +12,7 @@ const SNAPSHOT_NAME = "modified-function-formatprice"
 const typescript: Repository = {
   name: "typescript",
   path: "/fixtures/typescript",
+  baseBranch: null,
   forge: "git",
   forgeSlug: null,
   problem: null,

@@ -45,10 +45,48 @@ describe("createGitChangeReader", () => {
       const { headCommit } = await createRepository(repositoryPath)
       const mainCommit = await runGit(repositoryPath, ["rev-parse", "main"])
 
-      await expect(reader.findRevision(repositoryPath, "feature/held-stock")).resolves.toStrictEqual({
+      await expect(reader.findRevision(repositoryPath, "feature/held-stock", null)).resolves.toStrictEqual({
         headCommit,
         baseCommit: mainCommit,
       })
+    })
+  })
+
+  it("compares the branch with the base branch chosen for the repository", async () => {
+    await withTemporaryFolder(async (repositoryPath) => {
+      await createRepository(repositoryPath)
+      await runGit(repositoryPath, ["checkout", "--quiet", "-b", "develop", "main"])
+      const developCommit = await commitFile(repositoryPath, "src/develop.ts", "export const develop = true\n")
+      await runGit(repositoryPath, ["checkout", "--quiet", "-b", "feature/on-develop"])
+      const headCommit = await commitFile(repositoryPath, "src/feature.ts", "export const feature = true\n")
+
+      const revision = await reader.findRevision(repositoryPath, "feature/on-develop", "develop")
+
+      expect(revision).toStrictEqual({ headCommit, baseCommit: developCommit })
+      if (revision === null) throw new Error("The revision was not found.")
+      await expect(reader.listChangedPaths(repositoryPath, revision)).resolves.toStrictEqual(["src/feature.ts"])
+    })
+  })
+
+  it("prefers origin's copy of the chosen base branch to the local one", async () => {
+    await withTemporaryFolder(async (repositoryPath) => {
+      const { headCommit } = await createRepository(repositoryPath)
+      await runGit(repositoryPath, ["branch", "develop", "main"])
+      const originCommit = await runGit(repositoryPath, ["rev-parse", "main~1"])
+      await runGit(repositoryPath, ["update-ref", "refs/remotes/origin/develop", originCommit])
+
+      await expect(reader.findRevision(repositoryPath, "feature/held-stock", "develop")).resolves.toStrictEqual({
+        headCommit,
+        baseCommit: originCommit,
+      })
+    })
+  })
+
+  it("has no revision when the chosen base branch is not in the repository, instead of guessing main", async () => {
+    await withTemporaryFolder(async (repositoryPath) => {
+      await createRepository(repositoryPath)
+
+      await expect(reader.findRevision(repositoryPath, "feature/held-stock", "develop")).resolves.toBeNull()
     })
   })
 
@@ -56,14 +94,14 @@ describe("createGitChangeReader", () => {
     await withTemporaryFolder(async (repositoryPath) => {
       await createRepository(repositoryPath)
 
-      await expect(reader.findRevision(repositoryPath, "missing")).resolves.toBeNull()
+      await expect(reader.findRevision(repositoryPath, "missing", null)).resolves.toBeNull()
     })
   })
 
   it("lists and diffs what the branch changed since it left the main branch, without what main did since", async () => {
     await withTemporaryFolder(async (repositoryPath) => {
       await createRepository(repositoryPath)
-      const revision = await reader.findRevision(repositoryPath, "feature/held-stock")
+      const revision = await reader.findRevision(repositoryPath, "feature/held-stock", null)
       if (revision === null) throw new Error("The revision was not found.")
 
       await expect(reader.listChangedPaths(repositoryPath, revision)).resolves.toStrictEqual(["src/held.ts", "src/price.ts"])

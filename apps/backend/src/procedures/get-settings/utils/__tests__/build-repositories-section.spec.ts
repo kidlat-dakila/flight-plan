@@ -1,8 +1,8 @@
 import { buildRepositoriesSection } from "@/procedures/get-settings/utils/build-repositories-section"
 import { DEV, LENA } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 
-const STOREFRONT = { name: "storefront", path: "/Users/dev/projects/storefront" }
-const CHECKOUT_API = { name: "checkout api", path: "/Users/dev/projects/checkout-api" }
+const STOREFRONT = { name: "storefront", path: "/Users/dev/projects/storefront", baseBranch: "main" }
+const CHECKOUT_API = { name: "checkout api", path: "/Users/dev/projects/checkout-api", baseBranch: null }
 
 describe("buildRepositoriesSection", () => {
   it("shows the user git config names in place of the user picked by hand", () => {
@@ -39,6 +39,7 @@ describe("buildRepositoriesSection", () => {
           authorSearchPlaceholder: "Type a name or email",
           selfAuthor: null,
           trackedAuthors: [{ ...LENA, monogram: "LO" }],
+          baseBranch: "main",
           configurationHref: "/pr-reviews/storefront/configurations",
           emptyMessage: null,
         },

@@ -6,6 +6,7 @@ const UPDATED_AT = new Date("2026-10-01T12:00:00.000Z")
 const repository: Repository = {
   name: "storefront",
   path: "/work/storefront",
+  baseBranch: null,
   forge: "git",
   forgeSlug: null,
   problem: null,

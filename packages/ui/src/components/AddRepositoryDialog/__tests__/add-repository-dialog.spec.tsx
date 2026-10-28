@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import AddRepositoryDialog, { type FolderBrowse, type FolderSearch } from "@/components/AddRepositoryDialog"
+import type { BaseBranchChoice } from "@/components/BaseBranchField"
 import type { AuthorsChoice } from "@/components/RepositoryAuthors"
 
 const IDLE_SEARCH: FolderSearch = { query: "", options: [], message: null }
@@ -13,12 +14,22 @@ const LOCAL_GIT_AUTHORS: AuthorsChoice = {
   trackedAuthors: [],
   search: { role: null, query: "", options: [], message: null, errorMessage: null },
 }
+const DETECTED_BASE_BRANCH: BaseBranchChoice = {
+  branchName: "main",
+  search: {
+    query: "",
+    options: [{ id: "develop", label: "develop", detail: "3 days ago", stateLabel: null, isDisabled: false }],
+    message: null,
+    errorMessage: null,
+  },
+}
 
 interface DialogOverrides {
   readonly isOpen?: boolean
   readonly search?: Partial<FolderSearch>
   readonly browse?: Partial<FolderBrowse>
   readonly authors?: Partial<AuthorsChoice>
+  readonly baseBranch?: BaseBranchChoice | null
   readonly isAdding?: boolean
   readonly errorMessage?: string | null
 }
@@ -30,6 +41,8 @@ const renderDialog = (overrides: DialogOverrides = {}) => {
     onAuthorQueryChange: vi.fn(),
     onAuthorSelect: vi.fn(),
     onTrackedAuthorRemove: vi.fn(),
+    onBaseBranchQueryChange: vi.fn(),
+    onBaseBranchChange: vi.fn(),
     onSubmit: vi.fn(),
     onBrowse: vi.fn(),
     onBrowseFolder: vi.fn(),
@@ -42,6 +55,7 @@ const renderDialog = (overrides: DialogOverrides = {}) => {
       search={{ ...IDLE_SEARCH, ...overrides.search }}
       browse={{ ...CLOSED_BROWSE, ...overrides.browse }}
       authors={{ ...LOCAL_GIT_AUTHORS, ...overrides.authors }}
+      baseBranch={overrides.baseBranch ?? null}
       isAdding={overrides.isAdding ?? false}
       errorMessage={overrides.errorMessage ?? null}
       {...handlers}
@@ -174,5 +188,37 @@ describe("AddRepositoryDialog", () => {
     renderDialog()
 
     expect(screen.getByRole("combobox", { name: "Track branches from specific team members" })).toBeTruthy()
+  })
+
+  it("asks for the branch to compare with only once a folder is picked", () => {
+    renderDialog()
+
+    expect(screen.queryByRole("combobox", { name: "Branch to compare with" })).toBeNull()
+  })
+
+  it("starts the branch to compare with on the one the backend detected, and reports a search and a choice", () => {
+    const { onBaseBranchQueryChange, onBaseBranchChange } = renderDialog({ baseBranch: DETECTED_BASE_BRANCH })
+    const field = screen.getByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" })
+
+    expect(field.value).toBe("main")
+    fireEvent.focus(field)
+    fireEvent.change(field, { target: { value: "dev" } })
+    fireEvent.click(screen.getByRole("option", { name: /develop/ }))
+
+    expect(onBaseBranchQueryChange).toHaveBeenLastCalledWith("dev")
+    expect(onBaseBranchChange).toHaveBeenCalledWith("develop")
+  })
+
+  it("closes only the branch list when Escape is pressed with it open", () => {
+    const { onClose } = renderDialog({ baseBranch: DETECTED_BASE_BRANCH })
+    const field = screen.getByRole("combobox", { name: "Branch to compare with" })
+
+    fireEvent.focus(field)
+    fireEvent.keyDown(field, { key: "Escape" })
+    expect(onClose).not.toHaveBeenCalled()
+    expect(field.getAttribute("aria-expanded")).toBe("false")
+
+    fireEvent.keyDown(field, { key: "Escape" })
+    expect(onClose).toHaveBeenCalledTimes(1)
   })
 })

@@ -22,9 +22,10 @@ const storefront: Repository = {
   forgeSlug: "acme/storefront",
   problem: null,
   targets: [],
+  baseBranch: null,
 }
 
-const NOBODY_TRACKED = { trackedAuthorIds: [] }
+const NOBODY_TRACKED = { trackedAuthorIds: [], baseBranch: null }
 
 const createContext = (repositories: readonly Repository[]): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(repositories),

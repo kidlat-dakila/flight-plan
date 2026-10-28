@@ -1,5 +1,5 @@
 import { act, render, renderHook, waitFor } from "@testing-library/react"
-import { useReadingPositionStore } from "@/routes/pr-reviews/$repoName/-hooks/use-reading-position"
+import { holdCurrentAnchorId, useReadingPositionStore } from "@/routes/pr-reviews/$repoName/-hooks/use-reading-position"
 
 const SECTION_IDS = ["context", "walkthrough", "file-1"]
 const WAYPOINT_IDS = ["waypoint-1", "waypoint-2"]
@@ -76,5 +76,18 @@ describe("useReadingPositionStore", () => {
       expect(store.getState().currentAnchorId).toBe("file-1")
     })
     expect([...store.getState().aboveAnchorIds]).toStrictEqual(["waypoint-1", "waypoint-2"])
+  })
+
+  it("holds an opened section as current until the next scroll", async () => {
+    placeAnchors({ "context": -1100, "walkthrough": -500, "file-1": 300, "waypoint-1": -550, "waypoint-2": 400 })
+    const store = renderStore()
+
+    holdCurrentAnchorId(store, "file-1")
+
+    expect(store.getState().currentAnchorId).toBe("file-1")
+    scroll({ "context": -1000, "walkthrough": -400, "file-1": 400, "waypoint-1": -450, "waypoint-2": 500 })
+    await waitFor(() => {
+      expect(store.getState().currentAnchorId).toBe("walkthrough")
+    })
   })
 })

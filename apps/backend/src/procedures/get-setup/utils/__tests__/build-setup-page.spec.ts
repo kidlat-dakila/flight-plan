@@ -20,6 +20,7 @@ const sourceOf = (overrides: Partial<SetupPageSource>): SetupPageSource => ({
   cliProbes: [],
   repositoryForges: {},
   repositoryIdentities: {},
+  repositoryBaseBranches: {},
   ...overrides,
 })
 
@@ -485,6 +486,16 @@ describe("buildSetupPage", () => {
       ],
       isReadyToContinue: true,
       continueHint: null,
+    })
+  })
+
+  it("shows the base branch found for each repository, and none for a repository without one", () => {
+    const forgeRepository = { ...CHECKOUT_WEB, name: "storefront", path: "/Users/dev/projects/storefront" }
+    const setup = { ...READY_TO_FINISH, repositories: [...READY_TO_FINISH.repositories, forgeRepository] }
+    const repositoryBaseBranches = { [CHECKOUT_WEB.path]: "develop" }
+
+    expect(buildSetupPage(sourceOf({ setup, step: "repositories", repositoryBaseBranches })).form).toMatchObject({
+      repositories: [{ name: "checkout-web", baseBranch: "develop" }, { name: "storefront", baseBranch: null }],
     })
   })
 })

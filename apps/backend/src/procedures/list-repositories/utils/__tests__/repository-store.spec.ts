@@ -31,6 +31,15 @@ describe("InMemoryRepositoryStore", () => {
     await expect(store.replaceAuthors("ledger-api", NO_AUTHORS)).resolves.toBe(false)
   })
 
+  it("replaces the base branch of a repository, and reports one it does not hold", async () => {
+    const store = new InMemoryRepositoryStore([STOREFRONT])
+
+    await expect(store.replaceBaseBranch("storefront", "develop")).resolves.toBe(true)
+    await expect(store.list()).resolves.toMatchObject([{ name: "storefront", baseBranch: "develop" }])
+    await expect(store.listRegistered()).resolves.toStrictEqual([{ name: "storefront", path: STOREFRONT.path, baseBranch: "develop" }])
+    await expect(store.replaceBaseBranch("ledger-api", "develop")).resolves.toBe(false)
+  })
+
   it("adds a review target once, never as new, and nothing to a repository it does not hold", async () => {
     const store = new InMemoryRepositoryStore([{ ...STOREFRONT, targets: [] }])
     const branch = { kind: "branch" as const, name: "spike/returns", branchStatus: "no-review" as const, isNew: true, updatedAt: new Date(0) }
@@ -47,6 +56,6 @@ describe("InMemoryRepositoryStore", () => {
     await expect(store.remove("storefront")).resolves.toBe(false)
 
     await expect(store.list()).resolves.toStrictEqual([LEDGER])
-    await expect(store.listRegistered()).resolves.toStrictEqual([{ name: "ledger-api", path: LEDGER.path }])
+    await expect(store.listRegistered()).resolves.toStrictEqual([{ name: "ledger-api", path: LEDGER.path, baseBranch: null }])
   })
 })

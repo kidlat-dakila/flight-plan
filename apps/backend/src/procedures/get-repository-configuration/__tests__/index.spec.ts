@@ -32,6 +32,16 @@ describe("getRepositoryConfiguration", () => {
     })
   })
 
+  it("shows the detected main branch of a repository saved without a base branch, and the saved one once it is chosen", async () => {
+    const context = await withSavedAuthors()
+
+    await expect(getRepositoryConfiguration({ name: "storefront" }, context)).resolves.toMatchObject({ baseBranch: "main" })
+
+    await context.repositoryStore.replaceBaseBranch("storefront", "develop")
+
+    await expect(getRepositoryConfiguration({ name: "storefront" }, context)).resolves.toMatchObject({ baseBranch: "develop" })
+  })
+
   it("has nothing for a repository that is not listed", async () => {
     await expect(getRepositoryConfiguration({ name: "ledger-api" }, await withSavedAuthors())).resolves.toBeNull()
   })

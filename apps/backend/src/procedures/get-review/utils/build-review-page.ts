@@ -25,13 +25,16 @@ import {
 import type { ReviewArtifact, Segment, TokenLine, WalkthroughControls } from "@flightplan/configurations"
 import type { ReviewedMarks } from "@flightplan/reviewed-marks"
 import { buildCompleteAction, type BranchLinking } from "./build-complete-action"
+import { buildCreation, buildCreationExplorer } from "./build-creation"
 import { buildFileExplorer, diffTypesOf, selectedFilterLabelsOf } from "./build-file-explorer"
 import { buildStaleNotice } from "./build-notices"
 import { buildCompletionNotice, buildProgress, isWritingNow, type WritingActivity } from "./build-progress"
 import { buildRail } from "./build-rail"
 import { buildShell, NO_REVIEWER_REQUESTS, type ReviewerRequestAbilities } from "./build-shell"
+import { branchNameOf } from "./change-reader"
 import { buildContext } from "./context"
 import { countLabel } from "./count-label"
+import type { CreationReading } from "./creation-reading"
 import {
   attachThreads,
   buildConversation,
@@ -178,16 +181,19 @@ const placedThreadIdsOf = (segments: readonly SegmentView[]): ReadonlySet<string
 const UNBUILT_HEADING = "Flight Plan could not build this review"
 const UNBUILT_MESSAGE = "There is no review of this pull request or branch yet."
 
-const buildUnbuiltPage = (source: ReviewPageSource, shell: ReviewShell): ReviewPage => ({
+type ShellSource = Pick<ReviewPageSource, "repository" | "lineColor" | "target" | "detail" | "artifact" | "notice" | "isOwn" | "forge" | "publications">
+
+const buildUnbuiltPage = (source: ShellSource, shell: ReviewShell, message: string | null): ReviewPage => ({
   kind: "missing",
   shell,
   isOwn: source.isOwn,
   changedFiles: buildChangedFiles(source.detail),
   heading: UNBUILT_HEADING,
-  message: source.unavailableMessage ?? UNBUILT_MESSAGE,
+  message: message ?? UNBUILT_MESSAGE,
 })
 
-type ShellSource = Pick<ReviewPageSource, "repository" | "lineColor" | "target" | "detail" | "artifact" | "notice" | "isOwn" | "forge" | "publications">
+const unreadableBranchMessageOf = (target: ReviewTarget): string =>
+  `${branchNameOf(target)} is not in this checkout. Fetch it and try again.`
 
 const shellOf = (source: ShellSource): ReviewShell =>
   buildShell(
@@ -209,9 +215,28 @@ export const buildMigrationPage = (source: ShellSource, notice: MigrationNotice)
   ...notice,
 })
 
+export const buildCreationPage = (source: ShellSource, reading: CreationReading): ReviewPage => {
+  const shell = shellOf(source)
+  if (reading.kind === "unreadable") return buildUnbuiltPage(source, shell, unreadableBranchMessageOf(source.target))
+  return {
+    kind: "creation",
+    shell,
+    isOwn: source.isOwn,
+    panels: PANELS,
+    fileExplorer: buildCreationExplorer(reading.change),
+    creation: buildCreation({
+      target: source.target,
+      header: shell.header,
+      compareBranch: reading.compareBranch,
+      defaultBranch: reading.defaultBranch,
+      change: reading.change,
+    }),
+  }
+}
+
 export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput): ReviewPage => {
   const shell = shellOf(source)
-  if (source.artifact === null) return buildUnbuiltPage(source, shell)
+  if (source.artifact === null) return buildUnbuiltPage(source, shell, source.unavailableMessage)
   const { artifact } = source
   const forgeLocation: ForgeLocation = {
     forge: source.repository.forge,

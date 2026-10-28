@@ -1,7 +1,7 @@
 import { buildRepositoryConfiguration } from "@/procedures/get-repository-configuration/utils/build-repository-configuration"
 import { CHECKOUT_WEB, DEV, LENA } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 
-const LISTED = { name: CHECKOUT_WEB.name, path: CHECKOUT_WEB.path }
+const LISTED = { name: CHECKOUT_WEB.name, path: CHECKOUT_WEB.path, baseBranch: "develop" }
 
 describe("buildRepositoryConfiguration", () => {
   it("shows the tracked users of a repository local git serves, with the form to change them", () => {
@@ -14,6 +14,7 @@ describe("buildRepositoryConfiguration", () => {
         searchPlaceholder: "Type a name or email",
       },
       trackedAuthors: [{ ...LENA, monogram: "LO" }],
+      baseBranch: "develop",
     })
   })
 

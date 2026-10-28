@@ -6,6 +6,7 @@ import * as path from "node:path"
 import { promisify } from "node:util"
 import { onTestFinished } from "vitest"
 import { BaseGitAdapter, parseBlobBatch, parseBranchStart, parseBranchTips } from "@/git-adapter/base"
+import { assembleGitAdapter } from "@/git-adapter/helpers/assemble"
 import { GitAdapterError, type GitAdapter } from "@/git-adapter/types"
 
 const run = promisify(execFile)
@@ -377,6 +378,145 @@ suite("the git adapter", () => {
     const { gitAdapter } = await fresh()
 
     await expect(gitAdapter.fetchRemotes()).resolves.toBeUndefined()
+  })
+})
+
+interface DevelopRepository {
+  root: string
+  developForkPoint: string
+  at: (args: string[]) => Promise<string>
+}
+
+async function repositoryWithDevelop(): Promise<DevelopRepository> {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "flightplan-git-develop-"))
+  onTestFinished(async () => {
+    await fs.rm(root, { recursive: true, force: true, maxRetries: CLEANUP_RETRIES })
+  })
+  const at = async (args: string[]): Promise<string> => (await run("git", args, { cwd: root })).stdout.trim()
+  const commit = async (file: string, text: string, message: string, email = "nobody@example.com"): Promise<void> => {
+    await fs.writeFile(path.join(root, file), text)
+    await at(["add", "."])
+    await at(["-c", `user.email=${email}`, "commit", "-qm", message])
+  }
+
+  await at(["init", "-q", "-b", "main"])
+  await at(["config", "user.email", "nobody@example.com"])
+  await at(["config", "user.name", "Nobody"])
+  await at(["config", "maintenance.auto", "false"])
+  await commit("placeOrder.ts", "export function placeOrder() {}\n", "feat: place an order")
+
+  await at(["checkout", "-q", "-b", "develop"])
+  await commit("countStock.ts", "export function countStock() {}\n", "feat: count the stock", "lead@example.com")
+  const developForkPoint = await at(["rev-parse", "HEAD"])
+
+  await at(["checkout", "-q", "-b", "stock-check"])
+  await commit("hasStock.ts", "export function hasStock() {}\n", "feat: refuse an order with no stock")
+
+  await at(["checkout", "-q", "develop"])
+  await at(["checkout", "-q", "-b", "shipped"])
+  await commit("shipOrder.ts", "export function shipOrder() {}\n", "feat: ship an order")
+  await at(["checkout", "-q", "develop"])
+  await at(["merge", "-q", "--ff-only", "shipped"])
+  await commit("README.md", "# Storefront\n", "docs: describe the storefront")
+
+  await at(["checkout", "-q", "main"])
+  await commit("refund.ts", "export function refund() {}\n", "fix: refund on main only")
+
+  return { root, developForkPoint, at }
+}
+
+const STOCK_CHECK = { kind: "branch", name: "stock-check" } as const
+
+suite("the git adapter with a chosen base branch", () => {
+  it("bases a branch on where it left the chosen branch, also after that branch moved on", async () => {
+    const { root, developForkPoint } = await repositoryWithDevelop()
+    const gitAdapter = new BaseGitAdapter({ root, baseBranch: "develop" })
+
+    await expect(gitAdapter.baseSha(STOCK_CHECK)).resolves.toBe(developForkPoint)
+  })
+
+  it("diffs a branch against the chosen branch, leaving out the work that branch already has", async () => {
+    const { root } = await repositoryWithDevelop()
+    const gitAdapter = new BaseGitAdapter({ root, baseBranch: "develop" })
+
+    const diff = await gitAdapter.diff(STOCK_CHECK)
+
+    expect(diff).toContain("hasStock.ts")
+    expect(diff).not.toContain("countStock.ts")
+  })
+
+  it("lists the branches not merged into the chosen branch, without the chosen branch itself", async () => {
+    const { root } = await repositoryWithDevelop()
+    const gitAdapter = new BaseGitAdapter({ root, baseBranch: "develop" })
+
+    const branches = await gitAdapter.listBranches()
+
+    expect(branches.map((branch) => branch.name).sort()).toStrictEqual(["main", "stock-check"])
+  })
+
+  it("leaves out the local copy of the chosen branch when the remote one is behind it", async () => {
+    const { root, developForkPoint, at } = await repositoryWithDevelop()
+    await at(["update-ref", "refs/remotes/origin/develop", developForkPoint])
+    const gitAdapter = new BaseGitAdapter({ root, baseBranch: "develop" })
+
+    const branches = await gitAdapter.listBranches()
+
+    expect(branches.map((branch) => branch.name)).not.toContain("develop")
+  })
+
+  it("starts a branch at its oldest commit that the chosen branch lacks", async () => {
+    const { root } = await repositoryWithDevelop()
+    const gitAdapter = new BaseGitAdapter({ root, baseBranch: "develop" })
+
+    await expect(gitAdapter.branchStart("stock-check")).resolves.toMatchObject({ authorEmail: "nobody@example.com" })
+  })
+
+  it("prefers the chosen branch on the remote over the local one", async () => {
+    const { root, at } = await repositoryWithDevelop()
+    const stockCheckTip = await at(["rev-parse", "stock-check"])
+    await at(["update-ref", "refs/remotes/origin/develop", stockCheckTip])
+    const gitAdapter = new BaseGitAdapter({ root, baseBranch: "develop" })
+
+    await expect(gitAdapter.baseSha(STOCK_CHECK)).resolves.toBe(stockCheckTip)
+  })
+
+  it("compares with the chosen branch when it is only on the remote", async () => {
+    const { root, developForkPoint, at } = await repositoryWithDevelop()
+    await at(["update-ref", "refs/remotes/origin/release", developForkPoint])
+    const gitAdapter = new BaseGitAdapter({ root, baseBranch: "release" })
+
+    await expect(gitAdapter.baseSha(STOCK_CHECK)).resolves.toBe(developForkPoint)
+  })
+
+  it("keeps comparing with the main branch when no base branch is chosen", async () => {
+    const { root, at } = await repositoryWithDevelop()
+    const mainForkPoint = await at(["merge-base", "main", "stock-check"])
+
+    await expect(new BaseGitAdapter({ root, baseBranch: null }).baseSha(STOCK_CHECK)).resolves.toBe(mainForkPoint)
+    await expect(new BaseGitAdapter({ root, baseBranch: "" }).baseSha(STOCK_CHECK)).resolves.toBe(mainForkPoint)
+  })
+
+  it("refuses to compare with a chosen branch that does not exist, naming it", async () => {
+    const { root } = await repositoryWithDevelop()
+    const gitAdapter = new BaseGitAdapter({ root, baseBranch: "trunk" })
+    const namesTheBranch = (cause: unknown): boolean =>
+      cause instanceof GitAdapterError
+      && cause.problem === "no-repo"
+      && cause.message === "The branch trunk to compare with does not exist in this repository."
+
+    await assert.rejects(async () => gitAdapter.baseSha(STOCK_CHECK), namesTheBranch)
+    await assert.rejects(async () => gitAdapter.diff(STOCK_CHECK), namesTheBranch)
+    await assert.rejects(async () => gitAdapter.listBranches(), namesTheBranch)
+    await assert.rejects(async () => gitAdapter.branchStart("stock-check"), namesTheBranch)
+  })
+
+  it("passes the chosen branch on when assembled", async () => {
+    const { root, developForkPoint } = await repositoryWithDevelop()
+
+    const assembled = await assembleGitAdapter({ id: "git", root, secret: null, username: "", baseUrl: "", baseBranch: "develop" })
+
+    assert.ok(assembled.ok)
+    await expect(assembled.gitAdapter.baseSha(STOCK_CHECK)).resolves.toBe(developForkPoint)
   })
 })
 

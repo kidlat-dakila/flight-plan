@@ -2,6 +2,7 @@ import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { monogramOf } from "@/procedures/list-repositories/utils/monogram"
 import { findRepositoriesProblem } from "./completion-problem"
 import { repositoryIdentityOf, toIdentityAuthor, type GitIdentity, type RepositoryIdentities } from "./git-identity"
+import { repositoryBaseBranchOf, type RepositoryBaseBranches } from "./repository-base-branches"
 import type { RepositoriesStep, TrackedAuthor } from "./schemas"
 import {
   LOCAL_GIT_FORGE,
@@ -53,19 +54,21 @@ export const toRepositoryEntry = (
   authorSearchPlaceholder: authorSearchPlaceholder(forge),
   selfAuthor: selfAuthorOf(forge, identity),
   trackedAuthors: repository.trackedAuthors.map(toTrackedAuthor),
+  baseBranch: repository.baseBranch,
 })
 
 export const buildRepositoriesStep = (
   setup: Setup,
   repositoryForges: RepositoryForges,
   repositoryIdentities: RepositoryIdentities,
+  repositoryBaseBranches: RepositoryBaseBranches,
 ): RepositoriesStep => {
   const continueHint = findRepositoriesProblem(setup)
   return {
     step: "repositories",
     repositories: setup.repositories.map((repository, position) =>
       toRepositoryEntry(
-        repository,
+        { ...repository, baseBranch: repositoryBaseBranchOf(repositoryBaseBranches, repository.path) },
         position,
         repositoryForgeOf(repositoryForges, repository.path),
         repositoryIdentityOf(repositoryIdentities, repository.path),

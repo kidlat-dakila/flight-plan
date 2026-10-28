@@ -17,13 +17,15 @@ export const tracePageSegmentSchema = z.strictObject({
   traceDiagram: traceBandSchema,
 })
 
+export const tracePageSchema = z.strictObject({
+  segments: z.array(tracePageSegmentSchema),
+  codeLinks: z.record(z.string(), codeLinkSchema),
+  codeDefinitions: z.record(z.string(), codeDefinitionSchema),
+})
+
 export const traceFixturePageSchema = z.strictObject({
   entry: traceFixtureEntrySchema,
-  page: z.strictObject({
-    segments: z.array(tracePageSegmentSchema),
-    codeLinks: z.record(z.string(), codeLinkSchema),
-    codeDefinitions: z.record(z.string(), codeDefinitionSchema),
-  }),
+  page: tracePageSchema,
 })
 
 export const failureBodySchema = z.object({ message: z.string() })
@@ -31,5 +33,7 @@ export const failureBodySchema = z.object({ message: z.string() })
 export type TraceFixtureEntry = z.infer<typeof traceFixtureEntrySchema>
 
 export type TracePageSegment = z.infer<typeof tracePageSegmentSchema>
+
+export type TracePage = z.infer<typeof tracePageSchema>
 
 export type TraceFixturePage = z.infer<typeof traceFixturePageSchema>

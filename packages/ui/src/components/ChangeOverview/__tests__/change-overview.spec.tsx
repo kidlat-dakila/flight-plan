@@ -20,7 +20,7 @@ const ROWS: readonly ChangeOverviewRow[] = [
 
 describe("ChangeOverview", () => {
   it("groups the plates under their classification, each with its change, name, type and path", () => {
-    render(<ChangeOverview heading="Change Overview" emptyMessage={null} rows={ROWS} onOpenWaypoint={vi.fn()} />)
+    render(<ChangeOverview anchorId="one-change-overview" heading="Change Overview" emptyMessage={null} rows={ROWS} onOpenWaypoint={vi.fn()} />)
 
     const section = screen.getByRole("region", { name: "Change Overview" })
     const components = within(section).getByRole("listitem", { name: "Component" })
@@ -33,7 +33,7 @@ describe("ChangeOverview", () => {
 
   it("jumps to the first waypoint of a card that has one, and draws a card without one as no button", () => {
     const onOpenWaypoint = vi.fn()
-    render(<ChangeOverview heading="Change Overview" emptyMessage={null} rows={ROWS} onOpenWaypoint={onOpenWaypoint} />)
+    render(<ChangeOverview anchorId="one-change-overview" heading="Change Overview" emptyMessage={null} rows={ROWS} onOpenWaypoint={onOpenWaypoint} />)
 
     fireEvent.click(screen.getByRole("button", { name: /AddTodoForm/ }))
 
@@ -48,7 +48,7 @@ describe("ChangeOverview", () => {
       classification: { key: "logic", label: "Logic" },
       cards: [{ id: "price", label: "priceOf", typeLabel: "Function", path: "src/price.ts", change: "modified", changeLabel: "Modified", waypointAnchorId: "waypoint-w2", preview: CODE_LINKS["src/price.ts#priceOf"] }],
     }]
-    render(<ChangeOverview heading="Change Overview" emptyMessage={null} rows={rows} onOpenWaypoint={onOpenWaypoint} />)
+    render(<ChangeOverview anchorId="one-change-overview" heading="Change Overview" emptyMessage={null} rows={rows} onOpenWaypoint={onOpenWaypoint} />)
 
     const plate = screen.getByRole("button", { name: /priceOf/ })
     fireEvent.focus(plate)
@@ -62,7 +62,7 @@ describe("ChangeOverview", () => {
   })
 
   it("says so when no code changed", () => {
-    render(<ChangeOverview heading="Change Overview" emptyMessage="No code changed." rows={[]} onOpenWaypoint={vi.fn()} />)
+    render(<ChangeOverview anchorId="one-change-overview" heading="Change Overview" emptyMessage="No code changed." rows={[]} onOpenWaypoint={vi.fn()} />)
 
     expect(screen.getByText("No code changed.")).toBeTruthy()
     expect(screen.queryByRole("list")).toBeNull()

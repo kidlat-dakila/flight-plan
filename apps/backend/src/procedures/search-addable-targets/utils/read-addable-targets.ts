@@ -1,5 +1,5 @@
 import type { ForgesChoice } from "@/procedures/get-setup/utils/setup"
-import type { ReviewTarget } from "@/procedures/list-repositories/utils/repository"
+import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import type { RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import { GitAdapterError, type GitAdapter, type ReviewTarget as ForgeTarget } from "@flightplan/git-forge"
 import { selectAddableTargets } from "./select-addable-targets"
@@ -30,11 +30,11 @@ const readFromAdapter = async (adapter: GitAdapter): Promise<AddableTargetsReadi
 }
 
 export const readAddableTargets = async (
-  repositoryPath: string,
+  repository: Pick<Repository, "path" | "baseBranch">,
   forges: ForgesChoice | null,
   openRepository: RepositoryAdapterOpener,
 ): Promise<AddableTargetsReading> => {
-  const opened = await openRepository(repositoryPath, forges)
+  const opened = await openRepository(repository.path, forges, repository.baseBranch)
   return opened.resolved.ok
     ? await readFromAdapter(opened.resolved.gitAdapter)
     : { kind: "unreadable", message: opened.resolved.error.message }

@@ -1,0 +1,6 @@
+{
+  "title": "Drizzle ORM on Postgres with plain service functions",
+  "packages": ["drizzle-orm"],
+  "language": "typescript",
+  "mainFramework": null
+}

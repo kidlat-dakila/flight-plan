@@ -122,4 +122,14 @@ describe("FileExplorer", () => {
     fireEvent.click(screen.getByRole("button", { name: "Clear" }))
     expect(onClearFilter).toHaveBeenCalledTimes(1)
   })
+
+  it("quiets a file only when it carries a note", () => {
+    const unlinked = fileRow("src/app.py", 0, [], { anchorId: null, reviewed: null })
+    const notCovered = fileRow("setup.cfg", 0, [], { anchorId: null, noteLabel: "Not covered", reviewed: null })
+    const { container } = renderExplorer({ ...EXPLORER, rows: [unlinked, notCovered] })
+
+    const rowOf = (id: string): Element | null => container.querySelector(`[data-file-row="${id}"]`)
+    expect(rowOf("src/app.py")?.classList.contains("text-muted-foreground")).toBe(false)
+    expect(rowOf("setup.cfg")?.classList.contains("text-muted-foreground")).toBe(true)
+  })
 })

@@ -1,0 +1,6821 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "src/app/api/pokemon/[id]/route.ts",
+        "codeBlockIds": [
+          "src/app/api/pokemon/[id]/route.ts#import@1:1",
+          "src/app/api/pokemon/[id]/route.ts#function@3:1",
+          "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:30",
+          "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:51",
+          "src/app/api/pokemon/[id]/route.ts#variable@4:3",
+          "src/app/api/pokemon/[id]/route.ts#call@5:3",
+          "src/app/api/pokemon/[id]/route.ts#property@6:31"
+        ],
+        "rootBlockIds": [
+          "src/app/api/pokemon/[id]/route.ts#import@1:1",
+          "src/app/api/pokemon/[id]/route.ts#function@3:1"
+        ],
+        "diffBlockIds": [
+          "src/app/api/pokemon/[id]/route.ts#import@1:1",
+          "src/app/api/pokemon/[id]/route.ts#function@3:1",
+          "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:30",
+          "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:51",
+          "src/app/api/pokemon/[id]/route.ts#variable@4:3",
+          "src/app/api/pokemon/[id]/route.ts#call@5:3",
+          "src/app/api/pokemon/[id]/route.ts#property@6:31"
+        ],
+        "diffContains": [
+          "route",
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/app/api/pokemon/[id]/route.ts#call@5:3",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/lib/pokemon.ts#function@25:1"
+        ],
+        "exports": {
+          "DELETE": "src/app/api/pokemon/[id]/route.ts#function@3:1"
+        }
+      },
+      {
+        "filePath": "src/app/api/pokemon/route.ts",
+        "codeBlockIds": [
+          "src/app/api/pokemon/route.ts#import@1:1",
+          "src/app/api/pokemon/route.ts#function@3:1"
+        ],
+        "rootBlockIds": [
+          "src/app/api/pokemon/route.ts#import@1:1",
+          "src/app/api/pokemon/route.ts#function@3:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/app/api/pokemon/route.ts#function@3:1",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/lib/pokemon.ts#function@15:1"
+        ],
+        "exports": {
+          "GET": "src/app/api/pokemon/route.ts#function@3:1"
+        }
+      },
+      {
+        "filePath": "src/app/pokemon/actions.ts",
+        "codeBlockIds": [
+          "src/app/pokemon/actions.ts#directive@1:1",
+          "src/app/pokemon/actions.ts#import@3:1",
+          "src/app/pokemon/actions.ts#import@4:1",
+          "src/app/pokemon/actions.ts#import@5:1",
+          "src/app/pokemon/actions.ts#function@7:1",
+          "src/app/pokemon/actions.ts#root-argument-value@7:28",
+          "src/app/pokemon/actions.ts#root-argument-value@9:18",
+          "src/app/pokemon/actions.ts#property@9:5",
+          "src/app/pokemon/actions.ts#property@10:5",
+          "src/app/pokemon/actions.ts#property@11:5",
+          "src/app/pokemon/actions.ts#function@15:1",
+          "src/app/pokemon/actions.ts#root-argument-value@15:37",
+          "src/app/pokemon/actions.ts#call@16:3",
+          "src/app/pokemon/actions.ts#navigation@17:3",
+          "src/app/pokemon/actions.ts#function@20:1",
+          "src/app/pokemon/actions.ts#root-argument-value@20:38",
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3"
+        ],
+        "rootBlockIds": [
+          "src/app/pokemon/actions.ts#directive@1:1",
+          "src/app/pokemon/actions.ts#import@3:1",
+          "src/app/pokemon/actions.ts#import@4:1",
+          "src/app/pokemon/actions.ts#import@5:1",
+          "src/app/pokemon/actions.ts#function@7:1",
+          "src/app/pokemon/actions.ts#function@15:1",
+          "src/app/pokemon/actions.ts#function@20:1"
+        ],
+        "diffBlockIds": [
+          "src/app/pokemon/actions.ts#import@3:1",
+          "src/app/pokemon/actions.ts#import@5:1",
+          "src/app/pokemon/actions.ts#function@20:1",
+          "src/app/pokemon/actions.ts#root-argument-value@20:38",
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3"
+        ],
+        "diffContains": [
+          "route",
+          "data",
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/app/pokemon/actions.ts#function@7:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/app/pokemon/actions.ts#call@16:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/app/pokemon/actions.ts#navigation@17:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/app/pokemon/actions.ts#call@21:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/app/pokemon/actions.ts#cache@22:3",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/lib/pokemon.ts#type-declaration@8:1",
+          "src/lib/pokemon.ts#function@19:1",
+          "src/lib/pokemon.ts#function@25:1"
+        ],
+        "exports": {
+          "createPokemon": "src/app/pokemon/actions.ts#function@15:1",
+          "releasePokemon": "src/app/pokemon/actions.ts#function@20:1"
+        }
+      },
+      {
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "codeBlockIds": [
+          "src/app/pokemon/components/PokemonForm.tsx#import@1:1",
+          "src/app/pokemon/components/PokemonForm.tsx#import@2:1",
+          "src/app/pokemon/components/PokemonForm.tsx#component@4:1",
+          "src/app/pokemon/components/PokemonForm.tsx#render-root@5:3",
+          "src/app/pokemon/components/PokemonForm.tsx#render@6:5",
+          "src/app/pokemon/components/PokemonForm.tsx#render-event@6:11",
+          "src/app/pokemon/components/PokemonForm.tsx#render@7:7",
+          "src/app/pokemon/components/PokemonForm.tsx#render@8:7",
+          "src/app/pokemon/components/PokemonForm.tsx#render@9:7",
+          "src/app/pokemon/components/PokemonForm.tsx#render@10:7"
+        ],
+        "rootBlockIds": [
+          "src/app/pokemon/components/PokemonForm.tsx#import@1:1",
+          "src/app/pokemon/components/PokemonForm.tsx#import@2:1",
+          "src/app/pokemon/components/PokemonForm.tsx#component@4:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "renderRootBlockIds": [
+          "src/app/pokemon/components/PokemonForm.tsx#render-root@5:3"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/app/pokemon/components/PokemonForm.tsx#render-event@6:11",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/app/pokemon/components/PokemonForm.tsx#render@10:7",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/app/pokemon/actions.ts#function@15:1"
+        ],
+        "exports": {
+          "PokemonForm": "src/app/pokemon/components/PokemonForm.tsx#component@4:1"
+        }
+      },
+      {
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "codeBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#directive@1:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#import@3:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#import@4:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:33",
+          "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:37",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-event@12:7",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@12:16",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9",
+          "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
+          "src/app/pokemon/components/ReleaseButton.tsx#effect-callback@13:62",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8"
+        ],
+        "rootBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#directive@1:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#import@3:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#import@4:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1"
+        ],
+        "diffBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#directive@1:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#import@3:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#import@4:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:33",
+          "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:37",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-event@12:7",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@12:16",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9",
+          "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8"
+        ],
+        "diffContains": [
+          "ui",
+          "effect",
+          "logic"
+        ],
+        "renderRootBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/app/pokemon/actions.ts#function@20:1"
+        ],
+        "exports": {
+          "ReleaseButton": "src/app/pokemon/components/ReleaseButton.tsx#component@6:1"
+        }
+      },
+      {
+        "filePath": "src/app/pokemon/new/page.tsx",
+        "codeBlockIds": [
+          "src/app/pokemon/new/page.tsx#import@1:1",
+          "src/app/pokemon/new/page.tsx#component@3:1",
+          "src/app/pokemon/new/page.tsx#render-root@4:3",
+          "src/app/pokemon/new/page.tsx#render@5:5",
+          "src/app/pokemon/new/page.tsx#render@6:7",
+          "src/app/pokemon/new/page.tsx#render@7:7"
+        ],
+        "rootBlockIds": [
+          "src/app/pokemon/new/page.tsx#import@1:1",
+          "src/app/pokemon/new/page.tsx#component@3:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "renderRootBlockIds": [
+          "src/app/pokemon/new/page.tsx#render-root@4:3"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/app/pokemon/new/page.tsx#render@7:7",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/app/pokemon/components/PokemonForm.tsx#component@4:1"
+        ],
+        "exports": {
+          "default": "src/app/pokemon/new/page.tsx#component@3:1"
+        }
+      },
+      {
+        "filePath": "src/app/pokemon/page.tsx",
+        "codeBlockIds": [
+          "src/app/pokemon/page.tsx#import@1:1",
+          "src/app/pokemon/page.tsx#import@2:1",
+          "src/app/pokemon/page.tsx#import@3:1",
+          "src/app/pokemon/page.tsx#component@5:1",
+          "src/app/pokemon/page.tsx#external-value@6:3",
+          "src/app/pokemon/page.tsx#render-root@7:3",
+          "src/app/pokemon/page.tsx#render@8:5",
+          "src/app/pokemon/page.tsx#render@9:7",
+          "src/app/pokemon/page.tsx#render@10:7",
+          "src/app/pokemon/page.tsx#render@11:7",
+          "src/app/pokemon/page.tsx#render-loop@12:10",
+          "src/app/pokemon/page.tsx#function@12:20",
+          "src/app/pokemon/page.tsx#variable@12:21",
+          "src/app/pokemon/page.tsx#render@13:11",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "rootBlockIds": [
+          "src/app/pokemon/page.tsx#import@1:1",
+          "src/app/pokemon/page.tsx#import@2:1",
+          "src/app/pokemon/page.tsx#import@3:1",
+          "src/app/pokemon/page.tsx#component@5:1"
+        ],
+        "diffBlockIds": [
+          "src/app/pokemon/page.tsx#import@2:1",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "diffContains": [
+          "ui",
+          "logic"
+        ],
+        "renderRootBlockIds": [
+          "src/app/pokemon/page.tsx#render-root@7:3"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/app/pokemon/page.tsx#external-value@6:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/app/pokemon/page.tsx#render@10:7",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/app/pokemon/page.tsx#render@15:13",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/lib/pokemon.ts#function@15:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1"
+        ],
+        "exports": {
+          "default": "src/app/pokemon/page.tsx#component@5:1"
+        }
+      },
+      {
+        "filePath": "src/lib/pokemon.ts",
+        "codeBlockIds": [
+          "src/lib/pokemon.ts#type-declaration@1:1",
+          "src/lib/pokemon.ts#type-declaration@8:1",
+          "src/lib/pokemon.ts#root-variable@10:1",
+          "src/lib/pokemon.ts#property@11:5",
+          "src/lib/pokemon.ts#property@11:12",
+          "src/lib/pokemon.ts#property@11:29",
+          "src/lib/pokemon.ts#property@11:40",
+          "src/lib/pokemon.ts#property@12:5",
+          "src/lib/pokemon.ts#property@12:12",
+          "src/lib/pokemon.ts#property@12:31",
+          "src/lib/pokemon.ts#property@12:41",
+          "src/lib/pokemon.ts#function@15:1",
+          "src/lib/pokemon.ts#function@19:1",
+          "src/lib/pokemon.ts#root-argument-value@19:28",
+          "src/lib/pokemon.ts#external-value@20:3",
+          "src/lib/pokemon.ts#property@20:19",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#root-argument-value@25:31",
+          "src/lib/pokemon.ts#function@26:24",
+          "src/lib/pokemon.ts#variable@26:25"
+        ],
+        "rootBlockIds": [
+          "src/lib/pokemon.ts#type-declaration@1:1",
+          "src/lib/pokemon.ts#type-declaration@8:1",
+          "src/lib/pokemon.ts#root-variable@10:1",
+          "src/lib/pokemon.ts#function@15:1",
+          "src/lib/pokemon.ts#function@19:1",
+          "src/lib/pokemon.ts#function@25:1"
+        ],
+        "diffBlockIds": [
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#root-argument-value@25:31",
+          "src/lib/pokemon.ts#function@26:24",
+          "src/lib/pokemon.ts#variable@26:25"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "Pokemon": "src/lib/pokemon.ts#type-declaration@1:1",
+          "NewPokemon": "src/lib/pokemon.ts#type-declaration@8:1",
+          "listPokemon": "src/lib/pokemon.ts#function@15:1",
+          "addPokemon": "src/lib/pokemon.ts#function@19:1",
+          "removePokemon": "src/lib/pokemon.ts#function@25:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "src/app/api/pokemon/[id]/route.ts",
+      "src/app/api/pokemon/route.ts",
+      "src/app/pokemon/new/page.tsx",
+      "src/app/pokemon/page.tsx"
+    ],
+    "codeBlocks": [
+      {
+        "id": "src/app/api/pokemon/[id]/route.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 46
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 46
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/api/pokemon/[id]/route.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/api/pokemon/[id]/route.ts#function@3:1",
+        "name": "DELETE",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:30",
+          "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:51",
+          "src/app/api/pokemon/[id]/route.ts#variable@4:3",
+          "src/app/api/pokemon/[id]/route.ts#call@5:3",
+          "src/app/api/pokemon/[id]/route.ts#property@6:31"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/app/api/pokemon/[id]/route.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 30
+            }
+          },
+          {
+            "start": {
+              "line": 3,
+              "column": 47
+            },
+            "end": {
+              "line": 3,
+              "column": 51
+            }
+          },
+          {
+            "start": {
+              "line": 3,
+              "column": 57
+            },
+            "end": {
+              "line": 3,
+              "column": 99
+            }
+          },
+          {
+            "start": {
+              "line": 6,
+              "column": 3
+            },
+            "end": {
+              "line": 6,
+              "column": 31
+            }
+          },
+          {
+            "start": {
+              "line": 6,
+              "column": 42
+            },
+            "end": {
+              "line": 6,
+              "column": 45
+            }
+          },
+          {
+            "start": {
+              "line": 7,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 3,
+                "column": 30
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 47
+              },
+              "end": {
+                "line": 3,
+                "column": 51
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 57
+              },
+              "end": {
+                "line": 3,
+                "column": 99
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 3
+              },
+              "end": {
+                "line": 6,
+                "column": 31
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 42
+              },
+              "end": {
+                "line": 6,
+                "column": 45
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 1
+              },
+              "end": {
+                "line": 7,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/api/pokemon/[id]/route.ts#function@3:1",
+          "src/app/api/pokemon/[id]/route.ts#call@5:3",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [
+          "api-route"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/api/pokemon/[id]/route.ts#call@5:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/api/pokemon/[id]/route.ts",
+        "catalogue": {
+          "specifier": "next",
+          "name": "{app,src/app}/**/route.{js,ts}",
+          "runs": "route",
+          "path": "/api/pokemon/[id]",
+          "method": "DELETE",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Next.js",
+          "kind": "route",
+          "part": "handler",
+          "heading": "DELETE",
+          "groupKey": "/api/pokemon/[id]",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:30",
+        "name": "_request",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 30
+            },
+            "end": {
+              "line": 3,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/app/api/pokemon/[id]/route.ts#function@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 30
+            },
+            "end": {
+              "line": 3,
+              "column": 47
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 30
+              },
+              "end": {
+                "line": 3,
+                "column": 47
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/api/pokemon/[id]/route.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:51",
+        "name": "params",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 51
+            },
+            "end": {
+              "line": 3,
+              "column": 57
+            }
+          }
+        ],
+        "parentBlockId": "src/app/api/pokemon/[id]/route.ts#function@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 51
+            },
+            "end": {
+              "line": 3,
+              "column": 57
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 51
+              },
+              "end": {
+                "line": 3,
+                "column": 57
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/api/pokemon/[id]/route.ts#variable@4:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/api/pokemon/[id]/route.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/api/pokemon/[id]/route.ts#variable@4:3",
+        "name": "id",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 3
+            },
+            "end": {
+              "line": 4,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/app/api/pokemon/[id]/route.ts#function@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 4,
+              "column": 3
+            },
+            "end": {
+              "line": 4,
+              "column": 30
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 3
+              },
+              "end": {
+                "line": 4,
+                "column": 30
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 24
+              },
+              "end": {
+                "line": 4,
+                "column": 30
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:51"
+          }
+        ],
+        "usedByIds": [
+          "src/app/api/pokemon/[id]/route.ts#call@5:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/api/pokemon/[id]/route.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/api/pokemon/[id]/route.ts#call@5:3",
+        "name": "removePokemon",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 3
+            },
+            "end": {
+              "line": 5,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "src/app/api/pokemon/[id]/route.ts#function@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 3
+            },
+            "end": {
+              "line": 5,
+              "column": 28
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 3
+              },
+              "end": {
+                "line": 5,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 3
+              },
+              "end": {
+                "line": 5,
+                "column": 16
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 24
+              },
+              "end": {
+                "line": 5,
+                "column": 26
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/api/pokemon/[id]/route.ts#call@5:3",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 3
+              },
+              "end": {
+                "line": 5,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/lib/pokemon.ts#function@25:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 24
+              },
+              "end": {
+                "line": 5,
+                "column": 26
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/api/pokemon/[id]/route.ts#variable@4:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/lib/pokemon.ts#function@25:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/api/pokemon/[id]/route.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/api/pokemon/[id]/route.ts#property@6:31",
+        "name": "status",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 31
+            },
+            "end": {
+              "line": 6,
+              "column": 42
+            }
+          }
+        ],
+        "parentBlockId": "src/app/api/pokemon/[id]/route.ts#function@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 31
+            },
+            "end": {
+              "line": 6,
+              "column": 42
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 31
+              },
+              "end": {
+                "line": 6,
+                "column": 42
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/api/pokemon/[id]/route.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/api/pokemon/route.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/api/pokemon/route.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/api/pokemon/route.ts#function@3:1",
+        "name": "GET",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/app/api/pokemon/route.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 24
+              },
+              "end": {
+                "line": 4,
+                "column": 35
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/lib/pokemon.ts#function@15:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/api/pokemon/route.ts",
+        "catalogue": {
+          "specifier": "next",
+          "name": "{app,src/app}/**/route.{js,ts}",
+          "runs": "route",
+          "path": "/api/pokemon",
+          "method": "GET",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Next.js",
+          "kind": "route",
+          "part": "handler",
+          "heading": "GET",
+          "groupKey": "/api/pokemon",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#directive@1:1",
+        "type": "directive",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 13
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 44
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 3,
+                "column": 44
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#import@5:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 75
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 22
+            },
+            "end": {
+              "line": 5,
+              "column": 37
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 22
+              },
+              "end": {
+                "line": 5,
+                "column": 37
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#function@7:1",
+        "name": "readPokemonFields",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/app/pokemon/actions.ts#root-argument-value@7:28",
+          "src/app/pokemon/actions.ts#property@9:5",
+          "src/app/pokemon/actions.ts#property@10:5",
+          "src/app/pokemon/actions.ts#property@11:5"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 49
+              },
+              "end": {
+                "line": 7,
+                "column": 59
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/lib/pokemon.ts#type-declaration@8:1"
+          }
+        ],
+        "usedByIds": [
+          "src/app/pokemon/actions.ts#call@16:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#root-argument-value@7:28",
+        "name": "formData",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 28
+            },
+            "end": {
+              "line": 7,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#function@7:1",
+        "childrenBlockIds": [
+          "src/app/pokemon/actions.ts#root-argument-value@9:18"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/pokemon/actions.ts#property@9:5",
+          "src/app/pokemon/actions.ts#property@10:5",
+          "src/app/pokemon/actions.ts#property@11:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/app/pokemon/actions.ts#call@16:3",
+            "symbolIndex": 2
+          }
+        ],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#root-argument-value@9:18",
+        "name": "get",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 18
+            },
+            "end": {
+              "line": 9,
+              "column": 30
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 19
+            },
+            "end": {
+              "line": 10,
+              "column": 31
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 25
+            },
+            "end": {
+              "line": 11,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#root-argument-value@7:28",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#property@9:5",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 39
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#function@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 18
+              },
+              "end": {
+                "line": 9,
+                "column": 30
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": "src/app/pokemon/actions.ts#root-argument-value@9:18"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/actions.ts#root-argument-value@7:28"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#property@10:5",
+        "name": "level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#function@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 19
+              },
+              "end": {
+                "line": 10,
+                "column": 31
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": "src/app/pokemon/actions.ts#root-argument-value@9:18"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/actions.ts#root-argument-value@7:28"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#property@11:5",
+        "name": "primaryType",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 5
+            },
+            "end": {
+              "line": 11,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#function@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 25
+              },
+              "end": {
+                "line": 11,
+                "column": 37
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": "src/app/pokemon/actions.ts#root-argument-value@9:18"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/actions.ts#root-argument-value@7:28"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#function@15:1",
+        "name": "createPokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 1
+            },
+            "end": {
+              "line": 18,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/app/pokemon/actions.ts#root-argument-value@15:37",
+          "src/app/pokemon/actions.ts#call@16:3",
+          "src/app/pokemon/actions.ts#navigation@17:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/app/pokemon/actions.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "server-action",
+          "api-route",
+          "navigation"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/pokemon/components/PokemonForm.tsx#render-event@6:11"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": {
+          "specifier": null,
+          "name": "use server",
+          "runs": "route",
+          "path": null,
+          "method": "POST",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Next.js",
+          "kind": "route",
+          "part": "server-action",
+          "heading": "POST",
+          "groupKey": null,
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#root-argument-value@15:37",
+        "name": "formData",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 37
+            },
+            "end": {
+              "line": 15,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#function@15:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/pokemon/actions.ts#call@16:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#call@16:3",
+        "name": "addPokemon",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 3
+            },
+            "end": {
+              "line": 16,
+              "column": 42
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#function@15:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 3
+              },
+              "end": {
+                "line": 16,
+                "column": 13
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/lib/pokemon.ts#function@19:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 14
+              },
+              "end": {
+                "line": 16,
+                "column": 31
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/actions.ts#function@7:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 32
+              },
+              "end": {
+                "line": 16,
+                "column": 40
+              }
+            },
+            "use": "value",
+            "handedToId": "src/app/pokemon/actions.ts#root-argument-value@7:28",
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/actions.ts#root-argument-value@15:37"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#navigation@17:3",
+        "type": "navigation",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 3
+            },
+            "end": {
+              "line": 17,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#function@15:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "navigation"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 3
+              },
+              "end": {
+                "line": 17,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "next/navigation",
+            "importedName": "redirect",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": {
+          "specifier": "next/navigation",
+          "name": "redirect",
+          "runs": null,
+          "path": "/pokemon",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#function@20:1",
+        "name": "releasePokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 1
+            },
+            "end": {
+              "line": 23,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/app/pokemon/actions.ts#root-argument-value@20:38",
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/app/pokemon/actions.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 1
+            },
+            "end": {
+              "line": 20,
+              "column": 38
+            }
+          },
+          {
+            "start": {
+              "line": 20,
+              "column": 48
+            },
+            "end": {
+              "line": 20,
+              "column": 51
+            }
+          },
+          {
+            "start": {
+              "line": 23,
+              "column": 1
+            },
+            "end": {
+              "line": 23,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 1
+              },
+              "end": {
+                "line": 20,
+                "column": 38
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 48
+              },
+              "end": {
+                "line": 20,
+                "column": 51
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 1
+              },
+              "end": {
+                "line": 23,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/actions.ts#function@20:1",
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "server-action",
+          "api-route",
+          "database-read-write"
+        ],
+        "diffClassifications": [
+          "server-action",
+          "api-route",
+          "database-read-write"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62"
+        ],
+        "nextBlockIds": [
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": {
+          "specifier": null,
+          "name": "use server",
+          "runs": "route",
+          "path": null,
+          "method": "POST",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Next.js",
+          "kind": "route",
+          "part": "server-action",
+          "heading": "POST",
+          "groupKey": null,
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#root-argument-value@20:38",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 38
+            },
+            "end": {
+              "line": 20,
+              "column": 48
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#function@20:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 38
+            },
+            "end": {
+              "line": 20,
+              "column": 48
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 38
+              },
+              "end": {
+                "line": 20,
+                "column": 48
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/pokemon/actions.ts#call@21:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#call@21:3",
+        "name": "removePokemon",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 3
+            },
+            "end": {
+              "line": 21,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#function@20:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 21,
+              "column": 3
+            },
+            "end": {
+              "line": 21,
+              "column": 20
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 3
+              },
+              "end": {
+                "line": 21,
+                "column": 20
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 3
+              },
+              "end": {
+                "line": 21,
+                "column": 16
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 3
+              },
+              "end": {
+                "line": 21,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/lib/pokemon.ts#function@25:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 17
+              },
+              "end": {
+                "line": 21,
+                "column": 19
+              }
+            },
+            "use": "value",
+            "handedToId": "src/lib/pokemon.ts#root-argument-value@25:31",
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/actions.ts#root-argument-value@20:38"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/lib/pokemon.ts#function@25:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/actions.ts#cache@22:3",
+        "type": "cache",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 22,
+              "column": 3
+            },
+            "end": {
+              "line": 22,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/actions.ts#function@20:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 22,
+              "column": 3
+            },
+            "end": {
+              "line": 22,
+              "column": 29
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 3
+              },
+              "end": {
+                "line": 22,
+                "column": 29
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/actions.ts#cache@22:3"
+        ],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [
+          "database-read-write"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 22,
+                "column": 3
+              },
+              "end": {
+                "line": 22,
+                "column": 17
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "next/cache",
+            "importedName": "revalidatePath",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/actions.ts",
+        "catalogue": {
+          "specifier": "next/cache",
+          "name": "revalidatePath",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/app/pokemon/components/PokemonForm.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/PokemonForm.tsx#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 60
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/PokemonForm.tsx#component@4:1",
+        "name": "PokemonForm",
+        "type": "component",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/app/pokemon/components/PokemonForm.tsx#render-root@5:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/app/pokemon/components/PokemonForm.tsx"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/pokemon/new/page.tsx#render@7:7"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/PokemonForm.tsx#render-root@5:3",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 3
+            },
+            "end": {
+              "line": 12,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/PokemonForm.tsx#component@4:1",
+        "childrenBlockIds": [
+          "src/app/pokemon/components/PokemonForm.tsx#render@6:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/PokemonForm.tsx#render@6:5",
+        "name": "form",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 11,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/PokemonForm.tsx#render-root@5:3",
+        "childrenBlockIds": [
+          "src/app/pokemon/components/PokemonForm.tsx#render-event@6:11",
+          "src/app/pokemon/components/PokemonForm.tsx#render@7:7",
+          "src/app/pokemon/components/PokemonForm.tsx#render@8:7",
+          "src/app/pokemon/components/PokemonForm.tsx#render@9:7",
+          "src/app/pokemon/components/PokemonForm.tsx#render@10:7"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/PokemonForm.tsx#render-event@6:11",
+        "name": "action",
+        "type": "render-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 11
+            },
+            "end": {
+              "line": 6,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/PokemonForm.tsx#render@6:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 19
+              },
+              "end": {
+                "line": 6,
+                "column": 32
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/app/pokemon/actions.ts#function@15:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/PokemonForm.tsx#render@7:7",
+        "name": "input",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 7
+            },
+            "end": {
+              "line": 7,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/PokemonForm.tsx#render@6:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/PokemonForm.tsx#render@8:7",
+        "name": "input",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 7
+            },
+            "end": {
+              "line": 8,
+              "column": 70
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/PokemonForm.tsx#render@6:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/PokemonForm.tsx#render@9:7",
+        "name": "input",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 7
+            },
+            "end": {
+              "line": 9,
+              "column": 63
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/PokemonForm.tsx#render@6:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/PokemonForm.tsx#render@10:7",
+        "name": "SubmitButton",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 7
+            },
+            "end": {
+              "line": 10,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/PokemonForm.tsx#render@6:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 8
+              },
+              "end": {
+                "line": 10,
+                "column": 20
+              }
+            },
+            "use": "render",
+            "type": "unopened-import",
+            "specifier": "@/components/ui/SubmitButton",
+            "importedName": "SubmitButton",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/PokemonForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#directive@1:1",
+        "type": "directive",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 13
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 13
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 13
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 38
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 3,
+                "column": 38
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 55
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 1
+              },
+              "end": {
+                "line": 4,
+                "column": 55
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+        "name": "ReleaseButton",
+        "type": "component",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 19,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:33",
+          "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:37",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/app/pokemon/components/ReleaseButton.tsx"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 33
+            }
+          },
+          {
+            "start": {
+              "line": 6,
+              "column": 35
+            },
+            "end": {
+              "line": 6,
+              "column": 37
+            }
+          },
+          {
+            "start": {
+              "line": 6,
+              "column": 41
+            },
+            "end": {
+              "line": 6,
+              "column": 76
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 1
+            },
+            "end": {
+              "line": 19,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 1
+              },
+              "end": {
+                "line": 6,
+                "column": 33
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 35
+              },
+              "end": {
+                "line": 6,
+                "column": 37
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 41
+              },
+              "end": {
+                "line": 6,
+                "column": 76
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 1
+              },
+              "end": {
+                "line": 19,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8"
+        ],
+        "classifications": [
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [
+          "component",
+          "effect"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "nextBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:33",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 33
+            },
+            "end": {
+              "line": 6,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 33
+            },
+            "end": {
+              "line": 6,
+              "column": 35
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 33
+              },
+              "end": {
+                "line": 6,
+                "column": 35
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/app/pokemon/page.tsx#render@15:13",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:37",
+        "name": "name",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 37
+            },
+            "end": {
+              "line": 6,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 37
+            },
+            "end": {
+              "line": 6,
+              "column": 41
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 37
+              },
+              "end": {
+                "line": 6,
+                "column": 41
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/app/pokemon/page.tsx#render@15:13",
+            "symbolIndex": 2
+          }
+        ],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+        "name": "isReleasing",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 54
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 3
+              },
+              "end": {
+                "line": 7,
+                "column": 54
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 39
+              },
+              "end": {
+                "line": 7,
+                "column": 52
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "react",
+            "importedName": "useTransition",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 3
+            },
+            "end": {
+              "line": 18,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+        "childrenBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 3
+            },
+            "end": {
+              "line": 8,
+              "column": 11
+            }
+          },
+          {
+            "start": {
+              "line": 18,
+              "column": 3
+            },
+            "end": {
+              "line": 18,
+              "column": 4
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 3
+              },
+              "end": {
+                "line": 8,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 3
+              },
+              "end": {
+                "line": 18,
+                "column": 4
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8"
+        ],
+        "classifications": [
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [
+          "component",
+          "effect"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+        "name": "button",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 17,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+        "childrenBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#render-event@12:7",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 12
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 7
+            },
+            "end": {
+              "line": 10,
+              "column": 20
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 7
+            },
+            "end": {
+              "line": 11,
+              "column": 29
+            }
+          },
+          {
+            "start": {
+              "line": 15,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 6
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 7
+            },
+            "end": {
+              "line": 16,
+              "column": 8
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 46
+            },
+            "end": {
+              "line": 16,
+              "column": 47
+            }
+          },
+          {
+            "start": {
+              "line": 17,
+              "column": 5
+            },
+            "end": {
+              "line": 17,
+              "column": 14
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 5
+              },
+              "end": {
+                "line": 9,
+                "column": 12
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 7
+              },
+              "end": {
+                "line": 10,
+                "column": 20
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 7
+              },
+              "end": {
+                "line": 11,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 17
+              },
+              "end": {
+                "line": 11,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 5
+              },
+              "end": {
+                "line": 15,
+                "column": 6
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 7
+              },
+              "end": {
+                "line": 16,
+                "column": 8
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 46
+              },
+              "end": {
+                "line": 16,
+                "column": 47
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 5
+              },
+              "end": {
+                "line": 17,
+                "column": 14
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8"
+        ],
+        "classifications": [
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [
+          "component",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 17
+              },
+              "end": {
+                "line": 11,
+                "column": 28
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#render-event@12:7",
+        "name": "onClick",
+        "type": "render-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 7
+            },
+            "end": {
+              "line": 14,
+              "column": 9
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+        "childrenBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#function@12:16"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 12,
+              "column": 7
+            },
+            "end": {
+              "line": 12,
+              "column": 16
+            }
+          },
+          {
+            "start": {
+              "line": 14,
+              "column": 8
+            },
+            "end": {
+              "line": 14,
+              "column": 9
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 7
+              },
+              "end": {
+                "line": 12,
+                "column": 16
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 8
+              },
+              "end": {
+                "line": 14,
+                "column": 9
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/actions.ts#function@20:1",
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-event@12:7",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@12:16",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9",
+          "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "component",
+          "effect"
+        ],
+        "diffClassifications": [
+          "component",
+          "effect"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#function@12:16"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#function@12:16",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 16
+            },
+            "end": {
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#render-event@12:7",
+        "childrenBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 12,
+              "column": 16
+            },
+            "end": {
+              "line": 12,
+              "column": 23
+            }
+          },
+          {
+            "start": {
+              "line": 14,
+              "column": 7
+            },
+            "end": {
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 16
+              },
+              "end": {
+                "line": 12,
+                "column": 23
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 7
+              },
+              "end": {
+                "line": 14,
+                "column": 8
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/actions.ts#function@20:1",
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@12:16",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9",
+          "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 9
+            },
+            "end": {
+              "line": 13,
+              "column": 87
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#function@12:16",
+        "childrenBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 13,
+              "column": 9
+            },
+            "end": {
+              "line": 13,
+              "column": 49
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 9
+              },
+              "end": {
+                "line": 13,
+                "column": 49
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/actions.ts#function@20:1",
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9",
+          "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 39
+              },
+              "end": {
+                "line": 13,
+                "column": 43
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:37"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
+        "type": "effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 49
+            },
+            "end": {
+              "line": 13,
+              "column": 87
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9",
+        "childrenBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#effect-callback@13:62"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 13,
+              "column": 49
+            },
+            "end": {
+              "line": 13,
+              "column": 62
+            }
+          },
+          {
+            "start": {
+              "line": 13,
+              "column": 86
+            },
+            "end": {
+              "line": 13,
+              "column": 87
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 49
+              },
+              "end": {
+                "line": 13,
+                "column": 62
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 49
+              },
+              "end": {
+                "line": 13,
+                "column": 61
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 86
+              },
+              "end": {
+                "line": 13,
+                "column": 87
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/actions.ts#function@20:1",
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 49
+              },
+              "end": {
+                "line": 13,
+                "column": 61
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#effect-callback@13:62",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#effect-callback@13:62",
+        "name": "0",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 62
+            },
+            "end": {
+              "line": 13,
+              "column": 86
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
+        "childrenBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/app/pokemon/actions.ts#function@20:1",
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "effect"
+        ],
+        "diffClassifications": [
+          "effect"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 62
+            },
+            "end": {
+              "line": 13,
+              "column": 86
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#effect-callback@13:62",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 13,
+              "column": 62
+            },
+            "end": {
+              "line": 13,
+              "column": 86
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 62
+              },
+              "end": {
+                "line": 13,
+                "column": 86
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 68
+              },
+              "end": {
+                "line": 13,
+                "column": 82
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/actions.ts#function@20:1",
+          "src/app/pokemon/actions.ts#call@21:3",
+          "src/app/pokemon/actions.ts#cache@22:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 68
+              },
+              "end": {
+                "line": 13,
+                "column": 82
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/app/pokemon/actions.ts#function@20:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 83
+              },
+              "end": {
+                "line": 13,
+                "column": 85
+              }
+            },
+            "use": "value",
+            "handedToId": "src/app/pokemon/actions.ts#root-argument-value@20:38",
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:33"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/actions.ts#function@20:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 8
+            },
+            "end": {
+              "line": 16,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 8
+            },
+            "end": {
+              "line": 16,
+              "column": 46
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 8
+              },
+              "end": {
+                "line": 16,
+                "column": 46
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 8
+              },
+              "end": {
+                "line": 16,
+                "column": 19
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 8
+              },
+              "end": {
+                "line": 16,
+                "column": 19
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/components/ReleaseButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/new/page.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/new/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/new/page.tsx#component@3:1",
+        "name": "NewPokemonPage",
+        "type": "component",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/app/pokemon/new/page.tsx#render-root@4:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/app/pokemon/new/page.tsx"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "page",
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/new/page.tsx",
+        "catalogue": {
+          "specifier": "next",
+          "name": "{app,src/app}/**/page.{js,jsx,ts,tsx}",
+          "runs": "page",
+          "path": "/pokemon/new",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Next.js",
+          "kind": "route",
+          "part": "page",
+          "heading": null,
+          "groupKey": "/pokemon/new",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/app/pokemon/new/page.tsx#render-root@4:3",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/new/page.tsx#component@3:1",
+        "childrenBlockIds": [
+          "src/app/pokemon/new/page.tsx#render@5:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/new/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/new/page.tsx#render@5:5",
+        "name": "main",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/new/page.tsx#render-root@4:3",
+        "childrenBlockIds": [
+          "src/app/pokemon/new/page.tsx#render@6:7",
+          "src/app/pokemon/new/page.tsx#render@7:7"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/new/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/new/page.tsx#render@6:7",
+        "name": "h1",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 7
+            },
+            "end": {
+              "line": 6,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/new/page.tsx#render@5:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/new/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/new/page.tsx#render@7:7",
+        "name": "PokemonForm",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 7
+            },
+            "end": {
+              "line": 7,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/new/page.tsx#render@5:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 8
+              },
+              "end": {
+                "line": 7,
+                "column": 19
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/app/pokemon/components/PokemonForm.tsx#component@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/new/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 71
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 71
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 1
+              },
+              "end": {
+                "line": 2,
+                "column": 71
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#component@5:1",
+        "name": "PokemonPage",
+        "type": "component",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 21,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/app/pokemon/page.tsx#external-value@6:3",
+          "src/app/pokemon/page.tsx#render-root@7:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/app/pokemon/page.tsx"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "classifications": [
+          "page",
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/page.tsx#render-root@7:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": {
+          "specifier": "next",
+          "name": "{app,src/app}/**/page.{js,jsx,ts,tsx}",
+          "runs": "page",
+          "path": "/pokemon",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Next.js",
+          "kind": "route",
+          "part": "page",
+          "heading": null,
+          "groupKey": "/pokemon",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#external-value@6:3",
+        "name": "party",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 3
+            },
+            "end": {
+              "line": 6,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#component@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 17
+              },
+              "end": {
+                "line": 6,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/lib/pokemon.ts#function@15:1"
+          }
+        ],
+        "usedByIds": [
+          "src/app/pokemon/page.tsx#render-loop@12:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#render-root@7:3",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 20,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#component@5:1",
+        "childrenBlockIds": [
+          "src/app/pokemon/page.tsx#render@8:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/page.tsx#render@8:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#render@8:5",
+        "name": "main",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 19,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#render-root@7:3",
+        "childrenBlockIds": [
+          "src/app/pokemon/page.tsx#render@9:7",
+          "src/app/pokemon/page.tsx#render@10:7",
+          "src/app/pokemon/page.tsx#render@11:7"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/page.tsx#render@11:7"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#render@9:7",
+        "name": "h1",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 7
+            },
+            "end": {
+              "line": 9,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#render@8:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#render@10:7",
+        "name": "Link",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 7
+            },
+            "end": {
+              "line": 10,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#render@8:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 8
+              },
+              "end": {
+                "line": 10,
+                "column": 12
+              }
+            },
+            "use": "render",
+            "type": "unopened-import",
+            "specifier": "next/link",
+            "importedName": "default",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": {
+          "specifier": "next/link",
+          "name": "default",
+          "runs": null,
+          "path": "/pokemon/new",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#render@11:7",
+        "name": "ul",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 7
+            },
+            "end": {
+              "line": 18,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#render@8:5",
+        "childrenBlockIds": [
+          "src/app/pokemon/page.tsx#render-loop@12:10"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/page.tsx#render-loop@12:10"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#render-loop@12:10",
+        "type": "render-loop",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 10
+            },
+            "end": {
+              "line": 17,
+              "column": 11
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#render@11:7",
+        "childrenBlockIds": [
+          "src/app/pokemon/page.tsx#function@12:20"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 10
+              },
+              "end": {
+                "line": 12,
+                "column": 19
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "map"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/page.tsx#external-value@6:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/page.tsx#function@12:20"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#function@12:20",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 20
+            },
+            "end": {
+              "line": 17,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#render-loop@12:10",
+        "childrenBlockIds": [
+          "src/app/pokemon/page.tsx#variable@12:21",
+          "src/app/pokemon/page.tsx#render@13:11"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/page.tsx#render@13:11"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#variable@12:21",
+        "name": "pokemon",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 21
+            },
+            "end": {
+              "line": 12,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#function@12:20",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/app/pokemon/page.tsx#render@13:11",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#render@13:11",
+        "name": "li",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 11
+            },
+            "end": {
+              "line": 16,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#function@12:20",
+        "childrenBlockIds": [
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 20
+              },
+              "end": {
+                "line": 13,
+                "column": 30
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/page.tsx#variable@12:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 14
+              },
+              "end": {
+                "line": 14,
+                "column": 26
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/page.tsx#variable@12:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 33
+              },
+              "end": {
+                "line": 14,
+                "column": 46
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "level"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/page.tsx#variable@12:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 49
+              },
+              "end": {
+                "line": 14,
+                "column": 68
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "primaryType"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/page.tsx#variable@12:21"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/app/pokemon/page.tsx#render@15:13",
+        "name": "ReleaseButton",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 13
+            },
+            "end": {
+              "line": 15,
+              "column": 66
+            }
+          }
+        ],
+        "parentBlockId": "src/app/pokemon/page.tsx#render@13:11",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 15,
+              "column": 13
+            },
+            "end": {
+              "line": 15,
+              "column": 66
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 13
+              },
+              "end": {
+                "line": 15,
+                "column": 66
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 14
+              },
+              "end": {
+                "line": 15,
+                "column": 27
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+          "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+          "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+          "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+          "src/app/pokemon/page.tsx#render@15:13"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 14
+              },
+              "end": {
+                "line": 15,
+                "column": 27
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#component@6:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 32
+              },
+              "end": {
+                "line": 15,
+                "column": 42
+              }
+            },
+            "use": "read",
+            "handedToId": "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:33",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/page.tsx#variable@12:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 50
+              },
+              "end": {
+                "line": 15,
+                "column": 62
+              }
+            },
+            "use": "read",
+            "handedToId": "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:37",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/app/pokemon/page.tsx#variable@12:21"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/app/pokemon/components/ReleaseButton.tsx#component@6:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/app/pokemon/page.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#type-declaration@1:1",
+        "name": "Pokemon",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/lib/pokemon.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "data-model"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/lib/pokemon.ts#type-declaration@8:1",
+          "src/lib/pokemon.ts#root-variable@10:1",
+          "src/lib/pokemon.ts#function@15:1",
+          "src/lib/pokemon.ts#function@19:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#type-declaration@8:1",
+        "name": "NewPokemon",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/lib/pokemon.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "data-model"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 31
+              },
+              "end": {
+                "line": 8,
+                "column": 38
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/app/pokemon/actions.ts#function@7:1",
+          "src/lib/pokemon.ts#root-argument-value@19:28"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#root-variable@10:1",
+        "name": "party",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/lib/pokemon.ts#property@11:5",
+          "src/lib/pokemon.ts#property@11:12",
+          "src/lib/pokemon.ts#property@11:29",
+          "src/lib/pokemon.ts#property@11:40",
+          "src/lib/pokemon.ts#property@12:5",
+          "src/lib/pokemon.ts#property@12:12",
+          "src/lib/pokemon.ts#property@12:31",
+          "src/lib/pokemon.ts#property@12:41"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "isPlain": true,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 12
+              },
+              "end": {
+                "line": 10,
+                "column": 19
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/lib/pokemon.ts#function@15:1",
+          "src/lib/pokemon.ts#property@20:19",
+          "src/lib/pokemon.ts#function@19:1",
+          "src/lib/pokemon.ts#function@25:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#property@11:5",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 5
+            },
+            "end": {
+              "line": 11,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#property@11:12",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 12
+            },
+            "end": {
+              "line": 11,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#property@11:29",
+        "name": "level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 29
+            },
+            "end": {
+              "line": 11,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#property@11:40",
+        "name": "primaryType",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 40
+            },
+            "end": {
+              "line": 11,
+              "column": 63
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#property@12:5",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 5
+            },
+            "end": {
+              "line": 12,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#property@12:12",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 12
+            },
+            "end": {
+              "line": 12,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#property@12:31",
+        "name": "level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 31
+            },
+            "end": {
+              "line": 12,
+              "column": 39
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#property@12:41",
+        "name": "primaryType",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 41
+            },
+            "end": {
+              "line": 12,
+              "column": 61
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#function@15:1",
+        "name": "listPokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 1
+            },
+            "end": {
+              "line": 17,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/lib/pokemon.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 32
+              },
+              "end": {
+                "line": 15,
+                "column": 39
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#type-declaration@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 10
+              },
+              "end": {
+                "line": 16,
+                "column": 15
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#root-variable@10:1"
+          }
+        ],
+        "usedByIds": [
+          "src/app/api/pokemon/route.ts#function@3:1",
+          "src/app/pokemon/page.tsx#external-value@6:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#function@19:1",
+        "name": "addPokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 1
+            },
+            "end": {
+              "line": 23,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/lib/pokemon.ts#root-argument-value@19:28",
+          "src/lib/pokemon.ts#external-value@20:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/lib/pokemon.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 49
+              },
+              "end": {
+                "line": 19,
+                "column": 56
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#type-declaration@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 3
+              },
+              "end": {
+                "line": 21,
+                "column": 8
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#root-variable@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 15
+              },
+              "end": {
+                "line": 21,
+                "column": 20
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#root-variable@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 22
+              },
+              "end": {
+                "line": 21,
+                "column": 27
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#external-value@20:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 22,
+                "column": 10
+              },
+              "end": {
+                "line": 22,
+                "column": 15
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#external-value@20:3"
+          }
+        ],
+        "usedByIds": [
+          "src/app/pokemon/actions.ts#call@16:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#root-argument-value@19:28",
+        "name": "fields",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 28
+            },
+            "end": {
+              "line": 19,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#function@19:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 36
+              },
+              "end": {
+                "line": 19,
+                "column": 46
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#type-declaration@8:1"
+          }
+        ],
+        "usedByIds": [
+          "src/lib/pokemon.ts#external-value@20:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#external-value@20:3",
+        "name": "added",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 3
+            },
+            "end": {
+              "line": 20,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#function@19:1",
+        "childrenBlockIds": [
+          "src/lib/pokemon.ts#property@20:19"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 44
+              },
+              "end": {
+                "line": 20,
+                "column": 50
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#root-argument-value@19:28"
+          }
+        ],
+        "usedByIds": [
+          "src/lib/pokemon.ts#function@19:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#property@20:19",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 19
+            },
+            "end": {
+              "line": 20,
+              "column": 39
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#external-value@20:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 23
+              },
+              "end": {
+                "line": 20,
+                "column": 35
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "length"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#root-variable@10:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#function@25:1",
+        "name": "removePokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 25,
+              "column": 1
+            },
+            "end": {
+              "line": 27,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/lib/pokemon.ts#root-argument-value@25:31",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/lib/pokemon.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 25,
+              "column": 1
+            },
+            "end": {
+              "line": 25,
+              "column": 31
+            }
+          },
+          {
+            "start": {
+              "line": 25,
+              "column": 41
+            },
+            "end": {
+              "line": 25,
+              "column": 50
+            }
+          },
+          {
+            "start": {
+              "line": 26,
+              "column": 3
+            },
+            "end": {
+              "line": 26,
+              "column": 24
+            }
+          },
+          {
+            "start": {
+              "line": 26,
+              "column": 54
+            },
+            "end": {
+              "line": 26,
+              "column": 55
+            }
+          },
+          {
+            "start": {
+              "line": 27,
+              "column": 1
+            },
+            "end": {
+              "line": 27,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 1
+              },
+              "end": {
+                "line": 25,
+                "column": 31
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 41
+              },
+              "end": {
+                "line": 25,
+                "column": 50
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 26,
+                "column": 3
+              },
+              "end": {
+                "line": 26,
+                "column": 24
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 26,
+                "column": 54
+              },
+              "end": {
+                "line": 26,
+                "column": 55
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 27,
+                "column": 1
+              },
+              "end": {
+                "line": 27,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/pokemon.ts#function@25:1",
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 26,
+                "column": 3
+              },
+              "end": {
+                "line": 26,
+                "column": 8
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#root-variable@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 26,
+                "column": 11
+              },
+              "end": {
+                "line": 26,
+                "column": 23
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "filter"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#root-variable@10:1"
+          }
+        ],
+        "usedByIds": [
+          "src/app/api/pokemon/[id]/route.ts#call@5:3",
+          "src/app/pokemon/actions.ts#call@21:3"
+        ],
+        "nextBlockIds": [
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#root-argument-value@25:31",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 25,
+              "column": 31
+            },
+            "end": {
+              "line": 25,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#function@25:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 25,
+              "column": 31
+            },
+            "end": {
+              "line": 25,
+              "column": 41
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 31
+              },
+              "end": {
+                "line": 25,
+                "column": 41
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/app/pokemon/actions.ts#call@21:3",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#function@26:24",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 26,
+              "column": 24
+            },
+            "end": {
+              "line": 26,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#function@25:1",
+        "childrenBlockIds": [
+          "src/lib/pokemon.ts#variable@26:25"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 26,
+              "column": 24
+            },
+            "end": {
+              "line": 26,
+              "column": 25
+            }
+          },
+          {
+            "start": {
+              "line": 26,
+              "column": 32
+            },
+            "end": {
+              "line": 26,
+              "column": 54
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 26,
+                "column": 24
+              },
+              "end": {
+                "line": 26,
+                "column": 25
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 26,
+                "column": 32
+              },
+              "end": {
+                "line": 26,
+                "column": 54
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 26,
+                "column": 37
+              },
+              "end": {
+                "line": 26,
+                "column": 47
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#variable@26:25"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 26,
+                "column": 52
+              },
+              "end": {
+                "line": 26,
+                "column": 54
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/pokemon.ts#root-argument-value@25:31"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/pokemon.ts#variable@26:25",
+        "name": "pokemon",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 26,
+              "column": 25
+            },
+            "end": {
+              "line": 26,
+              "column": 32
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/pokemon.ts#function@26:24",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 26,
+              "column": 25
+            },
+            "end": {
+              "line": 26,
+              "column": 32
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 26,
+                "column": 25
+              },
+              "end": {
+                "line": 26,
+                "column": 32
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/lib/pokemon.ts#function@26:24"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/pokemon.ts",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "src/app/api/pokemon/[id]/route.ts#import@1:1",
+      "src/app/api/pokemon/[id]/route.ts#function@3:1",
+      "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:30",
+      "src/app/api/pokemon/[id]/route.ts#root-argument-value@3:51",
+      "src/app/api/pokemon/[id]/route.ts#variable@4:3",
+      "src/app/api/pokemon/[id]/route.ts#call@5:3",
+      "src/app/api/pokemon/[id]/route.ts#property@6:31",
+      "src/app/pokemon/actions.ts#import@3:1",
+      "src/app/pokemon/actions.ts#import@5:1",
+      "src/app/pokemon/actions.ts#function@20:1",
+      "src/app/pokemon/actions.ts#root-argument-value@20:38",
+      "src/app/pokemon/actions.ts#call@21:3",
+      "src/app/pokemon/actions.ts#cache@22:3",
+      "src/app/pokemon/components/ReleaseButton.tsx#directive@1:1",
+      "src/app/pokemon/components/ReleaseButton.tsx#import@3:1",
+      "src/app/pokemon/components/ReleaseButton.tsx#import@4:1",
+      "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+      "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:33",
+      "src/app/pokemon/components/ReleaseButton.tsx#root-argument-value@6:37",
+      "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3",
+      "src/app/pokemon/components/ReleaseButton.tsx#render-root@8:3",
+      "src/app/pokemon/components/ReleaseButton.tsx#render@9:5",
+      "src/app/pokemon/components/ReleaseButton.tsx#render-event@12:7",
+      "src/app/pokemon/components/ReleaseButton.tsx#function@12:16",
+      "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9",
+      "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
+      "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+      "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8",
+      "src/app/pokemon/page.tsx#import@2:1",
+      "src/app/pokemon/page.tsx#render@15:13",
+      "src/lib/pokemon.ts#function@25:1",
+      "src/lib/pokemon.ts#root-argument-value@25:31",
+      "src/lib/pokemon.ts#function@26:24",
+      "src/lib/pokemon.ts#variable@26:25"
+    ],
+    "diffContains": [
+      "ui",
+      "effect",
+      "route",
+      "data",
+      "logic"
+    ],
+    "chainContains": [
+      "ui",
+      "effect",
+      "route",
+      "data",
+      "logic"
+    ],
+    "diffChainIds": [
+      "src/app/api/pokemon/[id]/route.ts#function@3:1",
+      "src/app/pokemon/components/ReleaseButton.tsx#render-event@12:7",
+      "src/app/pokemon/page.tsx#component@5:1"
+    ]
+  }
+]

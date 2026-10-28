@@ -5,7 +5,7 @@ const AT_REPOSITORIES_WITH_CHECKOUT_WEB = { ...AT_REPOSITORIES, repositories: [C
 
 describe("author tracking", () => {
   it("tracks an author in the named repository only", () => {
-    const other = { name: "mobile-app", path: "/Users/dev/work/mobile-app", selfAuthor: null, trackedAuthors: [] }
+    const other = { name: "mobile-app", path: "/Users/dev/work/mobile-app", selfAuthor: null, trackedAuthors: [], baseBranch: null }
     const setup = { ...AT_REPOSITORIES, repositories: [CHECKOUT_WEB, other] }
 
     expect(withTrackedAuthor(setup, "checkout-web", LENA, null).repositories).toStrictEqual([
@@ -33,7 +33,7 @@ describe("author tracking", () => {
   })
 
   it("replaces the user and the tracked authors of the named repository only", () => {
-    const other = { name: "mobile-app", path: "/Users/dev/work/mobile-app", selfAuthor: DEV, trackedAuthors: [LENA] }
+    const other = { name: "mobile-app", path: "/Users/dev/work/mobile-app", selfAuthor: DEV, trackedAuthors: [LENA], baseBranch: null }
     const setup = { ...READY_TO_FINISH, repositories: [...READY_TO_FINISH.repositories, other] }
 
     expect(withAuthors(setup, "checkout-web", { selfAuthor: null, trackedAuthors: [] }).repositories).toStrictEqual([

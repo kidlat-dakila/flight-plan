@@ -10,7 +10,7 @@ Local git reviews the branches of a repository on your machine. It needs no acco
 A repository on local git lists only:
 
 - the branches you add yourself, with **Add a branch** on its line on the home page, and
-- the branches of the team members you track, when the main branch doesn't contain them yet.
+- the branches of the team members you track, when the repository's branch to compare with doesn't contain them yet. See [Repositories](/docs/setup/repositories/#choose-the-branch-to-compare-with).
 
 With no team member tracked, Flight Plan lists no branch on its own, not even yours. An empty repository says **No branches yet** and offers **Add a branch**.
 

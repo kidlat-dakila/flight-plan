@@ -113,6 +113,7 @@ export const setupRepositorySchema = z.strictObject({
   authorSearchPlaceholder: z.string(),
   selfAuthor: trackedAuthorSchema.nullable(),
   trackedAuthors: z.array(trackedAuthorSchema),
+  baseBranch: z.string().nullable(),
 })
 
 export const repositoriesStepSchema = z.strictObject({

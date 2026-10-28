@@ -25,6 +25,7 @@ const storefront: Repository = {
   forgeSlug: "acme/storefront",
   problem: null,
   targets: [],
+  baseBranch: null,
 }
 
 const createContext = (repositories: readonly Repository[], setup: Setup = EMPTY_SETUP): ProcedureContext => ({
@@ -51,17 +52,17 @@ const createContext = (repositories: readonly Repository[], setup: Setup = EMPTY
   errorLog: createMockErrorLog(),
 })
 
-const NOBODY_TRACKED = { trackedAuthorIds: [] }
+const NOBODY_TRACKED = { trackedAuthorIds: [], baseBranch: null }
 
 describe("addRepository", () => {
   it("accepts a new path and adds it to the store with its authors followed", async () => {
     const context = createContext([storefront])
 
     await expect(
-      addRepository({ path: "/work/ledger-api", trackedAuthorIds: [LENA.id] }, context),
+      addRepository({ path: "/work/ledger-api", trackedAuthorIds: [LENA.id], baseBranch: null }, context),
     ).resolves.toStrictEqual({
       kind: "accepted",
-      repository: { name: "ledger-api", path: "/work/ledger-api", forge: "git", forgeSlug: null, problem: null, targets: [] },
+      repository: { name: "ledger-api", path: "/work/ledger-api", forge: "git", forgeSlug: null, problem: null, targets: [], baseBranch: null },
     })
     await expect(context.repositoryStore.list()).resolves.toMatchObject([
       { name: "storefront" },
@@ -84,7 +85,7 @@ describe("addRepository", () => {
     }
 
     await expect(
-      addRepository({ path: "/work/ledger-api", trackedAuthorIds: [LENA.id, DEV.id] }, context),
+      addRepository({ path: "/work/ledger-api", trackedAuthorIds: [LENA.id, DEV.id], baseBranch: null }, context),
     ).resolves.toMatchObject({ kind: "accepted" })
     await expect(context.repositoryStore.readAuthors("ledger-api")).resolves.toStrictEqual({
       selfAuthor: null,
@@ -109,15 +110,55 @@ describe("addRepository", () => {
     const context = createContext([storefront], { ...EMPTY_SETUP, forges: GITHUB_FORGES })
 
     await expect(
-      addRepository({ path: "/work/ledger-api", trackedAuthorIds: ["@teo"] }, context),
+      addRepository({ path: "/work/ledger-api", trackedAuthorIds: ["@teo"], baseBranch: null }, context),
     ).resolves.toMatchObject({ kind: "accepted" })
+  })
+
+  it("saves the base branch chosen for the repository", async () => {
+    const base = createContext([storefront])
+    const context = {
+      ...base,
+      setupEnvironment: {
+        ...base.setupEnvironment,
+        listBranches: async () => await Promise.resolve([{ name: "develop", committedAt: NOW }]),
+      },
+    }
+
+    await expect(addRepository({ path: "/work/ledger-api", ...NOBODY_TRACKED, baseBranch: "develop" }, context)).resolves.toMatchObject({
+      kind: "accepted",
+      repository: { baseBranch: "develop" },
+    })
+    await expect(context.repositoryStore.listRegistered()).resolves.toContainEqual({ name: "ledger-api", path: "/work/ledger-api", baseBranch: "develop" })
+  })
+
+  it("saves the detected main branch when no base branch is chosen", async () => {
+    const base = createContext([storefront])
+    const context = {
+      ...base,
+      setupEnvironment: { ...base.setupEnvironment, detectMainBranch: async () => await Promise.resolve("trunk") },
+    }
+
+    await expect(addRepository({ path: "/work/ledger-api", ...NOBODY_TRACKED }, context)).resolves.toMatchObject({
+      kind: "accepted",
+      repository: { baseBranch: "trunk" },
+    })
+  })
+
+  it("rejects a base branch the repository does not have without changing the store", async () => {
+    const context = createContext([storefront])
+
+    await expect(addRepository({ path: "/work/ledger-api", ...NOBODY_TRACKED, baseBranch: "develop" }, context)).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "develop is not a branch of this repository.",
+    })
+    await expect(context.repositoryStore.list()).resolves.toStrictEqual([storefront])
   })
 
   it("rejects an author the repository does not have", async () => {
     const context = createContext([storefront])
 
     await expect(
-      addRepository({ path: "/work/ledger-api", trackedAuthorIds: ["ghost@acme.example"] }, context),
+      addRepository({ path: "/work/ledger-api", trackedAuthorIds: ["ghost@acme.example"], baseBranch: null }, context),
     ).resolves.toStrictEqual({ kind: "rejected", message: "ghost@acme.example is not an author of this repository." })
     await expect(context.repositoryStore.list()).resolves.toStrictEqual([storefront])
   })

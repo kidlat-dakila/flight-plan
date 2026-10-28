@@ -2,6 +2,7 @@ import { createConfiguration } from "@/procedures/create-configuration"
 import { getSettings } from "@/procedures/get-settings"
 import {
   AT_REPOSITORIES,
+  CHECKOUT_WEB,
   createSetupContext,
   GITHUB_FORGES,
   LENA,
@@ -10,6 +11,7 @@ import {
 import { EMPTY_SETUP, type Setup } from "@/procedures/get-setup/utils/setup"
 
 const COMPLETE_SETUP: Setup = { ...AT_REPOSITORIES, isComplete: true }
+const NO_AUTHORS = { selfAuthor: null, trackedAuthors: [] }
 
 describe("getSettings", () => {
   it("fills the agents section with the saved agents and their models", async () => {
@@ -58,6 +60,16 @@ describe("getSettings", () => {
     await expect(getSettings({ section: "repositories" }, context)).resolves.toMatchObject({
       section: "repositories",
       repositories: [{ name: "storefront", trackedAuthors: [{ name: "Lena Okafor" }], emptyMessage: null }],
+    })
+  })
+
+  it("shows the base branch saved for each followed repository, and the detected main branch for one saved without it", async () => {
+    const context = createSetupContext(COMPLETE_SETUP)
+    await context.repositoryStore.add(STOREFRONT, NO_AUTHORS)
+    await context.repositoryStore.add({ ...STOREFRONT, name: "checkout-web", path: CHECKOUT_WEB.path, baseBranch: "develop" }, NO_AUTHORS)
+
+    await expect(getSettings({ section: "repositories" }, context)).resolves.toMatchObject({
+      repositories: [{ name: "storefront", baseBranch: "main" }, { name: "checkout-web", baseBranch: "develop" }],
     })
   })
 

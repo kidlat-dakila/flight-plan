@@ -138,7 +138,7 @@ const isPlainClick = (event: MouseEvent<HTMLAnchorElement>): boolean =>
 const FileRow = ({ row, isCurrent, onOpen }: FileRowProps) =>
   row.anchorId === null
     ? (
-        <div data-file-row={row.id} className={cn(ROW_CLASSES, FILE_COLUMNS, "text-muted-foreground")} style={indentOf(row.depth)}>
+        <div data-file-row={row.id} className={cn(ROW_CLASSES, FILE_COLUMNS, row.noteLabel !== null && "text-muted-foreground")} style={indentOf(row.depth)}>
           <FileRowContent row={row} />
         </div>
       )

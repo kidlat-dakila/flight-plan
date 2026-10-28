@@ -10,6 +10,6 @@ export const buildContext = (prepared: PreparedWalkthrough, scope: string, conte
     markdown: segment.context,
     isDraft: segment.context.trim() === "",
     unwrittenLabel: "Not written yet.",
-    changeOverview: buildChangeOverview(prepared, context.blobLinkOf),
+    changeOverview: { ...buildChangeOverview(prepared, context.blobLinkOf), anchorId: `${scope}change-overview` },
   }
 }

@@ -46,6 +46,7 @@ import { createAgentDetector } from "@/utils/agent-detector"
 import { createAgentInstaller, createInstallChecker } from "@/utils/agent-installer"
 import { createAgentModelLister } from "@/utils/agent-model-lister"
 import { createAuthorLookup } from "@/utils/author-lookup"
+import { createBaseBranchReader } from "@/utils/base-branch-reader"
 import { createBranchPuller } from "@/utils/branch-puller"
 import { createCommitAuthorReader } from "@/utils/commit-author-reader"
 import { FileConfigurationStore } from "@/utils/configuration-file-store"
@@ -331,6 +332,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
       findRepositoryForge: createRepositoryForgeFinder({ readRemote }),
       readGitIdentity,
       readRepositoryActivity: createRepositoryActivityReader({ runCommand, environment: machine.environment }),
+      ...createBaseBranchReader({ runCommand, environment: machine.environment }),
     },
   }
 }

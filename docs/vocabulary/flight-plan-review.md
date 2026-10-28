@@ -22,7 +22,7 @@ Guided review has one standing objection: a curated tour can leave out the file 
 ## How a review happens
 
 1. The reviewer picks a pull request or branch in the web app, from the list the forge provides.
-2. The reviewer [opens](#opening-a-review) the review target's page. Flight Plan builds the structure of the artifact from the change, saves it and shows it at once, so the reviewer can read the diagrams and the code before any prose is written. Until an agent writes it up, it stays Flight Plan's own build, with no write-up.
+2. The reviewer [opens](#opening-a-review) the review target's page. With no review artifact yet, the page shows the creation view: what the change touches, and the branch it is compared with. The reviewer presses "Create Review Artifact", and Flight Plan builds the structure of the artifact from the change against that branch, saves it and shows it at once, so the reviewer can read the diagrams and the code before any prose is written. Until an agent writes it up, it stays Flight Plan's own build, with no write-up.
 3. The reviewer asks the agent for a [write-up](#write-up). Flight Plan leaves the request for the review's [live agent](agent-conversation.md#live-agents), a Claude session the reviewer runs with `/flightplan:live <repository>/<target>` in a terminal they can see, and asks them to start one when none is online (the [Launch Agent dialog](#launching-the-agent)). Codex and Cursor get the prompt as one line the reviewer runs in them. The agent works with the Flight Plan review skill.
 4. The agent fills in the prose through the MCP tools: each segment's title and context, labels and explanations, findings. It can change the words, never the structure.
 5. The artifact opens in the web app while it is still being written, marked as drafting, and fills in as the agent works. The page shows the [progress](#progress-and-completion) at the top, and a skeleton in place of each part that is not written yet.
@@ -31,7 +31,26 @@ Guided review has one standing objection: a curated tour can leave out the file 
 
 ## Opening a review
 
-A review target has no start page. When its page opens and Flight Plan holds no review artifact for it, `review.get` builds one from the change (`procedures/get-review/utils/opening-scaffold.ts`), saves it and returns the review. The artifact is built as the [review preferences](review-preferences.md) say: without the ignored files, and with segments on or off. A request is saved with it:
+When a review target's page opens and Flight Plan holds no review artifact for it, `review.get` builds nothing. It returns the **creation view** (`kind: "creation"`): what the change touches against a branch to compare with, and a button that creates the artifact. Nothing is saved until the reviewer presses it.
+
+The creation view keeps the frame of the review page. The [changed files explorer](#changed-files-and-side-panels) is docked at the left and lists the change's files, each with what the change did to it. Its rows lead nowhere, because there is no Code Walkthrough yet, and it has no filter. The sign band holds the review target's header with the Settings Menu alone. The middle column holds, top to bottom:
+
+| Part | What it shows |
+|---|---|
+| Heading | "Create a new Flight Plan Review Artifact for “<pull request title or branch name>”" |
+| Introduction | The author, and a sentence about what merges into what: for a pull request, who wants to merge which branch into which, in which pull request; for a branch, which changes on it are not on the branch to compare with |
+| Branch to compare with | The branch the change is compared with |
+| Facts | Files, lines added and lines removed, then how many files the change added, modified and deleted. A count of zero reads "None". |
+| Where the lines are | One row per place, with a bar of its added and removed lines and both counts |
+| Create Review Artifact | The primary button |
+
+The branch to compare with starts on a default. For a pull request it is the branch the pull request will merge into, its base branch on the forge, or the repository's [branch to compare with](forge.md#the-branch-to-compare-with) when the forge gives none. For a branch it is the repository's branch to compare with, the one chosen when the repository was added. While the field shows that default, a note beside the branch says which it is: "Pull request base" or "Repository default". The field searches the repository's local and `origin` branches (`review.searchBaseBranches`, `procedures/search-review-base-branches/`). Choosing another branch puts it in the page's address as `compare`, and `review.get` takes it as `baseBranch` and computes the explorer, the facts and the places against it. They leave out the files the [review preferences](review-preferences.md) ignore, as the artifact does.
+
+A place is a file's first two folders (`apps/backend`), its folder when it sits in only one (`docs`), or "Top-level files" for the files at the root. The rows are sorted by the lines they change, most first. The first four are kept, and the rest merge into one row, "3 more places". Every bar is drawn against the place that changes the most lines.
+
+When the change cannot be read against the chosen branch (that branch is not in the checkout, the target has no commits after it, the change touches no files, or the review preferences ignore every file it touches), the view says why in place of the facts and the places, and the button is disabled until another branch is chosen.
+
+"Create Review Artifact" calls `review.create` (`procedures/create-review/`) with the branch the field shows. It builds the artifact from the change against that branch, as the [review preferences](review-preferences.md) say: without the ignored files, and with segments on or off. A request is saved with it:
 
 | Part of the request | Value |
 |---|---|
@@ -41,11 +60,13 @@ A review target has no start page. When its page opens and Flight Plan holds no 
 
 The artifact of the viewer's own target starts as `authoring`, for the author to edit and mark complete. Someone else's starts as `complete`: nothing in it is required until a [write-up](#write-up) asks for it, and a complete review [catches up](#catching-up-and-deleting) with its target. No agent is started.
 
-When the artifact cannot be built (the branch is not in the checkout, the folder is not a git repository, the change touches no files) nothing is saved, and the page says why in place of the review. The page's header then states how many files of each kind the change touches.
+The review keeps the branch it was created against in its meta, as `baseBranch`. A review saved without it was compared with the repository's branch to compare with. When the target already has an artifact, `review.create` writes nothing and says so. Once the artifact is saved, the page shows the review, which offers a [write-up](#write-up) as on any first open.
+
+A review target whose own branch cannot be read (it is not in the checkout, or the folder is not a git repository) has no creation view. Nothing is saved, and the page says why in place of the review. The page's header then states how many files of each kind the change touches.
 
 A review saved by another version of Flight Plan opens as a page that offers to update it, in place of the review (see [review artifact migrations](migrations.md#review-artifact-migrations)).
 
-The New Flight Plan page (`/pr-reviews/<repository>/create`) searches the repository's pull requests and branches, and picking one opens its page, which builds the review.
+The New Flight Plan page (`/pr-reviews/<repository>/create`) searches the repository's pull requests and branches, and picking one opens its page, which shows the creation view.
 
 The request is saved inside the review artifact, and every [write-up](#write-up) updates it. The prompt names the review target and how to reach Flight Plan. It never names the configuration, which the agent reads from Flight Plan's MCP tools, nor an order for the Code Walkthrough, which Flight Plan sorts itself.
 
@@ -66,7 +87,7 @@ The reviewer asks the agent to write a review up from the review page, choosing 
 
 A count is of the parts still unwritten that choosing the section would require: the context of each segment (the first alone with segments off), the labels and descriptions of the Trace Diagram and its title, the files of the Blast Diagram to assess, the titles and readings of the waypoints. Findings count the waypoints the agent reads for them. The plan is asked for again with the sections the reviewer ticks, and its counts and labels follow. Unless the reviewer chose otherwise, the sections are those of the last write-up of this review, or else those the Write-ups of the [review preferences](review-preferences.md) mark Always; the configuration is the review's, or else the default; the order is the last write-up's, or else the preference's.
 
-The review page opens the [Write-up Dialog](../DESIGN.md#write-up-dialog) on its own while `isOffered` is false: the first time a review opens, right after Flight Plan built it. It shows the choice in short, and "Configure" shows the inputs. "Not now" calls `review.declineWriteUp` (`procedures/decline-write-up/`), which keeps `isWriteUpDeclined` with the request, so the page does not ask again. With no agent set up the dialog is not shown. "Explain this review" in the Settings Menu of the review page opens it again at any time.
+The review page opens the [Write-up Dialog](../DESIGN.md#write-up-dialog) on its own while `isOffered` is false: the first time a review opens, right after the reviewer created it. It shows the choice in short, and "Configure" shows the inputs. "Not now" calls `review.declineWriteUp` (`procedures/decline-write-up/`), which keeps `isWriteUpDeclined` with the request, so the page does not ask again. With no agent set up the dialog is not shown. "Explain this review" in the Settings Menu of the review page opens it again at any time.
 
 `review.writeUp` takes the sections, the configuration, the order and whether segments are on. It refuses, as data with the field it is about, an empty choice, a configuration that no longer exists and a review with no agent set up. Otherwise it sets segments on or off, rebuilding the artifact at its commits when the choice differs from the stored one ([segments off](review-artifact.md#segments-off)), requires the context code blocks of the configuration and every node of the chosen sections (a node once required stays required), stores the choice with the request as `writeUp`, makes the artifact drafting and leaves it for the live agent: started, or the one line to run in Codex or Cursor. The prompt names the chosen parts, and asks the agent to check every waypoint for findings or to write none. When everything chosen is already written, the agent is asked for nothing and the answer says so. The page sorts the Code Walkthrough by the order in `writeUp` over the preference.
 
@@ -105,8 +126,8 @@ A review target is the viewer's **own** when it is a branch with no pull request
 
 | | No review artifact | Not uploaded | Uploaded |
 |---|---|---|---|
-| The viewer's own | Built on open, then the author's page | The author's page | The author's page, with the review status, the reviewers, the conversation and Submit review |
-| Someone else's | Built on open, then the reviewer's page | The reviewer's page | The reviewer's page |
+| The viewer's own | The creation view, then the author's page | The author's page | The author's page, with the review status, the reviewers, the conversation and Submit review |
+| Someone else's | The creation view, then the reviewer's page | The reviewer's page | The reviewer's page |
 
 The **author's page** is where a Flight Plan is edited: its segments, its contexts, its diagrams and its Code Walkthrough. Only the viewer's own Flight Plan can be edited. Until it is uploaded its header shows the review target, the label "Your Flight Plan" and the Settings Menu, and the page has no review status, no reviewers, no comments and no Submit review.
 
@@ -186,7 +207,7 @@ A Flight Plan made for a branch is stored under the branch, not under a pull req
 
 ## Catching up and deleting
 
-A review catches up with its target on its own. When the page opens on a stored review whose target has moved past the commit it describes, and no agent is writing it, Flight Plan pulls the branch, builds the review artifact again at the new head and keeps what was written for code that has not changed since. What is new is left unwritten, with its hints, for the next [write-up](#write-up), which writes up only what is missing. The review keeps its status, its choice of segments, its context code block kinds and its request.
+A review catches up with its target on its own. When the page opens on a stored review whose target has moved past the commit it describes, and no agent is writing it, Flight Plan pulls the branch, builds the review artifact again at the new head, against the branch the review was created with, and keeps what was written for code that has not changed since. What is new is left unwritten, with its hints, for the next [write-up](#write-up), which writes up only what is missing. The review keeps its status, its choice of segments, its context code block kinds and its request.
 
 Pulling fetches the branch from `origin` and fast-forwards the local branch. A repository with no remote is built as it is. When the pull fails, or the build cannot be made, the review stays as it is and the page goes on saying it is out of date.
 
@@ -202,7 +223,7 @@ What a refresh keeps is decided part by part, by comparing the code as the two a
 
 A part is not kept when a code link in it no longer resolves, or points at lines of a file that changed.
 
-The Settings Menu of the review page holds the review's actions above the settings: View pull request, Explain this review and Delete, which deletes the review artifact and goes back to the repositories. Opening the review target again builds a new one.
+The Settings Menu of the review page holds the review's actions above the settings: View pull request, Explain this review and Delete, which deletes the review artifact and goes back to the repositories. Opening the review target again shows the creation view.
 
 ## Who writes what
 

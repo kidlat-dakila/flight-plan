@@ -1,4 +1,5 @@
-import { useId, useState, type KeyboardEvent, type ReactNode } from "react"
+import { ChevronsUpDownIcon } from "lucide-react"
+import { useId, useState, type FocusEvent, type KeyboardEvent, type ReactNode } from "react"
 import Input from "@/components/blocks/input"
 import ProblemAlert from "@/components/ProblemAlert"
 import { cn } from "@/lib/utils"
@@ -22,11 +23,13 @@ interface SuggestionFieldProps {
   readonly errorMessage: string | null
   readonly onTroubleshoot?: (() => void) | null
   readonly isLiteral?: boolean
+  readonly isSelect?: boolean
   readonly className?: string
   readonly onValueChange: (value: string) => void
   readonly onSelect: (id: string) => void
   readonly onOpen?: () => void
   readonly onEnter?: () => void
+  readonly onBlur?: () => void
 }
 
 type ActiveStep = 1 | -1
@@ -49,11 +52,13 @@ const SuggestionField = ({
   errorMessage,
   onTroubleshoot = null,
   isLiteral = false,
+  isSelect = false,
   className,
   onValueChange,
   onSelect,
   onOpen,
   onEnter,
+  onBlur,
 }: SuggestionFieldProps) => {
   const inputId = useId()
   const listId = useId()
@@ -79,6 +84,21 @@ const SuggestionField = ({
   const moveActive = (step: ActiveStep) => {
     setIsOpen(true)
     setActiveIndex((current) => movedActiveIndex(current, suggestions.length, step))
+  }
+
+  const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
+    if (isSelect) event.target.select()
+    setIsOpen(true)
+    onOpen?.()
+  }
+
+  const handleBlur = () => {
+    closeList()
+    onBlur?.()
+  }
+
+  const handleClick = () => {
+    if (isSelect) setIsOpen(true)
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -115,19 +135,25 @@ const SuggestionField = ({
           aria-activedescendant={activeSuggestion === undefined ? undefined : `${listId}-${activeSuggestion.id}`}
           aria-invalid={hasError}
           aria-describedby={cn(hint === null ? "" : hintId, hasError ? errorId : "") || undefined}
-          className={isLiteral ? "font-mono placeholder:font-sans" : ""}
+          className={cn(isLiteral ? "font-mono placeholder:font-sans" : "", isSelect ? "pr-8" : "")}
           onChange={(event) => {
             onValueChange(event.target.value)
             setIsOpen(true)
             setActiveIndex(null)
           }}
-          onFocus={() => {
-            setIsOpen(true)
-            onOpen?.()
-          }}
-          onBlur={closeList}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onClick={handleClick}
           onKeyDown={handleKeyDown}
         />
+        {isSelect
+          ? (
+              <ChevronsUpDownIcon
+                aria-hidden="true"
+                className="pointer-events-none absolute top-4 right-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+            )
+          : null}
         <div
           id={listId}
           role="listbox"

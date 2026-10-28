@@ -8,7 +8,7 @@ const failureMessageOf = (status: number, body: unknown): string => {
   return failure.success ? failure.data.message : `The lab server answered ${String(status)}.`
 }
 
-const fetchJson = async <Value>(path: string, schema: z.ZodType<Value>): Promise<Value> => {
+export const fetchJson = async <Value>(path: string, schema: z.ZodType<Value>): Promise<Value> => {
   const response = await fetch(path)
   const body: unknown = await response.json()
   if (!response.ok) throw new Error(failureMessageOf(response.status, body))

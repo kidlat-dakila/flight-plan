@@ -17,9 +17,15 @@ If your repository isn't in the list, **Add repository** opens a dialog. Type th
 
 Flight Plan refuses a folder that isn't a git repository, a folder already on the list, and a second repository with the same name.
 
-## Choose who to follow
+Once you pick a folder, the dialog also asks for the branch to compare with. It's set to the repository's main branch, and Flight Plan saves that one unless you pick another.
 
-A checked repository opens its fields under its name.
+## Choose the branch to compare with
+
+A checked repository opens its fields under its name. One of them sets the branch your work gets compared with. The field starts on the repository's main branch: the one `origin/HEAD` points to, or else `main` or `master`. Change it if your team branches off something else, like `develop`. Type part of a name to search your local and `origin` branches. Each one shows when it last got a commit.
+
+A new review of a branch starts on this branch, and so does a review of a pull request when your forge doesn't say which branch the pull request merges into. You can pick another one when you create the review. Each review shows what its branch changed since it split from the branch it compares with. Flight Plan only lists branches that the repository's branch doesn't contain yet. If the branch is deleted later, the repository shows a problem that names the missing branch.
+
+## Choose who to follow
 
 Flight Plan knows you from your git config. It reads the repository's config first, and your global config (`git config --global user.email`) when the repository sets no email. If it finds no email, it asks you to pick yourself from the people who committed to the repository.
 
@@ -34,4 +40,4 @@ With nobody tracked, what a repository lists depends on how Flight Plan reaches 
 
 ## Later
 
-**Settings → Repositories** shows the same list, and each change is saved as you make it. On the home page, **Configure** beside a repository changes the team members you track in it, and **Remove repository** takes it off the list and leaves its folder on disk alone.
+**Settings → Repositories** shows the same list, and each change is saved as you make it. On the home page, **Configure** beside a repository changes its branch to compare with and the team members you track in it, and **Remove repository** takes it off the list and leaves its folder on disk alone.

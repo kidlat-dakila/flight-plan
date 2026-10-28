@@ -11,7 +11,7 @@ export const readBranchAuthorEmail = async (
 ): Promise<string | null> => {
   if (repository.forge !== LOCAL_GIT) return null
   const setup = await context.setupStore.read()
-  const opened = await context.openRepository(repository.path, setup.forges)
+  const opened = await context.openRepository(repository.path, setup.forges, repository.baseBranch)
   if (!opened.resolved.ok) return null
   try {
     return (await opened.resolved.gitAdapter.branchStart(branchName))?.authorEmail ?? null

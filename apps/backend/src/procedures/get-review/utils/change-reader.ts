@@ -4,7 +4,7 @@ export interface ChangeRevision {
 }
 
 export interface ChangeReader {
-  readonly findRevision: (repositoryPath: string, branchName: string) => Promise<ChangeRevision | null>
+  readonly findRevision: (repositoryPath: string, branchName: string, baseBranch: string | null) => Promise<ChangeRevision | null>
   readonly readDiff: (repositoryPath: string, revision: ChangeRevision) => Promise<string | null>
   readonly listChangedPaths: (repositoryPath: string, revision: ChangeRevision) => Promise<readonly string[] | null>
   readonly listPaths: (repositoryPath: string, commit: string) => Promise<readonly string[] | null>

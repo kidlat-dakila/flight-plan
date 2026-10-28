@@ -1,10 +1,10 @@
-import { use, useId, useRef, useState, type KeyboardEvent } from "react"
+import { use, useId, useState } from "react"
 import CodeLink from "@/components/CodeLink"
+import TabRow from "@/components/TabRow"
 import { AccordionOpeningContext } from "@/lib/accordion-opening"
 import { keyed } from "@/lib/keyed"
 import type { CodeLinkTargets, Inline, ProseBlock, ProseBlocks, ProseListItem, ProseSection, ProseTab } from "@/lib/review-content"
 import { sectionSummaryOf, type SectionSummary } from "@/lib/section-summary"
-import { TAB_CLASSES, TAB_LIST_CLASSES, tabIndexAfterKey } from "@/lib/tab-bar"
 import { cn } from "@/lib/utils"
 
 interface LinkProps {
@@ -66,38 +66,17 @@ const panelIdOf = (tabsId: string, position: number): string => `${tabsId}-panel
 const Tabs = ({ tabs, codeLinks, onOpenCodeLink }: LinkProps & { readonly tabs: readonly ProseTab[] }) => {
   const tabsId = useId()
   const [openIndex, setOpenIndex] = useState(0)
-  const tabButtonsRef = useRef<(HTMLButtonElement | null)[]>([])
   const openTab = tabs.at(openIndex) ?? tabs[0]
-
-  const moveWithKey = (event: KeyboardEvent<HTMLButtonElement>) => {
-    const nextIndex = tabIndexAfterKey(event.key, openIndex, tabs.length)
-    if (nextIndex === null) return
-    event.preventDefault()
-    setOpenIndex(nextIndex)
-    tabButtonsRef.current[nextIndex]?.focus()
-  }
+  const rowTabs = keyed(tabs).map(({ key, item }, position) => ({
+    key,
+    label: item.label,
+    id: tabIdOf(tabsId, position),
+    controlsId: panelIdOf(tabsId, position),
+  }))
 
   return (
     <div className="flex flex-col gap-4">
-      <div role="tablist" className={TAB_LIST_CLASSES}>
-        {keyed(tabs).map(({ key, item }, position) => (
-          <button
-            key={key}
-            ref={(button) => { tabButtonsRef.current[position] = button }}
-            type="button"
-            role="tab"
-            id={tabIdOf(tabsId, position)}
-            aria-selected={position === openIndex}
-            aria-controls={panelIdOf(tabsId, position)}
-            tabIndex={position === openIndex ? 0 : -1}
-            className={TAB_CLASSES}
-            onClick={() => { setOpenIndex(position) }}
-            onKeyDown={moveWithKey}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
+      <TabRow tabs={rowTabs} openIndex={openIndex} onOpen={setOpenIndex} />
       <div role="tabpanel" id={panelIdOf(tabsId, openIndex)} aria-labelledby={tabIdOf(tabsId, openIndex)} className="flex flex-col gap-4">
         <Blocks blocks={openTab.blocks} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
       </div>

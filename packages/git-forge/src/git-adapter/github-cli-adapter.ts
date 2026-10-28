@@ -7,6 +7,7 @@ export interface GithubCliAdapterOptions {
   root?: string
   repo?: string
   environment?: Readonly<Record<string, string | undefined>>
+  baseBranch?: string | null
 }
 
 export class GithubCLIAdapter extends GithubAdapter {

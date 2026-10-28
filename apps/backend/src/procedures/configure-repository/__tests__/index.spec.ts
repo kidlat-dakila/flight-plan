@@ -19,7 +19,7 @@ describe("configureRepository", () => {
     const context = await createContext()
 
     await expect(
-      configureRepository({ repositoryName: "storefront", trackedAuthorIds: [LENA.id] }, context),
+      configureRepository({ repositoryName: "storefront", trackedAuthorIds: [LENA.id], baseBranch: null }, context),
     ).resolves.toStrictEqual({ kind: "accepted" })
     await expect(context.repositoryStore.readAuthors("storefront")).resolves.toStrictEqual({
       selfAuthor: null,
@@ -31,12 +31,42 @@ describe("configureRepository", () => {
     const context = servedByForge(await createContext(), "gh")
 
     await expect(
-      configureRepository({ repositoryName: "storefront", trackedAuthorIds: ["@teo"] }, context),
+      configureRepository({ repositoryName: "storefront", trackedAuthorIds: ["@teo"], baseBranch: null }, context),
     ).resolves.toStrictEqual({ kind: "accepted" })
     await expect(
-      configureRepository({ repositoryName: "storefront", trackedAuthorIds: [] }, context),
+      configureRepository({ repositoryName: "storefront", trackedAuthorIds: [], baseBranch: null }, context),
     ).resolves.toStrictEqual({ kind: "accepted" })
     await expect(context.repositoryStore.readAuthors("storefront")).resolves.toStrictEqual({ selfAuthor: null, trackedAuthors: [] })
+  })
+
+  it("changes the base branch of the repository", async () => {
+    const context = await createContext()
+
+    await expect(
+      configureRepository({ repositoryName: "storefront", trackedAuthorIds: [], baseBranch: "develop" }, context),
+    ).resolves.toStrictEqual({ kind: "accepted" })
+    await expect(context.repositoryStore.listRegistered()).resolves.toStrictEqual([
+      { name: "storefront", path: STOREFRONT.path, baseBranch: "develop" },
+    ])
+  })
+
+  it("keeps the saved base branch when none is chosen", async () => {
+    const context = await createContext()
+    await configureRepository({ repositoryName: "storefront", trackedAuthorIds: [], baseBranch: "develop" }, context)
+
+    await configureRepository({ repositoryName: "storefront", trackedAuthorIds: [LENA.id], baseBranch: null }, context)
+
+    await expect(context.repositoryStore.listRegistered()).resolves.toMatchObject([{ baseBranch: "develop" }])
+  })
+
+  it("rejects a base branch the repository does not have, without changing its authors", async () => {
+    const context = await createContext()
+
+    await expect(
+      configureRepository({ repositoryName: "storefront", trackedAuthorIds: [LENA.id], baseBranch: "trunk" }, context),
+    ).resolves.toStrictEqual({ kind: "rejected", message: "trunk is not a branch of this repository." })
+    await expect(context.repositoryStore.readAuthors("storefront")).resolves.toStrictEqual({ selfAuthor: DEV, trackedAuthors: [] })
+    await expect(context.repositoryStore.listRegistered()).resolves.toMatchObject([{ baseBranch: null }])
   })
 
   it("rejects an author the repository does not have", async () => {
@@ -44,7 +74,7 @@ describe("configureRepository", () => {
 
     await expect(
       configureRepository(
-        { repositoryName: "storefront", trackedAuthorIds: ["ghost@acme.example"] },
+        { repositoryName: "storefront", trackedAuthorIds: ["ghost@acme.example"], baseBranch: null },
         context,
       ),
     ).resolves.toStrictEqual({ kind: "rejected", message: "ghost@acme.example is not an author of this repository." })
@@ -53,7 +83,7 @@ describe("configureRepository", () => {
   it("rejects a repository that is no longer listed", async () => {
     await expect(
       configureRepository(
-        { repositoryName: "ledger-api", trackedAuthorIds: [] },
+        { repositoryName: "ledger-api", trackedAuthorIds: [], baseBranch: null },
         await createContext(),
       ),
     ).resolves.toStrictEqual({ kind: "rejected", message: "ledger-api is no longer on the list." })

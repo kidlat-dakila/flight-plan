@@ -29,7 +29,7 @@ describe("planSetupRepository", () => {
   })
 
   it("adds the repository after the ones already in the setup", () => {
-    const repository = { name: "mobile-app", path: "/Users/dev/work/mobile-app", selfAuthor: null, trackedAuthors: [] }
+    const repository = { name: "mobile-app", path: "/Users/dev/work/mobile-app", selfAuthor: null, trackedAuthors: [], baseBranch: null }
 
     expect(withRepository(READY_TO_FINISH, repository).repositories.map((listed) => listed.name)).toStrictEqual([
       "checkout-web",

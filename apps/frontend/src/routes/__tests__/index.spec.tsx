@@ -115,8 +115,13 @@ const storefrontConfiguration = {
     trackedAuthors: [
       { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" },
     ],
+    baseBranch: "main",
   },
 }
+
+const branchOptionOf = (name: string) => ({ id: name, label: name, detail: "Last commit 2 days ago", stateLabel: null, isDisabled: false })
+
+const someBranches = { data: { options: [branchOptionOf("main"), branchOptionOf("develop")], message: null, detectedBranch: "main" } }
 
 const someAuthors = { data: { options: [devOption, lenaOption], message: null } }
 
@@ -443,6 +448,7 @@ describe("the index page", () => {
       "repository.add": addRepository,
       "repository.authorForm": () => localGitAuthorForm,
       "repository.searchAuthors": () => someAuthors,
+      "repository.searchBaseBranches": () => someBranches,
       "setup.searchFolders": () => noFolders,
     })
 
@@ -452,14 +458,84 @@ describe("the index page", () => {
     fireEvent.focus(tracked)
     fireEvent.click(await screen.findByRole("option", { name: /Lena Okafor/ }))
     expect(within(screen.getByRole("list", { name: "Tracked team members" })).getByText("Lena Okafor")).toBeTruthy()
+    await waitFor(() => {
+      expect(screen.getByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" }).value).toBe("main")
+    })
     fireEvent.click(screen.getByRole("button", { name: "Add" }))
 
     expect(await screen.findByRole("region", { name: "docs-site" })).toBeTruthy()
     expect(addRepository).toHaveBeenCalledWith({
       path: "/work/docs-site",
       trackedAuthorIds: ["lena@acme.example"],
+      baseBranch: "main",
     })
     expect(screen.queryByRole("combobox", { name: "Repository folder" })).toBeNull()
+  })
+
+  it("adds a repository with the branch picked to compare with, and starts over when the folder changes", async () => {
+    const searchBaseBranches = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(someBranches)
+    const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "docs-site" } })
+    renderApp({
+      "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+      "repository.add": addRepository,
+      "repository.authorForm": () => localGitAuthorForm,
+      "repository.searchBaseBranches": searchBaseBranches,
+      "setup.searchFolders": () => noFolders,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+    expect(screen.queryByRole("combobox", { name: "Branch to compare with" })).toBeNull()
+    const folderField = screen.getByRole("combobox", { name: "Repository folder" })
+    fireEvent.change(folderField, { target: { value: "/work/ledger" } })
+    fireEvent.focus(await screen.findByRole("combobox", { name: "Branch to compare with" }))
+    fireEvent.click(await screen.findByRole("option", { name: /^develop/ }))
+    expect(screen.getByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" }).value).toBe("develop")
+    fireEvent.change(folderField, { target: { value: "/work/docs-site" } })
+    await waitFor(() => {
+      expect(screen.getByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" }).value).toBe("main")
+    })
+    fireEvent.focus(screen.getByRole("combobox", { name: "Branch to compare with" }))
+    fireEvent.click(await screen.findByRole("option", { name: /^develop/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Add" }))
+
+    await waitFor(() => {
+      expect(addRepository).toHaveBeenCalledWith({ path: "/work/docs-site", trackedAuthorIds: [], baseBranch: "develop" })
+    })
+    expect(searchBaseBranches).toHaveBeenCalledWith({ path: "/work/docs-site", query: "" })
+  })
+
+  it("asks for the branch to compare with only once the folder is a git repository", async () => {
+    const searchBaseBranches = vi.fn<(input: unknown) => ProcedureReply>((input) => {
+      if (JSON.stringify(input).includes("/work/docs-site")) return someBranches
+      const message = JSON.stringify(input).includes("/work/") ? "/work/doc is not a git repository." : "Choose the repository folder first."
+      return { data: { options: [], message, detectedBranch: null } }
+    })
+    renderApp({
+      "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+      "repository.authorForm": () => localGitAuthorForm,
+      "repository.searchBaseBranches": searchBaseBranches,
+      "setup.searchFolders": () => noFolders,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+    const folderField = screen.getByRole("combobox", { name: "Repository folder" })
+    fireEvent.change(folderField, { target: { value: "wor" } })
+    await waitFor(() => {
+      expect(searchBaseBranches).toHaveBeenCalledWith({ path: "wor", query: "" })
+    })
+    expect(screen.queryByRole("combobox", { name: "Branch to compare with" })).toBeNull()
+    expect(screen.queryByText("Choose the repository folder first.")).toBeNull()
+
+    fireEvent.change(folderField, { target: { value: "/work/doc" } })
+    await waitFor(() => {
+      expect(searchBaseBranches).toHaveBeenCalledWith({ path: "/work/doc", query: "" })
+    })
+    expect(screen.queryByRole("combobox", { name: "Branch to compare with" })).toBeNull()
+    expect(screen.queryByText("/work/doc is not a git repository.")).toBeNull()
+
+    fireEvent.change(folderField, { target: { value: "/work/docs-site" } })
+    const branchField = await screen.findByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" })
+    expect(branchField.value).toBe("main")
   })
 
   it("searches the authors of the folder typed, along with the ones already chosen", async () => {
@@ -624,7 +700,30 @@ describe("the index page", () => {
       expect(configure).toHaveBeenCalledWith({
         repositoryName: "storefront",
         trackedAuthorIds: [],
+        baseBranch: "main",
       })
+    })
+
+    it("shows the saved branch to compare with and saves the one picked only on Save", async () => {
+      const configure = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "storefront" } })
+      const searchBaseBranches = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(someBranches)
+      await openConfiguration({ "repository.configure": configure, "repository.searchBaseBranches": searchBaseBranches })
+
+      const field = screen.getByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" })
+      expect(field.value).toBe("main")
+      fireEvent.focus(field)
+      fireEvent.click(await screen.findByRole("option", { name: /^develop/ }))
+      expect(configure).not.toHaveBeenCalled()
+      fireEvent.click(screen.getByRole("button", { name: "Save" }))
+
+      await waitFor(() => {
+        expect(configure).toHaveBeenCalledWith({
+          repositoryName: "storefront",
+          trackedAuthorIds: ["lena@acme.example"],
+          baseBranch: "develop",
+        })
+      })
+      expect(searchBaseBranches).toHaveBeenCalledWith({ path: "/work/storefront", query: "" })
     })
 
     it("searches the saved folder of the repository along with the authors already chosen", async () => {

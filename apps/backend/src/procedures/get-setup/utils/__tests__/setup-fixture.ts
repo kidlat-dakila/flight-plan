@@ -63,6 +63,7 @@ export const CHECKOUT_WEB: SetupRepository = {
   path: "/Users/dev/projects/checkout-web",
   selfAuthor: null,
   trackedAuthors: [],
+  baseBranch: null,
 }
 
 const ADDED_CHECKOUT_WEB: SetupRepository = { ...CHECKOUT_WEB, selfAuthor: DEV, trackedAuthors: [LENA] }
@@ -84,6 +85,7 @@ export const STOREFRONT: Repository = {
   forgeSlug: "acme/storefront",
   problem: null,
   targets: [],
+  baseBranch: null,
 }
 
 export const createSetupContext = (setup: Setup, repositories: readonly Repository[] = []): ProcedureContext => ({

@@ -1,0 +1,6 @@
+{
+  "title": "FastAPI service with pydantic schemas and an in-memory store",
+  "packages": ["fastapi", "starlette", "pydantic"],
+  "language": "python",
+  "mainFramework": "fastapi"
+}

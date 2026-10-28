@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { Link, useNavigate, type ErrorComponentProps } from "@tanstack/react-router"
-import { lazy, Suspense, use, useRef, useState, type ReactNode } from "react"
+import { lazy, Suspense, use, useRef, useState, type ComponentProps, type CSSProperties, type ReactNode, type RefObject } from "react"
 import { createPortal } from "react-dom"
 import { BandSlotContext } from "@/band-slot"
 import { useColorTheme } from "@/color-theme"
@@ -24,6 +24,7 @@ import { WriteUpAgentContext, type WriteUpAgent } from "@flightplan/ui/lib/write
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
 import OrderedSections from "@flightplan/ui/OrderedSections"
 import SubmitReviewMenu, { BandHint, CompleteButton, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
+import ReviewCreation from "@flightplan/ui/ReviewCreation"
 import ReviewGuideTooltips from "@flightplan/ui/ReviewGuideTooltips"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
@@ -50,14 +51,16 @@ import TerminusHeading from "./-components/TerminusHeading"
 import UnassignedFilesDialog from "./-components/UnassignedFilesDialog"
 import WalkthroughFileSection from "./-components/WalkthroughFileSection"
 import WalkthroughScrolling from "./-components/WalkthroughScrolling"
+import { navigatorRailOf } from "./-hooks/navigator-rail"
 import { useAgentChat } from "./-hooks/use-agent-chat"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
 import { useLiveAgent } from "./-hooks/use-live-agent"
-import { usePanelWidths } from "./-hooks/use-panel-widths"
-import { useReadingPositionStore } from "./-hooks/use-reading-position"
+import { usePanelWidths, type PanelWidths } from "./-hooks/use-panel-widths"
+import { holdCurrentAnchorId, useReadingPositionStore } from "./-hooks/use-reading-position"
+import { useReviewCreation } from "./-hooks/use-review-creation"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
-import { useReviewPanels } from "./-hooks/use-review-panels"
+import { useReviewPanels, type ReviewPanelsState } from "./-hooks/use-review-panels"
 import { useReviewerActivity } from "./-hooks/use-reviewer-activity"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useTargetSwitching } from "./-hooks/use-target-switching"
@@ -67,7 +70,7 @@ import { useTraceEditing } from "./-hooks/use-trace-editing"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
 import { useWalkthroughNavigation } from "./-hooks/use-walkthrough-navigation"
 import { useWaypointAuthoring } from "./-hooks/use-waypoint-authoring"
-import { scrollToAnchor, scrollToSettledAnchor, useWaypointStepping, waypointAnchorIdsOf } from "./-hooks/use-waypoint-stepping"
+import { jumpToSettledAnchor, scrollToAnchor, useWaypointStepping, waypointAnchorIdsOf } from "./-hooks/use-waypoint-stepping"
 import { useWriteUpDialog } from "./-hooks/use-write-up-dialog"
 import { useWriteUpRequest } from "./-hooks/use-write-up-request"
 
@@ -100,12 +103,16 @@ const PANEL_TRANSITION = "duration-200 ease-out"
 const PAGE_GUTTER = "1.5rem"
 const EXPLORER_RESIZE_LABEL = "Changed files width"
 const SIDE_RESIZE_LABEL = "Side panel width"
-const DOCKED_CLASSES = "fixed top-(--band-height) bottom-11 z-30 bg-background"
+const DOCK_CLASSES = "fixed top-(--band-height) z-30 bg-background"
+const ABOVE_NAVIGATOR_CLASSES = "bottom-11"
+const AT_PAGE_BOTTOM_CLASSES = "bottom-0"
+const DOCKED_CLASSES = `${DOCK_CLASSES} ${ABOVE_NAVIGATOR_CLASSES}`
 const PANELS_LABEL = "Panels"
 
 export interface ReviewSearch {
   readonly filter?: readonly string[] | undefined
   readonly reviewed?: boolean | undefined
+  readonly compare?: string | undefined
 }
 
 export interface ReviewParams {
@@ -123,6 +130,15 @@ interface ReviewPageProps {
   readonly onSearchChange: (change: ReviewSearch) => void
 }
 
+type ReadingFileExplorerProps = ComponentProps<typeof ReadingFileExplorer>
+
+interface ExplorerDockProps extends Pick<ReadingFileExplorerProps, "labels" | "explorer" | "readingPosition" | "filterNavigation" | "onOpenFile" | "onClearFilter"> {
+  readonly dockRef: RefObject<HTMLDivElement | null>
+  readonly panelWidths: PanelWidths
+  readonly panels: ReviewPanelsState
+  readonly isAboveNavigator: boolean
+}
+
 interface WritingProvidersProps {
   readonly writingLabel: string | null
   readonly agent: WriteUpAgent | null
@@ -133,6 +149,31 @@ const WritingProviders = ({ writingLabel, agent, children }: WritingProvidersPro
   <WritingContext value={writingLabel}>
     <WriteUpAgentContext value={agent}>{children}</WriteUpAgentContext>
   </WritingContext>
+)
+
+const ExplorerDock = ({ dockRef, panelWidths, panels, isAboveNavigator, labels, ...explorer }: ExplorerDockProps) => (
+  <div
+    ref={dockRef}
+    className={cn(
+      DOCK_CLASSES,
+      isAboveNavigator ? ABOVE_NAVIGATOR_CLASSES : AT_PAGE_BOTTOM_CLASSES,
+      "left-0 border-r",
+      !panelWidths.isResizing && ["transition-[width]", PANEL_TRANSITION],
+    )}
+    style={{ width: panelWidths.explorer.widthPx }}
+  >
+    {panels.isExplorerShown
+      ? (
+          <ReadingFileExplorer
+            {...explorer}
+            labels={labels}
+            shortcutLabel={PANEL_SHORTCUT_LABELS.explorer}
+            onHide={() => { panels.onToggle("explorer") }}
+          />
+        )
+      : <FileExplorerStrip labels={labels} shortcutLabel={PANEL_SHORTCUT_LABELS.explorer} onShow={() => { panels.onToggle("explorer") }} />}
+    {panels.isExplorerShown ? <DockResizeHandle dock={panelWidths.explorer} label={EXPLORER_RESIZE_LABEL} edge="right" /> : null}
+  </div>
 )
 
 const renderCommentEditor = (request: CommentEditorRequest) => (
@@ -146,7 +187,22 @@ export const reviewRequestOf = (params: ReviewParams, search: ReviewSearch) => (
   targetId: params.branchId,
   filterKeys: [...(search.filter ?? [])],
   isShowingReviewed: search.reviewed === true,
+  baseBranch: search.compare ?? null,
 })
+
+const refreshIntervalOf = (page: { readonly kind: string } | undefined): number | false =>
+  page?.kind === "creation" ? false : REFRESH_INTERVAL_MS
+
+const explorerInsetOf = (panelWidths: PanelWidths): string => `calc(${String(panelWidths.explorer.widthPx)}px + ${PAGE_GUTTER})`
+
+const sideInsetOf = (panelWidths: PanelWidths): string =>
+  `calc(${String(panelWidths.side.widthPx)}px + var(--activity-width) + ${PAGE_GUTTER})`
+
+const frameInsetsOf = (kind: string, panelWidths: PanelWidths): CSSProperties | undefined => {
+  if (kind === "artifact") return { paddingLeft: explorerInsetOf(panelWidths), paddingRight: sideInsetOf(panelWidths) }
+  if (kind === "creation") return { paddingLeft: explorerInsetOf(panelWidths), paddingRight: PAGE_GUTTER }
+  return undefined
+}
 
 export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) => {
   const trpc = useTRPC()
@@ -156,7 +212,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const reviewKey = { repositoryName: params.repoName, targetId: params.branchId }
   const { data: page } = useSuspenseQuery({
     ...trpc.review.get.queryOptions(reviewRequestOf(params, search)),
-    refetchInterval: REFRESH_INTERVAL_MS,
+    refetchInterval: (query) => refreshIntervalOf(query.state.data),
     refetchIntervalInBackground: true,
   })
   const [unassignedFilesPrompt, setUnassignedFilesPrompt] = useState<UnassignedFilesPrompt | null>(null)
@@ -190,6 +246,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const sideDockRef = useRef<HTMLDivElement>(null)
   const panelWidths = usePanelWidths({ explorer: explorerDockRef, side: sideDockRef }, panels.isExplorerShown, panels.sidePanel)
   const targetSwitching = useTargetSwitching(reviewKey)
+  const reviewCreation = useReviewCreation(reviewKey, page.kind === "creation" ? page.creation.baseBranch.branchName : null, onSearchChange)
   const colorTheme = useColorTheme()
 
   const refreshReview = async (): Promise<void> => {
@@ -261,10 +318,21 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const handleToggleWaypoint = stepping.onToggleWaypoint
   const railSections = [...(artifact?.rail.groups.flatMap((group) => group.sections) ?? []), ...(artifact?.rail.sections ?? [])]
   const fileAnchorIdsBySection = new Map(artifact?.segments.map((segment) => [segment.walkthrough.anchorId, segment.walkthrough.files.map((file) => file.anchorId)] as const))
-  const readingPosition = useReadingPositionStore(
-    railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId), ...(fileAnchorIdsBySection.get(section.anchorId) ?? [])]),
-    waypointAnchorIdsOf(artifact?.segments ?? NO_SEGMENTS),
-  )
+  const readingAnchorIds = railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId), ...(fileAnchorIdsBySection.get(section.anchorId) ?? [])])
+  const readingPosition = useReadingPositionStore(readingAnchorIds, waypointAnchorIdsOf(artifact?.segments ?? NO_SEGMENTS))
+  const jumpToHeldAnchor = (anchorId: string): void => {
+    jumpToSettledAnchor(anchorId, () => {
+      if (readingAnchorIds.includes(anchorId)) holdCurrentAnchorId(readingPosition, anchorId)
+    })
+  }
+  const handleOpenFile = (anchorId: string): void => {
+    stepping.onFileEntered(anchorId)
+    jumpToHeldAnchor(anchorId)
+  }
+  const handleJumpToSection = (anchorId: string): void => {
+    stepping.onSectionEntered(anchorId)
+    jumpToHeldAnchor(anchorId)
+  }
   const walkthroughLayout = useWalkthroughNavigation(artifact?.segments ?? NO_SEGMENTS, stepping, {
     onReviewedChange: isOwn
       ? null
@@ -317,7 +385,8 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     )
   }
 
-  const settingsMenu = page.kind === "missing"
+  const isDocked = page.kind === "artifact" || page.kind === "creation"
+  const settingsMenu = page.kind === "missing" || page.kind === "creation"
     ? <SettingsMenu links={SETTINGS_LINKS} themeToggle={colorTheme} />
     : (
         <SettingsMenu
@@ -335,17 +404,12 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     <div
       className={cn(
         "pb-24",
-        page.kind === "artifact" ? [PANEL_LAYOUT, !panelWidths.isResizing && ["transition-[padding]", PANEL_TRANSITION]] : "px-6",
+        isDocked ? [PANEL_LAYOUT, !panelWidths.isResizing && ["transition-[padding]", PANEL_TRANSITION]] : "px-6",
         ACCENT_LINE_CLASS,
         LAYOUT_VARIABLES,
         progress === null ? null : DRAFTING_STRIP_HEIGHT,
       )}
-      style={page.kind !== "artifact"
-        ? undefined
-        : {
-            paddingLeft: `calc(${String(panelWidths.explorer.widthPx)}px + ${PAGE_GUTTER})`,
-            paddingRight: `calc(${String(panelWidths.side.widthPx)}px + var(--activity-width) + ${PAGE_GUTTER})`,
-          }}
+      style={frameInsetsOf(page.kind, panelWidths)}
     >
       <title>{page.shell.documentTitle}</title>
       {bandSlot === null
@@ -355,7 +419,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
               <BandLine lineColor="primary" />
               <ReviewHeader
                 header={page.shell.header}
-                changedFiles={page.kind === "artifact" ? null : page.changedFiles}
+                changedFiles={page.kind === "artifact" || page.kind === "creation" ? null : page.changedFiles}
                 authorLabel={page.shell.authorLabel}
                 reviewerRequesting={discussion.reviewerRequesting}
                 targetSwitching={targetSwitching}
@@ -431,10 +495,38 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
             </div>
           )
         : null}
+      {page.kind === "creation"
+        ? (
+            <>
+              <ReviewCreation
+                creation={page.creation}
+                branchSearch={reviewCreation.branchSearch}
+                isCreating={reviewCreation.isCreating}
+                errorMessage={reviewCreation.errorMessage}
+                onTroubleshoot={reviewCreation.onTroubleshoot}
+                onBranchQueryChange={reviewCreation.onBranchQueryChange}
+                onBaseBranchChange={reviewCreation.onBaseBranchChange}
+                onCreate={reviewCreation.onCreate}
+              />
+              <ExplorerDock
+                dockRef={explorerDockRef}
+                panelWidths={panelWidths}
+                panels={panels}
+                isAboveNavigator={false}
+                labels={page.panels.explorer}
+                explorer={page.fileExplorer}
+                readingPosition={readingPosition}
+                filterNavigation={null}
+                onOpenFile={handleOpenFile}
+                onClearFilter={() => { onSearchChange({ filter: undefined }) }}
+              />
+            </>
+          )
+        : null}
       {page.kind !== "artifact"
         ? null
         : (
-            <ReviewNavigator rail={page.rail} onSectionJump={stepping.onSectionEntered}>
+            <ReviewNavigator rail={navigatorRailOf(page.rail)} onSectionJump={stepping.onSectionEntered}>
               <WritingProviders writingLabel={page.progress?.isWriting === true ? page.progress.label : null} agent={writeUpDialog.agent}>
                 <ReviewNotices
                   staleNotice={page.staleNotice}
@@ -723,27 +815,18 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                   }}
                   onAsk={askAbout}
                 />
-                <div
-                  ref={explorerDockRef}
-                  className={cn(DOCKED_CLASSES, "left-0 border-r", !panelWidths.isResizing && ["transition-[width]", PANEL_TRANSITION])}
-                  style={{ width: panelWidths.explorer.widthPx }}
-                >
-                  {panels.isExplorerShown
-                    ? (
-                        <ReadingFileExplorer
-                          labels={page.panels.explorer}
-                          shortcutLabel={PANEL_SHORTCUT_LABELS.explorer}
-                          explorer={page.fileExplorer}
-                          readingPosition={readingPosition}
-                          filterNavigation={walkthroughLayout.reviewFilter}
-                          onOpenFile={scrollToSettledAnchor}
-                          onHide={() => { panels.onToggle("explorer") }}
-                          onClearFilter={() => { onSearchChange({ filter: undefined }) }}
-                        />
-                      )
-                    : <FileExplorerStrip labels={page.panels.explorer} shortcutLabel={PANEL_SHORTCUT_LABELS.explorer} onShow={() => { panels.onToggle("explorer") }} />}
-                  {panels.isExplorerShown ? <DockResizeHandle dock={panelWidths.explorer} label={EXPLORER_RESIZE_LABEL} edge="right" /> : null}
-                </div>
+                <ExplorerDock
+                  dockRef={explorerDockRef}
+                  panelWidths={panelWidths}
+                  panels={panels}
+                  isAboveNavigator
+                  labels={page.panels.explorer}
+                  explorer={page.fileExplorer}
+                  readingPosition={readingPosition}
+                  filterNavigation={walkthroughLayout.reviewFilter}
+                  onOpenFile={handleOpenFile}
+                  onClearFilter={() => { onSearchChange({ filter: undefined }) }}
+                />
                 {panels.sidePanel === null
                   ? null
                   : (
@@ -768,6 +851,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                     groups={page.rail.groups}
                                     sections={page.rail.sections}
                                     readingPosition={readingPosition}
+                                    onJump={handleJumpToSection}
                                     onEditGroup={isOwn ? handleEditRailGroup : null}
                                     onArrangeGroups={isOwn && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
                                   />
@@ -862,4 +946,5 @@ const stringListOf = (value: unknown): string[] | undefined =>
 export const validateReviewSearch = (search: Record<string, unknown>): ReviewSearch => ({
   filter: stringListOf(search.filter),
   reviewed: search.reviewed === true ? true : undefined,
+  compare: typeof search.compare === "string" && search.compare !== "" ? search.compare : undefined,
 })

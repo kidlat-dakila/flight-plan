@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react"
+import type { BaseBranchChoice } from "@/components/BaseBranchField"
 import ConfigureRepositoryDialog from "@/components/ConfigureRepositoryDialog"
 import type { AuthorsChoice } from "@/components/RepositoryAuthors"
 
@@ -10,6 +11,15 @@ const AUTHORS: AuthorsChoice = {
   },
   trackedAuthors: [{ id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" }],
   search: { role: null, query: "", options: [], message: null, errorMessage: null },
+}
+const SAVED_BASE_BRANCH: BaseBranchChoice = {
+  branchName: "develop",
+  search: {
+    query: "",
+    options: [{ id: "release/2.x", label: "release/2.x", detail: "yesterday", stateLabel: null, isDisabled: false }],
+    message: null,
+    errorMessage: null,
+  },
 }
 
 interface DialogOverrides {
@@ -25,6 +35,8 @@ const renderDialog = (overrides: DialogOverrides = {}) => {
     onAuthorQueryChange: vi.fn(),
     onAuthorSelect: vi.fn(),
     onTrackedAuthorRemove: vi.fn(),
+    onBaseBranchQueryChange: vi.fn(),
+    onBaseBranchChange: vi.fn(),
     onSave: vi.fn(),
     onRemove: vi.fn(),
     onClose: vi.fn(),
@@ -36,6 +48,7 @@ const renderDialog = (overrides: DialogOverrides = {}) => {
       path="/Users/dev/projects/storefront"
       configurationHref="/pr-reviews/storefront/configurations"
       authors={{ ...AUTHORS, ...overrides.authors }}
+      baseBranch={SAVED_BASE_BRANCH}
       isSaving={overrides.isSaving ?? false}
       isRemoving={overrides.isRemoving ?? false}
       errorMessage={overrides.errorMessage ?? null}
@@ -143,6 +156,32 @@ describe("ConfigureRepositoryDialog", () => {
       authors: { search: { role: "tracked", query: "te", options: [teo], message: null, errorMessage: null } },
     })
     const field = screen.getByRole("combobox", { name: "Track branches from specific team members" })
+
+    fireEvent.focus(field)
+    fireEvent.keyDown(field, { key: "Escape" })
+    expect(onClose).not.toHaveBeenCalled()
+
+    fireEvent.keyDown(field, { key: "Escape" })
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it("shows the saved branch to compare with, and reports a search and a choice", () => {
+    const { onBaseBranchQueryChange, onBaseBranchChange } = renderDialog()
+    const field = screen.getByRole<HTMLInputElement>("combobox", { name: "Branch to compare with" })
+
+    expect(field.value).toBe("develop")
+    fireEvent.focus(field)
+    expect(onBaseBranchQueryChange).toHaveBeenLastCalledWith("")
+    fireEvent.change(field, { target: { value: "rel" } })
+    fireEvent.click(screen.getByRole("option", { name: /release\/2\.x/ }))
+
+    expect(onBaseBranchQueryChange).toHaveBeenLastCalledWith("rel")
+    expect(onBaseBranchChange).toHaveBeenCalledWith("release/2.x")
+  })
+
+  it("closes only the branch list when Escape is pressed with it open", () => {
+    const { onClose } = renderDialog()
+    const field = screen.getByRole("combobox", { name: "Branch to compare with" })
 
     fireEvent.focus(field)
     fireEvent.keyDown(field, { key: "Escape" })

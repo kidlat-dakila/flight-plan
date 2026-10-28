@@ -1,0 +1,6 @@
+{
+  "title": "Python package with pydantic v2 models and validators",
+  "packages": ["pydantic"],
+  "language": "python",
+  "mainFramework": null
+}

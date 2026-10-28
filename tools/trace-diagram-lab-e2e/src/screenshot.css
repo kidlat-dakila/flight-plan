@@ -1,3 +1,7 @@
 [data-testid="lab-toolbar"] {
   visibility: hidden;
 }
+
+[data-testid="playground-nav"] {
+  visibility: hidden;
+}

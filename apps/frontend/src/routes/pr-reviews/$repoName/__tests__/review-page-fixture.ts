@@ -80,7 +80,7 @@ const segment = <File extends OrderedFile>(id: string, title: string | null, pos
     markdown: `Why ${id} matters.`,
     isDraft: false,
     unwrittenLabel: "Not written yet.",
-    changeOverview: { heading: "Change Overview", emptyMessage: null, rows: [] },
+    changeOverview: { anchorId: `${id}-change-overview`, heading: "Change Overview", emptyMessage: null, rows: [] },
   },
   traceDiagram: { ...ABSENT_TRACE, anchorId: `${id}-trace-diagram` },
   blastDiagram: null,
@@ -478,6 +478,65 @@ export const needsMigrationPage = {
   copyLabel: "Copy command",
   changedFiles,
 }
+
+const changedFileRow = (path: string, name: string, depth: number, ancestorIds: readonly string[]) => ({
+  kind: "file",
+  id: path,
+  name,
+  depth,
+  ancestorIds,
+  icon: { kind: "typescript", label: "TypeScript" },
+  change: { kind: "modified", label: "Modified" },
+  anchorId: null,
+  noteLabel: null,
+  marks: [],
+  reviewed: null,
+  match: null,
+})
+
+const creationFact = (label: string, value: string, tone: string, size: string) => ({ label, value, tone, size })
+
+export const creationPage = {
+  kind: "creation",
+  shell,
+  isOwn: false,
+  panels: artifactPage.panels,
+  fileExplorer: {
+    summary: ["2 files"],
+    filter: null,
+    hiddenLabel: null,
+    rows: [
+      { kind: "folder", id: "src", name: "src", depth: 0, ancestorIds: [] },
+      changedFileRow("src/cart.ts", "cart.ts", 1, ["src"]),
+      changedFileRow("src/price.ts", "price.ts", 1, ["src"]),
+    ],
+  },
+  creation: {
+    heading: "Create a new Flight Plan Review Artifact for “Count held units in the stock check”",
+    author: { name: "mira", avatarUrl: null, monogram: "M" },
+    introduction: [plain("mira wants to merge "), { text: "feat/held-units", kind: "code" }, plain(" into "), { text: "main", kind: "code" }, plain(" in pull request #412.")],
+    baseBranch: { branchName: "main", noteLabel: "Pull request base" },
+    facts: [
+      creationFact("Files", "2", "plain", "large"),
+      creationFact("Lines added", "+40", "added", "large"),
+      creationFact("Lines removed", "−6", "removed", "large"),
+      creationFact("Added", "None", "quiet", "small"),
+      creationFact("Modified", "2 files", "plain", "small"),
+      creationFact("Deleted", "None", "quiet", "small"),
+    ],
+    areas: {
+      heading: "Where the lines are",
+      rows: [{ name: "src", isPath: true, fileCountLabel: "2 files", addedLabel: "+40", removedLabel: "−6", addedShare: 0.87, removedShare: 0.13 }],
+    },
+    problem: null,
+    createLabel: "Create Review Artifact",
+    creatingLabel: "Creating the review artifact",
+  },
+}
+
+const reviewBranchOption = (name: string) => ({ id: name, label: name, detail: "Last commit 2 days ago", stateLabel: null, isDisabled: false })
+
+export const reviewBranches = { options: [reviewBranchOption("main"), reviewBranchOption("develop")], message: null, detectedBranch: "main" }
 
 export const conversationReply = {
   heading: "Chat with the agent",

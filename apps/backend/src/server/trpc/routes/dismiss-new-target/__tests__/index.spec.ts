@@ -18,6 +18,7 @@ import { highlightAsPlainText } from "@flightplan/codegraph"
 const storefront: Repository = {
   name: "storefront",
   path: "/work/storefront",
+  baseBranch: null,
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,

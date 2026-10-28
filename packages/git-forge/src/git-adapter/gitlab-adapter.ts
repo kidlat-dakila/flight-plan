@@ -379,6 +379,7 @@ export interface GitlabAdapterOptions {
   baseUrl?: string
   provider?: ExtendedGitLabProvider
   environment?: Readonly<Record<string, string | undefined>>
+  baseBranch?: string | null
 }
 
 export class GitlabAdapter extends BaseGitAdapter {

@@ -5,6 +5,7 @@ import { use, useDeferredValue, useState } from "react"
 import { createPortal } from "react-dom"
 import { useAuthorsChoice } from "@/authors-choice"
 import { BandSlotContext } from "@/band-slot"
+import { NO_BASE_BRANCH_SELECTION, useBaseBranchChoice, useRepositoryBranchSearch } from "@/base-branch-choice"
 import { useRepositoryFinder } from "@/repository-finder"
 import { useFailureTroubleshooting, usePageErrorTroubleshooting } from "@/troubleshooting"
 import { useTRPC } from "@/trpc"
@@ -70,6 +71,8 @@ const RepositoriesSection = ({
   const [authorQuery, setAuthorQuery] = useState<AuthorQuery | null>(null)
   const finder = useRepositoryFinder(isAddOpen)
   const additionAuthors = useAuthorsChoice({ isEnabled: isAddOpen, folderPath: finder.search.query, repositoryName: null, saved: null })
+  const additionBranch = useBaseBranchChoice({ isEnabled: isAddOpen, folderPath: finder.search.query, saved: null })
+  const branchSearch = useRepositoryBranchSearch("setup", repositories)
   const deferredAuthorQuery = useDeferredValue(authorQuery)
   const recentRepositories = useQuery({
     ...trpc.setup.recentRepositories.queryOptions({}),
@@ -93,6 +96,7 @@ const RepositoriesSection = ({
         setIsAddOpen(false)
         finder.reset()
         additionAuthors.reset()
+        additionBranch.reset()
         await onChanged()
       },
     }),
@@ -100,15 +104,17 @@ const RepositoriesSection = ({
   const followRepository = useMutation(trpc.setup.addRepository.mutationOptions({ onSuccess: onChanged }))
   const removeRepository = useMutation(trpc.setup.removeRepository.mutationOptions({ onSuccess: onChanged }))
   const setAuthorTracking = useMutation(trpc.setup.setAuthorTracking.mutationOptions({ onSuccess: onChanged }))
+  const setBaseBranch = useMutation(trpc.setup.setBaseBranch.mutationOptions({ onSuccess: onChanged }))
 
   const handleAddClose = () => {
     addRepository.reset()
     finder.reset()
     additionAuthors.reset()
+    additionBranch.reset()
     setIsAddOpen(false)
   }
 
-  const repositoryFailure = followRepository.error ?? removeRepository.error
+  const repositoryFailure = followRepository.error ?? removeRepository.error ?? setBaseBranch.error
   const authorFailure = authorSuggestions.error ?? setAuthorTracking.error
   const listMessage = recentRepositories.isPending
     ? LOOKING_FOR_REPOSITORIES_MESSAGE
@@ -122,6 +128,7 @@ const RepositoriesSection = ({
         repositoryErrorMessage={repositoryFailure?.message ?? null}
         onRepositoryTroubleshoot={troubleshootFailure(repositoryFailure)}
         isChangingRepositories={followRepository.isPending || removeRepository.isPending}
+        baseBranchSearch={branchSearch.search}
         authorSearch={{
           repositoryName: authorQuery?.repositoryName ?? null,
           role: authorQuery?.role ?? null,
@@ -140,16 +147,25 @@ const RepositoriesSection = ({
         onOpenAddRepository={() => { setIsAddOpen(true) }}
         onFollow={(path) => {
           removeRepository.reset()
-          followRepository.mutate({ path, trackedAuthorIds: [] })
+          setBaseBranch.reset()
+          followRepository.mutate({ path, trackedAuthorIds: [], ...NO_BASE_BRANCH_SELECTION })
         }}
         onUnfollow={(name) => {
           followRepository.reset()
+          setBaseBranch.reset()
           removeRepository.mutate({ name })
         }}
         onAuthorQueryChange={(repositoryName, role, query) => { setAuthorQuery({ repositoryName, role, query }) }}
         onAuthorTrackingChange={(repositoryName, authorId, isTracked) => {
           setAuthorQuery(null)
           setAuthorTracking.mutate({ repositoryName, authorId, isTracked })
+        }}
+        onBaseBranchQueryChange={branchSearch.onQueryChange}
+        onBaseBranchChange={(repositoryName, baseBranch) => {
+          branchSearch.close()
+          followRepository.reset()
+          removeRepository.reset()
+          setBaseBranch.mutate({ repositoryName, baseBranch })
         }}
         onContinue={onContinue}
       />
@@ -158,6 +174,7 @@ const RepositoriesSection = ({
         search={finder.search}
         browse={finder.browse}
         authors={additionAuthors.authors}
+        baseBranch={additionBranch.baseBranch}
         isAdding={addRepository.isPending}
         errorMessage={addRepository.error?.message ?? null}
         onTroubleshoot={troubleshootFailure(addRepository.error)}
@@ -169,7 +186,11 @@ const RepositoriesSection = ({
         onAuthorQueryChange={additionAuthors.onAuthorQueryChange}
         onAuthorSelect={additionAuthors.onAuthorSelect}
         onTrackedAuthorRemove={additionAuthors.onTrackedAuthorRemove}
-        onSubmit={() => { addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection }) }}
+        onBaseBranchQueryChange={additionBranch.onQueryChange}
+        onBaseBranchChange={additionBranch.onBaseBranchChange}
+        onSubmit={() => {
+          addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection, ...additionBranch.selection })
+        }}
         onBrowse={() => {
           addRepository.reset()
           finder.onBrowse()

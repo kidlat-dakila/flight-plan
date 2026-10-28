@@ -22,6 +22,7 @@ const registered = (name: string, overrides: Partial<SetupRepository> = {}): Set
   path: `/work/${name}`,
   selfAuthor: { id: "dev@acme.test", name: "Dev", detail: "dev@acme.test", avatarUrl: null },
   trackedAuthors: [{ id: "mira@acme.test", name: "Mira", detail: "mira@acme.test", avatarUrl: null }],
+  baseBranch: null,
   ...overrides,
 })
 
@@ -95,8 +96,16 @@ describe("LiveRepositoryStore", () => {
         forgeSlug: null,
         problem: null,
         targets: [{ kind: "branch", name: "first", branchStatus: "no-review", isNew: true, updatedAt: AFTER_BASELINE }],
+        baseBranch: null,
       },
     ])
+  })
+
+  it("lists and inspects a repository with the base branch saved for it", async () => {
+    const { store, requests } = createStore(setupWith(registered("storefront", { baseBranch: "develop" })))
+
+    await expect(store.list()).resolves.toMatchObject([{ name: "storefront", baseBranch: "develop" }])
+    expect(requests()).toMatchObject([{ path: "/work/storefront", baseBranch: "develop" }])
   })
 
   it("inspects each repository with its path, its forges and its tracked authors, and no own author without a git config email", async () => {
@@ -107,6 +116,7 @@ describe("LiveRepositoryStore", () => {
     expect(requests()).toStrictEqual([
       {
         path: "/work/storefront",
+        baseBranch: null,
         forges: null,
         trackedAuthorIds: ["mira@acme.test"],
         selfAuthorId: null,
@@ -171,25 +181,25 @@ describe("LiveRepositoryStore", () => {
   })
 
   it("lists the registered repositories without inspecting them", async () => {
-    const { store, requests } = createStore(setupWith(registered("storefront"), registered("ledger")))
+    const { store, requests } = createStore(setupWith(registered("storefront"), registered("ledger", { baseBranch: "develop" })))
 
     await expect(store.listRegistered()).resolves.toStrictEqual([
-      { name: "storefront", path: "/work/storefront" },
-      { name: "ledger", path: "/work/ledger" },
+      { name: "storefront", path: "/work/storefront", baseBranch: null },
+      { name: "ledger", path: "/work/ledger", baseBranch: "develop" },
     ])
     expect(requests()).toStrictEqual([])
   })
 
-  it("registers a new repository in the setup with the authors chosen for it", async () => {
+  it("registers a new repository in the setup with the authors and the base branch chosen for it", async () => {
     const { store, setupStore } = createStore(setupWith(registered("storefront")))
-    const added: Repository = { name: "ledger", path: "/work/ledger", forge: "git", forgeSlug: null, problem: null, targets: [] }
+    const added: Repository = { name: "ledger", path: "/work/ledger", forge: "git", forgeSlug: null, problem: null, targets: [], baseBranch: "develop" }
     const selfAuthor = { id: "dev@acme.test", name: "Dev", detail: "dev@acme.test", avatarUrl: null }
     const trackedAuthors = [{ id: "mira@acme.test", name: "Mira", detail: "mira@acme.test", avatarUrl: null }]
 
     await store.add(added, { selfAuthor, trackedAuthors })
 
     await expect(setupStore.read()).resolves.toMatchObject({
-      repositories: [{ name: "storefront" }, { name: "ledger", path: "/work/ledger", selfAuthor, trackedAuthors }],
+      repositories: [{ name: "storefront" }, { name: "ledger", path: "/work/ledger", selfAuthor, trackedAuthors, baseBranch: "develop" }],
     })
   })
 
@@ -197,7 +207,7 @@ describe("LiveRepositoryStore", () => {
     const { store, setupStore } = createStore(setupWith(registered("storefront")))
 
     await store.add(
-      { name: "storefront", path: "/work/storefront", forge: "git", forgeSlug: null, problem: null, targets: [] },
+      { name: "storefront", path: "/work/storefront", forge: "git", forgeSlug: null, problem: null, targets: [], baseBranch: null },
       { selfAuthor: null, trackedAuthors: [] },
     )
 
@@ -236,6 +246,17 @@ describe("LiveRepositoryStore", () => {
 
     await expect(setupStore.read()).resolves.toMatchObject({
       repositories: [{ name: "storefront", selfAuthor: null, trackedAuthors: [] }, { name: "ledger", selfAuthor: { id: "dev@acme.test" } }],
+    })
+  })
+
+  it("replaces the base branch of one repository in the setup and reports a repository it does not hold", async () => {
+    const { store, setupStore } = createStore(setupWith(registered("storefront"), registered("ledger")))
+
+    await expect(store.replaceBaseBranch("storefront", "develop")).resolves.toBe(true)
+    await expect(store.replaceBaseBranch("missing", "develop")).resolves.toBe(false)
+
+    await expect(setupStore.read()).resolves.toMatchObject({
+      repositories: [{ name: "storefront", baseBranch: "develop" }, { name: "ledger", baseBranch: null }],
     })
   })
 

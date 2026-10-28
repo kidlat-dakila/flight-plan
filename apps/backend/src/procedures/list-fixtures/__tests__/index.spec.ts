@@ -8,6 +8,7 @@ const NOW = new Date("2026-10-01T12:00:00.000Z")
 const repositoryOf = (name: string): Repository => ({
   name,
   path: `/fixtures/${name}`,
+  baseBranch: null,
   forge: "git",
   forgeSlug: null,
   problem: null,
