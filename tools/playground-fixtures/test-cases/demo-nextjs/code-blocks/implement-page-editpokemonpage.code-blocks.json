@@ -997,6 +997,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/[id]/edit/page.tsx"
         ],
@@ -2404,6 +2410,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 9,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/[id]/page.tsx"
         ],
@@ -3340,6 +3352,12 @@
         ],
         "isRoot": true,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -4978,6 +4996,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/components/PokemonForm.tsx"
         ],
@@ -6186,6 +6210,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 7,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/new/page.tsx"
         ],
@@ -6641,6 +6671,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 7,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/components/ui/SubmitButton.tsx"
         ],
@@ -7283,6 +7319,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 7,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/db/queries/pokemon.ts"
         ],
@@ -7569,6 +7611,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/db/queries/pokemon.ts"
         ],
@@ -8498,6 +8546,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/db/queries/trainers.ts"
         ],

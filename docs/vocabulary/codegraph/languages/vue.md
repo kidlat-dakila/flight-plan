@@ -8,7 +8,7 @@ How the [codegraph](../../codegraph.md) reads a Vue single-file component. This 
 | **Grammar** | tree-sitter `html` for the file, then `typescript` or `tsx` for each script block and each template expression |
 | **Reader of the import graph** | The script reader, shared with [TypeScript](typescript.md) and [JavaScript and JSX](jsx.md) |
 | **Reader of the AST graph** | `readVueSyntax` |
-| **Trace Diagram** | The same as [JavaScript and JSX](jsx.md#trace-diagram): the component of a file is a `component` node, the components its template renders are inside it, and a listener of the template is a trigger label and a node of its own, like an effect of the setup script |
+| **Trace Diagram** | The same as [JavaScript and JSX](jsx.md#trace-diagram): the component of a file is a `component` node, the components its template renders are inside it, and a listener of the template is a trigger label and a node of its own, like an effect of the setup script. `computed` is a memo as `useMemo` is, `watch`, `watchEffect` and `onMounted` are effects as `useEffect` is, `defineProps` gives the props, and the template is one return group whose `v-if` and `v-for` are condition and loop rows, as the [component card](../../trace-diagram/component-card.md) says |
 
 ## A Vue file is three languages
 

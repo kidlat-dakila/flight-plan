@@ -486,6 +486,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/repositories/pokemon.ts"
         ],
@@ -872,6 +878,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 9,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/repositories/pokemon.ts"
         ],
@@ -1089,6 +1101,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/repositories/pokemon.ts"
         ],
@@ -1587,6 +1605,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 17,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/repositories/pokemon.ts"
         ],
@@ -2938,6 +2962,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 8,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/services/party.ts"
         ],
@@ -3296,6 +3326,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/services/party.ts"
         ],
@@ -3461,6 +3497,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 19,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/services/party.ts"
         ],

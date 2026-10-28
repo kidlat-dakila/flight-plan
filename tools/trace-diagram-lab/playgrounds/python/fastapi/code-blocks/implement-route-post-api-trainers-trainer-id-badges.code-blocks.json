@@ -1037,6 +1037,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/badges/dependencies.py",
           "src/pokedex/badges/routes.py"
@@ -2108,6 +2114,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/badges/routes.py"
         ],
@@ -3355,6 +3367,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 8,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/badges/routes.py",
           "src/pokedex/badges/service.py"
@@ -4562,6 +4580,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/errors.py",
           "src/pokedex/main.py"
@@ -4989,6 +5013,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 8,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/health/routes.py"
         ],
@@ -6789,6 +6819,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 15,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -7910,6 +7946,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/dependencies.py"
         ],
@@ -8467,6 +8509,12 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/routes.py"
         ],
@@ -8596,6 +8644,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 17,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/routes.py"
         ],
@@ -8779,6 +8833,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 22,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/routes.py"
         ],
@@ -9468,6 +9528,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 8,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/routes.py",
           "src/pokedex/trainers/service.py"
@@ -9644,6 +9710,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 15,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/dependencies.py",
           "src/pokedex/trainers/service.py"
@@ -9957,6 +10029,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 21,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/routes.py",
           "src/pokedex/trainers/service.py"

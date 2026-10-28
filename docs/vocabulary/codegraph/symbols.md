@@ -42,6 +42,7 @@ type CodeBlockSymbol = {
   handedTo?: CodeBlock | null // alias not a shallow or clone
   member?: SymbolMember
   binding?: string
+  isRunInPlace?: boolean
 } & (
   | { type: "internal-variable"; lineOfCodeReference: SourceRange }
   | { type: "internal-code-block"; codeBlockReference: CodeBlock }
@@ -88,6 +89,8 @@ const Page = () => {
 An element counts as rendered only inside a `render-root`. An element anywhere else, in an object, an array or an argument, is a `value`: building the element does not run the component. So `{ path: "/orders", element: <OrdersPage /> }` in a route table hands `OrdersPage` over, and `OrdersPage` is a component nothing renders.
 
 The two uses of `save` are two symbols of `Page`. The first means `Page` runs `save` while it renders. The second means it does not: `SaveButton` runs it later.
+
+**A name handed to a method of a collection or a promise is run there.** In TypeScript, a name passed as an argument to `map`, `filter`, `forEach` or another method of a collection, or to `then`, `catch` or `finally`, has the use `call` and says `isRunInPlace: true`: `names.map(normalizeName)` runs `normalizeName`, and `load().then(save)` runs `save`. Every other symbol leaves `isRunInPlace` out. A [function card](../trace-diagram/function-card.md#external-calls) reads it: such a function is a call with a row, and a parameter handed so is no call of the parameter.
 
 ## What a handed-over value is handed to
 

@@ -1337,6 +1337,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 15,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -1842,6 +1848,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 13
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -1977,6 +1989,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 18,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -2480,6 +2498,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -3586,6 +3610,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 17,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -3719,6 +3749,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 25,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -4219,6 +4255,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 22,
+            "column": 13
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {

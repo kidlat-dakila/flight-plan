@@ -1021,6 +1021,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/api/client.ts"
         ],
@@ -2341,6 +2347,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 14,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/composables/use-items.ts"
         ],
@@ -2936,6 +2948,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 14,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/composables/use-trainers.ts"
         ],
@@ -4249,6 +4267,12 @@
         ],
         "isRoot": true,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -8968,8 +8992,7 @@
                 "column": 34
               }
             },
-            "use": "value",
-            "handedToId": null,
+            "use": "call",
             "type": "external-block",
             "codeBlockId": "src/api/client.ts#function@9:1"
           },

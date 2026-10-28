@@ -242,8 +242,12 @@
                       "triggerLabels": [],
                       "blockLabels": [
                         {
-                          "label": "Finds the highest level of the team",
-                          "codeBlockId": "src/training/gym-camp.ts#variable@8:5"
+                          "label": "Returns the count, the badge and the strongest level of the team",
+                          "codeBlockId": "src/training/gym-camp.ts#method@7:3",
+                          "at": {
+                            "line": 9,
+                            "column": 5
+                          }
                         }
                       ]
                     }
@@ -279,12 +283,28 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Raises the levels of the team in the roster",
-                      "codeBlockId": "src/training/camp.ts#variable@10:5"
+                      "label": "Calls this.roster.levelUp to raise the level of the team",
+                      "codeBlockId": "src/training/camp.ts#variable@10:5",
+                      "at": {
+                        "line": 10,
+                        "column": 18
+                      }
                     },
                     {
-                      "label": "Returns a message for a trainer with no team",
-                      "codeBlockId": "src/training/camp.ts#condition@11:5"
+                      "label": "Returns that the trainer has no Pokemon to train when the team is empty",
+                      "codeBlockId": "src/training/camp.ts#condition@11:5",
+                      "at": {
+                        "line": 11,
+                        "column": 28
+                      }
+                    },
+                    {
+                      "label": "Returns the report of the trained team",
+                      "codeBlockId": "src/training/camp.ts#method@9:3",
+                      "at": {
+                        "line": 13,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -349,16 +369,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Finds the trainer of the id",
-                      "codeBlockId": "src/trainers/roster.ts#variable@17:5"
+                      "label": "Returns an empty team when no trainer has the id",
+                      "codeBlockId": "src/trainers/roster.ts#condition@18:5",
+                      "at": {
+                        "line": 18,
+                        "column": 32
+                      }
                     },
                     {
-                      "label": "Returns an empty team for an id with no trainer",
-                      "codeBlockId": "src/trainers/roster.ts#condition@18:5"
-                    },
-                    {
-                      "label": "Raises each level up to the maximum level, then saves the team",
-                      "codeBlockId": "src/trainers/roster.ts#external-value@19:5"
+                      "label": "Returns the leveled-up team",
+                      "codeBlockId": "src/trainers/roster.ts#method@16:3",
+                      "at": {
+                        "line": 21,
+                        "column": 5
+                      }
                     }
                   ]
                 }

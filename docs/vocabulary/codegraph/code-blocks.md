@@ -262,6 +262,7 @@ interface CodeBlock {
   isExported: boolean
   isPlain?: boolean
   isReturned?: boolean
+  returnsAt?: Position[]
   isParameterProperty?: boolean
   isAnnotatedAlias?: boolean
   exportedBy: ASTGraph[] // aliases not a shallow or clone
@@ -294,6 +295,7 @@ interface CodeBlock {
 | `isExported` | Whether the file exports it. Being exported is a fact about a block, not a type: a function, a class and a root variable can each be exported or not. |
 | `isPlain` | On a `root-variable`, set when every value in it, at any depth, is written out as it is: no call but `new`, no function, no markup, and in Python no comprehension. Left out otherwise. The Trace Diagram reads it as [Plain code](../trace-diagram.md#plain-code) says. |
 | `isReturned` | On a `function`, a `hook`, a `component` or a `method`, set when the function around it returns it: written in the `return`, as the body of an arrow function, or named by the `return`. Left out otherwise. |
+| `returnsAt` | The start of each `return` statement the block is the innermost block around, inside a `function`, a `method`, a `hook`, a `component`, an `effect-callback`, a `code-event` or a `render-event`, in TypeScript, JSX, Vue and Python. Left out on a block with none. A `return` belongs only to the function around it, so one inside a function written in the block is no entry of the block, and an arrow function whose body is an expression has no `return`. The [function card](../trace-diagram/function-card.md#rows) lists one row per entry. |
 | `isParameterProperty` | On a `root-argument-value` of a TypeScript constructor, set when the parameter is marked `private`, `protected`, `public` or `readonly`, so it declares a property of the class too. Left out otherwise. The Trace Diagram draws it as a property of its class, as the [class card](../trace-diagram/class-card.md#rows-and-methods) says. |
 | `isAnnotatedAlias` | On a Python `root-variable`, set when its value is `Annotated[…]`, written bare or as `typing.Annotated[…]`, so the name stands for a type and what the `Annotated` holds: `CurrentUser = Annotated[User, Depends(current_user)]`. Left out otherwise. A chain steps to it from a type that names it, as [Chains](chains.md#what-a-chain-steps-through) says, and the Trace Diagram draws it as [plain code](../trace-diagram.md#plain-code). |
 | `exportedBy` | The AST graph of every file that exports the block: its own file, and each file that re-exports it, such as an `index.ts`. Empty when `isExported` is `false`. |

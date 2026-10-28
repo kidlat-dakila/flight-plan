@@ -1324,6 +1324,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -3075,6 +3081,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 17,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "pokedex/views.py"
         ],
@@ -3387,6 +3399,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 27,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "pokedex/views.py"
         ],
@@ -3961,6 +3979,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 26,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -4662,6 +4686,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 32,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -5101,6 +5131,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 38,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -5892,6 +5928,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 42,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -6377,6 +6419,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 51,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "pokedex/views.py"
         ],

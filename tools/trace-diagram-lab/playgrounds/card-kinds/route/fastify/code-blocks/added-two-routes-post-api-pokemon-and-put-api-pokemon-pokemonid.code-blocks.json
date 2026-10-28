@@ -1105,6 +1105,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -3336,6 +3342,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokemon/controller.ts"
         ],
@@ -4031,6 +4043,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 30
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -5039,6 +5057,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -6112,6 +6136,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 22,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -7607,6 +7637,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 19,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokemon/store.ts"
         ],
@@ -8066,6 +8102,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 27,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokemon/store.ts"
         ],
@@ -8292,6 +8334,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 24,
+            "column": 30
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],

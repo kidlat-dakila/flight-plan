@@ -258,8 +258,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Limits a team to six Pokemon",
-                      "codeBlockId": "src/trainers/trainer.entity.ts#root-variable@4:1"
+                      "label": "Returns whether the team holds fewer than six Pokemon",
+                      "codeBlockId": "src/trainers/trainer.entity.ts#method@20:3",
+                      "at": {
+                        "line": 21,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -319,24 +323,28 @@
               ],
               "blockLabels": [
                 {
-                  "label": "Gets the repository of the pokemon table",
-                  "codeBlockId": "src/trainers/team.ts#root-variable@7:1"
+                  "label": "Throws a NotFoundError when no trainer has the id",
+                  "codeBlockId": "src/trainers/team.ts#throw@17:25"
                 },
                 {
-                  "label": "Loads the trainer of the id with its team, or null",
-                  "codeBlockId": "src/trainers/team.ts#external-value@16:3"
+                  "label": "Calls trainer.hasRoomInTeam when the trainer exists to check that the team has room",
+                  "codeBlockId": "src/trainers/team.ts#condition@18:3",
+                  "at": {
+                    "line": 18,
+                    "column": 8
+                  }
                 },
                 {
-                  "label": "Throws NotFoundError when no trainer has the id",
-                  "codeBlockId": "src/trainers/team.ts#condition@17:3"
+                  "label": "Throws a TeamFullError when the team of the trainer is full",
+                  "codeBlockId": "src/trainers/team.ts#throw@18:33"
                 },
                 {
-                  "label": "Throws TeamFullError when the team has no room",
-                  "codeBlockId": "src/trainers/team.ts#condition@18:3"
-                },
-                {
-                  "label": "Inserts a row for the species, linked to the trainer, and returns it",
-                  "codeBlockId": "src/trainers/team.ts#data@19:10"
+                  "label": "Returns the caught Pokemon saved in the team of the trainer",
+                  "codeBlockId": "src/trainers/team.ts#function@15:1",
+                  "at": {
+                    "line": 19,
+                    "column": 3
+                  }
                 }
               ]
             }
@@ -1326,20 +1334,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Opens the connection of the data source",
-                  "codeBlockId": "src/scripts/catch-pokemon.ts#call@5:3"
-                },
-                {
-                  "label": "Catches a Pokemon of the species for the trainer",
-                  "codeBlockId": "src/scripts/catch-pokemon.ts#external-value@6:3"
-                },
-                {
-                  "label": "Prints the trainer, the species and the catch time",
-                  "codeBlockId": "src/scripts/catch-pokemon.ts#telemetry@7:3"
-                },
-                {
-                  "label": "Closes the connection of the data source",
-                  "codeBlockId": "src/scripts/catch-pokemon.ts#call@8:3"
+                  "label": "Calls catchPokemon to add a Pokemon of the species to the team",
+                  "codeBlockId": "src/scripts/catch-pokemon.ts#external-value@6:3",
+                  "at": {
+                    "line": 6,
+                    "column": 25
+                  }
                 }
               ]
             },
@@ -1395,24 +1395,28 @@
               ],
               "blockLabels": [
                 {
-                  "label": "Gets the repository of the pokemon table",
-                  "codeBlockId": "src/trainers/team.ts#root-variable@7:1"
+                  "label": "Throws a NotFoundError when no trainer has the id",
+                  "codeBlockId": "src/trainers/team.ts#throw@17:25"
                 },
                 {
-                  "label": "Loads the trainer of the id with its team, or null",
-                  "codeBlockId": "src/trainers/team.ts#external-value@16:3"
+                  "label": "Calls trainer.hasRoomInTeam when the trainer exists to check that the team has room",
+                  "codeBlockId": "src/trainers/team.ts#condition@18:3",
+                  "at": {
+                    "line": 18,
+                    "column": 8
+                  }
                 },
                 {
-                  "label": "Throws NotFoundError when no trainer has the id",
-                  "codeBlockId": "src/trainers/team.ts#condition@17:3"
+                  "label": "Throws a TeamFullError when the team of the trainer is full",
+                  "codeBlockId": "src/trainers/team.ts#throw@18:33"
                 },
                 {
-                  "label": "Throws TeamFullError when the team has no room",
-                  "codeBlockId": "src/trainers/team.ts#condition@18:3"
-                },
-                {
-                  "label": "Inserts a row for the species, linked to the trainer, and returns it",
-                  "codeBlockId": "src/trainers/team.ts#data@19:10"
+                  "label": "Returns the caught Pokemon saved in the team of the trainer",
+                  "codeBlockId": "src/trainers/team.ts#function@15:1",
+                  "at": {
+                    "line": 19,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -1446,8 +1450,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Limits a team to six Pokemon",
-                      "codeBlockId": "src/trainers/trainer.entity.ts#root-variable@4:1"
+                      "label": "Returns whether the team holds fewer than six Pokemon",
+                      "codeBlockId": "src/trainers/trainer.entity.ts#method@20:3",
+                      "at": {
+                        "line": 21,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -1486,12 +1494,7 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": [
-                    {
-                      "label": "Sets the message to the name and \"already carries six Pokemon\"",
-                      "codeBlockId": "src/errors.ts#call@12:5"
-                    }
-                  ]
+                  "blockLabels": []
                 }
               ],
               "triggerLabels": [],

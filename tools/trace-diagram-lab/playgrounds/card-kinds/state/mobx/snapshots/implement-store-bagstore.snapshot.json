@@ -202,7 +202,20 @@
               "diffCodeBlockIds": [],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the title and the items page",
+                  "codeBlockId": "src/App.tsx#component@3:1",
+                  "at": {
+                    "line": 4,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<ItemsPage />` below the title",
+                  "codeBlockId": "src/App.tsx#render@7:7"
+                }
+              ]
             },
             {
               "id": "src/pages/items/ItemsPage.tsx#component@5:1",
@@ -251,8 +264,16 @@
               ],
               "blockLabels": [
                 {
+                  "label": "Renders the count of the bag, an Empty the bag button and the items",
+                  "codeBlockId": "src/pages/items/ItemsPage.tsx#component@5:1",
+                  "at": {
+                    "line": 6,
+                    "column": 3
+                  }
+                },
+                {
                   "label": "Renders one row with an Add to bag button for each item",
-                  "codeBlockId": "src/pages/items/ItemsPage.tsx#function@13:20"
+                  "codeBlockId": "src/pages/items/ItemsPage.tsx#render-loop@13:10"
                 }
               ]
             },
@@ -360,16 +381,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Finds the line of the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#variable@9:3"
+                  "label": "Returns the lines with a new line for the item when it has none",
+                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3",
+                  "at": {
+                    "line": 10,
+                    "column": 27
+                  }
                 },
                 {
-                  "label": "Adds a new line when the bag has none for the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3"
-                },
-                {
-                  "label": "Adds one to the quantity of the line of the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#function@11:20"
+                  "label": "Returns the lines with one more of the item on its line",
+                  "codeBlockId": "src/lib/bag-lines.ts#function@8:1",
+                  "at": {
+                    "line": 11,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -416,7 +441,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls bagStore.clear to empty the bag",
+                  "codeBlockId": "src/pages/items/ItemsPage.tsx#function@9:38",
+                  "at": {
+                    "line": 9,
+                    "column": 44
+                  }
+                }
+              ]
             },
             {
               "id": "src/pages/items/ItemsPage.tsx#render-event@16:35",
@@ -433,7 +467,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls bagStore.addItem to add the item of the row to the bag",
+                  "codeBlockId": "src/pages/items/ItemsPage.tsx#function@16:44",
+                  "at": {
+                    "line": 16,
+                    "column": 50
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

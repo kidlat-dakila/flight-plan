@@ -219,16 +219,16 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the trainer of the id, or throws NotFoundException",
-                      "codeBlockId": "src/trainers/trainers.service.ts#variable@27:5"
+                      "label": "Throws a ConflictException when the trainer already has the badge",
+                      "codeBlockId": "src/trainers/trainers.service.ts#throw@28:41"
                     },
                     {
-                      "label": "Throws ConflictException when the trainer already has the badge",
-                      "codeBlockId": "src/trainers/trainers.service.ts#condition@28:5"
-                    },
-                    {
-                      "label": "Copies the trainer with the badge added, stores the copy in the map and returns it",
-                      "codeBlockId": "src/trainers/trainers.service.ts#variable@29:5"
+                      "label": "Returns the trainer with the new badge",
+                      "codeBlockId": "src/trainers/trainers.service.ts#method@26:3",
+                      "at": {
+                        "line": 31,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -1213,16 +1213,16 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the trainer of the id, or throws NotFoundException",
-                      "codeBlockId": "src/trainers/trainers.service.ts#variable@27:5"
+                      "label": "Throws a ConflictException when the trainer already has the badge",
+                      "codeBlockId": "src/trainers/trainers.service.ts#throw@28:41"
                     },
                     {
-                      "label": "Throws ConflictException when the trainer already has the badge",
-                      "codeBlockId": "src/trainers/trainers.service.ts#condition@28:5"
-                    },
-                    {
-                      "label": "Copies the trainer with the badge added, stores the copy in the map and returns it",
-                      "codeBlockId": "src/trainers/trainers.service.ts#variable@29:5"
+                      "label": "Returns the trainer with the new badge",
+                      "codeBlockId": "src/trainers/trainers.service.ts#method@26:3",
+                      "at": {
+                        "line": 31,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -1301,16 +1301,16 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the key from POKEDEX_GYM_LEADER_KEY, or uses \"dev-gym-leader-key\"",
-                      "codeBlockId": "src/settings.ts#root-variable@2:1"
+                      "label": "Throws a ForbiddenException when the gym leader key is wrong",
+                      "codeBlockId": "src/security.ts#throw@18:64"
                     },
                     {
-                      "label": "Gets the HTTP request of the call",
-                      "codeBlockId": "src/security.ts#variable@17:5"
-                    },
-                    {
-                      "label": "Throws ForbiddenException when the x-gym-leader-key header differs from the key",
-                      "codeBlockId": "src/security.ts#condition@18:5"
+                      "label": "Returns true to let the request through",
+                      "codeBlockId": "src/security.ts#method@16:3",
+                      "at": {
+                        "line": 19,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -1351,7 +1351,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the trainer with the new badge",
+                      "codeBlockId": "src/trainers/trainers.controller.ts#method@26:3",
+                      "at": {
+                        "line": 29,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls this.trainers.awardBadge to give the badge of the body to the trainer",
+                      "codeBlockId": "src/trainers/trainers.controller.ts#method@26:3",
+                      "at": {
+                        "line": 29,
+                        "column": 12
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],

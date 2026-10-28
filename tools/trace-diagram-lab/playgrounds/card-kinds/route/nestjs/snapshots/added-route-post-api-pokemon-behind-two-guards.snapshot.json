@@ -274,12 +274,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Returns the id, the name and the level of the Pokemon",
-                  "codeBlockId": "src/pokemon/pokemon.controller.ts#property@7:53"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/security.ts#class@5:1",
@@ -314,8 +309,16 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Throws UnauthorizedException when the `x-api-key` header differs from the key",
-                      "codeBlockId": "src/security.ts#condition@9:5"
+                      "label": "Throws an UnauthorizedException when the API key is missing or wrong",
+                      "codeBlockId": "src/security.ts#throw@9:50"
+                    },
+                    {
+                      "label": "Returns true to let the request through",
+                      "codeBlockId": "src/security.ts#method@7:3",
+                      "at": {
+                        "line": 10,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -362,12 +365,16 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Gets the HTTP request of the call",
-                      "codeBlockId": "src/security.ts#variable@17:5"
+                      "label": "Throws a ForbiddenException when the request names no trainer",
+                      "codeBlockId": "src/security.ts#throw@18:52"
                     },
                     {
-                      "label": "Throws ForbiddenException when the request has no `x-trainer` header",
-                      "codeBlockId": "src/security.ts#condition@18:5"
+                      "label": "Returns true to let the request through",
+                      "codeBlockId": "src/security.ts#method@16:3",
+                      "at": {
+                        "line": 19,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -398,7 +405,32 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the view of every Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@14:3",
+                      "at": {
+                        "line": 16,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.list to read every Pokemon of the party",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@14:3",
+                      "at": {
+                        "line": 16,
+                        "column": 12
+                      }
+                    },
+                    {
+                      "label": "Calls toView to keep the id, name and level of each Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@14:3",
+                      "at": {
+                        "line": 16,
+                        "column": 36
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "src/pokemon/pokemon.controller.ts#method@19:3",
@@ -421,7 +453,32 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the view of the new Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@19:3",
+                      "at": {
+                        "line": 22,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls toView to keep the id, name and level of the new Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@19:3",
+                      "at": {
+                        "line": 22,
+                        "column": 12
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.create to add the Pokemon for the trainer",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@19:3",
+                      "at": {
+                        "line": 22,
+                        "column": 19
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],
@@ -450,7 +507,32 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the view of the Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@25:3",
+                      "at": {
+                        "line": 27,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls toView to keep the id, name and level of the Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@25:3",
+                      "at": {
+                        "line": 27,
+                        "column": 12
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.find to look up the Pokemon of the id",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@25:3",
+                      "at": {
+                        "line": 27,
+                        "column": 19
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],

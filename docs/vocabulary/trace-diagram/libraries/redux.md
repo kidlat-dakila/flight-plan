@@ -19,7 +19,7 @@ STATE · REDUCERS · THUNKS · EXTRA REDUCERS · LISTENERS · SELECTORS
 | The `effect` of `listenerMiddleware.startListening({ actionCreator, effect })` that listens to an action of the slice | A function card under LISTENERS. A listener of an action no slice makes is a card of its own. |
 | A selector beside the slice, a function that reads the key of the slice, such as `(state) => state.cart.items`, and a `createSelector` built on one | A function card under SELECTORS, in the slice it reads |
 
-**A write to the state in a reducer is a row of the reducer card.** `state.items.push(action.payload)` and `state.items = []` are rows, and reading `state.items` has none, as [Reading and writing the store](../state.md#reading-and-writing-the-store) says.
+**A write to the state in a reducer has no row.** A reducer is a [function card](../function-card.md#rows), which lists its arguments, its calls, and its returns and raises: `state.items.push(action.payload)`, `state.items = []` and a read of `state.items` are no rows. A changed write marks the reducer card as changed.
 
 ```ts
 export const checkout = createAsyncThunk("cart/checkout", async (items) => api.post("/orders", items))
@@ -58,19 +58,20 @@ export const store = configureStore({ reducer: { cart: cartSlice.reducer } })
  │ ┌ ƒ addItem ────────────────────────── store/cart-slice.ts ┐ │  ← a reducer: an inner function card
  │ │ Function                                        Modified │ │
  │ │ Puts a product in the cart                               │ │
+ │ │ ARGUMENTS                                                │ │
  │ │ ┌──────────────────────────────────────────────────────┐ │ │
- │ │ │ action                                               │ │ │
+ │ │ │ () state                                             │ │ │
  │ │ └──────────────────────────────────────────────────────┘ │ │
- │ │ ╔══════════════════════════════════════════════════════╗ │ │
- │ │ ║ Adds the product                                     ║ │ │
- │ │ ║ state.items.push                                     ║ │ │
- │ │ ╚══════════════════════════════════════════════════════╝ │ │
+ │ │ ┌──────────────────────────────────────────────────────┐ │ │
+ │ │ │ () action                                            │ │ │
+ │ │ └──────────────────────────────────────────────────────┘ │ │
  │ └──────────────────────────────────────────────────────────┘ │
  │ ┌ ƒ clear ──────────────────────────── store/cart-slice.ts ┐ │
  │ │ Function                                                 │ │
  │ │ Empties the cart                                         │ │
+ │ │ ARGUMENTS                                                │ │
  │ │ ┌──────────────────────────────────────────────────────┐ │ │
- │ │ │ state.items                                          │ │ │
+ │ │ │ () state                                             │ │ │
  │ │ └──────────────────────────────────────────────────────┘ │ │
  │ └──────────────────────────────────────────────────────────┘ │
  │ THUNKS                                                       │
@@ -85,24 +86,30 @@ export const store = configureStore({ reducer: { cart: cartSlice.reducer } })
  │ ┌ ƒ checkout.fulfilled ─────────────── store/cart-slice.ts ┐ │
  │ │ Callback                                                 │ │
  │ │ Empties the cart after an order                          │ │
+ │ │ ARGUMENTS                                                │ │
  │ │ ┌──────────────────────────────────────────────────────┐ │ │
- │ │ │ state.items                                          │ │ │
+ │ │ │ () state                                             │ │ │
  │ │ └──────────────────────────────────────────────────────┘ │ │
  │ └──────────────────────────────────────────────────────────┘ │
  │ LISTENERS                                                    │
  │ ┌ ƒ addItem listener ───────────────── store/cart-slice.ts ┐ │  ← listens to addItem
  │ │ Callback                                                 │ │
  │ │ Saves the cart after a product is added                  │ │
- │ │ ┌──────────────────────────────────────────────────────┐ │ │
- │ │ │ storage.save                                         │○──▶ storage.save
+ │ │ EXTERNAL CALLS                                           │ │
+ │ │ ┌ ƒ save ───────────────────────── Function • Modified ┐ │ │
+ │ │ │ ┌──────────────────────────────────────────────────┐ │ │ │
+ │ │ │ │ Calls storage.save to keep the cart              │○──▶ storage.save
+ │ │ │ │ storage.save()                                   │ │ │ │
+ │ │ │ └──────────────────────────────────────────────────┘ │ │ │
  │ │ └──────────────────────────────────────────────────────┘ │ │
  │ └──────────────────────────────────────────────────────────┘ │
  │ SELECTORS                                                    │
  │ ┌ ƒ selectItems ────────────────────── store/cart-slice.ts ┐ │  ← reads state.cart: drawn here
  │ │ Function                                                 │ │
  │ │ Reads the items                                          │ │
+ │ │ ARGUMENTS                                                │ │
  │ │ ┌──────────────────────────────────────────────────────┐ │ │
- │ │ │ state                                                │ │ │
+ │ │ │ () state                                             │ │ │
  │ │ └──────────────────────────────────────────────────────┘ │ │
  │ └──────────────────────────────────────────────────────────┘ │
  │ ┌ ƒ selectTotal ────────────────────── store/cart-slice.ts ┐ │
@@ -159,8 +166,12 @@ export const { selectAll: selectAllTodos } = todosAdapter.getSelectors((state) =
  │ ┌ ƒ filterChanged ─────────────── store/todos-slice.ts ┐ │
  │ │ Function                                    Modified │ │
  │ │ Changes the filter                                   │ │
+ │ │ ARGUMENTS                                            │ │
  │ │ ┌──────────────────────────────────────────────────┐ │ │
- │ │ │ action                                           │ │ │
+ │ │ │ () state                                         │ │ │
+ │ │ └──────────────────────────────────────────────────┘ │ │
+ │ │ ┌──────────────────────────────────────────────────┐ │ │
+ │ │ │ () action                                        │ │ │
  │ │ └──────────────────────────────────────────────────┘ │ │
  │ └──────────────────────────────────────────────────────┘ │
  │ SELECTORS                                                │
@@ -197,10 +208,18 @@ export const counterReducer = createReducer({ value: 0 }, (builder) => {
  │ ┌ ƒ increment ─────────────────────── store/counter.ts ┐ │  ← named after its action
  │ │ Callback                                    Modified │ │
  │ │ Adds one                                             │ │
+ │ │ ARGUMENTS                                            │ │
+ │ │ ┌──────────────────────────────────────────────────┐ │ │
+ │ │ │ () state                                         │ │ │
+ │ │ └──────────────────────────────────────────────────┘ │ │
  │ └──────────────────────────────────────────────────────┘ │
  │ ┌ ƒ reset ─────────────────────────── store/counter.ts ┐ │
  │ │ Callback                                             │ │
  │ │ Goes back to zero                                    │ │
+ │ │ ARGUMENTS                                            │ │
+ │ │ ┌──────────────────────────────────────────────────┐ │ │
+ │ │ │ () state                                         │ │ │
+ │ │ └──────────────────────────────────────────────────┘ │ │
  │ └──────────────────────────────────────────────────────┘ │
  └──────────────────────────────────────────────────────────┘
 ```
@@ -213,7 +232,7 @@ export const counterReducer = createReducer({ value: 0 }, (builder) => {
 |---|---|
 | `createApi({ endpoints: (builder) => ({ getTodos: builder.query(…) }) })` | An API card, with `getTodos` under QUERY |
 | `todosApi.injectEndpoints({ endpoints: (builder) => ({ … }) })` | Its endpoints, inside the card of the API they are injected into |
-| `useGetTodosQuery()` in a component | A hook row of the component, with a line to the card of `getTodos` |
+| `useGetTodosQuery()` in a component | A call row in a callee card of the API, typed API, as [Calls of values a library made](../function-card.md#calls-of-values-a-library-made) says. The line to the card of `getTodos` leaves that row. |
 
 ```ts
 export const todosApi = createApi({

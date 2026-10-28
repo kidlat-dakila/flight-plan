@@ -232,16 +232,28 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the trainer of the id",
-                      "codeBlockId": "src/trainers/roster.ts#variable@21:5"
+                      "label": "Returns an empty team when no trainer has the id",
+                      "codeBlockId": "src/trainers/roster.ts#condition@22:5",
+                      "at": {
+                        "line": 22,
+                        "column": 32
+                      }
                     },
                     {
-                      "label": "Returns an empty team for an id with no trainer",
-                      "codeBlockId": "src/trainers/roster.ts#condition@22:5"
+                      "label": "Calls clampLevel to keep each raised level within the limits",
+                      "codeBlockId": "src/trainers/roster.ts#property@23:63",
+                      "at": {
+                        "line": 23,
+                        "column": 70
+                      }
                     },
                     {
-                      "label": "Raises and clamps each level, then saves the new team",
-                      "codeBlockId": "src/trainers/roster.ts#external-value@23:5"
+                      "label": "Returns the team with the raised levels",
+                      "codeBlockId": "src/trainers/roster.ts#method@20:3",
+                      "at": {
+                        "line": 25,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -264,7 +276,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns the level kept between 1 and the maximum level",
+                  "codeBlockId": "src/teams/levels.ts#function@10:1",
+                  "at": {
+                    "line": 11,
+                    "column": 3
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [
@@ -974,12 +995,44 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Raises the team of the trainer in the roster",
-                      "codeBlockId": "src/training/training-camp.ts#variable@9:5"
+                      "label": "Calls this.roster.levelUpTeam to raise the levels of the team of the trainer",
+                      "codeBlockId": "src/training/training-camp.ts#variable@9:5",
+                      "at": {
+                        "line": 9,
+                        "column": 18
+                      }
                     },
                     {
-                      "label": "Returns a message for an empty team, or else the average level",
-                      "codeBlockId": "src/training/training-camp.ts#condition@10:5"
+                      "label": "Returns a notice when the trainer has no Pokemon to train",
+                      "codeBlockId": "src/training/training-camp.ts#condition@10:5",
+                      "at": {
+                        "line": 10,
+                        "column": 28
+                      }
+                    },
+                    {
+                      "label": "Returns how many Pokemon were trained and their average level",
+                      "codeBlockId": "src/training/training-camp.ts#method@8:3",
+                      "at": {
+                        "line": 11,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls formatLevel to write the average level for the report",
+                      "codeBlockId": "src/training/training-camp.ts#method@8:3",
+                      "at": {
+                        "line": 11,
+                        "column": 55
+                      }
+                    },
+                    {
+                      "label": "Calls averageLevel to work out the average level of the team",
+                      "codeBlockId": "src/training/training-camp.ts#method@8:3",
+                      "at": {
+                        "line": 11,
+                        "column": 67
+                      }
                     }
                   ]
                 }
@@ -1040,16 +1093,28 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the trainer of the id",
-                      "codeBlockId": "src/trainers/roster.ts#variable@21:5"
+                      "label": "Returns an empty team when no trainer has the id",
+                      "codeBlockId": "src/trainers/roster.ts#condition@22:5",
+                      "at": {
+                        "line": 22,
+                        "column": 32
+                      }
                     },
                     {
-                      "label": "Returns an empty team for an id with no trainer",
-                      "codeBlockId": "src/trainers/roster.ts#condition@22:5"
+                      "label": "Calls clampLevel to keep each raised level within the limits",
+                      "codeBlockId": "src/trainers/roster.ts#property@23:63",
+                      "at": {
+                        "line": 23,
+                        "column": 70
+                      }
                     },
                     {
-                      "label": "Raises and clamps each level, then saves the new team",
-                      "codeBlockId": "src/trainers/roster.ts#external-value@23:5"
+                      "label": "Returns the team with the raised levels",
+                      "codeBlockId": "src/trainers/roster.ts#method@20:3",
+                      "at": {
+                        "line": 25,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -1072,7 +1137,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns the level kept between 1 and the maximum level",
+                  "codeBlockId": "src/teams/levels.ts#function@10:1",
+                  "at": {
+                    "line": 11,
+                    "column": 3
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

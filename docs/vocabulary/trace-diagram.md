@@ -24,8 +24,9 @@ On the page each node is a card. This entry holds the rules every card shares; e
 
 | Card | The node of | Its rows | Cards inside it |
 |---|---|---|---|
-| [Component card](trace-diagram/component-card.md) | A component | Its parameters as chips under its head, then rows under headings: State, Hooks, Effects, Calls, Triggers, Steps | The components it renders |
-| [Function card](trace-diagram/function-card.md) | A function, a hook, a method, an event, an effect, a callback, the handler of a route, a procedure | As written, no headings. Under the headings of a component card when it returns a function. | The function it returns |
+| [Component card](trace-diagram/component-card.md) | A component | Under Props, State, External calls, Memos, Effects, Triggers, Renders: its props and its state as written, its calls grouped by what they call, a row per memo and per effect, its trigger labels, and one group per `return` with the parts of its markup a reader asks about | A slim card per callee, under External calls, and the components it renders, each inside the render row that renders it |
+| [Effect card and memo card](trace-diagram/component-card.md#effects-and-memos) | An effect hook of a component, such as `useEffect`, `watch` or `onMounted`, and a memo, `useMemo`, `useCallback` or Vue `computed`, with the callback it is handed | Under Dependencies, Outside variables, External calls, Triggers, Returns and raises | A slim card per callee, under External calls |
+| [Function card](trace-diagram/function-card.md) | A function, a hook, a method, an event, a callback, the handler of a route | Under Arguments, External calls, Triggers, Returns and raises: its parameters, its calls grouped by what they call, its trigger labels, each `return` and each raise. A procedure, a middleware and an effect that is no effect hook are drawn in its frame, with their rows as written. | A slim card per callee, under External calls, and the function it returns |
 | [Class card](trace-diagram/class-card.md) | A class with a method | Under Properties | Its methods, under Methods, then the classes that extend it |
 | [Route card](trace-diagram/route-card.md) | A route path | None | The handler of each method, under a heading per method |
 | [tRPC router card](trace-diagram/libraries/trpc.md) | A router of procedures, and a [GraphQL resolver of NestJS](trace-diagram/libraries/nestjs.md#graphql-resolvers) | None | Each procedure, under a heading per procedure type |
@@ -74,6 +75,7 @@ interface TriggerLabel {
 interface BlockLabel {
   label: string | null
   codeBlock: CodeBlock
+  at?: { line: number, column: number }
 }
 
 interface TraceNodeEdge {
@@ -98,7 +100,7 @@ interface TraceNodeEdge {
 | `diffCodeBlocks` | The blocks of `codeBlocks` that have a change. A node with none is only on the way to a change. |
 | `children` | The nodes drawn inside this one, as [Children](#children) says |
 | `triggerLabels` | The blocks of the node an agent writes a line about, each with that line |
-| `blockLabels` | The listed blocks of the node, its state, hooks, effects, calls and steps, each with the label an agent writes about it. `null` until it is written. A step of several statements is listed by the block of its first statement. |
+| `blockLabels` | The rows of the node an agent writes a label for, each with that label. `null` until it is written. In a [function card](trace-diagram/function-card.md#labels), each call, each `return` and each raise: a call and a return also hold `at`, the line and the column where they are written, so two calls in one block are two entries. In a [component card](trace-diagram/component-card.md#labels), each call with `at`, each memo and each effect, each return group, with `at` when it is a `return` statement, and each render row, a value row with `at`. In an [effect card or a memo card](trace-diagram/component-card.md#effects-and-memos), each call, each `return` and each raise, as in a function card. In any other card, the listed blocks, its arguments, state, hooks, effects, calls and steps, with no `at`. A step of several statements is listed by the block of its first statement. |
 | `from`, `to` of an edge | The ids of two nodes: the first runs the second |
 | `rows` | The rows of the node as an author chose them, each with its type, its label and its lines. A node without `rows` lists its rows from its `codeBlocks`, as [On the page](#on-the-page) says. |
 | `position` | Where an author dragged the node to, on the board. A node without one is placed by the page. |
@@ -128,7 +130,7 @@ A node has no height, no width until an author drags its edge, and no position u
 | A statement at the top level of a file, such as `app.use(rateLimit())` or `"use client"` | No node, and no edge. A block it runs keeps its own node. |
 | A changed import, type or interface | No node. Nothing that runs is different. |
 
-**A node is one root block, but in a component, a class, a function that returns a function, a router, a Redux slice and an API.** A function, a hook and a value at the top level of a file are each one node, whatever is written inside them: an effect, a callback, an event or a route inside one is a row of that node, listed as [On the page](#on-the-page) says, and a line to what it runs leaves from its row. These root blocks hold nodes that are drawn inside their card, as [Children](#children) says:
+**A node is one root block, but in a component, a class, a function that returns a function, a router, a Redux slice and an API.** A function, a hook and a value at the top level of a file are each one node, whatever is written inside them: an effect, a callback, an event or a route inside one is part of that node, listed as [On the page](#on-the-page) says, and a line to what it runs leaves from the row that runs it. These root blocks hold nodes that are drawn inside their card, as [Children](#children) says:
 
 | Root block | The nodes it holds |
 |---|---|
@@ -136,9 +138,9 @@ A node has no height, no width until an author drags its edge, and no position u
 | A function, a hook or a method that returns a function | The function it returns |
 | A router | Each procedure |
 | A Redux slice, and an API of RTK Query | Its reducers, thunks, extra reducers, listeners and selectors, and the endpoints of the API, as [libraries/redux.md](trace-diagram/libraries/redux.md) says |
-| A component | The events, effects and callbacks that something triggers, drawn beside it, as the next paragraph says |
+| A component | The events, effects and callbacks that something triggers, and its memos, drawn beside it, as the next paragraph says |
 
-**A block inside a component is a node when something triggers it.** An event, an effect and a callback that have a change, or that hold a block on a chain, are each a node of their own: they run on an occasion of their own, after the markup of their component is returned. Every other block stays in the node around it. A block that runs only to produce the markup is part of the render, and the render is one unit. A function or a condition is a step of the node it is written in.
+**A block inside a component is a node when something triggers it.** An event, an effect and a callback that have a change, or that hold a block on a chain, are each a node of their own: they run on an occasion of their own, after the markup of their component is returned. A memo, the declaration that keeps `useMemo`, `useCallback` or Vue `computed`, is a node of its own too: it is worked out again when what it reads changes, not with every line of the render. The callback an effect hook or a memo is handed is part of that node, not a node of its own, and nothing inside a memo is a node. Every other block stays in the node around it. A block that runs only to produce the markup is part of the render, and the render is one unit. A function or a condition is part of the node it is written in.
 
 Two other root blocks hold nodes of their own:
 
@@ -152,22 +154,25 @@ The table below is for a block inside a component, or inside a statement at the 
 | A block inside a root block | A node of its own |
 |---|---|
 | `render-event`, `code-event`, `effect-callback`, `resolver`, `middleware` | Yes. It is triggered. |
+| The `effect-callback` of an effect hook, such as the callback of `useEffect`, the source and the callback of Vue `watch`, and the callback of `watchEffect` or `onMounted` | No. It is merged into the node of its effect, whose card lists its calls and its returns: an [effect card](trace-diagram/component-card.md#effects-and-memos). |
 | `route` | Yes, with every other registration of its route path: one [route card](trace-diagram/route-card.md) per path |
 | The `effect-callback` of a route registration that runs its handler | Yes, drawn inside the route card. When it only names a function, as `listUsers` in `router.get("/api/users", listUsers)`, it is no node, and the function it names is the handler. |
 | The `effect-callback` of a route registration that runs a middleware | Yes when the middleware is written in place, a card of its own. When it only names a function, it is no node, and the node of that function is the middleware. |
 | `effect`, `component-effect` | Yes. What it is handed runs later. |
-| A call the [catalogue](codegraph/catalogue.md) types, such as a `request` or a `data-fetch`, that is handed a callback that does not run `in-place`, such as `api.todo.create.useMutation({ onSuccess })` of a tRPC client | Yes, as an effect is. What it is handed runs later, and a step that calls its result, `createTodo.mutate`, has a line to it. |
+| An `effect` or a `component-effect` that is no effect hook, calls a store or a hook RTK Query generates by its name, or is a hook of a library handed a store, and is handed only callbacks that run in place, such as `useBagStore((state) => state.count)` | No, and neither is its callback. It is a call row of the card it is written in, with the selector folded into it, as [Calls of values a library made](trace-diagram/function-card.md#calls-of-values-a-library-made) says. |
+| A call the [catalogue](codegraph/catalogue.md) types, such as a `request` or a `data-fetch`, that is handed a callback that does not run `in-place`, such as `api.todo.create.useMutation({ onSuccess })` of a tRPC client | Yes, as an effect is. What it is handed runs later, and a step that calls its result, `createTodo.mutate`, has a line to it. In its component it is also a call row, in the card of what it reaches, and the line to its node leaves that row. |
 | The call that makes a `state` or a `derived`, such as `useCartStore(selectTotal)` in `const total = useCartStore(selectTotal)`, and an `effect-callback` handed to it | No. It is part of the declaration, and runs with the render. An event handed to it, such as an `onChange`, is still a node. |
+| The declaration that keeps `useMemo`, `useCallback` or Vue `computed` inside a component or a statement at the top level of a file, such as `const teamTypes = useMemo(() => …, [trainer])` | Yes, a [memo card](trace-diagram/component-card.md#effects-and-memos), with the callback it is handed. Nothing inside it is a node. |
 | An `effect-callback` the [catalogue](codegraph/catalogue.md) says runs `in-place`, such as `select` of `useQuery` | No. It runs with the call, during the render. |
 | A `function` written in place of an event or of a callback, such as the arrow function of `onClick={() => save()}` | No. It is the body of that event or callback, so the two are one node. |
 | A `function` an event of the same root block is handed by name, such as `submit` in `onSubmit={submit}` | No. It is the body of that event too: the node of the event holds it and what is inside it, and it is no step of the node it is declared in. A call of it from elsewhere leads to the node of the event. |
-| `function`, `method`, and a `condition`, `switch`, `switch-case`, `loop`, `try-catch`, `throw`, `data`, `data-fetch`, `cache`, `auth`, `request`, `navigation`, `publish`, `storage`, `telemetry`, `transaction`, `validation`, `config` or `feature-flag` inside one of them, inside a node above or inside a root block that is no component and no hook | No. It is a [step](#on-the-page) of the node it is in: it is invoked or executed there, and it has a row. |
+| `function`, `method`, and a `condition`, `switch`, `switch-case`, `loop`, `try-catch`, `throw`, `data`, `data-fetch`, `cache`, `auth`, `request`, `navigation`, `publish`, `storage`, `telemetry`, `transaction`, `validation`, `config` or `feature-flag` inside one of them, inside a node above or inside a root block that is no component and no hook | No. It is part of the node it is in: it is invoked or executed there. A [function card](trace-diagram/function-card.md#rows) and a [component card](trace-diagram/component-card.md#rows) list the calls inside it, and any other card lists it as a [step](#steps). |
 | The same types, directly in the body of a component or of a hook, or inside the markup, a declaration or a component of that body | No. It runs on the way to the `return`. A call the catalogue types that is handed a callback is a node, as the row of `effect` says. |
-| `variable`, `property`, `root-argument-value`, `external-value`, `state`, `derived` | No. Declaring a value changes no behaviour: the block that updates it does. |
-| `component`, `render-root`, `render`, `render-condition`, `render-loop` | No. It is the render. |
+| `variable`, `property`, `root-argument-value`, `external-value`, `state`, `derived` | No, but a memo. Declaring a value changes no behaviour: the block that updates it does. |
+| `component`, `render-root`, `render`, `render-condition`, `render-loop` | No. It is the render, which the component card lists under [Renders](trace-diagram/component-card.md#renders). |
 | `deleted` | No. It does not run. |
 
-**A block of another root block is always a node.** A step that runs a function, a hook or a value declared at the top level of a file leads to the node of that root block, with a line from the row of the step. A function a route names as its handler is that node too, drawn inside the route card.
+**A block of another root block is always a node.** A step that runs a function, a hook or a value declared at the top level of a file leads to the node of that root block, with a line from the row of the call in a function card, a component card, an effect card or a memo card, or of the step in any other card. A function a route names as its handler is that node too, drawn inside the route card.
 
 ```tsx
 export const PromoForm = () => {
@@ -175,7 +180,7 @@ export const PromoForm = () => {
   const { mutate } = useApplyPromo()                   // external-value: no node. useApplyPromo is a node
   const shown = code ? formatCode(code) : null         // a condition in the body: no node
   const submit = () => {                               // handed to onSubmit: the body of that event, no step
-    if (code) mutate(code)                             // a condition in it: a step of the event
+    if (code) mutate(code)                             // a call in it: a row of the event
   }
   return <form onSubmit={submit}>{shown}</form>        // render-event: a node. The markup: no node
 }
@@ -268,7 +273,7 @@ An edge joins two nodes in the order the code runs. There is one edge for every 
 | A block that is a node inside another | The node around it | The node of the block |
 | A middleware that runs before a handler | The node of the middleware | The handler of a [route card](trace-diagram/route-card.md#middleware), or a procedure of a [tRPC router card](trace-diagram/libraries/trpc.md#middleware) |
 
-A step that stays inside one node is no edge. The second kind is what joins a node to the units written inside it: a component to its events and its effects, an effect to its callbacks, a card to the cards drawn inside it.
+A step that stays inside one node is no edge. The second kind is what joins a node to the units written inside it: a component to its events, its effects and its memos, a call handed callbacks to the callbacks that are nodes, a card to the cards drawn inside it.
 
 **A step through a block of a node around is carried on.** An event often runs a function its component declares, and that function a value the component keeps: `onSubmit` runs `submit`, and `submit` calls `mutate`, which `PromoForm` got from `useApplyPromo`. Those steps do not lead back to `PromoForm`. The edge goes from the node that takes the step to the node it ends in, here from `onSubmit` to `useApplyPromo`, so the path keeps running to the right.
 
@@ -280,7 +285,7 @@ An edge holds its two ends and nothing else. It has no kind and no label, and th
 
 | Card | Its children | Where they are drawn |
 |---|---|---|
-| [Component card](trace-diagram/component-card.md#components-inside) | The components it renders, each with the first component that reaches it from the top | Below its rows |
+| [Component card](trace-diagram/component-card.md#components-inside) | The components it renders, each with the first component that reaches it from the top | Inside the render row that renders it, or after its groups when no render row does |
 | [Function card](trace-diagram/function-card.md#returning-a-function) | The function it returns | Below its rows |
 | [Class card](trace-diagram/class-card.md) | Its methods, then the classes that extend it | Under Methods, then below the methods |
 | [Route card](trace-diagram/route-card.md#methods-and-handlers) | The handler of each registration | Under the heading of its method |
@@ -339,7 +344,7 @@ interface FlatTraceNode {
   codeBlockIds: string[]
   diffCodeBlockIds: string[]
   triggerLabels: { label: string | null, codeBlockId: string }[]
-  blockLabels: { label: string | null, codeBlockId: string }[]
+  blockLabels: { label: string | null, codeBlockId: string, at?: { line: number, column: number } }[]
 }
 ```
 
@@ -351,22 +356,22 @@ An agent reads and writes one node at a time. A node that carried its children w
 |---|---|
 | The title of the diagram | The `title` of the diagram: the flow it shows, such as "Submit order flow diagram". When a segment's diagram is the only one on the page it is the heading of the Trace Diagram section, in place of "Trace Diagram". When there are several, the section keeps "Trace Diagram" as its heading and each title is the label of its diagram's tab. A diagram with no title yet keeps "Trace Diagram" as its heading, drawn as a skeleton while an agent is writing, and a tab is named after the code of its changed nodes. The board is named after the title for a screen reader. The section rail and the Review Navigator always say Trace Diagram. |
 | The description of the diagram, above the board | The `description` of the diagram: its caption, in five sentences at most. A diagram nobody has described yet says "Not written yet." there. |
-| A node, headed by the name of its code and the path of its file, with its type and its label below | A `TraceNode`. The path is cut to its last two folders and its file, such as `routes/orders/index.tsx`. A route card is headed by its route path, a router card reads Router for its type, a NestJS resolver Resolver, and a NestJS controller Controller. A node with no label has its header and its type alone. |
+| A node, headed by the name of its code and the path of its file, with its type and its label below | A `TraceNode`. The path is cut to its last two folders and its file, such as `routes/orders/index.tsx`. A route card is headed by its route path, a router card reads Router for its type, a NestJS resolver Resolver, a NestJS controller Controller, and a memo Memo. A node with no label has its header and its type alone. |
 | A node as added or modified | Its `diffCodeBlocks`. A node whose every line is new is added. |
 | A node inside another | Its place in `children`, drawn inside the card of its parent, as [Children](#children) says |
 | The code of a pressed row | Pressing a row opens the panel of its node with the code focused on the lines of the block of that row: every other line is dimmed, and the first focused line is scrolled into view. Pressing the head of the node shows its code with no line dimmed. |
 | A row inside a node | A trigger label, with its label on one line and the name of its code, such as `button.onClick`, on the line below. A trigger label nobody has written yet is a row of one line, with the name of its code alone. |
-| A row inside a node | A listed block: a state, a hook, an effect, a call or a step among its `codeBlocks`, with its label on one line and the name of its code on the line below, as a trigger label has. One nobody has written yet is a row of one line, with the name of its code alone. A changed one has the border of the change. |
+| A row inside a node | A listed block: a state, a hook, an effect, a call or a step among its `codeBlocks`, with its label on one line and the name of its code on the line below, as a trigger label has. One nobody has written yet is a row of one line, with the name of its code alone. A changed one has the border of the change. A function card lists an argument, a call, a return and a raise instead, as [its rows](trace-diagram/function-card.md#rows) say, and a component card, an effect card and a memo card list theirs as [the component card](trace-diagram/component-card.md#rows) says. |
 | A small heading above rows or cards | The group of the rows, or of the cards inside, below it, as the table below says |
 | A line between two nodes | An edge whose ends are not inside each other |
 | A line that leaves a row, or ends at one | A step of a chain between the blocks of the two nodes of an edge, or a block of the first node that the second node stands for. The line is joined to the row of the block the step leaves, and to the row of the block it reaches. |
 | The side panel of a chosen node | Its description, then the code of the block it stands for, with the box of each waypoint above the first line it explains |
 
-**A node lists what it holds of eight kinds.** The lists are read from the `codeBlocks` of the node, so a block is listed only when a chain passes through it or when it has a change. A node with no such block has no list.
+**A node that is no function card, component card, effect card or memo card lists what it holds of eight kinds.** A [function card](trace-diagram/function-card.md#rows) lists its arguments, its calls, its trigger labels, and its returns and raises instead, and a [component card](trace-diagram/component-card.md#rows), an effect card and a memo card list the rows their page gives. The lists are read from the `codeBlocks` of the node, so a block is listed only when a chain passes through it or when it has a change. A node with no such block has no list.
 
 | Kind | The blocks of it | Named |
 |---|---|---|
-| No row | A parameter, `root-argument-value`, and a read through one, such as `props.onSave` or `session.scalars`. The parameters of a function, method, hook or component card are chips under its head, each its name and its type as written, `session: Session`, with a default left out and `self` and `cls` left out. A parameter of a function written in place, such as `event` in `onSubmit={(event) => { … }}`, is no chip either | None |
+| No row | A parameter, `root-argument-value`, and a read through one, such as `props.onSave` or `session.scalars`. A component card lists its props as rows under Props, and a function card its parameters under Arguments. A parameter of a function written in place, such as `event` in `onSubmit={(event) => { … }}`, has no row either | None |
 | Properties | `property` of a class, in a class card | After the property |
 | State | `state`, `derived`, and the declaration of one around an effect on a chain, such as `const total = useCartStore(selectTotal)` whose call a chain passes through | After the declaration |
 | Hooks | An `external-value` that keeps the result of a call named `use` and a capital letter | After the hook that is called, such as `useApplyPromo` |
@@ -375,13 +380,13 @@ An agent reads and writes one node at a time. A node that carried its children w
 | Steps | A function, a method, a condition, a loop or a call that is invoked or executed after the render, as the table of [Nodes](#nodes) says, and any other block with a change that is not markup, each as the [statement](#steps) it is written in | After the block, or after its type and its line: `Condition :8`. A step of several statements is named after the first two, and counts the others: `user, stored +2` |
 | Parts | In a [state card](trace-diagram/state.md), a part of the store that is no card of its own: a key of its state, a getter, an action or a selector. Every block written inside a part is folded into its row, and a block that holds parts, such as the call that makes the store, has no row. | After the part: `items`, `addItem`, `selectTotal` |
 
-**Every block with a change is in a row, but markup.** A changed block of one of the first four kinds is in its list, also inside a listed block, a changed event or data fetch is a trigger label, and any other changed block is a step or is folded into one. A row is marked as changed when a block folded into it is.
+**In a card that lists these kinds, every block with a change is in a row, but markup.** A changed block of one of the first four kinds is in its list, also inside a listed block, a changed event or data fetch is a trigger label, and any other changed block is a step or is folded into one. A row is marked as changed when a block folded into it is.
 
-**Markup has no row**, as the [component card](trace-diagram/component-card.md#rows) says. **Nothing a method reaches through `this` or `self` has a row**, as the [class card](trace-diagram/class-card.md#rows-and-methods) says. **Reading a store has no row, and writing it has one**, as the [state card](trace-diagram/state.md#reading-and-writing-the-store) says.
+**Markup has no row** in such a card. A component card lists what it renders under [Renders](trace-diagram/component-card.md#renders). **Nothing of its own class a method reaches through `this` or `self` has a row**, as the [class card](trace-diagram/class-card.md#rows-and-methods) says. **Reading a store has no row, and writing it has one**, as the [state card](trace-diagram/state.md#reading-and-writing-the-store) says.
 
-**A step and a call have a row and no node.** The row is where it is written, in the node around it. A row that runs a block of another root block has a line from its row to the node of that block: the row `Condition :5` of the event `onSubmit` is joined to the node of `useApplyPromo`, and a call on the way to a change always has a row for that line to leave. A step through a value of the same node is carried on to what the value leads to, so the line leaves the row of the step, not only the row of the value.
+**A step and a call have a row and no node.** The row is where it is written, in the node around it. A row that runs a block of another root block has a line from its row to the node of that block: the row `mutate()` of the event `onSubmit` is joined to the node of `useApplyPromo`, and a call on the way to a change always has a row for that line to leave. A step through a value of the same node is carried on to what the value leads to, so the line leaves the row of the step, not only the row of the value.
 
-**A block that is a node of its own has a row in the node around it.** An event has its trigger label for a row, and an effect its row under Effects. A line runs from the row to its node. A block inside a listed block has the row of that block: a `setTimeout` inside a function `retry` of the node has the row `retry`.
+**A block that is a node of its own has a row in the node around it.** An event has its trigger label for a row, and in a component card an effect its row under Effects and a memo its row under Memos. A line runs from the row to its node. A block inside a listed block has the row of that block: a `setTimeout` inside a function `retry` of the node has the row `retry`.
 
 A block inside a listed block is not listed again, unless it is a state, a hook or an effect with a change: the callbacks of a listed effect, and the call inside a `state` or a `derived`, are left out, and what is written inside a state, a hook or an effect is folded into its row. A function written in place of an event or a callback, and a function an event is handed by name, is never listed: a change in it marks the trigger label and the node of that event, and pressing that trigger label focuses the lines of the function too. A [chain does not pass through state](codegraph/chains.md#a-chain-and-state), so a state the chain only writes is not listed. Each listed block is drawn as a row like a trigger label. The lists are not in the diagram: the page builds them.
 
@@ -389,8 +394,9 @@ A block inside a listed block is not listed again, unless it is a state, a hook 
 
 | Card | Headings, in order |
 |---|---|
-| [Component card](trace-diagram/component-card.md#rows) | State, Hooks, Effects, one group per kind of call (Calls for a kept value and a plain call, and the name of its type for a call the catalogue types, such as Request or Storage), Triggers, Steps. None when its only rows are trigger labels. |
-| [Function card](trace-diagram/function-card.md#rows) | None: every row in the order it is written, its trigger labels among them. The headings of a component card when it [returns a function](trace-diagram/function-card.md#returning-a-function). |
+| [Component card](trace-diagram/component-card.md#rows) | Props, State, External calls, Memos, Effects, Triggers, Renders, then any component it renders that no render row holds, with no heading |
+| [Effect card and memo card](trace-diagram/component-card.md#effects-and-memos) | Dependencies, Outside variables, External calls, Triggers, Returns and raises |
+| [Function card](trace-diagram/function-card.md#rows) | Arguments, External calls, Triggers, Returns and raises, then the function it [returns](trace-diagram/function-card.md#returning-a-function), with no heading. A procedure, a middleware and an effect that is no effect hook: none, every row in the order it is written, its trigger labels among them. |
 | [Class card](trace-diagram/class-card.md#rows-and-methods) | Properties, Methods |
 | [Route card](trace-diagram/route-card.md#methods-and-handlers) | POST, PUT, PATCH, GET, DELETE, HEAD, OPTIONS, ANY |
 | [tRPC router card](trace-diagram/libraries/trpc.md#procedures) | QUERY, MUTATION, SUBSCRIPTION, and FIELD for a [NestJS resolver](trace-diagram/libraries/nestjs.md#graphql-resolvers), then Methods for a method of a resolver with none of them |
@@ -398,7 +404,7 @@ A block inside a listed block is not listed again, unless it is a state, a hook 
 
 ### Steps
 
-The rows under Steps are the [steps](codegraph/steps.md) of the node. That entry has the whole of the folding, and how the children of a waypoint differ.
+The rows of a card that lists them as written are the [steps](codegraph/steps.md) of the node. That entry has the whole of the folding, and how the children of a waypoint differ. A function card has no steps: it lists the calls, the returns and the raises of the same code, as [its rows](trace-diagram/function-card.md#rows) say. A component card, an effect card and a memo card have none either.
 
 **A step is a statement, not a block inside one.** Everything written inside a statement is folded into the row of that statement: the properties of an object, the function handed to `.map` or `.filter`, the parameters of that function and a condition inside it. A statement here is a declared value, a property, or a function with no name, and the outermost of them around a block is the one listed, whether or not a chain passes through it. A parameter of the node has no row.
 
@@ -412,6 +418,8 @@ The rows under Steps are the [steps](codegraph/steps.md) of the node. That entry
 | A `throw`, a `deleted` block and any other block that is no statement | One row |
 
 **A step inside a step that stands alone has a row when it has a change.** A condition inside a loop, a statement that calls out inside a condition and a `throw` inside a `try-catch` or a function are listed below the row around them when they, or a block folded into them, changed. A `throw` inside a condition, a switch or a loop is folded into it, and so is a statement that calls nothing out.
+
+Read as steps, the statements of `renameUser` fold as the code below shows. Its own function card lists them otherwise: `getUsers()` and `saveUser()` under External calls, and the two throws under Returns and raises.
 
 ```ts
 export const renameUser = (param) => {
@@ -427,7 +435,7 @@ export const renameUser = (param) => {
 }
 ```
 
-**A line is joined to the row the code steps from.** An edge joins two nodes, and the steps of a chain behind it join blocks of the two. The page draws one line for each pair of rows those steps join. The row of a block is the listed block or the trigger label it is, the step its statement is folded into, or the nearest one around it. A block with no row around it is joined at the head of its node, so a call to a function ends at the head of that function, and so does the line from a row to the node of its block. Like the lists, the rows of a line are not in the diagram: the page builds them from the `nextBlocks` of the `codeBlocks` of the two nodes.
+**A line is joined to the row the code steps from.** An edge joins two nodes, and the steps of a chain behind it join blocks of the two. The page draws one line for each pair of rows those steps join. The row of a block is the listed block or the trigger label it is, the step its statement is folded into, or the nearest one around it. In a function card, an effect card and a memo card it is the row of the call that leads to the other node, and a line ends at the head of a function card, or at the row of an argument or a raise the step reaches. In a component card it is the row of the call, also the call row of a call that is a node of its own, or the row of the effect, the memo or the trigger label whose card the line reaches, or the component row that renders a child drawn in another card. A call row carries a line only to what its own call reaches, its callee or the part of it the call names, and the row of a hook of a library also to each value it is handed. A line that leaves through a parameter, a type, a default or a `Depends(…)`, leaves the row of that argument, a prop row on a component, or the head when no argument row fits. A call draws one line, to the most specific row of the card it reaches: a step that reaches both the head of a card and one of its rows draws only the line to the row. A line a card rule draws with no step behind it, such as the line from a hook of an RTK Query API to its endpoint, leaves the call row whose callee holds the node it reaches. A block with no row around it is joined at the head of its node, so a call to a function ends at the head of that function, and so does the line from a row to the node of its block. Like the lists, the rows of a line are not in the diagram: the page builds them from the `nextBlocks` of the `codeBlocks` of the two nodes.
 
 The page arranges the diagram itself, to be read from left to right:
 
@@ -456,6 +464,7 @@ Collapsing a node hides the nodes it leads to, and focusing on a node shows only
 | The description of the diagram | The agent, or the author on their own page. It tells the diagram as text: where its paths start, what they run through and where they reach the change. Five sentences at most, and required on every diagram that has a node. |
 | Each node's label and description | The agent. A description tells how the node is reached and what it runs next, not the change. |
 | The label of each trigger label | The agent |
+| The label of each row a card lists | The agent. A function card takes one on each call, each `return` and each raise, in the patterns its [Labels](trace-diagram/function-card.md#labels) give, and none on an argument. A component card takes one on each call, each memo, each effect, each return group and each render row, and none on a prop or a state, as its [Labels](trace-diagram/component-card.md#labels) give. An effect card and a memo card take one as a function card does, and none on a dependency or an outside variable. |
 
 The agent cannot add, remove or move a node, and cannot write an edge.
 

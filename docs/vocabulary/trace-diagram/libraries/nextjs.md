@@ -34,20 +34,37 @@ export const DELETE = async (request, { params }) => {
  │ Route                                                 Modified │
  │ Shows and removes one user                                     │
  │ GET                                                            │
- │ ┌ ƒ GET ──────────────────────── app/api/users/[id]/route.ts ┐ │    ← export async function GET
+ │ ┌ ƒ GET ──────────────────────── app/api/users/[id]/route.ts ┐ │  ← export async function GET
  │ │ Function                                          Modified │ │
  │ │ Sends the user                                             │ │
+ │ │ ARGUMENTS                                                  │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ () request                                             │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ () params                                              │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ RETURNS AND RAISES                                         │ │
  │ │ ╔════════════════════════════════════════════════════════╗ │ │
- │ │ ║ Finds the user                                         ║ │ │
- │ │ ║ user                                                   ║○──▶ db.user.find
+ │ │ ║ Returns the user as JSON                               ║ │ │
+ │ │ ║ return                                                 ║ │ │
  │ │ ╚════════════════════════════════════════════════════════╝ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  │ DELETE                                                         │
- │ ┌ ƒ DELETE ───────────────────── app/api/users/[id]/route.ts ┐ │    ← export const DELETE = …
+ │ ┌ ƒ DELETE ───────────────────── app/api/users/[id]/route.ts ┐ │  ← export const DELETE = …
  │ │ Function                                          Modified │ │
  │ │ Removes the user                                           │ │
+ │ │ ARGUMENTS                                                  │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ () request                                             │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ () params                                              │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ RETURNS AND RAISES                                         │ │
  │ │ ╔════════════════════════════════════════════════════════╗ │ │
- │ │ ║ db.user.delete                                         ║○──▶ db.user.delete
+ │ │ ║ Returns an empty answer with the status 204            ║ │ │
+ │ │ ║ return                                                 ║ │ │
  │ │ ╚════════════════════════════════════════════════════════╝ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────────────┘
@@ -67,13 +84,26 @@ export { handler as GET, handler as POST }
  ┌ ⇢ /api/auth ──────────────────────────── app/api/auth/route.ts ┐
  │ Route                                                 Modified │
  │ Signs a user in and out                                        │
- │ GET · POST                                                     │    ← export { handler as GET, handler as POST }
+ │ GET · POST                                                     │  ← export { handler as GET, handler as POST }
  │ ┌ ƒ handler ────────────────────────── app/api/auth/route.ts ┐ │
  │ │ Function                                          Modified │ │
  │ │ Answers every request of the sign-in                       │ │
- │ │ ╔════════════════════════════════════════════════════════╗ │ │
- │ │ ║ session                                                ║○──▶ auth
- │ │ ╚════════════════════════════════════════════════════════╝ │ │
+ │ │ ARGUMENTS                                                  │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ () request                                             │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ EXTERNAL CALLS                                             │ │
+ │ │ ┌ ƒ auth ─────────────────────────── Function • Modified ┐ │ │
+ │ │ │ ╔════════════════════════════════════════════════════╗ │ │ │
+ │ │ │ ║ Calls auth to read the session of the request      ║○──▶ auth
+ │ │ │ ║ auth()                                             ║ │ │ │
+ │ │ │ ╚════════════════════════════════════════════════════╝ │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ Returns the session as JSON                            │ │ │
+ │ │ │ return                                                 │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────────────┘
 ```
@@ -90,16 +120,17 @@ export default async function handler(req, res) {
  ┌ ⇢ /api/posts/[id] ──────────────────── pages/api/posts/[id].ts ┐
  │ Route                                                 Modified │
  │ Sends one post                                                 │
- │ ANY                                                            │    ← the default export answers every method
+ │ ANY                                                            │  ← the default export answers every method
  │ ┌ ƒ handler ──────────────────────── pages/api/posts/[id].ts ┐ │
  │ │ Function                                          Modified │ │
  │ │ Finds the post and sends it                                │ │
+ │ │ ARGUMENTS                                                  │ │
  │ │ ┌────────────────────────────────────────────────────────┐ │ │
- │ │ │ req.query                                              │ │ │
+ │ │ │ () req                                                 │ │ │
  │ │ └────────────────────────────────────────────────────────┘ │ │
- │ │ ╔════════════════════════════════════════════════════════╗ │ │
- │ │ ║ post                                                   ║○──▶ db.post.find
- │ │ ╚════════════════════════════════════════════════════════╝ │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ () res                                                 │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────────────┘
 ```
@@ -122,19 +153,19 @@ export async function createUser(formData) {
 ```
 
 ```
- ┌ ƒ createUser ────────────────────────── app/actions.ts ┐    ← a card of its own, with no route around it
+ ┌ ƒ createUser ────────────────────────── app/actions.ts ┐  ← a card of its own, with no route around it
  │ Server action                                 Modified │
  │ Saves the user a form sends                            │
- │ ╔════════════════════════════════════════════════════╗ │
- │ ║ Saves the user                                     ║ │
- │ ║ db.user.create                                     ║○──▶ db.user.create
- │ ╚════════════════════════════════════════════════════╝ │
+ │ ARGUMENTS                                              │
+ │ ┌────────────────────────────────────────────────────┐ │
+ │ │ () formData                                        │ │
+ │ └────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────┘
 ```
 
 **A page that hands an action to a form has a line to it.** `<form action={createUser}>` and `<button formAction={renameUser}>` are events, as `onSubmit` is: each is a Triggers row of the component, `form.action` and `button.formAction`, with a line to the server action it names, in its own file or another.
 
-**An action written inside a component is rows of that component.** The component is the card, as [component and route come first](../../trace-diagram.md#component-and-route-come-first) says.
+**An action written inside a component is no card of its own.** The component is the card, as [component and route come first](../../trace-diagram.md#component-and-route-come-first) says. An action a form is handed by name, `<form action={create}>`, is the body of that event, and its calls are rows of the event's function card. Any other action written in the component has its calls listed under External calls of the [component card](../component-card.md#rows).
 
 ## Pages
 

@@ -2652,6 +2652,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 16,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -2777,6 +2783,7 @@
               }
             },
             "use": "call",
+            "isRunInPlace": true,
             "type": "internal-code-block",
             "codeBlockId": "src/pokemon/pokemon.controller.ts#function@7:1"
           }
@@ -3062,6 +3069,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 22,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -3549,6 +3562,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 27,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -3666,6 +3685,7 @@
               }
             },
             "use": "call",
+            "isRunInPlace": true,
             "type": "internal-code-block",
             "codeBlockId": "src/pokemon/pokemon.controller.ts#root-argument-value@26:8"
           }
@@ -4853,6 +4873,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -4929,6 +4955,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 19,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -5236,6 +5268,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 25,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -6130,6 +6168,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -6713,6 +6757,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 19,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {

@@ -1,9 +1,11 @@
 import { compareRanges } from "@/code-blocks/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
-import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType, ImportGraphGroup, TraceDiagram, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
+import type { ASTCodeGroupGraph, BlockLabel, CodeBlock, CodeBlockType, ImportGraphGroup, TraceDiagram, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 import { groupCardNodes, listCardAddedEdges, listCardLeftOutEdgeIds, listCardParents, listLeftOutNodeIds, type CardContext, type NodeGroup, type ParentIdById } from "./cards"
+import { isComponentCardBlock, listComponentCardLabels } from "./component-card"
 import { isFunctionCardBlock, listFunctionCardLabels } from "./function-card"
+import { isHookCallBlock } from "./hook-calls"
 import { listListedBlocks } from "./listed-blocks"
 import { foldedValueOf, listNodeSteps, nodeBlockAround, nodeBlockOf } from "./node-blocks"
 
@@ -127,6 +129,12 @@ const withoutOtherLines = ({ blocks, steps }: Walk, reach: Reach): Walk => {
 
 const compareBlocks = (one: CodeBlock, two: CodeBlock): number => compareRanges(one.lineOfCodeRangeReference[0], two.lineOfCodeRangeReference[0])
 
+const listBlockLabels = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): BlockLabel[] => {
+  if (isFunctionCardBlock(nodeBlock) || isHookCallBlock(nodeBlock)) return listFunctionCardLabels(nodeBlock, insideBlocks)
+  if (isComponentCardBlock(nodeBlock)) return listComponentCardLabels(nodeBlock, insideBlocks)
+  return listListedBlocks(nodeBlock, insideBlocks).map(({ block }) => ({ label: null, codeBlock: block }))
+}
+
 export const toTraceNode = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): TraceNode => {
   const inside = [...insideBlocks].sort(compareBlocks)
   const codeBlocks = [nodeBlock, ...inside]
@@ -139,7 +147,7 @@ export const toTraceNode = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlo
     diffCodeBlocks: codeBlocks.filter(isChanged),
     children: [],
     triggerLabels: inside.filter((block) => TRIGGER_TYPES.has(block.type)).map((codeBlock) => ({ label: null, codeBlock })),
-    blockLabels: isFunctionCardBlock(nodeBlock) ? listFunctionCardLabels(nodeBlock, inside) : listListedBlocks(nodeBlock, inside).map(({ block }) => ({ label: null, codeBlock: block })),
+    blockLabels: listBlockLabels(nodeBlock, inside),
     isRequired: false,
   }
 }

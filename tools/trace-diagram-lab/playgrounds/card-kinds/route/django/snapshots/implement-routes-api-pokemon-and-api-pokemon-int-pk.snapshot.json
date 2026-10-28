@@ -167,16 +167,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Checks whether the request is a POST",
-                      "codeBlockId": "pokedex/views.py#condition@23:5"
+                      "label": "Returns the new Pokemon with a 201 when the request is a POST",
+                      "codeBlockId": "pokedex/views.py#condition@23:5",
+                      "at": {
+                        "line": 26,
+                        "column": 9
+                      }
                     },
                     {
-                      "label": "Reads the JSON body of the request",
-                      "codeBlockId": "pokedex/views.py#external-value@24:9"
-                    },
-                    {
-                      "label": "Creates the Pokemon for the signed-in trainer and returns it with a 201",
-                      "codeBlockId": "pokedex/views.py#external-value@25:9"
+                      "label": "Returns every Pokemon of the signed-in trainer",
+                      "codeBlockId": "pokedex/views.py#function@20:1",
+                      "at": {
+                        "line": 27,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -228,7 +232,16 @@
                       "codeBlockId": "pokedex/views.py#data-fetch@32:29"
                     }
                   ],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the Pokemon of the id as JSON",
+                      "codeBlockId": "pokedex/views.py#method@31:5",
+                      "at": {
+                        "line": 32,
+                        "column": 9
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "pokedex/views.py#method@34:5",
@@ -262,12 +275,12 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Loads the Pokemon and sets the name from the JSON body",
-                      "codeBlockId": "pokedex/views.py#external-value@35:9"
-                    },
-                    {
-                      "label": "Saves the Pokemon and returns it",
-                      "codeBlockId": "pokedex/views.py#call@37:9"
+                      "label": "Returns the renamed Pokemon as JSON",
+                      "codeBlockId": "pokedex/views.py#method@34:5",
+                      "at": {
+                        "line": 38,
+                        "column": 9
+                      }
                     }
                   ]
                 },
@@ -299,8 +312,12 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Deletes the Pokemon from the database",
-                      "codeBlockId": "pokedex/views.py#call@41:9"
+                      "label": "Returns an empty 204 response",
+                      "codeBlockId": "pokedex/views.py#method@40:5",
+                      "at": {
+                        "line": 42,
+                        "column": 9
+                      }
                     }
                   ]
                 }
@@ -356,16 +373,12 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Caps the level at 100",
-                      "codeBlockId": "pokedex/views.py#root-variable@11:1"
-                    },
-                    {
-                      "label": "Loads the Pokemon of the trainer and raises its level by one",
-                      "codeBlockId": "pokedex/views.py#external-value@48:5"
-                    },
-                    {
-                      "label": "Saves the Pokemon and returns it",
-                      "codeBlockId": "pokedex/views.py#call@50:5"
+                      "label": "Returns the leveled-up Pokemon as JSON",
+                      "codeBlockId": "pokedex/views.py#function@45:1",
+                      "at": {
+                        "line": 51,
+                        "column": 5
+                      }
                     }
                   ]
                 }

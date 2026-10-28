@@ -3291,8 +3291,12 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Filters the Pokemon by the trainer when one is given",
-                      "codeBlockId": "src/pokemon/pokemon.service.ts#property@17:32"
+                      "label": "Returns the Pokemon ordered by name, of one trainer when one is given",
+                      "codeBlockId": "src/pokemon/pokemon.service.ts#method@16:3",
+                      "at": {
+                        "line": 17,
+                        "column": 5
+                      }
                     }
                   ]
                 },
@@ -3328,12 +3332,16 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Loads the row of the id, or null",
-                      "codeBlockId": "src/pokemon/pokemon.service.ts#external-value@21:5"
+                      "label": "Throws a NotFoundError when no Pokemon has the id",
+                      "codeBlockId": "src/pokemon/pokemon.service.ts#throw@22:27"
                     },
                     {
-                      "label": "Checks whether the id has no row",
-                      "codeBlockId": "src/pokemon/pokemon.service.ts#condition@22:5"
+                      "label": "Returns the found Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.service.ts#method@20:3",
+                      "at": {
+                        "line": 23,
+                        "column": 5
+                      }
                     }
                   ]
                 },
@@ -3362,12 +3370,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Loads the named trainer, or throws NotFoundError",
-                      "codeBlockId": "src/pokemon/pokemon.service.ts#condition@27:5"
+                      "label": "Calls this.trainers.find when a trainer is given to check that the trainer exists",
+                      "codeBlockId": "src/pokemon/pokemon.service.ts#call@27:35",
+                      "at": {
+                        "line": 27,
+                        "column": 41
+                      }
                     },
                     {
-                      "label": "Inserts a new row built from the body",
-                      "codeBlockId": "src/pokemon/pokemon.service.ts#data@28:12"
+                      "label": "Returns the saved Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.service.ts#method@26:3",
+                      "at": {
+                        "line": 28,
+                        "column": 5
+                      }
                     }
                   ]
                 },
@@ -3400,16 +3416,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Loads the stored Pokemon, or throws NotFoundError",
-                      "codeBlockId": "src/pokemon/pokemon.service.ts#variable@32:5"
+                      "label": "Calls this.trainers.find when a new trainer is given to check that the trainer exists",
+                      "codeBlockId": "src/pokemon/pokemon.service.ts#call@33:36",
+                      "at": {
+                        "line": 33,
+                        "column": 42
+                      }
                     },
                     {
-                      "label": "Loads the trainer the body sets, or throws NotFoundError",
-                      "codeBlockId": "src/pokemon/pokemon.service.ts#condition@33:5"
-                    },
-                    {
-                      "label": "Copies the body onto the row and saves it",
-                      "codeBlockId": "src/pokemon/pokemon.service.ts#data@34:12"
+                      "label": "Returns the Pokemon saved with the changes",
+                      "codeBlockId": "src/pokemon/pokemon.service.ts#method@31:3",
+                      "at": {
+                        "line": 34,
+                        "column": 5
+                      }
                     }
                   ]
                 },
@@ -3432,16 +3452,7 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": [
-                    {
-                      "label": "Loads the stored Pokemon, or throws NotFoundError",
-                      "codeBlockId": "src/pokemon/pokemon.service.ts#variable@38:5"
-                    },
-                    {
-                      "label": "Deletes the row from the database",
-                      "codeBlockId": "src/pokemon/pokemon.service.ts#data@39:11"
-                    }
-                  ]
+                  "blockLabels": []
                 }
               ],
               "triggerLabels": [],
@@ -3745,7 +3756,16 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns whether the second type differs from the first type",
+                      "codeBlockId": "src/pokemon/pokemon.dto.ts#method@10:3",
+                      "at": {
+                        "line": 11,
+                        "column": 5
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "src/pokemon/pokemon.dto.ts#method@14:3",
@@ -3760,7 +3780,16 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the message that a Pokemon cannot have one type twice",
+                      "codeBlockId": "src/pokemon/pokemon.dto.ts#method@14:3",
+                      "at": {
+                        "line": 15,
+                        "column": 5
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],
@@ -3798,7 +3827,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the listed Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@11:3",
+                      "at": {
+                        "line": 13,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.list to read every Pokemon, or those of one trainer",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@11:3",
+                      "at": {
+                        "line": 13,
+                        "column": 12
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "src/pokemon/pokemon.controller.ts#method@21:3",
@@ -3815,7 +3861,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the created Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@21:3",
+                      "at": {
+                        "line": 23,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.create to store the new Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@21:3",
+                      "at": {
+                        "line": 23,
+                        "column": 12
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],
@@ -3846,7 +3909,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the Pokemon with the id",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@16:3",
+                      "at": {
+                        "line": 18,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.find to read the Pokemon with the id",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@16:3",
+                      "at": {
+                        "line": 18,
+                        "column": 12
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "src/pokemon/pokemon.controller.ts#method@26:3",
@@ -3865,7 +3945,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the updated Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@26:3",
+                      "at": {
+                        "line": 28,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.update to save the changes to the Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@26:3",
+                      "at": {
+                        "line": 28,
+                        "column": 12
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "src/pokemon/pokemon.controller.ts#method@31:3",
@@ -3882,7 +3979,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns once the Pokemon is removed",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@31:3",
+                      "at": {
+                        "line": 34,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.remove to delete the Pokemon with the id",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@31:3",
+                      "at": {
+                        "line": 34,
+                        "column": 12
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],

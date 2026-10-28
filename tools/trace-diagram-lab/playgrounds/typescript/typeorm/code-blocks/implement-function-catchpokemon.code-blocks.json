@@ -1683,6 +1683,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokemon/pokedex.ts"
         ],
@@ -5122,6 +5128,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/team.ts"
         ],
@@ -5649,6 +5661,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 19,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/team.ts"
         ],
@@ -7932,6 +7950,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 21,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {

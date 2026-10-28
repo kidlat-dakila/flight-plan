@@ -163,16 +163,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Reads the id of the path as a number",
-                  "codeBlockId": "src/tasks/routes.ts#variable@7:3"
+                  "label": "Returns after the 400 when the id is not a positive integer",
+                  "codeBlockId": "src/tasks/routes.ts#condition@8:3",
+                  "at": {
+                    "line": 10,
+                    "column": 5
+                  }
                 },
                 {
-                  "label": "Checks whether the id is not a positive integer",
-                  "codeBlockId": "src/tasks/routes.ts#condition@8:3"
-                },
-                {
-                  "label": "Passes the request on to the handler",
-                  "codeBlockId": "src/tasks/routes.ts#call@12:3"
+                  "label": "Calls next to pass the request on to the route handler",
+                  "codeBlockId": "src/tasks/routes.ts#call@12:3",
+                  "at": {
+                    "line": 12,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -199,12 +203,28 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Reads the task of the id from the store",
-                  "codeBlockId": "src/tasks/service.ts#external-value@9:3"
+                  "label": "Calls readTask to read the task of the id",
+                  "codeBlockId": "src/tasks/service.ts#external-value@9:3",
+                  "at": {
+                    "line": 9,
+                    "column": 16
+                  }
                 },
                 {
-                  "label": "Checks whether the id has a task",
-                  "codeBlockId": "src/tasks/service.ts#condition@10:10"
+                  "label": "Returns the completed task, or nothing when no task has the id",
+                  "codeBlockId": "src/tasks/service.ts#function@8:1",
+                  "at": {
+                    "line": 10,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Calls saveTask when the task exists to store it as done",
+                  "codeBlockId": "src/tasks/service.ts#condition@10:10",
+                  "at": {
+                    "line": 10,
+                    "column": 43
+                  }
                 }
               ]
             },
@@ -229,8 +249,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Puts the task into the map under its id",
-                  "codeBlockId": "src/tasks/store.ts#call@13:3"
+                  "label": "Returns the saved task",
+                  "codeBlockId": "src/tasks/store.ts#function@12:1",
+                  "at": {
+                    "line": 14,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -277,16 +301,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Completes the task of the id in the path",
-                      "codeBlockId": "src/tasks/routes.ts#external-value@29:3"
+                      "label": "Calls completeTask to mark the task of the id as done",
+                      "codeBlockId": "src/tasks/routes.ts#external-value@29:3",
+                      "at": {
+                        "line": 29,
+                        "column": 16
+                      }
                     },
                     {
-                      "label": "Checks whether the id has no task",
-                      "codeBlockId": "src/tasks/routes.ts#condition@30:3"
-                    },
-                    {
-                      "label": "Sends the completed task as JSON",
-                      "codeBlockId": "src/tasks/routes.ts#call@34:3"
+                      "label": "Returns after the 404 when no task has the id",
+                      "codeBlockId": "src/tasks/routes.ts#condition@30:3",
+                      "at": {
+                        "line": 32,
+                        "column": 5
+                      }
                     }
                   ]
                 }

@@ -4,7 +4,7 @@ import { typeIconOf } from "@/components/TraceDiagram/type-icons"
 import { findNavigatorButton, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
 import { CODE_LINKS, codeLine, paragraph } from "@/lib/__tests__/review-samples"
 import { ZOOM_STEP } from "@/lib/board-zoom"
-import { NODE_HEAD_HEIGHT, NODE_WIDTH } from "@/lib/trace-layout"
+import { ARGUMENT_ROW_HEIGHT, NODE_HEAD_HEIGHT, NODE_WIDTH, TWO_LINE_ROW_HEIGHT } from "@/lib/trace-layout"
 
 const node = (overrides: Partial<TraceNode> & Pick<TraceNode, "id" | "label">): TraceNode => ({
   type: "function",
@@ -331,7 +331,7 @@ describe("TraceDiagram", () => {
       label: "Renames a trainer",
       name: "rename_trainer",
       blockLists: [
-        { kind: "argument", label: "Arguments", blocks: [listed("rename-id", "trainer_id", "trainer_id: int")] },
+        { kind: "argument", label: "Arguments", blocks: [listed("rename-id", "trainer_id: int", "trainer_id: int")] },
         { kind: "call", label: "Calls", blocks: [listed("rename@3:5", "load_trainers", "Calls load_trainers to read every trainer"), listed("rename@9:5", "load_trainers", "Calls load_trainers when the cache is cold to read them again")] },
         { kind: "return", label: "Returns", blocks: [listed("rename@12:5", "return", "Returns the renamed trainer")] },
         { kind: "throw", label: "Raises", blocks: [listed("rename-raise", "raise LookupError", "Raises LookupError when no trainer has the id")] },
@@ -789,5 +789,146 @@ describe("typeIconOf", () => {
 
     expect(new Set(icons).size).toBe(BLOCK_TYPES.length)
     expect(icons).not.toContain(typeIconOf("unknown-type"))
+  })
+})
+
+const writtenRow = (id: string, name: string, label: string, line: number) => ({ id, name, label, isDraft: false, hint: null, change: null, lines: [[line, line]] as const })
+
+const TEAM_SLOT = node({ id: "team-slot", type: "component", typeLabel: "Component", label: "Shows one Pokemon of the team", name: "TeamSlot" })
+
+const TEAM_FOOTER = node({ id: "team-footer", type: "component", typeLabel: "Component", label: "Shows the footer of the team", name: "TeamFooter" })
+
+const TEAM_PAGE = node({
+  id: "team-page",
+  type: "component",
+  typeLabel: "Component",
+  label: "Shows the team of one trainer",
+  name: "TeamPage",
+  blockLists: [
+    { kind: "argument", label: "Props", blocks: [writtenRow("team-page-trainer-id", "trainerId: number", "trainerId: number", 14)] },
+    { kind: "state", label: "State", blocks: [writtenRow("team-page-publishing", "isPublishing = false", "isPublishing = false", 15)] },
+    { kind: "memo", label: "Memos", blocks: [writtenRow("team-page-strongest", "strongest = useMemo()", "Finds the strongest Pokemon of the team", 17)] },
+    { kind: "effect", label: "Effects", blocks: [writtenRow("team-page-effect", "useEffect()", "Remembers the last trainer", 18)] },
+    {
+      kind: "render",
+      label: "Renders",
+      blocks: [
+        writtenRow("team-page@22:3", "return <p>", "Renders a loading line when the trainer is not loaded yet", 22),
+        writtenRow("team-page@33:3", "return <section>", "Renders the team with its heading and a Publish button", 33),
+        writtenRow("team-page-empty", "trainer.team.length === 0 && <p>", "Renders a note when the team has no Pokemon", 36),
+        writtenRow("team-page-slot", "<TeamSlot />", "Renders <TeamSlot /> for each Pokemon of the team", 38),
+      ],
+    },
+  ],
+  rowGroups: [
+    { label: "Props", rowIds: ["team-page-trainer-id"], childIds: [] },
+    { label: "State", rowIds: ["team-page-publishing"], childIds: [] },
+    { label: "External calls", rowIds: [], childIds: [], calleeCards: [] },
+    { label: "Memos", rowIds: ["team-page-strongest"], childIds: [] },
+    { label: "Effects", rowIds: ["team-page-effect"], childIds: [] },
+    {
+      label: "Renders",
+      rowIds: [],
+      childIds: [],
+      renderGroups: [
+        { id: "team-page:renders:22", name: "return <p>", rowId: "team-page@22:3", rows: [] },
+        {
+          id: "team-page:renders:33",
+          name: "return <section>",
+          rowId: "team-page@33:3",
+          rows: [{ rowId: "team-page-empty", kind: "condition", childIds: [] }, { rowId: "team-page-slot", kind: "component", childIds: ["team-slot"] }],
+        },
+      ],
+    },
+  ],
+  children: [TEAM_SLOT, TEAM_FOOTER],
+})
+
+const TEAM_PAGE_EFFECT = node({
+  id: "team-page-effect-card",
+  type: "effect",
+  typeLabel: "Effect",
+  label: "Remembers the last trainer",
+  name: "useEffect",
+  blockLists: [
+    { kind: "dependency", label: "Dependencies", blocks: [writtenRow("effect-trainer-id", "trainerId", "trainerId", 20)] },
+    { kind: "outside-variable", label: "Outside variables", blocks: [writtenRow("effect-last-trainer-key", "LAST_TRAINER_KEY", "Constant", 19)] },
+  ],
+  rowGroups: [
+    { label: "Dependencies", rowIds: ["effect-trainer-id"], childIds: [] },
+    { label: "Outside variables", rowIds: ["effect-last-trainer-key"], childIds: [] },
+    { label: "External calls", rowIds: [], childIds: [], calleeCards: [] },
+  ],
+})
+
+const TEAM_EDGES: readonly TraceEdge[] = [{ id: "page-effect", from: "team-page", to: "team-page-effect-card", fromRowId: "team-page-effect", toRowId: null, toSide: "left" }]
+
+const renderTeamDiagram = (authoring: TraceAuthoring | null = null) =>
+  render(
+    <TraceDiagram title="A team" nodes={[TEAM_PAGE, TEAM_PAGE_EFFECT]} edges={TEAM_EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} authoring={authoring} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+  )
+
+const iconClassOf = (row: HTMLElement): string => row.querySelector("svg")?.getAttribute("class") ?? ""
+
+const bottomOf = ({ top, height }: Place): number => top + height
+
+describe("TraceDiagram component cards", () => {
+  it("draws props, state, dependency and outside variable rows like argument rows, each with its own icon, and says what an outside variable is beside its name", () => {
+    renderTeamDiagram()
+    const rows = ["Props: trainerId: number", "State: isPublishing = false", "Dependencies: trainerId", "Outside variables: LAST_TRAINER_KEY, Constant"].map((name) => screen.getByRole("button", { name }))
+    const outside = rows[3]
+
+    expect(rows.map((row) => Number.parseFloat(row.style.height))).toStrictEqual(rows.map(() => ARGUMENT_ROW_HEIGHT))
+    expect(rows.map(iconClassOf).map((iconClass) => ["parentheses", "toggle-right", "link", "eye"].find((icon) => iconClass.includes(`lucide-${icon}`)))).toStrictEqual(["parentheses", "toggle-right", "link", "eye"])
+    expect(within(outside).getByText("LAST_TRAINER_KEY").className).toContain("font-mono")
+    expect(within(outside).getByText("Constant").className).toContain("ml-auto")
+  })
+
+  it("draws memo and effect rows as written rows of two lines with the code under the label, and leaves a line from the row it names", () => {
+    const { container } = renderTeamDiagram()
+    const memo = screen.getByRole("button", { name: "Memos: Finds the strongest Pokemon of the team" })
+    const effect = screen.getByRole("button", { name: "Effects: Remembers the last trainer" })
+    const leaving = placeOf(effect)
+
+    expect([memo, effect].map((row) => Number.parseFloat(row.style.height))).toStrictEqual([TWO_LINE_ROW_HEIGHT, TWO_LINE_ROW_HEIGHT])
+    expect([iconClassOf(memo).includes("lucide-sigma"), iconClassOf(effect).includes("lucide-zap")]).toStrictEqual([true, true])
+    expect(within(memo).getByText("strongest = useMemo()").className).toContain("font-mono")
+    expect(linePathsOf(container).filter((path) => path?.startsWith(`M ${String(leaving.left + leaving.width)} ${String(leaving.top + leaving.height / 2)} `) === true)).toHaveLength(1)
+  })
+
+  it("draws each return of a component under Renders with its code, its line and its label, then its rows on a rail with an icon for their kind", () => {
+    const { container } = renderTeamDiagram()
+    const [loading, section] = ["Renders: Renders a loading line when the trainer is not loaded yet", "Renders: Renders the team with its heading and a Publish button"].map((name) => screen.getByRole("button", { name }))
+    const [empty, slotRow] = ["Renders: Renders a note when the team has no Pokemon", "Renders: Renders <TeamSlot /> for each Pokemon of the team"].map((name) => screen.getByRole("button", { name }))
+    const rails = [...container.querySelectorAll<HTMLElement>("[data-render-rail]")]
+    const [rail, sectionPlace, emptyPlace, slotRowPlace] = [rails[0], section, empty, slotRow].map(placeOf)
+
+    expect([...container.querySelectorAll("[data-row-heading=\"team-page\"]")].map((heading) => heading.textContent)).toStrictEqual(["Props", "State", "Memos", "Effects", "Renders"])
+    expect([within(section).getByText("return <section>").parentElement?.className, within(section).getByText(":33").className]).toStrictEqual([expect.stringContaining("font-mono"), expect.stringContaining("ml-auto")])
+    expect(within(section).getByText("Renders the team with its heading and a Publish button").className).toContain("font-bold")
+    expect(within(slotRow).getByText("Renders <TeamSlot /> for each Pokemon of the team").className).not.toContain("font-bold")
+    expect(within(slotRow).getByText("<TeamSlot />").parentElement?.className).toContain("font-mono")
+    expect([iconClassOf(empty).includes("lucide-split"), iconClassOf(slotRow).includes("lucide-component"), iconClassOf(section).includes("lucide-corner-down-left")]).toStrictEqual([true, true, true])
+    expect(placeOf(loading).top).toBeLessThan(sectionPlace.top)
+    expect(rails).toHaveLength(1)
+    expect([rail.left > sectionPlace.left, rail.left < emptyPlace.left, rail.top > bottomOf(sectionPlace), rail.top < emptyPlace.top, bottomOf(rail) > bottomOf(slotRowPlace)]).toStrictEqual([true, true, true, true, true])
+  })
+
+  it("draws the child card a render row names under that row inside the rail, and a child card no render row names after the render groups", () => {
+    const { container } = renderTeamDiagram()
+    const slotRow = placeOf(screen.getByRole("button", { name: "Renders: Renders <TeamSlot /> for each Pokemon of the team" }))
+    const rail = placeOf(container.querySelector<HTMLElement>("[data-render-rail]"))
+    const [page, slot, footer] = ["team-page", "team-slot", "team-footer"].map((nodeId) => placeOf(boxOf(container, nodeId)))
+
+    expect([slot.left, slot.width]).toStrictEqual([slotRow.left, slotRow.width])
+    expect([slot.top > bottomOf(slotRow), bottomOf(slot) < bottomOf(rail)]).toStrictEqual([true, true])
+    expect([footer.left < slot.left, footer.top > bottomOf(rail), bottomOf(footer) < bottomOf(page)]).toStrictEqual([true, true, true])
+  })
+
+  it("offers to draw a line from a memo or an effect row, and from no render row, return or value row", () => {
+    const { container } = renderTeamDiagram(createAuthoring())
+    const rowHandleIds = [...container.querySelectorAll(handleSelectorOf("row:"))].map((handle) => handle.getAttribute("data-handleid"))
+
+    expect(rowHandleIds).toStrictEqual(["row:team-page-strongest", "row:team-page-effect"])
   })
 })

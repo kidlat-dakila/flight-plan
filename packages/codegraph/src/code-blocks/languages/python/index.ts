@@ -4,6 +4,7 @@ import { matchSyntax } from "@/catalogue/matching/match-source"
 import { declaredBindingAt, pythonReaderOf, type FindImportedBinding } from "@/catalogue/matching/python-reader"
 import type { FindExportedBinding, SyntaxReader } from "@/catalogue/matching/syntax-reader"
 import { listLibraryUses } from "@/code-blocks/classifications"
+import { withReturns } from "@/code-blocks/languages/returns"
 import { createFileNaming } from "@/code-blocks/languages/typescript/named-by"
 import { nodeAtRange } from "@/code-blocks/languages/typescript/syntax"
 import { LIBRARIES } from "@/code-blocks/libraries"
@@ -22,6 +23,7 @@ export interface PythonSource {
 
 const GRAMMAR: GrammarId = "python"
 const FUNCTION_TYPE = "function"
+const FUNCTION_TYPES: ReadonlySet<string> = new Set(["function_definition", "lambda"])
 
 const exportsOf = (outline: PythonOutline): FileExports => ({
   local: outline.declarations
@@ -49,7 +51,7 @@ export const outlinePython = ({ filePath, source, importedFilePaths }: PythonSou
       declaredBindingAt(syntaxReaderOf(outline, findBinding), nodeAtRange(outline.tree, toSyntaxRange(declarationRange))),
     read: (findExport, findBinding) => {
       const matches = matchSyntax(syntaxReaderOf(outline, findBinding), LIBRARIES)
-      const blocks = readPythonBlocks({ filePath, outline, naming: createFileNaming(matches), findExport })
+      const blocks = withReturns(readPythonBlocks({ filePath, outline, naming: createFileNaming(matches), findExport }), outline.tree.rootNode, FUNCTION_TYPES)
       return {
         filePath,
         blocks: withCards(blocks, matches, outline.tree, LIBRARIES),

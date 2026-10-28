@@ -1916,6 +1916,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -3046,6 +3052,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 23,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -4043,6 +4055,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 32,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -4721,6 +4739,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/tasks/service.ts"
         ],
@@ -5813,6 +5837,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 14,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/tasks/store.ts"
         ],

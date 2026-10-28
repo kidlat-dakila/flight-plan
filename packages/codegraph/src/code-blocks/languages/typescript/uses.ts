@@ -26,6 +26,7 @@ const MEMBER_TYPE = "member_expression"
 const NAME_TYPE = "identifier"
 const CALL_TYPE = "call_expression"
 const CONSTRUCTION_TYPE = "new_expression"
+const AWAIT_TYPE = "await_expression"
 const ARGUMENTS_TYPE = "arguments"
 const SHORTHAND_BINDING_TYPE = "shorthand_property_identifier_pattern"
 const KEYED_BINDING_TYPE = "pair_pattern"
@@ -78,9 +79,14 @@ const isRunInPlace = (passed: SyntaxNode): boolean => {
 
 const runInPlaceMarkOf = (used: SyntaxNode): Pick<ReadUse, "isRunInPlace"> => (isRunInPlace(used) ? { isRunInPlace: true } : {})
 
+const isCalledFunction = (node: SyntaxNode): boolean => node.parent?.type === CALL_TYPE && isFieldOf(node, "function")
+
+const isAwaitedCallee = (parent: SyntaxNode): boolean => parent.type === AWAIT_TYPE && isCalledFunction(parent)
+
 export const roleOf = (used: SyntaxNode): Role => {
   const { parent } = used
   if (parent === null) return "value"
+  if (isAwaitedCallee(parent)) return "call"
   if (isRunInPlace(used)) return "call"
   if (ELEMENT_TAG_TYPES.has(parent.type) && isFieldOf(used, "name")) return "render"
   if (parent.type === CALL_TYPE && isFieldOf(used, "function")) return "call"

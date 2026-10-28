@@ -316,16 +316,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Finds the line of the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#variable@9:3"
+                  "label": "Returns the lines with a new line for the item when it has none",
+                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3",
+                  "at": {
+                    "line": 10,
+                    "column": 27
+                  }
                 },
                 {
-                  "label": "Adds a new line when the bag has none for the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3"
-                },
-                {
-                  "label": "Adds one to the quantity of the line of the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#function@11:20"
+                  "label": "Returns the lines with one more of the item on its line",
+                  "codeBlockId": "src/lib/bag-lines.ts#function@8:1",
+                  "at": {
+                    "line": 11,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -382,14 +386,35 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Gets the bag store",
-                      "codeBlockId": "src/views/items/ItemsPage.vue#external-value@5:1"
+                      "label": "Calls useBagStore to get the bag store",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#external-value@5:1",
+                      "at": {
+                        "line": 5,
+                        "column": 13
+                      }
+                    },
+                    {
+                      "label": "Renders the count of the bag, an Empty the bag button that is off while the bag is empty, and the items",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render-root@12:1"
+                    },
+                    {
+                      "label": "Renders one row with an Add to bag button for each item",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render-loop@18:5"
                     }
                   ]
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the title and the items page",
+                  "codeBlockId": "src/App.vue#render-root@5:1"
+                },
+                {
+                  "label": "Renders `<ItemsPage />` below the title",
+                  "codeBlockId": "src/App.vue#render@8:5"
+                }
+              ]
             },
             {
               "id": "src/views/items/ItemsPage.vue#render-event@15:51",
@@ -410,8 +435,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Clears every line of the bag store",
-                  "codeBlockId": "src/views/items/ItemsPage.vue#call@8:3"
+                  "label": "Calls bag.clear to empty the bag",
+                  "codeBlockId": "src/views/items/ItemsPage.vue#call@8:3",
+                  "at": {
+                    "line": 8,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -428,7 +457,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls bag.addItem to add the item of the row to the bag",
+                  "codeBlockId": "src/views/items/ItemsPage.vue#render-event@20:29",
+                  "at": {
+                    "line": 20,
+                    "column": 37
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

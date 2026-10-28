@@ -28,13 +28,28 @@ const depthAfter = (character: string, depth: number): number => {
   return CLOSERS.has(character) ? depth - 1 : depth
 }
 
-export const withoutDefault = (written: string): string => {
-  const { defaultAt } = Array.from({ length: written.length }, (_, index) => index).reduce<Scan>(
+const defaultMarkAt = (written: string): number | null =>
+  Array.from({ length: written.length }, (_, index) => index).reduce<Scan>(
     (scan, index) =>
       scan.defaultAt !== null ? scan : { depth: depthAfter(written[index], scan.depth), defaultAt: isDefaultMark(written, index, scan.depth) ? index : null },
     { depth: 0, defaultAt: null },
-  )
-  return (defaultAt === null ? written : written.slice(0, defaultAt)).replace(WHITESPACE, SPACE).trim()
+  ).defaultAt
+
+const tidied = (text: string): string => text.replace(WHITESPACE, SPACE).trim()
+
+export const withoutDefault = (written: string): string => {
+  const defaultAt = defaultMarkAt(written)
+  return tidied(defaultAt === null ? written : written.slice(0, defaultAt))
+}
+
+export const assignedTargetOf = (written: string): string | null => {
+  const markAt = defaultMarkAt(written)
+  return markAt === null ? null : tidied(written.slice(0, markAt))
+}
+
+export const assignedValueOf = (written: string): string | null => {
+  const markAt = defaultMarkAt(written)
+  return markAt === null ? null : tidied(written.slice(markAt + DEFAULT_MARK.length))
 }
 
 const headLinesBetween = ({ lines }: SourceFile, firstLine: number, lastLine: number): string[] =>

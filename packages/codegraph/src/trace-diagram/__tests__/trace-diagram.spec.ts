@@ -438,6 +438,39 @@ describe("the nodes inside a root block", () => {
   })
 })
 
+describe("the memos and the effects of a component", () => {
+  const files = {
+    "src/team.ts": codeOf("export const findStrongest = (team) => team", "export const saveTeam = (id) => id"),
+    "src/team-page.tsx": codeOf(
+      "import { useCallback, useEffect, useMemo } from \"react\"",
+      "import { findStrongest, saveTeam } from \"./team\"",
+      "export const TeamPage = ({ team }) => {",
+      "  const strongest = useMemo(() => findStrongest(team), [team])",
+      "  const save = useCallback(() => saveTeam(team), [team])",
+      "  useEffect(() => { saveTeam(strongest) }, [strongest])",
+      "  return <button onClick={save}>{strongest}</button>",
+      "}",
+    ),
+  }
+  const change = { "src/team.ts": [rangeAt(1, 40, 1, 44), rangeAt(2, 34, 2, 36)] }
+
+  it("makes a node of a memo and of an effect, and none of the callback of either: the callback is in the node of its memo or effect", () => {
+    const nodes = listTraceNodes(presentDiagramOf(files, change).traceNodes)
+    const nodeOfBlock = (blockId: string): string | undefined => nodes.find((node) => node.codeBlocks.some((block) => block.id === blockId))?.id
+
+    expect(nodes.map((node) => [node.type, nameOfBlock(node.codeBlocks[0])])).toStrictEqual(expect.arrayContaining([
+      ["derived", "strongest"],
+      ["external-value", "save"],
+      ["component-effect", "useEffect"],
+    ]))
+    expect(nodes.map((node) => node.type)).not.toContain("effect-callback")
+    expect([nodeOfBlock("src/team-page.tsx#effect-callback@4:29"), nodeOfBlock("src/team-page.tsx#effect-callback@6:13")]).toStrictEqual([
+      "src/team-page.tsx#derived@4:3",
+      "src/team-page.tsx#component-effect@6:3",
+    ])
+  })
+})
+
 describe("the forms of a Trace Diagram", () => {
   it("stores every block as its id and links the stored form back to the same blocks", () => {
     const diagram = presentDiagramOf(SHOP, ORDERS_CHANGE)

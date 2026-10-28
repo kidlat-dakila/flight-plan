@@ -970,6 +970,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/client/App.tsx"
         ],
@@ -2039,6 +2045,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 7,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/client/PartyList.tsx"
         ],
@@ -2269,6 +2281,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 33
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [
@@ -3188,6 +3206,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/client/RenameForm.tsx"
         ],
@@ -6613,6 +6637,12 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 14,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/server/data/pokemon.ts"
         ],
@@ -6687,6 +6717,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 18,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/server/data/pokemon.ts"
         ],
@@ -6929,6 +6965,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 22,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/server/data/pokemon.ts"
         ],
@@ -7392,6 +7434,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 27,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/server/data/pokemon.ts"
         ],
@@ -8519,6 +8567,12 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/server/data/trainers.ts"
         ],
@@ -8695,6 +8749,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/server/main.ts"
         ],
@@ -9462,6 +9522,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -13167,6 +13233,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 18,
+            "column": 7
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {

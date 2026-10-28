@@ -342,7 +342,20 @@
                           "codeBlockId": "src/pages/trainers/components/HometownFilter.tsx#render-event@12:57"
                         }
                       ],
-                      "blockLabels": []
+                      "blockLabels": [
+                        {
+                          "label": "Renders a labelled field for the hometown",
+                          "codeBlockId": "src/pages/trainers/components/HometownFilter.tsx#component@8:1",
+                          "at": {
+                            "line": 9,
+                            "column": 3
+                          }
+                        },
+                        {
+                          "label": "Renders `<Input />` that holds the typed hometown",
+                          "codeBlockId": "src/pages/trainers/components/HometownFilter.tsx#render@12:7"
+                        }
+                      ]
                     }
                   ],
                   "triggerLabels": [
@@ -353,22 +366,59 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Keeps the hometown the user typed",
-                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#state@7:3"
+                      "label": "Calls useTrainers to load the trainers of the hometown and whether they still load",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#external-value@8:3",
+                      "at": {
+                        "line": 8,
+                        "column": 35
+                      }
                     },
                     {
-                      "label": "Gets the trainers of the hometown and whether they still load",
-                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#external-value@8:3"
+                      "label": "Renders the hometown filter above the table of trainers",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#component@6:1",
+                      "at": {
+                        "line": 14,
+                        "column": 3
+                      }
                     },
                     {
-                      "label": "Renders one row for each trainer",
-                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#function@22:27"
+                      "label": "Renders `<HometownFilter />` with the typed hometown",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#render@16:7"
+                    },
+                    {
+                      "label": "Renders `<TrainerRow />` for each trainer when the trainers are loaded",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#render@23:15"
                     }
                   ]
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders a header with the two tab buttons and the page of the chosen tab",
+                  "codeBlockId": "src/App.tsx#component@8:1",
+                  "at": {
+                    "line": 10,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<Button />` that opens the trainers tab",
+                  "codeBlockId": "src/App.tsx#render@13:9"
+                },
+                {
+                  "label": "Renders `<Button />` that opens the items tab",
+                  "codeBlockId": "src/App.tsx#render@16:9"
+                },
+                {
+                  "label": "Renders `<TrainersPage />` when the trainers tab is chosen",
+                  "codeBlockId": "src/App.tsx#render@20:35"
+                },
+                {
+                  "label": "Renders `<ItemsPage />` when the items tab is chosen",
+                  "codeBlockId": "src/App.tsx#render@20:54"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-trainers.ts#hook@5:1",
@@ -394,8 +444,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Requests the trainers again each time the hometown changes",
-                  "codeBlockId": "src/hooks/use-trainers.ts#component-effect@9:3"
+                  "label": "Calls fetchTrainers to load the trainers of the hometown",
+                  "codeBlockId": "src/hooks/use-trainers.ts#call@11:5",
+                  "at": {
+                    "line": 11,
+                    "column": 5
+                  }
+                },
+                {
+                  "label": "Returns the trainers and whether they are still loading",
+                  "codeBlockId": "src/hooks/use-trainers.ts#hook@5:1",
+                  "at": {
+                    "line": 16,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -420,8 +482,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Builds the hometown query, or an empty query for an empty hometown",
-                  "codeBlockId": "src/api/trainers.ts#variable@5:3"
+                  "label": "Returns the trainers from the API",
+                  "codeBlockId": "src/api/trainers.ts#function@4:1",
+                  "at": {
+                    "line": 6,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Calls request to get the trainers, filtered by the hometown when one is given",
+                  "codeBlockId": "src/api/trainers.ts#function@4:1",
+                  "at": {
+                    "line": 6,
+                    "column": 10
+                  }
                 }
               ]
             },
@@ -444,16 +518,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Takes the value of the hometown field",
-                  "codeBlockId": "src/pages/trainers/TrainersPage.tsx#variable@10:27"
-                },
-                {
-                  "label": "Stores the trimmed value as the hometown",
-                  "codeBlockId": "src/pages/trainers/TrainersPage.tsx#call@11:5"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/pages/trainers/components/HometownFilter.tsx#render-event@12:57",
@@ -472,7 +537,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls onHometownChange to pass the typed hometown to the page",
+                  "codeBlockId": "src/pages/trainers/components/HometownFilter.tsx#function@12:67",
+                  "at": {
+                    "line": 12,
+                    "column": 78
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

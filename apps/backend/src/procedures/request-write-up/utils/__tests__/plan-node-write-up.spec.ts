@@ -55,7 +55,7 @@ describe("planNodeWriteUp", () => {
 
     expect(planned).toMatchObject({ kind: "planned", message: "Explaining the card" })
     expect(planned.kind === "planned" ? planned.ask : "").toBe(
-      "The reviewer asks for the write-up of the Trace Diagram node `j-subtotal` of segment `all` alone: write its label and the labels of its trigger labels and listed blocks, and nothing else.",
+      "The reviewer asks for the write-up of the Trace Diagram node `j-subtotal` of segment `all` alone: write its label, its trigger labels and its block labels, each block label by its `codeBlockId` and its `at`, and nothing else.",
     )
     expect(planned.kind === "planned" ? listTraceNodes(planned.artifact.segments[0].traceDiagram?.traceNodes ?? []).find((node) => node.id === "j-subtotal")?.isRequired : false).toBe(true)
   })

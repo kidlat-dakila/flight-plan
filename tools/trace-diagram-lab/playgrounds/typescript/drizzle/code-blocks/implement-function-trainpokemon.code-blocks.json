@@ -825,6 +825,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 7,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/db/queries/pokemon.ts"
         ],
@@ -1137,6 +1143,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/db/queries/pokemon.ts"
         ],
@@ -1427,6 +1439,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 16,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/db/queries/pokemon.ts"
         ],
@@ -1980,6 +1998,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 21,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/db/queries/pokemon.ts"
         ],
@@ -2722,6 +2746,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/db/queries/trainers.ts"
         ],
@@ -4938,6 +4968,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 7,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokemon/service.ts"
         ],
@@ -5176,6 +5212,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokemon/service.ts"
         ],
@@ -5309,6 +5351,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 18,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokemon/service.ts"
         ],
@@ -5856,6 +5904,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 16,
+            "column": 33
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -6407,6 +6461,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/service.ts"
         ],

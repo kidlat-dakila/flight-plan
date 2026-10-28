@@ -262,16 +262,36 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Checks whether the first argument is `trade`",
-                  "codeBlockId": "src/pokedex/cli.py#condition@8:5"
+                  "label": "Calls trade_pokemon when the command is trade to give the Pokemon to the trainer",
+                  "codeBlockId": "src/pokedex/cli.py#call@9:9",
+                  "at": {
+                    "line": 9,
+                    "column": 9
+                  }
                 },
                 {
-                  "label": "Trades the Pokemon of the second argument to the trainer of the third",
-                  "codeBlockId": "src/pokedex/cli.py#call@9:9"
+                  "label": "Calls team_report when the command is trade to write the team of the new trainer",
+                  "codeBlockId": "src/pokedex/cli.py#call@10:9",
+                  "at": {
+                    "line": 10,
+                    "column": 15
+                  }
                 },
                 {
-                  "label": "Prints the team of the trainer who receives the Pokemon",
-                  "codeBlockId": "src/pokedex/cli.py#call@10:9"
+                  "label": "Returns after the trade when the command is trade",
+                  "codeBlockId": "src/pokedex/cli.py#condition@8:5",
+                  "at": {
+                    "line": 11,
+                    "column": 9
+                  }
+                },
+                {
+                  "label": "Calls team_report to write the team of the trainer of the first argument",
+                  "codeBlockId": "src/pokedex/cli.py#call@13:5",
+                  "at": {
+                    "line": 13,
+                    "column": 11
+                  }
                 }
               ]
             },
@@ -302,20 +322,36 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Loads the Pokemon of the id",
-                  "codeBlockId": "src/pokedex/trades/service.py#external-value@10:9"
+                  "label": "Calls find_pokemon to load the Pokemon to trade",
+                  "codeBlockId": "src/pokedex/trades/service.py#external-value@10:9",
+                  "at": {
+                    "line": 10,
+                    "column": 19
+                  }
                 },
                 {
-                  "label": "Loads the trainer who receives the Pokemon",
-                  "codeBlockId": "src/pokedex/trades/service.py#external-value@11:9"
+                  "label": "Calls find_trainer to load the trainer who gets the Pokemon",
+                  "codeBlockId": "src/pokedex/trades/service.py#external-value@11:9",
+                  "at": {
+                    "line": 11,
+                    "column": 19
+                  }
                 },
                 {
-                  "label": "Records the trade and gives the Pokemon to that trainer",
-                  "codeBlockId": "src/pokedex/trades/service.py#external-value@12:9"
+                  "label": "Calls save_trade to record the trade and move the Pokemon",
+                  "codeBlockId": "src/pokedex/trades/service.py#external-value@12:9",
+                  "at": {
+                    "line": 12,
+                    "column": 17
+                  }
                 },
                 {
-                  "label": "Commits the session and returns the id of the trade",
-                  "codeBlockId": "src/pokedex/trades/service.py#data@13:9"
+                  "label": "Returns the id of the saved trade",
+                  "codeBlockId": "src/pokedex/trades/service.py#function@8:1",
+                  "at": {
+                    "line": 14,
+                    "column": 9
+                  }
                 }
               ]
             },
@@ -351,7 +387,16 @@
                   "codeBlockId": "src/pokedex/trades/queries.py#data-fetch@9:28"
                 }
               ],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns the one Pokemon with the id",
+                  "codeBlockId": "src/pokedex/trades/queries.py#function@8:1",
+                  "at": {
+                    "line": 9,
+                    "column": 5
+                  }
+                }
+              ]
             },
             {
               "id": "src/pokedex/trades/queries.py#function@12:1",
@@ -402,16 +447,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Maps each trade to a row of the trades table, with its Pokemon",
-                  "codeBlockId": "src/pokedex/trades/models.py#class@10:1"
+                  "label": "Calls Trade to make the row of the trade from the old to the new trainer",
+                  "codeBlockId": "src/pokedex/trades/queries.py#external-value@13:5",
+                  "at": {
+                    "line": 13,
+                    "column": 13
+                  }
                 },
                 {
-                  "label": "Makes a trade from the current trainer to the new one",
-                  "codeBlockId": "src/pokedex/trades/queries.py#external-value@13:5"
-                },
-                {
-                  "label": "Adds the trade to the session and returns it",
-                  "codeBlockId": "src/pokedex/trades/queries.py#data@15:5"
+                  "label": "Returns the new trade",
+                  "codeBlockId": "src/pokedex/trades/queries.py#function@12:1",
+                  "at": {
+                    "line": 16,
+                    "column": 5
+                  }
                 }
               ]
             }

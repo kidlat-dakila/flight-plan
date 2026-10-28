@@ -294,6 +294,12 @@
         ],
         "isRoot": true,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 4,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -832,6 +838,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/api/pokemon/[id]/route.ts"
         ],
@@ -1455,6 +1467,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 27
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -1876,6 +1894,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 30
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -2246,6 +2270,12 @@
         ],
         "isRoot": true,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 4,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -2793,6 +2823,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 9,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/api/pokemon/route.ts"
         ],
@@ -3429,6 +3465,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 15,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/api/pokemon/route.ts"
         ],
@@ -3871,6 +3913,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 14,
+            "column": 30
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -4675,6 +4723,12 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 16,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/lib/pokemon.ts"
         ],
@@ -4749,6 +4803,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 22,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/lib/pokemon.ts"
         ],
@@ -5044,6 +5104,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 27,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/lib/pokemon.ts"
         ],

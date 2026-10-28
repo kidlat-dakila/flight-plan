@@ -640,6 +640,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 4,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/App.tsx"
         ],
@@ -3063,6 +3069,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 18,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pages/party/PartyPage.tsx"
         ],
@@ -6675,6 +6687,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 16,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],

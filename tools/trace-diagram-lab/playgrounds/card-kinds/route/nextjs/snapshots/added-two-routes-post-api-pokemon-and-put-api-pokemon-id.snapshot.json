@@ -123,24 +123,44 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the id from the path",
-                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#variable@8:3"
+                      "label": "Calls readName to read the trimmed name from the body",
+                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#external-value@9:3",
+                      "at": {
+                        "line": 9,
+                        "column": 16
+                      }
                     },
                     {
-                      "label": "Reads the trimmed name from the body",
-                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#external-value@9:3"
+                      "label": "Returns a 400 when the body has no name",
+                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#condition@10:3",
+                      "at": {
+                        "line": 10,
+                        "column": 27
+                      }
                     },
                     {
-                      "label": "Checks whether the body has no name, and returns a 400",
-                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#condition@10:3"
+                      "label": "Calls renamePokemon to give the Pokemon of the id its new name",
+                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#external-value@11:3",
+                      "at": {
+                        "line": 11,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Renames the Pokemon of the id in the party",
-                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#external-value@11:3"
+                      "label": "Returns a 404 when no Pokemon has the id",
+                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#condition@12:3",
+                      "at": {
+                        "line": 12,
+                        "column": 30
+                      }
                     },
                     {
-                      "label": "Checks whether the party has no Pokemon of the id, and returns a 404",
-                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#condition@12:3"
+                      "label": "Returns the renamed Pokemon as JSON",
+                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#function@7:1",
+                      "at": {
+                        "line": 13,
+                        "column": 3
+                      }
                     }
                   ]
                 }
@@ -169,8 +189,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Checks whether the name is a string that is not blank",
-                  "codeBlockId": "src/app/api/pokemon/[id]/route.ts#condition@4:10"
+                  "label": "Returns the trimmed name, or undefined when it is blank",
+                  "codeBlockId": "src/app/api/pokemon/[id]/route.ts#function@3:1",
+                  "at": {
+                    "line": 4,
+                    "column": 3
+                  }
                 }
               ]
             }
@@ -585,12 +609,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads every Pokemon of the party",
-                      "codeBlockId": "src/app/api/pokemon/route.ts#external-value@8:3"
+                      "label": "Calls listPokemon to read every Pokemon of the party",
+                      "codeBlockId": "src/app/api/pokemon/route.ts#effect@8:17",
+                      "at": {
+                        "line": 8,
+                        "column": 17
+                      }
                     },
                     {
-                      "label": "Sorts the Pokemon from the highest level down",
-                      "codeBlockId": "src/app/api/pokemon/route.ts#effect@8:17"
+                      "label": "Returns the party as JSON",
+                      "codeBlockId": "src/app/api/pokemon/route.ts#function@7:1",
+                      "at": {
+                        "line": 9,
+                        "column": 3
+                      }
                     }
                   ]
                 },
@@ -623,16 +655,36 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the fields of the new Pokemon from the body",
-                      "codeBlockId": "src/app/api/pokemon/route.ts#variable@13:3"
+                      "label": "Calls isNewPokemon to check the name and the level of the body",
+                      "codeBlockId": "src/app/api/pokemon/route.ts#condition@14:3",
+                      "at": {
+                        "line": 14,
+                        "column": 8
+                      }
                     },
                     {
-                      "label": "Checks whether the fields are not a new Pokemon, and returns a 400",
-                      "codeBlockId": "src/app/api/pokemon/route.ts#condition@14:3"
+                      "label": "Returns a 400 when the body has no name or whole level",
+                      "codeBlockId": "src/app/api/pokemon/route.ts#condition@14:3",
+                      "at": {
+                        "line": 14,
+                        "column": 30
+                      }
                     },
                     {
-                      "label": "Sends the added Pokemon with a 201",
-                      "codeBlockId": "src/app/api/pokemon/route.ts#property@15:46"
+                      "label": "Returns the new Pokemon as JSON with a 201",
+                      "codeBlockId": "src/app/api/pokemon/route.ts#function@12:1",
+                      "at": {
+                        "line": 15,
+                        "column": 3
+                      }
+                    },
+                    {
+                      "label": "Calls addPokemon to add the Pokemon of the body to the party",
+                      "codeBlockId": "src/app/api/pokemon/route.ts#function@12:1",
+                      "at": {
+                        "line": 15,
+                        "column": 24
+                      }
                     }
                   ]
                 }
@@ -659,7 +711,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns whether the name is not blank and the level is whole",
+                  "codeBlockId": "src/app/api/pokemon/route.ts#function@3:1",
+                  "at": {
+                    "line": 4,
+                    "column": 3
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

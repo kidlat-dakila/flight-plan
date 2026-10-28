@@ -225,12 +225,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Gets every trainer from the service",
-                      "codeBlockId": "src/trainers/trainers.resolver.ts#variable@15:5"
+                      "label": "Calls this.trainersService.list to read every trainer",
+                      "codeBlockId": "src/trainers/trainers.resolver.ts#variable@15:5",
+                      "at": {
+                        "line": 15,
+                        "column": 22
+                      }
                     },
                     {
-                      "label": "Keeps the trainers of the hometown when one is given",
-                      "codeBlockId": "src/trainers/trainers.resolver.ts#condition@16:12"
+                      "label": "Returns the trainers of the hometown, or all when none is given",
+                      "codeBlockId": "src/trainers/trainers.resolver.ts#method@13:3",
+                      "at": {
+                        "line": 16,
+                        "column": 5
+                      }
                     }
                   ]
                 },
@@ -261,16 +269,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Makes the PubSub that carries the awarded trainers",
-                      "codeBlockId": "src/trainers/trainers.resolver.ts#root-variable@7:1"
+                      "label": "Calls this.trainersService.awardBadge to give the trainer the badge",
+                      "codeBlockId": "src/trainers/trainers.resolver.ts#variable@21:5",
+                      "at": {
+                        "line": 21,
+                        "column": 21
+                      }
                     },
                     {
-                      "label": "Awards the badge under its full name through the service",
-                      "codeBlockId": "src/trainers/trainers.resolver.ts#variable@21:5"
-                    },
-                    {
-                      "label": "Publishes the trainer to the badgeAwarded subscribers",
-                      "codeBlockId": "src/trainers/trainers.resolver.ts#call@22:5"
+                      "label": "Returns the trainer with the new badge",
+                      "codeBlockId": "src/trainers/trainers.resolver.ts#method@19:3",
+                      "at": {
+                        "line": 23,
+                        "column": 5
+                      }
                     }
                   ]
                 },
@@ -291,8 +303,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Makes the PubSub that awardBadge publishes to",
-                      "codeBlockId": "src/trainers/trainers.resolver.ts#root-variable@7:1"
+                      "label": "Returns an iterator over each published badge award",
+                      "codeBlockId": "src/trainers/trainers.resolver.ts#method@26:3",
+                      "at": {
+                        "line": 28,
+                        "column": 5
+                      }
                     }
                   ]
                 },
@@ -313,7 +329,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the team of the trainer",
+                      "codeBlockId": "src/trainers/trainers.resolver.ts#method@31:3",
+                      "at": {
+                        "line": 33,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls this.trainersService.teamOf to read the ordered team of the trainer",
+                      "codeBlockId": "src/trainers/trainers.resolver.ts#method@31:3",
+                      "at": {
+                        "line": 33,
+                        "column": 12
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "src/trainers/trainers.resolver.ts#method@36:3",
@@ -336,8 +369,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Checks whether the name already ends with Badge",
-                      "codeBlockId": "src/trainers/trainers.resolver.ts#condition@37:12"
+                      "label": "Returns the badge name ending in Badge",
+                      "codeBlockId": "src/trainers/trainers.resolver.ts#method@36:3",
+                      "at": {
+                        "line": 37,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -372,8 +409,24 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Adds the badge to the trainer and stores the trainer",
-                      "codeBlockId": "src/trainers/trainers.service.ts#external-value@25:5"
+                      "label": "Throws a NotFoundException when no trainer has the id",
+                      "codeBlockId": "src/trainers/trainers.service.ts#throw@24:32"
+                    },
+                    {
+                      "label": "Calls withBadge to copy the trainer with the badge",
+                      "codeBlockId": "src/trainers/trainers.service.ts#external-value@25:5",
+                      "at": {
+                        "line": 25,
+                        "column": 21
+                      }
+                    },
+                    {
+                      "label": "Returns the trainer with the badge",
+                      "codeBlockId": "src/trainers/trainers.service.ts#method@22:3",
+                      "at": {
+                        "line": 27,
+                        "column": 5
+                      }
                     }
                   ]
                 },
@@ -388,7 +441,24 @@
                   "diffCodeBlockIds": [],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the team ordered by level",
+                      "codeBlockId": "src/trainers/trainers.service.ts#method@30:3",
+                      "at": {
+                        "line": 31,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls orderTeam to order the team from the highest level down",
+                      "codeBlockId": "src/trainers/trainers.service.ts#method@30:3",
+                      "at": {
+                        "line": 31,
+                        "column": 12
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],
@@ -415,8 +485,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Sorts the Pokemon by level, highest first",
-                  "codeBlockId": "src/trainers/rules.ts#function@10:25"
+                  "label": "Returns a copy of the team from the highest level down",
+                  "codeBlockId": "src/trainers/rules.ts#function@9:1",
+                  "at": {
+                    "line": 10,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -438,8 +512,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Returns the trainer as it is when it already has the badge",
-                  "codeBlockId": "src/trainers/rules.ts#condition@5:3"
+                  "label": "Returns the trainer as it is when it has the badge already",
+                  "codeBlockId": "src/trainers/rules.ts#condition@5:3",
+                  "at": {
+                    "line": 5,
+                    "column": 39
+                  }
+                },
+                {
+                  "label": "Returns a copy of the trainer with the badge added",
+                  "codeBlockId": "src/trainers/rules.ts#function@4:1",
+                  "at": {
+                    "line": 6,
+                    "column": 3
+                  }
                 }
               ]
             }

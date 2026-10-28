@@ -810,28 +810,36 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Sets the experience of one level to 100",
-                  "codeBlockId": "src/pokemon/service.ts#root-variable@4:1"
+                  "label": "Calls findPokemonWithTrainer to load the Pokemon with its trainer",
+                  "codeBlockId": "src/pokemon/service.ts#external-value@15:3",
+                  "at": {
+                    "line": 15,
+                    "column": 25
+                  }
                 },
                 {
-                  "label": "Loads the Pokemon with its trainer",
-                  "codeBlockId": "src/pokemon/service.ts#external-value@15:3"
+                  "label": "Returns nothing when the Pokemon or its trainer is missing",
+                  "codeBlockId": "src/pokemon/service.ts#condition@16:3",
+                  "at": {
+                    "line": 16,
+                    "column": 33
+                  }
                 },
                 {
-                  "label": "Checks whether the Pokemon exists and has a trainer",
-                  "codeBlockId": "src/pokemon/service.ts#condition@16:3"
+                  "label": "Returns the Pokemon with its new level and experience",
+                  "codeBlockId": "src/pokemon/service.ts#function@14:1",
+                  "at": {
+                    "line": 18,
+                    "column": 3
+                  }
                 },
                 {
-                  "label": "Adds the gained experience to the stored experience",
-                  "codeBlockId": "src/pokemon/service.ts#variable@17:3"
-                },
-                {
-                  "label": "Adds one level per 100 points of experience",
-                  "codeBlockId": "src/pokemon/service.ts#property@19:5"
-                },
-                {
-                  "label": "Keeps the experience left over after the new levels",
-                  "codeBlockId": "src/pokemon/service.ts#property@20:5"
+                  "label": "Calls savePokemonProgress to store the new level and the experience left over",
+                  "codeBlockId": "src/pokemon/service.ts#function@14:1",
+                  "at": {
+                    "line": 18,
+                    "column": 10
+                  }
                 }
               ]
             },
@@ -858,8 +866,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Updates the row of the id and returns the saved Pokemon",
-                  "codeBlockId": "src/db/queries/pokemon.ts#external-value@20:3"
+                  "label": "Returns the updated Pokemon",
+                  "codeBlockId": "src/db/queries/pokemon.ts#function@19:1",
+                  "at": {
+                    "line": 21,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -886,12 +898,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Filters the rows by the id of the Pokemon",
-                  "codeBlockId": "src/db/queries/pokemon.ts#property@16:39"
-                },
-                {
-                  "label": "Loads the trainer of the Pokemon through its relation",
-                  "codeBlockId": "src/db/queries/pokemon.ts#property@16:66"
+                  "label": "Returns the Pokemon of the id with its trainer",
+                  "codeBlockId": "src/db/queries/pokemon.ts#function@15:1",
+                  "at": {
+                    "line": 16,
+                    "column": 3
+                  }
                 }
               ]
             },

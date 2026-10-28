@@ -153,16 +153,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Holds the API key that every request must send",
-                  "codeBlockId": "src/pokemon/routes.ts#root-variable@5:1"
+                  "label": "Returns early with a 401 when the API key is missing or wrong",
+                  "codeBlockId": "src/pokemon/routes.ts#condition@10:3",
+                  "at": {
+                    "line": 12,
+                    "column": 5
+                  }
                 },
                 {
-                  "label": "Checks whether the `x-api-key` header holds another key, and returns a 401",
-                  "codeBlockId": "src/pokemon/routes.ts#condition@10:3"
-                },
-                {
-                  "label": "Passes the request on to the next handler",
-                  "codeBlockId": "src/pokemon/routes.ts#call@14:3"
+                  "label": "Calls next to pass the request on to the route",
+                  "codeBlockId": "src/pokemon/routes.ts#call@14:3",
+                  "at": {
+                    "line": 14,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -201,16 +205,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Reads the name and the level from the body",
-                  "codeBlockId": "src/pokemon/routes.ts#variable@18:3"
+                  "label": "Returns early with a 400 when the body has no name or whole level",
+                  "codeBlockId": "src/pokemon/routes.ts#condition@19:3",
+                  "at": {
+                    "line": 21,
+                    "column": 5
+                  }
                 },
                 {
-                  "label": "Checks whether the name is not a string or the level is not a whole number, and returns a 400",
-                  "codeBlockId": "src/pokemon/routes.ts#condition@19:3"
-                },
-                {
-                  "label": "Passes the request on to the handler",
-                  "codeBlockId": "src/pokemon/routes.ts#call@23:3"
+                  "label": "Calls next to pass the valid body on to the route",
+                  "codeBlockId": "src/pokemon/routes.ts#call@23:3",
+                  "at": {
+                    "line": 23,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -260,16 +268,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads every Pokemon of the party",
-                      "codeBlockId": "src/pokemon/controller.ts#external-value@5:3"
-                    },
-                    {
-                      "label": "Sorts the Pokemon from the highest level down",
-                      "codeBlockId": "src/pokemon/controller.ts#effect@5:17"
-                    },
-                    {
-                      "label": "Sends the sorted party as JSON",
-                      "codeBlockId": "src/pokemon/controller.ts#call@6:3"
+                      "label": "Calls readParty to read every Pokemon of the party",
+                      "codeBlockId": "src/pokemon/controller.ts#effect@5:17",
+                      "at": {
+                        "line": 5,
+                        "column": 17
+                      }
                     }
                   ]
                 },
@@ -297,12 +301,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Adds a Pokemon with the name and the level of the body",
-                      "codeBlockId": "src/pokemon/routes.ts#external-value@31:3"
-                    },
-                    {
-                      "label": "Sends the new Pokemon with a 201",
-                      "codeBlockId": "src/pokemon/routes.ts#call@32:3"
+                      "label": "Calls addPokemon to add the Pokemon of the body to the party",
+                      "codeBlockId": "src/pokemon/routes.ts#external-value@31:3",
+                      "at": {
+                        "line": 31,
+                        "column": 19
+                      }
                     }
                   ]
                 }
@@ -344,16 +348,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the Pokemon of the id in the path",
-                      "codeBlockId": "src/pokemon/routes.ts#external-value@36:3"
+                      "label": "Calls readPokemon to find the Pokemon of the id",
+                      "codeBlockId": "src/pokemon/routes.ts#external-value@36:3",
+                      "at": {
+                        "line": 36,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Checks whether the party has no Pokemon of the id, and returns a 404",
-                      "codeBlockId": "src/pokemon/routes.ts#condition@37:3"
-                    },
-                    {
-                      "label": "Sends the Pokemon as JSON",
-                      "codeBlockId": "src/pokemon/routes.ts#call@41:3"
+                      "label": "Returns early with a 404 when no Pokemon has the id",
+                      "codeBlockId": "src/pokemon/routes.ts#condition@37:3",
+                      "at": {
+                        "line": 39,
+                        "column": 5
+                      }
                     }
                   ]
                 }

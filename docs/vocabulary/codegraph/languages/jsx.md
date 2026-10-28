@@ -61,12 +61,15 @@ See [Trace Diagram](../../trace-diagram.md) for the rules every language shares.
 | A component | A node of the type `component` |
 | A component another component renders | A child of the node of the component that renders it |
 | A handler on an element, such as `onClick={handleRemove}` | A `render-event` block of its component's node and one of its trigger labels, and a node of the type `render-event` with an edge from the component. An arrow function written in the attribute is part of that node. |
-| A function the component declares for a handler | A block of the component's node, listed as a step. The edge of the handler that calls it goes on to what the function runs. |
-| An effect in the body of the component, such as `useEffect(() => { … })` | A node of the type `component-effect`, with a node per callback it is handed |
-| The markup, a declaration, and a condition or a loop on the way to the `return` | Blocks of the component's node. The render is one unit, and markup has no row. |
+| A function the component declares and hands to a handler by name, such as `onClick={publish}` | The body of that handler: a block of the node of the `render-event`, whose card lists its calls. It has no row in the component. |
+| Any other function the component declares | A block of the component's node. The component card lists the calls inside it under External calls. |
+| An effect in the body of the component, such as `useEffect(() => { … }, [id])` | A node of the type `component-effect` and a row under Effects of the component. Its callback is part of that node: an [effect card](../../trace-diagram/component-card.md#effects-and-memos) with its dependencies, the outside variables it reads, its calls and its cleanup. |
+| A memo in the body of the component, such as `const total = useMemo(() => …, [items])` or `useCallback(…)` | A node of the type of its declaration, such as `derived`, and a row under Memos of the component, with a [memo card](../../trace-diagram/component-card.md#effects-and-memos) that holds its callback |
+| A call handed a callback that is no effect hook, such as `useMutation({ onSuccess })` | A node of the type `component-effect`, with a node per callback that runs later |
+| The markup, a declaration, and a condition or a loop on the way to the `return` | Blocks of the component's node. The render is one unit: the component card lists one group per `return` under [Renders](../../trace-diagram/component-card.md#renders), with a row for a condition, a loop, a component of the repository and a value that holds markup, and no row for a plain element. |
 | A prop a handler is passed through, such as `onSave` of `<SaveButton onSave={saveReview} />` | A `root-argument-value` block of the node of the component that takes it. The chain passes through it, and it is no node. |
 | A data fetch in the body of the component | A `data-fetch` block of its node, and one of its trigger labels. |
-| A hook of the repository the component calls | A node of the type `hook`, with an edge from the component |
+| A hook of the repository the component calls | A node of the type `hook`, with a line from its call row under External calls of the component |
 | A variable that holds markup, or a function that returns markup, inside the component | A `component` block of the component's node. Among components, only one at the top level of a file is a node. |
 | A route table that names the component as a page | A node of the type of the table, such as `root-variable`, with an edge to the component |
 

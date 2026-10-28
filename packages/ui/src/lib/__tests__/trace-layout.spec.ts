@@ -1,10 +1,54 @@
-import { ARGUMENT_ROW_HEIGHT, CALLEE_HEAD_HEIGHT, CALLEE_INSET, EDGE_APPROACH, EDGE_SPACING, layoutTrace, MARGIN, NODE_GAP, NODE_HEAD_HEIGHT, NODE_WIDTH, ROW_HEADING_HEIGHT, ROW_HEIGHT, SITE_ROW_HEIGHT, TWO_LINE_ROW_HEIGHT, type LayoutEdge, type LayoutNode } from "@/lib/trace-layout"
+import {
+  ARGUMENT_ROW_HEIGHT,
+  CALLEE_HEAD_HEIGHT,
+  CALLEE_INSET,
+  EDGE_APPROACH,
+  EDGE_SPACING,
+  innerWidthOf,
+  layoutTrace,
+  MARGIN,
+  NODE_GAP,
+  NODE_HEAD_HEIGHT,
+  NODE_WIDTH,
+  RAIL_GAP,
+  RAIL_INDENT,
+  RAIL_ITEM_GAP,
+  RAIL_LINE_OFFSET,
+  RAIL_LINE_WIDTH,
+  RAIL_PADDING,
+  railIdOf,
+  RENDER_GROUP_GAP,
+  RENDER_RETURN_HEIGHT,
+  RENDER_ROW_HEIGHT,
+  ROW_HEADING_HEIGHT,
+  ROW_HEIGHT,
+  SITE_ROW_HEIGHT,
+  TWO_LINE_ROW_HEIGHT,
+  type LayoutEdge,
+  type LayoutNode,
+  type LayoutRow,
+  type PlacedRow,
+} from "@/lib/trace-layout"
 
 const leaf = (id: string, rowIds: readonly string[] = []): LayoutNode => ({ id, rows: rowIds.map((rowId) => ({ id: rowId, kind: "row" })), children: [] })
 
 const edge = (id: string, from: string, to: string, rowIds: Partial<Pick<LayoutEdge, "fromRowId" | "toRowId">> = {}): LayoutEdge => ({ id, from, to, fromRowId: null, toRowId: null, ...rowIds })
 
 const HALF = 2
+
+const renderGroup = (id: string, rows: readonly LayoutRow[]): LayoutRow => ({ id, kind: "render-group", rows: [{ id: `${id}:return`, kind: "render-return" }, ...rows] })
+
+const TEAM_PAGE: LayoutNode = {
+  id: "team-page",
+  rows: [
+    { id: "renders", kind: "heading" },
+    renderGroup("loading", []),
+    renderGroup("section", [{ id: "slot-row", kind: "render-row" }, { id: "slot", kind: "card" }, { id: "badges-row", kind: "render-row" }]),
+  ],
+  children: [leaf("slot", ["slot-call"]), leaf("loose")],
+}
+
+const rowNamed = (rows: readonly PlacedRow[], id: string): PlacedRow | undefined => rows.find((row) => row.id === id)
 
 const approachTo = ({ x, y }: { readonly x: number, readonly y: number }): { x: number, y: number } => ({ x: x - EDGE_APPROACH, y })
 
@@ -307,5 +351,45 @@ describe("layoutTrace", () => {
     expect(lowest).toBeGreaterThan(Math.max(form.y + form.height, submit.y + submit.height))
     expect(height).toBeGreaterThan(lowest)
     expect(back.points.every((point, index) => index === 0 || point.x === back.points[index - 1].x || point.y === back.points[index - 1].y)).toBe(true)
+  })
+
+  it("draws a return of a render group across the card, and its rows and the child card a row names on a rail, indented, in the order they come", () => {
+    const { nodes: [page, slot, loose], rows } = layoutTrace([TEAM_PAGE], [])
+    const innerX = page.x + (page.width - innerWidthOf(page.width)) / HALF
+    const [opening, rail, slotRow, badgesRow] = ["section:return", railIdOf("section"), "slot-row", "badges-row"].map((id) => rowNamed(rows, id))
+
+    expect([opening?.x, opening?.width, opening?.height]).toStrictEqual([innerX, innerWidthOf(page.width), RENDER_RETURN_HEIGHT])
+    expect([rail?.kind, rail?.x, rail?.width, rail?.y]).toStrictEqual(["render-rail", innerX + RAIL_LINE_OFFSET, RAIL_LINE_WIDTH, (opening?.y ?? 0) + RENDER_RETURN_HEIGHT + RAIL_GAP])
+    expect([slotRow?.x, slotRow?.width, slotRow?.y, slotRow?.height]).toStrictEqual([innerX + RAIL_INDENT, innerWidthOf(page.width) - RAIL_INDENT, (rail?.y ?? 0) + RAIL_PADDING, RENDER_ROW_HEIGHT])
+    expect([slot.depth, slot.topId, slot.x, slot.width, slot.y]).toStrictEqual([1, "team-page", slotRow?.x, slotRow?.width, (slotRow?.y ?? 0) + RENDER_ROW_HEIGHT + RAIL_ITEM_GAP])
+    expect(badgesRow?.y).toBe(slot.y + slot.height + RAIL_ITEM_GAP)
+    expect((rail?.y ?? 0) + (rail?.height ?? 0)).toBe((badgesRow?.y ?? 0) + RENDER_ROW_HEIGHT + RAIL_PADDING)
+    expect(loose.y).toBeGreaterThan((rail?.y ?? 0) + (rail?.height ?? 0))
+    expect(loose.x).toBe(innerX)
+    expect(page.y + page.height).toBeGreaterThan(loose.y + loose.height)
+  })
+
+  it("widens a card by the indent of the rail that holds a child card, and keeps the child card at least the width of a node", () => {
+    const { nodes: [page, slot] } = layoutTrace([TEAM_PAGE], [])
+
+    expect(slot.width).toBe(NODE_WIDTH)
+    expect(page.width).toBe(NODE_WIDTH + (NODE_WIDTH - innerWidthOf(NODE_WIDTH)) + RAIL_INDENT)
+  })
+
+  it("draws no rail under a return with no rows, and sets two render groups further apart than two rows", () => {
+    const { rows } = layoutTrace([TEAM_PAGE], [])
+    const [loading, section] = ["loading:return", "section:return"].map((id) => rowNamed(rows, id))
+
+    expect(rows.filter((row) => row.kind === "render-rail").map((row) => row.id)).toStrictEqual([railIdOf("section")])
+    expect((section?.y ?? 0) - ((loading?.y ?? 0) + (loading?.height ?? 0))).toBe(RENDER_GROUP_GAP)
+  })
+
+  it("leaves an edge from a row of a child card on a rail at the edge of the outer card, level with that row", () => {
+    const { nodes: [page], rows, edges } = layoutTrace([TEAM_PAGE, leaf("store")], [edge("a", "slot", "store", { fromRowId: "slot-call" })])
+    const call = rowNamed(rows, "slot-call")
+    const leaving = { x: page.x + page.width, y: (call?.y ?? 0) + (call?.height ?? 0) / HALF }
+
+    expect(edges[0].points[0]).toStrictEqual(leaving)
+    expect(edges[0].fromRowPoints).toStrictEqual([{ x: (call?.x ?? 0) + (call?.width ?? 0), y: leaving.y }, leaving])
   })
 })

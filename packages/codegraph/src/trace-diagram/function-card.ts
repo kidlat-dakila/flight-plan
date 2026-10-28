@@ -2,7 +2,8 @@ import { comparePositions } from "@/code-blocks/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import type { BlockLabel, CodeBlock, CodeBlockSymbol, CodeBlockType, Position } from "@flightplan/configurations"
 import { isParameterOf } from "./listed-blocks"
-import { eventHandedTo, isNodeBlock, nodeBlockOf } from "./node-blocks"
+import { eventHandedTo, foldedValueOf, isNodeBlock, nodeBlockOf } from "./node-blocks"
+import { isInFoldedCallback, libraryHookCalleeOf, repositoryCalleeOf, storePartCalled } from "./repository-calls"
 import { isParameter, isWithin } from "./step-folding"
 
 export interface CallSite {
@@ -29,6 +30,7 @@ export interface FunctionCardRows {
 
 const CALLING: CodeBlockSymbol["use"] = "call"
 const THROW: CodeBlockType = "throw"
+const TRIGGER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event", "data-fetch"])
 const CLASS: CodeBlockType = "class"
 const METHOD: CodeBlockType = "method"
 const HOLDER = "holder"
@@ -46,7 +48,7 @@ export const isFunctionCardBlock = (block: CodeBlock): boolean =>
 export const siteIdOf = (block: CodeBlock, at: Position | null | undefined): string =>
   at === null || at === undefined ? block.id : `${block.id}${SITE_MARK}${String(at.line)}${POSITION_SEPARATOR}${String(at.column)}`
 
-const isWithinOrSame = (block: CodeBlock, holder: CodeBlock): boolean => block.id === holder.id || isWithin(block, holder)
+export const isWithinOrSame = (block: CodeBlock, holder: CodeBlock): boolean => block.id === holder.id || isWithin(block, holder)
 
 const classOf = (block: CodeBlock): CodeBlock | null => {
   if (block.type === CLASS) return block
@@ -55,7 +57,7 @@ const classOf = (block: CodeBlock): CodeBlock | null => {
 
 const isReceiver = (block: CodeBlock): boolean => RECEIVER_NAMES.has(block.name ?? "")
 
-const referenceOf = (symbol: CodeBlockSymbol): CodeBlock | null =>
+export const referenceOf = (symbol: CodeBlockSymbol): CodeBlock | null =>
   symbol.type === "internal-code-block" || symbol.type === "external-block" ? symbol.codeBlockReference : null
 
 const calledOf = (symbol: CodeBlockSymbol, reference: CodeBlock): CodeBlock | null => (symbol.member === undefined ? reference : symbol.member.block)
@@ -81,11 +83,14 @@ const handedCalleeOf = (parameter: CodeBlock, called: CodeBlock | null): Callee 
   return called !== null && CALLEE_TYPES.has(called.type) ? { callee: parameter, called } : null
 }
 
+const originsIn = (holder: CodeBlock, nodeBlock: CodeBlock, seenIds: ReadonlySet<string>): CodeBlock[] =>
+  holder.outerSymbols.flatMap((symbol) => calleeOfSymbol(symbol, nodeBlock, seenIds, holder)?.callee ?? [])
+
 const originOf = (declaration: CodeBlock, nodeBlock: CodeBlock, seenIds: ReadonlySet<string>): CodeBlock | null => {
   if (seenIds.has(declaration.id)) return null
   const seen = new Set([...seenIds, declaration.id])
-  const origins = declaration.outerSymbols.flatMap((symbol) => calleeOfSymbol(symbol, nodeBlock, seen)?.callee ?? [])
-  return origins[0] ?? null
+  const origins = [declaration, ...declaration.childrenBlocks].flatMap((holder) => originsIn(holder, nodeBlock, seen))
+  return origins.length === 0 ? null : origins[0]
 }
 
 export const lastKeyOf = ({ member }: CodeBlockSymbol): string | null =>
@@ -99,9 +104,11 @@ export const isBareName = (symbol: CodeBlockSymbol): boolean => {
 
 const declaredCalleeOf = (declaration: CodeBlock, symbol: CodeBlockSymbol, nodeBlock: CodeBlock, seenIds: ReadonlySet<string>): Callee | null => {
   const called = symbol.member === undefined ? null : symbol.member.block
-  if (symbol.member !== undefined && called === null && !isBareName(symbol)) return null
   const origin = originOf(declaration, nodeBlock, seenIds)
-  return origin === null ? null : { callee: origin, called }
+  const part = origin === null ? null : storePartCalled(origin, symbol)
+  if (origin !== null && part !== null) return { callee: origin, called: part }
+  if (symbol.member !== undefined && !isBareName(symbol) && (called === null || !CALLEE_TYPES.has(called.type))) return null
+  return origin === null ? outsideCalleeOf(called, nodeBlock) : { callee: origin, called }
 }
 
 const isParameterAround = (reference: CodeBlock, nodeBlock: CodeBlock): boolean => {
@@ -109,26 +116,27 @@ const isParameterAround = (reference: CodeBlock, nodeBlock: CodeBlock): boolean 
   return isParameterOf(reference, nodeBlock) || (reference.type === PARAMETER && holder !== null && holder.type !== PARAMETER && isWithin(nodeBlock, holder))
 }
 
-const calleeOfSymbol = (symbol: CodeBlockSymbol, nodeBlock: CodeBlock, seenIds: ReadonlySet<string>): Callee | null => {
+const calleeOfSymbol = (symbol: CodeBlockSymbol, nodeBlock: CodeBlock, seenIds: ReadonlySet<string>, block: CodeBlock | null = null): Callee | null => {
   if (symbol.use !== CALLING) return null
   const reference = referenceOf(symbol)
   if (reference === null) return null
   const called = calledOf(symbol, reference)
   if (isParameterAround(reference, nodeBlock)) return symbol.isRunInPlace === true ? null : handedCalleeOf(reference, called)
   if (DECLARATION_TYPES.has(reference.type)) return declaredCalleeOf(reference, symbol, nodeBlock, seenIds)
-  return isWithinOrSame(reference, nodeBlock) ? null : outsideCalleeOf(called, nodeBlock)
+  if (isWithinOrSame(reference, nodeBlock)) return null
+  return outsideCalleeOf(called, nodeBlock) ?? repositoryCalleeOf(symbol, reference, block)
 }
 
 const NO_IDS: ReadonlySet<string> = new Set()
 
-const listBlocksWithin = (block: CodeBlock): CodeBlock[] => [block, ...block.childrenBlocks.flatMap(listBlocksWithin)]
+export const listBlocksWithin = (block: CodeBlock): CodeBlock[] => [block, ...block.childrenBlocks.flatMap(listBlocksWithin)]
 
 const isOwnBlock = (block: CodeBlock, nodeBlock: CodeBlock): boolean =>
   block.id === nodeBlock.id || (!isNodeBlock(block) && nodeBlockOf(block)?.id === nodeBlock.id)
 
 const listHandedFunctions = (nodeBlock: CodeBlock): CodeBlock[] => nodeBlock.nextBlocks.filter((next) => eventHandedTo(next)?.id === nodeBlock.id)
 
-const listOwnBlocks = (nodeBlock: CodeBlock): CodeBlock[] =>
+export const listOwnBlocks = (nodeBlock: CodeBlock): CodeBlock[] =>
   firstOfEach([nodeBlock, ...listHandedFunctions(nodeBlock)].flatMap(listBlocksWithin), (block) => block.id).filter((block) => isOwnBlock(block, nodeBlock))
 
 const isInThrow = (block: CodeBlock, nodeBlock: CodeBlock): boolean => {
@@ -136,13 +144,30 @@ const isInThrow = (block: CodeBlock, nodeBlock: CodeBlock): boolean => {
   return block.id !== nodeBlock.id && block.parentBlock !== null && isInThrow(block.parentBlock, nodeBlock)
 }
 
-const callSitesIn = (block: CodeBlock, nodeBlock: CodeBlock): CallSite[] =>
-  block.outerSymbols.flatMap((symbol) => {
-    const found = calleeOfSymbol(symbol, nodeBlock, NO_IDS)
+const DECORATOR_OFFSET = 1
+
+const decoratorLinesOf = (block: CodeBlock): ReadonlySet<number> => {
+  const { start } = block.lineOfCodeRangeReference[0]
+  const marked = block.outerSymbols.map(({ usedAt }) => usedAt.start).filter(({ column }) => column === start.column + DECORATOR_OFFSET).map(({ line }) => line)
+  const lastLine = marked.includes(start.line) ? Math.max(...marked) : start.line - DECORATOR_OFFSET
+  return new Set(Array.from({ length: lastLine - start.line + DECORATOR_OFFSET }, (_, offset) => start.line + offset))
+}
+
+const isWrittenInDecorator = (symbol: CodeBlockSymbol, decoratorLines: ReadonlySet<number>): boolean => decoratorLines.has(symbol.usedAt.start.line)
+
+const callSitesIn = (block: CodeBlock, nodeBlock: CodeBlock): CallSite[] => {
+  const decoratorLines = decoratorLinesOf(block)
+  return block.outerSymbols.filter((symbol) => !isWrittenInDecorator(symbol, decoratorLines)).flatMap((symbol) => {
+    const found = calleeOfSymbol(symbol, nodeBlock, NO_IDS, block) ?? libraryHookCalleeOf(symbol, block)
     return found === null ? [] : [{ block, at: symbol.usedAt.start, symbol, ...found }]
   })
+}
 
-const callSitesOf = (block: CodeBlock, nodeBlock: CodeBlock): CallSite[] => (isInThrow(block, nodeBlock) ? [] : callSitesIn(block, nodeBlock))
+const isTriggerInside = (block: CodeBlock, nodeBlock: CodeBlock): boolean => block.id !== nodeBlock.id && TRIGGER_TYPES.has(block.type)
+
+const isLeftOutOfRows = (block: CodeBlock, nodeBlock: CodeBlock): boolean => isInThrow(block, nodeBlock) || isTriggerInside(block, nodeBlock) || isInFoldedCallback(block)
+
+const callSitesOf = (block: CodeBlock, nodeBlock: CodeBlock): CallSite[] => (isLeftOutOfRows(block, nodeBlock) ? [] : callSitesIn(block, nodeBlock))
 
 const exitSitesOf = (block: CodeBlock): ExitSite[] => [
   ...(block.type === THROW ? [{ kind: "throw" as const, block, at: null }] : []),
@@ -151,12 +176,14 @@ const exitSitesOf = (block: CodeBlock): ExitSite[] => [
 
 const startOf = (block: CodeBlock, at: Position | null): Position => at ?? block.lineOfCodeRangeReference[0].start
 
-const inWrittenOrder = <Site extends { readonly block: CodeBlock, readonly at: Position | null }>(sites: readonly Site[]): Site[] =>
+export const inWrittenOrder = <Site extends { readonly block: CodeBlock, readonly at: Position | null }>(sites: readonly Site[]): Site[] =>
   [...sites].sort((one, two) => comparePositions(startOf(one.block, one.at), startOf(two.block, two.at)))
 
-export const listFunctionCardRows = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): FunctionCardRows => {
+const isHeldOutside = (block: CodeBlock, nodeBlock: CodeBlock): boolean => !isWithinOrSame(block, nodeBlock) && foldedValueOf(block) === null
+
+export const listFunctionCardRows = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[] = []): FunctionCardRows => {
   const ownBlocks = listOwnBlocks(nodeBlock)
-  const scanned = firstOfEach([...ownBlocks, ...insideBlocks.filter((block) => !isWithinOrSame(block, nodeBlock))], (block) => block.id)
+  const scanned = firstOfEach([...ownBlocks, ...insideBlocks.filter((block) => isHeldOutside(block, nodeBlock))], (block) => block.id)
   return {
     parameters: [nodeBlock, ...listHandedFunctions(nodeBlock)].flatMap((holder) => holder.childrenBlocks).filter((child) => (isParameterOf(child, nodeBlock) || isParameter(child)) && !isReceiver(child)),
     calls: inWrittenOrder(scanned.flatMap((block) => callSitesOf(block, nodeBlock))),
@@ -164,8 +191,15 @@ export const listFunctionCardRows = (nodeBlock: CodeBlock, insideBlocks: readonl
   }
 }
 
+export interface LabelSite {
+  readonly block: CodeBlock
+  readonly at: Position | null
+}
+
+export const labelsOfSites = (sites: readonly LabelSite[]): BlockLabel[] =>
+  inWrittenOrder(sites).map(({ block, at }) => (at === null ? { label: null, codeBlock: block } : { label: null, codeBlock: block, at }))
+
 export const listFunctionCardLabels = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): BlockLabel[] => {
   const { calls, exits } = listFunctionCardRows(nodeBlock, insideBlocks)
-  return inWrittenOrder<{ readonly block: CodeBlock, readonly at: Position | null }>([...calls, ...exits]).map(({ block, at }) =>
-    at === null ? { label: null, codeBlock: block } : { label: null, codeBlock: block, at })
+  return labelsOfSites([...calls, ...exits])
 }

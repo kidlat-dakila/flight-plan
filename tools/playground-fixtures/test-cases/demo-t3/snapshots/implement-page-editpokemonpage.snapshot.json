@@ -1594,8 +1594,28 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Gets the mutation that updates a Pokemon",
-                      "codeBlockId": "src/app/pokemon/_components/PokemonForm.tsx#external-value@15:3"
+                      "label": "Calls api.pokemon.update.useMutation to get the mutation that updates the Pokemon and opens its page",
+                      "codeBlockId": "src/app/pokemon/_components/PokemonForm.tsx#request@15:18",
+                      "at": {
+                        "line": 15,
+                        "column": 18
+                      }
+                    },
+                    {
+                      "label": "Renders a form with the fields of the Pokemon and a Save button",
+                      "codeBlockId": "src/app/pokemon/_components/PokemonForm.tsx#component@10:1",
+                      "at": {
+                        "line": 19,
+                        "column": 3
+                      }
+                    },
+                    {
+                      "label": "Renders an option for each trainer",
+                      "codeBlockId": "src/app/pokemon/_components/PokemonForm.tsx#render-loop@39:10"
+                    },
+                    {
+                      "label": "Renders `<SubmitButton />` that saves the form",
+                      "codeBlockId": "src/app/pokemon/_components/PokemonForm.tsx#render@45:7"
                     }
                   ]
                 }
@@ -1603,24 +1623,16 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Reads the id of the Pokemon from the URL",
-                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#variable@6:3"
+                  "label": "Renders a heading with the name of the Pokemon and the form",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#component@5:1",
+                  "at": {
+                    "line": 10,
+                    "column": 3
+                  }
                 },
                 {
-                  "label": "Loads the Pokemon with that id",
-                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#external-value@7:3"
-                },
-                {
-                  "label": "Checks whether a Pokemon has that id",
-                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#condition@8:3"
-                },
-                {
-                  "label": "Shows the 404 page when no Pokemon has it",
-                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#call@8:25"
-                },
-                {
-                  "label": "Loads the trainers for the trainer select",
-                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#external-value@9:3"
+                  "label": "Renders `<PokemonForm />` filled with the Pokemon to update it",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#render@13:7"
                 }
               ]
             },
@@ -1729,12 +1741,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Opens the page of the Pokemon",
-                  "codeBlockId": "src/app/pokemon/_components/PokemonForm.tsx#navigation@16:29"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/app/pokemon/_components/PokemonForm.tsx#render-event@22:7",
@@ -1759,20 +1766,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Reads the name, level, type and trainer from the form data",
-                  "codeBlockId": "src/app/pokemon/_components/PokemonForm.tsx#external-value@24:9"
-                },
-                {
-                  "label": "Checks whether the form was given a Pokemon",
-                  "codeBlockId": "src/app/pokemon/_components/PokemonForm.tsx#condition@30:9"
-                },
-                {
-                  "label": "Sends the fields with the id of the Pokemon",
-                  "codeBlockId": "src/app/pokemon/_components/PokemonForm.tsx#call@31:14"
-                }
-              ]
+              "blockLabels": []
             }
           ],
           "traceNodeEdges": [

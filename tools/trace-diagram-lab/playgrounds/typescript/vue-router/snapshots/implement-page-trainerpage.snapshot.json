@@ -340,7 +340,12 @@
                   "codeBlockId": "src/components/ui/BaseButton.vue#render-event@7:74"
                 }
               ],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders a button around the content it is given, styled by its variant",
+                  "codeBlockId": "src/components/ui/BaseButton.vue#render-root@6:1"
+                }
+              ]
             },
             {
               "id": "src/router.ts#root-variable@15:1",
@@ -388,9 +393,6 @@
                 "src/views/trainers/TrainerPage.vue#external-value@8:1",
                 "src/views/trainers/TrainerPage.vue#external-value@9:1",
                 "src/views/trainers/TrainerPage.vue#derived@10:1",
-                "src/views/trainers/TrainerPage.vue#component-effect@10:19",
-                "src/views/trainers/TrainerPage.vue#effect-callback@10:28",
-                "src/views/trainers/TrainerPage.vue#function@10:28",
                 "src/views/trainers/TrainerPage.vue#state@11:1",
                 "src/views/trainers/TrainerPage.vue#component-effect@13:1",
                 "src/views/trainers/TrainerPage.vue#render-root@26:1",
@@ -410,8 +412,6 @@
                 "src/views/trainers/TrainerPage.vue#external-value@8:1",
                 "src/views/trainers/TrainerPage.vue#external-value@9:1",
                 "src/views/trainers/TrainerPage.vue#derived@10:1",
-                "src/views/trainers/TrainerPage.vue#component-effect@10:19",
-                "src/views/trainers/TrainerPage.vue#function@10:28",
                 "src/views/trainers/TrainerPage.vue#state@11:1",
                 "src/views/trainers/TrainerPage.vue#component-effect@13:1",
                 "src/views/trainers/TrainerPage.vue#render-root@26:1",
@@ -433,24 +433,28 @@
               ],
               "blockLabels": [
                 {
-                  "label": "Gets the current route",
-                  "codeBlockId": "src/views/trainers/TrainerPage.vue#external-value@8:1"
-                },
-                {
-                  "label": "Gets the router that opens other pages",
-                  "codeBlockId": "src/views/trainers/TrainerPage.vue#external-value@9:1"
-                },
-                {
                   "label": "Reads the trainer id from the path",
                   "codeBlockId": "src/views/trainers/TrainerPage.vue#derived@10:1"
                 },
                 {
-                  "label": "Keeps the loaded trainer",
-                  "codeBlockId": "src/views/trainers/TrainerPage.vue#state@11:1"
-                },
-                {
                   "label": "Loads the trainer at once and after each new id",
                   "codeBlockId": "src/views/trainers/TrainerPage.vue#component-effect@13:1"
+                },
+                {
+                  "label": "Renders a link back to the trainers, the trainer and a Next trainer button",
+                  "codeBlockId": "src/views/trainers/TrainerPage.vue#render-root@26:1"
+                },
+                {
+                  "label": "Renders a loading line when the trainer is not loaded yet",
+                  "codeBlockId": "src/views/trainers/TrainerPage.vue#render-condition@29:5"
+                },
+                {
+                  "label": "Renders the name and the hometown of the trainer when it is loaded",
+                  "codeBlockId": "src/views/trainers/TrainerPage.vue#render-condition@30:5"
+                },
+                {
+                  "label": "Renders `<BaseButton />` that opens the next trainer",
+                  "codeBlockId": "src/views/trainers/TrainerPage.vue#render@34:5"
                 }
               ]
             },
@@ -477,12 +481,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Reads the id of the path as a number",
-                  "codeBlockId": "src/router.ts#variable@11:3"
-                },
-                {
-                  "label": "Checks whether the id is a positive integer",
-                  "codeBlockId": "src/router.ts#condition@12:10"
+                  "label": "Returns true for a positive whole id, or the path back to the start",
+                  "codeBlockId": "src/router.ts#function@10:1",
+                  "at": {
+                    "line": 12,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -497,7 +501,16 @@
               "diffCodeBlockIds": [],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls emit to pass the click to the component that renders the button",
+                  "codeBlockId": "src/components/ui/BaseButton.vue#render-event@7:74",
+                  "at": {
+                    "line": 7,
+                    "column": 82
+                  }
+                }
+              ]
             },
             {
               "id": "src/views/trainers/TrainerPage.vue#component-effect@13:1",
@@ -508,27 +521,27 @@
                 "src/views/trainers/TrainerPage.vue#component-effect@13:1",
                 "src/views/trainers/TrainerPage.vue#effect-callback@14:3",
                 "src/views/trainers/TrainerPage.vue#effect-callback@15:3",
+                "src/views/trainers/TrainerPage.vue#function@15:3",
+                "src/views/trainers/TrainerPage.vue#variable@15:10",
                 "src/views/trainers/TrainerPage.vue#property@18:5"
               ],
               "diffCodeBlockIds": [
                 "src/views/trainers/TrainerPage.vue#component-effect@13:1",
                 "src/views/trainers/TrainerPage.vue#effect-callback@14:3",
+                "src/views/trainers/TrainerPage.vue#function@15:3",
+                "src/views/trainers/TrainerPage.vue#variable@15:10",
                 "src/views/trainers/TrainerPage.vue#property@18:5"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Watches the trainer id of the path",
-                  "codeBlockId": "src/views/trainers/TrainerPage.vue#effect-callback@14:3"
-                },
-                {
-                  "label": "Loads the trainer of the new id",
-                  "codeBlockId": "src/views/trainers/TrainerPage.vue#effect-callback@15:3"
-                },
-                {
-                  "label": "Runs the load once when the page opens",
-                  "codeBlockId": "src/views/trainers/TrainerPage.vue#property@18:5"
+                  "label": "Calls request to load the trainer of the new id",
+                  "codeBlockId": "src/views/trainers/TrainerPage.vue#function@15:3",
+                  "at": {
+                    "line": 16,
+                    "column": 27
+                  }
                 }
               ]
             },
@@ -549,26 +562,23 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Pushes the path of the trainer with the next id",
-                  "codeBlockId": "src/views/trainers/TrainerPage.vue#navigation@22:3"
-                }
-              ]
+              "blockLabels": []
             },
             {
-              "id": "src/views/trainers/TrainerPage.vue#effect-callback@15:3",
-              "type": "effect-callback",
-              "label": "Requests the trainer of the id and stores it",
-              "description": "When the watch sees a new `trainerId`, Vue calls this function with the id, and [the function requests `/trainers/:id` through `request()`](code:src/views/trainers/TrainerPage.vue#L16).",
+              "id": "src/views/trainers/TrainerPage.vue#derived@10:1",
+              "type": "derived",
+              "label": "Reads the trainer id again when the path changes",
+              "description": "When `TrainerPage` runs its setup, [the watch reads this computed](code:src/views/trainers/TrainerPage.vue#L14) at once, and Vue runs it again after `route.params.id` changes.",
               "codeBlockIds": [
-                "src/views/trainers/TrainerPage.vue#effect-callback@15:3",
-                "src/views/trainers/TrainerPage.vue#function@15:3",
-                "src/views/trainers/TrainerPage.vue#variable@15:10"
+                "src/views/trainers/TrainerPage.vue#derived@10:1",
+                "src/views/trainers/TrainerPage.vue#component-effect@10:19",
+                "src/views/trainers/TrainerPage.vue#effect-callback@10:28",
+                "src/views/trainers/TrainerPage.vue#function@10:28"
               ],
               "diffCodeBlockIds": [
-                "src/views/trainers/TrainerPage.vue#function@15:3",
-                "src/views/trainers/TrainerPage.vue#variable@15:10"
+                "src/views/trainers/TrainerPage.vue#derived@10:1",
+                "src/views/trainers/TrainerPage.vue#component-effect@10:19",
+                "src/views/trainers/TrainerPage.vue#function@10:28"
               ],
               "children": [],
               "triggerLabels": [],
@@ -597,6 +607,16 @@
               "to": "src/views/trainers/TrainerPage.vue#render-event@34:33"
             },
             {
+              "id": "src/views/trainers/TrainerPage.vue#component-effect@13:1 -> src/views/trainers/TrainerPage.vue#derived@10:1",
+              "from": "src/views/trainers/TrainerPage.vue#component-effect@13:1",
+              "to": "src/views/trainers/TrainerPage.vue#derived@10:1"
+            },
+            {
+              "id": "src/views/trainers/TrainerPage.vue#render-event@34:33 -> src/views/trainers/TrainerPage.vue#derived@10:1",
+              "from": "src/views/trainers/TrainerPage.vue#render-event@34:33",
+              "to": "src/views/trainers/TrainerPage.vue#derived@10:1"
+            },
+            {
               "id": "src/components/ui/BaseButton.vue#component@1:1 -> src/components/ui/BaseButton.vue#render-event@7:74",
               "from": "src/components/ui/BaseButton.vue#component@1:1",
               "to": "src/components/ui/BaseButton.vue#render-event@7:74"
@@ -612,9 +632,9 @@
               "to": "src/views/trainers/TrainerPage.vue#render-event@34:33"
             },
             {
-              "id": "src/views/trainers/TrainerPage.vue#component-effect@13:1 -> src/views/trainers/TrainerPage.vue#effect-callback@15:3",
-              "from": "src/views/trainers/TrainerPage.vue#component-effect@13:1",
-              "to": "src/views/trainers/TrainerPage.vue#effect-callback@15:3"
+              "id": "src/views/trainers/TrainerPage.vue#component@1:1 -> src/views/trainers/TrainerPage.vue#derived@10:1",
+              "from": "src/views/trainers/TrainerPage.vue#component@1:1",
+              "to": "src/views/trainers/TrainerPage.vue#derived@10:1"
             }
           ]
         },

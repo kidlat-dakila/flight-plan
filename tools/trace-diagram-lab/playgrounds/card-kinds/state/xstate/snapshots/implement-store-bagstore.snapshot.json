@@ -198,6 +198,12 @@
                     "src/pages/items/ItemsPage.tsx#component@5:1",
                     "src/pages/items/ItemsPage.tsx#external-value@6:3",
                     "src/pages/items/ItemsPage.tsx#component-effect@6:17",
+                    "src/pages/items/ItemsPage.tsx#effect-callback@6:39",
+                    "src/pages/items/ItemsPage.tsx#function@6:39",
+                    "src/pages/items/ItemsPage.tsx#variable@6:40",
+                    "src/pages/items/ItemsPage.tsx#function@6:83",
+                    "src/pages/items/ItemsPage.tsx#variable@6:84",
+                    "src/pages/items/ItemsPage.tsx#variable@6:89",
                     "src/pages/items/ItemsPage.tsx#render-root@7:3",
                     "src/pages/items/ItemsPage.tsx#render@8:5",
                     "src/pages/items/ItemsPage.tsx#render@9:7",
@@ -214,6 +220,11 @@
                   "diffCodeBlockIds": [
                     "src/pages/items/ItemsPage.tsx#external-value@6:3",
                     "src/pages/items/ItemsPage.tsx#component-effect@6:17",
+                    "src/pages/items/ItemsPage.tsx#function@6:39",
+                    "src/pages/items/ItemsPage.tsx#variable@6:40",
+                    "src/pages/items/ItemsPage.tsx#function@6:83",
+                    "src/pages/items/ItemsPage.tsx#variable@6:84",
+                    "src/pages/items/ItemsPage.tsx#variable@6:89",
                     "src/pages/items/ItemsPage.tsx#render@8:5",
                     "src/pages/items/ItemsPage.tsx#render@9:7",
                     "src/pages/items/ItemsPage.tsx#render@10:7",
@@ -239,22 +250,43 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Gets the number of items in the bag",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#external-value@6:3"
+                      "label": "Calls useSelector to count the items in the bag store",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component-effect@6:17",
+                      "at": {
+                        "line": 6,
+                        "column": 17
+                      }
                     },
                     {
-                      "label": "Reads the item count from the bag store",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component-effect@6:17"
+                      "label": "Renders the count of the bag, an Empty the bag button and the items",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component@5:1",
+                      "at": {
+                        "line": 7,
+                        "column": 3
+                      }
                     },
                     {
                       "label": "Renders one row with an Add to bag button for each item",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#function@14:20"
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#render-loop@14:10"
                     }
                   ]
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the title and the items page",
+                  "codeBlockId": "src/App.tsx#component@3:1",
+                  "at": {
+                    "line": 4,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<ItemsPage />` below the title",
+                  "codeBlockId": "src/App.tsx#render@7:7"
+                }
+              ]
             },
             {
               "id": "src/stores/bag-store.ts#state@5:1",
@@ -357,16 +389,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Finds the line of the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#variable@9:3"
+                  "label": "Returns the lines with a new line for the item when it has none",
+                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3",
+                  "at": {
+                    "line": 10,
+                    "column": 27
+                  }
                 },
                 {
-                  "label": "Adds a new line when the bag has none for the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3"
-                },
-                {
-                  "label": "Adds one to the quantity of the line of the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#function@11:20"
+                  "label": "Returns the lines with one more of the item on its line",
+                  "codeBlockId": "src/lib/bag-lines.ts#function@8:1",
+                  "at": {
+                    "line": 11,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -389,12 +425,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Sends a clear event to the bag store",
-                  "codeBlockId": "src/pages/items/ItemsPage.tsx#publish@10:44"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/pages/items/ItemsPage.tsx#render-event@17:35",
@@ -417,62 +448,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Sends an addItem event with the item to the bag store",
-                  "codeBlockId": "src/pages/items/ItemsPage.tsx#publish@17:50"
-                }
-              ]
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@6:17",
-              "type": "component-effect",
-              "label": "Subscribes the page to the item count",
-              "description": "When `ItemsPage` renders, [it calls `useSelector(bagStore)` with a selector](code:src/pages/items/ItemsPage.tsx#L6).",
-              "codeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#component-effect@6:17",
-                "src/pages/items/ItemsPage.tsx#effect-callback@6:39"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#component-effect@6:17"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Picks the item count from the snapshot",
-                  "codeBlockId": "src/pages/items/ItemsPage.tsx#effect-callback@6:39"
-                }
-              ]
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#effect-callback@6:39",
-              "type": "effect-callback",
-              "label": "Counts the items of the bag",
-              "description": "When the snapshot of the bag store changes, XState Store calls this selector with the new snapshot, because [`ItemsPage` passes it to `useSelector()`](code:src/pages/items/ItemsPage.tsx#L6).",
-              "codeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#effect-callback@6:39",
-                "src/pages/items/ItemsPage.tsx#function@6:39",
-                "src/pages/items/ItemsPage.tsx#variable@6:40",
-                "src/pages/items/ItemsPage.tsx#function@6:83",
-                "src/pages/items/ItemsPage.tsx#variable@6:84",
-                "src/pages/items/ItemsPage.tsx#variable@6:89"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#function@6:39",
-                "src/pages/items/ItemsPage.tsx#variable@6:40",
-                "src/pages/items/ItemsPage.tsx#function@6:83",
-                "src/pages/items/ItemsPage.tsx#variable@6:84",
-                "src/pages/items/ItemsPage.tsx#variable@6:89"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Adds up the quantities of the lines",
-                  "codeBlockId": "src/pages/items/ItemsPage.tsx#function@6:83"
-                }
-              ]
+              "blockLabels": []
             }
           ],
           "traceNodeEdges": [
@@ -497,8 +473,8 @@
               "to": "src/pages/items/ItemsPage.tsx#component@5:1"
             },
             {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@6:17 -> src/stores/bag-store.ts#state@5:1",
-              "from": "src/pages/items/ItemsPage.tsx#component-effect@6:17",
+              "id": "src/pages/items/ItemsPage.tsx#component@5:1 -> src/stores/bag-store.ts#state@5:1",
+              "from": "src/pages/items/ItemsPage.tsx#component@5:1",
               "to": "src/stores/bag-store.ts#state@5:1"
             },
             {
@@ -510,16 +486,6 @@
               "id": "src/pages/items/ItemsPage.tsx#component@5:1 -> src/pages/items/ItemsPage.tsx#render-event@17:35",
               "from": "src/pages/items/ItemsPage.tsx#component@5:1",
               "to": "src/pages/items/ItemsPage.tsx#render-event@17:35"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component@5:1 -> src/pages/items/ItemsPage.tsx#component-effect@6:17",
-              "from": "src/pages/items/ItemsPage.tsx#component@5:1",
-              "to": "src/pages/items/ItemsPage.tsx#component-effect@6:17"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@6:17 -> src/pages/items/ItemsPage.tsx#effect-callback@6:39",
-              "from": "src/pages/items/ItemsPage.tsx#component-effect@6:17",
-              "to": "src/pages/items/ItemsPage.tsx#effect-callback@6:39"
             }
           ]
         },

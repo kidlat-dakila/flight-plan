@@ -181,12 +181,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Reads the name and the level from the body",
-                  "codeBlockId": "src/pokemon/routes.ts#variable@11:3"
-                },
-                {
-                  "label": "Checks whether the name is not a string or the level is not a whole number, and returns a 400",
-                  "codeBlockId": "src/pokemon/routes.ts#condition@12:3"
+                  "label": "Returns a 400 when the body has no name or whole level",
+                  "codeBlockId": "src/pokemon/routes.ts#condition@12:3",
+                  "at": {
+                    "line": 13,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -219,12 +219,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Holds the API key that every request must send",
-                  "codeBlockId": "src/index.ts#root-variable@6:1"
-                },
-                {
-                  "label": "Checks whether the `x-api-key` header holds another key, and returns a 401",
-                  "codeBlockId": "src/index.ts#condition@9:3"
+                  "label": "Returns a 401 when the API key is missing or wrong",
+                  "codeBlockId": "src/index.ts#condition@9:3",
+                  "at": {
+                    "line": 10,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -275,16 +275,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads every Pokemon of the party",
-                      "codeBlockId": "src/pokemon/controller.ts#external-value@5:3"
-                    },
-                    {
-                      "label": "Sorts the Pokemon from the highest level down",
-                      "codeBlockId": "src/pokemon/controller.ts#effect@5:17"
-                    },
-                    {
-                      "label": "Sends the sorted party",
-                      "codeBlockId": "src/pokemon/controller.ts#call@6:3"
+                      "label": "Calls readParty to read every Pokemon of the party",
+                      "codeBlockId": "src/pokemon/controller.ts#effect@5:17",
+                      "at": {
+                        "line": 5,
+                        "column": 17
+                      }
                     }
                   ]
                 },
@@ -310,12 +306,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the new Pokemon from the body of the request",
-                      "codeBlockId": "src/pokemon/routes.ts#variable@20:70"
+                      "label": "Calls addPokemon to add the Pokemon of the body to the party",
+                      "codeBlockId": "src/pokemon/routes.ts#external-value@21:5",
+                      "at": {
+                        "line": 21,
+                        "column": 21
+                      }
                     },
                     {
-                      "label": "Adds a Pokemon with the name and the level of the body",
-                      "codeBlockId": "src/pokemon/routes.ts#external-value@21:5"
+                      "label": "Returns a 201 with the new Pokemon",
+                      "codeBlockId": "src/pokemon/routes.ts#function@20:63",
+                      "at": {
+                        "line": 22,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -370,12 +374,28 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Renames the Pokemon of the id in the path to the name of the body",
-                      "codeBlockId": "src/pokemon/controller.ts#external-value@10:3"
+                      "label": "Calls renamePokemon to give the Pokemon of the id its new name",
+                      "codeBlockId": "src/pokemon/controller.ts#external-value@10:3",
+                      "at": {
+                        "line": 10,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Checks whether the party has no Pokemon of the id, and returns a 404",
-                      "codeBlockId": "src/pokemon/controller.ts#condition@11:3"
+                      "label": "Returns a 404 when no Pokemon has the id",
+                      "codeBlockId": "src/pokemon/controller.ts#condition@11:3",
+                      "at": {
+                        "line": 11,
+                        "column": 30
+                      }
+                    },
+                    {
+                      "label": "Returns the renamed Pokemon",
+                      "codeBlockId": "src/pokemon/controller.ts#function@9:1",
+                      "at": {
+                        "line": 12,
+                        "column": 3
+                      }
                     }
                   ]
                 }

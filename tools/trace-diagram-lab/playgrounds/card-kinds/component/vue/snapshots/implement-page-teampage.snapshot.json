@@ -5,10 +5,15 @@
     "new file mode 100644",
     "--- /dev/null",
     "+++ b/src/api/teams.ts",
-    "@@ -0,0 +1,4 @@",
+    "@@ -0,0 +1,9 @@",
     "+export const publishTeam = async (trainerId: number): Promise<void> => {",
     "+  const response = await fetch(`/api/trainers/${trainerId}/team/publish`, { method: \"POST\" })",
     "+  if (!response.ok) throw new Error(`Publishing the team failed with ${response.status}.`)",
+    "+}",
+    "+",
+    "+export const watchTeam = (trainerId: number): (() => void) => {",
+    "+  const events = new EventSource(`/api/trainers/${trainerId}/team/events`)",
+    "+  return () => events.close()",
     "+}",
     "diff --git a/src/composables/use-trainer.ts b/src/composables/use-trainer.ts",
     "new file mode 100644",
@@ -60,10 +65,10 @@
     "new file mode 100644",
     "--- /dev/null",
     "+++ b/src/views/team/TeamPage.vue",
-    "@@ -0,0 +1,46 @@",
+    "@@ -0,0 +1,52 @@",
     "+<script setup lang=\"ts\">",
-    "+import { computed, ref, toRef, watch } from \"vue\"",
-    "+import { publishTeam } from \"@/api/teams\"",
+    "+import { computed, ref, toRef, watch, watchEffect } from \"vue\"",
+    "+import { publishTeam, watchTeam } from \"@/api/teams\"",
     "+import { useTrainer } from \"@/composables/use-trainer\"",
     "+import { formatTeamTitle } from \"@/lib/team-title\"",
     "+import TeamSlot from \"@/views/team/components/TeamSlot.vue\"",
@@ -87,6 +92,11 @@
     "+  { immediate: true },",
     "+)",
     "+",
+    "+watchEffect((onCleanup) => {",
+    "+  const stopWatching = watchTeam(props.trainerId)",
+    "+  onCleanup(stopWatching)",
+    "+})",
+    "+",
     "+const publish = async () => {",
     "+  isPublishing.value = true",
     "+  await publishTeam(props.trainerId)",
@@ -100,6 +110,7 @@
     "+    <p v-if=\"trainer === null\">Loading the trainer…</p>",
     "+    <template v-else>",
     "+      <h1>{{ title }}</h1>",
+    "+      <p v-if=\"trainer.team.length === 0\">No Pokemon in the team yet</p>",
     "+      <ul>",
     "+        <TeamSlot v-for=\"pokemon in trainer.team\" :key=\"pokemon.id\" :pokemon=\"pokemon\" />",
     "+      </ul>",
@@ -126,7 +137,7 @@
   "codegraph": {
     "segments": [
       {
-        "title": "New TeamPage, TeamSlot, useTrainer, publishTeam and formatTeamTitle, modified main.ts and Trainer",
+        "title": "New components, functions and useTrainer, modified main.ts and Trainer",
         "importGraph": [
           {
             "filePath": "src/api/client.ts",
@@ -313,14 +324,14 @@
           }
         ],
         "traceDiagram": {
-          "title": "Load and publish team flow diagram",
-          "description": "This diagram shows how the team page loads a trainer through `useTrainer()` and renders the team of that trainer. It also shows what happens when the user publishes the team, and how the request reaches the API through `publishTeam()`.",
+          "title": "Team page flow diagram",
+          "description": "This diagram shows how the team page loads a trainer through `useTrainer()`, watches the events of the team and renders the team of that trainer. It also shows what happens when the user publishes the team, and how the request reaches the API through `publishTeam()`.",
           "traceNodes": [
             {
               "id": "src/composables/use-trainer.ts#hook@5:1",
               "type": "hook",
               "label": "Loads one trainer by its id",
-              "description": "When `teamApp` mounts `TeamPage`, [`TeamPage` calls this composable with a ref of `trainerId`](code:src/views/team/TeamPage.vue#L15). The composable [watches the ref](code:src/composables/use-trainer.ts#L8-15) and calls `request()` with `/trainers/1` at once.",
+              "description": "When `teamApp` mounts `TeamPage`, [`TeamPage` calls this composable with a ref of `trainerId`](code:src/views/team/TeamPage.vue#L15). The composable [watches the ref](code:src/composables/use-trainer.ts#L8-14) and calls `request()` with `/trainers/1` at once.",
               "codeBlockIds": [
                 "src/composables/use-trainer.ts#hook@5:1",
                 "src/composables/use-trainer.ts#root-argument-value@5:28",
@@ -346,16 +357,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Keeps the loaded trainer, or `null` before the response",
-                  "codeBlockId": "src/composables/use-trainer.ts#state@6:3"
+                  "label": "Calls request at once and after each change of the id to load the trainer",
+                  "codeBlockId": "src/composables/use-trainer.ts#function@10:5",
+                  "at": {
+                    "line": 11,
+                    "column": 29
+                  }
                 },
                 {
-                  "label": "Watches the trainer id and requests the trainer at once",
-                  "codeBlockId": "src/composables/use-trainer.ts#component-effect@8:3"
-                },
-                {
-                  "label": "Requests the trainer again each time the id changes",
-                  "codeBlockId": "src/composables/use-trainer.ts#effect-callback@9:5"
+                  "label": "Returns a ref of the trainer that holds null until the trainer loads",
+                  "codeBlockId": "src/composables/use-trainer.ts#hook@5:1",
+                  "at": {
+                    "line": 16,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -377,25 +392,24 @@
                 "src/views/team/TeamPage.vue#external-value@16:1",
                 "src/views/team/TeamPage.vue#storage@16:23",
                 "src/views/team/TeamPage.vue#derived@17:1",
-                "src/views/team/TeamPage.vue#component-effect@17:15",
-                "src/views/team/TeamPage.vue#effect-callback@17:24",
-                "src/views/team/TeamPage.vue#function@17:24",
-                "src/views/team/TeamPage.vue#condition@17:31",
                 "src/views/team/TeamPage.vue#component-effect@19:1",
-                "src/views/team/TeamPage.vue#render-root@34:1",
-                "src/views/team/TeamPage.vue#render@35:3",
-                "src/views/team/TeamPage.vue#render-condition@36:5",
-                "src/views/team/TeamPage.vue#render@36:5",
-                "src/views/team/TeamPage.vue#render-condition@37:5",
-                "src/views/team/TeamPage.vue#render@37:5",
-                "src/views/team/TeamPage.vue#render-condition@38:5",
-                "src/views/team/TeamPage.vue#render@38:5",
-                "src/views/team/TeamPage.vue#render@39:7",
-                "src/views/team/TeamPage.vue#render@40:7",
-                "src/views/team/TeamPage.vue#render-loop@41:9",
-                "src/views/team/TeamPage.vue#render@41:9",
-                "src/views/team/TeamPage.vue#render@43:7",
-                "src/views/team/TeamPage.vue#render-event@43:54"
+                "src/views/team/TeamPage.vue#component-effect@27:1",
+                "src/views/team/TeamPage.vue#render-root@39:1",
+                "src/views/team/TeamPage.vue#render@40:3",
+                "src/views/team/TeamPage.vue#render-condition@41:5",
+                "src/views/team/TeamPage.vue#render@41:5",
+                "src/views/team/TeamPage.vue#render-condition@42:5",
+                "src/views/team/TeamPage.vue#render@42:5",
+                "src/views/team/TeamPage.vue#render-condition@43:5",
+                "src/views/team/TeamPage.vue#render@43:5",
+                "src/views/team/TeamPage.vue#render@44:7",
+                "src/views/team/TeamPage.vue#render-condition@45:7",
+                "src/views/team/TeamPage.vue#render@45:7",
+                "src/views/team/TeamPage.vue#render@46:7",
+                "src/views/team/TeamPage.vue#render-loop@47:9",
+                "src/views/team/TeamPage.vue#render@47:9",
+                "src/views/team/TeamPage.vue#render@49:7",
+                "src/views/team/TeamPage.vue#render-event@49:54"
               ],
               "diffCodeBlockIds": [
                 "src/views/team/TeamPage.vue#component@1:1",
@@ -410,27 +424,26 @@
                 "src/views/team/TeamPage.vue#external-value@16:1",
                 "src/views/team/TeamPage.vue#storage@16:23",
                 "src/views/team/TeamPage.vue#derived@17:1",
-                "src/views/team/TeamPage.vue#component-effect@17:15",
-                "src/views/team/TeamPage.vue#function@17:24",
-                "src/views/team/TeamPage.vue#condition@17:31",
                 "src/views/team/TeamPage.vue#component-effect@19:1",
-                "src/views/team/TeamPage.vue#render-root@34:1",
-                "src/views/team/TeamPage.vue#render@35:3",
-                "src/views/team/TeamPage.vue#render@36:5",
-                "src/views/team/TeamPage.vue#render@37:5",
-                "src/views/team/TeamPage.vue#render@38:5",
-                "src/views/team/TeamPage.vue#render@39:7",
-                "src/views/team/TeamPage.vue#render@40:7",
-                "src/views/team/TeamPage.vue#render@41:9",
-                "src/views/team/TeamPage.vue#render@43:7",
-                "src/views/team/TeamPage.vue#render-event@43:54"
+                "src/views/team/TeamPage.vue#component-effect@27:1",
+                "src/views/team/TeamPage.vue#render-root@39:1",
+                "src/views/team/TeamPage.vue#render@40:3",
+                "src/views/team/TeamPage.vue#render@41:5",
+                "src/views/team/TeamPage.vue#render@42:5",
+                "src/views/team/TeamPage.vue#render@43:5",
+                "src/views/team/TeamPage.vue#render@44:7",
+                "src/views/team/TeamPage.vue#render@45:7",
+                "src/views/team/TeamPage.vue#render@46:7",
+                "src/views/team/TeamPage.vue#render@47:9",
+                "src/views/team/TeamPage.vue#render@49:7",
+                "src/views/team/TeamPage.vue#render-event@49:54"
               ],
               "children": [
                 {
                   "id": "src/views/team/components/TeamSlot.vue#component@1:1",
                   "type": "component",
                   "label": "Shows the number, name and type of one Pokemon",
-                  "description": "When `TeamPage` renders a loaded trainer, [it renders this component](code:src/views/team/TeamPage.vue#L41) once for each Pokemon of `trainer.team`.",
+                  "description": "When `TeamPage` renders a loaded trainer, [it renders this component](code:src/views/team/TeamPage.vue#L47) once for each Pokemon of `trainer.team`.",
                   "codeBlockIds": [
                     "src/views/team/components/TeamSlot.vue#component@1:1",
                     "src/views/team/components/TeamSlot.vue#call@5:1",
@@ -449,8 +462,16 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Declares the Pokemon the slot shows",
-                      "codeBlockId": "src/views/team/components/TeamSlot.vue#call@5:1"
+                      "label": "Renders the number, the name and the type of the Pokemon",
+                      "codeBlockId": "src/views/team/components/TeamSlot.vue#render-root@8:1"
+                    },
+                    {
+                      "label": "Calls formatNumber to write the number of the Pokemon",
+                      "codeBlockId": "src/views/team/components/TeamSlot.vue#render@9:3",
+                      "at": {
+                        "line": 9,
+                        "column": 10
+                      }
                     }
                   ]
                 }
@@ -458,29 +479,17 @@
               "triggerLabels": [
                 {
                   "label": "A user clicks Publish the team",
-                  "codeBlockId": "src/views/team/TeamPage.vue#render-event@43:54"
+                  "codeBlockId": "src/views/team/TeamPage.vue#render-event@49:54"
                 }
               ],
               "blockLabels": [
                 {
-                  "label": "Names the storage key and reads the props of the page",
-                  "codeBlockId": "src/views/team/TeamPage.vue#variable@8:1"
-                },
-                {
-                  "label": "Throws an error when the team has no slot",
-                  "codeBlockId": "src/views/team/TeamPage.vue#condition@12:1"
-                },
-                {
-                  "label": "Keeps whether the team is being published",
-                  "codeBlockId": "src/views/team/TeamPage.vue#state@14:1"
-                },
-                {
-                  "label": "Gets the trainer with their team",
-                  "codeBlockId": "src/views/team/TeamPage.vue#external-value@15:1"
-                },
-                {
-                  "label": "Reads the id of the trainer last opened from `localStorage`",
-                  "codeBlockId": "src/views/team/TeamPage.vue#external-value@16:1"
+                  "label": "Calls useTrainer to load the trainer with their team",
+                  "codeBlockId": "src/views/team/TeamPage.vue#external-value@15:1",
+                  "at": {
+                    "line": 15,
+                    "column": 17
+                  }
                 },
                 {
                   "label": "Builds the heading from the trainer name and the team size",
@@ -489,6 +498,30 @@
                 {
                   "label": "Remembers the trainer id at once and after each change",
                   "codeBlockId": "src/views/team/TeamPage.vue#component-effect@19:1"
+                },
+                {
+                  "label": "Watches the events of the team at once and after each change of the id",
+                  "codeBlockId": "src/views/team/TeamPage.vue#component-effect@27:1"
+                },
+                {
+                  "label": "Renders the team of the trainer with its heading and a Publish button",
+                  "codeBlockId": "src/views/team/TeamPage.vue#render-root@39:1"
+                },
+                {
+                  "label": "Renders a greeting when the trainer is the one last opened",
+                  "codeBlockId": "src/views/team/TeamPage.vue#render-condition@41:5"
+                },
+                {
+                  "label": "Renders a loading line when the trainer is not loaded yet",
+                  "codeBlockId": "src/views/team/TeamPage.vue#render-condition@42:5"
+                },
+                {
+                  "label": "Renders a note when the team has no Pokemon",
+                  "codeBlockId": "src/views/team/TeamPage.vue#render-condition@45:7"
+                },
+                {
+                  "label": "Renders `<TeamSlot />` for each Pokemon of the team",
+                  "codeBlockId": "src/views/team/TeamPage.vue#render@47:9"
                 }
               ]
             },
@@ -528,7 +561,7 @@
               "id": "src/api/teams.ts#function@1:1",
               "type": "function",
               "label": "Sends a POST request that publishes the team",
-              "description": "When the user clicks Publish the team, the handler of the button [calls `publishTeam(1)`](code:src/views/team/TeamPage.vue#L29).",
+              "description": "When the user clicks Publish the team, the handler of the button [calls `publishTeam(1)`](code:src/views/team/TeamPage.vue#L34).",
               "codeBlockIds": [
                 "src/api/teams.ts#function@1:1",
                 "src/api/teams.ts#root-argument-value@1:35",
@@ -551,12 +584,61 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Posts to `/api/trainers/1/team/publish`",
-                  "codeBlockId": "src/api/teams.ts#external-value@2:3"
-                },
+                  "label": "Throws an Error when the publish request fails",
+                  "codeBlockId": "src/api/teams.ts#throw@3:21"
+                }
+              ]
+            },
+            {
+              "id": "src/api/teams.ts#function@6:1",
+              "type": "function",
+              "label": "Opens a stream of the events of the team",
+              "description": "When `TeamPage` runs its setup, [`watchEffect()` runs its callback](code:src/views/team/TeamPage.vue#L27-30), and the callback calls `watchTeam(1)`.",
+              "codeBlockIds": [
+                "src/api/teams.ts#function@6:1",
+                "src/api/teams.ts#root-argument-value@6:27",
+                "src/api/teams.ts#external-value@7:3",
+                "src/api/teams.ts#data-fetch@7:18",
+                "src/api/teams.ts#function@8:10"
+              ],
+              "diffCodeBlockIds": [
+                "src/api/teams.ts#function@6:1",
+                "src/api/teams.ts#root-argument-value@6:27",
+                "src/api/teams.ts#external-value@7:3",
+                "src/api/teams.ts#data-fetch@7:18",
+                "src/api/teams.ts#function@8:10"
+              ],
+              "children": [
                 {
-                  "label": "Throws an error when the response status is not 2xx",
-                  "codeBlockId": "src/api/teams.ts#condition@3:3"
+                  "id": "src/api/teams.ts#function@8:10",
+                  "type": "function",
+                  "label": "Closes the stream of the team events",
+                  "description": "Before `watchEffect()` of `TeamPage` runs its callback again, and when the page unmounts, Vue calls this function, which [the callback hands to `onCleanup()`](code:src/views/team/TeamPage.vue#L29).",
+                  "codeBlockIds": [
+                    "src/api/teams.ts#function@8:10"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/api/teams.ts#function@8:10"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": []
+                }
+              ],
+              "triggerLabels": [
+                {
+                  "label": "The events of the team are loaded",
+                  "codeBlockId": "src/api/teams.ts#data-fetch@7:18"
+                }
+              ],
+              "blockLabels": [
+                {
+                  "label": "Returns a function that closes the stream",
+                  "codeBlockId": "src/api/teams.ts#function@6:1",
+                  "at": {
+                    "line": 8,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -584,83 +666,119 @@
             {
               "id": "src/views/team/TeamPage.vue#component-effect@19:1",
               "type": "component-effect",
-              "label": "Runs its callback at once and after each change of the trainer id",
-              "description": "When `TeamPage` runs its setup, [`watch()` reads `props.trainerId`](code:src/views/team/TeamPage.vue#L20) and runs the callback at once, because `immediate` is `true`.",
+              "label": "Stores the trainer id at once and after each change",
+              "description": "When `TeamPage` runs its setup, [`watch()` reads `props.trainerId`](code:src/views/team/TeamPage.vue#L20) and runs its callback at once, because `immediate` is `true`. The callback [writes `\"1\"` to `localStorage`](code:src/views/team/TeamPage.vue#L22).",
               "codeBlockIds": [
                 "src/views/team/TeamPage.vue#component-effect@19:1",
                 "src/views/team/TeamPage.vue#effect-callback@20:3",
                 "src/views/team/TeamPage.vue#function@20:3",
                 "src/views/team/TeamPage.vue#effect-callback@21:3",
+                "src/views/team/TeamPage.vue#function@21:3",
+                "src/views/team/TeamPage.vue#variable@21:4",
+                "src/views/team/TeamPage.vue#storage@22:5",
                 "src/views/team/TeamPage.vue#property@24:5"
               ],
               "diffCodeBlockIds": [
                 "src/views/team/TeamPage.vue#component-effect@19:1",
                 "src/views/team/TeamPage.vue#function@20:3",
+                "src/views/team/TeamPage.vue#function@21:3",
+                "src/views/team/TeamPage.vue#variable@21:4",
+                "src/views/team/TeamPage.vue#storage@22:5",
                 "src/views/team/TeamPage.vue#property@24:5"
               ],
               "children": [],
               "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component-effect@27:1",
+              "type": "component-effect",
+              "label": "Watches the team until the trainer id changes",
+              "description": "When `TeamPage` runs its setup, [`watchEffect()` runs its callback](code:src/views/team/TeamPage.vue#L27-30) at once, and again after each change of `props.trainerId`. The callback calls `watchTeam(1)` and [hands the returned function to `onCleanup()`](code:src/views/team/TeamPage.vue#L29).",
+              "codeBlockIds": [
+                "src/views/team/TeamPage.vue#component-effect@27:1",
+                "src/views/team/TeamPage.vue#effect-callback@27:13",
+                "src/views/team/TeamPage.vue#function@27:13",
+                "src/views/team/TeamPage.vue#variable@27:14",
+                "src/views/team/TeamPage.vue#external-value@28:3",
+                "src/views/team/TeamPage.vue#call@29:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/team/TeamPage.vue#component-effect@27:1",
+                "src/views/team/TeamPage.vue#function@27:13",
+                "src/views/team/TeamPage.vue#variable@27:14",
+                "src/views/team/TeamPage.vue#external-value@28:3",
+                "src/views/team/TeamPage.vue#call@29:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Reads the trainer id to watch",
-                  "codeBlockId": "src/views/team/TeamPage.vue#effect-callback@20:3"
-                },
-                {
-                  "label": "Runs the callback that stores the trainer id",
-                  "codeBlockId": "src/views/team/TeamPage.vue#effect-callback@21:3"
-                },
-                {
-                  "label": "Asks for a first run without a change",
-                  "codeBlockId": "src/views/team/TeamPage.vue#property@24:5"
+                  "label": "Calls watchTeam to watch the events of the team",
+                  "codeBlockId": "src/views/team/TeamPage.vue#external-value@28:3",
+                  "at": {
+                    "line": 28,
+                    "column": 24
+                  }
                 }
               ]
             },
             {
-              "id": "src/views/team/TeamPage.vue#render-event@43:54",
+              "id": "src/views/team/TeamPage.vue#render-event@49:54",
               "type": "render-event",
               "label": "Publishes the team and disables the button until the request ends",
-              "description": "When the user clicks Publish the team, [the button runs `publish()`](code:src/views/team/TeamPage.vue#L43), which sets `isPublishing` to `true`, calls `publishTeam(1)` and sets `isPublishing` back to `false`.",
+              "description": "When the user clicks Publish the team, [the button runs `publish()`](code:src/views/team/TeamPage.vue#L49), which sets `isPublishing` to `true`, calls `publishTeam(1)` and sets `isPublishing` back to `false`.",
               "codeBlockIds": [
-                "src/views/team/TeamPage.vue#render-event@43:54",
-                "src/views/team/TeamPage.vue#function@27:1",
-                "src/views/team/TeamPage.vue#call@29:3"
+                "src/views/team/TeamPage.vue#render-event@49:54",
+                "src/views/team/TeamPage.vue#function@32:1",
+                "src/views/team/TeamPage.vue#call@34:3"
               ],
               "diffCodeBlockIds": [
-                "src/views/team/TeamPage.vue#render-event@43:54",
-                "src/views/team/TeamPage.vue#function@27:1",
-                "src/views/team/TeamPage.vue#call@29:3"
+                "src/views/team/TeamPage.vue#render-event@49:54",
+                "src/views/team/TeamPage.vue#function@32:1",
+                "src/views/team/TeamPage.vue#call@34:3"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Publishes the team of the trainer",
-                  "codeBlockId": "src/views/team/TeamPage.vue#call@29:3"
+                  "label": "Calls publishTeam to publish the team of the trainer",
+                  "codeBlockId": "src/views/team/TeamPage.vue#call@34:3",
+                  "at": {
+                    "line": 34,
+                    "column": 9
+                  }
                 }
               ]
             },
             {
-              "id": "src/views/team/TeamPage.vue#effect-callback@21:3",
-              "type": "effect-callback",
-              "label": "Stores the id of the trainer last opened",
-              "description": "When `watch()` of `TeamPage` runs, it calls this callback with the trainer id, and [the callback writes `\"1\"` to `localStorage`](code:src/views/team/TeamPage.vue#L22).",
+              "id": "src/views/team/TeamPage.vue#derived@17:1",
+              "type": "derived",
+              "label": "Builds the heading again when the trainer or the slot count changes",
+              "description": "When `TeamPage` renders, Vue runs [this computed](code:src/views/team/TeamPage.vue#L17) the first time `title` is read, and again after `trainer` or `props.maxSlots` changes.",
               "codeBlockIds": [
-                "src/views/team/TeamPage.vue#effect-callback@21:3",
-                "src/views/team/TeamPage.vue#function@21:3",
-                "src/views/team/TeamPage.vue#variable@21:4",
-                "src/views/team/TeamPage.vue#storage@22:5"
+                "src/views/team/TeamPage.vue#derived@17:1",
+                "src/views/team/TeamPage.vue#component-effect@17:15",
+                "src/views/team/TeamPage.vue#effect-callback@17:24",
+                "src/views/team/TeamPage.vue#function@17:24",
+                "src/views/team/TeamPage.vue#condition@17:31"
               ],
               "diffCodeBlockIds": [
-                "src/views/team/TeamPage.vue#function@21:3",
-                "src/views/team/TeamPage.vue#variable@21:4",
-                "src/views/team/TeamPage.vue#storage@22:5"
+                "src/views/team/TeamPage.vue#derived@17:1",
+                "src/views/team/TeamPage.vue#component-effect@17:15",
+                "src/views/team/TeamPage.vue#function@17:24",
+                "src/views/team/TeamPage.vue#condition@17:31"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Writes `\"1\"` under `team-builder.last-trainer`",
-                  "codeBlockId": "src/views/team/TeamPage.vue#storage@22:5"
+                  "label": "Calls formatTeamTitle when the trainer is loaded to build the heading",
+                  "codeBlockId": "src/views/team/TeamPage.vue#condition@17:31",
+                  "at": {
+                    "line": 17,
+                    "column": 61
+                  }
                 }
               ]
             }
@@ -672,9 +790,14 @@
               "to": "src/views/team/TeamPage.vue#component@1:1"
             },
             {
-              "id": "src/views/team/TeamPage.vue#render-event@43:54 -> src/api/teams.ts#function@1:1",
-              "from": "src/views/team/TeamPage.vue#render-event@43:54",
+              "id": "src/views/team/TeamPage.vue#render-event@49:54 -> src/api/teams.ts#function@1:1",
+              "from": "src/views/team/TeamPage.vue#render-event@49:54",
               "to": "src/api/teams.ts#function@1:1"
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component-effect@27:1 -> src/api/teams.ts#function@6:1",
+              "from": "src/views/team/TeamPage.vue#component-effect@27:1",
+              "to": "src/api/teams.ts#function@6:1"
             },
             {
               "id": "src/views/team/TeamPage.vue#component@1:1 -> src/composables/use-trainer.ts#hook@5:1",
@@ -687,8 +810,8 @@
               "to": "src/views/team/components/TeamSlot.vue#component@1:1"
             },
             {
-              "id": "src/views/team/TeamPage.vue#component@1:1 -> src/lib/team-title.ts#function@1:1",
-              "from": "src/views/team/TeamPage.vue#component@1:1",
+              "id": "src/views/team/TeamPage.vue#derived@17:1 -> src/lib/team-title.ts#function@1:1",
+              "from": "src/views/team/TeamPage.vue#derived@17:1",
               "to": "src/lib/team-title.ts#function@1:1"
             },
             {
@@ -697,14 +820,24 @@
               "to": "src/views/team/TeamPage.vue#component-effect@19:1"
             },
             {
-              "id": "src/views/team/TeamPage.vue#component@1:1 -> src/views/team/TeamPage.vue#render-event@43:54",
+              "id": "src/views/team/TeamPage.vue#component@1:1 -> src/views/team/TeamPage.vue#component-effect@27:1",
               "from": "src/views/team/TeamPage.vue#component@1:1",
-              "to": "src/views/team/TeamPage.vue#render-event@43:54"
+              "to": "src/views/team/TeamPage.vue#component-effect@27:1"
             },
             {
-              "id": "src/views/team/TeamPage.vue#component-effect@19:1 -> src/views/team/TeamPage.vue#effect-callback@21:3",
-              "from": "src/views/team/TeamPage.vue#component-effect@19:1",
-              "to": "src/views/team/TeamPage.vue#effect-callback@21:3"
+              "id": "src/views/team/TeamPage.vue#component@1:1 -> src/views/team/TeamPage.vue#render-event@49:54",
+              "from": "src/views/team/TeamPage.vue#component@1:1",
+              "to": "src/views/team/TeamPage.vue#render-event@49:54"
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component@1:1 -> src/views/team/TeamPage.vue#derived@17:1",
+              "from": "src/views/team/TeamPage.vue#component@1:1",
+              "to": "src/views/team/TeamPage.vue#derived@17:1"
+            },
+            {
+              "id": "src/api/teams.ts#function@6:1 -> src/api/teams.ts#function@8:10",
+              "from": "src/api/teams.ts#function@6:1",
+              "to": "src/api/teams.ts#function@8:10"
             }
           ]
         },
@@ -730,6 +863,22 @@
                     "src/api/teams.ts#throw@3:21"
                   ],
                   "children": []
+                },
+                {
+                  "id": "w2",
+                  "declaration": "watchTeam",
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/api/teams.ts#function@6:1",
+                    "src/api/teams.ts#root-argument-value@6:27",
+                    "src/api/teams.ts#external-value@7:3",
+                    "src/api/teams.ts#data-fetch@7:18",
+                    "src/api/teams.ts#function@8:10"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -737,7 +886,7 @@
               "path": "src/composables/use-trainer.ts",
               "waypoints": [
                 {
-                  "id": "w2",
+                  "id": "w3",
                   "declaration": "useTrainer",
                   "range": {
                     "lineStart": 5,
@@ -755,7 +904,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w2.1",
+                      "id": "w3.1",
                       "declaration": "useTrainer › trainer",
                       "range": {
                         "lineStart": 6,
@@ -767,7 +916,7 @@
                       "children": []
                     },
                     {
-                      "id": "w2.2",
+                      "id": "w3.2",
                       "declaration": "useTrainer › watch",
                       "range": {
                         "lineStart": 8,
@@ -790,7 +939,7 @@
               "path": "src/lib/team-title.ts",
               "waypoints": [
                 {
-                  "id": "w3",
+                  "id": "w4",
                   "declaration": "formatTeamTitle",
                   "range": {
                     "lineStart": 1,
@@ -810,7 +959,7 @@
               "path": "src/main.ts",
               "waypoints": [
                 {
-                  "id": "w4",
+                  "id": "w5",
                   "declaration": "teamApp",
                   "range": {
                     "lineStart": 6,
@@ -826,7 +975,7 @@
                   "children": []
                 },
                 {
-                  "id": "w5",
+                  "id": "w6",
                   "declaration": "Lines 9–9",
                   "range": {
                     "lineStart": 9,
@@ -843,7 +992,7 @@
               "path": "src/types/trainer.ts",
               "waypoints": [
                 {
-                  "id": "w6",
+                  "id": "w7",
                   "declaration": "Trainer",
                   "range": {
                     "lineStart": 3,
@@ -860,11 +1009,11 @@
               "path": "src/views/team/TeamPage.vue",
               "waypoints": [
                 {
-                  "id": "w7",
+                  "id": "w8",
                   "declaration": "TeamPage",
                   "range": {
                     "lineStart": 1,
-                    "lineEnd": 46
+                    "lineEnd": 52
                   },
                   "codeBlockIds": [
                     "src/views/team/TeamPage.vue#component@1:1",
@@ -888,22 +1037,28 @@
                     "src/views/team/TeamPage.vue#variable@21:4",
                     "src/views/team/TeamPage.vue#storage@22:5",
                     "src/views/team/TeamPage.vue#property@24:5",
-                    "src/views/team/TeamPage.vue#function@27:1",
+                    "src/views/team/TeamPage.vue#component-effect@27:1",
+                    "src/views/team/TeamPage.vue#function@27:13",
+                    "src/views/team/TeamPage.vue#variable@27:14",
+                    "src/views/team/TeamPage.vue#external-value@28:3",
                     "src/views/team/TeamPage.vue#call@29:3",
-                    "src/views/team/TeamPage.vue#render-root@34:1",
-                    "src/views/team/TeamPage.vue#render@35:3",
-                    "src/views/team/TeamPage.vue#render@36:5",
-                    "src/views/team/TeamPage.vue#render@37:5",
-                    "src/views/team/TeamPage.vue#render@38:5",
-                    "src/views/team/TeamPage.vue#render@39:7",
-                    "src/views/team/TeamPage.vue#render@40:7",
-                    "src/views/team/TeamPage.vue#render@41:9",
-                    "src/views/team/TeamPage.vue#render@43:7",
-                    "src/views/team/TeamPage.vue#render-event@43:54"
+                    "src/views/team/TeamPage.vue#function@32:1",
+                    "src/views/team/TeamPage.vue#call@34:3",
+                    "src/views/team/TeamPage.vue#render-root@39:1",
+                    "src/views/team/TeamPage.vue#render@40:3",
+                    "src/views/team/TeamPage.vue#render@41:5",
+                    "src/views/team/TeamPage.vue#render@42:5",
+                    "src/views/team/TeamPage.vue#render@43:5",
+                    "src/views/team/TeamPage.vue#render@44:7",
+                    "src/views/team/TeamPage.vue#render@45:7",
+                    "src/views/team/TeamPage.vue#render@46:7",
+                    "src/views/team/TeamPage.vue#render@47:9",
+                    "src/views/team/TeamPage.vue#render@49:7",
+                    "src/views/team/TeamPage.vue#render-event@49:54"
                   ],
                   "children": [
                     {
-                      "id": "w7.1",
+                      "id": "w8.1",
                       "declaration": "TeamPage › LAST_TRAINER_KEY",
                       "range": {
                         "lineStart": 8,
@@ -915,7 +1070,7 @@
                       "children": []
                     },
                     {
-                      "id": "w7.2",
+                      "id": "w8.2",
                       "declaration": "TeamPage › props",
                       "range": {
                         "lineStart": 10,
@@ -927,7 +1082,7 @@
                       "children": []
                     },
                     {
-                      "id": "w7.3",
+                      "id": "w8.3",
                       "declaration": "TeamPage › Condition :12",
                       "range": {
                         "lineStart": 12,
@@ -940,7 +1095,7 @@
                       "children": []
                     },
                     {
-                      "id": "w7.4",
+                      "id": "w8.4",
                       "declaration": "TeamPage › isPublishing",
                       "range": {
                         "lineStart": 14,
@@ -952,7 +1107,7 @@
                       "children": []
                     },
                     {
-                      "id": "w7.5",
+                      "id": "w8.5",
                       "declaration": "TeamPage › trainer",
                       "range": {
                         "lineStart": 15,
@@ -964,7 +1119,7 @@
                       "children": []
                     },
                     {
-                      "id": "w7.6",
+                      "id": "w8.6",
                       "declaration": "TeamPage › lastTrainerId",
                       "range": {
                         "lineStart": 16,
@@ -977,7 +1132,7 @@
                       "children": []
                     },
                     {
-                      "id": "w7.7",
+                      "id": "w8.7",
                       "declaration": "TeamPage › title",
                       "range": {
                         "lineStart": 17,
@@ -992,7 +1147,7 @@
                       "children": []
                     },
                     {
-                      "id": "w7.8",
+                      "id": "w8.8",
                       "declaration": "TeamPage › watch",
                       "range": {
                         "lineStart": 19,
@@ -1008,7 +1163,7 @@
                       ],
                       "children": [
                         {
-                          "id": "w7.8.1",
+                          "id": "w8.8.1",
                           "declaration": "TeamPage › watch › 0",
                           "range": {
                             "lineStart": 20,
@@ -1021,7 +1176,7 @@
                           "children": []
                         },
                         {
-                          "id": "w7.8.2",
+                          "id": "w8.8.2",
                           "declaration": "TeamPage › watch › 1",
                           "range": {
                             "lineStart": 21,
@@ -1036,7 +1191,7 @@
                           "children": []
                         },
                         {
-                          "id": "w7.8.3",
+                          "id": "w8.8.3",
                           "declaration": "TeamPage › watch › immediate",
                           "range": {
                             "lineStart": 24,
@@ -1050,83 +1205,113 @@
                       ]
                     },
                     {
-                      "id": "w7.9",
-                      "declaration": "TeamPage › publish",
+                      "id": "w8.9",
+                      "declaration": "TeamPage › watchEffect",
                       "range": {
                         "lineStart": 27,
-                        "lineEnd": 31
+                        "lineEnd": 30
                       },
                       "codeBlockIds": [
-                        "src/views/team/TeamPage.vue#function@27:1",
+                        "src/views/team/TeamPage.vue#component-effect@27:1",
+                        "src/views/team/TeamPage.vue#function@27:13",
+                        "src/views/team/TeamPage.vue#variable@27:14",
+                        "src/views/team/TeamPage.vue#external-value@28:3",
                         "src/views/team/TeamPage.vue#call@29:3"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w7.10",
-                      "declaration": "TeamPage › Markup condition :36",
+                      "id": "w8.10",
+                      "declaration": "TeamPage › publish",
                       "range": {
-                        "lineStart": 36,
+                        "lineStart": 32,
                         "lineEnd": 36
                       },
                       "codeBlockIds": [
-                        "src/views/team/TeamPage.vue#render-condition@36:5",
-                        "src/views/team/TeamPage.vue#render@36:5"
+                        "src/views/team/TeamPage.vue#function@32:1",
+                        "src/views/team/TeamPage.vue#call@34:3"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w7.11",
-                      "declaration": "TeamPage › Markup condition :37",
+                      "id": "w8.11",
+                      "declaration": "TeamPage › Markup condition :41",
                       "range": {
-                        "lineStart": 37,
-                        "lineEnd": 37
+                        "lineStart": 41,
+                        "lineEnd": 41
                       },
                       "codeBlockIds": [
-                        "src/views/team/TeamPage.vue#render-condition@37:5",
-                        "src/views/team/TeamPage.vue#render@37:5"
+                        "src/views/team/TeamPage.vue#render-condition@41:5",
+                        "src/views/team/TeamPage.vue#render@41:5"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w7.12",
-                      "declaration": "TeamPage › Markup condition :38",
+                      "id": "w8.12",
+                      "declaration": "TeamPage › Markup condition :42",
                       "range": {
-                        "lineStart": 38,
-                        "lineEnd": 44
+                        "lineStart": 42,
+                        "lineEnd": 42
                       },
                       "codeBlockIds": [
-                        "src/views/team/TeamPage.vue#render-condition@38:5",
-                        "src/views/team/TeamPage.vue#render@38:5",
-                        "src/views/team/TeamPage.vue#render@39:7",
-                        "src/views/team/TeamPage.vue#render@40:7",
-                        "src/views/team/TeamPage.vue#render@41:9",
-                        "src/views/team/TeamPage.vue#render@43:7",
-                        "src/views/team/TeamPage.vue#render-event@43:54"
+                        "src/views/team/TeamPage.vue#render-condition@42:5",
+                        "src/views/team/TeamPage.vue#render@42:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w8.13",
+                      "declaration": "TeamPage › Markup condition :43",
+                      "range": {
+                        "lineStart": 43,
+                        "lineEnd": 50
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#render-condition@43:5",
+                        "src/views/team/TeamPage.vue#render@43:5",
+                        "src/views/team/TeamPage.vue#render@44:7",
+                        "src/views/team/TeamPage.vue#render@45:7",
+                        "src/views/team/TeamPage.vue#render@46:7",
+                        "src/views/team/TeamPage.vue#render@47:9",
+                        "src/views/team/TeamPage.vue#render@49:7",
+                        "src/views/team/TeamPage.vue#render-event@49:54"
                       ],
                       "children": [
                         {
-                          "id": "w7.12.1",
-                          "declaration": "TeamPage › Markup condition :38 › Markup loop :41",
+                          "id": "w8.13.1",
+                          "declaration": "TeamPage › Markup condition :43 › Markup condition :45",
                           "range": {
-                            "lineStart": 41,
-                            "lineEnd": 41
+                            "lineStart": 45,
+                            "lineEnd": 45
                           },
                           "codeBlockIds": [
-                            "src/views/team/TeamPage.vue#render-loop@41:9",
-                            "src/views/team/TeamPage.vue#render@41:9"
+                            "src/views/team/TeamPage.vue#render-condition@45:7",
+                            "src/views/team/TeamPage.vue#render@45:7"
                           ],
                           "children": []
                         },
                         {
-                          "id": "w7.12.2",
-                          "declaration": "TeamPage › Markup condition :38 › button.onClick",
+                          "id": "w8.13.2",
+                          "declaration": "TeamPage › Markup condition :43 › Markup loop :47",
                           "range": {
-                            "lineStart": 43,
-                            "lineEnd": 43
+                            "lineStart": 47,
+                            "lineEnd": 47
                           },
                           "codeBlockIds": [
-                            "src/views/team/TeamPage.vue#render-event@43:54"
+                            "src/views/team/TeamPage.vue#render-loop@47:9",
+                            "src/views/team/TeamPage.vue#render@47:9"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w8.13.3",
+                          "declaration": "TeamPage › Markup condition :43 › button.onClick",
+                          "range": {
+                            "lineStart": 49,
+                            "lineEnd": 49
+                          },
+                          "codeBlockIds": [
+                            "src/views/team/TeamPage.vue#render-event@49:54"
                           ],
                           "children": []
                         }
@@ -1140,7 +1325,7 @@
               "path": "src/views/team/components/TeamSlot.vue",
               "waypoints": [
                 {
-                  "id": "w8",
+                  "id": "w9",
                   "declaration": "TeamSlot",
                   "range": {
                     "lineStart": 1,
@@ -1195,6 +1380,28 @@
                   2
                 ],
                 "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 50,
+                "endColumn": 59,
+                "path": "src/api/teams.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 15,
+                "endColumn": 21,
+                "path": "src/api/teams.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
               }
             ],
             "languageReferences": [
@@ -1215,6 +1422,12 @@
                 "startColumn": 30,
                 "endColumn": 35,
                 "name": "Error"
+              },
+              {
+                "line": 7,
+                "startColumn": 21,
+                "endColumn": 32,
+                "name": "EventSource"
               }
             ],
             "exports": [
@@ -1228,11 +1441,29 @@
                 ],
                 "usages": [
                   {
-                    "line": 29,
+                    "line": 34,
                     "startColumn": 8,
                     "endColumn": 19,
                     "path": "src/views/team/TeamPage.vue",
                     "text": "  await publishTeam(props.trainerId)"
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 22,
+                "lines": [
+                  6,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 28,
+                    "startColumn": 23,
+                    "endColumn": 32,
+                    "path": "src/views/team/TeamPage.vue",
+                    "text": "  const stopWatching = watchTeam(props.trainerId)"
                   }
                 ]
               }
@@ -1496,7 +1727,7 @@
                 "path": "src/views/team/TeamPage.vue",
                 "lines": [
                   1,
-                  46
+                  52
                 ],
                 "isLibrary": false
               },
@@ -1633,7 +1864,7 @@
                 ],
                 "usages": [
                   {
-                    "line": 41,
+                    "line": 47,
                     "startColumn": 9,
                     "endColumn": 17,
                     "path": "src/views/team/TeamPage.vue",
@@ -1839,7 +2070,66 @@
                 "isLibrary": false
               },
               {
+                "line": 27,
+                "startColumn": 0,
+                "endColumn": 11,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "watchEffect"
+                }
+              },
+              {
                 "line": 28,
+                "startColumn": 23,
+                "endColumn": 32,
+                "path": "src/api/teams.ts",
+                "lines": [
+                  6,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 33,
+                "endColumn": 38,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 29,
+                "startColumn": 2,
+                "endColumn": 11,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  27,
+                  27
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 29,
+                "startColumn": 12,
+                "endColumn": 24,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  28,
+                  28
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 33,
                 "startColumn": 2,
                 "endColumn": 14,
                 "path": "src/views/team/TeamPage.vue",
@@ -1850,7 +2140,7 @@
                 "isLibrary": false
               },
               {
-                "line": 29,
+                "line": 34,
                 "startColumn": 8,
                 "endColumn": 19,
                 "path": "src/api/teams.ts",
@@ -1861,7 +2151,7 @@
                 "isLibrary": false
               },
               {
-                "line": 29,
+                "line": 34,
                 "startColumn": 20,
                 "endColumn": 25,
                 "path": "src/views/team/TeamPage.vue",
@@ -1872,7 +2162,7 @@
                 "isLibrary": false
               },
               {
-                "line": 30,
+                "line": 35,
                 "startColumn": 2,
                 "endColumn": 14,
                 "path": "src/views/team/TeamPage.vue",
@@ -1883,7 +2173,7 @@
                 "isLibrary": false
               },
               {
-                "line": 36,
+                "line": 41,
                 "startColumn": 13,
                 "endColumn": 26,
                 "path": "src/views/team/TeamPage.vue",
@@ -1894,7 +2184,7 @@
                 "isLibrary": false
               },
               {
-                "line": 37,
+                "line": 42,
                 "startColumn": 13,
                 "endColumn": 20,
                 "path": "src/views/team/TeamPage.vue",
@@ -1905,7 +2195,7 @@
                 "isLibrary": false
               },
               {
-                "line": 39,
+                "line": 44,
                 "startColumn": 13,
                 "endColumn": 18,
                 "path": "src/views/team/TeamPage.vue",
@@ -1916,7 +2206,18 @@
                 "isLibrary": false
               },
               {
-                "line": 41,
+                "line": 45,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 47,
                 "startColumn": 9,
                 "endColumn": 17,
                 "path": "src/views/team/components/TeamSlot.vue",
@@ -1927,7 +2228,7 @@
                 "isLibrary": false
               },
               {
-                "line": 41,
+                "line": 47,
                 "startColumn": 36,
                 "endColumn": 43,
                 "path": "src/views/team/TeamPage.vue",
@@ -1938,7 +2239,7 @@
                 "isLibrary": false
               },
               {
-                "line": 43,
+                "line": 49,
                 "startColumn": 39,
                 "endColumn": 51,
                 "path": "src/views/team/TeamPage.vue",
@@ -1949,13 +2250,13 @@
                 "isLibrary": false
               },
               {
-                "line": 43,
+                "line": 49,
                 "startColumn": 61,
                 "endColumn": 68,
                 "path": "src/views/team/TeamPage.vue",
                 "lines": [
-                  27,
-                  31
+                  32,
+                  36
                 ],
                 "isLibrary": false
               }
@@ -1992,13 +2293,13 @@
                 "name": "String"
               },
               {
-                "line": 36,
+                "line": 41,
                 "startColumn": 31,
                 "endColumn": 37,
                 "name": "String"
               },
               {
-                "line": 36,
+                "line": 41,
                 "startColumn": 38,
                 "endColumn": 47,
                 "name": "trainerId"
@@ -2011,7 +2312,7 @@
                 "endColumn": 24,
                 "lines": [
                   1,
-                  46
+                  52
                 ],
                 "usages": [
                   {

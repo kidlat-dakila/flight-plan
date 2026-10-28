@@ -2772,6 +2772,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/api/client.ts"
         ],
@@ -3582,6 +3588,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/api/pokemon.ts"
         ],
@@ -4781,6 +4793,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 14,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/composables/use-items.ts"
         ],
@@ -5397,6 +5415,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 18,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/composables/use-pokemon.ts"
         ],
@@ -7022,6 +7046,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 14,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/composables/use-trainers.ts"
         ],

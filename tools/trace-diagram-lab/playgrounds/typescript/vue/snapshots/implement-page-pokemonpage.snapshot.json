@@ -439,11 +439,6 @@
                     "src/views/pokemon/PokemonPage.vue#external-value@8:1",
                     "src/views/pokemon/PokemonPage.vue#external-value@9:1",
                     "src/views/pokemon/PokemonPage.vue#derived@10:1",
-                    "src/views/pokemon/PokemonPage.vue#component-effect@10:22",
-                    "src/views/pokemon/PokemonPage.vue#effect-callback@10:31",
-                    "src/views/pokemon/PokemonPage.vue#function@10:31",
-                    "src/views/pokemon/PokemonPage.vue#function@10:70",
-                    "src/views/pokemon/PokemonPage.vue#variable@10:71",
                     "src/views/pokemon/PokemonPage.vue#render-root@17:1",
                     "src/views/pokemon/PokemonPage.vue#render@18:3",
                     "src/views/pokemon/PokemonPage.vue#render@19:5",
@@ -464,10 +459,6 @@
                     "src/views/pokemon/PokemonPage.vue#external-value@8:1",
                     "src/views/pokemon/PokemonPage.vue#external-value@9:1",
                     "src/views/pokemon/PokemonPage.vue#derived@10:1",
-                    "src/views/pokemon/PokemonPage.vue#component-effect@10:22",
-                    "src/views/pokemon/PokemonPage.vue#function@10:31",
-                    "src/views/pokemon/PokemonPage.vue#function@10:70",
-                    "src/views/pokemon/PokemonPage.vue#variable@10:71",
                     "src/views/pokemon/PokemonPage.vue#render-root@17:1",
                     "src/views/pokemon/PokemonPage.vue#render@18:3",
                     "src/views/pokemon/PokemonPage.vue#render@19:5",
@@ -521,8 +512,12 @@
                       ],
                       "blockLabels": [
                         {
-                          "label": "Takes the trainers and the id of the picked trainer",
-                          "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#call@4:1"
+                          "label": "Renders a select of the trainers that shows the picked one",
+                          "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#render-root@12:1"
+                        },
+                        {
+                          "label": "Renders an option for each trainer",
+                          "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#render-loop@15:5"
                         }
                       ]
                     }
@@ -535,20 +530,44 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Keeps the id of the picked trainer",
-                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#state@7:1"
+                      "label": "Calls useTrainers to load the trainers to pick from",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#external-value@8:1",
+                      "at": {
+                        "line": 8,
+                        "column": 22
+                      }
                     },
                     {
-                      "label": "Gets the trainers to pick from",
-                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#external-value@8:1"
-                    },
-                    {
-                      "label": "Gets the Pokemon of the picked trainer and whether they load",
-                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#external-value@9:1"
+                      "label": "Calls usePokemon to load the Pokemon of the picked trainer and whether they still load",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#external-value@9:1",
+                      "at": {
+                        "line": 9,
+                        "column": 32
+                      }
                     },
                     {
                       "label": "Computes the highest level of the Pokemon",
                       "codeBlockId": "src/views/pokemon/PokemonPage.vue#derived@10:1"
+                    },
+                    {
+                      "label": "Renders a heading, the trainer picker and the Pokemon of the picked trainer",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#render-root@17:1"
+                    },
+                    {
+                      "label": "Renders `<TrainerPicker />` with the trainers and the picked id",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#render@20:5"
+                    },
+                    {
+                      "label": "Renders a loading line when the Pokemon are still loading",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#render-condition@21:5"
+                    },
+                    {
+                      "label": "Renders the highest level and the list of Pokemon when they are loaded",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#render-condition@22:5"
+                    },
+                    {
+                      "label": "Renders a list item for each Pokemon with its name and level",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#render-loop@25:9"
                     }
                   ]
                 }
@@ -559,7 +578,44 @@
                   "codeBlockId": "src/App.vue#render-event@17:33"
                 }
               ],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the header with its buttons and the page the user chose",
+                  "codeBlockId": "src/App.vue#render-root@14:1"
+                },
+                {
+                  "label": "Renders `<BaseButton />` that opens the trainers page",
+                  "codeBlockId": "src/App.vue#render@16:5"
+                },
+                {
+                  "label": "Renders `<BaseButton />` that opens the Pokemon page",
+                  "codeBlockId": "src/App.vue#render@17:5"
+                },
+                {
+                  "label": "Renders `<BaseButton />` that opens the items page",
+                  "codeBlockId": "src/App.vue#render@18:5"
+                },
+                {
+                  "label": "Renders `<BaseButton />` that opens the help page",
+                  "codeBlockId": "src/App.vue#render@19:5"
+                },
+                {
+                  "label": "Renders `<TrainersPage />` when the user chose trainers",
+                  "codeBlockId": "src/App.vue#render@22:5"
+                },
+                {
+                  "label": "Renders `<PokemonPage />` when the user chose Pokemon",
+                  "codeBlockId": "src/App.vue#render@23:5"
+                },
+                {
+                  "label": "Renders `<ItemsPage />` when the user chose items",
+                  "codeBlockId": "src/App.vue#render@24:5"
+                },
+                {
+                  "label": "Renders `<HelpPage />` when the user chose help",
+                  "codeBlockId": "src/App.vue#render@25:5"
+                }
+              ]
             },
             {
               "id": "src/composables/use-pokemon.ts#hook@4:1",
@@ -597,24 +653,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Keeps the loaded Pokemon",
-                  "codeBlockId": "src/composables/use-pokemon.ts#state@5:3"
+                  "label": "Calls fetchPokemon to load the Pokemon of the new trainer id",
+                  "codeBlockId": "src/composables/use-pokemon.ts#function@10:5",
+                  "at": {
+                    "line": 12,
+                    "column": 29
+                  }
                 },
                 {
-                  "label": "Keeps whether a load is running",
-                  "codeBlockId": "src/composables/use-pokemon.ts#state@6:3"
-                },
-                {
-                  "label": "Loads the Pokemon at once and after each new trainer id",
-                  "codeBlockId": "src/composables/use-pokemon.ts#component-effect@8:3"
-                },
-                {
-                  "label": "Watches the trainer id the page passes in",
-                  "codeBlockId": "src/composables/use-pokemon.ts#effect-callback@9:5"
-                },
-                {
-                  "label": "Returns the Pokemon and whether they load",
-                  "codeBlockId": "src/composables/use-pokemon.ts#property@18:12"
+                  "label": "Returns the Pokemon and whether they are still loading",
+                  "codeBlockId": "src/composables/use-pokemon.ts#hook@4:1",
+                  "at": {
+                    "line": 18,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -658,8 +710,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Builds the `trainer_id` query when a trainer is given",
-                  "codeBlockId": "src/api/pokemon.ts#variable@11:3"
+                  "label": "Returns the Pokemon from the API",
+                  "codeBlockId": "src/api/pokemon.ts#function@10:1",
+                  "at": {
+                    "line": 12,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Calls request to get the Pokemon, filtered by the trainer when one is given",
+                  "codeBlockId": "src/api/pokemon.ts#function@10:1",
+                  "at": {
+                    "line": 12,
+                    "column": 10
+                  }
                 }
               ]
             },
@@ -695,12 +759,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Sets the trainer id to the emitted one",
-                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#variable@12:24"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
@@ -725,14 +784,46 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Receives the value of the picked option",
-                  "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#variable@7:22"
+                  "label": "Calls emit to send the picked trainer id, or none for every trainer",
+                  "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#call@8:3",
+                  "at": {
+                    "line": 8,
+                    "column": 3
+                  }
                 },
                 {
-                  "label": "Emits select with the trainer id, or `null` for Every trainer",
-                  "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#call@8:3"
+                  "label": "Calls pickTrainer to pick the trainer of the chosen option",
+                  "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
+                  "at": {
+                    "line": 13,
+                    "column": 46
+                  }
                 }
               ]
+            },
+            {
+              "id": "src/views/pokemon/PokemonPage.vue#derived@10:1",
+              "type": "derived",
+              "label": "Computes the highest level again when the Pokemon change",
+              "description": "When `PokemonPage` renders, Vue runs [this computed](code:src/views/pokemon/PokemonPage.vue#L10) the first time `highestLevel` is read, and again after `pokemon` changes.",
+              "codeBlockIds": [
+                "src/views/pokemon/PokemonPage.vue#derived@10:1",
+                "src/views/pokemon/PokemonPage.vue#component-effect@10:22",
+                "src/views/pokemon/PokemonPage.vue#effect-callback@10:31",
+                "src/views/pokemon/PokemonPage.vue#function@10:31",
+                "src/views/pokemon/PokemonPage.vue#function@10:70",
+                "src/views/pokemon/PokemonPage.vue#variable@10:71"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/pokemon/PokemonPage.vue#derived@10:1",
+                "src/views/pokemon/PokemonPage.vue#component-effect@10:22",
+                "src/views/pokemon/PokemonPage.vue#function@10:31",
+                "src/views/pokemon/PokemonPage.vue#function@10:70",
+                "src/views/pokemon/PokemonPage.vue#variable@10:71"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "traceNodeEdges": [
@@ -777,6 +868,11 @@
               "to": "src/views/pokemon/components/TrainerPicker.vue#component@1:1"
             },
             {
+              "id": "src/views/pokemon/PokemonPage.vue#derived@10:1 -> src/composables/use-pokemon.ts#hook@4:1",
+              "from": "src/views/pokemon/PokemonPage.vue#derived@10:1",
+              "to": "src/composables/use-pokemon.ts#hook@4:1"
+            },
+            {
               "id": "src/App.vue#component@1:1 -> src/App.vue#render-event@17:33",
               "from": "src/App.vue#component@1:1",
               "to": "src/App.vue#render-event@17:33"
@@ -790,6 +886,11 @@
               "id": "src/views/pokemon/components/TrainerPicker.vue#component@1:1 -> src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
               "from": "src/views/pokemon/components/TrainerPicker.vue#component@1:1",
               "to": "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37"
+            },
+            {
+              "id": "src/views/pokemon/PokemonPage.vue#component@1:1 -> src/views/pokemon/PokemonPage.vue#derived@10:1",
+              "from": "src/views/pokemon/PokemonPage.vue#component@1:1",
+              "to": "src/views/pokemon/PokemonPage.vue#derived@10:1"
             }
           ]
         },

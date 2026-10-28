@@ -163,12 +163,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Keeps every Pokemon whose id is not the given id",
-                  "codeBlockId": "src/lib/pokemon.ts#function@26:24"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/app/pokemon/actions.ts#function@20:1",
@@ -191,12 +186,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Removes the Pokemon from the party",
-                  "codeBlockId": "src/app/pokemon/actions.ts#call@21:3"
-                },
-                {
-                  "label": "Revalidates the cached page at /pokemon",
-                  "codeBlockId": "src/app/pokemon/actions.ts#cache@22:3"
+                  "label": "Calls removePokemon to take the Pokemon out of the list",
+                  "codeBlockId": "src/app/pokemon/actions.ts#call@21:3",
+                  "at": {
+                    "line": 21,
+                    "column": 3
+                  }
                 }
               ]
             }
@@ -830,16 +825,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the id from the params of the path",
-                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#variable@4:3"
+                      "label": "Calls removePokemon to take the Pokemon of the path out of the list",
+                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#call@5:3",
+                      "at": {
+                        "line": 5,
+                        "column": 3
+                      }
                     },
                     {
-                      "label": "Removes the Pokemon of that id from the party",
-                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#call@5:3"
-                    },
-                    {
-                      "label": "Returns a 204 response with no body",
-                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#property@6:31"
+                      "label": "Returns an empty response with status 204",
+                      "codeBlockId": "src/app/api/pokemon/[id]/route.ts#function@3:1",
+                      "at": {
+                        "line": 6,
+                        "column": 3
+                      }
                     }
                   ]
                 }
@@ -866,12 +865,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Keeps every Pokemon whose id is not the given id",
-                  "codeBlockId": "src/lib/pokemon.ts#function@26:24"
-                }
-              ]
+              "blockLabels": []
             }
           ],
           "traceNodeEdges": [
@@ -1391,12 +1385,12 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Gets the pending flag and the start function of a transition",
-                      "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#external-value@7:3"
-                    },
-                    {
-                      "label": "Shows Releasing… while the release runs",
-                      "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#condition@16:8"
+                      "label": "Renders a Release button that reads Releasing… while the release runs",
+                      "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#component@6:1",
+                      "at": {
+                        "line": 8,
+                        "column": 3
+                      }
                     }
                   ]
                 }
@@ -1404,8 +1398,24 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Renders one row with a release button per Pokemon",
-                  "codeBlockId": "src/app/pokemon/page.tsx#function@12:20"
+                  "label": "Calls listPokemon to read the Pokemon of the party",
+                  "codeBlockId": "src/app/pokemon/page.tsx#external-value@6:3",
+                  "at": {
+                    "line": 6,
+                    "column": 17
+                  }
+                },
+                {
+                  "label": "Renders the heading, a link to a new Pokemon and the list of the party",
+                  "codeBlockId": "src/app/pokemon/page.tsx#component@5:1",
+                  "at": {
+                    "line": 7,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<ReleaseButton />` for each Pokemon of the party",
+                  "codeBlockId": "src/app/pokemon/page.tsx#render@15:13"
                 }
               ]
             },
@@ -1430,12 +1440,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Removes the Pokemon from the party",
-                  "codeBlockId": "src/app/pokemon/actions.ts#call@21:3"
-                },
-                {
-                  "label": "Revalidates the cached page at /pokemon",
-                  "codeBlockId": "src/app/pokemon/actions.ts#cache@22:3"
+                  "label": "Calls removePokemon to take the Pokemon out of the list",
+                  "codeBlockId": "src/app/pokemon/actions.ts#call@21:3",
+                  "at": {
+                    "line": 21,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -1458,12 +1468,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Keeps every Pokemon whose id is not the given id",
-                  "codeBlockId": "src/lib/pokemon.ts#function@26:24"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/app/pokemon/components/ReleaseButton.tsx#render-event@12:7",
@@ -1484,16 +1489,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Checks whether the trainer confirms the release",
-                  "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#condition@13:9"
-                },
-                {
-                  "label": "Starts a transition that releases the Pokemon",
-                  "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/app/pokemon/components/ReleaseButton.tsx#effect@13:49",
@@ -1530,7 +1526,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls releasePokemon to release the Pokemon on the server",
+                  "codeBlockId": "src/app/pokemon/components/ReleaseButton.tsx#function@13:62",
+                  "at": {
+                    "line": 13,
+                    "column": 68
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

@@ -1,5 +1,14 @@
 import { tallyNodes, tallyWork, unwrittenWork } from "@/procedures/read-artifact/utils/unwritten-work"
 import { DRAFT_ARTIFACT, DRAFT_TRACE_NODE, DRAFT_SEGMENT, draftTraceOf, WALKTHROUGH_ONLY_ARTIFACT } from "./artifact-fixture"
+import { TEAM_FILES } from "./team-fixture"
+import { traceCode } from "./traced-fixture"
+
+const PAGE_ID = "src/pages/TeamPage.tsx#component@7:1"
+const team = traceCode(TEAM_FILES)
+const TEAM_ARTIFACT = { ...DRAFT_ARTIFACT, sources: team.sources, segments: [{ ...DRAFT_SEGMENT, traceDiagram: team.traceDiagram }] }
+
+const blockLabelMessagesOf = (nodeId: string): string[] =>
+  unwrittenWork(TEAM_ARTIFACT).filter((one) => one.needs === "block-label" && one.id === nodeId).map((one) => one.message)
 
 const needsOf = (id: string | null, work: ReturnType<typeof unwrittenWork>): string[] =>
   work.filter((one) => one.id === id).map((one) => one.needs)
@@ -72,6 +81,30 @@ describe("unwrittenWork", () => {
     const work = unwrittenWork({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, traceDiagram }] })
 
     expect(needsOf("j-subtotal", work)).toStrictEqual(["block-label"])
+  })
+
+  it("names each unwritten row of a function card by its place and the code written there", () => {
+    expect(blockLabelMessagesOf("src/trainers/rename.ts#function@2:1")).toStrictEqual([
+      "The call `loadTrainers()` (block `src/trainers/rename.ts#external-value@3:3`, at line 3, column 20) of `src/trainers/rename.ts#function@2:1` has no label. Say what the call is for, and the condition it runs under when it has one.",
+      "The throw `throw new RangeError` (block `src/trainers/rename.ts#throw@4:30`) of `src/trainers/rename.ts#function@2:1` has no label. Say what it raises and when.",
+      "The return (block `src/trainers/rename.ts#function@2:1`, at line 5, column 3) of `src/trainers/rename.ts#function@2:1` has no label. Say what it returns, and when, if it is not the only or the last return.",
+    ])
+  })
+
+  it("asks each unwritten row of a component card in the words of its kind", () => {
+    expect(blockLabelMessagesOf("src/pages/badges.tsx#component@1:1")).toStrictEqual([
+      "The return `return <p>` (block `src/pages/badges.tsx#component@1:1`, at line 2, column 3) of `src/pages/badges.tsx#component@1:1` has no label. Say what it renders, and when, if it is not the last return.",
+      "The render row `badges.map()` (block `src/pages/badges.tsx#render-loop@4:8`) of `src/pages/badges.tsx#component@1:1` has no label. Say what it renders for each item, as \"Renders … for each …\".",
+    ])
+    expect(blockLabelMessagesOf(PAGE_ID).slice(1, 3)).toStrictEqual([
+      `The memo \`teamTypes = useMemo()\` (block \`src/pages/TeamPage.tsx#derived@9:3\`) of \`${PAGE_ID}\` has no label. Say what it works out, starting with a verb.`,
+      `The effect \`useEffect()\` (block \`src/pages/TeamPage.tsx#component-effect@10:3\`) of \`${PAGE_ID}\` has no label. Say what it does, starting with a verb.`,
+    ])
+    expect(blockLabelMessagesOf(PAGE_ID).slice(5)).toStrictEqual([
+      `The render row \`{renderBadges()}\` (block \`src/pages/TeamPage.tsx#render@15:5\`, at line 17, column 8) of \`${PAGE_ID}\` has no label. Say what it renders and which code drew it, as "Renders … that renderBadges drew".`,
+      `The render row \`{… && <p>}\` (block \`src/pages/TeamPage.tsx#render-condition@18:8\`) of \`${PAGE_ID}\` has no label. Say what it renders and when, as "Renders … when …".`,
+      `The render row \`trainer.team.map()\` (block \`src/pages/TeamPage.tsx#render@21:11\`) of \`${PAGE_ID}\` has no label. Say which component it renders, and when or for each what, as "Renders \`<TeamSlot />\` for each …".`,
+    ])
   })
 
   it("asks a solution of a bug, a risk and a nit, and none of a question", () => {

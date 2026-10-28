@@ -1531,6 +1531,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 7,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/cli.py",
           "src/pokedex/importer.py"
@@ -1770,6 +1776,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/cli.py",
           "src/pokedex/importer.py"
@@ -3269,6 +3281,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 25,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -4162,6 +4180,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 42,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -4518,6 +4542,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 48,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {

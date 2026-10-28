@@ -7,6 +7,7 @@ import { exportedBindingAt, javascriptReaderOf, listHandedImports } from "@/cata
 import { matchSyntax } from "@/catalogue/matching/match-source"
 import { findNothingHanded, type Binding, type FindExportedBinding, type FindHandedExport, type SyntaxReader } from "@/catalogue/matching/syntax-reader"
 import { listLibraryUses } from "@/code-blocks/classifications"
+import { withReturns } from "@/code-blocks/languages/returns"
 import { LIBRARIES } from "@/code-blocks/libraries"
 import { listOwnUses, nodeFinderOf, withCards } from "@/code-blocks/libraries/cards"
 import type { FileExports, FindExport, OutlinedFile, ScriptReading } from "@/code-blocks/reading"
@@ -29,6 +30,7 @@ export interface TypescriptSource {
 const VALUE_SPACE: SymbolSpace = "value"
 const JSX_GRAMMAR: GrammarId = "tsx"
 const FUNCTION_TYPE = "function"
+const FUNCTION_TYPES: ReadonlySet<string> = new Set(["function_declaration", "function_expression", "function", "arrow_function", "method_definition", "generator_function_declaration", "generator_function"])
 const ARGUMENT = "argument"
 
 export const exportsOf = ({ localExports, forwardedExports }: FileOutline): FileExports => ({
@@ -78,7 +80,7 @@ const scriptReaderOf = ({ grammar, filePath, outline }: ReadScript, findBinding:
 export const readScript = (script: ReadScript, findExport: FindExport, findBinding: FindExportedBinding, findHanded: FindHandedExport = findNothingHanded): ScriptReading => {
   const { filePath, outline, componentId } = script
   const matches = matchSyntax(scriptReaderOf(script, findBinding, findHanded), LIBRARIES)
-  const blocks = readBlocks(createBlockReader(script, findExport, createFileNaming(matches)), componentId)
+  const blocks = withReturns(readBlocks(createBlockReader(script, findExport, createFileNaming(matches)), componentId), outline.tree.rootNode, FUNCTION_TYPES)
   return {
     filePath,
     blocks: withCards(withDirectives(blocks, matches, exportsOf(outline)), matches, outline.tree, LIBRARIES),

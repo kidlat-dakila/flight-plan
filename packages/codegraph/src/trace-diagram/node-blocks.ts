@@ -1,6 +1,8 @@
 import type { CodeBlock, CodeBlockType } from "@flightplan/configurations"
 import { isCardNodeBlock, isCardNotNodeBlock } from "./cards"
 import { classOfDeclaredProperty, hasMethodsOfItsOwn, isRouterClass } from "./cards/class"
+import { isHookCallBlock, isInsideMemo, isMemoBlock, isMergedCallback } from "./hook-calls"
+import { isFoldedCall, isFoldedCallback } from "./repository-calls"
 
 export interface NodeStep {
   readonly from: CodeBlock
@@ -141,7 +143,9 @@ export const foldedValueOf = (block: CodeBlock): CodeBlock | null => {
 export const isNodeBlock = (block: CodeBlock): boolean => {
   if (isCardNotNodeBlock(block)) return false
   if (block.parentBlock === null) return block.type !== STATEMENT && !isFoldedValue(block)
-  return isOwnNode(block) || isCardNodeBlock(block, isNodeBlock) || (isTriggered(block) && hasNodesInside(rootOf(block)) && !isInsideOwnNode(block))
+  if (isOwnNode(block) || isCardNodeBlock(block, isNodeBlock)) return true
+  const isRunOnItsOwn = (isTriggered(block) && !isMergedCallback(block) && !isFoldedCall(block) && !isFoldedCallback(block)) || isMemoBlock(block)
+  return isRunOnItsOwn && hasNodesInside(rootOf(block)) && !isInsideOwnNode(block) && !isInsideMemo(block)
 }
 
 export const isNodeDrawnInside = (block: CodeBlock): boolean => block.parentBlock !== null && isCardNodeBlock(block, isNodeBlock)
@@ -176,10 +180,15 @@ const carryThrough = (from: CodeBlock, fromBlock: CodeBlock, toBlock: CodeBlock,
   return nextBlocksOf(toBlock).flatMap((next) => stepsInto(from, fromBlock, next, nextBlocksOf, new Set([...carriedIds, toBlock.id])))
 }
 
+const callsValue = (fromBlock: CodeBlock, value: CodeBlock): boolean => listCalledBlocks(fromBlock).some((called) => called.id === value.id)
+
+const isOnlyRead = (from: CodeBlock, fromBlock: CodeBlock, value: CodeBlock): boolean => isHookCallBlock(from) && !callsValue(fromBlock, value)
+
 const stepsInto = (from: CodeBlock, fromBlock: CodeBlock, toBlock: CodeBlock, nextBlocksOf: NextBlocksOf, carriedIds: ReadonlySet<string>): NodeStep[] => {
   const to = nodeBlockOf(toBlock)
   if (to === null) return foldedValueOf(toBlock) === null ? [] : carryThrough(from, fromBlock, toBlock, nextBlocksOf, carriedIds)
   const isInFrom = to.id === from.id
+  if (!isInFrom && toBlock.id !== to.id && isAround(to, from) && isOnlyRead(from, fromBlock, toBlock)) return []
   const isCarried = toBlock.id !== to.id && (isInFrom ? isInStep(fromBlock) && VALUE_TYPES.has(toBlock.type) : isAround(to, from))
   if (isCarried) return carryThrough(from, fromBlock, toBlock, nextBlocksOf, carriedIds)
   return isInFrom || isAround(from, to) ? [] : [{ from, fromBlock, to, toBlock }]

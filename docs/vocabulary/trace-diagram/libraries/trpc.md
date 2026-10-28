@@ -79,7 +79,7 @@ export const todoRouter = createTRPCRouter({
 
 ## Calls from a client
 
-**A call on a tRPC client has a line to the procedure it names.** `api.todo.create.useMutation(…)` in a component leads to the `create` procedure of `todoRouter`, as [A chain across a boundary](../../codegraph/chains.md#a-chain-across-a-boundary) says, so the line runs from the node of the call to the procedure card inside the router card. A `useMutation` handed a callback is a node of its own, and the line leaves it; a query handed none is a row of its component, and the line leaves that row.
+**A call on a tRPC client has a line to the procedure it names.** `api.todo.create.useMutation(…)` in a component leads to the `create` procedure of `todoRouter`, as [A chain across a boundary](../../codegraph/chains.md#a-chain-across-a-boundary) says, so the line runs from the node of the call to the procedure card inside the router card. A `useMutation` handed a callback that runs later, `api.todo.create.useMutation({ onSuccess })`, is a node of its own, a Request card with a card for that callback, and the line to the procedure leaves it. In its component it is still a call row, in a callee card of the procedure typed Resolver, and the line to the Request card leaves that row. A mutation handed none, `api.todo.create.useMutation()`, and a call of a server caller are call rows of the card they are written in, in a callee card of the procedure, and the line to the procedure leaves that row, as [Calls of values a library made](../function-card.md#calls-of-values-a-library-made) says. A query, `api.todo.list.useQuery()`, is a data fetch: a trigger row of its component, with the line, and no call row.
 
 ```mermaid
 flowchart LR

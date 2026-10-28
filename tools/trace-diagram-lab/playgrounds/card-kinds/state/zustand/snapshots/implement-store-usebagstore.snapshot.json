@@ -211,12 +211,20 @@
                     "src/pages/items/ItemsPage.tsx#component@4:1",
                     "src/pages/items/ItemsPage.tsx#external-value@5:3",
                     "src/pages/items/ItemsPage.tsx#component-effect@5:17",
+                    "src/pages/items/ItemsPage.tsx#effect-callback@5:29",
                     "src/pages/items/ItemsPage.tsx#external-value@6:3",
                     "src/pages/items/ItemsPage.tsx#component-effect@6:17",
+                    "src/pages/items/ItemsPage.tsx#effect-callback@6:29",
                     "src/pages/items/ItemsPage.tsx#external-value@7:3",
                     "src/pages/items/ItemsPage.tsx#component-effect@7:19",
+                    "src/pages/items/ItemsPage.tsx#effect-callback@7:31",
+                    "src/pages/items/ItemsPage.tsx#function@7:31",
+                    "src/pages/items/ItemsPage.tsx#variable@7:32",
                     "src/pages/items/ItemsPage.tsx#external-value@8:3",
                     "src/pages/items/ItemsPage.tsx#component-effect@8:17",
+                    "src/pages/items/ItemsPage.tsx#effect-callback@8:29",
+                    "src/pages/items/ItemsPage.tsx#function@8:29",
+                    "src/pages/items/ItemsPage.tsx#variable@8:30",
                     "src/pages/items/ItemsPage.tsx#render-root@9:3",
                     "src/pages/items/ItemsPage.tsx#render@10:5",
                     "src/pages/items/ItemsPage.tsx#render@11:7",
@@ -233,12 +241,18 @@
                   "diffCodeBlockIds": [
                     "src/pages/items/ItemsPage.tsx#external-value@5:3",
                     "src/pages/items/ItemsPage.tsx#component-effect@5:17",
+                    "src/pages/items/ItemsPage.tsx#effect-callback@5:29",
                     "src/pages/items/ItemsPage.tsx#external-value@6:3",
                     "src/pages/items/ItemsPage.tsx#component-effect@6:17",
+                    "src/pages/items/ItemsPage.tsx#effect-callback@6:29",
                     "src/pages/items/ItemsPage.tsx#external-value@7:3",
                     "src/pages/items/ItemsPage.tsx#component-effect@7:19",
+                    "src/pages/items/ItemsPage.tsx#function@7:31",
+                    "src/pages/items/ItemsPage.tsx#variable@7:32",
                     "src/pages/items/ItemsPage.tsx#external-value@8:3",
                     "src/pages/items/ItemsPage.tsx#component-effect@8:17",
+                    "src/pages/items/ItemsPage.tsx#function@8:29",
+                    "src/pages/items/ItemsPage.tsx#variable@8:30",
                     "src/pages/items/ItemsPage.tsx#render@10:5",
                     "src/pages/items/ItemsPage.tsx#render@11:7",
                     "src/pages/items/ItemsPage.tsx#render@14:7",
@@ -264,46 +278,67 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Gets the number of items in the bag",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#external-value@5:3"
+                      "label": "Calls useBagStore to read the item count",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component-effect@5:17",
+                      "at": {
+                        "line": 5,
+                        "column": 17
+                      }
                     },
                     {
-                      "label": "Reads the item count from the bag store",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component-effect@5:17"
+                      "label": "Calls useBagStore to read the total",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component-effect@6:17",
+                      "at": {
+                        "line": 6,
+                        "column": 17
+                      }
                     },
                     {
-                      "label": "Gets the total price of the bag",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#external-value@6:3"
+                      "label": "Calls useBagStore to get the addItem action",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component-effect@7:19",
+                      "at": {
+                        "line": 7,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Reads the total from the bag store",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component-effect@6:17"
+                      "label": "Calls useBagStore to get the clear action",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component-effect@8:17",
+                      "at": {
+                        "line": 8,
+                        "column": 17
+                      }
                     },
                     {
-                      "label": "Gets the action that adds an item",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#external-value@7:3"
-                    },
-                    {
-                      "label": "Reads the add action from the bag store",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component-effect@7:19"
-                    },
-                    {
-                      "label": "Gets the action that empties the bag",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#external-value@8:3"
-                    },
-                    {
-                      "label": "Reads the clear action from the bag store",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component-effect@8:17"
+                      "label": "Renders the count and the total of the bag, an Empty the bag button and the items",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component@4:1",
+                      "at": {
+                        "line": 9,
+                        "column": 3
+                      }
                     },
                     {
                       "label": "Renders one row with an Add to bag button for each item",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#function@18:20"
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#render-loop@18:10"
                     }
                   ]
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the title and the items page",
+                  "codeBlockId": "src/App.tsx#component@3:1",
+                  "at": {
+                    "line": 4,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<ItemsPage />` below the title",
+                  "codeBlockId": "src/App.tsx#render@7:7"
+                }
+              ]
             },
             {
               "id": "src/stores/bag-store.ts#state@12:1",
@@ -442,16 +477,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Finds the line of the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#variable@9:3"
+                  "label": "Returns the lines with a new line for the item when it has none",
+                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3",
+                  "at": {
+                    "line": 10,
+                    "column": 27
+                  }
                 },
                 {
-                  "label": "Adds a new line when the bag has none for the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3"
-                },
-                {
-                  "label": "Adds one to the quantity of the line of the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#function@11:20"
+                  "label": "Returns the lines with one more of the item on its line",
+                  "codeBlockId": "src/lib/bag-lines.ts#function@8:1",
+                  "at": {
+                    "line": 11,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -485,171 +524,28 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@8:17",
-              "type": "component-effect",
-              "label": "Subscribes the page to the clear action",
-              "description": "When `ItemsPage` renders, [it calls `useBagStore()` with a selector](code:src/pages/items/ItemsPage.tsx#L8).",
-              "codeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#component-effect@8:17",
-                "src/pages/items/ItemsPage.tsx#effect-callback@8:29"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#component-effect@8:17"
-              ],
-              "children": [],
-              "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Picks the clear action from the state",
-                  "codeBlockId": "src/pages/items/ItemsPage.tsx#effect-callback@8:29"
+                  "label": "Calls addItem to add the item of the row to the bag",
+                  "codeBlockId": "src/pages/items/ItemsPage.tsx#function@21:44",
+                  "at": {
+                    "line": 21,
+                    "column": 50
+                  }
                 }
               ]
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#effect-callback@8:29",
-              "type": "effect-callback",
-              "label": "Returns the clear action of the store",
-              "description": "When `ItemsPage` renders, Zustand calls this selector with the state, because [`ItemsPage` passes it to `useBagStore()`](code:src/pages/items/ItemsPage.tsx#L8).",
-              "codeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#effect-callback@8:29",
-                "src/pages/items/ItemsPage.tsx#function@8:29",
-                "src/pages/items/ItemsPage.tsx#variable@8:30"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#function@8:29",
-                "src/pages/items/ItemsPage.tsx#variable@8:30"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@7:19",
-              "type": "component-effect",
-              "label": "Subscribes the page to the add action",
-              "description": "When `ItemsPage` renders, [it calls `useBagStore()` with a selector](code:src/pages/items/ItemsPage.tsx#L7).",
-              "codeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#component-effect@7:19",
-                "src/pages/items/ItemsPage.tsx#effect-callback@7:31"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#component-effect@7:19"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Picks the add action from the state",
-                  "codeBlockId": "src/pages/items/ItemsPage.tsx#effect-callback@7:31"
-                }
-              ]
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#effect-callback@7:31",
-              "type": "effect-callback",
-              "label": "Returns the add action of the store",
-              "description": "When `ItemsPage` renders, Zustand calls this selector with the state, because [`ItemsPage` passes it to `useBagStore()`](code:src/pages/items/ItemsPage.tsx#L7).",
-              "codeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#effect-callback@7:31",
-                "src/pages/items/ItemsPage.tsx#function@7:31",
-                "src/pages/items/ItemsPage.tsx#variable@7:32"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#function@7:31",
-                "src/pages/items/ItemsPage.tsx#variable@7:32"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@5:17",
-              "type": "component-effect",
-              "label": "Subscribes the page to the item count",
-              "description": "When `ItemsPage` renders, [it calls `useBagStore(selectCount)`](code:src/pages/items/ItemsPage.tsx#L5).",
-              "codeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#component-effect@5:17",
-                "src/pages/items/ItemsPage.tsx#effect-callback@5:29"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#component-effect@5:17",
-                "src/pages/items/ItemsPage.tsx#effect-callback@5:29"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Picks the item count from the state",
-                  "codeBlockId": "src/pages/items/ItemsPage.tsx#effect-callback@5:29"
-                }
-              ]
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@6:17",
-              "type": "component-effect",
-              "label": "Subscribes the page to the total",
-              "description": "When `ItemsPage` renders, [it calls `useBagStore(selectTotal)`](code:src/pages/items/ItemsPage.tsx#L6).",
-              "codeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#component-effect@6:17",
-                "src/pages/items/ItemsPage.tsx#effect-callback@6:29"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#component-effect@6:17",
-                "src/pages/items/ItemsPage.tsx#effect-callback@6:29"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Picks the total from the state",
-                  "codeBlockId": "src/pages/items/ItemsPage.tsx#effect-callback@6:29"
-                }
-              ]
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#effect-callback@5:29",
-              "type": "effect-callback",
-              "label": "Counts the items of the bag",
-              "description": "When the state of the bag store changes, Zustand calls [`selectCount()`](code:src/stores/bag-store.ts#selectCount) with the new state, because `ItemsPage` passes it to `useBagStore()`.",
-              "codeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#effect-callback@5:29"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#effect-callback@5:29"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#effect-callback@6:29",
-              "type": "effect-callback",
-              "label": "Adds up the price of the bag",
-              "description": "When the state of the bag store changes, Zustand calls [`selectTotal()`](code:src/stores/bag-store.ts#selectTotal) with the new state, because `ItemsPage` passes it to `useBagStore()`.",
-              "codeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#effect-callback@6:29"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/items/ItemsPage.tsx#effect-callback@6:29"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "traceNodeEdges": [
             {
-              "id": "src/pages/items/ItemsPage.tsx#render-event@14:29 -> src/pages/items/ItemsPage.tsx#effect-callback@8:29",
+              "id": "src/pages/items/ItemsPage.tsx#render-event@14:29 -> src/stores/bag-store.ts#state@12:1",
               "from": "src/pages/items/ItemsPage.tsx#render-event@14:29",
-              "to": "src/pages/items/ItemsPage.tsx#effect-callback@8:29"
+              "to": "src/stores/bag-store.ts#state@12:1"
             },
             {
-              "id": "src/pages/items/ItemsPage.tsx#render-event@21:35 -> src/pages/items/ItemsPage.tsx#effect-callback@7:31",
+              "id": "src/pages/items/ItemsPage.tsx#render-event@21:35 -> src/stores/bag-store.ts#state@12:1",
               "from": "src/pages/items/ItemsPage.tsx#render-event@21:35",
-              "to": "src/pages/items/ItemsPage.tsx#effect-callback@7:31"
+              "to": "src/stores/bag-store.ts#state@12:1"
             },
             {
               "id": "src/App.tsx#component@3:1 -> src/pages/items/ItemsPage.tsx#component@4:1",
@@ -657,49 +553,14 @@
               "to": "src/pages/items/ItemsPage.tsx#component@4:1"
             },
             {
-              "id": "src/pages/items/ItemsPage.tsx#effect-callback@8:29 -> src/stores/bag-store.ts#state@12:1",
-              "from": "src/pages/items/ItemsPage.tsx#effect-callback@8:29",
-              "to": "src/stores/bag-store.ts#state@12:1"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#effect-callback@7:31 -> src/stores/bag-store.ts#state@12:1",
-              "from": "src/pages/items/ItemsPage.tsx#effect-callback@7:31",
-              "to": "src/stores/bag-store.ts#state@12:1"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@5:17 -> src/stores/bag-store.ts#state@12:1",
-              "from": "src/pages/items/ItemsPage.tsx#component-effect@5:17",
-              "to": "src/stores/bag-store.ts#state@12:1"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@6:17 -> src/stores/bag-store.ts#state@12:1",
-              "from": "src/pages/items/ItemsPage.tsx#component-effect@6:17",
-              "to": "src/stores/bag-store.ts#state@12:1"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@7:19 -> src/stores/bag-store.ts#state@12:1",
-              "from": "src/pages/items/ItemsPage.tsx#component-effect@7:19",
-              "to": "src/stores/bag-store.ts#state@12:1"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@8:17 -> src/stores/bag-store.ts#state@12:1",
-              "from": "src/pages/items/ItemsPage.tsx#component-effect@8:17",
+              "id": "src/pages/items/ItemsPage.tsx#component@4:1 -> src/stores/bag-store.ts#state@12:1",
+              "from": "src/pages/items/ItemsPage.tsx#component@4:1",
               "to": "src/stores/bag-store.ts#state@12:1"
             },
             {
               "id": "src/stores/bag-store.ts#state@12:1 -> src/lib/bag-lines.ts#function@8:1",
               "from": "src/stores/bag-store.ts#state@12:1",
               "to": "src/lib/bag-lines.ts#function@8:1"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#effect-callback@5:29 -> src/stores/bag-store.ts#state@12:1",
-              "from": "src/pages/items/ItemsPage.tsx#effect-callback@5:29",
-              "to": "src/stores/bag-store.ts#state@12:1"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#effect-callback@6:29 -> src/stores/bag-store.ts#state@12:1",
-              "from": "src/pages/items/ItemsPage.tsx#effect-callback@6:29",
-              "to": "src/stores/bag-store.ts#state@12:1"
             },
             {
               "id": "src/pages/items/ItemsPage.tsx#component@4:1 -> src/pages/items/ItemsPage.tsx#render-event@14:29",
@@ -710,46 +571,6 @@
               "id": "src/pages/items/ItemsPage.tsx#component@4:1 -> src/pages/items/ItemsPage.tsx#render-event@21:35",
               "from": "src/pages/items/ItemsPage.tsx#component@4:1",
               "to": "src/pages/items/ItemsPage.tsx#render-event@21:35"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component@4:1 -> src/pages/items/ItemsPage.tsx#component-effect@8:17",
-              "from": "src/pages/items/ItemsPage.tsx#component@4:1",
-              "to": "src/pages/items/ItemsPage.tsx#component-effect@8:17"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@8:17 -> src/pages/items/ItemsPage.tsx#effect-callback@8:29",
-              "from": "src/pages/items/ItemsPage.tsx#component-effect@8:17",
-              "to": "src/pages/items/ItemsPage.tsx#effect-callback@8:29"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component@4:1 -> src/pages/items/ItemsPage.tsx#component-effect@7:19",
-              "from": "src/pages/items/ItemsPage.tsx#component@4:1",
-              "to": "src/pages/items/ItemsPage.tsx#component-effect@7:19"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@7:19 -> src/pages/items/ItemsPage.tsx#effect-callback@7:31",
-              "from": "src/pages/items/ItemsPage.tsx#component-effect@7:19",
-              "to": "src/pages/items/ItemsPage.tsx#effect-callback@7:31"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component@4:1 -> src/pages/items/ItemsPage.tsx#component-effect@5:17",
-              "from": "src/pages/items/ItemsPage.tsx#component@4:1",
-              "to": "src/pages/items/ItemsPage.tsx#component-effect@5:17"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component@4:1 -> src/pages/items/ItemsPage.tsx#component-effect@6:17",
-              "from": "src/pages/items/ItemsPage.tsx#component@4:1",
-              "to": "src/pages/items/ItemsPage.tsx#component-effect@6:17"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@5:17 -> src/pages/items/ItemsPage.tsx#effect-callback@5:29",
-              "from": "src/pages/items/ItemsPage.tsx#component-effect@5:17",
-              "to": "src/pages/items/ItemsPage.tsx#effect-callback@5:29"
-            },
-            {
-              "id": "src/pages/items/ItemsPage.tsx#component-effect@6:17 -> src/pages/items/ItemsPage.tsx#effect-callback@6:29",
-              "from": "src/pages/items/ItemsPage.tsx#component-effect@6:17",
-              "to": "src/pages/items/ItemsPage.tsx#effect-callback@6:29"
             }
           ]
         },

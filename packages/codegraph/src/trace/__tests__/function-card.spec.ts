@@ -307,4 +307,26 @@ describe("the rows of a function card", () => {
     expect(calleesOf(presentDiagramOf(typescript, { "src/party.ts": [rangeAt(4, 3, 5, 20)], "src/store.ts": [rangeAt(1, 1, 1, 38)] }), "src/party.ts#function@3:1")).toStrictEqual(["save"])
     expect(calleesOf(presentDiagramOf(python, { "shop/party.py": [rangeAt(4, 5, 6, 23)], "shop/store.py": [rangeAt(2, 5, 2, 17)] }), "shop/party.py#function@3:1")).toStrictEqual(["save"])
   })
+
+  it("gives no row to a call written in a decorator of the function, though it calls a value of the repository", () => {
+    const files = {
+      "app/pokemon.py": codeOf("def list_pokemon():", "    return []"),
+      "app/routes.py": codeOf(
+        "from fastapi import APIRouter",
+        "from app.pokemon import list_pokemon",
+        "router = APIRouter()",
+        "@router.get(\"/api/pokemon\")",
+        "def read_pokemon():",
+        "    return list_pokemon()",
+      ),
+    }
+    const traceDiagram = presentDiagramOf(files, { "app/pokemon.py": [rangeAt(2, 5, 2, 14)] })
+    const handler = listNodeViews(viewOf(traceDiagram)?.nodes ?? []).find((node) => node.id === "app/routes.py#function@4:1")
+    const labels = listTraceNodes(traceDiagram.traceNodes).find((node) => node.id === "app/routes.py#function@4:1")?.blockLabels ?? []
+
+    expect(handler?.rowGroups.flatMap(({ calleeCards }) => calleeCards ?? []).map(({ name, rowIds }) => [name, rowIds])).toStrictEqual([
+      ["list_pokemon", ["app/routes.py#function@4:1@6:12"]],
+    ])
+    expect(labels.map(({ at }) => at?.line)).toStrictEqual([6, 6])
+  })
 })

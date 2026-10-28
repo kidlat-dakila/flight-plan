@@ -1,4 +1,5 @@
 import { waypointsOf, type LocatedWaypoint } from "@/procedures/read-artifact/utils/artifact-walk"
+import { describeBlockLabels } from "@/procedures/read-artifact/utils/block-label-rows"
 import { lineRangeOfBlock, nameOfContext, pathOfBlock, placeOfBlock } from "@/procedures/read-artifact/utils/context-code-blocks"
 import { coverCode, coverRange, type CoveredCode } from "@/procedures/read-artifact/utils/covered-code"
 import { hasDrawnTrace, type Work, type WorkKind, type WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
@@ -65,7 +66,7 @@ const traceCandidates = (segment: Segment): Candidate[] => {
       segmentId: segment.id,
       describe: (sources, maxLineCount) => ({
         file: path,
-        node: { ...flatNodes[index], name: nameOfBlock(root) },
+        node: { ...flatNodes[index], name: nameOfBlock(root), blockLabels: describeBlockLabels(node, sources) },
         lineage: traceLineageOf(flatNodes[index], flatNodes),
         code: coverRange(sources, path, lineRangeOf(node), maxLineCount),
       }),

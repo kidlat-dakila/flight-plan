@@ -152,16 +152,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Checks whether the X-Api-Key header holds another key than the API key",
-                  "codeBlockId": "src/pokedex/pokemon/views.py#condition@14:5"
-                },
-                {
-                  "label": "Stops the request with a 401",
-                  "codeBlockId": "src/pokedex/pokemon/views.py#call@15:9"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/pokedex/pokemon/views.py#route@/api/pokemon",
@@ -196,20 +187,52 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the trainer from the X-Trainer header",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@20:5"
+                      "label": "Calls Pokemon to make the new Pokemon of the body",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@23:9",
+                      "at": {
+                        "line": 23,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Checks whether the request is a POST",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#condition@21:5"
+                      "label": "Calls list_pokemon to count the Pokemon the trainer has",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@23:9",
+                      "at": {
+                        "line": 23,
+                        "column": 34
+                      }
                     },
                     {
-                      "label": "Reads the JSON body of the request",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@22:9"
+                      "label": "Returns the saved Pokemon with a 201 when the request is a POST",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#condition@21:5",
+                      "at": {
+                        "line": 24,
+                        "column": 9
+                      }
                     },
                     {
-                      "label": "Makes the Pokemon with the next id, saves it and returns it with a 201",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@23:9"
+                      "label": "Calls save_pokemon when the request is a POST to store the new Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#condition@21:5",
+                      "at": {
+                        "line": 24,
+                        "column": 23
+                      }
+                    },
+                    {
+                      "label": "Returns every Pokemon of the trainer",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#function@18:1",
+                      "at": {
+                        "line": 25,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls list_pokemon to read the Pokemon of the trainer",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#function@18:1",
+                      "at": {
+                        "line": 25,
+                        "column": 44
+                      }
                     }
                   ]
                 }
@@ -275,16 +298,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Finds the Pokemon of the id in the party",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@30:9"
+                      "label": "Calls find_pokemon to look up the Pokemon of the id",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@30:9",
+                      "at": {
+                        "line": 30,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Checks whether no Pokemon has the id",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#condition@31:9"
-                    },
-                    {
-                      "label": "Stops the request with a 404",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#call@32:13"
+                      "label": "Returns the Pokemon found",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#method@29:5",
+                      "at": {
+                        "line": 33,
+                        "column": 9
+                      }
                     }
                   ]
                 },
@@ -313,20 +340,36 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Finds the Pokemon of the id in the party",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@36:9"
+                      "label": "Calls find_pokemon to look up the Pokemon of the id",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@36:9",
+                      "at": {
+                        "line": 36,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Checks whether no Pokemon has the id",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#condition@37:9"
+                      "label": "Returns the saved Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#method@35:5",
+                      "at": {
+                        "line": 40,
+                        "column": 9
+                      }
                     },
                     {
-                      "label": "Stops the request with a 404",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#call@38:13"
+                      "label": "Calls save_pokemon to store the Pokemon with its new level",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#method@35:5",
+                      "at": {
+                        "line": 40,
+                        "column": 23
+                      }
                     },
                     {
-                      "label": "Reads the new level from the JSON body and saves the Pokemon with it",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@39:9"
+                      "label": "Calls Pokemon to copy the Pokemon with the level of the body",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#method@35:5",
+                      "at": {
+                        "line": 40,
+                        "column": 36
+                      }
                     }
                   ]
                 },
@@ -349,8 +392,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Removes the Pokemon of the id from the party",
-                      "codeBlockId": "src/pokedex/pokemon/views.py#call@43:9"
+                      "label": "Calls remove_pokemon to take the Pokemon out of the party",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#call@43:9",
+                      "at": {
+                        "line": 43,
+                        "column": 9
+                      }
+                    },
+                    {
+                      "label": "Returns an empty 204 response",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#method@42:5",
+                      "at": {
+                        "line": 44,
+                        "column": 9
+                      }
                     }
                   ]
                 }

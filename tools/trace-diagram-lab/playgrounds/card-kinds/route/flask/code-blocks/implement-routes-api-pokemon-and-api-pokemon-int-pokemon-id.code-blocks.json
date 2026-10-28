@@ -1012,6 +1012,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 8,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/health.py"
         ],
@@ -1447,6 +1453,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 16,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/pokemon/store.py",
           "src/pokedex/pokemon/views.py"
@@ -1589,6 +1601,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 20,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/pokemon/store.py",
           "src/pokedex/pokemon/views.py"
@@ -1731,6 +1749,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 25,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/pokemon/store.py",
           "src/pokedex/pokemon/views.py"
@@ -2851,6 +2875,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 25,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/pokemon/views.py"
         ],
@@ -3165,6 +3195,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 24,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -3758,6 +3794,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 33,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -4266,6 +4308,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 40,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -4957,6 +5005,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 44,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {

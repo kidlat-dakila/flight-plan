@@ -58,7 +58,7 @@ const planTraceNode = (artifact: ReviewArtifact, target: TargetOf<"trace-node">)
   if (!isTraceNodeUnwritten(node)) return ALREADY_WRITTEN
   return planned(
     withRequiredCard(artifact, target.segmentId, target.nodeId),
-    `The reviewer asks for the write-up of the Trace Diagram node ${quoted(target.nodeId)} of segment ${quoted(target.segmentId)} alone: write its label and the labels of its trigger labels and listed blocks, and nothing else.`,
+    `The reviewer asks for the write-up of the Trace Diagram node ${quoted(target.nodeId)} of segment ${quoted(target.segmentId)} alone: write its label, its trigger labels and its block labels, each block label by its ${quoted("codeBlockId")} and its ${quoted("at")}, and nothing else.`,
     "Explaining the card",
   )
 }

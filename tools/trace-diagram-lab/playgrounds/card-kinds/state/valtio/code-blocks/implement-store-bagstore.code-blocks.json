@@ -416,6 +416,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 4,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/App.tsx"
         ],
@@ -1364,6 +1370,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/lib/bag-lines.ts"
         ],
@@ -2342,6 +2354,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 27
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -3768,6 +3786,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 8,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pages/items/ItemsPage.tsx"
         ],

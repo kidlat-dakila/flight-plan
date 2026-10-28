@@ -234,30 +234,75 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Reads the number of open slots from the store",
-                      "codeBlockId": "src/pages/party/PartyPage.tsx#state@9:3"
+                      "label": "Calls useSelector to read the members of the party",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#component-effect@8:19",
+                      "at": {
+                        "line": 8,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Gets the suggested Pokemon from the API",
-                      "codeBlockId": "src/pages/party/PartyPage.tsx#external-value@11:3"
+                      "label": "Calls useSelector to read the number of open slots",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#component-effect@9:21",
+                      "at": {
+                        "line": 9,
+                        "column": 21
+                      }
                     },
                     {
-                      "label": "Gets the mutation that saves the party",
-                      "codeBlockId": "src/pages/party/PartyPage.tsx#external-value@12:3"
+                      "label": "Calls useGetSuggestionsQuery to load the suggested Pokemon",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#external-value@11:3",
+                      "at": {
+                        "line": 11,
+                        "column": 38
+                      }
+                    },
+                    {
+                      "label": "Calls useSavePartyMutation to get the function that saves the party",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#external-value@12:3",
+                      "at": {
+                        "line": 12,
+                        "column": 23
+                      }
                     },
                     {
                       "label": "Loads the saved party after the first render",
                       "codeBlockId": "src/pages/party/PartyPage.tsx#component-effect@14:3"
                     },
                     {
-                      "label": "Reads the hooks that `pokemonApi` makes for its endpoints",
-                      "codeBlockId": "src/api/pokemon-api.ts#root-variable@20:1"
+                      "label": "Renders the open slots, the party, the suggestions and a Save the party button",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#component@7:1",
+                      "at": {
+                        "line": 18,
+                        "column": 3
+                      }
+                    },
+                    {
+                      "label": "Renders a row with a Release button for each Pokemon of the party",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#render-loop@22:10"
+                    },
+                    {
+                      "label": "Renders an Add button for each suggested Pokemon",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#render-loop@32:10"
                     }
                   ]
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the party page",
+                  "codeBlockId": "src/App.tsx#component@3:1",
+                  "at": {
+                    "line": 4,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<PartyPage />` as the whole content of the app",
+                  "codeBlockId": "src/App.tsx#render@6:7"
+                }
+              ]
             },
             {
               "id": "src/store/party-slice.ts#state@19:1",
@@ -377,12 +422,7 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": [
-                    {
-                      "label": "Checks that the party is idle and has an open slot",
-                      "codeBlockId": "src/store/party-slice.ts#condition@24:7"
-                    }
-                  ]
+                  "blockLabels": []
                 },
                 {
                   "id": "src/store/party-slice.ts#code-event@47:3",
@@ -403,12 +443,7 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": [
-                    {
-                      "label": "Writes the id and the time under `party.last-released`",
-                      "codeBlockId": "src/store/party-slice.ts#storage@48:5"
-                    }
-                  ]
+                  "blockLabels": []
                 },
                 {
                   "id": "src/store/party-slice.ts#effect-callback@39:36",
@@ -428,12 +463,7 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": [
-                    {
-                      "label": "Sets the status to `\"failed\"`",
-                      "codeBlockId": "src/store/party-slice.ts#property@40:9"
-                    }
-                  ]
+                  "blockLabels": []
                 },
                 {
                   "id": "src/store/party-slice.ts#effect-callback@35:37",
@@ -457,12 +487,7 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": [
-                    {
-                      "label": "Stores the loaded members and sets the status to `\"idle\"`",
-                      "codeBlockId": "src/store/party-slice.ts#property@36:9"
-                    }
-                  ]
+                  "blockLabels": []
                 },
                 {
                   "id": "src/store/party-slice.ts#effect-callback@32:35",
@@ -482,12 +507,7 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": [
-                    {
-                      "label": "Sets the status to `\"loading\"`",
-                      "codeBlockId": "src/store/party-slice.ts#property@33:9"
-                    }
-                  ]
+                  "blockLabels": []
                 }
               ],
               "triggerLabels": [
@@ -604,19 +624,25 @@
             {
               "id": "src/pages/party/PartyPage.tsx#component-effect@14:3",
               "type": "component-effect",
-              "label": "Runs its callback after the first render",
+              "label": "Dispatches the thunk that loads the party after the first render",
               "description": "When `PartyPage` first renders, React runs [this effect](code:src/pages/party/PartyPage.tsx#L14-16). `dispatch` does not change, so the effect runs once.",
               "codeBlockIds": [
                 "src/pages/party/PartyPage.tsx#component-effect@14:3",
-                "src/pages/party/PartyPage.tsx#effect-callback@14:13"
+                "src/pages/party/PartyPage.tsx#effect-callback@14:13",
+                "src/pages/party/PartyPage.tsx#function@14:13",
+                "src/pages/party/PartyPage.tsx#call@15:5"
               ],
               "diffCodeBlockIds": [],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Runs the callback that loads the party",
-                  "codeBlockId": "src/pages/party/PartyPage.tsx#effect-callback@14:13"
+                  "label": "Calls loadParty to make the thunk that loads the saved party",
+                  "codeBlockId": "src/pages/party/PartyPage.tsx#call@15:5",
+                  "at": {
+                    "line": 15,
+                    "column": 14
+                  }
                 }
               ]
             },
@@ -632,7 +658,16 @@
               "diffCodeBlockIds": [],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls partySlice.actions.removeMember to make the action that releases the Pokemon",
+                  "codeBlockId": "src/pages/party/PartyPage.tsx#function@25:44",
+                  "at": {
+                    "line": 25,
+                    "column": 59
+                  }
+                }
+              ]
             },
             {
               "id": "src/pages/party/PartyPage.tsx#render-event@34:35",
@@ -646,7 +681,16 @@
               "diffCodeBlockIds": [],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls partySlice.actions.addMember to make the action that adds the suggested Pokemon",
+                  "codeBlockId": "src/pages/party/PartyPage.tsx#function@34:44",
+                  "at": {
+                    "line": 34,
+                    "column": 59
+                  }
+                }
+              ]
             },
             {
               "id": "src/pages/party/PartyPage.tsx#render-event@40:29",
@@ -660,25 +704,14 @@
               "diffCodeBlockIds": [],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/pages/party/PartyPage.tsx#effect-callback@14:13",
-              "type": "effect-callback",
-              "label": "Dispatches the thunk that loads the party",
-              "description": "When React runs the effect of `PartyPage`, the effect calls this callback, and [the callback dispatches `loadParty()`](code:src/pages/party/PartyPage.tsx#L15).",
-              "codeBlockIds": [
-                "src/pages/party/PartyPage.tsx#effect-callback@14:13",
-                "src/pages/party/PartyPage.tsx#function@14:13",
-                "src/pages/party/PartyPage.tsx#call@15:5"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Dispatches `loadParty()`",
-                  "codeBlockId": "src/pages/party/PartyPage.tsx#call@15:5"
+                  "label": "Calls saveParty to save the ids of the party members",
+                  "codeBlockId": "src/pages/party/PartyPage.tsx#function@40:38",
+                  "at": {
+                    "line": 40,
+                    "column": 44
+                  }
                 }
               ]
             }
@@ -705,8 +738,8 @@
               "to": "src/pages/party/PartyPage.tsx#component@7:1"
             },
             {
-              "id": "src/pages/party/PartyPage.tsx#effect-callback@14:13 -> src/store/party-slice.ts#root-variable@13:1",
-              "from": "src/pages/party/PartyPage.tsx#effect-callback@14:13",
+              "id": "src/pages/party/PartyPage.tsx#component-effect@14:3 -> src/store/party-slice.ts#root-variable@13:1",
+              "from": "src/pages/party/PartyPage.tsx#component-effect@14:3",
               "to": "src/store/party-slice.ts#root-variable@13:1"
             },
             {
@@ -768,11 +801,6 @@
               "id": "src/store/party-slice.ts#state@19:1 -> src/store/party-slice.ts#code-event@47:3",
               "from": "src/store/party-slice.ts#state@19:1",
               "to": "src/store/party-slice.ts#code-event@47:3"
-            },
-            {
-              "id": "src/pages/party/PartyPage.tsx#component-effect@14:3 -> src/pages/party/PartyPage.tsx#effect-callback@14:13",
-              "from": "src/pages/party/PartyPage.tsx#component-effect@14:3",
-              "to": "src/pages/party/PartyPage.tsx#effect-callback@14:13"
             },
             {
               "id": "src/store/party-slice.ts#state@19:1 -> src/store/party-slice.ts#effect-callback@39:36",

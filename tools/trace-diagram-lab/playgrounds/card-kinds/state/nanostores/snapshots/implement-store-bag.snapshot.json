@@ -243,18 +243,43 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Keeps the value of the bag store",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#state@6:3"
+                      "label": "Calls useStore to read the bag store and render again when it changes",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#state@6:3",
+                      "at": {
+                        "line": 6,
+                        "column": 15
+                      }
+                    },
+                    {
+                      "label": "Renders the number of lines in the bag, an Empty the bag button and the items",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#component@5:1",
+                      "at": {
+                        "line": 7,
+                        "column": 3
+                      }
                     },
                     {
                       "label": "Renders one row with an Add to bag button for each item, marking the last item added",
-                      "codeBlockId": "src/pages/items/ItemsPage.tsx#function@14:20"
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#render-loop@14:10"
                     }
                   ]
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the title and the items page",
+                  "codeBlockId": "src/App.tsx#component@3:1",
+                  "at": {
+                    "line": 4,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<ItemsPage />` below the title",
+                  "codeBlockId": "src/App.tsx#render@7:7"
+                }
+              ]
             },
             {
               "id": "src/stores/bag.ts#function@14:1",
@@ -275,12 +300,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Sets the bag to no line and no last item",
-                  "codeBlockId": "src/stores/bag.ts#call@15:3"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/stores/bag.ts#function@10:1",
@@ -307,8 +327,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Sets the lines with the item added and keeps its id",
-                  "codeBlockId": "src/stores/bag.ts#call@11:3"
+                  "label": "Calls addLine to add one of the item to the lines",
+                  "codeBlockId": "src/stores/bag.ts#property@11:14",
+                  "at": {
+                    "line": 11,
+                    "column": 21
+                  }
                 }
               ]
             },
@@ -385,16 +409,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Finds the line of the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#variable@9:3"
+                  "label": "Returns the lines with a new line for the item when it has none",
+                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3",
+                  "at": {
+                    "line": 10,
+                    "column": 27
+                  }
                 },
                 {
-                  "label": "Adds a new line when the bag has none for the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3"
-                },
-                {
-                  "label": "Adds one to the quantity of the line of the item",
-                  "codeBlockId": "src/lib/bag-lines.ts#function@11:20"
+                  "label": "Returns the lines with one more of the item on its line",
+                  "codeBlockId": "src/lib/bag-lines.ts#function@8:1",
+                  "at": {
+                    "line": 11,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -428,7 +456,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls addToBag to add the item of the row to the bag",
+                  "codeBlockId": "src/pages/items/ItemsPage.tsx#function@18:44",
+                  "at": {
+                    "line": 18,
+                    "column": 50
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

@@ -110,20 +110,32 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Sets the largest party to 6 Pokemon",
-                  "codeBlockId": "src/services/party.ts#root-variable@3:1"
+                  "label": "Calls countPartyOf to count the Pokemon of the new trainer",
+                  "codeBlockId": "src/services/party.ts#external-value@17:3",
+                  "at": {
+                    "line": 17,
+                    "column": 27
+                  }
                 },
                 {
-                  "label": "Declares the error that a full party throws",
-                  "codeBlockId": "src/services/party.ts#class@5:1"
+                  "label": "Throws a PartyFullError when the party of the new trainer is full",
+                  "codeBlockId": "src/services/party.ts#throw@18:33"
                 },
                 {
-                  "label": "Counts the Pokemon of the receiving trainer",
-                  "codeBlockId": "src/services/party.ts#external-value@17:3"
+                  "label": "Returns the Pokemon with its new trainer",
+                  "codeBlockId": "src/services/party.ts#function@16:1",
+                  "at": {
+                    "line": 19,
+                    "column": 3
+                  }
                 },
                 {
-                  "label": "Checks whether the receiving party already has 6 Pokemon",
-                  "codeBlockId": "src/services/party.ts#condition@18:3"
+                  "label": "Calls transferPokemon to move the Pokemon to the new trainer",
+                  "codeBlockId": "src/services/party.ts#function@16:1",
+                  "at": {
+                    "line": 19,
+                    "column": 10
+                  }
                 }
               ]
             },
@@ -164,8 +176,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Updates the trainer relation of the Pokemon and returns the Pokemon with its trainer",
-                  "codeBlockId": "src/repositories/pokemon.ts#data@17:10"
+                  "label": "Returns the updated Pokemon with its new trainer",
+                  "codeBlockId": "src/repositories/pokemon.ts#function@16:1",
+                  "at": {
+                    "line": 17,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -197,8 +213,12 @@
               ],
               "blockLabels": [
                 {
-                  "label": "Filters the Pokemon by the id of the trainer",
-                  "codeBlockId": "src/repositories/pokemon.ts#property@13:29"
+                  "label": "Returns the count of Pokemon of the trainer",
+                  "codeBlockId": "src/repositories/pokemon.ts#function@12:1",
+                  "at": {
+                    "line": 13,
+                    "column": 3
+                  }
                 }
               ]
             }

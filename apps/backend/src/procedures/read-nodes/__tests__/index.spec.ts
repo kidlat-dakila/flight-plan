@@ -1,4 +1,6 @@
 import { createArtifactContext, DRAFT_ARTIFACT, DRAFT_TRACE_NODE, DRAFT_SEGMENT, draftTraceOf, KEY, SUBTOTAL_PATH } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
+import { TEAM_FILES } from "@/procedures/read-artifact/utils/__tests__/team-fixture"
+import { traceCode } from "@/procedures/read-artifact/utils/__tests__/traced-fixture"
 import { readNodes } from "@/procedures/read-nodes"
 
 describe("readNodes", () => {
@@ -110,6 +112,24 @@ describe("readNodes", () => {
       ],
     })
     expect(JSON.stringify(reading)).not.toContain("\"children\"")
+  })
+
+  it("shows each block label of a node with its place and the name of the code it labels", async () => {
+    const team = traceCode(TEAM_FILES)
+    const context = await createArtifactContext({ ...DRAFT_ARTIFACT, sources: team.sources, segments: [{ ...DRAFT_SEGMENT, traceDiagram: team.traceDiagram }] })
+
+    const reading = await readNodes({ ...KEY, ids: ["src/pages/badges.tsx#component@1:1"] }, context)
+
+    expect(reading).toMatchObject({
+      items: [{
+        node: {
+          blockLabels: [
+            { codeBlockId: "src/pages/badges.tsx#component@1:1", at: { line: 2, column: 3 }, kind: "return", name: "return <p>", label: null },
+            { codeBlockId: "src/pages/badges.tsx#render-loop@4:8", kind: "loop", name: "badges.map()", label: null },
+          ],
+        },
+      }],
+    })
   })
 
   it("cuts the code at the line limit", async () => {

@@ -6,7 +6,7 @@ Two things are made of steps:
 
 | What | Its steps |
 |---|---|
-| A node of the Trace Diagram | Its rows that are steps and calls: the rows under Calls and Steps of a component, and every row after the arguments of any other node |
+| A node of the Trace Diagram that lists its rows as written | Its rows that are steps and calls: every row after the arguments. A [function card](../trace-diagram/function-card.md) has no steps: it lists its calls, its returns and its raises. Neither has a [component card](../trace-diagram/component-card.md), nor an effect card or a memo card. |
 | A waypoint of the [Code Walkthrough](../code-walkthrough.md) | Its children |
 
 Both use the same folding, each with rules of its own. [Two readers](#two-readers) lists where they differ.
@@ -115,11 +115,11 @@ A run ends at a step that stands alone. Only statements with the same step aroun
 | Markup | No row | Only a `render-condition`, a `render-loop` and a `render-event`, each with all that is inside it |
 | One step alone | A row | No child: the waypoint of the declaration covers it |
 
-**An event, an effect and a callback differ most.** In the diagram each is a node of its own inside a component, with rows of its own, and a row of the one node of any other root block, and a function an event is handed by name is the body of that event: its steps are rows of the event, and it is no step of the node it is declared in. In the walkthrough it is a step of its declaration. It is a child only when its own lines changed, and the changed steps inside it are then its children. When only code inside it changed, it is no step, and those steps are children of the declaration.
+**An event, an effect and a callback differ most.** In the diagram each is a node of its own inside a component, with rows of its own, and a row of the one node of any other root block. The callback of an effect hook is part of the card of its effect, and a function an event is handed by name is the body of that event: its calls are rows of the event, and it is no step of the node it is declared in. In the walkthrough it is a step of its declaration. It is a child only when its own lines changed, and the changed steps inside it are then its children. When only code inside it changed, it is no step, and those steps are children of the declaration.
 
-For `renameUser`, with every line changed:
+For `renameUser`, with every line changed, in a card that lists steps and in its walkthrough. As a function, `renameUser` is a function card, which lists `getUsers()` and `saveUser()` under External calls and the two throws and the `return` under Returns and raises instead.
 
-| Step | Trace row | Waypoint child |
+| Step | Row in a card with steps | Waypoint child |
 |---|---|---|
 | `const users = getUsers()` | `users` | `renameUser › users` |
 | `if (!users) throw …` | `Condition :4` | `renameUser › Condition :4` |
@@ -148,5 +148,5 @@ A step is only as exact as the blocks under it. Five things follow from the bloc
 | File | What it holds |
 |---|---|
 | `packages/codegraph/src/trace-diagram/step-folding.ts` | The folding: `statementOf`, `isStepRow`, `listRuns`, `nameOfRun`, and `StepRules`, the four rules a reader supplies |
-| `packages/codegraph/src/trace-diagram/listed-blocks.ts` | The rules of a trace node, and its other lists |
+| `packages/codegraph/src/trace-diagram/listed-blocks.ts` | The rules of a trace node that is no function card, and its other lists |
 | `packages/codegraph/src/code-walkthrough/steps.ts` | The rules of a waypoint, and the tree of its children |

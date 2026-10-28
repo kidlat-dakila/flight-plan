@@ -2,6 +2,7 @@ import { createSegment, createViewContext } from "@/__tests__/review-fixture"
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
 import { buildTrace, buildTraceTabs } from "@/trace/build"
 import { presentDiagramOf } from "@/trace-diagram/__tests__/diagram-fixture"
+import { siteIdOf } from "@/trace-diagram/function-card"
 import type { TraceNodeView } from "@flightplan/configurations"
 
 const PROMO = codeOf("export const fetchPromo = (code) => {", "  return code.trim()", "}")
@@ -26,6 +27,8 @@ const PROMO_FORM = codeOf(
 )
 const FILES = { "src/promo.ts": PROMO, "src/use-apply-promo.ts": USE_APPLY_PROMO, "src/promo-form.tsx": PROMO_FORM }
 const PROMO_CHANGE = { "src/promo.ts": [rangeAt(2, 10, 2, 20)] }
+
+const FIXED_KINDS: ReadonlySet<string> = new Set(["argument", "state", "dependency", "outside-variable"])
 
 const listNodeViews = (nodes: readonly TraceNodeView[]): TraceNodeView[] => nodes.flatMap((node) => [node, ...listNodeViews(node.children)])
 
@@ -68,13 +71,13 @@ describe("the hints of the trace band", () => {
     const form = nodeViewsOf().find((node) => node.name === "PromoForm")
 
     expect(form?.triggerLabels.map((trigger) => [trigger.name, trigger.hint])).toStrictEqual([["form.onSubmit", "No lines changed in a component, but it uses code that did."]])
-    expect(form?.blockLists.flatMap((list) => list.blocks).find((block) => block.name === "useEffect")?.hint).toBe("No lines changed in an effect, but it uses code that did.")
+    expect(form?.blockLists.flatMap((list) => list.blocks).find((block) => block.name === "useEffect()")?.hint).toBe("No lines changed in an effect, but it uses code that did.")
   })
 
   it("gives a diagram with no description a hint naming what its cards are, once each", () => {
     const segment = createSegment({ traceDiagram: presentDiagramOf(FILES, PROMO_CHANGE) })
 
-    expect(buildTrace(segment, "", [], createViewContext()).diagram?.descriptionHint).toBe("Runs through a component, a hook, plain logic and an effect.")
+    expect(buildTrace(segment, "", [], createViewContext()).diagram?.descriptionHint).toBe("Runs through a component, a hook, plain logic, an effect and UI state.")
   })
 
   it("gives no hint to what is written", () => {
@@ -138,10 +141,10 @@ describe("the block labels of a node of the trace band", () => {
       traceNodes: traceDiagram.traceNodes.map((node) => ({ ...node, blockLabels: node.blockLabels.map((listed) => (listed === written ? { ...listed, label: "Holds the typed code" } : listed)) })),
     }
     const views = listNodeViews(buildTrace(createSegment({ traceDiagram: labelled }), "", [], createViewContext()).diagram?.nodes ?? [])
-    const steps = views.flatMap((node) => node.blockLists).filter(({ kind }) => kind !== "argument").flatMap(({ blocks }) => blocks)
+    const steps = views.flatMap((node) => node.blockLists).filter(({ kind }) => !FIXED_KINDS.has(kind)).flatMap(({ blocks }) => blocks)
 
     expect(traceDiagram.traceNodes.flatMap((node) => node.blockLabels).every((listed) => listed.label === null)).toBe(true)
-    expect(steps.filter((block) => !block.isDraft).map((block) => [block.id, block.label])).toStrictEqual([[written.codeBlock.id, "Holds the typed code"]])
+    expect(steps.filter((block) => !block.isDraft).map((block) => [block.id, block.label])).toStrictEqual([[siteIdOf(written.codeBlock, written.at), "Holds the typed code"]])
     expect(steps.filter((block) => block.isDraft).every((block) => block.label === block.name)).toBe(true)
   })
 })
@@ -152,26 +155,29 @@ describe("the edges of the trace band", () => {
     const edges = buildTrace(segment, "", [], createViewContext()).diagram?.edges ?? []
 
     expect(edges.map(({ from, to, fromRowId, toRowId }) => [from, fromRowId, to, toRowId])).toStrictEqual([
-      ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#external-value@6:3", "src/use-apply-promo.ts#hook@3:1", null],
+      ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#external-value@6:3@6:22", "src/use-apply-promo.ts#hook@3:1", null],
       ["src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#call@9:34@9:34", "src/use-apply-promo.ts#hook@3:1", null],
-      ["src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#call@9:48@9:48", "src/promo.ts#function@1:1", null],
-      ["src/promo-form.tsx#effect-callback@8:13", "src/promo-form.tsx#call@8:21@8:21", "src/promo.ts#function@1:1", null],
+      ["src/promo-form.tsx#render-event@9:16", null, "src/promo-form.tsx#derived@7:3", null],
+      ["src/promo-form.tsx#component-effect@8:3", "src/promo-form.tsx#call@8:21@8:21", "src/promo.ts#function@1:1", null],
       ["src/use-apply-promo.ts#hook@3:1", null, "src/promo.ts#function@1:1", null],
-      ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#derived@7:3", "src/promo.ts#function@1:1", null],
+      ["src/promo-form.tsx#derived@7:3", "src/promo-form.tsx#function@7:25@7:31", "src/promo.ts#function@1:1", null],
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#component-effect@8:3", "src/promo-form.tsx#component-effect@8:3", null],
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#render-event@9:16", null],
-      ["src/promo-form.tsx#component-effect@8:3", "src/promo-form.tsx#effect-callback@8:13", "src/promo-form.tsx#effect-callback@8:13", null],
+      ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#derived@7:3", "src/promo-form.tsx#derived@7:3", null],
     ])
     expect(new Set(edges.map((edge) => edge.id)).size).toBe(edges.length)
   })
 })
 
 describe("the block lists of a node of the trace band", () => {
-  it("lists the state, the hooks and the effects of a node that are on a chain, each kind once, and leaves out the state no chain reads on the way to a change", () => {
+  it("lists the props, the state, the calls, the memos, the effects and the returns of a component, each kind once", () => {
     expect(blockListsOf("src/promo-form.tsx#component@4:1")).toStrictEqual([
-      ["state", "State", ["shown"]],
-      ["hook", "Hooks", ["useApplyPromo"]],
-      ["effect", "Effects", ["useEffect"]],
+      ["argument", "Args", ["onApplied"]],
+      ["state", "State", ["code"]],
+      ["call", "Calls", ["useApplyPromo()"]],
+      ["memo", "Memos", ["shown = useMemo()"]],
+      ["effect", "Effects", ["useEffect()"]],
+      ["render", "Renders", ["return <form>"]],
     ])
   })
 
@@ -179,7 +185,7 @@ describe("the block lists of a node of the trace band", () => {
     expect(blockListsOf("src/use-apply-promo.ts#hook@3:1")).toStrictEqual([["return", "Returns", ["return"]]])
   })
 
-  it("lists an effect that makes a state as that state, though no chain passes through its declaration, and names another effect after what it calls", () => {
+  it("lists a state a component declares, though no chain passes through its declaration, its call of a store hook, and names an effect after what it calls", () => {
     const files = {
       "src/cart-store.ts": codeOf("import { create } from \"zustand\"", "export const selectTotal = (state) => state.total", "export const useCartStore = create(() => ({ total: 0 }))"),
       "src/poll.ts": codeOf("export const poll = (run) => run()"),
@@ -197,7 +203,7 @@ describe("the block lists of a node of the trace band", () => {
     const [summary] = listNodeViews(buildTrace(createSegment({ traceDiagram: diagram }), "", [], createViewContext()).diagram?.nodes ?? [])
 
     expect(diagram.traceNodes[0].codeBlocks.map((block) => block.type)).not.toContain("state")
-    expect(summary.blockLists.map(({ kind, blocks }) => [kind, blocks.map((block) => block.name)])).toStrictEqual([["state", ["total"]], ["effect", ["poll"]]])
+    expect(summary.blockLists.map(({ kind, blocks }) => [kind, blocks.map((block) => block.name)])).toStrictEqual([["state", ["total"]], ["call", ["useCartStore()"]], ["effect", ["poll()"]], ["render", ["return <p>"]]])
   })
 
   it("lists an argument of a function card as a row with nothing to write, no row for a read through it, and no parameter", () => {
@@ -256,7 +262,7 @@ const handlerEdgesBetween = (from: string, to: string): [string | null, string |
 
 describe("the rows of a node that holds nodes of its own", () => {
   it("has no node for a function an event of the node is handed: it is the trigger of that event, and its calls are rows of the event", () => {
-    expect(handlerRowsOf(FORM)).toStrictEqual([["Hooks", ["useApplyPromo"]], ["Calls", ["shown"]]])
+    expect(handlerRowsOf(FORM)).toStrictEqual([["State", ["code"]], ["Calls", ["useApplyPromo()", "fetchPromo()"]], ["Renders", ["return <form>"]]])
     expect(handlerNodeOf(FORM)?.triggerLabels.map((trigger) => trigger.name)).toStrictEqual(["form.onSubmit", "input.onChange"])
     expect(handlerNodeOf(SUBMIT)).toBeUndefined()
     expect(handlerRowsOf(SUBMIT_EVENT)).toStrictEqual([["Calls", ["mutate()"]]])
@@ -270,18 +276,18 @@ describe("the rows of a node that holds nodes of its own", () => {
     expect(handlerRowsOf(FETCH_PROMO)).toStrictEqual([["Args", ["code"]], ["Returns", ["return", "return"]]])
   })
 
-  it("lists a value kept from other code as a call, marked as changed when a block folded into it is", () => {
+  it("lists each call of a component into other code as a row, marked as changed when its line is", () => {
     const calls = handlerNodeOf(FORM)?.blockLists.find((list) => list.kind === "call")?.blocks ?? []
 
-    expect(calls.map(({ name, change }) => [name, change])).toStrictEqual([["shown", "modified"]])
+    expect(calls.map(({ name, change }) => [name, change])).toStrictEqual([["useApplyPromo()", null], ["fetchPromo()", "modified"]])
   })
 
-  it("has no row for changed markup: the node of the component holds its markup as one unit, and is marked as changed", () => {
+  it("has no row for changed markup that renders no child, only the row of its return, and marks the node as changed", () => {
     const traceDiagram = presentDiagramOf(HANDLERS, { ...HANDLERS_CHANGE, "src/promo-form.tsx": [rangeAt(11, 10, 11, 15), rangeAt(11, 34, 11, 40)] })
     const form = listNodeViews(buildTrace(createSegment({ traceDiagram }), "", [], createViewContext()).diagram?.nodes ?? []).find((node) => node.id === FORM)
 
     expect(traceDiagram.traceNodes.find((node) => node.id === FORM)?.diffCodeBlocks.map((block) => block.type)).toContain("render")
-    expect(form?.blockLists.map(({ label, blocks }) => [label, blocks.map((block) => block.name)])).toStrictEqual([["Hooks", ["useApplyPromo"]], ["Calls", ["shown"]]])
+    expect(form?.blockLists.map(({ label, blocks }) => [label, blocks.map((block) => block.name)])).toStrictEqual([["State", ["code"]], ["Calls", ["useApplyPromo()", "fetchPromo()"]], ["Renders", ["return <form>"]]])
     expect(form?.change).toBe("modified")
   })
 
@@ -314,8 +320,8 @@ describe("the edges of a node that holds nodes of its own", () => {
   })
 
   it("joins the row of a step to the node the step leads to, through the value of the component it calls", () => {
-    expect(handlerEdgesBetween(FORM, HOOK)).toStrictEqual([["src/promo-form.tsx#external-value@6:3", null]])
-    expect(handlerEdgesBetween(FORM, FETCH_PROMO)).toStrictEqual([["src/promo-form.tsx#external-value@10:3", null]])
+    expect(handlerEdgesBetween(FORM, HOOK)).toStrictEqual([["src/promo-form.tsx#external-value@6:3@6:22", null]])
+    expect(handlerEdgesBetween(FORM, FETCH_PROMO)).toStrictEqual([["src/promo-form.tsx#condition@10:17@10:24", null]])
   })
 
   it("leaves the row of a call of the function an event is handed for the node that call leads to", () => {
@@ -441,12 +447,20 @@ describe("the rows of a card", () => {
     )
   })
 
-  it("groups the rows of a component: arguments, state, a group per kind of call, its triggers, then its steps", () => {
-    expect(groupsOf(bandOf(CALLER_FILES, { ...CALLEE_CHANGE, "src/list.tsx": [rangeAt(11, 3, 11, 12)] }), LIST)).toStrictEqual([
-      ["Hooks", ["useUsers"]],
-      ["Calls", ["users"]],
+  it("groups the rows of a component: props, state, its calls in a card of each callee, its triggers, then what it renders, and no step", () => {
+    const band = bandOf(CALLER_FILES, { ...CALLEE_CHANGE, "src/list.tsx": [rangeAt(11, 3, 11, 12)] })
+
+    expect(groupsOf(band, LIST)).toStrictEqual([
+      ["Props", ["title"]],
+      ["State", ["open"]],
+      ["External calls", []],
       ["Triggers", ["form.onSubmit"]],
-      ["Steps", ["Condition :11"]],
+      ["Renders", []],
+    ])
+    expect(calleeCardsOf(band, LIST)).toStrictEqual([
+      ["getUsers", "Function", ["getUsers()"]],
+      ["useUsers", "Hook", ["useUsers()"]],
+      ["saveUser", "Function", ["saveUser()"]],
     ])
   })
 

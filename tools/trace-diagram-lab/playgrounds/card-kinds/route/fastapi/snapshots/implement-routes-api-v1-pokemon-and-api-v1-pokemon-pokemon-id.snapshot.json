@@ -231,20 +231,36 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Makes the Pokemon with the next id and saves it to the party",
-                      "codeBlockId": "src/pokedex/pokemon/routes.py#external-value@12:5"
+                      "label": "Calls Pokemon to make the new Pokemon of the draft",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#external-value@12:5",
+                      "at": {
+                        "line": 12,
+                        "column": 15
+                      }
                     },
                     {
-                      "label": "Takes the trainer as a string from a dependency",
-                      "codeBlockId": "src/pokedex/pokemon/dependencies.py#root-variable@22:1"
+                      "label": "Calls list_pokemon to count the Pokemon the trainer has",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#external-value@12:5",
+                      "at": {
+                        "line": 12,
+                        "column": 30
+                      }
                     },
                     {
-                      "label": "Asks FastAPI to resolve the trainer before the call",
-                      "codeBlockId": "src/pokedex/pokemon/dependencies.py#effect@22:33"
+                      "label": "Returns the saved Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@10:1",
+                      "at": {
+                        "line": 13,
+                        "column": 5
+                      }
                     },
                     {
-                      "label": "Reads the trainer from the x-trainer header",
-                      "codeBlockId": "src/pokedex/pokemon/dependencies.py#effect-callback@22:41"
+                      "label": "Calls save_pokemon to store the new Pokemon in the party",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@10:1",
+                      "at": {
+                        "line": 13,
+                        "column": 12
+                      }
                     }
                   ]
                 },
@@ -271,16 +287,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Takes the trainer as a string from a dependency",
-                      "codeBlockId": "src/pokedex/pokemon/dependencies.py#root-variable@22:1"
+                      "label": "Returns every Pokemon of the trainer",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@16:1",
+                      "at": {
+                        "line": 18,
+                        "column": 5
+                      }
                     },
                     {
-                      "label": "Asks FastAPI to resolve the trainer before the call",
-                      "codeBlockId": "src/pokedex/pokemon/dependencies.py#effect@22:33"
-                    },
-                    {
-                      "label": "Reads the trainer from the x-trainer header",
-                      "codeBlockId": "src/pokedex/pokemon/dependencies.py#effect-callback@22:41"
+                      "label": "Calls list_pokemon to read the Pokemon of the trainer",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@16:1",
+                      "at": {
+                        "line": 18,
+                        "column": 12
+                      }
                     }
                   ]
                 }
@@ -321,12 +341,24 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Finds the Pokemon of the id in the party",
-                      "codeBlockId": "src/pokedex/pokemon/routes.py#external-value@23:5"
+                      "label": "Calls find_pokemon to look up the Pokemon of the id",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#external-value@23:5",
+                      "at": {
+                        "line": 23,
+                        "column": 15
+                      }
                     },
                     {
-                      "label": "Checks whether no Pokemon has the id",
-                      "codeBlockId": "src/pokedex/pokemon/routes.py#condition@24:5"
+                      "label": "Raises an HTTPException when no Pokemon has the id",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#throw@25:9"
+                    },
+                    {
+                      "label": "Returns the Pokemon found",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@21:1",
+                      "at": {
+                        "line": 26,
+                        "column": 5
+                      }
                     }
                   ]
                 },
@@ -363,16 +395,28 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Takes the trainer as a string from a dependency",
-                      "codeBlockId": "src/pokedex/pokemon/dependencies.py#root-variable@22:1"
+                      "label": "Returns the saved Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@29:1",
+                      "at": {
+                        "line": 31,
+                        "column": 5
+                      }
                     },
                     {
-                      "label": "Asks FastAPI to resolve the trainer before the call",
-                      "codeBlockId": "src/pokedex/pokemon/dependencies.py#effect@22:33"
+                      "label": "Calls save_pokemon to store the new name and level",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@29:1",
+                      "at": {
+                        "line": 31,
+                        "column": 12
+                      }
                     },
                     {
-                      "label": "Reads the trainer from the x-trainer header",
-                      "codeBlockId": "src/pokedex/pokemon/dependencies.py#effect-callback@22:41"
+                      "label": "Calls Pokemon to make the Pokemon from the draft",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@29:1",
+                      "at": {
+                        "line": 31,
+                        "column": 25
+                      }
                     }
                   ]
                 },
@@ -397,8 +441,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Removes the Pokemon of the id from the party",
-                      "codeBlockId": "src/pokedex/pokemon/routes.py#call@36:5"
+                      "label": "Calls remove_pokemon to take the Pokemon out of the party",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#call@36:5",
+                      "at": {
+                        "line": 36,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -455,12 +503,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Writes the method and the path to the pokedex.pokemon logger",
-                  "codeBlockId": "src/pokedex/pokemon/dependencies.py#call@15:5"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/pokedex/pokemon/dependencies.py#function@9:1",
@@ -483,8 +526,8 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Checks whether the header holds another key than the API key",
-                  "codeBlockId": "src/pokedex/pokemon/dependencies.py#condition@10:5"
+                  "label": "Raises an HTTPException when the API key is missing or wrong",
+                  "codeBlockId": "src/pokedex/pokemon/dependencies.py#throw@11:9"
                 }
               ]
             },
@@ -505,7 +548,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns the trainer name trimmed and in lower case",
+                  "codeBlockId": "src/pokedex/pokemon/dependencies.py#function@18:1",
+                  "at": {
+                    "line": 19,
+                    "column": 5
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

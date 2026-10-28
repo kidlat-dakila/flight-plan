@@ -5,10 +5,15 @@
     "new file mode 100644",
     "--- /dev/null",
     "+++ b/src/api/teams.ts",
-    "@@ -0,0 +1,4 @@",
+    "@@ -0,0 +1,9 @@",
     "+export async function publishTeam(trainerId: number): Promise<void> {",
     "+  const response = await fetch(`/api/trainers/${trainerId}/team/publish`, { method: \"POST\" })",
     "+  if (!response.ok) throw new Error(`Publishing the team failed with ${response.status}.`)",
+    "+}",
+    "+",
+    "+export function watchTeam(trainerId: number): () => void {",
+    "+  const events = new EventSource(`/api/trainers/${trainerId}/team/events`)",
+    "+  return () => events.close()",
     "+}",
     "diff --git a/src/hooks/use-trainer.ts b/src/hooks/use-trainer.ts",
     "new file mode 100644",
@@ -36,6 +41,16 @@
     "+export function formatTeamTitle(trainerName: string, teamSize: number, maxSlots: number): string {",
     "+  return `${trainerName}'s team, ${teamSize} of ${maxSlots}`",
     "+}",
+    "diff --git a/src/lib/team-types.ts b/src/lib/team-types.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/lib/team-types.ts",
+    "@@ -0,0 +1,5 @@",
+    "+import type { Pokemon } from \"@/types/pokemon\"",
+    "+",
+    "+export function listTeamTypes(team: Pokemon[]): string[] {",
+    "+  return [...new Set(team.map((pokemon) => pokemon.type))]",
+    "+}",
     "diff --git a/src/main.tsx b/src/main.tsx",
     "--- a/src/main.tsx",
     "+++ b/src/main.tsx",
@@ -47,11 +62,13 @@
     "new file mode 100644",
     "--- /dev/null",
     "+++ b/src/pages/team/TeamPage.tsx",
-    "@@ -0,0 +1,45 @@",
-    "+import { useEffect, useState } from \"react\"",
-    "+import { publishTeam } from \"@/api/teams\"",
+    "@@ -0,0 +1,56 @@",
+    "+import { useEffect, useMemo, useState } from \"react\"",
+    "+import { publishTeam, watchTeam } from \"@/api/teams\"",
     "+import { useTrainer } from \"@/hooks/use-trainer\"",
     "+import { formatTeamTitle } from \"@/lib/team-title\"",
+    "+import { listTeamTypes } from \"@/lib/team-types\"",
+    "+import { renderBadges } from \"./components/badges\"",
     "+import { TeamSlot } from \"./components/TeamSlot\"",
     "+",
     "+const LAST_TRAINER_KEY = \"team-builder.last-trainer\"",
@@ -64,9 +81,15 @@
     "+export function TeamPage({ trainerId, maxSlots }: TeamPageProps) {",
     "+  const [isPublishing, setIsPublishing] = useState(false)",
     "+  const trainer = useTrainer(trainerId)",
+    "+  const teamTypes = useMemo(() => listTeamTypes(trainer?.team ?? []), [trainer])",
     "+",
     "+  useEffect(() => {",
     "+    localStorage.setItem(LAST_TRAINER_KEY, String(trainerId))",
+    "+  }, [trainerId])",
+    "+",
+    "+  useEffect(() => {",
+    "+    const stopWatching = watchTeam(trainerId)",
+    "+    return stopWatching",
     "+  }, [trainerId])",
     "+",
     "+  if (trainer === null) return <p>Loading the trainer…</p>",
@@ -82,6 +105,9 @@
     "+  return (",
     "+    <section>",
     "+      <h1>{title}</h1>",
+    "+      <p>{teamTypes.join(\" · \")}</p>",
+    "+      {renderBadges(trainer.badges)}",
+    "+      {trainer.team.length === 0 && <p>No Pokemon in the team yet</p>}",
     "+      <ul>",
     "+        {trainer.team.map((pokemon) => (",
     "+          <TeamSlot key={pokemon.id} pokemon={pokemon} />",
@@ -108,19 +134,34 @@
     "+    </li>",
     "+  )",
     "+}",
+    "diff --git a/src/pages/team/components/badges.tsx b/src/pages/team/components/badges.tsx",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pages/team/components/badges.tsx",
+    "@@ -0,0 +1,9 @@",
+    "+export function renderBadges(badges: string[]) {",
+    "+  return (",
+    "+    <p>",
+    "+      {badges.map((badge) => (",
+    "+        <span key={badge}>{badge}</span>",
+    "+      ))}",
+    "+    </p>",
+    "+  )",
+    "+}",
     "diff --git a/src/types/trainer.ts b/src/types/trainer.ts",
     "--- a/src/types/trainer.ts",
     "+++ b/src/types/trainer.ts",
     "@@ -0,0 +1,2 @@",
     "+import type { Pokemon } from \"@/types/pokemon\"",
     "+",
-    "@@ -3,0 +6 @@ export interface Trainer {",
-    "+  team: Pokemon[]"
+    "@@ -3,0 +6,2 @@ export interface Trainer {",
+    "+  team: Pokemon[]",
+    "+  badges: string[]"
   ],
   "codegraph": {
     "segments": [
       {
-        "title": "New TeamPage, TeamSlot, useTrainer, publishTeam and formatTeamTitle, modified main.tsx and Trainer",
+        "title": "New components, functions and useTrainer, modified main.tsx and Trainer",
         "importGraph": [
           {
             "filePath": "src/api/client.ts",
@@ -213,6 +254,20 @@
             "importedFilePaths": {}
           },
           {
+            "filePath": "src/lib/team-types.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pages/team/TeamPage.tsx"
+            ],
+            "importsTo": [
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
             "filePath": "src/main.tsx",
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": "modified",
@@ -253,12 +308,16 @@
               "src/api/teams.ts",
               "src/hooks/use-trainer.ts",
               "src/lib/team-title.ts",
-              "src/pages/team/components/TeamSlot.tsx"
+              "src/lib/team-types.ts",
+              "src/pages/team/components/TeamSlot.tsx",
+              "src/pages/team/components/badges.tsx"
             ],
             "importedFilePaths": {
               "@/api/teams": "src/api/teams.ts",
               "@/hooks/use-trainer": "src/hooks/use-trainer.ts",
               "@/lib/team-title": "src/lib/team-title.ts",
+              "@/lib/team-types": "src/lib/team-types.ts",
+              "./components/badges": "src/pages/team/components/badges.tsx",
               "./components/TeamSlot": "src/pages/team/components/TeamSlot.tsx"
             }
           },
@@ -279,12 +338,23 @@
             }
           },
           {
+            "filePath": "src/pages/team/components/badges.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pages/team/TeamPage.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
             "filePath": "src/types/pokemon.ts",
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": null,
             "importedBy": [
               "src/api/pokedex.ts",
               "src/hooks/use-pokedex.ts",
+              "src/lib/team-types.ts",
               "src/pages/team/components/TeamSlot.tsx",
               "src/types/trainer.ts"
             ],
@@ -307,14 +377,14 @@
           }
         ],
         "traceDiagram": {
-          "title": "Load and publish team flow diagram",
-          "description": "This diagram shows how the team page loads a trainer through `useTrainer()` and renders the team of that trainer. It also shows what happens when the user publishes the team, and how the request reaches the API through `publishTeam()`.",
+          "title": "Team page flow diagram",
+          "description": "This diagram shows how the team page loads a trainer through `useTrainer()`, watches the events of the team and renders the team of that trainer. It also shows what happens when the user publishes the team, and how the request reaches the API through `publishTeam()`.",
           "traceNodes": [
             {
               "id": "src/hooks/use-trainer.ts#hook@5:1",
               "type": "hook",
               "label": "Loads one trainer by its id",
-              "description": "When the user opens the app, [`TeamPage` calls this hook with `trainerId` 1](code:src/pages/team/TeamPage.tsx#L16). After the first render, React runs [the effect of the hook](code:src/hooks/use-trainer.ts#L8-10), and the effect calls `request()` with `/trainers/1`.",
+              "description": "When the user opens the app, [`TeamPage` calls this hook with `trainerId` 1](code:src/pages/team/TeamPage.tsx#L18). After the first render, React runs [the effect of the hook](code:src/hooks/use-trainer.ts#L8-10), and the effect calls `request()` with `/trainers/1`.",
               "codeBlockIds": [
                 "src/hooks/use-trainer.ts#hook@5:1",
                 "src/hooks/use-trainer.ts#root-argument-value@5:28",
@@ -336,70 +406,132 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Keeps the loaded trainer, or `null` before the response",
-                  "codeBlockId": "src/hooks/use-trainer.ts#state@6:3"
+                  "label": "Calls request when the trainer id changes to load the trainer",
+                  "codeBlockId": "src/hooks/use-trainer.ts#call@9:5",
+                  "at": {
+                    "line": 9,
+                    "column": 5
+                  }
                 },
                 {
-                  "label": "Requests the trainer again each time the id changes",
-                  "codeBlockId": "src/hooks/use-trainer.ts#component-effect@8:3"
+                  "label": "Returns the loaded trainer, or null until it loads",
+                  "codeBlockId": "src/hooks/use-trainer.ts#hook@5:1",
+                  "at": {
+                    "line": 12,
+                    "column": 3
+                  }
                 }
               ]
             },
             {
-              "id": "src/pages/team/TeamPage.tsx#component@14:1",
+              "id": "src/pages/team/TeamPage.tsx#component@16:1",
               "type": "component",
               "label": "Shows the team of one trainer with a Publish button",
               "description": "When the user opens the app, [`main.tsx` renders this page](code:src/main.tsx#L11) with `trainerId` 1 and `maxSlots` 6. When the user clicks Publish the team, the handler of the button calls `publishTeam()`.",
               "codeBlockIds": [
-                "src/pages/team/TeamPage.tsx#component@14:1",
-                "src/pages/team/TeamPage.tsx#root-argument-value@14:28",
-                "src/pages/team/TeamPage.tsx#root-argument-value@14:39",
-                "src/pages/team/TeamPage.tsx#state@15:3",
-                "src/pages/team/TeamPage.tsx#external-value@16:3",
-                "src/pages/team/TeamPage.tsx#component-effect@18:3",
-                "src/pages/team/TeamPage.tsx#condition@22:3",
-                "src/pages/team/TeamPage.tsx#render-root@22:25",
-                "src/pages/team/TeamPage.tsx#render@22:32",
-                "src/pages/team/TeamPage.tsx#external-value@24:3",
-                "src/pages/team/TeamPage.tsx#render-root@32:3",
-                "src/pages/team/TeamPage.tsx#render@33:5",
-                "src/pages/team/TeamPage.tsx#render@34:7",
-                "src/pages/team/TeamPage.tsx#render@35:7",
-                "src/pages/team/TeamPage.tsx#render-loop@36:10",
-                "src/pages/team/TeamPage.tsx#function@36:27",
-                "src/pages/team/TeamPage.tsx#variable@36:28",
-                "src/pages/team/TeamPage.tsx#render@37:11",
-                "src/pages/team/TeamPage.tsx#render@40:7",
-                "src/pages/team/TeamPage.tsx#render-event@40:53"
+                "src/pages/team/TeamPage.tsx#component@16:1",
+                "src/pages/team/TeamPage.tsx#root-argument-value@16:28",
+                "src/pages/team/TeamPage.tsx#root-argument-value@16:39",
+                "src/pages/team/TeamPage.tsx#state@17:3",
+                "src/pages/team/TeamPage.tsx#external-value@18:3",
+                "src/pages/team/TeamPage.tsx#derived@19:3",
+                "src/pages/team/TeamPage.tsx#component-effect@21:3",
+                "src/pages/team/TeamPage.tsx#component-effect@25:3",
+                "src/pages/team/TeamPage.tsx#condition@30:3",
+                "src/pages/team/TeamPage.tsx#render-root@30:25",
+                "src/pages/team/TeamPage.tsx#render@30:32",
+                "src/pages/team/TeamPage.tsx#external-value@32:3",
+                "src/pages/team/TeamPage.tsx#render-root@40:3",
+                "src/pages/team/TeamPage.tsx#render@41:5",
+                "src/pages/team/TeamPage.tsx#render@42:7",
+                "src/pages/team/TeamPage.tsx#render@43:7",
+                "src/pages/team/TeamPage.tsx#render-condition@45:8",
+                "src/pages/team/TeamPage.tsx#render@45:37",
+                "src/pages/team/TeamPage.tsx#render@46:7",
+                "src/pages/team/TeamPage.tsx#render-loop@47:10",
+                "src/pages/team/TeamPage.tsx#function@47:27",
+                "src/pages/team/TeamPage.tsx#variable@47:28",
+                "src/pages/team/TeamPage.tsx#render@48:11",
+                "src/pages/team/TeamPage.tsx#render@51:7",
+                "src/pages/team/TeamPage.tsx#render-event@51:53"
               ],
               "diffCodeBlockIds": [
-                "src/pages/team/TeamPage.tsx#component@14:1",
-                "src/pages/team/TeamPage.tsx#root-argument-value@14:28",
-                "src/pages/team/TeamPage.tsx#root-argument-value@14:39",
-                "src/pages/team/TeamPage.tsx#state@15:3",
-                "src/pages/team/TeamPage.tsx#external-value@16:3",
-                "src/pages/team/TeamPage.tsx#component-effect@18:3",
-                "src/pages/team/TeamPage.tsx#condition@22:3",
-                "src/pages/team/TeamPage.tsx#render-root@22:25",
-                "src/pages/team/TeamPage.tsx#render@22:32",
-                "src/pages/team/TeamPage.tsx#external-value@24:3",
-                "src/pages/team/TeamPage.tsx#render-root@32:3",
-                "src/pages/team/TeamPage.tsx#render@33:5",
-                "src/pages/team/TeamPage.tsx#render@34:7",
-                "src/pages/team/TeamPage.tsx#render@35:7",
-                "src/pages/team/TeamPage.tsx#render-loop@36:10",
-                "src/pages/team/TeamPage.tsx#function@36:27",
-                "src/pages/team/TeamPage.tsx#variable@36:28",
-                "src/pages/team/TeamPage.tsx#render@37:11",
-                "src/pages/team/TeamPage.tsx#render@40:7",
-                "src/pages/team/TeamPage.tsx#render-event@40:53"
+                "src/pages/team/TeamPage.tsx#component@16:1",
+                "src/pages/team/TeamPage.tsx#root-argument-value@16:28",
+                "src/pages/team/TeamPage.tsx#root-argument-value@16:39",
+                "src/pages/team/TeamPage.tsx#state@17:3",
+                "src/pages/team/TeamPage.tsx#external-value@18:3",
+                "src/pages/team/TeamPage.tsx#derived@19:3",
+                "src/pages/team/TeamPage.tsx#component-effect@21:3",
+                "src/pages/team/TeamPage.tsx#component-effect@25:3",
+                "src/pages/team/TeamPage.tsx#condition@30:3",
+                "src/pages/team/TeamPage.tsx#render-root@30:25",
+                "src/pages/team/TeamPage.tsx#render@30:32",
+                "src/pages/team/TeamPage.tsx#external-value@32:3",
+                "src/pages/team/TeamPage.tsx#render-root@40:3",
+                "src/pages/team/TeamPage.tsx#render@41:5",
+                "src/pages/team/TeamPage.tsx#render@42:7",
+                "src/pages/team/TeamPage.tsx#render@43:7",
+                "src/pages/team/TeamPage.tsx#render-condition@45:8",
+                "src/pages/team/TeamPage.tsx#render@45:37",
+                "src/pages/team/TeamPage.tsx#render@46:7",
+                "src/pages/team/TeamPage.tsx#render-loop@47:10",
+                "src/pages/team/TeamPage.tsx#function@47:27",
+                "src/pages/team/TeamPage.tsx#variable@47:28",
+                "src/pages/team/TeamPage.tsx#render@48:11",
+                "src/pages/team/TeamPage.tsx#render@51:7",
+                "src/pages/team/TeamPage.tsx#render-event@51:53"
               ],
               "children": [
+                {
+                  "id": "src/pages/team/components/badges.tsx#component@1:1",
+                  "type": "component",
+                  "label": "Draws the badges of the trainer",
+                  "description": "When `TeamPage` renders a loaded trainer, [it calls this function](code:src/pages/team/TeamPage.tsx#L44) with the badges of the trainer.",
+                  "codeBlockIds": [
+                    "src/pages/team/components/badges.tsx#component@1:1",
+                    "src/pages/team/components/badges.tsx#root-argument-value@1:30",
+                    "src/pages/team/components/badges.tsx#render-root@2:3",
+                    "src/pages/team/components/badges.tsx#render@3:5",
+                    "src/pages/team/components/badges.tsx#render-loop@4:8",
+                    "src/pages/team/components/badges.tsx#root-argument-value@4:8",
+                    "src/pages/team/components/badges.tsx#function@4:19",
+                    "src/pages/team/components/badges.tsx#variable@4:20",
+                    "src/pages/team/components/badges.tsx#render@5:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pages/team/components/badges.tsx#component@1:1",
+                    "src/pages/team/components/badges.tsx#root-argument-value@1:30",
+                    "src/pages/team/components/badges.tsx#render-root@2:3",
+                    "src/pages/team/components/badges.tsx#render@3:5",
+                    "src/pages/team/components/badges.tsx#render-loop@4:8",
+                    "src/pages/team/components/badges.tsx#root-argument-value@4:8",
+                    "src/pages/team/components/badges.tsx#function@4:19",
+                    "src/pages/team/components/badges.tsx#variable@4:20",
+                    "src/pages/team/components/badges.tsx#render@5:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Renders the badges in one paragraph",
+                      "codeBlockId": "src/pages/team/components/badges.tsx#component@1:1",
+                      "at": {
+                        "line": 2,
+                        "column": 3
+                      }
+                    },
+                    {
+                      "label": "Renders a span for each badge",
+                      "codeBlockId": "src/pages/team/components/badges.tsx#render-loop@4:8"
+                    }
+                  ]
+                },
                 {
                   "id": "src/pages/team/components/TeamSlot.tsx#component@4:1",
                   "type": "component",
                   "label": "Shows the number, name and type of one Pokemon",
-                  "description": "When `TeamPage` renders a loaded trainer, [it renders this component](code:src/pages/team/TeamPage.tsx#L37) once for each Pokemon of `trainer.team`.",
+                  "description": "When `TeamPage` renders a loaded trainer, [it renders this component](code:src/pages/team/TeamPage.tsx#L48) once for each Pokemon of `trainer.team`.",
                   "codeBlockIds": [
                     "src/pages/team/components/TeamSlot.tsx#component@4:1",
                     "src/pages/team/components/TeamSlot.tsx#root-argument-value@4:28",
@@ -414,39 +546,92 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Renders the number, the name and the type of the Pokemon",
+                      "codeBlockId": "src/pages/team/components/TeamSlot.tsx#component@4:1",
+                      "at": {
+                        "line": 5,
+                        "column": 3
+                      }
+                    },
+                    {
+                      "label": "Calls formatNumber to write the number of the Pokemon",
+                      "codeBlockId": "src/pages/team/components/TeamSlot.tsx#render@6:5",
+                      "at": {
+                        "line": 7,
+                        "column": 8
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [
                 {
                   "label": "A user clicks Publish the team",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#render-event@40:53"
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#render-event@51:53"
                 }
               ],
               "blockLabels": [
                 {
-                  "label": "Keeps whether the team is being published",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#state@15:3"
+                  "label": "Calls useTrainer to load the trainer with their team",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#external-value@18:3",
+                  "at": {
+                    "line": 18,
+                    "column": 19
+                  }
                 },
                 {
-                  "label": "Gets the trainer with their team",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#external-value@16:3"
+                  "label": "Lists each type of the team once",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#derived@19:3"
                 },
                 {
                   "label": "Remembers the trainer id after a render with a new id",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#component-effect@18:3"
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#component-effect@21:3"
                 },
                 {
-                  "label": "Checks whether the trainer is loaded yet",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#condition@22:3"
+                  "label": "Watches the events of the team after a render with a new id",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#component-effect@25:3"
                 },
                 {
-                  "label": "Builds the heading from the trainer name and the team size",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#external-value@24:3"
+                  "label": "Renders a loading line when the trainer is not loaded yet",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#condition@30:3",
+                  "at": {
+                    "line": 30,
+                    "column": 25
+                  }
                 },
                 {
-                  "label": "Renders one slot for each Pokemon of the team",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#function@36:27"
+                  "label": "Calls formatTeamTitle when the trainer is loaded to build the heading",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#external-value@32:3",
+                  "at": {
+                    "line": 32,
+                    "column": 17
+                  }
+                },
+                {
+                  "label": "Renders the heading, the types, the badges and the slots of the team",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#component@16:1",
+                  "at": {
+                    "line": 40,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders the badges that renderBadges drew",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#render@41:5",
+                  "at": {
+                    "line": 44,
+                    "column": 8
+                  }
+                },
+                {
+                  "label": "Renders a note when the team has no Pokemon",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#render-condition@45:8"
+                },
+                {
+                  "label": "Renders `<TeamSlot />` for each Pokemon of the team",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#render@48:11"
                 }
               ]
             },
@@ -454,7 +639,7 @@
               "id": "src/lib/team-title.ts#function@1:1",
               "type": "function",
               "label": "Writes the trainer name and the filled slots as a heading",
-              "description": "When `TeamPage` renders a loaded trainer, [it calls this function](code:src/pages/team/TeamPage.tsx#L24) with the name of the trainer, the size of the team and `6`.",
+              "description": "When `TeamPage` renders a loaded trainer, [it calls this function](code:src/pages/team/TeamPage.tsx#L32) with the name of the trainer, the size of the team and `6`.",
               "codeBlockIds": [
                 "src/lib/team-title.ts#function@1:1",
                 "src/lib/team-title.ts#root-argument-value@1:33",
@@ -466,169 +651,318 @@
                 "src/lib/team-title.ts#root-argument-value@1:33",
                 "src/lib/team-title.ts#root-argument-value@1:54",
                 "src/lib/team-title.ts#root-argument-value@1:72"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Returns the trainer name with the filled and total slots",
+                  "codeBlockId": "src/lib/team-title.ts#function@1:1",
+                  "at": {
+                    "line": 2,
+                    "column": 3
+                  }
+                }
+              ]
+            },
+            {
+              "id": "src/api/teams.ts#function@1:1",
+              "type": "function",
+              "label": "Sends a POST request that publishes the team",
+              "description": "When the user clicks Publish the team, the handler of the button [calls `publishTeam(1)`](code:src/pages/team/TeamPage.tsx#L36).",
+              "codeBlockIds": [
+                "src/api/teams.ts#function@1:1",
+                "src/api/teams.ts#root-argument-value@1:35",
+                "src/api/teams.ts#external-value@2:3",
+                "src/api/teams.ts#request@2:26",
+                "src/api/teams.ts#property@2:77",
+                "src/api/teams.ts#condition@3:3",
+                "src/api/teams.ts#throw@3:21"
+              ],
+              "diffCodeBlockIds": [
+                "src/api/teams.ts#function@1:1",
+                "src/api/teams.ts#root-argument-value@1:35",
+                "src/api/teams.ts#external-value@2:3",
+                "src/api/teams.ts#request@2:26",
+                "src/api/teams.ts#property@2:77",
+                "src/api/teams.ts#condition@3:3",
+                "src/api/teams.ts#throw@3:21"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Throws an Error when the publish request fails",
+                  "codeBlockId": "src/api/teams.ts#throw@3:21"
+                }
+              ]
+            },
+            {
+              "id": "src/api/teams.ts#function@6:1",
+              "type": "function",
+              "label": "Opens a stream of the events of the team",
+              "description": "When `TeamPage` renders with a new `trainerId`, React runs [the second effect of the page](code:src/pages/team/TeamPage.tsx#L25-28), and the effect calls `watchTeam(1)`.",
+              "codeBlockIds": [
+                "src/api/teams.ts#function@6:1",
+                "src/api/teams.ts#root-argument-value@6:27",
+                "src/api/teams.ts#external-value@7:3",
+                "src/api/teams.ts#data-fetch@7:18",
+                "src/api/teams.ts#function@8:10"
+              ],
+              "diffCodeBlockIds": [
+                "src/api/teams.ts#function@6:1",
+                "src/api/teams.ts#root-argument-value@6:27",
+                "src/api/teams.ts#external-value@7:3",
+                "src/api/teams.ts#data-fetch@7:18",
+                "src/api/teams.ts#function@8:10"
+              ],
+              "children": [
+                {
+                  "id": "src/api/teams.ts#function@8:10",
+                  "type": "function",
+                  "label": "Closes the stream of the team events",
+                  "description": "When React cleans up [the second effect of `TeamPage`](code:src/pages/team/TeamPage.tsx#L25-28), before its next run or when the page unmounts, React calls this function that `watchTeam()` returned.",
+                  "codeBlockIds": [
+                    "src/api/teams.ts#function@8:10"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/api/teams.ts#function@8:10"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": []
+                }
+              ],
+              "triggerLabels": [
+                {
+                  "label": "The events of the team are loaded",
+                  "codeBlockId": "src/api/teams.ts#data-fetch@7:18"
+                }
+              ],
+              "blockLabels": [
+                {
+                  "label": "Returns a function that closes the stream",
+                  "codeBlockId": "src/api/teams.ts#function@6:1",
+                  "at": {
+                    "line": 8,
+                    "column": 3
+                  }
+                }
+              ]
+            },
+            {
+              "id": "src/lib/team-types.ts#function@3:1",
+              "type": "function",
+              "label": "Lists each type of a team once",
+              "description": "When `TeamPage` renders, [its memo calls this function](code:src/pages/team/TeamPage.tsx#L19) with the team of the trainer, or with `[]` until the trainer loads.",
+              "codeBlockIds": [
+                "src/lib/team-types.ts#function@3:1",
+                "src/lib/team-types.ts#root-argument-value@3:31",
+                "src/lib/team-types.ts#root-argument-value@4:22",
+                "src/lib/team-types.ts#function@4:31",
+                "src/lib/team-types.ts#variable@4:32"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/team-types.ts#function@3:1",
+                "src/lib/team-types.ts#root-argument-value@3:31",
+                "src/lib/team-types.ts#root-argument-value@4:22",
+                "src/lib/team-types.ts#function@4:31",
+                "src/lib/team-types.ts#variable@4:32"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Returns the types of the team without repeats",
+                  "codeBlockId": "src/lib/team-types.ts#function@3:1",
+                  "at": {
+                    "line": 4,
+                    "column": 3
+                  }
+                }
+              ]
+            },
+            {
+              "id": "src/pages/team/TeamPage.tsx#component-effect@21:3",
+              "type": "component-effect",
+              "label": "Stores the trainer id after a render with a new id",
+              "description": "When `TeamPage` renders with a `trainerId` it has not rendered with before, React runs [this effect](code:src/pages/team/TeamPage.tsx#L21-23), and the effect [writes `\"1\"` to `localStorage`](code:src/pages/team/TeamPage.tsx#L22).",
+              "codeBlockIds": [
+                "src/pages/team/TeamPage.tsx#component-effect@21:3",
+                "src/pages/team/TeamPage.tsx#root-variable@9:1",
+                "src/pages/team/TeamPage.tsx#effect-callback@21:13",
+                "src/pages/team/TeamPage.tsx#function@21:13",
+                "src/pages/team/TeamPage.tsx#storage@22:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/team/TeamPage.tsx#component-effect@21:3",
+                "src/pages/team/TeamPage.tsx#root-variable@9:1",
+                "src/pages/team/TeamPage.tsx#function@21:13",
+                "src/pages/team/TeamPage.tsx#storage@22:5"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": []
             },
             {
-              "id": "src/api/teams.ts#function@1:1",
-              "type": "function",
-              "label": "Sends a POST request that publishes the team",
-              "description": "When the user clicks Publish the team, the handler of the button [calls `publishTeam(1)`](code:src/pages/team/TeamPage.tsx#L28).",
+              "id": "src/pages/team/TeamPage.tsx#component-effect@25:3",
+              "type": "component-effect",
+              "label": "Watches the team until the trainer id changes",
+              "description": "When `TeamPage` renders with a `trainerId` it has not rendered with before, React runs [this effect](code:src/pages/team/TeamPage.tsx#L25-28), and the effect calls `watchTeam(1)`. React calls the cleanup that the effect returns before the next run and when the page unmounts.",
               "codeBlockIds": [
-                "src/api/teams.ts#function@1:1",
-                "src/api/teams.ts#root-argument-value@1:35",
-                "src/api/teams.ts#external-value@2:3",
-                "src/api/teams.ts#request@2:26",
-                "src/api/teams.ts#property@2:77",
-                "src/api/teams.ts#condition@3:3",
-                "src/api/teams.ts#throw@3:21"
+                "src/pages/team/TeamPage.tsx#component-effect@25:3",
+                "src/pages/team/TeamPage.tsx#effect-callback@25:13",
+                "src/pages/team/TeamPage.tsx#function@25:13",
+                "src/pages/team/TeamPage.tsx#external-value@26:5"
               ],
               "diffCodeBlockIds": [
-                "src/api/teams.ts#function@1:1",
-                "src/api/teams.ts#root-argument-value@1:35",
-                "src/api/teams.ts#external-value@2:3",
-                "src/api/teams.ts#request@2:26",
-                "src/api/teams.ts#property@2:77",
-                "src/api/teams.ts#condition@3:3",
-                "src/api/teams.ts#throw@3:21"
+                "src/pages/team/TeamPage.tsx#component-effect@25:3",
+                "src/pages/team/TeamPage.tsx#function@25:13",
+                "src/pages/team/TeamPage.tsx#external-value@26:5"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Posts to `/api/trainers/1/team/publish`",
-                  "codeBlockId": "src/api/teams.ts#external-value@2:3"
+                  "label": "Calls watchTeam to watch the events of the team",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#external-value@26:5",
+                  "at": {
+                    "line": 26,
+                    "column": 26
+                  }
                 },
                 {
-                  "label": "Throws an error when the response status is not 2xx",
-                  "codeBlockId": "src/api/teams.ts#condition@3:3"
+                  "label": "Returns a cleanup that stops watching the team",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#function@25:13",
+                  "at": {
+                    "line": 27,
+                    "column": 5
+                  }
                 }
               ]
             },
             {
-              "id": "src/pages/team/TeamPage.tsx#component-effect@18:3",
-              "type": "component-effect",
-              "label": "Runs its callback after a render with a new trainer id",
-              "description": "When `TeamPage` renders with a `trainerId` it has not rendered with before, React runs [this effect](code:src/pages/team/TeamPage.tsx#L18-20), and the effect runs its callback.",
-              "codeBlockIds": [
-                "src/pages/team/TeamPage.tsx#component-effect@18:3",
-                "src/pages/team/TeamPage.tsx#effect-callback@18:13"
-              ],
-              "diffCodeBlockIds": [
-                "src/pages/team/TeamPage.tsx#component-effect@18:3"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Runs the callback that stores the trainer id",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#effect-callback@18:13"
-                }
-              ]
-            },
-            {
-              "id": "src/pages/team/TeamPage.tsx#render-event@40:53",
+              "id": "src/pages/team/TeamPage.tsx#render-event@51:53",
               "type": "render-event",
               "label": "Publishes the team and disables the button until the request ends",
-              "description": "When the user clicks Publish the team, [the button runs `publish()`](code:src/pages/team/TeamPage.tsx#L40), which calls `publishTeam(1)` between two calls of `setIsPublishing()`.",
+              "description": "When the user clicks Publish the team, [the button runs `publish()`](code:src/pages/team/TeamPage.tsx#L51), which calls `publishTeam(1)` between two calls of `setIsPublishing()`.",
               "codeBlockIds": [
-                "src/pages/team/TeamPage.tsx#render-event@40:53",
-                "src/pages/team/TeamPage.tsx#function@26:3",
-                "src/pages/team/TeamPage.tsx#call@27:5",
-                "src/pages/team/TeamPage.tsx#call@28:5",
-                "src/pages/team/TeamPage.tsx#call@29:5"
+                "src/pages/team/TeamPage.tsx#render-event@51:53",
+                "src/pages/team/TeamPage.tsx#function@34:3",
+                "src/pages/team/TeamPage.tsx#call@35:5",
+                "src/pages/team/TeamPage.tsx#call@36:5",
+                "src/pages/team/TeamPage.tsx#call@37:5"
               ],
               "diffCodeBlockIds": [
-                "src/pages/team/TeamPage.tsx#render-event@40:53",
-                "src/pages/team/TeamPage.tsx#function@26:3",
-                "src/pages/team/TeamPage.tsx#call@27:5",
-                "src/pages/team/TeamPage.tsx#call@28:5",
-                "src/pages/team/TeamPage.tsx#call@29:5"
+                "src/pages/team/TeamPage.tsx#render-event@51:53",
+                "src/pages/team/TeamPage.tsx#function@34:3",
+                "src/pages/team/TeamPage.tsx#call@35:5",
+                "src/pages/team/TeamPage.tsx#call@36:5",
+                "src/pages/team/TeamPage.tsx#call@37:5"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Disables the button",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#call@27:5"
-                },
-                {
-                  "label": "Publishes the team of the trainer",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#call@28:5"
-                },
-                {
-                  "label": "Enables the button again",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#call@29:5"
+                  "label": "Calls publishTeam to publish the team of the trainer",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#call@36:5",
+                  "at": {
+                    "line": 36,
+                    "column": 11
+                  }
                 }
               ]
             },
             {
-              "id": "src/pages/team/TeamPage.tsx#effect-callback@18:13",
-              "type": "effect-callback",
-              "label": "Stores the id of the trainer last opened",
-              "description": "When React runs the effect of `TeamPage`, the effect calls this callback, which [writes `\"1\"` to `localStorage`](code:src/pages/team/TeamPage.tsx#L19).",
+              "id": "src/pages/team/TeamPage.tsx#derived@19:3",
+              "type": "derived",
+              "label": "Lists the types of the team again when the trainer changes",
+              "description": "When `TeamPage` renders, React runs [this memo](code:src/pages/team/TeamPage.tsx#L19) on the first render and after each render with a new `trainer`.",
               "codeBlockIds": [
-                "src/pages/team/TeamPage.tsx#effect-callback@18:13",
-                "src/pages/team/TeamPage.tsx#root-variable@7:1",
-                "src/pages/team/TeamPage.tsx#function@18:13",
-                "src/pages/team/TeamPage.tsx#storage@19:5"
+                "src/pages/team/TeamPage.tsx#derived@19:3",
+                "src/pages/team/TeamPage.tsx#component-effect@19:21",
+                "src/pages/team/TeamPage.tsx#effect-callback@19:29",
+                "src/pages/team/TeamPage.tsx#function@19:29"
               ],
               "diffCodeBlockIds": [
-                "src/pages/team/TeamPage.tsx#root-variable@7:1",
-                "src/pages/team/TeamPage.tsx#function@18:13",
-                "src/pages/team/TeamPage.tsx#storage@19:5"
+                "src/pages/team/TeamPage.tsx#derived@19:3",
+                "src/pages/team/TeamPage.tsx#component-effect@19:21",
+                "src/pages/team/TeamPage.tsx#function@19:29"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Names the storage key of the last trainer",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#root-variable@7:1"
-                },
-                {
-                  "label": "Writes `\"1\"` under `team-builder.last-trainer`",
-                  "codeBlockId": "src/pages/team/TeamPage.tsx#storage@19:5"
+                  "label": "Calls listTeamTypes to list the types of the team",
+                  "codeBlockId": "src/pages/team/TeamPage.tsx#function@19:29",
+                  "at": {
+                    "line": 19,
+                    "column": 35
+                  }
                 }
               ]
             }
           ],
           "traceNodeEdges": [
             {
-              "id": "src/pages/team/TeamPage.tsx#component@14:1 -> src/hooks/use-trainer.ts#hook@5:1",
-              "from": "src/pages/team/TeamPage.tsx#component@14:1",
+              "id": "src/pages/team/TeamPage.tsx#component@16:1 -> src/hooks/use-trainer.ts#hook@5:1",
+              "from": "src/pages/team/TeamPage.tsx#component@16:1",
               "to": "src/hooks/use-trainer.ts#hook@5:1"
             },
             {
-              "id": "src/pages/team/TeamPage.tsx#component@14:1 -> src/lib/team-title.ts#function@1:1",
-              "from": "src/pages/team/TeamPage.tsx#component@14:1",
+              "id": "src/pages/team/TeamPage.tsx#component@16:1 -> src/lib/team-title.ts#function@1:1",
+              "from": "src/pages/team/TeamPage.tsx#component@16:1",
               "to": "src/lib/team-title.ts#function@1:1"
             },
             {
-              "id": "src/pages/team/TeamPage.tsx#render-event@40:53 -> src/api/teams.ts#function@1:1",
-              "from": "src/pages/team/TeamPage.tsx#render-event@40:53",
+              "id": "src/pages/team/TeamPage.tsx#component@16:1 -> src/pages/team/components/badges.tsx#component@1:1",
+              "from": "src/pages/team/TeamPage.tsx#component@16:1",
+              "to": "src/pages/team/components/badges.tsx#component@1:1"
+            },
+            {
+              "id": "src/pages/team/TeamPage.tsx#render-event@51:53 -> src/api/teams.ts#function@1:1",
+              "from": "src/pages/team/TeamPage.tsx#render-event@51:53",
               "to": "src/api/teams.ts#function@1:1"
             },
             {
-              "id": "src/pages/team/TeamPage.tsx#component@14:1 -> src/pages/team/components/TeamSlot.tsx#component@4:1",
-              "from": "src/pages/team/TeamPage.tsx#component@14:1",
+              "id": "src/pages/team/TeamPage.tsx#component-effect@25:3 -> src/api/teams.ts#function@6:1",
+              "from": "src/pages/team/TeamPage.tsx#component-effect@25:3",
+              "to": "src/api/teams.ts#function@6:1"
+            },
+            {
+              "id": "src/pages/team/TeamPage.tsx#derived@19:3 -> src/lib/team-types.ts#function@3:1",
+              "from": "src/pages/team/TeamPage.tsx#derived@19:3",
+              "to": "src/lib/team-types.ts#function@3:1"
+            },
+            {
+              "id": "src/pages/team/TeamPage.tsx#component@16:1 -> src/pages/team/components/TeamSlot.tsx#component@4:1",
+              "from": "src/pages/team/TeamPage.tsx#component@16:1",
               "to": "src/pages/team/components/TeamSlot.tsx#component@4:1"
             },
             {
-              "id": "src/pages/team/TeamPage.tsx#component@14:1 -> src/pages/team/TeamPage.tsx#component-effect@18:3",
-              "from": "src/pages/team/TeamPage.tsx#component@14:1",
-              "to": "src/pages/team/TeamPage.tsx#component-effect@18:3"
+              "id": "src/pages/team/TeamPage.tsx#component@16:1 -> src/pages/team/TeamPage.tsx#component-effect@21:3",
+              "from": "src/pages/team/TeamPage.tsx#component@16:1",
+              "to": "src/pages/team/TeamPage.tsx#component-effect@21:3"
             },
             {
-              "id": "src/pages/team/TeamPage.tsx#component@14:1 -> src/pages/team/TeamPage.tsx#render-event@40:53",
-              "from": "src/pages/team/TeamPage.tsx#component@14:1",
-              "to": "src/pages/team/TeamPage.tsx#render-event@40:53"
+              "id": "src/pages/team/TeamPage.tsx#component@16:1 -> src/pages/team/TeamPage.tsx#component-effect@25:3",
+              "from": "src/pages/team/TeamPage.tsx#component@16:1",
+              "to": "src/pages/team/TeamPage.tsx#component-effect@25:3"
             },
             {
-              "id": "src/pages/team/TeamPage.tsx#component-effect@18:3 -> src/pages/team/TeamPage.tsx#effect-callback@18:13",
-              "from": "src/pages/team/TeamPage.tsx#component-effect@18:3",
-              "to": "src/pages/team/TeamPage.tsx#effect-callback@18:13"
+              "id": "src/pages/team/TeamPage.tsx#component@16:1 -> src/pages/team/TeamPage.tsx#render-event@51:53",
+              "from": "src/pages/team/TeamPage.tsx#component@16:1",
+              "to": "src/pages/team/TeamPage.tsx#render-event@51:53"
+            },
+            {
+              "id": "src/pages/team/TeamPage.tsx#component@16:1 -> src/pages/team/TeamPage.tsx#derived@19:3",
+              "from": "src/pages/team/TeamPage.tsx#component@16:1",
+              "to": "src/pages/team/TeamPage.tsx#derived@19:3"
+            },
+            {
+              "id": "src/api/teams.ts#function@6:1 -> src/api/teams.ts#function@8:10",
+              "from": "src/api/teams.ts#function@6:1",
+              "to": "src/api/teams.ts#function@8:10"
             }
           ]
         },
@@ -654,6 +988,22 @@
                     "src/api/teams.ts#throw@3:21"
                   ],
                   "children": []
+                },
+                {
+                  "id": "w2",
+                  "declaration": "watchTeam",
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/api/teams.ts#function@6:1",
+                    "src/api/teams.ts#root-argument-value@6:27",
+                    "src/api/teams.ts#external-value@7:3",
+                    "src/api/teams.ts#data-fetch@7:18",
+                    "src/api/teams.ts#function@8:10"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -661,7 +1011,7 @@
               "path": "src/hooks/use-trainer.ts",
               "waypoints": [
                 {
-                  "id": "w2",
+                  "id": "w3",
                   "declaration": "useTrainer",
                   "range": {
                     "lineStart": 5,
@@ -677,7 +1027,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w2.1",
+                      "id": "w3.1",
                       "declaration": "useTrainer › trainer",
                       "range": {
                         "lineStart": 6,
@@ -689,7 +1039,7 @@
                       "children": []
                     },
                     {
-                      "id": "w2.2",
+                      "id": "w3.2",
                       "declaration": "useTrainer › useEffect",
                       "range": {
                         "lineStart": 8,
@@ -710,7 +1060,7 @@
               "path": "src/lib/team-title.ts",
               "waypoints": [
                 {
-                  "id": "w3",
+                  "id": "w4",
                   "declaration": "formatTeamTitle",
                   "range": {
                     "lineStart": 1,
@@ -727,10 +1077,31 @@
               ]
             },
             {
+              "path": "src/lib/team-types.ts",
+              "waypoints": [
+                {
+                  "id": "w5",
+                  "declaration": "listTeamTypes",
+                  "range": {
+                    "lineStart": 3,
+                    "lineEnd": 5
+                  },
+                  "codeBlockIds": [
+                    "src/lib/team-types.ts#function@3:1",
+                    "src/lib/team-types.ts#root-argument-value@3:31",
+                    "src/lib/team-types.ts#root-argument-value@4:22",
+                    "src/lib/team-types.ts#function@4:31",
+                    "src/lib/team-types.ts#variable@4:32"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
               "path": "src/main.tsx",
               "waypoints": [
                 {
-                  "id": "w4",
+                  "id": "w6",
                   "declaration": "Lines 9–14",
                   "range": {
                     "lineStart": 9,
@@ -748,168 +1119,218 @@
               "path": "src/pages/team/TeamPage.tsx",
               "waypoints": [
                 {
-                  "id": "w5",
+                  "id": "w7",
                   "declaration": "LAST_TRAINER_KEY",
                   "range": {
-                    "lineStart": 7,
-                    "lineEnd": 7
+                    "lineStart": 9,
+                    "lineEnd": 9
                   },
                   "codeBlockIds": [
-                    "src/pages/team/TeamPage.tsx#root-variable@7:1"
+                    "src/pages/team/TeamPage.tsx#root-variable@9:1"
                   ],
                   "children": []
                 },
                 {
-                  "id": "w6",
+                  "id": "w8",
                   "declaration": "TeamPageProps",
                   "range": {
-                    "lineStart": 9,
-                    "lineEnd": 12
+                    "lineStart": 11,
+                    "lineEnd": 14
                   },
                   "codeBlockIds": [
-                    "src/pages/team/TeamPage.tsx#type-declaration@9:1"
+                    "src/pages/team/TeamPage.tsx#type-declaration@11:1"
                   ],
                   "children": []
                 },
                 {
-                  "id": "w7",
+                  "id": "w9",
                   "declaration": "TeamPage",
                   "range": {
-                    "lineStart": 14,
-                    "lineEnd": 45
+                    "lineStart": 16,
+                    "lineEnd": 56
                   },
                   "codeBlockIds": [
-                    "src/pages/team/TeamPage.tsx#component@14:1",
-                    "src/pages/team/TeamPage.tsx#root-argument-value@14:28",
-                    "src/pages/team/TeamPage.tsx#root-argument-value@14:39",
-                    "src/pages/team/TeamPage.tsx#state@15:3",
-                    "src/pages/team/TeamPage.tsx#external-value@16:3",
-                    "src/pages/team/TeamPage.tsx#component-effect@18:3",
-                    "src/pages/team/TeamPage.tsx#function@18:13",
-                    "src/pages/team/TeamPage.tsx#storage@19:5",
-                    "src/pages/team/TeamPage.tsx#condition@22:3",
-                    "src/pages/team/TeamPage.tsx#render-root@22:25",
-                    "src/pages/team/TeamPage.tsx#render@22:32",
-                    "src/pages/team/TeamPage.tsx#external-value@24:3",
-                    "src/pages/team/TeamPage.tsx#function@26:3",
-                    "src/pages/team/TeamPage.tsx#call@27:5",
-                    "src/pages/team/TeamPage.tsx#call@28:5",
-                    "src/pages/team/TeamPage.tsx#call@29:5",
-                    "src/pages/team/TeamPage.tsx#render-root@32:3",
-                    "src/pages/team/TeamPage.tsx#render@33:5",
-                    "src/pages/team/TeamPage.tsx#render@34:7",
-                    "src/pages/team/TeamPage.tsx#render@35:7",
-                    "src/pages/team/TeamPage.tsx#render-loop@36:10",
-                    "src/pages/team/TeamPage.tsx#function@36:27",
-                    "src/pages/team/TeamPage.tsx#variable@36:28",
-                    "src/pages/team/TeamPage.tsx#render@37:11",
-                    "src/pages/team/TeamPage.tsx#render@40:7",
-                    "src/pages/team/TeamPage.tsx#render-event@40:53"
+                    "src/pages/team/TeamPage.tsx#component@16:1",
+                    "src/pages/team/TeamPage.tsx#root-argument-value@16:28",
+                    "src/pages/team/TeamPage.tsx#root-argument-value@16:39",
+                    "src/pages/team/TeamPage.tsx#state@17:3",
+                    "src/pages/team/TeamPage.tsx#external-value@18:3",
+                    "src/pages/team/TeamPage.tsx#derived@19:3",
+                    "src/pages/team/TeamPage.tsx#component-effect@19:21",
+                    "src/pages/team/TeamPage.tsx#function@19:29",
+                    "src/pages/team/TeamPage.tsx#component-effect@21:3",
+                    "src/pages/team/TeamPage.tsx#function@21:13",
+                    "src/pages/team/TeamPage.tsx#storage@22:5",
+                    "src/pages/team/TeamPage.tsx#component-effect@25:3",
+                    "src/pages/team/TeamPage.tsx#function@25:13",
+                    "src/pages/team/TeamPage.tsx#external-value@26:5",
+                    "src/pages/team/TeamPage.tsx#condition@30:3",
+                    "src/pages/team/TeamPage.tsx#render-root@30:25",
+                    "src/pages/team/TeamPage.tsx#render@30:32",
+                    "src/pages/team/TeamPage.tsx#external-value@32:3",
+                    "src/pages/team/TeamPage.tsx#function@34:3",
+                    "src/pages/team/TeamPage.tsx#call@35:5",
+                    "src/pages/team/TeamPage.tsx#call@36:5",
+                    "src/pages/team/TeamPage.tsx#call@37:5",
+                    "src/pages/team/TeamPage.tsx#render-root@40:3",
+                    "src/pages/team/TeamPage.tsx#render@41:5",
+                    "src/pages/team/TeamPage.tsx#render@42:7",
+                    "src/pages/team/TeamPage.tsx#render@43:7",
+                    "src/pages/team/TeamPage.tsx#render-condition@45:8",
+                    "src/pages/team/TeamPage.tsx#render@45:37",
+                    "src/pages/team/TeamPage.tsx#render@46:7",
+                    "src/pages/team/TeamPage.tsx#render-loop@47:10",
+                    "src/pages/team/TeamPage.tsx#function@47:27",
+                    "src/pages/team/TeamPage.tsx#variable@47:28",
+                    "src/pages/team/TeamPage.tsx#render@48:11",
+                    "src/pages/team/TeamPage.tsx#render@51:7",
+                    "src/pages/team/TeamPage.tsx#render-event@51:53"
                   ],
                   "children": [
                     {
-                      "id": "w7.1",
+                      "id": "w9.1",
                       "declaration": "TeamPage › isPublishing",
                       "range": {
-                        "lineStart": 15,
-                        "lineEnd": 15
+                        "lineStart": 17,
+                        "lineEnd": 17
                       },
                       "codeBlockIds": [
-                        "src/pages/team/TeamPage.tsx#state@15:3"
+                        "src/pages/team/TeamPage.tsx#state@17:3"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w7.2",
+                      "id": "w9.2",
                       "declaration": "TeamPage › trainer",
                       "range": {
-                        "lineStart": 16,
-                        "lineEnd": 16
+                        "lineStart": 18,
+                        "lineEnd": 18
                       },
                       "codeBlockIds": [
-                        "src/pages/team/TeamPage.tsx#external-value@16:3"
+                        "src/pages/team/TeamPage.tsx#external-value@18:3"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w7.3",
+                      "id": "w9.3",
+                      "declaration": "TeamPage › teamTypes",
+                      "range": {
+                        "lineStart": 19,
+                        "lineEnd": 19
+                      },
+                      "codeBlockIds": [
+                        "src/pages/team/TeamPage.tsx#derived@19:3",
+                        "src/pages/team/TeamPage.tsx#component-effect@19:21",
+                        "src/pages/team/TeamPage.tsx#function@19:29"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.4",
                       "declaration": "TeamPage › useEffect",
                       "range": {
-                        "lineStart": 18,
-                        "lineEnd": 20
+                        "lineStart": 21,
+                        "lineEnd": 23
                       },
                       "codeBlockIds": [
-                        "src/pages/team/TeamPage.tsx#component-effect@18:3",
-                        "src/pages/team/TeamPage.tsx#function@18:13",
-                        "src/pages/team/TeamPage.tsx#storage@19:5"
+                        "src/pages/team/TeamPage.tsx#component-effect@21:3",
+                        "src/pages/team/TeamPage.tsx#function@21:13",
+                        "src/pages/team/TeamPage.tsx#storage@22:5"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w7.4",
-                      "declaration": "TeamPage › Condition :22",
+                      "id": "w9.5",
+                      "declaration": "TeamPage › useEffect (2)",
                       "range": {
-                        "lineStart": 22,
-                        "lineEnd": 22
+                        "lineStart": 25,
+                        "lineEnd": 28
                       },
                       "codeBlockIds": [
-                        "src/pages/team/TeamPage.tsx#condition@22:3",
-                        "src/pages/team/TeamPage.tsx#render-root@22:25",
-                        "src/pages/team/TeamPage.tsx#render@22:32"
+                        "src/pages/team/TeamPage.tsx#component-effect@25:3",
+                        "src/pages/team/TeamPage.tsx#function@25:13",
+                        "src/pages/team/TeamPage.tsx#external-value@26:5"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w7.5",
-                      "declaration": "TeamPage › title",
+                      "id": "w9.6",
+                      "declaration": "TeamPage › Condition :30",
                       "range": {
-                        "lineStart": 24,
-                        "lineEnd": 24
-                      },
-                      "codeBlockIds": [
-                        "src/pages/team/TeamPage.tsx#external-value@24:3"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w7.6",
-                      "declaration": "TeamPage › publish",
-                      "range": {
-                        "lineStart": 26,
+                        "lineStart": 30,
                         "lineEnd": 30
                       },
                       "codeBlockIds": [
-                        "src/pages/team/TeamPage.tsx#function@26:3",
-                        "src/pages/team/TeamPage.tsx#call@27:5",
-                        "src/pages/team/TeamPage.tsx#call@28:5",
-                        "src/pages/team/TeamPage.tsx#call@29:5"
+                        "src/pages/team/TeamPage.tsx#condition@30:3",
+                        "src/pages/team/TeamPage.tsx#render-root@30:25",
+                        "src/pages/team/TeamPage.tsx#render@30:32"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w7.7",
-                      "declaration": "TeamPage › Markup loop :36",
+                      "id": "w9.7",
+                      "declaration": "TeamPage › title",
                       "range": {
-                        "lineStart": 36,
+                        "lineStart": 32,
+                        "lineEnd": 32
+                      },
+                      "codeBlockIds": [
+                        "src/pages/team/TeamPage.tsx#external-value@32:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.8",
+                      "declaration": "TeamPage › publish",
+                      "range": {
+                        "lineStart": 34,
                         "lineEnd": 38
                       },
                       "codeBlockIds": [
-                        "src/pages/team/TeamPage.tsx#render-loop@36:10",
-                        "src/pages/team/TeamPage.tsx#function@36:27",
-                        "src/pages/team/TeamPage.tsx#variable@36:28",
-                        "src/pages/team/TeamPage.tsx#render@37:11"
+                        "src/pages/team/TeamPage.tsx#function@34:3",
+                        "src/pages/team/TeamPage.tsx#call@35:5",
+                        "src/pages/team/TeamPage.tsx#call@36:5",
+                        "src/pages/team/TeamPage.tsx#call@37:5"
                       ],
                       "children": []
                     },
                     {
-                      "id": "w7.8",
-                      "declaration": "TeamPage › button.onClick",
+                      "id": "w9.9",
+                      "declaration": "TeamPage › Markup condition :45",
                       "range": {
-                        "lineStart": 40,
-                        "lineEnd": 40
+                        "lineStart": 45,
+                        "lineEnd": 45
                       },
                       "codeBlockIds": [
-                        "src/pages/team/TeamPage.tsx#render-event@40:53"
+                        "src/pages/team/TeamPage.tsx#render-condition@45:8",
+                        "src/pages/team/TeamPage.tsx#render@45:37"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.10",
+                      "declaration": "TeamPage › Markup loop :47",
+                      "range": {
+                        "lineStart": 47,
+                        "lineEnd": 49
+                      },
+                      "codeBlockIds": [
+                        "src/pages/team/TeamPage.tsx#render-loop@47:10",
+                        "src/pages/team/TeamPage.tsx#function@47:27",
+                        "src/pages/team/TeamPage.tsx#variable@47:28",
+                        "src/pages/team/TeamPage.tsx#render@48:11"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.11",
+                      "declaration": "TeamPage › button.onClick",
+                      "range": {
+                        "lineStart": 51,
+                        "lineEnd": 51
+                      },
+                      "codeBlockIds": [
+                        "src/pages/team/TeamPage.tsx#render-event@51:53"
                       ],
                       "children": []
                     }
@@ -921,7 +1342,7 @@
               "path": "src/pages/team/components/TeamSlot.tsx",
               "waypoints": [
                 {
-                  "id": "w8",
+                  "id": "w10",
                   "declaration": "TeamSlot",
                   "range": {
                     "lineStart": 4,
@@ -938,14 +1359,39 @@
               ]
             },
             {
+              "path": "src/pages/team/components/badges.tsx",
+              "waypoints": [
+                {
+                  "id": "w11",
+                  "declaration": "renderBadges",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/pages/team/components/badges.tsx#component@1:1",
+                    "src/pages/team/components/badges.tsx#root-argument-value@1:30",
+                    "src/pages/team/components/badges.tsx#render-root@2:3",
+                    "src/pages/team/components/badges.tsx#render@3:5",
+                    "src/pages/team/components/badges.tsx#render-loop@4:8",
+                    "src/pages/team/components/badges.tsx#root-argument-value@4:8",
+                    "src/pages/team/components/badges.tsx#function@4:19",
+                    "src/pages/team/components/badges.tsx#variable@4:20",
+                    "src/pages/team/components/badges.tsx#render@5:9"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
               "path": "src/types/trainer.ts",
               "waypoints": [
                 {
-                  "id": "w9",
+                  "id": "w12",
                   "declaration": "Trainer",
                   "range": {
                     "lineStart": 3,
-                    "lineEnd": 7
+                    "lineEnd": 8
                   },
                   "codeBlockIds": [
                     "src/types/trainer.ts#type-declaration@3:1"
@@ -992,6 +1438,28 @@
                   2
                 ],
                 "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 50,
+                "endColumn": 59,
+                "path": "src/api/teams.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 15,
+                "endColumn": 21,
+                "path": "src/api/teams.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
               }
             ],
             "languageReferences": [
@@ -1012,6 +1480,12 @@
                 "startColumn": 30,
                 "endColumn": 35,
                 "name": "Error"
+              },
+              {
+                "line": 7,
+                "startColumn": 21,
+                "endColumn": 32,
+                "name": "EventSource"
               }
             ],
             "exports": [
@@ -1025,11 +1499,29 @@
                 ],
                 "usages": [
                   {
-                    "line": 28,
+                    "line": 36,
                     "startColumn": 10,
                     "endColumn": 21,
                     "path": "src/pages/team/TeamPage.tsx",
                     "text": "    await publishTeam(trainerId)"
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  6,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 26,
+                    "startColumn": 25,
+                    "endColumn": 34,
+                    "path": "src/pages/team/TeamPage.tsx",
+                    "text": "    const stopWatching = watchTeam(trainerId)"
                   }
                 ]
               }
@@ -1060,7 +1552,7 @@
                 "path": "src/types/trainer.ts",
                 "lines": [
                   3,
-                  7
+                  8
                 ],
                 "isLibrary": false
               },
@@ -1097,7 +1589,7 @@
                 "path": "src/types/trainer.ts",
                 "lines": [
                   3,
-                  7
+                  8
                 ],
                 "isLibrary": false
               },
@@ -1158,7 +1650,7 @@
                 ],
                 "usages": [
                   {
-                    "line": 16,
+                    "line": 18,
                     "startColumn": 18,
                     "endColumn": 28,
                     "path": "src/pages/team/TeamPage.tsx",
@@ -1217,11 +1709,66 @@
                 ],
                 "usages": [
                   {
-                    "line": 24,
+                    "line": 32,
                     "startColumn": 16,
                     "endColumn": 31,
                     "path": "src/pages/team/TeamPage.tsx",
                     "text": "  const title = formatTeamTitle(trainer.name, trainer.team.length, maxSlots)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/lib/team-types.ts",
+            "references": [
+              {
+                "line": 3,
+                "startColumn": 36,
+                "endColumn": 43,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 4,
+                "startColumn": 21,
+                "endColumn": 25,
+                "path": "src/lib/team-types.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 4,
+                "startColumn": 17,
+                "endColumn": 20,
+                "name": "Set"
+              }
+            ],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 16,
+                "endColumn": 29,
+                "lines": [
+                  3,
+                  5
+                ],
+                "usages": [
+                  {
+                    "line": 19,
+                    "startColumn": 34,
+                    "endColumn": 47,
+                    "path": "src/pages/team/TeamPage.tsx",
+                    "text": "  const teamTypes = useMemo(() => listTeamTypes(trainer?.team ?? []), [trainer])"
                   }
                 ]
               }
@@ -1288,8 +1835,8 @@
                 "endColumn": 13,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
-                  14,
-                  45
+                  16,
+                  56
                 ],
                 "isLibrary": false
               },
@@ -1320,6 +1867,65 @@
               }
             ],
             "exports": []
+          },
+          {
+            "path": "src/pages/team/components/badges.tsx",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/pages/team/components/badges.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 19,
+                "endColumn": 24,
+                "path": "src/pages/team/components/badges.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 27,
+                "endColumn": 32,
+                "path": "src/pages/team/components/badges.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 16,
+                "endColumn": 28,
+                "lines": [
+                  1,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 44,
+                    "startColumn": 7,
+                    "endColumn": 19,
+                    "path": "src/pages/team/TeamPage.tsx",
+                    "text": "      {renderBadges(trainer.badges)}"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/pages/team/components/TeamSlot.tsx",
@@ -1392,7 +1998,7 @@
                 ],
                 "usages": [
                   {
-                    "line": 37,
+                    "line": 48,
                     "startColumn": 11,
                     "endColumn": 19,
                     "path": "src/pages/team/TeamPage.tsx",
@@ -1406,18 +2012,18 @@
             "path": "src/pages/team/TeamPage.tsx",
             "references": [
               {
-                "line": 14,
+                "line": 16,
                 "startColumn": 50,
                 "endColumn": 63,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
-                  9,
-                  12
+                  11,
+                  14
                 ],
                 "isLibrary": false
               },
               {
-                "line": 15,
+                "line": 17,
                 "startColumn": 42,
                 "endColumn": 50,
                 "path": "src/pages/team/TeamPage.tsx",
@@ -1432,7 +2038,7 @@
                 }
               },
               {
-                "line": 16,
+                "line": 18,
                 "startColumn": 18,
                 "endColumn": 28,
                 "path": "src/hooks/use-trainer.ts",
@@ -1443,18 +2049,66 @@
                 "isLibrary": false
               },
               {
-                "line": 16,
+                "line": 18,
                 "startColumn": 29,
                 "endColumn": 38,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
-                  14,
-                  14
+                  16,
+                  16
                 ],
                 "isLibrary": false
               },
               {
-                "line": 18,
+                "line": 19,
+                "startColumn": 20,
+                "endColumn": 27,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useMemo"
+                }
+              },
+              {
+                "line": 19,
+                "startColumn": 34,
+                "endColumn": 47,
+                "path": "src/lib/team-types.ts",
+                "lines": [
+                  3,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 48,
+                "endColumn": 55,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 71,
+                "endColumn": 78,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
                 "startColumn": 2,
                 "endColumn": 11,
                 "path": "src/pages/team/TeamPage.tsx",
@@ -1469,42 +2123,20 @@
                 }
               },
               {
-                "line": 19,
+                "line": 22,
                 "startColumn": 25,
                 "endColumn": 41,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
-                  7,
-                  7
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 19,
-                "startColumn": 50,
-                "endColumn": 59,
-                "path": "src/pages/team/TeamPage.tsx",
-                "lines": [
-                  14,
-                  14
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 20,
-                "startColumn": 6,
-                "endColumn": 15,
-                "path": "src/pages/team/TeamPage.tsx",
-                "lines": [
-                  14,
-                  14
+                  9,
+                  9
                 ],
                 "isLibrary": false
               },
               {
                 "line": 22,
-                "startColumn": 6,
-                "endColumn": 13,
+                "startColumn": 50,
+                "endColumn": 59,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
                   16,
@@ -1513,7 +2145,88 @@
                 "isLibrary": false
               },
               {
-                "line": 24,
+                "line": 23,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 2,
+                "endColumn": 11,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useEffect"
+                }
+              },
+              {
+                "line": 26,
+                "startColumn": 25,
+                "endColumn": 34,
+                "path": "src/api/teams.ts",
+                "lines": [
+                  6,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 35,
+                "endColumn": 44,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 11,
+                "endColumn": 23,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  26,
+                  26
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 30,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
                 "startColumn": 16,
                 "endColumn": 31,
                 "path": "src/lib/team-title.ts",
@@ -1524,51 +2237,51 @@
                 "isLibrary": false
               },
               {
-                "line": 24,
+                "line": 32,
                 "startColumn": 32,
                 "endColumn": 39,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
-                  16,
-                  16
+                  18,
+                  18
                 ],
                 "isLibrary": false
               },
               {
-                "line": 24,
+                "line": 32,
                 "startColumn": 46,
                 "endColumn": 53,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 67,
+                "endColumn": 75,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
                   16,
                   16
                 ],
                 "isLibrary": false
               },
               {
-                "line": 24,
-                "startColumn": 67,
-                "endColumn": 75,
-                "path": "src/pages/team/TeamPage.tsx",
-                "lines": [
-                  14,
-                  14
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 27,
+                "line": 35,
                 "startColumn": 4,
                 "endColumn": 19,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
-                  15,
-                  15
+                  17,
+                  17
                 ],
                 "isLibrary": false
               },
               {
-                "line": 28,
+                "line": 36,
                 "startColumn": 10,
                 "endColumn": 21,
                 "path": "src/api/teams.ts",
@@ -1579,42 +2292,9 @@
                 "isLibrary": false
               },
               {
-                "line": 28,
+                "line": 36,
                 "startColumn": 22,
                 "endColumn": 31,
-                "path": "src/pages/team/TeamPage.tsx",
-                "lines": [
-                  14,
-                  14
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 29,
-                "startColumn": 4,
-                "endColumn": 19,
-                "path": "src/pages/team/TeamPage.tsx",
-                "lines": [
-                  15,
-                  15
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 34,
-                "startColumn": 11,
-                "endColumn": 16,
-                "path": "src/pages/team/TeamPage.tsx",
-                "lines": [
-                  24,
-                  24
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 36,
-                "startColumn": 9,
-                "endColumn": 16,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
                   16,
@@ -1624,6 +2304,83 @@
               },
               {
                 "line": 37,
+                "startColumn": 4,
+                "endColumn": 19,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 42,
+                "startColumn": 11,
+                "endColumn": 16,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  32,
+                  32
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 43,
+                "startColumn": 10,
+                "endColumn": 19,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 44,
+                "startColumn": 7,
+                "endColumn": 19,
+                "path": "src/pages/team/components/badges.tsx",
+                "lines": [
+                  1,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 44,
+                "startColumn": 20,
+                "endColumn": 27,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 45,
+                "startColumn": 7,
+                "endColumn": 14,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 47,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/pages/team/TeamPage.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 48,
                 "startColumn": 11,
                 "endColumn": 19,
                 "path": "src/pages/team/components/TeamSlot.tsx",
@@ -1634,59 +2391,59 @@
                 "isLibrary": false
               },
               {
-                "line": 37,
+                "line": 48,
                 "startColumn": 25,
                 "endColumn": 32,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
-                  36,
-                  36
+                  47,
+                  47
                 ],
                 "isLibrary": false
               },
               {
-                "line": 37,
+                "line": 48,
                 "startColumn": 46,
                 "endColumn": 53,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
-                  36,
-                  36
+                  47,
+                  47
                 ],
                 "isLibrary": false
               },
               {
-                "line": 40,
+                "line": 51,
                 "startColumn": 38,
                 "endColumn": 50,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
-                  15,
-                  15
+                  17,
+                  17
                 ],
                 "isLibrary": false
               },
               {
-                "line": 40,
+                "line": 51,
                 "startColumn": 61,
                 "endColumn": 68,
                 "path": "src/pages/team/TeamPage.tsx",
                 "lines": [
-                  26,
-                  30
+                  34,
+                  38
                 ],
                 "isLibrary": false
               }
             ],
             "languageReferences": [
               {
-                "line": 19,
+                "line": 22,
                 "startColumn": 4,
                 "endColumn": 16,
                 "name": "localStorage"
               },
               {
-                "line": 19,
+                "line": 22,
                 "startColumn": 43,
                 "endColumn": 49,
                 "name": "String"
@@ -1694,12 +2451,12 @@
             ],
             "exports": [
               {
-                "line": 14,
+                "line": 16,
                 "startColumn": 16,
                 "endColumn": 24,
                 "lines": [
-                  14,
-                  45
+                  16,
+                  56
                 ],
                 "usages": [
                   {
@@ -1736,7 +2493,7 @@
                 "endColumn": 24,
                 "lines": [
                   3,
-                  7
+                  8
                 ],
                 "usages": [
                   {
