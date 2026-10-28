@@ -3,6 +3,7 @@ import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
 import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType, ImportGraphGroup, TraceDiagram, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 import { groupCardNodes, listCardAddedEdges, listCardLeftOutEdgeIds, listCardParents, listLeftOutNodeIds, type CardContext, type NodeGroup, type ParentIdById } from "./cards"
+import { isFunctionCardBlock, listFunctionCardLabels } from "./function-card"
 import { listListedBlocks } from "./listed-blocks"
 import { foldedValueOf, listNodeSteps, nodeBlockAround, nodeBlockOf } from "./node-blocks"
 
@@ -138,7 +139,7 @@ export const toTraceNode = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlo
     diffCodeBlocks: codeBlocks.filter(isChanged),
     children: [],
     triggerLabels: inside.filter((block) => TRIGGER_TYPES.has(block.type)).map((codeBlock) => ({ label: null, codeBlock })),
-    blockLabels: listListedBlocks(nodeBlock, inside).map(({ block }) => ({ label: null, codeBlock: block })),
+    blockLabels: isFunctionCardBlock(nodeBlock) ? listFunctionCardLabels(nodeBlock, inside) : listListedBlocks(nodeBlock, inside).map(({ block }) => ({ label: null, codeBlock: block })),
     isRequired: false,
   }
 }

@@ -54,7 +54,7 @@ export const textAt = (source: SourceFile, { start, end }: SourceRange): string 
     .join(SPACE)
 }
 
-const parameterTextOf = (parameter: CodeBlock, source: SourceFile | null): string => {
+export const parameterTextOf = (parameter: CodeBlock, source: SourceFile | null): string => {
   const [range] = parameter.lineOfCodeRangeReference
   const written = source === null ? null : textAt(source, range)
   return written === null ? (parameter.name ?? "") : withoutDefault(written)

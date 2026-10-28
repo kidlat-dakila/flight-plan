@@ -18,6 +18,7 @@ import {
   ChevronsDownUpIcon,
   ChevronsUpDownIcon,
   CrosshairIcon,
+  ParenthesesIcon,
   PencilIcon,
   PlusIcon,
   Trash2Icon,
@@ -39,7 +40,7 @@ import { navigatorButtonOf, WRITE_UP_KEY, type NavigatorButton } from "@/lib/nav
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { arrangeTrace, nearestSideOf, placeUnplacedCards, type CardSide, type PositionById } from "@/lib/trace-arrangement"
 import { toTraceFlow, type FlowFrame, type FlowHandleType } from "@/lib/trace-flow"
-import { innerWidthOf, layoutTrace, nestedCardWidthOf, NODE_HEAD_HEIGHT, NODE_WIDTH, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/trace-layout"
+import { CALLEE_HEAD_HEIGHT, innerWidthOf, layoutTrace, nestedCardWidthOf, NODE_HEAD_HEIGHT, NODE_WIDTH, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/trace-layout"
 import { cn } from "@/lib/utils"
 import BlockTypeIcon, { BlockListIcon } from "./type-icons"
 
@@ -73,10 +74,21 @@ export interface TraceBlockList {
   readonly blocks: readonly TraceListedBlock[]
 }
 
+export interface TraceCalleeCard {
+  readonly id: string
+  readonly name: string
+  readonly type: string
+  readonly typeLabel: string
+  readonly change: NodeChange | null
+  readonly changedLabel: string | null
+  readonly rowIds: readonly string[]
+}
+
 export interface TraceRowGroup {
   readonly label: string | null
   readonly rowIds: readonly string[]
   readonly childIds: readonly string[]
+  readonly calleeCards?: readonly TraceCalleeCard[]
 }
 
 export interface TraceNode {
@@ -249,6 +261,15 @@ const PARAMETER_CHIP_GAP_PX = 4
 const PARAMETERS_CLASSES = "absolute flex flex-wrap content-start gap-1"
 const PARAMETER_CHIP_CLASSES = "flex h-5 max-w-full items-center rounded-sm border bg-muted px-1.5 font-mono text-[0.6875rem] leading-4 text-muted-foreground"
 const ROW_HEADING_CLASSES = "absolute flex items-end px-0.5 text-[0.625rem] leading-3 font-bold tracking-wide text-muted-foreground uppercase"
+const CALLEE_CARD_CLASSES = "pointer-events-none absolute rounded-md border bg-card"
+const CALLEE_HEAD_CLASSES = "flex items-center gap-1.5 px-2"
+const CALLEE_KIND_CLASSES = "ml-auto flex shrink-0 items-center gap-1 text-[0.6875rem] leading-4 text-muted-foreground"
+const ARGUMENT_BLOCK_TYPE = "root-argument-value"
+const ARGUMENT_KIND = "argument"
+const SITE_KINDS: ReadonlySet<string> = new Set(["call", "return", "throw"])
+const THROW_KIND = "throw"
+const CALLEE_ID_SEPARATOR = ":callee:"
+const UNDRAWN_LINE_KINDS: ReadonlySet<LayoutRowKind> = new Set<LayoutRowKind>(["heading", "parameters", "argument-row", "callee"])
 const FOCUS_LABEL = "Show only the paths through this node"
 const COLLAPSE_LABEL = "Hide the nodes this node leads to"
 const EXPAND_LABEL = "Show the nodes this node leads to again"
@@ -322,8 +343,25 @@ const headingIdOf = (node: TraceNode, groupIndex: number): string => [node.id, S
 const listBlockRows = (node: TraceNode): BlockRow[] =>
   node.blockLists.flatMap(({ kind, label, blocks }) => blocks.map((block) => ({ kind, kindLabel: label, block })))
 
+const calleeCardsOf = (group: TraceRowGroup): readonly TraceCalleeCard[] => group.calleeCards ?? []
+
+const isEmptyGroup = (group: TraceRowGroup): boolean =>
+  group.rowIds.length === 0 && group.childIds.length === 0 && calleeCardsOf(group).length === 0
+
 const listRowHeadings = (node: TraceNode): RowHeading[] =>
-  node.rowGroups.flatMap(({ label }, groupIndex) => (label === null ? [] : [{ id: headingIdOf(node, groupIndex), label }]))
+  node.rowGroups.flatMap((group, groupIndex) => (group.label === null || isEmptyGroup(group) ? [] : [{ id: headingIdOf(node, groupIndex), label: group.label }]))
+
+const calleeRowIdOf = (node: TraceNode, callee: TraceCalleeCard): string => [node.id, callee.id].join(CALLEE_ID_SEPARATOR)
+
+interface PlacedCallee {
+  readonly rowId: string
+  readonly callee: TraceCalleeCard
+}
+
+const listCallees = (node: TraceNode): PlacedCallee[] =>
+  node.rowGroups.flatMap(calleeCardsOf).map((callee) => ({ rowId: calleeRowIdOf(node, callee), callee }))
+
+const isFunctionCard = (node: TraceNode): boolean => node.rowGroups.some((group) => group.calleeCards !== undefined)
 
 interface ChipPacking {
   readonly lineCount: number
@@ -346,16 +384,36 @@ const parametersRowsOf = (node: TraceNode, cardWidth: number): LayoutRow[] =>
 
 const rowKindOf = ({ isDraft }: Pick<TraceTriggerLabel, "isDraft">): LayoutRowKind => (isDraft ? "row" : "two-line-row")
 
+interface DrawnRowSource {
+  readonly isDraft: boolean
+  readonly kind: string | null
+}
+
+const siteRowKindOf = ({ isDraft }: DrawnRowSource): LayoutRowKind => (isDraft ? "row" : "site-row")
+
+const functionCardRowKindOf = (row: DrawnRowSource): LayoutRowKind => {
+  if (row.kind === ARGUMENT_KIND) return "argument-row"
+  return row.kind !== null && SITE_KINDS.has(row.kind) ? siteRowKindOf(row) : rowKindOf(row)
+}
+
 const toLayoutRows = (node: TraceNode, cardWidth: number): LayoutRow[] => {
-  const rowById = new Map([...node.blockLists.flatMap(({ blocks }) => blocks), ...node.triggerLabels].map((row) => [row.id, row] as const))
-  return [...parametersRowsOf(node, cardWidth), ...node.rowGroups.flatMap(({ label, rowIds, childIds }, groupIndex): LayoutRow[] => [
-    ...(label === null ? [] : [{ id: headingIdOf(node, groupIndex), kind: "heading" as const }]),
-    ...rowIds.flatMap((rowId): LayoutRow[] => {
+  const rowById = new Map<string, DrawnRowSource>([
+    ...node.blockLists.flatMap(({ kind, blocks }) => blocks.map((block) => [block.id, { isDraft: block.isDraft, kind }] as const)),
+    ...node.triggerLabels.map((trigger) => [trigger.id, { isDraft: trigger.isDraft, kind: null }] as const),
+  ])
+  const kindOfRow = isFunctionCard(node) ? functionCardRowKindOf : rowKindOf
+  const rowsOf = (rowIds: readonly string[], kindOf: (row: DrawnRowSource) => LayoutRowKind): LayoutRow[] =>
+    rowIds.flatMap((rowId): LayoutRow[] => {
       const row = rowById.get(rowId)
-      return row === undefined ? [] : [{ id: rowId, kind: rowKindOf(row) }]
-    }),
-    ...childIds.map((childId): LayoutRow => ({ id: childId, kind: "card" })),
-  ])]
+      return row === undefined ? [] : [{ id: rowId, kind: kindOf(row) }]
+    })
+  const groupRowsOf = (group: TraceRowGroup, groupIndex: number): LayoutRow[] => [
+    ...(group.label === null ? [] : [{ id: headingIdOf(node, groupIndex), kind: "heading" as const }]),
+    ...rowsOf(group.rowIds, kindOfRow),
+    ...calleeCardsOf(group).map((callee): LayoutRow => ({ id: calleeRowIdOf(node, callee), kind: "callee", rows: rowsOf(callee.rowIds, siteRowKindOf) })),
+    ...group.childIds.map((childId): LayoutRow => ({ id: childId, kind: "card" })),
+  ]
+  return [...parametersRowsOf(node, cardWidth), ...node.rowGroups.flatMap((group, groupIndex) => (isEmptyGroup(group) ? [] : groupRowsOf(group, groupIndex)))]
 }
 
 const toNestedLayoutNode = (node: TraceNode, cardWidth: number): LayoutNode => ({
@@ -649,6 +707,8 @@ interface BlockRowButtonProps {
   readonly onHoverChange: (isHovered: boolean) => void
 }
 
+const rowIconClassesOf = (kind: string): string => cn(ROW_ICON_CLASSES, kind === THROW_KIND && "text-destructive")
+
 const BlockRowButton = ({ nodeId, row: { kind, kindLabel, block }, placed, emphasis, onSelect, onHoverChange }: BlockRowButtonProps) => (
   <button
     type="button"
@@ -666,14 +726,57 @@ const BlockRowButton = ({ nodeId, row: { kind, kindLabel, block }, placed, empha
     onBlur={() => { onHoverChange(false) }}
     onClick={onSelect}
   >
-    <BlockListIcon kind={kind} className={ROW_ICON_CLASSES} />
-    <span className="flex min-w-0 flex-col">
-      <Unwritten isPending={block.isDraft} className="h-4 w-24 py-0 text-[0.75rem]">
-        <span className={cn("truncate text-[0.75rem] leading-4", block.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{block.label}</span>
-      </Unwritten>
-      {block.isDraft ? null : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{block.name}</span>}
-    </span>
+    {placed.kind === "argument-row"
+      ? (
+          <>
+            <ParenthesesIcon aria-hidden="true" className={ROW_ICON_CLASSES} />
+            <span className="min-w-0 truncate font-mono text-[0.6875rem] leading-4">{block.label}</span>
+          </>
+        )
+      : (
+          <>
+            <BlockListIcon kind={kind} className={rowIconClassesOf(kind)} />
+            <span className="flex min-w-0 flex-col">
+              <Unwritten isPending={block.isDraft} className="h-4 w-24 py-0 text-[0.75rem]">
+                <span className={cn("text-[0.75rem] leading-4", placed.kind === "site-row" ? "line-clamp-2" : "truncate", block.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{block.label}</span>
+              </Unwritten>
+              {block.isDraft ? null : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{block.name}</span>}
+            </span>
+          </>
+        )}
   </button>
+)
+
+const CalleeIcon = ({ type }: { readonly type: string }) =>
+  type === ARGUMENT_BLOCK_TYPE
+    ? <ParenthesesIcon aria-hidden="true" className={ROW_ICON_CLASSES} />
+    : <BlockTypeIcon type={type} className={ROW_ICON_CLASSES} />
+
+interface CalleeFrameProps {
+  readonly nodeId: string
+  readonly callee: TraceCalleeCard
+  readonly placed: PlacedRow
+}
+
+const CalleeFrame = ({ nodeId, callee, placed }: CalleeFrameProps) => (
+  <div
+    data-callee-card={callee.id}
+    {...artifactPartMark("trace-node", nodeId)}
+    data-change={callee.change ?? undefined}
+    className={cn(CALLEE_CARD_CLASSES, callee.change === null ? "border-input" : CHANGE_BORDER_CLASSES[callee.change])}
+    style={boxStyleOf(placed)}
+  >
+    <div className={CALLEE_HEAD_CLASSES} style={{ height: CALLEE_HEAD_HEIGHT }}>
+      <CalleeIcon type={callee.type} />
+      <span className="min-w-0 truncate font-mono text-[0.6875rem] leading-4 font-bold">{callee.name}</span>
+      <span className={CALLEE_KIND_CLASSES}>
+        <span>{callee.typeLabel}</span>
+        {callee.change === null || callee.changedLabel === null
+          ? null
+          : <span className={cn("font-bold before:mr-1 before:font-normal before:text-muted-foreground before:content-['•']", CHANGE_TEXT_CLASSES[callee.change])}>{callee.changedLabel}</span>}
+      </span>
+    </div>
+  </div>
 )
 
 interface FlowNodeData extends Record<string, unknown> {
@@ -724,7 +827,7 @@ const aroundCentre = ({ x, y }: Point): Point => ({ x: x - CONNECT_HANDLE_RADIUS
 
 const connectHandlesOf = (frame: FlowFrame): ConnectHandle[] => [
   ...frame.rows
-    .filter((placed) => placed.kind !== "heading" && placed.kind !== "parameters")
+    .filter((placed) => !UNDRAWN_LINE_KINDS.has(placed.kind))
     .map((placed) => ({
       id: rowHandleIdOf(placed.id),
       type: "source" as const,
@@ -745,6 +848,7 @@ const FlowNodeView = ({ data: { node, frame, cardActions, resizing, emphasis, is
   const headingById = new Map(listRowHeadings(node).map((heading) => [heading.id, heading] as const))
   const blockRowById = new Map(listBlockRows(node).map((row) => [row.block.id, row] as const))
   const triggerById = new Map(node.triggerLabels.map((trigger) => [trigger.id, trigger] as const))
+  const calleeByRowId = new Map(listCallees(node).map(({ rowId, callee }) => [rowId, callee] as const))
   return (
     <>
       <NodeBox
@@ -766,6 +870,8 @@ const FlowNodeView = ({ data: { node, frame, cardActions, resizing, emphasis, is
         const heading = headingById.get(placed.id)
         const blockRow = blockRowById.get(placed.id)
         const trigger = triggerById.get(placed.id)
+        const callee = calleeByRowId.get(placed.id)
+        if (callee !== undefined) return [<CalleeFrame key={placed.id} nodeId={node.id} callee={callee} placed={placed} />]
         if (heading !== undefined) return [<span key={placed.id} data-row-heading={node.id} {...artifactPartMark("trace-node", node.id)} className={ROW_HEADING_CLASSES} style={boxStyleOf(placed)}>{heading.label}</span>]
         if (placed.kind === "parameters") {
           return [

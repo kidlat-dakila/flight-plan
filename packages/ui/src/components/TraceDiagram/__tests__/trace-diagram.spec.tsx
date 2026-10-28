@@ -324,6 +324,46 @@ describe("TraceDiagram", () => {
     expect(inPlace.map((row) => row.getAttribute("data-block-id"))).toStrictEqual(["on-submit-event", "on-submit-prevent", "on-submit-mutate"])
   })
 
+  it("draws a function card with argument rows, its calls in a card per callee and its returns and raises, and leaves a line from the call row it names", () => {
+    const listed = (id: string, name: string, label: string) => ({ id, name, label, isDraft: false, hint: null, change: null, lines: [[1, 1]] as const })
+    const rename = node({
+      id: "rename",
+      label: "Renames a trainer",
+      name: "rename_trainer",
+      blockLists: [
+        { kind: "argument", label: "Arguments", blocks: [listed("rename-id", "trainer_id", "trainer_id: int")] },
+        { kind: "call", label: "Calls", blocks: [listed("rename@3:5", "load_trainers", "Calls load_trainers to read every trainer"), listed("rename@9:5", "load_trainers", "Calls load_trainers when the cache is cold to read them again")] },
+        { kind: "return", label: "Returns", blocks: [listed("rename@12:5", "return", "Returns the renamed trainer")] },
+        { kind: "throw", label: "Raises", blocks: [listed("rename-raise", "raise LookupError", "Raises LookupError when no trainer has the id")] },
+      ],
+      rowGroups: [
+        { label: "Arguments", rowIds: ["rename-id"], childIds: [] },
+        { label: "External calls", rowIds: [], childIds: [], calleeCards: [{ id: "store#load_trainers", name: "load_trainers", type: "function", typeLabel: "Function", change: "added", changedLabel: "Added", rowIds: ["rename@3:5", "rename@9:5"] }] },
+        { label: "Returns and raises", rowIds: ["rename-raise", "rename@12:5"], childIds: [] },
+      ],
+    })
+    const load = node({ id: "load", label: "Loads the trainers", name: "load_trainers" })
+    const edges: readonly TraceEdge[] = [{ id: "rename-load", from: "rename", to: "load", fromRowId: "rename@9:5", toRowId: null, toSide: "left" }]
+    const { container } = render(
+      <TraceDiagram title="A rename" nodes={[rename, load]} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+    )
+    const callee = container.querySelector<HTMLElement>("[data-callee-card=\"store#load_trainers\"]")
+    const calleePlace = placeOf(callee)
+    const [first, second] = ["Calls: Calls load_trainers to read every trainer", "Calls: Calls load_trainers when the cache is cold to read them again"].map((name) => screen.getByRole("button", { name }))
+    const argument = screen.getByRole("button", { name: "Arguments: trainer_id: int" })
+    const raise = screen.getByRole("button", { name: "Raises: Raises LookupError when no trainer has the id" })
+    const leaving = placeOf(second)
+
+    expect([...container.querySelectorAll("[data-row-heading=\"rename\"]")].map((heading) => heading.textContent)).toStrictEqual(["Arguments", "External calls", "Returns and raises"])
+    expect(callee === null ? null : [within(callee).getByText("load_trainers").tagName, within(callee).getByText("Function").tagName, within(callee).getByText("Added").tagName]).toStrictEqual(["SPAN", "SPAN", "SPAN"])
+    expect([first, second].map(placeOf).every((place) => place.left > calleePlace.left && place.top > calleePlace.top && place.left + place.width < calleePlace.left + calleePlace.width && place.top + place.height < calleePlace.top + calleePlace.height)).toBe(true)
+    expect(within(argument).getByText("trainer_id: int").className).toContain("font-mono")
+    expect(Number.parseFloat(argument.style.height)).toBeLessThan(Number.parseFloat(first.style.height))
+    expect(within(first).getByText("Calls load_trainers to read every trainer").className).toContain("line-clamp-2")
+    expect(raise.querySelector("svg")?.getAttribute("class")).toContain("text-destructive")
+    expect(linePathsOf(container).filter((path) => path?.startsWith(`M ${String(leaving.left + leaving.width)} ${String(leaving.top + leaving.height / 2)} `) === true)).toHaveLength(1)
+  })
+
   it("names a card's classification after its type, unless they are the same", () => {
     const nodes = [
       node({ id: "save", label: "Saves the order", classification: { key: "database-write", label: "Database write" } }),

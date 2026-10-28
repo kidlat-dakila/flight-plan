@@ -1966,6 +1966,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 18,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/history.py",
           "src/pokedex/trainers/rename.py"
@@ -2782,6 +2788,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 26,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/history.py",
           "src/pokedex/trainers/rename.py"
@@ -3155,6 +3167,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/names.py",
           "src/pokedex/trainers/rename.py"
@@ -3531,6 +3549,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/names.py",
           "src/pokedex/trainers/rename.py"
@@ -4184,6 +4208,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 74,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/rename.py",
           "src/pokedex/trainers/rename_handler.py"
@@ -5897,6 +5927,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 27,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -9462,6 +9498,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 63,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -10939,6 +10981,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 9,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/rename_handler.py"
         ],
@@ -11248,6 +11296,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 23,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/cli.py",
           "src/pokedex/trainers/rename_handler.py"
@@ -11627,6 +11681,12 @@
         "isRoot": false,
         "isExported": false,
         "isReturned": true,
+        "returnsAt": [
+          {
+            "line": 21,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -12891,6 +12951,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/rename.py",
           "src/pokedex/trainers/store.py"

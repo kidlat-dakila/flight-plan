@@ -1,13 +1,14 @@
 import type { Point } from "@/lib/diagram-path"
 
-export type LayoutRowKind = "heading" | "parameters" | "row" | "two-line-row" | "card"
+export type LayoutRowKind = "heading" | "parameters" | "row" | "two-line-row" | "argument-row" | "site-row" | "callee" | "card"
 
-type DrawnRowKind = Exclude<LayoutRowKind, "card">
+type DrawnRowKind = Exclude<LayoutRowKind, "card" | "callee">
 
 export interface LayoutRow {
   readonly id: string
   readonly kind: LayoutRowKind
   readonly lineCount?: number
+  readonly rows?: readonly LayoutRow[]
 }
 
 export interface LayoutNode {
@@ -131,6 +132,10 @@ export const TWO_LINE_ROW_HEIGHT = 48
 export const ROW_HEADING_HEIGHT = 16
 export const PARAMETER_LINE_HEIGHT = 20
 export const PARAMETER_LINE_GAP = 4
+export const ARGUMENT_ROW_HEIGHT = 28
+export const SITE_ROW_HEIGHT = 60
+export const CALLEE_HEAD_HEIGHT = 24
+export const CALLEE_INSET = 5
 export const EDGE_APPROACH = 24
 export const EDGE_SPACING = 18
 const ARRIVAL_INSET = 6
@@ -149,21 +154,36 @@ export const nestedCardWidthOf = (cardWidth: number): number => Math.max(NODE_WI
 
 const sumOf = (numbers: readonly number[]): number => numbers.reduce((total, one) => total + one, 0)
 
-const ROW_HEIGHTS: Readonly<Record<Exclude<DrawnRowKind, "parameters">, number>> = { "heading": ROW_HEADING_HEIGHT, "row": ROW_HEIGHT, "two-line-row": TWO_LINE_ROW_HEIGHT }
+const ROW_HEIGHTS: Readonly<Record<Exclude<DrawnRowKind, "parameters">, number>> = {
+  "heading": ROW_HEADING_HEIGHT,
+  "row": ROW_HEIGHT,
+  "two-line-row": TWO_LINE_ROW_HEIGHT,
+  "argument-row": ARGUMENT_ROW_HEIGHT,
+  "site-row": SITE_ROW_HEIGHT,
+}
 const ONE_LINE = 1
 
 const rowHeightOf = ({ kind, lineCount = ONE_LINE }: LayoutRow & { readonly kind: DrawnRowKind }): number =>
   kind === "parameters" ? lineCount * PARAMETER_LINE_HEIGHT + (lineCount - ONE_LINE) * PARAMETER_LINE_GAP : ROW_HEIGHTS[kind]
 const CARD_ROW: LayoutRowKind = "card"
+const CALLEE_ROW: LayoutRowKind = "callee"
 
-type LayoutPart = { readonly kind: "row", readonly row: LayoutRow & { readonly kind: DrawnRowKind } } | { readonly kind: "card", readonly node: LayoutNode }
+type DrawnRow = LayoutRow & { readonly kind: DrawnRowKind }
+
+type LayoutPart
+  = | { readonly kind: "row", readonly row: DrawnRow }
+    | { readonly kind: "callee", readonly row: LayoutRow, readonly rows: readonly DrawnRow[] }
+    | { readonly kind: "card", readonly node: LayoutNode }
 
 interface PartsPlacement {
   readonly top: number
   readonly placed: Placement
 }
 
-const isDrawnRow = (row: LayoutRow): row is LayoutRow & { readonly kind: DrawnRowKind } => row.kind !== CARD_ROW
+const isDrawnRow = (row: LayoutRow): row is DrawnRow => row.kind !== CARD_ROW && row.kind !== CALLEE_ROW
+
+const calleeHeightOf = (rows: readonly DrawnRow[]): number =>
+  CALLEE_HEAD_HEIGHT + sumOf(rows.map(rowHeightOf)) + ROW_GAP * Math.max(0, rows.length - ONE_LINE) + CALLEE_INSET
 
 const partsOf = (node: LayoutNode): LayoutPart[] => {
   const childById = new Map(node.children.map((child) => [child.id, child] as const))
@@ -171,6 +191,7 @@ const partsOf = (node: LayoutNode): LayoutPart[] => {
   return [
     ...node.rows.flatMap((row): LayoutPart[] => {
       if (isDrawnRow(row)) return [{ kind: "row", row }]
+      if (row.kind === CALLEE_ROW) return [{ kind: "callee", row, rows: (row.rows ?? []).filter(isDrawnRow) }]
       const child = childById.get(row.id)
       return child === undefined ? [] : [{ kind: "card", node: child }]
     }),
@@ -178,7 +199,12 @@ const partsOf = (node: LayoutNode): LayoutPart[] => {
   ]
 }
 
-const heightOfPart = (part: LayoutPart): number => (part.kind === "row" ? rowHeightOf(part.row) : sizeOf(part.node).height) + ROW_GAP
+const partHeightOf = (part: LayoutPart): number => {
+  if (part.kind === "row") return rowHeightOf(part.row)
+  return part.kind === "callee" ? calleeHeightOf(part.rows) : sizeOf(part.node).height
+}
+
+const heightOfPart = (part: LayoutPart): number => partHeightOf(part) + ROW_GAP
 
 const sizeOf = (node: LayoutNode): Size => {
   const childSizes = node.children.map(sizeOf)
@@ -191,10 +217,20 @@ const sizeOf = (node: LayoutNode): Size => {
 const placeNode = (node: LayoutNode, box: Omit<Box, "height">, depth: number, topId: string): Placement => {
   const { height } = sizeOf(node)
   const inner = { x: box.x + INSET, width: innerWidthOf(box.width) }
-  const placeOne = (part: LayoutPart, y: number): Placement =>
-    part.kind === "row"
-      ? { nodes: [], rows: [{ id: part.row.id, kind: part.row.kind, nodeId: node.id, ...inner, y, height: rowHeightOf(part.row) }], lanes: [] }
-      : placeNode(part.node, { ...inner, y }, depth + 1, topId)
+  const placeRow = (row: DrawnRow, area: Omit<Box, "height">): PlacedRow => ({ id: row.id, kind: row.kind, nodeId: node.id, ...area, height: rowHeightOf(row) })
+  const placeCallee = (row: LayoutRow, rows: readonly DrawnRow[], y: number): PlacedRow[] => {
+    const within = { x: inner.x + CALLEE_INSET, width: inner.width - CALLEE_INSET * HALF }
+    const { placed } = rows.reduce<{ readonly top: number, readonly placed: readonly PlacedRow[] }>(
+      ({ top, placed: soFar }, inside) => ({ top: top + rowHeightOf(inside) + ROW_GAP, placed: [...soFar, placeRow(inside, { ...within, y: top })] }),
+      { top: y + CALLEE_HEAD_HEIGHT, placed: [] },
+    )
+    return [{ id: row.id, kind: row.kind, nodeId: node.id, ...inner, y, height: calleeHeightOf(rows) }, ...placed]
+  }
+  const placeOne = (part: LayoutPart, y: number): Placement => {
+    if (part.kind === "row") return { nodes: [], rows: [placeRow(part.row, { ...inner, y })], lanes: [] }
+    if (part.kind === "callee") return { nodes: [], rows: placeCallee(part.row, part.rows, y), lanes: [] }
+    return placeNode(part.node, { ...inner, y }, depth + 1, topId)
+  }
   const { placed } = partsOf(node).reduce<PartsPlacement>(
     ({ top, placed: soFar }, part) => ({ top: top + heightOfPart(part), placed: mergePlacements([soFar, placeOne(part, top)]) }),
     { top: box.y + NODE_HEAD_HEIGHT, placed: NOTHING_PLACED },

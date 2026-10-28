@@ -24,8 +24,10 @@ const ORDERS_CHANGE = { "src/orders.ts": [rangeAt(2, 10, 2, 12)] }
 const ORDERS_VIEW = codeOf("import { loadOrders } from \"./orders\"", "export const showOrders = () => {", "  return loadOrders()", "}")
 const ORDERS_VIEW_EDGE = { id: "src/orders-view.ts#function@2:1 -> src/orders.ts#function@2:1", from: "src/orders-view.ts#function@2:1", to: "src/orders.ts#function@2:1" }
 
-const rowIdsOf = (nodes: readonly TraceNode[], nodeId: string): string[] =>
-  (nodes.find((node) => node.id === nodeId)?.blockLabels ?? []).map(({ codeBlock }) => codeBlock.id)
+const ORDERS_KEY_ID = "src/orders.ts#root-variable@1:1"
+
+const holdsBlock = (nodes: readonly TraceNode[], nodeId: string, blockId: string): boolean =>
+  (nodes.find((node) => node.id === nodeId)?.codeBlocks ?? []).some((block) => block.id === blockId)
 
 describe("the Trace Diagram of a group", () => {
   it("makes one node per root block on a chain, typed as that block, and an edge where a chain steps from one root block into another", () => {
@@ -113,7 +115,7 @@ describe("the Trace Diagram of a group", () => {
     expect(diagramOf({ "src/pricing.ts": prices }, { "src/pricing.ts": [rangeAt(2, 3, 2, 9), rangeAt(5, 3, 5, 9)] })).toBeNull()
   })
 
-  it("gives a value at the top level of a file that is not exported no node, and lists it as a step of every node that reads it", () => {
+  it("gives a value at the top level of a file that is not exported no node, and folds it into every node that reads it", () => {
     const orders = codeOf(
       "const ORDERS_KEY = [\"orders\"]",
       "export const loadOrders = () => {",
@@ -128,19 +130,16 @@ describe("the Trace Diagram of a group", () => {
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function countOrders (changed)", "function showOrders", "function loadOrders (changed)"])
     expect(diagram?.traceNodeEdges).toStrictEqual([ORDERS_VIEW_EDGE])
-    expect([rowIdsOf(nodes, "src/orders.ts#function@2:1"), rowIdsOf(nodes, "src/orders.ts#function@5:1")]).toStrictEqual([
-      ["src/orders.ts#root-variable@1:1"],
-      ["src/orders.ts#root-variable@1:1"],
-    ])
+    expect([holdsBlock(nodes, "src/orders.ts#function@2:1", ORDERS_KEY_ID), holdsBlock(nodes, "src/orders.ts#function@5:1", ORDERS_KEY_ID)]).toStrictEqual([true, true])
   })
 
-  it("gives an exported value that is plain no node, and lists it as a step of every node that reads it", () => {
+  it("gives an exported value that is plain no node, and folds it into every node that reads it", () => {
     const orders = codeOf("export const ORDERS_KEY = [\"orders\"]", "export const loadOrders = () => {", "  return ORDERS_KEY", "}")
     const diagram = diagramOf({ "src/orders.ts": orders, "src/orders-view.ts": ORDERS_VIEW }, { "src/orders.ts": [rangeAt(1, 27, 1, 36)] })
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function showOrders", "function loadOrders (changed)"])
     expect(diagram?.traceNodeEdges).toStrictEqual([ORDERS_VIEW_EDGE])
-    expect(rowIdsOf(diagram?.traceNodes ?? [], "src/orders.ts#function@2:1")).toStrictEqual(["src/orders.ts#root-variable@1:1"])
+    expect(holdsBlock(diagram?.traceNodes ?? [], "src/orders.ts#function@2:1", ORDERS_KEY_ID)).toBe(true)
   })
 
   it("keeps a node for an exported value made by a call", () => {

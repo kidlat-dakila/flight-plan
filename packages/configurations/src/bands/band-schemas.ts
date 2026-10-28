@@ -8,7 +8,7 @@ export const WAYPOINT_CHANGES = ["added", "modified", "removed"] as const
 export const WAYPOINT_FILTER_KEYS = [...WAYPOINT_FINDING_FILTER_KEYS, ...WAYPOINT_CHANGES] as const
 export const ROOT_BLOCK_CHANGES = ["added", "modified", "deleted"] as const
 export const NODE_CHANGES = ["added", "modified"] as const
-export const NODE_BLOCK_LIST_KINDS = ["argument", "property", "state", "hook", "effect", "call", "step", "part"] as const
+export const NODE_BLOCK_LIST_KINDS = ["argument", "property", "state", "hook", "effect", "call", "step", "part", "return", "throw"] as const
 export const BLAST_FILE_MARKS = ["added", "modified", "deleted", "breaks", "behaviour-changes", "plain"] as const
 export const BLAST_VIEW_IDS = ["export-bound", "import-bound"] as const
 export const BLAST_IMPACT_CHOICES = [...IMPACT_TYPES, "unassessed"] as const
@@ -229,7 +229,24 @@ export const traceBlockListSchema = z.strictObject({
 
 export type TraceBlockListView = z.infer<typeof traceBlockListSchema>
 
-export const traceRowGroupSchema = z.strictObject({ label: z.string().nullable(), rowIds: z.array(z.string()), childIds: z.array(z.string()) })
+export const traceCalleeCardSchema = z.strictObject({
+  id: z.string(),
+  name: z.string(),
+  type: z.enum(CODE_BLOCK_TYPES),
+  typeLabel: z.string(),
+  change: z.enum(NODE_CHANGES).nullable(),
+  changedLabel: z.string().nullable(),
+  rowIds: z.array(z.string()),
+})
+
+export type TraceCalleeCardView = z.infer<typeof traceCalleeCardSchema>
+
+export const traceRowGroupSchema = z.strictObject({
+  label: z.string().nullable(),
+  rowIds: z.array(z.string()),
+  childIds: z.array(z.string()),
+  calleeCards: z.array(traceCalleeCardSchema).optional(),
+})
 
 export type TraceRowGroupView = z.infer<typeof traceRowGroupSchema>
 

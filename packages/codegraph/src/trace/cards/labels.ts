@@ -11,9 +11,11 @@ export const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = {
   call: "Calls",
   step: "Steps",
   part: "Parts",
+  return: "Returns",
+  throw: "Raises",
 }
 export const KINDS_BEFORE_CALLS: readonly NodeBlockListKind[] = ["argument", "state", "hook", "effect"]
-export const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = ["argument", "property", "state", "hook", "effect", "call", "step", "part"]
+export const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = ["argument", "property", "state", "hook", "effect", "call", "step", "part", "return", "throw"]
 export const ARGUMENT: NodeBlockListKind = "argument"
 export const PROPERTY: NodeBlockListKind = "property"
 export const EXTERNAL_CALL: NodeBlockListKind = "call"

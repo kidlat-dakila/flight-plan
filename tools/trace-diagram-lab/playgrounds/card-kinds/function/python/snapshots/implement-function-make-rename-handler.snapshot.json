@@ -358,20 +358,32 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Strips the spaces off the new name",
-                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#variable@15:16"
+                      "label": "Raises a ValueError when the name is only spaces",
+                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#throw@18:13"
                     },
                     {
-                      "label": "Raises a ValueError for an empty name",
-                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#condition@17:9"
+                      "label": "Calls rename_trainer to check and save the new name",
+                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#external-value@19:9",
+                      "at": {
+                        "line": 19,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Renames the trainer in the store",
-                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#external-value@19:9"
+                      "label": "Calls log to write the new name after the date",
+                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#call@20:9",
+                      "at": {
+                        "line": 20,
+                        "column": 9
+                      }
                     },
                     {
-                      "label": "Logs the new name after the date prefix",
-                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#call@20:9"
+                      "label": "Returns the renamed trainer",
+                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#function@15:5",
+                      "at": {
+                        "line": 21,
+                        "column": 9
+                      }
                     }
                   ]
                 }
@@ -379,8 +391,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Makes the date prefix of every log line",
-                  "codeBlockId": "src/pokedex/trainers/rename_handler.py#external-value@13:5"
+                  "label": "Calls log_prefix to make the date prefix of every log line",
+                  "codeBlockId": "src/pokedex/trainers/rename_handler.py#external-value@13:5",
+                  "at": {
+                    "line": 13,
+                    "column": 14
+                  }
+                },
+                {
+                  "label": "Returns the rename handler",
+                  "codeBlockId": "src/pokedex/trainers/rename_handler.py#function@12:1",
+                  "at": {
+                    "line": 23,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -511,160 +535,132 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Loads every stored trainer",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@13:5"
+                  "label": "Calls load_trainers to read every stored trainer",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@13:5",
+                  "at": {
+                    "line": 13,
+                    "column": 16
+                  }
                 },
                 {
                   "label": "Raises a LookupError when no trainer is stored",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@14:5"
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@15:9"
                 },
                 {
-                  "label": "Finds the trainer of the id",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#variable@16:5"
+                  "label": "Raises a LookupError when no trainer has the id",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@18:9"
                 },
                 {
-                  "label": "Raises a LookupError for an id with no trainer",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@17:5"
+                  "label": "Calls normalize_name to capitalize each word of the new name",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@20:5",
+                  "at": {
+                    "line": 20,
+                    "column": 18
+                  }
                 },
                 {
-                  "label": "Capitalizes each word of the new name",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@20:5"
+                  "label": "Raises a ValueError when the name is shorter than 2 letters",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@23:9"
                 },
                 {
-                  "label": "Sets the shortest name to 2 letters",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#variable@21:5"
-                },
-                {
-                  "label": "Raises a ValueError for a name shorter than 2 letters",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@22:5"
-                },
-                {
-                  "label": "Raises a ValueError for a name with a digit",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@24:5"
+                  "label": "Raises a ValueError when the name has a digit",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@25:9"
                 },
                 {
                   "label": "Returns the trainer as it is when the name does not change",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@26:5"
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@26:5",
+                  "at": {
+                    "line": 27,
+                    "column": 9
+                  }
                 },
                 {
-                  "label": "Checks whether the name is kept for some trainers",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@29:5"
+                  "label": "Calls is_reserved_name to check whether the name is kept for Pallet Town",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@29:5",
+                  "at": {
+                    "line": 29,
+                    "column": 8
+                  }
                 },
                 {
-                  "label": "Raises a PermissionError for a trainer from outside Pallet Town",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@30:9"
+                  "label": "Raises a PermissionError when the trainer is not from Pallet Town",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@31:13"
                 },
                 {
-                  "label": "Raises a PermissionError for a trainer with fewer than 8 badges",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@32:9"
-                },
-                {
-                  "label": "Finds another trainer with the same name in any case",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#variable@35:5"
+                  "label": "Raises a PermissionError when the trainer has too few badges for the name",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@33:13"
                 },
                 {
                   "label": "Raises a ValueError when another trainer has the name",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@36:5"
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@37:9"
                 },
                 {
-                  "label": "Takes the given rename time, or now",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@39:5"
+                  "label": "Calls renames_of to read the past renames of the trainer",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@40:5",
+                  "at": {
+                    "line": 40,
+                    "column": 20
+                  }
                 },
                 {
-                  "label": "Reads the past renames of the trainer",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@40:5"
-                },
-                {
-                  "label": "Picks the days between renames by hometown",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#switch@41:5"
-                },
-                {
-                  "label": "Matches a trainer of Pallet Town",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#switch-case@42:9"
-                },
-                {
-                  "label": "Halves the days between renames",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@43:13"
-                },
-                {
-                  "label": "Matches a trainer of Viridian City",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#switch-case@44:9"
-                },
-                {
-                  "label": "Doubles the days between renames",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@45:13"
-                },
-                {
-                  "label": "Matches a trainer of any other hometown",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#switch-case@46:9"
-                },
-                {
-                  "label": "Keeps the 30 days between renames",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@47:13"
-                },
-                {
-                  "label": "Turns the days between renames into a timedelta",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@48:5"
-                },
-                {
-                  "label": "Starts the count of renames this year at 0",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#variable@49:5"
-                },
-                {
-                  "label": "Goes through each past rename of the trainer",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#loop@50:5"
-                },
-                {
-                  "label": "Raises a PermissionError for a rename too soon after the last one",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@52:9"
-                },
-                {
-                  "label": "Counts the rename when it is in the same year",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@54:9"
+                  "label": "Raises a PermissionError when the last rename is too recent",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@53:13"
                 },
                 {
                   "label": "Raises a ValueError when the trainer had the name before",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@56:9"
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@57:13"
                 },
                 {
-                  "label": "Raises a PermissionError after 3 renames in one year",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@58:5"
+                  "label": "Raises a PermissionError when the trainer was renamed too often this year",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@59:9"
                 },
                 {
-                  "label": "Copies the trainer with the new name",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@61:5"
+                  "label": "Returns the renamed trainer unsaved when it is a dry run",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@62:5",
+                  "at": {
+                    "line": 63,
+                    "column": 9
+                  }
                 },
                 {
-                  "label": "Returns the renamed trainer unsaved on a dry run",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@62:5"
+                  "label": "Calls save_trainer when it is no dry run to store the renamed trainer",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#call@65:9",
+                  "at": {
+                    "line": 65,
+                    "column": 9
+                  }
                 },
                 {
-                  "label": "Catches a ValueError of the save",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#try-catch@64:5"
+                  "label": "Raises a ValueError when the store rejects a name longer than 2 letters",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@68:13"
                 },
                 {
-                  "label": "Saves the renamed trainer",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#call@65:9"
-                },
-                {
-                  "label": "Raises a ValueError when the name is too long for the store",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@67:9"
-                },
-                {
-                  "label": "Raises a RuntimeError that says the trainer keeps its old name",
+                  "label": "Raises a RuntimeError when the store rejects the name",
                   "codeBlockId": "src/pokedex/trainers/rename.py#throw@69:9"
                 },
                 {
-                  "label": "Adds the old name to the rename log",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#call@71:5"
+                  "label": "Calls record_rename to log the old name of the trainer",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#call@71:5",
+                  "at": {
+                    "line": 71,
+                    "column": 5
+                  }
                 },
                 {
-                  "label": "Checks whether this was the last rename of the year",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@72:5"
+                  "label": "Calls last_rename_notice when this was the last rename of the year to write the warning",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#call@73:9",
+                  "at": {
+                    "line": 73,
+                    "column": 23
+                  }
                 },
                 {
-                  "label": "Warns that the trainer can not be renamed again this year",
-                  "codeBlockId": "src/pokedex/trainers/rename.py#call@73:9"
+                  "label": "Returns the renamed trainer",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#function@12:1",
+                  "at": {
+                    "line": 74,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -686,12 +682,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Makes the rename handler that prints its log",
-                  "codeBlockId": "src/pokedex/cli.py#external-value@5:5"
+                  "label": "Calls make_rename_handler to make a rename handler that prints",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@5:5",
+                  "at": {
+                    "line": 5,
+                    "column": 14
+                  }
                 },
                 {
-                  "label": "Renames trainer 1 to Red",
-                  "codeBlockId": "src/pokedex/cli.py#call@6:5"
+                  "label": "Calls rename to rename trainer 1 to Red",
+                  "codeBlockId": "src/pokedex/cli.py#call@6:5",
+                  "at": {
+                    "line": 6,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -712,7 +716,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns the date in brackets",
+                  "codeBlockId": "src/pokedex/trainers/rename_handler.py#function@8:1",
+                  "at": {
+                    "line": 9,
+                    "column": 5
+                  }
+                }
+              ]
             },
             {
               "id": "src/pokedex/trainers/store.py#function@10:1",
@@ -733,8 +746,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Orders the trainers by id",
-                  "codeBlockId": "src/pokedex/trainers/store.py#function@11:48"
+                  "label": "Returns the stored trainers ordered by id",
+                  "codeBlockId": "src/pokedex/trainers/store.py#function@10:1",
+                  "at": {
+                    "line": 11,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -759,8 +776,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Splits the name into words",
-                  "codeBlockId": "src/pokedex/trainers/names.py#variable@5:5"
+                  "label": "Returns the words of the name, each capitalized",
+                  "codeBlockId": "src/pokedex/trainers/names.py#function@4:1",
+                  "at": {
+                    "line": 6,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -779,7 +800,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns whether the name is a reserved name",
+                  "codeBlockId": "src/pokedex/trainers/names.py#function@9:1",
+                  "at": {
+                    "line": 10,
+                    "column": 5
+                  }
+                }
+              ]
             },
             {
               "id": "src/pokedex/trainers/history.py#function@17:1",
@@ -800,8 +830,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Keeps every rename in memory",
-                  "codeBlockId": "src/pokedex/trainers/history.py#root-variable@14:1"
+                  "label": "Returns the renames of the trainer from the log",
+                  "codeBlockId": "src/pokedex/trainers/history.py#function@17:1",
+                  "at": {
+                    "line": 18,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -838,16 +872,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Makes the entry of the rename",
-                  "codeBlockId": "src/pokedex/trainers/history.py#class@7:1"
-                },
-                {
-                  "label": "Keeps every rename in memory",
-                  "codeBlockId": "src/pokedex/trainers/history.py#root-variable@14:1"
-                },
-                {
-                  "label": "Adds the trainer id, the old name and the time",
-                  "codeBlockId": "src/pokedex/trainers/history.py#call@22:5"
+                  "label": "Calls RenameEntry to make the entry of the rename",
+                  "codeBlockId": "src/pokedex/trainers/history.py#call@22:5",
+                  "at": {
+                    "line": 22,
+                    "column": 23
+                  }
                 }
               ]
             },
@@ -871,8 +901,8 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Raises a ValueError for a name longer than 12 letters",
-                  "codeBlockId": "src/pokedex/trainers/store.py#condition@15:5"
+                  "label": "Raises a ValueError when the name is too long",
+                  "codeBlockId": "src/pokedex/trainers/store.py#throw@16:9"
                 }
               ]
             },
@@ -893,7 +923,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns the notice that the trainer can not be renamed again",
+                  "codeBlockId": "src/pokedex/trainers/history.py#function@25:1",
+                  "at": {
+                    "line": 26,
+                    "column": 5
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

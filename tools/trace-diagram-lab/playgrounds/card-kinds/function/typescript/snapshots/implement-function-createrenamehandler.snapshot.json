@@ -369,20 +369,32 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Trims the spaces off the new name",
-                      "codeBlockId": "src/trainers/rename-handler.ts#variable@10:11"
+                      "label": "Throws an Error when the name is only spaces",
+                      "codeBlockId": "src/trainers/rename-handler.ts#throw@12:25"
                     },
                     {
-                      "label": "Throws an error for an empty name",
-                      "codeBlockId": "src/trainers/rename-handler.ts#condition@12:5"
+                      "label": "Calls renameTrainer to check and save the new name",
+                      "codeBlockId": "src/trainers/rename-handler.ts#external-value@13:5",
+                      "at": {
+                        "line": 13,
+                        "column": 21
+                      }
                     },
                     {
-                      "label": "Renames the trainer in the store",
-                      "codeBlockId": "src/trainers/rename-handler.ts#external-value@13:5"
+                      "label": "Calls log to write the new name after the date",
+                      "codeBlockId": "src/trainers/rename-handler.ts#call@14:5",
+                      "at": {
+                        "line": 14,
+                        "column": 5
+                      }
                     },
                     {
-                      "label": "Logs the new name after the date prefix",
-                      "codeBlockId": "src/trainers/rename-handler.ts#call@14:5"
+                      "label": "Returns the renamed trainer",
+                      "codeBlockId": "src/trainers/rename-handler.ts#function@10:10",
+                      "at": {
+                        "line": 15,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -390,8 +402,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Makes the date prefix of every log line",
-                  "codeBlockId": "src/trainers/rename-handler.ts#external-value@9:3"
+                  "label": "Calls logPrefix to make the date prefix of every log line",
+                  "codeBlockId": "src/trainers/rename-handler.ts#external-value@9:3",
+                  "at": {
+                    "line": 9,
+                    "column": 18
+                  }
+                },
+                {
+                  "label": "Returns the rename handler",
+                  "codeBlockId": "src/trainers/rename-handler.ts#function@8:1",
+                  "at": {
+                    "line": 10,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -412,7 +436,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns the date in brackets",
+                  "codeBlockId": "src/trainers/rename-handler.ts#function@4:1",
+                  "at": {
+                    "line": 5,
+                    "column": 3
+                  }
+                }
+              ]
             },
             {
               "id": "src/trainers/rename.ts#function@9:1",
@@ -555,148 +588,132 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Counts the milliseconds of one day",
-                  "codeBlockId": "src/trainers/rename.ts#root-variable@7:1"
+                  "label": "Calls loadTrainers to read every stored trainer",
+                  "codeBlockId": "src/trainers/rename.ts#external-value@10:3",
+                  "at": {
+                    "line": 10,
+                    "column": 20
+                  }
                 },
                 {
-                  "label": "Loads every stored trainer",
-                  "codeBlockId": "src/trainers/rename.ts#external-value@10:3"
+                  "label": "Throws an Error when no trainer is stored",
+                  "codeBlockId": "src/trainers/rename.ts#throw@11:30"
                 },
                 {
-                  "label": "Throws an error when no trainer is stored",
-                  "codeBlockId": "src/trainers/rename.ts#condition@11:3"
+                  "label": "Throws a RangeError when no trainer has the id",
+                  "codeBlockId": "src/trainers/rename.ts#throw@13:30"
                 },
                 {
-                  "label": "Finds the trainer of the id",
-                  "codeBlockId": "src/trainers/rename.ts#variable@12:3"
+                  "label": "Calls normalizeName to capitalize each word of the new name",
+                  "codeBlockId": "src/trainers/rename.ts#external-value@15:3",
+                  "at": {
+                    "line": 15,
+                    "column": 22
+                  }
                 },
                 {
-                  "label": "Throws a RangeError for an id with no trainer",
-                  "codeBlockId": "src/trainers/rename.ts#condition@13:3"
+                  "label": "Throws a RangeError when the name is shorter than 2 letters",
+                  "codeBlockId": "src/trainers/rename.ts#throw@18:5"
                 },
                 {
-                  "label": "Capitalizes each word of the new name",
-                  "codeBlockId": "src/trainers/rename.ts#external-value@15:3"
-                },
-                {
-                  "label": "Sets the shortest name to 2 letters",
-                  "codeBlockId": "src/trainers/rename.ts#variable@16:3"
-                },
-                {
-                  "label": "Throws a RangeError for a name shorter than 2 letters",
-                  "codeBlockId": "src/trainers/rename.ts#condition@17:3"
-                },
-                {
-                  "label": "Throws a RangeError for a name with a digit",
-                  "codeBlockId": "src/trainers/rename.ts#condition@20:3"
+                  "label": "Throws a RangeError when the name has a digit",
+                  "codeBlockId": "src/trainers/rename.ts#throw@21:5"
                 },
                 {
                   "label": "Returns the trainer as it is when the name does not change",
-                  "codeBlockId": "src/trainers/rename.ts#condition@23:3"
+                  "codeBlockId": "src/trainers/rename.ts#condition@23:3",
+                  "at": {
+                    "line": 24,
+                    "column": 5
+                  }
                 },
                 {
-                  "label": "Checks whether the name is kept for some trainers",
-                  "codeBlockId": "src/trainers/rename.ts#condition@27:3"
+                  "label": "Calls isReservedName to check whether the name is kept for Pallet Town",
+                  "codeBlockId": "src/trainers/rename.ts#condition@27:3",
+                  "at": {
+                    "line": 27,
+                    "column": 7
+                  }
                 },
                 {
-                  "label": "Throws an error for a trainer from outside Pallet Town",
-                  "codeBlockId": "src/trainers/rename.ts#condition@28:5"
+                  "label": "Throws an Error when the trainer is not from Pallet Town",
+                  "codeBlockId": "src/trainers/rename.ts#throw@29:7"
                 },
                 {
-                  "label": "Throws an error for a trainer with fewer than 8 badges",
-                  "codeBlockId": "src/trainers/rename.ts#condition@31:5"
+                  "label": "Throws an Error when the trainer has too few badges for the name",
+                  "codeBlockId": "src/trainers/rename.ts#throw@32:7"
                 },
                 {
-                  "label": "Finds another trainer with the same name in any case",
-                  "codeBlockId": "src/trainers/rename.ts#variable@36:3"
+                  "label": "Throws an Error when another trainer has the name",
+                  "codeBlockId": "src/trainers/rename.ts#throw@38:5"
                 },
                 {
-                  "label": "Throws an error when another trainer has the name",
-                  "codeBlockId": "src/trainers/rename.ts#condition@37:3"
+                  "label": "Calls renamesOf to read the past renames of the trainer",
+                  "codeBlockId": "src/trainers/rename.ts#external-value@41:3",
+                  "at": {
+                    "line": 41,
+                    "column": 23
+                  }
                 },
                 {
-                  "label": "Reads the past renames of the trainer",
-                  "codeBlockId": "src/trainers/rename.ts#external-value@41:3"
+                  "label": "Throws an Error when the last rename is too recent",
+                  "codeBlockId": "src/trainers/rename.ts#throw@56:7"
                 },
                 {
-                  "label": "Starts the days between renames at 30",
-                  "codeBlockId": "src/trainers/rename.ts#external-value@42:3"
+                  "label": "Throws an Error when the trainer had the name before",
+                  "codeBlockId": "src/trainers/rename.ts#throw@62:7"
                 },
                 {
-                  "label": "Picks the days between renames by hometown",
-                  "codeBlockId": "src/trainers/rename.ts#switch@43:3"
+                  "label": "Throws an Error when the trainer was renamed too often this year",
+                  "codeBlockId": "src/trainers/rename.ts#throw@66:5"
                 },
                 {
-                  "label": "Halves the days for a trainer of Pallet Town",
-                  "codeBlockId": "src/trainers/rename.ts#switch-case@44:5"
+                  "label": "Returns the renamed trainer unsaved when it is a dry run",
+                  "codeBlockId": "src/trainers/rename.ts#condition@70:3",
+                  "at": {
+                    "line": 71,
+                    "column": 5
+                  }
                 },
                 {
-                  "label": "Doubles the days for a trainer of Viridian City",
-                  "codeBlockId": "src/trainers/rename.ts#switch-case@47:5"
+                  "label": "Calls saveTrainer when it is no dry run to store the renamed trainer",
+                  "codeBlockId": "src/trainers/rename.ts#call@74:5",
+                  "at": {
+                    "line": 74,
+                    "column": 5
+                  }
                 },
                 {
-                  "label": "Counts the milliseconds of the days between renames",
-                  "codeBlockId": "src/trainers/rename.ts#external-value@51:3"
+                  "label": "Throws a RangeError when the store rejects a name longer than 2 letters",
+                  "codeBlockId": "src/trainers/rename.ts#throw@77:7"
                 },
                 {
-                  "label": "Starts the count of renames this year at 0",
-                  "codeBlockId": "src/trainers/rename.ts#variable@52:3"
-                },
-                {
-                  "label": "Goes through each past rename of the trainer",
-                  "codeBlockId": "src/trainers/rename.ts#loop@53:3"
-                },
-                {
-                  "label": "Throws an error for a rename too soon after the last one",
-                  "codeBlockId": "src/trainers/rename.ts#condition@55:5"
-                },
-                {
-                  "label": "Counts the rename when it is in the same year",
-                  "codeBlockId": "src/trainers/rename.ts#condition@58:5"
-                },
-                {
-                  "label": "Throws an error when the trainer had the name before",
-                  "codeBlockId": "src/trainers/rename.ts#condition@61:5"
-                },
-                {
-                  "label": "Throws an error after 3 renames in one year",
-                  "codeBlockId": "src/trainers/rename.ts#condition@65:3"
-                },
-                {
-                  "label": "Copies the trainer with the new name",
-                  "codeBlockId": "src/trainers/rename.ts#variable@69:3"
-                },
-                {
-                  "label": "Returns the renamed trainer unsaved on a dry run",
-                  "codeBlockId": "src/trainers/rename.ts#condition@70:3"
-                },
-                {
-                  "label": "Catches an error of the save",
-                  "codeBlockId": "src/trainers/rename.ts#try-catch@73:3"
-                },
-                {
-                  "label": "Saves the renamed trainer",
-                  "codeBlockId": "src/trainers/rename.ts#call@74:5"
-                },
-                {
-                  "label": "Throws a RangeError when the name is too long for the store",
-                  "codeBlockId": "src/trainers/rename.ts#condition@76:5"
-                },
-                {
-                  "label": "Throws an error that says the trainer keeps its old name",
+                  "label": "Throws an Error when the store rejects the name",
                   "codeBlockId": "src/trainers/rename.ts#throw@79:5"
                 },
                 {
-                  "label": "Adds the old name to the rename log",
-                  "codeBlockId": "src/trainers/rename.ts#call@82:3"
+                  "label": "Calls recordRename to log the old name of the trainer",
+                  "codeBlockId": "src/trainers/rename.ts#call@82:3",
+                  "at": {
+                    "line": 82,
+                    "column": 3
+                  }
                 },
                 {
-                  "label": "Checks whether this was the last rename of the year",
-                  "codeBlockId": "src/trainers/rename.ts#condition@83:3"
+                  "label": "Calls lastRenameNotice when this was the last rename of the year to write the warning",
+                  "codeBlockId": "src/trainers/rename.ts#telemetry@84:5",
+                  "at": {
+                    "line": 84,
+                    "column": 18
+                  }
                 },
                 {
-                  "label": "Warns that the trainer can not be renamed again this year",
-                  "codeBlockId": "src/trainers/rename.ts#telemetry@84:5"
+                  "label": "Returns the renamed trainer",
+                  "codeBlockId": "src/trainers/rename.ts#function@9:1",
+                  "at": {
+                    "line": 86,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -721,8 +738,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Orders the trainers by id",
-                  "codeBlockId": "src/trainers/store.ts#function@10:42"
+                  "label": "Returns the stored trainers ordered by id",
+                  "codeBlockId": "src/trainers/store.ts#function@9:1",
+                  "at": {
+                    "line": 10,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -751,8 +772,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Splits the trimmed name into words",
-                  "codeBlockId": "src/trainers/names.ts#variable@4:3"
+                  "label": "Returns the words of the name, each capitalized",
+                  "codeBlockId": "src/trainers/names.ts#function@3:1",
+                  "at": {
+                    "line": 5,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -771,7 +796,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns whether the name is a reserved name",
+                  "codeBlockId": "src/trainers/names.ts#function@8:1",
+                  "at": {
+                    "line": 9,
+                    "column": 3
+                  }
+                }
+              ]
             },
             {
               "id": "src/trainers/history.ts#function@11:1",
@@ -796,12 +830,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Keeps every rename in memory",
-                  "codeBlockId": "src/trainers/history.ts#root-variable@9:1"
-                },
-                {
-                  "label": "Keeps the entries of the trainer",
-                  "codeBlockId": "src/trainers/history.ts#function@12:27"
+                  "label": "Returns the renames of the trainer from the log",
+                  "codeBlockId": "src/trainers/history.ts#function@11:1",
+                  "at": {
+                    "line": 12,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -834,16 +868,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Keeps every rename in memory",
-                  "codeBlockId": "src/trainers/history.ts#root-variable@9:1"
-                },
-                {
-                  "label": "Adds the trainer id, the old name and the date",
-                  "codeBlockId": "src/trainers/history.ts#call@16:3"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/trainers/store.ts#function@13:1",
@@ -865,8 +890,8 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Throws a RangeError for a name longer than 12 letters",
-                  "codeBlockId": "src/trainers/store.ts#condition@14:3"
+                  "label": "Throws a RangeError when the name is too long",
+                  "codeBlockId": "src/trainers/store.ts#throw@14:46"
                 }
               ]
             },
@@ -887,7 +912,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns the notice that the trainer can not be renamed again",
+                  "codeBlockId": "src/trainers/history.ts#function@19:1",
+                  "at": {
+                    "line": 20,
+                    "column": 3
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

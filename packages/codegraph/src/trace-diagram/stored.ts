@@ -1,4 +1,4 @@
-import type { ASTCodeGroupGraph, BlockLabel, CodeBlock, CodeBlockType, ImportGraphGroup, TraceDiagram, TraceNode, TraceNodeEdge, TriggerLabel } from "@flightplan/configurations"
+import type { ASTCodeGroupGraph, BlockLabel, CodeBlock, CodeBlockType, ImportGraphGroup, Position, TraceDiagram, TraceNode, TraceNodeEdge, TriggerLabel } from "@flightplan/configurations"
 
 export interface StoredTriggerLabel {
   readonly label: string | null
@@ -8,6 +8,7 @@ export interface StoredTriggerLabel {
 export interface StoredBlockLabel {
   readonly label: string | null
   readonly codeBlockId: string
+  readonly at?: Position
 }
 
 export interface StoredTraceNode {
@@ -46,7 +47,7 @@ const idsOf = (blocks: readonly CodeBlock[]): string[] => blocks.map((block) => 
 
 const storeTriggerLabel = ({ label, codeBlock }: TriggerLabel): StoredTriggerLabel => ({ label, codeBlockId: codeBlock.id })
 
-const storeBlockLabel = ({ label, codeBlock }: BlockLabel): StoredBlockLabel => ({ label, codeBlockId: codeBlock.id })
+const storeBlockLabel = ({ label, codeBlock, at }: BlockLabel): StoredBlockLabel => (at === undefined ? { label, codeBlockId: codeBlock.id } : { label, codeBlockId: codeBlock.id, at })
 
 const storeNode = ({ id, type, label, description, codeBlocks, diffCodeBlocks, children, triggerLabels, blockLabels }: TraceNode): StoredTraceNode => ({
   id,
@@ -73,6 +74,9 @@ const found = (blockById: ReadonlyMap<string, CodeBlock>, blockId: string): Code
   return block
 }
 
+const linkBlockLabel = ({ label, codeBlockId, at }: StoredBlockLabel, blockById: ReadonlyMap<string, CodeBlock>): BlockLabel =>
+  at === undefined ? { label, codeBlock: found(blockById, codeBlockId) } : { label, codeBlock: found(blockById, codeBlockId), at }
+
 const linkNode = (stored: StoredTraceNode, blockById: ReadonlyMap<string, CodeBlock>): TraceNode => ({
   id: stored.id,
   type: stored.type,
@@ -82,7 +86,7 @@ const linkNode = (stored: StoredTraceNode, blockById: ReadonlyMap<string, CodeBl
   diffCodeBlocks: stored.diffCodeBlockIds.map((blockId) => found(blockById, blockId)),
   children: stored.children.map((child) => linkNode(child, blockById)),
   triggerLabels: stored.triggerLabels.map((trigger) => ({ label: trigger.label, codeBlock: found(blockById, trigger.codeBlockId) })),
-  blockLabels: stored.blockLabels.map((listed) => ({ label: listed.label, codeBlock: found(blockById, listed.codeBlockId) })),
+  blockLabels: stored.blockLabels.map((listed) => linkBlockLabel(listed, blockById)),
   isRequired: false,
 })
 

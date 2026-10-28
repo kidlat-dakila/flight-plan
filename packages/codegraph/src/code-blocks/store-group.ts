@@ -13,12 +13,13 @@ type PlaceBySymbol = ReadonlyMap<CodeBlockSymbol, StoredSymbolPlace>
 
 const idsOf = (blocks: readonly CodeBlock[]): string[] => blocks.map((block) => block.id)
 
-const usageOf = ({ usedAt, use, handedTo, member, binding }: CodeBlockSymbol): StoredSymbolUsage => ({
+const usageOf = ({ usedAt, use, handedTo, member, binding, isRunInPlace }: CodeBlockSymbol): StoredSymbolUsage => ({
   usedAt,
   use,
   ...(handedTo === undefined ? {} : { handedToId: handedTo?.id ?? null }),
   ...(member === undefined ? {} : { member: { path: member.path, blockId: member.block?.id ?? null } }),
   ...(binding === undefined ? {} : { binding }),
+  ...(isRunInPlace === true ? { isRunInPlace } : {}),
 })
 
 const storeSymbol = (symbol: CodeBlockSymbol): StoredCodeBlockSymbol => {
@@ -51,6 +52,7 @@ const storeBlock = (block: CodeBlock, placeBySymbol: PlaceBySymbol): StoredCodeB
   isExported: block.isExported,
   ...(block.isPlain === true ? { isPlain: true } : {}),
   ...(block.isReturned === true ? { isReturned: true } : {}),
+  ...(block.returnsAt === undefined ? {} : { returnsAt: block.returnsAt }),
   ...(block.isParameterProperty === true ? { isParameterProperty: true } : {}),
   ...(block.isAnnotatedAlias === true ? { isAnnotatedAlias: true } : {}),
   exportedByFilePaths: block.exportedBy.map((astGraph) => astGraph.filePath),

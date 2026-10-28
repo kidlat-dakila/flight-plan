@@ -204,6 +204,7 @@ export interface SymbolUsage {
   readonly handedTo?: CodeBlock | null
   readonly member?: SymbolMember
   readonly binding?: string
+  readonly isRunInPlace?: boolean
 }
 
 export interface InternalVariableSymbol extends SymbolUsage {
@@ -260,6 +261,7 @@ export interface CodeBlock {
   readonly isExported: boolean
   readonly isPlain?: boolean
   readonly isReturned?: boolean
+  readonly returnsAt?: readonly Position[]
   readonly isParameterProperty?: boolean
   readonly isAnnotatedAlias?: boolean
   readonly exportedBy: readonly ASTGraph[]

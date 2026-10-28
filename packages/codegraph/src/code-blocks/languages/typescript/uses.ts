@@ -76,6 +76,8 @@ const isRunInPlace = (passed: SyntaxNode): boolean => {
   return method !== null && (COLLECTION_METHODS.has(method) || PROMISE_METHODS.has(method))
 }
 
+const runInPlaceMarkOf = (used: SyntaxNode): Pick<ReadUse, "isRunInPlace"> => (isRunInPlace(used) ? { isRunInPlace: true } : {})
+
 export const roleOf = (used: SyntaxNode): Role => {
   const { parent } = used
   if (parent === null) return "value"
@@ -155,10 +157,10 @@ const readUse = ({ reference, resolution }: ResolvedReference, outline: FileOutl
   if (!reference.spaces.includes(VALUE_SPACE)) return { usedAt, use: "type", memberPath: path, target, handing: null, writtenAt: WRITTEN_NOWHERE }
   if (target.kind === "import" && isNamespaceOfFile(target, path)) {
     const [importedName, ...memberPath] = path
-    return { usedAt, use: useOf(role, memberPath), memberPath, target: { ...target, importedName }, handing: null, writtenAt }
+    return { usedAt, use: useOf(role, memberPath), memberPath, target: { ...target, importedName }, handing: null, writtenAt, ...runInPlaceMarkOf(outermost) }
   }
   const use = useOf(role, path)
-  return { usedAt, use, memberPath: path, target, handing: role === "value" ? handingOf(outermost, outline) : null, writtenAt }
+  return { usedAt, use, memberPath: path, target, handing: role === "value" ? handingOf(outermost, outline) : null, writtenAt, ...runInPlaceMarkOf(outermost) }
 }
 
 const firstParameterOf = (callback: SyntaxNode): SyntaxNode | null => {
@@ -228,7 +230,7 @@ const readReceiverUse = (receiver: SyntaxNode, outline: FileOutline): ReadUse[] 
   const { outermost, path } = chainFrom(receiver)
   const classBody = path.length === 0 ? null : classBodyBoundTo(receiver)
   if (classBody === null) return []
-  const usage = { usedAt: rangeOfNode(outermost), handing: null, writtenAt: writtenAtOf(outermost) }
+  const usage = { usedAt: rangeOfNode(outermost), handing: null, writtenAt: writtenAtOf(outermost), ...runInPlaceMarkOf(outermost) }
   const role = roleOf(outermost)
   const memberName = receiver.type === RECEIVER_TYPE ? findMemberNamed(classBody, path[0]) : null
   if (memberName !== null) {

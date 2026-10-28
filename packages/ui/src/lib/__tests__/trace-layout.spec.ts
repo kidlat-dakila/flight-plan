@@ -1,4 +1,4 @@
-import { EDGE_APPROACH, EDGE_SPACING, layoutTrace, MARGIN, NODE_GAP, NODE_HEAD_HEIGHT, NODE_WIDTH, ROW_HEADING_HEIGHT, ROW_HEIGHT, TWO_LINE_ROW_HEIGHT, type LayoutEdge, type LayoutNode } from "@/lib/trace-layout"
+import { ARGUMENT_ROW_HEIGHT, CALLEE_HEAD_HEIGHT, CALLEE_INSET, EDGE_APPROACH, EDGE_SPACING, layoutTrace, MARGIN, NODE_GAP, NODE_HEAD_HEIGHT, NODE_WIDTH, ROW_HEADING_HEIGHT, ROW_HEIGHT, SITE_ROW_HEIGHT, TWO_LINE_ROW_HEIGHT, type LayoutEdge, type LayoutNode } from "@/lib/trace-layout"
 
 const leaf = (id: string, rowIds: readonly string[] = []): LayoutNode => ({ id, rows: rowIds.map((rowId) => ({ id: rowId, kind: "row" })), children: [] })
 
@@ -111,6 +111,37 @@ describe("layoutTrace", () => {
     expect(TWO_LINE_ROW_HEIGHT).toBeGreaterThan(ROW_HEIGHT)
     expect(held.y).toBeGreaterThanOrEqual(click.y + click.height)
     expect(held.y + held.height).toBeLessThanOrEqual(page.y + page.height)
+  })
+
+  it("places the rows of a callee card inside its frame, below its head, and grows the node by the whole card", () => {
+    const card: LayoutNode = {
+      id: "rename",
+      rows: [
+        { id: "trainer-id", kind: "argument-row" },
+        { id: "load", kind: "callee", rows: [{ id: "first-load", kind: "site-row" }, { id: "second-load", kind: "row" }] },
+        { id: "returned", kind: "site-row" },
+      ],
+      children: [],
+    }
+    const plain: LayoutNode = { ...card, rows: [card.rows[0], card.rows[2]] }
+    const { nodes: [rename], rows: [argument, load, firstLoad, secondLoad, returned] } = layoutTrace([card], [])
+    const { nodes: [withoutCallee] } = layoutTrace([plain], [])
+
+    expect([argument.height, firstLoad.height, secondLoad.height, returned.height]).toStrictEqual([ARGUMENT_ROW_HEIGHT, SITE_ROW_HEIGHT, ROW_HEIGHT, SITE_ROW_HEIGHT])
+    expect([load.kind, firstLoad.x, firstLoad.width, firstLoad.y]).toStrictEqual(["callee", load.x + CALLEE_INSET, load.width - CALLEE_INSET * HALF, load.y + CALLEE_HEAD_HEIGHT])
+    expect(secondLoad.y).toBeGreaterThan(firstLoad.y + firstLoad.height)
+    expect(load.y + load.height).toBe(secondLoad.y + secondLoad.height + CALLEE_INSET)
+    expect(returned.y).toBeGreaterThan(load.y + load.height)
+    expect(rename.height - withoutCallee.height).toBeGreaterThanOrEqual(load.height)
+  })
+
+  it("leaves an edge from a call row inside a callee card at the edge of its node, level with that row", () => {
+    const card: LayoutNode = { id: "rename", rows: [{ id: "load", kind: "callee", rows: [{ id: "first-load", kind: "site-row" }, { id: "second-load", kind: "site-row" }] }], children: [] }
+    const { nodes: [rename], rows: [, , secondLoad], edges } = layoutTrace([card, leaf("store")], [edge("a", "rename", "store", { fromRowId: "second-load" })])
+    const leaving = { x: rename.x + rename.width, y: secondLoad.y + secondLoad.height / HALF }
+
+    expect(edges[0].points[0]).toStrictEqual(leaving)
+    expect(edges[0].fromRowPoints).toStrictEqual([{ x: secondLoad.x + secondLoad.width, y: leaving.y }, leaving])
   })
 
   it("joins an edge to the row it leaves and to the row it reaches, level with each, through the edge of the outer node", () => {

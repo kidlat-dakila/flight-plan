@@ -2,12 +2,23 @@ import { z } from "zod"
 import type { Codegraph, CodegraphSegment, LinkedCodeWalkthrough, LinkedFileSection, LinkedWaypoint } from "@flightplan/codegraph"
 import { artifactFindingSchema, IMPACT_TYPES, type Blast, type BlockLabel, type Finding, type TraceDiagram, type TraceNode, type TriggerLabel } from "@flightplan/configurations"
 
+interface WrittenSite {
+  readonly line: number
+  readonly column: number
+}
+
+interface WrittenBlockLabel {
+  readonly label: string | null
+  readonly codeBlockId: string
+  readonly at?: WrittenSite | undefined
+}
+
 interface WrittenTraceNode {
   readonly id: string
   readonly label: string | null
   readonly description: string | null
   readonly triggerLabels: readonly { readonly label: string | null, readonly codeBlockId: string }[]
-  readonly blockLabels: readonly { readonly label: string | null, readonly codeBlockId: string }[]
+  readonly blockLabels: readonly WrittenBlockLabel[]
   readonly children: readonly WrittenTraceNode[]
 }
 
@@ -17,7 +28,7 @@ const writtenTraceNodeSchema: z.ZodType<WrittenTraceNode> = z.lazy(() =>
     label: z.string().nullable(),
     description: z.string().nullable(),
     triggerLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })).default([]),
-    blockLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })).default([]),
+    blockLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string(), at: z.object({ line: z.number(), column: z.number() }).optional() })).default([]),
     children: z.array(writtenTraceNodeSchema).default([]),
   }),
 )
@@ -91,8 +102,11 @@ const withWrittenTriggerLabel = (trigger: TriggerLabel, written: WrittenTraceNod
   return writtenTrigger === undefined ? trigger : { ...trigger, label: writtenTrigger.label }
 }
 
+const isSameSite = (one: WrittenSite | undefined, two: WrittenSite | undefined): boolean =>
+  one === undefined || two === undefined ? one === two : one.line === two.line && one.column === two.column
+
 const withWrittenBlockLabel = (listed: BlockLabel, written: WrittenTraceNode): BlockLabel => {
-  const writtenBlock = written.blockLabels.find((one) => one.codeBlockId === listed.codeBlock.id)
+  const writtenBlock = written.blockLabels.find((one) => one.codeBlockId === listed.codeBlock.id && isSameSite(one.at, listed.at))
   return writtenBlock === undefined ? listed : { ...listed, label: writtenBlock.label }
 }
 

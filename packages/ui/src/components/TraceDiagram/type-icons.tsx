@@ -24,6 +24,7 @@ import {
   MemoryStickIcon,
   MousePointerClickIcon,
   NavigationIcon,
+  OctagonXIcon,
   PiIcon,
   PuzzleIcon,
   QuoteIcon,
@@ -186,6 +187,8 @@ const BLOCK_LIST_ICONS: Readonly<Record<string, BlockIcon>> = {
   hook: AnchorIcon,
   effect: ZapIcon,
   call: ArrowUpRightIcon,
+  return: CornerDownLeftIcon,
+  throw: OctagonXIcon,
   step: FootprintsIcon,
   part: PuzzleIcon,
 }

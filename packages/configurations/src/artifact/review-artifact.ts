@@ -1,5 +1,5 @@
 import type { z } from "zod"
-import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType } from "@/code-graph/code-blocks"
+import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType, Position } from "@/code-graph/code-blocks"
 import type { ImportGraphGroup } from "@/code-graph/import-graph"
 import type { codeExportSchema, codeReferenceSchema, codeUsageSchema, languageReferenceSchema } from "./artifact-schema"
 import type { CARD_SIDES, CONTEXT_CODE_BLOCK_KINDS, DIFF_TYPES, IMPACT_TYPES, SECTION_NAMES } from "./kinds"
@@ -92,6 +92,7 @@ export interface TriggerLabel {
 export interface BlockLabel {
   readonly label: string | null
   readonly codeBlock: CodeBlock
+  readonly at?: Position | undefined
 }
 
 export interface TraceRow {

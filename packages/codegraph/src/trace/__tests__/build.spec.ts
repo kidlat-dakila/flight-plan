@@ -138,7 +138,7 @@ describe("the block labels of a node of the trace band", () => {
       traceNodes: traceDiagram.traceNodes.map((node) => ({ ...node, blockLabels: node.blockLabels.map((listed) => (listed === written ? { ...listed, label: "Holds the typed code" } : listed)) })),
     }
     const views = listNodeViews(buildTrace(createSegment({ traceDiagram: labelled }), "", [], createViewContext()).diagram?.nodes ?? [])
-    const steps = views.flatMap((node) => node.blockLists).flatMap(({ blocks }) => blocks)
+    const steps = views.flatMap((node) => node.blockLists).filter(({ kind }) => kind !== "argument").flatMap(({ blocks }) => blocks)
 
     expect(traceDiagram.traceNodes.flatMap((node) => node.blockLabels).every((listed) => listed.label === null)).toBe(true)
     expect(steps.filter((block) => !block.isDraft).map((block) => [block.id, block.label])).toStrictEqual([[written.codeBlock.id, "Holds the typed code"]])
@@ -153,10 +153,10 @@ describe("the edges of the trace band", () => {
 
     expect(edges.map(({ from, to, fromRowId, toRowId }) => [from, fromRowId, to, toRowId])).toStrictEqual([
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#external-value@6:3", "src/use-apply-promo.ts#hook@3:1", null],
-      ["src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#call@9:34", "src/use-apply-promo.ts#hook@3:1", null],
-      ["src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#call@9:48", "src/promo.ts#function@1:1", null],
-      ["src/promo-form.tsx#effect-callback@8:13", "src/promo-form.tsx#call@8:21", "src/promo.ts#function@1:1", null],
-      ["src/use-apply-promo.ts#hook@3:1", "src/use-apply-promo.ts#component-effect@4:10", "src/promo.ts#function@1:1", null],
+      ["src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#call@9:34@9:34", "src/use-apply-promo.ts#hook@3:1", null],
+      ["src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#call@9:48@9:48", "src/promo.ts#function@1:1", null],
+      ["src/promo-form.tsx#effect-callback@8:13", "src/promo-form.tsx#call@8:21@8:21", "src/promo.ts#function@1:1", null],
+      ["src/use-apply-promo.ts#hook@3:1", null, "src/promo.ts#function@1:1", null],
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#derived@7:3", "src/promo.ts#function@1:1", null],
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#component-effect@8:3", "src/promo-form.tsx#component-effect@8:3", null],
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#render-event@9:16", null],
@@ -175,8 +175,8 @@ describe("the block lists of a node of the trace band", () => {
     ])
   })
 
-  it("names an effect once, without the callbacks inside it", () => {
-    expect(blockListsOf("src/use-apply-promo.ts#hook@3:1")).toStrictEqual([["effect", "Effects", ["useMutation"]]])
+  it("gives a hook the rows of a function card, with no row for a hook of a library it calls", () => {
+    expect(blockListsOf("src/use-apply-promo.ts#hook@3:1")).toStrictEqual([["return", "Returns", ["return"]]])
   })
 
   it("lists an effect that makes a state as that state, though no chain passes through its declaration, and names another effect after what it calls", () => {
@@ -200,11 +200,11 @@ describe("the block lists of a node of the trace band", () => {
     expect(summary.blockLists.map(({ kind, blocks }) => [kind, blocks.map((block) => block.name)])).toStrictEqual([["state", ["total"]], ["effect", ["poll"]]])
   })
 
-  it("lists no row for an argument or a read through it, and gives the argument to the card as a parameter", () => {
+  it("lists an argument of a function card as a row with nothing to write, no row for a read through it, and no parameter", () => {
     const promo = nodeViewsOf().find((node) => node.id === "src/promo.ts#function@1:1")
 
-    expect(promo?.blockLists).toStrictEqual([])
-    expect(promo?.parameters).toStrictEqual(["code"])
+    expect(promo?.blockLists.map(({ kind, blocks }) => [kind, blocks.map(({ name, isDraft }) => [name, isDraft])])).toStrictEqual([["argument", [["code", false]]], ["return", [["return", true]]]])
+    expect(promo?.parameters).toStrictEqual([])
   })
 })
 
@@ -255,19 +255,19 @@ const handlerEdgesBetween = (from: string, to: string): [string | null, string |
   handlersBand().edges.filter((edge) => edge.from === from && edge.to === to).map(({ fromRowId, toRowId }) => [fromRowId, toRowId])
 
 describe("the rows of a node that holds nodes of its own", () => {
-  it("has no step for a function an event of the node is handed: it is the trigger of that event, and its steps are rows of the event", () => {
+  it("has no node for a function an event of the node is handed: it is the trigger of that event, and its calls are rows of the event", () => {
     expect(handlerRowsOf(FORM)).toStrictEqual([["Hooks", ["useApplyPromo"]], ["Calls", ["shown"]]])
     expect(handlerNodeOf(FORM)?.triggerLabels.map((trigger) => trigger.name)).toStrictEqual(["form.onSubmit", "input.onChange"])
     expect(handlerNodeOf(SUBMIT)).toBeUndefined()
-    expect(handlerRowsOf(SUBMIT_EVENT)).toStrictEqual([["Steps", ["Condition :8"]]])
+    expect(handlerRowsOf(SUBMIT_EVENT)).toStrictEqual([["Calls", ["mutate()"]]])
   })
 
   it("gives the trigger of an event handed a function the lines of that function too", () => {
     expect(handlerNodeOf(FORM)?.triggerLabels.find((trigger) => trigger.id === SUBMIT_EVENT)?.lines).toStrictEqual([[7, 9], [11, 11]])
   })
 
-  it("lists a condition of a plain function as a step of it", () => {
-    expect(handlerRowsOf(FETCH_PROMO)).toStrictEqual([["Steps", ["Condition :2"]]])
+  it("lists no step for a condition of a plain function, only its arguments and its returns", () => {
+    expect(handlerRowsOf(FETCH_PROMO)).toStrictEqual([["Args", ["code"]], ["Returns", ["return", "return"]]])
   })
 
   it("lists a value kept from other code as a call, marked as changed when a block folded into it is", () => {
@@ -285,8 +285,8 @@ describe("the rows of a node that holds nodes of its own", () => {
     expect(form?.change).toBe("modified")
   })
 
-  it("lists the effects and the calls inside a root block that is no component as rows of its one node", () => {
-    expect(handlerRowsOf(HOOK)).toStrictEqual([["Effects", ["mutationFn"]], ["Calls", ["fetchPromo"]]])
+  it("lists the calls and the returns of a hook as rows of its one node, with a call inside a callback it hands a library", () => {
+    expect(handlerRowsOf(HOOK)).toStrictEqual([["Calls", ["fetchPromo()"]], ["Returns", ["return"]]])
     expect(listNodeViews(handlersBand().nodes).filter((node) => node.shortPath === "src/use-apply-promo.ts").map((node) => node.id)).toStrictEqual([HOOK])
   })
 
@@ -302,18 +302,15 @@ describe("the edges of a node that holds nodes of its own", () => {
     expect(handlerEdgesBetween(FORM, SUBMIT_EVENT)).toStrictEqual([[SUBMIT_EVENT, null]])
   })
 
-  it("has no node for the call that makes a state: the line to what its callback runs leaves the row of that state", () => {
+  it("has no node for the call that makes a state: the line to what its callback runs leaves the row of the call in that callback", () => {
     const files = { ...HANDLERS, "src/use-apply-promo.ts": HANDLERS["src/use-apply-promo.ts"].replace("const applyPromo = useMutation", "const [applyPromo] = useState").replace("@tanstack/react-query", "react").replace("useMutation }", "useState }") }
     const band = buildTrace(createSegment({ traceDiagram: presentDiagramOf(files, HANDLERS_CHANGE) }), "", [], createViewContext()).diagram
     const hook = listNodeViews(band?.nodes ?? []).find((node) => node.id === HOOK)
     const leaving = (band?.edges ?? []).filter((edge) => edge.from === HOOK)
 
-    expect(hook?.blockLists.map(({ label, blocks }) => [label, blocks.map((block) => block.name)])).toStrictEqual([["State", ["applyPromo"]]])
+    expect(hook?.blockLists.map(({ label, blocks }) => [label, blocks.map((block) => block.name)])).toStrictEqual([["Calls", ["fetchPromo()"]], ["Returns", ["return"]]])
     expect(listNodeViews(band?.nodes ?? []).map((node) => node.type)).not.toContain("component-effect")
-    expect(leaving.map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual([
-      [FETCH_PROMO, "src/use-apply-promo.ts#state@4:3"],
-      [FETCH_PROMO, "src/use-apply-promo.ts#code-event@4:59"],
-    ])
+    expect(leaving.map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual([[FETCH_PROMO, "src/use-apply-promo.ts#call@4:78@4:78"]])
   })
 
   it("joins the row of a step to the node the step leads to, through the value of the component it calls", () => {
@@ -321,8 +318,8 @@ describe("the edges of a node that holds nodes of its own", () => {
     expect(handlerEdgesBetween(FORM, FETCH_PROMO)).toStrictEqual([["src/promo-form.tsx#external-value@10:3", null]])
   })
 
-  it("leaves the row of a step of the function an event is handed for the node that step leads to", () => {
-    expect(handlerEdgesBetween(SUBMIT_EVENT, HOOK)).toStrictEqual([["src/promo-form.tsx#condition@8:5", null]])
+  it("leaves the row of a call of the function an event is handed for the node that call leads to", () => {
+    expect(handlerEdgesBetween(SUBMIT_EVENT, HOOK)).toStrictEqual([["src/promo-form.tsx#call@8:17@8:17", null]])
   })
 
   it("gives every edge a line with an id of its own", () => {
@@ -332,28 +329,6 @@ describe("the edges of a node that holds nodes of its own", () => {
   })
 })
 
-const RENAME_FILES = {
-  "src/users.ts": codeOf("export const getUsers = () => [{ id: 1, name: \"a\" }]", "export const saveUser = (user) => user"),
-  "src/rename.ts": codeOf(
-    "import { getUsers, saveUser } from \"./users\"",
-    "export const renameUser = (param) => {",
-    "  const users = getUsers()",
-    "  if (!users) throw new Error(\"no user\")",
-    "  const user = users.filter((u) => u.id === param.id)",
-    "  user.name = param.name",
-    "  const stored = { id: user.id, meta: { name: user.name } }",
-    "  for (const one of users) { saveUser(one) }",
-    "  try {",
-    "    saveUser(user)",
-    "  } catch (err) {",
-    "    throw err",
-    "  }",
-    "  return users.map((u) => { if (u.id) { return { ...u, n: 1 } } return u })",
-    "}",
-  ),
-  "src/rename-form.ts": codeOf("import { renameUser } from \"./rename\"", "export const submitRename = (param) => renameUser(param)"),
-}
-const RENAME = "src/rename.ts#function@2:1"
 const STORE_FILES = {
   "src/store.ts": codeOf(
     "import { create } from \"zustand\"",
@@ -378,19 +353,6 @@ const STORE_FILES = {
     "}",
   ),
 }
-const HELPER_FILES = {
-  "src/helper.ts": codeOf("export const helper = (count) => {", "  return count + 1", "}"),
-  "src/totals.ts": codeOf(
-    "import { helper } from \"./helper\"",
-    "export const totals = () => {",
-    "  const first = 1",
-    "  const second = { a: first, b: { c: 2 } }",
-    "  const third = [1].map((count) => helper(count))",
-    "  return third",
-    "}",
-  ),
-}
-const TOTALS = "src/totals.ts#function@2:1"
 
 const bandOf = (files: Parameters<typeof presentDiagramOf>[0], diffs: Parameters<typeof presentDiagramOf>[1]): NonNullable<ReturnType<typeof buildTrace>["diagram"]> => {
   const diagram = buildTrace(createSegment({ traceDiagram: presentDiagramOf(files, diffs) }), "", [], createViewContext()).diagram
@@ -406,42 +368,10 @@ const rowsOf = (band: ReturnType<typeof bandOf>, nodeId: string): Row[] => {
   return (node?.rowGroups ?? []).flatMap(({ rowIds }) => rowIds.flatMap((rowId) => rowById.get(rowId) ?? []))
 }
 
-const stepsOf = rowsOf
-
-describe("the steps of a node of the trace band", () => {
-  it("lists every row in the order it is written, with no row for a read through an argument: the statements that follow each other as one step, and a block, a call out and a throw as a row of its own", () => {
-    const steps = stepsOf(bandOf(RENAME_FILES, { "src/rename.ts": [rangeAt(3, 1, 14, 80)] }), RENAME)
-
-    expect(steps.map(({ name, lines }) => [name, lines])).toStrictEqual([
-      ["users", [[3, 3]]],
-      ["Condition :4", [[4, 4]]],
-      ["user, stored", [[5, 7]]],
-      ["Loop :8", [[8, 8]]],
-      ["saveUser", [[8, 8]]],
-      ["Try :9", [[9, 13]]],
-      ["saveUser", [[10, 10]]],
-      ["Throw :12", [[12, 12]]],
-      ["Function :14", [[14, 14]]],
-    ])
-  })
-
-  it("lists a value at the top level of its file that is not exported as a step of the node that reads it, marked as changed with the lines of its declaration", () => {
-    const orders = codeOf("const ORDERS_KEY = [\"orders\"]", "export const loadOrders = () => {", "  return ORDERS_KEY", "}")
-    const page = codeOf("import { loadOrders } from \"./orders\"", "export const showOrders = () => loadOrders()")
-    const steps = stepsOf(bandOf({ "src/orders.ts": orders, "src/orders-page.ts": page }, { "src/orders.ts": [rangeAt(1, 20, 1, 29)] }), "src/orders.ts#function@2:1")
-
-    expect(steps.map(({ name, change, lines }) => [name, change, lines])).toStrictEqual([["ORDERS_KEY", "modified", [[1, 1]]]])
-  })
-
-  it("names a folded step after its first block, so one label is written for it", () => {
-    const steps = stepsOf(bandOf(RENAME_FILES, { "src/rename.ts": [rangeAt(3, 1, 14, 80)] }), RENAME)
-
-    expect(steps.find((step) => step.name === "user, stored")?.id).toBe("src/rename.ts#variable@5:3")
-  })
-
+describe("the rows of a store in the trace band", () => {
   it("lists an action of a store as a row of the store, and folds what is written inside the action into its row", () => {
     const band = bandOf(STORE_FILES, { "src/store.ts": [rangeAt(5, 1, 11, 10)] })
-    const namedRows = (nodeId: string): [string, string | null][] => stepsOf(band, nodeId).map(({ name, change }) => [name, change])
+    const namedRows = (nodeId: string): [string, string | null][] => rowsOf(band, nodeId).map(({ name, change }) => [name, change])
 
     expect(listNodeViews(band.nodes).map((node) => [node.id, node.name])).toStrictEqual([
       ["src/add-button.tsx#component@2:1", "AddButton"],
@@ -449,29 +379,6 @@ describe("the steps of a node of the trace band", () => {
       ["src/add-button.tsx#render-event@4:18", "button.onClick"],
     ])
     expect(namedRows("src/store.ts#state@2:1")).toStrictEqual([["addItem", "modified"]])
-  })
-
-  it("marks a step as changed when a block folded into it is", () => {
-    const steps = stepsOf(bandOf(HELPER_FILES, { "src/totals.ts": [rangeAt(4, 34, 4, 38)], "src/helper.ts": [rangeAt(2, 10, 2, 19)] }), TOTALS)
-
-    expect(steps.map(({ name, change }) => [name, change])).toContainEqual(["second", "modified"])
-  })
-
-  it("names a step of several statements after the first two, and counts the others", () => {
-    const files = {
-      "src/sum.ts": codeOf("export const sum = () => {", "  const one = 1", "  const two = 2", "  const three = 3", "  const four = 4", "  return one + two + three + four", "}"),
-      "src/total.ts": codeOf("import { sum } from \"./sum\"", "export const total = () => sum()"),
-    }
-    const steps = stepsOf(bandOf(files, { "src/sum.ts": [rangeAt(2, 1, 5, 20)] }), "src/sum.ts#function@1:1")
-
-    expect(steps.map(({ name, lines }) => [name, lines])).toStrictEqual([["one, two +2", [[2, 5]]]])
-  })
-
-  it("gives a statement that leads to another node a step of its own, and joins the line from a block folded into it to that step", () => {
-    const band = bandOf(HELPER_FILES, { "src/totals.ts": [rangeAt(3, 1, 5, 60)], "src/helper.ts": [rangeAt(2, 10, 2, 19)] })
-
-    expect(stepsOf(band, TOTALS).map((step) => step.name)).toStrictEqual(["first, second", "third"])
-    expect(band.edges.filter((edge) => edge.from === TOTALS).map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual([["src/helper.ts#function@1:1", "src/totals.ts#external-value@5:3"]])
   })
 })
 
@@ -514,15 +421,22 @@ const groupsOf = (band: ReturnType<typeof bandOf>, nodeId: string): [string | nu
   return (node?.rowGroups ?? []).map(({ label, rowIds }) => [label, rowIds.map((rowId) => nameById.get(rowId) ?? rowId)])
 }
 
+const calleeCardsOf = (band: ReturnType<typeof bandOf>, nodeId: string): [string, string, string[]][] => {
+  const node = listNodeViews(band.nodes).find((one) => one.id === nodeId)
+  const nameById = new Map((node?.blockLists ?? []).flatMap(({ blocks }) => blocks).map((row) => [row.id, row.name] as const))
+  return (node?.rowGroups ?? []).flatMap(({ calleeCards }) => calleeCards ?? []).map(({ name, typeLabel, rowIds }) => [name, typeLabel, rowIds.map((rowId) => nameById.get(rowId) ?? rowId)])
+}
+
 describe("the rows of a card", () => {
-  it("gives a call into other code on the way to a change a row though its own line did not change, and joins the line to that code to it", () => {
+  it("gives a call into other code a row in the card of what it calls though its own line did not change, and joins the line to that code to it", () => {
     const band = bandOf(CALLER_FILES, CALLEE_CHANGE)
 
-    expect(groupsOf(band, RENAME_USER)).toStrictEqual([[null, ["users", "Condition :5", "saveUser"]]])
+    expect(groupsOf(band, RENAME_USER)).toStrictEqual([["Arguments", ["param", "other"]], ["External calls", []], ["Returns and raises", ["Throw :5", "return"]]])
+    expect(calleeCardsOf(band, RENAME_USER)).toStrictEqual([["getUsers", "Function", ["getUsers()"]], ["saveUser", "Function", ["saveUser()"]]])
     expect(band.edges.filter((edge) => edge.from === RENAME_USER).map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual(
       expect.arrayContaining([
-        ["src/users.ts#function@1:1", "src/rename.ts#external-value@3:3"],
-        ["src/users.ts#function@4:1", "src/rename.ts#call@6:3"],
+        ["src/users.ts#function@1:1", "src/rename.ts#external-value@3:3@3:17"],
+        ["src/users.ts#function@4:1", "src/rename.ts#call@6:3@6:3"],
       ]),
     )
   })
@@ -536,12 +450,13 @@ describe("the rows of a card", () => {
     ])
   })
 
-  it("lists the rows of any other card in the order they are written, with no group and no row for an argument of its function", () => {
+  it("gives an event the arguments and the calls of the function it is handed, and no row for a call into the language", () => {
     const band = bandOf(CALLER_FILES, { ...CALLEE_CHANGE, "src/list.tsx": [rangeAt(7, 17, 7, 22), rangeAt(8, 5, 8, 27)] })
 
-    expect(groupsOf(band, LIST_SUBMIT)).toStrictEqual([[null, ["event.preventDefault", "saveUser"]]])
+    expect(groupsOf(band, LIST_SUBMIT)).toStrictEqual([["Arguments", ["event"]], ["External calls", []]])
+    expect(calleeCardsOf(band, LIST_SUBMIT)).toStrictEqual([["saveUser", "Function", ["saveUser()"]]])
     expect(band.edges.filter((edge) => edge.from === LIST_SUBMIT).map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual(
-      expect.arrayContaining([["src/users.ts#function@4:1", "src/list.tsx#call@9:5"]]),
+      expect.arrayContaining([["src/users.ts#function@4:1", "src/list.tsx#call@9:5@9:5"]]),
     )
   })
 })

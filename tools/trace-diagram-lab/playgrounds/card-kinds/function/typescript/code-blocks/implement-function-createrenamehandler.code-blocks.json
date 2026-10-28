@@ -1505,6 +1505,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/history.ts"
         ],
@@ -2782,6 +2788,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 20,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/history.ts"
         ],
@@ -3178,6 +3190,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/names.ts"
         ],
@@ -3802,6 +3820,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 9,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/names.ts"
         ],
@@ -4170,6 +4194,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/rename-handler.ts"
         ],
@@ -4484,6 +4514,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/rename-handler.ts"
         ],
@@ -4859,6 +4895,12 @@
         "isRoot": false,
         "isExported": false,
         "isReturned": true,
+        "returnsAt": [
+          {
+            "line": 15,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -6305,6 +6347,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 86,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/rename.ts"
         ],
@@ -8390,6 +8438,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 24,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -12336,6 +12390,12 @@
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 71,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -14290,6 +14350,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trainers/store.ts"
         ],
