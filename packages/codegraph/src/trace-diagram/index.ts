@@ -1,6 +1,7 @@
 import { compareRanges } from "@/code-blocks/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
+import { listLeavesReached } from "@/shared/leaves-reached"
 import type { ASTCodeGroupGraph, BlockLabel, CodeBlock, CodeBlockType, ImportGraphGroup, TraceDiagram, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 import { groupCardNodes, listCardAddedEdges, listCardLeftOutEdgeIds, listCardParents, listLeftOutNodeIds, type CardContext, type NodeGroup, type ParentIdById } from "./cards"
 import { isComponentCardBlock, listComponentCardLabels } from "./component-card"
@@ -50,6 +51,8 @@ interface ValueRead {
   readonly reader: CodeBlock
   readonly value: CodeBlock
 }
+
+type ReadsByValueId = ReadonlyMap<string, readonly ValueRead[]>
 
 interface FoldedValueHold {
   readonly nodeId: string
@@ -183,11 +186,10 @@ const listValueReads = (steps: readonly Step[]): ValueRead[] =>
     return value === null || reader === null || reader.id === value.id ? [] : [{ reader, value }]
   })
 
-const listNodesReading = (value: CodeBlock, readsByValueId: ReadonlyMap<string, readonly ValueRead[]>, seenIds: ReadonlySet<string>): CodeBlock[] =>
-  (readsByValueId.get(value.id) ?? []).flatMap(({ reader }) => {
-    if (seenIds.has(reader.id)) return []
-    return foldedValueOf(reader) === null ? [reader] : listNodesReading(reader, readsByValueId, new Set([...seenIds, value.id]))
-  })
+const readersOf = (value: CodeBlock, readsByValueId: ReadsByValueId): readonly CodeBlock[] => (readsByValueId.get(value.id) ?? []).map(({ reader }) => reader)
+
+const listNodesReading = (value: CodeBlock, readsByValueId: ReadsByValueId): CodeBlock[] =>
+  listLeavesReached(value, { nextOf: (reader) => readersOf(reader, readsByValueId), isLeaf: (reader) => foldedValueOf(reader) === null, keyOf: (reader) => reader.id })
 
 const listFoldedValueHolds = (steps: readonly Step[], shownBlocks: readonly CodeBlock[]): FoldedValueHold[] => {
   const reads = listValueReads(steps)
@@ -195,7 +197,7 @@ const listFoldedValueHolds = (steps: readonly Step[], shownBlocks: readonly Code
   const values = firstOfEach(reads.map((read) => read.value), (value) => value.id)
   return values.flatMap((value) => {
     const valueBlocks = shownBlocks.filter((block) => rootBlockOf(block).id === value.id)
-    return firstOfEach(listNodesReading(value, readsByValueId, new Set([value.id])), (node) => node.id).flatMap((node) => valueBlocks.map((block) => ({ nodeId: node.id, block })))
+    return listNodesReading(value, readsByValueId).flatMap((node) => valueBlocks.map((block) => ({ nodeId: node.id, block })))
   })
 }
 
