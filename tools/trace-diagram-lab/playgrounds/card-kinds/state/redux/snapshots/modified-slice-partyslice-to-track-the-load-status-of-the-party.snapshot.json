@@ -1,0 +1,2314 @@
+{
+  "title": "Modified slice partySlice to track the load status of the party",
+  "diff": [
+    "diff --git a/src/api/pokemon-api.ts b/src/api/pokemon-api.ts",
+    "--- a/src/api/pokemon-api.ts",
+    "+++ b/src/api/pokemon-api.ts",
+    "@@ -6,0 +7 @@ export const pokemonApi = createApi({",
+    "+  tagTypes: [\"Suggestions\"],",
+    "@@ -9,0 +11 @@ export const pokemonApi = createApi({",
+    "+      providesTags: [\"Suggestions\"],",
+    "@@ -12,0 +15 @@ export const pokemonApi = createApi({",
+    "+      invalidatesTags: [\"Suggestions\"],",
+    "diff --git a/src/store/party-slice.ts b/src/store/party-slice.ts",
+    "--- a/src/store/party-slice.ts",
+    "+++ b/src/store/party-slice.ts",
+    "@@ -4,0 +5,2 @@ import type { Pokemon } from \"@/types/pokemon\"",
+    "+type PartyStatus = \"idle\" | \"loading\" | \"failed\"",
+    "+",
+    "@@ -6 +8 @@ interface PartyRoot {",
+    "-  party: { members: Pokemon[] }",
+    "+  party: { members: Pokemon[], status: PartyStatus }",
+    "@@ -12,0 +15 @@ export const loadParty = createAsyncThunk(\"party/load\", async () => {",
+    "+  if (!response.ok) throw new Error(`Loading the party failed with ${response.status}.`)",
+    "@@ -18 +21 @@ export const partySlice = createSlice({",
+    "-  initialState: { members: [] as Pokemon[] },",
+    "+  initialState: { members: [] as Pokemon[], status: \"idle\" as PartyStatus },",
+    "@@ -21 +24 @@ export const partySlice = createSlice({",
+    "-      if (state.members.length < PARTY_LIMIT) state.members.push(action.payload)",
+    "+      if (state.status === \"idle\" && state.members.length < PARTY_LIMIT) state.members.push(action.payload)",
+    "@@ -28,3 +31,11 @@ export const partySlice = createSlice({",
+    "-    builder.addCase(loadParty.fulfilled, (state, action) => {",
+    "-      state.members = action.payload",
+    "-    })",
+    "+    builder",
+    "+      .addCase(loadParty.pending, (state) => {",
+    "+        state.status = \"loading\"",
+    "+      })",
+    "+      .addCase(loadParty.fulfilled, (state, action) => {",
+    "+        state.members = action.payload",
+    "+        state.status = \"idle\"",
+    "+      })",
+    "+      .addCase(loadParty.rejected, (state) => {",
+    "+        state.status = \"failed\"",
+    "+      })",
+    "@@ -37 +48 @@ listenerMiddleware.startListening({",
+    "-    localStorage.setItem(\"party.last-released\", String(action.payload))",
+    "+    localStorage.setItem(\"party.last-released\", JSON.stringify({ pokemonId: action.payload, releasedAt: Date.now() }))",
+    "@@ -42 +53,4 @@ export const selectMembers = (state: PartyRoot) => state.party.members",
+    "-export const selectOpenSlots = createSelector([selectMembers], (members) => PARTY_LIMIT - members.length)",
+    "+export const selectStatus = (state: PartyRoot) => state.party.status",
+    "+export const selectOpenSlots = createSelector([selectMembers, selectStatus], (members, status) =>",
+    "+  status === \"loading\" ? 0 : PARTY_LIMIT - members.length,",
+    "+)"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Modified partySlice and pokemonApi",
+        "importGraph": [
+          {
+            "filePath": "src/App.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/pages/party/PartyPage.tsx"
+            ],
+            "importedFilePaths": {
+              "@/pages/party/PartyPage": "src/pages/party/PartyPage.tsx"
+            }
+          },
+          {
+            "filePath": "src/api/pokemon-api.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pages/party/PartyPage.tsx",
+              "src/store/index.ts"
+            ],
+            "importsTo": [
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/App.tsx",
+              "src/store/index.ts"
+            ],
+            "importedFilePaths": {
+              "@/App": "src/App.tsx",
+              "@/store": "src/store/index.ts"
+            }
+          },
+          {
+            "filePath": "src/pages/party/PartyPage.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.tsx"
+            ],
+            "importsTo": [
+              "src/api/pokemon-api.ts",
+              "src/store/index.ts",
+              "src/store/party-slice.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/pokemon-api": "src/api/pokemon-api.ts",
+              "@/store": "src/store/index.ts",
+              "@/store/party-slice": "src/store/party-slice.ts"
+            }
+          },
+          {
+            "filePath": "src/store/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx",
+              "src/pages/party/PartyPage.tsx"
+            ],
+            "importsTo": [
+              "src/api/pokemon-api.ts",
+              "src/store/listener.ts",
+              "src/store/party-slice.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/pokemon-api": "src/api/pokemon-api.ts",
+              "@/store/listener": "src/store/listener.ts",
+              "@/store/party-slice": "src/store/party-slice.ts"
+            }
+          },
+          {
+            "filePath": "src/store/listener.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/store/index.ts",
+              "src/store/party-slice.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/store/party-slice.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pages/party/PartyPage.tsx",
+              "src/store/index.ts"
+            ],
+            "importsTo": [
+              "src/store/listener.ts",
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/store/listener": "src/store/listener.ts",
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/types/pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/pokemon-api.ts",
+              "src/store/party-slice.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Party page flow diagram",
+          "description": "This diagram shows how the party page loads the party through the `loadParty` thunk of `partySlice` and reads its open slots through `selectOpenSlots()`. It also shows what happens when the user releases a Pokemon, adds a suggestion or saves the party, and how each action reaches `partySlice` or the `saveParty` mutation of `pokemonApi`.",
+          "traceNodes": [
+            {
+              "id": "src/App.tsx#component@3:1",
+              "type": "component",
+              "label": "Renders the party page",
+              "description": "When the user opens the app, [`main.tsx` renders this component](code:src/main.tsx#L13) inside the Redux `Provider`.",
+              "codeBlockIds": [
+                "src/App.tsx#component@3:1",
+                "src/App.tsx#render-root@4:3",
+                "src/App.tsx#render@5:5",
+                "src/App.tsx#render@6:7"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pages/party/PartyPage.tsx#component@7:1",
+                  "type": "component",
+                  "label": "Shows the party, the suggestions and a Save button",
+                  "description": "When `App` renders, [it renders this page](code:src/App.tsx#L6). When the user clicks Release, the page dispatches `removeMember`. When the user clicks Add, the page dispatches `addMember`, and Save the party calls the `saveParty` mutation.",
+                  "codeBlockIds": [
+                    "src/pages/party/PartyPage.tsx#component@7:1",
+                    "src/pages/party/PartyPage.tsx#state@9:3",
+                    "src/pages/party/PartyPage.tsx#effect-callback@9:33",
+                    "src/pages/party/PartyPage.tsx#external-value@11:3",
+                    "src/pages/party/PartyPage.tsx#external-value@12:3",
+                    "src/pages/party/PartyPage.tsx#component-effect@14:3",
+                    "src/pages/party/PartyPage.tsx#render-root@18:3",
+                    "src/pages/party/PartyPage.tsx#render@19:5",
+                    "src/api/pokemon-api.ts#root-variable@20:1",
+                    "src/pages/party/PartyPage.tsx#render@20:7",
+                    "src/pages/party/PartyPage.tsx#render-event@25:35",
+                    "src/pages/party/PartyPage.tsx#render@31:7",
+                    "src/pages/party/PartyPage.tsx#render-loop@32:10",
+                    "src/pages/party/PartyPage.tsx#render-event@34:35",
+                    "src/pages/party/PartyPage.tsx#render-event@40:29"
+                  ],
+                  "diffCodeBlockIds": [],
+                  "children": [],
+                  "triggerLabels": [
+                    {
+                      "label": "A user clicks Release on a party member",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#render-event@25:35"
+                    },
+                    {
+                      "label": "A user clicks Add on a suggestion",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#render-event@34:35"
+                    },
+                    {
+                      "label": "A user clicks Save the party",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#render-event@40:29"
+                    }
+                  ],
+                  "blockLabels": [
+                    {
+                      "label": "Reads the number of open slots from the store",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#state@9:3"
+                    },
+                    {
+                      "label": "Gets the suggested Pokemon from the API",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#external-value@11:3"
+                    },
+                    {
+                      "label": "Gets the mutation that saves the party",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#external-value@12:3"
+                    },
+                    {
+                      "label": "Loads the saved party after the first render",
+                      "codeBlockId": "src/pages/party/PartyPage.tsx#component-effect@14:3"
+                    },
+                    {
+                      "label": "Reads the hooks that `pokemonApi` makes for its endpoints",
+                      "codeBlockId": "src/api/pokemon-api.ts#root-variable@20:1"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/store/party-slice.ts#state@19:1",
+              "type": "state",
+              "label": "Keeps the party members and their load status",
+              "description": "When the party page renders, [`useSelector()` reads this slice through `selectOpenSlots()`](code:src/pages/party/PartyPage.tsx#L9). When the user clicks Release or Add, the page dispatches `removeMember` or `addMember`, and [`store` runs the reducer of this slice](code:src/store/index.ts#L8).",
+              "codeBlockIds": [
+                "src/store/party-slice.ts#state@19:1",
+                "src/store/party-slice.ts#effect@19:27",
+                "src/store/party-slice.ts#property@21:3",
+                "src/store/party-slice.ts#property@21:45",
+                "src/store/party-slice.ts#function@23:5",
+                "src/store/party-slice.ts#effect-callback@30:3",
+                "src/store/party-slice.ts#function@30:18",
+                "src/store/party-slice.ts#effect@31:5",
+                "src/store/party-slice.ts#effect@31:5-38:9",
+                "src/store/party-slice.ts#effect@31:5-34:9",
+                "src/store/party-slice.ts#effect-callback@32:35",
+                "src/store/party-slice.ts#effect-callback@35:37",
+                "src/store/party-slice.ts#effect-callback@39:36",
+                "src/store/party-slice.ts#code-event@47:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/store/party-slice.ts#property@21:3",
+                "src/store/party-slice.ts#property@21:45",
+                "src/store/party-slice.ts#effect@31:5",
+                "src/store/party-slice.ts#effect@31:5-38:9",
+                "src/store/party-slice.ts#effect@31:5-34:9"
+              ],
+              "children": [
+                {
+                  "id": "src/store/party-slice.ts#function@53:1",
+                  "type": "function",
+                  "label": "Reads the load status of the party",
+                  "description": "When the party page renders, `useSelector()` calls `selectOpenSlots()`, and [`selectOpenSlots()` calls this selector](code:src/store/party-slice.ts#L54).",
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#function@53:1",
+                    "src/store/party-slice.ts#root-argument-value@53:30",
+                    "src/store/party-slice.ts#root-argument-value@53:51"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/store/party-slice.ts#function@53:1",
+                    "src/store/party-slice.ts#root-argument-value@53:30",
+                    "src/store/party-slice.ts#root-argument-value@53:51"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": []
+                },
+                {
+                  "id": "src/store/party-slice.ts#root-variable@13:1",
+                  "type": "root-variable",
+                  "label": "Requests the saved party from the API",
+                  "description": "When the party page first renders, [its effect dispatches `loadParty()`](code:src/pages/party/PartyPage.tsx#L15), and Redux Toolkit runs this thunk.",
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#root-variable@13:1",
+                    "src/store/party-slice.ts#effect-callback@13:57",
+                    "src/store/party-slice.ts#function@13:57",
+                    "src/store/party-slice.ts#condition@15:3",
+                    "src/store/party-slice.ts#throw@15:21"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/store/party-slice.ts#condition@15:3",
+                    "src/store/party-slice.ts#throw@15:21"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Fetches `/api/party` and throws when the status is not 2xx",
+                      "codeBlockId": "src/store/party-slice.ts#effect-callback@13:57"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/store/party-slice.ts#derived@54:1",
+                  "type": "derived",
+                  "label": "Counts the open slots, or 0 while the party loads",
+                  "description": "When the party page renders, [`useSelector()` calls this selector](code:src/pages/party/PartyPage.tsx#L9).",
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#derived@54:1",
+                    "src/store/party-slice.ts#effect@54:32",
+                    "src/store/party-slice.ts#effect-callback@54:78",
+                    "src/store/party-slice.ts#function@54:78",
+                    "src/store/party-slice.ts#variable@54:79",
+                    "src/store/party-slice.ts#variable@54:88",
+                    "src/store/party-slice.ts#condition@55:3"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/store/party-slice.ts#derived@54:1",
+                    "src/store/party-slice.ts#effect@54:32",
+                    "src/store/party-slice.ts#function@54:78",
+                    "src/store/party-slice.ts#variable@54:79",
+                    "src/store/party-slice.ts#variable@54:88",
+                    "src/store/party-slice.ts#condition@55:3"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Builds the count from the members and the status",
+                      "codeBlockId": "src/store/party-slice.ts#effect@54:32"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/store/party-slice.ts#function@23:5",
+                  "type": "function",
+                  "label": "Adds a Pokemon while the party is idle and not full",
+                  "description": "When the user clicks Add on a suggestion, [the page dispatches `addMember`](code:src/pages/party/PartyPage.tsx#L34), and the slice runs this reducer.",
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#function@23:5",
+                    "src/store/party-slice.ts#condition@24:7"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/store/party-slice.ts#condition@24:7"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Checks that the party is idle and has an open slot",
+                      "codeBlockId": "src/store/party-slice.ts#condition@24:7"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/store/party-slice.ts#code-event@47:3",
+                  "type": "code-event",
+                  "label": "Stores the released Pokemon and the time of the release",
+                  "description": "When the user clicks Release, the page dispatches `removeMember`, and [the listener middleware runs this effect](code:src/store/party-slice.ts#L45-50) after the reducer.",
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#code-event@47:3",
+                    "src/store/party-slice.ts#function@47:11",
+                    "src/store/party-slice.ts#storage@48:5",
+                    "src/store/party-slice.ts#property@48:66",
+                    "src/store/party-slice.ts#property@48:93"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/store/party-slice.ts#storage@48:5",
+                    "src/store/party-slice.ts#property@48:66",
+                    "src/store/party-slice.ts#property@48:93"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Writes the id and the time under `party.last-released`",
+                      "codeBlockId": "src/store/party-slice.ts#storage@48:5"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/store/party-slice.ts#effect-callback@39:36",
+                  "type": "effect-callback",
+                  "label": "Marks the party as failed",
+                  "description": "When `loadParty` throws, Redux Toolkit dispatches `loadParty.rejected`, and [the slice runs this case](code:src/store/party-slice.ts#L39-41).",
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#effect-callback@39:36",
+                    "src/store/party-slice.ts#function@39:36",
+                    "src/store/party-slice.ts#variable@39:37",
+                    "src/store/party-slice.ts#property@40:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/store/party-slice.ts#function@39:36",
+                    "src/store/party-slice.ts#variable@39:37",
+                    "src/store/party-slice.ts#property@40:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Sets the status to `\"failed\"`",
+                      "codeBlockId": "src/store/party-slice.ts#property@40:9"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/store/party-slice.ts#effect-callback@35:37",
+                  "type": "effect-callback",
+                  "label": "Replaces the members with the loaded party",
+                  "description": "When `loadParty` returns the party, Redux Toolkit dispatches `loadParty.fulfilled`, and [the slice runs this case](code:src/store/party-slice.ts#L35-38).",
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#effect-callback@35:37",
+                    "src/store/party-slice.ts#function@35:37",
+                    "src/store/party-slice.ts#variable@35:38",
+                    "src/store/party-slice.ts#variable@35:45",
+                    "src/store/party-slice.ts#property@36:9",
+                    "src/store/party-slice.ts#property@37:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/store/party-slice.ts#function@35:37",
+                    "src/store/party-slice.ts#variable@35:38",
+                    "src/store/party-slice.ts#variable@35:45",
+                    "src/store/party-slice.ts#property@36:9",
+                    "src/store/party-slice.ts#property@37:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Stores the loaded members and sets the status to `\"idle\"`",
+                      "codeBlockId": "src/store/party-slice.ts#property@36:9"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/store/party-slice.ts#effect-callback@32:35",
+                  "type": "effect-callback",
+                  "label": "Marks the party as loading",
+                  "description": "When the page dispatches `loadParty()`, Redux Toolkit dispatches `loadParty.pending` before the request, and [the slice runs this case](code:src/store/party-slice.ts#L32-34).",
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#effect-callback@32:35",
+                    "src/store/party-slice.ts#function@32:35",
+                    "src/store/party-slice.ts#variable@32:36",
+                    "src/store/party-slice.ts#property@33:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/store/party-slice.ts#function@32:35",
+                    "src/store/party-slice.ts#variable@32:36",
+                    "src/store/party-slice.ts#property@33:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Sets the status to `\"loading\"`",
+                      "codeBlockId": "src/store/party-slice.ts#property@33:9"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [
+                {
+                  "label": "A Pokemon is released from the party",
+                  "codeBlockId": "src/store/party-slice.ts#code-event@47:3"
+                }
+              ],
+              "blockLabels": [
+                {
+                  "label": "Keeps whether the party is idle, loading or failed",
+                  "codeBlockId": "src/store/party-slice.ts#property@21:45"
+                }
+              ]
+            },
+            {
+              "id": "src/store/index.ts#root-variable@6:1",
+              "type": "root-variable",
+              "label": "Joins the party slice and the Pokemon API into one store",
+              "description": "When the app starts, [`main.tsx` hands this store to `Provider`](code:src/main.tsx#L12). The store holds the reducer of `partySlice` and the reducer and the middleware of `pokemonApi`.",
+              "codeBlockIds": [
+                "src/store/index.ts#root-variable@6:1",
+                "src/store/index.ts#effect@6:22",
+                "src/store/index.ts#property@7:3",
+                "src/store/index.ts#property@8:5",
+                "src/store/index.ts#property@9:5",
+                "src/store/index.ts#effect-callback@11:3",
+                "src/store/index.ts#function@11:15"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Creates the store with both reducers and the listener middleware",
+                  "codeBlockId": "src/store/index.ts#effect@6:22"
+                }
+              ]
+            },
+            {
+              "id": "src/api/pokemon-api.ts#state@4:1",
+              "type": "state",
+              "label": "Loads suggestions and saves the party on the server",
+              "description": "When the party page renders, it calls the hooks of this API, and [`store` adds the middleware of the API](code:src/store/index.ts#L11).",
+              "codeBlockIds": [
+                "src/api/pokemon-api.ts#state@4:1",
+                "src/api/pokemon-api.ts#effect@4:27",
+                "src/api/pokemon-api.ts#property@7:3",
+                "src/api/pokemon-api.ts#effect-callback@8:3",
+                "src/api/pokemon-api.ts#function@8:14",
+                "src/api/pokemon-api.ts#property@9:5",
+                "src/api/pokemon-api.ts#property@13:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/api/pokemon-api.ts#effect@4:27",
+                "src/api/pokemon-api.ts#property@7:3"
+              ],
+              "children": [
+                {
+                  "id": "src/api/pokemon-api.ts#property@9:5",
+                  "type": "property",
+                  "label": "Loads the suggested Pokemon",
+                  "description": "When the party page renders, [`useGetSuggestionsQuery()` runs this query](code:src/pages/party/PartyPage.tsx#L11).",
+                  "codeBlockIds": [
+                    "src/api/pokemon-api.ts#property@9:5",
+                    "src/api/pokemon-api.ts#effect@9:21",
+                    "src/api/pokemon-api.ts#property@11:7"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/api/pokemon-api.ts#effect@9:21",
+                    "src/api/pokemon-api.ts#property@11:7"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Requests `/pokemon/suggestions` and provides the `Suggestions` tag",
+                      "codeBlockId": "src/api/pokemon-api.ts#effect@9:21"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/api/pokemon-api.ts#property@13:5",
+                  "type": "property",
+                  "label": "Saves the member ids of the party",
+                  "description": "When the user clicks Save the party, the page calls the `saveParty` function that [`useSavePartyMutation()` returns](code:src/pages/party/PartyPage.tsx#L12).",
+                  "codeBlockIds": [
+                    "src/api/pokemon-api.ts#property@13:5",
+                    "src/api/pokemon-api.ts#effect@13:16",
+                    "src/api/pokemon-api.ts#property@15:7"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/api/pokemon-api.ts#effect@13:16",
+                    "src/api/pokemon-api.ts#property@15:7"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Sends `PUT /party` and invalidates the `Suggestions` tag",
+                      "codeBlockId": "src/api/pokemon-api.ts#effect@13:16"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Declares the `Suggestions` tag",
+                  "codeBlockId": "src/api/pokemon-api.ts#property@7:3"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#component-effect@14:3",
+              "type": "component-effect",
+              "label": "Runs its callback after the first render",
+              "description": "When `PartyPage` first renders, React runs [this effect](code:src/pages/party/PartyPage.tsx#L14-16). `dispatch` does not change, so the effect runs once.",
+              "codeBlockIds": [
+                "src/pages/party/PartyPage.tsx#component-effect@14:3",
+                "src/pages/party/PartyPage.tsx#effect-callback@14:13"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Runs the callback that loads the party",
+                  "codeBlockId": "src/pages/party/PartyPage.tsx#effect-callback@14:13"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#render-event@25:35",
+              "type": "render-event",
+              "label": "Dispatches `removeMember` with the id of the Pokemon",
+              "description": "When the user clicks Release, [the button dispatches `partySlice.actions.removeMember`](code:src/pages/party/PartyPage.tsx#L25) to the store.",
+              "codeBlockIds": [
+                "src/pages/party/PartyPage.tsx#render-event@25:35",
+                "src/pages/party/PartyPage.tsx#function@25:44"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#render-event@34:35",
+              "type": "render-event",
+              "label": "Dispatches `addMember` with the suggested Pokemon",
+              "description": "When the user clicks Add, [the button dispatches `partySlice.actions.addMember`](code:src/pages/party/PartyPage.tsx#L34) to the store.",
+              "codeBlockIds": [
+                "src/pages/party/PartyPage.tsx#render-event@34:35",
+                "src/pages/party/PartyPage.tsx#function@34:44"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#render-event@40:29",
+              "type": "render-event",
+              "label": "Saves the ids of the party members",
+              "description": "When the user clicks Save the party, [the button calls `saveParty()`](code:src/pages/party/PartyPage.tsx#L40) with the id of each member.",
+              "codeBlockIds": [
+                "src/pages/party/PartyPage.tsx#render-event@40:29",
+                "src/pages/party/PartyPage.tsx#function@40:38"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#effect-callback@14:13",
+              "type": "effect-callback",
+              "label": "Dispatches the thunk that loads the party",
+              "description": "When React runs the effect of `PartyPage`, the effect calls this callback, and [the callback dispatches `loadParty()`](code:src/pages/party/PartyPage.tsx#L15).",
+              "codeBlockIds": [
+                "src/pages/party/PartyPage.tsx#effect-callback@14:13",
+                "src/pages/party/PartyPage.tsx#function@14:13",
+                "src/pages/party/PartyPage.tsx#call@15:5"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Dispatches `loadParty()`",
+                  "codeBlockId": "src/pages/party/PartyPage.tsx#call@15:5"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pages/party/PartyPage.tsx#render-event@25:35 -> src/store/party-slice.ts#state@19:1",
+              "from": "src/pages/party/PartyPage.tsx#render-event@25:35",
+              "to": "src/store/party-slice.ts#state@19:1"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#render-event@34:35 -> src/store/party-slice.ts#state@19:1",
+              "from": "src/pages/party/PartyPage.tsx#render-event@34:35",
+              "to": "src/store/party-slice.ts#state@19:1"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#render-event@40:29 -> src/api/pokemon-api.ts#state@4:1",
+              "from": "src/pages/party/PartyPage.tsx#render-event@40:29",
+              "to": "src/api/pokemon-api.ts#state@4:1"
+            },
+            {
+              "id": "src/App.tsx#component@3:1 -> src/pages/party/PartyPage.tsx#component@7:1",
+              "from": "src/App.tsx#component@3:1",
+              "to": "src/pages/party/PartyPage.tsx#component@7:1"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#effect-callback@14:13 -> src/store/party-slice.ts#root-variable@13:1",
+              "from": "src/pages/party/PartyPage.tsx#effect-callback@14:13",
+              "to": "src/store/party-slice.ts#root-variable@13:1"
+            },
+            {
+              "id": "src/store/party-slice.ts#state@19:1 -> src/store/party-slice.ts#root-variable@13:1",
+              "from": "src/store/party-slice.ts#state@19:1",
+              "to": "src/store/party-slice.ts#root-variable@13:1"
+            },
+            {
+              "id": "src/store/index.ts#root-variable@6:1 -> src/api/pokemon-api.ts#state@4:1",
+              "from": "src/store/index.ts#root-variable@6:1",
+              "to": "src/api/pokemon-api.ts#state@4:1"
+            },
+            {
+              "id": "src/store/index.ts#root-variable@6:1 -> src/store/party-slice.ts#state@19:1",
+              "from": "src/store/index.ts#root-variable@6:1",
+              "to": "src/store/party-slice.ts#state@19:1"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#component@7:1 -> src/store/party-slice.ts#derived@54:1",
+              "from": "src/pages/party/PartyPage.tsx#component@7:1",
+              "to": "src/store/party-slice.ts#derived@54:1"
+            },
+            {
+              "id": "src/store/party-slice.ts#state@19:1 -> src/store/party-slice.ts#function@53:1",
+              "from": "src/store/party-slice.ts#state@19:1",
+              "to": "src/store/party-slice.ts#function@53:1"
+            },
+            {
+              "id": "src/store/party-slice.ts#state@19:1 -> src/store/party-slice.ts#derived@54:1",
+              "from": "src/store/party-slice.ts#state@19:1",
+              "to": "src/store/party-slice.ts#derived@54:1"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#component@7:1 -> src/pages/party/PartyPage.tsx#component-effect@14:3",
+              "from": "src/pages/party/PartyPage.tsx#component@7:1",
+              "to": "src/pages/party/PartyPage.tsx#component-effect@14:3"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#component@7:1 -> src/pages/party/PartyPage.tsx#render-event@25:35",
+              "from": "src/pages/party/PartyPage.tsx#component@7:1",
+              "to": "src/pages/party/PartyPage.tsx#render-event@25:35"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#component@7:1 -> src/pages/party/PartyPage.tsx#render-event@34:35",
+              "from": "src/pages/party/PartyPage.tsx#component@7:1",
+              "to": "src/pages/party/PartyPage.tsx#render-event@34:35"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#component@7:1 -> src/pages/party/PartyPage.tsx#render-event@40:29",
+              "from": "src/pages/party/PartyPage.tsx#component@7:1",
+              "to": "src/pages/party/PartyPage.tsx#render-event@40:29"
+            },
+            {
+              "id": "src/store/party-slice.ts#state@19:1 -> src/store/party-slice.ts#function@23:5",
+              "from": "src/store/party-slice.ts#state@19:1",
+              "to": "src/store/party-slice.ts#function@23:5"
+            },
+            {
+              "id": "src/store/party-slice.ts#state@19:1 -> src/store/party-slice.ts#code-event@47:3",
+              "from": "src/store/party-slice.ts#state@19:1",
+              "to": "src/store/party-slice.ts#code-event@47:3"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#component-effect@14:3 -> src/pages/party/PartyPage.tsx#effect-callback@14:13",
+              "from": "src/pages/party/PartyPage.tsx#component-effect@14:3",
+              "to": "src/pages/party/PartyPage.tsx#effect-callback@14:13"
+            },
+            {
+              "id": "src/store/party-slice.ts#state@19:1 -> src/store/party-slice.ts#effect-callback@39:36",
+              "from": "src/store/party-slice.ts#state@19:1",
+              "to": "src/store/party-slice.ts#effect-callback@39:36"
+            },
+            {
+              "id": "src/store/party-slice.ts#state@19:1 -> src/store/party-slice.ts#effect-callback@35:37",
+              "from": "src/store/party-slice.ts#state@19:1",
+              "to": "src/store/party-slice.ts#effect-callback@35:37"
+            },
+            {
+              "id": "src/api/pokemon-api.ts#state@4:1 -> src/api/pokemon-api.ts#property@9:5",
+              "from": "src/api/pokemon-api.ts#state@4:1",
+              "to": "src/api/pokemon-api.ts#property@9:5"
+            },
+            {
+              "id": "src/api/pokemon-api.ts#state@4:1 -> src/api/pokemon-api.ts#property@13:5",
+              "from": "src/api/pokemon-api.ts#state@4:1",
+              "to": "src/api/pokemon-api.ts#property@13:5"
+            },
+            {
+              "id": "src/store/party-slice.ts#state@19:1 -> src/store/party-slice.ts#effect-callback@32:35",
+              "from": "src/store/party-slice.ts#state@19:1",
+              "to": "src/store/party-slice.ts#effect-callback@32:35"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#component@7:1 -> src/api/pokemon-api.ts#property@9:5",
+              "from": "src/pages/party/PartyPage.tsx#component@7:1",
+              "to": "src/api/pokemon-api.ts#property@9:5"
+            },
+            {
+              "id": "src/pages/party/PartyPage.tsx#component@7:1 -> src/api/pokemon-api.ts#property@13:5",
+              "from": "src/pages/party/PartyPage.tsx#component@7:1",
+              "to": "src/api/pokemon-api.ts#property@13:5"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/api/pokemon-api.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "pokemonApi",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 18
+                  },
+                  "codeBlockIds": [
+                    "src/api/pokemon-api.ts#state@4:1",
+                    "src/api/pokemon-api.ts#effect@4:27",
+                    "src/api/pokemon-api.ts#property@7:3",
+                    "src/api/pokemon-api.ts#effect@9:21",
+                    "src/api/pokemon-api.ts#property@11:7",
+                    "src/api/pokemon-api.ts#effect@13:16",
+                    "src/api/pokemon-api.ts#property@15:7"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/store/party-slice.ts",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "PartyStatus",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 5
+                  },
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#type-declaration@5:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w3",
+                  "declaration": "PartyRoot",
+                  "range": {
+                    "lineStart": 7,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#type-declaration@7:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "loadParty",
+                  "range": {
+                    "lineStart": 13,
+                    "lineEnd": 17
+                  },
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#root-variable@13:1",
+                    "src/store/party-slice.ts#condition@15:3",
+                    "src/store/party-slice.ts#throw@15:21"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w5",
+                  "declaration": "partySlice",
+                  "range": {
+                    "lineStart": 19,
+                    "lineEnd": 43
+                  },
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#state@19:1",
+                    "src/store/party-slice.ts#property@21:3",
+                    "src/store/party-slice.ts#property@21:45",
+                    "src/store/party-slice.ts#condition@24:7",
+                    "src/store/party-slice.ts#effect@31:5",
+                    "src/store/party-slice.ts#effect@31:5-38:9",
+                    "src/store/party-slice.ts#effect@31:5-34:9",
+                    "src/store/party-slice.ts#function@32:35",
+                    "src/store/party-slice.ts#variable@32:36",
+                    "src/store/party-slice.ts#property@33:9",
+                    "src/store/party-slice.ts#function@35:37",
+                    "src/store/party-slice.ts#variable@35:38",
+                    "src/store/party-slice.ts#variable@35:45",
+                    "src/store/party-slice.ts#property@36:9",
+                    "src/store/party-slice.ts#property@37:9",
+                    "src/store/party-slice.ts#function@39:36",
+                    "src/store/party-slice.ts#variable@39:37",
+                    "src/store/party-slice.ts#property@40:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w5.1",
+                      "declaration": "partySlice › initialState",
+                      "range": {
+                        "lineStart": 21,
+                        "lineEnd": 21
+                      },
+                      "codeBlockIds": [
+                        "src/store/party-slice.ts#property@21:3",
+                        "src/store/party-slice.ts#property@21:45"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.2",
+                      "declaration": "partySlice › Condition :24",
+                      "range": {
+                        "lineStart": 24,
+                        "lineEnd": 24
+                      },
+                      "codeBlockIds": [
+                        "src/store/party-slice.ts#condition@24:7"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.3",
+                      "declaration": "partySlice › Effect :31",
+                      "range": {
+                        "lineStart": 31,
+                        "lineEnd": 41
+                      },
+                      "codeBlockIds": [
+                        "src/store/party-slice.ts#effect@31:5",
+                        "src/store/party-slice.ts#effect@31:5-38:9",
+                        "src/store/party-slice.ts#effect@31:5-34:9",
+                        "src/store/party-slice.ts#function@32:35",
+                        "src/store/party-slice.ts#variable@32:36",
+                        "src/store/party-slice.ts#property@33:9",
+                        "src/store/party-slice.ts#function@35:37",
+                        "src/store/party-slice.ts#variable@35:38",
+                        "src/store/party-slice.ts#variable@35:45",
+                        "src/store/party-slice.ts#property@36:9",
+                        "src/store/party-slice.ts#property@37:9",
+                        "src/store/party-slice.ts#function@39:36",
+                        "src/store/party-slice.ts#variable@39:37",
+                        "src/store/party-slice.ts#property@40:9"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w6",
+                  "declaration": "Lines 45–50",
+                  "range": {
+                    "lineStart": 45,
+                    "lineEnd": 50
+                  },
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#root-statement@45:1",
+                    "src/store/party-slice.ts#storage@48:5",
+                    "src/store/party-slice.ts#property@48:66",
+                    "src/store/party-slice.ts#property@48:93"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "selectStatus",
+                  "range": {
+                    "lineStart": 53,
+                    "lineEnd": 53
+                  },
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#function@53:1",
+                    "src/store/party-slice.ts#root-argument-value@53:30",
+                    "src/store/party-slice.ts#root-argument-value@53:51"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w8",
+                  "declaration": "selectOpenSlots",
+                  "range": {
+                    "lineStart": 54,
+                    "lineEnd": 56
+                  },
+                  "codeBlockIds": [
+                    "src/store/party-slice.ts#derived@54:1",
+                    "src/store/party-slice.ts#effect@54:32",
+                    "src/store/party-slice.ts#function@54:78",
+                    "src/store/party-slice.ts#variable@54:79",
+                    "src/store/party-slice.ts#variable@54:88",
+                    "src/store/party-slice.ts#condition@55:3"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/api/pokemon-api.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 26,
+                "endColumn": 35,
+                "path": "src/api/pokemon-api.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@reduxjs/toolkit/query/react",
+                  "name": "createApi"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 27,
+                "path": "src/api/pokemon-api.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@reduxjs/toolkit/query/react",
+                  "name": "fetchBaseQuery"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 20,
+                "endColumn": 27,
+                "path": "src/api/pokemon-api.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 34,
+                "endColumn": 41,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/api/pokemon-api.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 64,
+                "endColumn": 74,
+                "path": "src/api/pokemon-api.ts",
+                "lines": [
+                  4,
+                  18
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  4,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 5,
+                    "endColumn": 15,
+                    "path": "src/store/index.ts",
+                    "text": "    [pokemonApi.reducerPath]: pokemonApi.reducer,"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 30,
+                    "endColumn": 40,
+                    "path": "src/store/index.ts",
+                    "text": "    [pokemonApi.reducerPath]: pokemonApi.reducer,"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 109,
+                    "endColumn": 119,
+                    "path": "src/store/index.ts",
+                    "text": "  middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(listenerMiddleware.middleware).concat(pokemonApi.middleware),"
+                  }
+                ]
+              },
+              {
+                "line": 20,
+                "startColumn": 15,
+                "endColumn": 37,
+                "lines": [
+                  20,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 37,
+                    "endColumn": 59,
+                    "path": "src/pages/party/PartyPage.tsx",
+                    "text": "  const { data: suggestions = [] } = useGetSuggestionsQuery()"
+                  },
+                  {
+                    "line": 12,
+                    "startColumn": 22,
+                    "endColumn": 42,
+                    "path": "src/pages/party/PartyPage.tsx",
+                    "text": "  const [saveParty] = useSavePartyMutation()"
+                  }
+                ]
+              },
+              {
+                "line": 20,
+                "startColumn": 39,
+                "endColumn": 59,
+                "lines": [
+                  20,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 37,
+                    "endColumn": 59,
+                    "path": "src/pages/party/PartyPage.tsx",
+                    "text": "  const { data: suggestions = [] } = useGetSuggestionsQuery()"
+                  },
+                  {
+                    "line": 12,
+                    "startColumn": 22,
+                    "endColumn": 42,
+                    "path": "src/pages/party/PartyPage.tsx",
+                    "text": "  const [saveParty] = useSavePartyMutation()"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/App.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 7,
+                "endColumn": 16,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  7,
+                  45
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 16,
+                "endColumn": 19,
+                "lines": [
+                  3,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 7,
+                    "endColumn": 10,
+                    "path": "src/main.tsx",
+                    "text": "      <App />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pages/party/PartyPage.tsx",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 18,
+                "endColumn": 29,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-redux",
+                  "name": "useSelector"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 30,
+                "endColumn": 43,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  52,
+                  52
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 20,
+                "endColumn": 31,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-redux",
+                  "name": "useSelector"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 32,
+                "endColumn": 47,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  54,
+                  56
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 19,
+                "endColumn": 30,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-redux",
+                  "name": "useDispatch"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/store/index.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 37,
+                "endColumn": 59,
+                "path": "src/api/pokemon-api.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 22,
+                "endColumn": 42,
+                "path": "src/api/pokemon-api.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 2,
+                "endColumn": 11,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useEffect"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 4,
+                "endColumn": 12,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 13,
+                "endColumn": 22,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  13,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 6,
+                "endColumn": 14,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 11,
+                "endColumn": 20,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 13,
+                "endColumn": 20,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 49,
+                "endColumn": 57,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 58,
+                "endColumn": 68,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  19,
+                  43
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 90,
+                "endColumn": 97,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 9,
+                "endColumn": 20,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 33,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  32,
+                  32
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 34,
+                "startColumn": 49,
+                "endColumn": 57,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 34,
+                "startColumn": 58,
+                "endColumn": 68,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  19,
+                  43
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 34,
+                "startColumn": 87,
+                "endColumn": 94,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  32,
+                  32
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 35,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  32,
+                  32
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 40,
+                "startColumn": 43,
+                "endColumn": 52,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 40,
+                "startColumn": 53,
+                "endColumn": 60,
+                "path": "src/pages/party/PartyPage.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  7,
+                  45
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 7,
+                    "endColumn": 16,
+                    "path": "src/App.tsx",
+                    "text": "      <PartyPage />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/store/index.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 21,
+                "endColumn": 35,
+                "path": "src/store/index.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@reduxjs/toolkit",
+                  "name": "configureStore"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 11,
+                "endColumn": 21,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  19,
+                  43
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/api/pokemon-api.ts",
+                "lines": [
+                  4,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 30,
+                "endColumn": 40,
+                "path": "src/api/pokemon-api.ts",
+                "lines": [
+                  4,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 71,
+                "endColumn": 89,
+                "path": "src/store/listener.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 109,
+                "endColumn": 119,
+                "path": "src/api/pokemon-api.ts",
+                "lines": [
+                  4,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 42,
+                "endColumn": 47,
+                "path": "src/store/index.ts",
+                "lines": [
+                  6,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 33,
+                "endColumn": 38,
+                "path": "src/store/index.ts",
+                "lines": [
+                  6,
+                  12
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 14,
+                "startColumn": 24,
+                "endColumn": 34,
+                "name": "ReturnType"
+              }
+            ],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 18,
+                "lines": [
+                  6,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 21,
+                    "endColumn": 26,
+                    "path": "src/main.tsx",
+                    "text": "    <Provider store={store}>"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 12,
+                "endColumn": 21,
+                "lines": [
+                  14,
+                  14
+                ],
+                "usages": []
+              },
+              {
+                "line": 15,
+                "startColumn": 12,
+                "endColumn": 23,
+                "lines": [
+                  15,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 31,
+                    "endColumn": 42,
+                    "path": "src/pages/party/PartyPage.tsx",
+                    "text": "  const dispatch = useDispatch<AppDispatch>()"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/store/party-slice.ts",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 20,
+                "endColumn": 27,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 39,
+                "endColumn": 50,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 25,
+                "endColumn": 41,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@reduxjs/toolkit",
+                  "name": "createAsyncThunk"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 15,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 69,
+                "endColumn": 77,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 16,
+                "endColumn": 24,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 36,
+                "endColumn": 43,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 26,
+                "endColumn": 37,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@reduxjs/toolkit",
+                  "name": "createSlice"
+                }
+              },
+              {
+                "line": 21,
+                "startColumn": 33,
+                "endColumn": 40,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 62,
+                "endColumn": 73,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 29,
+                "endColumn": 42,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@reduxjs/toolkit",
+                  "name": "PayloadAction"
+                }
+              },
+              {
+                "line": 23,
+                "startColumn": 43,
+                "endColumn": 50,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 10,
+                "endColumn": 15,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 37,
+                "endColumn": 42,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 60,
+                "endColumn": 71,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 73,
+                "endColumn": 78,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 92,
+                "endColumn": 98,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 34,
+                "endColumn": 47,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@reduxjs/toolkit",
+                  "name": "PayloadAction"
+                }
+              },
+              {
+                "line": 27,
+                "startColumn": 6,
+                "endColumn": 11,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  26,
+                  26
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 22,
+                "endColumn": 27,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  26,
+                  26
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 71,
+                "endColumn": 77,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  26,
+                  26
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 4,
+                "endColumn": 11,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  30,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 15,
+                "endColumn": 24,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  13,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 33,
+                "startColumn": 8,
+                "endColumn": 13,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  32,
+                  32
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 35,
+                "startColumn": 15,
+                "endColumn": 24,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  13,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 8,
+                "endColumn": 13,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  35,
+                  35
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 24,
+                "endColumn": 30,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  35,
+                  35
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 37,
+                "startColumn": 8,
+                "endColumn": 13,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  35,
+                  35
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 39,
+                "startColumn": 15,
+                "endColumn": 24,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  13,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 40,
+                "startColumn": 8,
+                "endColumn": 13,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  39,
+                  39
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 45,
+                "startColumn": 0,
+                "endColumn": 18,
+                "path": "src/store/listener.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 46,
+                "startColumn": 17,
+                "endColumn": 27,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  19,
+                  43
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 48,
+                "startColumn": 76,
+                "endColumn": 82,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  47,
+                  47
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 52,
+                "startColumn": 37,
+                "endColumn": 46,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  7,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 53,
+                "startColumn": 36,
+                "endColumn": 45,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  7,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 54,
+                "startColumn": 31,
+                "endColumn": 45,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@reduxjs/toolkit",
+                  "name": "createSelector"
+                }
+              },
+              {
+                "line": 54,
+                "startColumn": 47,
+                "endColumn": 60,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  52,
+                  52
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 54,
+                "startColumn": 62,
+                "endColumn": 74,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  53,
+                  53
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 55,
+                "startColumn": 2,
+                "endColumn": 8,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  54,
+                  54
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 55,
+                "startColumn": 29,
+                "endColumn": 40,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 55,
+                "startColumn": 43,
+                "endColumn": 50,
+                "path": "src/store/party-slice.ts",
+                "lines": [
+                  54,
+                  54
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 14,
+                "startColumn": 25,
+                "endColumn": 30,
+                "name": "fetch"
+              },
+              {
+                "line": 15,
+                "startColumn": 30,
+                "endColumn": 35,
+                "name": "Error"
+              },
+              {
+                "line": 48,
+                "startColumn": 4,
+                "endColumn": 16,
+                "name": "localStorage"
+              },
+              {
+                "line": 48,
+                "startColumn": 48,
+                "endColumn": 52,
+                "name": "JSON"
+              },
+              {
+                "line": 48,
+                "startColumn": 104,
+                "endColumn": 108,
+                "name": "Date"
+              }
+            ],
+            "exports": [
+              {
+                "line": 13,
+                "startColumn": 13,
+                "endColumn": 22,
+                "lines": [
+                  13,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 15,
+                    "startColumn": 13,
+                    "endColumn": 22,
+                    "path": "src/pages/party/PartyPage.tsx",
+                    "text": "    dispatch(loadParty())"
+                  }
+                ]
+              },
+              {
+                "line": 19,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  19,
+                  43
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 58,
+                    "endColumn": 68,
+                    "path": "src/pages/party/PartyPage.tsx",
+                    "text": "            <button type=\"button\" onClick={() => dispatch(partySlice.actions.removeMember(pokemon.id))}>"
+                  },
+                  {
+                    "line": 34,
+                    "startColumn": 58,
+                    "endColumn": 68,
+                    "path": "src/pages/party/PartyPage.tsx",
+                    "text": "            <button type=\"button\" onClick={() => dispatch(partySlice.actions.addMember(pokemon))}>"
+                  },
+                  {
+                    "line": 8,
+                    "startColumn": 11,
+                    "endColumn": 21,
+                    "path": "src/store/index.ts",
+                    "text": "    party: partySlice.reducer,"
+                  }
+                ]
+              },
+              {
+                "line": 52,
+                "startColumn": 13,
+                "endColumn": 26,
+                "lines": [
+                  52,
+                  52
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 30,
+                    "endColumn": 43,
+                    "path": "src/pages/party/PartyPage.tsx",
+                    "text": "  const members = useSelector(selectMembers)"
+                  }
+                ]
+              },
+              {
+                "line": 53,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  53,
+                  53
+                ],
+                "usages": []
+              },
+              {
+                "line": 54,
+                "startColumn": 13,
+                "endColumn": 28,
+                "lines": [
+                  54,
+                  56
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 32,
+                    "endColumn": 47,
+                    "path": "src/pages/party/PartyPage.tsx",
+                    "text": "  const openSlots = useSelector(selectOpenSlots)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

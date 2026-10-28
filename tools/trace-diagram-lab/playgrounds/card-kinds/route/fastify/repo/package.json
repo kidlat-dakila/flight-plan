@@ -1,0 +1,11 @@
+{
+  "name": "pokedex-fastify",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "fastify": "5.4.0"
+  },
+  "devDependencies": {
+    "typescript": "5.8.3"
+  }
+}

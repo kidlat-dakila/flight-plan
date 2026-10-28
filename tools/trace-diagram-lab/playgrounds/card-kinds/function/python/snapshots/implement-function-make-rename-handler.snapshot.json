@@ -1,0 +1,3876 @@
+{
+  "title": "Implement function make_rename_handler",
+  "diff": [
+    "diff --git a/src/pokedex/cli.py b/src/pokedex/cli.py",
+    "--- a/src/pokedex/cli.py",
+    "+++ b/src/pokedex/cli.py",
+    "@@ -1 +1 @@",
+    "-from .trainers.rename import rename_trainer",
+    "+from .trainers.rename_handler import make_rename_handler",
+    "@@ -5,2 +5,2 @@ def main() -> None:",
+    "-    renamed = rename_trainer(1, \"Red\")",
+    "-    print(f\"Trainer {renamed.id} is now {renamed.name}\")",
+    "+    rename = make_rename_handler(print)",
+    "+    rename(1, \" Red \")",
+    "diff --git a/src/pokedex/trainers/history.py b/src/pokedex/trainers/history.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/trainers/history.py",
+    "@@ -0,0 +1,26 @@",
+    "+from dataclasses import dataclass",
+    "+from datetime import datetime",
+    "+",
+    "+from .trainer import Trainer",
+    "+",
+    "+",
+    "+@dataclass(frozen=True)",
+    "+class RenameEntry:",
+    "+    trainer_id: int",
+    "+    previous_name: str",
+    "+    renamed_at: datetime",
+    "+",
+    "+",
+    "+RENAME_LOG: list[RenameEntry] = []",
+    "+",
+    "+",
+    "+def renames_of(trainer_id: int) -> list[RenameEntry]:",
+    "+    return [entry for entry in RENAME_LOG if entry.trainer_id == trainer_id]",
+    "+",
+    "+",
+    "+def record_rename(trainer_id: int, previous_name: str, renamed_at: datetime) -> None:",
+    "+    RENAME_LOG.append(RenameEntry(trainer_id=trainer_id, previous_name=previous_name, renamed_at=renamed_at))",
+    "+",
+    "+",
+    "+def last_rename_notice(trainer: Trainer) -> str:",
+    "+    return f\"{trainer.name} can not be renamed again this year\"",
+    "diff --git a/src/pokedex/trainers/names.py b/src/pokedex/trainers/names.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/trainers/names.py",
+    "@@ -0,0 +1,10 @@",
+    "+from ..config import RESERVED_NAMES",
+    "+",
+    "+",
+    "+def normalize_name(name: str) -> str:",
+    "+    words = name.split()",
+    "+    return \" \".join(word.capitalize() for word in words)",
+    "+",
+    "+",
+    "+def is_reserved_name(name: str) -> bool:",
+    "+    return name in RESERVED_NAMES",
+    "diff --git a/src/pokedex/trainers/rename.py b/src/pokedex/trainers/rename.py",
+    "--- a/src/pokedex/trainers/rename.py",
+    "+++ b/src/pokedex/trainers/rename.py",
+    "@@ -0,0 +1 @@",
+    "+import warnings",
+    "@@ -1,0 +3 @@ from dataclasses import replace",
+    "+from datetime import datetime, timedelta",
+    "@@ -2,0 +5,3 @@ from dataclasses import replace",
+    "+from ..config import BADGES_FOR_RESERVED_NAME, MAX_RENAMES_PER_YEAR, RENAME_COOLDOWN_DAYS",
+    "+from .history import last_rename_notice, record_rename, renames_of",
+    "+from .names import is_reserved_name, normalize_name",
+    "@@ -7,4 +12,62 @@ from .trainer import Trainer",
+    "-def rename_trainer(trainer_id: int, name: str) -> Trainer:",
+    "-    trainer = next(stored for stored in load_trainers() if stored.id == trainer_id)",
+    "-    renamed = replace(trainer, name=name)",
+    "-    save_trainer(renamed)",
+    "+def rename_trainer(trainer_id: int, name: str, renamed_at: datetime | None = None, is_dry_run: bool = False) -> Trainer:",
+    "+    trainers = load_trainers()",
+    "+    if not trainers:",
+    "+        raise LookupError(\"No trainer is stored\")",
+    "+    trainer = next((stored for stored in trainers if stored.id == trainer_id), None)",
+    "+    if trainer is None:",
+    "+        raise LookupError(f\"No trainer has the id {trainer_id}\")",
+    "+",
+    "+    normalized = normalize_name(name)",
+    "+    minimum_length = 2",
+    "+    if len(normalized) < minimum_length:",
+    "+        raise ValueError(f\"A name has at least {minimum_length} letters\")",
+    "+    if any(character.isdigit() for character in normalized):",
+    "+        raise ValueError(\"A name has no digits\")",
+    "+    if normalized == trainer.name:",
+    "+        return trainer",
+    "+",
+    "+    if is_reserved_name(normalized):",
+    "+        if trainer.hometown != \"Pallet Town\":",
+    "+            raise PermissionError(f\"{normalized} is kept for trainers of Pallet Town\")",
+    "+        if len(trainer.badges) < BADGES_FOR_RESERVED_NAME:",
+    "+            raise PermissionError(f\"{normalized} is kept for trainers with {BADGES_FOR_RESERVED_NAME} badges\")",
+    "+",
+    "+    taken_by = next((stored for stored in trainers if stored.id != trainer_id and stored.name.lower() == normalized.lower()), None)",
+    "+    if taken_by is not None:",
+    "+        raise ValueError(f\"Trainer {taken_by.id} already has the name {normalized}\")",
+    "+",
+    "+    when = renamed_at or datetime.now()",
+    "+    past_renames = renames_of(trainer_id)",
+    "+    match trainer.hometown:",
+    "+        case \"Pallet Town\":",
+    "+            cooldown_days = RENAME_COOLDOWN_DAYS // 2",
+    "+        case \"Viridian City\":",
+    "+            cooldown_days = RENAME_COOLDOWN_DAYS * 2",
+    "+        case _:",
+    "+            cooldown_days = RENAME_COOLDOWN_DAYS",
+    "+    cooldown = timedelta(days=cooldown_days)",
+    "+    renames_this_year = 0",
+    "+    for past_rename in past_renames:",
+    "+        elapsed = when - past_rename.renamed_at",
+    "+        if elapsed < cooldown:",
+    "+            raise PermissionError(f\"Trainer {trainer_id} was renamed less than {cooldown_days} days ago\")",
+    "+        if past_rename.renamed_at.year == when.year:",
+    "+            renames_this_year += 1",
+    "+        if past_rename.previous_name == normalized:",
+    "+            raise ValueError(f\"Trainer {trainer_id} had the name {normalized} before\")",
+    "+    if renames_this_year >= MAX_RENAMES_PER_YEAR:",
+    "+        raise PermissionError(f\"Trainer {trainer_id} was renamed {renames_this_year} times this year\")",
+    "+",
+    "+    renamed = replace(trainer, name=normalized)",
+    "+    if is_dry_run:",
+    "+        return renamed",
+    "+    try:",
+    "+        save_trainer(renamed)",
+    "+    except ValueError as error:",
+    "+        if len(normalized) > minimum_length:",
+    "+            raise ValueError(f\"{normalized} is too long for trainer {trainer_id}\") from error",
+    "+        raise RuntimeError(f\"Trainer {trainer_id} keeps the name {trainer.name}\") from error",
+    "+",
+    "+    record_rename(trainer_id, trainer.name, when)",
+    "+    if renames_this_year + 1 == MAX_RENAMES_PER_YEAR:",
+    "+        warnings.warn(last_rename_notice(renamed), stacklevel=2)",
+    "diff --git a/src/pokedex/trainers/rename_handler.py b/src/pokedex/trainers/rename_handler.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/trainers/rename_handler.py",
+    "@@ -0,0 +1,23 @@",
+    "+from collections.abc import Callable",
+    "+from datetime import date",
+    "+",
+    "+from .rename import rename_trainer",
+    "+from .trainer import Trainer",
+    "+",
+    "+",
+    "+def log_prefix(day: date) -> str:",
+    "+    return f\"[{day.isoformat()}]\"",
+    "+",
+    "+",
+    "+def make_rename_handler(log: Callable[[str], None]) -> Callable[[int, str], Trainer]:",
+    "+    prefix = log_prefix(date.today())",
+    "+",
+    "+    def rename(trainer_id: int, name: str) -> Trainer:",
+    "+        cleaned = name.strip()",
+    "+        if not cleaned:",
+    "+            raise ValueError(\"A trainer needs a name\")",
+    "+        renamed = rename_trainer(trainer_id, cleaned)",
+    "+        log(f\"{prefix} Trainer {trainer_id} is now {renamed.name}\")",
+    "+        return renamed",
+    "+",
+    "+    return rename",
+    "diff --git a/src/pokedex/trainers/store.py b/src/pokedex/trainers/store.py",
+    "--- a/src/pokedex/trainers/store.py",
+    "+++ b/src/pokedex/trainers/store.py",
+    "@@ -0,0 +1 @@",
+    "+from ..config import MAX_NAME_LENGTH",
+    "@@ -10 +11 @@ def load_trainers() -> list[Trainer]:",
+    "-    return list(TRAINERS_BY_ID.values())",
+    "+    return sorted(TRAINERS_BY_ID.values(), key=lambda trainer: trainer.id)",
+    "@@ -13,0 +15,2 @@ def save_trainer(trainer: Trainer) -> None:",
+    "+    if len(trainer.name) > MAX_NAME_LENGTH:",
+    "+        raise ValueError(f\"A name has at most {MAX_NAME_LENGTH} letters\")"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New functions, modified functions",
+        "importGraph": [
+          {
+            "filePath": "src/pokedex/cli.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/pokedex/trainers/rename_handler.py"
+            ],
+            "importedFilePaths": {
+              ".trainers.rename_handler:make_rename_handler": "src/pokedex/trainers/rename_handler.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/config.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/trainers/names.py",
+              "src/pokedex/trainers/rename.py",
+              "src/pokedex/trainers/store.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/trainers/history.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/trainers/rename.py"
+            ],
+            "importsTo": [
+              "src/pokedex/trainers/trainer.py"
+            ],
+            "importedFilePaths": {
+              ".trainer:Trainer": "src/pokedex/trainers/trainer.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trainers/names.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/trainers/rename.py"
+            ],
+            "importsTo": [
+              "src/pokedex/config.py"
+            ],
+            "importedFilePaths": {
+              "..config:RESERVED_NAMES": "src/pokedex/config.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trainers/rename.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokedex/trainers/rename_handler.py"
+            ],
+            "importsTo": [
+              "src/pokedex/config.py",
+              "src/pokedex/trainers/history.py",
+              "src/pokedex/trainers/names.py",
+              "src/pokedex/trainers/store.py",
+              "src/pokedex/trainers/trainer.py"
+            ],
+            "importedFilePaths": {
+              "..config:BADGES_FOR_RESERVED_NAME": "src/pokedex/config.py",
+              "..config:MAX_RENAMES_PER_YEAR": "src/pokedex/config.py",
+              "..config:RENAME_COOLDOWN_DAYS": "src/pokedex/config.py",
+              ".history:last_rename_notice": "src/pokedex/trainers/history.py",
+              ".history:record_rename": "src/pokedex/trainers/history.py",
+              ".history:renames_of": "src/pokedex/trainers/history.py",
+              ".names:is_reserved_name": "src/pokedex/trainers/names.py",
+              ".names:normalize_name": "src/pokedex/trainers/names.py",
+              ".store:load_trainers": "src/pokedex/trainers/store.py",
+              ".store:save_trainer": "src/pokedex/trainers/store.py",
+              ".trainer:Trainer": "src/pokedex/trainers/trainer.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trainers/rename_handler.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/cli.py"
+            ],
+            "importsTo": [
+              "src/pokedex/trainers/rename.py",
+              "src/pokedex/trainers/trainer.py"
+            ],
+            "importedFilePaths": {
+              ".rename:rename_trainer": "src/pokedex/trainers/rename.py",
+              ".trainer:Trainer": "src/pokedex/trainers/trainer.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trainers/store.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokedex/trainers/rename.py"
+            ],
+            "importsTo": [
+              "src/pokedex/config.py",
+              "src/pokedex/trainers/trainer.py"
+            ],
+            "importedFilePaths": {
+              "..config:MAX_NAME_LENGTH": "src/pokedex/config.py",
+              ".trainer:Trainer": "src/pokedex/trainers/trainer.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trainers/trainer.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/trainers/history.py",
+              "src/pokedex/trainers/rename.py",
+              "src/pokedex/trainers/rename_handler.py",
+              "src/pokedex/trainers/store.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Rename trainer command flow diagram",
+          "description": "This diagram shows how `main()` makes the `rename` handler through `make_rename_handler()` when the command runs. It also shows what happens when the command renames trainer 1, and how the new name reaches the store through `save_trainer()` and the rename log through `record_rename()`.",
+          "traceNodes": [
+            {
+              "id": "src/pokedex/trainers/rename_handler.py#function@12:1",
+              "type": "function",
+              "label": "Makes a handler that renames a trainer and logs it",
+              "description": "When the `pokedex` command runs, [`main()` calls this function with `print`](code:src/pokedex/cli.py#L5) and keeps the function it returns as `rename`.",
+              "codeBlockIds": [
+                "src/pokedex/trainers/rename_handler.py#function@12:1",
+                "src/pokedex/trainers/rename_handler.py#root-argument-value@12:25",
+                "src/pokedex/trainers/rename_handler.py#external-value@13:5",
+                "src/pokedex/trainers/rename_handler.py#function@15:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/rename_handler.py#function@12:1",
+                "src/pokedex/trainers/rename_handler.py#root-argument-value@12:25",
+                "src/pokedex/trainers/rename_handler.py#external-value@13:5",
+                "src/pokedex/trainers/rename_handler.py#function@15:5"
+              ],
+              "children": [
+                {
+                  "id": "src/pokedex/trainers/rename_handler.py#function@15:5",
+                  "type": "function",
+                  "label": "Renames one trainer and logs the new name",
+                  "description": "When the `pokedex` command runs, [`main()` calls `rename(1, \" Red \")`](code:src/pokedex/cli.py#L6), and this function runs with the id `1` and the name `\" Red \"`.",
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/rename_handler.py#function@15:5",
+                    "src/pokedex/trainers/rename_handler.py#variable@15:16",
+                    "src/pokedex/trainers/rename_handler.py#variable@15:33",
+                    "src/pokedex/trainers/rename_handler.py#variable@16:9",
+                    "src/pokedex/trainers/rename_handler.py#condition@17:9",
+                    "src/pokedex/trainers/rename_handler.py#throw@18:13",
+                    "src/pokedex/trainers/rename_handler.py#external-value@19:9",
+                    "src/pokedex/trainers/rename_handler.py#call@20:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/trainers/rename_handler.py#function@15:5",
+                    "src/pokedex/trainers/rename_handler.py#variable@15:16",
+                    "src/pokedex/trainers/rename_handler.py#variable@15:33",
+                    "src/pokedex/trainers/rename_handler.py#variable@16:9",
+                    "src/pokedex/trainers/rename_handler.py#condition@17:9",
+                    "src/pokedex/trainers/rename_handler.py#throw@18:13",
+                    "src/pokedex/trainers/rename_handler.py#external-value@19:9",
+                    "src/pokedex/trainers/rename_handler.py#call@20:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Strips the spaces off the new name",
+                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#variable@15:16"
+                    },
+                    {
+                      "label": "Raises a ValueError for an empty name",
+                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#condition@17:9"
+                    },
+                    {
+                      "label": "Renames the trainer in the store",
+                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#external-value@19:9"
+                    },
+                    {
+                      "label": "Logs the new name after the date prefix",
+                      "codeBlockId": "src/pokedex/trainers/rename_handler.py#call@20:9"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Makes the date prefix of every log line",
+                  "codeBlockId": "src/pokedex/trainers/rename_handler.py#external-value@13:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/trainers/rename.py#function@12:1",
+              "type": "function",
+              "label": "Checks a new name against the rename rules and saves it",
+              "description": "When `main()` calls `rename(1, \" Red \")`, [the handler calls this function with `1` and `\"Red\"`](code:src/pokedex/trainers/rename_handler.py#L19).",
+              "codeBlockIds": [
+                "src/pokedex/trainers/rename.py#function@12:1",
+                "src/pokedex/trainers/rename.py#root-argument-value@12:20",
+                "src/pokedex/trainers/rename.py#root-argument-value@12:37",
+                "src/pokedex/trainers/rename.py#root-argument-value@12:48",
+                "src/pokedex/trainers/rename.py#root-argument-value@12:84",
+                "src/pokedex/trainers/rename.py#external-value@13:5",
+                "src/pokedex/trainers/rename.py#condition@14:5",
+                "src/pokedex/trainers/rename.py#throw@15:9",
+                "src/pokedex/trainers/rename.py#variable@16:5",
+                "src/pokedex/trainers/rename.py#condition@17:5",
+                "src/pokedex/trainers/rename.py#throw@18:9",
+                "src/pokedex/trainers/rename.py#external-value@20:5",
+                "src/pokedex/trainers/rename.py#variable@21:5",
+                "src/pokedex/trainers/rename.py#condition@22:5",
+                "src/pokedex/trainers/rename.py#throw@23:9",
+                "src/pokedex/trainers/rename.py#condition@24:5",
+                "src/pokedex/trainers/rename.py#throw@25:9",
+                "src/pokedex/trainers/rename.py#condition@26:5",
+                "src/pokedex/trainers/rename.py#condition@29:5",
+                "src/pokedex/trainers/rename.py#condition@30:9",
+                "src/pokedex/trainers/rename.py#throw@31:13",
+                "src/pokedex/trainers/rename.py#condition@32:9",
+                "src/pokedex/trainers/rename.py#throw@33:13",
+                "src/pokedex/trainers/rename.py#variable@35:5",
+                "src/pokedex/trainers/rename.py#condition@36:5",
+                "src/pokedex/trainers/rename.py#throw@37:9",
+                "src/pokedex/trainers/rename.py#external-value@39:5",
+                "src/pokedex/trainers/rename.py#external-value@40:5",
+                "src/pokedex/trainers/rename.py#switch@41:5",
+                "src/pokedex/trainers/rename.py#switch-case@42:9",
+                "src/pokedex/trainers/rename.py#external-value@43:13",
+                "src/pokedex/trainers/rename.py#switch-case@44:9",
+                "src/pokedex/trainers/rename.py#external-value@45:13",
+                "src/pokedex/trainers/rename.py#switch-case@46:9",
+                "src/pokedex/trainers/rename.py#external-value@47:13",
+                "src/pokedex/trainers/rename.py#external-value@48:5",
+                "src/pokedex/trainers/rename.py#variable@49:5",
+                "src/pokedex/trainers/rename.py#loop@50:5",
+                "src/pokedex/trainers/rename.py#variable@50:9",
+                "src/pokedex/trainers/rename.py#variable@51:9",
+                "src/pokedex/trainers/rename.py#condition@52:9",
+                "src/pokedex/trainers/rename.py#throw@53:13",
+                "src/pokedex/trainers/rename.py#condition@54:9",
+                "src/pokedex/trainers/rename.py#condition@56:9",
+                "src/pokedex/trainers/rename.py#throw@57:13",
+                "src/pokedex/trainers/rename.py#condition@58:5",
+                "src/pokedex/trainers/rename.py#throw@59:9",
+                "src/pokedex/trainers/rename.py#external-value@61:5",
+                "src/pokedex/trainers/rename.py#condition@62:5",
+                "src/pokedex/trainers/rename.py#try-catch@64:5",
+                "src/pokedex/trainers/rename.py#call@65:9",
+                "src/pokedex/trainers/rename.py#condition@67:9",
+                "src/pokedex/trainers/rename.py#throw@68:13",
+                "src/pokedex/trainers/rename.py#throw@69:9",
+                "src/pokedex/trainers/rename.py#call@71:5",
+                "src/pokedex/trainers/rename.py#condition@72:5",
+                "src/pokedex/trainers/rename.py#call@73:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/rename.py#function@12:1",
+                "src/pokedex/trainers/rename.py#root-argument-value@12:20",
+                "src/pokedex/trainers/rename.py#root-argument-value@12:37",
+                "src/pokedex/trainers/rename.py#root-argument-value@12:48",
+                "src/pokedex/trainers/rename.py#root-argument-value@12:84",
+                "src/pokedex/trainers/rename.py#external-value@13:5",
+                "src/pokedex/trainers/rename.py#condition@14:5",
+                "src/pokedex/trainers/rename.py#throw@15:9",
+                "src/pokedex/trainers/rename.py#variable@16:5",
+                "src/pokedex/trainers/rename.py#condition@17:5",
+                "src/pokedex/trainers/rename.py#throw@18:9",
+                "src/pokedex/trainers/rename.py#external-value@20:5",
+                "src/pokedex/trainers/rename.py#variable@21:5",
+                "src/pokedex/trainers/rename.py#condition@22:5",
+                "src/pokedex/trainers/rename.py#throw@23:9",
+                "src/pokedex/trainers/rename.py#condition@24:5",
+                "src/pokedex/trainers/rename.py#throw@25:9",
+                "src/pokedex/trainers/rename.py#condition@26:5",
+                "src/pokedex/trainers/rename.py#condition@29:5",
+                "src/pokedex/trainers/rename.py#condition@30:9",
+                "src/pokedex/trainers/rename.py#throw@31:13",
+                "src/pokedex/trainers/rename.py#condition@32:9",
+                "src/pokedex/trainers/rename.py#throw@33:13",
+                "src/pokedex/trainers/rename.py#variable@35:5",
+                "src/pokedex/trainers/rename.py#condition@36:5",
+                "src/pokedex/trainers/rename.py#throw@37:9",
+                "src/pokedex/trainers/rename.py#external-value@39:5",
+                "src/pokedex/trainers/rename.py#external-value@40:5",
+                "src/pokedex/trainers/rename.py#switch@41:5",
+                "src/pokedex/trainers/rename.py#switch-case@42:9",
+                "src/pokedex/trainers/rename.py#external-value@43:13",
+                "src/pokedex/trainers/rename.py#switch-case@44:9",
+                "src/pokedex/trainers/rename.py#external-value@45:13",
+                "src/pokedex/trainers/rename.py#switch-case@46:9",
+                "src/pokedex/trainers/rename.py#external-value@47:13",
+                "src/pokedex/trainers/rename.py#external-value@48:5",
+                "src/pokedex/trainers/rename.py#variable@49:5",
+                "src/pokedex/trainers/rename.py#loop@50:5",
+                "src/pokedex/trainers/rename.py#variable@50:9",
+                "src/pokedex/trainers/rename.py#variable@51:9",
+                "src/pokedex/trainers/rename.py#condition@52:9",
+                "src/pokedex/trainers/rename.py#throw@53:13",
+                "src/pokedex/trainers/rename.py#condition@54:9",
+                "src/pokedex/trainers/rename.py#condition@56:9",
+                "src/pokedex/trainers/rename.py#throw@57:13",
+                "src/pokedex/trainers/rename.py#condition@58:5",
+                "src/pokedex/trainers/rename.py#throw@59:9",
+                "src/pokedex/trainers/rename.py#external-value@61:5",
+                "src/pokedex/trainers/rename.py#condition@62:5",
+                "src/pokedex/trainers/rename.py#try-catch@64:5",
+                "src/pokedex/trainers/rename.py#call@65:9",
+                "src/pokedex/trainers/rename.py#condition@67:9",
+                "src/pokedex/trainers/rename.py#throw@68:13",
+                "src/pokedex/trainers/rename.py#throw@69:9",
+                "src/pokedex/trainers/rename.py#call@71:5",
+                "src/pokedex/trainers/rename.py#condition@72:5",
+                "src/pokedex/trainers/rename.py#call@73:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Loads every stored trainer",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@13:5"
+                },
+                {
+                  "label": "Raises a LookupError when no trainer is stored",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@14:5"
+                },
+                {
+                  "label": "Finds the trainer of the id",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#variable@16:5"
+                },
+                {
+                  "label": "Raises a LookupError for an id with no trainer",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@17:5"
+                },
+                {
+                  "label": "Capitalizes each word of the new name",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@20:5"
+                },
+                {
+                  "label": "Sets the shortest name to 2 letters",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#variable@21:5"
+                },
+                {
+                  "label": "Raises a ValueError for a name shorter than 2 letters",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@22:5"
+                },
+                {
+                  "label": "Raises a ValueError for a name with a digit",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@24:5"
+                },
+                {
+                  "label": "Returns the trainer as it is when the name does not change",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@26:5"
+                },
+                {
+                  "label": "Checks whether the name is kept for some trainers",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@29:5"
+                },
+                {
+                  "label": "Raises a PermissionError for a trainer from outside Pallet Town",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@30:9"
+                },
+                {
+                  "label": "Raises a PermissionError for a trainer with fewer than 8 badges",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@32:9"
+                },
+                {
+                  "label": "Finds another trainer with the same name in any case",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#variable@35:5"
+                },
+                {
+                  "label": "Raises a ValueError when another trainer has the name",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@36:5"
+                },
+                {
+                  "label": "Takes the given rename time, or now",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@39:5"
+                },
+                {
+                  "label": "Reads the past renames of the trainer",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@40:5"
+                },
+                {
+                  "label": "Picks the days between renames by hometown",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#switch@41:5"
+                },
+                {
+                  "label": "Matches a trainer of Pallet Town",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#switch-case@42:9"
+                },
+                {
+                  "label": "Halves the days between renames",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@43:13"
+                },
+                {
+                  "label": "Matches a trainer of Viridian City",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#switch-case@44:9"
+                },
+                {
+                  "label": "Doubles the days between renames",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@45:13"
+                },
+                {
+                  "label": "Matches a trainer of any other hometown",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#switch-case@46:9"
+                },
+                {
+                  "label": "Keeps the 30 days between renames",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@47:13"
+                },
+                {
+                  "label": "Turns the days between renames into a timedelta",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@48:5"
+                },
+                {
+                  "label": "Starts the count of renames this year at 0",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#variable@49:5"
+                },
+                {
+                  "label": "Goes through each past rename of the trainer",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#loop@50:5"
+                },
+                {
+                  "label": "Raises a PermissionError for a rename too soon after the last one",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@52:9"
+                },
+                {
+                  "label": "Counts the rename when it is in the same year",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@54:9"
+                },
+                {
+                  "label": "Raises a ValueError when the trainer had the name before",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@56:9"
+                },
+                {
+                  "label": "Raises a PermissionError after 3 renames in one year",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@58:5"
+                },
+                {
+                  "label": "Copies the trainer with the new name",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#external-value@61:5"
+                },
+                {
+                  "label": "Returns the renamed trainer unsaved on a dry run",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@62:5"
+                },
+                {
+                  "label": "Catches a ValueError of the save",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#try-catch@64:5"
+                },
+                {
+                  "label": "Saves the renamed trainer",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#call@65:9"
+                },
+                {
+                  "label": "Raises a ValueError when the name is too long for the store",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@67:9"
+                },
+                {
+                  "label": "Raises a RuntimeError that says the trainer keeps its old name",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#throw@69:9"
+                },
+                {
+                  "label": "Adds the old name to the rename log",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#call@71:5"
+                },
+                {
+                  "label": "Checks whether this was the last rename of the year",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#condition@72:5"
+                },
+                {
+                  "label": "Warns that the trainer can not be renamed again this year",
+                  "codeBlockId": "src/pokedex/trainers/rename.py#call@73:9"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/cli.py#function@4:1",
+              "type": "function",
+              "label": "Renames trainer 1 through a handler that prints",
+              "description": "When the `pokedex` command runs, Python calls this function, the [script entry of `pyproject.toml`](code:pyproject.toml#L8).",
+              "codeBlockIds": [
+                "src/pokedex/cli.py#function@4:1",
+                "src/pokedex/cli.py#external-value@5:5",
+                "src/pokedex/cli.py#call@6:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/cli.py#external-value@5:5",
+                "src/pokedex/cli.py#call@6:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Makes the rename handler that prints its log",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@5:5"
+                },
+                {
+                  "label": "Renames trainer 1 to Red",
+                  "codeBlockId": "src/pokedex/cli.py#call@6:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/trainers/rename_handler.py#function@8:1",
+              "type": "function",
+              "label": "Formats a date as the prefix of a log line",
+              "description": "When the `pokedex` command runs, [`make_rename_handler()` calls this function with the date of today](code:src/pokedex/trainers/rename_handler.py#L13). The handler then [logs every line after that prefix](code:src/pokedex/trainers/rename_handler.py#L20).",
+              "codeBlockIds": [
+                "src/pokedex/trainers/rename_handler.py#function@8:1",
+                "src/pokedex/trainers/rename_handler.py#root-argument-value@8:16",
+                "src/pokedex/trainers/rename_handler.py#root-argument-value@9:16"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/rename_handler.py#function@8:1",
+                "src/pokedex/trainers/rename_handler.py#root-argument-value@8:16",
+                "src/pokedex/trainers/rename_handler.py#root-argument-value@9:16"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/trainers/store.py#function@10:1",
+              "type": "function",
+              "label": "Returns the stored trainers ordered by id",
+              "description": "When `main()` calls `rename(1, \" Red \")`, the handler calls `rename_trainer()`, and [`rename_trainer()` calls this function](code:src/pokedex/trainers/rename.py#L13).",
+              "codeBlockIds": [
+                "src/pokedex/trainers/store.py#function@10:1",
+                "src/pokedex/trainers/store.py#function@11:48",
+                "src/pokedex/trainers/store.py#variable@11:55"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/store.py#function@10:1",
+                "src/pokedex/trainers/store.py#function@11:48",
+                "src/pokedex/trainers/store.py#variable@11:55"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Orders the trainers by id",
+                  "codeBlockId": "src/pokedex/trainers/store.py#function@11:48"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/trainers/names.py#function@4:1",
+              "type": "function",
+              "label": "Capitalizes each word of a name",
+              "description": "When `main()` calls `rename(1, \" Red \")`, the handler calls `rename_trainer()`, and [`rename_trainer()` calls this function with the new name](code:src/pokedex/trainers/rename.py#L20).",
+              "codeBlockIds": [
+                "src/pokedex/trainers/names.py#function@4:1",
+                "src/pokedex/trainers/names.py#root-argument-value@4:20",
+                "src/pokedex/trainers/names.py#variable@5:5",
+                "src/pokedex/trainers/names.py#root-argument-value@5:13"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/names.py#function@4:1",
+                "src/pokedex/trainers/names.py#root-argument-value@4:20",
+                "src/pokedex/trainers/names.py#variable@5:5",
+                "src/pokedex/trainers/names.py#root-argument-value@5:13"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Splits the name into words",
+                  "codeBlockId": "src/pokedex/trainers/names.py#variable@5:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/trainers/names.py#function@9:1",
+              "type": "function",
+              "label": "Checks whether a name is kept for some trainers",
+              "description": "When `main()` calls `rename(1, \" Red \")`, the handler calls `rename_trainer()`, and [`rename_trainer()` calls this function with the capitalized name](code:src/pokedex/trainers/rename.py#L29).",
+              "codeBlockIds": [
+                "src/pokedex/trainers/names.py#function@9:1",
+                "src/pokedex/trainers/names.py#root-argument-value@9:22"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/names.py#function@9:1",
+                "src/pokedex/trainers/names.py#root-argument-value@9:22"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/trainers/history.py#function@17:1",
+              "type": "function",
+              "label": "Returns the past renames of one trainer",
+              "description": "When `main()` calls `rename(1, \" Red \")`, the handler calls `rename_trainer()`, and [`rename_trainer()` calls this function with the id of the trainer](code:src/pokedex/trainers/rename.py#L40).",
+              "codeBlockIds": [
+                "src/pokedex/trainers/history.py#function@17:1",
+                "src/pokedex/trainers/history.py#root-variable@14:1",
+                "src/pokedex/trainers/history.py#root-argument-value@17:16"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/history.py#function@17:1",
+                "src/pokedex/trainers/history.py#root-variable@14:1",
+                "src/pokedex/trainers/history.py#root-argument-value@17:16"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps every rename in memory",
+                  "codeBlockId": "src/pokedex/trainers/history.py#root-variable@14:1"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/trainers/history.py#function@21:1",
+              "type": "function",
+              "label": "Adds a rename to the log",
+              "description": "When `main()` calls `rename(1, \" Red \")`, the handler calls `rename_trainer()`, and [`rename_trainer()` calls this function after the save](code:src/pokedex/trainers/rename.py#L71).",
+              "codeBlockIds": [
+                "src/pokedex/trainers/history.py#function@21:1",
+                "src/pokedex/trainers/history.py#class@7:1",
+                "src/pokedex/trainers/history.py#property@9:5",
+                "src/pokedex/trainers/history.py#property@10:5",
+                "src/pokedex/trainers/history.py#property@11:5",
+                "src/pokedex/trainers/history.py#root-variable@14:1",
+                "src/pokedex/trainers/history.py#root-argument-value@21:19",
+                "src/pokedex/trainers/history.py#root-argument-value@21:36",
+                "src/pokedex/trainers/history.py#root-argument-value@21:56",
+                "src/pokedex/trainers/history.py#call@22:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/history.py#function@21:1",
+                "src/pokedex/trainers/history.py#class@7:1",
+                "src/pokedex/trainers/history.py#property@9:5",
+                "src/pokedex/trainers/history.py#property@10:5",
+                "src/pokedex/trainers/history.py#property@11:5",
+                "src/pokedex/trainers/history.py#root-variable@14:1",
+                "src/pokedex/trainers/history.py#root-argument-value@21:19",
+                "src/pokedex/trainers/history.py#root-argument-value@21:36",
+                "src/pokedex/trainers/history.py#root-argument-value@21:56",
+                "src/pokedex/trainers/history.py#call@22:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Makes the entry of the rename",
+                  "codeBlockId": "src/pokedex/trainers/history.py#class@7:1"
+                },
+                {
+                  "label": "Keeps every rename in memory",
+                  "codeBlockId": "src/pokedex/trainers/history.py#root-variable@14:1"
+                },
+                {
+                  "label": "Adds the trainer id, the old name and the time",
+                  "codeBlockId": "src/pokedex/trainers/history.py#call@22:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/trainers/store.py#function@14:1",
+              "type": "function",
+              "label": "Stores a trainer whose name is short enough",
+              "description": "When `main()` calls `rename(1, \" Red \")`, the handler calls `rename_trainer()`, and [`rename_trainer()` calls this function inside its `try`](code:src/pokedex/trainers/rename.py#L65) with the renamed trainer.",
+              "codeBlockIds": [
+                "src/pokedex/trainers/store.py#function@14:1",
+                "src/pokedex/trainers/store.py#condition@15:5",
+                "src/pokedex/trainers/store.py#root-argument-value@15:12",
+                "src/pokedex/trainers/store.py#throw@16:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/store.py#condition@15:5",
+                "src/pokedex/trainers/store.py#root-argument-value@15:12",
+                "src/pokedex/trainers/store.py#throw@16:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Raises a ValueError for a name longer than 12 letters",
+                  "codeBlockId": "src/pokedex/trainers/store.py#condition@15:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/trainers/history.py#function@25:1",
+              "type": "function",
+              "label": "Writes the notice of the last rename of the year",
+              "description": "When `main()` calls `rename(1, \" Red \")`, the handler calls `rename_trainer()`, and [`rename_trainer()` calls this function after the third rename of the year](code:src/pokedex/trainers/rename.py#L73).",
+              "codeBlockIds": [
+                "src/pokedex/trainers/history.py#function@25:1",
+                "src/pokedex/trainers/history.py#root-argument-value@25:24",
+                "src/pokedex/trainers/history.py#root-argument-value@26:15"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/history.py#function@25:1",
+                "src/pokedex/trainers/history.py#root-argument-value@25:24",
+                "src/pokedex/trainers/history.py#root-argument-value@26:15"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokedex/trainers/rename_handler.py#function@15:5 -> src/pokedex/trainers/rename.py#function@12:1",
+              "from": "src/pokedex/trainers/rename_handler.py#function@15:5",
+              "to": "src/pokedex/trainers/rename.py#function@12:1"
+            },
+            {
+              "id": "src/pokedex/trainers/rename_handler.py#function@15:5 -> src/pokedex/trainers/rename_handler.py#function@8:1",
+              "from": "src/pokedex/trainers/rename_handler.py#function@15:5",
+              "to": "src/pokedex/trainers/rename_handler.py#function@8:1"
+            },
+            {
+              "id": "src/pokedex/trainers/rename_handler.py#function@12:1 -> src/pokedex/trainers/rename_handler.py#function@8:1",
+              "from": "src/pokedex/trainers/rename_handler.py#function@12:1",
+              "to": "src/pokedex/trainers/rename_handler.py#function@8:1"
+            },
+            {
+              "id": "src/pokedex/trainers/rename.py#function@12:1 -> src/pokedex/trainers/store.py#function@10:1",
+              "from": "src/pokedex/trainers/rename.py#function@12:1",
+              "to": "src/pokedex/trainers/store.py#function@10:1"
+            },
+            {
+              "id": "src/pokedex/trainers/rename.py#function@12:1 -> src/pokedex/trainers/names.py#function@4:1",
+              "from": "src/pokedex/trainers/rename.py#function@12:1",
+              "to": "src/pokedex/trainers/names.py#function@4:1"
+            },
+            {
+              "id": "src/pokedex/trainers/rename.py#function@12:1 -> src/pokedex/trainers/names.py#function@9:1",
+              "from": "src/pokedex/trainers/rename.py#function@12:1",
+              "to": "src/pokedex/trainers/names.py#function@9:1"
+            },
+            {
+              "id": "src/pokedex/trainers/rename.py#function@12:1 -> src/pokedex/trainers/history.py#function@17:1",
+              "from": "src/pokedex/trainers/rename.py#function@12:1",
+              "to": "src/pokedex/trainers/history.py#function@17:1"
+            },
+            {
+              "id": "src/pokedex/trainers/rename.py#function@12:1 -> src/pokedex/trainers/history.py#function@21:1",
+              "from": "src/pokedex/trainers/rename.py#function@12:1",
+              "to": "src/pokedex/trainers/history.py#function@21:1"
+            },
+            {
+              "id": "src/pokedex/cli.py#function@4:1 -> src/pokedex/trainers/rename_handler.py#function@12:1",
+              "from": "src/pokedex/cli.py#function@4:1",
+              "to": "src/pokedex/trainers/rename_handler.py#function@12:1"
+            },
+            {
+              "id": "src/pokedex/trainers/rename.py#function@12:1 -> src/pokedex/trainers/store.py#function@14:1",
+              "from": "src/pokedex/trainers/rename.py#function@12:1",
+              "to": "src/pokedex/trainers/store.py#function@14:1"
+            },
+            {
+              "id": "src/pokedex/trainers/rename.py#function@12:1 -> src/pokedex/trainers/history.py#function@25:1",
+              "from": "src/pokedex/trainers/rename.py#function@12:1",
+              "to": "src/pokedex/trainers/history.py#function@25:1"
+            },
+            {
+              "id": "src/pokedex/trainers/rename_handler.py#function@12:1 -> src/pokedex/trainers/rename_handler.py#function@15:5",
+              "from": "src/pokedex/trainers/rename_handler.py#function@12:1",
+              "to": "src/pokedex/trainers/rename_handler.py#function@15:5"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokedex/cli.py",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "main",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 6
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/cli.py#function@4:1",
+                    "src/pokedex/cli.py#external-value@5:5",
+                    "src/pokedex/cli.py#call@6:5"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trainers/history.py",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "RenameEntry",
+                  "range": {
+                    "lineStart": 7,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/history.py#class@7:1",
+                    "src/pokedex/trainers/history.py#property@9:5",
+                    "src/pokedex/trainers/history.py#property@10:5",
+                    "src/pokedex/trainers/history.py#property@11:5"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w3",
+                  "declaration": "RENAME_LOG",
+                  "range": {
+                    "lineStart": 14,
+                    "lineEnd": 14
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/history.py#root-variable@14:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "renames_of",
+                  "range": {
+                    "lineStart": 17,
+                    "lineEnd": 18
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/history.py#function@17:1",
+                    "src/pokedex/trainers/history.py#root-argument-value@17:16"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w5",
+                  "declaration": "record_rename",
+                  "range": {
+                    "lineStart": 21,
+                    "lineEnd": 22
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/history.py#function@21:1",
+                    "src/pokedex/trainers/history.py#root-argument-value@21:19",
+                    "src/pokedex/trainers/history.py#root-argument-value@21:36",
+                    "src/pokedex/trainers/history.py#root-argument-value@21:56",
+                    "src/pokedex/trainers/history.py#call@22:5"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w6",
+                  "declaration": "last_rename_notice",
+                  "range": {
+                    "lineStart": 25,
+                    "lineEnd": 26
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/history.py#function@25:1",
+                    "src/pokedex/trainers/history.py#root-argument-value@25:24",
+                    "src/pokedex/trainers/history.py#root-argument-value@26:15"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trainers/names.py",
+              "waypoints": [
+                {
+                  "id": "w7",
+                  "declaration": "normalize_name",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 6
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/names.py#function@4:1",
+                    "src/pokedex/trainers/names.py#root-argument-value@4:20",
+                    "src/pokedex/trainers/names.py#variable@5:5",
+                    "src/pokedex/trainers/names.py#root-argument-value@5:13"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w8",
+                  "declaration": "is_reserved_name",
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 10
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/names.py#function@9:1",
+                    "src/pokedex/trainers/names.py#root-argument-value@9:22"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trainers/rename.py",
+              "waypoints": [
+                {
+                  "id": "w9",
+                  "declaration": "rename_trainer",
+                  "range": {
+                    "lineStart": 12,
+                    "lineEnd": 74
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/rename.py#function@12:1",
+                    "src/pokedex/trainers/rename.py#root-argument-value@12:20",
+                    "src/pokedex/trainers/rename.py#root-argument-value@12:37",
+                    "src/pokedex/trainers/rename.py#root-argument-value@12:48",
+                    "src/pokedex/trainers/rename.py#root-argument-value@12:84",
+                    "src/pokedex/trainers/rename.py#external-value@13:5",
+                    "src/pokedex/trainers/rename.py#condition@14:5",
+                    "src/pokedex/trainers/rename.py#throw@15:9",
+                    "src/pokedex/trainers/rename.py#variable@16:5",
+                    "src/pokedex/trainers/rename.py#condition@17:5",
+                    "src/pokedex/trainers/rename.py#throw@18:9",
+                    "src/pokedex/trainers/rename.py#external-value@20:5",
+                    "src/pokedex/trainers/rename.py#variable@21:5",
+                    "src/pokedex/trainers/rename.py#condition@22:5",
+                    "src/pokedex/trainers/rename.py#throw@23:9",
+                    "src/pokedex/trainers/rename.py#condition@24:5",
+                    "src/pokedex/trainers/rename.py#throw@25:9",
+                    "src/pokedex/trainers/rename.py#condition@26:5",
+                    "src/pokedex/trainers/rename.py#condition@29:5",
+                    "src/pokedex/trainers/rename.py#condition@30:9",
+                    "src/pokedex/trainers/rename.py#throw@31:13",
+                    "src/pokedex/trainers/rename.py#condition@32:9",
+                    "src/pokedex/trainers/rename.py#throw@33:13",
+                    "src/pokedex/trainers/rename.py#variable@35:5",
+                    "src/pokedex/trainers/rename.py#condition@36:5",
+                    "src/pokedex/trainers/rename.py#throw@37:9",
+                    "src/pokedex/trainers/rename.py#external-value@39:5",
+                    "src/pokedex/trainers/rename.py#external-value@40:5",
+                    "src/pokedex/trainers/rename.py#switch@41:5",
+                    "src/pokedex/trainers/rename.py#switch-case@42:9",
+                    "src/pokedex/trainers/rename.py#external-value@43:13",
+                    "src/pokedex/trainers/rename.py#switch-case@44:9",
+                    "src/pokedex/trainers/rename.py#external-value@45:13",
+                    "src/pokedex/trainers/rename.py#switch-case@46:9",
+                    "src/pokedex/trainers/rename.py#external-value@47:13",
+                    "src/pokedex/trainers/rename.py#external-value@48:5",
+                    "src/pokedex/trainers/rename.py#variable@49:5",
+                    "src/pokedex/trainers/rename.py#loop@50:5",
+                    "src/pokedex/trainers/rename.py#variable@50:9",
+                    "src/pokedex/trainers/rename.py#variable@51:9",
+                    "src/pokedex/trainers/rename.py#condition@52:9",
+                    "src/pokedex/trainers/rename.py#throw@53:13",
+                    "src/pokedex/trainers/rename.py#condition@54:9",
+                    "src/pokedex/trainers/rename.py#condition@56:9",
+                    "src/pokedex/trainers/rename.py#throw@57:13",
+                    "src/pokedex/trainers/rename.py#condition@58:5",
+                    "src/pokedex/trainers/rename.py#throw@59:9",
+                    "src/pokedex/trainers/rename.py#external-value@61:5",
+                    "src/pokedex/trainers/rename.py#condition@62:5",
+                    "src/pokedex/trainers/rename.py#try-catch@64:5",
+                    "src/pokedex/trainers/rename.py#call@65:9",
+                    "src/pokedex/trainers/rename.py#condition@67:9",
+                    "src/pokedex/trainers/rename.py#throw@68:13",
+                    "src/pokedex/trainers/rename.py#throw@69:9",
+                    "src/pokedex/trainers/rename.py#call@71:5",
+                    "src/pokedex/trainers/rename.py#condition@72:5",
+                    "src/pokedex/trainers/rename.py#call@73:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w9.1",
+                      "declaration": "rename_trainer › trainers",
+                      "range": {
+                        "lineStart": 13,
+                        "lineEnd": 13
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#external-value@13:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.2",
+                      "declaration": "rename_trainer › Condition :14",
+                      "range": {
+                        "lineStart": 14,
+                        "lineEnd": 15
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#condition@14:5",
+                        "src/pokedex/trainers/rename.py#throw@15:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.3",
+                      "declaration": "rename_trainer › trainer",
+                      "range": {
+                        "lineStart": 16,
+                        "lineEnd": 16
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#variable@16:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.4",
+                      "declaration": "rename_trainer › Condition :17",
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 18
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#condition@17:5",
+                        "src/pokedex/trainers/rename.py#throw@18:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.5",
+                      "declaration": "rename_trainer › normalized",
+                      "range": {
+                        "lineStart": 20,
+                        "lineEnd": 20
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#external-value@20:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.6",
+                      "declaration": "rename_trainer › minimum_length",
+                      "range": {
+                        "lineStart": 21,
+                        "lineEnd": 21
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#variable@21:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.7",
+                      "declaration": "rename_trainer › Condition :22",
+                      "range": {
+                        "lineStart": 22,
+                        "lineEnd": 23
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#condition@22:5",
+                        "src/pokedex/trainers/rename.py#throw@23:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.8",
+                      "declaration": "rename_trainer › Condition :24",
+                      "range": {
+                        "lineStart": 24,
+                        "lineEnd": 25
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#condition@24:5",
+                        "src/pokedex/trainers/rename.py#throw@25:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.9",
+                      "declaration": "rename_trainer › Condition :26",
+                      "range": {
+                        "lineStart": 26,
+                        "lineEnd": 27
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#condition@26:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.10",
+                      "declaration": "rename_trainer › Condition :29",
+                      "range": {
+                        "lineStart": 29,
+                        "lineEnd": 33
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#condition@29:5",
+                        "src/pokedex/trainers/rename.py#condition@30:9",
+                        "src/pokedex/trainers/rename.py#throw@31:13",
+                        "src/pokedex/trainers/rename.py#condition@32:9",
+                        "src/pokedex/trainers/rename.py#throw@33:13"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.11",
+                      "declaration": "rename_trainer › taken_by",
+                      "range": {
+                        "lineStart": 35,
+                        "lineEnd": 35
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#variable@35:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.12",
+                      "declaration": "rename_trainer › Condition :36",
+                      "range": {
+                        "lineStart": 36,
+                        "lineEnd": 37
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#condition@36:5",
+                        "src/pokedex/trainers/rename.py#throw@37:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.13",
+                      "declaration": "rename_trainer › when",
+                      "range": {
+                        "lineStart": 39,
+                        "lineEnd": 39
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#external-value@39:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.14",
+                      "declaration": "rename_trainer › past_renames",
+                      "range": {
+                        "lineStart": 40,
+                        "lineEnd": 40
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#external-value@40:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.15",
+                      "declaration": "rename_trainer › Switch :41",
+                      "range": {
+                        "lineStart": 41,
+                        "lineEnd": 47
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#switch@41:5",
+                        "src/pokedex/trainers/rename.py#switch-case@42:9",
+                        "src/pokedex/trainers/rename.py#external-value@43:13",
+                        "src/pokedex/trainers/rename.py#switch-case@44:9",
+                        "src/pokedex/trainers/rename.py#external-value@45:13",
+                        "src/pokedex/trainers/rename.py#switch-case@46:9",
+                        "src/pokedex/trainers/rename.py#external-value@47:13"
+                      ],
+                      "children": [
+                        {
+                          "id": "w9.15.1",
+                          "declaration": "rename_trainer › Switch :41 › Case :42",
+                          "range": {
+                            "lineStart": 42,
+                            "lineEnd": 43
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename.py#switch-case@42:9",
+                            "src/pokedex/trainers/rename.py#external-value@43:13"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w9.15.2",
+                          "declaration": "rename_trainer › Switch :41 › Case :44",
+                          "range": {
+                            "lineStart": 44,
+                            "lineEnd": 45
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename.py#switch-case@44:9",
+                            "src/pokedex/trainers/rename.py#external-value@45:13"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w9.15.3",
+                          "declaration": "rename_trainer › Switch :41 › Case :46",
+                          "range": {
+                            "lineStart": 46,
+                            "lineEnd": 47
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename.py#switch-case@46:9",
+                            "src/pokedex/trainers/rename.py#external-value@47:13"
+                          ],
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "w9.16",
+                      "declaration": "rename_trainer › cooldown",
+                      "range": {
+                        "lineStart": 48,
+                        "lineEnd": 48
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#external-value@48:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.17",
+                      "declaration": "rename_trainer › renames_this_year",
+                      "range": {
+                        "lineStart": 49,
+                        "lineEnd": 49
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#variable@49:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.18",
+                      "declaration": "rename_trainer › Loop :50",
+                      "range": {
+                        "lineStart": 50,
+                        "lineEnd": 57
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#loop@50:5",
+                        "src/pokedex/trainers/rename.py#variable@50:9",
+                        "src/pokedex/trainers/rename.py#variable@51:9",
+                        "src/pokedex/trainers/rename.py#condition@52:9",
+                        "src/pokedex/trainers/rename.py#throw@53:13",
+                        "src/pokedex/trainers/rename.py#condition@54:9",
+                        "src/pokedex/trainers/rename.py#condition@56:9",
+                        "src/pokedex/trainers/rename.py#throw@57:13"
+                      ],
+                      "children": [
+                        {
+                          "id": "w9.18.1",
+                          "declaration": "rename_trainer › Loop :50 › Condition :52",
+                          "range": {
+                            "lineStart": 52,
+                            "lineEnd": 53
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename.py#condition@52:9",
+                            "src/pokedex/trainers/rename.py#throw@53:13"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w9.18.2",
+                          "declaration": "rename_trainer › Loop :50 › Condition :54",
+                          "range": {
+                            "lineStart": 54,
+                            "lineEnd": 55
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename.py#condition@54:9"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w9.18.3",
+                          "declaration": "rename_trainer › Loop :50 › Condition :56",
+                          "range": {
+                            "lineStart": 56,
+                            "lineEnd": 57
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename.py#condition@56:9",
+                            "src/pokedex/trainers/rename.py#throw@57:13"
+                          ],
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "w9.19",
+                      "declaration": "rename_trainer › Condition :58",
+                      "range": {
+                        "lineStart": 58,
+                        "lineEnd": 59
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#condition@58:5",
+                        "src/pokedex/trainers/rename.py#throw@59:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.20",
+                      "declaration": "rename_trainer › renamed",
+                      "range": {
+                        "lineStart": 61,
+                        "lineEnd": 61
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#external-value@61:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.21",
+                      "declaration": "rename_trainer › Condition :62",
+                      "range": {
+                        "lineStart": 62,
+                        "lineEnd": 63
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#condition@62:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.22",
+                      "declaration": "rename_trainer › Try :64",
+                      "range": {
+                        "lineStart": 64,
+                        "lineEnd": 69
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#try-catch@64:5",
+                        "src/pokedex/trainers/rename.py#call@65:9",
+                        "src/pokedex/trainers/rename.py#condition@67:9",
+                        "src/pokedex/trainers/rename.py#throw@68:13",
+                        "src/pokedex/trainers/rename.py#throw@69:9"
+                      ],
+                      "children": [
+                        {
+                          "id": "w9.22.1",
+                          "declaration": "rename_trainer › Try :64 › save_trainer",
+                          "range": {
+                            "lineStart": 65,
+                            "lineEnd": 65
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename.py#call@65:9"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w9.22.2",
+                          "declaration": "rename_trainer › Try :64 › Condition :67",
+                          "range": {
+                            "lineStart": 67,
+                            "lineEnd": 68
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename.py#condition@67:9",
+                            "src/pokedex/trainers/rename.py#throw@68:13"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w9.22.3",
+                          "declaration": "rename_trainer › Try :64 › Throw :69",
+                          "range": {
+                            "lineStart": 69,
+                            "lineEnd": 69
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename.py#throw@69:9"
+                          ],
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "w9.23",
+                      "declaration": "rename_trainer › record_rename",
+                      "range": {
+                        "lineStart": 71,
+                        "lineEnd": 71
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#call@71:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.24",
+                      "declaration": "rename_trainer › Condition :72",
+                      "range": {
+                        "lineStart": 72,
+                        "lineEnd": 73
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename.py#condition@72:5",
+                        "src/pokedex/trainers/rename.py#call@73:9"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trainers/rename_handler.py",
+              "waypoints": [
+                {
+                  "id": "w10",
+                  "declaration": "log_prefix",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/rename_handler.py#function@8:1",
+                    "src/pokedex/trainers/rename_handler.py#root-argument-value@8:16",
+                    "src/pokedex/trainers/rename_handler.py#root-argument-value@9:16"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w11",
+                  "declaration": "make_rename_handler",
+                  "range": {
+                    "lineStart": 12,
+                    "lineEnd": 23
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/rename_handler.py#function@12:1",
+                    "src/pokedex/trainers/rename_handler.py#root-argument-value@12:25",
+                    "src/pokedex/trainers/rename_handler.py#external-value@13:5",
+                    "src/pokedex/trainers/rename_handler.py#function@15:5",
+                    "src/pokedex/trainers/rename_handler.py#variable@15:16",
+                    "src/pokedex/trainers/rename_handler.py#variable@15:33",
+                    "src/pokedex/trainers/rename_handler.py#variable@16:9",
+                    "src/pokedex/trainers/rename_handler.py#condition@17:9",
+                    "src/pokedex/trainers/rename_handler.py#throw@18:13",
+                    "src/pokedex/trainers/rename_handler.py#external-value@19:9",
+                    "src/pokedex/trainers/rename_handler.py#call@20:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w11.1",
+                      "declaration": "make_rename_handler › prefix",
+                      "range": {
+                        "lineStart": 13,
+                        "lineEnd": 13
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename_handler.py#external-value@13:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w11.2",
+                      "declaration": "make_rename_handler › rename",
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 21
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/rename_handler.py#function@15:5",
+                        "src/pokedex/trainers/rename_handler.py#variable@15:16",
+                        "src/pokedex/trainers/rename_handler.py#variable@15:33",
+                        "src/pokedex/trainers/rename_handler.py#variable@16:9",
+                        "src/pokedex/trainers/rename_handler.py#condition@17:9",
+                        "src/pokedex/trainers/rename_handler.py#throw@18:13",
+                        "src/pokedex/trainers/rename_handler.py#external-value@19:9",
+                        "src/pokedex/trainers/rename_handler.py#call@20:9"
+                      ],
+                      "children": [
+                        {
+                          "id": "w11.2.1",
+                          "declaration": "make_rename_handler › rename › Condition :17",
+                          "range": {
+                            "lineStart": 17,
+                            "lineEnd": 18
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename_handler.py#condition@17:9",
+                            "src/pokedex/trainers/rename_handler.py#throw@18:13"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w11.2.2",
+                          "declaration": "make_rename_handler › rename › renamed",
+                          "range": {
+                            "lineStart": 19,
+                            "lineEnd": 19
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename_handler.py#external-value@19:9"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w11.2.3",
+                          "declaration": "make_rename_handler › rename › log",
+                          "range": {
+                            "lineStart": 20,
+                            "lineEnd": 20
+                          },
+                          "codeBlockIds": [
+                            "src/pokedex/trainers/rename_handler.py#call@20:9"
+                          ],
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trainers/store.py",
+              "waypoints": [
+                {
+                  "id": "w12",
+                  "declaration": "load_trainers",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/store.py#function@10:1",
+                    "src/pokedex/trainers/store.py#function@11:48",
+                    "src/pokedex/trainers/store.py#variable@11:55"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w13",
+                  "declaration": "save_trainer",
+                  "range": {
+                    "lineStart": 14,
+                    "lineEnd": 17
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/store.py#function@14:1",
+                    "src/pokedex/trainers/store.py#condition@15:5",
+                    "src/pokedex/trainers/store.py#root-argument-value@15:12",
+                    "src/pokedex/trainers/store.py#throw@16:9"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokedex/cli.py",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 32,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  12,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 4,
+                "endColumn": 10,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 4,
+                "endColumn": 8,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  4,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 33,
+                "endColumn": 38,
+                "name": "print"
+              },
+              {
+                "line": 9,
+                "startColumn": 3,
+                "endColumn": 11,
+                "name": "__name__"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 4,
+                "endColumn": 8,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": []
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trainers/history.py",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 1,
+                "endColumn": 10,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:dataclass",
+                  "name": "dataclass"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 16,
+                "endColumn": 24,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "datetime:datetime",
+                  "name": "datetime"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 17,
+                "endColumn": 28,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  7,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 40,
+                "endColumn": 51,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  7,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 31,
+                "endColumn": 41,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 65,
+                "endColumn": 75,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 67,
+                "endColumn": 75,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "datetime:datetime",
+                  "name": "datetime"
+                }
+              },
+              {
+                "line": 22,
+                "startColumn": 4,
+                "endColumn": 14,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 22,
+                "endColumn": 33,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  7,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 45,
+                "endColumn": 55,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 71,
+                "endColumn": 84,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 97,
+                "endColumn": 107,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/pokedex/trainers/trainer.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 14,
+                "endColumn": 21,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 9,
+                "startColumn": 16,
+                "endColumn": 19,
+                "name": "int"
+              },
+              {
+                "line": 10,
+                "startColumn": 19,
+                "endColumn": 22,
+                "name": "str"
+              },
+              {
+                "line": 14,
+                "startColumn": 12,
+                "endColumn": 16,
+                "name": "list"
+              },
+              {
+                "line": 17,
+                "startColumn": 27,
+                "endColumn": 30,
+                "name": "int"
+              },
+              {
+                "line": 17,
+                "startColumn": 35,
+                "endColumn": 39,
+                "name": "list"
+              },
+              {
+                "line": 21,
+                "startColumn": 30,
+                "endColumn": 33,
+                "name": "int"
+              },
+              {
+                "line": 21,
+                "startColumn": 50,
+                "endColumn": 53,
+                "name": "str"
+              },
+              {
+                "line": 25,
+                "startColumn": 44,
+                "endColumn": 47,
+                "name": "str"
+              }
+            ],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 6,
+                "endColumn": 17,
+                "lines": [
+                  7,
+                  11
+                ],
+                "usages": []
+              },
+              {
+                "line": 14,
+                "startColumn": 0,
+                "endColumn": 10,
+                "lines": [
+                  14,
+                  14
+                ],
+                "usages": []
+              },
+              {
+                "line": 17,
+                "startColumn": 4,
+                "endColumn": 14,
+                "lines": [
+                  17,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 40,
+                    "startColumn": 19,
+                    "endColumn": 29,
+                    "path": "src/pokedex/trainers/rename.py",
+                    "text": "    past_renames = renames_of(trainer_id)"
+                  }
+                ]
+              },
+              {
+                "line": 21,
+                "startColumn": 4,
+                "endColumn": 17,
+                "lines": [
+                  21,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 71,
+                    "startColumn": 4,
+                    "endColumn": 17,
+                    "path": "src/pokedex/trainers/rename.py",
+                    "text": "    record_rename(trainer_id, trainer.name, when)"
+                  }
+                ]
+              },
+              {
+                "line": 25,
+                "startColumn": 4,
+                "endColumn": 22,
+                "lines": [
+                  25,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 73,
+                    "startColumn": 22,
+                    "endColumn": 40,
+                    "path": "src/pokedex/trainers/rename.py",
+                    "text": "        warnings.warn(last_rename_notice(renamed), stacklevel=2)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trainers/names.py",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 12,
+                "endColumn": 16,
+                "path": "src/pokedex/trainers/names.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 50,
+                "endColumn": 55,
+                "path": "src/pokedex/trainers/names.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 11,
+                "endColumn": 15,
+                "path": "src/pokedex/trainers/names.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 19,
+                "endColumn": 33,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 4,
+                "startColumn": 25,
+                "endColumn": 28,
+                "name": "str"
+              },
+              {
+                "line": 4,
+                "startColumn": 33,
+                "endColumn": 36,
+                "name": "str"
+              },
+              {
+                "line": 9,
+                "startColumn": 27,
+                "endColumn": 30,
+                "name": "str"
+              },
+              {
+                "line": 9,
+                "startColumn": 35,
+                "endColumn": 39,
+                "name": "bool"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 4,
+                "endColumn": 18,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 20,
+                    "startColumn": 17,
+                    "endColumn": 31,
+                    "path": "src/pokedex/trainers/rename.py",
+                    "text": "    normalized = normalize_name(name)"
+                  }
+                ]
+              },
+              {
+                "line": 9,
+                "startColumn": 4,
+                "endColumn": 20,
+                "lines": [
+                  9,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 29,
+                    "startColumn": 7,
+                    "endColumn": 23,
+                    "path": "src/pokedex/trainers/rename.py",
+                    "text": "    if is_reserved_name(normalized):"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trainers/rename_handler.py",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 20,
+                "endColumn": 24,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "datetime:date",
+                  "name": "date"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 15,
+                "endColumn": 18,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 29,
+                "endColumn": 37,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "collections.abc:Callable",
+                  "name": "Callable"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 55,
+                "endColumn": 63,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "collections.abc:Callable",
+                  "name": "Callable"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 76,
+                "endColumn": 83,
+                "path": "src/pokedex/trainers/trainer.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 13,
+                "endColumn": 23,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  8,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 24,
+                "endColumn": 28,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "datetime:date",
+                  "name": "date"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 46,
+                "endColumn": 53,
+                "path": "src/pokedex/trainers/trainer.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 18,
+                "endColumn": 22,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 18,
+                "endColumn": 32,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  74
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 33,
+                "endColumn": 43,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 45,
+                "endColumn": 52,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 8,
+                "endColumn": 11,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 15,
+                "endColumn": 21,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 32,
+                "endColumn": 42,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 52,
+                "endColumn": 59,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 11,
+                "endColumn": 17,
+                "path": "src/pokedex/trainers/rename_handler.py",
+                "lines": [
+                  15,
+                  21
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 8,
+                "startColumn": 29,
+                "endColumn": 32,
+                "name": "str"
+              },
+              {
+                "line": 12,
+                "startColumn": 39,
+                "endColumn": 42,
+                "name": "str"
+              },
+              {
+                "line": 12,
+                "startColumn": 65,
+                "endColumn": 68,
+                "name": "int"
+              },
+              {
+                "line": 12,
+                "startColumn": 70,
+                "endColumn": 73,
+                "name": "str"
+              },
+              {
+                "line": 15,
+                "startColumn": 27,
+                "endColumn": 30,
+                "name": "int"
+              },
+              {
+                "line": 15,
+                "startColumn": 38,
+                "endColumn": 41,
+                "name": "str"
+              },
+              {
+                "line": 18,
+                "startColumn": 18,
+                "endColumn": 28,
+                "name": "ValueError"
+              }
+            ],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 4,
+                "endColumn": 14,
+                "lines": [
+                  8,
+                  9
+                ],
+                "usages": []
+              },
+              {
+                "line": 12,
+                "startColumn": 4,
+                "endColumn": 23,
+                "lines": [
+                  12,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 13,
+                    "endColumn": 32,
+                    "path": "src/pokedex/cli.py",
+                    "text": "    rename = make_rename_handler(print)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trainers/rename.py",
+            "references": [
+              {
+                "line": 12,
+                "startColumn": 59,
+                "endColumn": 67,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "datetime:datetime",
+                  "name": "datetime"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 112,
+                "endColumn": 119,
+                "path": "src/pokedex/trainers/trainer.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 15,
+                "endColumn": 28,
+                "path": "src/pokedex/trainers/store.py",
+                "lines": [
+                  10,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 11,
+                "endColumn": 19,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 41,
+                "endColumn": 49,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 66,
+                "endColumn": 76,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 7,
+                "endColumn": 14,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 51,
+                "endColumn": 61,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 17,
+                "endColumn": 31,
+                "path": "src/pokedex/trainers/names.py",
+                "lines": [
+                  4,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 32,
+                "endColumn": 36,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 11,
+                "endColumn": 21,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 25,
+                "endColumn": 39,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 48,
+                "endColumn": 62,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 48,
+                "endColumn": 58,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 21,
+                "endColumn": 28,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 29,
+                "startColumn": 7,
+                "endColumn": 23,
+                "path": "src/pokedex/trainers/names.py",
+                "lines": [
+                  9,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 29,
+                "startColumn": 24,
+                "endColumn": 34,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 30,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 37,
+                "endColumn": 47,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 33,
+                "endColumn": 57,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 33,
+                "startColumn": 37,
+                "endColumn": 47,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 33,
+                "startColumn": 76,
+                "endColumn": 100,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 35,
+                "startColumn": 42,
+                "endColumn": 50,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 35,
+                "startColumn": 67,
+                "endColumn": 77,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 35,
+                "startColumn": 105,
+                "endColumn": 115,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 7,
+                "endColumn": 15,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  35,
+                  35
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 37,
+                "startColumn": 36,
+                "endColumn": 44,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  35,
+                  35
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 37,
+                "startColumn": 71,
+                "endColumn": 81,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 39,
+                "startColumn": 11,
+                "endColumn": 21,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 39,
+                "startColumn": 25,
+                "endColumn": 33,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "datetime:datetime",
+                  "name": "datetime"
+                }
+              },
+              {
+                "line": 40,
+                "startColumn": 19,
+                "endColumn": 29,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  17,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 40,
+                "startColumn": 30,
+                "endColumn": 40,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 41,
+                "startColumn": 10,
+                "endColumn": 17,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 43,
+                "startColumn": 28,
+                "endColumn": 48,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 45,
+                "startColumn": 12,
+                "endColumn": 25,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  43,
+                  43
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 45,
+                "startColumn": 28,
+                "endColumn": 48,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 47,
+                "startColumn": 12,
+                "endColumn": 25,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  43,
+                  43
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 47,
+                "startColumn": 28,
+                "endColumn": 48,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 48,
+                "startColumn": 15,
+                "endColumn": 24,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "datetime:timedelta",
+                  "name": "timedelta"
+                }
+              },
+              {
+                "line": 48,
+                "startColumn": 30,
+                "endColumn": 43,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  43,
+                  43
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 50,
+                "startColumn": 23,
+                "endColumn": 35,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  40,
+                  40
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 51,
+                "startColumn": 18,
+                "endColumn": 22,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  39,
+                  39
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 51,
+                "startColumn": 25,
+                "endColumn": 36,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  50,
+                  50
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 52,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  51,
+                  51
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 52,
+                "startColumn": 21,
+                "endColumn": 29,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  48,
+                  48
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 53,
+                "startColumn": 45,
+                "endColumn": 55,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 53,
+                "startColumn": 80,
+                "endColumn": 93,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  43,
+                  43
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 54,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  50,
+                  50
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 54,
+                "startColumn": 42,
+                "endColumn": 46,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  39,
+                  39
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 55,
+                "startColumn": 12,
+                "endColumn": 29,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  49,
+                  49
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 56,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  50,
+                  50
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 56,
+                "startColumn": 40,
+                "endColumn": 50,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 57,
+                "startColumn": 40,
+                "endColumn": 50,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 57,
+                "startColumn": 66,
+                "endColumn": 76,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 58,
+                "startColumn": 7,
+                "endColumn": 24,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  49,
+                  49
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 58,
+                "startColumn": 28,
+                "endColumn": 48,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 59,
+                "startColumn": 41,
+                "endColumn": 51,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 59,
+                "startColumn": 66,
+                "endColumn": 83,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  49,
+                  49
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 61,
+                "startColumn": 14,
+                "endColumn": 21,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:replace",
+                  "name": "replace"
+                }
+              },
+              {
+                "line": 61,
+                "startColumn": 22,
+                "endColumn": 29,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 61,
+                "startColumn": 36,
+                "endColumn": 46,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 62,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 63,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  61,
+                  61
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 65,
+                "startColumn": 8,
+                "endColumn": 20,
+                "path": "src/pokedex/trainers/store.py",
+                "lines": [
+                  14,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 65,
+                "startColumn": 21,
+                "endColumn": 28,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  61,
+                  61
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 67,
+                "startColumn": 15,
+                "endColumn": 25,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 67,
+                "startColumn": 29,
+                "endColumn": 43,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 68,
+                "startColumn": 32,
+                "endColumn": 42,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 68,
+                "startColumn": 69,
+                "endColumn": 79,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 68,
+                "startColumn": 88,
+                "endColumn": 93,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  66,
+                  66
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 69,
+                "startColumn": 38,
+                "endColumn": 48,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 69,
+                "startColumn": 66,
+                "endColumn": 73,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 69,
+                "startColumn": 87,
+                "endColumn": 92,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  66,
+                  66
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 71,
+                "startColumn": 4,
+                "endColumn": 17,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  21,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 71,
+                "startColumn": 18,
+                "endColumn": 28,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 71,
+                "startColumn": 30,
+                "endColumn": 37,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 71,
+                "startColumn": 44,
+                "endColumn": 48,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  39,
+                  39
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 72,
+                "startColumn": 7,
+                "endColumn": 24,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  49,
+                  49
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 72,
+                "startColumn": 32,
+                "endColumn": 52,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 73,
+                "startColumn": 8,
+                "endColumn": 16,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "warnings",
+                  "name": "*"
+                }
+              },
+              {
+                "line": 73,
+                "startColumn": 22,
+                "endColumn": 40,
+                "path": "src/pokedex/trainers/history.py",
+                "lines": [
+                  25,
+                  26
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 73,
+                "startColumn": 41,
+                "endColumn": 48,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  61,
+                  61
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 74,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/trainers/rename.py",
+                "lines": [
+                  61,
+                  61
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 12,
+                "startColumn": 31,
+                "endColumn": 34,
+                "name": "int"
+              },
+              {
+                "line": 12,
+                "startColumn": 42,
+                "endColumn": 45,
+                "name": "str"
+              },
+              {
+                "line": 12,
+                "startColumn": 95,
+                "endColumn": 99,
+                "name": "bool"
+              },
+              {
+                "line": 15,
+                "startColumn": 14,
+                "endColumn": 25,
+                "name": "LookupError"
+              },
+              {
+                "line": 16,
+                "startColumn": 14,
+                "endColumn": 18,
+                "name": "next"
+              },
+              {
+                "line": 18,
+                "startColumn": 14,
+                "endColumn": 25,
+                "name": "LookupError"
+              },
+              {
+                "line": 22,
+                "startColumn": 7,
+                "endColumn": 10,
+                "name": "len"
+              },
+              {
+                "line": 23,
+                "startColumn": 14,
+                "endColumn": 24,
+                "name": "ValueError"
+              },
+              {
+                "line": 24,
+                "startColumn": 7,
+                "endColumn": 10,
+                "name": "any"
+              },
+              {
+                "line": 25,
+                "startColumn": 14,
+                "endColumn": 24,
+                "name": "ValueError"
+              },
+              {
+                "line": 31,
+                "startColumn": 18,
+                "endColumn": 33,
+                "name": "PermissionError"
+              },
+              {
+                "line": 32,
+                "startColumn": 11,
+                "endColumn": 14,
+                "name": "len"
+              },
+              {
+                "line": 33,
+                "startColumn": 18,
+                "endColumn": 33,
+                "name": "PermissionError"
+              },
+              {
+                "line": 35,
+                "startColumn": 15,
+                "endColumn": 19,
+                "name": "next"
+              },
+              {
+                "line": 37,
+                "startColumn": 14,
+                "endColumn": 24,
+                "name": "ValueError"
+              },
+              {
+                "line": 53,
+                "startColumn": 18,
+                "endColumn": 33,
+                "name": "PermissionError"
+              },
+              {
+                "line": 57,
+                "startColumn": 18,
+                "endColumn": 28,
+                "name": "ValueError"
+              },
+              {
+                "line": 59,
+                "startColumn": 14,
+                "endColumn": 29,
+                "name": "PermissionError"
+              },
+              {
+                "line": 66,
+                "startColumn": 11,
+                "endColumn": 21,
+                "name": "ValueError"
+              },
+              {
+                "line": 67,
+                "startColumn": 11,
+                "endColumn": 14,
+                "name": "len"
+              },
+              {
+                "line": 68,
+                "startColumn": 18,
+                "endColumn": 28,
+                "name": "ValueError"
+              },
+              {
+                "line": 69,
+                "startColumn": 14,
+                "endColumn": 26,
+                "name": "RuntimeError"
+              }
+            ],
+            "exports": [
+              {
+                "line": 12,
+                "startColumn": 4,
+                "endColumn": 18,
+                "lines": [
+                  12,
+                  74
+                ],
+                "usages": [
+                  {
+                    "line": 19,
+                    "startColumn": 18,
+                    "endColumn": 32,
+                    "path": "src/pokedex/trainers/rename_handler.py",
+                    "text": "        renamed = rename_trainer(trainer_id, cleaned)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trainers/store.py",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 26,
+                "endColumn": 33,
+                "path": "src/pokedex/trainers/trainer.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 7,
+                "endColumn": 14,
+                "path": "src/pokedex/trainers/trainer.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 7,
+                "endColumn": 14,
+                "path": "src/pokedex/trainers/trainer.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 28,
+                "endColumn": 35,
+                "path": "src/pokedex/trainers/trainer.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 18,
+                "endColumn": 32,
+                "path": "src/pokedex/trainers/store.py",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 26,
+                "endColumn": 33,
+                "path": "src/pokedex/trainers/trainer.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/trainers/store.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 27,
+                "endColumn": 42,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 47,
+                "endColumn": 62,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 4,
+                "endColumn": 18,
+                "path": "src/pokedex/trainers/store.py",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/pokedex/trainers/store.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 33,
+                "endColumn": 40,
+                "path": "src/pokedex/trainers/store.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 20,
+                "name": "dict"
+              },
+              {
+                "line": 4,
+                "startColumn": 21,
+                "endColumn": 24,
+                "name": "int"
+              },
+              {
+                "line": 10,
+                "startColumn": 23,
+                "endColumn": 27,
+                "name": "list"
+              },
+              {
+                "line": 11,
+                "startColumn": 11,
+                "endColumn": 17,
+                "name": "sorted"
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 10,
+                "name": "len"
+              },
+              {
+                "line": 16,
+                "startColumn": 14,
+                "endColumn": 24,
+                "name": "ValueError"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 0,
+                "endColumn": 14,
+                "lines": [
+                  4,
+                  7
+                ],
+                "usages": []
+              },
+              {
+                "line": 10,
+                "startColumn": 4,
+                "endColumn": 17,
+                "lines": [
+                  10,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 15,
+                    "endColumn": 28,
+                    "path": "src/pokedex/trainers/rename.py",
+                    "text": "    trainers = load_trainers()"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 4,
+                "endColumn": 16,
+                "lines": [
+                  14,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 65,
+                    "startColumn": 8,
+                    "endColumn": 20,
+                    "path": "src/pokedex/trainers/rename.py",
+                    "text": "        save_trainer(renamed)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

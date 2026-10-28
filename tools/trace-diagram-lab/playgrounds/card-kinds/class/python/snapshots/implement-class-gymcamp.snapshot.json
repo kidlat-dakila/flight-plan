@@ -1,0 +1,1373 @@
+{
+  "title": "Implement class GymCamp",
+  "diff": [
+    "diff --git a/src/pokedex/cli.py b/src/pokedex/cli.py",
+    "--- a/src/pokedex/cli.py",
+    "+++ b/src/pokedex/cli.py",
+    "@@ -1 +1 @@",
+    "-from .trainers.roster import TrainerRoster",
+    "+from .trainers.gym_camp import GymCamp",
+    "@@ -5,2 +5,2 @@ def main() -> None:",
+    "-    roster = TrainerRoster()",
+    "-    print(roster.find_trainer(1))",
+    "+    camp = GymCamp()",
+    "+    print(camp.train(1, 5))",
+    "diff --git a/src/pokedex/trainers/camp.py b/src/pokedex/trainers/camp.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/trainers/camp.py",
+    "@@ -0,0 +1,18 @@",
+    "+from .models import Pokemon",
+    "+from .roster import TrainerRoster",
+    "+",
+    "+",
+    "+class TrainingCamp:",
+    "+    def __init__(self) -> None:",
+    "+        self.roster: TrainerRoster = TrainerRoster()",
+    "+        self.sessions = 0",
+    "+",
+    "+    def train(self, trainer_id: int, levels: int) -> str:",
+    "+        team = self.roster.level_up(trainer_id, levels)",
+    "+        if not team:",
+    "+            return f\"Trainer {trainer_id} has no Pokemon to train\"",
+    "+        self.sessions += 1",
+    "+        return self.report(team)",
+    "+",
+    "+    def report(self, team: list[Pokemon]) -> str:",
+    "+        return f\"{len(team)} Pokemon trained\"",
+    "diff --git a/src/pokedex/trainers/gym_camp.py b/src/pokedex/trainers/gym_camp.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/trainers/gym_camp.py",
+    "@@ -0,0 +1,10 @@",
+    "+from .models import Pokemon",
+    "+from .camp import TrainingCamp",
+    "+",
+    "+",
+    "+class GymCamp(TrainingCamp):",
+    "+    badge = \"Boulder Badge\"",
+    "+",
+    "+    def report(self, team: list[Pokemon]) -> str:",
+    "+        strongest = max(pokemon.level for pokemon in team)",
+    "+        return f\"{len(team)} Pokemon trained for the {self.badge}, the strongest at level {strongest}\"",
+    "diff --git a/src/pokedex/trainers/roster.py b/src/pokedex/trainers/roster.py",
+    "--- a/src/pokedex/trainers/roster.py",
+    "+++ b/src/pokedex/trainers/roster.py",
+    "@@ -0,0 +1,3 @@",
+    "+from dataclasses import replace",
+    "+",
+    "+from ..config import MAX_LEVEL",
+    "@@ -14,0 +18,8 @@ class TrainerRoster:",
+    "+",
+    "+    def level_up(self, trainer_id: int, levels: int) -> list[Pokemon]:",
+    "+        trainer = self.find_trainer(trainer_id)",
+    "+        if trainer is None:",
+    "+            return []",
+    "+        team = [replace(pokemon, level=min(pokemon.level + levels, MAX_LEVEL)) for pokemon in trainer.team]",
+    "+        self.trainers_by_id[trainer_id] = replace(trainer, team=team)",
+    "+        return team"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New TrainingCamp and GymCamp, modified TrainerRoster and main",
+        "importGraph": [
+          {
+            "filePath": "src/pokedex/cli.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/pokedex/trainers/gym_camp.py"
+            ],
+            "importedFilePaths": {
+              ".trainers.gym_camp:GymCamp": "src/pokedex/trainers/gym_camp.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/config.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/trainers/roster.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/trainers/camp.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/trainers/gym_camp.py"
+            ],
+            "importsTo": [
+              "src/pokedex/trainers/models.py",
+              "src/pokedex/trainers/roster.py"
+            ],
+            "importedFilePaths": {
+              ".models:Pokemon": "src/pokedex/trainers/models.py",
+              ".roster:TrainerRoster": "src/pokedex/trainers/roster.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trainers/gym_camp.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/cli.py"
+            ],
+            "importsTo": [
+              "src/pokedex/trainers/camp.py",
+              "src/pokedex/trainers/models.py"
+            ],
+            "importedFilePaths": {
+              ".models:Pokemon": "src/pokedex/trainers/models.py",
+              ".camp:TrainingCamp": "src/pokedex/trainers/camp.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trainers/models.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/trainers/camp.py",
+              "src/pokedex/trainers/gym_camp.py",
+              "src/pokedex/trainers/roster.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/trainers/roster.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokedex/trainers/camp.py"
+            ],
+            "importsTo": [
+              "src/pokedex/config.py",
+              "src/pokedex/trainers/models.py"
+            ],
+            "importedFilePaths": {
+              "..config:MAX_LEVEL": "src/pokedex/config.py",
+              ".models:Pokemon": "src/pokedex/trainers/models.py",
+              ".models:Trainer": "src/pokedex/trainers/models.py"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Gym camp training flow diagram",
+          "description": "This diagram shows how `main()` makes a `GymCamp`, and how `TrainingCamp` makes its `TrainerRoster`. It also shows what happens when the command trains the team of trainer 1, and how the raised levels reach the roster through `level_up()`.",
+          "traceNodes": [
+            {
+              "id": "src/pokedex/trainers/camp.py#class@5:1",
+              "type": "class",
+              "label": "Trains the teams of one roster",
+              "description": "When the `pokedex` command runs, [`main()` makes a `GymCamp`](code:src/pokedex/cli.py#L5), and `GymCamp` extends this class.",
+              "codeBlockIds": [
+                "src/pokedex/trainers/camp.py#class@5:1",
+                "src/pokedex/trainers/camp.py#method@6:5",
+                "src/pokedex/trainers/camp.py#property@7:9",
+                "src/pokedex/trainers/camp.py#property@8:9",
+                "src/pokedex/trainers/camp.py#method@10:5",
+                "src/pokedex/trainers/camp.py#method@17:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/camp.py#class@5:1",
+                "src/pokedex/trainers/camp.py#method@6:5",
+                "src/pokedex/trainers/camp.py#property@7:9",
+                "src/pokedex/trainers/camp.py#property@8:9",
+                "src/pokedex/trainers/camp.py#method@10:5",
+                "src/pokedex/trainers/camp.py#method@17:5"
+              ],
+              "children": [
+                {
+                  "id": "src/pokedex/trainers/gym_camp.py#class@5:1",
+                  "type": "class",
+                  "label": "Trains teams for a gym badge",
+                  "description": "When the `pokedex` command runs, [`main()` makes this class with `GymCamp()`](code:src/pokedex/cli.py#L5).",
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/gym_camp.py#class@5:1",
+                    "src/pokedex/trainers/gym_camp.py#property@6:5",
+                    "src/pokedex/trainers/gym_camp.py#method@8:5"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/trainers/gym_camp.py#class@5:1",
+                    "src/pokedex/trainers/gym_camp.py#property@6:5",
+                    "src/pokedex/trainers/gym_camp.py#method@8:5"
+                  ],
+                  "children": [
+                    {
+                      "id": "src/pokedex/trainers/gym_camp.py#method@8:5",
+                      "type": "method",
+                      "label": "Reports the team with its badge and its strongest level",
+                      "description": "When `main()` calls `camp.train(1, 5)`, [`train()` calls `self.report(team)`](code:src/pokedex/trainers/camp.py#L15), and the gym camp runs this method in place of the `report()` of `TrainingCamp`.",
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/gym_camp.py#method@8:5",
+                        "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22",
+                        "src/pokedex/trainers/gym_camp.py#variable@9:9"
+                      ],
+                      "diffCodeBlockIds": [
+                        "src/pokedex/trainers/gym_camp.py#method@8:5",
+                        "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22",
+                        "src/pokedex/trainers/gym_camp.py#variable@9:9"
+                      ],
+                      "children": [],
+                      "triggerLabels": [],
+                      "blockLabels": [
+                        {
+                          "label": "Finds the highest level of the team",
+                          "codeBlockId": "src/pokedex/trainers/gym_camp.py#variable@9:9"
+                        }
+                      ]
+                    }
+                  ],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Keeps the badge the camp trains for",
+                      "codeBlockId": "src/pokedex/trainers/gym_camp.py#property@6:5"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/pokedex/trainers/camp.py#method@6:5",
+                  "type": "method",
+                  "label": "Makes the roster and sets the sessions to 0",
+                  "description": "When the `pokedex` command runs, [`main()` calls `GymCamp()`](code:src/pokedex/cli.py#L5), and Python runs this method of the class that `GymCamp` extends.",
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/camp.py#method@6:5"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/trainers/camp.py#method@6:5"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": []
+                },
+                {
+                  "id": "src/pokedex/trainers/camp.py#method@10:5",
+                  "type": "method",
+                  "label": "Raises a team and reports it",
+                  "description": "When the `pokedex` command runs, [`main()` calls `camp.train(1, 5)`](code:src/pokedex/cli.py#L6) on the gym camp.",
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/camp.py#method@10:5",
+                    "src/pokedex/trainers/camp.py#root-argument-value@10:21",
+                    "src/pokedex/trainers/camp.py#root-argument-value@10:38",
+                    "src/pokedex/trainers/camp.py#variable@11:9",
+                    "src/pokedex/trainers/camp.py#condition@12:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/trainers/camp.py#method@10:5",
+                    "src/pokedex/trainers/camp.py#root-argument-value@10:21",
+                    "src/pokedex/trainers/camp.py#root-argument-value@10:38",
+                    "src/pokedex/trainers/camp.py#variable@11:9",
+                    "src/pokedex/trainers/camp.py#condition@12:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Raises the levels of the team in the roster",
+                      "codeBlockId": "src/pokedex/trainers/camp.py#variable@11:9"
+                    },
+                    {
+                      "label": "Returns a message for a trainer with no team",
+                      "codeBlockId": "src/pokedex/trainers/camp.py#condition@12:9"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps a new roster of the trainers",
+                  "codeBlockId": "src/pokedex/trainers/camp.py#property@7:9"
+                },
+                {
+                  "label": "Counts the sessions that raised a team",
+                  "codeBlockId": "src/pokedex/trainers/camp.py#property@8:9"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/cli.py#function@4:1",
+              "type": "function",
+              "label": "Trains the team of trainer 1 at a gym camp",
+              "description": "When the `pokedex` command runs, Python calls this function, the script entry `pokedex.cli:main` of `pyproject.toml`.",
+              "codeBlockIds": [
+                "src/pokedex/cli.py#function@4:1",
+                "src/pokedex/cli.py#external-value@5:5",
+                "src/pokedex/cli.py#call@6:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/cli.py#external-value@5:5",
+                "src/pokedex/cli.py#call@6:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Makes a gym camp",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@5:5"
+                },
+                {
+                  "label": "Prints the report of 5 levels of training for trainer 1",
+                  "codeBlockId": "src/pokedex/cli.py#call@6:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/trainers/roster.py#class@12:1",
+              "type": "class",
+              "label": "Keeps the trainers by their id",
+              "description": "When the `pokedex` command runs, [the constructor of `TrainingCamp` makes this class](code:src/pokedex/trainers/camp.py#L7) and keeps it as `self.roster`.",
+              "codeBlockIds": [
+                "src/pokedex/trainers/roster.py#class@12:1",
+                "src/pokedex/trainers/roster.py#method@19:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trainers/roster.py#method@19:5"
+              ],
+              "children": [
+                {
+                  "id": "src/pokedex/trainers/roster.py#method@19:5",
+                  "type": "method",
+                  "label": "Raises the level of every Pokemon of one team",
+                  "description": "When `main()` calls `camp.train(1, 5)`, [`train()` calls this method on its roster](code:src/pokedex/trainers/camp.py#L11) with trainer 1 and 5 levels.",
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/roster.py#method@19:5",
+                    "src/pokedex/trainers/roster.py#root-argument-value@19:24",
+                    "src/pokedex/trainers/roster.py#root-argument-value@19:41",
+                    "src/pokedex/trainers/roster.py#variable@20:9",
+                    "src/pokedex/trainers/roster.py#condition@21:9",
+                    "src/pokedex/trainers/roster.py#external-value@23:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/trainers/roster.py#method@19:5",
+                    "src/pokedex/trainers/roster.py#root-argument-value@19:24",
+                    "src/pokedex/trainers/roster.py#root-argument-value@19:41",
+                    "src/pokedex/trainers/roster.py#variable@20:9",
+                    "src/pokedex/trainers/roster.py#condition@21:9",
+                    "src/pokedex/trainers/roster.py#external-value@23:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Finds the trainer of the id",
+                      "codeBlockId": "src/pokedex/trainers/roster.py#variable@20:9"
+                    },
+                    {
+                      "label": "Returns an empty team for an id with no trainer",
+                      "codeBlockId": "src/pokedex/trainers/roster.py#condition@21:9"
+                    },
+                    {
+                      "label": "Raises each level up to the maximum level, then saves the team",
+                      "codeBlockId": "src/pokedex/trainers/roster.py#external-value@23:9"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokedex/trainers/camp.py#method@6:5 -> src/pokedex/trainers/roster.py#class@12:1",
+              "from": "src/pokedex/trainers/camp.py#method@6:5",
+              "to": "src/pokedex/trainers/roster.py#class@12:1"
+            },
+            {
+              "id": "src/pokedex/trainers/camp.py#class@5:1 -> src/pokedex/trainers/roster.py#class@12:1",
+              "from": "src/pokedex/trainers/camp.py#class@5:1",
+              "to": "src/pokedex/trainers/roster.py#class@12:1"
+            },
+            {
+              "id": "src/pokedex/trainers/camp.py#method@10:5 -> src/pokedex/trainers/roster.py#method@19:5",
+              "from": "src/pokedex/trainers/camp.py#method@10:5",
+              "to": "src/pokedex/trainers/roster.py#method@19:5"
+            },
+            {
+              "id": "src/pokedex/cli.py#function@4:1 -> src/pokedex/trainers/gym_camp.py#class@5:1",
+              "from": "src/pokedex/cli.py#function@4:1",
+              "to": "src/pokedex/trainers/gym_camp.py#class@5:1"
+            },
+            {
+              "id": "src/pokedex/cli.py#function@4:1 -> src/pokedex/trainers/camp.py#method@10:5",
+              "from": "src/pokedex/cli.py#function@4:1",
+              "to": "src/pokedex/trainers/camp.py#method@10:5"
+            },
+            {
+              "id": "src/pokedex/trainers/camp.py#class@5:1 -> src/pokedex/trainers/camp.py#method@6:5",
+              "from": "src/pokedex/trainers/camp.py#class@5:1",
+              "to": "src/pokedex/trainers/camp.py#method@6:5"
+            },
+            {
+              "id": "src/pokedex/trainers/camp.py#class@5:1 -> src/pokedex/trainers/camp.py#method@10:5",
+              "from": "src/pokedex/trainers/camp.py#class@5:1",
+              "to": "src/pokedex/trainers/camp.py#method@10:5"
+            },
+            {
+              "id": "src/pokedex/trainers/roster.py#class@12:1 -> src/pokedex/trainers/roster.py#method@19:5",
+              "from": "src/pokedex/trainers/roster.py#class@12:1",
+              "to": "src/pokedex/trainers/roster.py#method@19:5"
+            },
+            {
+              "id": "src/pokedex/trainers/gym_camp.py#class@5:1 -> src/pokedex/trainers/gym_camp.py#method@8:5",
+              "from": "src/pokedex/trainers/gym_camp.py#class@5:1",
+              "to": "src/pokedex/trainers/gym_camp.py#method@8:5"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokedex/cli.py",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "main",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 6
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/cli.py#function@4:1",
+                    "src/pokedex/cli.py#external-value@5:5",
+                    "src/pokedex/cli.py#call@6:5"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trainers/camp.py",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "TrainingCamp",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 18
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/camp.py#class@5:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w3",
+                  "declaration": "TrainingCamp.__init__",
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 8
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/camp.py#method@6:5",
+                    "src/pokedex/trainers/camp.py#property@7:9",
+                    "src/pokedex/trainers/camp.py#property@8:9"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "TrainingCamp.train",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 15
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/camp.py#method@10:5",
+                    "src/pokedex/trainers/camp.py#root-argument-value@10:21",
+                    "src/pokedex/trainers/camp.py#root-argument-value@10:38",
+                    "src/pokedex/trainers/camp.py#variable@11:9",
+                    "src/pokedex/trainers/camp.py#condition@12:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w4.1",
+                      "declaration": "TrainingCamp.train › team",
+                      "range": {
+                        "lineStart": 11,
+                        "lineEnd": 11
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/camp.py#variable@11:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.2",
+                      "declaration": "TrainingCamp.train › Condition :12",
+                      "range": {
+                        "lineStart": 12,
+                        "lineEnd": 13
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/camp.py#condition@12:9"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w5",
+                  "declaration": "TrainingCamp.report",
+                  "range": {
+                    "lineStart": 17,
+                    "lineEnd": 18
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/camp.py#method@17:5",
+                    "src/pokedex/trainers/camp.py#root-argument-value@17:22"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trainers/gym_camp.py",
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "declaration": "GymCamp",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 10
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/gym_camp.py#class@5:1",
+                    "src/pokedex/trainers/gym_camp.py#property@6:5"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "GymCamp.report",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 10
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/gym_camp.py#method@8:5",
+                    "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22",
+                    "src/pokedex/trainers/gym_camp.py#variable@9:9"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trainers/roster.py",
+              "waypoints": [
+                {
+                  "id": "w8",
+                  "declaration": "TrainerRoster.level_up",
+                  "range": {
+                    "lineStart": 19,
+                    "lineEnd": 25
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trainers/roster.py#method@19:5",
+                    "src/pokedex/trainers/roster.py#root-argument-value@19:24",
+                    "src/pokedex/trainers/roster.py#root-argument-value@19:41",
+                    "src/pokedex/trainers/roster.py#variable@20:9",
+                    "src/pokedex/trainers/roster.py#condition@21:9",
+                    "src/pokedex/trainers/roster.py#external-value@23:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w8.1",
+                      "declaration": "TrainerRoster.level_up › trainer",
+                      "range": {
+                        "lineStart": 20,
+                        "lineEnd": 20
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/roster.py#variable@20:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w8.2",
+                      "declaration": "TrainerRoster.level_up › Condition :21",
+                      "range": {
+                        "lineStart": 21,
+                        "lineEnd": 22
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/roster.py#condition@21:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w8.3",
+                      "declaration": "TrainerRoster.level_up › team",
+                      "range": {
+                        "lineStart": 23,
+                        "lineEnd": 23
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trainers/roster.py#external-value@23:9"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokedex/cli.py",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/trainers/gym_camp.py",
+                "lines": [
+                  5,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 10,
+                "endColumn": 14,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 4,
+                "endColumn": 8,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  4,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 6,
+                "startColumn": 4,
+                "endColumn": 9,
+                "name": "print"
+              },
+              {
+                "line": 9,
+                "startColumn": 3,
+                "endColumn": 11,
+                "name": "__name__"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 4,
+                "endColumn": 8,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": []
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trainers/camp.py",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 21,
+                "endColumn": 34,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  12,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 37,
+                "endColumn": 50,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  12,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 15,
+                "endColumn": 19,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 36,
+                "endColumn": 46,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 48,
+                "endColumn": 54,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 15,
+                "endColumn": 19,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 30,
+                "endColumn": 40,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 15,
+                "endColumn": 19,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 27,
+                "endColumn": 31,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/pokedex/trainers/models.py",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 22,
+                "endColumn": 26,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 10,
+                "startColumn": 32,
+                "endColumn": 35,
+                "name": "int"
+              },
+              {
+                "line": 10,
+                "startColumn": 45,
+                "endColumn": 48,
+                "name": "int"
+              },
+              {
+                "line": 10,
+                "startColumn": 53,
+                "endColumn": 56,
+                "name": "str"
+              },
+              {
+                "line": 17,
+                "startColumn": 27,
+                "endColumn": 31,
+                "name": "list"
+              },
+              {
+                "line": 17,
+                "startColumn": 45,
+                "endColumn": 48,
+                "name": "str"
+              },
+              {
+                "line": 18,
+                "startColumn": 18,
+                "endColumn": 21,
+                "name": "len"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 6,
+                "endColumn": 18,
+                "lines": [
+                  5,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 14,
+                    "endColumn": 26,
+                    "path": "src/pokedex/trainers/gym_camp.py",
+                    "text": "class GymCamp(TrainingCamp):"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trainers/gym_camp.py",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 14,
+                "endColumn": 26,
+                "path": "src/pokedex/trainers/camp.py",
+                "lines": [
+                  5,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/pokedex/trainers/models.py",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 53,
+                "endColumn": 57,
+                "path": "src/pokedex/trainers/gym_camp.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 22,
+                "endColumn": 26,
+                "path": "src/pokedex/trainers/gym_camp.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 54,
+                "endColumn": 58,
+                "path": "src/pokedex/trainers/gym_camp.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 91,
+                "endColumn": 100,
+                "path": "src/pokedex/trainers/gym_camp.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 8,
+                "startColumn": 27,
+                "endColumn": 31,
+                "name": "list"
+              },
+              {
+                "line": 8,
+                "startColumn": 45,
+                "endColumn": 48,
+                "name": "str"
+              },
+              {
+                "line": 9,
+                "startColumn": 20,
+                "endColumn": 23,
+                "name": "max"
+              },
+              {
+                "line": 10,
+                "startColumn": 18,
+                "endColumn": 21,
+                "name": "len"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 6,
+                "endColumn": 13,
+                "lines": [
+                  5,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 11,
+                    "endColumn": 18,
+                    "path": "src/pokedex/cli.py",
+                    "text": "    camp = GymCamp()"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trainers/roster.py",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 4,
+                "endColumn": 11,
+                "path": "src/pokedex/trainers/models.py",
+                "lines": [
+                  10,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 36,
+                "endColumn": 43,
+                "path": "src/pokedex/trainers/models.py",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 71,
+                "endColumn": 78,
+                "path": "src/pokedex/trainers/models.py",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 4,
+                "endColumn": 11,
+                "path": "src/pokedex/trainers/models.py",
+                "lines": [
+                  10,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 38,
+                "endColumn": 45,
+                "path": "src/pokedex/trainers/models.py",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 66,
+                "endColumn": 74,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  6,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 47,
+                "endColumn": 54,
+                "path": "src/pokedex/trainers/models.py",
+                "lines": [
+                  10,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 15,
+                "endColumn": 19,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 39,
+                "endColumn": 49,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 61,
+                "endColumn": 68,
+                "path": "src/pokedex/trainers/models.py",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 18,
+                "endColumn": 22,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 36,
+                "endColumn": 46,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 16,
+                "endColumn": 23,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:replace",
+                  "name": "replace"
+                }
+              },
+              {
+                "line": 23,
+                "startColumn": 59,
+                "endColumn": 65,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 67,
+                "endColumn": 76,
+                "path": "src/pokedex/config.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 94,
+                "endColumn": 101,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 28,
+                "endColumn": 38,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 42,
+                "endColumn": 49,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:replace",
+                  "name": "replace"
+                }
+              },
+              {
+                "line": 24,
+                "startColumn": 50,
+                "endColumn": 57,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 64,
+                "endColumn": 68,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 15,
+                "endColumn": 19,
+                "path": "src/pokedex/trainers/roster.py",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 16,
+                "startColumn": 39,
+                "endColumn": 42,
+                "name": "int"
+              },
+              {
+                "line": 19,
+                "startColumn": 35,
+                "endColumn": 38,
+                "name": "int"
+              },
+              {
+                "line": 19,
+                "startColumn": 48,
+                "endColumn": 51,
+                "name": "int"
+              },
+              {
+                "line": 19,
+                "startColumn": 56,
+                "endColumn": 60,
+                "name": "list"
+              },
+              {
+                "line": 23,
+                "startColumn": 39,
+                "endColumn": 42,
+                "name": "min"
+              }
+            ],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 0,
+                "endColumn": 8,
+                "lines": [
+                  6,
+                  9
+                ],
+                "usages": []
+              },
+              {
+                "line": 12,
+                "startColumn": 6,
+                "endColumn": 19,
+                "lines": [
+                  12,
+                  25
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 21,
+                    "endColumn": 34,
+                    "path": "src/pokedex/trainers/camp.py",
+                    "text": "        self.roster: TrainerRoster = TrainerRoster()"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 37,
+                    "endColumn": 50,
+                    "path": "src/pokedex/trainers/camp.py",
+                    "text": "        self.roster: TrainerRoster = TrainerRoster()"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

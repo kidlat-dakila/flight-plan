@@ -1,0 +1,6 @@
+{
+  "title": "Router card in NestJS GraphQL",
+  "packages": ["@nestjs/apollo", "@nestjs/common", "@nestjs/core", "@nestjs/graphql", "graphql-subscriptions", "reflect-metadata"],
+  "language": "typescript",
+  "mainFramework": "nest"
+}

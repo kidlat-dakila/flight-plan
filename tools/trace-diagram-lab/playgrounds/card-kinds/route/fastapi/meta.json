@@ -1,0 +1,6 @@
+{
+  "title": "Route card in FastAPI",
+  "packages": ["fastapi", "pydantic"],
+  "language": "python",
+  "mainFramework": "fastapi"
+}

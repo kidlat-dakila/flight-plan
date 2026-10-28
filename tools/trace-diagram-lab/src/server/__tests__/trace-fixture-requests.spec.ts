@@ -19,10 +19,12 @@ const PLAYGROUND: PlaygroundEntry = {
   language: "typescript",
   framework: "react",
   title: "React app with a todo list",
-  caseTitle: "Add a done filter",
 }
 
-const PLAYGROUND_PAGE: PlaygroundPage = { entry: PLAYGROUND, page: EMPTY_PAGE }
+const PLAYGROUND_PAGE: PlaygroundPage = {
+  entry: PLAYGROUND,
+  cases: [{ id: PLAYGROUND.id, title: PLAYGROUND.title, caseTitle: "Add a done filter", page: EMPTY_PAGE }],
+}
 
 const createLoader = (): TraceFixtureLoader => ({
   listTraceFixtures: async () => await Promise.resolve([ENTRY]),

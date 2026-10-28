@@ -1,0 +1,7178 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "src/App.tsx",
+        "codeBlockIds": [
+          "src/App.tsx#import@1:1",
+          "src/App.tsx#component@3:1",
+          "src/App.tsx#render-root@4:3",
+          "src/App.tsx#render@5:5",
+          "src/App.tsx#render@6:7",
+          "src/App.tsx#render@7:7"
+        ],
+        "rootBlockIds": [
+          "src/App.tsx#import@1:1",
+          "src/App.tsx#component@3:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "renderRootBlockIds": [
+          "src/App.tsx#render-root@4:3"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/App.tsx#render@7:7",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/pages/items/ItemsPage.tsx#component@5:1"
+        ],
+        "exports": {
+          "App": "src/App.tsx#component@3:1"
+        }
+      },
+      {
+        "filePath": "src/data/items.ts",
+        "codeBlockIds": [
+          "src/data/items.ts#import@1:1",
+          "src/data/items.ts#root-variable@3:1",
+          "src/data/items.ts#property@4:5",
+          "src/data/items.ts#property@4:12",
+          "src/data/items.ts#property@4:31",
+          "src/data/items.ts#property@5:5",
+          "src/data/items.ts#property@5:12",
+          "src/data/items.ts#property@5:28",
+          "src/data/items.ts#property@6:5",
+          "src/data/items.ts#property@6:12",
+          "src/data/items.ts#property@6:30"
+        ],
+        "rootBlockIds": [
+          "src/data/items.ts#import@1:1",
+          "src/data/items.ts#root-variable@3:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/data/items.ts#root-variable@3:1",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/types/item.ts#type-declaration@1:1"
+        ],
+        "exports": {
+          "ITEMS": "src/data/items.ts#root-variable@3:1"
+        }
+      },
+      {
+        "filePath": "src/lib/bag-lines.ts",
+        "codeBlockIds": [
+          "src/lib/bag-lines.ts#import@1:1",
+          "src/lib/bag-lines.ts#type-declaration@3:1",
+          "src/lib/bag-lines.ts#function@8:1",
+          "src/lib/bag-lines.ts#root-argument-value@8:25",
+          "src/lib/bag-lines.ts#root-argument-value@9:16",
+          "src/lib/bag-lines.ts#root-argument-value@11:10",
+          "src/lib/bag-lines.ts#root-argument-value@8:43",
+          "src/lib/bag-lines.ts#root-argument-value@9:56",
+          "src/lib/bag-lines.ts#variable@9:3",
+          "src/lib/bag-lines.ts#function@9:27",
+          "src/lib/bag-lines.ts#variable@9:28",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#property@10:47",
+          "src/lib/bag-lines.ts#property@10:53",
+          "src/lib/bag-lines.ts#function@11:20",
+          "src/lib/bag-lines.ts#variable@11:21",
+          "src/lib/bag-lines.ts#condition@11:32",
+          "src/lib/bag-lines.ts#property@11:61"
+        ],
+        "rootBlockIds": [
+          "src/lib/bag-lines.ts#import@1:1",
+          "src/lib/bag-lines.ts#type-declaration@3:1",
+          "src/lib/bag-lines.ts#function@8:1"
+        ],
+        "diffBlockIds": [
+          "src/lib/bag-lines.ts#import@1:1",
+          "src/lib/bag-lines.ts#type-declaration@3:1",
+          "src/lib/bag-lines.ts#function@8:1",
+          "src/lib/bag-lines.ts#root-argument-value@8:25",
+          "src/lib/bag-lines.ts#root-argument-value@9:16",
+          "src/lib/bag-lines.ts#root-argument-value@11:10",
+          "src/lib/bag-lines.ts#root-argument-value@8:43",
+          "src/lib/bag-lines.ts#root-argument-value@9:56",
+          "src/lib/bag-lines.ts#variable@9:3",
+          "src/lib/bag-lines.ts#function@9:27",
+          "src/lib/bag-lines.ts#variable@9:28",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#property@10:47",
+          "src/lib/bag-lines.ts#property@10:53",
+          "src/lib/bag-lines.ts#function@11:20",
+          "src/lib/bag-lines.ts#variable@11:21",
+          "src/lib/bag-lines.ts#condition@11:32",
+          "src/lib/bag-lines.ts#property@11:61"
+        ],
+        "diffContains": [
+          "type",
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/lib/bag-lines.ts#type-declaration@3:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/lib/bag-lines.ts#root-argument-value@8:43",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/types/item.ts#type-declaration@1:1"
+        ],
+        "exports": {
+          "BagLine": "src/lib/bag-lines.ts#type-declaration@3:1",
+          "addLine": "src/lib/bag-lines.ts#function@8:1"
+        }
+      },
+      {
+        "filePath": "src/main.tsx",
+        "codeBlockIds": [
+          "src/main.tsx#import@1:1",
+          "src/main.tsx#import@2:1",
+          "src/main.tsx#import@3:1",
+          "src/main.tsx#root-variable@5:1",
+          "src/main.tsx#root-statement@6:1",
+          "src/main.tsx#condition@6:1",
+          "src/main.tsx#throw@6:27",
+          "src/main.tsx#root-statement@8:1",
+          "src/main.tsx#config@8:1",
+          "src/main.tsx#render@9:3",
+          "src/main.tsx#render@10:5"
+        ],
+        "rootBlockIds": [
+          "src/main.tsx#import@1:1",
+          "src/main.tsx#import@2:1",
+          "src/main.tsx#import@3:1",
+          "src/main.tsx#root-variable@5:1",
+          "src/main.tsx#root-statement@6:1",
+          "src/main.tsx#root-statement@8:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/main.tsx#config@8:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/main.tsx#render@9:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/main.tsx#render@10:5",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/App.tsx#component@3:1"
+        ],
+        "exports": {}
+      },
+      {
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "codeBlockIds": [
+          "src/pages/items/ItemsPage.tsx#import@1:1",
+          "src/pages/items/ItemsPage.tsx#import@2:1",
+          "src/pages/items/ItemsPage.tsx#import@3:1",
+          "src/pages/items/ItemsPage.tsx#component@5:1",
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render-root@7:3",
+          "src/pages/items/ItemsPage.tsx#render@8:5",
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render-event@10:29",
+          "src/pages/items/ItemsPage.tsx#render@13:7",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#variable@14:21",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/pages/items/ItemsPage.tsx#render-event@18:35",
+          "src/pages/items/ItemsPage.tsx#function@18:44"
+        ],
+        "rootBlockIds": [
+          "src/pages/items/ItemsPage.tsx#import@1:1",
+          "src/pages/items/ItemsPage.tsx#import@2:1",
+          "src/pages/items/ItemsPage.tsx#import@3:1",
+          "src/pages/items/ItemsPage.tsx#component@5:1"
+        ],
+        "diffBlockIds": [
+          "src/pages/items/ItemsPage.tsx#import@1:1",
+          "src/pages/items/ItemsPage.tsx#import@3:1",
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@8:5",
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render-event@10:29",
+          "src/pages/items/ItemsPage.tsx#render@13:7",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#variable@14:21",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/pages/items/ItemsPage.tsx#render-event@18:35",
+          "src/pages/items/ItemsPage.tsx#function@18:44"
+        ],
+        "diffContains": [
+          "ui",
+          "state",
+          "logic"
+        ],
+        "renderRootBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render-root@7:3"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/pages/items/ItemsPage.tsx#state@6:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pages/items/ItemsPage.tsx#state@6:3",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pages/items/ItemsPage.tsx#render-event@10:29",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pages/items/ItemsPage.tsx#function@18:44",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#function@14:1",
+          "src/data/items.ts#root-variable@3:1",
+          "src/stores/bag.ts#function@10:1"
+        ],
+        "exports": {
+          "ItemsPage": "src/pages/items/ItemsPage.tsx#component@5:1"
+        }
+      },
+      {
+        "filePath": "src/stores/bag.ts",
+        "codeBlockIds": [
+          "src/stores/bag.ts#import@1:1",
+          "src/stores/bag.ts#import@2:1",
+          "src/stores/bag.ts#import@3:1",
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#property@6:3",
+          "src/stores/bag.ts#property@7:3",
+          "src/stores/bag.ts#function@10:1",
+          "src/stores/bag.ts#root-argument-value@10:26",
+          "src/stores/bag.ts#root-argument-value@11:67",
+          "src/stores/bag.ts#call@11:3",
+          "src/stores/bag.ts#property@11:14",
+          "src/stores/bag.ts#property@11:54",
+          "src/stores/bag.ts#function@14:1",
+          "src/stores/bag.ts#call@15:3",
+          "src/stores/bag.ts#property@15:14",
+          "src/stores/bag.ts#property@15:25"
+        ],
+        "rootBlockIds": [
+          "src/stores/bag.ts#import@1:1",
+          "src/stores/bag.ts#import@2:1",
+          "src/stores/bag.ts#import@3:1",
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#function@10:1",
+          "src/stores/bag.ts#function@14:1"
+        ],
+        "diffBlockIds": [
+          "src/stores/bag.ts#import@1:1",
+          "src/stores/bag.ts#import@2:1",
+          "src/stores/bag.ts#import@3:1",
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#property@6:3",
+          "src/stores/bag.ts#property@7:3",
+          "src/stores/bag.ts#function@10:1",
+          "src/stores/bag.ts#root-argument-value@10:26",
+          "src/stores/bag.ts#root-argument-value@11:67",
+          "src/stores/bag.ts#call@11:3",
+          "src/stores/bag.ts#property@11:14",
+          "src/stores/bag.ts#property@11:54",
+          "src/stores/bag.ts#function@14:1",
+          "src/stores/bag.ts#call@15:3",
+          "src/stores/bag.ts#property@15:14",
+          "src/stores/bag.ts#property@15:25"
+        ],
+        "diffContains": [
+          "state",
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/stores/bag.ts#state@5:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/stores/bag.ts#property@6:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/stores/bag.ts#root-argument-value@10:26",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/stores/bag.ts#property@11:14",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/lib/bag-lines.ts#type-declaration@3:1",
+          "src/types/item.ts#type-declaration@1:1",
+          "src/lib/bag-lines.ts#function@8:1"
+        ],
+        "exports": {
+          "$bag": "src/stores/bag.ts#state@5:1",
+          "addToBag": "src/stores/bag.ts#function@10:1",
+          "clearBag": "src/stores/bag.ts#function@14:1"
+        }
+      },
+      {
+        "filePath": "src/types/item.ts",
+        "codeBlockIds": [
+          "src/types/item.ts#type-declaration@1:1"
+        ],
+        "rootBlockIds": [
+          "src/types/item.ts#type-declaration@1:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "Item": "src/types/item.ts#type-declaration@1:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "src/main.tsx"
+    ],
+    "codeBlocks": [
+      {
+        "id": "src/App.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/App.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/App.tsx#component@3:1",
+        "name": "App",
+        "type": "component",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/App.tsx#render-root@4:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/App.tsx"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@8:5",
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render@13:7",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/main.tsx#render@10:5"
+        ],
+        "nextBlockIds": [
+          "src/App.tsx#render-root@4:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/App.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/App.tsx#render-root@4:3",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/App.tsx#component@3:1",
+        "childrenBlockIds": [
+          "src/App.tsx#render@5:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@8:5",
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render@13:7",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/App.tsx#render@5:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/App.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/App.tsx#render@5:5",
+        "name": "main",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/App.tsx#render-root@4:3",
+        "childrenBlockIds": [
+          "src/App.tsx#render@6:7",
+          "src/App.tsx#render@7:7"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@8:5",
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render@13:7",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/App.tsx#render@7:7"
+        ],
+        "handedFrom": [],
+        "filePath": "src/App.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/App.tsx#render@6:7",
+        "name": "h1",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 7
+            },
+            "end": {
+              "line": 6,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/App.tsx#render@5:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/App.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/App.tsx#render@7:7",
+        "name": "ItemsPage",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 7
+            },
+            "end": {
+              "line": 7,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/App.tsx#render@5:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 8
+              },
+              "end": {
+                "line": 7,
+                "column": 17
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@8:5",
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render@13:7",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 8
+              },
+              "end": {
+                "line": 7,
+                "column": 17
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/pages/items/ItemsPage.tsx#component@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pages/items/ItemsPage.tsx#component@5:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/App.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#root-variable@3:1",
+        "name": "ITEMS",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/data/items.ts#property@4:5",
+          "src/data/items.ts#property@4:12",
+          "src/data/items.ts#property@4:31",
+          "src/data/items.ts#property@5:5",
+          "src/data/items.ts#property@5:12",
+          "src/data/items.ts#property@5:28",
+          "src/data/items.ts#property@6:5",
+          "src/data/items.ts#property@6:12",
+          "src/data/items.ts#property@6:30"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "isPlain": true,
+        "exportedByFilePaths": [
+          "src/data/items.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 3,
+                "column": 21
+              },
+              "end": {
+                "line": 3,
+                "column": 25
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/item.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#property@4:5",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 5
+            },
+            "end": {
+              "line": 4,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/data/items.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#property@4:12",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 12
+            },
+            "end": {
+              "line": 4,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "src/data/items.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#property@4:31",
+        "name": "price",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 31
+            },
+            "end": {
+              "line": 4,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/data/items.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#property@5:5",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 5
+            },
+            "end": {
+              "line": 5,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/data/items.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#property@5:12",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 12
+            },
+            "end": {
+              "line": 5,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/data/items.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#property@5:28",
+        "name": "price",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 28
+            },
+            "end": {
+              "line": 5,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": "src/data/items.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#property@6:5",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/data/items.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#property@6:12",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 12
+            },
+            "end": {
+              "line": 6,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "src/data/items.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/data/items.ts#property@6:30",
+        "name": "price",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 30
+            },
+            "end": {
+              "line": 6,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "src/data/items.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/data/items.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 41
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 41
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#type-declaration@3:1",
+        "name": "BagLine",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/lib/bag-lines.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 27
+            }
+          },
+          {
+            "start": {
+              "line": 4,
+              "column": 3
+            },
+            "end": {
+              "line": 4,
+              "column": 13
+            }
+          },
+          {
+            "start": {
+              "line": 5,
+              "column": 3
+            },
+            "end": {
+              "line": 5,
+              "column": 19
+            }
+          },
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 3,
+                "column": 27
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 3
+              },
+              "end": {
+                "line": 4,
+                "column": 13
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 3
+              },
+              "end": {
+                "line": 5,
+                "column": 19
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 1
+              },
+              "end": {
+                "line": 6,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "data-model"
+        ],
+        "diffClassifications": [
+          "data-model"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 9
+              },
+              "end": {
+                "line": 4,
+                "column": 13
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/item.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/lib/bag-lines.ts#root-argument-value@8:25",
+          "src/lib/bag-lines.ts#function@8:1",
+          "src/stores/bag.ts#property@6:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#function@8:1",
+        "name": "addLine",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/lib/bag-lines.ts#root-argument-value@8:25",
+          "src/lib/bag-lines.ts#root-argument-value@8:43",
+          "src/lib/bag-lines.ts#variable@9:3",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#function@11:20"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/lib/bag-lines.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 25
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 41
+            },
+            "end": {
+              "line": 8,
+              "column": 43
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 53
+            },
+            "end": {
+              "line": 8,
+              "column": 67
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 10
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 19
+            },
+            "end": {
+              "line": 11,
+              "column": 20
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 100
+            },
+            "end": {
+              "line": 11,
+              "column": 101
+            }
+          },
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 1
+              },
+              "end": {
+                "line": 8,
+                "column": 25
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 41
+              },
+              "end": {
+                "line": 8,
+                "column": 43
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 53
+              },
+              "end": {
+                "line": 8,
+                "column": 67
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 56
+              },
+              "end": {
+                "line": 8,
+                "column": 63
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 3
+              },
+              "end": {
+                "line": 11,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 19
+              },
+              "end": {
+                "line": 11,
+                "column": 20
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 100
+              },
+              "end": {
+                "line": 11,
+                "column": 101
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 1
+              },
+              "end": {
+                "line": 12,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#function@8:1",
+          "src/lib/bag-lines.ts#function@9:27",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#function@11:20",
+          "src/lib/bag-lines.ts#condition@11:32"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 56
+              },
+              "end": {
+                "line": 8,
+                "column": 63
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#type-declaration@3:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 10
+              },
+              "end": {
+                "line": 11,
+                "column": 19
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "map"
+              ],
+              "blockId": "src/lib/bag-lines.ts#root-argument-value@11:10"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#root-argument-value@8:25"
+          }
+        ],
+        "usedByIds": [
+          "src/stores/bag.ts#property@11:14"
+        ],
+        "nextBlockIds": [
+          "src/lib/bag-lines.ts#variable@9:3",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#function@11:20"
+        ],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#root-argument-value@8:25",
+        "name": "lines",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 25
+            },
+            "end": {
+              "line": 8,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#function@8:1",
+        "childrenBlockIds": [
+          "src/lib/bag-lines.ts#root-argument-value@9:16",
+          "src/lib/bag-lines.ts#root-argument-value@11:10"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 25
+            },
+            "end": {
+              "line": 8,
+              "column": 41
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 25
+              },
+              "end": {
+                "line": 8,
+                "column": 41
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 32
+              },
+              "end": {
+                "line": 8,
+                "column": 39
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 32
+              },
+              "end": {
+                "line": 8,
+                "column": 39
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#type-declaration@3:1"
+          }
+        ],
+        "usedByIds": [
+          "src/lib/bag-lines.ts#variable@9:3",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#function@8:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#root-argument-value@9:16",
+        "name": "find",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 16
+            },
+            "end": {
+              "line": 9,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#root-argument-value@8:25",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 16
+            },
+            "end": {
+              "line": 9,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 16
+              },
+              "end": {
+                "line": 9,
+                "column": 26
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#root-argument-value@11:10",
+        "name": "map",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 10
+            },
+            "end": {
+              "line": 11,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#root-argument-value@8:25",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 10
+            },
+            "end": {
+              "line": 11,
+              "column": 19
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 10
+              },
+              "end": {
+                "line": 11,
+                "column": 19
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#root-argument-value@8:43",
+        "name": "item",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 43
+            },
+            "end": {
+              "line": 8,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#function@8:1",
+        "childrenBlockIds": [
+          "src/lib/bag-lines.ts#root-argument-value@9:56"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 43
+            },
+            "end": {
+              "line": 8,
+              "column": 53
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 43
+              },
+              "end": {
+                "line": 8,
+                "column": 53
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 49
+              },
+              "end": {
+                "line": 8,
+                "column": 53
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/item.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/lib/bag-lines.ts#function@9:27",
+          "src/lib/bag-lines.ts#property@10:47"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/stores/bag.ts#property@11:14",
+            "symbolIndex": 2
+          }
+        ],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#root-argument-value@9:56",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 56
+            },
+            "end": {
+              "line": 9,
+              "column": 63
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#root-argument-value@8:43",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 56
+            },
+            "end": {
+              "line": 9,
+              "column": 63
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 56
+              },
+              "end": {
+                "line": 9,
+                "column": 63
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#variable@9:3",
+        "name": "line",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 64
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#function@8:1",
+        "childrenBlockIds": [
+          "src/lib/bag-lines.ts#function@9:27"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 16
+            }
+          },
+          {
+            "start": {
+              "line": 9,
+              "column": 26
+            },
+            "end": {
+              "line": 9,
+              "column": 27
+            }
+          },
+          {
+            "start": {
+              "line": 9,
+              "column": 63
+            },
+            "end": {
+              "line": 9,
+              "column": 64
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 3
+              },
+              "end": {
+                "line": 9,
+                "column": 16
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 26
+              },
+              "end": {
+                "line": 9,
+                "column": 27
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 63
+              },
+              "end": {
+                "line": 9,
+                "column": 64
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#function@9:27"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 16
+              },
+              "end": {
+                "line": 9,
+                "column": 26
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "find"
+              ],
+              "blockId": "src/lib/bag-lines.ts#root-argument-value@9:16"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#root-argument-value@8:25"
+          }
+        ],
+        "usedByIds": [
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#condition@11:32"
+        ],
+        "nextBlockIds": [
+          "src/lib/bag-lines.ts#function@9:27"
+        ],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#function@9:27",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 27
+            },
+            "end": {
+              "line": 9,
+              "column": 63
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#variable@9:3",
+        "childrenBlockIds": [
+          "src/lib/bag-lines.ts#variable@9:28"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 27
+            },
+            "end": {
+              "line": 9,
+              "column": 28
+            }
+          },
+          {
+            "start": {
+              "line": 9,
+              "column": 33
+            },
+            "end": {
+              "line": 9,
+              "column": 56
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 27
+              },
+              "end": {
+                "line": 9,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 33
+              },
+              "end": {
+                "line": 9,
+                "column": 56
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#function@9:27"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 38
+              },
+              "end": {
+                "line": 9,
+                "column": 51
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "item",
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#variable@9:28"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 56
+              },
+              "end": {
+                "line": 9,
+                "column": 63
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": "src/lib/bag-lines.ts#root-argument-value@9:56"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#root-argument-value@8:43"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#variable@9:28",
+        "name": "entry",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 28
+            },
+            "end": {
+              "line": 9,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#function@9:27",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 28
+            },
+            "end": {
+              "line": 9,
+              "column": 33
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 28
+              },
+              "end": {
+                "line": 9,
+                "column": 33
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/lib/bag-lines.ts#function@9:27"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#condition@10:3",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 3
+            },
+            "end": {
+              "line": 10,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#function@8:1",
+        "childrenBlockIds": [
+          "src/lib/bag-lines.ts#property@10:47",
+          "src/lib/bag-lines.ts#property@10:53"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 3
+            },
+            "end": {
+              "line": 10,
+              "column": 47
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 51
+            },
+            "end": {
+              "line": 10,
+              "column": 53
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 64
+            },
+            "end": {
+              "line": 10,
+              "column": 67
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 3
+              },
+              "end": {
+                "line": 10,
+                "column": 47
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 7
+              },
+              "end": {
+                "line": 10,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 51
+              },
+              "end": {
+                "line": 10,
+                "column": 53
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 64
+              },
+              "end": {
+                "line": 10,
+                "column": 67
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#condition@10:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 7
+              },
+              "end": {
+                "line": 10,
+                "column": 11
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#variable@9:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 38
+              },
+              "end": {
+                "line": 10,
+                "column": 43
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#root-argument-value@8:25"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#property@10:47",
+        "name": "item",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 47
+            },
+            "end": {
+              "line": 10,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#condition@10:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 47
+            },
+            "end": {
+              "line": 10,
+              "column": 51
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 47
+              },
+              "end": {
+                "line": 10,
+                "column": 51
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 47
+              },
+              "end": {
+                "line": 10,
+                "column": 51
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#root-argument-value@8:43"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#property@10:53",
+        "name": "quantity",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 53
+            },
+            "end": {
+              "line": 10,
+              "column": 64
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#condition@10:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 53
+            },
+            "end": {
+              "line": 10,
+              "column": 64
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 53
+              },
+              "end": {
+                "line": 10,
+                "column": 64
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#function@11:20",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 20
+            },
+            "end": {
+              "line": 11,
+              "column": 100
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#function@8:1",
+        "childrenBlockIds": [
+          "src/lib/bag-lines.ts#variable@11:21",
+          "src/lib/bag-lines.ts#condition@11:32"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 20
+            },
+            "end": {
+              "line": 11,
+              "column": 21
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 26
+            },
+            "end": {
+              "line": 11,
+              "column": 32
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 99
+            },
+            "end": {
+              "line": 11,
+              "column": 100
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 20
+              },
+              "end": {
+                "line": 11,
+                "column": 21
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 26
+              },
+              "end": {
+                "line": 11,
+                "column": 32
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 99
+              },
+              "end": {
+                "line": 11,
+                "column": 100
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#function@11:20",
+          "src/lib/bag-lines.ts#condition@11:32"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/lib/bag-lines.ts#condition@11:32"
+        ],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#variable@11:21",
+        "name": "entry",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 21
+            },
+            "end": {
+              "line": 11,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#function@11:20",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 21
+            },
+            "end": {
+              "line": 11,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 21
+              },
+              "end": {
+                "line": 11,
+                "column": 26
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/lib/bag-lines.ts#condition@11:32",
+          "src/lib/bag-lines.ts#property@11:61"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#condition@11:32",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 32
+            },
+            "end": {
+              "line": 11,
+              "column": 99
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#function@11:20",
+        "childrenBlockIds": [
+          "src/lib/bag-lines.ts#property@11:61"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 32
+            },
+            "end": {
+              "line": 11,
+              "column": 61
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 89
+            },
+            "end": {
+              "line": 11,
+              "column": 99
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 32
+              },
+              "end": {
+                "line": 11,
+                "column": 61
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 32
+              },
+              "end": {
+                "line": 11,
+                "column": 37
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 42
+              },
+              "end": {
+                "line": 11,
+                "column": 46
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 54
+              },
+              "end": {
+                "line": 11,
+                "column": 59
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 89
+              },
+              "end": {
+                "line": 11,
+                "column": 99
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 94
+              },
+              "end": {
+                "line": 11,
+                "column": 99
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#condition@11:32"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 32
+              },
+              "end": {
+                "line": 11,
+                "column": 37
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#variable@11:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 42
+              },
+              "end": {
+                "line": 11,
+                "column": 46
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#variable@9:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 54
+              },
+              "end": {
+                "line": 11,
+                "column": 59
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#variable@11:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 94
+              },
+              "end": {
+                "line": 11,
+                "column": 99
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#variable@11:21"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/bag-lines.ts#property@11:61",
+        "name": "quantity",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 61
+            },
+            "end": {
+              "line": 11,
+              "column": 89
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/bag-lines.ts#condition@11:32",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 61
+            },
+            "end": {
+              "line": 11,
+              "column": 89
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 61
+              },
+              "end": {
+                "line": 11,
+                "column": 89
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 71
+              },
+              "end": {
+                "line": 11,
+                "column": 85
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 71
+              },
+              "end": {
+                "line": 11,
+                "column": 85
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "quantity"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/bag-lines.ts#variable@11:21"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/bag-lines.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#root-variable@5:1",
+        "name": "rootElement",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/main.tsx#condition@6:1",
+          "src/main.tsx#config@8:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#root-statement@6:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 76
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/main.tsx#condition@6:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#condition@6:1",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 76
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#root-statement@6:1",
+        "childrenBlockIds": [
+          "src/main.tsx#throw@6:27"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 5
+              },
+              "end": {
+                "line": 6,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/main.tsx#root-variable@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#throw@6:27",
+        "type": "throw",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 27
+            },
+            "end": {
+              "line": 6,
+              "column": 76
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#condition@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#root-statement@8:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/main.tsx#config@8:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "config"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#config@8:1",
+        "type": "config",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#root-statement@8:1",
+        "childrenBlockIds": [
+          "src/main.tsx#render@9:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component",
+          "config"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 1
+              },
+              "end": {
+                "line": 8,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "react-dom/client",
+            "importedName": "createRoot",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 12
+              },
+              "end": {
+                "line": 8,
+                "column": 23
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/main.tsx#root-variable@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": {
+          "specifier": "react-dom/client",
+          "name": "render",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/main.tsx#render@9:3",
+        "name": "StrictMode",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#config@8:1",
+        "childrenBlockIds": [
+          "src/main.tsx#render@10:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 4
+              },
+              "end": {
+                "line": 9,
+                "column": 14
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "react",
+            "importedName": "StrictMode",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#render@10:5",
+        "name": "App",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#render@9:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 6
+              },
+              "end": {
+                "line": 10,
+                "column": 9
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/App.tsx#component@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 45
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 45
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 56
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 3,
+                "column": 56
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#component@5:1",
+        "name": "ItemsPage",
+        "type": "component",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 26,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render-root@7:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pages/items/ItemsPage.tsx"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@8:5",
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render@13:7",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component",
+          "ui-state"
+        ],
+        "diffClassifications": [
+          "component",
+          "ui-state"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/App.tsx#render@7:7"
+        ],
+        "nextBlockIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render-root@7:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#state@6:3",
+        "name": "bag",
+        "type": "state",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 3
+            },
+            "end": {
+              "line": 6,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#component@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 3
+            },
+            "end": {
+              "line": 6,
+              "column": 29
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 3
+              },
+              "end": {
+                "line": 6,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 24
+              },
+              "end": {
+                "line": 6,
+                "column": 28
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "ui-state"
+        ],
+        "diffClassifications": [
+          "ui-state"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 15
+              },
+              "end": {
+                "line": 6,
+                "column": 23
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "@nanostores/react",
+            "importedName": "useStore",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 24
+              },
+              "end": {
+                "line": 6,
+                "column": 28
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/stores/bag.ts#state@5:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@15:11"
+        ],
+        "nextBlockIds": [
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": {
+          "specifier": "@nanostores/react",
+          "name": "useStore",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#render-root@7:3",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 25,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#component@5:1",
+        "childrenBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render@8:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@8:5",
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render@13:7",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render@8:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#render@8:5",
+        "name": "section",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 24,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#render-root@7:3",
+        "childrenBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render@13:7"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 14
+            }
+          },
+          {
+            "start": {
+              "line": 24,
+              "column": 5
+            },
+            "end": {
+              "line": 24,
+              "column": 15
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 5
+              },
+              "end": {
+                "line": 8,
+                "column": 14
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 24,
+                "column": 5
+              },
+              "end": {
+                "line": 24,
+                "column": 15
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@8:5",
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render@13:7",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/pages/items/ItemsPage.tsx#render@10:7",
+          "src/pages/items/ItemsPage.tsx#render@13:7"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#render@9:7",
+        "name": "p",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 7
+            },
+            "end": {
+              "line": 9,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#render@8:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 7
+            },
+            "end": {
+              "line": 9,
+              "column": 49
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 7
+              },
+              "end": {
+                "line": 9,
+                "column": 49
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 11
+              },
+              "end": {
+                "line": 9,
+                "column": 27
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@9:7",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 11
+              },
+              "end": {
+                "line": 9,
+                "column": 27
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "lines",
+                "length"
+              ],
+              "blockId": "src/stores/bag.ts#property@6:3"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pages/items/ItemsPage.tsx#state@6:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#render@10:7",
+        "name": "button",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 7
+            },
+            "end": {
+              "line": 12,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#render@8:5",
+        "childrenBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render-event@10:29"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 7
+            },
+            "end": {
+              "line": 10,
+              "column": 29
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 47
+            },
+            "end": {
+              "line": 10,
+              "column": 48
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 9
+            },
+            "end": {
+              "line": 11,
+              "column": 22
+            }
+          },
+          {
+            "start": {
+              "line": 12,
+              "column": 7
+            },
+            "end": {
+              "line": 12,
+              "column": 16
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 7
+              },
+              "end": {
+                "line": 10,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 47
+              },
+              "end": {
+                "line": 10,
+                "column": 48
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 9
+              },
+              "end": {
+                "line": 11,
+                "column": 22
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 7
+              },
+              "end": {
+                "line": 12,
+                "column": 16
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#render@10:7"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#render-event@10:29",
+        "name": "onClick",
+        "type": "render-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 29
+            },
+            "end": {
+              "line": 10,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#render@10:7",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 29
+            },
+            "end": {
+              "line": 10,
+              "column": 47
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 29
+              },
+              "end": {
+                "line": 10,
+                "column": 47
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 38
+              },
+              "end": {
+                "line": 10,
+                "column": 46
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#render-event@10:29",
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#function@14:1",
+          "src/stores/bag.ts#call@15:3"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 38
+              },
+              "end": {
+                "line": 10,
+                "column": 46
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/stores/bag.ts#function@14:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/stores/bag.ts#function@14:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#render@13:7",
+        "name": "ul",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 7
+            },
+            "end": {
+              "line": 23,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#render@8:5",
+        "childrenBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 13,
+              "column": 7
+            },
+            "end": {
+              "line": 13,
+              "column": 11
+            }
+          },
+          {
+            "start": {
+              "line": 14,
+              "column": 9
+            },
+            "end": {
+              "line": 14,
+              "column": 10
+            }
+          },
+          {
+            "start": {
+              "line": 22,
+              "column": 11
+            },
+            "end": {
+              "line": 22,
+              "column": 12
+            }
+          },
+          {
+            "start": {
+              "line": 23,
+              "column": 7
+            },
+            "end": {
+              "line": 23,
+              "column": 12
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 7
+              },
+              "end": {
+                "line": 13,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 9
+              },
+              "end": {
+                "line": 14,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 11
+              },
+              "end": {
+                "line": 22,
+                "column": 12
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 7
+              },
+              "end": {
+                "line": 23,
+                "column": 12
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@13:7",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+        "type": "render-loop",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 10
+            },
+            "end": {
+              "line": 22,
+              "column": 11
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#render@13:7",
+        "childrenBlockIds": [
+          "src/pages/items/ItemsPage.tsx#function@14:20"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 14,
+              "column": 10
+            },
+            "end": {
+              "line": 14,
+              "column": 20
+            }
+          },
+          {
+            "start": {
+              "line": 22,
+              "column": 10
+            },
+            "end": {
+              "line": 22,
+              "column": 11
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 10
+              },
+              "end": {
+                "line": 14,
+                "column": 20
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 10
+              },
+              "end": {
+                "line": 22,
+                "column": 11
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 10
+              },
+              "end": {
+                "line": 14,
+                "column": 19
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "map"
+              ],
+              "blockId": null
+            },
+            "type": "external-block",
+            "codeBlockId": "src/data/items.ts#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pages/items/ItemsPage.tsx#function@14:20"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#function@14:20",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 20
+            },
+            "end": {
+              "line": 22,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+        "childrenBlockIds": [
+          "src/pages/items/ItemsPage.tsx#variable@14:21",
+          "src/pages/items/ItemsPage.tsx#render@15:11"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 14,
+              "column": 20
+            },
+            "end": {
+              "line": 14,
+              "column": 21
+            }
+          },
+          {
+            "start": {
+              "line": 14,
+              "column": 25
+            },
+            "end": {
+              "line": 14,
+              "column": 31
+            }
+          },
+          {
+            "start": {
+              "line": 22,
+              "column": 9
+            },
+            "end": {
+              "line": 22,
+              "column": 10
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 20
+              },
+              "end": {
+                "line": 14,
+                "column": 21
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 25
+              },
+              "end": {
+                "line": 14,
+                "column": 31
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 9
+              },
+              "end": {
+                "line": 22,
+                "column": 10
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#function@14:20",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render@15:11"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#variable@14:21",
+        "name": "item",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 21
+            },
+            "end": {
+              "line": 14,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#function@14:20",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 14,
+              "column": 21
+            },
+            "end": {
+              "line": 14,
+              "column": 25
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 21
+              },
+              "end": {
+                "line": 14,
+                "column": 25
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#function@18:44"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#render@15:11",
+        "name": "li",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 11
+            },
+            "end": {
+              "line": 21,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#function@14:20",
+        "childrenBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render@18:13"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 15,
+              "column": 11
+            },
+            "end": {
+              "line": 15,
+              "column": 29
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 13
+            },
+            "end": {
+              "line": 16,
+              "column": 38
+            }
+          },
+          {
+            "start": {
+              "line": 17,
+              "column": 13
+            },
+            "end": {
+              "line": 17,
+              "column": 61
+            }
+          },
+          {
+            "start": {
+              "line": 21,
+              "column": 11
+            },
+            "end": {
+              "line": 21,
+              "column": 16
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 11
+              },
+              "end": {
+                "line": 15,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 20
+              },
+              "end": {
+                "line": 15,
+                "column": 27
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 13
+              },
+              "end": {
+                "line": 16,
+                "column": 38
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 14
+              },
+              "end": {
+                "line": 16,
+                "column": 23
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 27
+              },
+              "end": {
+                "line": 16,
+                "column": 37
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 13
+              },
+              "end": {
+                "line": 17,
+                "column": 61
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 14
+              },
+              "end": {
+                "line": 17,
+                "column": 21
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 26
+              },
+              "end": {
+                "line": 17,
+                "column": 41
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 11
+              },
+              "end": {
+                "line": 21,
+                "column": 16
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/pages/items/ItemsPage.tsx#render@15:11",
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 20
+              },
+              "end": {
+                "line": 15,
+                "column": 27
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pages/items/ItemsPage.tsx#variable@14:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 14
+              },
+              "end": {
+                "line": 16,
+                "column": 23
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pages/items/ItemsPage.tsx#variable@14:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 27
+              },
+              "end": {
+                "line": 16,
+                "column": 37
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "price"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pages/items/ItemsPage.tsx#variable@14:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 14
+              },
+              "end": {
+                "line": 17,
+                "column": 21
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pages/items/ItemsPage.tsx#variable@14:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 26
+              },
+              "end": {
+                "line": 17,
+                "column": 41
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "lastAddedId"
+              ],
+              "blockId": "src/stores/bag.ts#property@7:3"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pages/items/ItemsPage.tsx#state@6:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render@18:13",
+          "src/pages/items/ItemsPage.tsx#state@6:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#render@18:13",
+        "name": "button",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 13
+            },
+            "end": {
+              "line": 20,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#render@15:11",
+        "childrenBlockIds": [
+          "src/pages/items/ItemsPage.tsx#render-event@18:35"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 18,
+              "column": 13
+            },
+            "end": {
+              "line": 18,
+              "column": 35
+            }
+          },
+          {
+            "start": {
+              "line": 18,
+              "column": 65
+            },
+            "end": {
+              "line": 18,
+              "column": 66
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 15
+            },
+            "end": {
+              "line": 19,
+              "column": 25
+            }
+          },
+          {
+            "start": {
+              "line": 20,
+              "column": 13
+            },
+            "end": {
+              "line": 20,
+              "column": 22
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 13
+              },
+              "end": {
+                "line": 18,
+                "column": 35
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 65
+              },
+              "end": {
+                "line": 18,
+                "column": 66
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 15
+              },
+              "end": {
+                "line": 19,
+                "column": 25
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 13
+              },
+              "end": {
+                "line": 20,
+                "column": 22
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pages/items/ItemsPage.tsx#render@18:13"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#render-event@18:35",
+        "name": "onClick",
+        "type": "render-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 35
+            },
+            "end": {
+              "line": 18,
+              "column": 65
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#render@18:13",
+        "childrenBlockIds": [
+          "src/pages/items/ItemsPage.tsx#function@18:44"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 18,
+              "column": 35
+            },
+            "end": {
+              "line": 18,
+              "column": 44
+            }
+          },
+          {
+            "start": {
+              "line": 18,
+              "column": 64
+            },
+            "end": {
+              "line": 18,
+              "column": 65
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 35
+              },
+              "end": {
+                "line": 18,
+                "column": 44
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 64
+              },
+              "end": {
+                "line": 18,
+                "column": 65
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#function@8:1",
+          "src/lib/bag-lines.ts#function@9:27",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#function@11:20",
+          "src/lib/bag-lines.ts#condition@11:32",
+          "src/pages/items/ItemsPage.tsx#render-event@18:35",
+          "src/pages/items/ItemsPage.tsx#function@18:44",
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#function@10:1",
+          "src/stores/bag.ts#call@11:3"
+        ],
+        "classifications": [
+          "component"
+        ],
+        "diffClassifications": [
+          "component"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pages/items/ItemsPage.tsx#function@18:44"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/pages/items/ItemsPage.tsx#function@18:44",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 44
+            },
+            "end": {
+              "line": 18,
+              "column": 64
+            }
+          }
+        ],
+        "parentBlockId": "src/pages/items/ItemsPage.tsx#render-event@18:35",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 18,
+              "column": 44
+            },
+            "end": {
+              "line": 18,
+              "column": 64
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 44
+              },
+              "end": {
+                "line": 18,
+                "column": 64
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 50
+              },
+              "end": {
+                "line": 18,
+                "column": 58
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 59
+              },
+              "end": {
+                "line": 18,
+                "column": 63
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#function@8:1",
+          "src/lib/bag-lines.ts#function@9:27",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#function@11:20",
+          "src/lib/bag-lines.ts#condition@11:32",
+          "src/pages/items/ItemsPage.tsx#function@18:44",
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#function@10:1",
+          "src/stores/bag.ts#call@11:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 50
+              },
+              "end": {
+                "line": 18,
+                "column": 58
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/stores/bag.ts#function@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 59
+              },
+              "end": {
+                "line": 18,
+                "column": 63
+              }
+            },
+            "use": "value",
+            "handedToId": "src/stores/bag.ts#root-argument-value@10:26",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pages/items/ItemsPage.tsx#variable@14:21"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/stores/bag.ts#function@10:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pages/items/ItemsPage.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 33
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 33
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 56
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 1
+              },
+              "end": {
+                "line": 2,
+                "column": 56
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 41
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 3,
+                "column": 41
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#state@5:1",
+        "name": "$bag",
+        "type": "state",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/stores/bag.ts#property@6:3",
+          "src/stores/bag.ts#property@7:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/stores/bag.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 26
+            }
+          },
+          {
+            "start": {
+              "line": 6,
+              "column": 25
+            },
+            "end": {
+              "line": 6,
+              "column": 26
+            }
+          },
+          {
+            "start": {
+              "line": 7,
+              "column": 37
+            },
+            "end": {
+              "line": 7,
+              "column": 38
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 3
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 1
+              },
+              "end": {
+                "line": 5,
+                "column": 26
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 25
+              },
+              "end": {
+                "line": 6,
+                "column": 26
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 37
+              },
+              "end": {
+                "line": 7,
+                "column": 38
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 1
+              },
+              "end": {
+                "line": 8,
+                "column": 3
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "ui-state"
+        ],
+        "diffClassifications": [
+          "ui-state"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 21
+              },
+              "end": {
+                "line": 5,
+                "column": 24
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "nanostores",
+            "importedName": "map",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pages/items/ItemsPage.tsx#state@6:3",
+          "src/stores/bag.ts#call@11:3",
+          "src/stores/bag.ts#property@11:14",
+          "src/stores/bag.ts#call@15:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": {
+          "specifier": "nanostores",
+          "name": "map",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Nano Stores",
+          "kind": "store",
+          "part": "holder",
+          "heading": null,
+          "groupKey": null,
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/stores/bag.ts#property@6:3",
+        "name": "lines",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 3
+            },
+            "end": {
+              "line": 6,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/bag.ts#state@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 3
+            },
+            "end": {
+              "line": 6,
+              "column": 25
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 3
+              },
+              "end": {
+                "line": 6,
+                "column": 25
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 16
+              },
+              "end": {
+                "line": 6,
+                "column": 23
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "ui-state"
+        ],
+        "diffClassifications": [
+          "ui-state"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 16
+              },
+              "end": {
+                "line": 6,
+                "column": 23
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/lib/bag-lines.ts#type-declaration@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null,
+        "card": {
+          "library": "Nano Stores",
+          "kind": "store",
+          "part": "state",
+          "heading": "STATE",
+          "groupKey": null,
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/stores/bag.ts#property@7:3",
+        "name": "lastAddedId",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/bag.ts#state@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 37
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 3
+              },
+              "end": {
+                "line": 7,
+                "column": 37
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "ui-state"
+        ],
+        "diffClassifications": [
+          "ui-state"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null,
+        "card": {
+          "library": "Nano Stores",
+          "kind": "store",
+          "part": "state",
+          "heading": "STATE",
+          "groupKey": null,
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/stores/bag.ts#function@10:1",
+        "name": "addToBag",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/stores/bag.ts#root-argument-value@10:26",
+          "src/stores/bag.ts#call@11:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/stores/bag.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 26
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 36
+            },
+            "end": {
+              "line": 10,
+              "column": 39
+            }
+          },
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 1
+              },
+              "end": {
+                "line": 10,
+                "column": 26
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 36
+              },
+              "end": {
+                "line": 10,
+                "column": 39
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 1
+              },
+              "end": {
+                "line": 12,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#function@8:1",
+          "src/lib/bag-lines.ts#function@9:27",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#function@11:20",
+          "src/lib/bag-lines.ts#condition@11:32",
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#function@10:1",
+          "src/stores/bag.ts#call@11:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pages/items/ItemsPage.tsx#function@18:44"
+        ],
+        "nextBlockIds": [
+          "src/stores/bag.ts#call@11:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#root-argument-value@10:26",
+        "name": "item",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 26
+            },
+            "end": {
+              "line": 10,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/bag.ts#function@10:1",
+        "childrenBlockIds": [
+          "src/stores/bag.ts#root-argument-value@11:67"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 26
+            },
+            "end": {
+              "line": 10,
+              "column": 36
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 26
+              },
+              "end": {
+                "line": 10,
+                "column": 36
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 32
+              },
+              "end": {
+                "line": 10,
+                "column": 36
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/item.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/stores/bag.ts#property@11:14",
+          "src/stores/bag.ts#property@11:54"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/pages/items/ItemsPage.tsx#function@18:44",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#root-argument-value@11:67",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 67
+            },
+            "end": {
+              "line": 11,
+              "column": 74
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/bag.ts#root-argument-value@10:26",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 67
+            },
+            "end": {
+              "line": 11,
+              "column": 74
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 67
+              },
+              "end": {
+                "line": 11,
+                "column": 74
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#call@11:3",
+        "name": "$bag.set",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 77
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/bag.ts#function@10:1",
+        "childrenBlockIds": [
+          "src/stores/bag.ts#property@11:14",
+          "src/stores/bag.ts#property@11:54"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 14
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 52
+            },
+            "end": {
+              "line": 11,
+              "column": 54
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 74
+            },
+            "end": {
+              "line": 11,
+              "column": 77
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 3
+              },
+              "end": {
+                "line": 11,
+                "column": 14
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 3
+              },
+              "end": {
+                "line": 11,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 52
+              },
+              "end": {
+                "line": 11,
+                "column": 54
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 74
+              },
+              "end": {
+                "line": 11,
+                "column": 77
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#function@8:1",
+          "src/lib/bag-lines.ts#function@9:27",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#function@11:20",
+          "src/lib/bag-lines.ts#condition@11:32",
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#call@11:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 3
+              },
+              "end": {
+                "line": 11,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "set"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/bag.ts#state@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/stores/bag.ts#property@11:14",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#property@11:14",
+        "name": "lines",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 14
+            },
+            "end": {
+              "line": 11,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/bag.ts#call@11:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 14
+            },
+            "end": {
+              "line": 11,
+              "column": 52
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 14
+              },
+              "end": {
+                "line": 11,
+                "column": 52
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 21
+              },
+              "end": {
+                "line": 11,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 29
+              },
+              "end": {
+                "line": 11,
+                "column": 37
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/bag-lines.ts#function@8:1",
+          "src/lib/bag-lines.ts#function@9:27",
+          "src/lib/bag-lines.ts#condition@10:3",
+          "src/lib/bag-lines.ts#function@11:20",
+          "src/lib/bag-lines.ts#condition@11:32",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 21
+              },
+              "end": {
+                "line": 11,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/lib/bag-lines.ts#function@8:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 29
+              },
+              "end": {
+                "line": 11,
+                "column": 37
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/bag.ts#state@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 47
+              },
+              "end": {
+                "line": 11,
+                "column": 51
+              }
+            },
+            "use": "value",
+            "handedToId": "src/lib/bag-lines.ts#root-argument-value@8:43",
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/bag.ts#root-argument-value@10:26"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/lib/bag-lines.ts#function@8:1",
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#property@11:54",
+        "name": "lastAddedId",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 54
+            },
+            "end": {
+              "line": 11,
+              "column": 74
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/bag.ts#call@11:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 54
+            },
+            "end": {
+              "line": 11,
+              "column": 67
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 54
+              },
+              "end": {
+                "line": 11,
+                "column": 67
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 67
+              },
+              "end": {
+                "line": 11,
+                "column": 74
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": "src/stores/bag.ts#root-argument-value@11:67"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/bag.ts#root-argument-value@10:26"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#function@14:1",
+        "name": "clearBag",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 1
+            },
+            "end": {
+              "line": 16,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/stores/bag.ts#call@15:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/stores/bag.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 14,
+              "column": 1
+            },
+            "end": {
+              "line": 14,
+              "column": 29
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 1
+            },
+            "end": {
+              "line": 16,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 1
+              },
+              "end": {
+                "line": 14,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 1
+              },
+              "end": {
+                "line": 16,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#function@14:1",
+          "src/stores/bag.ts#call@15:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pages/items/ItemsPage.tsx#render-event@10:29"
+        ],
+        "nextBlockIds": [
+          "src/stores/bag.ts#call@15:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#call@15:3",
+        "name": "$bag.set",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 3
+            },
+            "end": {
+              "line": 15,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/bag.ts#function@14:1",
+        "childrenBlockIds": [
+          "src/stores/bag.ts#property@15:14",
+          "src/stores/bag.ts#property@15:25"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 15,
+              "column": 3
+            },
+            "end": {
+              "line": 15,
+              "column": 14
+            }
+          },
+          {
+            "start": {
+              "line": 15,
+              "column": 23
+            },
+            "end": {
+              "line": 15,
+              "column": 25
+            }
+          },
+          {
+            "start": {
+              "line": 15,
+              "column": 42
+            },
+            "end": {
+              "line": 15,
+              "column": 45
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 3
+              },
+              "end": {
+                "line": 15,
+                "column": 14
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 3
+              },
+              "end": {
+                "line": 15,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 23
+              },
+              "end": {
+                "line": 15,
+                "column": 25
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 42
+              },
+              "end": {
+                "line": 15,
+                "column": 45
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/stores/bag.ts#state@5:1",
+          "src/stores/bag.ts#call@15:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 3
+              },
+              "end": {
+                "line": 15,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "set"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/bag.ts#state@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/stores/bag.ts#state@5:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#property@15:14",
+        "name": "lines",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 14
+            },
+            "end": {
+              "line": 15,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/bag.ts#call@15:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 15,
+              "column": 14
+            },
+            "end": {
+              "line": 15,
+              "column": 23
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 14
+              },
+              "end": {
+                "line": 15,
+                "column": 23
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/bag.ts#property@15:25",
+        "name": "lastAddedId",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 25
+            },
+            "end": {
+              "line": 15,
+              "column": 42
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/bag.ts#call@15:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 15,
+              "column": 25
+            },
+            "end": {
+              "line": 15,
+              "column": 42
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 25
+              },
+              "end": {
+                "line": 15,
+                "column": 42
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/bag.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/types/item.ts#type-declaration@1:1",
+        "name": "Item",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/types/item.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "data-model"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/data/items.ts#root-variable@3:1",
+          "src/lib/bag-lines.ts#type-declaration@3:1",
+          "src/lib/bag-lines.ts#root-argument-value@8:43",
+          "src/stores/bag.ts#root-argument-value@10:26"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/types/item.ts",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "src/lib/bag-lines.ts#import@1:1",
+      "src/lib/bag-lines.ts#type-declaration@3:1",
+      "src/lib/bag-lines.ts#function@8:1",
+      "src/lib/bag-lines.ts#root-argument-value@8:25",
+      "src/lib/bag-lines.ts#root-argument-value@9:16",
+      "src/lib/bag-lines.ts#root-argument-value@11:10",
+      "src/lib/bag-lines.ts#root-argument-value@8:43",
+      "src/lib/bag-lines.ts#root-argument-value@9:56",
+      "src/lib/bag-lines.ts#variable@9:3",
+      "src/lib/bag-lines.ts#function@9:27",
+      "src/lib/bag-lines.ts#variable@9:28",
+      "src/lib/bag-lines.ts#condition@10:3",
+      "src/lib/bag-lines.ts#property@10:47",
+      "src/lib/bag-lines.ts#property@10:53",
+      "src/lib/bag-lines.ts#function@11:20",
+      "src/lib/bag-lines.ts#variable@11:21",
+      "src/lib/bag-lines.ts#condition@11:32",
+      "src/lib/bag-lines.ts#property@11:61",
+      "src/pages/items/ItemsPage.tsx#import@1:1",
+      "src/pages/items/ItemsPage.tsx#import@3:1",
+      "src/pages/items/ItemsPage.tsx#state@6:3",
+      "src/pages/items/ItemsPage.tsx#render@8:5",
+      "src/pages/items/ItemsPage.tsx#render@9:7",
+      "src/pages/items/ItemsPage.tsx#render@10:7",
+      "src/pages/items/ItemsPage.tsx#render-event@10:29",
+      "src/pages/items/ItemsPage.tsx#render@13:7",
+      "src/pages/items/ItemsPage.tsx#render-loop@14:10",
+      "src/pages/items/ItemsPage.tsx#function@14:20",
+      "src/pages/items/ItemsPage.tsx#variable@14:21",
+      "src/pages/items/ItemsPage.tsx#render@15:11",
+      "src/pages/items/ItemsPage.tsx#render@18:13",
+      "src/pages/items/ItemsPage.tsx#render-event@18:35",
+      "src/pages/items/ItemsPage.tsx#function@18:44",
+      "src/stores/bag.ts#import@1:1",
+      "src/stores/bag.ts#import@2:1",
+      "src/stores/bag.ts#import@3:1",
+      "src/stores/bag.ts#state@5:1",
+      "src/stores/bag.ts#property@6:3",
+      "src/stores/bag.ts#property@7:3",
+      "src/stores/bag.ts#function@10:1",
+      "src/stores/bag.ts#root-argument-value@10:26",
+      "src/stores/bag.ts#root-argument-value@11:67",
+      "src/stores/bag.ts#call@11:3",
+      "src/stores/bag.ts#property@11:14",
+      "src/stores/bag.ts#property@11:54",
+      "src/stores/bag.ts#function@14:1",
+      "src/stores/bag.ts#call@15:3",
+      "src/stores/bag.ts#property@15:14",
+      "src/stores/bag.ts#property@15:25"
+    ],
+    "diffContains": [
+      "ui",
+      "state",
+      "type",
+      "logic"
+    ],
+    "chainContains": [
+      "ui",
+      "state",
+      "logic"
+    ],
+    "diffChainIds": [
+      "src/App.tsx#component@3:1",
+      "src/pages/items/ItemsPage.tsx#render-event@10:29",
+      "src/pages/items/ItemsPage.tsx#render-event@18:35"
+    ]
+  }
+]

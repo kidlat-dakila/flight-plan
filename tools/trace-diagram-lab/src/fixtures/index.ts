@@ -9,7 +9,7 @@ import { isMissingFile, listSnapshotNames, readCaseArtifact, readTraceSnapshot }
 import { TRACE_FIXTURE_FOLDERS, type TraceFixtureFolders } from "./fixture-folders"
 
 export { PLAYGROUNDS_FOLDER, TRACE_FIXTURE_FOLDERS, type TraceFixtureFolders } from "./fixture-folders"
-export { listPlaygrounds, readPlayground, type PlaygroundEntry } from "./playgrounds"
+export { listPlaygrounds, readPlayground, type PlaygroundCase, type PlaygroundEntry } from "./playgrounds"
 
 export type TraceFixtureSource = "playground" | "lab"
 

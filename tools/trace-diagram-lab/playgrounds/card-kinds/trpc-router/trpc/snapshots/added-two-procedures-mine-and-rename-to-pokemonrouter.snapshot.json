@@ -1,0 +1,2244 @@
+{
+  "title": "Added two procedures mine and rename to pokemonRouter",
+  "diff": [
+    "diff --git a/src/client/PartyList.tsx b/src/client/PartyList.tsx",
+    "--- a/src/client/PartyList.tsx",
+    "+++ b/src/client/PartyList.tsx",
+    "@@ -1,0 +2 @@ import { api } from \"~/client/api\"",
+    "+import { RenameForm } from \"~/client/RenameForm\"",
+    "@@ -4 +5 @@ export function PartyList() {",
+    "-  const party = api.pokemon.list.useQuery()",
+    "+  const party = api.pokemon.mine.useQuery()",
+    "@@ -10,0 +12 @@ export function PartyList() {",
+    "+          <RenameForm id={pokemon.id} name={pokemon.name} />",
+    "diff --git a/src/client/RenameForm.tsx b/src/client/RenameForm.tsx",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/client/RenameForm.tsx",
+    "@@ -0,0 +1,23 @@",
+    "+import { useState } from \"react\"",
+    "+import { api } from \"~/client/api\"",
+    "+",
+    "+export function RenameForm({ id, name }: { id: number; name: string }) {",
+    "+  const [draft, setDraft] = useState(name)",
+    "+  const utils = api.useUtils()",
+    "+  const rename = api.pokemon.rename.useMutation({",
+    "+    onSuccess: () => utils.pokemon.mine.invalidate(),",
+    "+  })",
+    "+  return (",
+    "+    <form",
+    "+      onSubmit={(event) => {",
+    "+        event.preventDefault()",
+    "+        rename.mutate({ id, name: draft })",
+    "+      }}",
+    "+    >",
+    "+      <input value={draft} onChange={(event) => setDraft(event.target.value)} />",
+    "+      <button type=\"submit\" disabled={rename.isPending}>",
+    "+        Rename",
+    "+      </button>",
+    "+    </form>",
+    "+  )",
+    "+}",
+    "diff --git a/src/server/data/pokemon.ts b/src/server/data/pokemon.ts",
+    "--- a/src/server/data/pokemon.ts",
+    "+++ b/src/server/data/pokemon.ts",
+    "@@ -19,0 +20,9 @@ export function readPokemon(id: number): Pokemon | undefined {",
+    "+",
+    "+export function readPartyOf(trainerName: string): Pokemon[] {",
+    "+  return party.filter((pokemon) => pokemon.trainerName === trainerName)",
+    "+}",
+    "+",
+    "+export function renamePokemon(id: number, name: string): Pokemon | undefined {",
+    "+  party = party.map((pokemon) => (pokemon.id === id ? { ...pokemon, name } : pokemon))",
+    "+  return readPokemon(id)",
+    "+}",
+    "diff --git a/src/server/procedures.ts b/src/server/procedures.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/server/procedures.ts",
+    "@@ -0,0 +1,9 @@",
+    "+import { TRPCError } from \"@trpc/server\"",
+    "+import { t } from \"~/server/trpc\"",
+    "+",
+    "+const requireTrainer = t.middleware(({ ctx, next }) => {",
+    "+  if (ctx.trainerName === null) throw new TRPCError({ code: \"UNAUTHORIZED\" })",
+    "+  return next({ ctx: { trainerName: ctx.trainerName } })",
+    "+})",
+    "+",
+    "+export const protectedProcedure = t.procedure.use(requireTrainer)",
+    "diff --git a/src/server/routers/pokemon.ts b/src/server/routers/pokemon.ts",
+    "--- a/src/server/routers/pokemon.ts",
+    "+++ b/src/server/routers/pokemon.ts",
+    "@@ -0,0 +1 @@",
+    "+import { TRPCError } from \"@trpc/server\"",
+    "@@ -2 +3,2 @@ import { z } from \"zod\"",
+    "-import { readParty, readPokemon } from \"~/server/data/pokemon\"",
+    "+import { readParty, readPartyOf, readPokemon, renamePokemon } from \"~/server/data/pokemon\"",
+    "+import { protectedProcedure } from \"~/server/procedures\"",
+    "@@ -8,0 +11,9 @@ export const pokemonRouter = createTRPCRouter({",
+    "+",
+    "+  mine: protectedProcedure.query(({ ctx }) => readPartyOf(ctx.trainerName)),",
+    "+",
+    "+  rename: protectedProcedure",
+    "+    .input(z.object({ id: z.number(), name: z.string().min(1) }))",
+    "+    .mutation(({ ctx, input }) => {",
+    "+      if (readPokemon(input.id)?.trainerName !== ctx.trainerName) throw new TRPCError({ code: \"FORBIDDEN\" })",
+    "+      return renamePokemon(input.id, input.name)",
+    "+    }),"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New RenameForm and protectedProcedure, modified PartyList and pokemonRouter",
+        "importGraph": [
+          {
+            "filePath": "src/client/App.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/client/main.tsx"
+            ],
+            "importsTo": [
+              "src/client/PartyList.tsx",
+              "src/client/api.ts"
+            ],
+            "importedFilePaths": {
+              "~/client/api": "src/client/api.ts",
+              "~/client/PartyList": "src/client/PartyList.tsx"
+            }
+          },
+          {
+            "filePath": "src/client/PartyList.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/client/App.tsx"
+            ],
+            "importsTo": [
+              "src/client/RenameForm.tsx",
+              "src/client/api.ts"
+            ],
+            "importedFilePaths": {
+              "~/client/api": "src/client/api.ts",
+              "~/client/RenameForm": "src/client/RenameForm.tsx"
+            }
+          },
+          {
+            "filePath": "src/client/RenameForm.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/client/PartyList.tsx"
+            ],
+            "importsTo": [
+              "src/client/api.ts"
+            ],
+            "importedFilePaths": {
+              "~/client/api": "src/client/api.ts"
+            }
+          },
+          {
+            "filePath": "src/client/api.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/client/App.tsx",
+              "src/client/PartyList.tsx",
+              "src/client/RenameForm.tsx"
+            ],
+            "importsTo": [
+              "src/server/root.ts"
+            ],
+            "importedFilePaths": {
+              "~/server/root": "src/server/root.ts"
+            }
+          },
+          {
+            "filePath": "src/client/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/client/App.tsx"
+            ],
+            "importedFilePaths": {
+              "~/client/App": "src/client/App.tsx"
+            }
+          },
+          {
+            "filePath": "src/server/data/pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/server/routers/pokemon.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/server/data/trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/server/routers/trainer.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/server/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/server/root.ts",
+              "src/server/trpc.ts"
+            ],
+            "importedFilePaths": {
+              "~/server/root": "src/server/root.ts",
+              "~/server/trpc": "src/server/trpc.ts"
+            }
+          },
+          {
+            "filePath": "src/server/procedures.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/server/routers/pokemon.ts"
+            ],
+            "importsTo": [
+              "src/server/trpc.ts"
+            ],
+            "importedFilePaths": {
+              "~/server/trpc": "src/server/trpc.ts"
+            }
+          },
+          {
+            "filePath": "src/server/root.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/client/api.ts",
+              "src/server/main.ts"
+            ],
+            "importsTo": [
+              "src/server/routers/pokemon.ts",
+              "src/server/routers/trainer.ts",
+              "src/server/trpc.ts"
+            ],
+            "importedFilePaths": {
+              "~/server/routers/pokemon": "src/server/routers/pokemon.ts",
+              "~/server/routers/trainer": "src/server/routers/trainer.ts",
+              "~/server/trpc": "src/server/trpc.ts"
+            }
+          },
+          {
+            "filePath": "src/server/routers/pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/server/root.ts"
+            ],
+            "importsTo": [
+              "src/server/data/pokemon.ts",
+              "src/server/procedures.ts",
+              "src/server/trpc.ts"
+            ],
+            "importedFilePaths": {
+              "~/server/data/pokemon": "src/server/data/pokemon.ts",
+              "~/server/procedures": "src/server/procedures.ts",
+              "~/server/trpc": "src/server/trpc.ts"
+            }
+          },
+          {
+            "filePath": "src/server/routers/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/server/root.ts"
+            ],
+            "importsTo": [
+              "src/server/data/trainers.ts",
+              "src/server/trpc.ts"
+            ],
+            "importedFilePaths": {
+              "~/server/data/trainers": "src/server/data/trainers.ts",
+              "~/server/trpc": "src/server/trpc.ts"
+            }
+          },
+          {
+            "filePath": "src/server/trpc.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/server/main.ts",
+              "src/server/procedures.ts",
+              "src/server/root.ts",
+              "src/server/routers/pokemon.ts",
+              "src/server/routers/trainer.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "List and rename own Pokemon flow diagram",
+          "description": "This diagram shows how the app loads the Pokemon of the signed-in trainer through the `mine` query and renders a rename form on each row. It also shows what happens when the trainer types a name or submits the form, and how the new name reaches the party through `renamePokemon()`.",
+          "traceNodes": [
+            {
+              "id": "src/client/App.tsx#component@7:1",
+              "type": "component",
+              "label": "Provides the tRPC and query clients to the app",
+              "description": "When a trainer opens the app, [`createRoot().render()` renders `<App />`](code:src/client/main.tsx#L4).",
+              "codeBlockIds": [
+                "src/client/App.tsx#component@7:1",
+                "src/client/App.tsx#render-root@10:3",
+                "src/client/App.tsx#render@11:5",
+                "src/client/App.tsx#render@12:7",
+                "src/client/App.tsx#render@13:9"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/client/PartyList.tsx#component@4:1",
+                  "type": "component",
+                  "label": "Lists the Pokemon of the signed-in trainer",
+                  "description": "When a trainer opens the app, [`<App />` renders `<PartyList />`](code:src/client/App.tsx#L13). When the Pokemon of the trainer are loaded, [`api.pokemon.mine.useQuery()`](code:src/client/PartyList.tsx#L5) calls the `mine` procedure of `pokemonRouter`.",
+                  "codeBlockIds": [
+                    "src/client/PartyList.tsx#component@4:1",
+                    "src/client/PartyList.tsx#external-value@5:3",
+                    "src/client/PartyList.tsx#data-fetch@5:17",
+                    "src/client/PartyList.tsx#condition@6:3",
+                    "src/client/PartyList.tsx#render-root@7:3",
+                    "src/client/PartyList.tsx#render@8:5",
+                    "src/client/PartyList.tsx#render-loop@9:8",
+                    "src/client/PartyList.tsx#function@9:23",
+                    "src/client/PartyList.tsx#render@10:9",
+                    "src/client/PartyList.tsx#render@12:11"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/client/PartyList.tsx#data-fetch@5:17",
+                    "src/client/PartyList.tsx#render@12:11"
+                  ],
+                  "children": [
+                    {
+                      "id": "src/client/RenameForm.tsx#component@4:1",
+                      "type": "component",
+                      "label": "Shows a rename form for one Pokemon",
+                      "description": "When the Pokemon of the trainer are loaded, [`<PartyList />` renders `<RenameForm />` on the row of each Pokemon](code:src/client/PartyList.tsx#L12). When a trainer submits the form, the handler calls `rename.mutate()`, and when a trainer types a name, the handler stores the draft.",
+                      "codeBlockIds": [
+                        "src/client/RenameForm.tsx#component@4:1",
+                        "src/client/RenameForm.tsx#root-argument-value@4:30",
+                        "src/client/RenameForm.tsx#root-argument-value@4:34",
+                        "src/client/RenameForm.tsx#state@5:3",
+                        "src/client/RenameForm.tsx#component-effect@5:29",
+                        "src/client/RenameForm.tsx#effect-callback@5:38",
+                        "src/client/RenameForm.tsx#external-value@6:3",
+                        "src/client/RenameForm.tsx#external-value@7:3",
+                        "src/client/RenameForm.tsx#request@7:18",
+                        "src/client/RenameForm.tsx#render-root@10:3",
+                        "src/client/RenameForm.tsx#render@11:5",
+                        "src/client/RenameForm.tsx#render-event@12:7",
+                        "src/client/RenameForm.tsx#render@17:7",
+                        "src/client/RenameForm.tsx#render-event@17:28",
+                        "src/client/RenameForm.tsx#render@18:7"
+                      ],
+                      "diffCodeBlockIds": [
+                        "src/client/RenameForm.tsx#component@4:1",
+                        "src/client/RenameForm.tsx#root-argument-value@4:30",
+                        "src/client/RenameForm.tsx#root-argument-value@4:34",
+                        "src/client/RenameForm.tsx#state@5:3",
+                        "src/client/RenameForm.tsx#component-effect@5:29",
+                        "src/client/RenameForm.tsx#effect-callback@5:38",
+                        "src/client/RenameForm.tsx#external-value@6:3",
+                        "src/client/RenameForm.tsx#external-value@7:3",
+                        "src/client/RenameForm.tsx#request@7:18",
+                        "src/client/RenameForm.tsx#render-root@10:3",
+                        "src/client/RenameForm.tsx#render@11:5",
+                        "src/client/RenameForm.tsx#render-event@12:7",
+                        "src/client/RenameForm.tsx#render@17:7",
+                        "src/client/RenameForm.tsx#render-event@17:28",
+                        "src/client/RenameForm.tsx#render@18:7"
+                      ],
+                      "children": [],
+                      "triggerLabels": [
+                        {
+                          "label": "A trainer submits the rename form",
+                          "codeBlockId": "src/client/RenameForm.tsx#render-event@12:7"
+                        },
+                        {
+                          "label": "A trainer types a new name",
+                          "codeBlockId": "src/client/RenameForm.tsx#render-event@17:28"
+                        }
+                      ],
+                      "blockLabels": [
+                        {
+                          "label": "Keeps the draft name, starting from the current name",
+                          "codeBlockId": "src/client/RenameForm.tsx#state@5:3"
+                        },
+                        {
+                          "label": "Gets the tRPC query utilities",
+                          "codeBlockId": "src/client/RenameForm.tsx#external-value@6:3"
+                        },
+                        {
+                          "label": "Gets the mutation that renames a Pokemon",
+                          "codeBlockId": "src/client/RenameForm.tsx#external-value@7:3"
+                        }
+                      ]
+                    }
+                  ],
+                  "triggerLabels": [
+                    {
+                      "label": "The Pokemon of the signed-in trainer are loaded",
+                      "codeBlockId": "src/client/PartyList.tsx#data-fetch@5:17"
+                    }
+                  ],
+                  "blockLabels": [
+                    {
+                      "label": "Gets the query of the Pokemon of the signed-in trainer",
+                      "codeBlockId": "src/client/PartyList.tsx#external-value@5:3"
+                    },
+                    {
+                      "label": "Renders one row with a rename form per Pokemon",
+                      "codeBlockId": "src/client/PartyList.tsx#function@9:23"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/server/procedures.ts#root-variable@9:1",
+              "type": "root-variable",
+              "label": "Builds a procedure that runs requireTrainer first",
+              "description": "Two paths reach this procedure, because [`mine`](code:src/server/routers/pokemon.ts#L12) and [`rename`](code:src/server/routers/pokemon.ts#L14) are built on it:\n\n- When the Pokemon of the trainer are loaded, `api.pokemon.mine.useQuery()` sends a request that tRPC runs through `requireTrainer` before the `mine` resolver.\n- When a trainer submits the rename form, `rename.mutate()` sends a request that tRPC runs through `requireTrainer` before the `rename` resolver.",
+              "codeBlockIds": [
+                "src/server/procedures.ts#root-variable@9:1",
+                "src/server/procedures.ts#middleware@9:35",
+                "src/server/procedures.ts#effect-callback@9:51"
+              ],
+              "diffCodeBlockIds": [
+                "src/server/procedures.ts#root-variable@9:1",
+                "src/server/procedures.ts#middleware@9:35",
+                "src/server/procedures.ts#effect-callback@9:51"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Extends the base procedure with a middleware",
+                  "codeBlockId": "src/server/procedures.ts#middleware@9:35"
+                },
+                {
+                  "label": "Runs requireTrainer before the resolver",
+                  "codeBlockId": "src/server/procedures.ts#effect-callback@9:51"
+                }
+              ]
+            },
+            {
+              "id": "src/server/routers/pokemon.ts#root-variable@7:1",
+              "type": "root-variable",
+              "label": "Lists, finds and renames Pokemon",
+              "description": "When a client calls a procedure of `pokemon`, tRPC runs it from this router, because [`appRouter` joins it under the key `pokemon`](code:src/server/root.ts#L6).",
+              "codeBlockIds": [
+                "src/server/routers/pokemon.ts#root-variable@7:1",
+                "src/server/routers/pokemon.ts#property@12:3",
+                "src/server/routers/pokemon.ts#resolver@12:9",
+                "src/server/routers/pokemon.ts#property@14:3",
+                "src/server/routers/pokemon.ts#resolver@14:11"
+              ],
+              "diffCodeBlockIds": [
+                "src/server/routers/pokemon.ts#root-variable@7:1",
+                "src/server/routers/pokemon.ts#property@12:3",
+                "src/server/routers/pokemon.ts#resolver@12:9",
+                "src/server/routers/pokemon.ts#property@14:3",
+                "src/server/routers/pokemon.ts#resolver@14:11"
+              ],
+              "children": [
+                {
+                  "id": "src/server/routers/pokemon.ts#resolver@14:11",
+                  "type": "resolver",
+                  "label": "Renames a Pokemon of the signed-in trainer",
+                  "description": "When a trainer submits the rename form, [`rename.mutate()`](code:src/client/RenameForm.tsx#L14) sends a request, and tRPC calls this resolver after [`requireTrainer` calls `next()`](code:src/server/procedures.ts#L6).",
+                  "codeBlockIds": [
+                    "src/server/routers/pokemon.ts#resolver@14:11",
+                    "src/server/routers/pokemon.ts#validation@14:11",
+                    "src/server/routers/pokemon.ts#validation@15:12",
+                    "src/server/routers/pokemon.ts#property@15:23",
+                    "src/server/routers/pokemon.ts#property@15:39",
+                    "src/server/routers/pokemon.ts#validation@15:45",
+                    "src/server/routers/pokemon.ts#effect-callback@16:15",
+                    "src/server/routers/pokemon.ts#function@16:15",
+                    "src/server/routers/pokemon.ts#variable@16:16",
+                    "src/server/routers/pokemon.ts#condition@17:7",
+                    "src/server/routers/pokemon.ts#throw@17:67",
+                    "src/server/routers/pokemon.ts#property@17:89"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/server/routers/pokemon.ts#resolver@14:11",
+                    "src/server/routers/pokemon.ts#validation@14:11",
+                    "src/server/routers/pokemon.ts#validation@15:12",
+                    "src/server/routers/pokemon.ts#property@15:23",
+                    "src/server/routers/pokemon.ts#property@15:39",
+                    "src/server/routers/pokemon.ts#validation@15:45",
+                    "src/server/routers/pokemon.ts#function@16:15",
+                    "src/server/routers/pokemon.ts#variable@16:16",
+                    "src/server/routers/pokemon.ts#condition@17:7",
+                    "src/server/routers/pokemon.ts#throw@17:67",
+                    "src/server/routers/pokemon.ts#property@17:89"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Validates a number id and a name of at least one character",
+                      "codeBlockId": "src/server/routers/pokemon.ts#validation@14:11"
+                    },
+                    {
+                      "label": "Throws FORBIDDEN for a Pokemon of another trainer, then renames the Pokemon",
+                      "codeBlockId": "src/server/routers/pokemon.ts#effect-callback@16:15"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/server/routers/pokemon.ts#resolver@12:9",
+                  "type": "resolver",
+                  "label": "Sends the Pokemon of the signed-in trainer",
+                  "description": "When the Pokemon of the trainer are loaded, [`api.pokemon.mine.useQuery()`](code:src/client/PartyList.tsx#L5) sends a request, and tRPC calls this resolver after [`requireTrainer` calls `next()`](code:src/server/procedures.ts#L6).",
+                  "codeBlockIds": [
+                    "src/server/routers/pokemon.ts#resolver@12:9",
+                    "src/server/routers/pokemon.ts#effect-callback@12:34",
+                    "src/server/routers/pokemon.ts#function@12:34",
+                    "src/server/routers/pokemon.ts#variable@12:35"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/server/routers/pokemon.ts#resolver@12:9",
+                    "src/server/routers/pokemon.ts#function@12:34",
+                    "src/server/routers/pokemon.ts#variable@12:35"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Reads the Pokemon of the trainer name in the context",
+                      "codeBlockId": "src/server/routers/pokemon.ts#effect-callback@12:34"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Registers the mine query of the router",
+                  "codeBlockId": "src/server/routers/pokemon.ts#property@12:3"
+                },
+                {
+                  "label": "Registers the rename mutation of the router",
+                  "codeBlockId": "src/server/routers/pokemon.ts#property@14:3"
+                }
+              ]
+            },
+            {
+              "id": "src/server/procedures.ts#root-variable@4:1",
+              "type": "root-variable",
+              "label": "Throws UNAUTHORIZED for a request with no trainer",
+              "description": "When a request reaches a procedure built on `protectedProcedure`, tRPC calls this middleware first, because [`t.procedure.use(requireTrainer)` adds it](code:src/server/procedures.ts#L9).",
+              "codeBlockIds": [
+                "src/server/procedures.ts#root-variable@4:1",
+                "src/server/procedures.ts#effect@4:24",
+                "src/server/procedures.ts#effect-callback@4:37",
+                "src/server/procedures.ts#function@4:37",
+                "src/server/procedures.ts#variable@4:38",
+                "src/server/procedures.ts#condition@5:3",
+                "src/server/procedures.ts#throw@5:33",
+                "src/server/procedures.ts#property@5:55",
+                "src/server/procedures.ts#property@6:17",
+                "src/server/procedures.ts#property@6:24"
+              ],
+              "diffCodeBlockIds": [
+                "src/server/procedures.ts#root-variable@4:1",
+                "src/server/procedures.ts#effect@4:24",
+                "src/server/procedures.ts#function@4:37",
+                "src/server/procedures.ts#variable@4:38",
+                "src/server/procedures.ts#condition@5:3",
+                "src/server/procedures.ts#throw@5:33",
+                "src/server/procedures.ts#property@5:55",
+                "src/server/procedures.ts#property@6:17",
+                "src/server/procedures.ts#property@6:24"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Throws UNAUTHORIZED for a `null` trainer name, then calls `next()` with the name",
+                  "codeBlockId": "src/server/procedures.ts#effect@4:24"
+                }
+              ]
+            },
+            {
+              "id": "src/server/data/pokemon.ts#function@25:1",
+              "type": "function",
+              "label": "Replaces the name of one Pokemon in the party",
+              "description": "When a trainer submits the rename form, [the `rename` resolver calls this function with the id and the new name](code:src/server/routers/pokemon.ts#L18).",
+              "codeBlockIds": [
+                "src/server/data/pokemon.ts#function@25:1",
+                "src/server/data/pokemon.ts#root-argument-value@25:31",
+                "src/server/data/pokemon.ts#root-argument-value@25:43",
+                "src/server/data/pokemon.ts#function@26:21",
+                "src/server/data/pokemon.ts#variable@26:22",
+                "src/server/data/pokemon.ts#condition@26:35",
+                "src/server/data/pokemon.ts#property@26:69"
+              ],
+              "diffCodeBlockIds": [
+                "src/server/data/pokemon.ts#function@25:1",
+                "src/server/data/pokemon.ts#root-argument-value@25:31",
+                "src/server/data/pokemon.ts#root-argument-value@25:43",
+                "src/server/data/pokemon.ts#function@26:21",
+                "src/server/data/pokemon.ts#variable@26:22",
+                "src/server/data/pokemon.ts#condition@26:35",
+                "src/server/data/pokemon.ts#property@26:69"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Copies the Pokemon of the id with the new name",
+                  "codeBlockId": "src/server/data/pokemon.ts#function@26:21"
+                }
+              ]
+            },
+            {
+              "id": "src/server/data/pokemon.ts#function@21:1",
+              "type": "function",
+              "label": "Filters the party by the trainer name",
+              "description": "When the Pokemon of the trainer are loaded, [the `mine` resolver calls this function with the trainer name of the context](code:src/server/routers/pokemon.ts#L12).",
+              "codeBlockIds": [
+                "src/server/data/pokemon.ts#function@21:1",
+                "src/server/data/pokemon.ts#root-argument-value@21:29",
+                "src/server/data/pokemon.ts#function@22:23",
+                "src/server/data/pokemon.ts#variable@22:24"
+              ],
+              "diffCodeBlockIds": [
+                "src/server/data/pokemon.ts#function@21:1",
+                "src/server/data/pokemon.ts#root-argument-value@21:29",
+                "src/server/data/pokemon.ts#function@22:23",
+                "src/server/data/pokemon.ts#variable@22:24"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps each Pokemon of the trainer",
+                  "codeBlockId": "src/server/data/pokemon.ts#function@22:23"
+                }
+              ]
+            },
+            {
+              "id": "src/client/RenameForm.tsx#request@7:18",
+              "type": "request",
+              "label": "Calls the rename procedure on the server",
+              "description": "When a trainer submits the rename form, [the handler calls `rename.mutate()`](code:src/client/RenameForm.tsx#L14), and the mutation sends the id and the draft name to the `rename` procedure. When the server confirms the rename, the mutation runs `onSuccess`.",
+              "codeBlockIds": [
+                "src/client/RenameForm.tsx#request@7:18",
+                "src/client/RenameForm.tsx#code-event@8:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/client/RenameForm.tsx#request@7:18",
+                "src/client/RenameForm.tsx#code-event@8:5"
+              ],
+              "children": [],
+              "triggerLabels": [
+                {
+                  "label": "The server confirms the rename",
+                  "codeBlockId": "src/client/RenameForm.tsx#code-event@8:5"
+                }
+              ],
+              "blockLabels": []
+            },
+            {
+              "id": "src/client/RenameForm.tsx#code-event@8:5",
+              "type": "code-event",
+              "label": "Reloads the Pokemon of the trainer after a rename",
+              "description": "When the server confirms the rename, [`api.pokemon.rename.useMutation()`](code:src/client/RenameForm.tsx#L7) calls this callback, which calls `utils.pokemon.mine.invalidate()`.",
+              "codeBlockIds": [
+                "src/client/RenameForm.tsx#code-event@8:5",
+                "src/client/RenameForm.tsx#function@8:16"
+              ],
+              "diffCodeBlockIds": [
+                "src/client/RenameForm.tsx#code-event@8:5",
+                "src/client/RenameForm.tsx#function@8:16"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/client/RenameForm.tsx#render-event@12:7",
+              "type": "render-event",
+              "label": "Sends the draft name to the rename mutation",
+              "description": "When a trainer submits the rename form, the browser calls this handler on the `<form>`.",
+              "codeBlockIds": [
+                "src/client/RenameForm.tsx#render-event@12:7",
+                "src/client/RenameForm.tsx#function@12:17",
+                "src/client/RenameForm.tsx#variable@12:18",
+                "src/client/RenameForm.tsx#call@13:9",
+                "src/client/RenameForm.tsx#call@14:9",
+                "src/client/RenameForm.tsx#property@14:25",
+                "src/client/RenameForm.tsx#property@14:29"
+              ],
+              "diffCodeBlockIds": [
+                "src/client/RenameForm.tsx#render-event@12:7",
+                "src/client/RenameForm.tsx#function@12:17",
+                "src/client/RenameForm.tsx#variable@12:18",
+                "src/client/RenameForm.tsx#call@13:9",
+                "src/client/RenameForm.tsx#call@14:9",
+                "src/client/RenameForm.tsx#property@14:25",
+                "src/client/RenameForm.tsx#property@14:29"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Stops the browser from reloading the page",
+                  "codeBlockId": "src/client/RenameForm.tsx#call@13:9"
+                },
+                {
+                  "label": "Sends the id and the draft name to the mutation",
+                  "codeBlockId": "src/client/RenameForm.tsx#call@14:9"
+                }
+              ]
+            },
+            {
+              "id": "src/client/RenameForm.tsx#render-event@17:28",
+              "type": "render-event",
+              "label": "Stores the typed name as the draft",
+              "description": "When a trainer types a new name, the browser calls this handler on the `<input>`, which calls `setDraft()` with the value of the input.",
+              "codeBlockIds": [
+                "src/client/RenameForm.tsx#render-event@17:28",
+                "src/client/RenameForm.tsx#function@17:38",
+                "src/client/RenameForm.tsx#variable@17:39"
+              ],
+              "diffCodeBlockIds": [
+                "src/client/RenameForm.tsx#render-event@17:28",
+                "src/client/RenameForm.tsx#function@17:38",
+                "src/client/RenameForm.tsx#variable@17:39"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/server/procedures.ts#root-variable@9:1 -> src/server/procedures.ts#root-variable@4:1",
+              "from": "src/server/procedures.ts#root-variable@9:1",
+              "to": "src/server/procedures.ts#root-variable@4:1"
+            },
+            {
+              "id": "src/client/RenameForm.tsx#render-event@12:7 -> src/client/RenameForm.tsx#request@7:18",
+              "from": "src/client/RenameForm.tsx#render-event@12:7",
+              "to": "src/client/RenameForm.tsx#request@7:18"
+            },
+            {
+              "id": "src/client/App.tsx#component@7:1 -> src/client/PartyList.tsx#component@4:1",
+              "from": "src/client/App.tsx#component@7:1",
+              "to": "src/client/PartyList.tsx#component@4:1"
+            },
+            {
+              "id": "src/client/RenameForm.tsx#request@7:18 -> src/server/routers/pokemon.ts#resolver@14:11",
+              "from": "src/client/RenameForm.tsx#request@7:18",
+              "to": "src/server/routers/pokemon.ts#resolver@14:11"
+            },
+            {
+              "id": "src/client/PartyList.tsx#component@4:1 -> src/server/routers/pokemon.ts#resolver@12:9",
+              "from": "src/client/PartyList.tsx#component@4:1",
+              "to": "src/server/routers/pokemon.ts#resolver@12:9"
+            },
+            {
+              "id": "src/server/routers/pokemon.ts#resolver@14:11 -> src/server/data/pokemon.ts#function@25:1",
+              "from": "src/server/routers/pokemon.ts#resolver@14:11",
+              "to": "src/server/data/pokemon.ts#function@25:1"
+            },
+            {
+              "id": "src/server/routers/pokemon.ts#resolver@12:9 -> src/server/data/pokemon.ts#function@21:1",
+              "from": "src/server/routers/pokemon.ts#resolver@12:9",
+              "to": "src/server/data/pokemon.ts#function@21:1"
+            },
+            {
+              "id": "src/client/PartyList.tsx#component@4:1 -> src/client/RenameForm.tsx#component@4:1",
+              "from": "src/client/PartyList.tsx#component@4:1",
+              "to": "src/client/RenameForm.tsx#component@4:1"
+            },
+            {
+              "id": "src/client/RenameForm.tsx#component@4:1 -> src/client/RenameForm.tsx#request@7:18",
+              "from": "src/client/RenameForm.tsx#component@4:1",
+              "to": "src/client/RenameForm.tsx#request@7:18"
+            },
+            {
+              "id": "src/client/RenameForm.tsx#request@7:18 -> src/client/RenameForm.tsx#code-event@8:5",
+              "from": "src/client/RenameForm.tsx#request@7:18",
+              "to": "src/client/RenameForm.tsx#code-event@8:5"
+            },
+            {
+              "id": "src/client/RenameForm.tsx#component@4:1 -> src/client/RenameForm.tsx#render-event@12:7",
+              "from": "src/client/RenameForm.tsx#component@4:1",
+              "to": "src/client/RenameForm.tsx#render-event@12:7"
+            },
+            {
+              "id": "src/client/RenameForm.tsx#component@4:1 -> src/client/RenameForm.tsx#render-event@17:28",
+              "from": "src/client/RenameForm.tsx#component@4:1",
+              "to": "src/client/RenameForm.tsx#render-event@17:28"
+            },
+            {
+              "id": "src/server/routers/pokemon.ts#root-variable@7:1 -> src/server/routers/pokemon.ts#resolver@14:11",
+              "from": "src/server/routers/pokemon.ts#root-variable@7:1",
+              "to": "src/server/routers/pokemon.ts#resolver@14:11"
+            },
+            {
+              "id": "src/server/routers/pokemon.ts#root-variable@7:1 -> src/server/routers/pokemon.ts#resolver@12:9",
+              "from": "src/server/routers/pokemon.ts#root-variable@7:1",
+              "to": "src/server/routers/pokemon.ts#resolver@12:9"
+            },
+            {
+              "id": "src/server/procedures.ts#root-variable@9:1 -> src/server/routers/pokemon.ts#resolver@14:11",
+              "from": "src/server/procedures.ts#root-variable@9:1",
+              "to": "src/server/routers/pokemon.ts#resolver@14:11"
+            },
+            {
+              "id": "src/server/procedures.ts#root-variable@9:1 -> src/server/routers/pokemon.ts#resolver@12:9",
+              "from": "src/server/procedures.ts#root-variable@9:1",
+              "to": "src/server/routers/pokemon.ts#resolver@12:9"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/client/PartyList.tsx",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "PartyList",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 17
+                  },
+                  "codeBlockIds": [
+                    "src/client/PartyList.tsx#component@4:1",
+                    "src/client/PartyList.tsx#data-fetch@5:17",
+                    "src/client/PartyList.tsx#render@12:11"
+                  ],
+                  "children": [
+                    {
+                      "id": "w1.1",
+                      "declaration": "PartyList › useQuery",
+                      "range": {
+                        "lineStart": 5,
+                        "lineEnd": 5
+                      },
+                      "codeBlockIds": [
+                        "src/client/PartyList.tsx#data-fetch@5:17"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w1.2",
+                      "declaration": "PartyList › Markup loop :9",
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 14
+                      },
+                      "codeBlockIds": [
+                        "src/client/PartyList.tsx#render-loop@9:8",
+                        "src/client/PartyList.tsx#render@12:11"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/client/RenameForm.tsx",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "RenameForm",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 23
+                  },
+                  "codeBlockIds": [
+                    "src/client/RenameForm.tsx#component@4:1",
+                    "src/client/RenameForm.tsx#root-argument-value@4:30",
+                    "src/client/RenameForm.tsx#root-argument-value@4:34",
+                    "src/client/RenameForm.tsx#state@5:3",
+                    "src/client/RenameForm.tsx#component-effect@5:29",
+                    "src/client/RenameForm.tsx#effect-callback@5:38",
+                    "src/client/RenameForm.tsx#external-value@6:3",
+                    "src/client/RenameForm.tsx#external-value@7:3",
+                    "src/client/RenameForm.tsx#request@7:18",
+                    "src/client/RenameForm.tsx#code-event@8:5",
+                    "src/client/RenameForm.tsx#function@8:16",
+                    "src/client/RenameForm.tsx#render-root@10:3",
+                    "src/client/RenameForm.tsx#render@11:5",
+                    "src/client/RenameForm.tsx#render-event@12:7",
+                    "src/client/RenameForm.tsx#function@12:17",
+                    "src/client/RenameForm.tsx#variable@12:18",
+                    "src/client/RenameForm.tsx#call@13:9",
+                    "src/client/RenameForm.tsx#call@14:9",
+                    "src/client/RenameForm.tsx#property@14:25",
+                    "src/client/RenameForm.tsx#property@14:29",
+                    "src/client/RenameForm.tsx#render@17:7",
+                    "src/client/RenameForm.tsx#render-event@17:28",
+                    "src/client/RenameForm.tsx#function@17:38",
+                    "src/client/RenameForm.tsx#variable@17:39",
+                    "src/client/RenameForm.tsx#render@18:7"
+                  ],
+                  "children": [
+                    {
+                      "id": "w2.1",
+                      "declaration": "RenameForm › draft",
+                      "range": {
+                        "lineStart": 5,
+                        "lineEnd": 5
+                      },
+                      "codeBlockIds": [
+                        "src/client/RenameForm.tsx#state@5:3",
+                        "src/client/RenameForm.tsx#component-effect@5:29",
+                        "src/client/RenameForm.tsx#effect-callback@5:38"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.2",
+                      "declaration": "RenameForm › utils",
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "codeBlockIds": [
+                        "src/client/RenameForm.tsx#external-value@6:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.3",
+                      "declaration": "RenameForm › rename",
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 9
+                      },
+                      "codeBlockIds": [
+                        "src/client/RenameForm.tsx#external-value@7:3",
+                        "src/client/RenameForm.tsx#request@7:18",
+                        "src/client/RenameForm.tsx#code-event@8:5",
+                        "src/client/RenameForm.tsx#function@8:16"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.4",
+                      "declaration": "RenameForm › form.onSubmit",
+                      "range": {
+                        "lineStart": 12,
+                        "lineEnd": 15
+                      },
+                      "codeBlockIds": [
+                        "src/client/RenameForm.tsx#render-event@12:7",
+                        "src/client/RenameForm.tsx#function@12:17",
+                        "src/client/RenameForm.tsx#variable@12:18",
+                        "src/client/RenameForm.tsx#call@13:9",
+                        "src/client/RenameForm.tsx#call@14:9",
+                        "src/client/RenameForm.tsx#property@14:25",
+                        "src/client/RenameForm.tsx#property@14:29"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.5",
+                      "declaration": "RenameForm › input.onChange",
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 17
+                      },
+                      "codeBlockIds": [
+                        "src/client/RenameForm.tsx#render-event@17:28",
+                        "src/client/RenameForm.tsx#function@17:38",
+                        "src/client/RenameForm.tsx#variable@17:39"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/server/data/pokemon.ts",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "readPartyOf",
+                  "range": {
+                    "lineStart": 21,
+                    "lineEnd": 23
+                  },
+                  "codeBlockIds": [
+                    "src/server/data/pokemon.ts#function@21:1",
+                    "src/server/data/pokemon.ts#root-argument-value@21:29",
+                    "src/server/data/pokemon.ts#function@22:23",
+                    "src/server/data/pokemon.ts#variable@22:24"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "renamePokemon",
+                  "range": {
+                    "lineStart": 25,
+                    "lineEnd": 28
+                  },
+                  "codeBlockIds": [
+                    "src/server/data/pokemon.ts#function@25:1",
+                    "src/server/data/pokemon.ts#root-argument-value@25:31",
+                    "src/server/data/pokemon.ts#root-argument-value@25:43",
+                    "src/server/data/pokemon.ts#function@26:21",
+                    "src/server/data/pokemon.ts#variable@26:22",
+                    "src/server/data/pokemon.ts#condition@26:35",
+                    "src/server/data/pokemon.ts#property@26:69"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/server/procedures.ts",
+              "waypoints": [
+                {
+                  "id": "w5",
+                  "declaration": "requireTrainer",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 7
+                  },
+                  "codeBlockIds": [
+                    "src/server/procedures.ts#root-variable@4:1",
+                    "src/server/procedures.ts#effect@4:24",
+                    "src/server/procedures.ts#function@4:37",
+                    "src/server/procedures.ts#variable@4:38",
+                    "src/server/procedures.ts#condition@5:3",
+                    "src/server/procedures.ts#throw@5:33",
+                    "src/server/procedures.ts#property@5:55",
+                    "src/server/procedures.ts#property@6:17",
+                    "src/server/procedures.ts#property@6:24"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w6",
+                  "declaration": "protectedProcedure",
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/server/procedures.ts#root-variable@9:1",
+                    "src/server/procedures.ts#middleware@9:35",
+                    "src/server/procedures.ts#effect-callback@9:51"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/server/routers/pokemon.ts",
+              "waypoints": [
+                {
+                  "id": "w7",
+                  "declaration": "pokemonRouter",
+                  "range": {
+                    "lineStart": 7,
+                    "lineEnd": 20
+                  },
+                  "codeBlockIds": [
+                    "src/server/routers/pokemon.ts#root-variable@7:1",
+                    "src/server/routers/pokemon.ts#property@12:3",
+                    "src/server/routers/pokemon.ts#resolver@12:9",
+                    "src/server/routers/pokemon.ts#function@12:34",
+                    "src/server/routers/pokemon.ts#variable@12:35",
+                    "src/server/routers/pokemon.ts#property@14:3",
+                    "src/server/routers/pokemon.ts#resolver@14:11",
+                    "src/server/routers/pokemon.ts#validation@14:11",
+                    "src/server/routers/pokemon.ts#validation@15:12",
+                    "src/server/routers/pokemon.ts#property@15:23",
+                    "src/server/routers/pokemon.ts#property@15:39",
+                    "src/server/routers/pokemon.ts#validation@15:45",
+                    "src/server/routers/pokemon.ts#function@16:15",
+                    "src/server/routers/pokemon.ts#variable@16:16",
+                    "src/server/routers/pokemon.ts#condition@17:7",
+                    "src/server/routers/pokemon.ts#throw@17:67",
+                    "src/server/routers/pokemon.ts#property@17:89"
+                  ],
+                  "children": [
+                    {
+                      "id": "w7.1",
+                      "declaration": "pokemonRouter › mine",
+                      "range": {
+                        "lineStart": 12,
+                        "lineEnd": 12
+                      },
+                      "codeBlockIds": [
+                        "src/server/routers/pokemon.ts#property@12:3",
+                        "src/server/routers/pokemon.ts#resolver@12:9",
+                        "src/server/routers/pokemon.ts#function@12:34",
+                        "src/server/routers/pokemon.ts#variable@12:35"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.2",
+                      "declaration": "pokemonRouter › rename",
+                      "range": {
+                        "lineStart": 14,
+                        "lineEnd": 19
+                      },
+                      "codeBlockIds": [
+                        "src/server/routers/pokemon.ts#property@14:3",
+                        "src/server/routers/pokemon.ts#resolver@14:11",
+                        "src/server/routers/pokemon.ts#validation@14:11",
+                        "src/server/routers/pokemon.ts#validation@15:12",
+                        "src/server/routers/pokemon.ts#property@15:23",
+                        "src/server/routers/pokemon.ts#property@15:39",
+                        "src/server/routers/pokemon.ts#validation@15:45",
+                        "src/server/routers/pokemon.ts#function@16:15",
+                        "src/server/routers/pokemon.ts#variable@16:16",
+                        "src/server/routers/pokemon.ts#condition@17:7",
+                        "src/server/routers/pokemon.ts#throw@17:67",
+                        "src/server/routers/pokemon.ts#property@17:89"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/client/App.tsx",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 24,
+                "endColumn": 32,
+                "path": "src/client/App.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useState"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 43,
+                "endColumn": 54,
+                "path": "src/client/App.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/react-query",
+                  "name": "QueryClient"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 23,
+                "endColumn": 31,
+                "path": "src/client/App.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useState"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 38,
+                "endColumn": 41,
+                "path": "src/client/api.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 65,
+                "endColumn": 78,
+                "path": "src/client/App.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@trpc/client",
+                  "name": "httpBatchLink"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 5,
+                "endColumn": 24,
+                "path": "src/client/App.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/react-query",
+                  "name": "QueryClientProvider"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 33,
+                "endColumn": 44,
+                "path": "src/client/App.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 7,
+                "endColumn": 10,
+                "path": "src/client/api.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 28,
+                "endColumn": 38,
+                "path": "src/client/App.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 53,
+                "endColumn": 64,
+                "path": "src/client/App.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/client/PartyList.tsx",
+                "lines": [
+                  4,
+                  17
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 19,
+                "lines": [
+                  7,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 53,
+                    "endColumn": 56,
+                    "path": "src/client/main.tsx",
+                    "text": "createRoot(document.getElementById(\"root\")!).render(<App />)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/client/PartyList.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 19,
+                "path": "src/client/api.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 6,
+                "endColumn": 11,
+                "path": "src/client/PartyList.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 7,
+                "endColumn": 12,
+                "path": "src/client/PartyList.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/client/PartyList.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/client/PartyList.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 30,
+                "endColumn": 37,
+                "path": "src/client/PartyList.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 11,
+                "endColumn": 21,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  4,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 26,
+                "endColumn": 33,
+                "path": "src/client/PartyList.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 44,
+                "endColumn": 51,
+                "path": "src/client/PartyList.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  4,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 9,
+                    "endColumn": 18,
+                    "path": "src/client/App.tsx",
+                    "text": "        <PartyList />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/client/RenameForm.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 28,
+                "endColumn": 36,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useState"
+                }
+              },
+              {
+                "line": 5,
+                "startColumn": 37,
+                "endColumn": 41,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 19,
+                "path": "src/client/api.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 17,
+                "endColumn": 20,
+                "path": "src/client/api.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 21,
+                "endColumn": 26,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 8,
+                "endColumn": 13,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 8,
+                "endColumn": 14,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  7,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 24,
+                "endColumn": 26,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 34,
+                "endColumn": 39,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 20,
+                "endColumn": 25,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 48,
+                "endColumn": 56,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 38,
+                "endColumn": 44,
+                "path": "src/client/RenameForm.tsx",
+                "lines": [
+                  7,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  4,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 11,
+                    "endColumn": 21,
+                    "path": "src/client/PartyList.tsx",
+                    "text": "          <RenameForm id={pokemon.id} name={pokemon.name} />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/server/data/pokemon.ts",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 29,
+                "endColumn": 36,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  8,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 41,
+                "endColumn": 48,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  8,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 48,
+                "endColumn": 50,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 50,
+                "endColumn": 57,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  8,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 59,
+                "endColumn": 70,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 57,
+                "endColumn": 64,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 2,
+                "endColumn": 7,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  8,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 10,
+                "endColumn": 15,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  8,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 49,
+                "endColumn": 51,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 68,
+                "endColumn": 72,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 9,
+                "endColumn": 20,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  17,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 21,
+                "endColumn": 23,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  25,
+                  25
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 17,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  6
+                ],
+                "usages": []
+              },
+              {
+                "line": 13,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  13,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 36,
+                    "endColumn": 45,
+                    "path": "src/server/routers/pokemon.ts",
+                    "text": "  list: publicProcedure.query(() => readParty()),"
+                  }
+                ]
+              },
+              {
+                "line": 17,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  17,
+                  19
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 81,
+                    "endColumn": 92,
+                    "path": "src/server/routers/pokemon.ts",
+                    "text": "  byId: publicProcedure.input(z.object({ id: z.number() })).query(({ input }) => readPokemon(input.id) ?? null),"
+                  },
+                  {
+                    "line": 17,
+                    "startColumn": 10,
+                    "endColumn": 21,
+                    "path": "src/server/routers/pokemon.ts",
+                    "text": "      if (readPokemon(input.id)?.trainerName !== ctx.trainerName) throw new TRPCError({ code: \"FORBIDDEN\" })"
+                  }
+                ]
+              },
+              {
+                "line": 21,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  21,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 46,
+                    "endColumn": 57,
+                    "path": "src/server/routers/pokemon.ts",
+                    "text": "  mine: protectedProcedure.query(({ ctx }) => readPartyOf(ctx.trainerName)),"
+                  }
+                ]
+              },
+              {
+                "line": 25,
+                "startColumn": 16,
+                "endColumn": 29,
+                "lines": [
+                  25,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 18,
+                    "startColumn": 13,
+                    "endColumn": 26,
+                    "path": "src/server/routers/pokemon.ts",
+                    "text": "      return renamePokemon(input.id, input.name)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/server/procedures.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 23,
+                "endColumn": 24,
+                "path": "src/server/trpc.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 6,
+                "endColumn": 9,
+                "path": "src/server/procedures.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 42,
+                "endColumn": 51,
+                "path": "src/server/procedures.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@trpc/server",
+                  "name": "TRPCError"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/server/procedures.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 36,
+                "endColumn": 39,
+                "path": "src/server/procedures.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 34,
+                "endColumn": 35,
+                "path": "src/server/trpc.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 50,
+                "endColumn": 64,
+                "path": "src/server/procedures.ts",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 31,
+                "lines": [
+                  9,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 8,
+                    "endColumn": 26,
+                    "path": "src/server/routers/pokemon.ts",
+                    "text": "  mine: protectedProcedure.query(({ ctx }) => readPartyOf(ctx.trainerName)),"
+                  },
+                  {
+                    "line": 14,
+                    "startColumn": 10,
+                    "endColumn": 28,
+                    "path": "src/server/routers/pokemon.ts",
+                    "text": "  rename: protectedProcedure"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/server/routers/pokemon.ts",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 29,
+                "endColumn": 45,
+                "path": "src/server/trpc.ts",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 8,
+                "endColumn": 23,
+                "path": "src/server/trpc.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 36,
+                "endColumn": 45,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  13,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 8,
+                "endColumn": 23,
+                "path": "src/server/trpc.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 30,
+                "endColumn": 31,
+                "path": "src/server/routers/pokemon.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zod",
+                  "name": "z"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 45,
+                "endColumn": 46,
+                "path": "src/server/routers/pokemon.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zod",
+                  "name": "z"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 81,
+                "endColumn": 92,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  17,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 8,
+                "endColumn": 26,
+                "path": "src/server/procedures.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 46,
+                "endColumn": 57,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  21,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 10,
+                "endColumn": 28,
+                "path": "src/server/procedures.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 11,
+                "endColumn": 12,
+                "path": "src/server/routers/pokemon.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zod",
+                  "name": "z"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 26,
+                "endColumn": 27,
+                "path": "src/server/routers/pokemon.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zod",
+                  "name": "z"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 44,
+                "endColumn": 45,
+                "path": "src/server/routers/pokemon.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zod",
+                  "name": "z"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 10,
+                "endColumn": 21,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  17,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 22,
+                "endColumn": 27,
+                "path": "src/server/routers/pokemon.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 49,
+                "endColumn": 52,
+                "path": "src/server/routers/pokemon.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 76,
+                "endColumn": 85,
+                "path": "src/server/routers/pokemon.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@trpc/server",
+                  "name": "TRPCError"
+                }
+              },
+              {
+                "line": 18,
+                "startColumn": 13,
+                "endColumn": 26,
+                "path": "src/server/data/pokemon.ts",
+                "lines": [
+                  25,
+                  28
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 27,
+                "endColumn": 32,
+                "path": "src/server/routers/pokemon.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 37,
+                "endColumn": 42,
+                "path": "src/server/routers/pokemon.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 26,
+                "lines": [
+                  7,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 11,
+                    "endColumn": 24,
+                    "path": "src/server/root.ts",
+                    "text": "  pokemon: pokemonRouter,"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "title": "State card in MobX",
+  "packages": ["react", "react-dom", "mobx", "mobx-react-lite"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

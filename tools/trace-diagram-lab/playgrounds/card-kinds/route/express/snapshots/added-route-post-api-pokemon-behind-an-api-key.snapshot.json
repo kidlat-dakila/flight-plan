@@ -1,0 +1,1136 @@
+{
+  "title": "Added route POST /api/pokemon behind an API key",
+  "diff": [
+    "diff --git a/src/pokemon/controller.ts b/src/pokemon/controller.ts",
+    "--- a/src/pokemon/controller.ts",
+    "+++ b/src/pokemon/controller.ts",
+    "@@ -5 +5,2 @@ export const listPokemon = (_req: Request, res: Response) => {",
+    "-  res.json(readParty())",
+    "+  const party = readParty().toSorted((first, second) => second.level - first.level)",
+    "+  res.json(party)",
+    "diff --git a/src/pokemon/routes.ts b/src/pokemon/routes.ts",
+    "--- a/src/pokemon/routes.ts",
+    "+++ b/src/pokemon/routes.ts",
+    "@@ -1 +1 @@",
+    "-import { Router } from \"express\"",
+    "+import { Router, type NextFunction, type Request, type Response } from \"express\"",
+    "@@ -3 +3,3 @@ import { listPokemon } from \"@/pokemon/controller\"",
+    "-import { readPokemon } from \"@/pokemon/store\"",
+    "+import { addPokemon, readPokemon } from \"@/pokemon/store\"",
+    "+",
+    "+const API_KEY = \"pallet-town\"",
+    "@@ -6,0 +9,19 @@ export const pokemonRouter = Router()",
+    "+const requireApiKey = (req: Request, res: Response, next: NextFunction) => {",
+    "+  if (req.header(\"x-api-key\") !== API_KEY) {",
+    "+    res.status(401).json({ error: \"The API key is missing or wrong.\" })",
+    "+    return",
+    "+  }",
+    "+  next()",
+    "+}",
+    "+",
+    "+const validatePokemon = (req: Request, res: Response, next: NextFunction) => {",
+    "+  const { name, level } = req.body",
+    "+  if (typeof name !== \"string\" || !Number.isInteger(level)) {",
+    "+    res.status(400).json({ error: \"A Pokemon needs a name and a whole level.\" })",
+    "+    return",
+    "+  }",
+    "+  next()",
+    "+}",
+    "+",
+    "+pokemonRouter.use(requireApiKey)",
+    "+",
+    "@@ -8,0 +30,5 @@ pokemonRouter.get(\"/pokemon\", listPokemon)",
+    "+pokemonRouter.post(\"/pokemon\", validatePokemon, (req, res) => {",
+    "+  const pokemon = addPokemon(req.body.name, req.body.level)",
+    "+  res.status(201).json(pokemon)",
+    "+})",
+    "+",
+    "@@ -10 +36,6 @@ pokemonRouter.get(\"/pokemon/:pokemonId\", (req, res) => {",
+    "-  res.json(readPokemon(Number(req.params.pokemonId)))",
+    "+  const pokemon = readPokemon(Number(req.params.pokemonId))",
+    "+  if (pokemon === undefined) {",
+    "+    res.status(404).end()",
+    "+    return",
+    "+  }",
+    "+  res.json(pokemon)"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New POST /api/pokemon route and middleware, modified listPokemon and GET /api/pokemon/:pokemonId",
+        "importGraph": [
+          {
+            "filePath": "src/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/pokemon/routes.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/routes": "src/pokemon/routes.ts",
+              "@/trainers/routes": "src/trainers/routes.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/controller.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokemon/routes.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/store.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/store": "src/pokemon/store.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/routes.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/index.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/controller.ts",
+              "src/pokemon/store.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/controller": "src/pokemon/controller.ts",
+              "@/pokemon/store": "src/pokemon/store.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/store.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokemon/controller.ts",
+              "src/pokemon/routes.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Pokemon API flow diagram",
+          "description": "This diagram shows how the Pokemon router sends the party and one Pokemon to a client that sends the API key. It also shows what happens when a request reaches `POST /api/pokemon`, and how the new Pokemon reaches the party through `addPokemon()`.",
+          "traceNodes": [
+            {
+              "id": "src/pokemon/routes.ts#function@9:1",
+              "type": "function",
+              "label": "Returns a 401 for a request without the API key",
+              "description": "Two paths reach this middleware, because [`pokemonRouter.use(requireApiKey)` runs it before every route of the router](code:src/pokemon/routes.ts#L26):\n\n- When a client sends `GET` or `POST /api/pokemon`, Express calls this middleware before the handler of the method.\n- When a client sends `GET /api/pokemon/:pokemonId`, Express calls this middleware before [the handler of that route](code:src/pokemon/routes.ts#L35-42).",
+              "codeBlockIds": [
+                "src/pokemon/routes.ts#function@9:1",
+                "src/pokemon/routes.ts#root-variable@5:1",
+                "src/pokemon/routes.ts#root-argument-value@9:24",
+                "src/pokemon/routes.ts#root-argument-value@9:38",
+                "src/pokemon/routes.ts#root-argument-value@9:53",
+                "src/pokemon/routes.ts#condition@10:3",
+                "src/pokemon/routes.ts#root-argument-value@10:7",
+                "src/pokemon/routes.ts#call@11:5",
+                "src/pokemon/routes.ts#root-argument-value@11:5",
+                "src/pokemon/routes.ts#property@11:28",
+                "src/pokemon/routes.ts#call@14:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokemon/routes.ts#function@9:1",
+                "src/pokemon/routes.ts#root-variable@5:1",
+                "src/pokemon/routes.ts#root-argument-value@9:24",
+                "src/pokemon/routes.ts#root-argument-value@9:38",
+                "src/pokemon/routes.ts#root-argument-value@9:53",
+                "src/pokemon/routes.ts#condition@10:3",
+                "src/pokemon/routes.ts#root-argument-value@10:7",
+                "src/pokemon/routes.ts#call@11:5",
+                "src/pokemon/routes.ts#root-argument-value@11:5",
+                "src/pokemon/routes.ts#property@11:28",
+                "src/pokemon/routes.ts#call@14:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Holds the API key that every request must send",
+                  "codeBlockId": "src/pokemon/routes.ts#root-variable@5:1"
+                },
+                {
+                  "label": "Checks whether the `x-api-key` header holds another key, and returns a 401",
+                  "codeBlockId": "src/pokemon/routes.ts#condition@10:3"
+                },
+                {
+                  "label": "Passes the request on to the next handler",
+                  "codeBlockId": "src/pokemon/routes.ts#call@14:3"
+                }
+              ]
+            },
+            {
+              "id": "src/pokemon/routes.ts#function@17:1",
+              "type": "function",
+              "label": "Returns a 400 for a body without a name or a whole level",
+              "description": "When a client sends `POST /api/pokemon`, Express calls this middleware after `requireApiKey()`, because [the route names `validatePokemon` before its handler](code:src/pokemon/routes.ts#L30).",
+              "codeBlockIds": [
+                "src/pokemon/routes.ts#function@17:1",
+                "src/pokemon/routes.ts#root-argument-value@17:26",
+                "src/pokemon/routes.ts#root-argument-value@17:40",
+                "src/pokemon/routes.ts#root-argument-value@17:55",
+                "src/pokemon/routes.ts#variable@18:3",
+                "src/pokemon/routes.ts#root-argument-value@18:27",
+                "src/pokemon/routes.ts#condition@19:3",
+                "src/pokemon/routes.ts#call@20:5",
+                "src/pokemon/routes.ts#root-argument-value@20:5",
+                "src/pokemon/routes.ts#property@20:28",
+                "src/pokemon/routes.ts#call@23:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokemon/routes.ts#function@17:1",
+                "src/pokemon/routes.ts#root-argument-value@17:26",
+                "src/pokemon/routes.ts#root-argument-value@17:40",
+                "src/pokemon/routes.ts#root-argument-value@17:55",
+                "src/pokemon/routes.ts#variable@18:3",
+                "src/pokemon/routes.ts#root-argument-value@18:27",
+                "src/pokemon/routes.ts#condition@19:3",
+                "src/pokemon/routes.ts#call@20:5",
+                "src/pokemon/routes.ts#root-argument-value@20:5",
+                "src/pokemon/routes.ts#property@20:28",
+                "src/pokemon/routes.ts#call@23:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Reads the name and the level from the body",
+                  "codeBlockId": "src/pokemon/routes.ts#variable@18:3"
+                },
+                {
+                  "label": "Checks whether the name is not a string or the level is not a whole number, and returns a 400",
+                  "codeBlockId": "src/pokemon/routes.ts#condition@19:3"
+                },
+                {
+                  "label": "Passes the request on to the handler",
+                  "codeBlockId": "src/pokemon/routes.ts#call@23:3"
+                }
+              ]
+            },
+            {
+              "id": "src/pokemon/routes.ts#route@/api/pokemon",
+              "type": "route",
+              "label": "Lists the Pokemon of the party and adds one",
+              "description": "When a client sends `GET` or `POST /api/pokemon`, Express matches this path, because [`app.use(\"/api\", pokemonRouter)` mounts the router under `/api`](code:src/index.ts#L11). A `GET` runs [`listPokemon()`](code:src/pokemon/controller.ts#listPokemon), and a `POST` runs [the handler written in the route](code:src/pokemon/routes.ts#L30-33).",
+              "codeBlockIds": [
+                "src/pokemon/routes.ts#route@28:1",
+                "src/pokemon/routes.ts#effect-callback@28:31",
+                "src/pokemon/routes.ts#route@30:1",
+                "src/pokemon/routes.ts#effect-callback@30:32",
+                "src/pokemon/routes.ts#effect-callback@30:49"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokemon/routes.ts#route@30:1",
+                "src/pokemon/routes.ts#effect-callback@30:32"
+              ],
+              "children": [
+                {
+                  "id": "src/pokemon/controller.ts#function@4:1",
+                  "type": "function",
+                  "label": "Sends the party from the highest level down",
+                  "description": "When a client sends `GET /api/pokemon`, Express calls this handler after `requireApiKey()`, because [the route names `listPokemon`](code:src/pokemon/routes.ts#L28).",
+                  "codeBlockIds": [
+                    "src/pokemon/controller.ts#function@4:1",
+                    "src/pokemon/controller.ts#external-value@5:3",
+                    "src/pokemon/controller.ts#effect@5:17",
+                    "src/pokemon/controller.ts#effect-callback@5:38",
+                    "src/pokemon/controller.ts#function@5:38",
+                    "src/pokemon/controller.ts#variable@5:39",
+                    "src/pokemon/controller.ts#variable@5:46",
+                    "src/pokemon/controller.ts#call@6:3",
+                    "src/pokemon/controller.ts#root-argument-value@6:3"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokemon/controller.ts#external-value@5:3",
+                    "src/pokemon/controller.ts#effect@5:17",
+                    "src/pokemon/controller.ts#function@5:38",
+                    "src/pokemon/controller.ts#variable@5:39",
+                    "src/pokemon/controller.ts#variable@5:46",
+                    "src/pokemon/controller.ts#call@6:3",
+                    "src/pokemon/controller.ts#root-argument-value@6:3"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Reads every Pokemon of the party",
+                      "codeBlockId": "src/pokemon/controller.ts#external-value@5:3"
+                    },
+                    {
+                      "label": "Sorts the Pokemon from the highest level down",
+                      "codeBlockId": "src/pokemon/controller.ts#effect@5:17"
+                    },
+                    {
+                      "label": "Sends the sorted party as JSON",
+                      "codeBlockId": "src/pokemon/controller.ts#call@6:3"
+                    }
+                  ]
+                },
+                {
+                  "id": "src/pokemon/routes.ts#effect-callback@30:49",
+                  "type": "effect-callback",
+                  "label": "Adds the Pokemon of the body to the party",
+                  "description": "When a client sends `POST /api/pokemon`, Express calls `requireApiKey()`, then `validatePokemon()`, and [`validatePokemon()` calls `next()`](code:src/pokemon/routes.ts#L23), which runs this handler.",
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#effect-callback@30:49",
+                    "src/pokemon/routes.ts#function@30:49",
+                    "src/pokemon/routes.ts#variable@30:50",
+                    "src/pokemon/routes.ts#variable@30:55",
+                    "src/pokemon/routes.ts#external-value@31:3",
+                    "src/pokemon/routes.ts#call@32:3"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokemon/routes.ts#function@30:49",
+                    "src/pokemon/routes.ts#variable@30:50",
+                    "src/pokemon/routes.ts#variable@30:55",
+                    "src/pokemon/routes.ts#external-value@31:3",
+                    "src/pokemon/routes.ts#call@32:3"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Adds a Pokemon with the name and the level of the body",
+                      "codeBlockId": "src/pokemon/routes.ts#external-value@31:3"
+                    },
+                    {
+                      "label": "Sends the new Pokemon with a 201",
+                      "codeBlockId": "src/pokemon/routes.ts#call@32:3"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokemon/routes.ts#route@/api/pokemon/:pokemonId",
+              "type": "route",
+              "label": "Sends one Pokemon of the party",
+              "description": "When a client sends `GET /api/pokemon/:pokemonId`, Express matches this path, because [`app.use(\"/api\", pokemonRouter)` mounts the router under `/api`](code:src/index.ts#L11). It runs [the handler written in the route](code:src/pokemon/routes.ts#L35-42).",
+              "codeBlockIds": [
+                "src/pokemon/routes.ts#route@35:1",
+                "src/pokemon/routes.ts#effect-callback@35:42"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pokemon/routes.ts#effect-callback@35:42",
+                  "type": "effect-callback",
+                  "label": "Sends the Pokemon of the id, or a 404",
+                  "description": "When a client sends `GET /api/pokemon/:pokemonId`, Express calls this handler after [`requireApiKey()` calls `next()`](code:src/pokemon/routes.ts#L14).",
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#effect-callback@35:42",
+                    "src/pokemon/routes.ts#function@35:42",
+                    "src/pokemon/routes.ts#external-value@36:3",
+                    "src/pokemon/routes.ts#condition@37:3",
+                    "src/pokemon/routes.ts#call@38:5",
+                    "src/pokemon/routes.ts#call@41:3"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokemon/routes.ts#external-value@36:3",
+                    "src/pokemon/routes.ts#condition@37:3",
+                    "src/pokemon/routes.ts#call@38:5",
+                    "src/pokemon/routes.ts#call@41:3"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Reads the Pokemon of the id in the path",
+                      "codeBlockId": "src/pokemon/routes.ts#external-value@36:3"
+                    },
+                    {
+                      "label": "Checks whether the party has no Pokemon of the id, and returns a 404",
+                      "codeBlockId": "src/pokemon/routes.ts#condition@37:3"
+                    },
+                    {
+                      "label": "Sends the Pokemon as JSON",
+                      "codeBlockId": "src/pokemon/routes.ts#call@41:3"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokemon/routes.ts#route@/api/pokemon -> src/pokemon/controller.ts#function@4:1",
+              "from": "src/pokemon/routes.ts#route@/api/pokemon",
+              "to": "src/pokemon/controller.ts#function@4:1"
+            },
+            {
+              "id": "src/pokemon/routes.ts#route@/api/pokemon -> src/pokemon/routes.ts#effect-callback@30:49",
+              "from": "src/pokemon/routes.ts#route@/api/pokemon",
+              "to": "src/pokemon/routes.ts#effect-callback@30:49"
+            },
+            {
+              "id": "src/pokemon/routes.ts#route@/api/pokemon/:pokemonId -> src/pokemon/routes.ts#effect-callback@35:42",
+              "from": "src/pokemon/routes.ts#route@/api/pokemon/:pokemonId",
+              "to": "src/pokemon/routes.ts#effect-callback@35:42"
+            },
+            {
+              "id": "src/pokemon/routes.ts#function@17:1 -> src/pokemon/routes.ts#effect-callback@30:49",
+              "from": "src/pokemon/routes.ts#function@17:1",
+              "to": "src/pokemon/routes.ts#effect-callback@30:49"
+            },
+            {
+              "id": "src/pokemon/routes.ts#function@9:1 -> src/pokemon/routes.ts#route@/api/pokemon",
+              "from": "src/pokemon/routes.ts#function@9:1",
+              "to": "src/pokemon/routes.ts#route@/api/pokemon"
+            },
+            {
+              "id": "src/pokemon/routes.ts#function@9:1 -> src/pokemon/routes.ts#route@/api/pokemon/:pokemonId",
+              "from": "src/pokemon/routes.ts#function@9:1",
+              "to": "src/pokemon/routes.ts#route@/api/pokemon/:pokemonId"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokemon/controller.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "listPokemon",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 7
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/controller.ts#function@4:1",
+                    "src/pokemon/controller.ts#external-value@5:3",
+                    "src/pokemon/controller.ts#effect@5:17",
+                    "src/pokemon/controller.ts#function@5:38",
+                    "src/pokemon/controller.ts#variable@5:39",
+                    "src/pokemon/controller.ts#variable@5:46",
+                    "src/pokemon/controller.ts#call@6:3",
+                    "src/pokemon/controller.ts#root-argument-value@6:3"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokemon/routes.ts",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "API_KEY",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 5
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#root-variable@5:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w3",
+                  "declaration": "requireApiKey",
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 15
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#function@9:1",
+                    "src/pokemon/routes.ts#root-argument-value@9:24",
+                    "src/pokemon/routes.ts#root-argument-value@9:38",
+                    "src/pokemon/routes.ts#root-argument-value@9:53",
+                    "src/pokemon/routes.ts#condition@10:3",
+                    "src/pokemon/routes.ts#root-argument-value@10:7",
+                    "src/pokemon/routes.ts#call@11:5",
+                    "src/pokemon/routes.ts#root-argument-value@11:5",
+                    "src/pokemon/routes.ts#property@11:28",
+                    "src/pokemon/routes.ts#call@14:3"
+                  ],
+                  "children": [
+                    {
+                      "id": "w3.1",
+                      "declaration": "requireApiKey › Condition :10",
+                      "range": {
+                        "lineStart": 10,
+                        "lineEnd": 13
+                      },
+                      "codeBlockIds": [
+                        "src/pokemon/routes.ts#condition@10:3",
+                        "src/pokemon/routes.ts#call@11:5",
+                        "src/pokemon/routes.ts#property@11:28"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.2",
+                      "declaration": "requireApiKey › next",
+                      "range": {
+                        "lineStart": 14,
+                        "lineEnd": 14
+                      },
+                      "codeBlockIds": [
+                        "src/pokemon/routes.ts#call@14:3"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w4",
+                  "declaration": "validatePokemon",
+                  "range": {
+                    "lineStart": 17,
+                    "lineEnd": 24
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#function@17:1",
+                    "src/pokemon/routes.ts#root-argument-value@17:26",
+                    "src/pokemon/routes.ts#root-argument-value@17:40",
+                    "src/pokemon/routes.ts#root-argument-value@17:55",
+                    "src/pokemon/routes.ts#variable@18:3",
+                    "src/pokemon/routes.ts#root-argument-value@18:27",
+                    "src/pokemon/routes.ts#condition@19:3",
+                    "src/pokemon/routes.ts#call@20:5",
+                    "src/pokemon/routes.ts#root-argument-value@20:5",
+                    "src/pokemon/routes.ts#property@20:28",
+                    "src/pokemon/routes.ts#call@23:3"
+                  ],
+                  "children": [
+                    {
+                      "id": "w4.1",
+                      "declaration": "validatePokemon › name",
+                      "range": {
+                        "lineStart": 18,
+                        "lineEnd": 18
+                      },
+                      "codeBlockIds": [
+                        "src/pokemon/routes.ts#variable@18:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.2",
+                      "declaration": "validatePokemon › Condition :19",
+                      "range": {
+                        "lineStart": 19,
+                        "lineEnd": 22
+                      },
+                      "codeBlockIds": [
+                        "src/pokemon/routes.ts#condition@19:3",
+                        "src/pokemon/routes.ts#call@20:5",
+                        "src/pokemon/routes.ts#property@20:28"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.3",
+                      "declaration": "validatePokemon › next",
+                      "range": {
+                        "lineStart": 23,
+                        "lineEnd": 23
+                      },
+                      "codeBlockIds": [
+                        "src/pokemon/routes.ts#call@23:3"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w5",
+                  "declaration": "Lines 26–26",
+                  "range": {
+                    "lineStart": 26,
+                    "lineEnd": 26
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#root-statement@26:1",
+                    "src/pokemon/routes.ts#middleware@26:1",
+                    "src/pokemon/routes.ts#effect-callback@26:19"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w6",
+                  "declaration": "Lines 30–33",
+                  "range": {
+                    "lineStart": 30,
+                    "lineEnd": 33
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#root-statement@30:1",
+                    "src/pokemon/routes.ts#route@30:1",
+                    "src/pokemon/routes.ts#effect-callback@30:32",
+                    "src/pokemon/routes.ts#function@30:49",
+                    "src/pokemon/routes.ts#variable@30:50",
+                    "src/pokemon/routes.ts#variable@30:55",
+                    "src/pokemon/routes.ts#external-value@31:3",
+                    "src/pokemon/routes.ts#call@32:3"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "Lines 35–42",
+                  "range": {
+                    "lineStart": 35,
+                    "lineEnd": 42
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#root-statement@35:1",
+                    "src/pokemon/routes.ts#external-value@36:3",
+                    "src/pokemon/routes.ts#condition@37:3",
+                    "src/pokemon/routes.ts#call@38:5",
+                    "src/pokemon/routes.ts#call@41:3"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokemon/controller.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 34,
+                "endColumn": 41,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "Request"
+                }
+              },
+              {
+                "line": 4,
+                "startColumn": 48,
+                "endColumn": 56,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "Response"
+                }
+              },
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 25,
+                "path": "src/pokemon/store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 2,
+                "endColumn": 5,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 11,
+                "endColumn": 16,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  4,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 28,
+                    "startColumn": 30,
+                    "endColumn": 41,
+                    "path": "src/pokemon/routes.ts",
+                    "text": "pokemonRouter.get(\"/pokemon\", listPokemon)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokemon/routes.ts",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 29,
+                "endColumn": 35,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "Router"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 28,
+                "endColumn": 35,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "Request"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 42,
+                "endColumn": 50,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "Response"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 58,
+                "endColumn": 70,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "NextFunction"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 6,
+                "endColumn": 9,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 34,
+                "endColumn": 41,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 2,
+                "endColumn": 6,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 30,
+                "endColumn": 37,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "Request"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 44,
+                "endColumn": 52,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "Response"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 60,
+                "endColumn": 72,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "NextFunction"
+                }
+              },
+              {
+                "line": 18,
+                "startColumn": 26,
+                "endColumn": 29,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 13,
+                "endColumn": 17,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 52,
+                "endColumn": 57,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 2,
+                "endColumn": 6,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 0,
+                "endColumn": 13,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 18,
+                "endColumn": 31,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 0,
+                "endColumn": 13,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 30,
+                "endColumn": 41,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 30,
+                "startColumn": 0,
+                "endColumn": 13,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 30,
+                "startColumn": 31,
+                "endColumn": 46,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  17,
+                  24
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 18,
+                "endColumn": 28,
+                "path": "src/pokemon/store.ts",
+                "lines": [
+                  16,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 29,
+                "endColumn": 32,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  30,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 44,
+                "endColumn": 47,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  30,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 2,
+                "endColumn": 5,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  30,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 23,
+                "endColumn": 30,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  31,
+                  31
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 35,
+                "startColumn": 0,
+                "endColumn": 13,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 18,
+                "endColumn": 29,
+                "path": "src/pokemon/store.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 37,
+                "endColumn": 40,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  35,
+                  35
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 37,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  36,
+                  36
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 38,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  35,
+                  35
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 41,
+                "startColumn": 2,
+                "endColumn": 5,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  35,
+                  35
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 41,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  36,
+                  36
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 19,
+                "startColumn": 35,
+                "endColumn": 41,
+                "name": "Number"
+              },
+              {
+                "line": 36,
+                "startColumn": 30,
+                "endColumn": 36,
+                "name": "Number"
+              }
+            ],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 26,
+                "lines": [
+                  7,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 16,
+                    "endColumn": 29,
+                    "path": "src/index.ts",
+                    "text": "app.use(\"/api\", pokemonRouter)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

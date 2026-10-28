@@ -1,0 +1,6 @@
+{
+  "title": "State card in Effector",
+  "packages": ["react", "react-dom", "effector", "effector-react"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

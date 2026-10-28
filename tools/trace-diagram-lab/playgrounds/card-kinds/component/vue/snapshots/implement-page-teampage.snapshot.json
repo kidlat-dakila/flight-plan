@@ -1,0 +1,2032 @@
+{
+  "title": "Implement page TeamPage",
+  "diff": [
+    "diff --git a/src/api/teams.ts b/src/api/teams.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/api/teams.ts",
+    "@@ -0,0 +1,4 @@",
+    "+export const publishTeam = async (trainerId: number): Promise<void> => {",
+    "+  const response = await fetch(`/api/trainers/${trainerId}/team/publish`, { method: \"POST\" })",
+    "+  if (!response.ok) throw new Error(`Publishing the team failed with ${response.status}.`)",
+    "+}",
+    "diff --git a/src/composables/use-trainer.ts b/src/composables/use-trainer.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/composables/use-trainer.ts",
+    "@@ -0,0 +1,17 @@",
+    "+import { ref, watch, type Ref } from \"vue\"",
+    "+import { request } from \"@/api/client\"",
+    "+import type { Trainer } from \"@/types/trainer\"",
+    "+",
+    "+export const useTrainer = (trainerId: Ref<number>) => {",
+    "+  const trainer = ref<Trainer | null>(null)",
+    "+",
+    "+  watch(",
+    "+    trainerId,",
+    "+    async (id) => {",
+    "+      trainer.value = await request<Trainer>(`/trainers/${id}`)",
+    "+    },",
+    "+    { immediate: true },",
+    "+  )",
+    "+",
+    "+  return trainer",
+    "+}",
+    "diff --git a/src/lib/team-title.ts b/src/lib/team-title.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/lib/team-title.ts",
+    "@@ -0,0 +1,2 @@",
+    "+export const formatTeamTitle = (trainerName: string, teamSize: number, maxSlots: number): string =>",
+    "+  `${trainerName}'s team, ${teamSize} of ${maxSlots}`",
+    "diff --git a/src/main.ts b/src/main.ts",
+    "--- a/src/main.ts",
+    "+++ b/src/main.ts",
+    "@@ -2,0 +3 @@ import PokedexPage from \"@/views/pokedex/PokedexPage.vue\"",
+    "+import TeamPage from \"@/views/team/TeamPage.vue\"",
+    "@@ -4,0 +6 @@ const pokedexApp = createApp(PokedexPage)",
+    "+const teamApp = createApp(TeamPage, { trainerId: 1, maxSlots: 6 })",
+    "@@ -6,0 +9 @@ pokedexApp.mount(\"#pokedex\")",
+    "+teamApp.mount(\"#team\")",
+    "diff --git a/src/types/trainer.ts b/src/types/trainer.ts",
+    "--- a/src/types/trainer.ts",
+    "+++ b/src/types/trainer.ts",
+    "@@ -0,0 +1,2 @@",
+    "+import type { Pokemon } from \"@/types/pokemon\"",
+    "+",
+    "@@ -3,0 +6 @@ export interface Trainer {",
+    "+  team: Pokemon[]",
+    "diff --git a/src/views/team/TeamPage.vue b/src/views/team/TeamPage.vue",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/views/team/TeamPage.vue",
+    "@@ -0,0 +1,46 @@",
+    "+<script setup lang=\"ts\">",
+    "+import { computed, ref, toRef, watch } from \"vue\"",
+    "+import { publishTeam } from \"@/api/teams\"",
+    "+import { useTrainer } from \"@/composables/use-trainer\"",
+    "+import { formatTeamTitle } from \"@/lib/team-title\"",
+    "+import TeamSlot from \"@/views/team/components/TeamSlot.vue\"",
+    "+",
+    "+const LAST_TRAINER_KEY = \"team-builder.last-trainer\"",
+    "+",
+    "+const props = defineProps<{ trainerId: number, maxSlots: number }>()",
+    "+",
+    "+if (props.maxSlots < 1) throw new Error(\"A team needs at least one slot.\")",
+    "+",
+    "+const isPublishing = ref(false)",
+    "+const trainer = useTrainer(toRef(props, \"trainerId\"))",
+    "+const lastTrainerId = localStorage.getItem(LAST_TRAINER_KEY)",
+    "+const title = computed(() => (trainer.value === null ? \"\" : formatTeamTitle(trainer.value.name, trainer.value.team.length, props.maxSlots)))",
+    "+",
+    "+watch(",
+    "+  () => props.trainerId,",
+    "+  (id) => {",
+    "+    localStorage.setItem(LAST_TRAINER_KEY, String(id))",
+    "+  },",
+    "+  { immediate: true },",
+    "+)",
+    "+",
+    "+const publish = async () => {",
+    "+  isPublishing.value = true",
+    "+  await publishTeam(props.trainerId)",
+    "+  isPublishing.value = false",
+    "+}",
+    "+</script>",
+    "+",
+    "+<template>",
+    "+  <section>",
+    "+    <p v-if=\"lastTrainerId === String(trainerId)\">Welcome back.</p>",
+    "+    <p v-if=\"trainer === null\">Loading the trainer…</p>",
+    "+    <template v-else>",
+    "+      <h1>{{ title }}</h1>",
+    "+      <ul>",
+    "+        <TeamSlot v-for=\"pokemon in trainer.team\" :key=\"pokemon.id\" :pokemon=\"pokemon\" />",
+    "+      </ul>",
+    "+      <button type=\"button\" :disabled=\"isPublishing\" @click=\"publish\">Publish the team</button>",
+    "+    </template>",
+    "+  </section>",
+    "+</template>",
+    "diff --git a/src/views/team/components/TeamSlot.vue b/src/views/team/components/TeamSlot.vue",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/views/team/components/TeamSlot.vue",
+    "@@ -0,0 +1,10 @@",
+    "+<script setup lang=\"ts\">",
+    "+import { formatNumber } from \"@/lib/format\"",
+    "+import type { Pokemon } from \"@/types/pokemon\"",
+    "+",
+    "+defineProps<{ pokemon: Pokemon }>()",
+    "+</script>",
+    "+",
+    "+<template>",
+    "+  <li>{{ formatNumber(pokemon.id) }} {{ pokemon.name }} · {{ pokemon.type }}</li>",
+    "+</template>"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New TeamPage, TeamSlot, useTrainer, publishTeam and formatTeamTitle, modified main.ts and Trainer",
+        "importGraph": [
+          {
+            "filePath": "src/api/client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/pokedex.ts",
+              "src/composables/use-trainer.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/api/pokedex.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/composables/use-pokedex.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/api/teams.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/team/TeamPage.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/composables/use-pokedex.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/pokedex/PokedexPage.vue"
+            ],
+            "importsTo": [
+              "src/api/pokedex.ts",
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/pokedex": "src/api/pokedex.ts",
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/composables/use-trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/team/TeamPage.vue"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/lib/format.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/pokedex/PokedexPage.vue",
+              "src/views/team/components/TeamSlot.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/lib/team-title.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/team/TeamPage.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/views/pokedex/PokedexPage.vue",
+              "src/views/team/TeamPage.vue"
+            ],
+            "importedFilePaths": {
+              "@/views/pokedex/PokedexPage.vue": "src/views/pokedex/PokedexPage.vue",
+              "@/views/team/TeamPage.vue": "src/views/team/TeamPage.vue"
+            }
+          },
+          {
+            "filePath": "src/types/pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/pokedex.ts",
+              "src/composables/use-pokedex.ts",
+              "src/types/trainer.ts",
+              "src/views/team/components/TeamSlot.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/types/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/composables/use-trainer.ts"
+            ],
+            "importsTo": [
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/views/pokedex/PokedexPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/composables/use-pokedex.ts",
+              "src/lib/format.ts"
+            ],
+            "importedFilePaths": {
+              "@/composables/use-pokedex": "src/composables/use-pokedex.ts",
+              "@/lib/format": "src/lib/format.ts"
+            }
+          },
+          {
+            "filePath": "src/views/team/TeamPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/api/teams.ts",
+              "src/composables/use-trainer.ts",
+              "src/lib/team-title.ts",
+              "src/views/team/components/TeamSlot.vue"
+            ],
+            "importedFilePaths": {
+              "@/api/teams": "src/api/teams.ts",
+              "@/composables/use-trainer": "src/composables/use-trainer.ts",
+              "@/lib/team-title": "src/lib/team-title.ts",
+              "@/views/team/components/TeamSlot.vue": "src/views/team/components/TeamSlot.vue"
+            }
+          },
+          {
+            "filePath": "src/views/team/components/TeamSlot.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/team/TeamPage.vue"
+            ],
+            "importsTo": [
+              "src/lib/format.ts",
+              "src/types/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/format": "src/lib/format.ts",
+              "@/types/pokemon": "src/types/pokemon.ts"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Load and publish team flow diagram",
+          "description": "This diagram shows how the team page loads a trainer through `useTrainer()` and renders the team of that trainer. It also shows what happens when the user publishes the team, and how the request reaches the API through `publishTeam()`.",
+          "traceNodes": [
+            {
+              "id": "src/composables/use-trainer.ts#hook@5:1",
+              "type": "hook",
+              "label": "Loads one trainer by its id",
+              "description": "When `teamApp` mounts `TeamPage`, [`TeamPage` calls this composable with a ref of `trainerId`](code:src/views/team/TeamPage.vue#L15). The composable [watches the ref](code:src/composables/use-trainer.ts#L8-15) and calls `request()` with `/trainers/1` at once.",
+              "codeBlockIds": [
+                "src/composables/use-trainer.ts#hook@5:1",
+                "src/composables/use-trainer.ts#root-argument-value@5:28",
+                "src/composables/use-trainer.ts#state@6:3",
+                "src/composables/use-trainer.ts#component-effect@8:3",
+                "src/composables/use-trainer.ts#effect-callback@9:5",
+                "src/composables/use-trainer.ts#effect-callback@10:5",
+                "src/composables/use-trainer.ts#function@10:5",
+                "src/composables/use-trainer.ts#variable@10:12",
+                "src/composables/use-trainer.ts#property@13:7"
+              ],
+              "diffCodeBlockIds": [
+                "src/composables/use-trainer.ts#hook@5:1",
+                "src/composables/use-trainer.ts#root-argument-value@5:28",
+                "src/composables/use-trainer.ts#state@6:3",
+                "src/composables/use-trainer.ts#component-effect@8:3",
+                "src/composables/use-trainer.ts#effect-callback@9:5",
+                "src/composables/use-trainer.ts#function@10:5",
+                "src/composables/use-trainer.ts#variable@10:12",
+                "src/composables/use-trainer.ts#property@13:7"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps the loaded trainer, or `null` before the response",
+                  "codeBlockId": "src/composables/use-trainer.ts#state@6:3"
+                },
+                {
+                  "label": "Watches the trainer id and requests the trainer at once",
+                  "codeBlockId": "src/composables/use-trainer.ts#component-effect@8:3"
+                },
+                {
+                  "label": "Requests the trainer again each time the id changes",
+                  "codeBlockId": "src/composables/use-trainer.ts#effect-callback@9:5"
+                }
+              ]
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component@1:1",
+              "type": "component",
+              "label": "Shows the team of one trainer with a Publish button",
+              "description": "When the page loads, [`main.ts` creates `teamApp` with this component](code:src/main.ts#L6) and `trainerId` 1 and `maxSlots` 6, and [mounts it on `#team`](code:src/main.ts#L9). When the user clicks Publish the team, the handler of the button calls `publishTeam()`.",
+              "codeBlockIds": [
+                "src/views/team/TeamPage.vue#component@1:1",
+                "src/views/team/TeamPage.vue#variable@8:1",
+                "src/views/team/TeamPage.vue#variable@10:1",
+                "src/views/team/TeamPage.vue#root-argument-value@10:29",
+                "src/views/team/TeamPage.vue#root-argument-value@10:48",
+                "src/views/team/TeamPage.vue#condition@12:1",
+                "src/views/team/TeamPage.vue#throw@12:25",
+                "src/views/team/TeamPage.vue#state@14:1",
+                "src/views/team/TeamPage.vue#external-value@15:1",
+                "src/views/team/TeamPage.vue#external-value@16:1",
+                "src/views/team/TeamPage.vue#storage@16:23",
+                "src/views/team/TeamPage.vue#derived@17:1",
+                "src/views/team/TeamPage.vue#component-effect@17:15",
+                "src/views/team/TeamPage.vue#effect-callback@17:24",
+                "src/views/team/TeamPage.vue#function@17:24",
+                "src/views/team/TeamPage.vue#condition@17:31",
+                "src/views/team/TeamPage.vue#component-effect@19:1",
+                "src/views/team/TeamPage.vue#render-root@34:1",
+                "src/views/team/TeamPage.vue#render@35:3",
+                "src/views/team/TeamPage.vue#render-condition@36:5",
+                "src/views/team/TeamPage.vue#render@36:5",
+                "src/views/team/TeamPage.vue#render-condition@37:5",
+                "src/views/team/TeamPage.vue#render@37:5",
+                "src/views/team/TeamPage.vue#render-condition@38:5",
+                "src/views/team/TeamPage.vue#render@38:5",
+                "src/views/team/TeamPage.vue#render@39:7",
+                "src/views/team/TeamPage.vue#render@40:7",
+                "src/views/team/TeamPage.vue#render-loop@41:9",
+                "src/views/team/TeamPage.vue#render@41:9",
+                "src/views/team/TeamPage.vue#render@43:7",
+                "src/views/team/TeamPage.vue#render-event@43:54"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/team/TeamPage.vue#component@1:1",
+                "src/views/team/TeamPage.vue#variable@8:1",
+                "src/views/team/TeamPage.vue#variable@10:1",
+                "src/views/team/TeamPage.vue#root-argument-value@10:29",
+                "src/views/team/TeamPage.vue#root-argument-value@10:48",
+                "src/views/team/TeamPage.vue#condition@12:1",
+                "src/views/team/TeamPage.vue#throw@12:25",
+                "src/views/team/TeamPage.vue#state@14:1",
+                "src/views/team/TeamPage.vue#external-value@15:1",
+                "src/views/team/TeamPage.vue#external-value@16:1",
+                "src/views/team/TeamPage.vue#storage@16:23",
+                "src/views/team/TeamPage.vue#derived@17:1",
+                "src/views/team/TeamPage.vue#component-effect@17:15",
+                "src/views/team/TeamPage.vue#function@17:24",
+                "src/views/team/TeamPage.vue#condition@17:31",
+                "src/views/team/TeamPage.vue#component-effect@19:1",
+                "src/views/team/TeamPage.vue#render-root@34:1",
+                "src/views/team/TeamPage.vue#render@35:3",
+                "src/views/team/TeamPage.vue#render@36:5",
+                "src/views/team/TeamPage.vue#render@37:5",
+                "src/views/team/TeamPage.vue#render@38:5",
+                "src/views/team/TeamPage.vue#render@39:7",
+                "src/views/team/TeamPage.vue#render@40:7",
+                "src/views/team/TeamPage.vue#render@41:9",
+                "src/views/team/TeamPage.vue#render@43:7",
+                "src/views/team/TeamPage.vue#render-event@43:54"
+              ],
+              "children": [
+                {
+                  "id": "src/views/team/components/TeamSlot.vue#component@1:1",
+                  "type": "component",
+                  "label": "Shows the number, name and type of one Pokemon",
+                  "description": "When `TeamPage` renders a loaded trainer, [it renders this component](code:src/views/team/TeamPage.vue#L41) once for each Pokemon of `trainer.team`.",
+                  "codeBlockIds": [
+                    "src/views/team/components/TeamSlot.vue#component@1:1",
+                    "src/views/team/components/TeamSlot.vue#call@5:1",
+                    "src/views/team/components/TeamSlot.vue#root-argument-value@5:15",
+                    "src/views/team/components/TeamSlot.vue#render-root@8:1",
+                    "src/views/team/components/TeamSlot.vue#render@9:3"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/views/team/components/TeamSlot.vue#component@1:1",
+                    "src/views/team/components/TeamSlot.vue#call@5:1",
+                    "src/views/team/components/TeamSlot.vue#root-argument-value@5:15",
+                    "src/views/team/components/TeamSlot.vue#render-root@8:1",
+                    "src/views/team/components/TeamSlot.vue#render@9:3"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Declares the Pokemon the slot shows",
+                      "codeBlockId": "src/views/team/components/TeamSlot.vue#call@5:1"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [
+                {
+                  "label": "A user clicks Publish the team",
+                  "codeBlockId": "src/views/team/TeamPage.vue#render-event@43:54"
+                }
+              ],
+              "blockLabels": [
+                {
+                  "label": "Names the storage key and reads the props of the page",
+                  "codeBlockId": "src/views/team/TeamPage.vue#variable@8:1"
+                },
+                {
+                  "label": "Throws an error when the team has no slot",
+                  "codeBlockId": "src/views/team/TeamPage.vue#condition@12:1"
+                },
+                {
+                  "label": "Keeps whether the team is being published",
+                  "codeBlockId": "src/views/team/TeamPage.vue#state@14:1"
+                },
+                {
+                  "label": "Gets the trainer with their team",
+                  "codeBlockId": "src/views/team/TeamPage.vue#external-value@15:1"
+                },
+                {
+                  "label": "Reads the id of the trainer last opened from `localStorage`",
+                  "codeBlockId": "src/views/team/TeamPage.vue#external-value@16:1"
+                },
+                {
+                  "label": "Builds the heading from the trainer name and the team size",
+                  "codeBlockId": "src/views/team/TeamPage.vue#derived@17:1"
+                },
+                {
+                  "label": "Remembers the trainer id at once and after each change",
+                  "codeBlockId": "src/views/team/TeamPage.vue#component-effect@19:1"
+                }
+              ]
+            },
+            {
+              "id": "src/main.ts#root-variable@6:1",
+              "type": "root-variable",
+              "label": "Creates the team app with the team page as its root",
+              "description": "When the page loads, `main.ts` runs this statement, and [`teamApp.mount(\"#team\")`](code:src/main.ts#L9) renders `TeamPage` with the props it is given.",
+              "codeBlockIds": [
+                "src/main.ts#root-variable@6:1",
+                "src/main.ts#effect@6:17",
+                "src/main.ts#effect-callback@6:27",
+                "src/main.ts#property@6:39",
+                "src/main.ts#property@6:53"
+              ],
+              "diffCodeBlockIds": [
+                "src/main.ts#root-variable@6:1",
+                "src/main.ts#effect@6:17",
+                "src/main.ts#effect-callback@6:27",
+                "src/main.ts#property@6:39",
+                "src/main.ts#property@6:53"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Creates the app with `trainerId` 1 and `maxSlots` 6",
+                  "codeBlockId": "src/main.ts#effect@6:17"
+                },
+                {
+                  "label": "Uses `TeamPage` as the root component",
+                  "codeBlockId": "src/main.ts#effect-callback@6:27"
+                }
+              ]
+            },
+            {
+              "id": "src/api/teams.ts#function@1:1",
+              "type": "function",
+              "label": "Sends a POST request that publishes the team",
+              "description": "When the user clicks Publish the team, the handler of the button [calls `publishTeam(1)`](code:src/views/team/TeamPage.vue#L29).",
+              "codeBlockIds": [
+                "src/api/teams.ts#function@1:1",
+                "src/api/teams.ts#root-argument-value@1:35",
+                "src/api/teams.ts#external-value@2:3",
+                "src/api/teams.ts#request@2:26",
+                "src/api/teams.ts#property@2:77",
+                "src/api/teams.ts#condition@3:3",
+                "src/api/teams.ts#throw@3:21"
+              ],
+              "diffCodeBlockIds": [
+                "src/api/teams.ts#function@1:1",
+                "src/api/teams.ts#root-argument-value@1:35",
+                "src/api/teams.ts#external-value@2:3",
+                "src/api/teams.ts#request@2:26",
+                "src/api/teams.ts#property@2:77",
+                "src/api/teams.ts#condition@3:3",
+                "src/api/teams.ts#throw@3:21"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Posts to `/api/trainers/1/team/publish`",
+                  "codeBlockId": "src/api/teams.ts#external-value@2:3"
+                },
+                {
+                  "label": "Throws an error when the response status is not 2xx",
+                  "codeBlockId": "src/api/teams.ts#condition@3:3"
+                }
+              ]
+            },
+            {
+              "id": "src/lib/team-title.ts#function@1:1",
+              "type": "function",
+              "label": "Writes the trainer name and the filled slots as a heading",
+              "description": "When `TeamPage` renders a loaded trainer, [its computed `title` calls this function](code:src/views/team/TeamPage.vue#L17) with the name of the trainer, the size of the team and `6`.",
+              "codeBlockIds": [
+                "src/lib/team-title.ts#function@1:1",
+                "src/lib/team-title.ts#root-argument-value@1:33",
+                "src/lib/team-title.ts#root-argument-value@1:54",
+                "src/lib/team-title.ts#root-argument-value@1:72"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/team-title.ts#function@1:1",
+                "src/lib/team-title.ts#root-argument-value@1:33",
+                "src/lib/team-title.ts#root-argument-value@1:54",
+                "src/lib/team-title.ts#root-argument-value@1:72"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component-effect@19:1",
+              "type": "component-effect",
+              "label": "Runs its callback at once and after each change of the trainer id",
+              "description": "When `TeamPage` runs its setup, [`watch()` reads `props.trainerId`](code:src/views/team/TeamPage.vue#L20) and runs the callback at once, because `immediate` is `true`.",
+              "codeBlockIds": [
+                "src/views/team/TeamPage.vue#component-effect@19:1",
+                "src/views/team/TeamPage.vue#effect-callback@20:3",
+                "src/views/team/TeamPage.vue#function@20:3",
+                "src/views/team/TeamPage.vue#effect-callback@21:3",
+                "src/views/team/TeamPage.vue#property@24:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/team/TeamPage.vue#component-effect@19:1",
+                "src/views/team/TeamPage.vue#function@20:3",
+                "src/views/team/TeamPage.vue#property@24:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Reads the trainer id to watch",
+                  "codeBlockId": "src/views/team/TeamPage.vue#effect-callback@20:3"
+                },
+                {
+                  "label": "Runs the callback that stores the trainer id",
+                  "codeBlockId": "src/views/team/TeamPage.vue#effect-callback@21:3"
+                },
+                {
+                  "label": "Asks for a first run without a change",
+                  "codeBlockId": "src/views/team/TeamPage.vue#property@24:5"
+                }
+              ]
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#render-event@43:54",
+              "type": "render-event",
+              "label": "Publishes the team and disables the button until the request ends",
+              "description": "When the user clicks Publish the team, [the button runs `publish()`](code:src/views/team/TeamPage.vue#L43), which sets `isPublishing` to `true`, calls `publishTeam(1)` and sets `isPublishing` back to `false`.",
+              "codeBlockIds": [
+                "src/views/team/TeamPage.vue#render-event@43:54",
+                "src/views/team/TeamPage.vue#function@27:1",
+                "src/views/team/TeamPage.vue#call@29:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/team/TeamPage.vue#render-event@43:54",
+                "src/views/team/TeamPage.vue#function@27:1",
+                "src/views/team/TeamPage.vue#call@29:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Publishes the team of the trainer",
+                  "codeBlockId": "src/views/team/TeamPage.vue#call@29:3"
+                }
+              ]
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#effect-callback@21:3",
+              "type": "effect-callback",
+              "label": "Stores the id of the trainer last opened",
+              "description": "When `watch()` of `TeamPage` runs, it calls this callback with the trainer id, and [the callback writes `\"1\"` to `localStorage`](code:src/views/team/TeamPage.vue#L22).",
+              "codeBlockIds": [
+                "src/views/team/TeamPage.vue#effect-callback@21:3",
+                "src/views/team/TeamPage.vue#function@21:3",
+                "src/views/team/TeamPage.vue#variable@21:4",
+                "src/views/team/TeamPage.vue#storage@22:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/team/TeamPage.vue#function@21:3",
+                "src/views/team/TeamPage.vue#variable@21:4",
+                "src/views/team/TeamPage.vue#storage@22:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Writes `\"1\"` under `team-builder.last-trainer`",
+                  "codeBlockId": "src/views/team/TeamPage.vue#storage@22:5"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/main.ts#root-variable@6:1 -> src/views/team/TeamPage.vue#component@1:1",
+              "from": "src/main.ts#root-variable@6:1",
+              "to": "src/views/team/TeamPage.vue#component@1:1"
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#render-event@43:54 -> src/api/teams.ts#function@1:1",
+              "from": "src/views/team/TeamPage.vue#render-event@43:54",
+              "to": "src/api/teams.ts#function@1:1"
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component@1:1 -> src/composables/use-trainer.ts#hook@5:1",
+              "from": "src/views/team/TeamPage.vue#component@1:1",
+              "to": "src/composables/use-trainer.ts#hook@5:1"
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component@1:1 -> src/views/team/components/TeamSlot.vue#component@1:1",
+              "from": "src/views/team/TeamPage.vue#component@1:1",
+              "to": "src/views/team/components/TeamSlot.vue#component@1:1"
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component@1:1 -> src/lib/team-title.ts#function@1:1",
+              "from": "src/views/team/TeamPage.vue#component@1:1",
+              "to": "src/lib/team-title.ts#function@1:1"
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component@1:1 -> src/views/team/TeamPage.vue#component-effect@19:1",
+              "from": "src/views/team/TeamPage.vue#component@1:1",
+              "to": "src/views/team/TeamPage.vue#component-effect@19:1"
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component@1:1 -> src/views/team/TeamPage.vue#render-event@43:54",
+              "from": "src/views/team/TeamPage.vue#component@1:1",
+              "to": "src/views/team/TeamPage.vue#render-event@43:54"
+            },
+            {
+              "id": "src/views/team/TeamPage.vue#component-effect@19:1 -> src/views/team/TeamPage.vue#effect-callback@21:3",
+              "from": "src/views/team/TeamPage.vue#component-effect@19:1",
+              "to": "src/views/team/TeamPage.vue#effect-callback@21:3"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/api/teams.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "publishTeam",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 4
+                  },
+                  "codeBlockIds": [
+                    "src/api/teams.ts#function@1:1",
+                    "src/api/teams.ts#root-argument-value@1:35",
+                    "src/api/teams.ts#external-value@2:3",
+                    "src/api/teams.ts#request@2:26",
+                    "src/api/teams.ts#property@2:77",
+                    "src/api/teams.ts#condition@3:3",
+                    "src/api/teams.ts#throw@3:21"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/composables/use-trainer.ts",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "useTrainer",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 17
+                  },
+                  "codeBlockIds": [
+                    "src/composables/use-trainer.ts#hook@5:1",
+                    "src/composables/use-trainer.ts#root-argument-value@5:28",
+                    "src/composables/use-trainer.ts#state@6:3",
+                    "src/composables/use-trainer.ts#component-effect@8:3",
+                    "src/composables/use-trainer.ts#effect-callback@9:5",
+                    "src/composables/use-trainer.ts#function@10:5",
+                    "src/composables/use-trainer.ts#variable@10:12",
+                    "src/composables/use-trainer.ts#property@13:7"
+                  ],
+                  "children": [
+                    {
+                      "id": "w2.1",
+                      "declaration": "useTrainer › trainer",
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "codeBlockIds": [
+                        "src/composables/use-trainer.ts#state@6:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.2",
+                      "declaration": "useTrainer › watch",
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 14
+                      },
+                      "codeBlockIds": [
+                        "src/composables/use-trainer.ts#component-effect@8:3",
+                        "src/composables/use-trainer.ts#effect-callback@9:5",
+                        "src/composables/use-trainer.ts#function@10:5",
+                        "src/composables/use-trainer.ts#variable@10:12",
+                        "src/composables/use-trainer.ts#property@13:7"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/lib/team-title.ts",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "formatTeamTitle",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 2
+                  },
+                  "codeBlockIds": [
+                    "src/lib/team-title.ts#function@1:1",
+                    "src/lib/team-title.ts#root-argument-value@1:33",
+                    "src/lib/team-title.ts#root-argument-value@1:54",
+                    "src/lib/team-title.ts#root-argument-value@1:72"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/main.ts",
+              "waypoints": [
+                {
+                  "id": "w4",
+                  "declaration": "teamApp",
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 6
+                  },
+                  "codeBlockIds": [
+                    "src/main.ts#root-variable@6:1",
+                    "src/main.ts#effect@6:17",
+                    "src/main.ts#effect-callback@6:27",
+                    "src/main.ts#property@6:39",
+                    "src/main.ts#property@6:53"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w5",
+                  "declaration": "Lines 9–9",
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/main.ts#root-statement@9:1"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/types/trainer.ts",
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "declaration": "Trainer",
+                  "range": {
+                    "lineStart": 3,
+                    "lineEnd": 7
+                  },
+                  "codeBlockIds": [
+                    "src/types/trainer.ts#type-declaration@3:1"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/views/team/TeamPage.vue",
+              "waypoints": [
+                {
+                  "id": "w7",
+                  "declaration": "TeamPage",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 46
+                  },
+                  "codeBlockIds": [
+                    "src/views/team/TeamPage.vue#component@1:1",
+                    "src/views/team/TeamPage.vue#variable@8:1",
+                    "src/views/team/TeamPage.vue#variable@10:1",
+                    "src/views/team/TeamPage.vue#root-argument-value@10:29",
+                    "src/views/team/TeamPage.vue#root-argument-value@10:48",
+                    "src/views/team/TeamPage.vue#condition@12:1",
+                    "src/views/team/TeamPage.vue#throw@12:25",
+                    "src/views/team/TeamPage.vue#state@14:1",
+                    "src/views/team/TeamPage.vue#external-value@15:1",
+                    "src/views/team/TeamPage.vue#external-value@16:1",
+                    "src/views/team/TeamPage.vue#storage@16:23",
+                    "src/views/team/TeamPage.vue#derived@17:1",
+                    "src/views/team/TeamPage.vue#component-effect@17:15",
+                    "src/views/team/TeamPage.vue#function@17:24",
+                    "src/views/team/TeamPage.vue#condition@17:31",
+                    "src/views/team/TeamPage.vue#component-effect@19:1",
+                    "src/views/team/TeamPage.vue#function@20:3",
+                    "src/views/team/TeamPage.vue#function@21:3",
+                    "src/views/team/TeamPage.vue#variable@21:4",
+                    "src/views/team/TeamPage.vue#storage@22:5",
+                    "src/views/team/TeamPage.vue#property@24:5",
+                    "src/views/team/TeamPage.vue#function@27:1",
+                    "src/views/team/TeamPage.vue#call@29:3",
+                    "src/views/team/TeamPage.vue#render-root@34:1",
+                    "src/views/team/TeamPage.vue#render@35:3",
+                    "src/views/team/TeamPage.vue#render@36:5",
+                    "src/views/team/TeamPage.vue#render@37:5",
+                    "src/views/team/TeamPage.vue#render@38:5",
+                    "src/views/team/TeamPage.vue#render@39:7",
+                    "src/views/team/TeamPage.vue#render@40:7",
+                    "src/views/team/TeamPage.vue#render@41:9",
+                    "src/views/team/TeamPage.vue#render@43:7",
+                    "src/views/team/TeamPage.vue#render-event@43:54"
+                  ],
+                  "children": [
+                    {
+                      "id": "w7.1",
+                      "declaration": "TeamPage › LAST_TRAINER_KEY",
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#variable@8:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.2",
+                      "declaration": "TeamPage › props",
+                      "range": {
+                        "lineStart": 10,
+                        "lineEnd": 10
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#variable@10:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.3",
+                      "declaration": "TeamPage › Condition :12",
+                      "range": {
+                        "lineStart": 12,
+                        "lineEnd": 12
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#condition@12:1",
+                        "src/views/team/TeamPage.vue#throw@12:25"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.4",
+                      "declaration": "TeamPage › isPublishing",
+                      "range": {
+                        "lineStart": 14,
+                        "lineEnd": 14
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#state@14:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.5",
+                      "declaration": "TeamPage › trainer",
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 15
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#external-value@15:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.6",
+                      "declaration": "TeamPage › lastTrainerId",
+                      "range": {
+                        "lineStart": 16,
+                        "lineEnd": 16
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#external-value@16:1",
+                        "src/views/team/TeamPage.vue#storage@16:23"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.7",
+                      "declaration": "TeamPage › title",
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 17
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#derived@17:1",
+                        "src/views/team/TeamPage.vue#component-effect@17:15",
+                        "src/views/team/TeamPage.vue#function@17:24",
+                        "src/views/team/TeamPage.vue#condition@17:31"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.8",
+                      "declaration": "TeamPage › watch",
+                      "range": {
+                        "lineStart": 19,
+                        "lineEnd": 25
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#component-effect@19:1",
+                        "src/views/team/TeamPage.vue#function@20:3",
+                        "src/views/team/TeamPage.vue#function@21:3",
+                        "src/views/team/TeamPage.vue#variable@21:4",
+                        "src/views/team/TeamPage.vue#storage@22:5",
+                        "src/views/team/TeamPage.vue#property@24:5"
+                      ],
+                      "children": [
+                        {
+                          "id": "w7.8.1",
+                          "declaration": "TeamPage › watch › 0",
+                          "range": {
+                            "lineStart": 20,
+                            "lineEnd": 20
+                          },
+                          "codeBlockIds": [
+                            "src/views/team/TeamPage.vue#effect-callback@20:3",
+                            "src/views/team/TeamPage.vue#function@20:3"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w7.8.2",
+                          "declaration": "TeamPage › watch › 1",
+                          "range": {
+                            "lineStart": 21,
+                            "lineEnd": 23
+                          },
+                          "codeBlockIds": [
+                            "src/views/team/TeamPage.vue#effect-callback@21:3",
+                            "src/views/team/TeamPage.vue#function@21:3",
+                            "src/views/team/TeamPage.vue#variable@21:4",
+                            "src/views/team/TeamPage.vue#storage@22:5"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w7.8.3",
+                          "declaration": "TeamPage › watch › immediate",
+                          "range": {
+                            "lineStart": 24,
+                            "lineEnd": 24
+                          },
+                          "codeBlockIds": [
+                            "src/views/team/TeamPage.vue#property@24:5"
+                          ],
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "w7.9",
+                      "declaration": "TeamPage › publish",
+                      "range": {
+                        "lineStart": 27,
+                        "lineEnd": 31
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#function@27:1",
+                        "src/views/team/TeamPage.vue#call@29:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.10",
+                      "declaration": "TeamPage › Markup condition :36",
+                      "range": {
+                        "lineStart": 36,
+                        "lineEnd": 36
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#render-condition@36:5",
+                        "src/views/team/TeamPage.vue#render@36:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.11",
+                      "declaration": "TeamPage › Markup condition :37",
+                      "range": {
+                        "lineStart": 37,
+                        "lineEnd": 37
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#render-condition@37:5",
+                        "src/views/team/TeamPage.vue#render@37:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.12",
+                      "declaration": "TeamPage › Markup condition :38",
+                      "range": {
+                        "lineStart": 38,
+                        "lineEnd": 44
+                      },
+                      "codeBlockIds": [
+                        "src/views/team/TeamPage.vue#render-condition@38:5",
+                        "src/views/team/TeamPage.vue#render@38:5",
+                        "src/views/team/TeamPage.vue#render@39:7",
+                        "src/views/team/TeamPage.vue#render@40:7",
+                        "src/views/team/TeamPage.vue#render@41:9",
+                        "src/views/team/TeamPage.vue#render@43:7",
+                        "src/views/team/TeamPage.vue#render-event@43:54"
+                      ],
+                      "children": [
+                        {
+                          "id": "w7.12.1",
+                          "declaration": "TeamPage › Markup condition :38 › Markup loop :41",
+                          "range": {
+                            "lineStart": 41,
+                            "lineEnd": 41
+                          },
+                          "codeBlockIds": [
+                            "src/views/team/TeamPage.vue#render-loop@41:9",
+                            "src/views/team/TeamPage.vue#render@41:9"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w7.12.2",
+                          "declaration": "TeamPage › Markup condition :38 › button.onClick",
+                          "range": {
+                            "lineStart": 43,
+                            "lineEnd": 43
+                          },
+                          "codeBlockIds": [
+                            "src/views/team/TeamPage.vue#render-event@43:54"
+                          ],
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/views/team/components/TeamSlot.vue",
+              "waypoints": [
+                {
+                  "id": "w8",
+                  "declaration": "TeamSlot",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 10
+                  },
+                  "codeBlockIds": [
+                    "src/views/team/components/TeamSlot.vue#component@1:1",
+                    "src/views/team/components/TeamSlot.vue#call@5:1",
+                    "src/views/team/components/TeamSlot.vue#root-argument-value@5:15",
+                    "src/views/team/components/TeamSlot.vue#render-root@8:1",
+                    "src/views/team/components/TeamSlot.vue#render@9:3"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/api/teams.ts",
+            "references": [
+              {
+                "line": 2,
+                "startColumn": 48,
+                "endColumn": 57,
+                "path": "src/api/teams.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 3,
+                "startColumn": 7,
+                "endColumn": 15,
+                "path": "src/api/teams.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 3,
+                "startColumn": 71,
+                "endColumn": 79,
+                "path": "src/api/teams.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 1,
+                "startColumn": 54,
+                "endColumn": 61,
+                "name": "Promise"
+              },
+              {
+                "line": 2,
+                "startColumn": 25,
+                "endColumn": 30,
+                "name": "fetch"
+              },
+              {
+                "line": 3,
+                "startColumn": 30,
+                "endColumn": 35,
+                "name": "Error"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  4
+                ],
+                "usages": [
+                  {
+                    "line": 29,
+                    "startColumn": 8,
+                    "endColumn": 19,
+                    "path": "src/views/team/TeamPage.vue",
+                    "text": "  await publishTeam(props.trainerId)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/composables/use-trainer.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 38,
+                "endColumn": 41,
+                "path": "src/composables/use-trainer.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "Ref"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 18,
+                "endColumn": 21,
+                "path": "src/composables/use-trainer.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 22,
+                "endColumn": 29,
+                "path": "src/types/trainer.ts",
+                "lines": [
+                  3,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 2,
+                "endColumn": 7,
+                "path": "src/composables/use-trainer.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "watch"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 4,
+                "endColumn": 13,
+                "path": "src/composables/use-trainer.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/composables/use-trainer.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 28,
+                "endColumn": 35,
+                "path": "src/api/client.ts",
+                "lines": [
+                  3,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 36,
+                "endColumn": 43,
+                "path": "src/types/trainer.ts",
+                "lines": [
+                  3,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 58,
+                "endColumn": 60,
+                "path": "src/composables/use-trainer.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/composables/use-trainer.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  5,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 15,
+                    "startColumn": 16,
+                    "endColumn": 26,
+                    "path": "src/views/team/TeamPage.vue",
+                    "text": "const trainer = useTrainer(toRef(props, \"trainerId\"))"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/lib/team-title.ts",
+            "references": [
+              {
+                "line": 2,
+                "startColumn": 5,
+                "endColumn": 16,
+                "path": "src/lib/team-title.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 2,
+                "startColumn": 28,
+                "endColumn": 36,
+                "path": "src/lib/team-title.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 2,
+                "startColumn": 43,
+                "endColumn": 51,
+                "path": "src/lib/team-title.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 13,
+                "endColumn": 28,
+                "lines": [
+                  1,
+                  2
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 60,
+                    "endColumn": 75,
+                    "path": "src/views/team/TeamPage.vue",
+                    "text": "const title = computed(() => (trainer.value === null ? \"\" : formatTeamTitle(trainer.value.name, trainer.value.team.length, props.maxSlots)))"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/main.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 19,
+                "endColumn": 28,
+                "path": "src/main.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "createApp"
+                }
+              },
+              {
+                "line": 5,
+                "startColumn": 29,
+                "endColumn": 40,
+                "path": "src/views/pokedex/PokedexPage.vue",
+                "lines": [
+                  1,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 25,
+                "path": "src/main.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "createApp"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 26,
+                "endColumn": 34,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  1,
+                  46
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 0,
+                "endColumn": 10,
+                "path": "src/main.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 0,
+                "endColumn": 7,
+                "path": "src/main.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": []
+          },
+          {
+            "path": "src/types/trainer.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 8,
+                "endColumn": 15,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 17,
+                "endColumn": 24,
+                "lines": [
+                  3,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 22,
+                    "endColumn": 29,
+                    "path": "src/composables/use-trainer.ts",
+                    "text": "  const trainer = ref<Trainer | null>(null)"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 36,
+                    "endColumn": 43,
+                    "path": "src/composables/use-trainer.ts",
+                    "text": "      trainer.value = await request<Trainer>(`/trainers/${id}`)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/views/team/components/TeamSlot.vue",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 23,
+                "endColumn": 30,
+                "path": "src/types/pokemon.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 9,
+                "endColumn": 21,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 0,
+                "endColumn": 11,
+                "name": "defineProps"
+              },
+              {
+                "line": 9,
+                "startColumn": 22,
+                "endColumn": 29,
+                "name": "pokemon"
+              },
+              {
+                "line": 9,
+                "startColumn": 40,
+                "endColumn": 47,
+                "name": "pokemon"
+              },
+              {
+                "line": 9,
+                "startColumn": 61,
+                "endColumn": 68,
+                "name": "pokemon"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 41,
+                    "startColumn": 9,
+                    "endColumn": 17,
+                    "path": "src/views/team/TeamPage.vue",
+                    "text": "        <TeamSlot v-for=\"pokemon in trainer.team\" :key=\"pokemon.id\" :pokemon=\"pokemon\" />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/views/team/TeamPage.vue",
+            "references": [
+              {
+                "line": 12,
+                "startColumn": 4,
+                "endColumn": 9,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 21,
+                "endColumn": 24,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 16,
+                "endColumn": 26,
+                "path": "src/composables/use-trainer.ts",
+                "lines": [
+                  5,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 27,
+                "endColumn": 32,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "toRef"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 33,
+                "endColumn": 38,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 43,
+                "endColumn": 59,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 14,
+                "endColumn": 22,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "computed"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 30,
+                "endColumn": 37,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 60,
+                "endColumn": 75,
+                "path": "src/lib/team-title.ts",
+                "lines": [
+                  1,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 76,
+                "endColumn": 83,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 96,
+                "endColumn": 103,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 123,
+                "endColumn": 128,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 0,
+                "endColumn": 5,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "watch"
+                }
+              },
+              {
+                "line": 20,
+                "startColumn": 8,
+                "endColumn": 13,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 25,
+                "endColumn": 41,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 50,
+                "endColumn": 52,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 2,
+                "endColumn": 14,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 29,
+                "startColumn": 8,
+                "endColumn": 19,
+                "path": "src/api/teams.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 29,
+                "startColumn": 20,
+                "endColumn": 25,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 30,
+                "startColumn": 2,
+                "endColumn": 14,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 13,
+                "endColumn": 26,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 37,
+                "startColumn": 13,
+                "endColumn": 20,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 39,
+                "startColumn": 13,
+                "endColumn": 18,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 41,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/views/team/components/TeamSlot.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 41,
+                "startColumn": 36,
+                "endColumn": 43,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 43,
+                "startColumn": 39,
+                "endColumn": 51,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 43,
+                "startColumn": 61,
+                "endColumn": 68,
+                "path": "src/views/team/TeamPage.vue",
+                "lines": [
+                  27,
+                  31
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 25,
+                "name": "defineProps"
+              },
+              {
+                "line": 12,
+                "startColumn": 34,
+                "endColumn": 39,
+                "name": "Error"
+              },
+              {
+                "line": 16,
+                "startColumn": 22,
+                "endColumn": 34,
+                "name": "localStorage"
+              },
+              {
+                "line": 22,
+                "startColumn": 4,
+                "endColumn": 16,
+                "name": "localStorage"
+              },
+              {
+                "line": 22,
+                "startColumn": 43,
+                "endColumn": 49,
+                "name": "String"
+              },
+              {
+                "line": 36,
+                "startColumn": 31,
+                "endColumn": 37,
+                "name": "String"
+              },
+              {
+                "line": 36,
+                "startColumn": 38,
+                "endColumn": 47,
+                "name": "trainerId"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  46
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 26,
+                    "endColumn": 34,
+                    "path": "src/main.ts",
+                    "text": "const teamApp = createApp(TeamPage, { trainerId: 1, maxSlots: 6 })"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

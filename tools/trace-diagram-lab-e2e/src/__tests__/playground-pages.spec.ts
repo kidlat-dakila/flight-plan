@@ -41,7 +41,13 @@ const hasSnapshot = (playgroundPath: string): boolean => {
   return existsSync(snapshotsPath) && readdirSync(snapshotsPath).some((file) => file.endsWith(SNAPSHOT_SUFFIX))
 }
 
-const isPlayground = (playgroundPath: string): boolean => hasSnapshot(playgroundPath) && existsSync(join(playgroundPath, META_FILE))
+const hasMeta = (folderPath: string): boolean => existsSync(join(folderPath, META_FILE))
+
+const isCase = (casePath: string): boolean => hasSnapshot(casePath) && hasMeta(casePath)
+
+const hasVariant = (groupPath: string): boolean => listFolders(groupPath).some((variant) => isCase(join(groupPath, variant)))
+
+const isPlayground = (playgroundPath: string): boolean => isCase(playgroundPath) || (hasMeta(playgroundPath) && hasVariant(playgroundPath))
 
 const listLanguagePlaygroundIds = (language: string): string[] =>
   [...listFolders(join(PLAYGROUNDS_FOLDER, language))]

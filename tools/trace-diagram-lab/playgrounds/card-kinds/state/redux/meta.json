@@ -1,0 +1,6 @@
+{
+  "title": "State card in Redux Toolkit",
+  "packages": ["@reduxjs/toolkit", "react", "react-dom", "react-redux"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

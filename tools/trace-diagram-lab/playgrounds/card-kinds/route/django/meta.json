@@ -1,0 +1,6 @@
+{
+  "title": "Route card in Django",
+  "packages": ["django"],
+  "language": "python",
+  "mainFramework": "django"
+}

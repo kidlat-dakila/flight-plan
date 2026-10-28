@@ -1,0 +1,1081 @@
+{
+  "title": "Implement store bagStore",
+  "diff": [
+    "diff --git a/src/lib/bag-lines.ts b/src/lib/bag-lines.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/lib/bag-lines.ts",
+    "@@ -0,0 +1,12 @@",
+    "+import type { Item } from \"@/types/item\"",
+    "+",
+    "+export interface BagLine {",
+    "+  item: Item",
+    "+  quantity: number",
+    "+}",
+    "+",
+    "+export function addLine(lines: BagLine[], item: Item): BagLine[] {",
+    "+  const line = lines.find((entry) => entry.item.id === item.id)",
+    "+  if (line === undefined) return [...lines, { item, quantity: 1 }]",
+    "+  return lines.map((entry) => (entry === line ? { ...entry, quantity: entry.quantity + 1 } : entry))",
+    "+}",
+    "diff --git a/src/pages/items/ItemsPage.tsx b/src/pages/items/ItemsPage.tsx",
+    "--- a/src/pages/items/ItemsPage.tsx",
+    "+++ b/src/pages/items/ItemsPage.tsx",
+    "@@ -0,0 +1 @@",
+    "+import { useSnapshot } from \"valtio\"",
+    "@@ -1,0 +3 @@ import { ITEMS } from \"@/data/items\"",
+    "+import { bagStore } from \"@/stores/bag-store\"",
+    "@@ -3,0 +6,2 @@ export function ItemsPage() {",
+    "+  const bag = useSnapshot(bagStore)",
+    "+  const count = bag.lines.reduce((sum, line) => sum + line.quantity, 0)",
+    "@@ -5,7 +9,16 @@ export function ItemsPage() {",
+    "-    <ul>",
+    "-      {ITEMS.map((item) => (",
+    "-        <li key={item.id}>",
+    "-          {item.name} ₽{item.price}",
+    "-        </li>",
+    "-      ))}",
+    "-    </ul>",
+    "+    <section>",
+    "+      <p>{count} items in the bag</p>",
+    "+      <button type=\"button\" onClick={bagStore.clear}>",
+    "+        Empty the bag",
+    "+      </button>",
+    "+      <ul>",
+    "+        {ITEMS.map((item) => (",
+    "+          <li key={item.id}>",
+    "+            {item.name} ₽{item.price}",
+    "+            <button type=\"button\" onClick={() => bagStore.addItem(item)}>",
+    "+              Add to bag",
+    "+            </button>",
+    "+          </li>",
+    "+        ))}",
+    "+      </ul>",
+    "+    </section>",
+    "diff --git a/src/stores/bag-store.ts b/src/stores/bag-store.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/stores/bag-store.ts",
+    "@@ -0,0 +1,16 @@",
+    "+import { proxy } from \"valtio\"",
+    "+import { addLine, type BagLine } from \"@/lib/bag-lines\"",
+    "+import type { Item } from \"@/types/item\"",
+    "+",
+    "+export const bagStore = proxy({",
+    "+  lines: [] as BagLine[],",
+    "+  lastAddedId: null as number | null,",
+    "+  addItem: (item: Item) => {",
+    "+    bagStore.lines = addLine(bagStore.lines, item)",
+    "+    bagStore.lastAddedId = item.id",
+    "+  },",
+    "+  clear: () => {",
+    "+    bagStore.lines = []",
+    "+    bagStore.lastAddedId = null",
+    "+  },",
+    "+})"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New bagStore and addLine, modified ItemsPage",
+        "importGraph": [
+          {
+            "filePath": "src/App.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/pages/items/ItemsPage.tsx"
+            ],
+            "importedFilePaths": {
+              "@/pages/items/ItemsPage": "src/pages/items/ItemsPage.tsx"
+            }
+          },
+          {
+            "filePath": "src/data/items.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pages/items/ItemsPage.tsx"
+            ],
+            "importsTo": [
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/lib/bag-lines.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/stores/bag-store.ts"
+            ],
+            "importsTo": [
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/App.tsx"
+            ],
+            "importedFilePaths": {
+              "@/App": "src/App.tsx"
+            }
+          },
+          {
+            "filePath": "src/pages/items/ItemsPage.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/App.tsx"
+            ],
+            "importsTo": [
+              "src/data/items.ts",
+              "src/stores/bag-store.ts"
+            ],
+            "importedFilePaths": {
+              "@/data/items": "src/data/items.ts",
+              "@/stores/bag-store": "src/stores/bag-store.ts"
+            }
+          },
+          {
+            "filePath": "src/stores/bag-store.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pages/items/ItemsPage.tsx"
+            ],
+            "importsTo": [
+              "src/lib/bag-lines.ts",
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/bag-lines": "src/lib/bag-lines.ts",
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/types/item.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/data/items.ts",
+              "src/lib/bag-lines.ts",
+              "src/stores/bag-store.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Items page flow diagram",
+          "description": "This diagram shows how the items page reads a snapshot of the bag store and renders the item count above the items. It also shows what happens when the user clicks Empty the bag or Add to bag, and how each click reaches the bag store through `clear()` or `addItem()`.",
+          "traceNodes": [
+            {
+              "id": "src/App.tsx#component@3:1",
+              "type": "component",
+              "label": "Renders the title and the items page",
+              "description": "When the user opens the app, `main.tsx` renders this component inside `StrictMode`.",
+              "codeBlockIds": [
+                "src/App.tsx#component@3:1",
+                "src/App.tsx#render-root@4:3",
+                "src/App.tsx#render@5:5",
+                "src/App.tsx#render@7:7"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pages/items/ItemsPage.tsx#component@5:1",
+                  "type": "component",
+                  "label": "Lists the items below the count of the bag",
+                  "description": "When the user opens the app, [`App` renders this page](code:src/App.tsx#L7). Valtio renders it again each time a value of the snapshot it reads changes.",
+                  "codeBlockIds": [
+                    "src/pages/items/ItemsPage.tsx#component@5:1",
+                    "src/pages/items/ItemsPage.tsx#state@6:3",
+                    "src/pages/items/ItemsPage.tsx#variable@7:3",
+                    "src/pages/items/ItemsPage.tsx#function@7:34",
+                    "src/pages/items/ItemsPage.tsx#variable@7:35",
+                    "src/pages/items/ItemsPage.tsx#variable@7:40",
+                    "src/pages/items/ItemsPage.tsx#render-root@8:3",
+                    "src/pages/items/ItemsPage.tsx#render@9:5",
+                    "src/pages/items/ItemsPage.tsx#render@10:7",
+                    "src/pages/items/ItemsPage.tsx#render@11:7",
+                    "src/pages/items/ItemsPage.tsx#render-event@11:29",
+                    "src/pages/items/ItemsPage.tsx#render@14:7",
+                    "src/pages/items/ItemsPage.tsx#render-loop@15:10",
+                    "src/pages/items/ItemsPage.tsx#function@15:20",
+                    "src/pages/items/ItemsPage.tsx#variable@15:21",
+                    "src/pages/items/ItemsPage.tsx#render@16:11",
+                    "src/pages/items/ItemsPage.tsx#render@18:13",
+                    "src/pages/items/ItemsPage.tsx#render-event@18:35"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pages/items/ItemsPage.tsx#state@6:3",
+                    "src/pages/items/ItemsPage.tsx#variable@7:3",
+                    "src/pages/items/ItemsPage.tsx#function@7:34",
+                    "src/pages/items/ItemsPage.tsx#variable@7:35",
+                    "src/pages/items/ItemsPage.tsx#variable@7:40",
+                    "src/pages/items/ItemsPage.tsx#render@9:5",
+                    "src/pages/items/ItemsPage.tsx#render@10:7",
+                    "src/pages/items/ItemsPage.tsx#render@11:7",
+                    "src/pages/items/ItemsPage.tsx#render-event@11:29",
+                    "src/pages/items/ItemsPage.tsx#render@14:7",
+                    "src/pages/items/ItemsPage.tsx#render-loop@15:10",
+                    "src/pages/items/ItemsPage.tsx#function@15:20",
+                    "src/pages/items/ItemsPage.tsx#variable@15:21",
+                    "src/pages/items/ItemsPage.tsx#render@16:11",
+                    "src/pages/items/ItemsPage.tsx#render@18:13",
+                    "src/pages/items/ItemsPage.tsx#render-event@18:35"
+                  ],
+                  "children": [],
+                  "triggerLabels": [
+                    {
+                      "label": "A user clicks \"Empty the bag\"",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#render-event@11:29"
+                    },
+                    {
+                      "label": "A user clicks \"Add to bag\"",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#render-event@18:35"
+                    }
+                  ],
+                  "blockLabels": [
+                    {
+                      "label": "Keeps a snapshot of the bag store",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#state@6:3"
+                    },
+                    {
+                      "label": "Adds up the quantities of the lines in the snapshot",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#variable@7:3"
+                    },
+                    {
+                      "label": "Renders one row with an Add to bag button for each item",
+                      "codeBlockId": "src/pages/items/ItemsPage.tsx#function@15:20"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/stores/bag-store.ts#state@5:1",
+              "type": "state",
+              "label": "Keeps the lines of the bag and the last item added",
+              "description": "Three paths reach this store:\n- When `ItemsPage` renders, [it calls `useSnapshot(bagStore)`](code:src/pages/items/ItemsPage.tsx#L6) and reads the lines of the snapshot.\n- When a user clicks \"Empty the bag\", [the button runs `bagStore.clear()`](code:src/pages/items/ItemsPage.tsx#L11).\n- When a user clicks \"Add to bag\", [the button calls `bagStore.addItem()` with the item of its row](code:src/pages/items/ItemsPage.tsx#L18).",
+              "codeBlockIds": [
+                "src/stores/bag-store.ts#state@5:1",
+                "src/stores/bag-store.ts#effect@5:25",
+                "src/stores/bag-store.ts#property@6:3",
+                "src/stores/bag-store.ts#property@7:3",
+                "src/stores/bag-store.ts#effect-callback@8:3",
+                "src/stores/bag-store.ts#function@8:12",
+                "src/stores/bag-store.ts#variable@8:13",
+                "src/stores/bag-store.ts#effect-callback@12:3",
+                "src/stores/bag-store.ts#function@12:10"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/bag-store.ts#state@5:1",
+                "src/stores/bag-store.ts#effect@5:25",
+                "src/stores/bag-store.ts#property@6:3",
+                "src/stores/bag-store.ts#property@7:3",
+                "src/stores/bag-store.ts#effect-callback@8:3",
+                "src/stores/bag-store.ts#function@8:12",
+                "src/stores/bag-store.ts#variable@8:13",
+                "src/stores/bag-store.ts#effect-callback@12:3",
+                "src/stores/bag-store.ts#function@12:10"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Starts the bag with no line",
+                  "codeBlockId": "src/stores/bag-store.ts#property@6:3"
+                },
+                {
+                  "label": "Starts with no item added",
+                  "codeBlockId": "src/stores/bag-store.ts#property@7:3"
+                },
+                {
+                  "label": "Adds the item to the lines and keeps its id",
+                  "codeBlockId": "src/stores/bag-store.ts#effect-callback@8:3"
+                },
+                {
+                  "label": "Empties the lines and forgets the last item",
+                  "codeBlockId": "src/stores/bag-store.ts#effect-callback@12:3"
+                }
+              ]
+            },
+            {
+              "id": "src/lib/bag-lines.ts#function@8:1",
+              "type": "function",
+              "label": "Adds one of the item, as a new line or to its line",
+              "description": "When a user clicks \"Add to bag\", `ItemsPage` calls `bagStore.addItem()`, and [`addItem()` calls this function](code:src/stores/bag-store.ts#L9) with the current lines and the item.",
+              "codeBlockIds": [
+                "src/lib/bag-lines.ts#function@8:1",
+                "src/lib/bag-lines.ts#root-argument-value@8:25",
+                "src/lib/bag-lines.ts#root-argument-value@8:43",
+                "src/lib/bag-lines.ts#variable@9:3",
+                "src/lib/bag-lines.ts#root-argument-value@9:16",
+                "src/lib/bag-lines.ts#function@9:27",
+                "src/lib/bag-lines.ts#variable@9:28",
+                "src/lib/bag-lines.ts#root-argument-value@9:56",
+                "src/lib/bag-lines.ts#condition@10:3",
+                "src/lib/bag-lines.ts#property@10:47",
+                "src/lib/bag-lines.ts#property@10:53",
+                "src/lib/bag-lines.ts#root-argument-value@11:10",
+                "src/lib/bag-lines.ts#function@11:20",
+                "src/lib/bag-lines.ts#variable@11:21",
+                "src/lib/bag-lines.ts#condition@11:32",
+                "src/lib/bag-lines.ts#property@11:61"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/bag-lines.ts#function@8:1",
+                "src/lib/bag-lines.ts#root-argument-value@8:25",
+                "src/lib/bag-lines.ts#root-argument-value@8:43",
+                "src/lib/bag-lines.ts#variable@9:3",
+                "src/lib/bag-lines.ts#root-argument-value@9:16",
+                "src/lib/bag-lines.ts#function@9:27",
+                "src/lib/bag-lines.ts#variable@9:28",
+                "src/lib/bag-lines.ts#root-argument-value@9:56",
+                "src/lib/bag-lines.ts#condition@10:3",
+                "src/lib/bag-lines.ts#property@10:47",
+                "src/lib/bag-lines.ts#property@10:53",
+                "src/lib/bag-lines.ts#root-argument-value@11:10",
+                "src/lib/bag-lines.ts#function@11:20",
+                "src/lib/bag-lines.ts#variable@11:21",
+                "src/lib/bag-lines.ts#condition@11:32",
+                "src/lib/bag-lines.ts#property@11:61"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Finds the line of the item",
+                  "codeBlockId": "src/lib/bag-lines.ts#variable@9:3"
+                },
+                {
+                  "label": "Adds a new line when the bag has none for the item",
+                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3"
+                },
+                {
+                  "label": "Adds one to the quantity of the line of the item",
+                  "codeBlockId": "src/lib/bag-lines.ts#function@11:20"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/items/ItemsPage.tsx#render-event@11:29",
+              "type": "render-event",
+              "label": "Empties the bag",
+              "description": "When a user clicks \"Empty the bag\", [the button runs `bagStore.clear()`](code:src/pages/items/ItemsPage.tsx#L11), which `ItemsPage` passes as `onClick`.",
+              "codeBlockIds": [
+                "src/pages/items/ItemsPage.tsx#render-event@11:29"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/items/ItemsPage.tsx#render-event@11:29"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pages/items/ItemsPage.tsx#render-event@18:35",
+              "type": "render-event",
+              "label": "Adds the item of the row to the bag",
+              "description": "When a user clicks \"Add to bag\" beside an item, [the button runs this handler](code:src/pages/items/ItemsPage.tsx#L18), which calls `bagStore.addItem()` with the item of that row.",
+              "codeBlockIds": [
+                "src/pages/items/ItemsPage.tsx#render-event@18:35",
+                "src/pages/items/ItemsPage.tsx#function@18:44"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/items/ItemsPage.tsx#render-event@18:35",
+                "src/pages/items/ItemsPage.tsx#function@18:44"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pages/items/ItemsPage.tsx#render-event@11:29 -> src/stores/bag-store.ts#state@5:1",
+              "from": "src/pages/items/ItemsPage.tsx#render-event@11:29",
+              "to": "src/stores/bag-store.ts#state@5:1"
+            },
+            {
+              "id": "src/pages/items/ItemsPage.tsx#render-event@18:35 -> src/stores/bag-store.ts#state@5:1",
+              "from": "src/pages/items/ItemsPage.tsx#render-event@18:35",
+              "to": "src/stores/bag-store.ts#state@5:1"
+            },
+            {
+              "id": "src/stores/bag-store.ts#state@5:1 -> src/lib/bag-lines.ts#function@8:1",
+              "from": "src/stores/bag-store.ts#state@5:1",
+              "to": "src/lib/bag-lines.ts#function@8:1"
+            },
+            {
+              "id": "src/App.tsx#component@3:1 -> src/pages/items/ItemsPage.tsx#component@5:1",
+              "from": "src/App.tsx#component@3:1",
+              "to": "src/pages/items/ItemsPage.tsx#component@5:1"
+            },
+            {
+              "id": "src/pages/items/ItemsPage.tsx#component@5:1 -> src/stores/bag-store.ts#state@5:1",
+              "from": "src/pages/items/ItemsPage.tsx#component@5:1",
+              "to": "src/stores/bag-store.ts#state@5:1"
+            },
+            {
+              "id": "src/pages/items/ItemsPage.tsx#component@5:1 -> src/pages/items/ItemsPage.tsx#render-event@11:29",
+              "from": "src/pages/items/ItemsPage.tsx#component@5:1",
+              "to": "src/pages/items/ItemsPage.tsx#render-event@11:29"
+            },
+            {
+              "id": "src/pages/items/ItemsPage.tsx#component@5:1 -> src/pages/items/ItemsPage.tsx#render-event@18:35",
+              "from": "src/pages/items/ItemsPage.tsx#component@5:1",
+              "to": "src/pages/items/ItemsPage.tsx#render-event@18:35"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/lib/bag-lines.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "BagLine",
+                  "range": {
+                    "lineStart": 3,
+                    "lineEnd": 6
+                  },
+                  "codeBlockIds": [
+                    "src/lib/bag-lines.ts#type-declaration@3:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w2",
+                  "declaration": "addLine",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 12
+                  },
+                  "codeBlockIds": [
+                    "src/lib/bag-lines.ts#function@8:1",
+                    "src/lib/bag-lines.ts#root-argument-value@8:25",
+                    "src/lib/bag-lines.ts#root-argument-value@8:43",
+                    "src/lib/bag-lines.ts#variable@9:3",
+                    "src/lib/bag-lines.ts#root-argument-value@9:16",
+                    "src/lib/bag-lines.ts#function@9:27",
+                    "src/lib/bag-lines.ts#variable@9:28",
+                    "src/lib/bag-lines.ts#root-argument-value@9:56",
+                    "src/lib/bag-lines.ts#condition@10:3",
+                    "src/lib/bag-lines.ts#property@10:47",
+                    "src/lib/bag-lines.ts#property@10:53",
+                    "src/lib/bag-lines.ts#root-argument-value@11:10",
+                    "src/lib/bag-lines.ts#function@11:20",
+                    "src/lib/bag-lines.ts#variable@11:21",
+                    "src/lib/bag-lines.ts#condition@11:32",
+                    "src/lib/bag-lines.ts#property@11:61"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pages/items/ItemsPage.tsx",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "ItemsPage",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 26
+                  },
+                  "codeBlockIds": [
+                    "src/pages/items/ItemsPage.tsx#component@5:1",
+                    "src/pages/items/ItemsPage.tsx#state@6:3",
+                    "src/pages/items/ItemsPage.tsx#variable@7:3",
+                    "src/pages/items/ItemsPage.tsx#function@7:34",
+                    "src/pages/items/ItemsPage.tsx#variable@7:35",
+                    "src/pages/items/ItemsPage.tsx#variable@7:40",
+                    "src/pages/items/ItemsPage.tsx#render@9:5",
+                    "src/pages/items/ItemsPage.tsx#render@10:7",
+                    "src/pages/items/ItemsPage.tsx#render@11:7",
+                    "src/pages/items/ItemsPage.tsx#render-event@11:29",
+                    "src/pages/items/ItemsPage.tsx#render@14:7",
+                    "src/pages/items/ItemsPage.tsx#render-loop@15:10",
+                    "src/pages/items/ItemsPage.tsx#function@15:20",
+                    "src/pages/items/ItemsPage.tsx#variable@15:21",
+                    "src/pages/items/ItemsPage.tsx#render@16:11",
+                    "src/pages/items/ItemsPage.tsx#render@18:13",
+                    "src/pages/items/ItemsPage.tsx#render-event@18:35",
+                    "src/pages/items/ItemsPage.tsx#function@18:44"
+                  ],
+                  "children": [
+                    {
+                      "id": "w3.1",
+                      "declaration": "ItemsPage › bag",
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "codeBlockIds": [
+                        "src/pages/items/ItemsPage.tsx#state@6:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.2",
+                      "declaration": "ItemsPage › count",
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 7
+                      },
+                      "codeBlockIds": [
+                        "src/pages/items/ItemsPage.tsx#variable@7:3",
+                        "src/pages/items/ItemsPage.tsx#function@7:34",
+                        "src/pages/items/ItemsPage.tsx#variable@7:35",
+                        "src/pages/items/ItemsPage.tsx#variable@7:40"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.3",
+                      "declaration": "ItemsPage › button.onClick",
+                      "range": {
+                        "lineStart": 11,
+                        "lineEnd": 11
+                      },
+                      "codeBlockIds": [
+                        "src/pages/items/ItemsPage.tsx#render-event@11:29"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.4",
+                      "declaration": "ItemsPage › Markup loop :15",
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 22
+                      },
+                      "codeBlockIds": [
+                        "src/pages/items/ItemsPage.tsx#render-loop@15:10",
+                        "src/pages/items/ItemsPage.tsx#function@15:20",
+                        "src/pages/items/ItemsPage.tsx#variable@15:21",
+                        "src/pages/items/ItemsPage.tsx#render@16:11",
+                        "src/pages/items/ItemsPage.tsx#render@18:13",
+                        "src/pages/items/ItemsPage.tsx#render-event@18:35",
+                        "src/pages/items/ItemsPage.tsx#function@18:44"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/stores/bag-store.ts",
+              "waypoints": [
+                {
+                  "id": "w4",
+                  "declaration": "bagStore",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 16
+                  },
+                  "codeBlockIds": [
+                    "src/stores/bag-store.ts#state@5:1",
+                    "src/stores/bag-store.ts#effect@5:25",
+                    "src/stores/bag-store.ts#property@6:3",
+                    "src/stores/bag-store.ts#property@7:3",
+                    "src/stores/bag-store.ts#effect-callback@8:3",
+                    "src/stores/bag-store.ts#function@8:12",
+                    "src/stores/bag-store.ts#variable@8:13",
+                    "src/stores/bag-store.ts#effect-callback@12:3",
+                    "src/stores/bag-store.ts#function@12:10"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/App.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 7,
+                "endColumn": 16,
+                "path": "src/pages/items/ItemsPage.tsx",
+                "lines": [
+                  5,
+                  26
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 16,
+                "endColumn": 19,
+                "lines": [
+                  3,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 5,
+                    "endColumn": 8,
+                    "path": "src/main.tsx",
+                    "text": "    <App />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/lib/bag-lines.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/types/item.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 31,
+                "endColumn": 38,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  3,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 48,
+                "endColumn": 52,
+                "path": "src/types/item.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 55,
+                "endColumn": 62,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  3,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 15,
+                "endColumn": 20,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 55,
+                "endColumn": 59,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 6,
+                "endColumn": 10,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 37,
+                "endColumn": 42,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 46,
+                "endColumn": 50,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 41,
+                "endColumn": 45,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 17,
+                "endColumn": 24,
+                "lines": [
+                  3,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 15,
+                    "endColumn": 22,
+                    "path": "src/stores/bag-store.ts",
+                    "text": "  lines: [] as BagLine[],"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 23,
+                "lines": [
+                  8,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 21,
+                    "endColumn": 28,
+                    "path": "src/stores/bag-store.ts",
+                    "text": "    bagStore.lines = addLine(bagStore.lines, item)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pages/items/ItemsPage.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 14,
+                "endColumn": 25,
+                "path": "src/pages/items/ItemsPage.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "valtio",
+                  "name": "useSnapshot"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 26,
+                "endColumn": 34,
+                "path": "src/stores/bag-store.ts",
+                "lines": [
+                  5,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 19,
+                "path": "src/pages/items/ItemsPage.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 10,
+                "endColumn": 15,
+                "path": "src/pages/items/ItemsPage.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 37,
+                "endColumn": 45,
+                "path": "src/stores/bag-store.ts",
+                "lines": [
+                  5,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/data/items.ts",
+                "lines": [
+                  3,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 19,
+                "endColumn": 23,
+                "path": "src/pages/items/ItemsPage.tsx",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 13,
+                "endColumn": 17,
+                "path": "src/pages/items/ItemsPage.tsx",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 26,
+                "endColumn": 30,
+                "path": "src/pages/items/ItemsPage.tsx",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 49,
+                "endColumn": 57,
+                "path": "src/stores/bag-store.ts",
+                "lines": [
+                  5,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 66,
+                "endColumn": 70,
+                "path": "src/pages/items/ItemsPage.tsx",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  5,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 7,
+                    "endColumn": 16,
+                    "path": "src/App.tsx",
+                    "text": "      <ItemsPage />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/stores/bag-store.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 24,
+                "endColumn": 29,
+                "path": "src/stores/bag-store.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "valtio",
+                  "name": "proxy"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  3,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 18,
+                "endColumn": 22,
+                "path": "src/types/item.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 21,
+                "endColumn": 28,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 45,
+                "endColumn": 49,
+                "path": "src/stores/bag-store.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 27,
+                "endColumn": 31,
+                "path": "src/stores/bag-store.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 21,
+                "lines": [
+                  5,
+                  16
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 26,
+                    "endColumn": 34,
+                    "path": "src/pages/items/ItemsPage.tsx",
+                    "text": "  const bag = useSnapshot(bagStore)"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 37,
+                    "endColumn": 45,
+                    "path": "src/pages/items/ItemsPage.tsx",
+                    "text": "      <button type=\"button\" onClick={bagStore.clear}>"
+                  },
+                  {
+                    "line": 18,
+                    "startColumn": 49,
+                    "endColumn": 57,
+                    "path": "src/pages/items/ItemsPage.tsx",
+                    "text": "            <button type=\"button\" onClick={() => bagStore.addItem(item)}>"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, symlink } from "node:fs/promises"
+import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { onTestFinished } from "vitest"
@@ -12,6 +12,8 @@ const CASE_TITLE = "Implement route PATCH /tasks/:id/complete"
 const META_FILE = "meta.json"
 const KIND_PARTS = ["repo", "snapshots", "code-blocks", META_FILE]
 const UNTITLED_KIND_PARTS = KIND_PARTS.filter((part) => part !== META_FILE)
+
+const GROUP_TITLE = "Route card"
 
 const sourcePathsOf = (artifact: ReviewArtifact | null): string[] => [...(artifact?.sources ?? []).map((source) => source.path)].sort()
 
@@ -27,7 +29,10 @@ const createEmptyFolder = async (): Promise<string> => {
 }
 
 const linkLabKind = async (playgrounds: string, language: string, framework: string, parts: readonly string[] = KIND_PARTS): Promise<void> => {
-  const target = join(playgrounds, language, framework)
+  await linkLabCase(join(playgrounds, language, framework), parts)
+}
+
+const linkLabCase = async (target: string, parts: readonly string[] = KIND_PARTS): Promise<void> => {
   await mkdir(target, { recursive: true })
   await Promise.all(parts.map(async (part) => {
     await symlink(join(TRACE_FIXTURE_FOLDERS.lab, LAB_KIND, part), join(target, part))
@@ -42,7 +47,17 @@ const createPlaygrounds = async (): Promise<string> => {
   await linkLabKind(playgrounds, "python", "base")
   await linkLabKind(playgrounds, "typescript", "untitled", UNTITLED_KIND_PARTS)
   await mkdir(join(playgrounds, "typescript", "unwritten", "repo"), { recursive: true })
+  await writeTitle(join(playgrounds, "card-kinds", "route"), GROUP_TITLE)
+  await linkLabCase(join(playgrounds, "card-kinds", "route", "fastapi"))
+  await linkLabCase(join(playgrounds, "card-kinds", "route", "express"))
+  await linkLabCase(join(playgrounds, "card-kinds", "route", "untitled"), UNTITLED_KIND_PARTS)
+  await writeTitle(join(playgrounds, "card-kinds", "class"), "Class card")
   return playgrounds
+}
+
+const writeTitle = async (folder: string, title: string): Promise<void> => {
+  await mkdir(folder, { recursive: true })
+  await writeFile(join(folder, META_FILE), JSON.stringify({ title }))
 }
 
 describe("listPlaygrounds", () => {
@@ -56,20 +71,30 @@ describe("listPlaygrounds", () => {
   it("lists each playground with its title and the title of its case", async () => {
     const entries = await listPlaygrounds(await createPlaygrounds())
 
-    expect(entries).toContainEqual({ id: "typescript/express", language: "typescript", framework: "express", title: KIND_TITLE, caseTitle: CASE_TITLE })
+    expect(entries).toContainEqual({ id: "typescript/express", language: "typescript", framework: "express", title: KIND_TITLE })
   })
 
   it("lists the languages in order, each with its base first", async () => {
     const entries = await listPlaygrounds(await createPlaygrounds())
 
-    expect(entries.map((entry) => entry.id)).toStrictEqual(["python/base", "python/fastapi", "typescript/base", "typescript/express"])
+    expect(entries.map((entry) => entry.id)).toStrictEqual(["card-kinds/route", "python/base", "python/fastapi", "typescript/base", "typescript/express"])
+  })
+
+  it("lists a folder of variants with its own title, and leaves out one with no variant", async () => {
+    const entries = await listPlaygrounds(await createPlaygrounds())
+
+    expect(entries).toContainEqual({ id: "card-kinds/route", language: "card-kinds", framework: "route", title: GROUP_TITLE })
+    expect(entries.map((entry) => entry.id)).not.toContain("card-kinds/class")
   })
 })
 
 describe("readPlayground", () => {
   it("reads a playground's case as the lab reads the same case", async () => {
     const playgrounds = await createPlaygrounds()
-    const [artifact, labArtifact] = await Promise.all([readPlayground("typescript/express", playgrounds), readTraceFixture(LAB_FIXTURE_ID)])
+    const [cases, labArtifact] = await Promise.all([readPlayground("typescript/express", playgrounds), readTraceFixture(LAB_FIXTURE_ID)])
+    const artifact = cases?.at(0)?.artifact ?? null
+
+    expect(cases?.map(({ id, title, caseTitle }) => ({ id, title, caseTitle }))).toStrictEqual([{ id: "typescript/express", title: KIND_TITLE, caseTitle: CASE_TITLE }])
 
     expect(reviewArtifactSchema.safeParse(artifact).success).toBe(true)
     expect(artifact?.title).toBe(labArtifact?.title)
@@ -77,7 +102,17 @@ describe("readPlayground", () => {
     expect(traceNodeIdsOf(artifact)).toStrictEqual(traceNodeIdsOf(labArtifact))
   })
 
-  it.each(["typescript/unwritten", "typescript/missing", "typescript", "typescript/express/extra", "../cases/express-api", "Typescript/express"])(
+  it("reads every titled variant of a folder of variants, in order", async () => {
+    const cases = await readPlayground("card-kinds/route", await createPlaygrounds())
+
+    expect(cases?.map(({ id, title, caseTitle }) => ({ id, title, caseTitle }))).toStrictEqual([
+      { id: "card-kinds/route/express", title: KIND_TITLE, caseTitle: CASE_TITLE },
+      { id: "card-kinds/route/fastapi", title: KIND_TITLE, caseTitle: CASE_TITLE },
+    ])
+    expect(cases?.every(({ artifact }) => reviewArtifactSchema.safeParse(artifact).success)).toBe(true)
+  })
+
+  it.each(["card-kinds/class", "card-kinds/route/express", "typescript/unwritten", "typescript/missing", "typescript", "typescript/express/extra", "../cases/express-api", "Typescript/express"])(
     "returns null for %s, which names no playground",
     async (id) => {
       await expect(readPlayground(id, await createPlaygrounds())).resolves.toBeNull()

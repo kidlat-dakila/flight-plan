@@ -1,0 +1,7 @@
+{
+  "name": "team-builder-vue",
+  "private": true,
+  "dependencies": {
+    "vue": "3.5.13"
+  }
+}

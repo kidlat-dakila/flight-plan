@@ -1,0 +1,162 @@
+import { join } from "node:path"
+import { buildBranchCodegraph } from "@flightplan/codegraph"
+import { assembleGitAdapter, type GitAdapter } from "@flightplan/git-forge"
+import { CASE_REF, setupTest } from "@flightplan/playground-fixtures/test-setup"
+import { expectTraceSnapshot } from "@test-setup/trace-snapshot"
+
+const REPO_PATH = join(import.meta.dirname, "repo")
+
+const openRepository = async (root: string): Promise<GitAdapter> => {
+  const resolved = await assembleGitAdapter({ id: "git", root, secret: null, username: "", baseUrl: "" })
+  if (!resolved.ok) throw resolved.error
+  return resolved.gitAdapter
+}
+
+describe("card-kinds/component/vue", () => {
+  it("Implement page TeamPage", async () => {
+    setupTest({
+      repoPath: REPO_PATH,
+      diffs: [
+        [
+          "diff --git a/src/api/teams.ts b/src/api/teams.ts",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/api/teams.ts",
+          "@@ -0,0 +1,4 @@",
+          "+export const publishTeam = async (trainerId: number): Promise<void> => {",
+          "+  const response = await fetch(`/api/trainers/${trainerId}/team/publish`, { method: \"POST\" })",
+          "+  if (!response.ok) throw new Error(`Publishing the team failed with ${response.status}.`)",
+          "+}",
+        ].join("\n"),
+        [
+          "diff --git a/src/composables/use-trainer.ts b/src/composables/use-trainer.ts",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/composables/use-trainer.ts",
+          "@@ -0,0 +1,17 @@",
+          "+import { ref, watch, type Ref } from \"vue\"",
+          "+import { request } from \"@/api/client\"",
+          "+import type { Trainer } from \"@/types/trainer\"",
+          "+",
+          "+export const useTrainer = (trainerId: Ref<number>) => {",
+          "+  const trainer = ref<Trainer | null>(null)",
+          "+",
+          "+  watch(",
+          "+    trainerId,",
+          "+    async (id) => {",
+          "+      trainer.value = await request<Trainer>(`/trainers/${id}`)",
+          "+    },",
+          "+    { immediate: true },",
+          "+  )",
+          "+",
+          "+  return trainer",
+          "+}",
+        ].join("\n"),
+        [
+          "diff --git a/src/lib/team-title.ts b/src/lib/team-title.ts",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/lib/team-title.ts",
+          "@@ -0,0 +1,2 @@",
+          "+export const formatTeamTitle = (trainerName: string, teamSize: number, maxSlots: number): string =>",
+          "+  `${trainerName}'s team, ${teamSize} of ${maxSlots}`",
+        ].join("\n"),
+        [
+          "diff --git a/src/main.ts b/src/main.ts",
+          "--- a/src/main.ts",
+          "+++ b/src/main.ts",
+          "@@ -2,0 +3 @@ import PokedexPage from \"@/views/pokedex/PokedexPage.vue\"",
+          "+import TeamPage from \"@/views/team/TeamPage.vue\"",
+          "@@ -4,0 +6 @@ const pokedexApp = createApp(PokedexPage)",
+          "+const teamApp = createApp(TeamPage, { trainerId: 1, maxSlots: 6 })",
+          "@@ -6,0 +9 @@ pokedexApp.mount(\"#pokedex\")",
+          "+teamApp.mount(\"#team\")",
+        ].join("\n"),
+        [
+          "diff --git a/src/types/trainer.ts b/src/types/trainer.ts",
+          "--- a/src/types/trainer.ts",
+          "+++ b/src/types/trainer.ts",
+          "@@ -0,0 +1,2 @@",
+          "+import type { Pokemon } from \"@/types/pokemon\"",
+          "+",
+          "@@ -3,0 +6 @@ export interface Trainer {",
+          "+  team: Pokemon[]",
+        ].join("\n"),
+        [
+          "diff --git a/src/views/team/TeamPage.vue b/src/views/team/TeamPage.vue",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/views/team/TeamPage.vue",
+          "@@ -0,0 +1,46 @@",
+          "+<script setup lang=\"ts\">",
+          "+import { computed, ref, toRef, watch } from \"vue\"",
+          "+import { publishTeam } from \"@/api/teams\"",
+          "+import { useTrainer } from \"@/composables/use-trainer\"",
+          "+import { formatTeamTitle } from \"@/lib/team-title\"",
+          "+import TeamSlot from \"@/views/team/components/TeamSlot.vue\"",
+          "+",
+          "+const LAST_TRAINER_KEY = \"team-builder.last-trainer\"",
+          "+",
+          "+const props = defineProps<{ trainerId: number, maxSlots: number }>()",
+          "+",
+          "+if (props.maxSlots < 1) throw new Error(\"A team needs at least one slot.\")",
+          "+",
+          "+const isPublishing = ref(false)",
+          "+const trainer = useTrainer(toRef(props, \"trainerId\"))",
+          "+const lastTrainerId = localStorage.getItem(LAST_TRAINER_KEY)",
+          "+const title = computed(() => (trainer.value === null ? \"\" : formatTeamTitle(trainer.value.name, trainer.value.team.length, props.maxSlots)))",
+          "+",
+          "+watch(",
+          "+  () => props.trainerId,",
+          "+  (id) => {",
+          "+    localStorage.setItem(LAST_TRAINER_KEY, String(id))",
+          "+  },",
+          "+  { immediate: true },",
+          "+)",
+          "+",
+          "+const publish = async () => {",
+          "+  isPublishing.value = true",
+          "+  await publishTeam(props.trainerId)",
+          "+  isPublishing.value = false",
+          "+}",
+          "+</script>",
+          "+",
+          "+<template>",
+          "+  <section>",
+          "+    <p v-if=\"lastTrainerId === String(trainerId)\">Welcome back.</p>",
+          "+    <p v-if=\"trainer === null\">Loading the trainer…</p>",
+          "+    <template v-else>",
+          "+      <h1>{{ title }}</h1>",
+          "+      <ul>",
+          "+        <TeamSlot v-for=\"pokemon in trainer.team\" :key=\"pokemon.id\" :pokemon=\"pokemon\" />",
+          "+      </ul>",
+          "+      <button type=\"button\" :disabled=\"isPublishing\" @click=\"publish\">Publish the team</button>",
+          "+    </template>",
+          "+  </section>",
+          "+</template>",
+        ].join("\n"),
+        [
+          "diff --git a/src/views/team/components/TeamSlot.vue b/src/views/team/components/TeamSlot.vue",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/views/team/components/TeamSlot.vue",
+          "@@ -0,0 +1,10 @@",
+          "+<script setup lang=\"ts\">",
+          "+import { formatNumber } from \"@/lib/format\"",
+          "+import type { Pokemon } from \"@/types/pokemon\"",
+          "+",
+          "+defineProps<{ pokemon: Pokemon }>()",
+          "+</script>",
+          "+",
+          "+<template>",
+          "+  <li>{{ formatNumber(pokemon.id) }} {{ pokemon.name }} · {{ pokemon.type }}</li>",
+          "+</template>",
+        ].join("\n"),
+      ],
+    })
+
+    const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF, isSegmented: true })
+
+    await expectTraceSnapshot(codegraph)
+  })
+})

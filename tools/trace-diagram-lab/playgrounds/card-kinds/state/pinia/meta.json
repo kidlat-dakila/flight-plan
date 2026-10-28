@@ -1,0 +1,6 @@
+{
+  "title": "State card in Pinia",
+  "packages": ["vue", "pinia"],
+  "language": "typescript",
+  "mainFramework": "vue"
+}

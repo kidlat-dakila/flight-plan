@@ -1,0 +1,5677 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "src/pokedex/app.py",
+        "codeBlockIds": [
+          "src/pokedex/app.py#import@1:1",
+          "src/pokedex/app.py#import@3:1",
+          "src/pokedex/app.py#import@4:1",
+          "src/pokedex/app.py#root-variable@6:1",
+          "src/pokedex/app.py#root-variable@7:1",
+          "src/pokedex/app.py#root-statement@9:1",
+          "src/pokedex/app.py#root-statement@10:1",
+          "src/pokedex/app.py#root-statement@11:1"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/app.py#import@1:1",
+          "src/pokedex/app.py#import@3:1",
+          "src/pokedex/app.py#import@4:1",
+          "src/pokedex/app.py#root-variable@6:1",
+          "src/pokedex/app.py#root-variable@7:1",
+          "src/pokedex/app.py#root-statement@9:1",
+          "src/pokedex/app.py#root-statement@10:1",
+          "src/pokedex/app.py#root-statement@11:1"
+        ],
+        "diffBlockIds": [
+          "src/pokedex/app.py#import@4:1",
+          "src/pokedex/app.py#root-statement@10:1"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/app.py#root-variable@6:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/app.py#root-variable@7:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/app.py#root-statement@9:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/app.py#root-statement@10:1",
+            "symbolIndex": 1
+          }
+        ],
+        "externalBlockIds": [
+          "src/pokedex/health.py#root-variable@3:1",
+          "src/pokedex/pokemon/views.py#root-variable@9:1"
+        ],
+        "exports": {
+          "app": "src/pokedex/app.py#root-variable@6:1",
+          "api": "src/pokedex/app.py#root-variable@7:1",
+          "health_bp": "src/pokedex/health.py#root-variable@3:1",
+          "pokemon_bp": "src/pokedex/pokemon/views.py#root-variable@9:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/health.py",
+        "codeBlockIds": [
+          "src/pokedex/health.py#import@1:1",
+          "src/pokedex/health.py#root-variable@3:1",
+          "src/pokedex/health.py#function@6:1",
+          "src/pokedex/health.py#property@8:13"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/health.py#import@1:1",
+          "src/pokedex/health.py#root-variable@3:1",
+          "src/pokedex/health.py#function@6:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/health.py#root-variable@3:1",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [],
+        "exports": {
+          "bp": "src/pokedex/health.py#root-variable@3:1",
+          "read_health": "src/pokedex/health.py#function@6:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/pokemon/store.py",
+        "codeBlockIds": [
+          "src/pokedex/pokemon/store.py#import@1:1",
+          "src/pokedex/pokemon/store.py#class@4:1",
+          "src/pokedex/pokemon/store.py#property@6:5",
+          "src/pokedex/pokemon/store.py#property@7:5",
+          "src/pokedex/pokemon/store.py#property@8:5",
+          "src/pokedex/pokemon/store.py#property@9:5",
+          "src/pokedex/pokemon/store.py#root-variable@12:1",
+          "src/pokedex/pokemon/store.py#function@15:1",
+          "src/pokedex/pokemon/store.py#root-argument-value@15:18",
+          "src/pokedex/pokemon/store.py#function@19:1",
+          "src/pokedex/pokemon/store.py#root-argument-value@19:18",
+          "src/pokedex/pokemon/store.py#function@23:1",
+          "src/pokedex/pokemon/store.py#root-argument-value@23:18",
+          "src/pokedex/pokemon/store.py#root-argument-value@24:11",
+          "src/pokedex/pokemon/store.py#function@28:1",
+          "src/pokedex/pokemon/store.py#root-argument-value@28:20",
+          "src/pokedex/pokemon/store.py#call@29:5"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/pokemon/store.py#import@1:1",
+          "src/pokedex/pokemon/store.py#class@4:1",
+          "src/pokedex/pokemon/store.py#root-variable@12:1",
+          "src/pokedex/pokemon/store.py#function@15:1",
+          "src/pokedex/pokemon/store.py#function@19:1",
+          "src/pokedex/pokemon/store.py#function@23:1",
+          "src/pokedex/pokemon/store.py#function@28:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/pokemon/store.py#class@4:1",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [],
+        "exports": {
+          "Pokemon": "src/pokedex/pokemon/store.py#class@4:1",
+          "party": "src/pokedex/pokemon/store.py#root-variable@12:1",
+          "list_pokemon": "src/pokedex/pokemon/store.py#function@15:1",
+          "find_pokemon": "src/pokedex/pokemon/store.py#function@19:1",
+          "save_pokemon": "src/pokedex/pokemon/store.py#function@23:1",
+          "remove_pokemon": "src/pokedex/pokemon/store.py#function@28:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/pokemon/views.py",
+        "codeBlockIds": [
+          "src/pokedex/pokemon/views.py#import@1:1",
+          "src/pokedex/pokemon/views.py#import@3:1",
+          "src/pokedex/pokemon/views.py#import@4:1",
+          "src/pokedex/pokemon/views.py#import@6:1",
+          "src/pokedex/pokemon/views.py#import@7:1",
+          "src/pokedex/pokemon/views.py#root-variable@9:1",
+          "src/pokedex/pokemon/views.py#function@12:1",
+          "src/pokedex/pokemon/views.py#condition@14:5",
+          "src/pokedex/pokemon/views.py#call@15:9",
+          "src/pokedex/pokemon/views.py#function@18:1",
+          "src/pokedex/pokemon/views.py#external-value@20:5",
+          "src/pokedex/pokemon/views.py#condition@21:5",
+          "src/pokedex/pokemon/views.py#external-value@22:9",
+          "src/pokedex/pokemon/views.py#external-value@23:9",
+          "src/pokedex/pokemon/views.py#class@28:1",
+          "src/pokedex/pokemon/views.py#method@29:5",
+          "src/pokedex/pokemon/views.py#root-argument-value@29:19",
+          "src/pokedex/pokemon/views.py#external-value@30:9",
+          "src/pokedex/pokemon/views.py#condition@31:9",
+          "src/pokedex/pokemon/views.py#call@32:13",
+          "src/pokedex/pokemon/views.py#method@35:5",
+          "src/pokedex/pokemon/views.py#root-argument-value@35:21",
+          "src/pokedex/pokemon/views.py#external-value@36:9",
+          "src/pokedex/pokemon/views.py#condition@37:9",
+          "src/pokedex/pokemon/views.py#call@38:13",
+          "src/pokedex/pokemon/views.py#external-value@39:9",
+          "src/pokedex/pokemon/views.py#method@42:5",
+          "src/pokedex/pokemon/views.py#root-argument-value@42:22",
+          "src/pokedex/pokemon/views.py#call@43:9",
+          "src/pokedex/pokemon/views.py#root-statement@47:1",
+          "src/pokedex/pokemon/views.py#route@47:1",
+          "src/pokedex/pokemon/views.py#effect-callback@47:48"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/pokemon/views.py#import@1:1",
+          "src/pokedex/pokemon/views.py#import@3:1",
+          "src/pokedex/pokemon/views.py#import@4:1",
+          "src/pokedex/pokemon/views.py#import@6:1",
+          "src/pokedex/pokemon/views.py#import@7:1",
+          "src/pokedex/pokemon/views.py#root-variable@9:1",
+          "src/pokedex/pokemon/views.py#function@12:1",
+          "src/pokedex/pokemon/views.py#function@18:1",
+          "src/pokedex/pokemon/views.py#class@28:1",
+          "src/pokedex/pokemon/views.py#root-statement@47:1"
+        ],
+        "diffBlockIds": [
+          "src/pokedex/pokemon/views.py#import@1:1",
+          "src/pokedex/pokemon/views.py#import@3:1",
+          "src/pokedex/pokemon/views.py#import@4:1",
+          "src/pokedex/pokemon/views.py#import@6:1",
+          "src/pokedex/pokemon/views.py#import@7:1",
+          "src/pokedex/pokemon/views.py#root-variable@9:1",
+          "src/pokedex/pokemon/views.py#function@12:1",
+          "src/pokedex/pokemon/views.py#condition@14:5",
+          "src/pokedex/pokemon/views.py#call@15:9",
+          "src/pokedex/pokemon/views.py#function@18:1",
+          "src/pokedex/pokemon/views.py#external-value@20:5",
+          "src/pokedex/pokemon/views.py#condition@21:5",
+          "src/pokedex/pokemon/views.py#external-value@22:9",
+          "src/pokedex/pokemon/views.py#external-value@23:9",
+          "src/pokedex/pokemon/views.py#class@28:1",
+          "src/pokedex/pokemon/views.py#method@29:5",
+          "src/pokedex/pokemon/views.py#root-argument-value@29:19",
+          "src/pokedex/pokemon/views.py#external-value@30:9",
+          "src/pokedex/pokemon/views.py#condition@31:9",
+          "src/pokedex/pokemon/views.py#call@32:13",
+          "src/pokedex/pokemon/views.py#method@35:5",
+          "src/pokedex/pokemon/views.py#root-argument-value@35:21",
+          "src/pokedex/pokemon/views.py#external-value@36:9",
+          "src/pokedex/pokemon/views.py#condition@37:9",
+          "src/pokedex/pokemon/views.py#call@38:13",
+          "src/pokedex/pokemon/views.py#external-value@39:9",
+          "src/pokedex/pokemon/views.py#method@42:5",
+          "src/pokedex/pokemon/views.py#root-argument-value@42:22",
+          "src/pokedex/pokemon/views.py#call@43:9",
+          "src/pokedex/pokemon/views.py#route@47:1",
+          "src/pokedex/pokemon/views.py#effect-callback@47:48"
+        ],
+        "diffContains": [
+          "effect",
+          "route",
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/pokemon/views.py#root-variable@9:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#condition@14:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#condition@14:5",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#call@15:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#function@18:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#function@18:1",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#external-value@20:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#condition@21:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#condition@21:5",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#condition@21:5",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#external-value@22:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#external-value@23:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#external-value@23:9",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#class@28:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#method@29:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#external-value@30:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#call@32:13",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#method@35:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#method@35:5",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#method@35:5",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#external-value@36:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#call@38:13",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#external-value@39:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#call@43:9",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/pokedex/settings.py#root-variable@3:1",
+          "src/pokedex/pokemon/store.py#function@15:1",
+          "src/pokedex/pokemon/store.py#function@23:1",
+          "src/pokedex/pokemon/store.py#class@4:1",
+          "src/pokedex/pokemon/store.py#function@19:1",
+          "src/pokedex/pokemon/store.py#function@28:1"
+        ],
+        "exports": {
+          "bp": "src/pokedex/pokemon/views.py#root-variable@9:1",
+          "require_api_key": "src/pokedex/pokemon/views.py#function@12:1",
+          "party": "src/pokedex/pokemon/views.py#function@18:1",
+          "PokemonAPI": "src/pokedex/pokemon/views.py#class@28:1",
+          "Pokemon": "src/pokedex/pokemon/store.py#class@4:1",
+          "find_pokemon": "src/pokedex/pokemon/store.py#function@19:1",
+          "list_pokemon": "src/pokedex/pokemon/store.py#function@15:1",
+          "remove_pokemon": "src/pokedex/pokemon/store.py#function@28:1",
+          "save_pokemon": "src/pokedex/pokemon/store.py#function@23:1",
+          "API_KEY": "src/pokedex/settings.py#root-variable@3:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/settings.py",
+        "codeBlockIds": [
+          "src/pokedex/settings.py#import@1:1",
+          "src/pokedex/settings.py#root-variable@3:1"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/settings.py#import@1:1",
+          "src/pokedex/settings.py#root-variable@3:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/settings.py#root-variable@3:1",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [],
+        "exports": {
+          "API_KEY": "src/pokedex/settings.py#root-variable@3:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "src/pokedex/app.py"
+    ],
+    "codeBlocks": [
+      {
+        "id": "src/pokedex/app.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/app.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/app.py#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/app.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/app.py#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 51
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 1
+              },
+              "end": {
+                "line": 4,
+                "column": 51
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/app.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/app.py#root-variable@6:1",
+        "name": "app",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/app.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 7
+              },
+              "end": {
+                "line": 6,
+                "column": 12
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "flask:Flask",
+            "importedName": "Flask",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/app.py#root-statement@11:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/app.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/app.py#root-variable@7:1",
+        "name": "api",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/app.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 7
+              },
+              "end": {
+                "line": 7,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "flask:Blueprint",
+            "importedName": "Blueprint",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/app.py#root-statement@9:1",
+          "src/pokedex/app.py#root-statement@10:1",
+          "src/pokedex/app.py#root-statement@11:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/app.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/app.py#root-statement@9:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 1
+              },
+              "end": {
+                "line": 9,
+                "column": 23
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "register_blueprint"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/app.py#root-variable@7:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 24
+              },
+              "end": {
+                "line": 9,
+                "column": 33
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/health.py#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/app.py",
+        "catalogue": null,
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "mount",
+          "heading": null,
+          "groupKey": "/api",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/pokedex/app.py#root-statement@10:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 35
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 1
+              },
+              "end": {
+                "line": 10,
+                "column": 35
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 24
+              },
+              "end": {
+                "line": 10,
+                "column": 34
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/app.py#root-statement@10:1",
+          "src/pokedex/pokemon/views.py#root-variable@9:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 1
+              },
+              "end": {
+                "line": 10,
+                "column": 23
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "register_blueprint"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/app.py#root-variable@7:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 24
+              },
+              "end": {
+                "line": 10,
+                "column": 34
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#root-variable@9:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#root-variable@9:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/app.py",
+        "catalogue": null,
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "mount",
+          "heading": null,
+          "groupKey": "/api",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/pokedex/app.py#root-statement@11:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 1
+              },
+              "end": {
+                "line": 11,
+                "column": 23
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "register_blueprint"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/app.py#root-variable@6:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 24
+              },
+              "end": {
+                "line": 11,
+                "column": 27
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/app.py#root-variable@7:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/app.py",
+        "catalogue": null,
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "mount",
+          "heading": null,
+          "groupKey": null,
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/pokedex/health.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/health.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/health.py#root-variable@3:1",
+        "name": "bp",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/app.py",
+          "src/pokedex/health.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 3,
+                "column": 6
+              },
+              "end": {
+                "line": 3,
+                "column": 15
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "flask:Blueprint",
+            "importedName": "Blueprint",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/app.py#root-statement@9:1",
+          "src/pokedex/health.py#function@6:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/health.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/health.py#function@6:1",
+        "name": "read_health",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/health.py#property@8:13"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/health.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 2
+              },
+              "end": {
+                "line": 6,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/health.py#root-variable@3:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 2
+              },
+              "end": {
+                "line": 6,
+                "column": 19
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "/health"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/health.py#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/health.py",
+        "catalogue": {
+          "specifier": "flask",
+          "name": "get",
+          "runs": "route",
+          "path": "/api/health",
+          "method": "GET",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "handler",
+          "heading": "GET",
+          "groupKey": "/api/health",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/pokedex/health.py#property@8:13",
+        "name": "status",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 13
+            },
+            "end": {
+              "line": 8,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/health.py#function@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/health.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#class@4:1",
+        "name": "Pokemon",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/store.py#property@6:5",
+          "src/pokedex/pokemon/store.py#property@7:5",
+          "src/pokedex/pokemon/store.py#property@8:5",
+          "src/pokedex/pokemon/store.py#property@9:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/pokemon/store.py",
+          "src/pokedex/pokemon/views.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 2
+              },
+              "end": {
+                "line": 4,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:dataclass",
+            "importedName": "dataclass",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/store.py#root-variable@12:1",
+          "src/pokedex/pokemon/store.py#function@15:1",
+          "src/pokedex/pokemon/store.py#function@19:1",
+          "src/pokedex/pokemon/store.py#root-argument-value@23:18",
+          "src/pokedex/pokemon/store.py#function@23:1",
+          "src/pokedex/pokemon/views.py#external-value@23:9",
+          "src/pokedex/pokemon/views.py#method@35:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#property@6:5",
+        "name": "Pokemon.id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/store.py#class@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#property@7:5",
+        "name": "Pokemon.trainer",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 17
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/store.py#class@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#property@8:5",
+        "name": "Pokemon.name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/store.py#class@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#property@9:5",
+        "name": "Pokemon.level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/store.py#class@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#root-variable@12:1",
+        "name": "party",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "isPlain": true,
+        "exportedByFilePaths": [
+          "src/pokedex/pokemon/store.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 18
+              },
+              "end": {
+                "line": 12,
+                "column": 25
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#class@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/store.py#function@15:1",
+          "src/pokedex/pokemon/store.py#function@19:1",
+          "src/pokedex/pokemon/store.py#function@23:1",
+          "src/pokedex/pokemon/store.py#call@29:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#function@15:1",
+        "name": "list_pokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 1
+            },
+            "end": {
+              "line": 16,
+              "column": 81
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/store.py#root-argument-value@15:18"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/pokemon/store.py",
+          "src/pokedex/pokemon/views.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 40
+              },
+              "end": {
+                "line": 15,
+                "column": 47
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#class@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 36
+              },
+              "end": {
+                "line": 16,
+                "column": 48
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "values"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#root-variable@12:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 73
+              },
+              "end": {
+                "line": 16,
+                "column": 80
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#root-argument-value@15:18"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#external-value@23:9",
+          "src/pokedex/pokemon/views.py#function@18:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#root-argument-value@15:18",
+        "name": "trainer",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 18
+            },
+            "end": {
+              "line": 15,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/store.py#function@15:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/pokemon/store.py#function@15:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/pokedex/pokemon/views.py#external-value@23:9",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#function@18:1",
+            "symbolIndex": 3
+          }
+        ],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#function@19:1",
+        "name": "find_pokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 1
+            },
+            "end": {
+              "line": 20,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/store.py#root-argument-value@19:18"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/pokemon/store.py",
+          "src/pokedex/pokemon/views.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 38
+              },
+              "end": {
+                "line": 19,
+                "column": 45
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#class@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 12
+              },
+              "end": {
+                "line": 20,
+                "column": 21
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#root-variable@12:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 22
+              },
+              "end": {
+                "line": 20,
+                "column": 32
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#root-argument-value@19:18"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#external-value@30:9",
+          "src/pokedex/pokemon/views.py#external-value@36:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#root-argument-value@19:18",
+        "name": "pokemon_id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 18
+            },
+            "end": {
+              "line": 19,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/store.py#function@19:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/pokemon/store.py#function@19:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/pokedex/pokemon/views.py#external-value@30:9",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/pokemon/views.py#external-value@36:9",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#function@23:1",
+        "name": "save_pokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 23,
+              "column": 1
+            },
+            "end": {
+              "line": 25,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/store.py#root-argument-value@23:18"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/pokemon/store.py",
+          "src/pokedex/pokemon/views.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 39
+              },
+              "end": {
+                "line": 23,
+                "column": 46
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#class@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 5
+              },
+              "end": {
+                "line": 24,
+                "column": 10
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#root-variable@12:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 11
+              },
+              "end": {
+                "line": 24,
+                "column": 21
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": "src/pokedex/pokemon/store.py#root-argument-value@24:11"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#root-argument-value@23:18"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 25
+              },
+              "end": {
+                "line": 24,
+                "column": 32
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#root-argument-value@23:18"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 12
+              },
+              "end": {
+                "line": 25,
+                "column": 19
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#root-argument-value@23:18"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#condition@21:5",
+          "src/pokedex/pokemon/views.py#method@35:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#root-argument-value@23:18",
+        "name": "pokemon",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 23,
+              "column": 18
+            },
+            "end": {
+              "line": 23,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/store.py#function@23:1",
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/store.py#root-argument-value@24:11"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 27
+              },
+              "end": {
+                "line": 23,
+                "column": 34
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#class@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/store.py#function@23:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/pokedex/pokemon/views.py#condition@21:5",
+            "symbolIndex": 3
+          }
+        ],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#root-argument-value@24:11",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 24,
+              "column": 11
+            },
+            "end": {
+              "line": 24,
+              "column": 21
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/store.py#root-argument-value@23:18",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#function@28:1",
+        "name": "remove_pokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 1
+            },
+            "end": {
+              "line": 29,
+              "column": 32
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/store.py#root-argument-value@28:20",
+          "src/pokedex/pokemon/store.py#call@29:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/pokemon/store.py",
+          "src/pokedex/pokemon/views.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#call@43:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#root-argument-value@28:20",
+        "name": "pokemon_id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 20
+            },
+            "end": {
+              "line": 28,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/store.py#function@28:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/pokemon/store.py#call@29:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/pokedex/pokemon/views.py#call@43:9",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/store.py#call@29:5",
+        "name": "party.pop",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 29,
+              "column": 5
+            },
+            "end": {
+              "line": 29,
+              "column": 32
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/store.py#function@28:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 29,
+                "column": 5
+              },
+              "end": {
+                "line": 29,
+                "column": 14
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "pop"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#root-variable@12:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 29,
+                "column": 15
+              },
+              "end": {
+                "line": 29,
+                "column": 25
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#root-argument-value@28:20"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/store.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 31
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 31
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 44
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 3,
+                "column": 44
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 35
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 1
+              },
+              "end": {
+                "line": 4,
+                "column": 35
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#import@6:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 100
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 100
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 1
+              },
+              "end": {
+                "line": 6,
+                "column": 100
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#import@7:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 37
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 1
+              },
+              "end": {
+                "line": 7,
+                "column": 37
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#root-variable@9:1",
+        "name": "bp",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 59
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/app.py",
+          "src/pokedex/pokemon/views.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 59
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 1
+              },
+              "end": {
+                "line": 9,
+                "column": 59
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#root-variable@9:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 6
+              },
+              "end": {
+                "line": 9,
+                "column": 15
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "flask:Blueprint",
+            "importedName": "Blueprint",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/app.py#root-statement@10:1",
+          "src/pokedex/pokemon/views.py#function@12:1",
+          "src/pokedex/pokemon/views.py#function@18:1",
+          "src/pokedex/pokemon/views.py#route@47:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#function@12:1",
+        "name": "require_api_key",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 15,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#condition@14:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/pokemon/views.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 19
+            }
+          },
+          {
+            "start": {
+              "line": 13,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 23
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 1
+              },
+              "end": {
+                "line": 12,
+                "column": 19
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 2
+              },
+              "end": {
+                "line": 12,
+                "column": 19
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 1
+              },
+              "end": {
+                "line": 13,
+                "column": 23
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#root-variable@9:1",
+          "src/pokedex/pokemon/views.py#function@12:1",
+          "src/pokedex/pokemon/views.py#condition@14:5",
+          "src/pokedex/pokemon/views.py#call@15:9"
+        ],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [
+          "api-route"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 2
+              },
+              "end": {
+                "line": 12,
+                "column": 19
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "before_request"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#root-variable@9:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#condition@14:5",
+          "src/pokedex/pokemon/views.py#root-variable@9:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": {
+          "specifier": "flask",
+          "name": "before_request",
+          "runs": "middleware",
+          "path": "/pokemon",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "middleware",
+          "heading": null,
+          "groupKey": null,
+          "ownerId": null,
+          "routePaths": [
+            "/api/pokemon",
+            "/api/pokemon/<int:pokemon_id>"
+          ]
+        }
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#condition@14:5",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#function@12:1",
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#call@15:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 14,
+              "column": 5
+            },
+            "end": {
+              "line": 14,
+              "column": 52
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 5
+              },
+              "end": {
+                "line": 14,
+                "column": 52
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#condition@14:5",
+          "src/pokedex/pokemon/views.py#call@15:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 8
+              },
+              "end": {
+                "line": 14,
+                "column": 27
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "headers",
+                "get"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "flask:request",
+            "importedName": "request",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 44
+              },
+              "end": {
+                "line": 14,
+                "column": 51
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/settings.py#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#call@15:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#call@15:9",
+        "name": "abort",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 9
+            },
+            "end": {
+              "line": 15,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#condition@14:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 15,
+              "column": 9
+            },
+            "end": {
+              "line": 15,
+              "column": 19
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 9
+              },
+              "end": {
+                "line": 15,
+                "column": 19
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#call@15:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 9
+              },
+              "end": {
+                "line": 15,
+                "column": 14
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "flask:abort",
+            "importedName": "abort",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#function@18:1",
+        "name": "party",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 1
+            },
+            "end": {
+              "line": 25,
+              "column": 66
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#external-value@20:5",
+          "src/pokedex/pokemon/views.py#condition@21:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/pokemon/views.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 18,
+              "column": 1
+            },
+            "end": {
+              "line": 18,
+              "column": 40
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 1
+            },
+            "end": {
+              "line": 19,
+              "column": 13
+            }
+          },
+          {
+            "start": {
+              "line": 25,
+              "column": 5
+            },
+            "end": {
+              "line": 25,
+              "column": 66
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 1
+              },
+              "end": {
+                "line": 18,
+                "column": 40
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 2
+              },
+              "end": {
+                "line": 18,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 1
+              },
+              "end": {
+                "line": 19,
+                "column": 13
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 5
+              },
+              "end": {
+                "line": 25,
+                "column": 66
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#root-variable@9:1",
+          "src/pokedex/pokemon/views.py#function@18:1",
+          "src/pokedex/pokemon/views.py#external-value@20:5",
+          "src/pokedex/pokemon/views.py#condition@21:5",
+          "src/pokedex/pokemon/views.py#external-value@22:9",
+          "src/pokedex/pokemon/views.py#external-value@23:9"
+        ],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [
+          "api-route"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 2
+              },
+              "end": {
+                "line": 18,
+                "column": 10
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "route"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#root-variable@9:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 13
+              },
+              "end": {
+                "line": 25,
+                "column": 19
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:asdict",
+            "importedName": "asdict",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 44
+              },
+              "end": {
+                "line": 25,
+                "column": 56
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#function@15:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 57
+              },
+              "end": {
+                "line": 25,
+                "column": 64
+              }
+            },
+            "use": "value",
+            "handedToId": "src/pokedex/pokemon/store.py#root-argument-value@15:18",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@20:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#external-value@20:5",
+          "src/pokedex/pokemon/views.py#condition@21:5",
+          "src/pokedex/pokemon/views.py#root-variable@9:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": {
+          "specifier": "flask",
+          "name": "route",
+          "runs": "route",
+          "path": "/api/pokemon",
+          "method": "GET,POST",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "handler",
+          "heading": "GET · POST",
+          "groupKey": "/api/pokemon",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#external-value@20:5",
+        "name": "trainer",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#function@18:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 43
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 5
+              },
+              "end": {
+                "line": 20,
+                "column": 43
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#external-value@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 15
+              },
+              "end": {
+                "line": 20,
+                "column": 43
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "headers",
+                "X-Trainer"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "flask:request",
+            "importedName": "request",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#external-value@23:9",
+          "src/pokedex/pokemon/views.py#function@18:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#condition@21:5",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 5
+            },
+            "end": {
+              "line": 24,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#function@18:1",
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#external-value@22:9",
+          "src/pokedex/pokemon/views.py#external-value@23:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 21,
+              "column": 5
+            },
+            "end": {
+              "line": 21,
+              "column": 33
+            }
+          },
+          {
+            "start": {
+              "line": 24,
+              "column": 9
+            },
+            "end": {
+              "line": 24,
+              "column": 50
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 5
+              },
+              "end": {
+                "line": 21,
+                "column": 33
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 24,
+                "column": 9
+              },
+              "end": {
+                "line": 24,
+                "column": 50
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#external-value@20:5",
+          "src/pokedex/pokemon/views.py#condition@21:5",
+          "src/pokedex/pokemon/views.py#external-value@22:9",
+          "src/pokedex/pokemon/views.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 8
+              },
+              "end": {
+                "line": 21,
+                "column": 22
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "method"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "flask:request",
+            "importedName": "request",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 16
+              },
+              "end": {
+                "line": 24,
+                "column": 22
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:asdict",
+            "importedName": "asdict",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 23
+              },
+              "end": {
+                "line": 24,
+                "column": 35
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#function@23:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 36
+              },
+              "end": {
+                "line": 24,
+                "column": 43
+              }
+            },
+            "use": "value",
+            "handedToId": "src/pokedex/pokemon/store.py#root-argument-value@23:18",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@23:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#external-value@22:9",
+          "src/pokedex/pokemon/views.py#external-value@23:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#external-value@22:9",
+        "name": "body",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 22,
+              "column": 9
+            },
+            "end": {
+              "line": 22,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#condition@21:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 22,
+              "column": 9
+            },
+            "end": {
+              "line": 22,
+              "column": 34
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 9
+              },
+              "end": {
+                "line": 22,
+                "column": 34
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#external-value@22:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 22,
+                "column": 16
+              },
+              "end": {
+                "line": 22,
+                "column": 32
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get_json"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "flask:request",
+            "importedName": "request",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#external-value@23:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#external-value@23:9",
+        "name": "pokemon",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 23,
+              "column": 9
+            },
+            "end": {
+              "line": 23,
+              "column": 118
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#condition@21:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 23,
+              "column": 9
+            },
+            "end": {
+              "line": 23,
+              "column": 118
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 9
+              },
+              "end": {
+                "line": 23,
+                "column": 118
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 47
+              },
+              "end": {
+                "line": 23,
+                "column": 54
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 70
+              },
+              "end": {
+                "line": 23,
+                "column": 77
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 84
+              },
+              "end": {
+                "line": 23,
+                "column": 96
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 104
+              },
+              "end": {
+                "line": 23,
+                "column": 117
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#external-value@20:5",
+          "src/pokedex/pokemon/views.py#external-value@22:9",
+          "src/pokedex/pokemon/views.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 19
+              },
+              "end": {
+                "line": 23,
+                "column": 26
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#class@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 34
+              },
+              "end": {
+                "line": 23,
+                "column": 46
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#function@15:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 47
+              },
+              "end": {
+                "line": 23,
+                "column": 54
+              }
+            },
+            "use": "value",
+            "handedToId": "src/pokedex/pokemon/store.py#root-argument-value@15:18",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@20:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 70
+              },
+              "end": {
+                "line": 23,
+                "column": 77
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@20:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 84
+              },
+              "end": {
+                "line": 23,
+                "column": 96
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@22:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 104
+              },
+              "end": {
+                "line": 23,
+                "column": 117
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "level"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@22:9"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#condition@21:5"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#external-value@20:5",
+          "src/pokedex/pokemon/views.py#external-value@22:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#class@28:1",
+        "name": "PokemonAPI",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 1
+            },
+            "end": {
+              "line": 44,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#method@29:5",
+          "src/pokedex/pokemon/views.py#method@35:5",
+          "src/pokedex/pokemon/views.py#method@42:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/pokemon/views.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 28,
+              "column": 1
+            },
+            "end": {
+              "line": 28,
+              "column": 30
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 28,
+                "column": 1
+              },
+              "end": {
+                "line": 28,
+                "column": 30
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#class@28:1",
+          "src/pokedex/pokemon/views.py#method@29:5",
+          "src/pokedex/pokemon/views.py#external-value@30:9",
+          "src/pokedex/pokemon/views.py#condition@31:9",
+          "src/pokedex/pokemon/views.py#call@32:13",
+          "src/pokedex/pokemon/views.py#method@35:5",
+          "src/pokedex/pokemon/views.py#external-value@36:9",
+          "src/pokedex/pokemon/views.py#condition@37:9",
+          "src/pokedex/pokemon/views.py#call@38:13",
+          "src/pokedex/pokemon/views.py#external-value@39:9",
+          "src/pokedex/pokemon/views.py#method@42:5",
+          "src/pokedex/pokemon/views.py#call@43:9"
+        ],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [
+          "api-route"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 28,
+                "column": 18
+              },
+              "end": {
+                "line": 28,
+                "column": 28
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "flask.views:MethodView",
+            "importedName": "MethodView",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#effect-callback@47:48"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#method@29:5",
+          "src/pokedex/pokemon/views.py#method@35:5",
+          "src/pokedex/pokemon/views.py#method@42:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#method@29:5",
+        "name": "PokemonAPI.get",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 29,
+              "column": 5
+            },
+            "end": {
+              "line": 33,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#class@28:1",
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#root-argument-value@29:19",
+          "src/pokedex/pokemon/views.py#external-value@30:9",
+          "src/pokedex/pokemon/views.py#condition@31:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 29,
+              "column": 5
+            },
+            "end": {
+              "line": 29,
+              "column": 19
+            }
+          },
+          {
+            "start": {
+              "line": 29,
+              "column": 29
+            },
+            "end": {
+              "line": 29,
+              "column": 31
+            }
+          },
+          {
+            "start": {
+              "line": 33,
+              "column": 9
+            },
+            "end": {
+              "line": 33,
+              "column": 31
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 29,
+                "column": 5
+              },
+              "end": {
+                "line": 29,
+                "column": 19
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 29,
+                "column": 29
+              },
+              "end": {
+                "line": 29,
+                "column": 31
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 33,
+                "column": 9
+              },
+              "end": {
+                "line": 33,
+                "column": 31
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#method@29:5",
+          "src/pokedex/pokemon/views.py#external-value@30:9",
+          "src/pokedex/pokemon/views.py#condition@31:9",
+          "src/pokedex/pokemon/views.py#call@32:13"
+        ],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [
+          "api-route"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 33,
+                "column": 16
+              },
+              "end": {
+                "line": 33,
+                "column": 22
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:asdict",
+            "importedName": "asdict",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 33,
+                "column": 23
+              },
+              "end": {
+                "line": 33,
+                "column": 30
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@30:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#external-value@30:9",
+          "src/pokedex/pokemon/views.py#condition@31:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null,
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "handler",
+          "heading": "GET",
+          "groupKey": "/api/pokemon/<int:pokemon_id>",
+          "ownerId": "src/pokedex/pokemon/views.py#route@47:1"
+        }
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#root-argument-value@29:19",
+        "name": "pokemon_id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 29,
+              "column": 19
+            },
+            "end": {
+              "line": 29,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#method@29:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 29,
+              "column": 19
+            },
+            "end": {
+              "line": 29,
+              "column": 29
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 29,
+                "column": 19
+              },
+              "end": {
+                "line": 29,
+                "column": 29
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#external-value@30:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#external-value@30:9",
+        "name": "pokemon",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 30,
+              "column": 9
+            },
+            "end": {
+              "line": 30,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#method@29:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 30,
+              "column": 9
+            },
+            "end": {
+              "line": 30,
+              "column": 43
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 30,
+                "column": 9
+              },
+              "end": {
+                "line": 30,
+                "column": 43
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#external-value@30:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 30,
+                "column": 19
+              },
+              "end": {
+                "line": 30,
+                "column": 31
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#function@19:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 30,
+                "column": 32
+              },
+              "end": {
+                "line": 30,
+                "column": 42
+              }
+            },
+            "use": "value",
+            "handedToId": "src/pokedex/pokemon/store.py#root-argument-value@19:18",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#root-argument-value@29:19"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#condition@31:9",
+          "src/pokedex/pokemon/views.py#method@29:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#condition@31:9",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 31,
+              "column": 9
+            },
+            "end": {
+              "line": 32,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#method@29:5",
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#call@32:13"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 31,
+              "column": 9
+            },
+            "end": {
+              "line": 31,
+              "column": 28
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 31,
+                "column": 9
+              },
+              "end": {
+                "line": 31,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 31,
+                "column": 12
+              },
+              "end": {
+                "line": 31,
+                "column": 19
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#external-value@30:9",
+          "src/pokedex/pokemon/views.py#condition@31:9",
+          "src/pokedex/pokemon/views.py#call@32:13"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 31,
+                "column": 12
+              },
+              "end": {
+                "line": 31,
+                "column": 19
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@30:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#call@32:13",
+          "src/pokedex/pokemon/views.py#external-value@30:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#call@32:13",
+        "name": "abort",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 32,
+              "column": 13
+            },
+            "end": {
+              "line": 32,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#condition@31:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 32,
+              "column": 13
+            },
+            "end": {
+              "line": 32,
+              "column": 23
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 32,
+                "column": 13
+              },
+              "end": {
+                "line": 32,
+                "column": 23
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#call@32:13"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 32,
+                "column": 13
+              },
+              "end": {
+                "line": 32,
+                "column": 18
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "flask:abort",
+            "importedName": "abort",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#method@35:5",
+        "name": "PokemonAPI.patch",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 35,
+              "column": 5
+            },
+            "end": {
+              "line": 40,
+              "column": 117
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#class@28:1",
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#root-argument-value@35:21",
+          "src/pokedex/pokemon/views.py#external-value@36:9",
+          "src/pokedex/pokemon/views.py#condition@37:9",
+          "src/pokedex/pokemon/views.py#external-value@39:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 35,
+              "column": 5
+            },
+            "end": {
+              "line": 35,
+              "column": 21
+            }
+          },
+          {
+            "start": {
+              "line": 35,
+              "column": 31
+            },
+            "end": {
+              "line": 35,
+              "column": 33
+            }
+          },
+          {
+            "start": {
+              "line": 40,
+              "column": 9
+            },
+            "end": {
+              "line": 40,
+              "column": 117
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 35,
+                "column": 5
+              },
+              "end": {
+                "line": 35,
+                "column": 21
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 35,
+                "column": 31
+              },
+              "end": {
+                "line": 35,
+                "column": 33
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 40,
+                "column": 9
+              },
+              "end": {
+                "line": 40,
+                "column": 117
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#method@35:5",
+          "src/pokedex/pokemon/views.py#external-value@36:9",
+          "src/pokedex/pokemon/views.py#condition@37:9",
+          "src/pokedex/pokemon/views.py#call@38:13",
+          "src/pokedex/pokemon/views.py#external-value@39:9"
+        ],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [
+          "api-route"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 40,
+                "column": 16
+              },
+              "end": {
+                "line": 40,
+                "column": 22
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:asdict",
+            "importedName": "asdict",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 40,
+                "column": 23
+              },
+              "end": {
+                "line": 40,
+                "column": 35
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#function@23:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 40,
+                "column": 36
+              },
+              "end": {
+                "line": 40,
+                "column": 43
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#class@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 40,
+                "column": 47
+              },
+              "end": {
+                "line": 40,
+                "column": 57
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@36:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 40,
+                "column": 67
+              },
+              "end": {
+                "line": 40,
+                "column": 82
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "trainer"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@36:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 40,
+                "column": 89
+              },
+              "end": {
+                "line": 40,
+                "column": 101
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@36:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 40,
+                "column": 109
+              },
+              "end": {
+                "line": 40,
+                "column": 114
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@39:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#external-value@36:9",
+          "src/pokedex/pokemon/views.py#condition@37:9",
+          "src/pokedex/pokemon/views.py#external-value@39:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null,
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "handler",
+          "heading": "PATCH",
+          "groupKey": "/api/pokemon/<int:pokemon_id>",
+          "ownerId": "src/pokedex/pokemon/views.py#route@47:1"
+        }
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#root-argument-value@35:21",
+        "name": "pokemon_id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 35,
+              "column": 21
+            },
+            "end": {
+              "line": 35,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#method@35:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 35,
+              "column": 21
+            },
+            "end": {
+              "line": 35,
+              "column": 31
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 35,
+                "column": 21
+              },
+              "end": {
+                "line": 35,
+                "column": 31
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#external-value@36:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#external-value@36:9",
+        "name": "pokemon",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 36,
+              "column": 9
+            },
+            "end": {
+              "line": 36,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#method@35:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 36,
+              "column": 9
+            },
+            "end": {
+              "line": 36,
+              "column": 43
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 36,
+                "column": 9
+              },
+              "end": {
+                "line": 36,
+                "column": 43
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#external-value@36:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 36,
+                "column": 19
+              },
+              "end": {
+                "line": 36,
+                "column": 31
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#function@19:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 36,
+                "column": 32
+              },
+              "end": {
+                "line": 36,
+                "column": 42
+              }
+            },
+            "use": "value",
+            "handedToId": "src/pokedex/pokemon/store.py#root-argument-value@19:18",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#root-argument-value@35:21"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#condition@37:9",
+          "src/pokedex/pokemon/views.py#method@35:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#condition@37:9",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 37,
+              "column": 9
+            },
+            "end": {
+              "line": 38,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#method@35:5",
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#call@38:13"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 37,
+              "column": 9
+            },
+            "end": {
+              "line": 37,
+              "column": 28
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 37,
+                "column": 9
+              },
+              "end": {
+                "line": 37,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 37,
+                "column": 12
+              },
+              "end": {
+                "line": 37,
+                "column": 19
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#external-value@36:9",
+          "src/pokedex/pokemon/views.py#condition@37:9",
+          "src/pokedex/pokemon/views.py#call@38:13"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 37,
+                "column": 12
+              },
+              "end": {
+                "line": 37,
+                "column": 19
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#external-value@36:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#call@38:13",
+          "src/pokedex/pokemon/views.py#external-value@36:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#call@38:13",
+        "name": "abort",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 38,
+              "column": 13
+            },
+            "end": {
+              "line": 38,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#condition@37:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 38,
+              "column": 13
+            },
+            "end": {
+              "line": 38,
+              "column": 23
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 38,
+                "column": 13
+              },
+              "end": {
+                "line": 38,
+                "column": 23
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#call@38:13"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 38,
+                "column": 13
+              },
+              "end": {
+                "line": 38,
+                "column": 18
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "flask:abort",
+            "importedName": "abort",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#external-value@39:9",
+        "name": "level",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 39,
+              "column": 9
+            },
+            "end": {
+              "line": 39,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#method@35:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 39,
+              "column": 9
+            },
+            "end": {
+              "line": 39,
+              "column": 44
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 39,
+                "column": 9
+              },
+              "end": {
+                "line": 39,
+                "column": 44
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#external-value@39:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 39,
+                "column": 17
+              },
+              "end": {
+                "line": 39,
+                "column": 33
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get_json"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "flask:request",
+            "importedName": "request",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#method@35:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#method@42:5",
+        "name": "PokemonAPI.delete",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 42,
+              "column": 5
+            },
+            "end": {
+              "line": 44,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#class@28:1",
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#root-argument-value@42:22",
+          "src/pokedex/pokemon/views.py#call@43:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 42,
+              "column": 5
+            },
+            "end": {
+              "line": 42,
+              "column": 22
+            }
+          },
+          {
+            "start": {
+              "line": 42,
+              "column": 32
+            },
+            "end": {
+              "line": 42,
+              "column": 34
+            }
+          },
+          {
+            "start": {
+              "line": 44,
+              "column": 9
+            },
+            "end": {
+              "line": 44,
+              "column": 23
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 42,
+                "column": 5
+              },
+              "end": {
+                "line": 42,
+                "column": 22
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 42,
+                "column": 32
+              },
+              "end": {
+                "line": 42,
+                "column": 34
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 44,
+                "column": 9
+              },
+              "end": {
+                "line": 44,
+                "column": 23
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#method@42:5",
+          "src/pokedex/pokemon/views.py#call@43:9"
+        ],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [
+          "api-route"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#call@43:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null,
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "handler",
+          "heading": "DELETE",
+          "groupKey": "/api/pokemon/<int:pokemon_id>",
+          "ownerId": "src/pokedex/pokemon/views.py#route@47:1"
+        }
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#root-argument-value@42:22",
+        "name": "pokemon_id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 42,
+              "column": 22
+            },
+            "end": {
+              "line": 42,
+              "column": 32
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#method@42:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 42,
+              "column": 22
+            },
+            "end": {
+              "line": 42,
+              "column": 32
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 42,
+                "column": 22
+              },
+              "end": {
+                "line": 42,
+                "column": 32
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#call@43:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#call@43:9",
+        "name": "remove_pokemon",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 43,
+              "column": 9
+            },
+            "end": {
+              "line": 43,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#method@42:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 43,
+              "column": 9
+            },
+            "end": {
+              "line": 43,
+              "column": 35
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 43,
+                "column": 9
+              },
+              "end": {
+                "line": 43,
+                "column": 35
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#call@43:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 43,
+                "column": 9
+              },
+              "end": {
+                "line": 43,
+                "column": 23
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/pokemon/store.py#function@28:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 43,
+                "column": 24
+              },
+              "end": {
+                "line": 43,
+                "column": 34
+              }
+            },
+            "use": "value",
+            "handedToId": "src/pokedex/pokemon/store.py#root-argument-value@28:20",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#root-argument-value@42:22"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#root-statement@47:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 47,
+              "column": 1
+            },
+            "end": {
+              "line": 47,
+              "column": 78
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#route@47:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#route@47:1",
+        "type": "route",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 47,
+              "column": 1
+            },
+            "end": {
+              "line": 47,
+              "column": 78
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#root-statement@47:1",
+        "childrenBlockIds": [
+          "src/pokedex/pokemon/views.py#effect-callback@47:48"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 47,
+              "column": 1
+            },
+            "end": {
+              "line": 47,
+              "column": 48
+            }
+          },
+          {
+            "start": {
+              "line": 47,
+              "column": 77
+            },
+            "end": {
+              "line": 47,
+              "column": 78
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 47,
+                "column": 1
+              },
+              "end": {
+                "line": 47,
+                "column": 48
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 47,
+                "column": 1
+              },
+              "end": {
+                "line": 47,
+                "column": 16
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 47,
+                "column": 77
+              },
+              "end": {
+                "line": 47,
+                "column": 78
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#root-variable@9:1",
+          "src/pokedex/pokemon/views.py#route@47:1",
+          "src/pokedex/pokemon/views.py#effect-callback@47:48"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 47,
+                "column": 1
+              },
+              "end": {
+                "line": 47,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "add_url_rule"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#root-variable@9:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/pokemon/views.py#effect-callback@47:48",
+          "src/pokedex/pokemon/views.py#root-variable@9:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": {
+          "specifier": "flask",
+          "name": "add_url_rule",
+          "runs": "route",
+          "path": "/api/pokemon/<int:pokemon_id>",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "holder",
+          "heading": "ANY",
+          "groupKey": "/api/pokemon/<int:pokemon_id>",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/pokedex/pokemon/views.py#effect-callback@47:48",
+        "name": "view_func",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 47,
+              "column": 48
+            },
+            "end": {
+              "line": 47,
+              "column": 77
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/pokemon/views.py#route@47:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 47,
+              "column": 48
+            },
+            "end": {
+              "line": 47,
+              "column": 77
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 47,
+                "column": 48
+              },
+              "end": {
+                "line": 47,
+                "column": 77
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 47,
+                "column": 48
+              },
+              "end": {
+                "line": 47,
+                "column": 66
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/pokemon/views.py#effect-callback@47:48"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 47,
+                "column": 48
+              },
+              "end": {
+                "line": 47,
+                "column": 66
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "as_view"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/pokemon/views.py#class@28:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/pokemon/views.py",
+        "catalogue": {
+          "specifier": "flask",
+          "name": "add_url_rule",
+          "runs": "route",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Flask",
+          "kind": "route",
+          "part": "handler",
+          "heading": "ANY",
+          "groupKey": "/api/pokemon/<int:pokemon_id>",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "src/pokedex/settings.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/settings.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/settings.py#root-variable@3:1",
+        "name": "API_KEY",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 59
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/pokemon/views.py",
+          "src/pokedex/settings.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 3,
+                "column": 11
+              },
+              "end": {
+                "line": 3,
+                "column": 25
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "environ",
+                "get"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "os",
+            "importedName": "*",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/pokemon/views.py#condition@14:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/settings.py",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "src/pokedex/app.py#import@4:1",
+      "src/pokedex/app.py#root-statement@10:1",
+      "src/pokedex/pokemon/views.py#import@1:1",
+      "src/pokedex/pokemon/views.py#import@3:1",
+      "src/pokedex/pokemon/views.py#import@4:1",
+      "src/pokedex/pokemon/views.py#import@6:1",
+      "src/pokedex/pokemon/views.py#import@7:1",
+      "src/pokedex/pokemon/views.py#root-variable@9:1",
+      "src/pokedex/pokemon/views.py#function@12:1",
+      "src/pokedex/pokemon/views.py#condition@14:5",
+      "src/pokedex/pokemon/views.py#call@15:9",
+      "src/pokedex/pokemon/views.py#function@18:1",
+      "src/pokedex/pokemon/views.py#external-value@20:5",
+      "src/pokedex/pokemon/views.py#condition@21:5",
+      "src/pokedex/pokemon/views.py#external-value@22:9",
+      "src/pokedex/pokemon/views.py#external-value@23:9",
+      "src/pokedex/pokemon/views.py#class@28:1",
+      "src/pokedex/pokemon/views.py#method@29:5",
+      "src/pokedex/pokemon/views.py#root-argument-value@29:19",
+      "src/pokedex/pokemon/views.py#external-value@30:9",
+      "src/pokedex/pokemon/views.py#condition@31:9",
+      "src/pokedex/pokemon/views.py#call@32:13",
+      "src/pokedex/pokemon/views.py#method@35:5",
+      "src/pokedex/pokemon/views.py#root-argument-value@35:21",
+      "src/pokedex/pokemon/views.py#external-value@36:9",
+      "src/pokedex/pokemon/views.py#condition@37:9",
+      "src/pokedex/pokemon/views.py#call@38:13",
+      "src/pokedex/pokemon/views.py#external-value@39:9",
+      "src/pokedex/pokemon/views.py#method@42:5",
+      "src/pokedex/pokemon/views.py#root-argument-value@42:22",
+      "src/pokedex/pokemon/views.py#call@43:9",
+      "src/pokedex/pokemon/views.py#route@47:1",
+      "src/pokedex/pokemon/views.py#effect-callback@47:48"
+    ],
+    "diffContains": [
+      "effect",
+      "route",
+      "logic"
+    ],
+    "chainContains": [
+      "effect",
+      "route",
+      "logic"
+    ],
+    "diffChainIds": [
+      "src/pokedex/app.py#root-statement@10:1",
+      "src/pokedex/pokemon/views.py#function@12:1",
+      "src/pokedex/pokemon/views.py#function@18:1",
+      "src/pokedex/pokemon/views.py#class@28:1",
+      "src/pokedex/pokemon/views.py#route@47:1"
+    ]
+  }
+]
