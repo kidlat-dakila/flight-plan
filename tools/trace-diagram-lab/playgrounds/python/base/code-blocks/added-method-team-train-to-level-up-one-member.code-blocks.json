@@ -1,0 +1,4297 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "src/pokedex/cli.py",
+        "codeBlockIds": [
+          "src/pokedex/cli.py#import@1:1",
+          "src/pokedex/cli.py#import@2:1",
+          "src/pokedex/cli.py#import@3:1",
+          "src/pokedex/cli.py#function@6:1",
+          "src/pokedex/cli.py#external-value@7:5",
+          "src/pokedex/cli.py#call@8:5",
+          "src/pokedex/cli.py#call@9:5",
+          "src/pokedex/cli.py#function@13:1",
+          "src/pokedex/cli.py#external-value@14:5",
+          "src/pokedex/cli.py#call@15:5",
+          "src/pokedex/cli.py#call@16:5",
+          "src/pokedex/cli.py#root-statement@19:1",
+          "src/pokedex/cli.py#condition@19:1",
+          "src/pokedex/cli.py#call@20:5"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/cli.py#import@1:1",
+          "src/pokedex/cli.py#import@2:1",
+          "src/pokedex/cli.py#import@3:1",
+          "src/pokedex/cli.py#function@6:1",
+          "src/pokedex/cli.py#function@13:1",
+          "src/pokedex/cli.py#root-statement@19:1"
+        ],
+        "diffBlockIds": [
+          "src/pokedex/cli.py#call@15:5"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/cli.py#function@6:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/cli.py#external-value@7:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/cli.py#external-value@7:5",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/cli.py#call@8:5",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/cli.py#call@9:5",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/cli.py#call@16:5",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/pokedex/team.py#class@9:1",
+          "src/pokedex/models.py#class@16:1",
+          "src/pokedex/models.py#class@6:1",
+          "src/pokedex/display/formatting.py#function@9:1"
+        ],
+        "exports": {
+          "build_starter_team": "src/pokedex/cli.py#function@6:1",
+          "main": "src/pokedex/cli.py#function@13:1",
+          "describe_team": "src/pokedex/display/formatting.py#function@9:1",
+          "Pokemon": "src/pokedex/models.py#class@6:1",
+          "Trainer": "src/pokedex/models.py#class@16:1",
+          "Team": "src/pokedex/team.py#class@9:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/display/formatting.py",
+        "codeBlockIds": [
+          "src/pokedex/display/formatting.py#import@1:1",
+          "src/pokedex/display/formatting.py#import@2:1",
+          "src/pokedex/display/formatting.py#function@5:1",
+          "src/pokedex/display/formatting.py#root-argument-value@5:22",
+          "src/pokedex/display/formatting.py#root-argument-value@6:15",
+          "src/pokedex/display/formatting.py#root-argument-value@6:40",
+          "src/pokedex/display/formatting.py#root-argument-value@6:62",
+          "src/pokedex/display/formatting.py#function@9:1",
+          "src/pokedex/display/formatting.py#root-argument-value@9:19",
+          "src/pokedex/display/formatting.py#root-argument-value@10:55",
+          "src/pokedex/display/formatting.py#root-argument-value@11:26",
+          "src/pokedex/display/formatting.py#external-value@10:5"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/display/formatting.py#import@1:1",
+          "src/pokedex/display/formatting.py#import@2:1",
+          "src/pokedex/display/formatting.py#function@5:1",
+          "src/pokedex/display/formatting.py#function@9:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/display/formatting.py#root-argument-value@5:22",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/display/formatting.py#root-argument-value@9:19",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/pokedex/models.py#class@6:1",
+          "src/pokedex/team.py#class@9:1"
+        ],
+        "exports": {
+          "describe_pokemon": "src/pokedex/display/formatting.py#function@5:1",
+          "describe_team": "src/pokedex/display/formatting.py#function@9:1",
+          "Pokemon": "src/pokedex/models.py#class@6:1",
+          "Team": "src/pokedex/team.py#class@9:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/models.py",
+        "codeBlockIds": [
+          "src/pokedex/models.py#import@1:1",
+          "src/pokedex/models.py#import@3:1",
+          "src/pokedex/models.py#class@6:1",
+          "src/pokedex/models.py#property@8:5",
+          "src/pokedex/models.py#property@9:5",
+          "src/pokedex/models.py#property@10:5",
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/models.py#class@16:1",
+          "src/pokedex/models.py#property@18:5",
+          "src/pokedex/models.py#property@19:5",
+          "src/pokedex/models.py#property@20:5"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/models.py#import@1:1",
+          "src/pokedex/models.py#import@3:1",
+          "src/pokedex/models.py#class@6:1",
+          "src/pokedex/models.py#class@16:1"
+        ],
+        "diffBlockIds": [
+          "src/pokedex/models.py#import@1:1",
+          "src/pokedex/models.py#import@3:1",
+          "src/pokedex/models.py#method@12:5"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/models.py#class@6:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/models.py#method@12:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/models.py#method@12:5",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "src/pokedex/models.py#class@16:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/models.py#property@20:5",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/pokedex/rules.py#root-variable@2:1"
+        ],
+        "exports": {
+          "Pokemon": "src/pokedex/models.py#class@6:1",
+          "Trainer": "src/pokedex/models.py#class@16:1",
+          "MAX_LEVEL": "src/pokedex/rules.py#root-variable@2:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/rules.py",
+        "codeBlockIds": [
+          "src/pokedex/rules.py#root-variable@1:1",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/rules.py#function@5:1",
+          "src/pokedex/rules.py#root-argument-value@5:14"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/rules.py#root-variable@1:1",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/rules.py#function@5:1"
+        ],
+        "diffBlockIds": [
+          "src/pokedex/rules.py#root-variable@2:1"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "MAX_TEAM_SIZE": "src/pokedex/rules.py#root-variable@1:1",
+          "MAX_LEVEL": "src/pokedex/rules.py#root-variable@2:1",
+          "has_room": "src/pokedex/rules.py#function@5:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/team.py",
+        "codeBlockIds": [
+          "src/pokedex/team.py#import@1:1",
+          "src/pokedex/team.py#import@2:1",
+          "src/pokedex/team.py#class@5:1",
+          "src/pokedex/team.py#class@9:1",
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#root-argument-value@10:24",
+          "src/pokedex/team.py#property@11:9",
+          "src/pokedex/team.py#property@12:9",
+          "src/pokedex/team.py#property@13:9",
+          "src/pokedex/team.py#method@15:5",
+          "src/pokedex/team.py#root-argument-value@15:19",
+          "src/pokedex/team.py#condition@16:9",
+          "src/pokedex/team.py#throw@17:13",
+          "src/pokedex/team.py#call@18:9",
+          "src/pokedex/team.py#method@20:5",
+          "src/pokedex/team.py#root-argument-value@20:21",
+          "src/pokedex/team.py#variable@21:9",
+          "src/pokedex/team.py#variable@22:9",
+          "src/pokedex/team.py#method@27:5",
+          "src/pokedex/team.py#function@28:38",
+          "src/pokedex/team.py#variable@28:45"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/team.py#import@1:1",
+          "src/pokedex/team.py#import@2:1",
+          "src/pokedex/team.py#class@5:1",
+          "src/pokedex/team.py#class@9:1"
+        ],
+        "diffBlockIds": [
+          "src/pokedex/team.py#property@13:9",
+          "src/pokedex/team.py#method@20:5",
+          "src/pokedex/team.py#root-argument-value@20:21",
+          "src/pokedex/team.py#variable@21:9",
+          "src/pokedex/team.py#variable@22:9"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/team.py#root-argument-value@10:24",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/team.py#property@12:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/team.py#root-argument-value@15:19",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/team.py#condition@16:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/team.py#method@20:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/team.py#variable@21:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/team.py#method@27:5",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/pokedex/models.py#class@16:1",
+          "src/pokedex/models.py#class@6:1",
+          "src/pokedex/rules.py#function@5:1"
+        ],
+        "exports": {
+          "TeamFullError": "src/pokedex/team.py#class@5:1",
+          "Team": "src/pokedex/team.py#class@9:1",
+          "Pokemon": "src/pokedex/models.py#class@6:1",
+          "Trainer": "src/pokedex/models.py#class@16:1",
+          "has_room": "src/pokedex/rules.py#function@5:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "src/pokedex/cli.py"
+    ],
+    "codeBlocks": [
+      {
+        "id": "src/pokedex/cli.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#function@6:1",
+        "name": "build_starter_team",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/cli.py#external-value@7:5",
+          "src/pokedex/cli.py#call@8:5",
+          "src/pokedex/cli.py#call@9:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/cli.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 29
+              },
+              "end": {
+                "line": 6,
+                "column": 33
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 29
+              },
+              "end": {
+                "line": 6,
+                "column": 33
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/team.py#class@9:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 12
+              },
+              "end": {
+                "line": 10,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/cli.py#external-value@7:5"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/cli.py#external-value@14:5"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#external-value@7:5",
+          "src/pokedex/cli.py#call@8:5",
+          "src/pokedex/cli.py#call@9:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#external-value@7:5",
+        "name": "team",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 61
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#function@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 12
+              },
+              "end": {
+                "line": 7,
+                "column": 16
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 12
+              },
+              "end": {
+                "line": 7,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/team.py#class@9:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 17
+              },
+              "end": {
+                "line": 7,
+                "column": 24
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/models.py#class@16:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/cli.py#call@8:5",
+          "src/pokedex/cli.py#call@9:5",
+          "src/pokedex/cli.py#function@6:1"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/team.py#class@9:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#call@8:5",
+        "name": "team.add",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 59
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#function@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 14
+              },
+              "end": {
+                "line": 8,
+                "column": 21
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 5
+              },
+              "end": {
+                "line": 8,
+                "column": 13
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "add"
+              ],
+              "blockId": "src/pokedex/team.py#method@15:5"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/cli.py#external-value@7:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 14
+              },
+              "end": {
+                "line": 8,
+                "column": 21
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/models.py#class@6:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/models.py#class@6:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#call@9:5",
+        "name": "team.add",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#function@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 14
+              },
+              "end": {
+                "line": 9,
+                "column": 21
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 5
+              },
+              "end": {
+                "line": 9,
+                "column": 13
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "add"
+              ],
+              "blockId": "src/pokedex/team.py#method@15:5"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/cli.py#external-value@7:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 14
+              },
+              "end": {
+                "line": 9,
+                "column": 21
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/models.py#class@6:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/models.py#class@6:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#function@13:1",
+        "name": "main",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 1
+            },
+            "end": {
+              "line": 16,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/cli.py#external-value@14:5",
+          "src/pokedex/cli.py#call@15:5",
+          "src/pokedex/cli.py#call@16:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/cli.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#call@15:5",
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/cli.py#call@20:5"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#external-value@14:5",
+          "src/pokedex/cli.py#call@15:5",
+          "src/pokedex/cli.py#call@16:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#external-value@14:5",
+        "name": "team",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 5
+            },
+            "end": {
+              "line": 14,
+              "column": 32
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#function@13:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 12
+              },
+              "end": {
+                "line": 14,
+                "column": 30
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/cli.py#function@6:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/cli.py#call@15:5",
+          "src/pokedex/cli.py#call@16:5"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#function@6:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#call@15:5",
+        "name": "team.train",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 18
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#function@13:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 15,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 18
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 5
+              },
+              "end": {
+                "line": 15,
+                "column": 18
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 5
+              },
+              "end": {
+                "line": 15,
+                "column": 15
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#call@15:5",
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 5
+              },
+              "end": {
+                "line": 15,
+                "column": 15
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "train"
+              ],
+              "blockId": "src/pokedex/team.py#method@20:5"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/cli.py#external-value@14:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#call@16:5",
+        "name": "print",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 5
+            },
+            "end": {
+              "line": 16,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#function@13:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 11
+              },
+              "end": {
+                "line": 16,
+                "column": 24
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/display/formatting.py#function@9:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 25
+              },
+              "end": {
+                "line": 16,
+                "column": 29
+              }
+            },
+            "use": "value",
+            "handedToId": "src/pokedex/display/formatting.py#root-argument-value@9:19",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/cli.py#external-value@14:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#external-value@14:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#root-statement@19:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 1
+            },
+            "end": {
+              "line": 20,
+              "column": 11
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/cli.py#condition@19:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#call@15:5",
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#condition@19:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#condition@19:1",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 1
+            },
+            "end": {
+              "line": 20,
+              "column": 11
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#root-statement@19:1",
+        "childrenBlockIds": [
+          "src/pokedex/cli.py#call@20:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#call@15:5",
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#call@20:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#call@20:5",
+        "name": "main",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 11
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#condition@19:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 5
+              },
+              "end": {
+                "line": 20,
+                "column": 9
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#call@15:5",
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 5
+              },
+              "end": {
+                "line": 20,
+                "column": 9
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/cli.py#function@13:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#function@13:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#function@5:1",
+        "name": "describe_pokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 77
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/display/formatting.py#root-argument-value@5:22"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/display/formatting.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 15
+              },
+              "end": {
+                "line": 6,
+                "column": 27
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": "src/pokedex/display/formatting.py#root-argument-value@6:15"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/display/formatting.py#root-argument-value@5:22"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 40
+              },
+              "end": {
+                "line": 6,
+                "column": 53
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "types"
+              ],
+              "blockId": "src/pokedex/display/formatting.py#root-argument-value@6:40"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/display/formatting.py#root-argument-value@5:22"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 62
+              },
+              "end": {
+                "line": 6,
+                "column": 75
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "level"
+              ],
+              "blockId": "src/pokedex/display/formatting.py#root-argument-value@6:62"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/display/formatting.py#root-argument-value@5:22"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/display/formatting.py#external-value@10:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#root-argument-value@5:22",
+        "name": "pokemon",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 22
+            },
+            "end": {
+              "line": 5,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/display/formatting.py#function@5:1",
+        "childrenBlockIds": [
+          "src/pokedex/display/formatting.py#root-argument-value@6:15",
+          "src/pokedex/display/formatting.py#root-argument-value@6:40",
+          "src/pokedex/display/formatting.py#root-argument-value@6:62"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 31
+              },
+              "end": {
+                "line": 5,
+                "column": 38
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 31
+              },
+              "end": {
+                "line": 5,
+                "column": 38
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/models.py#class@6:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/display/formatting.py#function@5:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#root-argument-value@6:15",
+        "name": "name",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 15
+            },
+            "end": {
+              "line": 6,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/display/formatting.py#root-argument-value@5:22",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#root-argument-value@6:40",
+        "name": "types",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 40
+            },
+            "end": {
+              "line": 6,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/display/formatting.py#root-argument-value@5:22",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#root-argument-value@6:62",
+        "name": "level",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 62
+            },
+            "end": {
+              "line": 6,
+              "column": 75
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/display/formatting.py#root-argument-value@5:22",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#function@9:1",
+        "name": "describe_team",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 62
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/display/formatting.py#root-argument-value@9:19",
+          "src/pokedex/display/formatting.py#external-value@10:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/cli.py",
+          "src/pokedex/display/formatting.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 26
+              },
+              "end": {
+                "line": 11,
+                "column": 43
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "trainer",
+                "name"
+              ],
+              "blockId": "src/pokedex/display/formatting.py#root-argument-value@11:26"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/display/formatting.py#root-argument-value@9:19"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 55
+              },
+              "end": {
+                "line": 11,
+                "column": 60
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/display/formatting.py#external-value@10:5"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/cli.py#call@16:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#root-argument-value@9:19",
+        "name": "team",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 19
+            },
+            "end": {
+              "line": 9,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/display/formatting.py#function@9:1",
+        "childrenBlockIds": [
+          "src/pokedex/display/formatting.py#root-argument-value@10:55",
+          "src/pokedex/display/formatting.py#root-argument-value@11:26"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 25
+              },
+              "end": {
+                "line": 9,
+                "column": 29
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 25
+              },
+              "end": {
+                "line": 9,
+                "column": 29
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/team.py#class@9:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/display/formatting.py#external-value@10:5",
+          "src/pokedex/display/formatting.py#function@9:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/pokedex/cli.py#call@16:5",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#root-argument-value@10:55",
+        "name": "members",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 55
+            },
+            "end": {
+              "line": 10,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/display/formatting.py#root-argument-value@9:19",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#root-argument-value@11:26",
+        "name": "trainer",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 26
+            },
+            "end": {
+              "line": 11,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/display/formatting.py#root-argument-value@9:19",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/display/formatting.py#external-value@10:5",
+        "name": "lines",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 68
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/display/formatting.py#function@9:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 14
+              },
+              "end": {
+                "line": 10,
+                "column": 30
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/display/formatting.py#function@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 55
+              },
+              "end": {
+                "line": 10,
+                "column": 67
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "members"
+              ],
+              "blockId": "src/pokedex/display/formatting.py#root-argument-value@10:55"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/display/formatting.py#root-argument-value@9:19"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/display/formatting.py#function@9:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/display/formatting.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 50
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 50
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 29
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 3,
+                "column": 29
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#class@6:1",
+        "name": "Pokemon",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/models.py#property@8:5",
+          "src/pokedex/models.py#property@9:5",
+          "src/pokedex/models.py#property@10:5",
+          "src/pokedex/models.py#method@12:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/cli.py",
+          "src/pokedex/display/formatting.py",
+          "src/pokedex/models.py",
+          "src/pokedex/team.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 2
+              },
+              "end": {
+                "line": 6,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:dataclass",
+            "importedName": "dataclass",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/cli.py#call@8:5",
+          "src/pokedex/cli.py#call@9:5",
+          "src/pokedex/display/formatting.py#root-argument-value@5:22",
+          "src/pokedex/team.py#property@12:9",
+          "src/pokedex/team.py#root-argument-value@15:19",
+          "src/pokedex/team.py#method@20:5",
+          "src/pokedex/team.py#variable@21:9",
+          "src/pokedex/team.py#method@27:5"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/models.py#method@12:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#property@8:5",
+        "name": "Pokemon.name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/models.py#class@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#property@9:5",
+        "name": "Pokemon.types",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/models.py#class@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#property@10:5",
+        "name": "Pokemon.level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/models.py#class@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/models.py#method@12:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#method@12:5",
+        "name": "Pokemon.level_up",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 5
+            },
+            "end": {
+              "line": 13,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/models.py#class@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 12,
+              "column": 5
+            },
+            "end": {
+              "line": 12,
+              "column": 37
+            }
+          },
+          {
+            "start": {
+              "line": 13,
+              "column": 9
+            },
+            "end": {
+              "line": 13,
+              "column": 67
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 5
+              },
+              "end": {
+                "line": 12,
+                "column": 37
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 9
+              },
+              "end": {
+                "line": 13,
+                "column": 67
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 56
+              },
+              "end": {
+                "line": 13,
+                "column": 65
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 16
+              },
+              "end": {
+                "line": 13,
+                "column": 23
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:replace",
+            "importedName": "replace",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 40
+              },
+              "end": {
+                "line": 13,
+                "column": 50
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/models.py#property@10:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 56
+              },
+              "end": {
+                "line": 13,
+                "column": 65
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/rules.py#root-variable@2:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/rules.py#root-variable@2:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#class@16:1",
+        "name": "Trainer",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 1
+            },
+            "end": {
+              "line": 20,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/models.py#property@18:5",
+          "src/pokedex/models.py#property@19:5",
+          "src/pokedex/models.py#property@20:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/cli.py",
+          "src/pokedex/models.py",
+          "src/pokedex/team.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 2
+              },
+              "end": {
+                "line": 16,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:dataclass",
+            "importedName": "dataclass",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/cli.py#external-value@7:5",
+          "src/pokedex/team.py#root-argument-value@10:24"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#property@18:5",
+        "name": "Trainer.name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 5
+            },
+            "end": {
+              "line": 18,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/models.py#class@16:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#property@19:5",
+        "name": "Trainer.hometown",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 5
+            },
+            "end": {
+              "line": 19,
+              "column": 18
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/models.py#class@16:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/models.py#property@20:5",
+        "name": "Trainer.badges",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/models.py#class@16:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 25
+              },
+              "end": {
+                "line": 20,
+                "column": 30
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:field",
+            "importedName": "field",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/rules.py#root-variable@1:1",
+        "name": "MAX_TEAM_SIZE",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 18
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "isPlain": true,
+        "exportedByFilePaths": [
+          "src/pokedex/rules.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/rules.py#function@5:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/rules.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/rules.py#root-variable@2:1",
+        "name": "MAX_LEVEL",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "isPlain": true,
+        "exportedByFilePaths": [
+          "src/pokedex/models.py",
+          "src/pokedex/rules.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 16
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 1
+              },
+              "end": {
+                "line": 2,
+                "column": 16
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/rules.py#root-variable@2:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/models.py#method@12:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/rules.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/rules.py#function@5:1",
+        "name": "has_room",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/rules.py#root-argument-value@5:14"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/rules.py",
+          "src/pokedex/team.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 12
+              },
+              "end": {
+                "line": 6,
+                "column": 21
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/rules.py#root-argument-value@5:14"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 24
+              },
+              "end": {
+                "line": 6,
+                "column": 37
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/rules.py#root-variable@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/team.py#condition@16:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/rules.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/rules.py#root-argument-value@5:14",
+        "name": "team_size",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 14
+            },
+            "end": {
+              "line": 5,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/rules.py#function@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/rules.py#function@5:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/rules.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#class@5:1",
+        "name": "TeamFullError",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 9
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/team.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/team.py#throw@17:13"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#class@9:1",
+        "name": "Team",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 28,
+              "column": 82
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@15:5",
+          "src/pokedex/team.py#method@20:5",
+          "src/pokedex/team.py#method@27:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/cli.py",
+          "src/pokedex/display/formatting.py",
+          "src/pokedex/team.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/cli.py#function@6:1",
+          "src/pokedex/cli.py#external-value@7:5",
+          "src/pokedex/display/formatting.py#root-argument-value@9:19"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/team.py#method@10:5",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#method@10:5",
+        "name": "Team.__init__",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 13,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#class@9:1",
+        "childrenBlockIds": [
+          "src/pokedex/team.py#root-argument-value@10:24",
+          "src/pokedex/team.py#property@11:9",
+          "src/pokedex/team.py#property@12:9",
+          "src/pokedex/team.py#property@13:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/team.py#method@10:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#root-argument-value@10:24",
+        "name": "trainer",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 24
+            },
+            "end": {
+              "line": 10,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 33
+              },
+              "end": {
+                "line": 10,
+                "column": 40
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/models.py#class@16:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/team.py#property@11:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#property@11:9",
+        "name": "Team.trainer",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 9
+            },
+            "end": {
+              "line": 11,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 24
+              },
+              "end": {
+                "line": 11,
+                "column": 31
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#root-argument-value@10:24"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/team.py#throw@17:13"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#property@12:9",
+        "name": "Team.members",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 9
+            },
+            "end": {
+              "line": 12,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 28
+              },
+              "end": {
+                "line": 12,
+                "column": 35
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 28
+              },
+              "end": {
+                "line": 12,
+                "column": 35
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/models.py#class@6:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/team.py#condition@16:9",
+          "src/pokedex/team.py#call@18:9",
+          "src/pokedex/team.py#variable@21:9",
+          "src/pokedex/team.py#method@20:5",
+          "src/pokedex/team.py#method@27:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#property@13:9",
+        "name": "Team.sessions",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 9
+            },
+            "end": {
+              "line": 13,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 13,
+              "column": 9
+            },
+            "end": {
+              "line": 13,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 9
+              },
+              "end": {
+                "line": 13,
+                "column": 26
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#method@15:5",
+        "name": "Team.add",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 5
+            },
+            "end": {
+              "line": 18,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#class@9:1",
+        "childrenBlockIds": [
+          "src/pokedex/team.py#root-argument-value@15:19",
+          "src/pokedex/team.py#condition@16:9",
+          "src/pokedex/team.py#call@18:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#root-argument-value@15:19",
+        "name": "pokemon",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 19
+            },
+            "end": {
+              "line": 15,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@15:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 28
+              },
+              "end": {
+                "line": 15,
+                "column": 35
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 28
+              },
+              "end": {
+                "line": 15,
+                "column": 35
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/models.py#class@6:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/team.py#call@18:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#condition@16:9",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 9
+            },
+            "end": {
+              "line": 17,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@15:5",
+        "childrenBlockIds": [
+          "src/pokedex/team.py#throw@17:13"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 16
+              },
+              "end": {
+                "line": 16,
+                "column": 24
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/rules.py#function@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 29
+              },
+              "end": {
+                "line": 16,
+                "column": 41
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#property@12:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#throw@17:13",
+        "type": "throw",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 13
+            },
+            "end": {
+              "line": 17,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#condition@16:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 19
+              },
+              "end": {
+                "line": 17,
+                "column": 32
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#class@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 33
+              },
+              "end": {
+                "line": 17,
+                "column": 50
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#property@11:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#call@18:9",
+        "name": "self.members.append",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 9
+            },
+            "end": {
+              "line": 18,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@15:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 9
+              },
+              "end": {
+                "line": 18,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "append"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#property@12:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 29
+              },
+              "end": {
+                "line": 18,
+                "column": 36
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#root-argument-value@15:19"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#method@20:5",
+        "name": "Team.train",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 25,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#class@9:1",
+        "childrenBlockIds": [
+          "src/pokedex/team.py#root-argument-value@20:21",
+          "src/pokedex/team.py#variable@21:9",
+          "src/pokedex/team.py#variable@22:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 21
+            }
+          },
+          {
+            "start": {
+              "line": 20,
+              "column": 30
+            },
+            "end": {
+              "line": 20,
+              "column": 43
+            }
+          },
+          {
+            "start": {
+              "line": 23,
+              "column": 9
+            },
+            "end": {
+              "line": 23,
+              "column": 37
+            }
+          },
+          {
+            "start": {
+              "line": 24,
+              "column": 9
+            },
+            "end": {
+              "line": 24,
+              "column": 27
+            }
+          },
+          {
+            "start": {
+              "line": 25,
+              "column": 9
+            },
+            "end": {
+              "line": 25,
+              "column": 23
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 5
+              },
+              "end": {
+                "line": 20,
+                "column": 21
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 30
+              },
+              "end": {
+                "line": 20,
+                "column": 43
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 35
+              },
+              "end": {
+                "line": 20,
+                "column": 42
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 9
+              },
+              "end": {
+                "line": 23,
+                "column": 37
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 24,
+                "column": 9
+              },
+              "end": {
+                "line": 24,
+                "column": 27
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 24,
+                "column": 9
+              },
+              "end": {
+                "line": 24,
+                "column": 22
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 9
+              },
+              "end": {
+                "line": 25,
+                "column": 23
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 35
+              },
+              "end": {
+                "line": 20,
+                "column": 42
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/models.py#class@6:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 9
+              },
+              "end": {
+                "line": 23,
+                "column": 21
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#property@12:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 22
+              },
+              "end": {
+                "line": 23,
+                "column": 26
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#root-argument-value@20:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 30
+              },
+              "end": {
+                "line": 23,
+                "column": 37
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#variable@22:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 9
+              },
+              "end": {
+                "line": 24,
+                "column": 22
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#property@13:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 16
+              },
+              "end": {
+                "line": 25,
+                "column": 23
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#variable@22:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/team.py#variable@22:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#root-argument-value@20:21",
+        "name": "slot",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 21
+            },
+            "end": {
+              "line": 20,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@20:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 21
+            },
+            "end": {
+              "line": 20,
+              "column": 30
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 21
+              },
+              "end": {
+                "line": 20,
+                "column": 30
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/team.py#variable@21:9",
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#variable@21:9",
+        "name": "pokemon",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 9
+            },
+            "end": {
+              "line": 21,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@20:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 21,
+              "column": 9
+            },
+            "end": {
+              "line": 21,
+              "column": 46
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 9
+              },
+              "end": {
+                "line": 21,
+                "column": 46
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 18
+              },
+              "end": {
+                "line": 21,
+                "column": 25
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 18
+              },
+              "end": {
+                "line": 21,
+                "column": 25
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/models.py#class@6:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 28
+              },
+              "end": {
+                "line": 21,
+                "column": 40
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#property@12:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 41
+              },
+              "end": {
+                "line": 21,
+                "column": 45
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#root-argument-value@20:21"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/team.py#variable@22:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#variable@22:9",
+        "name": "trained",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 22,
+              "column": 9
+            },
+            "end": {
+              "line": 22,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@20:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 22,
+              "column": 9
+            },
+            "end": {
+              "line": 22,
+              "column": 37
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 9
+              },
+              "end": {
+                "line": 22,
+                "column": 37
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 19
+              },
+              "end": {
+                "line": 22,
+                "column": 35
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/models.py#method@12:5",
+          "src/pokedex/rules.py#root-variable@2:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 22,
+                "column": 19
+              },
+              "end": {
+                "line": 22,
+                "column": 35
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "level_up"
+              ],
+              "blockId": "src/pokedex/models.py#method@12:5"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#variable@21:9"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/team.py#method@20:5"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/models.py#method@12:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#method@27:5",
+        "name": "Team.strongest",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 27,
+              "column": 5
+            },
+            "end": {
+              "line": 28,
+              "column": 82
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#class@9:1",
+        "childrenBlockIds": [
+          "src/pokedex/team.py#function@28:38"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 27,
+                "column": 28
+              },
+              "end": {
+                "line": 27,
+                "column": 35
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 27,
+                "column": 28
+              },
+              "end": {
+                "line": 27,
+                "column": 35
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/models.py#class@6:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 28,
+                "column": 20
+              },
+              "end": {
+                "line": 28,
+                "column": 32
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#property@12:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#function@28:38",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 38
+            },
+            "end": {
+              "line": 28,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#method@27:5",
+        "childrenBlockIds": [
+          "src/pokedex/team.py#variable@28:45"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 28,
+                "column": 54
+              },
+              "end": {
+                "line": 28,
+                "column": 67
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "level"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/team.py#variable@28:45"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/team.py#variable@28:45",
+        "name": "pokemon",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 45
+            },
+            "end": {
+              "line": 28,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/team.py#function@28:38",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/team.py#function@28:38"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/team.py",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "src/pokedex/cli.py#call@15:5",
+      "src/pokedex/models.py#import@1:1",
+      "src/pokedex/models.py#import@3:1",
+      "src/pokedex/models.py#method@12:5",
+      "src/pokedex/rules.py#root-variable@2:1",
+      "src/pokedex/team.py#property@13:9",
+      "src/pokedex/team.py#method@20:5",
+      "src/pokedex/team.py#root-argument-value@20:21",
+      "src/pokedex/team.py#variable@21:9",
+      "src/pokedex/team.py#variable@22:9"
+    ],
+    "diffContains": [
+      "logic"
+    ],
+    "chainContains": [
+      "logic"
+    ],
+    "diffChainIds": [
+      "src/pokedex/cli.py#root-statement@19:1"
+    ]
+  }
+]

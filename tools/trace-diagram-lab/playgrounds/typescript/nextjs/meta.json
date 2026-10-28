@@ -1,0 +1,6 @@
+{
+  "title": "Next.js app router with server actions and an in-memory party",
+  "packages": ["next", "react", "react-dom"],
+  "language": "typescript",
+  "mainFramework": "next"
+}

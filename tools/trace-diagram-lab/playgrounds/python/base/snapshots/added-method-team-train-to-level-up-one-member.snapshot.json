@@ -1,0 +1,2077 @@
+{
+  "title": "Added method Team.train to level up one member",
+  "diff": [
+    "diff --git a/src/pokedex/rules.py b/src/pokedex/rules.py",
+    "--- a/src/pokedex/rules.py",
+    "+++ b/src/pokedex/rules.py",
+    "@@ -1,0 +2 @@ MAX_TEAM_SIZE = 6",
+    "+MAX_LEVEL = 100",
+    "diff --git a/src/pokedex/models.py b/src/pokedex/models.py",
+    "--- a/src/pokedex/models.py",
+    "+++ b/src/pokedex/models.py",
+    "@@ -1 +1,3 @@",
+    "-from dataclasses import dataclass, field",
+    "+from dataclasses import dataclass, field, replace",
+    "+",
+    "+from .rules import MAX_LEVEL",
+    "@@ -9,0 +12,3 @@ class Pokemon:",
+    "+    def level_up(self) -> \"Pokemon\":",
+    "+        return replace(self, level=min(self.level + 1, MAX_LEVEL))",
+    "+",
+    "diff --git a/src/pokedex/team.py b/src/pokedex/team.py",
+    "--- a/src/pokedex/team.py",
+    "+++ b/src/pokedex/team.py",
+    "@@ -12,0 +13 @@ class Team:",
+    "+        self.sessions = 0",
+    "@@ -18,0 +20,7 @@ class Team:",
+    "+    def train(self, slot: int) -> Pokemon:",
+    "+        pokemon: Pokemon = self.members[slot]",
+    "+        trained = pokemon.level_up()",
+    "+        self.members[slot] = trained",
+    "+        self.sessions += 1",
+    "+        return trained",
+    "+",
+    "diff --git a/src/pokedex/cli.py b/src/pokedex/cli.py",
+    "--- a/src/pokedex/cli.py",
+    "+++ b/src/pokedex/cli.py",
+    "@@ -14,0 +15 @@ def main() -> None:",
+    "+    team.train(0)"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Groundwork for main and build_starter_team",
+        "importGraph": [
+          {
+            "filePath": "src/pokedex/display/formatting.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/cli.py"
+            ],
+            "importsTo": [
+              "src/pokedex/models.py",
+              "src/pokedex/team.py"
+            ],
+            "importedFilePaths": {
+              "..models:Pokemon": "src/pokedex/models.py",
+              "..team:Team": "src/pokedex/team.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/models.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokedex/cli.py",
+              "src/pokedex/display/formatting.py",
+              "src/pokedex/team.py"
+            ],
+            "importsTo": [
+              "src/pokedex/rules.py"
+            ],
+            "importedFilePaths": {
+              ".rules:MAX_LEVEL": "src/pokedex/rules.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/rules.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokedex/models.py",
+              "src/pokedex/team.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/team.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokedex/cli.py",
+              "src/pokedex/display/formatting.py"
+            ],
+            "importsTo": [
+              "src/pokedex/models.py",
+              "src/pokedex/rules.py"
+            ],
+            "importedFilePaths": {
+              ".models:Pokemon": "src/pokedex/models.py",
+              ".models:Trainer": "src/pokedex/models.py",
+              ".rules:has_room": "src/pokedex/rules.py"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Train team member flow diagram",
+          "description": "This diagram shows how [`Team.train()` reads the Pokemon at one slot of the team](code:src/pokedex/team.py#L21), and how [`Pokemon.level_up()` returns a copy of that Pokemon one level higher](code:src/pokedex/models.py#L13). `main()` of the `pokedex` command reaches both through [`team.train(0)`](code:src/pokedex/cli.py#L15).",
+          "traceNodes": [
+            {
+              "id": "src/pokedex/team.py#class@9:1",
+              "type": "class",
+              "label": "Holds the Pokemon of one trainer and counts the training sessions",
+              "description": "When a user runs the `pokedex` command, [`build_starter_team()` makes a team for Ash](code:src/pokedex/cli.py#L7). Then [`main()` calls `train(0)` on that team](code:src/pokedex/cli.py#L15).",
+              "codeBlockIds": [
+                "src/pokedex/team.py#class@9:1",
+                "src/pokedex/team.py#method@10:5",
+                "src/pokedex/team.py#property@13:9",
+                "src/pokedex/team.py#method@20:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/team.py#property@13:9",
+                "src/pokedex/team.py#method@20:5"
+              ],
+              "children": [
+                {
+                  "id": "src/pokedex/team.py#method@20:5",
+                  "type": "method",
+                  "label": "Levels up the Pokemon at one slot and puts the copy back",
+                  "description": "When a user runs the `pokedex` command, [`main()` calls this method with the slot `0`](code:src/pokedex/cli.py#L15). Slot `0` holds Pikachu, because [`build_starter_team()` adds Pikachu first](code:src/pokedex/cli.py#L8).",
+                  "codeBlockIds": [
+                    "src/pokedex/team.py#method@20:5",
+                    "src/pokedex/team.py#root-argument-value@20:21",
+                    "src/pokedex/team.py#variable@21:9",
+                    "src/pokedex/team.py#variable@22:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/team.py#method@20:5",
+                    "src/pokedex/team.py#root-argument-value@20:21",
+                    "src/pokedex/team.py#variable@21:9",
+                    "src/pokedex/team.py#variable@22:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Reads the Pokemon at the slot",
+                      "codeBlockId": "src/pokedex/team.py#variable@21:9"
+                    },
+                    {
+                      "label": "Gets a copy of that Pokemon one level higher",
+                      "codeBlockId": "src/pokedex/team.py#variable@22:9"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Starts the count of training sessions at `0`",
+                  "codeBlockId": "src/pokedex/team.py#property@13:9"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/models.py#class@6:1",
+              "type": "class",
+              "label": "Describes one Pokemon by its name, types and level",
+              "description": "When a user runs the `pokedex` command, [`build_starter_team()` makes Pikachu and Bulbasaur](code:src/pokedex/cli.py#L8-9) with this class. Then [`Team.train()` calls `level_up()` on Pikachu](code:src/pokedex/team.py#L22).",
+              "codeBlockIds": [
+                "src/pokedex/models.py#class@6:1",
+                "src/pokedex/models.py#method@12:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/models.py#method@12:5"
+              ],
+              "children": [
+                {
+                  "id": "src/pokedex/models.py#method@12:5",
+                  "type": "method",
+                  "label": "Returns a copy one level higher, at most level 100",
+                  "description": "When a user runs the `pokedex` command, `main()` calls `team.train(0)`. Then [`Team.train()` calls this method](code:src/pokedex/team.py#L22) on the Pokemon at slot `0`.",
+                  "codeBlockIds": [
+                    "src/pokedex/models.py#method@12:5",
+                    "src/pokedex/rules.py#root-variable@2:1"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/models.py#method@12:5",
+                    "src/pokedex/rules.py#root-variable@2:1"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Caps the new level at `100`",
+                      "codeBlockId": "src/pokedex/rules.py#root-variable@2:1"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokedex/team.py#method@20:5 -> src/pokedex/models.py#method@12:5",
+              "from": "src/pokedex/team.py#method@20:5",
+              "to": "src/pokedex/models.py#method@12:5"
+            },
+            {
+              "id": "src/pokedex/team.py#class@9:1 -> src/pokedex/team.py#method@20:5",
+              "from": "src/pokedex/team.py#class@9:1",
+              "to": "src/pokedex/team.py#method@20:5"
+            },
+            {
+              "id": "src/pokedex/models.py#class@6:1 -> src/pokedex/models.py#method@12:5",
+              "from": "src/pokedex/models.py#class@6:1",
+              "to": "src/pokedex/models.py#method@12:5"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokedex/models.py",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "Pokemon.level_up",
+                  "range": {
+                    "lineStart": 12,
+                    "lineEnd": 13
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/models.py#method@12:5"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/rules.py",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "MAX_LEVEL",
+                  "range": {
+                    "lineStart": 2,
+                    "lineEnd": 2
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/rules.py#root-variable@2:1"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/team.py",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "Team.__init__",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 13
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/team.py#method@10:5",
+                    "src/pokedex/team.py#property@13:9"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "Team.train",
+                  "range": {
+                    "lineStart": 20,
+                    "lineEnd": 25
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/team.py#method@20:5",
+                    "src/pokedex/team.py#root-argument-value@20:21",
+                    "src/pokedex/team.py#variable@21:9",
+                    "src/pokedex/team.py#variable@22:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w4.1",
+                      "declaration": "Team.train › pokemon",
+                      "range": {
+                        "lineStart": 21,
+                        "lineEnd": 21
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/team.py#variable@21:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.2",
+                      "declaration": "Team.train › trained",
+                      "range": {
+                        "lineStart": 22,
+                        "lineEnd": 22
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/team.py#variable@22:9"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokedex/models.py",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 1,
+                "endColumn": 10,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:dataclass",
+                  "name": "dataclass"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:replace",
+                  "name": "replace"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 23,
+                "endColumn": 27,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 39,
+                "endColumn": 43,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 55,
+                "endColumn": 64,
+                "path": "src/pokedex/rules.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 1,
+                "endColumn": 10,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:dataclass",
+                  "name": "dataclass"
+                }
+              },
+              {
+                "line": 20,
+                "startColumn": 24,
+                "endColumn": 29,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:field",
+                  "name": "field"
+                }
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 8,
+                "startColumn": 10,
+                "endColumn": 13,
+                "name": "str"
+              },
+              {
+                "line": 9,
+                "startColumn": 11,
+                "endColumn": 16,
+                "name": "tuple"
+              },
+              {
+                "line": 9,
+                "startColumn": 17,
+                "endColumn": 20,
+                "name": "str"
+              },
+              {
+                "line": 10,
+                "startColumn": 11,
+                "endColumn": 14,
+                "name": "int"
+              },
+              {
+                "line": 13,
+                "startColumn": 35,
+                "endColumn": 38,
+                "name": "min"
+              },
+              {
+                "line": 18,
+                "startColumn": 10,
+                "endColumn": 13,
+                "name": "str"
+              },
+              {
+                "line": 19,
+                "startColumn": 14,
+                "endColumn": 17,
+                "name": "str"
+              },
+              {
+                "line": 20,
+                "startColumn": 12,
+                "endColumn": 16,
+                "name": "list"
+              },
+              {
+                "line": 20,
+                "startColumn": 17,
+                "endColumn": 20,
+                "name": "str"
+              },
+              {
+                "line": 20,
+                "startColumn": 46,
+                "endColumn": 50,
+                "name": "list"
+              }
+            ],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 6,
+                "endColumn": 13,
+                "lines": [
+                  6,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 13,
+                    "endColumn": 20,
+                    "path": "src/pokedex/cli.py",
+                    "text": "    team.add(Pokemon(name=\"Pikachu\", types=(\"electric\",)))"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 13,
+                    "endColumn": 20,
+                    "path": "src/pokedex/cli.py",
+                    "text": "    team.add(Pokemon(name=\"Bulbasaur\", types=(\"grass\", \"poison\")))"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 30,
+                    "endColumn": 37,
+                    "path": "src/pokedex/display/formatting.py",
+                    "text": "def describe_pokemon(pokemon: Pokemon) -> str:"
+                  },
+                  {
+                    "line": 12,
+                    "startColumn": 27,
+                    "endColumn": 34,
+                    "path": "src/pokedex/team.py",
+                    "text": "        self.members: list[Pokemon] = []"
+                  },
+                  {
+                    "line": 15,
+                    "startColumn": 27,
+                    "endColumn": 34,
+                    "path": "src/pokedex/team.py",
+                    "text": "    def add(self, pokemon: Pokemon) -> None:"
+                  },
+                  {
+                    "line": 20,
+                    "startColumn": 34,
+                    "endColumn": 41,
+                    "path": "src/pokedex/team.py",
+                    "text": "    def train(self, slot: int) -> Pokemon:"
+                  },
+                  {
+                    "line": 21,
+                    "startColumn": 17,
+                    "endColumn": 24,
+                    "path": "src/pokedex/team.py",
+                    "text": "        pokemon: Pokemon = self.members[slot]"
+                  },
+                  {
+                    "line": 27,
+                    "startColumn": 27,
+                    "endColumn": 34,
+                    "path": "src/pokedex/team.py",
+                    "text": "    def strongest(self) -> Pokemon | None:"
+                  }
+                ]
+              },
+              {
+                "line": 17,
+                "startColumn": 6,
+                "endColumn": 13,
+                "lines": [
+                  16,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 16,
+                    "endColumn": 23,
+                    "path": "src/pokedex/cli.py",
+                    "text": "    team = Team(Trainer(name=\"Ash\", hometown=\"Pallet Town\"))"
+                  },
+                  {
+                    "line": 10,
+                    "startColumn": 32,
+                    "endColumn": 39,
+                    "path": "src/pokedex/team.py",
+                    "text": "    def __init__(self, trainer: Trainer):"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/rules.py",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 11,
+                "endColumn": 20,
+                "path": "src/pokedex/rules.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 23,
+                "endColumn": 36,
+                "path": "src/pokedex/rules.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 24,
+                "endColumn": 27,
+                "name": "int"
+              },
+              {
+                "line": 5,
+                "startColumn": 32,
+                "endColumn": 36,
+                "name": "bool"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 13,
+                "lines": [
+                  1,
+                  1
+                ],
+                "usages": []
+              },
+              {
+                "line": 2,
+                "startColumn": 0,
+                "endColumn": 9,
+                "lines": [
+                  2,
+                  2
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 55,
+                    "endColumn": 64,
+                    "path": "src/pokedex/models.py",
+                    "text": "        return replace(self, level=min(self.level + 1, MAX_LEVEL))"
+                  }
+                ]
+              },
+              {
+                "line": 5,
+                "startColumn": 4,
+                "endColumn": 12,
+                "lines": [
+                  5,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 15,
+                    "endColumn": 23,
+                    "path": "src/pokedex/team.py",
+                    "text": "        if not has_room(len(self.members)):"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/team.py",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  16,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 23,
+                "endColumn": 30,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 15,
+                "endColumn": 23,
+                "path": "src/pokedex/rules.py",
+                "lines": [
+                  5,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 28,
+                "endColumn": 32,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 18,
+                "endColumn": 31,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  5,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 32,
+                "endColumn": 36,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 28,
+                "endColumn": 35,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 34,
+                "endColumn": 41,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 27,
+                "endColumn": 31,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 40,
+                "endColumn": 44,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 18,
+                "endColumn": 25,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 21,
+                "endColumn": 25,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 29,
+                "endColumn": 36,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 19,
+                "endColumn": 23,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  27,
+                  27
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 20,
+                "endColumn": 29,
+                "name": "Exception"
+              },
+              {
+                "line": 12,
+                "startColumn": 22,
+                "endColumn": 26,
+                "name": "list"
+              },
+              {
+                "line": 16,
+                "startColumn": 24,
+                "endColumn": 27,
+                "name": "len"
+              },
+              {
+                "line": 20,
+                "startColumn": 26,
+                "endColumn": 29,
+                "name": "int"
+              },
+              {
+                "line": 28,
+                "startColumn": 15,
+                "endColumn": 18,
+                "name": "max"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 6,
+                "endColumn": 19,
+                "lines": [
+                  5,
+                  6
+                ],
+                "usages": []
+              },
+              {
+                "line": 9,
+                "startColumn": 6,
+                "endColumn": 10,
+                "lines": [
+                  9,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 28,
+                    "endColumn": 32,
+                    "path": "src/pokedex/cli.py",
+                    "text": "def build_starter_team() -> Team:"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 11,
+                    "endColumn": 15,
+                    "path": "src/pokedex/cli.py",
+                    "text": "    team = Team(Trainer(name=\"Ash\", hometown=\"Pallet Town\"))"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 24,
+                    "endColumn": 28,
+                    "path": "src/pokedex/display/formatting.py",
+                    "text": "def describe_team(team: Team) -> str:"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Modified main function",
+        "importGraph": [
+          {
+            "filePath": "src/pokedex/cli.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/pokedex/display/formatting.py",
+              "src/pokedex/models.py",
+              "src/pokedex/team.py"
+            ],
+            "importedFilePaths": {
+              ".display.formatting:describe_team": "src/pokedex/display/formatting.py",
+              ".models:Pokemon": "src/pokedex/models.py",
+              ".models:Trainer": "src/pokedex/models.py",
+              ".team:Team": "src/pokedex/team.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/display/formatting.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/cli.py"
+            ],
+            "importsTo": [
+              "src/pokedex/models.py",
+              "src/pokedex/team.py"
+            ],
+            "importedFilePaths": {
+              "..models:Pokemon": "src/pokedex/models.py",
+              "..team:Team": "src/pokedex/team.py"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Run pokedex command flow diagram",
+          "description": "This diagram shows how `main()` [builds a starter team for Ash](code:src/pokedex/cli.py#L14) and [prints that team](code:src/pokedex/cli.py#L16). It also shows what happens when a user runs the `pokedex` command, and how the first Pokemon of the team reaches `Pokemon.level_up()` through [`Team.train()`](code:src/pokedex/cli.py#L15).",
+          "traceNodes": [
+            {
+              "id": "src/pokedex/cli.py#function@13:1",
+              "type": "function",
+              "label": "Builds the starter team, trains one member and prints the team",
+              "description": "When a user runs the `pokedex` command, Python calls this function, because `[project.scripts]` of `pyproject.toml` names `pokedex.cli:main`. [Running the module as a script calls it too](code:src/pokedex/cli.py#L19-20).",
+              "codeBlockIds": [
+                "src/pokedex/cli.py#function@13:1",
+                "src/pokedex/cli.py#external-value@14:5",
+                "src/pokedex/cli.py#call@15:5",
+                "src/pokedex/cli.py#call@16:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/cli.py#call@15:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Gets the starter team of Ash",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@14:5"
+                },
+                {
+                  "label": "Levels up the Pokemon in the first slot",
+                  "codeBlockId": "src/pokedex/cli.py#call@15:5"
+                },
+                {
+                  "label": "Prints the team with the level of each Pokemon",
+                  "codeBlockId": "src/pokedex/cli.py#call@16:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/cli.py#function@6:1",
+              "type": "function",
+              "label": "Makes the team of Ash with Pikachu and Bulbasaur",
+              "description": "When a user runs the `pokedex` command, [`main()` calls this function first](code:src/pokedex/cli.py#L14).",
+              "codeBlockIds": [
+                "src/pokedex/cli.py#function@6:1",
+                "src/pokedex/cli.py#external-value@7:5",
+                "src/pokedex/cli.py#call@8:5",
+                "src/pokedex/cli.py#call@9:5"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Makes an empty team for Ash of Pallet Town",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@7:5"
+                },
+                {
+                  "label": "Adds Pikachu to the team",
+                  "codeBlockId": "src/pokedex/cli.py#call@8:5"
+                },
+                {
+                  "label": "Adds Bulbasaur to the team",
+                  "codeBlockId": "src/pokedex/cli.py#call@9:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/team.py#class@9:1",
+              "type": "class",
+              "label": "Holds the Pokemon of one trainer and counts the training sessions",
+              "description": "When a user runs the `pokedex` command, [`build_starter_team()` makes a team for Ash](code:src/pokedex/cli.py#L7). Then [`main()` calls `train(0)` on that team](code:src/pokedex/cli.py#L15).",
+              "codeBlockIds": [
+                "src/pokedex/team.py#class@9:1",
+                "src/pokedex/team.py#method@10:5",
+                "src/pokedex/team.py#property@13:9",
+                "src/pokedex/team.py#method@20:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/team.py#property@13:9",
+                "src/pokedex/team.py#method@20:5"
+              ],
+              "children": [
+                {
+                  "id": "src/pokedex/team.py#method@20:5",
+                  "type": "method",
+                  "label": "Levels up the Pokemon at one slot and puts the copy back",
+                  "description": "When a user runs the `pokedex` command, [`main()` calls this method with the slot `0`](code:src/pokedex/cli.py#L15). Slot `0` holds Pikachu, because [`build_starter_team()` adds Pikachu first](code:src/pokedex/cli.py#L8).",
+                  "codeBlockIds": [
+                    "src/pokedex/team.py#method@20:5",
+                    "src/pokedex/team.py#root-argument-value@20:21",
+                    "src/pokedex/team.py#variable@21:9",
+                    "src/pokedex/team.py#variable@22:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/team.py#method@20:5",
+                    "src/pokedex/team.py#root-argument-value@20:21",
+                    "src/pokedex/team.py#variable@21:9",
+                    "src/pokedex/team.py#variable@22:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Reads the Pokemon at the slot",
+                      "codeBlockId": "src/pokedex/team.py#variable@21:9"
+                    },
+                    {
+                      "label": "Gets a copy of that Pokemon one level higher",
+                      "codeBlockId": "src/pokedex/team.py#variable@22:9"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Starts the count of training sessions at `0`",
+                  "codeBlockId": "src/pokedex/team.py#property@13:9"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/models.py#class@6:1",
+              "type": "class",
+              "label": "Describes one Pokemon by its name, types and level",
+              "description": "When a user runs the `pokedex` command, [`build_starter_team()` makes Pikachu and Bulbasaur](code:src/pokedex/cli.py#L8-9) with this class. Then [`Team.train()` calls `level_up()` on Pikachu](code:src/pokedex/team.py#L22).",
+              "codeBlockIds": [
+                "src/pokedex/models.py#class@6:1",
+                "src/pokedex/models.py#method@12:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/models.py#method@12:5"
+              ],
+              "children": [
+                {
+                  "id": "src/pokedex/models.py#method@12:5",
+                  "type": "method",
+                  "label": "Returns a copy one level higher, at most level 100",
+                  "description": "When a user runs the `pokedex` command, `main()` calls `team.train(0)`. Then [`Team.train()` calls this method](code:src/pokedex/team.py#L22) on the Pokemon at slot `0`.",
+                  "codeBlockIds": [
+                    "src/pokedex/models.py#method@12:5",
+                    "src/pokedex/rules.py#root-variable@2:1"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/models.py#method@12:5",
+                    "src/pokedex/rules.py#root-variable@2:1"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Caps the new level at `100`",
+                      "codeBlockId": "src/pokedex/rules.py#root-variable@2:1"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokedex/cli.py#function@13:1 -> src/pokedex/cli.py#function@6:1",
+              "from": "src/pokedex/cli.py#function@13:1",
+              "to": "src/pokedex/cli.py#function@6:1"
+            },
+            {
+              "id": "src/pokedex/cli.py#function@13:1 -> src/pokedex/team.py#method@20:5",
+              "from": "src/pokedex/cli.py#function@13:1",
+              "to": "src/pokedex/team.py#method@20:5"
+            },
+            {
+              "id": "src/pokedex/cli.py#function@6:1 -> src/pokedex/team.py#class@9:1",
+              "from": "src/pokedex/cli.py#function@6:1",
+              "to": "src/pokedex/team.py#class@9:1"
+            },
+            {
+              "id": "src/pokedex/cli.py#function@6:1 -> src/pokedex/models.py#class@6:1",
+              "from": "src/pokedex/cli.py#function@6:1",
+              "to": "src/pokedex/models.py#class@6:1"
+            },
+            {
+              "id": "src/pokedex/team.py#method@20:5 -> src/pokedex/models.py#method@12:5",
+              "from": "src/pokedex/team.py#method@20:5",
+              "to": "src/pokedex/models.py#method@12:5"
+            },
+            {
+              "id": "src/pokedex/team.py#class@9:1 -> src/pokedex/team.py#method@20:5",
+              "from": "src/pokedex/team.py#class@9:1",
+              "to": "src/pokedex/team.py#method@20:5"
+            },
+            {
+              "id": "src/pokedex/models.py#class@6:1 -> src/pokedex/models.py#method@12:5",
+              "from": "src/pokedex/models.py#class@6:1",
+              "to": "src/pokedex/models.py#method@12:5"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokedex/cli.py",
+              "waypoints": [
+                {
+                  "id": "w5",
+                  "declaration": "main",
+                  "range": {
+                    "lineStart": 13,
+                    "lineEnd": 16
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/cli.py#function@13:1",
+                    "src/pokedex/cli.py#call@15:5"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokedex/cli.py",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 28,
+                "endColumn": 32,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  9,
+                  28
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 11,
+                "endColumn": 15,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  9,
+                  28
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 23,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  16,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 4,
+                "endColumn": 8,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 20,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 4,
+                "endColumn": 8,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 20,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 11,
+                "endColumn": 15,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 11,
+                "endColumn": 29,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  6,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 4,
+                "endColumn": 8,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 10,
+                "endColumn": 23,
+                "path": "src/pokedex/display/formatting.py",
+                "lines": [
+                  9,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 24,
+                "endColumn": 28,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 4,
+                "endColumn": 8,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  13,
+                  16
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 16,
+                "startColumn": 4,
+                "endColumn": 9,
+                "name": "print"
+              },
+              {
+                "line": 19,
+                "startColumn": 3,
+                "endColumn": 11,
+                "name": "__name__"
+              }
+            ],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 4,
+                "endColumn": 22,
+                "lines": [
+                  6,
+                  10
+                ],
+                "usages": []
+              },
+              {
+                "line": 13,
+                "startColumn": 4,
+                "endColumn": 8,
+                "lines": [
+                  13,
+                  16
+                ],
+                "usages": []
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/models.py",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 1,
+                "endColumn": 10,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:dataclass",
+                  "name": "dataclass"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:replace",
+                  "name": "replace"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 23,
+                "endColumn": 27,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 39,
+                "endColumn": 43,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 55,
+                "endColumn": 64,
+                "path": "src/pokedex/rules.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 1,
+                "endColumn": 10,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:dataclass",
+                  "name": "dataclass"
+                }
+              },
+              {
+                "line": 20,
+                "startColumn": 24,
+                "endColumn": 29,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:field",
+                  "name": "field"
+                }
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 8,
+                "startColumn": 10,
+                "endColumn": 13,
+                "name": "str"
+              },
+              {
+                "line": 9,
+                "startColumn": 11,
+                "endColumn": 16,
+                "name": "tuple"
+              },
+              {
+                "line": 9,
+                "startColumn": 17,
+                "endColumn": 20,
+                "name": "str"
+              },
+              {
+                "line": 10,
+                "startColumn": 11,
+                "endColumn": 14,
+                "name": "int"
+              },
+              {
+                "line": 13,
+                "startColumn": 35,
+                "endColumn": 38,
+                "name": "min"
+              },
+              {
+                "line": 18,
+                "startColumn": 10,
+                "endColumn": 13,
+                "name": "str"
+              },
+              {
+                "line": 19,
+                "startColumn": 14,
+                "endColumn": 17,
+                "name": "str"
+              },
+              {
+                "line": 20,
+                "startColumn": 12,
+                "endColumn": 16,
+                "name": "list"
+              },
+              {
+                "line": 20,
+                "startColumn": 17,
+                "endColumn": 20,
+                "name": "str"
+              },
+              {
+                "line": 20,
+                "startColumn": 46,
+                "endColumn": 50,
+                "name": "list"
+              }
+            ],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 6,
+                "endColumn": 13,
+                "lines": [
+                  6,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 13,
+                    "endColumn": 20,
+                    "path": "src/pokedex/cli.py",
+                    "text": "    team.add(Pokemon(name=\"Pikachu\", types=(\"electric\",)))"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 13,
+                    "endColumn": 20,
+                    "path": "src/pokedex/cli.py",
+                    "text": "    team.add(Pokemon(name=\"Bulbasaur\", types=(\"grass\", \"poison\")))"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 30,
+                    "endColumn": 37,
+                    "path": "src/pokedex/display/formatting.py",
+                    "text": "def describe_pokemon(pokemon: Pokemon) -> str:"
+                  },
+                  {
+                    "line": 12,
+                    "startColumn": 27,
+                    "endColumn": 34,
+                    "path": "src/pokedex/team.py",
+                    "text": "        self.members: list[Pokemon] = []"
+                  },
+                  {
+                    "line": 15,
+                    "startColumn": 27,
+                    "endColumn": 34,
+                    "path": "src/pokedex/team.py",
+                    "text": "    def add(self, pokemon: Pokemon) -> None:"
+                  },
+                  {
+                    "line": 20,
+                    "startColumn": 34,
+                    "endColumn": 41,
+                    "path": "src/pokedex/team.py",
+                    "text": "    def train(self, slot: int) -> Pokemon:"
+                  },
+                  {
+                    "line": 21,
+                    "startColumn": 17,
+                    "endColumn": 24,
+                    "path": "src/pokedex/team.py",
+                    "text": "        pokemon: Pokemon = self.members[slot]"
+                  },
+                  {
+                    "line": 27,
+                    "startColumn": 27,
+                    "endColumn": 34,
+                    "path": "src/pokedex/team.py",
+                    "text": "    def strongest(self) -> Pokemon | None:"
+                  }
+                ]
+              },
+              {
+                "line": 17,
+                "startColumn": 6,
+                "endColumn": 13,
+                "lines": [
+                  16,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 16,
+                    "endColumn": 23,
+                    "path": "src/pokedex/cli.py",
+                    "text": "    team = Team(Trainer(name=\"Ash\", hometown=\"Pallet Town\"))"
+                  },
+                  {
+                    "line": 10,
+                    "startColumn": 32,
+                    "endColumn": 39,
+                    "path": "src/pokedex/team.py",
+                    "text": "    def __init__(self, trainer: Trainer):"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/team.py",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  16,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 23,
+                "endColumn": 30,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 15,
+                "endColumn": 23,
+                "path": "src/pokedex/rules.py",
+                "lines": [
+                  5,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 28,
+                "endColumn": 32,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 18,
+                "endColumn": 31,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  5,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 32,
+                "endColumn": 36,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 28,
+                "endColumn": 35,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 34,
+                "endColumn": 41,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 27,
+                "endColumn": 31,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 40,
+                "endColumn": 44,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 18,
+                "endColumn": 25,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 21,
+                "endColumn": 25,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 29,
+                "endColumn": 36,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  6,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 19,
+                "endColumn": 23,
+                "path": "src/pokedex/team.py",
+                "lines": [
+                  27,
+                  27
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 20,
+                "endColumn": 29,
+                "name": "Exception"
+              },
+              {
+                "line": 12,
+                "startColumn": 22,
+                "endColumn": 26,
+                "name": "list"
+              },
+              {
+                "line": 16,
+                "startColumn": 24,
+                "endColumn": 27,
+                "name": "len"
+              },
+              {
+                "line": 20,
+                "startColumn": 26,
+                "endColumn": 29,
+                "name": "int"
+              },
+              {
+                "line": 28,
+                "startColumn": 15,
+                "endColumn": 18,
+                "name": "max"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 6,
+                "endColumn": 19,
+                "lines": [
+                  5,
+                  6
+                ],
+                "usages": []
+              },
+              {
+                "line": 9,
+                "startColumn": 6,
+                "endColumn": 10,
+                "lines": [
+                  9,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 28,
+                    "endColumn": 32,
+                    "path": "src/pokedex/cli.py",
+                    "text": "def build_starter_team() -> Team:"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 11,
+                    "endColumn": 15,
+                    "path": "src/pokedex/cli.py",
+                    "text": "    team = Team(Trainer(name=\"Ash\", hometown=\"Pallet Town\"))"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 24,
+                    "endColumn": 28,
+                    "path": "src/pokedex/display/formatting.py",
+                    "text": "def describe_team(team: Team) -> str:"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

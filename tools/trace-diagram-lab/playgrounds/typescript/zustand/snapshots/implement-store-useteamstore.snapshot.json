@@ -1,0 +1,2480 @@
+{
+  "title": "Implement store useTeamStore",
+  "diff": [
+    "diff --git a/src/components/Header.tsx b/src/components/Header.tsx",
+    "--- a/src/components/Header.tsx",
+    "+++ b/src/components/Header.tsx",
+    "@@ -0,0 +1,2 @@",
+    "+import { selectTeamSize, useTeamStore } from \"@/stores/team-store\"",
+    "+",
+    "@@ -1,0 +4 @@ export function Header() {",
+    "+  const teamSize = useTeamStore(selectTeamSize)",
+    "@@ -4,0 +8 @@ export function Header() {",
+    "+      <span>{teamSize} trainers in the team</span>",
+    "diff --git a/src/lib/team-rules.ts b/src/lib/team-rules.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/lib/team-rules.ts",
+    "@@ -0,0 +1,5 @@",
+    "+export const TEAM_LIMIT = 6",
+    "+",
+    "+export function canJoinTeam(memberIds: number[], trainerId: number): boolean {",
+    "+  return memberIds.length < TEAM_LIMIT && !memberIds.includes(trainerId)",
+    "+}",
+    "diff --git a/src/pages/trainers/components/TrainerRow.tsx b/src/pages/trainers/components/TrainerRow.tsx",
+    "--- a/src/pages/trainers/components/TrainerRow.tsx",
+    "+++ b/src/pages/trainers/components/TrainerRow.tsx",
+    "@@ -0,0 +1 @@",
+    "+import { useTeamStore } from \"@/stores/team-store\"",
+    "@@ -3,0 +5,9 @@ export function TrainerRow({ trainer }: { trainer: Trainer }) {",
+    "+  const isMember = useTeamStore((state) => state.memberIds.includes(trainer.id))",
+    "+  const addMember = useTeamStore((state) => state.addMember)",
+    "+  const removeMember = useTeamStore((state) => state.removeMember)",
+    "+",
+    "+  const toggleMember = () => {",
+    "+    if (isMember) removeMember(trainer.id)",
+    "+    else addMember(trainer.id)",
+    "+  }",
+    "+",
+    "@@ -7,0 +18,5 @@ export function TrainerRow({ trainer }: { trainer: Trainer }) {",
+    "+      <td>",
+    "+        <button type=\"button\" onClick={toggleMember}>",
+    "+          {isMember ? \"Leave the team\" : \"Join the team\"}",
+    "+        </button>",
+    "+      </td>",
+    "diff --git a/src/stores/team-store.ts b/src/stores/team-store.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/stores/team-store.ts",
+    "@@ -0,0 +1,17 @@",
+    "+import { create } from \"zustand\"",
+    "+import { canJoinTeam } from \"@/lib/team-rules\"",
+    "+",
+    "+interface TeamState {",
+    "+  memberIds: number[]",
+    "+  addMember: (trainerId: number) => void",
+    "+  removeMember: (trainerId: number) => void",
+    "+}",
+    "+",
+    "+export const useTeamStore = create<TeamState>()((set) => ({",
+    "+  memberIds: [],",
+    "+  addMember: (trainerId) =>",
+    "+    set((state) => (canJoinTeam(state.memberIds, trainerId) ? { memberIds: [...state.memberIds, trainerId] } : state)),",
+    "+  removeMember: (trainerId) => set((state) => ({ memberIds: state.memberIds.filter((id) => id !== trainerId) })),",
+    "+}))",
+    "+",
+    "+export const selectTeamSize = (state: TeamState): number => state.memberIds.length"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Groundwork for Header and TrainerRow",
+        "importGraph": [
+          {
+            "filePath": "src/App.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/components/Header.tsx",
+              "src/pages/trainers/TrainersPage.tsx"
+            ],
+            "importedFilePaths": {
+              "@/components/Header": "src/components/Header.tsx",
+              "@/pages/items/ItemsPage": "src/pages/items/ItemsPage.tsx",
+              "@/pages/trainers/TrainersPage": "src/pages/trainers/TrainersPage.tsx"
+            }
+          },
+          {
+            "filePath": "src/lib/team-rules.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/stores/team-store.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/App.tsx"
+            ],
+            "importedFilePaths": {
+              "@/App": "src/App.tsx"
+            }
+          },
+          {
+            "filePath": "src/pages/trainers/TrainersPage.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.tsx"
+            ],
+            "importsTo": [
+              "src/pages/trainers/components/TrainerRow.tsx"
+            ],
+            "importedFilePaths": {
+              "@/data/trainers": "src/data/trainers.ts",
+              "@/stores/filter-store": "src/stores/filter-store.ts",
+              "./components/TrainerRow": "src/pages/trainers/components/TrainerRow.tsx"
+            }
+          },
+          {
+            "filePath": "src/stores/team-store.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/components/Header.tsx",
+              "src/pages/trainers/components/TrainerRow.tsx"
+            ],
+            "importsTo": [
+              "src/lib/team-rules.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/team-rules": "src/lib/team-rules.ts"
+            }
+          },
+          {
+            "filePath": "src/types/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pages/trainers/components/TrainerRow.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Add team member flow diagram",
+          "description": "This diagram shows how the team store keeps the ids of the team members, and how `addMember()` asks `canJoinTeam()` before it adds a trainer.",
+          "traceNodes": [
+            {
+              "id": "src/stores/team-store.ts#state@10:1",
+              "type": "state",
+              "label": "Keeps the trainers of the team",
+              "description": "When a component first calls `useTeamStore()`, Zustand runs [the function handed to `create()`](code:src/stores/team-store.ts#L10-15) once to make the state. [`Header` reads the state through `selectTeamSize()`](code:src/components/Header.tsx#L4), and `TrainerRow` reads it and calls its actions.",
+              "codeBlockIds": [
+                "src/stores/team-store.ts#state@10:1",
+                "src/stores/team-store.ts#effect@10:29",
+                "src/stores/team-store.ts#effect-callback@10:49",
+                "src/stores/team-store.ts#function@10:49",
+                "src/stores/team-store.ts#variable@10:50",
+                "src/stores/team-store.ts#property@11:3",
+                "src/stores/team-store.ts#function@12:3",
+                "src/stores/team-store.ts#variable@12:15",
+                "src/stores/team-store.ts#effect@13:5",
+                "src/stores/team-store.ts#effect-callback@13:9",
+                "src/stores/team-store.ts#function@13:9",
+                "src/stores/team-store.ts#variable@13:10",
+                "src/stores/team-store.ts#condition@13:21",
+                "src/stores/team-store.ts#property@13:65",
+                "src/stores/team-store.ts#function@14:3",
+                "src/stores/team-store.ts#variable@14:18",
+                "src/stores/team-store.ts#effect@14:32",
+                "src/stores/team-store.ts#effect-callback@14:36",
+                "src/stores/team-store.ts#function@14:36",
+                "src/stores/team-store.ts#variable@14:37",
+                "src/stores/team-store.ts#property@14:50",
+                "src/stores/team-store.ts#function@14:84",
+                "src/stores/team-store.ts#variable@14:85",
+                "src/stores/team-store.ts#root-argument-value@17:32",
+                "src/stores/team-store.ts#root-argument-value@17:61"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/team-store.ts#state@10:1",
+                "src/stores/team-store.ts#effect@10:29",
+                "src/stores/team-store.ts#function@10:49",
+                "src/stores/team-store.ts#variable@10:50",
+                "src/stores/team-store.ts#property@11:3",
+                "src/stores/team-store.ts#function@12:3",
+                "src/stores/team-store.ts#variable@12:15",
+                "src/stores/team-store.ts#effect@13:5",
+                "src/stores/team-store.ts#function@13:9",
+                "src/stores/team-store.ts#variable@13:10",
+                "src/stores/team-store.ts#condition@13:21",
+                "src/stores/team-store.ts#property@13:65",
+                "src/stores/team-store.ts#function@14:3",
+                "src/stores/team-store.ts#variable@14:18",
+                "src/stores/team-store.ts#effect@14:32",
+                "src/stores/team-store.ts#function@14:36",
+                "src/stores/team-store.ts#variable@14:37",
+                "src/stores/team-store.ts#property@14:50",
+                "src/stores/team-store.ts#function@14:84",
+                "src/stores/team-store.ts#variable@14:85",
+                "src/stores/team-store.ts#root-argument-value@17:32",
+                "src/stores/team-store.ts#root-argument-value@17:61"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Starts the team with no member",
+                  "codeBlockId": "src/stores/team-store.ts#property@11:3"
+                },
+                {
+                  "label": "Adds a trainer when the team rules allow it",
+                  "codeBlockId": "src/stores/team-store.ts#function@12:3"
+                },
+                {
+                  "label": "Removes a trainer from the team",
+                  "codeBlockId": "src/stores/team-store.ts#function@14:3"
+                },
+                {
+                  "label": "Counts the members of the team",
+                  "codeBlockId": "src/stores/team-store.ts#function@17:1"
+                }
+              ]
+            },
+            {
+              "id": "src/lib/team-rules.ts#function@3:1",
+              "type": "function",
+              "label": "Checks that the team has room and lacks the trainer",
+              "description": "When a user clicks \"Join the team\", `TrainerRow` calls `addMember()`, and [`addMember()` calls this function](code:src/stores/team-store.ts#L13) with the current members and the trainer id.",
+              "codeBlockIds": [
+                "src/lib/team-rules.ts#function@3:1",
+                "src/lib/team-rules.ts#root-variable@1:1",
+                "src/lib/team-rules.ts#root-argument-value@3:29",
+                "src/lib/team-rules.ts#root-argument-value@3:50",
+                "src/lib/team-rules.ts#root-argument-value@4:10",
+                "src/lib/team-rules.ts#root-argument-value@4:44"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/team-rules.ts#function@3:1",
+                "src/lib/team-rules.ts#root-variable@1:1",
+                "src/lib/team-rules.ts#root-argument-value@3:29",
+                "src/lib/team-rules.ts#root-argument-value@3:50",
+                "src/lib/team-rules.ts#root-argument-value@4:10",
+                "src/lib/team-rules.ts#root-argument-value@4:44"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Limits the team to six trainers",
+                  "codeBlockId": "src/lib/team-rules.ts#root-variable@1:1"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/stores/team-store.ts#state@10:1 -> src/lib/team-rules.ts#function@3:1",
+              "from": "src/stores/team-store.ts#state@10:1",
+              "to": "src/lib/team-rules.ts#function@3:1"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/lib/team-rules.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "TEAM_LIMIT",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 1
+                  },
+                  "codeBlockIds": [
+                    "src/lib/team-rules.ts#root-variable@1:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w2",
+                  "declaration": "canJoinTeam",
+                  "range": {
+                    "lineStart": 3,
+                    "lineEnd": 5
+                  },
+                  "codeBlockIds": [
+                    "src/lib/team-rules.ts#function@3:1",
+                    "src/lib/team-rules.ts#root-argument-value@3:29",
+                    "src/lib/team-rules.ts#root-argument-value@3:50",
+                    "src/lib/team-rules.ts#root-argument-value@4:10",
+                    "src/lib/team-rules.ts#root-argument-value@4:44"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/stores/team-store.ts",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "TeamState",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 8
+                  },
+                  "codeBlockIds": [
+                    "src/stores/team-store.ts#type-declaration@4:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "useTeamStore",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 15
+                  },
+                  "codeBlockIds": [
+                    "src/stores/team-store.ts#state@10:1",
+                    "src/stores/team-store.ts#effect@10:29",
+                    "src/stores/team-store.ts#function@10:49",
+                    "src/stores/team-store.ts#variable@10:50",
+                    "src/stores/team-store.ts#property@11:3",
+                    "src/stores/team-store.ts#function@12:3",
+                    "src/stores/team-store.ts#variable@12:15",
+                    "src/stores/team-store.ts#effect@13:5",
+                    "src/stores/team-store.ts#function@13:9",
+                    "src/stores/team-store.ts#variable@13:10",
+                    "src/stores/team-store.ts#condition@13:21",
+                    "src/stores/team-store.ts#property@13:65",
+                    "src/stores/team-store.ts#function@14:3",
+                    "src/stores/team-store.ts#variable@14:18",
+                    "src/stores/team-store.ts#effect@14:32",
+                    "src/stores/team-store.ts#function@14:36",
+                    "src/stores/team-store.ts#variable@14:37",
+                    "src/stores/team-store.ts#property@14:50",
+                    "src/stores/team-store.ts#function@14:84",
+                    "src/stores/team-store.ts#variable@14:85"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w5",
+                  "declaration": "selectTeamSize",
+                  "range": {
+                    "lineStart": 17,
+                    "lineEnd": 17
+                  },
+                  "codeBlockIds": [
+                    "src/stores/team-store.ts#function@17:1",
+                    "src/stores/team-store.ts#root-argument-value@17:32",
+                    "src/stores/team-store.ts#root-argument-value@17:61"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/lib/team-rules.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 4,
+                "startColumn": 28,
+                "endColumn": 38,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 4,
+                "startColumn": 43,
+                "endColumn": 52,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 4,
+                "startColumn": 62,
+                "endColumn": 71,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  1,
+                  1
+                ],
+                "usages": []
+              },
+              {
+                "line": 3,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  3,
+                  5
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 20,
+                    "endColumn": 31,
+                    "path": "src/stores/team-store.ts",
+                    "text": "    set((state) => (canJoinTeam(state.memberIds, trainerId) ? { memberIds: [...state.memberIds, trainerId] } : state)),"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/stores/team-store.ts",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 28,
+                "endColumn": 34,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zustand",
+                  "name": "create"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 35,
+                "endColumn": 44,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  4,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 20,
+                "endColumn": 31,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  3,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 49,
+                "endColumn": 58,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 96,
+                "endColumn": 105,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 31,
+                "endColumn": 34,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 38,
+                "endColumn": 47,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  4,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  10,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 19,
+                    "endColumn": 31,
+                    "path": "src/components/Header.tsx",
+                    "text": "  const teamSize = useTeamStore(selectTeamSize)"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 19,
+                    "endColumn": 31,
+                    "path": "src/pages/trainers/components/TrainerRow.tsx",
+                    "text": "  const isMember = useTeamStore((state) => state.memberIds.includes(trainer.id))"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 20,
+                    "endColumn": 32,
+                    "path": "src/pages/trainers/components/TrainerRow.tsx",
+                    "text": "  const addMember = useTeamStore((state) => state.addMember)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 23,
+                    "endColumn": 35,
+                    "path": "src/pages/trainers/components/TrainerRow.tsx",
+                    "text": "  const removeMember = useTeamStore((state) => state.removeMember)"
+                  }
+                ]
+              },
+              {
+                "line": 17,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  17,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 32,
+                    "endColumn": 46,
+                    "path": "src/components/Header.tsx",
+                    "text": "  const teamSize = useTeamStore(selectTeamSize)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Modified Header component",
+        "importGraph": [
+          {
+            "filePath": "src/App.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/components/Header.tsx",
+              "src/pages/trainers/TrainersPage.tsx"
+            ],
+            "importedFilePaths": {
+              "@/components/Header": "src/components/Header.tsx",
+              "@/pages/items/ItemsPage": "src/pages/items/ItemsPage.tsx",
+              "@/pages/trainers/TrainersPage": "src/pages/trainers/TrainersPage.tsx"
+            }
+          },
+          {
+            "filePath": "src/components/Header.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/App.tsx"
+            ],
+            "importsTo": [
+              "src/stores/team-store.ts"
+            ],
+            "importedFilePaths": {
+              "@/stores/team-store": "src/stores/team-store.ts"
+            }
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/App.tsx"
+            ],
+            "importedFilePaths": {
+              "@/App": "src/App.tsx"
+            }
+          },
+          {
+            "filePath": "src/pages/trainers/TrainersPage.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.tsx"
+            ],
+            "importsTo": [
+              "src/pages/trainers/components/TrainerRow.tsx"
+            ],
+            "importedFilePaths": {
+              "@/data/trainers": "src/data/trainers.ts",
+              "@/stores/filter-store": "src/stores/filter-store.ts",
+              "./components/TrainerRow": "src/pages/trainers/components/TrainerRow.tsx"
+            }
+          },
+          {
+            "filePath": "src/types/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pages/trainers/components/TrainerRow.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Show team size flow diagram",
+          "description": "This diagram shows how the header reads the size of the team from the team store through `selectTeamSize()` and renders it.",
+          "traceNodes": [
+            {
+              "id": "src/App.tsx#component@5:1",
+              "type": "component",
+              "label": "Renders the header and the pages",
+              "description": "When the user opens the app, `main.tsx` renders this component inside `StrictMode`.",
+              "codeBlockIds": [
+                "src/App.tsx#component@5:1",
+                "src/App.tsx#render-root@6:3",
+                "src/App.tsx#render@7:5",
+                "src/App.tsx#render@8:7"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/components/Header.tsx#component@3:1",
+                  "type": "component",
+                  "label": "Shows the number of trainers in the team",
+                  "description": "When the user opens the app, [`App` renders this component](code:src/App.tsx#L8). Zustand renders it again each time `selectTeamSize()` returns a new number.",
+                  "codeBlockIds": [
+                    "src/components/Header.tsx#component@3:1",
+                    "src/components/Header.tsx#external-value@4:3",
+                    "src/components/Header.tsx#component-effect@4:20",
+                    "src/components/Header.tsx#render-root@5:3",
+                    "src/components/Header.tsx#render@6:5",
+                    "src/components/Header.tsx#render@8:7"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/components/Header.tsx#external-value@4:3",
+                    "src/components/Header.tsx#component-effect@4:20",
+                    "src/components/Header.tsx#render@8:7"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Gets the number of trainers in the team",
+                      "codeBlockId": "src/components/Header.tsx#external-value@4:3"
+                    },
+                    {
+                      "label": "Reads the team size from the team store",
+                      "codeBlockId": "src/components/Header.tsx#component-effect@4:20"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/stores/team-store.ts#state@10:1",
+              "type": "state",
+              "label": "Keeps the trainers of the team",
+              "description": "When `Header` renders, [it calls `useTeamStore()` with `selectTeamSize()`](code:src/components/Header.tsx#L4), and Zustand runs the selector on the state of this store.",
+              "codeBlockIds": [
+                "src/stores/team-store.ts#state@10:1",
+                "src/stores/team-store.ts#effect@10:29",
+                "src/stores/team-store.ts#effect-callback@10:49",
+                "src/stores/team-store.ts#function@10:49",
+                "src/stores/team-store.ts#variable@10:50",
+                "src/stores/team-store.ts#property@11:3",
+                "src/stores/team-store.ts#function@12:3",
+                "src/stores/team-store.ts#variable@12:15",
+                "src/stores/team-store.ts#effect@13:5",
+                "src/stores/team-store.ts#function@13:9",
+                "src/stores/team-store.ts#variable@13:10",
+                "src/stores/team-store.ts#condition@13:21",
+                "src/stores/team-store.ts#property@13:65",
+                "src/stores/team-store.ts#function@14:3",
+                "src/stores/team-store.ts#variable@14:18",
+                "src/stores/team-store.ts#effect@14:32",
+                "src/stores/team-store.ts#function@14:36",
+                "src/stores/team-store.ts#variable@14:37",
+                "src/stores/team-store.ts#property@14:50",
+                "src/stores/team-store.ts#function@14:84",
+                "src/stores/team-store.ts#variable@14:85",
+                "src/stores/team-store.ts#root-argument-value@17:32",
+                "src/stores/team-store.ts#root-argument-value@17:61"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/team-store.ts#state@10:1",
+                "src/stores/team-store.ts#effect@10:29",
+                "src/stores/team-store.ts#function@10:49",
+                "src/stores/team-store.ts#variable@10:50",
+                "src/stores/team-store.ts#property@11:3",
+                "src/stores/team-store.ts#function@12:3",
+                "src/stores/team-store.ts#variable@12:15",
+                "src/stores/team-store.ts#effect@13:5",
+                "src/stores/team-store.ts#function@13:9",
+                "src/stores/team-store.ts#variable@13:10",
+                "src/stores/team-store.ts#condition@13:21",
+                "src/stores/team-store.ts#property@13:65",
+                "src/stores/team-store.ts#function@14:3",
+                "src/stores/team-store.ts#variable@14:18",
+                "src/stores/team-store.ts#effect@14:32",
+                "src/stores/team-store.ts#function@14:36",
+                "src/stores/team-store.ts#variable@14:37",
+                "src/stores/team-store.ts#property@14:50",
+                "src/stores/team-store.ts#function@14:84",
+                "src/stores/team-store.ts#variable@14:85",
+                "src/stores/team-store.ts#root-argument-value@17:32",
+                "src/stores/team-store.ts#root-argument-value@17:61"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Starts the team with no member",
+                  "codeBlockId": "src/stores/team-store.ts#property@11:3"
+                },
+                {
+                  "label": "Adds a trainer when the team rules allow it",
+                  "codeBlockId": "src/stores/team-store.ts#function@12:3"
+                },
+                {
+                  "label": "Removes a trainer from the team",
+                  "codeBlockId": "src/stores/team-store.ts#function@14:3"
+                },
+                {
+                  "label": "Counts the members of the team",
+                  "codeBlockId": "src/stores/team-store.ts#function@17:1"
+                }
+              ]
+            },
+            {
+              "id": "src/components/Header.tsx#component-effect@4:20",
+              "type": "component-effect",
+              "label": "Subscribes the header to the team size",
+              "description": "When `Header` renders, [it calls `useTeamStore(selectTeamSize)`](code:src/components/Header.tsx#L4).",
+              "codeBlockIds": [
+                "src/components/Header.tsx#component-effect@4:20",
+                "src/components/Header.tsx#effect-callback@4:33"
+              ],
+              "diffCodeBlockIds": [
+                "src/components/Header.tsx#component-effect@4:20",
+                "src/components/Header.tsx#effect-callback@4:33"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Picks the team size from the state",
+                  "codeBlockId": "src/components/Header.tsx#effect-callback@4:33"
+                }
+              ]
+            },
+            {
+              "id": "src/components/Header.tsx#effect-callback@4:33",
+              "type": "effect-callback",
+              "label": "Counts the members of the team",
+              "description": "When the state of the team store changes, Zustand calls [`selectTeamSize()`](code:src/stores/team-store.ts#L17) with the new state, because `Header` passes it to `useTeamStore()`.",
+              "codeBlockIds": [
+                "src/components/Header.tsx#effect-callback@4:33"
+              ],
+              "diffCodeBlockIds": [
+                "src/components/Header.tsx#effect-callback@4:33"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/App.tsx#component@5:1 -> src/components/Header.tsx#component@3:1",
+              "from": "src/App.tsx#component@5:1",
+              "to": "src/components/Header.tsx#component@3:1"
+            },
+            {
+              "id": "src/components/Header.tsx#component-effect@4:20 -> src/stores/team-store.ts#state@10:1",
+              "from": "src/components/Header.tsx#component-effect@4:20",
+              "to": "src/stores/team-store.ts#state@10:1"
+            },
+            {
+              "id": "src/components/Header.tsx#effect-callback@4:33 -> src/stores/team-store.ts#state@10:1",
+              "from": "src/components/Header.tsx#effect-callback@4:33",
+              "to": "src/stores/team-store.ts#state@10:1"
+            },
+            {
+              "id": "src/components/Header.tsx#component@3:1 -> src/components/Header.tsx#component-effect@4:20",
+              "from": "src/components/Header.tsx#component@3:1",
+              "to": "src/components/Header.tsx#component-effect@4:20"
+            },
+            {
+              "id": "src/components/Header.tsx#component-effect@4:20 -> src/components/Header.tsx#effect-callback@4:33",
+              "from": "src/components/Header.tsx#component-effect@4:20",
+              "to": "src/components/Header.tsx#effect-callback@4:33"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/components/Header.tsx",
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "declaration": "Header",
+                  "range": {
+                    "lineStart": 3,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/components/Header.tsx#component@3:1",
+                    "src/components/Header.tsx#external-value@4:3",
+                    "src/components/Header.tsx#component-effect@4:20",
+                    "src/components/Header.tsx#effect-callback@4:33",
+                    "src/components/Header.tsx#render@8:7"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/App.tsx",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/components/Header.tsx",
+                "lines": [
+                  3,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 9,
+                "endColumn": 21,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  5,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/App.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 19,
+                "lines": [
+                  5,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 5,
+                    "endColumn": 8,
+                    "path": "src/main.tsx",
+                    "text": "    <App />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/components/Header.tsx",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 19,
+                "endColumn": 31,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  10,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 4,
+                "startColumn": 32,
+                "endColumn": 46,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 21,
+                "path": "src/components/Header.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 16,
+                "endColumn": 22,
+                "lines": [
+                  3,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 7,
+                    "endColumn": 13,
+                    "path": "src/App.tsx",
+                    "text": "      <Header />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/stores/team-store.ts",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 28,
+                "endColumn": 34,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zustand",
+                  "name": "create"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 35,
+                "endColumn": 44,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  4,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 20,
+                "endColumn": 31,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  3,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 49,
+                "endColumn": 58,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 96,
+                "endColumn": 105,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 31,
+                "endColumn": 34,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 38,
+                "endColumn": 47,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  4,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  10,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 19,
+                    "endColumn": 31,
+                    "path": "src/components/Header.tsx",
+                    "text": "  const teamSize = useTeamStore(selectTeamSize)"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 19,
+                    "endColumn": 31,
+                    "path": "src/pages/trainers/components/TrainerRow.tsx",
+                    "text": "  const isMember = useTeamStore((state) => state.memberIds.includes(trainer.id))"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 20,
+                    "endColumn": 32,
+                    "path": "src/pages/trainers/components/TrainerRow.tsx",
+                    "text": "  const addMember = useTeamStore((state) => state.addMember)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 23,
+                    "endColumn": 35,
+                    "path": "src/pages/trainers/components/TrainerRow.tsx",
+                    "text": "  const removeMember = useTeamStore((state) => state.removeMember)"
+                  }
+                ]
+              },
+              {
+                "line": 17,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  17,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 32,
+                    "endColumn": 46,
+                    "path": "src/components/Header.tsx",
+                    "text": "  const teamSize = useTeamStore(selectTeamSize)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Modified TrainerRow component",
+        "importGraph": [
+          {
+            "filePath": "src/App.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/components/Header.tsx",
+              "src/pages/trainers/TrainersPage.tsx"
+            ],
+            "importedFilePaths": {
+              "@/components/Header": "src/components/Header.tsx",
+              "@/pages/items/ItemsPage": "src/pages/items/ItemsPage.tsx",
+              "@/pages/trainers/TrainersPage": "src/pages/trainers/TrainersPage.tsx"
+            }
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/App.tsx"
+            ],
+            "importedFilePaths": {
+              "@/App": "src/App.tsx"
+            }
+          },
+          {
+            "filePath": "src/pages/trainers/TrainersPage.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.tsx"
+            ],
+            "importsTo": [
+              "src/pages/trainers/components/TrainerRow.tsx"
+            ],
+            "importedFilePaths": {
+              "@/data/trainers": "src/data/trainers.ts",
+              "@/stores/filter-store": "src/stores/filter-store.ts",
+              "./components/TrainerRow": "src/pages/trainers/components/TrainerRow.tsx"
+            }
+          },
+          {
+            "filePath": "src/pages/trainers/components/TrainerRow.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pages/trainers/TrainersPage.tsx"
+            ],
+            "importsTo": [
+              "src/stores/team-store.ts",
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/stores/team-store": "src/stores/team-store.ts",
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/types/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pages/trainers/components/TrainerRow.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Join or leave team flow diagram",
+          "description": "This diagram shows how each trainer row reads from the team store whether its trainer is a member. It also shows what happens when the user clicks \"Join the team\" or \"Leave the team\", and how the trainer id reaches the team store through `addMember()` or `removeMember()`.",
+          "traceNodes": [
+            {
+              "id": "src/App.tsx#component@5:1",
+              "type": "component",
+              "label": "Renders the header and the pages",
+              "description": "When the user opens the app, `main.tsx` renders this component inside `StrictMode`.",
+              "codeBlockIds": [
+                "src/App.tsx#component@5:1",
+                "src/App.tsx#render-root@6:3",
+                "src/App.tsx#render@7:5",
+                "src/App.tsx#render@9:7",
+                "src/App.tsx#render@10:9"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pages/trainers/TrainersPage.tsx#component@5:1",
+                  "type": "component",
+                  "label": "Lists the trainers of the chosen hometown",
+                  "description": "When the user opens the app, [`App` renders this page](code:src/App.tsx#L10).",
+                  "codeBlockIds": [
+                    "src/pages/trainers/TrainersPage.tsx#component@5:1",
+                    "src/pages/trainers/TrainersPage.tsx#render-root@9:3",
+                    "src/pages/trainers/TrainersPage.tsx#render@10:5",
+                    "src/pages/trainers/TrainersPage.tsx#render@12:7",
+                    "src/pages/trainers/TrainersPage.tsx#render@13:9",
+                    "src/pages/trainers/TrainersPage.tsx#render-loop@14:12",
+                    "src/pages/trainers/TrainersPage.tsx#function@14:25",
+                    "src/pages/trainers/TrainersPage.tsx#render@15:13"
+                  ],
+                  "diffCodeBlockIds": [],
+                  "children": [
+                    {
+                      "id": "src/pages/trainers/components/TrainerRow.tsx#component@4:1",
+                      "type": "component",
+                      "label": "Shows one trainer with a team button",
+                      "description": "When `TrainersPage` renders, [it renders this component once for each trainer](code:src/pages/trainers/TrainersPage.tsx#L15). Zustand renders it again each time one of its three selectors returns a new value.",
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/TrainerRow.tsx#component@4:1",
+                        "src/pages/trainers/components/TrainerRow.tsx#external-value@5:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20",
+                        "src/pages/trainers/components/TrainerRow.tsx#external-value@6:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21",
+                        "src/pages/trainers/components/TrainerRow.tsx#external-value@7:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24",
+                        "src/pages/trainers/components/TrainerRow.tsx#render-root@14:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#render@15:5",
+                        "src/pages/trainers/components/TrainerRow.tsx#render@18:7",
+                        "src/pages/trainers/components/TrainerRow.tsx#render@19:9",
+                        "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31",
+                        "src/pages/trainers/components/TrainerRow.tsx#condition@20:12"
+                      ],
+                      "diffCodeBlockIds": [
+                        "src/pages/trainers/components/TrainerRow.tsx#external-value@5:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20",
+                        "src/pages/trainers/components/TrainerRow.tsx#external-value@6:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21",
+                        "src/pages/trainers/components/TrainerRow.tsx#external-value@7:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24",
+                        "src/pages/trainers/components/TrainerRow.tsx#render@18:7",
+                        "src/pages/trainers/components/TrainerRow.tsx#render@19:9",
+                        "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31",
+                        "src/pages/trainers/components/TrainerRow.tsx#condition@20:12"
+                      ],
+                      "children": [],
+                      "triggerLabels": [
+                        {
+                          "label": "A user clicks \"Join the team\" or \"Leave the team\"",
+                          "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31"
+                        }
+                      ],
+                      "blockLabels": [
+                        {
+                          "label": "Gets whether the trainer is in the team",
+                          "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#external-value@5:3"
+                        },
+                        {
+                          "label": "Reads the membership of the trainer from the team store",
+                          "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20"
+                        },
+                        {
+                          "label": "Gets the action that adds a member",
+                          "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#external-value@6:3"
+                        },
+                        {
+                          "label": "Reads the add action from the team store",
+                          "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21"
+                        },
+                        {
+                          "label": "Gets the action that removes a member",
+                          "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#external-value@7:3"
+                        },
+                        {
+                          "label": "Reads the remove action from the team store",
+                          "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24"
+                        },
+                        {
+                          "label": "Picks the button text from the membership",
+                          "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#condition@20:12"
+                        }
+                      ]
+                    }
+                  ],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Renders one row for each trainer",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#function@14:25"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/stores/team-store.ts#state@10:1",
+              "type": "state",
+              "label": "Keeps the trainers of the team",
+              "description": "When a user clicks the team button, [`toggleMember()` calls `removeMember()` or `addMember()`](code:src/pages/trainers/components/TrainerRow.tsx#L10-11) of this store with the trainer id.",
+              "codeBlockIds": [
+                "src/stores/team-store.ts#state@10:1",
+                "src/stores/team-store.ts#effect@10:29",
+                "src/stores/team-store.ts#effect-callback@10:49",
+                "src/stores/team-store.ts#function@10:49",
+                "src/stores/team-store.ts#variable@10:50",
+                "src/stores/team-store.ts#property@11:3",
+                "src/stores/team-store.ts#function@12:3",
+                "src/stores/team-store.ts#variable@12:15",
+                "src/stores/team-store.ts#effect@13:5",
+                "src/stores/team-store.ts#effect-callback@13:9",
+                "src/stores/team-store.ts#function@13:9",
+                "src/stores/team-store.ts#variable@13:10",
+                "src/stores/team-store.ts#condition@13:21",
+                "src/stores/team-store.ts#property@13:65",
+                "src/stores/team-store.ts#function@14:3",
+                "src/stores/team-store.ts#variable@14:18",
+                "src/stores/team-store.ts#effect@14:32",
+                "src/stores/team-store.ts#effect-callback@14:36",
+                "src/stores/team-store.ts#function@14:36",
+                "src/stores/team-store.ts#variable@14:37",
+                "src/stores/team-store.ts#property@14:50",
+                "src/stores/team-store.ts#function@14:84",
+                "src/stores/team-store.ts#variable@14:85"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/team-store.ts#state@10:1",
+                "src/stores/team-store.ts#effect@10:29",
+                "src/stores/team-store.ts#function@10:49",
+                "src/stores/team-store.ts#variable@10:50",
+                "src/stores/team-store.ts#property@11:3",
+                "src/stores/team-store.ts#function@12:3",
+                "src/stores/team-store.ts#variable@12:15",
+                "src/stores/team-store.ts#effect@13:5",
+                "src/stores/team-store.ts#function@13:9",
+                "src/stores/team-store.ts#variable@13:10",
+                "src/stores/team-store.ts#condition@13:21",
+                "src/stores/team-store.ts#property@13:65",
+                "src/stores/team-store.ts#function@14:3",
+                "src/stores/team-store.ts#variable@14:18",
+                "src/stores/team-store.ts#effect@14:32",
+                "src/stores/team-store.ts#function@14:36",
+                "src/stores/team-store.ts#variable@14:37",
+                "src/stores/team-store.ts#property@14:50",
+                "src/stores/team-store.ts#function@14:84",
+                "src/stores/team-store.ts#variable@14:85"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Starts the team with no member",
+                  "codeBlockId": "src/stores/team-store.ts#property@11:3"
+                },
+                {
+                  "label": "Adds a trainer when the team rules allow it",
+                  "codeBlockId": "src/stores/team-store.ts#function@12:3"
+                },
+                {
+                  "label": "Removes a trainer from the team",
+                  "codeBlockId": "src/stores/team-store.ts#function@14:3"
+                }
+              ]
+            },
+            {
+              "id": "src/lib/team-rules.ts#function@3:1",
+              "type": "function",
+              "label": "Checks that the team has room and lacks the trainer",
+              "description": "When a user clicks \"Join the team\", `toggleMember()` calls `addMember()`, and [`addMember()` calls this function](code:src/stores/team-store.ts#L13) with the current members and the trainer id.",
+              "codeBlockIds": [
+                "src/lib/team-rules.ts#function@3:1",
+                "src/lib/team-rules.ts#root-variable@1:1",
+                "src/lib/team-rules.ts#root-argument-value@3:29",
+                "src/lib/team-rules.ts#root-argument-value@3:50",
+                "src/lib/team-rules.ts#root-argument-value@4:10",
+                "src/lib/team-rules.ts#root-argument-value@4:44"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/team-rules.ts#function@3:1",
+                "src/lib/team-rules.ts#root-variable@1:1",
+                "src/lib/team-rules.ts#root-argument-value@3:29",
+                "src/lib/team-rules.ts#root-argument-value@3:50",
+                "src/lib/team-rules.ts#root-argument-value@4:10",
+                "src/lib/team-rules.ts#root-argument-value@4:44"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Limits the team to six trainers",
+                  "codeBlockId": "src/lib/team-rules.ts#root-variable@1:1"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31",
+              "type": "render-event",
+              "label": "Adds the trainer to the team or removes it",
+              "description": "When the user clicks the team button, [the button runs `toggleMember()`](code:src/pages/trainers/components/TrainerRow.tsx#L19), which `TrainerRow` passes as `onClick`.",
+              "codeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31",
+                "src/pages/trainers/components/TrainerRow.tsx#function@9:3",
+                "src/pages/trainers/components/TrainerRow.tsx#condition@10:5",
+                "src/pages/trainers/components/TrainerRow.tsx#call@10:19",
+                "src/pages/trainers/components/TrainerRow.tsx#call@11:10"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31",
+                "src/pages/trainers/components/TrainerRow.tsx#function@9:3",
+                "src/pages/trainers/components/TrainerRow.tsx#condition@10:5",
+                "src/pages/trainers/components/TrainerRow.tsx#call@10:19",
+                "src/pages/trainers/components/TrainerRow.tsx#call@11:10"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Checks whether the trainer is already a member",
+                  "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#condition@10:5"
+                },
+                {
+                  "label": "Removes the trainer from the team",
+                  "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#call@10:19"
+                },
+                {
+                  "label": "Adds the trainer to the team",
+                  "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#call@11:10"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20",
+              "type": "component-effect",
+              "label": "Subscribes the row to the membership of its trainer",
+              "description": "When `TrainerRow` renders, [it calls `useTeamStore()` with a selector](code:src/pages/trainers/components/TrainerRow.tsx#L5).",
+              "codeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20",
+                "src/pages/trainers/components/TrainerRow.tsx#effect-callback@5:33"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Checks whether the team holds the trainer id",
+                  "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@5:33"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@5:33",
+              "type": "effect-callback",
+              "label": "Checks whether the team holds the trainer",
+              "description": "When the state of the team store changes, Zustand calls this selector with the new state, because [`TrainerRow` passes it to `useTeamStore()`](code:src/pages/trainers/components/TrainerRow.tsx#L5).",
+              "codeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#effect-callback@5:33",
+                "src/pages/trainers/components/TrainerRow.tsx#function@5:33",
+                "src/pages/trainers/components/TrainerRow.tsx#variable@5:34"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#function@5:33",
+                "src/pages/trainers/components/TrainerRow.tsx#variable@5:34"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24",
+              "type": "component-effect",
+              "label": "Subscribes the row to the remove action",
+              "description": "When `TrainerRow` renders, [it calls `useTeamStore()` with a selector](code:src/pages/trainers/components/TrainerRow.tsx#L7).",
+              "codeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24",
+                "src/pages/trainers/components/TrainerRow.tsx#effect-callback@7:37"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Picks the remove action from the state",
+                  "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@7:37"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@7:37",
+              "type": "effect-callback",
+              "label": "Returns the remove action of the store",
+              "description": "When `TrainerRow` renders, Zustand calls this selector with the state, because [`TrainerRow` passes it to `useTeamStore()`](code:src/pages/trainers/components/TrainerRow.tsx#L7).",
+              "codeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#effect-callback@7:37",
+                "src/pages/trainers/components/TrainerRow.tsx#function@7:37",
+                "src/pages/trainers/components/TrainerRow.tsx#variable@7:38"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#function@7:37",
+                "src/pages/trainers/components/TrainerRow.tsx#variable@7:38"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21",
+              "type": "component-effect",
+              "label": "Subscribes the row to the add action",
+              "description": "When `TrainerRow` renders, [it calls `useTeamStore()` with a selector](code:src/pages/trainers/components/TrainerRow.tsx#L6).",
+              "codeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21",
+                "src/pages/trainers/components/TrainerRow.tsx#effect-callback@6:34"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Picks the add action from the state",
+                  "codeBlockId": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@6:34"
+                }
+              ]
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@6:34",
+              "type": "effect-callback",
+              "label": "Returns the add action of the store",
+              "description": "When `TrainerRow` renders, Zustand calls this selector with the state, because [`TrainerRow` passes it to `useTeamStore()`](code:src/pages/trainers/components/TrainerRow.tsx#L6).",
+              "codeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#effect-callback@6:34",
+                "src/pages/trainers/components/TrainerRow.tsx#function@6:34",
+                "src/pages/trainers/components/TrainerRow.tsx#variable@6:35"
+              ],
+              "diffCodeBlockIds": [
+                "src/pages/trainers/components/TrainerRow.tsx#function@6:34",
+                "src/pages/trainers/components/TrainerRow.tsx#variable@6:35"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31 -> src/pages/trainers/components/TrainerRow.tsx#effect-callback@5:33",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@5:33"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31 -> src/pages/trainers/components/TrainerRow.tsx#effect-callback@7:37",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@7:37"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31 -> src/pages/trainers/components/TrainerRow.tsx#effect-callback@6:34",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@6:34"
+            },
+            {
+              "id": "src/App.tsx#component@5:1 -> src/pages/trainers/TrainersPage.tsx#component@5:1",
+              "from": "src/App.tsx#component@5:1",
+              "to": "src/pages/trainers/TrainersPage.tsx#component@5:1"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@5:33 -> src/stores/team-store.ts#state@10:1",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@5:33",
+              "to": "src/stores/team-store.ts#state@10:1"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@7:37 -> src/stores/team-store.ts#state@10:1",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@7:37",
+              "to": "src/stores/team-store.ts#state@10:1"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@6:34 -> src/stores/team-store.ts#state@10:1",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@6:34",
+              "to": "src/stores/team-store.ts#state@10:1"
+            },
+            {
+              "id": "src/stores/team-store.ts#state@10:1 -> src/lib/team-rules.ts#function@3:1",
+              "from": "src/stores/team-store.ts#state@10:1",
+              "to": "src/lib/team-rules.ts#function@3:1"
+            },
+            {
+              "id": "src/pages/trainers/TrainersPage.tsx#component@5:1 -> src/pages/trainers/components/TrainerRow.tsx#component@4:1",
+              "from": "src/pages/trainers/TrainersPage.tsx#component@5:1",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#component@4:1"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20 -> src/stores/team-store.ts#state@10:1",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20",
+              "to": "src/stores/team-store.ts#state@10:1"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21 -> src/stores/team-store.ts#state@10:1",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21",
+              "to": "src/stores/team-store.ts#state@10:1"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24 -> src/stores/team-store.ts#state@10:1",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24",
+              "to": "src/stores/team-store.ts#state@10:1"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component@4:1 -> src/pages/trainers/components/TrainerRow.tsx#render-event@19:31",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#component@4:1",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component@4:1 -> src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#component@4:1",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20 -> src/pages/trainers/components/TrainerRow.tsx#effect-callback@5:33",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@5:33"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component@4:1 -> src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#component@4:1",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24 -> src/pages/trainers/components/TrainerRow.tsx#effect-callback@7:37",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@7:37"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component@4:1 -> src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#component@4:1",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21"
+            },
+            {
+              "id": "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21 -> src/pages/trainers/components/TrainerRow.tsx#effect-callback@6:34",
+              "from": "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21",
+              "to": "src/pages/trainers/components/TrainerRow.tsx#effect-callback@6:34"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pages/trainers/components/TrainerRow.tsx",
+              "waypoints": [
+                {
+                  "id": "w7",
+                  "declaration": "TrainerRow",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 25
+                  },
+                  "codeBlockIds": [
+                    "src/pages/trainers/components/TrainerRow.tsx#component@4:1",
+                    "src/pages/trainers/components/TrainerRow.tsx#external-value@5:3",
+                    "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20",
+                    "src/pages/trainers/components/TrainerRow.tsx#function@5:33",
+                    "src/pages/trainers/components/TrainerRow.tsx#variable@5:34",
+                    "src/pages/trainers/components/TrainerRow.tsx#external-value@6:3",
+                    "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21",
+                    "src/pages/trainers/components/TrainerRow.tsx#function@6:34",
+                    "src/pages/trainers/components/TrainerRow.tsx#variable@6:35",
+                    "src/pages/trainers/components/TrainerRow.tsx#external-value@7:3",
+                    "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24",
+                    "src/pages/trainers/components/TrainerRow.tsx#function@7:37",
+                    "src/pages/trainers/components/TrainerRow.tsx#variable@7:38",
+                    "src/pages/trainers/components/TrainerRow.tsx#function@9:3",
+                    "src/pages/trainers/components/TrainerRow.tsx#condition@10:5",
+                    "src/pages/trainers/components/TrainerRow.tsx#call@10:19",
+                    "src/pages/trainers/components/TrainerRow.tsx#call@11:10",
+                    "src/pages/trainers/components/TrainerRow.tsx#render@18:7",
+                    "src/pages/trainers/components/TrainerRow.tsx#render@19:9",
+                    "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31",
+                    "src/pages/trainers/components/TrainerRow.tsx#condition@20:12"
+                  ],
+                  "children": [
+                    {
+                      "id": "w7.1",
+                      "declaration": "TrainerRow › isMember",
+                      "range": {
+                        "lineStart": 5,
+                        "lineEnd": 5
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/TrainerRow.tsx#external-value@5:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#component-effect@5:20",
+                        "src/pages/trainers/components/TrainerRow.tsx#function@5:33",
+                        "src/pages/trainers/components/TrainerRow.tsx#variable@5:34"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.2",
+                      "declaration": "TrainerRow › addMember",
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/TrainerRow.tsx#external-value@6:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#component-effect@6:21",
+                        "src/pages/trainers/components/TrainerRow.tsx#function@6:34",
+                        "src/pages/trainers/components/TrainerRow.tsx#variable@6:35"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.3",
+                      "declaration": "TrainerRow › removeMember",
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 7
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/TrainerRow.tsx#external-value@7:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#component-effect@7:24",
+                        "src/pages/trainers/components/TrainerRow.tsx#function@7:37",
+                        "src/pages/trainers/components/TrainerRow.tsx#variable@7:38"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.4",
+                      "declaration": "TrainerRow › toggleMember",
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 12
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/TrainerRow.tsx#function@9:3",
+                        "src/pages/trainers/components/TrainerRow.tsx#condition@10:5",
+                        "src/pages/trainers/components/TrainerRow.tsx#call@10:19",
+                        "src/pages/trainers/components/TrainerRow.tsx#call@11:10"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.5",
+                      "declaration": "TrainerRow › button.onClick",
+                      "range": {
+                        "lineStart": 19,
+                        "lineEnd": 19
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/TrainerRow.tsx#render-event@19:31"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.6",
+                      "declaration": "TrainerRow › Condition :20",
+                      "range": {
+                        "lineStart": 20,
+                        "lineEnd": 20
+                      },
+                      "codeBlockIds": [
+                        "src/pages/trainers/components/TrainerRow.tsx#condition@20:12"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/App.tsx",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/components/Header.tsx",
+                "lines": [
+                  3,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 9,
+                "endColumn": 21,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  5,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/App.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 19,
+                "lines": [
+                  5,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 5,
+                    "endColumn": 8,
+                    "path": "src/main.tsx",
+                    "text": "    <App />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/lib/team-rules.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 4,
+                "startColumn": 28,
+                "endColumn": 38,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 4,
+                "startColumn": 43,
+                "endColumn": 52,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 4,
+                "startColumn": 62,
+                "endColumn": 71,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  1,
+                  1
+                ],
+                "usages": []
+              },
+              {
+                "line": 3,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  3,
+                  5
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 20,
+                    "endColumn": 31,
+                    "path": "src/stores/team-store.ts",
+                    "text": "    set((state) => (canJoinTeam(state.memberIds, trainerId) ? { memberIds: [...state.memberIds, trainerId] } : state)),"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pages/trainers/components/TrainerRow.tsx",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 51,
+                "endColumn": 58,
+                "path": "src/types/trainer.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 19,
+                "endColumn": 31,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  10,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 68,
+                "endColumn": 75,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 20,
+                "endColumn": 32,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  10,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 23,
+                "endColumn": 35,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  10,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 8,
+                "endColumn": 16,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 18,
+                "endColumn": 30,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 31,
+                "endColumn": 38,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 39,
+                "endColumn": 51,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  9,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 11,
+                "endColumn": 19,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  4,
+                  25
+                ],
+                "usages": [
+                  {
+                    "line": 15,
+                    "startColumn": 13,
+                    "endColumn": 23,
+                    "path": "src/pages/trainers/TrainersPage.tsx",
+                    "text": "            <TrainerRow key={trainer.id} trainer={trainer} />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pages/trainers/TrainersPage.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 19,
+                "endColumn": 33,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 22,
+                "endColumn": 36,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 19,
+                "endColumn": 27,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 48,
+                "endColumn": 56,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 88,
+                "endColumn": 96,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 20,
+                "endColumn": 28,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 74,
+                "endColumn": 85,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 11,
+                "endColumn": 19,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 13,
+                "endColumn": 23,
+                "path": "src/pages/trainers/components/TrainerRow.tsx",
+                "lines": [
+                  4,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 29,
+                "endColumn": 36,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 50,
+                "endColumn": 57,
+                "path": "src/pages/trainers/TrainersPage.tsx",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 28,
+                "lines": [
+                  5,
+                  21
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 9,
+                    "endColumn": 21,
+                    "path": "src/App.tsx",
+                    "text": "        <TrainersPage />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/stores/team-store.ts",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 28,
+                "endColumn": 34,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zustand",
+                  "name": "create"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 35,
+                "endColumn": 44,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  4,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 20,
+                "endColumn": 31,
+                "path": "src/lib/team-rules.ts",
+                "lines": [
+                  3,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 49,
+                "endColumn": 58,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 96,
+                "endColumn": 105,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 31,
+                "endColumn": 34,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 38,
+                "endColumn": 47,
+                "path": "src/stores/team-store.ts",
+                "lines": [
+                  4,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  10,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 19,
+                    "endColumn": 31,
+                    "path": "src/components/Header.tsx",
+                    "text": "  const teamSize = useTeamStore(selectTeamSize)"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 19,
+                    "endColumn": 31,
+                    "path": "src/pages/trainers/components/TrainerRow.tsx",
+                    "text": "  const isMember = useTeamStore((state) => state.memberIds.includes(trainer.id))"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 20,
+                    "endColumn": 32,
+                    "path": "src/pages/trainers/components/TrainerRow.tsx",
+                    "text": "  const addMember = useTeamStore((state) => state.addMember)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 23,
+                    "endColumn": 35,
+                    "path": "src/pages/trainers/components/TrainerRow.tsx",
+                    "text": "  const removeMember = useTeamStore((state) => state.removeMember)"
+                  }
+                ]
+              },
+              {
+                "line": 17,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  17,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 32,
+                    "endColumn": 46,
+                    "path": "src/components/Header.tsx",
+                    "text": "  const teamSize = useTeamStore(selectTeamSize)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

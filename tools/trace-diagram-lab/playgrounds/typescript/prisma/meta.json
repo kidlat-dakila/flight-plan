@@ -1,0 +1,6 @@
+{
+  "title": "Prisma on Postgres with repositories and plain service functions",
+  "packages": ["@prisma/client"],
+  "language": "typescript",
+  "mainFramework": null
+}

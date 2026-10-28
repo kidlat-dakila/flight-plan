@@ -1,0 +1,1702 @@
+{
+  "title": "Implement function trade_pokemon",
+  "diff": [
+    "diff --git a/src/pokedex/trades/models.py b/src/pokedex/trades/models.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/trades/models.py",
+    "@@ -0,0 +1,18 @@",
+    "+from datetime import datetime",
+    "+",
+    "+from sqlalchemy import ForeignKey, func",
+    "+from sqlalchemy.orm import Mapped, mapped_column, relationship",
+    "+",
+    "+from pokedex.database import Base",
+    "+from pokedex.models import Pokemon",
+    "+",
+    "+",
+    "+class Trade(Base):",
+    "+    __tablename__ = \"trades\"",
+    "+",
+    "+    id: Mapped[int] = mapped_column(primary_key=True)",
+    "+    pokemon_id: Mapped[int] = mapped_column(ForeignKey(\"pokemon.id\"))",
+    "+    from_trainer_id: Mapped[int] = mapped_column(ForeignKey(\"trainers.id\"))",
+    "+    to_trainer_id: Mapped[int] = mapped_column(ForeignKey(\"trainers.id\"))",
+    "+    traded_at: Mapped[datetime] = mapped_column(server_default=func.now())",
+    "+    pokemon: Mapped[Pokemon] = relationship()",
+    "diff --git a/src/pokedex/trades/queries.py b/src/pokedex/trades/queries.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/trades/queries.py",
+    "@@ -0,0 +1,16 @@",
+    "+from sqlalchemy import select",
+    "+from sqlalchemy.orm import Session",
+    "+",
+    "+from pokedex.models import Pokemon, Trainer",
+    "+from pokedex.trades.models import Trade",
+    "+",
+    "+",
+    "+def find_pokemon(session: Session, pokemon_id: int) -> Pokemon:",
+    "+    return session.scalars(select(Pokemon).where(Pokemon.id == pokemon_id)).one()",
+    "+",
+    "+",
+    "+def save_trade(session: Session, pokemon: Pokemon, to_trainer: Trainer) -> Trade:",
+    "+    trade = Trade(pokemon=pokemon, from_trainer_id=pokemon.trainer_id, to_trainer_id=to_trainer.id)",
+    "+    pokemon.trainer = to_trainer",
+    "+    session.add(trade)",
+    "+    return trade",
+    "diff --git a/src/pokedex/trades/service.py b/src/pokedex/trades/service.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/trades/service.py",
+    "@@ -0,0 +1,14 @@",
+    "+from sqlalchemy.orm import Session",
+    "+",
+    "+from pokedex.database import engine",
+    "+from pokedex.trades.queries import find_pokemon, save_trade",
+    "+from pokedex.trainers.queries import find_trainer",
+    "+",
+    "+",
+    "+def trade_pokemon(pokemon_id: int, trainer_id: int) -> int:",
+    "+    with Session(engine) as session:",
+    "+        pokemon = find_pokemon(session, pokemon_id)",
+    "+        trainer = find_trainer(session, trainer_id)",
+    "+        trade = save_trade(session, pokemon, trainer)",
+    "+        session.commit()",
+    "+        return trade.id",
+    "diff --git a/src/pokedex/cli.py b/src/pokedex/cli.py",
+    "--- a/src/pokedex/cli.py",
+    "+++ b/src/pokedex/cli.py",
+    "@@ -3,0 +4 @@ from pokedex.reports import team_report",
+    "+from pokedex.trades.service import trade_pokemon",
+    "@@ -6,0 +8,4 @@ def main() -> None:",
+    "+    if sys.argv[1] == \"trade\":",
+    "+        trade_pokemon(int(sys.argv[2]), int(sys.argv[3]))",
+    "+        print(team_report(int(sys.argv[3])))",
+    "+        return"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New trade_pokemon, trade queries and Trade model, modified main function",
+        "importGraph": [
+          {
+            "filePath": "src/pokedex/cli.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/pokedex/reports.py",
+              "src/pokedex/trades/service.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.reports:team_report": "src/pokedex/reports.py",
+              "pokedex.trades.service:trade_pokemon": "src/pokedex/trades/service.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/database.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/models.py",
+              "src/pokedex/reports.py",
+              "src/pokedex/trades/models.py",
+              "src/pokedex/trades/service.py"
+            ],
+            "importsTo": [
+              "src/pokedex/settings.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.settings:DATABASE_URL": "src/pokedex/settings.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/models.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/pokemon/queries.py",
+              "src/pokedex/trades/models.py",
+              "src/pokedex/trades/queries.py",
+              "src/pokedex/trainers/queries.py"
+            ],
+            "importsTo": [
+              "src/pokedex/database.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.database:Base": "src/pokedex/database.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/pokemon/queries.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/reports.py"
+            ],
+            "importsTo": [
+              "src/pokedex/models.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.models:Pokemon": "src/pokedex/models.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/reports.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/cli.py"
+            ],
+            "importsTo": [
+              "src/pokedex/database.py",
+              "src/pokedex/pokemon/queries.py",
+              "src/pokedex/trainers/queries.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.database:engine": "src/pokedex/database.py",
+              "pokedex.pokemon.queries:list_pokemon_of": "src/pokedex/pokemon/queries.py",
+              "pokedex.trainers.queries:find_trainer": "src/pokedex/trainers/queries.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/settings.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/database.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/trades/models.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/trades/queries.py"
+            ],
+            "importsTo": [
+              "src/pokedex/database.py",
+              "src/pokedex/models.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.database:Base": "src/pokedex/database.py",
+              "pokedex.models:Pokemon": "src/pokedex/models.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trades/queries.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/trades/service.py"
+            ],
+            "importsTo": [
+              "src/pokedex/models.py",
+              "src/pokedex/trades/models.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.models:Pokemon": "src/pokedex/models.py",
+              "pokedex.models:Trainer": "src/pokedex/models.py",
+              "pokedex.trades.models:Trade": "src/pokedex/trades/models.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trades/service.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/cli.py"
+            ],
+            "importsTo": [
+              "src/pokedex/database.py",
+              "src/pokedex/trades/queries.py",
+              "src/pokedex/trainers/queries.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.database:engine": "src/pokedex/database.py",
+              "pokedex.trades.queries:find_pokemon": "src/pokedex/trades/queries.py",
+              "pokedex.trades.queries:save_trade": "src/pokedex/trades/queries.py",
+              "pokedex.trainers.queries:find_trainer": "src/pokedex/trainers/queries.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trainers/queries.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/reports.py",
+              "src/pokedex/trades/service.py"
+            ],
+            "importsTo": [
+              "src/pokedex/models.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.models:Trainer": "src/pokedex/models.py"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Trade Pokemon command flow diagram",
+          "description": "This diagram shows how `main()` of the `pokedex` command [checks whether its first argument is `trade`](code:src/pokedex/cli.py#L8). It also shows what happens when a user runs `pokedex trade` with a Pokemon id and a trainer id, and how the new trade reaches the database through [`session.commit()`](code:src/pokedex/trades/service.py#L13).",
+          "traceNodes": [
+            {
+              "id": "src/pokedex/cli.py#function@7:1",
+              "type": "function",
+              "label": "Runs a trade for the trade command, then prints the team",
+              "description": "When a user runs `pokedex trade` with a Pokemon id and a trainer id, Python calls this function, because `[project.scripts]` of `pyproject.toml` names `pokedex.cli:main`.",
+              "codeBlockIds": [
+                "src/pokedex/cli.py#function@7:1",
+                "src/pokedex/cli.py#condition@8:5",
+                "src/pokedex/cli.py#call@9:9",
+                "src/pokedex/cli.py#call@10:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/cli.py#condition@8:5",
+                "src/pokedex/cli.py#call@9:9",
+                "src/pokedex/cli.py#call@10:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Checks whether the first argument is `trade`",
+                  "codeBlockId": "src/pokedex/cli.py#condition@8:5"
+                },
+                {
+                  "label": "Trades the Pokemon of the second argument to the trainer of the third",
+                  "codeBlockId": "src/pokedex/cli.py#call@9:9"
+                },
+                {
+                  "label": "Prints the team of the trainer who receives the Pokemon",
+                  "codeBlockId": "src/pokedex/cli.py#call@10:9"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/trades/service.py#function@8:1",
+              "type": "function",
+              "label": "Moves one Pokemon to another trainer and records the trade",
+              "description": "When a user runs `pokedex trade`, [`main()` calls this function](code:src/pokedex/cli.py#L9) with the second and third arguments as ids. The function [opens one `Session` on the engine](code:src/pokedex/trades/service.py#L9) for every query of the trade.",
+              "codeBlockIds": [
+                "src/pokedex/trades/service.py#function@8:1",
+                "src/pokedex/trades/service.py#root-argument-value@8:19",
+                "src/pokedex/trades/service.py#root-argument-value@8:36",
+                "src/pokedex/trades/service.py#external-value@10:9",
+                "src/pokedex/trades/service.py#external-value@11:9",
+                "src/pokedex/trades/service.py#external-value@12:9",
+                "src/pokedex/trades/service.py#data@13:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trades/service.py#function@8:1",
+                "src/pokedex/trades/service.py#root-argument-value@8:19",
+                "src/pokedex/trades/service.py#root-argument-value@8:36",
+                "src/pokedex/trades/service.py#external-value@10:9",
+                "src/pokedex/trades/service.py#external-value@11:9",
+                "src/pokedex/trades/service.py#external-value@12:9",
+                "src/pokedex/trades/service.py#data@13:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Loads the Pokemon of the id",
+                  "codeBlockId": "src/pokedex/trades/service.py#external-value@10:9"
+                },
+                {
+                  "label": "Loads the trainer who receives the Pokemon",
+                  "codeBlockId": "src/pokedex/trades/service.py#external-value@11:9"
+                },
+                {
+                  "label": "Records the trade and gives the Pokemon to that trainer",
+                  "codeBlockId": "src/pokedex/trades/service.py#external-value@12:9"
+                },
+                {
+                  "label": "Commits the session and returns the id of the trade",
+                  "codeBlockId": "src/pokedex/trades/service.py#data@13:9"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/trades/queries.py#function@8:1",
+              "type": "function",
+              "label": "Loads one Pokemon by its id",
+              "description": "When a user runs `pokedex trade`, `main()` calls `trade_pokemon()`, and [`trade_pokemon()` calls this function first](code:src/pokedex/trades/service.py#L10). `one()` raises `NoResultFound` when no Pokemon has the id.",
+              "codeBlockIds": [
+                "src/pokedex/trades/queries.py#function@8:1",
+                "src/pokedex/trades/queries.py#root-argument-value@8:18",
+                "src/pokedex/trades/queries.py#root-argument-value@8:36",
+                "src/pokedex/trades/queries.py#data-fetch@9:12",
+                "src/pokedex/trades/queries.py#root-argument-value@9:12",
+                "src/pokedex/trades/queries.py#data-fetch@9:28"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trades/queries.py#function@8:1",
+                "src/pokedex/trades/queries.py#root-argument-value@8:18",
+                "src/pokedex/trades/queries.py#root-argument-value@8:36",
+                "src/pokedex/trades/queries.py#data-fetch@9:12",
+                "src/pokedex/trades/queries.py#root-argument-value@9:12",
+                "src/pokedex/trades/queries.py#data-fetch@9:28"
+              ],
+              "children": [],
+              "triggerLabels": [
+                {
+                  "label": "The Pokemon of the id is loaded",
+                  "codeBlockId": "src/pokedex/trades/queries.py#data-fetch@9:12"
+                },
+                {
+                  "label": "The pokemon table is queried by id",
+                  "codeBlockId": "src/pokedex/trades/queries.py#data-fetch@9:28"
+                }
+              ],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/trades/queries.py#function@12:1",
+              "type": "function",
+              "label": "Adds a trade row and gives the Pokemon to the new trainer",
+              "description": "When a user runs `pokedex trade`, `main()` calls `trade_pokemon()`, and [`trade_pokemon()` calls this function](code:src/pokedex/trades/service.py#L12) with the loaded Pokemon and trainer. Nothing reaches the database until [`trade_pokemon()` commits the session](code:src/pokedex/trades/service.py#L13).",
+              "codeBlockIds": [
+                "src/pokedex/trades/queries.py#function@12:1",
+                "src/pokedex/trades/models.py#class@10:1",
+                "src/pokedex/trades/models.py#property@11:5",
+                "src/pokedex/trades/queries.py#root-argument-value@12:16",
+                "src/pokedex/trades/queries.py#root-argument-value@12:34",
+                "src/pokedex/trades/queries.py#root-argument-value@12:52",
+                "src/pokedex/trades/queries.py#external-value@13:5",
+                "src/pokedex/trades/models.py#property@13:5",
+                "src/pokedex/trades/queries.py#root-argument-value@13:52",
+                "src/pokedex/trades/queries.py#root-argument-value@13:86",
+                "src/pokedex/trades/models.py#property@14:5",
+                "src/pokedex/trades/queries.py#root-argument-value@14:5",
+                "src/pokedex/trades/models.py#property@15:5",
+                "src/pokedex/trades/queries.py#data@15:5",
+                "src/pokedex/trades/queries.py#root-argument-value@15:5",
+                "src/pokedex/trades/models.py#property@16:5",
+                "src/pokedex/trades/models.py#property@17:5",
+                "src/pokedex/trades/models.py#property@18:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/trades/queries.py#function@12:1",
+                "src/pokedex/trades/models.py#class@10:1",
+                "src/pokedex/trades/models.py#property@11:5",
+                "src/pokedex/trades/queries.py#root-argument-value@12:16",
+                "src/pokedex/trades/queries.py#root-argument-value@12:34",
+                "src/pokedex/trades/queries.py#root-argument-value@12:52",
+                "src/pokedex/trades/queries.py#external-value@13:5",
+                "src/pokedex/trades/models.py#property@13:5",
+                "src/pokedex/trades/queries.py#root-argument-value@13:52",
+                "src/pokedex/trades/queries.py#root-argument-value@13:86",
+                "src/pokedex/trades/models.py#property@14:5",
+                "src/pokedex/trades/queries.py#root-argument-value@14:5",
+                "src/pokedex/trades/models.py#property@15:5",
+                "src/pokedex/trades/queries.py#data@15:5",
+                "src/pokedex/trades/queries.py#root-argument-value@15:5",
+                "src/pokedex/trades/models.py#property@16:5",
+                "src/pokedex/trades/models.py#property@17:5",
+                "src/pokedex/trades/models.py#property@18:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Maps each trade to a row of the trades table, with its Pokemon",
+                  "codeBlockId": "src/pokedex/trades/models.py#class@10:1"
+                },
+                {
+                  "label": "Makes a trade from the current trainer to the new one",
+                  "codeBlockId": "src/pokedex/trades/queries.py#external-value@13:5"
+                },
+                {
+                  "label": "Adds the trade to the session and returns it",
+                  "codeBlockId": "src/pokedex/trades/queries.py#data@15:5"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokedex/cli.py#function@7:1 -> src/pokedex/trades/service.py#function@8:1",
+              "from": "src/pokedex/cli.py#function@7:1",
+              "to": "src/pokedex/trades/service.py#function@8:1"
+            },
+            {
+              "id": "src/pokedex/trades/service.py#function@8:1 -> src/pokedex/trades/queries.py#function@8:1",
+              "from": "src/pokedex/trades/service.py#function@8:1",
+              "to": "src/pokedex/trades/queries.py#function@8:1"
+            },
+            {
+              "id": "src/pokedex/trades/service.py#function@8:1 -> src/pokedex/trades/queries.py#function@12:1",
+              "from": "src/pokedex/trades/service.py#function@8:1",
+              "to": "src/pokedex/trades/queries.py#function@12:1"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokedex/cli.py",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "main",
+                  "range": {
+                    "lineStart": 7,
+                    "lineEnd": 13
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/cli.py#function@7:1",
+                    "src/pokedex/cli.py#condition@8:5",
+                    "src/pokedex/cli.py#call@9:9",
+                    "src/pokedex/cli.py#call@10:9"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trades/models.py",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "Trade",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 18
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trades/models.py#class@10:1",
+                    "src/pokedex/trades/models.py#property@11:5",
+                    "src/pokedex/trades/models.py#property@13:5",
+                    "src/pokedex/trades/models.py#property@14:5",
+                    "src/pokedex/trades/models.py#property@15:5",
+                    "src/pokedex/trades/models.py#property@16:5",
+                    "src/pokedex/trades/models.py#property@17:5",
+                    "src/pokedex/trades/models.py#property@18:5"
+                  ],
+                  "children": [
+                    {
+                      "id": "w2.1",
+                      "declaration": "Trade › Trade.__tablename__",
+                      "range": {
+                        "lineStart": 11,
+                        "lineEnd": 11
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/models.py#property@11:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.2",
+                      "declaration": "Trade › Trade.id",
+                      "range": {
+                        "lineStart": 13,
+                        "lineEnd": 13
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/models.py#property@13:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.3",
+                      "declaration": "Trade › Trade.pokemon_id",
+                      "range": {
+                        "lineStart": 14,
+                        "lineEnd": 14
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/models.py#property@14:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.4",
+                      "declaration": "Trade › Trade.from_trainer_id",
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 15
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/models.py#property@15:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.5",
+                      "declaration": "Trade › Trade.to_trainer_id",
+                      "range": {
+                        "lineStart": 16,
+                        "lineEnd": 16
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/models.py#property@16:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.6",
+                      "declaration": "Trade › Trade.traded_at",
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 17
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/models.py#property@17:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.7",
+                      "declaration": "Trade › Trade.pokemon",
+                      "range": {
+                        "lineStart": 18,
+                        "lineEnd": 18
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/models.py#property@18:5"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trades/queries.py",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "find_pokemon",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trades/queries.py#function@8:1",
+                    "src/pokedex/trades/queries.py#root-argument-value@8:18",
+                    "src/pokedex/trades/queries.py#root-argument-value@8:36",
+                    "src/pokedex/trades/queries.py#data-fetch@9:12",
+                    "src/pokedex/trades/queries.py#root-argument-value@9:12",
+                    "src/pokedex/trades/queries.py#data-fetch@9:28"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "save_trade",
+                  "range": {
+                    "lineStart": 12,
+                    "lineEnd": 16
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trades/queries.py#function@12:1",
+                    "src/pokedex/trades/queries.py#root-argument-value@12:16",
+                    "src/pokedex/trades/queries.py#root-argument-value@12:34",
+                    "src/pokedex/trades/queries.py#root-argument-value@12:52",
+                    "src/pokedex/trades/queries.py#external-value@13:5",
+                    "src/pokedex/trades/queries.py#root-argument-value@13:52",
+                    "src/pokedex/trades/queries.py#root-argument-value@13:86",
+                    "src/pokedex/trades/queries.py#root-argument-value@14:5",
+                    "src/pokedex/trades/queries.py#data@15:5",
+                    "src/pokedex/trades/queries.py#root-argument-value@15:5"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/trades/service.py",
+              "waypoints": [
+                {
+                  "id": "w5",
+                  "declaration": "trade_pokemon",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 14
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/trades/service.py#function@8:1",
+                    "src/pokedex/trades/service.py#root-argument-value@8:19",
+                    "src/pokedex/trades/service.py#root-argument-value@8:36",
+                    "src/pokedex/trades/service.py#external-value@10:9",
+                    "src/pokedex/trades/service.py#external-value@11:9",
+                    "src/pokedex/trades/service.py#external-value@12:9",
+                    "src/pokedex/trades/service.py#data@13:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w5.1",
+                      "declaration": "trade_pokemon › pokemon",
+                      "range": {
+                        "lineStart": 10,
+                        "lineEnd": 10
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/service.py#external-value@10:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.2",
+                      "declaration": "trade_pokemon › trainer",
+                      "range": {
+                        "lineStart": 11,
+                        "lineEnd": 11
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/service.py#external-value@11:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.3",
+                      "declaration": "trade_pokemon › trade",
+                      "range": {
+                        "lineStart": 12,
+                        "lineEnd": 12
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/service.py#external-value@12:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.4",
+                      "declaration": "trade_pokemon › commit",
+                      "range": {
+                        "lineStart": 13,
+                        "lineEnd": 13
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/trades/service.py#data@13:9"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokedex/cli.py",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 7,
+                "endColumn": 10,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sys",
+                  "name": "*"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 8,
+                "endColumn": 21,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  8,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 26,
+                "endColumn": 29,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sys",
+                  "name": "*"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 44,
+                "endColumn": 47,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sys",
+                  "name": "*"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 25,
+                "path": "src/pokedex/reports.py",
+                "lines": [
+                  8,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 30,
+                "endColumn": 33,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sys",
+                  "name": "*"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 21,
+                "endColumn": 24,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sys",
+                  "name": "*"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 10,
+                "endColumn": 21,
+                "path": "src/pokedex/reports.py",
+                "lines": [
+                  8,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 22,
+                "endColumn": 32,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 4,
+                "endColumn": 8,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  7,
+                  13
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 9,
+                "startColumn": 22,
+                "endColumn": 25,
+                "name": "int"
+              },
+              {
+                "line": 9,
+                "startColumn": 40,
+                "endColumn": 43,
+                "name": "int"
+              },
+              {
+                "line": 10,
+                "startColumn": 8,
+                "endColumn": 13,
+                "name": "print"
+              },
+              {
+                "line": 10,
+                "startColumn": 26,
+                "endColumn": 29,
+                "name": "int"
+              },
+              {
+                "line": 12,
+                "startColumn": 17,
+                "endColumn": 20,
+                "name": "int"
+              },
+              {
+                "line": 13,
+                "startColumn": 4,
+                "endColumn": 9,
+                "name": "print"
+              },
+              {
+                "line": 16,
+                "startColumn": 3,
+                "endColumn": 11,
+                "name": "__name__"
+              }
+            ],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 4,
+                "endColumn": 8,
+                "lines": [
+                  7,
+                  13
+                ],
+                "usages": []
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trades/models.py",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 12,
+                "endColumn": 16,
+                "path": "src/pokedex/database.py",
+                "lines": [
+                  9,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 8,
+                "endColumn": 14,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:Mapped",
+                  "name": "Mapped"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 22,
+                "endColumn": 35,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:mapped_column",
+                  "name": "mapped_column"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 16,
+                "endColumn": 22,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:Mapped",
+                  "name": "Mapped"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 30,
+                "endColumn": 43,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:mapped_column",
+                  "name": "mapped_column"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 44,
+                "endColumn": 54,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy:ForeignKey",
+                  "name": "ForeignKey"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 21,
+                "endColumn": 27,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:Mapped",
+                  "name": "Mapped"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 35,
+                "endColumn": 48,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:mapped_column",
+                  "name": "mapped_column"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 49,
+                "endColumn": 59,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy:ForeignKey",
+                  "name": "ForeignKey"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 19,
+                "endColumn": 25,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:Mapped",
+                  "name": "Mapped"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 33,
+                "endColumn": 46,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:mapped_column",
+                  "name": "mapped_column"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 47,
+                "endColumn": 57,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy:ForeignKey",
+                  "name": "ForeignKey"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 15,
+                "endColumn": 21,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:Mapped",
+                  "name": "Mapped"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 22,
+                "endColumn": 30,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "datetime:datetime",
+                  "name": "datetime"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 34,
+                "endColumn": 47,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:mapped_column",
+                  "name": "mapped_column"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 63,
+                "endColumn": 67,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy:func",
+                  "name": "func"
+                }
+              },
+              {
+                "line": 18,
+                "startColumn": 13,
+                "endColumn": 19,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:Mapped",
+                  "name": "Mapped"
+                }
+              },
+              {
+                "line": 18,
+                "startColumn": 20,
+                "endColumn": 27,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  16,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 31,
+                "endColumn": 43,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:relationship",
+                  "name": "relationship"
+                }
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 13,
+                "startColumn": 15,
+                "endColumn": 18,
+                "name": "int"
+              },
+              {
+                "line": 14,
+                "startColumn": 23,
+                "endColumn": 26,
+                "name": "int"
+              },
+              {
+                "line": 15,
+                "startColumn": 28,
+                "endColumn": 31,
+                "name": "int"
+              },
+              {
+                "line": 16,
+                "startColumn": 26,
+                "endColumn": 29,
+                "name": "int"
+              }
+            ],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 6,
+                "endColumn": 11,
+                "lines": [
+                  10,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 75,
+                    "endColumn": 80,
+                    "path": "src/pokedex/trades/queries.py",
+                    "text": "def save_trade(session: Session, pokemon: Pokemon, to_trainer: Trainer) -> Trade:"
+                  },
+                  {
+                    "line": 13,
+                    "startColumn": 12,
+                    "endColumn": 17,
+                    "path": "src/pokedex/trades/queries.py",
+                    "text": "    trade = Trade(pokemon=pokemon, from_trainer_id=pokemon.trainer_id, to_trainer_id=to_trainer.id)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trades/queries.py",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 26,
+                "endColumn": 33,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:Session",
+                  "name": "Session"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 55,
+                "endColumn": 62,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  16,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 27,
+                "endColumn": 33,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy:select",
+                  "name": "select"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 34,
+                "endColumn": 41,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  16,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 49,
+                "endColumn": 56,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  16,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 63,
+                "endColumn": 73,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 24,
+                "endColumn": 31,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:Session",
+                  "name": "Session"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 42,
+                "endColumn": 49,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  16,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 63,
+                "endColumn": 70,
+                "path": "src/pokedex/models.py",
+                "lines": [
+                  7,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 75,
+                "endColumn": 80,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  10,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 12,
+                "endColumn": 17,
+                "path": "src/pokedex/trades/models.py",
+                "lines": [
+                  10,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 26,
+                "endColumn": 33,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 51,
+                "endColumn": 58,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 85,
+                "endColumn": 95,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 4,
+                "endColumn": 11,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 22,
+                "endColumn": 32,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 4,
+                "endColumn": 11,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 16,
+                "endColumn": 21,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 11,
+                "endColumn": 16,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 8,
+                "startColumn": 47,
+                "endColumn": 50,
+                "name": "int"
+              }
+            ],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 4,
+                "endColumn": 16,
+                "lines": [
+                  8,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 18,
+                    "endColumn": 30,
+                    "path": "src/pokedex/trades/service.py",
+                    "text": "        pokemon = find_pokemon(session, pokemon_id)"
+                  }
+                ]
+              },
+              {
+                "line": 12,
+                "startColumn": 4,
+                "endColumn": 14,
+                "lines": [
+                  12,
+                  16
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 16,
+                    "endColumn": 26,
+                    "path": "src/pokedex/trades/service.py",
+                    "text": "        trade = save_trade(session, pokemon, trainer)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/trades/service.py",
+            "references": [
+              {
+                "line": 9,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sqlalchemy.orm:Session",
+                  "name": "Session"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 17,
+                "endColumn": 23,
+                "path": "src/pokedex/database.py",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 18,
+                "endColumn": 30,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  8,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 31,
+                "endColumn": 38,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 40,
+                "endColumn": 50,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 18,
+                "endColumn": 30,
+                "path": "src/pokedex/trainers/queries.py",
+                "lines": [
+                  11,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 31,
+                "endColumn": 38,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 40,
+                "endColumn": 50,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 16,
+                "endColumn": 26,
+                "path": "src/pokedex/trades/queries.py",
+                "lines": [
+                  12,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 36,
+                "endColumn": 43,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 45,
+                "endColumn": 52,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 8,
+                "endColumn": 15,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 15,
+                "endColumn": 20,
+                "path": "src/pokedex/trades/service.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 8,
+                "startColumn": 30,
+                "endColumn": 33,
+                "name": "int"
+              },
+              {
+                "line": 8,
+                "startColumn": 47,
+                "endColumn": 50,
+                "name": "int"
+              },
+              {
+                "line": 8,
+                "startColumn": 55,
+                "endColumn": 58,
+                "name": "int"
+              }
+            ],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 4,
+                "endColumn": 17,
+                "lines": [
+                  8,
+                  14
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 8,
+                    "endColumn": 21,
+                    "path": "src/pokedex/cli.py",
+                    "text": "        trade_pokemon(int(sys.argv[2]), int(sys.argv[3]))"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

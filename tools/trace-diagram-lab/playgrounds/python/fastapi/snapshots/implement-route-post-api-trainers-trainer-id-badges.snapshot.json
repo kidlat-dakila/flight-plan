@@ -1,0 +1,1394 @@
+{
+  "title": "Implement route POST /api/trainers/{trainer_id}/badges",
+  "diff": [
+    "diff --git a/src/pokedex/badges/schemas.py b/src/pokedex/badges/schemas.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/badges/schemas.py",
+    "@@ -0,0 +1,11 @@",
+    "+from pydantic import BaseModel, Field",
+    "+",
+    "+",
+    "+class BadgeAward(BaseModel):",
+    "+    badge: str = Field(min_length=1, max_length=30)",
+    "+",
+    "+",
+    "+class TrainerBadges(BaseModel):",
+    "+    id: int",
+    "+    name: str",
+    "+    badges: list[str]",
+    "diff --git a/src/pokedex/badges/dependencies.py b/src/pokedex/badges/dependencies.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/badges/dependencies.py",
+    "@@ -0,0 +1,11 @@",
+    "+from typing import Annotated",
+    "+",
+    "+from fastapi import Header, HTTPException",
+    "+",
+    "+GYM_LEADERS = {\"brock\", \"misty\", \"lt-surge\"}",
+    "+",
+    "+",
+    "+def require_gym_leader(x_gym_leader: Annotated[str, Header()]) -> str:",
+    "+    if x_gym_leader not in GYM_LEADERS:",
+    "+        raise HTTPException(status_code=403, detail=\"only a gym leader awards badges\")",
+    "+    return x_gym_leader",
+    "diff --git a/src/pokedex/badges/service.py b/src/pokedex/badges/service.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/badges/service.py",
+    "@@ -0,0 +1,8 @@",
+    "+from pokedex.trainers.schemas import TrainerRead",
+    "+from pokedex.trainers.service import trainers",
+    "+",
+    "+",
+    "+def award_badge(trainer: TrainerRead, badge: str) -> TrainerRead:",
+    "+    awarded = trainer.model_copy(update={\"badges\": [*trainer.badges, badge]})",
+    "+    trainers[trainer.id] = awarded",
+    "+    return awarded",
+    "diff --git a/src/pokedex/badges/routes.py b/src/pokedex/badges/routes.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/badges/routes.py",
+    "@@ -0,0 +1,13 @@",
+    "+from fastapi import APIRouter, Depends",
+    "+",
+    "+from pokedex.badges.dependencies import require_gym_leader",
+    "+from pokedex.badges.schemas import BadgeAward, TrainerBadges",
+    "+from pokedex.badges.service import award_badge",
+    "+from pokedex.trainers.dependencies import TrainerDep",
+    "+",
+    "+router = APIRouter(prefix=\"/trainers/{trainer_id}/badges\", tags=[\"badges\"])",
+    "+",
+    "+",
+    "+@router.post(\"/\", response_model=TrainerBadges, status_code=201, dependencies=[Depends(require_gym_leader)])",
+    "+def add_badge(award: BadgeAward, trainer: TrainerDep):",
+    "+    return award_badge(trainer, award.badge)",
+    "diff --git a/src/pokedex/main.py b/src/pokedex/main.py",
+    "--- a/src/pokedex/main.py",
+    "+++ b/src/pokedex/main.py",
+    "@@ -2,0 +3 @@ from fastapi import Depends, FastAPI",
+    "+from pokedex.badges.routes import router as badges_router",
+    "@@ -14,0 +16 @@ app.include_router(trainers_router, prefix=\"/api\", dependencies=[Depends(verify_",
+    "+app.include_router(badges_router, prefix=\"/api\", dependencies=[Depends(verify_api_key)])"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New add_badge route, award_badge, require_gym_leader and badge schemas, modified app",
+        "importGraph": [
+          {
+            "filePath": "src/pokedex/badges/dependencies.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/badges/routes.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/badges/routes.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/main.py"
+            ],
+            "importsTo": [
+              "src/pokedex/badges/dependencies.py",
+              "src/pokedex/badges/schemas.py",
+              "src/pokedex/badges/service.py",
+              "src/pokedex/trainers/dependencies.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.badges.dependencies:require_gym_leader": "src/pokedex/badges/dependencies.py",
+              "pokedex.badges.schemas:BadgeAward": "src/pokedex/badges/schemas.py",
+              "pokedex.badges.schemas:TrainerBadges": "src/pokedex/badges/schemas.py",
+              "pokedex.badges.service:award_badge": "src/pokedex/badges/service.py",
+              "pokedex.trainers.dependencies:TrainerDep": "src/pokedex/trainers/dependencies.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/badges/schemas.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/badges/routes.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/badges/service.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/badges/routes.py"
+            ],
+            "importsTo": [
+              "src/pokedex/trainers/schemas.py",
+              "src/pokedex/trainers/service.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.trainers.schemas:TrainerRead": "src/pokedex/trainers/schemas.py",
+              "pokedex.trainers.service:trainers": "src/pokedex/trainers/service.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/errors.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/main.py",
+              "src/pokedex/trainers/service.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/health/routes.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/main.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/main.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/pokedex/badges/routes.py",
+              "src/pokedex/errors.py",
+              "src/pokedex/health/routes.py",
+              "src/pokedex/middleware.py",
+              "src/pokedex/security.py",
+              "src/pokedex/trainers/routes.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.badges.routes:router": "src/pokedex/badges/routes.py",
+              "pokedex.errors:NotFoundError": "src/pokedex/errors.py",
+              "pokedex.errors:not_found_handler": "src/pokedex/errors.py",
+              "pokedex.health.routes:router": "src/pokedex/health/routes.py",
+              "pokedex.middleware:RequestLogMiddleware": "src/pokedex/middleware.py",
+              "pokedex.security:verify_api_key": "src/pokedex/security.py",
+              "pokedex.trainers.routes:router": "src/pokedex/trainers/routes.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/middleware.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/main.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/security.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/main.py"
+            ],
+            "importsTo": [
+              "src/pokedex/settings.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.settings:API_KEY": "src/pokedex/settings.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/settings.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/security.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/trainers/dependencies.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/badges/routes.py",
+              "src/pokedex/trainers/routes.py"
+            ],
+            "importsTo": [
+              "src/pokedex/trainers/schemas.py",
+              "src/pokedex/trainers/service.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.trainers.schemas:TrainerRead": "src/pokedex/trainers/schemas.py",
+              "pokedex.trainers.service:find_trainer": "src/pokedex/trainers/service.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trainers/routes.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/main.py"
+            ],
+            "importsTo": [
+              "src/pokedex/trainers/dependencies.py",
+              "src/pokedex/trainers/schemas.py",
+              "src/pokedex/trainers/service.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.trainers.dependencies:TrainerDep": "src/pokedex/trainers/dependencies.py",
+              "pokedex.trainers.schemas:TrainerCreate": "src/pokedex/trainers/schemas.py",
+              "pokedex.trainers.schemas:TrainerRead": "src/pokedex/trainers/schemas.py",
+              "pokedex.trainers.service:create_trainer": "src/pokedex/trainers/service.py",
+              "pokedex.trainers.service:list_trainers": "src/pokedex/trainers/service.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/trainers/schemas.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/badges/service.py",
+              "src/pokedex/trainers/dependencies.py",
+              "src/pokedex/trainers/routes.py",
+              "src/pokedex/trainers/service.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/trainers/service.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/badges/service.py",
+              "src/pokedex/trainers/dependencies.py",
+              "src/pokedex/trainers/routes.py"
+            ],
+            "importsTo": [
+              "src/pokedex/errors.py",
+              "src/pokedex/trainers/schemas.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.errors:NotFoundError": "src/pokedex/errors.py",
+              "pokedex.trainers.schemas:TrainerCreate": "src/pokedex/trainers/schemas.py",
+              "pokedex.trainers.schemas:TrainerRead": "src/pokedex/trainers/schemas.py"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Award badge request flow diagram",
+          "description": "This diagram shows how the badges router [registers `POST /api/trainers/{trainer_id}/badges`](code:src/pokedex/badges/routes.py#L11). It also shows what happens when a request reaches that route, and how the new badge [reaches the in-memory `trainers` store](code:src/pokedex/badges/service.py#L7) through `award_badge()`.",
+          "traceNodes": [
+            {
+              "id": "src/pokedex/badges/routes.py#route@/api/trainers/{trainer_id}/badges",
+              "type": "route",
+              "label": "Awards a badge to one trainer",
+              "description": "When a client sends `POST /api/trainers/{trainer_id}/badges`, FastAPI runs `verify_api_key()`, which [`main.py` adds to every route of the badges router](code:src/pokedex/main.py#L16). Then FastAPI runs [`require_gym_leader()` from the dependencies of the route](code:src/pokedex/badges/routes.py#L11) and calls the handler.",
+              "codeBlockIds": [
+                "src/pokedex/badges/routes.py#function@11:1"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pokedex/badges/routes.py#function@11:1",
+                  "type": "function",
+                  "label": "Adds the badge of the body to the trainer of the path",
+                  "description": "When a client sends `POST /api/trainers/{trainer_id}/badges`, FastAPI [parses the body as `BadgeAward`](code:src/pokedex/badges/routes.py#L12). FastAPI also [loads the trainer of the path through `TrainerDep`](code:src/pokedex/trainers/dependencies.py#L13), then calls this handler and [returns its result as `TrainerBadges` with a 201](code:src/pokedex/badges/routes.py#L11).",
+                  "codeBlockIds": [
+                    "src/pokedex/badges/routes.py#function@11:1",
+                    "src/pokedex/badges/routes.py#effect-callback@11:88",
+                    "src/pokedex/badges/routes.py#root-argument-value@12:15",
+                    "src/pokedex/badges/routes.py#root-argument-value@12:34",
+                    "src/pokedex/badges/routes.py#root-argument-value@13:33"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/badges/routes.py#function@11:1",
+                    "src/pokedex/badges/routes.py#effect-callback@11:88",
+                    "src/pokedex/badges/routes.py#root-argument-value@12:15",
+                    "src/pokedex/badges/routes.py#root-argument-value@12:34",
+                    "src/pokedex/badges/routes.py#root-argument-value@13:33"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": []
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/badges/routes.py#root-variable@8:1",
+              "type": "root-variable",
+              "label": "Puts /trainers/{trainer_id}/badges before every route of the file",
+              "description": "When a client sends `POST /api/trainers/{trainer_id}/badges`, FastAPI matches the path below the prefix of this router. [`main.py` mounts this router under `/api`](code:src/pokedex/main.py#L16).",
+              "codeBlockIds": [
+                "src/pokedex/badges/routes.py#root-variable@8:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/badges/routes.py#root-variable@8:1"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/badges/service.py#function@5:1",
+              "type": "function",
+              "label": "Appends the badge and saves the trainer in the store",
+              "description": "When a client sends `POST /api/trainers/{trainer_id}/badges`, [`add_badge()` calls this function](code:src/pokedex/badges/routes.py#L13) with the trainer of the path and the badge of the body.",
+              "codeBlockIds": [
+                "src/pokedex/badges/service.py#function@5:1",
+                "src/pokedex/badges/service.py#root-argument-value@5:17",
+                "src/pokedex/badges/service.py#root-argument-value@5:39",
+                "src/pokedex/badges/service.py#variable@6:5",
+                "src/pokedex/badges/service.py#root-argument-value@6:15",
+                "src/pokedex/badges/service.py#property@6:42",
+                "src/pokedex/badges/service.py#root-argument-value@6:54",
+                "src/pokedex/badges/service.py#root-argument-value@7:14"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/badges/service.py#function@5:1",
+                "src/pokedex/badges/service.py#root-argument-value@5:17",
+                "src/pokedex/badges/service.py#root-argument-value@5:39",
+                "src/pokedex/badges/service.py#variable@6:5",
+                "src/pokedex/badges/service.py#root-argument-value@6:15",
+                "src/pokedex/badges/service.py#property@6:42",
+                "src/pokedex/badges/service.py#root-argument-value@6:54",
+                "src/pokedex/badges/service.py#root-argument-value@7:14"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Copies the trainer with the badge added at the end",
+                  "codeBlockId": "src/pokedex/badges/service.py#variable@6:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/badges/schemas.py#class@4:1",
+              "type": "class",
+              "label": "Parses and checks the body of an award request",
+              "description": "When a client sends `POST /api/trainers/{trainer_id}/badges`, FastAPI [parses the request body into this model](code:src/pokedex/badges/routes.py#L12) before it calls `add_badge()`. FastAPI returns a 422 when `badge` is empty or longer than 30 characters.",
+              "codeBlockIds": [
+                "src/pokedex/badges/schemas.py#class@4:1",
+                "src/pokedex/badges/schemas.py#property@5:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/badges/schemas.py#class@4:1",
+                "src/pokedex/badges/schemas.py#property@5:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Checks that the badge has 1 to 30 characters",
+                  "codeBlockId": "src/pokedex/badges/schemas.py#property@5:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/badges/schemas.py#class@8:1",
+              "type": "class",
+              "label": "Builds the response body from the awarded trainer",
+              "description": "When `add_badge()` returns, FastAPI [validates the result against this model](code:src/pokedex/badges/routes.py#L11), because the route names it as its `response_model`. The response therefore holds the id, the name and the badges of the trainer, and leaves out `hometown`.",
+              "codeBlockIds": [
+                "src/pokedex/badges/schemas.py#class@8:1",
+                "src/pokedex/badges/schemas.py#property@9:5",
+                "src/pokedex/badges/schemas.py#property@10:5",
+                "src/pokedex/badges/schemas.py#property@11:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/badges/schemas.py#class@8:1",
+                "src/pokedex/badges/schemas.py#property@9:5",
+                "src/pokedex/badges/schemas.py#property@10:5",
+                "src/pokedex/badges/schemas.py#property@11:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps the id of the trainer",
+                  "codeBlockId": "src/pokedex/badges/schemas.py#property@9:5"
+                },
+                {
+                  "label": "Keeps the name of the trainer",
+                  "codeBlockId": "src/pokedex/badges/schemas.py#property@10:5"
+                },
+                {
+                  "label": "Keeps every badge of the trainer",
+                  "codeBlockId": "src/pokedex/badges/schemas.py#property@11:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/badges/dependencies.py#function@8:1",
+              "type": "function",
+              "label": "Returns a 403 for a header that names no gym leader",
+              "description": "When a client sends `POST /api/trainers/{trainer_id}/badges`, FastAPI calls this dependency before the handler, because [the route lists it in its `dependencies`](code:src/pokedex/badges/routes.py#L11). FastAPI reads `x_gym_leader` from the `x-gym-leader` header of the request.",
+              "codeBlockIds": [
+                "src/pokedex/badges/dependencies.py#function@8:1",
+                "src/pokedex/badges/dependencies.py#root-variable@5:1",
+                "src/pokedex/badges/dependencies.py#root-argument-value@8:24",
+                "src/pokedex/badges/dependencies.py#condition@9:5",
+                "src/pokedex/badges/dependencies.py#throw@10:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/badges/dependencies.py#function@8:1",
+                "src/pokedex/badges/dependencies.py#root-variable@5:1",
+                "src/pokedex/badges/dependencies.py#root-argument-value@8:24",
+                "src/pokedex/badges/dependencies.py#condition@9:5",
+                "src/pokedex/badges/dependencies.py#throw@10:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Lists the gym leaders who award badges",
+                  "codeBlockId": "src/pokedex/badges/dependencies.py#root-variable@5:1"
+                },
+                {
+                  "label": "Checks whether the header names a gym leader",
+                  "codeBlockId": "src/pokedex/badges/dependencies.py#condition@9:5"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokedex/badges/routes.py#function@11:1 -> src/pokedex/badges/service.py#function@5:1",
+              "from": "src/pokedex/badges/routes.py#function@11:1",
+              "to": "src/pokedex/badges/service.py#function@5:1"
+            },
+            {
+              "id": "src/pokedex/badges/routes.py#function@11:1 -> src/pokedex/badges/schemas.py#class@4:1",
+              "from": "src/pokedex/badges/routes.py#function@11:1",
+              "to": "src/pokedex/badges/schemas.py#class@4:1"
+            },
+            {
+              "id": "src/pokedex/badges/routes.py#function@11:1 -> src/pokedex/badges/schemas.py#class@8:1",
+              "from": "src/pokedex/badges/routes.py#function@11:1",
+              "to": "src/pokedex/badges/schemas.py#class@8:1"
+            },
+            {
+              "id": "src/pokedex/badges/dependencies.py#function@8:1 -> src/pokedex/badges/routes.py#function@11:1",
+              "from": "src/pokedex/badges/dependencies.py#function@8:1",
+              "to": "src/pokedex/badges/routes.py#function@11:1"
+            },
+            {
+              "id": "src/pokedex/badges/routes.py#root-variable@8:1 -> src/pokedex/badges/routes.py#route@/api/trainers/{trainer_id}/badges",
+              "from": "src/pokedex/badges/routes.py#root-variable@8:1",
+              "to": "src/pokedex/badges/routes.py#route@/api/trainers/{trainer_id}/badges"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokedex/badges/dependencies.py",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "GYM_LEADERS",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 5
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/badges/dependencies.py#root-variable@5:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w2",
+                  "declaration": "require_gym_leader",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/badges/dependencies.py#function@8:1",
+                    "src/pokedex/badges/dependencies.py#root-argument-value@8:24",
+                    "src/pokedex/badges/dependencies.py#condition@9:5",
+                    "src/pokedex/badges/dependencies.py#throw@10:9"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/badges/routes.py",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "router",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 8
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/badges/routes.py#root-variable@8:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "Lines 11–11",
+                  "range": {
+                    "lineStart": 11,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/badges/routes.py#effect@11:80",
+                    "src/pokedex/badges/routes.py#effect-callback@11:88"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w5",
+                  "declaration": "add_badge",
+                  "range": {
+                    "lineStart": 11,
+                    "lineEnd": 13
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/badges/routes.py#function@11:1",
+                    "src/pokedex/badges/routes.py#root-argument-value@12:15",
+                    "src/pokedex/badges/routes.py#root-argument-value@12:34",
+                    "src/pokedex/badges/routes.py#root-argument-value@13:33"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/badges/schemas.py",
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "declaration": "BadgeAward",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 5
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/badges/schemas.py#class@4:1",
+                    "src/pokedex/badges/schemas.py#property@5:5"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "TrainerBadges",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/badges/schemas.py#class@8:1",
+                    "src/pokedex/badges/schemas.py#property@9:5",
+                    "src/pokedex/badges/schemas.py#property@10:5",
+                    "src/pokedex/badges/schemas.py#property@11:5"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/badges/service.py",
+              "waypoints": [
+                {
+                  "id": "w8",
+                  "declaration": "award_badge",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 8
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/badges/service.py#function@5:1",
+                    "src/pokedex/badges/service.py#root-argument-value@5:17",
+                    "src/pokedex/badges/service.py#root-argument-value@5:39",
+                    "src/pokedex/badges/service.py#variable@6:5",
+                    "src/pokedex/badges/service.py#root-argument-value@6:15",
+                    "src/pokedex/badges/service.py#property@6:42",
+                    "src/pokedex/badges/service.py#root-argument-value@6:54",
+                    "src/pokedex/badges/service.py#root-argument-value@7:14"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/main.py",
+              "waypoints": [
+                {
+                  "id": "w9",
+                  "declaration": "Lines 16–16",
+                  "range": {
+                    "lineStart": 16,
+                    "lineEnd": 16
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/main.py#root-statement@16:1",
+                    "src/pokedex/main.py#middleware@16:1",
+                    "src/pokedex/main.py#effect@16:64",
+                    "src/pokedex/main.py#effect-callback@16:72"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokedex/badges/dependencies.py",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 37,
+                "endColumn": 46,
+                "path": "src/pokedex/badges/dependencies.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typing:Annotated",
+                  "name": "Annotated"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 52,
+                "endColumn": 58,
+                "path": "src/pokedex/badges/dependencies.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Header",
+                  "name": "Header"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 7,
+                "endColumn": 19,
+                "path": "src/pokedex/badges/dependencies.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 27,
+                "endColumn": 38,
+                "path": "src/pokedex/badges/dependencies.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 27,
+                "path": "src/pokedex/badges/dependencies.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:HTTPException",
+                  "name": "HTTPException"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 11,
+                "endColumn": 23,
+                "path": "src/pokedex/badges/dependencies.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 8,
+                "startColumn": 47,
+                "endColumn": 50,
+                "name": "str"
+              },
+              {
+                "line": 8,
+                "startColumn": 66,
+                "endColumn": 69,
+                "name": "str"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 0,
+                "endColumn": 11,
+                "lines": [
+                  5,
+                  5
+                ],
+                "usages": []
+              },
+              {
+                "line": 8,
+                "startColumn": 4,
+                "endColumn": 22,
+                "lines": [
+                  8,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 87,
+                    "endColumn": 105,
+                    "path": "src/pokedex/badges/routes.py",
+                    "text": "@router.post(\"/\", response_model=TrainerBadges, status_code=201, dependencies=[Depends(require_gym_leader)])"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/badges/routes.py",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/pokedex/badges/routes.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:APIRouter",
+                  "name": "APIRouter"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/pokedex/badges/routes.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 33,
+                "endColumn": 46,
+                "path": "src/pokedex/badges/schemas.py",
+                "lines": [
+                  8,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 79,
+                "endColumn": 86,
+                "path": "src/pokedex/badges/routes.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Depends",
+                  "name": "Depends"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 87,
+                "endColumn": 105,
+                "path": "src/pokedex/badges/dependencies.py",
+                "lines": [
+                  8,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 21,
+                "endColumn": 31,
+                "path": "src/pokedex/badges/schemas.py",
+                "lines": [
+                  4,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 42,
+                "endColumn": 52,
+                "path": "src/pokedex/trainers/dependencies.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/pokedex/badges/service.py",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 23,
+                "endColumn": 30,
+                "path": "src/pokedex/badges/routes.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 32,
+                "endColumn": 37,
+                "path": "src/pokedex/badges/routes.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 0,
+                "endColumn": 6,
+                "lines": [
+                  8,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 19,
+                    "endColumn": 32,
+                    "path": "src/pokedex/main.py",
+                    "text": "app.include_router(badges_router, prefix=\"/api\", dependencies=[Depends(verify_api_key)])"
+                  }
+                ]
+              },
+              {
+                "line": 12,
+                "startColumn": 4,
+                "endColumn": 13,
+                "lines": [
+                  11,
+                  13
+                ],
+                "usages": []
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/badges/schemas.py",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 17,
+                "endColumn": 26,
+                "path": "src/pokedex/badges/schemas.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:BaseModel",
+                  "name": "BaseModel"
+                }
+              },
+              {
+                "line": 5,
+                "startColumn": 17,
+                "endColumn": 22,
+                "path": "src/pokedex/badges/schemas.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 20,
+                "endColumn": 29,
+                "path": "src/pokedex/badges/schemas.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:BaseModel",
+                  "name": "BaseModel"
+                }
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 11,
+                "endColumn": 14,
+                "name": "str"
+              },
+              {
+                "line": 9,
+                "startColumn": 8,
+                "endColumn": 11,
+                "name": "int"
+              },
+              {
+                "line": 10,
+                "startColumn": 10,
+                "endColumn": 13,
+                "name": "str"
+              },
+              {
+                "line": 11,
+                "startColumn": 12,
+                "endColumn": 16,
+                "name": "list"
+              },
+              {
+                "line": 11,
+                "startColumn": 17,
+                "endColumn": 20,
+                "name": "str"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 6,
+                "endColumn": 16,
+                "lines": [
+                  4,
+                  5
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 21,
+                    "endColumn": 31,
+                    "path": "src/pokedex/badges/routes.py",
+                    "text": "def add_badge(award: BadgeAward, trainer: TrainerDep):"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 6,
+                "endColumn": 19,
+                "lines": [
+                  8,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 33,
+                    "endColumn": 46,
+                    "path": "src/pokedex/badges/routes.py",
+                    "text": "@router.post(\"/\", response_model=TrainerBadges, status_code=201, dependencies=[Depends(require_gym_leader)])"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/badges/service.py",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 25,
+                "endColumn": 36,
+                "path": "src/pokedex/trainers/schemas.py",
+                "lines": [
+                  9,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 53,
+                "endColumn": 64,
+                "path": "src/pokedex/trainers/schemas.py",
+                "lines": [
+                  9,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 14,
+                "endColumn": 21,
+                "path": "src/pokedex/badges/service.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 53,
+                "endColumn": 60,
+                "path": "src/pokedex/badges/service.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 69,
+                "endColumn": 74,
+                "path": "src/pokedex/badges/service.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 4,
+                "endColumn": 12,
+                "path": "src/pokedex/trainers/service.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 20,
+                "path": "src/pokedex/badges/service.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/pokedex/badges/service.py",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/badges/service.py",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 45,
+                "endColumn": 48,
+                "name": "str"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 4,
+                "endColumn": 15,
+                "lines": [
+                  5,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 11,
+                    "endColumn": 22,
+                    "path": "src/pokedex/badges/routes.py",
+                    "text": "    return award_badge(trainer, award.badge)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/main.py",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:FastAPI",
+                  "name": "FastAPI"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 19,
+                "endColumn": 39,
+                "path": "src/pokedex/middleware.py",
+                "lines": [
+                  9,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 26,
+                "endColumn": 39,
+                "path": "src/pokedex/errors.py",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 41,
+                "endColumn": 58,
+                "path": "src/pokedex/errors.py",
+                "lines": [
+                  11,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 19,
+                "endColumn": 32,
+                "path": "src/pokedex/health/routes.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 19,
+                "endColumn": 34,
+                "path": "src/pokedex/trainers/routes.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 65,
+                "endColumn": 72,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Depends",
+                  "name": "Depends"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 73,
+                "endColumn": 87,
+                "path": "src/pokedex/security.py",
+                "lines": [
+                  8,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 19,
+                "endColumn": 32,
+                "path": "src/pokedex/badges/routes.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 63,
+                "endColumn": 70,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Depends",
+                  "name": "Depends"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 71,
+                "endColumn": 85,
+                "path": "src/pokedex/security.py",
+                "lines": [
+                  8,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 0,
+                "endColumn": 3,
+                "lines": [
+                  10,
+                  10
+                ],
+                "usages": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

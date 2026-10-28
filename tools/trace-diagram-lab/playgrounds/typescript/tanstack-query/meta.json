@@ -1,0 +1,6 @@
+{
+  "title": "React app with TanStack Query queries and mutations, no other library",
+  "packages": ["react", "react-dom", "@tanstack/react-query"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

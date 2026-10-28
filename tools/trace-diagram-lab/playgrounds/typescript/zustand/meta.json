@@ -1,0 +1,6 @@
+{
+  "title": "React app with Zustand stores, no other library",
+  "packages": ["react", "react-dom", "zustand"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

@@ -1,0 +1,1844 @@
+{
+  "title": "Implement class TrainingCamp",
+  "diff": [
+    "diff --git a/src/main.ts b/src/main.ts",
+    "--- a/src/main.ts",
+    "+++ b/src/main.ts",
+    "@@ -2,0 +3 @@ import { teamReport } from \"@/teams/team-report\"",
+    "+import { TrainingCamp } from \"@/training/training-camp\"",
+    "@@ -10,0 +12 @@ const roster = new TrainerRoster(TRAINERS)",
+    "+const camp = new TrainingCamp(roster)",
+    "@@ -12,0 +15 @@ console.log(teamReport(roster, 1))",
+    "+console.log(camp.train(2, 5))",
+    "diff --git a/src/teams/levels.ts b/src/teams/levels.ts",
+    "--- a/src/teams/levels.ts",
+    "+++ b/src/teams/levels.ts",
+    "@@ -0,0 +1 @@",
+    "+import { MAX_LEVEL } from \"@/config\"",
+    "@@ -7,0 +9,4 @@ export function averageLevel(team: Pokemon[]): number {",
+    "+",
+    "+export function clampLevel(level: number): number {",
+    "+  return Math.min(Math.max(level, 1), MAX_LEVEL)",
+    "+}",
+    "diff --git a/src/trainers/roster.ts b/src/trainers/roster.ts",
+    "--- a/src/trainers/roster.ts",
+    "+++ b/src/trainers/roster.ts",
+    "@@ -1,0 +2 @@ import { TEAM_SIZE } from \"@/config\"",
+    "+import { clampLevel } from \"@/teams/levels\"",
+    "@@ -17,0 +19,8 @@ export class TrainerRoster {",
+    "+",
+    "+  levelUpTeam(id: number, levels: number): Pokemon[] {",
+    "+    const trainer = this.findTrainer(id)",
+    "+    if (trainer === undefined) return []",
+    "+    const team = trainer.team.map((pokemon) => ({ ...pokemon, level: clampLevel(pokemon.level + levels) }))",
+    "+    this.trainersById.set(id, { ...trainer, team })",
+    "+    return team",
+    "+  }",
+    "diff --git a/src/training/training-camp.ts b/src/training/training-camp.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/training/training-camp.ts",
+    "@@ -0,0 +1,13 @@",
+    "+import { formatLevel } from \"@/lib/format\"",
+    "+import { averageLevel } from \"@/teams/levels\"",
+    "+import type { TrainerRoster } from \"@/trainers\"",
+    "+",
+    "+export class TrainingCamp {",
+    "+  constructor(private readonly roster: TrainerRoster) {}",
+    "+",
+    "+  train(trainerId: number, levels: number): string {",
+    "+    const team = this.roster.levelUpTeam(trainerId, levels)",
+    "+    if (team.length === 0) return `Trainer ${trainerId} has no Pokemon to train.`",
+    "+    return `${team.length} Pokemon trained, average ${formatLevel(averageLevel(team))}`",
+    "+  }",
+    "+}"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Groundwork for TrainingCamp",
+        "importGraph": [
+          {
+            "filePath": "src/config.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/lib/format.ts",
+              "src/teams/levels.ts",
+              "src/trainers/roster.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/items/prices.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/lib/format.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/teams/team-report.ts",
+              "src/training/training-camp.ts"
+            ],
+            "importsTo": [
+              "src/config.ts"
+            ],
+            "importedFilePaths": {
+              "@/config": "src/config.ts"
+            }
+          },
+          {
+            "filePath": "src/teams/levels.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/teams/team-report.ts",
+              "src/trainers/roster.ts",
+              "src/training/training-camp.ts"
+            ],
+            "importsTo": [
+              "src/config.ts",
+              "src/trainers/index.ts"
+            ],
+            "importedFilePaths": {
+              "@/config": "src/config.ts",
+              "@/trainers": "src/trainers/index.ts"
+            }
+          },
+          {
+            "filePath": "src/teams/team-report.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/lib/format.ts",
+              "src/teams/levels.ts",
+              "src/trainers/index.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/format": "src/lib/format.ts",
+              "@/trainers": "src/trainers/index.ts",
+              "./levels": "src/teams/levels.ts"
+            }
+          },
+          {
+            "filePath": "src/trainers/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts",
+              "src/teams/levels.ts",
+              "src/teams/team-report.ts",
+              "src/training/training-camp.ts"
+            ],
+            "importsTo": [
+              "src/trainers/roster.ts",
+              "src/trainers/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "./roster": "src/trainers/roster.ts",
+              "./trainer": "src/trainers/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/trainers/roster.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/trainers/index.ts"
+            ],
+            "importsTo": [
+              "src/config.ts",
+              "src/teams/levels.ts",
+              "src/trainers/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/config": "src/config.ts",
+              "@/teams/levels": "src/teams/levels.ts",
+              "./trainer": "src/trainers/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/trainers/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/trainers/index.ts",
+              "src/trainers/roster.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Level up team flow diagram",
+          "description": "This diagram shows how `TrainerRoster` raises the level of every Pokemon of one team through `levelUpTeam()`, and how `clampLevel()` keeps each new level between 1 and `MAX_LEVEL`.",
+          "traceNodes": [
+            {
+              "id": "src/trainers/roster.ts#class@5:1",
+              "type": "class",
+              "label": "Keeps the trainers by their id",
+              "description": "When the script starts, [`main.ts` makes this class from the trainers of `TRAINERS`](code:src/main.ts#L11).",
+              "codeBlockIds": [
+                "src/trainers/roster.ts#class@5:1",
+                "src/trainers/roster.ts#method@20:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/trainers/roster.ts#method@20:3"
+              ],
+              "children": [
+                {
+                  "id": "src/trainers/roster.ts#method@20:3",
+                  "type": "method",
+                  "label": "Raises the level of every Pokemon of one team",
+                  "description": "When the script starts, [`TrainingCamp.train()` calls this method on its roster](code:src/training/training-camp.ts#L9) with the id of the trainer and the number of levels.",
+                  "codeBlockIds": [
+                    "src/trainers/roster.ts#method@20:3",
+                    "src/trainers/roster.ts#root-argument-value@20:15",
+                    "src/trainers/roster.ts#root-argument-value@20:27",
+                    "src/trainers/roster.ts#variable@21:5",
+                    "src/trainers/roster.ts#condition@22:5",
+                    "src/trainers/roster.ts#external-value@23:5",
+                    "src/trainers/roster.ts#function@23:35",
+                    "src/trainers/roster.ts#variable@23:36",
+                    "src/trainers/roster.ts#property@23:63",
+                    "src/trainers/roster.ts#call@24:5",
+                    "src/trainers/roster.ts#property@24:45"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/trainers/roster.ts#method@20:3",
+                    "src/trainers/roster.ts#root-argument-value@20:15",
+                    "src/trainers/roster.ts#root-argument-value@20:27",
+                    "src/trainers/roster.ts#variable@21:5",
+                    "src/trainers/roster.ts#condition@22:5",
+                    "src/trainers/roster.ts#external-value@23:5",
+                    "src/trainers/roster.ts#function@23:35",
+                    "src/trainers/roster.ts#variable@23:36",
+                    "src/trainers/roster.ts#property@23:63",
+                    "src/trainers/roster.ts#call@24:5",
+                    "src/trainers/roster.ts#property@24:45"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Reads the trainer of the id",
+                      "codeBlockId": "src/trainers/roster.ts#variable@21:5"
+                    },
+                    {
+                      "label": "Returns an empty team for an id with no trainer",
+                      "codeBlockId": "src/trainers/roster.ts#condition@22:5"
+                    },
+                    {
+                      "label": "Raises and clamps each level, then saves the new team",
+                      "codeBlockId": "src/trainers/roster.ts#external-value@23:5"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/teams/levels.ts#function@10:1",
+              "type": "function",
+              "label": "Keeps a level between 1 and the maximum level",
+              "description": "When `levelUpTeam()` raises a team, [`levelUpTeam()` calls this function](code:src/trainers/roster.ts#L23) once for each Pokemon, with its level plus the added levels.",
+              "codeBlockIds": [
+                "src/teams/levels.ts#function@10:1",
+                "src/teams/levels.ts#root-argument-value@10:28"
+              ],
+              "diffCodeBlockIds": [
+                "src/teams/levels.ts#function@10:1",
+                "src/teams/levels.ts#root-argument-value@10:28"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/trainers/roster.ts#method@20:3 -> src/teams/levels.ts#function@10:1",
+              "from": "src/trainers/roster.ts#method@20:3",
+              "to": "src/teams/levels.ts#function@10:1"
+            },
+            {
+              "id": "src/trainers/roster.ts#class@5:1 -> src/trainers/roster.ts#method@20:3",
+              "from": "src/trainers/roster.ts#class@5:1",
+              "to": "src/trainers/roster.ts#method@20:3"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/teams/levels.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "clampLevel",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 12
+                  },
+                  "codeBlockIds": [
+                    "src/teams/levels.ts#function@10:1",
+                    "src/teams/levels.ts#root-argument-value@10:28"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/trainers/roster.ts",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "TrainerRoster.levelUpTeam",
+                  "range": {
+                    "lineStart": 20,
+                    "lineEnd": 26
+                  },
+                  "codeBlockIds": [
+                    "src/trainers/roster.ts#method@20:3",
+                    "src/trainers/roster.ts#root-argument-value@20:15",
+                    "src/trainers/roster.ts#root-argument-value@20:27",
+                    "src/trainers/roster.ts#variable@21:5",
+                    "src/trainers/roster.ts#condition@22:5",
+                    "src/trainers/roster.ts#external-value@23:5",
+                    "src/trainers/roster.ts#function@23:35",
+                    "src/trainers/roster.ts#variable@23:36",
+                    "src/trainers/roster.ts#property@23:63",
+                    "src/trainers/roster.ts#call@24:5",
+                    "src/trainers/roster.ts#property@24:45"
+                  ],
+                  "children": [
+                    {
+                      "id": "w2.1",
+                      "declaration": "TrainerRoster.levelUpTeam › trainer",
+                      "range": {
+                        "lineStart": 21,
+                        "lineEnd": 21
+                      },
+                      "codeBlockIds": [
+                        "src/trainers/roster.ts#variable@21:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.2",
+                      "declaration": "TrainerRoster.levelUpTeam › Condition :22",
+                      "range": {
+                        "lineStart": 22,
+                        "lineEnd": 22
+                      },
+                      "codeBlockIds": [
+                        "src/trainers/roster.ts#condition@22:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.3",
+                      "declaration": "TrainerRoster.levelUpTeam › team",
+                      "range": {
+                        "lineStart": 23,
+                        "lineEnd": 23
+                      },
+                      "codeBlockIds": [
+                        "src/trainers/roster.ts#external-value@23:5",
+                        "src/trainers/roster.ts#function@23:35",
+                        "src/trainers/roster.ts#variable@23:36",
+                        "src/trainers/roster.ts#property@23:63"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.4",
+                      "declaration": "TrainerRoster.levelUpTeam › this.trainersById.set",
+                      "range": {
+                        "lineStart": 24,
+                        "lineEnd": 24
+                      },
+                      "codeBlockIds": [
+                        "src/trainers/roster.ts#call@24:5",
+                        "src/trainers/roster.ts#property@24:45"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/teams/levels.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 35,
+                "endColumn": 42,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 6,
+                "endColumn": 10,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 20,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 20,
+                "endColumn": 25,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 28,
+                "endColumn": 32,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 27,
+                "endColumn": 32,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 38,
+                "endColumn": 47,
+                "path": "src/config.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 7,
+                "startColumn": 9,
+                "endColumn": 13,
+                "name": "Math"
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 13,
+                "name": "Math"
+              },
+              {
+                "line": 11,
+                "startColumn": 18,
+                "endColumn": 22,
+                "name": "Math"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 28,
+                "lines": [
+                  4,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 73,
+                    "endColumn": 85,
+                    "path": "src/teams/team-report.ts",
+                    "text": "  return `${trainer.name}: ${team.length} Pokemon, average ${formatLevel(averageLevel(team))}`"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 66,
+                    "endColumn": 78,
+                    "path": "src/training/training-camp.ts",
+                    "text": "    return `${team.length} Pokemon trained, average ${formatLevel(averageLevel(team))}`"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  10,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 23,
+                    "startColumn": 69,
+                    "endColumn": 79,
+                    "path": "src/trainers/roster.ts",
+                    "text": "    const team = trainer.team.map((pokemon) => ({ ...pokemon, level: clampLevel(pokemon.level + levels) }))"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/trainers/roster.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 45,
+                "endColumn": 52,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  6,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 24,
+                "endColumn": 31,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  6,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  6,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 33,
+                "endColumn": 35,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 22,
+                "endColumn": 29,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 28,
+                "endColumn": 30,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 47,
+                "endColumn": 56,
+                "path": "src/config.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 43,
+                "endColumn": 50,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 37,
+                "endColumn": 39,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 8,
+                "endColumn": 15,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 69,
+                "endColumn": 79,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  10,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 96,
+                "endColumn": 102,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 26,
+                "endColumn": 28,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 35,
+                "endColumn": 42,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 44,
+                "endColumn": 48,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 11,
+                "endColumn": 15,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 6,
+                "startColumn": 33,
+                "endColumn": 36,
+                "name": "Map"
+              },
+              {
+                "line": 9,
+                "startColumn": 28,
+                "endColumn": 31,
+                "name": "Map"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 26,
+                "lines": [
+                  5,
+                  27
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 19,
+                    "endColumn": 32,
+                    "path": "src/main.ts",
+                    "text": "const roster = new TrainerRoster(TRAINERS)"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 35,
+                    "endColumn": 48,
+                    "path": "src/teams/team-report.ts",
+                    "text": "export function teamReport(roster: TrainerRoster, trainerId: number): string {"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 39,
+                    "endColumn": 52,
+                    "path": "src/training/training-camp.ts",
+                    "text": "  constructor(private readonly roster: TrainerRoster) {}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "New TrainingCamp class and camp",
+        "importGraph": [
+          {
+            "filePath": "src/config.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/lib/format.ts",
+              "src/teams/levels.ts",
+              "src/trainers/roster.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/items/prices.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/lib/format.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/teams/team-report.ts",
+              "src/training/training-camp.ts"
+            ],
+            "importsTo": [
+              "src/config.ts"
+            ],
+            "importedFilePaths": {
+              "@/config": "src/config.ts"
+            }
+          },
+          {
+            "filePath": "src/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/items/prices.ts",
+              "src/teams/team-report.ts",
+              "src/trainers/index.ts",
+              "src/training/training-camp.ts"
+            ],
+            "importedFilePaths": {
+              "@/items/prices": "src/items/prices.ts",
+              "@/teams/team-report": "src/teams/team-report.ts",
+              "@/training/training-camp": "src/training/training-camp.ts",
+              "@/trainers": "src/trainers/index.ts"
+            }
+          },
+          {
+            "filePath": "src/teams/team-report.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/lib/format.ts",
+              "src/teams/levels.ts",
+              "src/trainers/index.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/format": "src/lib/format.ts",
+              "@/trainers": "src/trainers/index.ts",
+              "./levels": "src/teams/levels.ts"
+            }
+          },
+          {
+            "filePath": "src/trainers/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts",
+              "src/teams/levels.ts",
+              "src/teams/team-report.ts",
+              "src/training/training-camp.ts"
+            ],
+            "importsTo": [
+              "src/trainers/roster.ts",
+              "src/trainers/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "./roster": "src/trainers/roster.ts",
+              "./trainer": "src/trainers/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/trainers/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/trainers/index.ts",
+              "src/trainers/roster.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/training/training-camp.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/lib/format.ts",
+              "src/teams/levels.ts",
+              "src/trainers/index.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/format": "src/lib/format.ts",
+              "@/teams/levels": "src/teams/levels.ts",
+              "@/trainers": "src/trainers/index.ts"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Training script run flow diagram",
+          "description": "This diagram shows how `main.ts` makes `camp`, a `TrainingCamp` on the trainer roster. It also shows what happens when the script trains the team of trainer 2, and how the raised levels reach the roster through `levelUpTeam()`.",
+          "traceNodes": [
+            {
+              "id": "src/main.ts#root-variable@12:1",
+              "type": "root-variable",
+              "label": "Makes the training camp on the roster",
+              "description": "When the script starts, `main.ts` makes this value once, and [the script calls `camp.train(2, 5)`](code:src/main.ts#L15) on it.",
+              "codeBlockIds": [
+                "src/main.ts#root-variable@12:1",
+                "src/main.ts#root-variable@11:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/main.ts#root-variable@12:1"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Makes the roster of the two trainers",
+                  "codeBlockId": "src/main.ts#root-variable@11:1"
+                }
+              ]
+            },
+            {
+              "id": "src/training/training-camp.ts#class@5:1",
+              "type": "class",
+              "label": "Trains the teams of one roster",
+              "description": "When the script starts, [`main.ts` makes this class with `new TrainingCamp(roster)`](code:src/main.ts#L12).",
+              "codeBlockIds": [
+                "src/training/training-camp.ts#class@5:1",
+                "src/training/training-camp.ts#method@6:3",
+                "src/training/training-camp.ts#root-argument-value@6:15",
+                "src/training/training-camp.ts#method@8:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/training/training-camp.ts#class@5:1",
+                "src/training/training-camp.ts#method@6:3",
+                "src/training/training-camp.ts#root-argument-value@6:15",
+                "src/training/training-camp.ts#method@8:3"
+              ],
+              "children": [
+                {
+                  "id": "src/training/training-camp.ts#method@8:3",
+                  "type": "method",
+                  "label": "Trains one team and reports its average level",
+                  "description": "When the script starts, [`main.ts` calls `camp.train(2, 5)`](code:src/main.ts#L15), and `TrainingCamp` runs this method on the roster it was made with.",
+                  "codeBlockIds": [
+                    "src/training/training-camp.ts#method@8:3",
+                    "src/training/training-camp.ts#root-argument-value@8:9",
+                    "src/training/training-camp.ts#root-argument-value@8:28",
+                    "src/training/training-camp.ts#variable@9:5",
+                    "src/training/training-camp.ts#condition@10:5"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/training/training-camp.ts#method@8:3",
+                    "src/training/training-camp.ts#root-argument-value@8:9",
+                    "src/training/training-camp.ts#root-argument-value@8:28",
+                    "src/training/training-camp.ts#variable@9:5",
+                    "src/training/training-camp.ts#condition@10:5"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Raises the team of the trainer in the roster",
+                      "codeBlockId": "src/training/training-camp.ts#variable@9:5"
+                    },
+                    {
+                      "label": "Returns a message for an empty team, or else the average level",
+                      "codeBlockId": "src/training/training-camp.ts#condition@10:5"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps the roster it trains",
+                  "codeBlockId": "src/training/training-camp.ts#root-argument-value@6:15"
+                }
+              ]
+            },
+            {
+              "id": "src/trainers/roster.ts#class@5:1",
+              "type": "class",
+              "label": "Keeps the trainers by their id",
+              "description": "When the script starts, [`main.ts` makes this class from the trainers of `TRAINERS`](code:src/main.ts#L11) and hands it to `TrainingCamp`.",
+              "codeBlockIds": [
+                "src/trainers/roster.ts#class@5:1",
+                "src/trainers/roster.ts#method@20:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/trainers/roster.ts#method@20:3"
+              ],
+              "children": [
+                {
+                  "id": "src/trainers/roster.ts#method@20:3",
+                  "type": "method",
+                  "label": "Raises the level of every Pokemon of one team",
+                  "description": "When the script runs `camp.train(2, 5)`, [`train()` calls this method on its roster](code:src/training/training-camp.ts#L9) with trainer 2 and 5 levels.",
+                  "codeBlockIds": [
+                    "src/trainers/roster.ts#method@20:3",
+                    "src/trainers/roster.ts#root-argument-value@20:15",
+                    "src/trainers/roster.ts#root-argument-value@20:27",
+                    "src/trainers/roster.ts#variable@21:5",
+                    "src/trainers/roster.ts#condition@22:5",
+                    "src/trainers/roster.ts#external-value@23:5",
+                    "src/trainers/roster.ts#function@23:35",
+                    "src/trainers/roster.ts#variable@23:36",
+                    "src/trainers/roster.ts#property@23:63",
+                    "src/trainers/roster.ts#call@24:5",
+                    "src/trainers/roster.ts#property@24:45"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/trainers/roster.ts#method@20:3",
+                    "src/trainers/roster.ts#root-argument-value@20:15",
+                    "src/trainers/roster.ts#root-argument-value@20:27",
+                    "src/trainers/roster.ts#variable@21:5",
+                    "src/trainers/roster.ts#condition@22:5",
+                    "src/trainers/roster.ts#external-value@23:5",
+                    "src/trainers/roster.ts#function@23:35",
+                    "src/trainers/roster.ts#variable@23:36",
+                    "src/trainers/roster.ts#property@23:63",
+                    "src/trainers/roster.ts#call@24:5",
+                    "src/trainers/roster.ts#property@24:45"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Reads the trainer of the id",
+                      "codeBlockId": "src/trainers/roster.ts#variable@21:5"
+                    },
+                    {
+                      "label": "Returns an empty team for an id with no trainer",
+                      "codeBlockId": "src/trainers/roster.ts#condition@22:5"
+                    },
+                    {
+                      "label": "Raises and clamps each level, then saves the new team",
+                      "codeBlockId": "src/trainers/roster.ts#external-value@23:5"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/teams/levels.ts#function@10:1",
+              "type": "function",
+              "label": "Keeps a level between 1 and the maximum level",
+              "description": "When the script runs `camp.train(2, 5)`, `train()` calls `levelUpTeam()`, and [`levelUpTeam()` calls this function](code:src/trainers/roster.ts#L23) once for each Pokemon of the team.",
+              "codeBlockIds": [
+                "src/teams/levels.ts#function@10:1",
+                "src/teams/levels.ts#root-argument-value@10:28"
+              ],
+              "diffCodeBlockIds": [
+                "src/teams/levels.ts#function@10:1",
+                "src/teams/levels.ts#root-argument-value@10:28"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/main.ts#root-variable@12:1 -> src/training/training-camp.ts#class@5:1",
+              "from": "src/main.ts#root-variable@12:1",
+              "to": "src/training/training-camp.ts#class@5:1"
+            },
+            {
+              "id": "src/main.ts#root-variable@12:1 -> src/trainers/roster.ts#class@5:1",
+              "from": "src/main.ts#root-variable@12:1",
+              "to": "src/trainers/roster.ts#class@5:1"
+            },
+            {
+              "id": "src/training/training-camp.ts#method@8:3 -> src/trainers/roster.ts#method@20:3",
+              "from": "src/training/training-camp.ts#method@8:3",
+              "to": "src/trainers/roster.ts#method@20:3"
+            },
+            {
+              "id": "src/trainers/roster.ts#method@20:3 -> src/teams/levels.ts#function@10:1",
+              "from": "src/trainers/roster.ts#method@20:3",
+              "to": "src/teams/levels.ts#function@10:1"
+            },
+            {
+              "id": "src/training/training-camp.ts#class@5:1 -> src/training/training-camp.ts#method@8:3",
+              "from": "src/training/training-camp.ts#class@5:1",
+              "to": "src/training/training-camp.ts#method@8:3"
+            },
+            {
+              "id": "src/trainers/roster.ts#class@5:1 -> src/trainers/roster.ts#method@20:3",
+              "from": "src/trainers/roster.ts#class@5:1",
+              "to": "src/trainers/roster.ts#method@20:3"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/main.ts",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "camp",
+                  "range": {
+                    "lineStart": 12,
+                    "lineEnd": 12
+                  },
+                  "codeBlockIds": [
+                    "src/main.ts#root-variable@12:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "Lines 15–15",
+                  "range": {
+                    "lineStart": 15,
+                    "lineEnd": 15
+                  },
+                  "codeBlockIds": [
+                    "src/main.ts#root-statement@15:1",
+                    "src/main.ts#telemetry@15:1"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/training/training-camp.ts",
+              "waypoints": [
+                {
+                  "id": "w5",
+                  "declaration": "TrainingCamp",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 13
+                  },
+                  "codeBlockIds": [
+                    "src/training/training-camp.ts#class@5:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w6",
+                  "declaration": "TrainingCamp.constructor",
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 6
+                  },
+                  "codeBlockIds": [
+                    "src/training/training-camp.ts#method@6:3",
+                    "src/training/training-camp.ts#root-argument-value@6:15"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "TrainingCamp.train",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 12
+                  },
+                  "codeBlockIds": [
+                    "src/training/training-camp.ts#method@8:3",
+                    "src/training/training-camp.ts#root-argument-value@8:9",
+                    "src/training/training-camp.ts#root-argument-value@8:28",
+                    "src/training/training-camp.ts#variable@9:5",
+                    "src/training/training-camp.ts#condition@10:5"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/main.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 23,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  6,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 19,
+                "endColumn": 32,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  5,
+                  27
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 33,
+                "endColumn": 41,
+                "path": "src/main.ts",
+                "lines": [
+                  6,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 17,
+                "endColumn": 29,
+                "path": "src/training/training-camp.ts",
+                "lines": [
+                  5,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 30,
+                "endColumn": 36,
+                "path": "src/main.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 12,
+                "endColumn": 22,
+                "path": "src/teams/team-report.ts",
+                "lines": [
+                  5,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 23,
+                "endColumn": 29,
+                "path": "src/main.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 12,
+                "endColumn": 16,
+                "path": "src/main.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 12,
+                "endColumn": 19,
+                "path": "src/items/prices.ts",
+                "lines": [
+                  8,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 14,
+                "startColumn": 0,
+                "endColumn": 7,
+                "name": "console"
+              },
+              {
+                "line": 15,
+                "startColumn": 0,
+                "endColumn": 7,
+                "name": "console"
+              },
+              {
+                "line": 16,
+                "startColumn": 0,
+                "endColumn": 7,
+                "name": "console"
+              }
+            ],
+            "exports": []
+          },
+          {
+            "path": "src/teams/levels.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 35,
+                "endColumn": 42,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 6,
+                "endColumn": 10,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 20,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 20,
+                "endColumn": 25,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 28,
+                "endColumn": 32,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 27,
+                "endColumn": 32,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 38,
+                "endColumn": 47,
+                "path": "src/config.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 7,
+                "startColumn": 9,
+                "endColumn": 13,
+                "name": "Math"
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 13,
+                "name": "Math"
+              },
+              {
+                "line": 11,
+                "startColumn": 18,
+                "endColumn": 22,
+                "name": "Math"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 28,
+                "lines": [
+                  4,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 73,
+                    "endColumn": 85,
+                    "path": "src/teams/team-report.ts",
+                    "text": "  return `${trainer.name}: ${team.length} Pokemon, average ${formatLevel(averageLevel(team))}`"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 66,
+                    "endColumn": 78,
+                    "path": "src/training/training-camp.ts",
+                    "text": "    return `${team.length} Pokemon trained, average ${formatLevel(averageLevel(team))}`"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  10,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 23,
+                    "startColumn": 69,
+                    "endColumn": 79,
+                    "path": "src/trainers/roster.ts",
+                    "text": "    const team = trainer.team.map((pokemon) => ({ ...pokemon, level: clampLevel(pokemon.level + levels) }))"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/trainers/roster.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 45,
+                "endColumn": 52,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  6,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 24,
+                "endColumn": 31,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  6,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  6,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 33,
+                "endColumn": 35,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 22,
+                "endColumn": 29,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 28,
+                "endColumn": 30,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 47,
+                "endColumn": 56,
+                "path": "src/config.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 43,
+                "endColumn": 50,
+                "path": "src/trainers/trainer.ts",
+                "lines": [
+                  1,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 37,
+                "endColumn": 39,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 8,
+                "endColumn": 15,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 69,
+                "endColumn": 79,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  10,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 96,
+                "endColumn": 102,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 26,
+                "endColumn": 28,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 35,
+                "endColumn": 42,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 44,
+                "endColumn": 48,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 11,
+                "endColumn": 15,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 6,
+                "startColumn": 33,
+                "endColumn": 36,
+                "name": "Map"
+              },
+              {
+                "line": 9,
+                "startColumn": 28,
+                "endColumn": 31,
+                "name": "Map"
+              }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 26,
+                "lines": [
+                  5,
+                  27
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 19,
+                    "endColumn": 32,
+                    "path": "src/main.ts",
+                    "text": "const roster = new TrainerRoster(TRAINERS)"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 35,
+                    "endColumn": 48,
+                    "path": "src/teams/team-report.ts",
+                    "text": "export function teamReport(roster: TrainerRoster, trainerId: number): string {"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 39,
+                    "endColumn": 52,
+                    "path": "src/training/training-camp.ts",
+                    "text": "  constructor(private readonly roster: TrainerRoster) {}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/training/training-camp.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 39,
+                "endColumn": 52,
+                "path": "src/trainers/roster.ts",
+                "lines": [
+                  5,
+                  27
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 41,
+                "endColumn": 50,
+                "path": "src/training/training-camp.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 52,
+                "endColumn": 58,
+                "path": "src/training/training-camp.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/training/training-camp.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 45,
+                "endColumn": 54,
+                "path": "src/training/training-camp.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 14,
+                "endColumn": 18,
+                "path": "src/training/training-camp.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 54,
+                "endColumn": 65,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  3,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 66,
+                "endColumn": 78,
+                "path": "src/teams/levels.ts",
+                "lines": [
+                  4,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 79,
+                "endColumn": 83,
+                "path": "src/training/training-camp.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  5,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 17,
+                    "endColumn": 29,
+                    "path": "src/main.ts",
+                    "text": "const camp = new TrainingCamp(roster)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

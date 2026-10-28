@@ -1,0 +1,6 @@
+{
+  "title": "Vue app with Vue Router",
+  "packages": ["vue", "vue-router"],
+  "language": "typescript",
+  "mainFramework": "vue"
+}

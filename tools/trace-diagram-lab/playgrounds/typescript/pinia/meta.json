@@ -1,0 +1,6 @@
+{
+  "title": "Vue app with Pinia stores",
+  "packages": ["vue", "pinia"],
+  "language": "typescript",
+  "mainFramework": "vue"
+}

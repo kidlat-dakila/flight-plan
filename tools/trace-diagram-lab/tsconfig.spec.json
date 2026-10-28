@@ -20,7 +20,8 @@
     "test-setup/**/*.ts"
   ],
   "exclude": [
-    "cases/**"
+    "cases/**",
+    "playgrounds/**"
   ],
   "references": [
     {

@@ -1,0 +1,2098 @@
+{
+  "title": "Implement page PokemonPage",
+  "diff": [
+    "diff --git a/src/api/pokemon.ts b/src/api/pokemon.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/api/pokemon.ts",
+    "@@ -0,0 +1,13 @@",
+    "+import { request } from \"@/api/client\"",
+    "+",
+    "+export interface Pokemon {",
+    "+  id: number",
+    "+  name: string",
+    "+  level: number",
+    "+  trainer_id: number | null",
+    "+}",
+    "+",
+    "+export const fetchPokemon = (trainerId: number | null): Promise<Pokemon[]> => {",
+    "+  const query = trainerId === null ? \"\" : `?trainer_id=${trainerId}`",
+    "+  return request<Pokemon[]>(`/pokemon${query}`)",
+    "+}",
+    "diff --git a/src/composables/use-pokemon.ts b/src/composables/use-pokemon.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/composables/use-pokemon.ts",
+    "@@ -0,0 +1,19 @@",
+    "+import { ref, watch, type Ref } from \"vue\"",
+    "+import { fetchPokemon, type Pokemon } from \"@/api/pokemon\"",
+    "+",
+    "+export const usePokemon = (trainerId: Ref<number | null>) => {",
+    "+  const pokemon = ref<Pokemon[]>([])",
+    "+  const isPending = ref(true)",
+    "+",
+    "+  watch(",
+    "+    trainerId,",
+    "+    async (id) => {",
+    "+      isPending.value = true",
+    "+      pokemon.value = await fetchPokemon(id)",
+    "+      isPending.value = false",
+    "+    },",
+    "+    { immediate: true },",
+    "+  )",
+    "+",
+    "+  return { pokemon, isPending }",
+    "+}",
+    "diff --git a/src/views/pokemon/components/TrainerPicker.vue b/src/views/pokemon/components/TrainerPicker.vue",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/views/pokemon/components/TrainerPicker.vue",
+    "@@ -0,0 +1,17 @@",
+    "+<script setup lang=\"ts\">",
+    "+import type { Trainer } from \"@/types/trainer\"",
+    "+",
+    "+defineProps<{ trainers: Trainer[], selectedId: number | null }>()",
+    "+const emit = defineEmits<{ (event: \"select\", trainerId: number | null): void }>()",
+    "+",
+    "+const pickTrainer = (value: string) => {",
+    "+  emit(\"select\", value === \"\" ? null : Number(value))",
+    "+}",
+    "+</script>",
+    "+",
+    "+<template>",
+    "+  <select :value=\"selectedId ?? ''\" @change=\"pickTrainer(($event.target as HTMLSelectElement).value)\">",
+    "+    <option value=\"\">Every trainer</option>",
+    "+    <option v-for=\"trainer in trainers\" :key=\"trainer.id\" :value=\"trainer.id\">{{ trainer.name }}</option>",
+    "+  </select>",
+    "+</template>",
+    "diff --git a/src/views/pokemon/PokemonPage.vue b/src/views/pokemon/PokemonPage.vue",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/views/pokemon/PokemonPage.vue",
+    "@@ -0,0 +1,29 @@",
+    "+<script setup lang=\"ts\">",
+    "+import { computed, ref } from \"vue\"",
+    "+import { usePokemon } from \"@/composables/use-pokemon\"",
+    "+import { useTrainers } from \"@/composables/use-trainers\"",
+    "+import TrainerPicker from \"@/views/pokemon/components/TrainerPicker.vue\"",
+    "+",
+    "+const trainerId = ref<number | null>(null)",
+    "+const { trainers } = useTrainers()",
+    "+const { pokemon, isPending } = usePokemon(trainerId)",
+    "+const highestLevel = computed(() => Math.max(0, ...pokemon.value.map((entry) => entry.level)))",
+    "+",
+    "+const selectTrainer = (id: number | null) => {",
+    "+  trainerId.value = id",
+    "+}",
+    "+</script>",
+    "+",
+    "+<template>",
+    "+  <section>",
+    "+    <h1>Pokemon</h1>",
+    "+    <TrainerPicker :trainers=\"trainers\" :selected-id=\"trainerId\" @select=\"selectTrainer\" />",
+    "+    <p v-if=\"isPending\">Loading the Pokemon…</p>",
+    "+    <template v-else>",
+    "+      <p>The strongest is level {{ highestLevel }}.</p>",
+    "+      <ul>",
+    "+        <li v-for=\"entry in pokemon\" :key=\"entry.id\">{{ entry.name }} Lv. {{ entry.level }}</li>",
+    "+      </ul>",
+    "+    </template>",
+    "+  </section>",
+    "+</template>",
+    "diff --git a/src/App.vue b/src/App.vue",
+    "--- a/src/App.vue",
+    "+++ b/src/App.vue",
+    "@@ -5,0 +6 @@ import ItemsPage from \"@/views/items/ItemsPage.vue\"",
+    "+import PokemonPage from \"@/views/pokemon/PokemonPage.vue\"",
+    "@@ -8 +9 @@ import TrainersPage from \"@/views/trainers/TrainersPage.vue\"",
+    "-type PageName = \"trainers\" | \"items\" | \"help\"",
+    "+type PageName = \"trainers\" | \"pokemon\" | \"items\" | \"help\"",
+    "@@ -15,0 +17 @@ const page = ref<PageName>(\"trainers\")",
+    "+    <BaseButton variant=\"ghost\" @click=\"page = 'pokemon'\">Pokemon</BaseButton>",
+    "@@ -20,0 +23 @@ const page = ref<PageName>(\"trainers\")",
+    "+    <PokemonPage v-else-if=\"page === 'pokemon'\" />"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New PokemonPage, TrainerPicker, usePokemon and fetchPokemon, modified App component",
+        "importGraph": [
+          {
+            "filePath": "src/App.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/components/ui/index.ts",
+              "src/views/help/HelpPage.vue",
+              "src/views/items/ItemsPage.vue",
+              "src/views/pokemon/PokemonPage.vue",
+              "src/views/trainers/TrainersPage.vue"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/views/help/HelpPage.vue": "src/views/help/HelpPage.vue",
+              "@/views/items/ItemsPage.vue": "src/views/items/ItemsPage.vue",
+              "@/views/pokemon/PokemonPage.vue": "src/views/pokemon/PokemonPage.vue",
+              "@/views/trainers/TrainersPage.vue": "src/views/trainers/TrainersPage.vue"
+            }
+          },
+          {
+            "filePath": "src/api/client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/items.ts",
+              "src/api/pokemon.ts",
+              "src/api/trainers.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/api/items.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/composables/use-items.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/api/pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/composables/use-pokemon.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts"
+            }
+          },
+          {
+            "filePath": "src/api/trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/composables/use-trainers.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/components/ui/BaseButton.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/components/ui/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.vue"
+            ],
+            "importsTo": [
+              "src/components/ui/BaseButton.vue"
+            ],
+            "importedFilePaths": {
+              "./BaseButton.vue": "src/components/ui/BaseButton.vue"
+            }
+          },
+          {
+            "filePath": "src/composables/use-items.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importsTo": [
+              "src/api/items.ts",
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/items": "src/api/items.ts",
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/composables/use-pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/pokemon/PokemonPage.vue"
+            ],
+            "importsTo": [
+              "src/api/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/pokemon": "src/api/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/composables/use-trainers.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/pokemon/PokemonPage.vue",
+              "src/views/trainers/TrainersPage.vue"
+            ],
+            "importsTo": [
+              "src/api/trainers.ts",
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/trainers": "src/api/trainers.ts",
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/lib/format.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/App.vue"
+            ],
+            "importedFilePaths": {
+              "@/App.vue": "src/App.vue"
+            }
+          },
+          {
+            "filePath": "src/types/item.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/items.ts",
+              "src/composables/use-items.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/types/trainer.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/trainers.ts",
+              "src/composables/use-trainers.ts",
+              "src/views/pokemon/components/TrainerPicker.vue",
+              "src/views/trainers/components/TrainerRow.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/views/help/HelpPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/views/items/ItemsPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.vue"
+            ],
+            "importsTo": [
+              "src/composables/use-items.ts",
+              "src/lib/format.ts"
+            ],
+            "importedFilePaths": {
+              "@/composables/use-items": "src/composables/use-items.ts",
+              "@/lib/format": "src/lib/format.ts"
+            }
+          },
+          {
+            "filePath": "src/views/pokemon/PokemonPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/App.vue"
+            ],
+            "importsTo": [
+              "src/composables/use-pokemon.ts",
+              "src/composables/use-trainers.ts",
+              "src/views/pokemon/components/TrainerPicker.vue"
+            ],
+            "importedFilePaths": {
+              "@/composables/use-pokemon": "src/composables/use-pokemon.ts",
+              "@/composables/use-trainers": "src/composables/use-trainers.ts",
+              "@/views/pokemon/components/TrainerPicker.vue": "src/views/pokemon/components/TrainerPicker.vue"
+            }
+          },
+          {
+            "filePath": "src/views/pokemon/components/TrainerPicker.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/pokemon/PokemonPage.vue"
+            ],
+            "importsTo": [
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          },
+          {
+            "filePath": "src/views/trainers/TrainersPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.vue"
+            ],
+            "importsTo": [
+              "src/composables/use-trainers.ts",
+              "src/views/trainers/components/TrainerRow.vue"
+            ],
+            "importedFilePaths": {
+              "@/composables/use-trainers": "src/composables/use-trainers.ts",
+              "@/views/trainers/components/TrainerRow.vue": "src/views/trainers/components/TrainerRow.vue"
+            }
+          },
+          {
+            "filePath": "src/views/trainers/components/TrainerRow.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/trainers/TrainersPage.vue"
+            ],
+            "importsTo": [
+              "src/types/trainer.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/trainer": "src/types/trainer.ts"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Pokemon page flow diagram",
+          "description": "This diagram shows how the app mounts `App`, which renders the Pokemon page and loads its Pokemon through `usePokemon()`. It also shows what happens when the user clicks Pokemon or picks a trainer, and how the trainer id reaches the API through `fetchPokemon()`.",
+          "traceNodes": [
+            {
+              "id": "src/App.vue#component@1:1",
+              "type": "component",
+              "label": "Renders the header and the page the user chose",
+              "description": "When the browser loads the page, [`createApp()` makes this component the root of the app](code:src/main.ts#L4), and [`app.mount(\"#app\")` renders it](code:src/main.ts#L6).",
+              "codeBlockIds": [
+                "src/App.vue#component@1:1",
+                "src/App.vue#render-root@14:1",
+                "src/App.vue#render@15:3",
+                "src/App.vue#render@17:5",
+                "src/App.vue#render-event@17:33",
+                "src/App.vue#render@21:3",
+                "src/App.vue#render-condition@23:5",
+                "src/App.vue#render@23:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/App.vue#render@17:5",
+                "src/App.vue#render-event@17:33",
+                "src/App.vue#render@23:5"
+              ],
+              "children": [
+                {
+                  "id": "src/views/pokemon/PokemonPage.vue#component@1:1",
+                  "type": "component",
+                  "label": "Lists the Pokemon of the picked trainer",
+                  "description": "When a user clicks Pokemon, [App sets `page` to `\"pokemon\"`](code:src/App.vue#L17) and [renders this page](code:src/App.vue#L23).",
+                  "codeBlockIds": [
+                    "src/views/pokemon/PokemonPage.vue#component@1:1",
+                    "src/views/pokemon/PokemonPage.vue#state@7:1",
+                    "src/views/pokemon/PokemonPage.vue#external-value@8:1",
+                    "src/views/pokemon/PokemonPage.vue#external-value@9:1",
+                    "src/views/pokemon/PokemonPage.vue#derived@10:1",
+                    "src/views/pokemon/PokemonPage.vue#component-effect@10:22",
+                    "src/views/pokemon/PokemonPage.vue#effect-callback@10:31",
+                    "src/views/pokemon/PokemonPage.vue#function@10:31",
+                    "src/views/pokemon/PokemonPage.vue#function@10:70",
+                    "src/views/pokemon/PokemonPage.vue#variable@10:71",
+                    "src/views/pokemon/PokemonPage.vue#render-root@17:1",
+                    "src/views/pokemon/PokemonPage.vue#render@18:3",
+                    "src/views/pokemon/PokemonPage.vue#render@19:5",
+                    "src/views/pokemon/PokemonPage.vue#render@20:5",
+                    "src/views/pokemon/PokemonPage.vue#render-event@20:66",
+                    "src/views/pokemon/PokemonPage.vue#render-condition@21:5",
+                    "src/views/pokemon/PokemonPage.vue#render@21:5",
+                    "src/views/pokemon/PokemonPage.vue#render-condition@22:5",
+                    "src/views/pokemon/PokemonPage.vue#render@22:5",
+                    "src/views/pokemon/PokemonPage.vue#render@23:7",
+                    "src/views/pokemon/PokemonPage.vue#render@24:7",
+                    "src/views/pokemon/PokemonPage.vue#render-loop@25:9",
+                    "src/views/pokemon/PokemonPage.vue#render@25:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/views/pokemon/PokemonPage.vue#component@1:1",
+                    "src/views/pokemon/PokemonPage.vue#state@7:1",
+                    "src/views/pokemon/PokemonPage.vue#external-value@8:1",
+                    "src/views/pokemon/PokemonPage.vue#external-value@9:1",
+                    "src/views/pokemon/PokemonPage.vue#derived@10:1",
+                    "src/views/pokemon/PokemonPage.vue#component-effect@10:22",
+                    "src/views/pokemon/PokemonPage.vue#function@10:31",
+                    "src/views/pokemon/PokemonPage.vue#function@10:70",
+                    "src/views/pokemon/PokemonPage.vue#variable@10:71",
+                    "src/views/pokemon/PokemonPage.vue#render-root@17:1",
+                    "src/views/pokemon/PokemonPage.vue#render@18:3",
+                    "src/views/pokemon/PokemonPage.vue#render@19:5",
+                    "src/views/pokemon/PokemonPage.vue#render@20:5",
+                    "src/views/pokemon/PokemonPage.vue#render-event@20:66",
+                    "src/views/pokemon/PokemonPage.vue#render@21:5",
+                    "src/views/pokemon/PokemonPage.vue#render@22:5",
+                    "src/views/pokemon/PokemonPage.vue#render@23:7",
+                    "src/views/pokemon/PokemonPage.vue#render@24:7",
+                    "src/views/pokemon/PokemonPage.vue#render@25:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "src/views/pokemon/components/TrainerPicker.vue#component@1:1",
+                      "type": "component",
+                      "label": "Shows the trainers in a select",
+                      "description": "When PokemonPage renders, [it renders this component](code:src/views/pokemon/PokemonPage.vue#L20) with the trainers and the id of the picked trainer.",
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/TrainerPicker.vue#component@1:1",
+                        "src/views/pokemon/components/TrainerPicker.vue#call@4:1",
+                        "src/views/pokemon/components/TrainerPicker.vue#root-argument-value@4:15",
+                        "src/views/pokemon/components/TrainerPicker.vue#root-argument-value@4:36",
+                        "src/views/pokemon/components/TrainerPicker.vue#variable@5:1",
+                        "src/views/pokemon/components/TrainerPicker.vue#root-argument-value@5:36",
+                        "src/views/pokemon/components/TrainerPicker.vue#render-root@12:1",
+                        "src/views/pokemon/components/TrainerPicker.vue#render@13:3",
+                        "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
+                        "src/views/pokemon/components/TrainerPicker.vue#render@14:5",
+                        "src/views/pokemon/components/TrainerPicker.vue#render-loop@15:5",
+                        "src/views/pokemon/components/TrainerPicker.vue#render@15:5"
+                      ],
+                      "diffCodeBlockIds": [
+                        "src/views/pokemon/components/TrainerPicker.vue#component@1:1",
+                        "src/views/pokemon/components/TrainerPicker.vue#call@4:1",
+                        "src/views/pokemon/components/TrainerPicker.vue#root-argument-value@4:15",
+                        "src/views/pokemon/components/TrainerPicker.vue#root-argument-value@4:36",
+                        "src/views/pokemon/components/TrainerPicker.vue#variable@5:1",
+                        "src/views/pokemon/components/TrainerPicker.vue#root-argument-value@5:36",
+                        "src/views/pokemon/components/TrainerPicker.vue#render-root@12:1",
+                        "src/views/pokemon/components/TrainerPicker.vue#render@13:3",
+                        "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
+                        "src/views/pokemon/components/TrainerPicker.vue#render@14:5",
+                        "src/views/pokemon/components/TrainerPicker.vue#render@15:5"
+                      ],
+                      "children": [],
+                      "triggerLabels": [
+                        {
+                          "label": "A user changes the trainer select",
+                          "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37"
+                        }
+                      ],
+                      "blockLabels": [
+                        {
+                          "label": "Takes the trainers and the id of the picked trainer",
+                          "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#call@4:1"
+                        }
+                      ]
+                    }
+                  ],
+                  "triggerLabels": [
+                    {
+                      "label": "A user picks a trainer",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#render-event@20:66"
+                    }
+                  ],
+                  "blockLabels": [
+                    {
+                      "label": "Keeps the id of the picked trainer",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#state@7:1"
+                    },
+                    {
+                      "label": "Gets the trainers to pick from",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#external-value@8:1"
+                    },
+                    {
+                      "label": "Gets the Pokemon of the picked trainer and whether they load",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#external-value@9:1"
+                    },
+                    {
+                      "label": "Computes the highest level of the Pokemon",
+                      "codeBlockId": "src/views/pokemon/PokemonPage.vue#derived@10:1"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [
+                {
+                  "label": "A user clicks Pokemon",
+                  "codeBlockId": "src/App.vue#render-event@17:33"
+                }
+              ],
+              "blockLabels": []
+            },
+            {
+              "id": "src/composables/use-pokemon.ts#hook@4:1",
+              "type": "hook",
+              "label": "Loads the Pokemon each time the trainer id changes",
+              "description": "When PokemonPage renders, [it calls this composable](code:src/views/pokemon/PokemonPage.vue#L9) with its `trainerId` ref. When a user picks a trainer, [`selectTrainer()` writes `trainerId`](code:src/views/pokemon/PokemonPage.vue#L13), and the watch of this composable runs again.",
+              "codeBlockIds": [
+                "src/composables/use-pokemon.ts#hook@4:1",
+                "src/composables/use-pokemon.ts#root-argument-value@4:28",
+                "src/composables/use-pokemon.ts#state@5:3",
+                "src/composables/use-pokemon.ts#state@6:3",
+                "src/composables/use-pokemon.ts#component-effect@8:3",
+                "src/composables/use-pokemon.ts#effect-callback@9:5",
+                "src/composables/use-pokemon.ts#effect-callback@10:5",
+                "src/composables/use-pokemon.ts#function@10:5",
+                "src/composables/use-pokemon.ts#variable@10:12",
+                "src/composables/use-pokemon.ts#property@15:7",
+                "src/composables/use-pokemon.ts#property@18:12",
+                "src/composables/use-pokemon.ts#property@18:21"
+              ],
+              "diffCodeBlockIds": [
+                "src/composables/use-pokemon.ts#hook@4:1",
+                "src/composables/use-pokemon.ts#root-argument-value@4:28",
+                "src/composables/use-pokemon.ts#state@5:3",
+                "src/composables/use-pokemon.ts#state@6:3",
+                "src/composables/use-pokemon.ts#component-effect@8:3",
+                "src/composables/use-pokemon.ts#effect-callback@9:5",
+                "src/composables/use-pokemon.ts#function@10:5",
+                "src/composables/use-pokemon.ts#variable@10:12",
+                "src/composables/use-pokemon.ts#property@15:7",
+                "src/composables/use-pokemon.ts#property@18:12",
+                "src/composables/use-pokemon.ts#property@18:21"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps the loaded Pokemon",
+                  "codeBlockId": "src/composables/use-pokemon.ts#state@5:3"
+                },
+                {
+                  "label": "Keeps whether a load is running",
+                  "codeBlockId": "src/composables/use-pokemon.ts#state@6:3"
+                },
+                {
+                  "label": "Loads the Pokemon at once and after each new trainer id",
+                  "codeBlockId": "src/composables/use-pokemon.ts#component-effect@8:3"
+                },
+                {
+                  "label": "Watches the trainer id the page passes in",
+                  "codeBlockId": "src/composables/use-pokemon.ts#effect-callback@9:5"
+                },
+                {
+                  "label": "Returns the Pokemon and whether they load",
+                  "codeBlockId": "src/composables/use-pokemon.ts#property@18:12"
+                }
+              ]
+            },
+            {
+              "id": "src/main.ts#root-variable@4:1",
+              "type": "root-variable",
+              "label": "Creates the app with App as its root component",
+              "description": "When the browser loads the page, [`app.mount(\"#app\")` mounts this app](code:src/main.ts#L6).",
+              "codeBlockIds": [
+                "src/main.ts#root-variable@4:1",
+                "src/main.ts#effect-callback@4:23"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Takes App as the root component",
+                  "codeBlockId": "src/main.ts#effect-callback@4:23"
+                }
+              ]
+            },
+            {
+              "id": "src/api/pokemon.ts#function@10:1",
+              "type": "function",
+              "label": "Requests the Pokemon of one trainer or of every trainer",
+              "description": "When PokemonPage opens or a user picks a trainer, [the watch of `usePokemon()` calls this function](code:src/composables/use-pokemon.ts#L12) with the trainer id.",
+              "codeBlockIds": [
+                "src/api/pokemon.ts#function@10:1",
+                "src/api/pokemon.ts#root-argument-value@10:30",
+                "src/api/pokemon.ts#variable@11:3",
+                "src/api/pokemon.ts#condition@11:17"
+              ],
+              "diffCodeBlockIds": [
+                "src/api/pokemon.ts#function@10:1",
+                "src/api/pokemon.ts#root-argument-value@10:30",
+                "src/api/pokemon.ts#variable@11:3",
+                "src/api/pokemon.ts#condition@11:17"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Builds the `trainer_id` query when a trainer is given",
+                  "codeBlockId": "src/api/pokemon.ts#variable@11:3"
+                }
+              ]
+            },
+            {
+              "id": "src/App.vue#render-event@17:33",
+              "type": "render-event",
+              "label": "Sets the open page to the Pokemon page",
+              "description": "When a user clicks the Pokemon button of the header, this handler sets `page` to `\"pokemon\"`, and [App renders `<PokemonPage />`](code:src/App.vue#L23).",
+              "codeBlockIds": [
+                "src/App.vue#render-event@17:33"
+              ],
+              "diffCodeBlockIds": [
+                "src/App.vue#render-event@17:33"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/views/pokemon/PokemonPage.vue#render-event@20:66",
+              "type": "render-event",
+              "label": "Stores the trainer id the picker emits",
+              "description": "When a user picks a trainer, [TrainerPicker emits `select`](code:src/views/pokemon/components/TrainerPicker.vue#L8) with the trainer id, and Vue calls [`selectTrainer()`](code:src/views/pokemon/PokemonPage.vue#L12-14). The new value of `trainerId` makes [the watch of `usePokemon()`](code:src/composables/use-pokemon.ts#L8-16) load the Pokemon again.",
+              "codeBlockIds": [
+                "src/views/pokemon/PokemonPage.vue#render-event@20:66",
+                "src/views/pokemon/PokemonPage.vue#function@12:1",
+                "src/views/pokemon/PokemonPage.vue#variable@12:24"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/pokemon/PokemonPage.vue#render-event@20:66",
+                "src/views/pokemon/PokemonPage.vue#function@12:1",
+                "src/views/pokemon/PokemonPage.vue#variable@12:24"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Sets the trainer id to the emitted one",
+                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#variable@12:24"
+                }
+              ]
+            },
+            {
+              "id": "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
+              "type": "render-event",
+              "label": "Emits select with the picked trainer id",
+              "description": "When a user picks an option of the select, Vue runs this `change` handler with the value of the option.",
+              "codeBlockIds": [
+                "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
+                "src/views/pokemon/components/TrainerPicker.vue#function@7:1",
+                "src/views/pokemon/components/TrainerPicker.vue#variable@7:22",
+                "src/views/pokemon/components/TrainerPicker.vue#call@8:3",
+                "src/views/pokemon/components/TrainerPicker.vue#condition@8:18"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
+                "src/views/pokemon/components/TrainerPicker.vue#function@7:1",
+                "src/views/pokemon/components/TrainerPicker.vue#variable@7:22",
+                "src/views/pokemon/components/TrainerPicker.vue#call@8:3",
+                "src/views/pokemon/components/TrainerPicker.vue#condition@8:18"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Receives the value of the picked option",
+                  "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#variable@7:22"
+                },
+                {
+                  "label": "Emits select with the trainer id, or `null` for Every trainer",
+                  "codeBlockId": "src/views/pokemon/components/TrainerPicker.vue#call@8:3"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/composables/use-pokemon.ts#hook@4:1 -> src/views/pokemon/PokemonPage.vue#component@1:1",
+              "from": "src/composables/use-pokemon.ts#hook@4:1",
+              "to": "src/views/pokemon/PokemonPage.vue#component@1:1"
+            },
+            {
+              "id": "src/composables/use-pokemon.ts#hook@4:1 -> src/api/pokemon.ts#function@10:1",
+              "from": "src/composables/use-pokemon.ts#hook@4:1",
+              "to": "src/api/pokemon.ts#function@10:1"
+            },
+            {
+              "id": "src/main.ts#root-variable@4:1 -> src/App.vue#component@1:1",
+              "from": "src/main.ts#root-variable@4:1",
+              "to": "src/App.vue#component@1:1"
+            },
+            {
+              "id": "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37 -> src/views/pokemon/PokemonPage.vue#render-event@20:66",
+              "from": "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
+              "to": "src/views/pokemon/PokemonPage.vue#render-event@20:66"
+            },
+            {
+              "id": "src/views/pokemon/components/TrainerPicker.vue#component@1:1 -> src/views/pokemon/PokemonPage.vue#render-event@20:66",
+              "from": "src/views/pokemon/components/TrainerPicker.vue#component@1:1",
+              "to": "src/views/pokemon/PokemonPage.vue#render-event@20:66"
+            },
+            {
+              "id": "src/App.vue#component@1:1 -> src/views/pokemon/PokemonPage.vue#component@1:1",
+              "from": "src/App.vue#component@1:1",
+              "to": "src/views/pokemon/PokemonPage.vue#component@1:1"
+            },
+            {
+              "id": "src/views/pokemon/PokemonPage.vue#component@1:1 -> src/composables/use-pokemon.ts#hook@4:1",
+              "from": "src/views/pokemon/PokemonPage.vue#component@1:1",
+              "to": "src/composables/use-pokemon.ts#hook@4:1"
+            },
+            {
+              "id": "src/views/pokemon/PokemonPage.vue#component@1:1 -> src/views/pokemon/components/TrainerPicker.vue#component@1:1",
+              "from": "src/views/pokemon/PokemonPage.vue#component@1:1",
+              "to": "src/views/pokemon/components/TrainerPicker.vue#component@1:1"
+            },
+            {
+              "id": "src/App.vue#component@1:1 -> src/App.vue#render-event@17:33",
+              "from": "src/App.vue#component@1:1",
+              "to": "src/App.vue#render-event@17:33"
+            },
+            {
+              "id": "src/views/pokemon/PokemonPage.vue#component@1:1 -> src/views/pokemon/PokemonPage.vue#render-event@20:66",
+              "from": "src/views/pokemon/PokemonPage.vue#component@1:1",
+              "to": "src/views/pokemon/PokemonPage.vue#render-event@20:66"
+            },
+            {
+              "id": "src/views/pokemon/components/TrainerPicker.vue#component@1:1 -> src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
+              "from": "src/views/pokemon/components/TrainerPicker.vue#component@1:1",
+              "to": "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/App.vue",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "App",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 27
+                  },
+                  "codeBlockIds": [
+                    "src/App.vue#component@1:1",
+                    "src/App.vue#render@17:5",
+                    "src/App.vue#render-event@17:33",
+                    "src/App.vue#render@23:5"
+                  ],
+                  "children": [
+                    {
+                      "id": "w1.1",
+                      "declaration": "App › BaseButton.onClick",
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 17
+                      },
+                      "codeBlockIds": [
+                        "src/App.vue#render-event@17:33"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w1.2",
+                      "declaration": "App › Markup condition :23",
+                      "range": {
+                        "lineStart": 23,
+                        "lineEnd": 23
+                      },
+                      "codeBlockIds": [
+                        "src/App.vue#render-condition@23:5",
+                        "src/App.vue#render@23:5"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w2",
+                  "declaration": "PageName",
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/App.vue#type-declaration@9:1"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/api/pokemon.ts",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "Pokemon",
+                  "range": {
+                    "lineStart": 3,
+                    "lineEnd": 8
+                  },
+                  "codeBlockIds": [
+                    "src/api/pokemon.ts#type-declaration@3:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "fetchPokemon",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 13
+                  },
+                  "codeBlockIds": [
+                    "src/api/pokemon.ts#function@10:1",
+                    "src/api/pokemon.ts#root-argument-value@10:30",
+                    "src/api/pokemon.ts#variable@11:3",
+                    "src/api/pokemon.ts#condition@11:17"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/composables/use-pokemon.ts",
+              "waypoints": [
+                {
+                  "id": "w5",
+                  "declaration": "usePokemon",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 19
+                  },
+                  "codeBlockIds": [
+                    "src/composables/use-pokemon.ts#hook@4:1",
+                    "src/composables/use-pokemon.ts#root-argument-value@4:28",
+                    "src/composables/use-pokemon.ts#state@5:3",
+                    "src/composables/use-pokemon.ts#state@6:3",
+                    "src/composables/use-pokemon.ts#component-effect@8:3",
+                    "src/composables/use-pokemon.ts#effect-callback@9:5",
+                    "src/composables/use-pokemon.ts#function@10:5",
+                    "src/composables/use-pokemon.ts#variable@10:12",
+                    "src/composables/use-pokemon.ts#property@15:7",
+                    "src/composables/use-pokemon.ts#property@18:12",
+                    "src/composables/use-pokemon.ts#property@18:21"
+                  ],
+                  "children": [
+                    {
+                      "id": "w5.1",
+                      "declaration": "usePokemon › pokemon",
+                      "range": {
+                        "lineStart": 5,
+                        "lineEnd": 5
+                      },
+                      "codeBlockIds": [
+                        "src/composables/use-pokemon.ts#state@5:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.2",
+                      "declaration": "usePokemon › isPending",
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "codeBlockIds": [
+                        "src/composables/use-pokemon.ts#state@6:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.3",
+                      "declaration": "usePokemon › watch",
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 16
+                      },
+                      "codeBlockIds": [
+                        "src/composables/use-pokemon.ts#component-effect@8:3",
+                        "src/composables/use-pokemon.ts#effect-callback@9:5",
+                        "src/composables/use-pokemon.ts#function@10:5",
+                        "src/composables/use-pokemon.ts#variable@10:12",
+                        "src/composables/use-pokemon.ts#property@15:7"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w5.4",
+                      "declaration": "usePokemon › pokemon, isPending",
+                      "range": {
+                        "lineStart": 18,
+                        "lineEnd": 18
+                      },
+                      "codeBlockIds": [
+                        "src/composables/use-pokemon.ts#property@18:12",
+                        "src/composables/use-pokemon.ts#property@18:21"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/views/pokemon/PokemonPage.vue",
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "declaration": "PokemonPage",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 29
+                  },
+                  "codeBlockIds": [
+                    "src/views/pokemon/PokemonPage.vue#component@1:1",
+                    "src/views/pokemon/PokemonPage.vue#state@7:1",
+                    "src/views/pokemon/PokemonPage.vue#external-value@8:1",
+                    "src/views/pokemon/PokemonPage.vue#external-value@9:1",
+                    "src/views/pokemon/PokemonPage.vue#derived@10:1",
+                    "src/views/pokemon/PokemonPage.vue#component-effect@10:22",
+                    "src/views/pokemon/PokemonPage.vue#function@10:31",
+                    "src/views/pokemon/PokemonPage.vue#function@10:70",
+                    "src/views/pokemon/PokemonPage.vue#variable@10:71",
+                    "src/views/pokemon/PokemonPage.vue#function@12:1",
+                    "src/views/pokemon/PokemonPage.vue#variable@12:24",
+                    "src/views/pokemon/PokemonPage.vue#render-root@17:1",
+                    "src/views/pokemon/PokemonPage.vue#render@18:3",
+                    "src/views/pokemon/PokemonPage.vue#render@19:5",
+                    "src/views/pokemon/PokemonPage.vue#render@20:5",
+                    "src/views/pokemon/PokemonPage.vue#render-event@20:66",
+                    "src/views/pokemon/PokemonPage.vue#render@21:5",
+                    "src/views/pokemon/PokemonPage.vue#render@22:5",
+                    "src/views/pokemon/PokemonPage.vue#render@23:7",
+                    "src/views/pokemon/PokemonPage.vue#render@24:7",
+                    "src/views/pokemon/PokemonPage.vue#render@25:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w6.1",
+                      "declaration": "PokemonPage › trainerId",
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 7
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#state@7:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.2",
+                      "declaration": "PokemonPage › trainers",
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#external-value@8:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.3",
+                      "declaration": "PokemonPage › pokemon",
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 9
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#external-value@9:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.4",
+                      "declaration": "PokemonPage › highestLevel",
+                      "range": {
+                        "lineStart": 10,
+                        "lineEnd": 10
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#derived@10:1",
+                        "src/views/pokemon/PokemonPage.vue#component-effect@10:22",
+                        "src/views/pokemon/PokemonPage.vue#function@10:31",
+                        "src/views/pokemon/PokemonPage.vue#function@10:70",
+                        "src/views/pokemon/PokemonPage.vue#variable@10:71"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.5",
+                      "declaration": "PokemonPage › selectTrainer",
+                      "range": {
+                        "lineStart": 12,
+                        "lineEnd": 14
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#function@12:1",
+                        "src/views/pokemon/PokemonPage.vue#variable@12:24"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.6",
+                      "declaration": "PokemonPage › TrainerPicker.onSelect",
+                      "range": {
+                        "lineStart": 20,
+                        "lineEnd": 20
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#render-event@20:66"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.7",
+                      "declaration": "PokemonPage › Markup condition :21",
+                      "range": {
+                        "lineStart": 21,
+                        "lineEnd": 21
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#render-condition@21:5",
+                        "src/views/pokemon/PokemonPage.vue#render@21:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w6.8",
+                      "declaration": "PokemonPage › Markup condition :22",
+                      "range": {
+                        "lineStart": 22,
+                        "lineEnd": 27
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/PokemonPage.vue#render-condition@22:5",
+                        "src/views/pokemon/PokemonPage.vue#render@22:5",
+                        "src/views/pokemon/PokemonPage.vue#render@23:7",
+                        "src/views/pokemon/PokemonPage.vue#render@24:7",
+                        "src/views/pokemon/PokemonPage.vue#render@25:9"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/views/pokemon/components/TrainerPicker.vue",
+              "waypoints": [
+                {
+                  "id": "w7",
+                  "declaration": "TrainerPicker",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 17
+                  },
+                  "codeBlockIds": [
+                    "src/views/pokemon/components/TrainerPicker.vue#component@1:1",
+                    "src/views/pokemon/components/TrainerPicker.vue#call@4:1",
+                    "src/views/pokemon/components/TrainerPicker.vue#root-argument-value@4:15",
+                    "src/views/pokemon/components/TrainerPicker.vue#root-argument-value@4:36",
+                    "src/views/pokemon/components/TrainerPicker.vue#variable@5:1",
+                    "src/views/pokemon/components/TrainerPicker.vue#root-argument-value@5:36",
+                    "src/views/pokemon/components/TrainerPicker.vue#function@7:1",
+                    "src/views/pokemon/components/TrainerPicker.vue#variable@7:22",
+                    "src/views/pokemon/components/TrainerPicker.vue#call@8:3",
+                    "src/views/pokemon/components/TrainerPicker.vue#condition@8:18",
+                    "src/views/pokemon/components/TrainerPicker.vue#render-root@12:1",
+                    "src/views/pokemon/components/TrainerPicker.vue#render@13:3",
+                    "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37",
+                    "src/views/pokemon/components/TrainerPicker.vue#render@14:5",
+                    "src/views/pokemon/components/TrainerPicker.vue#render@15:5"
+                  ],
+                  "children": [
+                    {
+                      "id": "w7.1",
+                      "declaration": "TrainerPicker › defineProps, emit",
+                      "range": {
+                        "lineStart": 4,
+                        "lineEnd": 5
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/TrainerPicker.vue#call@4:1",
+                        "src/views/pokemon/components/TrainerPicker.vue#variable@5:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.2",
+                      "declaration": "TrainerPicker › pickTrainer",
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 9
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/TrainerPicker.vue#function@7:1",
+                        "src/views/pokemon/components/TrainerPicker.vue#variable@7:22",
+                        "src/views/pokemon/components/TrainerPicker.vue#call@8:3",
+                        "src/views/pokemon/components/TrainerPicker.vue#condition@8:18"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.3",
+                      "declaration": "TrainerPicker › select.onChange",
+                      "range": {
+                        "lineStart": 13,
+                        "lineEnd": 13
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/TrainerPicker.vue#render-event@13:37"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.4",
+                      "declaration": "TrainerPicker › Markup loop :15",
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 15
+                      },
+                      "codeBlockIds": [
+                        "src/views/pokemon/components/TrainerPicker.vue#render-loop@15:5",
+                        "src/views/pokemon/components/TrainerPicker.vue#render@15:5"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/api/pokemon.ts",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 64,
+                "endColumn": 71,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  3,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 16,
+                "endColumn": 25,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 57,
+                "endColumn": 66,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/api/client.ts",
+                "lines": [
+                  9,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  3,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 39,
+                "endColumn": 44,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 10,
+                "startColumn": 56,
+                "endColumn": 63,
+                "name": "Promise"
+              }
+            ],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 17,
+                "endColumn": 24,
+                "lines": [
+                  3,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 22,
+                    "endColumn": 29,
+                    "path": "src/composables/use-pokemon.ts",
+                    "text": "  const pokemon = ref<Pokemon[]>([])"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  10,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 28,
+                    "endColumn": 40,
+                    "path": "src/composables/use-pokemon.ts",
+                    "text": "      pokemon.value = await fetchPokemon(id)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/App.vue",
+            "references": [
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 16,
+                "path": "src/App.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 17,
+                "endColumn": 25,
+                "path": "src/App.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 40,
+                "endColumn": 44,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 40,
+                "endColumn": 44,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 40,
+                "endColumn": 44,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 40,
+                "endColumn": 44,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 5,
+                "endColumn": 17,
+                "path": "src/views/trainers/TrainersPage.vue",
+                "lines": [
+                  1,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 24,
+                "endColumn": 28,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 5,
+                "endColumn": 16,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  1,
+                  29
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 28,
+                "endColumn": 32,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 5,
+                "endColumn": 14,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  1,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 26,
+                "endColumn": 30,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 5,
+                "endColumn": 13,
+                "path": "src/views/help/HelpPage.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  27
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 22,
+                    "endColumn": 25,
+                    "path": "src/main.ts",
+                    "text": "const app = createApp(App)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/composables/use-pokemon.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 38,
+                "endColumn": 41,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "Ref"
+                }
+              },
+              {
+                "line": 5,
+                "startColumn": 18,
+                "endColumn": 21,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 5,
+                "startColumn": 22,
+                "endColumn": 29,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  3,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 20,
+                "endColumn": 23,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 2,
+                "endColumn": 7,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "watch"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 4,
+                "endColumn": 13,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 28,
+                "endColumn": 40,
+                "path": "src/api/pokemon.ts",
+                "lines": [
+                  10,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 41,
+                "endColumn": 43,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 20,
+                "endColumn": 29,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  4,
+                  19
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 31,
+                    "endColumn": 41,
+                    "path": "src/views/pokemon/PokemonPage.vue",
+                    "text": "const { pokemon, isPending } = usePokemon(trainerId)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/main.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 12,
+                "endColumn": 21,
+                "path": "src/main.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "createApp"
+                }
+              },
+              {
+                "line": 4,
+                "startColumn": 22,
+                "endColumn": 25,
+                "path": "src/App.vue",
+                "lines": [
+                  1,
+                  27
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": []
+          },
+          {
+            "path": "src/views/pokemon/components/TrainerPicker.vue",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 24,
+                "endColumn": 31,
+                "path": "src/types/trainer.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 2,
+                "endColumn": 6,
+                "path": "src/views/pokemon/components/TrainerPicker.vue",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 17,
+                "endColumn": 22,
+                "path": "src/views/pokemon/components/TrainerPicker.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 46,
+                "endColumn": 51,
+                "path": "src/views/pokemon/components/TrainerPicker.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 45,
+                "endColumn": 56,
+                "path": "src/views/pokemon/components/TrainerPicker.vue",
+                "lines": [
+                  7,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 4,
+                "startColumn": 0,
+                "endColumn": 11,
+                "name": "defineProps"
+              },
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 24,
+                "name": "defineEmits"
+              },
+              {
+                "line": 8,
+                "startColumn": 39,
+                "endColumn": 45,
+                "name": "Number"
+              },
+              {
+                "line": 13,
+                "startColumn": 18,
+                "endColumn": 28,
+                "name": "selectedId"
+              },
+              {
+                "line": 13,
+                "startColumn": 58,
+                "endColumn": 64,
+                "name": "$event"
+              },
+              {
+                "line": 13,
+                "startColumn": 75,
+                "endColumn": 92,
+                "name": "HTMLSelectElement"
+              },
+              {
+                "line": 15,
+                "startColumn": 30,
+                "endColumn": 38,
+                "name": "trainers"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 20,
+                    "startColumn": 5,
+                    "endColumn": 18,
+                    "path": "src/views/pokemon/PokemonPage.vue",
+                    "text": "    <TrainerPicker :trainers=\"trainers\" :selected-id=\"trainerId\" @select=\"selectTrainer\" />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/views/pokemon/PokemonPage.vue",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 18,
+                "endColumn": 21,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 21,
+                "endColumn": 32,
+                "path": "src/composables/use-trainers.ts",
+                "lines": [
+                  5,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 31,
+                "endColumn": 41,
+                "path": "src/composables/use-pokemon.ts",
+                "lines": [
+                  4,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 42,
+                "endColumn": 51,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 21,
+                "endColumn": 29,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "computed"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 51,
+                "endColumn": 58,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 2,
+                "endColumn": 11,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 20,
+                "endColumn": 22,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 5,
+                "endColumn": 18,
+                "path": "src/views/pokemon/components/TrainerPicker.vue",
+                "lines": [
+                  1,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 30,
+                "endColumn": 38,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 54,
+                "endColumn": 63,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 74,
+                "endColumn": 87,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  12,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 13,
+                "endColumn": 22,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 35,
+                "endColumn": 47,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 28,
+                "endColumn": 35,
+                "path": "src/views/pokemon/PokemonPage.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 10,
+                "startColumn": 36,
+                "endColumn": 40,
+                "name": "Math"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  29
+                ],
+                "usages": [
+                  {
+                    "line": 23,
+                    "startColumn": 5,
+                    "endColumn": 16,
+                    "path": "src/App.vue",
+                    "text": "    <PokemonPage v-else-if=\"page === 'pokemon'\" />"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

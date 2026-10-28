@@ -1,0 +1,12 @@
+[project]
+name = "pokedex"
+version = "0.1.0"
+dependencies = [
+  "sqlalchemy>=2.0",
+]
+
+[project.scripts]
+pokedex = "pokedex.cli:main"
+
+[tool.setuptools.package-dir]
+"" = "src"

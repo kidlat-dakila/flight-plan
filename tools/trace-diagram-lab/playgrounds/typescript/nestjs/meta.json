@@ -1,0 +1,6 @@
+{
+  "title": "NestJS API with guards, class-validator and an in-memory trainer store",
+  "packages": ["@nestjs/common", "@nestjs/core", "class-validator", "express", "reflect-metadata"],
+  "language": "typescript",
+  "mainFramework": "nest"
+}

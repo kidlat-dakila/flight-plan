@@ -1,0 +1,6 @@
+{
+  "title": "React app with a custom hook and local state, no other library",
+  "packages": ["react", "react-dom"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

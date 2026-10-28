@@ -1,0 +1,6 @@
+{
+  "title": "React app with React Router route loaders, no other library",
+  "packages": ["react", "react-dom", "react-router"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

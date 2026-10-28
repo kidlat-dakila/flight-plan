@@ -1,0 +1,1601 @@
+{
+  "title": "Implement store useBagStore",
+  "diff": [
+    "diff --git a/src/stores/bag.ts b/src/stores/bag.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/stores/bag.ts",
+    "@@ -0,0 +1,30 @@",
+    "+import { defineStore } from \"pinia\"",
+    "+import type { Item } from \"@/types/item\"",
+    "+",
+    "+interface BagLine {",
+    "+  item: Item",
+    "+  quantity: number",
+    "+}",
+    "+",
+    "+export const useBagStore = defineStore(\"bag\", {",
+    "+  state: () => ({",
+    "+    lines: [] as BagLine[],",
+    "+  }),",
+    "+  getters: {",
+    "+    count: (state): number => state.lines.reduce((sum, line) => sum + line.quantity, 0),",
+    "+    total: (state): number => state.lines.reduce((sum, line) => sum + line.item.price * line.quantity, 0),",
+    "+  },",
+    "+  actions: {",
+    "+    addItem(item: Item) {",
+    "+      const line = this.lines.find((entry) => entry.item.id === item.id)",
+    "+      if (line === undefined) {",
+    "+        this.lines.push({ item, quantity: 1 })",
+    "+        return",
+    "+      }",
+    "+      line.quantity += 1",
+    "+    },",
+    "+    clear() {",
+    "+      this.lines = []",
+    "+    },",
+    "+  },",
+    "+})",
+    "diff --git a/src/views/items/components/BagSummary.vue b/src/views/items/components/BagSummary.vue",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/views/items/components/BagSummary.vue",
+    "@@ -0,0 +1,18 @@",
+    "+<script setup lang=\"ts\">",
+    "+import { BaseButton } from \"@/components/ui\"",
+    "+import { formatPrice } from \"@/lib/format\"",
+    "+",
+    "+defineProps<{ count: number, total: number }>()",
+    "+const emit = defineEmits<{ (event: \"clear\"): void }>()",
+    "+",
+    "+const askToEmpty = () => {",
+    "+  emit(\"clear\")",
+    "+}",
+    "+</script>",
+    "+",
+    "+<template>",
+    "+  <p>",
+    "+    {{ count }} items in the bag, {{ formatPrice(total) }}",
+    "+    <BaseButton variant=\"ghost\" :disabled=\"count === 0\" @click=\"askToEmpty\">Empty the bag</BaseButton>",
+    "+  </p>",
+    "+</template>",
+    "diff --git a/src/views/items/ItemsPage.vue b/src/views/items/ItemsPage.vue",
+    "--- a/src/views/items/ItemsPage.vue",
+    "+++ b/src/views/items/ItemsPage.vue",
+    "@@ -1,0 +2 @@",
+    "+import { BaseButton } from \"@/components/ui\"",
+    "@@ -3,0 +5,2 @@ import { formatPrice } from \"@/lib/format\"",
+    "+import { useBagStore } from \"@/stores/bag\"",
+    "+import BagSummary from \"@/views/items/components/BagSummary.vue\"",
+    "@@ -5,0 +9,5 @@ const { items, isPending } = useItems()",
+    "+const bag = useBagStore()",
+    "+",
+    "+const emptyBag = () => {",
+    "+  bag.clear()",
+    "+}",
+    "@@ -8,0 +17 @@ const { items, isPending } = useItems()",
+    "+  <BagSummary :count=\"bag.count\" :total=\"bag.total\" @clear=\"emptyBag\" />",
+    "@@ -11 +20,4 @@ const { items, isPending } = useItems()",
+    "-    <li v-for=\"item in items\" :key=\"item.id\">{{ item.name }} {{ formatPrice(item.price) }}</li>",
+    "+    <li v-for=\"item in items\" :key=\"item.id\">",
+    "+      {{ item.name }} {{ formatPrice(item.price) }}",
+    "+      <BaseButton variant=\"ghost\" @click=\"bag.addItem(item)\">Add to bag</BaseButton>",
+    "+    </li>"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New useBagStore and BagSummary, modified ItemsPage",
+        "importGraph": [
+          {
+            "filePath": "src/App.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/components/ui/index.ts",
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/stores/session": "src/stores/session.ts",
+              "@/views/help/HelpPage.vue": "src/views/help/HelpPage.vue",
+              "@/views/items/ItemsPage.vue": "src/views/items/ItemsPage.vue",
+              "@/views/trainers/TrainersPage.vue": "src/views/trainers/TrainersPage.vue"
+            }
+          },
+          {
+            "filePath": "src/api/client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/items.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/api/items.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/composables/use-items.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/components/ui/BaseButton.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/components/ui/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.vue",
+              "src/views/items/ItemsPage.vue",
+              "src/views/items/components/BagSummary.vue"
+            ],
+            "importsTo": [
+              "src/components/ui/BaseButton.vue"
+            ],
+            "importedFilePaths": {
+              "./BaseButton.vue": "src/components/ui/BaseButton.vue"
+            }
+          },
+          {
+            "filePath": "src/composables/use-items.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importsTo": [
+              "src/api/items.ts",
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/items": "src/api/items.ts",
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/lib/format.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/items/ItemsPage.vue",
+              "src/views/items/components/BagSummary.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/App.vue"
+            ],
+            "importedFilePaths": {
+              "@/App.vue": "src/App.vue"
+            }
+          },
+          {
+            "filePath": "src/stores/bag.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importsTo": [
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/types/item.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/items.ts",
+              "src/composables/use-items.ts",
+              "src/stores/bag.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/views/items/ItemsPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/App.vue"
+            ],
+            "importsTo": [
+              "src/components/ui/index.ts",
+              "src/composables/use-items.ts",
+              "src/lib/format.ts",
+              "src/stores/bag.ts",
+              "src/views/items/components/BagSummary.vue"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/composables/use-items": "src/composables/use-items.ts",
+              "@/lib/format": "src/lib/format.ts",
+              "@/stores/bag": "src/stores/bag.ts",
+              "@/views/items/components/BagSummary.vue": "src/views/items/components/BagSummary.vue"
+            }
+          },
+          {
+            "filePath": "src/views/items/components/BagSummary.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importsTo": [
+              "src/components/ui/index.ts",
+              "src/lib/format.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/lib/format": "src/lib/format.ts"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Items page flow diagram",
+          "description": "This diagram shows how the items page reads the count and the total of the bag store and renders them in the bag summary. It also shows what happens when the user clicks Add to bag or Empty the bag, and how each click reaches the bag store through `addItem()` or `clear()`.",
+          "traceNodes": [
+            {
+              "id": "src/components/ui/BaseButton.vue#component@1:1",
+              "type": "component",
+              "label": "Renders a button that emits click",
+              "description": "When BagSummary renders, [it renders this button](code:src/views/items/components/BagSummary.vue#L16) with the text Empty the bag.",
+              "codeBlockIds": [
+                "src/components/ui/BaseButton.vue#component@1:1",
+                "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+                "src/components/ui/BaseButton.vue#render-event@7:74"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [
+                {
+                  "label": "A user clicks the button",
+                  "codeBlockId": "src/components/ui/BaseButton.vue#render-event@7:74"
+                }
+              ],
+              "blockLabels": []
+            },
+            {
+              "id": "src/stores/bag.ts#state@9:1",
+              "type": "state",
+              "label": "Keeps the lines of the bag with their count and total",
+              "description": "Three paths reach this store:\n- When ItemsPage renders, [it calls `useBagStore()`](code:src/views/items/ItemsPage.vue#L9) and [reads `count` and `total`](code:src/views/items/ItemsPage.vue#L17).\n- When a user clicks Add to bag, [ItemsPage calls `addItem()` with the item of the row](code:src/views/items/ItemsPage.vue#L22).\n- When a user clicks Empty the bag, [`emptyBag()` calls `clear()`](code:src/views/items/ItemsPage.vue#L12).",
+              "codeBlockIds": [
+                "src/stores/bag.ts#state@9:1",
+                "src/stores/bag.ts#effect@9:28",
+                "src/stores/bag.ts#effect-callback@10:3",
+                "src/stores/bag.ts#function@10:10",
+                "src/stores/bag.ts#property@11:5",
+                "src/stores/bag.ts#property@13:3",
+                "src/stores/bag.ts#function@14:5",
+                "src/stores/bag.ts#variable@14:13",
+                "src/stores/bag.ts#function@14:50",
+                "src/stores/bag.ts#variable@14:51",
+                "src/stores/bag.ts#variable@14:56",
+                "src/stores/bag.ts#function@15:5",
+                "src/stores/bag.ts#variable@15:13",
+                "src/stores/bag.ts#function@15:50",
+                "src/stores/bag.ts#variable@15:51",
+                "src/stores/bag.ts#variable@15:56",
+                "src/stores/bag.ts#property@17:3",
+                "src/stores/bag.ts#function@18:5",
+                "src/stores/bag.ts#variable@18:13",
+                "src/stores/bag.ts#variable@19:7",
+                "src/stores/bag.ts#function@19:36",
+                "src/stores/bag.ts#variable@19:37",
+                "src/stores/bag.ts#condition@20:7",
+                "src/stores/bag.ts#call@21:9",
+                "src/stores/bag.ts#property@21:27",
+                "src/stores/bag.ts#property@21:33",
+                "src/stores/bag.ts#function@26:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/bag.ts#state@9:1",
+                "src/stores/bag.ts#effect@9:28",
+                "src/stores/bag.ts#effect-callback@10:3",
+                "src/stores/bag.ts#function@10:10",
+                "src/stores/bag.ts#property@11:5",
+                "src/stores/bag.ts#property@13:3",
+                "src/stores/bag.ts#function@14:5",
+                "src/stores/bag.ts#variable@14:13",
+                "src/stores/bag.ts#function@14:50",
+                "src/stores/bag.ts#variable@14:51",
+                "src/stores/bag.ts#variable@14:56",
+                "src/stores/bag.ts#function@15:5",
+                "src/stores/bag.ts#variable@15:13",
+                "src/stores/bag.ts#function@15:50",
+                "src/stores/bag.ts#variable@15:51",
+                "src/stores/bag.ts#variable@15:56",
+                "src/stores/bag.ts#property@17:3",
+                "src/stores/bag.ts#function@18:5",
+                "src/stores/bag.ts#variable@18:13",
+                "src/stores/bag.ts#variable@19:7",
+                "src/stores/bag.ts#function@19:36",
+                "src/stores/bag.ts#variable@19:37",
+                "src/stores/bag.ts#condition@20:7",
+                "src/stores/bag.ts#call@21:9",
+                "src/stores/bag.ts#property@21:27",
+                "src/stores/bag.ts#property@21:33",
+                "src/stores/bag.ts#function@26:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps one line per item with its quantity",
+                  "codeBlockId": "src/stores/bag.ts#property@11:5"
+                },
+                {
+                  "label": "Adds up the quantities of the lines",
+                  "codeBlockId": "src/stores/bag.ts#function@14:5"
+                },
+                {
+                  "label": "Adds up the price of each line times its quantity",
+                  "codeBlockId": "src/stores/bag.ts#function@15:5"
+                },
+                {
+                  "label": "Adds one of the item, as a new line or to its line",
+                  "codeBlockId": "src/stores/bag.ts#function@18:5"
+                },
+                {
+                  "label": "Removes every line from the bag",
+                  "codeBlockId": "src/stores/bag.ts#function@26:5"
+                }
+              ]
+            },
+            {
+              "id": "src/main.ts#root-variable@5:1",
+              "type": "root-variable",
+              "label": "Creates the app with App as its root component",
+              "description": "When the browser loads the page, [`app.use(createPinia())` installs Pinia](code:src/main.ts#L7) and [`app.mount(\"#app\")` mounts this app](code:src/main.ts#L8).",
+              "codeBlockIds": [
+                "src/main.ts#root-variable@5:1",
+                "src/main.ts#effect-callback@5:23"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Takes App as the root component",
+                  "codeBlockId": "src/main.ts#effect-callback@5:23"
+                }
+              ]
+            },
+            {
+              "id": "src/App.vue#component@1:1",
+              "type": "component",
+              "label": "Renders the header and the page the user chose",
+              "description": "When the browser loads the page, [`createApp()` makes this component the root of the app](code:src/main.ts#L5), and [`app.mount(\"#app\")` renders it](code:src/main.ts#L8).",
+              "codeBlockIds": [
+                "src/App.vue#component@1:1",
+                "src/App.vue#render-root@15:1",
+                "src/App.vue#render@23:3",
+                "src/App.vue#render-condition@25:5",
+                "src/App.vue#render@25:5"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/views/items/ItemsPage.vue#component@1:1",
+                  "type": "component",
+                  "label": "Lists the items below a summary of the bag",
+                  "description": "When a user clicks Items in the header, [App sets `page` to `\"items\"`](code:src/App.vue#L17) and [renders this page](code:src/App.vue#L24).",
+                  "codeBlockIds": [
+                    "src/views/items/ItemsPage.vue#component@1:1",
+                    "src/views/items/ItemsPage.vue#external-value@9:1",
+                    "src/views/items/ItemsPage.vue#render-root@16:1",
+                    "src/views/items/ItemsPage.vue#render@17:3",
+                    "src/views/items/ItemsPage.vue#render-event@17:53",
+                    "src/views/items/ItemsPage.vue#render-condition@19:3",
+                    "src/views/items/ItemsPage.vue#render@19:3",
+                    "src/views/items/ItemsPage.vue#render-loop@20:5",
+                    "src/views/items/ItemsPage.vue#render@20:5",
+                    "src/views/items/ItemsPage.vue#render@22:7",
+                    "src/views/items/ItemsPage.vue#render-event@22:35"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/views/items/ItemsPage.vue#external-value@9:1",
+                    "src/views/items/ItemsPage.vue#render@17:3",
+                    "src/views/items/ItemsPage.vue#render-event@17:53",
+                    "src/views/items/ItemsPage.vue#render@20:5",
+                    "src/views/items/ItemsPage.vue#render@22:7",
+                    "src/views/items/ItemsPage.vue#render-event@22:35"
+                  ],
+                  "children": [
+                    {
+                      "id": "src/views/items/components/BagSummary.vue#component@1:1",
+                      "type": "component",
+                      "label": "Shows the item count and the total of the bag",
+                      "description": "When ItemsPage renders, [it renders this summary](code:src/views/items/ItemsPage.vue#L17) with `count` and `total` of the bag store.",
+                      "codeBlockIds": [
+                        "src/views/items/components/BagSummary.vue#component@1:1",
+                        "src/views/items/components/BagSummary.vue#call@5:1",
+                        "src/views/items/components/BagSummary.vue#root-argument-value@5:15",
+                        "src/views/items/components/BagSummary.vue#root-argument-value@5:30",
+                        "src/views/items/components/BagSummary.vue#variable@6:1",
+                        "src/views/items/components/BagSummary.vue#root-argument-value@6:36",
+                        "src/views/items/components/BagSummary.vue#render-root@13:1",
+                        "src/views/items/components/BagSummary.vue#render@14:3",
+                        "src/views/items/components/BagSummary.vue#render@16:5",
+                        "src/views/items/components/BagSummary.vue#render-event@16:57"
+                      ],
+                      "diffCodeBlockIds": [
+                        "src/views/items/components/BagSummary.vue#component@1:1",
+                        "src/views/items/components/BagSummary.vue#call@5:1",
+                        "src/views/items/components/BagSummary.vue#root-argument-value@5:15",
+                        "src/views/items/components/BagSummary.vue#root-argument-value@5:30",
+                        "src/views/items/components/BagSummary.vue#variable@6:1",
+                        "src/views/items/components/BagSummary.vue#root-argument-value@6:36",
+                        "src/views/items/components/BagSummary.vue#render-root@13:1",
+                        "src/views/items/components/BagSummary.vue#render@14:3",
+                        "src/views/items/components/BagSummary.vue#render@16:5",
+                        "src/views/items/components/BagSummary.vue#render-event@16:57"
+                      ],
+                      "children": [],
+                      "triggerLabels": [
+                        {
+                          "label": "A user clicks Empty the bag",
+                          "codeBlockId": "src/views/items/components/BagSummary.vue#render-event@16:57"
+                        }
+                      ],
+                      "blockLabels": [
+                        {
+                          "label": "Takes the item count and the total price",
+                          "codeBlockId": "src/views/items/components/BagSummary.vue#call@5:1"
+                        }
+                      ]
+                    }
+                  ],
+                  "triggerLabels": [
+                    {
+                      "label": "A user empties the bag",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render-event@17:53"
+                    },
+                    {
+                      "label": "A user clicks Add to bag",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render-event@22:35"
+                    }
+                  ],
+                  "blockLabels": [
+                    {
+                      "label": "Gets the bag store",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#external-value@9:1"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/components/ui/BaseButton.vue#render-event@7:74",
+              "type": "render-event",
+              "label": "Emits click to the component that renders the button",
+              "description": "When a user clicks the `<button>`, Vue runs this handler, and [BagSummary receives `click`](code:src/views/items/components/BagSummary.vue#L16).",
+              "codeBlockIds": [
+                "src/components/ui/BaseButton.vue#render-event@7:74"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#render-event@17:53",
+              "type": "render-event",
+              "label": "Empties the bag",
+              "description": "When a user clicks Empty the bag, [BagSummary emits `clear`](code:src/views/items/components/BagSummary.vue#L9), and Vue calls [`emptyBag()`](code:src/views/items/ItemsPage.vue#L11-13).",
+              "codeBlockIds": [
+                "src/views/items/ItemsPage.vue#render-event@17:53",
+                "src/views/items/ItemsPage.vue#function@11:1",
+                "src/views/items/ItemsPage.vue#call@12:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/items/ItemsPage.vue#render-event@17:53",
+                "src/views/items/ItemsPage.vue#function@11:1",
+                "src/views/items/ItemsPage.vue#call@12:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Clears every line of the bag store",
+                  "codeBlockId": "src/views/items/ItemsPage.vue#call@12:3"
+                }
+              ]
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#render-event@22:35",
+              "type": "render-event",
+              "label": "Adds the item of the row to the bag",
+              "description": "When a user clicks Add to bag beside an item, [BaseButton emits `click`](code:src/components/ui/BaseButton.vue#L7), and Vue runs this handler with the item of that row.",
+              "codeBlockIds": [
+                "src/views/items/ItemsPage.vue#render-event@22:35"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/items/ItemsPage.vue#render-event@22:35"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/views/items/components/BagSummary.vue#render-event@16:57",
+              "type": "render-event",
+              "label": "Emits clear to the items page",
+              "description": "When a user clicks Empty the bag, [BaseButton emits `click`](code:src/components/ui/BaseButton.vue#L7), and Vue calls [`askToEmpty()`](code:src/views/items/components/BagSummary.vue#L8-10).",
+              "codeBlockIds": [
+                "src/views/items/components/BagSummary.vue#render-event@16:57",
+                "src/views/items/components/BagSummary.vue#function@8:1",
+                "src/views/items/components/BagSummary.vue#call@9:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/items/components/BagSummary.vue#render-event@16:57",
+                "src/views/items/components/BagSummary.vue#function@8:1",
+                "src/views/items/components/BagSummary.vue#call@9:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Emits clear to the page",
+                  "codeBlockId": "src/views/items/components/BagSummary.vue#call@9:3"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/components/ui/BaseButton.vue#render-event@7:74 -> src/views/items/components/BagSummary.vue#render-event@16:57",
+              "from": "src/components/ui/BaseButton.vue#render-event@7:74",
+              "to": "src/views/items/components/BagSummary.vue#render-event@16:57"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#render-event@22:35 -> src/stores/bag.ts#state@9:1",
+              "from": "src/views/items/ItemsPage.vue#render-event@22:35",
+              "to": "src/stores/bag.ts#state@9:1"
+            },
+            {
+              "id": "src/components/ui/BaseButton.vue#component@1:1 -> src/views/items/components/BagSummary.vue#render-event@16:57",
+              "from": "src/components/ui/BaseButton.vue#component@1:1",
+              "to": "src/views/items/components/BagSummary.vue#render-event@16:57"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#component@1:1 -> src/stores/bag.ts#state@9:1",
+              "from": "src/views/items/ItemsPage.vue#component@1:1",
+              "to": "src/stores/bag.ts#state@9:1"
+            },
+            {
+              "id": "src/main.ts#root-variable@5:1 -> src/App.vue#component@1:1",
+              "from": "src/main.ts#root-variable@5:1",
+              "to": "src/App.vue#component@1:1"
+            },
+            {
+              "id": "src/views/items/components/BagSummary.vue#render-event@16:57 -> src/views/items/ItemsPage.vue#render-event@17:53",
+              "from": "src/views/items/components/BagSummary.vue#render-event@16:57",
+              "to": "src/views/items/ItemsPage.vue#render-event@17:53"
+            },
+            {
+              "id": "src/views/items/components/BagSummary.vue#component@1:1 -> src/views/items/ItemsPage.vue#render-event@17:53",
+              "from": "src/views/items/components/BagSummary.vue#component@1:1",
+              "to": "src/views/items/ItemsPage.vue#render-event@17:53"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#render-event@17:53 -> src/stores/bag.ts#state@9:1",
+              "from": "src/views/items/ItemsPage.vue#render-event@17:53",
+              "to": "src/stores/bag.ts#state@9:1"
+            },
+            {
+              "id": "src/App.vue#component@1:1 -> src/views/items/ItemsPage.vue#component@1:1",
+              "from": "src/App.vue#component@1:1",
+              "to": "src/views/items/ItemsPage.vue#component@1:1"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#component@1:1 -> src/views/items/components/BagSummary.vue#component@1:1",
+              "from": "src/views/items/ItemsPage.vue#component@1:1",
+              "to": "src/views/items/components/BagSummary.vue#component@1:1"
+            },
+            {
+              "id": "src/components/ui/BaseButton.vue#component@1:1 -> src/components/ui/BaseButton.vue#render-event@7:74",
+              "from": "src/components/ui/BaseButton.vue#component@1:1",
+              "to": "src/components/ui/BaseButton.vue#render-event@7:74"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#component@1:1 -> src/views/items/ItemsPage.vue#render-event@17:53",
+              "from": "src/views/items/ItemsPage.vue#component@1:1",
+              "to": "src/views/items/ItemsPage.vue#render-event@17:53"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#component@1:1 -> src/views/items/ItemsPage.vue#render-event@22:35",
+              "from": "src/views/items/ItemsPage.vue#component@1:1",
+              "to": "src/views/items/ItemsPage.vue#render-event@22:35"
+            },
+            {
+              "id": "src/views/items/components/BagSummary.vue#component@1:1 -> src/views/items/components/BagSummary.vue#render-event@16:57",
+              "from": "src/views/items/components/BagSummary.vue#component@1:1",
+              "to": "src/views/items/components/BagSummary.vue#render-event@16:57"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/stores/bag.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "BagLine",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 7
+                  },
+                  "codeBlockIds": [
+                    "src/stores/bag.ts#type-declaration@4:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w2",
+                  "declaration": "useBagStore",
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 30
+                  },
+                  "codeBlockIds": [
+                    "src/stores/bag.ts#state@9:1",
+                    "src/stores/bag.ts#effect@9:28",
+                    "src/stores/bag.ts#effect-callback@10:3",
+                    "src/stores/bag.ts#function@10:10",
+                    "src/stores/bag.ts#property@11:5",
+                    "src/stores/bag.ts#property@13:3",
+                    "src/stores/bag.ts#function@14:5",
+                    "src/stores/bag.ts#variable@14:13",
+                    "src/stores/bag.ts#function@14:50",
+                    "src/stores/bag.ts#variable@14:51",
+                    "src/stores/bag.ts#variable@14:56",
+                    "src/stores/bag.ts#function@15:5",
+                    "src/stores/bag.ts#variable@15:13",
+                    "src/stores/bag.ts#function@15:50",
+                    "src/stores/bag.ts#variable@15:51",
+                    "src/stores/bag.ts#variable@15:56",
+                    "src/stores/bag.ts#property@17:3",
+                    "src/stores/bag.ts#function@18:5",
+                    "src/stores/bag.ts#variable@18:13",
+                    "src/stores/bag.ts#variable@19:7",
+                    "src/stores/bag.ts#function@19:36",
+                    "src/stores/bag.ts#variable@19:37",
+                    "src/stores/bag.ts#condition@20:7",
+                    "src/stores/bag.ts#call@21:9",
+                    "src/stores/bag.ts#property@21:27",
+                    "src/stores/bag.ts#property@21:33",
+                    "src/stores/bag.ts#function@26:5"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/views/items/ItemsPage.vue",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "ItemsPage",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 25
+                  },
+                  "codeBlockIds": [
+                    "src/views/items/ItemsPage.vue#component@1:1",
+                    "src/views/items/ItemsPage.vue#external-value@9:1",
+                    "src/views/items/ItemsPage.vue#function@11:1",
+                    "src/views/items/ItemsPage.vue#call@12:3",
+                    "src/views/items/ItemsPage.vue#render@17:3",
+                    "src/views/items/ItemsPage.vue#render-event@17:53",
+                    "src/views/items/ItemsPage.vue#render@20:5",
+                    "src/views/items/ItemsPage.vue#render@22:7",
+                    "src/views/items/ItemsPage.vue#render-event@22:35"
+                  ],
+                  "children": [
+                    {
+                      "id": "w3.1",
+                      "declaration": "ItemsPage › bag",
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 9
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/ItemsPage.vue#external-value@9:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.2",
+                      "declaration": "ItemsPage › emptyBag",
+                      "range": {
+                        "lineStart": 11,
+                        "lineEnd": 13
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/ItemsPage.vue#function@11:1",
+                        "src/views/items/ItemsPage.vue#call@12:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.3",
+                      "declaration": "ItemsPage › BagSummary.onClear",
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 17
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/ItemsPage.vue#render-event@17:53"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.4",
+                      "declaration": "ItemsPage › Markup loop :20",
+                      "range": {
+                        "lineStart": 20,
+                        "lineEnd": 23
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/ItemsPage.vue#render-loop@20:5",
+                        "src/views/items/ItemsPage.vue#render@20:5",
+                        "src/views/items/ItemsPage.vue#render@22:7",
+                        "src/views/items/ItemsPage.vue#render-event@22:35"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/views/items/components/BagSummary.vue",
+              "waypoints": [
+                {
+                  "id": "w4",
+                  "declaration": "BagSummary",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 18
+                  },
+                  "codeBlockIds": [
+                    "src/views/items/components/BagSummary.vue#component@1:1",
+                    "src/views/items/components/BagSummary.vue#call@5:1",
+                    "src/views/items/components/BagSummary.vue#root-argument-value@5:15",
+                    "src/views/items/components/BagSummary.vue#root-argument-value@5:30",
+                    "src/views/items/components/BagSummary.vue#variable@6:1",
+                    "src/views/items/components/BagSummary.vue#root-argument-value@6:36",
+                    "src/views/items/components/BagSummary.vue#function@8:1",
+                    "src/views/items/components/BagSummary.vue#call@9:3",
+                    "src/views/items/components/BagSummary.vue#render-root@13:1",
+                    "src/views/items/components/BagSummary.vue#render@14:3",
+                    "src/views/items/components/BagSummary.vue#render@16:5",
+                    "src/views/items/components/BagSummary.vue#render-event@16:57"
+                  ],
+                  "children": [
+                    {
+                      "id": "w4.1",
+                      "declaration": "BagSummary › defineProps, emit",
+                      "range": {
+                        "lineStart": 5,
+                        "lineEnd": 6
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/components/BagSummary.vue#call@5:1",
+                        "src/views/items/components/BagSummary.vue#variable@6:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.2",
+                      "declaration": "BagSummary › askToEmpty",
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 10
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/components/BagSummary.vue#function@8:1",
+                        "src/views/items/components/BagSummary.vue#call@9:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.3",
+                      "declaration": "BagSummary › BaseButton.onClick",
+                      "range": {
+                        "lineStart": 16,
+                        "lineEnd": 16
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/components/BagSummary.vue#render-event@16:57"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/App.vue",
+            "references": [
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 16,
+                "path": "src/App.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 17,
+                "endColumn": 25,
+                "path": "src/App.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 16,
+                "endColumn": 31,
+                "path": "src/App.vue",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 40,
+                "endColumn": 44,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 40,
+                "endColumn": 44,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 40,
+                "endColumn": 44,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 13,
+                "endColumn": 20,
+                "path": "src/App.vue",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 40,
+                "endColumn": 47,
+                "path": "src/App.vue",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 5,
+                "endColumn": 17,
+                "path": "src/App.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 24,
+                "endColumn": 28,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 5,
+                "endColumn": 14,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  1,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 26,
+                "endColumn": 30,
+                "path": "src/App.vue",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 5,
+                "endColumn": 13,
+                "path": "src/App.vue",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 22,
+                    "endColumn": 25,
+                    "path": "src/main.ts",
+                    "text": "const app = createApp(App)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/components/ui/BaseButton.vue",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 81,
+                "endColumn": 85,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 2,
+                "startColumn": 0,
+                "endColumn": 11,
+                "name": "defineProps"
+              },
+              {
+                "line": 3,
+                "startColumn": 13,
+                "endColumn": 24,
+                "name": "defineEmits"
+              },
+              {
+                "line": 7,
+                "startColumn": 29,
+                "endColumn": 36,
+                "name": "variant"
+              },
+              {
+                "line": 7,
+                "startColumn": 63,
+                "endColumn": 71,
+                "name": "disabled"
+              }
+            ],
+            "exports": []
+          },
+          {
+            "path": "src/main.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 12,
+                "endColumn": 21,
+                "path": "src/main.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "createApp"
+                }
+              },
+              {
+                "line": 5,
+                "startColumn": 22,
+                "endColumn": 25,
+                "path": "src/App.vue",
+                "lines": [
+                  1,
+                  28
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 8,
+                "endColumn": 19,
+                "path": "src/main.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pinia",
+                  "name": "createPinia"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": []
+          },
+          {
+            "path": "src/stores/bag.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/types/item.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 27,
+                "endColumn": 38,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pinia",
+                  "name": "defineStore"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 18,
+                "endColumn": 22,
+                "path": "src/types/item.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 64,
+                "endColumn": 68,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 10,
+                "endColumn": 14,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 26,
+                "endColumn": 30,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 6,
+                "endColumn": 10,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  9,
+                  30
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 12,
+                    "endColumn": 23,
+                    "path": "src/views/items/ItemsPage.vue",
+                    "text": "const bag = useBagStore()"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/views/items/components/BagSummary.vue",
+            "references": [
+              {
+                "line": 9,
+                "startColumn": 2,
+                "endColumn": 6,
+                "path": "src/views/items/components/BagSummary.vue",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 37,
+                "endColumn": 48,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 64,
+                "endColumn": 74,
+                "path": "src/views/items/components/BagSummary.vue",
+                "lines": [
+                  8,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 0,
+                "endColumn": 11,
+                "name": "defineProps"
+              },
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 24,
+                "name": "defineEmits"
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 12,
+                "name": "count"
+              },
+              {
+                "line": 15,
+                "startColumn": 49,
+                "endColumn": 54,
+                "name": "total"
+              },
+              {
+                "line": 16,
+                "startColumn": 43,
+                "endColumn": 48,
+                "name": "count"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 3,
+                    "endColumn": 13,
+                    "path": "src/views/items/ItemsPage.vue",
+                    "text": "  <BagSummary :count=\"bag.count\" :total=\"bag.total\" @clear=\"emptyBag\" />"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/views/items/ItemsPage.vue",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 29,
+                "endColumn": 37,
+                "path": "src/composables/use-items.ts",
+                "lines": [
+                  5,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 12,
+                "endColumn": 23,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  9,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 2,
+                "endColumn": 5,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 3,
+                "endColumn": 13,
+                "path": "src/views/items/components/BagSummary.vue",
+                "lines": [
+                  1,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 22,
+                "endColumn": 25,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 41,
+                "endColumn": 44,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 60,
+                "endColumn": 68,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  11,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 11,
+                "endColumn": 20,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 23,
+                "endColumn": 28,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 25,
+                "endColumn": 36,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 37,
+                "endColumn": 41,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 7,
+                "endColumn": 17,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 42,
+                "endColumn": 45,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 54,
+                "endColumn": 58,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  25
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 5,
+                    "endColumn": 14,
+                    "path": "src/App.vue",
+                    "text": "    <ItemsPage v-else-if=\"page === 'items'\" />"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

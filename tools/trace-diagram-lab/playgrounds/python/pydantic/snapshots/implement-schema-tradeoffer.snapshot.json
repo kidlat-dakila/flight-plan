@@ -1,0 +1,1548 @@
+{
+  "title": "Implement schema TradeOffer",
+  "diff": [
+    "diff --git a/src/pokedex/schemas.py b/src/pokedex/schemas.py",
+    "--- a/src/pokedex/schemas.py",
+    "+++ b/src/pokedex/schemas.py",
+    "@@ -1 +1,3 @@",
+    "-from pydantic import BaseModel, Field, field_validator",
+    "+from typing import Self",
+    "+",
+    "+from pydantic import BaseModel, Field, field_validator, model_validator",
+    "@@ -5,0 +8,5 @@ from pokedex.types import POKEMON_TYPES",
+    "+class Move(BaseModel):",
+    "+    name: str = Field(min_length=1, max_length=30)",
+    "+    power: int = Field(ge=0, le=250)",
+    "+",
+    "+",
+    "@@ -9,0 +17 @@ class PokemonEntry(BaseModel):",
+    "+    moves: list[Move] = Field(default_factory=list, max_length=4)",
+    "@@ -23,0 +32,17 @@ class Trainer(BaseModel):",
+    "+",
+    "+",
+    "+class TradeOffer(BaseModel):",
+    "+    trainer: str",
+    "+    offered: PokemonEntry",
+    "+    wanted: PokemonEntry",
+    "+",
+    "+    @field_validator(\"trainer\")",
+    "+    @classmethod",
+    "+    def strip_trainer(cls, trainer: str) -> str:",
+    "+        return trainer.strip()",
+    "+",
+    "+    @model_validator(mode=\"after\")",
+    "+    def check_fair_levels(self) -> Self:",
+    "+        if abs(self.offered.level - self.wanted.level) > 10:",
+    "+            raise ValueError(\"the levels of a fair trade differ by 10 at most\")",
+    "+        return self",
+    "diff --git a/src/pokedex/importer.py b/src/pokedex/importer.py",
+    "--- a/src/pokedex/importer.py",
+    "+++ b/src/pokedex/importer.py",
+    "@@ -3 +3 @@ from pathlib import Path",
+    "-from pokedex.schemas import Trainer",
+    "+from pokedex.schemas import PokemonEntry, TradeOffer, Trainer",
+    "@@ -7,0 +8,4 @@ def read_trainer(path: Path) -> Trainer:",
+    "+",
+    "+",
+    "+def build_offer(trainer: str, offered: dict, wanted: dict) -> TradeOffer:",
+    "+    return TradeOffer(trainer=trainer, offered=PokemonEntry.model_validate(offered), wanted=PokemonEntry.model_validate(wanted))",
+    "diff --git a/src/pokedex/cli.py b/src/pokedex/cli.py",
+    "--- a/src/pokedex/cli.py",
+    "+++ b/src/pokedex/cli.py",
+    "@@ -0,0 +1 @@",
+    "+import json",
+    "@@ -6 +7 @@ from pydantic import ValidationError",
+    "-from pokedex.importer import read_trainer",
+    "+from pokedex.importer import build_offer, read_trainer",
+    "@@ -11,0 +13 @@ def main() -> None:",
+    "+        offer = build_offer(trainer.name, trainer.team[0].model_dump(), json.loads(sys.argv[2]))",
+    "@@ -15 +17 @@ def main() -> None:",
+    "-    print(f\"{trainer.name} has {len(trainer.team)} Pokemon\")",
+    "+    print(f\"{offer.trainer} offers {offer.offered.name} for {offer.wanted.name}\")"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New TradeOffer and Move models and build_offer, modified PokemonEntry and main",
+        "importGraph": [
+          {
+            "filePath": "src/pokedex/cli.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/pokedex/importer.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.importer:build_offer": "src/pokedex/importer.py",
+              "pokedex.importer:read_trainer": "src/pokedex/importer.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/importer.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokedex/cli.py"
+            ],
+            "importsTo": [
+              "src/pokedex/schemas.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.schemas:PokemonEntry": "src/pokedex/schemas.py",
+              "pokedex.schemas:TradeOffer": "src/pokedex/schemas.py",
+              "pokedex.schemas:Trainer": "src/pokedex/schemas.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/schemas.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokedex/importer.py"
+            ],
+            "importsTo": [
+              "src/pokedex/types.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.types:POKEMON_TYPES": "src/pokedex/types.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/types.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/schemas.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Build trade offer flow diagram",
+          "description": "This diagram shows how `main()` of the `pokedex` command [reads a trainer file and builds a trade offer from it](code:src/pokedex/cli.py#L12-13). It also shows what happens when a user runs `pokedex` with a trainer file and a wanted Pokemon as JSON, and how that input reaches the validators of `TradeOffer` through [`build_offer()`](code:src/pokedex/importer.py#L10-11).",
+          "traceNodes": [
+            {
+              "id": "src/pokedex/schemas.py#class@8:1",
+              "type": "class",
+              "label": "Checks the name and the power of one move",
+              "description": "When `build_offer()` validates a Pokemon as `PokemonEntry`, pydantic [validates each entry of `moves` as this model](code:src/pokedex/schemas.py#L17). No code of the repository calls the model by name.",
+              "codeBlockIds": [
+                "src/pokedex/schemas.py#class@8:1",
+                "src/pokedex/schemas.py#property@9:5",
+                "src/pokedex/schemas.py#property@10:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/schemas.py#class@8:1",
+                "src/pokedex/schemas.py#property@9:5",
+                "src/pokedex/schemas.py#property@10:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Checks that the name has 1 to 30 characters",
+                  "codeBlockId": "src/pokedex/schemas.py#property@9:5"
+                },
+                {
+                  "label": "Checks that the power is from 0 to 250",
+                  "codeBlockId": "src/pokedex/schemas.py#property@10:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/schemas.py#class@13:1",
+              "type": "class",
+              "label": "Parses one Pokemon with its types, level and moves",
+              "description": "When a user runs `pokedex` with a trainer file and a wanted Pokemon, [`build_offer()` validates the offered and the wanted Pokemon as this model](code:src/pokedex/importer.py#L11). `read_trainer()` also parses [every Pokemon of the team of a `Trainer`](code:src/pokedex/schemas.py#L31) as this model.",
+              "codeBlockIds": [
+                "src/pokedex/schemas.py#class@13:1",
+                "src/pokedex/schemas.py#property@17:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/schemas.py#property@17:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Parses at most 4 moves as `Move` models",
+                  "codeBlockId": "src/pokedex/schemas.py#property@17:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/cli.py#function@10:1",
+              "type": "function",
+              "label": "Builds a trade offer from a trainer file and prints it",
+              "description": "When a user runs `pokedex` with a trainer file and a wanted Pokemon as JSON, Python calls this function, because `[project.scripts]` of `pyproject.toml` names `pokedex.cli:main`.",
+              "codeBlockIds": [
+                "src/pokedex/cli.py#function@10:1",
+                "src/pokedex/cli.py#try-catch@11:5",
+                "src/pokedex/cli.py#external-value@13:9",
+                "src/pokedex/cli.py#call@17:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/cli.py#external-value@13:9",
+                "src/pokedex/cli.py#call@17:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Prints the errors and exits with code 1 when validation fails",
+                  "codeBlockId": "src/pokedex/cli.py#try-catch@11:5"
+                },
+                {
+                  "label": "Offers the first Pokemon of the team for the wanted Pokemon",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@13:9"
+                },
+                {
+                  "label": "Prints who offers which Pokemon for which",
+                  "codeBlockId": "src/pokedex/cli.py#call@17:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/importer.py#function@10:1",
+              "type": "function",
+              "label": "Validates both Pokemon and builds the trade offer",
+              "description": "When a user runs `pokedex` with a trainer file and a wanted Pokemon, [`main()` calls this function](code:src/pokedex/cli.py#L13). It gets the name of the trainer, the first Pokemon of the team and the parsed JSON of the second argument.",
+              "codeBlockIds": [
+                "src/pokedex/importer.py#function@10:1",
+                "src/pokedex/importer.py#root-argument-value@10:17",
+                "src/pokedex/importer.py#root-argument-value@10:31",
+                "src/pokedex/importer.py#root-argument-value@10:46",
+                "src/pokedex/importer.py#validation@11:48",
+                "src/pokedex/importer.py#validation@11:93"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/importer.py#function@10:1",
+                "src/pokedex/importer.py#root-argument-value@10:17",
+                "src/pokedex/importer.py#root-argument-value@10:31",
+                "src/pokedex/importer.py#root-argument-value@10:46",
+                "src/pokedex/importer.py#validation@11:48",
+                "src/pokedex/importer.py#validation@11:93"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Validates the offered Pokemon as a `PokemonEntry`",
+                  "codeBlockId": "src/pokedex/importer.py#validation@11:48"
+                },
+                {
+                  "label": "Validates the wanted Pokemon as a `PokemonEntry`",
+                  "codeBlockId": "src/pokedex/importer.py#validation@11:93"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/schemas.py#class@34:1",
+              "type": "class",
+              "label": "Parses a trade offer and runs its validators",
+              "description": "When a user runs `pokedex` with a trainer file and a wanted Pokemon, `main()` calls `build_offer()`, and [`build_offer()` makes this model](code:src/pokedex/importer.py#L11). A failed validator raises `ValidationError`, and [`main()` prints that error](code:src/pokedex/cli.py#L14-16).",
+              "codeBlockIds": [
+                "src/pokedex/schemas.py#class@34:1",
+                "src/pokedex/schemas.py#property@35:5",
+                "src/pokedex/schemas.py#property@36:5",
+                "src/pokedex/schemas.py#property@37:5",
+                "src/pokedex/schemas.py#method@39:5",
+                "src/pokedex/schemas.py#method@44:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/schemas.py#class@34:1",
+                "src/pokedex/schemas.py#property@35:5",
+                "src/pokedex/schemas.py#property@36:5",
+                "src/pokedex/schemas.py#property@37:5",
+                "src/pokedex/schemas.py#method@39:5",
+                "src/pokedex/schemas.py#method@44:5"
+              ],
+              "children": [
+                {
+                  "id": "src/pokedex/schemas.py#method@39:5",
+                  "type": "method",
+                  "label": "Removes the spaces around the trainer name",
+                  "description": "When `build_offer()` makes a `TradeOffer`, pydantic calls this method on the `trainer` field, because [`@field_validator(\"trainer\")` names that field](code:src/pokedex/schemas.py#L39).",
+                  "codeBlockIds": [
+                    "src/pokedex/schemas.py#method@39:5",
+                    "src/pokedex/schemas.py#root-argument-value@41:28",
+                    "src/pokedex/schemas.py#root-argument-value@42:16"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/schemas.py#method@39:5",
+                    "src/pokedex/schemas.py#root-argument-value@41:28",
+                    "src/pokedex/schemas.py#root-argument-value@42:16"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": []
+                },
+                {
+                  "id": "src/pokedex/schemas.py#method@44:5",
+                  "type": "method",
+                  "label": "Raises ValueError when the levels differ by more than 10",
+                  "description": "When `build_offer()` makes a `TradeOffer`, pydantic calls this method after every field is valid, because [the method is a `model_validator` in the `after` mode](code:src/pokedex/schemas.py#L44).",
+                  "codeBlockIds": [
+                    "src/pokedex/schemas.py#method@44:5",
+                    "src/pokedex/schemas.py#condition@46:9",
+                    "src/pokedex/schemas.py#throw@47:13"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/schemas.py#method@44:5",
+                    "src/pokedex/schemas.py#condition@46:9",
+                    "src/pokedex/schemas.py#throw@47:13"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Checks whether the levels differ by more than 10",
+                      "codeBlockId": "src/pokedex/schemas.py#condition@46:9"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Keeps the name of the trainer who offers",
+                  "codeBlockId": "src/pokedex/schemas.py#property@35:5"
+                },
+                {
+                  "label": "Parses the offered Pokemon as a `PokemonEntry`",
+                  "codeBlockId": "src/pokedex/schemas.py#property@36:5"
+                },
+                {
+                  "label": "Parses the wanted Pokemon as a `PokemonEntry`",
+                  "codeBlockId": "src/pokedex/schemas.py#property@37:5"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokedex/cli.py#function@10:1 -> src/pokedex/importer.py#function@10:1",
+              "from": "src/pokedex/cli.py#function@10:1",
+              "to": "src/pokedex/importer.py#function@10:1"
+            },
+            {
+              "id": "src/pokedex/importer.py#function@10:1 -> src/pokedex/schemas.py#class@34:1",
+              "from": "src/pokedex/importer.py#function@10:1",
+              "to": "src/pokedex/schemas.py#class@34:1"
+            },
+            {
+              "id": "src/pokedex/schemas.py#class@34:1 -> src/pokedex/schemas.py#method@39:5",
+              "from": "src/pokedex/schemas.py#class@34:1",
+              "to": "src/pokedex/schemas.py#method@39:5"
+            },
+            {
+              "id": "src/pokedex/schemas.py#class@34:1 -> src/pokedex/schemas.py#method@44:5",
+              "from": "src/pokedex/schemas.py#class@34:1",
+              "to": "src/pokedex/schemas.py#method@44:5"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokedex/cli.py",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "main",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 17
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/cli.py#function@10:1",
+                    "src/pokedex/cli.py#external-value@13:9",
+                    "src/pokedex/cli.py#call@17:5"
+                  ],
+                  "children": [
+                    {
+                      "id": "w1.1",
+                      "declaration": "main › offer",
+                      "range": {
+                        "lineStart": 13,
+                        "lineEnd": 13
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/cli.py#external-value@13:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w1.2",
+                      "declaration": "main › print",
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 17
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/cli.py#call@17:5"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/importer.py",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "build_offer",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/importer.py#function@10:1",
+                    "src/pokedex/importer.py#root-argument-value@10:17",
+                    "src/pokedex/importer.py#root-argument-value@10:31",
+                    "src/pokedex/importer.py#root-argument-value@10:46",
+                    "src/pokedex/importer.py#validation@11:48",
+                    "src/pokedex/importer.py#validation@11:93"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/schemas.py",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "Move",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 10
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/schemas.py#class@8:1",
+                    "src/pokedex/schemas.py#property@9:5",
+                    "src/pokedex/schemas.py#property@10:5"
+                  ],
+                  "children": [
+                    {
+                      "id": "w3.1",
+                      "declaration": "Move › Move.name",
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 9
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/schemas.py#property@9:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.2",
+                      "declaration": "Move › Move.power",
+                      "range": {
+                        "lineStart": 10,
+                        "lineEnd": 10
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/schemas.py#property@10:5"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w4",
+                  "declaration": "PokemonEntry",
+                  "range": {
+                    "lineStart": 13,
+                    "lineEnd": 25
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/schemas.py#class@13:1",
+                    "src/pokedex/schemas.py#property@17:5"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w5",
+                  "declaration": "TradeOffer",
+                  "range": {
+                    "lineStart": 34,
+                    "lineEnd": 48
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/schemas.py#class@34:1",
+                    "src/pokedex/schemas.py#property@35:5",
+                    "src/pokedex/schemas.py#property@36:5",
+                    "src/pokedex/schemas.py#property@37:5"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w6",
+                  "declaration": "TradeOffer.strip_trainer",
+                  "range": {
+                    "lineStart": 39,
+                    "lineEnd": 42
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/schemas.py#method@39:5",
+                    "src/pokedex/schemas.py#root-argument-value@41:28",
+                    "src/pokedex/schemas.py#root-argument-value@42:16"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "TradeOffer.check_fair_levels",
+                  "range": {
+                    "lineStart": 44,
+                    "lineEnd": 48
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/schemas.py#method@44:5",
+                    "src/pokedex/schemas.py#condition@46:9",
+                    "src/pokedex/schemas.py#throw@47:13"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokedex/cli.py",
+            "references": [
+              {
+                "line": 12,
+                "startColumn": 18,
+                "endColumn": 30,
+                "path": "src/pokedex/importer.py",
+                "lines": [
+                  6,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 31,
+                "endColumn": 35,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pathlib:Path",
+                  "name": "Path"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 36,
+                "endColumn": 39,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sys",
+                  "name": "*"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 16,
+                "endColumn": 27,
+                "path": "src/pokedex/importer.py",
+                "lines": [
+                  10,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 28,
+                "endColumn": 35,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 42,
+                "endColumn": 49,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 72,
+                "endColumn": 76,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "json",
+                  "name": "*"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 83,
+                "endColumn": 86,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "sys",
+                  "name": "*"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 11,
+                "endColumn": 26,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:ValidationError",
+                  "name": "ValidationError"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 14,
+                "endColumn": 19,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 13,
+                "endColumn": 18,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 36,
+                "endColumn": 41,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 61,
+                "endColumn": 66,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 4,
+                "endColumn": 8,
+                "path": "src/pokedex/cli.py",
+                "lines": [
+                  10,
+                  17
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 15,
+                "startColumn": 8,
+                "endColumn": 13,
+                "name": "print"
+              },
+              {
+                "line": 16,
+                "startColumn": 14,
+                "endColumn": 24,
+                "name": "SystemExit"
+              },
+              {
+                "line": 17,
+                "startColumn": 4,
+                "endColumn": 9,
+                "name": "print"
+              },
+              {
+                "line": 20,
+                "startColumn": 3,
+                "endColumn": 11,
+                "name": "__name__"
+              }
+            ],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 4,
+                "endColumn": 8,
+                "lines": [
+                  10,
+                  17
+                ],
+                "usages": []
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/importer.py",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 23,
+                "endColumn": 27,
+                "path": "src/pokedex/importer.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pathlib:Path",
+                  "name": "Path"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  28,
+                  31
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  28,
+                  31
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 39,
+                "endColumn": 43,
+                "path": "src/pokedex/importer.py",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 62,
+                "endColumn": 72,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  34,
+                  48
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 11,
+                "endColumn": 21,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  34,
+                  48
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 30,
+                "endColumn": 37,
+                "path": "src/pokedex/importer.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 47,
+                "endColumn": 59,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  13,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 75,
+                "endColumn": 82,
+                "path": "src/pokedex/importer.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 92,
+                "endColumn": 104,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  13,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 120,
+                "endColumn": 126,
+                "path": "src/pokedex/importer.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 10,
+                "startColumn": 25,
+                "endColumn": 28,
+                "name": "str"
+              },
+              {
+                "line": 10,
+                "startColumn": 39,
+                "endColumn": 43,
+                "name": "dict"
+              },
+              {
+                "line": 10,
+                "startColumn": 53,
+                "endColumn": 57,
+                "name": "dict"
+              }
+            ],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 4,
+                "endColumn": 16,
+                "lines": [
+                  6,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 18,
+                    "endColumn": 30,
+                    "path": "src/pokedex/cli.py",
+                    "text": "        trainer = read_trainer(Path(sys.argv[1]))"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 4,
+                "endColumn": 15,
+                "lines": [
+                  10,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/pokedex/cli.py",
+                    "text": "        offer = build_offer(trainer.name, trainer.team[0].model_dump(), json.loads(sys.argv[2]))"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/schemas.py",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 11,
+                "endColumn": 20,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:BaseModel",
+                  "name": "BaseModel"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 16,
+                "endColumn": 21,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 17,
+                "endColumn": 22,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 19,
+                "endColumn": 28,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:BaseModel",
+                  "name": "BaseModel"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 16,
+                "endColumn": 21,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 23,
+                "endColumn": 28,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 17,
+                "endColumn": 22,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 16,
+                "endColumn": 20,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  8,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 24,
+                "endColumn": 29,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              },
+              {
+                "line": 19,
+                "startColumn": 5,
+                "endColumn": 20,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:field_validator",
+                  "name": "field_validator"
+                }
+              },
+              {
+                "line": 22,
+                "startColumn": 36,
+                "endColumn": 41,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 57,
+                "endColumn": 70,
+                "path": "src/pokedex/types.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 57,
+                "endColumn": 64,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 15,
+                "endColumn": 20,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 14,
+                "endColumn": 23,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:BaseModel",
+                  "name": "BaseModel"
+                }
+              },
+              {
+                "line": 29,
+                "startColumn": 16,
+                "endColumn": 21,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              },
+              {
+                "line": 31,
+                "startColumn": 15,
+                "endColumn": 27,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  13,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 31,
+                "endColumn": 36,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              },
+              {
+                "line": 34,
+                "startColumn": 17,
+                "endColumn": 26,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:BaseModel",
+                  "name": "BaseModel"
+                }
+              },
+              {
+                "line": 36,
+                "startColumn": 13,
+                "endColumn": 25,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  13,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 37,
+                "startColumn": 12,
+                "endColumn": 24,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  13,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 39,
+                "startColumn": 5,
+                "endColumn": 20,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:field_validator",
+                  "name": "field_validator"
+                }
+              },
+              {
+                "line": 42,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  41,
+                  41
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 44,
+                "startColumn": 5,
+                "endColumn": 20,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:model_validator",
+                  "name": "model_validator"
+                }
+              },
+              {
+                "line": 45,
+                "startColumn": 35,
+                "endColumn": 39,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typing:Self",
+                  "name": "Self"
+                }
+              },
+              {
+                "line": 46,
+                "startColumn": 15,
+                "endColumn": 19,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  45,
+                  45
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 46,
+                "startColumn": 36,
+                "endColumn": 40,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  45,
+                  45
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 48,
+                "startColumn": 15,
+                "endColumn": 19,
+                "path": "src/pokedex/schemas.py",
+                "lines": [
+                  45,
+                  45
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 9,
+                "startColumn": 10,
+                "endColumn": 13,
+                "name": "str"
+              },
+              {
+                "line": 10,
+                "startColumn": 11,
+                "endColumn": 14,
+                "name": "int"
+              },
+              {
+                "line": 14,
+                "startColumn": 10,
+                "endColumn": 13,
+                "name": "str"
+              },
+              {
+                "line": 15,
+                "startColumn": 11,
+                "endColumn": 15,
+                "name": "list"
+              },
+              {
+                "line": 15,
+                "startColumn": 16,
+                "endColumn": 19,
+                "name": "str"
+              },
+              {
+                "line": 16,
+                "startColumn": 11,
+                "endColumn": 14,
+                "name": "int"
+              },
+              {
+                "line": 17,
+                "startColumn": 11,
+                "endColumn": 15,
+                "name": "list"
+              },
+              {
+                "line": 17,
+                "startColumn": 46,
+                "endColumn": 50,
+                "name": "list"
+              },
+              {
+                "line": 20,
+                "startColumn": 5,
+                "endColumn": 16,
+                "name": "classmethod"
+              },
+              {
+                "line": 21,
+                "startColumn": 32,
+                "endColumn": 36,
+                "name": "list"
+              },
+              {
+                "line": 21,
+                "startColumn": 37,
+                "endColumn": 40,
+                "name": "str"
+              },
+              {
+                "line": 21,
+                "startColumn": 46,
+                "endColumn": 50,
+                "name": "list"
+              },
+              {
+                "line": 21,
+                "startColumn": 51,
+                "endColumn": 54,
+                "name": "str"
+              },
+              {
+                "line": 24,
+                "startColumn": 18,
+                "endColumn": 28,
+                "name": "ValueError"
+              },
+              {
+                "line": 29,
+                "startColumn": 10,
+                "endColumn": 13,
+                "name": "str"
+              },
+              {
+                "line": 30,
+                "startColumn": 14,
+                "endColumn": 17,
+                "name": "str"
+              },
+              {
+                "line": 31,
+                "startColumn": 10,
+                "endColumn": 14,
+                "name": "list"
+              },
+              {
+                "line": 31,
+                "startColumn": 53,
+                "endColumn": 57,
+                "name": "list"
+              },
+              {
+                "line": 35,
+                "startColumn": 13,
+                "endColumn": 16,
+                "name": "str"
+              },
+              {
+                "line": 40,
+                "startColumn": 5,
+                "endColumn": 16,
+                "name": "classmethod"
+              },
+              {
+                "line": 41,
+                "startColumn": 36,
+                "endColumn": 39,
+                "name": "str"
+              },
+              {
+                "line": 41,
+                "startColumn": 44,
+                "endColumn": 47,
+                "name": "str"
+              },
+              {
+                "line": 46,
+                "startColumn": 11,
+                "endColumn": 14,
+                "name": "abs"
+              },
+              {
+                "line": 47,
+                "startColumn": 18,
+                "endColumn": 28,
+                "name": "ValueError"
+              }
+            ],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 6,
+                "endColumn": 10,
+                "lines": [
+                  8,
+                  10
+                ],
+                "usages": []
+              },
+              {
+                "line": 13,
+                "startColumn": 6,
+                "endColumn": 18,
+                "lines": [
+                  13,
+                  25
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 47,
+                    "endColumn": 59,
+                    "path": "src/pokedex/importer.py",
+                    "text": "    return TradeOffer(trainer=trainer, offered=PokemonEntry.model_validate(offered), wanted=PokemonEntry.model_validate(wanted))"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 92,
+                    "endColumn": 104,
+                    "path": "src/pokedex/importer.py",
+                    "text": "    return TradeOffer(trainer=trainer, offered=PokemonEntry.model_validate(offered), wanted=PokemonEntry.model_validate(wanted))"
+                  }
+                ]
+              },
+              {
+                "line": 28,
+                "startColumn": 6,
+                "endColumn": 13,
+                "lines": [
+                  28,
+                  31
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 32,
+                    "endColumn": 39,
+                    "path": "src/pokedex/importer.py",
+                    "text": "def read_trainer(path: Path) -> Trainer:"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 11,
+                    "endColumn": 18,
+                    "path": "src/pokedex/importer.py",
+                    "text": "    return Trainer.model_validate_json(path.read_text())"
+                  }
+                ]
+              },
+              {
+                "line": 34,
+                "startColumn": 6,
+                "endColumn": 16,
+                "lines": [
+                  34,
+                  48
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 62,
+                    "endColumn": 72,
+                    "path": "src/pokedex/importer.py",
+                    "text": "def build_offer(trainer: str, offered: dict, wanted: dict) -> TradeOffer:"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 11,
+                    "endColumn": 21,
+                    "path": "src/pokedex/importer.py",
+                    "text": "    return TradeOffer(trainer=trainer, offered=PokemonEntry.model_validate(offered), wanted=PokemonEntry.model_validate(wanted))"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

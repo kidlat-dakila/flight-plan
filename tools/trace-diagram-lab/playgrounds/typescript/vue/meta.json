@@ -1,0 +1,6 @@
+{
+  "title": "Vue app with single-file components and composables",
+  "packages": ["vue"],
+  "language": "typescript",
+  "mainFramework": "vue"
+}

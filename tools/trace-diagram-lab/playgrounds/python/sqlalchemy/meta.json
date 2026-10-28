@@ -1,0 +1,6 @@
+{
+  "title": "Python package with SQLAlchemy 2 models, queries and sessions",
+  "packages": ["sqlalchemy"],
+  "language": "python",
+  "mainFramework": null
+}

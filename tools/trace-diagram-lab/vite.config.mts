@@ -20,7 +20,7 @@ const CASE_ALIASES = {
   "@flightplan/playground-fixtures": join(PLAYGROUND_FIXTURES_PATH, "src", "index.ts"),
 }
 
-const NODE_TESTS = ["src/fixtures/**/*.spec.ts", "src/server/**/*.spec.ts", "test-setup/**/*.spec.ts", "cases/*/*.integration.test.ts"]
+const NODE_TESTS = ["src/fixtures/**/*.spec.ts", "src/server/**/*.spec.ts", "test-setup/**/*.spec.ts", "cases/*/*.integration.test.ts", "playgrounds/*/*/*.integration.test.ts"]
 const BROWSER_TESTS = ["src/**/*.spec.tsx"]
 const GIT_FORGE_MOCK = join(PLAYGROUND_FIXTURES_PATH, "test-setup", "mock-git-forge.ts")
 

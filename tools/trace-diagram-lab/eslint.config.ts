@@ -1,11 +1,11 @@
 import { join } from "node:path"
 import baseConfig, { defineProjectConfig, node, react } from "../../eslint.base.config"
 
-const CASES = ["cases/**"]
+const CASES = ["cases/**", "playgrounds/**"]
 const FIXTURE_FILES = ["src/fixtures/**/*.ts"]
 const BROWSER_FOLDERS = ["./src/app", "./src/main.tsx"]
 const FIXTURES_FOLDER = "./src/fixtures"
-const TEST_ONLY_FOLDERS = ["./cases", "./test-setup"]
+const TEST_ONLY_FOLDERS = ["./cases", "./playgrounds", "./test-setup"]
 const SOURCE_FOLDER = "./src"
 const WORKSPACE_ROOT = join(import.meta.dirname, "..", "..")
 const WORKSPACE_PACKAGES = [

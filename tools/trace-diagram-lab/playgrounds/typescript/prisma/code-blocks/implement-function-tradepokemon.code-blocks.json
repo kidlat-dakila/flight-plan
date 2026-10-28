@@ -1,0 +1,4238 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "src/db.ts",
+        "codeBlockIds": [
+          "src/db.ts#import@1:1",
+          "src/db.ts#root-variable@3:1",
+          "src/db.ts#root-variable@5:1",
+          "src/db.ts#property@5:38"
+        ],
+        "rootBlockIds": [
+          "src/db.ts#import@1:1",
+          "src/db.ts#root-variable@3:1",
+          "src/db.ts#root-variable@5:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/db.ts#root-variable@5:1",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [],
+        "exports": {
+          "db": "src/db.ts#root-variable@5:1"
+        }
+      },
+      {
+        "filePath": "src/repositories/pokemon.ts",
+        "codeBlockIds": [
+          "src/repositories/pokemon.ts#import@1:1",
+          "src/repositories/pokemon.ts#import@2:1",
+          "src/repositories/pokemon.ts#function@4:1",
+          "src/repositories/pokemon.ts#root-argument-value@4:29",
+          "src/repositories/pokemon.ts#data-fetch@5:10",
+          "src/repositories/pokemon.ts#property@5:32",
+          "src/repositories/pokemon.ts#property@5:41",
+          "src/repositories/pokemon.ts#property@5:54",
+          "src/repositories/pokemon.ts#property@5:65",
+          "src/repositories/pokemon.ts#property@5:82",
+          "src/repositories/pokemon.ts#property@5:93",
+          "src/repositories/pokemon.ts#function@8:1",
+          "src/repositories/pokemon.ts#root-argument-value@8:31",
+          "src/repositories/pokemon.ts#data@9:10",
+          "src/repositories/pokemon.ts#property@9:30",
+          "src/repositories/pokemon.ts#function@12:1",
+          "src/repositories/pokemon.ts#root-argument-value@12:30",
+          "src/repositories/pokemon.ts#data-fetch@13:10",
+          "src/repositories/pokemon.ts#property@13:29",
+          "src/repositories/pokemon.ts#property@13:38",
+          "src/repositories/pokemon.ts#function@16:1",
+          "src/repositories/pokemon.ts#root-argument-value@16:33",
+          "src/repositories/pokemon.ts#root-argument-value@16:45",
+          "src/repositories/pokemon.ts#data@17:10",
+          "src/repositories/pokemon.ts#property@18:5",
+          "src/repositories/pokemon.ts#property@18:14",
+          "src/repositories/pokemon.ts#property@19:5",
+          "src/repositories/pokemon.ts#property@19:13",
+          "src/repositories/pokemon.ts#property@19:24",
+          "src/repositories/pokemon.ts#property@19:35",
+          "src/repositories/pokemon.ts#property@20:5",
+          "src/repositories/pokemon.ts#property@20:16"
+        ],
+        "rootBlockIds": [
+          "src/repositories/pokemon.ts#import@1:1",
+          "src/repositories/pokemon.ts#import@2:1",
+          "src/repositories/pokemon.ts#function@4:1",
+          "src/repositories/pokemon.ts#function@8:1",
+          "src/repositories/pokemon.ts#function@12:1",
+          "src/repositories/pokemon.ts#function@16:1"
+        ],
+        "diffBlockIds": [
+          "src/repositories/pokemon.ts#function@12:1",
+          "src/repositories/pokemon.ts#root-argument-value@12:30",
+          "src/repositories/pokemon.ts#data-fetch@13:10",
+          "src/repositories/pokemon.ts#property@13:29",
+          "src/repositories/pokemon.ts#property@13:38",
+          "src/repositories/pokemon.ts#function@16:1",
+          "src/repositories/pokemon.ts#root-argument-value@16:33",
+          "src/repositories/pokemon.ts#root-argument-value@16:45",
+          "src/repositories/pokemon.ts#data@17:10",
+          "src/repositories/pokemon.ts#property@18:5",
+          "src/repositories/pokemon.ts#property@18:14",
+          "src/repositories/pokemon.ts#property@19:5",
+          "src/repositories/pokemon.ts#property@19:13",
+          "src/repositories/pokemon.ts#property@19:24",
+          "src/repositories/pokemon.ts#property@19:35",
+          "src/repositories/pokemon.ts#property@20:5",
+          "src/repositories/pokemon.ts#property@20:16"
+        ],
+        "diffContains": [
+          "data",
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/repositories/pokemon.ts#data-fetch@5:10",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/repositories/pokemon.ts#root-argument-value@8:31",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/repositories/pokemon.ts#data@9:10",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/repositories/pokemon.ts#data-fetch@13:10",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/repositories/pokemon.ts#data@17:10",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/db.ts#root-variable@5:1"
+        ],
+        "exports": {
+          "findPartyOf": "src/repositories/pokemon.ts#function@4:1",
+          "createPokemon": "src/repositories/pokemon.ts#function@8:1",
+          "countPartyOf": "src/repositories/pokemon.ts#function@12:1",
+          "transferPokemon": "src/repositories/pokemon.ts#function@16:1"
+        }
+      },
+      {
+        "filePath": "src/services/party.ts",
+        "codeBlockIds": [
+          "src/services/party.ts#import@1:1",
+          "src/services/party.ts#root-variable@3:1",
+          "src/services/party.ts#class@5:1",
+          "src/services/party.ts#function@7:1",
+          "src/services/party.ts#root-argument-value@7:36",
+          "src/services/party.ts#root-argument-value@7:55",
+          "src/services/party.ts#root-argument-value@7:69",
+          "src/services/party.ts#property@8:26",
+          "src/services/party.ts#property@8:32",
+          "src/services/party.ts#property@8:45",
+          "src/services/party.ts#property@8:55",
+          "src/services/party.ts#function@11:1",
+          "src/services/party.ts#root-argument-value@11:35",
+          "src/services/party.ts#external-value@12:3",
+          "src/services/party.ts#function@16:1",
+          "src/services/party.ts#root-argument-value@16:36",
+          "src/services/party.ts#root-argument-value@16:55",
+          "src/services/party.ts#external-value@17:3",
+          "src/services/party.ts#condition@18:3",
+          "src/services/party.ts#throw@18:33"
+        ],
+        "rootBlockIds": [
+          "src/services/party.ts#import@1:1",
+          "src/services/party.ts#root-variable@3:1",
+          "src/services/party.ts#class@5:1",
+          "src/services/party.ts#function@7:1",
+          "src/services/party.ts#function@11:1",
+          "src/services/party.ts#function@16:1"
+        ],
+        "diffBlockIds": [
+          "src/services/party.ts#import@1:1",
+          "src/services/party.ts#root-variable@3:1",
+          "src/services/party.ts#class@5:1",
+          "src/services/party.ts#function@16:1",
+          "src/services/party.ts#root-argument-value@16:36",
+          "src/services/party.ts#root-argument-value@16:55",
+          "src/services/party.ts#external-value@17:3",
+          "src/services/party.ts#condition@18:3",
+          "src/services/party.ts#throw@18:33"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/services/party.ts#function@7:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/services/party.ts#external-value@12:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/services/party.ts#function@16:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/services/party.ts#external-value@17:3",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/repositories/pokemon.ts#function@8:1",
+          "src/repositories/pokemon.ts#function@4:1",
+          "src/repositories/pokemon.ts#function@16:1",
+          "src/repositories/pokemon.ts#function@12:1"
+        ],
+        "exports": {
+          "PartyFullError": "src/services/party.ts#class@5:1",
+          "catchPokemon": "src/services/party.ts#function@7:1",
+          "strongestOf": "src/services/party.ts#function@11:1",
+          "tradePokemon": "src/services/party.ts#function@16:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "src/services/party.ts"
+    ],
+    "codeBlocks": [
+      {
+        "id": "src/db.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/db.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/db.ts#root-variable@3:1",
+        "name": "DATABASE_URL",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 75
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "isPlain": true,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/db.ts#property@5:38"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/db.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/db.ts#root-variable@5:1",
+        "name": "db",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 68
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/db.ts#property@5:38"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "isPlain": true,
+        "exportedByFilePaths": [
+          "src/db.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 23
+              },
+              "end": {
+                "line": 5,
+                "column": 35
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "@prisma/client",
+            "importedName": "PrismaClient",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/repositories/pokemon.ts#data-fetch@5:10",
+          "src/repositories/pokemon.ts#data@9:10",
+          "src/repositories/pokemon.ts#data-fetch@13:10",
+          "src/repositories/pokemon.ts#data@17:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/db.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/db.ts#property@5:38",
+        "name": "datasourceUrl",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 38
+            },
+            "end": {
+              "line": 5,
+              "column": 65
+            }
+          }
+        ],
+        "parentBlockId": "src/db.ts#root-variable@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 53
+              },
+              "end": {
+                "line": 5,
+                "column": 65
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/db.ts#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/db.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#function@4:1",
+        "name": "findPartyOf",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#root-argument-value@4:29",
+          "src/repositories/pokemon.ts#data-fetch@5:10"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/repositories/pokemon.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#external-value@12:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#root-argument-value@4:29",
+        "name": "trainerId",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 29
+            },
+            "end": {
+              "line": 4,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#function@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/repositories/pokemon.ts#property@5:41"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/services/party.ts#external-value@12:3",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#data-fetch@5:10",
+        "type": "data-fetch",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 10
+            },
+            "end": {
+              "line": 5,
+              "column": 111
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#function@4:1",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@5:32",
+          "src/repositories/pokemon.ts#property@5:54",
+          "src/repositories/pokemon.ts#property@5:82"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 10
+              },
+              "end": {
+                "line": 5,
+                "column": 29
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "pokemon",
+                "findMany"
+              ],
+              "blockId": null
+            },
+            "type": "external-block",
+            "codeBlockId": "src/db.ts#root-variable@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": {
+          "specifier": "@prisma/client",
+          "name": "findMany",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@5:32",
+        "name": "where",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 32
+            },
+            "end": {
+              "line": 5,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#data-fetch@5:10",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@5:41"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@5:41",
+        "name": "trainerId",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 41
+            },
+            "end": {
+              "line": 5,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#property@5:32",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 41
+              },
+              "end": {
+                "line": 5,
+                "column": 50
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/repositories/pokemon.ts#root-argument-value@4:29"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@5:54",
+        "name": "orderBy",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 54
+            },
+            "end": {
+              "line": 5,
+              "column": 80
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#data-fetch@5:10",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@5:65"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@5:65",
+        "name": "level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 65
+            },
+            "end": {
+              "line": 5,
+              "column": 78
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#property@5:54",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@5:82",
+        "name": "include",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 82
+            },
+            "end": {
+              "line": 5,
+              "column": 108
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#data-fetch@5:10",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@5:93"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@5:93",
+        "name": "trainer",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 93
+            },
+            "end": {
+              "line": 5,
+              "column": 106
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#property@5:82",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#function@8:1",
+        "name": "createPokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#root-argument-value@8:31",
+          "src/repositories/pokemon.ts#data@9:10"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/repositories/pokemon.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#function@7:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#root-argument-value@8:31",
+        "name": "data",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 31
+            },
+            "end": {
+              "line": 8,
+              "column": 71
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#function@8:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 37
+              },
+              "end": {
+                "line": 8,
+                "column": 43
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "@prisma/client",
+            "importedName": "Prisma",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/repositories/pokemon.ts#property@9:30"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#data@9:10",
+        "type": "data",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 10
+            },
+            "end": {
+              "line": 9,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#function@8:1",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@9:30"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 10
+              },
+              "end": {
+                "line": 9,
+                "column": 27
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "pokemon",
+                "create"
+              ],
+              "blockId": null
+            },
+            "type": "external-block",
+            "codeBlockId": "src/db.ts#root-variable@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": {
+          "specifier": "@prisma/client",
+          "name": "create",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@9:30",
+        "name": "data",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 30
+            },
+            "end": {
+              "line": 9,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#data@9:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 30
+              },
+              "end": {
+                "line": 9,
+                "column": 34
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/repositories/pokemon.ts#root-argument-value@8:31"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#function@12:1",
+        "name": "countPartyOf",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 14,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#root-argument-value@12:30",
+          "src/repositories/pokemon.ts#data-fetch@13:10"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/repositories/pokemon.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 30
+            }
+          },
+          {
+            "start": {
+              "line": 12,
+              "column": 47
+            },
+            "end": {
+              "line": 12,
+              "column": 50
+            }
+          },
+          {
+            "start": {
+              "line": 13,
+              "column": 3
+            },
+            "end": {
+              "line": 13,
+              "column": 10
+            }
+          },
+          {
+            "start": {
+              "line": 14,
+              "column": 1
+            },
+            "end": {
+              "line": 14,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 1
+              },
+              "end": {
+                "line": 12,
+                "column": 30
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 47
+              },
+              "end": {
+                "line": 12,
+                "column": 50
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 3
+              },
+              "end": {
+                "line": 13,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 1
+              },
+              "end": {
+                "line": 14,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/repositories/pokemon.ts#function@12:1",
+          "src/repositories/pokemon.ts#data-fetch@13:10"
+        ],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [
+          "database-read-write"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#external-value@17:3"
+        ],
+        "nextBlockIds": [
+          "src/repositories/pokemon.ts#data-fetch@13:10"
+        ],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#root-argument-value@12:30",
+        "name": "trainerId",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 30
+            },
+            "end": {
+              "line": 12,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#function@12:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 12,
+              "column": 30
+            },
+            "end": {
+              "line": 12,
+              "column": 47
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 30
+              },
+              "end": {
+                "line": 12,
+                "column": 47
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/repositories/pokemon.ts#property@13:38"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/services/party.ts#external-value@17:3",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#data-fetch@13:10",
+        "type": "data-fetch",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 10
+            },
+            "end": {
+              "line": 13,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#function@12:1",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@13:29"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 13,
+              "column": 10
+            },
+            "end": {
+              "line": 13,
+              "column": 29
+            }
+          },
+          {
+            "start": {
+              "line": 13,
+              "column": 49
+            },
+            "end": {
+              "line": 13,
+              "column": 52
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 10
+              },
+              "end": {
+                "line": 13,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 49
+              },
+              "end": {
+                "line": 13,
+                "column": 52
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/repositories/pokemon.ts#data-fetch@13:10"
+        ],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [
+          "database-read-write"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 10
+              },
+              "end": {
+                "line": 13,
+                "column": 26
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "pokemon",
+                "count"
+              ],
+              "blockId": null
+            },
+            "type": "external-block",
+            "codeBlockId": "src/db.ts#root-variable@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": {
+          "specifier": "@prisma/client",
+          "name": "count",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@13:29",
+        "name": "where",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 29
+            },
+            "end": {
+              "line": 13,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#data-fetch@13:10",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@13:38"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 13,
+              "column": 29
+            },
+            "end": {
+              "line": 13,
+              "column": 38
+            }
+          },
+          {
+            "start": {
+              "line": 13,
+              "column": 47
+            },
+            "end": {
+              "line": 13,
+              "column": 49
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 29
+              },
+              "end": {
+                "line": 13,
+                "column": 38
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 47
+              },
+              "end": {
+                "line": 13,
+                "column": 49
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@13:38",
+        "name": "trainerId",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 38
+            },
+            "end": {
+              "line": 13,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#property@13:29",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 13,
+              "column": 38
+            },
+            "end": {
+              "line": 13,
+              "column": 47
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 38
+              },
+              "end": {
+                "line": 13,
+                "column": 47
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 38
+              },
+              "end": {
+                "line": 13,
+                "column": 47
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/repositories/pokemon.ts#root-argument-value@12:30"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#function@16:1",
+        "name": "transferPokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 1
+            },
+            "end": {
+              "line": 22,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#root-argument-value@16:33",
+          "src/repositories/pokemon.ts#root-argument-value@16:45",
+          "src/repositories/pokemon.ts#data@17:10"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/repositories/pokemon.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 1
+            },
+            "end": {
+              "line": 16,
+              "column": 33
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 43
+            },
+            "end": {
+              "line": 16,
+              "column": 45
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 62
+            },
+            "end": {
+              "line": 16,
+              "column": 65
+            }
+          },
+          {
+            "start": {
+              "line": 17,
+              "column": 3
+            },
+            "end": {
+              "line": 17,
+              "column": 10
+            }
+          },
+          {
+            "start": {
+              "line": 22,
+              "column": 1
+            },
+            "end": {
+              "line": 22,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 1
+              },
+              "end": {
+                "line": 16,
+                "column": 33
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 43
+              },
+              "end": {
+                "line": 16,
+                "column": 45
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 62
+              },
+              "end": {
+                "line": 16,
+                "column": 65
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 3
+              },
+              "end": {
+                "line": 17,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 1
+              },
+              "end": {
+                "line": 22,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/repositories/pokemon.ts#function@16:1",
+          "src/repositories/pokemon.ts#data@17:10"
+        ],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [
+          "database-read-write"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#function@16:1"
+        ],
+        "nextBlockIds": [
+          "src/repositories/pokemon.ts#data@17:10"
+        ],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#root-argument-value@16:33",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 33
+            },
+            "end": {
+              "line": 16,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#function@16:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 33
+            },
+            "end": {
+              "line": 16,
+              "column": 43
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 33
+              },
+              "end": {
+                "line": 16,
+                "column": 43
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/repositories/pokemon.ts#property@18:14"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/services/party.ts#function@16:1",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#root-argument-value@16:45",
+        "name": "trainerId",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 45
+            },
+            "end": {
+              "line": 16,
+              "column": 62
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#function@16:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 45
+            },
+            "end": {
+              "line": 16,
+              "column": 62
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 45
+              },
+              "end": {
+                "line": 16,
+                "column": 62
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/repositories/pokemon.ts#property@19:35"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/services/party.ts#function@16:1",
+            "symbolIndex": 2
+          }
+        ],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#data@17:10",
+        "type": "data",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 10
+            },
+            "end": {
+              "line": 21,
+              "column": 5
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#function@16:1",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@18:5",
+          "src/repositories/pokemon.ts#property@19:5",
+          "src/repositories/pokemon.ts#property@20:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 17,
+              "column": 10
+            },
+            "end": {
+              "line": 17,
+              "column": 29
+            }
+          },
+          {
+            "start": {
+              "line": 18,
+              "column": 18
+            },
+            "end": {
+              "line": 18,
+              "column": 19
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 54
+            },
+            "end": {
+              "line": 19,
+              "column": 55
+            }
+          },
+          {
+            "start": {
+              "line": 20,
+              "column": 31
+            },
+            "end": {
+              "line": 20,
+              "column": 32
+            }
+          },
+          {
+            "start": {
+              "line": 21,
+              "column": 3
+            },
+            "end": {
+              "line": 21,
+              "column": 5
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 10
+              },
+              "end": {
+                "line": 17,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 18
+              },
+              "end": {
+                "line": 18,
+                "column": 19
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 54
+              },
+              "end": {
+                "line": 19,
+                "column": 55
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 31
+              },
+              "end": {
+                "line": 20,
+                "column": 32
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 3
+              },
+              "end": {
+                "line": 21,
+                "column": 5
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/repositories/pokemon.ts#data@17:10"
+        ],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [
+          "database-read-write"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 10
+              },
+              "end": {
+                "line": 17,
+                "column": 27
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "pokemon",
+                "update"
+              ],
+              "blockId": null
+            },
+            "type": "external-block",
+            "codeBlockId": "src/db.ts#root-variable@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": {
+          "specifier": "@prisma/client",
+          "name": "update",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@18:5",
+        "name": "where",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 5
+            },
+            "end": {
+              "line": 18,
+              "column": 18
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#data@17:10",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@18:14"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 18,
+              "column": 5
+            },
+            "end": {
+              "line": 18,
+              "column": 14
+            }
+          },
+          {
+            "start": {
+              "line": 18,
+              "column": 16
+            },
+            "end": {
+              "line": 18,
+              "column": 18
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 5
+              },
+              "end": {
+                "line": 18,
+                "column": 14
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 16
+              },
+              "end": {
+                "line": 18,
+                "column": 18
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@18:14",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 14
+            },
+            "end": {
+              "line": 18,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#property@18:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 18,
+              "column": 14
+            },
+            "end": {
+              "line": 18,
+              "column": 16
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 14
+              },
+              "end": {
+                "line": 18,
+                "column": 16
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 14
+              },
+              "end": {
+                "line": 18,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/repositories/pokemon.ts#root-argument-value@16:33"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@19:5",
+        "name": "data",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 5
+            },
+            "end": {
+              "line": 19,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#data@17:10",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@19:13"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 5
+            },
+            "end": {
+              "line": 19,
+              "column": 13
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 52
+            },
+            "end": {
+              "line": 19,
+              "column": 54
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 5
+              },
+              "end": {
+                "line": 19,
+                "column": 13
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 52
+              },
+              "end": {
+                "line": 19,
+                "column": 54
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@19:13",
+        "name": "trainer",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 13
+            },
+            "end": {
+              "line": 19,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#property@19:5",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@19:24"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 13
+            },
+            "end": {
+              "line": 19,
+              "column": 24
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 50
+            },
+            "end": {
+              "line": 19,
+              "column": 52
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 13
+              },
+              "end": {
+                "line": 19,
+                "column": 24
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 50
+              },
+              "end": {
+                "line": 19,
+                "column": 52
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@19:24",
+        "name": "connect",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 24
+            },
+            "end": {
+              "line": 19,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#property@19:13",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@19:35"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 24
+            },
+            "end": {
+              "line": 19,
+              "column": 35
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 48
+            },
+            "end": {
+              "line": 19,
+              "column": 50
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 24
+              },
+              "end": {
+                "line": 19,
+                "column": 35
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 48
+              },
+              "end": {
+                "line": 19,
+                "column": 50
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@19:35",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 35
+            },
+            "end": {
+              "line": 19,
+              "column": 48
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#property@19:24",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 35
+            },
+            "end": {
+              "line": 19,
+              "column": 48
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 35
+              },
+              "end": {
+                "line": 19,
+                "column": 48
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 39
+              },
+              "end": {
+                "line": 19,
+                "column": 48
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/repositories/pokemon.ts#root-argument-value@16:45"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@20:5",
+        "name": "include",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#data@17:10",
+        "childrenBlockIds": [
+          "src/repositories/pokemon.ts#property@20:16"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 16
+            }
+          },
+          {
+            "start": {
+              "line": 20,
+              "column": 29
+            },
+            "end": {
+              "line": 20,
+              "column": 31
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 5
+              },
+              "end": {
+                "line": 20,
+                "column": 16
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 29
+              },
+              "end": {
+                "line": 20,
+                "column": 31
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/repositories/pokemon.ts#property@20:16",
+        "name": "trainer",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 16
+            },
+            "end": {
+              "line": 20,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "src/repositories/pokemon.ts#property@20:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 16
+            },
+            "end": {
+              "line": 20,
+              "column": 29
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 16
+              },
+              "end": {
+                "line": 20,
+                "column": 29
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/repositories/pokemon.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 99
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 99
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 99
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#root-variable@3:1",
+        "name": "PARTY_LIMIT",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "isPlain": true,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 22
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 3,
+                "column": 22
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/services/party.ts#root-variable@3:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#condition@18:3",
+          "src/services/party.ts#throw@18:33"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#class@5:1",
+        "name": "PartyFullError",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/services/party.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 45
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 1
+              },
+              "end": {
+                "line": 5,
+                "column": 45
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/services/party.ts#class@5:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#throw@18:33"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#function@7:1",
+        "name": "catchPokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/services/party.ts#root-argument-value@7:36",
+          "src/services/party.ts#root-argument-value@7:55",
+          "src/services/party.ts#root-argument-value@7:69",
+          "src/services/party.ts#property@8:26",
+          "src/services/party.ts#property@8:32",
+          "src/services/party.ts#property@8:45",
+          "src/services/party.ts#property@8:55"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/services/party.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 10
+              },
+              "end": {
+                "line": 8,
+                "column": 23
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/repositories/pokemon.ts#function@8:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#root-argument-value@7:36",
+        "name": "trainerId",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 36
+            },
+            "end": {
+              "line": 7,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#property@8:55"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#root-argument-value@7:55",
+        "name": "name",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 55
+            },
+            "end": {
+              "line": 7,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#property@8:26"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#root-argument-value@7:69",
+        "name": "primaryType",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 69
+            },
+            "end": {
+              "line": 7,
+              "column": 88
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#property@8:32"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#property@8:26",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 26
+            },
+            "end": {
+              "line": 8,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 26
+              },
+              "end": {
+                "line": 8,
+                "column": 30
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#root-argument-value@7:55"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#property@8:32",
+        "name": "primaryType",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 32
+            },
+            "end": {
+              "line": 8,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 32
+              },
+              "end": {
+                "line": 8,
+                "column": 43
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#root-argument-value@7:69"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#property@8:45",
+        "name": "level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 45
+            },
+            "end": {
+              "line": 8,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#property@8:55",
+        "name": "trainerId",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 55
+            },
+            "end": {
+              "line": 8,
+              "column": 64
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 55
+              },
+              "end": {
+                "line": 8,
+                "column": 64
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#root-argument-value@7:36"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#function@11:1",
+        "name": "strongestOf",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 14,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/services/party.ts#root-argument-value@11:35",
+          "src/services/party.ts#external-value@12:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/services/party.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 10
+              },
+              "end": {
+                "line": 13,
+                "column": 19
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#external-value@12:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#root-argument-value@11:35",
+        "name": "trainerId",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 35
+            },
+            "end": {
+              "line": 11,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@11:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#external-value@12:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#external-value@12:3",
+        "name": "strongest",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 3
+            },
+            "end": {
+              "line": 12,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@11:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 29
+              },
+              "end": {
+                "line": 12,
+                "column": 40
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/repositories/pokemon.ts#function@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 41
+              },
+              "end": {
+                "line": 12,
+                "column": 50
+              }
+            },
+            "use": "value",
+            "handedToId": "src/repositories/pokemon.ts#root-argument-value@4:29",
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#root-argument-value@11:35"
+          }
+        ],
+        "usedByIds": [
+          "src/services/party.ts#function@11:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#function@16:1",
+        "name": "tradePokemon",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 1
+            },
+            "end": {
+              "line": 20,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/services/party.ts#root-argument-value@16:36",
+          "src/services/party.ts#root-argument-value@16:55",
+          "src/services/party.ts#external-value@17:3",
+          "src/services/party.ts#condition@18:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/services/party.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 1
+            },
+            "end": {
+              "line": 16,
+              "column": 36
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 53
+            },
+            "end": {
+              "line": 16,
+              "column": 55
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 74
+            },
+            "end": {
+              "line": 16,
+              "column": 77
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 3
+            },
+            "end": {
+              "line": 19,
+              "column": 49
+            }
+          },
+          {
+            "start": {
+              "line": 20,
+              "column": 1
+            },
+            "end": {
+              "line": 20,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 1
+              },
+              "end": {
+                "line": 16,
+                "column": 36
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 53
+              },
+              "end": {
+                "line": 16,
+                "column": 55
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 74
+              },
+              "end": {
+                "line": 16,
+                "column": 77
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 3
+              },
+              "end": {
+                "line": 19,
+                "column": 49
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 10
+              },
+              "end": {
+                "line": 19,
+                "column": 25
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 1
+              },
+              "end": {
+                "line": 20,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/repositories/pokemon.ts#function@12:1",
+          "src/repositories/pokemon.ts#data-fetch@13:10",
+          "src/repositories/pokemon.ts#function@16:1",
+          "src/repositories/pokemon.ts#data@17:10",
+          "src/services/party.ts#root-variable@3:1",
+          "src/services/party.ts#class@5:1",
+          "src/services/party.ts#function@16:1",
+          "src/services/party.ts#external-value@17:3",
+          "src/services/party.ts#condition@18:3",
+          "src/services/party.ts#throw@18:33"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 10
+              },
+              "end": {
+                "line": 19,
+                "column": 25
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/repositories/pokemon.ts#function@16:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 26
+              },
+              "end": {
+                "line": 19,
+                "column": 35
+              }
+            },
+            "use": "value",
+            "handedToId": "src/repositories/pokemon.ts#root-argument-value@16:33",
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#root-argument-value@16:36"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 37
+              },
+              "end": {
+                "line": 19,
+                "column": 48
+              }
+            },
+            "use": "value",
+            "handedToId": "src/repositories/pokemon.ts#root-argument-value@16:45",
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#root-argument-value@16:55"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/services/party.ts#external-value@17:3",
+          "src/services/party.ts#condition@18:3",
+          "src/repositories/pokemon.ts#function@16:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#root-argument-value@16:36",
+        "name": "pokemonId",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 36
+            },
+            "end": {
+              "line": 16,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@16:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 36
+            },
+            "end": {
+              "line": 16,
+              "column": 53
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 36
+              },
+              "end": {
+                "line": 16,
+                "column": 53
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#function@16:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#root-argument-value@16:55",
+        "name": "toTrainerId",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 55
+            },
+            "end": {
+              "line": 16,
+              "column": 74
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@16:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 55
+            },
+            "end": {
+              "line": 16,
+              "column": 74
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 55
+              },
+              "end": {
+                "line": 16,
+                "column": 74
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/services/party.ts#external-value@17:3",
+          "src/services/party.ts#throw@18:33",
+          "src/services/party.ts#function@16:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#external-value@17:3",
+        "name": "partySize",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 3
+            },
+            "end": {
+              "line": 17,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@16:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 17,
+              "column": 3
+            },
+            "end": {
+              "line": 17,
+              "column": 52
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 3
+              },
+              "end": {
+                "line": 17,
+                "column": 52
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 27
+              },
+              "end": {
+                "line": 17,
+                "column": 39
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/repositories/pokemon.ts#function@12:1",
+          "src/repositories/pokemon.ts#data-fetch@13:10",
+          "src/services/party.ts#external-value@17:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 27
+              },
+              "end": {
+                "line": 17,
+                "column": 39
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/repositories/pokemon.ts#function@12:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 40
+              },
+              "end": {
+                "line": 17,
+                "column": 51
+              }
+            },
+            "use": "value",
+            "handedToId": "src/repositories/pokemon.ts#root-argument-value@12:30",
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#root-argument-value@16:55"
+          }
+        ],
+        "usedByIds": [
+          "src/services/party.ts#condition@18:3"
+        ],
+        "nextBlockIds": [
+          "src/repositories/pokemon.ts#function@12:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#condition@18:3",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 3
+            },
+            "end": {
+              "line": 18,
+              "column": 118
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#function@16:1",
+        "childrenBlockIds": [
+          "src/services/party.ts#throw@18:33"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 18,
+              "column": 3
+            },
+            "end": {
+              "line": 18,
+              "column": 33
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 3
+              },
+              "end": {
+                "line": 18,
+                "column": 33
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 7
+              },
+              "end": {
+                "line": 18,
+                "column": 16
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 20
+              },
+              "end": {
+                "line": 18,
+                "column": 31
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/repositories/pokemon.ts#function@12:1",
+          "src/repositories/pokemon.ts#data-fetch@13:10",
+          "src/services/party.ts#root-variable@3:1",
+          "src/services/party.ts#class@5:1",
+          "src/services/party.ts#external-value@17:3",
+          "src/services/party.ts#condition@18:3",
+          "src/services/party.ts#throw@18:33"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 7
+              },
+              "end": {
+                "line": 18,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#external-value@17:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 20
+              },
+              "end": {
+                "line": 18,
+                "column": 31
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/services/party.ts#throw@18:33",
+          "src/services/party.ts#external-value@17:3",
+          "src/services/party.ts#root-variable@3:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/services/party.ts#throw@18:33",
+        "type": "throw",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 33
+            },
+            "end": {
+              "line": 18,
+              "column": 118
+            }
+          }
+        ],
+        "parentBlockId": "src/services/party.ts#condition@18:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 18,
+              "column": 33
+            },
+            "end": {
+              "line": 18,
+              "column": 118
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 33
+              },
+              "end": {
+                "line": 18,
+                "column": 118
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 43
+              },
+              "end": {
+                "line": 18,
+                "column": 57
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 96
+              },
+              "end": {
+                "line": 18,
+                "column": 107
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/services/party.ts#root-variable@3:1",
+          "src/services/party.ts#class@5:1",
+          "src/services/party.ts#throw@18:33"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 43
+              },
+              "end": {
+                "line": 18,
+                "column": 57
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#class@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 69
+              },
+              "end": {
+                "line": 18,
+                "column": 80
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#root-argument-value@16:55"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 96
+              },
+              "end": {
+                "line": 18,
+                "column": 107
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/services/party.ts#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/services/party.ts#class@5:1",
+          "src/services/party.ts#root-variable@3:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/services/party.ts",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "src/repositories/pokemon.ts#function@12:1",
+      "src/repositories/pokemon.ts#root-argument-value@12:30",
+      "src/repositories/pokemon.ts#data-fetch@13:10",
+      "src/repositories/pokemon.ts#property@13:29",
+      "src/repositories/pokemon.ts#property@13:38",
+      "src/repositories/pokemon.ts#function@16:1",
+      "src/repositories/pokemon.ts#root-argument-value@16:33",
+      "src/repositories/pokemon.ts#root-argument-value@16:45",
+      "src/repositories/pokemon.ts#data@17:10",
+      "src/repositories/pokemon.ts#property@18:5",
+      "src/repositories/pokemon.ts#property@18:14",
+      "src/repositories/pokemon.ts#property@19:5",
+      "src/repositories/pokemon.ts#property@19:13",
+      "src/repositories/pokemon.ts#property@19:24",
+      "src/repositories/pokemon.ts#property@19:35",
+      "src/repositories/pokemon.ts#property@20:5",
+      "src/repositories/pokemon.ts#property@20:16",
+      "src/services/party.ts#import@1:1",
+      "src/services/party.ts#root-variable@3:1",
+      "src/services/party.ts#class@5:1",
+      "src/services/party.ts#function@16:1",
+      "src/services/party.ts#root-argument-value@16:36",
+      "src/services/party.ts#root-argument-value@16:55",
+      "src/services/party.ts#external-value@17:3",
+      "src/services/party.ts#condition@18:3",
+      "src/services/party.ts#throw@18:33"
+    ],
+    "diffContains": [
+      "data",
+      "logic"
+    ],
+    "chainContains": [
+      "data",
+      "logic"
+    ],
+    "diffChainIds": [
+      "src/services/party.ts#function@16:1"
+    ]
+  }
+]

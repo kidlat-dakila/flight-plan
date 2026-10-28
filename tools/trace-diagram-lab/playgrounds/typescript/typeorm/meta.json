@@ -1,0 +1,6 @@
+{
+  "title": "TypeORM data layer with a DataSource, two related entities and plain scripts",
+  "packages": ["typeorm", "reflect-metadata"],
+  "language": "typescript",
+  "mainFramework": null
+}

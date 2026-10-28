@@ -10,16 +10,35 @@ export interface LabRequests {
   readonly segmentCount: number | null
 }
 
-const LOADING_FIXTURES_MESSAGE = "Loading the fixtures."
-const NO_FIXTURES_MESSAGE = "There are no fixtures to show."
-const LOADING_FIXTURE_MESSAGE = "Loading the fixture."
-const NO_SEGMENTS_MESSAGE = "This fixture has no segment to show."
-
-export const labStatusOf = ({ fixtures, fixtureCount, page, segmentCount }: LabRequests): string | null => {
-  if (fixtures.error !== null) return fixtures.error.message
-  if (fixtures.isLoading) return LOADING_FIXTURES_MESSAGE
-  if (fixtureCount === 0) return NO_FIXTURES_MESSAGE
-  if (page.error !== null) return page.error.message
-  if (page.isLoading) return LOADING_FIXTURE_MESSAGE
-  return segmentCount === 0 ? NO_SEGMENTS_MESSAGE : null
+export interface ListedPageRequests {
+  readonly list: RequestState
+  readonly listCount: number | null
+  readonly page: RequestState
+  readonly segmentCount: number | null
 }
+
+export interface StatusMessages {
+  readonly loadingList: string
+  readonly emptyList: string
+  readonly loadingPage: string
+  readonly noSegments: string
+}
+
+const LAB_MESSAGES: StatusMessages = {
+  loadingList: "Loading the fixtures.",
+  emptyList: "There are no fixtures to show.",
+  loadingPage: "Loading the fixture.",
+  noSegments: "This fixture has no segment to show.",
+}
+
+export const requestStatusOf = (messages: StatusMessages, { list, listCount, page, segmentCount }: ListedPageRequests): string | null => {
+  if (list.error !== null) return list.error.message
+  if (list.isLoading) return messages.loadingList
+  if (listCount === 0) return messages.emptyList
+  if (page.error !== null) return page.error.message
+  if (page.isLoading) return messages.loadingPage
+  return segmentCount === 0 ? messages.noSegments : null
+}
+
+export const labStatusOf = ({ fixtures, fixtureCount, page, segmentCount }: LabRequests): string | null =>
+  requestStatusOf(LAB_MESSAGES, { list: fixtures, listCount: fixtureCount, page, segmentCount })
