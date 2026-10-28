@@ -39,6 +39,12 @@ describe("listLeavesReached", () => {
     expect(listLeavesReached(linkAt(0), reachOf(nextByItem))).toStrictEqual(["leafEnd"])
   })
 
+  it("opens the start even when it counts as a leaf", () => {
+    const nextByItem = new Map([["leafStart", ["a"]], ["a", ["leafX"]]])
+
+    expect(listLeavesReached("leafStart", reachOf(nextByItem))).toStrictEqual(["leafX"])
+  })
+
   it("gives nothing when the start leads nowhere", () => {
     expect(listLeavesReached("start", reachOf(new Map()))).toStrictEqual([])
   })

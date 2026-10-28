@@ -1,6 +1,7 @@
 import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
 import { Memo } from "@/shared/memo"
+import { walkBreadthFirstInTurns } from "@/shared/reach"
 import { compareRanges, containsRange, rangeKey, touchesRange } from "./source-range"
 import type { StoredCodeBlock, StoredCodeBlockSymbol } from "./stored-types"
 import type { CodeBlockDiff, CodeBlockType, SourceRange } from "./types"
@@ -18,26 +19,13 @@ const AFFECTED: CodeBlockDiff["type"] = "affected"
 const ARGUMENT: CodeBlockType = "root-argument-value"
 const NO_PATHS: readonly string[] = []
 
-const walkImports = (startPaths: readonly string[], importedPathsOf: ImportedPathsOf, visitedPaths: readonly string[]): string[] => {
-  const visited = new Set(visitedPaths)
-  const arrivingPaths = [...new Set(startPaths)].filter((filePath) => !visited.has(filePath))
-  if (arrivingPaths.length === 0) return [...visitedPaths]
-  return walkImports(arrivingPaths.flatMap(importedPathsOf), importedPathsOf, [...visitedPaths, ...arrivingPaths])
-}
-
-const walkUnvisited = (filePaths: readonly string[], importedPathsOf: ImportedPathsOf, visitedPaths: readonly string[]): string[] => {
-  const visited = new Set(visitedPaths)
-  const unvisitedPath = filePaths.find((filePath) => !visited.has(filePath))
-  return unvisitedPath === undefined ? [...visitedPaths] : walkUnvisited(filePaths, importedPathsOf, walkImports([unvisitedPath], importedPathsOf, visitedPaths))
-}
-
 export const listFilesFromRoots = (files: readonly TracedFile[], rootFilePaths: readonly string[]): string[] => {
   const filePaths = files.map((file) => file.filePath)
   const groupPaths = new Set(filePaths)
   const importedByPath = new Map(files.map((file) => [file.filePath, [...file.importedFilePaths.values()].filter((imported) => groupPaths.has(imported))] as const))
   const importedPathsOf: ImportedPathsOf = (filePath) => importedByPath.get(filePath) ?? NO_PATHS
-  const fromRoots = walkImports(rootFilePaths.filter((filePath) => groupPaths.has(filePath)), importedPathsOf, NO_PATHS)
-  return walkUnvisited(filePaths, importedPathsOf, fromRoots)
+  const rootPaths = rootFilePaths.filter((filePath) => groupPaths.has(filePath))
+  return [...walkBreadthFirstInTurns([rootPaths, ...filePaths.map((filePath) => [filePath])], { nextOf: importedPathsOf, keyOf: (filePath) => filePath })]
 }
 
 const isOwnChange = (diff: CodeBlockDiff, block: StoredCodeBlock): boolean =>

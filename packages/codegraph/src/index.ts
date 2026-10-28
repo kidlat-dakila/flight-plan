@@ -19,6 +19,7 @@ import {
 } from "@/import-graph"
 import { hunkOfPatch, type HunksByPath } from "@/scaffold/hunks"
 import { assembleReviewArtifact, listSourcePaths, segmentIdOf, type SegmentParts } from "@/scaffold/review-artifact"
+import { walkBreadthFirst } from "@/shared/reach"
 import { generateTraceDiagram, listTraceNodes } from "@/trace-diagram"
 import type { ASTCodeGroupGraph, Blast, CodeBlockType, DiffType, TraceDiagram, ReviewArtifact } from "@flightplan/configurations"
 import type { GitAdapter, TargetRef } from "@flightplan/git-forge"
@@ -236,17 +237,13 @@ const traceOf = (planned: PlannedSegment, drawing: Drawing): TraceDiagram | null
 
 const NO_EXPORTED_NAMES: ExportedNamesByPath = new Map()
 
-const reachImporters = (pending: readonly string[], importersOf: ReadonlyMap<string, readonly string[]>, reached: ReadonlySet<string>): ReadonlySet<string> => {
-  const unvisited = [...new Set(pending)].filter((filePath) => !reached.has(filePath))
-  if (unvisited.length === 0) return reached
-  return reachImporters(unvisited.flatMap((filePath) => importersOf.get(filePath) ?? []), importersOf, new Set([...reached, ...unvisited]))
-}
+const reachImporters = (startPaths: readonly string[], importersOf: ReadonlyMap<string, readonly string[]>): ReadonlySet<string> =>
+  new Set(walkBreadthFirst(startPaths, { nextOf: (filePath) => importersOf.get(filePath) ?? [], keyOf: (filePath) => filePath }))
 
 const listFullyImportedPaths = (importGraph: readonly ImportGraphFile[]): ReadonlySet<string> =>
   reachImporters(
     importGraph.filter((file) => file.diffType !== null).map((file) => file.filePath),
     new Map(importGraph.map((file) => [file.filePath, file.importedBy] as const)),
-    new Set(),
   )
 
 const exportedNamesIn = (group: StoredCodeGroupGraph | null, importGraph: readonly ImportGraphFile[]): ExportedNamesByPath => {

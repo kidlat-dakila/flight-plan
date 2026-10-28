@@ -2,6 +2,7 @@ import { compareRanges } from "@/code-blocks/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
 import { listLeavesReached } from "@/shared/leaves-reached"
+import { walkBreadthFirst } from "@/shared/reach"
 import type { ASTCodeGroupGraph, BlockLabel, CodeBlock, CodeBlockType, ImportGraphGroup, TraceDiagram, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 import { groupCardNodes, listCardAddedEdges, listCardLeftOutEdgeIds, listCardParents, listLeftOutNodeIds, type CardContext, type NodeGroup, type ParentIdById } from "./cards"
 import { isComponentCardBlock, listComponentCardLabels } from "./component-card"
@@ -64,7 +65,6 @@ type ImporterCountByPath = ReadonlyMap<string, number>
 const TRIGGER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event", "data-fetch"])
 const EDGE_ID_SEPARATOR = " -> "
 const VISIT_KEY_SEPARATOR = "|"
-const NO_STEPS: readonly Step[] = []
 
 const filePathOf = (block: CodeBlock): string => block.astGraph.filePath
 
@@ -108,18 +108,19 @@ const listNextVisits = ({ block, isBelowOwnChange }: Visit, reach: Reach): Visit
   })
 }
 
-const walkChains = (pending: readonly Visit[], reach: Reach, visited: readonly Visit[] = [], steps: readonly Step[] = NO_STEPS): Walk => {
-  const visitedKeys = new Set(visited.map(visitKeyOf))
-  const arriving = firstOfEach(pending.filter((visit) => !visitedKeys.has(visitKeyOf(visit))), visitKeyOf)
-  if (arriving.length === 0) return { blocks: firstOfEach(visited.map((visit) => visit.block), (block) => block.id), steps }
-  const taken = arriving.map((visit) => ({ visit, nextVisits: listNextVisits(visit, reach) }))
-  const stepsTaken = taken.flatMap(({ visit, nextVisits }) => nextVisits.map((next) => ({ from: visit.block, to: next.block })))
-  return walkChains(taken.flatMap(({ nextVisits }) => nextVisits), reach, [...visited, ...arriving], [...steps, ...stepsTaken])
+const walkChains = (tops: readonly Visit[], reach: Reach): Walk => {
+  const visits = [...walkBreadthFirst(tops, { nextOf: (visit) => listNextVisits(visit, reach), keyOf: visitKeyOf })]
+  return {
+    blocks: firstOfEach(visits.map((visit) => visit.block), (block) => block.id),
+    steps: visits.flatMap((visit) => listNextVisits(visit, reach).map((next) => ({ from: visit.block, to: next.block }))),
+  }
 }
 
-const listIdsLeadingTo = (keptIds: ReadonlySet<string>, candidates: readonly CodeBlock[], steps: readonly Step[]): ReadonlySet<string> => {
-  const joining = candidates.filter((block) => !keptIds.has(block.id) && steps.some((step) => step.from.id === block.id && keptIds.has(step.to.id)))
-  return joining.length === 0 ? keptIds : listIdsLeadingTo(new Set([...keptIds, ...joining.map((block) => block.id)]), candidates, steps)
+const listIdsLeadingTo = (endIds: ReadonlySet<string>, candidates: readonly CodeBlock[], steps: readonly Step[]): ReadonlySet<string> => {
+  const candidateIds = new Set(candidates.map((block) => block.id))
+  const stepsByToId = groupBy(steps.filter((step) => candidateIds.has(step.from.id)), (step) => step.to.id)
+  const idsStepping = (id: string): string[] => (stepsByToId.get(id) ?? []).map((step) => step.from.id)
+  return new Set(walkBreadthFirst([...endIds], { nextOf: idsStepping, keyOf: (id) => id }))
 }
 
 const withoutOtherLines = ({ blocks, steps }: Walk, reach: Reach): Walk => {
@@ -188,16 +189,19 @@ const listValueReads = (steps: readonly Step[]): ValueRead[] =>
 
 const readersOf = (value: CodeBlock, readsByValueId: ReadsByValueId): readonly CodeBlock[] => (readsByValueId.get(value.id) ?? []).map(({ reader }) => reader)
 
-const listNodesReading = (value: CodeBlock, readsByValueId: ReadsByValueId): CodeBlock[] =>
-  listLeavesReached(value, { nextOf: (reader) => readersOf(reader, readsByValueId), isLeaf: (reader) => foldedValueOf(reader) === null, keyOf: (reader) => reader.id })
+const listNodesReading = (value: CodeBlock, readsByValueId: ReadsByValueId, foldedReaderIds: ReadonlySet<string>): CodeBlock[] =>
+  listLeavesReached(value, { nextOf: (reader) => readersOf(reader, readsByValueId), isLeaf: (reader) => !foldedReaderIds.has(reader.id), keyOf: (reader) => reader.id })
 
 const listFoldedValueHolds = (steps: readonly Step[], shownBlocks: readonly CodeBlock[]): FoldedValueHold[] => {
   const reads = listValueReads(steps)
   const readsByValueId = groupBy(reads, (read) => read.value.id)
   const values = firstOfEach(reads.map((read) => read.value), (value) => value.id)
+  const readers = firstOfEach(reads.map((read) => read.reader), (reader) => reader.id)
+  const foldedReaderIds = new Set(readers.filter((reader) => foldedValueOf(reader) !== null).map((reader) => reader.id))
+  const shownByRootId = groupBy(shownBlocks, (block) => rootBlockOf(block).id)
   return values.flatMap((value) => {
-    const valueBlocks = shownBlocks.filter((block) => rootBlockOf(block).id === value.id)
-    return listNodesReading(value, readsByValueId).flatMap((node) => valueBlocks.map((block) => ({ nodeId: node.id, block })))
+    const valueBlocks = shownByRootId.get(value.id) ?? []
+    return listNodesReading(value, readsByValueId, foldedReaderIds).flatMap((node) => valueBlocks.map((block) => ({ nodeId: node.id, block })))
   })
 }
 
@@ -231,17 +235,14 @@ const listHeldNodeEdges = (nodeBlocks: readonly CodeBlock[]): TraceNodeEdge[] =>
 const listEdges = (walk: Walk, nodeBlocks: readonly CodeBlock[]): TraceNodeEdge[] =>
   firstOfEach([...listStepEdges(walk), ...listHeldNodeEdges(nodeBlocks)], (edge) => edge.id)
 
-const listImporterPaths = (pendingPaths: readonly string[], importersOf: (filePath: string) => readonly string[], foundPaths: ReadonlySet<string> = new Set()): ReadonlySet<string> => {
-  const arrivingPaths = [...new Set(pendingPaths)].filter((filePath) => !foundPaths.has(filePath))
-  if (arrivingPaths.length === 0) return foundPaths
-  return listImporterPaths(arrivingPaths.flatMap(importersOf), importersOf, new Set([...foundPaths, ...arrivingPaths]))
-}
+const countImportersReached = (filePath: string, importersOf: (filePath: string) => readonly string[]): number =>
+  [...walkBreadthFirst(importersOf(filePath), { nextOf: importersOf, keyOf: (importerPath) => importerPath })].length
 
 const countImportersByPath = (importGraphGroup: ImportGraphGroup, group: ASTCodeGroupGraph): ImporterCountByPath => {
   const groupPaths = new Set(group.astGraphs.map((astGraph) => astGraph.filePath))
   const importersByPath = new Map(importGraphGroup.map((file) => [file.filePath, file.importedBy.filter((importer) => groupPaths.has(importer))] as const))
   const importersOf = (filePath: string): readonly string[] => importersByPath.get(filePath) ?? []
-  return new Map(importGraphGroup.map((file) => [file.filePath, listImporterPaths(importersOf(file.filePath), importersOf).size] as const))
+  return new Map(importGraphGroup.map((file) => [file.filePath, countImportersReached(file.filePath, importersOf)] as const))
 }
 
 const nestNodes = (nodes: readonly TraceNode[], parentIdById: ParentIdById): TraceNode[] => {
