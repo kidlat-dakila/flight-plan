@@ -1,3 +1,4 @@
+import { endOfChain } from "@/shared/chain-end"
 import { walkDepthFirst } from "@/shared/reach"
 import type { CodeBlock, CodeBlockType } from "@flightplan/configurations"
 import { isCardNodeBlock, isCardNotNodeBlock } from "./cards"
@@ -164,12 +165,26 @@ export const isNodeDrawnInside = (block: CodeBlock): boolean => block.parentBloc
 export const isStepBlock = (block: CodeBlock): boolean =>
   block.parentBlock !== null && !isPartOfRender(block) && !isTriggered(block) && (isInvoked(block) || isExecutedAfterRender(block))
 
-const blockAround = (block: CodeBlock): CodeBlock | null => eventHandedTo(block) ?? block.cardOwner ?? classOfDeclaredProperty(block) ?? block.parentBlock
+type BlockAround = (block: CodeBlock) => CodeBlock | null
 
-const holderBlockOf = (block: CodeBlock): CodeBlock => {
-  const around = blockAround(block)
-  return around === null || isNodeBlock(block) ? block : holderBlockOf(around)
+const ownerBlockAround: BlockAround = (block) => block.cardOwner ?? classOfDeclaredProperty(block) ?? block.parentBlock
+
+const linkedBlockAround: BlockAround = (block) => eventHandedTo(block) ?? ownerBlockAround(block)
+
+const holderBlockAlong = (block: CodeBlock, blockAroundOf: BlockAround): CodeBlock =>
+  endOfChain(block, { nextOf: (step) => (isNodeBlock(step) ? null : blockAroundOf(step)), keyOf: (step) => step.id })
+
+const leadsBackTo = (start: CodeBlock, block: CodeBlock): boolean =>
+  holderBlockAlong(start, (step) => (step.id === block.id ? null : linkedBlockAround(step))).id === block.id
+
+const eventHandedOutsideOf = (block: CodeBlock): CodeBlock | null => {
+  const event = eventHandedTo(block)
+  return event === null || leadsBackTo(event, block) ? null : event
 }
+
+const blockAround: BlockAround = (block) => eventHandedOutsideOf(block) ?? ownerBlockAround(block)
+
+const holderBlockOf = (block: CodeBlock): CodeBlock => holderBlockAlong(block, blockAround)
 
 export const nodeBlockOf = (block: CodeBlock): CodeBlock | null => {
   const holder = holderBlockOf(block)
