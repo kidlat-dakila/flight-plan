@@ -44,9 +44,9 @@ export const planWriteUp = (input: WriteUpReviewInput, { scaffold, configuration
     kind: "planned",
     hasWork,
     scaffold: {
+      ...scaffold,
       artifact: hasWork ? { ...required, status: DRAFTING_STATUS } : required,
       request: requestOf(scaffold.request, input, configuration, writer, now),
-      baseCommit: scaffold.baseCommit,
     },
   }
 }

@@ -34,7 +34,7 @@ Each adapter declares what it can do, instead of failing when asked. The web app
 | `compare` | The diff between two commits, used for staleness | Yes |
 | `blob` | A file's content at a commit | Yes |
 | `headSha` | The commit at the head of a pull request or branch | Yes |
-| `baseSha` | The commit a pull request or branch is compared against: where it left the repository's branch to compare with, or the tip of that branch when the checkout does not hold both commits | Yes |
+| `baseSha` | The commit a pull request or branch is compared against: where it left the branch its review compares with, or the tip of that branch when the checkout does not hold both commits | Yes |
 | `branches` | List the branches that the repository's branch to compare with does not contain, with their last author and where each began: those of the checkout and its remotes, or those of the checkout alone | Yes |
 | `history` | Name the signed-in user, and list pull requests in every state with their reviews, comments and commits | No |
 | `people` | Search the people tied to the repository, for the tracked authors | No |
@@ -57,7 +57,7 @@ Where a review target stands in its review is its [branch status](branch-status.
 
 ### The branch to compare with
 
-Each repository Flight Plan follows has a **branch to compare with**. A review target's diff is taken against it, from the merge base. The branches Flight Plan lists for the repository, offers to add by hand and offers for a new Flight Plan are those it does not contain, and a branch begins at its oldest commit that the branch to compare with lacks.
+Each repository Flight Plan follows has a **branch to compare with**. A review compares its target against the branch chosen when the review was [created](flight-plan-review.md#opening-a-review), from the merge base. That choice starts on the pull request's base branch for a pull request, or on the repository's branch to compare with when the forge gives none, and on the repository's branch to compare with for a branch. The branches Flight Plan lists for the repository, offers to add by hand and offers for a new Flight Plan are those it does not contain, and a branch begins at its oldest commit that the branch to compare with lacks.
 
 It is stored as `baseBranch` with the repository in the setup (see [data storage](data-storage.md)). A `null` branch, which is how a setup saved before the field existed reads, is detected: it is the branch `origin/HEAD` points to, or the first of `main` and `master` that exists. When the stored branch exists neither as `origin/<branch>` nor as `<branch>`, the repository shows a problem that names it.
 

@@ -3,11 +3,11 @@ title: How it works
 description: How Flight Plan builds a review from the code, and how your agent explains it.
 ---
 
-Flight Plan builds a review on its own, with no model, and you can read it as soon as it opens. Your agent explains it when you ask, writing through Flight Plan's MCP tools into the structure Flight Plan built. It can't add, remove or move anything in it.
+Flight Plan builds a review on its own, with no model, and you can read it as soon as you create it. Your agent explains it when you ask, writing through Flight Plan's MCP tools into the structure Flight Plan built. It can't add, remove or move anything in it.
 
 ## 1. Flight Plan builds the review
 
-Open a pull request or a branch from the home page. If it has no review yet, Flight Plan builds one from git on the spot:
+Open a pull request or a branch from the home page. If it has no review yet, the page shows what the change touches and the branch it's compared with, which you can change. A pull request starts on the branch it merges into, and a branch on the repository's [branch to compare with](/docs/setup/repositories/#choose-the-branch-to-compare-with). **Create Review Artifact** builds the review from git:
 
 1. It reads the changed files and their diffs between the base and the head commit, and leaves out the files your [ignored files](/docs/setup/review-configuration/#advanced-options) match.
 2. It follows the imports of each changed file in both directions, to the files that import it and the files it imports.
@@ -20,7 +20,7 @@ This runs on your machine, with tree-sitter. The review is ready to read. A part
 
 ## 2. Your agent explains it
 
-The first time a review opens, a dialog asks **Ask Claude to explain this review?**, with the name of your agent. It lists the parts your agent will write, from your [review configuration](/docs/setup/review-configuration/), and how many there are. **Explain** asks your agent, and **Not now** leaves the review as it is. **Explain this review** in the ⚙ menu opens the dialog again. You can also ask for one waypoint, one card or one file at a time. See [Explaining a review](/docs/review-artifacts/features/explaining/).
+Right after you create a review, a dialog asks **Ask Claude to explain this review?**, with the name of your agent. It lists the parts your agent will write, from your [review configuration](/docs/setup/review-configuration/), and how many there are. **Explain** asks your agent, and **Not now** leaves the review as it is. **Explain this review** in the ⚙ menu opens the dialog again. You can also ask for one waypoint, one card or one file at a time. See [Explaining a review](/docs/review-artifacts/features/explaining/).
 
 Claude works in a terminal you can see, started with `/flightplan:live <repository>/<target>`. When it isn't online, Flight Plan asks you to start it. On macOS it can start it for you, in a new tab of the [terminal app](/docs/setup/agent-integration/#terminal-app) you picked. It explains the parts you picked with the Flight Plan review skill. With Codex or Cursor, Flight Plan copies a one-line prompt for you to run in your own session. Either way, the agent works through the same MCP tools:
 

@@ -21,9 +21,9 @@ Once you pick a folder, the dialog also asks for the branch to compare with. It'
 
 ## Choose the branch to compare with
 
-A checked repository opens its fields under its name. One of them sets the branch your work gets compared with. It starts on the repository's main branch: the one `origin/HEAD` points to, or else `main` or `master`. Change it if your team branches off something else, like `develop`. Type part of a name to search your local and `origin` branches. Each one shows when it last got a commit.
+A checked repository opens its fields under its name. One of them sets the branch your work gets compared with. The field starts on the repository's main branch: the one `origin/HEAD` points to, or else `main` or `master`. Change it if your team branches off something else, like `develop`. Type part of a name to search your local and `origin` branches. Each one shows when it last got a commit.
 
-Each review shows what a branch changed since it split from this one. Flight Plan only lists branches that this one doesn't contain yet. If the branch is deleted later, the repository shows a problem that names the missing branch.
+A new review of a branch starts on this branch, and so does a review of a pull request when your forge doesn't say which branch the pull request merges into. You can pick another one when you create the review. Each review shows what its branch changed since it split from the branch it compares with. Flight Plan only lists branches that the repository's branch doesn't contain yet. If the branch is deleted later, the repository shows a problem that names the missing branch.
 
 ## Choose who to follow
 

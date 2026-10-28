@@ -51,6 +51,20 @@ describe("stored review", () => {
     expect(parseStoredReview(formatStoredReview(writtenUp, null))).toStrictEqual(writtenUp)
   })
 
+  it("reads back the branch the review artifact was compared with, kept in the meta block", () => {
+    const compared = { ...SCAFFOLD, baseBranch: "develop" }
+
+    expect(parse(formatStoredReview(compared, null))).toMatchObject({ meta: { baseBranch: "develop" } })
+    expect(parseStoredReview(formatStoredReview(compared, null))).toStrictEqual(compared)
+  })
+
+  it("reads a review saved with no compare branch without one, so it keeps the repository's base branch", () => {
+    const stored: unknown = parse(formatStoredReview(SCAFFOLD, null))
+
+    expect(isStored(stored) && isStored(stored.meta) ? Object.keys(stored.meta) : []).not.toContain("baseBranch")
+    expect(parseStoredReview(formatStoredReview(SCAFFOLD, null))).not.toHaveProperty("baseBranch")
+  })
+
   it("writes the format version, the kind and the choices in the meta block", () => {
     expect(parse(formatStoredReview(SCAFFOLD, null))).toMatchObject({
       schema: 4,

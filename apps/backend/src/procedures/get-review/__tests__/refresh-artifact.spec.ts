@@ -1,4 +1,5 @@
 import { createConversationEnvironment, createMockProcedureContext, type ProcedureContext } from "@/procedures/context"
+import { createReview } from "@/procedures/create-review"
 import { SequentialIds } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
 import type { ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
 import { getReview } from "@/procedures/get-review"
@@ -128,7 +129,7 @@ const traceLabelsOf = async (reviewStore: ReviewStore): Promise<(string | null)[
 }
 
 const startWrittenReview = async (harness: Harness): Promise<void> => {
-  await getReview(PAGE_INPUT, harness.contextAt(FIRST_CHANGE))
+  await createReview({ ...KEY, baseBranch: "main" }, harness.contextAt(FIRST_CHANGE))
   await harness.reviewStore.amendArtifact(KEY, (artifact) => ({ artifact: writeEverything(artifact), outcome: null }))
 }
 

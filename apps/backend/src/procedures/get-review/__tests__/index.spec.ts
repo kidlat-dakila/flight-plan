@@ -26,14 +26,14 @@ describe("getReview", () => {
     await expect(getReview(requestFor("storefront", "pr-1"), createContext())).resolves.toBeNull()
   })
 
-  it("says why it could not build the review of a target without an artifact", async () => {
+  it("says why it cannot offer to create the review of a target whose branch it cannot read", async () => {
     const page = await getReview(requestFor("storefront", "pr-416"), createContext())
 
     expect(page).toMatchObject({
       kind: "missing",
       shell: { lineColor: "blue", notice: "Sample data. These repositories and pull requests are not real." },
       heading: "Flight Plan could not build this review",
-      message: "This is a sample repository, so there is no code to read.",
+      message: "feature/gift-card-balance is not in this checkout. Fetch it and try again.",
       changedFiles: [{ text: "10 changed files" }, { text: "4 TypeScript" }, { text: "2 TSX" }, {}, {}, {}, {}],
     })
     expect(page).not.toHaveProperty("form")
@@ -49,7 +49,7 @@ describe("getReview", () => {
     })
   })
 
-  it("reads the head commit and the changed files of a review target the review store holds no sample of", async () => {
+  it("reads the change of a review target the review store holds no sample of, for its creation page", async () => {
     const changeReader = new InMemoryChangeReader([
       {
         repositoryPath: "/Users/dev/projects/storefront",
@@ -63,9 +63,9 @@ describe("getReview", () => {
     const context = { ...createContext(), reviewStore: new InMemoryReviewStore([]), changeReader }
 
     await expect(getReview(requestFor("storefront", "pr-416"), context)).resolves.toMatchObject({
-      kind: "missing",
+      kind: "creation",
       shell: { notice: null },
-      changedFiles: [{ text: "3 changed files" }, { text: "2 TypeScript" }, { text: "1 Markdown" }],
+      creation: { problem: "Nothing changed against “main”, so there is nothing to review." },
     })
   })
 

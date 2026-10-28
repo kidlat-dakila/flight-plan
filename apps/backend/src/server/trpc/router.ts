@@ -10,6 +10,7 @@ import { chooseModelRoute } from "./routes/choose-model"
 import { completeSetupRoute } from "./routes/complete-setup"
 import { configureRepositoryRoute } from "./routes/configure-repository"
 import { createConfigurationRoute } from "./routes/create-configuration"
+import { createReviewRoute } from "./routes/create-review"
 import { declineWriteUpRoute } from "./routes/decline-write-up"
 import { deleteConfigurationRoute } from "./routes/delete-configuration"
 import { deleteReviewRoute } from "./routes/delete-review"
@@ -72,6 +73,7 @@ import { searchCreationTargetsRoute } from "./routes/search-creation-targets"
 import { searchFilesRoute } from "./routes/search-files"
 import { searchRepositoryAuthorsRoute } from "./routes/search-repository-authors"
 import { searchRepositoryFoldersRoute } from "./routes/search-repository-folders"
+import { searchReviewBaseBranchesRoute } from "./routes/search-review-base-branches"
 import { searchReviewersRoute } from "./routes/search-reviewers"
 import { sendReviewerMessageRoute } from "./routes/send-reviewer-message"
 import { setAuthorTrackingRoute } from "./routes/set-author-tracking"
@@ -131,6 +133,8 @@ export const appRouter = createRouter({
   }),
   review: createRouter({
     get: getReviewRoute,
+    create: createReviewRoute,
+    searchBaseBranches: searchReviewBaseBranchesRoute,
     creationForm: getCreationFormRoute,
     searchTargets: searchCreationTargetsRoute,
     targetSwitcher: getTargetSwitcherRoute,
