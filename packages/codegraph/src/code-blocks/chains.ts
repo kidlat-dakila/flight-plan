@@ -1,5 +1,5 @@
 import { groupBy } from "@/shared/group-by"
-import { walkBreadthFirst } from "@/shared/reach"
+import { walkBreadthFirst, walkBreadthFirstInTurns } from "@/shared/reach"
 import { listFilledClassIds } from "./filled-classes"
 import { listCalledProcedureIds, listRouterIds } from "./procedure-calls"
 import { listMountedRouterIds } from "./route-mounts"
@@ -242,18 +242,25 @@ const sourceOf = (changed: StoredCodeBlock, index: ChainIndex): StoredCodeBlock 
   return parent === null ? changed : sourceOf(parent, index)
 }
 
+interface TopVisit {
+  readonly blockId: string
+  readonly isTop: boolean
+}
+
+const topVisitOf = (blockId: string): TopVisit => ({ blockId, isTop: true })
+
 const listTops = (
   onChainIds: readonly string[],
   runnerIdsById: ReadonlyMap<string, readonly string[]>,
   nextOf: (blockId: string) => readonly string[],
 ): string[] => {
   const started = onChainIds.filter((blockId) => (runnerIdsById.get(blockId) ?? []).length === 0)
-  const withLoops = (tops: readonly string[]): string[] => {
-    const reached = reach(tops, nextOf)
-    const unreached = onChainIds.find((blockId) => !reached.has(blockId))
-    return unreached === undefined ? [...tops] : withLoops([...tops, unreached])
-  }
-  return withLoops(started)
+  const turns = [started.map(topVisitOf), ...onChainIds.map((blockId) => [topVisitOf(blockId)])]
+  const visits = walkBreadthFirstInTurns(turns, {
+    nextOf: ({ blockId }) => nextOf(blockId).map((nextId) => ({ blockId: nextId, isTop: false })),
+    keyOf: ({ blockId }) => blockId,
+  })
+  return [...visits].filter((visit) => visit.isTop).map((visit) => visit.blockId)
 }
 
 export interface ChainHints {

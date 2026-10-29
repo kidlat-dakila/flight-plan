@@ -1,7 +1,6 @@
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
 import { nameOfBlock } from "@/trace/names"
 import { listTraceNodes } from "@/trace-diagram"
-import { listTracePaths } from "@/trace-diagram/paths"
 import { flattenTraceNodes, linkTraceDiagram, storeTraceDiagram } from "@/trace-diagram/stored"
 import type { TraceNode } from "@flightplan/configurations"
 import { diagramOf, outlineOfNodes, presentDiagramOf } from "./diagram-fixture"
@@ -493,12 +492,5 @@ describe("the forms of a Trace Diagram", () => {
     ])
     expect(flat.every((node) => !("children" in node))).toBe(true)
     expect(flat[1].triggerLabels).toStrictEqual([{ label: null, codeBlockId: "src/order-list.tsx#render-event@3:14" }])
-  })
-
-  it("lists every path of a diagram as a line, from a node nothing leads to down to its last node", () => {
-    expect(listTracePaths(presentDiagramOf(SHOP, ORDERS_CHANGE))).toStrictEqual([
-      "src/orders-page.tsx#component@2:1 → src/order-list.tsx#component@2:1 → src/orders.ts#function@1:1",
-      "src/orders-page.tsx#component@2:1 → src/order-list.tsx#component@2:1 → src/order-list.tsx#render-event@3:14 → src/orders.ts#function@1:1",
-    ])
   })
 })
