@@ -68,13 +68,13 @@ importers:
         version: 3.31.4
       '@trpc/client':
         specifier: ^11.19.0
-        version: 11.19.0(@trpc/server@11.19.0(typescript@6.0.3))(typescript@6.0.3)
+        version: 11.19.0(@trpc/server@11.22.1(typescript@6.0.3))(typescript@6.0.3)
       '@trpc/server':
-        specifier: ^11.19.0
-        version: 11.19.0(typescript@6.0.3)
+        specifier: ^11.22.1
+        version: 11.22.1(typescript@6.0.3)
       '@trpc/tanstack-react-query':
         specifier: ^11.19.0
-        version: 11.19.0(@tanstack/react-query@5.103.2(react@19.3.0))(@trpc/client@11.19.0(@trpc/server@11.19.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.19.0(typescript@6.0.3))(react@19.3.0)(typescript@6.0.3)
+        version: 11.19.0(@tanstack/react-query@5.103.2(react@19.3.0))(@trpc/client@11.19.0(@trpc/server@11.22.1(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.22.1(typescript@6.0.3))(react@19.3.0)(typescript@6.0.3)
       '@xyflow/react':
         specifier: ^12.11.6
         version: 12.11.6(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -189,13 +189,13 @@ importers:
         version: 23.3.0(@babel/traverse@7.29.8(supports-color@7.2.0))(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/cli@0.8.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(chokidar@5.0.0)(supports-color@7.2.0))(@swc/core@1.15.47(@swc/helpers@0.5.23))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23)))(supports-color@7.2.0)
       '@nx/node':
         specifier: 23.3.0
-        version: 23.3.0(@babel/traverse@7.29.8(supports-color@7.2.0))(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/cli@0.8.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(chokidar@5.0.0)(supports-color@7.2.0))(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@24.13.3)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(eslint@10.10.0(jiti@2.4.2)(supports-color@7.2.0))(fastify@5.12.7)(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23)))(supports-color@7.2.0)(typescript@6.0.3)
+        version: 23.3.0(@babel/traverse@7.29.8(supports-color@7.2.0))(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/cli@0.8.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(chokidar@5.0.0)(supports-color@7.2.0))(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@24.13.3)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(eslint@10.10.0(jiti@2.4.2)(supports-color@7.2.0))(express@5.2.1(supports-color@7.2.0))(fastify@5.12.7)(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23)))(supports-color@7.2.0)(typescript@6.0.3)
       '@nx/playwright':
         specifier: 23.3.0
         version: 23.3.0(39ab9a108c681988c41df346ec2f5f2d)
       '@nx/react':
         specifier: 23.3.0
-        version: 23.3.0(5d97598cfbe4228fff583938a6a108c9)
+        version: 23.3.0(6ed76e41b0a22595a43e508bae9e415b)
       '@nx/vite':
         specifier: 23.3.0
         version: 23.3.0(@babel/traverse@7.29.8(supports-color@7.2.0))(@nx/eslint@23.3.0(412f800740c0cfa467f4d28bd78ef952))(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/cli@0.8.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(chokidar@5.0.0)(supports-color@7.2.0))(@swc/core@1.15.47(@swc/helpers@0.5.23))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23)))(supports-color@7.2.0)(typescript@6.0.3)(vite@6.4.4(@types/node@24.13.3)(jiti@2.4.2)(lightningcss@1.32.0)(yaml@2.9.0))(vitest@4.1.12)
@@ -3953,8 +3953,8 @@ packages:
       '@trpc/server': 11.19.0
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.19.0':
-    resolution: {integrity: sha512-7C1goiDurz82yFKtZUbEzjXd0Rg/jyisaIZQhdvus+1l7E6mwcEYZXjZ1US/HF8kOyz1LERL8UN3bcboJtjcyQ==}
+  '@trpc/server@11.22.1':
+    resolution: {integrity: sha512-9SjWTS5iwENHOVPqpTjm0I1Os/CtuT6p8kDlovyEm00pXhpHX55tQM2vszJTEpcQhm/JfUz4ut/7Y9JZZQZo6A==}
     hasBin: true
     peerDependencies:
       typescript: '>=5.7.2'
@@ -12222,7 +12222,7 @@ snapshots:
       - nx
       - supports-color
 
-  '@nx/node@23.3.0(@babel/traverse@7.29.8(supports-color@7.2.0))(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/cli@0.8.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(chokidar@5.0.0)(supports-color@7.2.0))(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@24.13.3)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(eslint@10.10.0(jiti@2.4.2)(supports-color@7.2.0))(fastify@5.12.7)(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23)))(supports-color@7.2.0)(typescript@6.0.3)':
+  '@nx/node@23.3.0(@babel/traverse@7.29.8(supports-color@7.2.0))(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/cli@0.8.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(chokidar@5.0.0)(supports-color@7.2.0))(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@24.13.3)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(eslint@10.10.0(jiti@2.4.2)(supports-color@7.2.0))(express@5.2.1(supports-color@7.2.0))(fastify@5.12.7)(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23)))(supports-color@7.2.0)(typescript@6.0.3)':
     dependencies:
       '@nx/devkit': 23.3.0(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23)))
       '@nx/docker': 23.3.0(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23)))
@@ -12234,6 +12234,7 @@ snapshots:
       tcp-port-used: 1.0.3(supports-color@7.2.0)
       tslib: 2.8.1
     optionalDependencies:
+      express: 5.2.1(supports-color@7.2.0)
       fastify: 5.12.7
     transitivePeerDependencies:
       - '@babel/traverse'
@@ -12307,7 +12308,7 @@ snapshots:
       - supports-color
       - verdaccio
 
-  '@nx/react@23.3.0(5d97598cfbe4228fff583938a6a108c9)':
+  '@nx/react@23.3.0(6ed76e41b0a22595a43e508bae9e415b)':
     dependencies:
       '@babel/preset-react': 7.29.7(@babel/core@7.29.7(supports-color@7.2.0))(supports-color@7.2.0)
       '@nx/devkit': 23.3.0(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23)))
@@ -12323,6 +12324,7 @@ snapshots:
     optionalDependencies:
       '@nx/vite': 23.3.0(@babel/traverse@7.29.8(supports-color@7.2.0))(@nx/eslint@23.3.0(412f800740c0cfa467f4d28bd78ef952))(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/cli@0.8.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(chokidar@5.0.0)(supports-color@7.2.0))(@swc/core@1.15.47(@swc/helpers@0.5.23))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@7.2.0)(typescript@6.0.3))(@swc/core@1.15.47(@swc/helpers@0.5.23)))(supports-color@7.2.0)(typescript@6.0.3)(vite@6.4.4(@types/node@24.13.3)(jiti@2.4.2)(lightningcss@1.32.0)(yaml@2.9.0))(vitest@4.1.12)
       babel-plugin-react-compiler: 1.0.0
+      express: 5.2.1(supports-color@7.2.0)
     transitivePeerDependencies:
       - '@babel/core'
       - '@babel/traverse'
@@ -13306,20 +13308,20 @@ snapshots:
 
   '@tokenizer/token@0.3.0': {}
 
-  '@trpc/client@11.19.0(@trpc/server@11.19.0(typescript@6.0.3))(typescript@6.0.3)':
+  '@trpc/client@11.19.0(@trpc/server@11.22.1(typescript@6.0.3))(typescript@6.0.3)':
     dependencies:
-      '@trpc/server': 11.19.0(typescript@6.0.3)
+      '@trpc/server': 11.22.1(typescript@6.0.3)
       typescript: 6.0.3
 
-  '@trpc/server@11.19.0(typescript@6.0.3)':
+  '@trpc/server@11.22.1(typescript@6.0.3)':
     dependencies:
       typescript: 6.0.3
 
-  '@trpc/tanstack-react-query@11.19.0(@tanstack/react-query@5.103.2(react@19.3.0))(@trpc/client@11.19.0(@trpc/server@11.19.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.19.0(typescript@6.0.3))(react@19.3.0)(typescript@6.0.3)':
+  '@trpc/tanstack-react-query@11.19.0(@tanstack/react-query@5.103.2(react@19.3.0))(@trpc/client@11.19.0(@trpc/server@11.22.1(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.22.1(typescript@6.0.3))(react@19.3.0)(typescript@6.0.3)':
     dependencies:
       '@tanstack/react-query': 5.103.2(react@19.3.0)
-      '@trpc/client': 11.19.0(@trpc/server@11.19.0(typescript@6.0.3))(typescript@6.0.3)
-      '@trpc/server': 11.19.0(typescript@6.0.3)
+      '@trpc/client': 11.19.0(@trpc/server@11.22.1(typescript@6.0.3))(typescript@6.0.3)
+      '@trpc/server': 11.22.1(typescript@6.0.3)
       react: 19.3.0
       typescript: 6.0.3
 

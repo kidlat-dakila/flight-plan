@@ -109,7 +109,7 @@
     "@tiptap/react": "^3.31.4",
     "@tiptap/starter-kit": "^3.31.4",
     "@trpc/client": "^11.19.0",
-    "@trpc/server": "^11.19.0",
+    "@trpc/server": "^11.22.1",
     "@trpc/tanstack-react-query": "^11.19.0",
     "@xyflow/react": "^12.11.6",
     "codehike": "1.1.0",
