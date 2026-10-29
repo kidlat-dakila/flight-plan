@@ -2,8 +2,8 @@
   "name": "pokedex-next",
   "private": true,
   "dependencies": {
-    "drizzle-orm": "0.44.2",
-    "next": "15.3.4",
+    "drizzle-orm": "0.45.2",
+    "next": "15.5.28",
     "pg": "8.16.2",
     "react": "19.1.0",
     "react-dom": "19.1.0"
